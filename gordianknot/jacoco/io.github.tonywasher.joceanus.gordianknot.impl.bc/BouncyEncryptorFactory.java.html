@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyElGamalKeyPair.BouncyElGamalEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAEncryptor;
@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCompositeEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
 
 /**
  * Bouncy Encryptor Factory.
@@ -41,16 +42,16 @@ public class BouncyEncryptorFactory
      */
     BouncyEncryptorFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
-<span class="fc" id="L44">        super(pFactory);</span>
-<span class="fc" id="L45">    }</span>
+<span class="fc" id="L45">        super(pFactory);</span>
+<span class="fc" id="L46">    }</span>
 
     @Override
     public GordianEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws GordianException {
         /* Check validity of Encryptor */
-<span class="fc" id="L50">        checkEncryptorSpec(pEncryptorSpec);</span>
+<span class="fc" id="L51">        checkEncryptorSpec(pEncryptorSpec);</span>
 
         /* Create the encryptor */
-<span class="fc" id="L53">        return getBCEncryptor(pEncryptorSpec);</span>
+<span class="fc" id="L54">        return getBCEncryptor((GordianCoreEncryptorSpec) pEncryptorSpec);</span>
     }
 
     /**
@@ -60,21 +61,15 @@ public class BouncyEncryptorFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianEncryptor getBCEncryptor(final GordianEncryptorSpec pSpec) throws GordianException {
-<span class="pc bpc" id="L64" title="1 of 6 branches missed.">        switch (pSpec.getKeyPairType()) {</span>
-            case RSA:
-<span class="fc" id="L66">                return new BouncyRSAEncryptor(getFactory(), pSpec);</span>
-            case ELGAMAL:
-<span class="fc" id="L68">                return new BouncyElGamalEncryptor(getFactory(), pSpec);</span>
-            case EC:
-<span class="fc" id="L70">                return new BouncyECEncryptor(getFactory(), pSpec);</span>
-            case SM2:
-<span class="fc" id="L72">                return new BouncySM2Encryptor(getFactory(), pSpec);</span>
-            case COMPOSITE:
-<span class="fc" id="L74">                return new GordianCompositeEncryptor(getFactory(), pSpec);</span>
-            default:
-<span class="nc" id="L76">                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));</span>
-        }
+    private GordianEncryptor getBCEncryptor(final GordianCoreEncryptorSpec pSpec) throws GordianException {
+<span class="pc bpc" id="L65" title="1 of 6 branches missed.">        return switch (pSpec.getKeyPairType()) {</span>
+<span class="fc" id="L66">            case RSA -&gt; new BouncyRSAEncryptor(getFactory(), pSpec);</span>
+<span class="fc" id="L67">            case ELGAMAL -&gt; new BouncyElGamalEncryptor(getFactory(), pSpec);</span>
+<span class="fc" id="L68">            case EC -&gt; new BouncyECEncryptor(getFactory(), pSpec);</span>
+<span class="fc" id="L69">            case SM2 -&gt; new BouncySM2Encryptor(getFactory(), pSpec);</span>
+<span class="fc" id="L70">            case COMPOSITE -&gt; new GordianCompositeEncryptor(getFactory(), pSpec);</span>
+<span class="nc" id="L71">            default -&gt; throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));</span>
+        };
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -17,8 +17,8 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
 
 import java.util.Objects;
 
@@ -41,7 +41,7 @@ public class GordianPBECipherSpec&lt;T extends GordianKeySpec&gt; {
     /**
      * Is the Spec valid?
      */
-    private boolean isValid;
+    private final boolean isValid;
 
     /**
      * Constructor.
@@ -86,7 +86,7 @@ public class GordianPBECipherSpec&lt;T extends GordianKeySpec&gt; {
 
     @Override
     public String toString() {
-<span class="nc" id="L89">        return &quot;&quot; + theCipherSpec + &quot;:&quot; + thePBESpec;</span>
+<span class="nc" id="L89">        return theCipherSpec + &quot;:&quot; + thePBESpec;</span>
     }
 
     @Override
@@ -100,19 +100,18 @@ public class GordianPBECipherSpec&lt;T extends GordianKeySpec&gt; {
         }
 
         /* Make sure that the classes are the same */
-<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (!(pThat instanceof GordianPBECipherSpec)) {</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (!(pThat instanceof GordianPBECipherSpec&lt;?&gt; myThat)) {</span>
 <span class="nc" id="L104">            return false;</span>
         }
-<span class="nc" id="L106">        final GordianPBECipherSpec&lt;?&gt; myThat = (GordianPBECipherSpec&lt;?&gt;) pThat;</span>
 
         /* Check that the fields are equal */
-<span class="nc bnc" id="L109" title="All 2 branches missed.">        return Objects.equals(theCipherSpec, myThat.getCipherSpec())</span>
-<span class="nc bnc" id="L110" title="All 2 branches missed.">                &amp;&amp; Objects.equals(thePBESpec, myThat.getPBESpec());</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        return Objects.equals(theCipherSpec, myThat.getCipherSpec())</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">                &amp;&amp; Objects.equals(thePBESpec, myThat.getPBESpec());</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L115">        return theCipherSpec.hashCode() + thePBESpec.hashCode();</span>
+<span class="nc" id="L114">        return theCipherSpec.hashCode() + thePBESpec.hashCode();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

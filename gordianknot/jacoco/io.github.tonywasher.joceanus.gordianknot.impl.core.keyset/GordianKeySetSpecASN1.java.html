@@ -19,11 +19,12 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset.GordianCoreKeySetSpecBuilder;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -49,7 +50,7 @@ public class GordianKeySetSpecASN1
     /**
      * KeySetSpecOID.
      */
-<span class="fc" id="L52">    public static final ASN1ObjectIdentifier KEYSETALGID = GordianKeySetData.KEYSETOID.branch(&quot;1&quot;);</span>
+<span class="fc" id="L53">    public static final ASN1ObjectIdentifier KEYSETALGID = GordianKeySetData.KEYSETOID.branch(&quot;1&quot;);</span>
 
     /**
      * The KeySetSpec.
@@ -61,10 +62,10 @@ public class GordianKeySetSpecASN1
      *
      * @param pKeySetSpec the keySetSpec
      */
-<span class="fc" id="L64">    public GordianKeySetSpecASN1(final GordianKeySetSpec pKeySetSpec) {</span>
+<span class="fc" id="L65">    public GordianKeySetSpecASN1(final GordianKeySetSpec pKeySetSpec) {</span>
         /* Store the Spec */
-<span class="fc" id="L66">        theSpec = pKeySetSpec;</span>
-<span class="fc" id="L67">    }</span>
+<span class="fc" id="L67">        theSpec = pKeySetSpec;</span>
+<span class="fc" id="L68">    }</span>
 
     /**
      * Constructor.
@@ -72,28 +73,29 @@ public class GordianKeySetSpecASN1
      * @param pSequence the Sequence
      * @throws GordianException on error
      */
-<span class="fc" id="L75">    private GordianKeySetSpecASN1(final ASN1Sequence pSequence) throws GordianException {</span>
+<span class="fc" id="L76">    private GordianKeySetSpecASN1(final ASN1Sequence pSequence) throws GordianException {</span>
         /* Protect against exceptions */
         try {
             /* Extract the parameters from the sequence */
-<span class="fc" id="L79">            final Enumeration&lt;?&gt; en = pSequence.getObjects();</span>
-<span class="fc" id="L80">            final int myId = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();</span>
-<span class="fc" id="L81">            final int myNumSteps = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();</span>
-<span class="fc" id="L82">            final GordianLength myLen = GordianKeyLengths.getKeyLengthForId(myId);</span>
+<span class="fc" id="L80">            final Enumeration&lt;?&gt; en = pSequence.getObjects();</span>
+<span class="fc" id="L81">            final int myId = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();</span>
+<span class="fc" id="L82">            final int myNumSteps = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();</span>
+<span class="fc" id="L83">            final GordianLength myLen = GordianKeyLengths.getKeyLengthForId(myId);</span>
 
             /* Make sure that we have completed the sequence */
-<span class="pc bpc" id="L85" title="1 of 2 branches missed.">            if (en.hasMoreElements()) {</span>
-<span class="nc" id="L86">                throw new GordianDataException(&quot;Unexpected additional values in ASN1 sequence&quot;);</span>
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">            if (en.hasMoreElements()) {</span>
+<span class="nc" id="L87">                throw new GordianDataException(&quot;Unexpected additional values in ASN1 sequence&quot;);</span>
             }
 
             /* Create the keySpec */
-<span class="fc" id="L90">            theSpec = new GordianKeySetSpec(myLen, myNumSteps);</span>
+<span class="fc" id="L91">            final GordianCoreKeySetSpecBuilder myBuilder = GordianCoreKeySetSpecBuilder.newInstance();</span>
+<span class="fc" id="L92">            theSpec = myBuilder.keySet(myLen, myNumSteps);</span>
 
             /* handle exceptions */
-<span class="nc" id="L93">        } catch (IllegalArgumentException e) {</span>
-<span class="nc" id="L94">            throw new GordianIOException(&quot;Unable to parse ASN1 sequence&quot;, e);</span>
-<span class="fc" id="L95">        }</span>
-<span class="fc" id="L96">    }</span>
+<span class="nc" id="L95">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L96">            throw new GordianIOException(&quot;Unable to parse ASN1 sequence&quot;, e);</span>
+<span class="fc" id="L97">        }</span>
+<span class="fc" id="L98">    }</span>
 
     /**
      * Parse the ASN1 object.
@@ -103,12 +105,12 @@ public class GordianKeySetSpecASN1
      * @throws GordianException on error
      */
     public static GordianKeySetSpecASN1 getInstance(final Object pObject) throws GordianException {
-<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        if (pObject instanceof GordianKeySetSpecASN1 myASN1) {</span>
-<span class="nc" id="L107">            return myASN1;</span>
-<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        } else if (pObject != null) {</span>
-<span class="fc" id="L109">            return new GordianKeySetSpecASN1(ASN1Sequence.getInstance(pObject));</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if (pObject instanceof GordianKeySetSpecASN1 myASN1) {</span>
+<span class="nc" id="L109">            return myASN1;</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        } else if (pObject != null) {</span>
+<span class="fc" id="L111">            return new GordianKeySetSpecASN1(ASN1Sequence.getInstance(pObject));</span>
         }
-<span class="nc" id="L111">        throw new GordianDataException(&quot;Null sequence&quot;);</span>
+<span class="nc" id="L113">        throw new GordianDataException(&quot;Null sequence&quot;);</span>
     }
 
     /**
@@ -117,16 +119,16 @@ public class GordianKeySetSpecASN1
      * @return the Spec
      */
     public GordianKeySetSpec getSpec() {
-<span class="fc" id="L120">        return theSpec;</span>
+<span class="fc" id="L122">        return theSpec;</span>
     }
 
     @Override
     public ASN1Primitive toASN1Primitive() {
-<span class="fc" id="L125">        final ASN1EncodableVector v = new ASN1EncodableVector();</span>
-<span class="fc" id="L126">        v.add(new ASN1Integer(GordianKeyLengths.getIdForKeyLength(theSpec.getKeyLength())));</span>
-<span class="fc" id="L127">        v.add(new ASN1Integer(theSpec.getCipherSteps()));</span>
+<span class="fc" id="L127">        final ASN1EncodableVector v = new ASN1EncodableVector();</span>
+<span class="fc" id="L128">        v.add(new ASN1Integer(GordianKeyLengths.getIdForKeyLength(theSpec.getKeyLength())));</span>
+<span class="fc" id="L129">        v.add(new ASN1Integer(theSpec.getCipherSteps()));</span>
 
-<span class="fc" id="L129">        return new DERSequence(v);</span>
+<span class="fc" id="L131">        return new DERSequence(v);</span>
     }
 
     /**
@@ -136,11 +138,11 @@ public class GordianKeySetSpecASN1
      */
     public static int getEncodedLength() {
         /* KeyType has type + length + value (all single byte) */
-<span class="fc" id="L139">        int myLength = GordianASN1Util.getLengthIntegerField(1);</span>
-<span class="fc" id="L140">        myLength += GordianASN1Util.getLengthIntegerField(1);</span>
+<span class="fc" id="L141">        int myLength = GordianASN1Util.getLengthIntegerField(1);</span>
+<span class="fc" id="L142">        myLength += GordianASN1Util.getLengthIntegerField(1);</span>
 
         /* Calculate the length of the sequence */
-<span class="fc" id="L143">        return GordianASN1Util.getLengthSequence(myLength);</span>
+<span class="fc" id="L145">        return GordianASN1Util.getLengthSequence(myLength);</span>
     }
 
     /**
@@ -149,27 +151,27 @@ public class GordianKeySetSpecASN1
      * @return the algorithmId
      */
     public AlgorithmIdentifier getAlgorithmId() {
-<span class="fc" id="L152">        return new AlgorithmIdentifier(KEYSETALGID, toASN1Primitive());</span>
+<span class="fc" id="L154">        return new AlgorithmIdentifier(KEYSETALGID, toASN1Primitive());</span>
     }
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle trivial cases */
-<span class="nc bnc" id="L158" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L159">            return true;</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L161">            return true;</span>
         }
-<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L162">            return false;</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L164">            return false;</span>
         }
 
         /* Check that the fields are equal */
-<span class="nc" id="L166">        return pThat instanceof GordianKeySetSpecASN1 myThat</span>
-<span class="nc bnc" id="L167" title="All 4 branches missed.">                &amp;&amp; Objects.equals(theSpec, myThat.getSpec());</span>
+<span class="nc" id="L168">        return pThat instanceof GordianKeySetSpecASN1 myThat</span>
+<span class="nc bnc" id="L169" title="All 4 branches missed.">                &amp;&amp; Objects.equals(theSpec, myThat.getSpec());</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L172">        return Objects.hash(getSpec());</span>
+<span class="nc" id="L174">        return Objects.hash(getSpec());</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -24,12 +24,12 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.moneywise.tax.uk;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> java.util.Iterator;
@@ -230,79 +230,80 @@
 <a class="jxr_linenumber" name="L222" href="#L222">222</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> MetisFieldSet&lt;MoneyWiseUKCapitalAsIncomeScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKCapitalAsIncomeScheme.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L223" href="#L223">223</a> 
 <a class="jxr_linenumber" name="L224" href="#L224">224</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L225" href="#L225">225</a> <em class="jxr_javadoccomment">         * Constructor.</em>
+<a class="jxr_linenumber" name="L225" href="#L225">225</a> <em class="jxr_javadoccomment">         * Default constructor.</em>
 <a class="jxr_linenumber" name="L226" href="#L226">226</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L227" href="#L227">227</a>         <strong class="jxr_keyword">public</strong> MoneyWiseUKCapitalAsIncomeScheme() {
-<a class="jxr_linenumber" name="L228" href="#L228">228</a>         }
-<a class="jxr_linenumber" name="L229" href="#L229">229</a> 
-<a class="jxr_linenumber" name="L230" href="#L230">230</a>         @Override
-<a class="jxr_linenumber" name="L231" href="#L231">231</a>         <strong class="jxr_keyword">public</strong> MetisFieldSet&lt;MoneyWiseUKCapitalAsIncomeScheme&gt; getDataFieldSet() {
-<a class="jxr_linenumber" name="L232" href="#L232">232</a>             <strong class="jxr_keyword">return</strong> FIELD_DEFS;
-<a class="jxr_linenumber" name="L233" href="#L233">233</a>         }
-<a class="jxr_linenumber" name="L234" href="#L234">234</a>     }
-<a class="jxr_linenumber" name="L235" href="#L235">235</a> 
-<a class="jxr_linenumber" name="L236" href="#L236">236</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L237" href="#L237">237</a> <em class="jxr_javadoccomment">     * Residential Scheme.</em>
-<a class="jxr_linenumber" name="L238" href="#L238">238</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L239" href="#L239">239</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> MoneyWiseUKCapitalResidentialScheme
-<a class="jxr_linenumber" name="L240" href="#L240">240</a>             <strong class="jxr_keyword">extends</strong> MoneyWiseUKCapitalSplitRateScheme {
-<a class="jxr_linenumber" name="L241" href="#L241">241</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L242" href="#L242">242</a> <em class="jxr_javadoccomment">         * Local Report fields.</em>
-<a class="jxr_linenumber" name="L243" href="#L243">243</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L244" href="#L244">244</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> MetisFieldSet&lt;MoneyWiseUKCapitalResidentialScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKCapitalResidentialScheme.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L245" href="#L245">245</a> 
-<a class="jxr_linenumber" name="L246" href="#L246">246</a>         <em class="jxr_comment">/*</em>
-<a class="jxr_linenumber" name="L247" href="#L247">247</a> <em class="jxr_comment">         * Declare Fields.</em>
-<a class="jxr_linenumber" name="L248" href="#L248">248</a> <em class="jxr_comment">         */</em>
-<a class="jxr_linenumber" name="L249" href="#L249">249</a>         <strong class="jxr_keyword">static</strong> {
-<a class="jxr_linenumber" name="L250" href="#L250">250</a>             FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_RESIDENTIAL, MoneyWiseUKCapitalResidentialScheme::getResidentialScheme);
-<a class="jxr_linenumber" name="L251" href="#L251">251</a>         }
-<a class="jxr_linenumber" name="L252" href="#L252">252</a> 
-<a class="jxr_linenumber" name="L253" href="#L253">253</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L254" href="#L254">254</a> <em class="jxr_javadoccomment">         * The Residential Scheme.</em>
-<a class="jxr_linenumber" name="L255" href="#L255">255</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L256" href="#L256">256</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> MoneyWiseUKCapitalSplitRateScheme theResidential;
-<a class="jxr_linenumber" name="L257" href="#L257">257</a> 
-<a class="jxr_linenumber" name="L258" href="#L258">258</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L259" href="#L259">259</a> <em class="jxr_javadoccomment">         * Constructor.</em>
-<a class="jxr_linenumber" name="L260" href="#L260">260</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L261" href="#L261">261</a> <em class="jxr_javadoccomment">         * @param pRate        the base rate</em>
-<a class="jxr_linenumber" name="L262" href="#L262">262</a> <em class="jxr_javadoccomment">         * @param pHighRate    the high rate</em>
-<a class="jxr_linenumber" name="L263" href="#L263">263</a> <em class="jxr_javadoccomment">         * @param pResRate     the base rate</em>
-<a class="jxr_linenumber" name="L264" href="#L264">264</a> <em class="jxr_javadoccomment">         * @param pHighResRate the high rate</em>
-<a class="jxr_linenumber" name="L265" href="#L265">265</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L266" href="#L266">266</a>         <strong class="jxr_keyword">protected</strong> MoneyWiseUKCapitalResidentialScheme(<strong class="jxr_keyword">final</strong> <a name="OceanusRate" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusRate.html#OceanusRate">OceanusRate</a> pRate,
-<a class="jxr_linenumber" name="L267" href="#L267">267</a>                                                       <strong class="jxr_keyword">final</strong> <a name="OceanusRate" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusRate.html#OceanusRate">OceanusRate</a> pHighRate,
-<a class="jxr_linenumber" name="L268" href="#L268">268</a>                                                       <strong class="jxr_keyword">final</strong> <a name="OceanusRate" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusRate.html#OceanusRate">OceanusRate</a> pResRate,
-<a class="jxr_linenumber" name="L269" href="#L269">269</a>                                                       <strong class="jxr_keyword">final</strong> <a name="OceanusRate" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusRate.html#OceanusRate">OceanusRate</a> pHighResRate) {
-<a class="jxr_linenumber" name="L270" href="#L270">270</a>             <strong class="jxr_keyword">super</strong>(pRate, pHighRate);
-<a class="jxr_linenumber" name="L271" href="#L271">271</a>             theResidential = <strong class="jxr_keyword">new</strong> MoneyWiseUKCapitalSplitRateScheme(pResRate, pHighResRate);
-<a class="jxr_linenumber" name="L272" href="#L272">272</a>         }
-<a class="jxr_linenumber" name="L273" href="#L273">273</a> 
-<a class="jxr_linenumber" name="L274" href="#L274">274</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L275" href="#L275">275</a> <em class="jxr_javadoccomment">         * Obtain the high rate.</em>
-<a class="jxr_linenumber" name="L276" href="#L276">276</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L277" href="#L277">277</a> <em class="jxr_javadoccomment">         * @return the high rate</em>
-<a class="jxr_linenumber" name="L278" href="#L278">278</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L279" href="#L279">279</a>         <strong class="jxr_keyword">protected</strong> MoneyWiseUKCapitalSplitRateScheme getResidentialScheme() {
-<a class="jxr_linenumber" name="L280" href="#L280">280</a>             <strong class="jxr_keyword">return</strong> theResidential;
-<a class="jxr_linenumber" name="L281" href="#L281">281</a>         }
-<a class="jxr_linenumber" name="L282" href="#L282">282</a> 
-<a class="jxr_linenumber" name="L283" href="#L283">283</a>         @Override
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>         <strong class="jxr_keyword">public</strong> MetisFieldSet&lt;MoneyWiseUKCapitalResidentialScheme&gt; getDataFieldSet() {
-<a class="jxr_linenumber" name="L285" href="#L285">285</a>             <strong class="jxr_keyword">return</strong> FIELD_DEFS;
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>         }
-<a class="jxr_linenumber" name="L287" href="#L287">287</a> 
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>         @Override
-<a class="jxr_linenumber" name="L289" href="#L289">289</a>         <strong class="jxr_keyword">protected</strong> Iterator&lt;MoneyWiseTaxBand&gt; taxBandIterator(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseUKTaxConfig" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/tax/uk/MoneyWiseUKTaxConfig.html#MoneyWiseUKTaxConfig">MoneyWiseUKTaxConfig</a> pConfig,
-<a class="jxr_linenumber" name="L290" href="#L290">290</a>                                                              <strong class="jxr_keyword">final</strong> <a name="MoneyWiseTaxClass" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/statics/MoneyWiseTaxClass.html#MoneyWiseTaxClass">MoneyWiseTaxClass</a> pBasis) {
-<a class="jxr_linenumber" name="L291" href="#L291">291</a>             <em class="jxr_comment">/* Switch on taxBasis */</em>
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>             <strong class="jxr_keyword">return</strong> MoneyWiseTaxClass.RESIDENTIALGAINS.equals(pBasis)
-<a class="jxr_linenumber" name="L293" href="#L293">293</a>                     ? theResidential.taxBandIterator(pConfig, pBasis)
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>                     : <strong class="jxr_keyword">super</strong>.taxBandIterator(pConfig, pBasis);
-<a class="jxr_linenumber" name="L295" href="#L295">295</a>         }
-<a class="jxr_linenumber" name="L296" href="#L296">296</a>     }
-<a class="jxr_linenumber" name="L297" href="#L297">297</a> }
+<a class="jxr_linenumber" name="L227" href="#L227">227</a>         MoneyWiseUKCapitalAsIncomeScheme() {
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>             <em class="jxr_comment">/* NoOp */</em>
+<a class="jxr_linenumber" name="L229" href="#L229">229</a>         }
+<a class="jxr_linenumber" name="L230" href="#L230">230</a> 
+<a class="jxr_linenumber" name="L231" href="#L231">231</a>         @Override
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>         <strong class="jxr_keyword">public</strong> MetisFieldSet&lt;MoneyWiseUKCapitalAsIncomeScheme&gt; getDataFieldSet() {
+<a class="jxr_linenumber" name="L233" href="#L233">233</a>             <strong class="jxr_keyword">return</strong> FIELD_DEFS;
+<a class="jxr_linenumber" name="L234" href="#L234">234</a>         }
+<a class="jxr_linenumber" name="L235" href="#L235">235</a>     }
+<a class="jxr_linenumber" name="L236" href="#L236">236</a> 
+<a class="jxr_linenumber" name="L237" href="#L237">237</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L238" href="#L238">238</a> <em class="jxr_javadoccomment">     * Residential Scheme.</em>
+<a class="jxr_linenumber" name="L239" href="#L239">239</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L240" href="#L240">240</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> MoneyWiseUKCapitalResidentialScheme
+<a class="jxr_linenumber" name="L241" href="#L241">241</a>             <strong class="jxr_keyword">extends</strong> MoneyWiseUKCapitalSplitRateScheme {
+<a class="jxr_linenumber" name="L242" href="#L242">242</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L243" href="#L243">243</a> <em class="jxr_javadoccomment">         * Local Report fields.</em>
+<a class="jxr_linenumber" name="L244" href="#L244">244</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L245" href="#L245">245</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> MetisFieldSet&lt;MoneyWiseUKCapitalResidentialScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKCapitalResidentialScheme.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L246" href="#L246">246</a> 
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>         <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="L248" href="#L248">248</a> <em class="jxr_comment">         * Declare Fields.</em>
+<a class="jxr_linenumber" name="L249" href="#L249">249</a> <em class="jxr_comment">         */</em>
+<a class="jxr_linenumber" name="L250" href="#L250">250</a>         <strong class="jxr_keyword">static</strong> {
+<a class="jxr_linenumber" name="L251" href="#L251">251</a>             FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_RESIDENTIAL, MoneyWiseUKCapitalResidentialScheme::getResidentialScheme);
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>         }
+<a class="jxr_linenumber" name="L253" href="#L253">253</a> 
+<a class="jxr_linenumber" name="L254" href="#L254">254</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L255" href="#L255">255</a> <em class="jxr_javadoccomment">         * The Residential Scheme.</em>
+<a class="jxr_linenumber" name="L256" href="#L256">256</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> MoneyWiseUKCapitalSplitRateScheme theResidential;
+<a class="jxr_linenumber" name="L258" href="#L258">258</a> 
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L260" href="#L260">260</a> <em class="jxr_javadoccomment">         * Constructor.</em>
+<a class="jxr_linenumber" name="L261" href="#L261">261</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="L262" href="#L262">262</a> <em class="jxr_javadoccomment">         * @param pRate        the base rate</em>
+<a class="jxr_linenumber" name="L263" href="#L263">263</a> <em class="jxr_javadoccomment">         * @param pHighRate    the high rate</em>
+<a class="jxr_linenumber" name="L264" href="#L264">264</a> <em class="jxr_javadoccomment">         * @param pResRate     the base rate</em>
+<a class="jxr_linenumber" name="L265" href="#L265">265</a> <em class="jxr_javadoccomment">         * @param pHighResRate the high rate</em>
+<a class="jxr_linenumber" name="L266" href="#L266">266</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>         <strong class="jxr_keyword">protected</strong> MoneyWiseUKCapitalResidentialScheme(<strong class="jxr_keyword">final</strong> <a name="OceanusRate" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusRate.html#OceanusRate">OceanusRate</a> pRate,
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>                                                       <strong class="jxr_keyword">final</strong> <a name="OceanusRate" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusRate.html#OceanusRate">OceanusRate</a> pHighRate,
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>                                                       <strong class="jxr_keyword">final</strong> <a name="OceanusRate" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusRate.html#OceanusRate">OceanusRate</a> pResRate,
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>                                                       <strong class="jxr_keyword">final</strong> <a name="OceanusRate" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusRate.html#OceanusRate">OceanusRate</a> pHighResRate) {
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>             <strong class="jxr_keyword">super</strong>(pRate, pHighRate);
+<a class="jxr_linenumber" name="L272" href="#L272">272</a>             theResidential = <strong class="jxr_keyword">new</strong> MoneyWiseUKCapitalSplitRateScheme(pResRate, pHighResRate);
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>         }
+<a class="jxr_linenumber" name="L274" href="#L274">274</a> 
+<a class="jxr_linenumber" name="L275" href="#L275">275</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L276" href="#L276">276</a> <em class="jxr_javadoccomment">         * Obtain the high rate.</em>
+<a class="jxr_linenumber" name="L277" href="#L277">277</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="L278" href="#L278">278</a> <em class="jxr_javadoccomment">         * @return the high rate</em>
+<a class="jxr_linenumber" name="L279" href="#L279">279</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L280" href="#L280">280</a>         <strong class="jxr_keyword">protected</strong> MoneyWiseUKCapitalSplitRateScheme getResidentialScheme() {
+<a class="jxr_linenumber" name="L281" href="#L281">281</a>             <strong class="jxr_keyword">return</strong> theResidential;
+<a class="jxr_linenumber" name="L282" href="#L282">282</a>         }
+<a class="jxr_linenumber" name="L283" href="#L283">283</a> 
+<a class="jxr_linenumber" name="L284" href="#L284">284</a>         @Override
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>         <strong class="jxr_keyword">public</strong> MetisFieldSet&lt;MoneyWiseUKCapitalResidentialScheme&gt; getDataFieldSet() {
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>             <strong class="jxr_keyword">return</strong> FIELD_DEFS;
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>         }
+<a class="jxr_linenumber" name="L288" href="#L288">288</a> 
+<a class="jxr_linenumber" name="L289" href="#L289">289</a>         @Override
+<a class="jxr_linenumber" name="L290" href="#L290">290</a>         <strong class="jxr_keyword">protected</strong> Iterator&lt;MoneyWiseTaxBand&gt; taxBandIterator(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseUKTaxConfig" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/tax/uk/MoneyWiseUKTaxConfig.html#MoneyWiseUKTaxConfig">MoneyWiseUKTaxConfig</a> pConfig,
+<a class="jxr_linenumber" name="L291" href="#L291">291</a>                                                              <strong class="jxr_keyword">final</strong> <a name="MoneyWiseTaxClass" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/statics/MoneyWiseTaxClass.html#MoneyWiseTaxClass">MoneyWiseTaxClass</a> pBasis) {
+<a class="jxr_linenumber" name="L292" href="#L292">292</a>             <em class="jxr_comment">/* Switch on taxBasis */</em>
+<a class="jxr_linenumber" name="L293" href="#L293">293</a>             <strong class="jxr_keyword">return</strong> MoneyWiseTaxClass.RESIDENTIALGAINS.equals(pBasis)
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>                     ? theResidential.taxBandIterator(pConfig, pBasis)
+<a class="jxr_linenumber" name="L295" href="#L295">295</a>                     : <strong class="jxr_keyword">super</strong>.taxBandIterator(pConfig, pBasis);
+<a class="jxr_linenumber" name="L296" href="#L296">296</a>         }
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>     }
+<a class="jxr_linenumber" name="L298" href="#L298">298</a> }
 </pre>
 <hr/>
 <div id="footer">© 2012–2026</div>

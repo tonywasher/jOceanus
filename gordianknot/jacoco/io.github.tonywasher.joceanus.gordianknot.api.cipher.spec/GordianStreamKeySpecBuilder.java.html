@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianStreamKeySpecBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.cipher.spec</a> &gt; <span class="el_source">GordianStreamKeySpecBuilder.java</span></div><h1>GordianStreamKeySpecBuilder.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianChaCha20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianElephantKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianISAPKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianRomulusKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSalsa20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSkeinXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSparkleKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianVMPCKey;
+
+/**
+ * GordianKnot StreamKeySpec Builder.
+ */
+public interface GordianStreamKeySpecBuilder {
+    /**
+     * Define StreamKeyType.
+     *
+     * @param pType the type
+     * @return the Builder
+     */
+    GordianStreamKeySpecBuilder withType(GordianStreamKeyType pType);
+
+    /**
+     * Define subType.
+     *
+     * @param pSubType the subType
+     * @return the Builder
+     */
+    GordianStreamKeySpecBuilder withSubType(GordianStreamKeySubType pSubType);
+
+    /**
+     * Define KeyLength.
+     *
+     * @param pKeyLength the keyLength
+     * @return the Builder
+     */
+    GordianStreamKeySpecBuilder withKeyLength(GordianLength pKeyLength);
+
+    /**
+     * Build streamKeySpec.
+     *
+     * @return the streamKeySpec
+     */
+    GordianStreamKeySpec build();
+
+    /**
+     * Create generic.
+     *
+     * @param pKeyType   the keyType
+     * @param pKeyLength the keyLength
+     * @param pSubType   the subType
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec streamKey(final GordianStreamKeyType pKeyType,
+                                           final GordianLength pKeyLength,
+                                           final GordianStreamKeySubType pSubType) {
+<span class="fc" id="L76">        return withType(pKeyType).withKeyLength(pKeyLength).withSubType(pSubType).build();</span>
+    }
+
+    /**
+     * Create hc.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec hc(final GordianLength pKeyLength) {
+<span class="fc" id="L86">        return withType(GordianStreamKeyType.HC).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create chacha`.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec chacha(final GordianLength pKeyLength) {
+<span class="fc" id="L96">        return withType(GordianStreamKeyType.CHACHA20).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create chacha7539.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec chacha7539(final GordianLength pKeyLength) {
+<span class="nc" id="L106">        return withType(GordianStreamKeyType.CHACHA20).withSubType(GordianChaCha20Key.ISO7539).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create xchacha.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec xchacha(final GordianLength pKeyLength) {
+<span class="nc" id="L116">        return withType(GordianStreamKeyType.CHACHA20).withSubType(GordianChaCha20Key.XCHACHA).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create salsa.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec salsa(final GordianLength pKeyLength) {
+<span class="nc" id="L126">        return withType(GordianStreamKeyType.SALSA20).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create xsalsa.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec xsalsa(final GordianLength pKeyLength) {
+<span class="nc" id="L136">        return withType(GordianStreamKeyType.SALSA20).withSubType(GordianSalsa20Key.XSALSA).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create isaac.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec isaac(final GordianLength pKeyLength) {
+<span class="nc" id="L146">        return withType(GordianStreamKeyType.ISAAC).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create rc4c.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec rc4(final GordianLength pKeyLength) {
+<span class="nc" id="L156">        return withType(GordianStreamKeyType.RC4).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create vmpc.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec vmpc(final GordianLength pKeyLength) {
+<span class="nc" id="L166">        return withType(GordianStreamKeyType.VMPC).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create vmpcKSA.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec vmpcKSA(final GordianLength pKeyLength) {
+<span class="nc" id="L176">        return withType(GordianStreamKeyType.VMPC).withSubType(GordianVMPCKey.KSA).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create grain.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec grain(final GordianLength pKeyLength) {
+<span class="nc" id="L186">        return withType(GordianStreamKeyType.GRAIN).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create rabbit.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec rabbit(final GordianLength pKeyLength) {
+<span class="nc" id="L196">        return withType(GordianStreamKeyType.RABBIT).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create sosemanuk.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec sosemanuk(final GordianLength pKeyLength) {
+<span class="nc" id="L206">        return withType(GordianStreamKeyType.SOSEMANUK).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create snow3G.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec snow3G(final GordianLength pKeyLength) {
+<span class="nc" id="L216">        return withType(GordianStreamKeyType.SNOW3G).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create zuc.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec zuc(final GordianLength pKeyLength) {
+<span class="nc" id="L226">        return withType(GordianStreamKeyType.ZUC).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create skein.
+     *
+     * @param pKeyLength   the keyLength
+     * @param pStateLength the stateLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec skeinXof(final GordianLength pKeyLength,
+                                          final GordianSkeinXofKey pStateLength) {
+<span class="nc" id="L238">        return withType(GordianStreamKeyType.SKEINXOF).withSubType(pStateLength).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create blake2X.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec blake2Xof(final GordianLength pKeyLength) {
+<span class="nc" id="L248">        return withType(GordianStreamKeyType.BLAKE2XOF).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create blake3.
+     *
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec blake3Xof() {
+<span class="nc" id="L257">        return withType(GordianStreamKeyType.BLAKE3XOF).build();</span>
+    }
+
+    /**
+     * Create ascon.
+     *
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec ascon() {
+<span class="nc" id="L266">        return withType(GordianStreamKeyType.ASCON).build();</span>
+    }
+
+    /**
+     * Create elephant.
+     *
+     * @param pSubSpec the subSpec
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec elephant(final GordianElephantKey pSubSpec) {
+<span class="nc" id="L276">        return withType(GordianStreamKeyType.ELEPHANT).withSubType(pSubSpec).build();</span>
+    }
+
+    /**
+     * Create isap.
+     *
+     * @param pSubSpec the subSpec
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec isap(final GordianISAPKey pSubSpec) {
+<span class="nc" id="L286">        return withType(GordianStreamKeyType.ISAP).withSubType(pSubSpec).build();</span>
+    }
+
+    /**
+     * Create photonBeetle.
+     *
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec photonBeetle() {
+<span class="nc" id="L295">        return withType(GordianStreamKeyType.PHOTONBEETLE).build();</span>
+    }
+
+    /**
+     * Create romulus.
+     *
+     * @param pSubSpec the subSpec
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec romulus(final GordianRomulusKey pSubSpec) {
+<span class="nc" id="L305">        return withType(GordianStreamKeyType.ROMULUS).withSubType(pSubSpec).build();</span>
+    }
+
+    /**
+     * Create sparkle.
+     *
+     * @param pSubSpec the subSpec
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec sparkle(final GordianSparkleKey pSubSpec) {
+<span class="nc" id="L315">        return withType(GordianStreamKeyType.SPARKLE).withSubType(pSubSpec).build();</span>
+    }
+
+    /**
+     * Create xoodyak.
+     *
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec xoodyak() {
+<span class="nc" id="L324">        return withType(GordianStreamKeyType.XOODYAK).build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

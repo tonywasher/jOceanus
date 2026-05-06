@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreStreamKeySpecBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher</a> &gt; <span class="el_source">GordianCoreStreamKeySpecBuilder.java</span></div><h1>GordianCoreStreamKeySpecBuilder.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianBlakeXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianChaCha20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianElephantKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianISAPKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianRomulusKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSalsa20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSkeinXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSparkleKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianVMPCKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * StreamKey specification Builder.
+ */
+
+public final class GordianCoreStreamKeySpecBuilder
+        implements GordianStreamKeySpecBuilder {
+    /**
+     * The type.
+     */
+    private GordianStreamKeyType theType;
+
+    /**
+     * The subSpec.
+     */
+    private GordianStreamKeySubType theSubType;
+
+    /**
+     * The keyLength.
+     */
+    private GordianLength theKeyLength;
+
+    /**
+     * Private constructor.
+     */
+    private GordianCoreStreamKeySpecBuilder() {
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreStreamKeySpecBuilder newInstance() {
+<span class="fc" id="L74">        return new GordianCoreStreamKeySpecBuilder();</span>
+    }
+
+    @Override
+    public GordianStreamKeySpecBuilder withType(final GordianStreamKeyType pType) {
+<span class="fc" id="L79">        theType = pType;</span>
+<span class="fc" id="L80">        return this;</span>
+    }
+
+    @Override
+    public GordianStreamKeySpecBuilder withSubType(final GordianStreamKeySubType pSubType) {
+<span class="fc" id="L85">        theSubType = pSubType;</span>
+<span class="fc" id="L86">        return this;</span>
+    }
+
+    @Override
+    public GordianStreamKeySpecBuilder withKeyLength(final GordianLength pKeyLength) {
+<span class="fc" id="L91">        theKeyLength = pKeyLength;</span>
+<span class="fc" id="L92">        return this;</span>
+    }
+
+    @Override
+    public GordianStreamKeySpec build() {
+        /* Handle null type */
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if (theType == null) {</span>
+<span class="nc" id="L99">            throw new NullPointerException(&quot;streamKeyType is null&quot;);</span>
+        }
+
+        /* Handle defaults */
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        theSubType = theSubType == null ? GordianCoreStreamKeySubType.defaultSubKeyType(theType) : theSubType;</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        theKeyLength = theKeyLength == null ? defaultKeyLength() : theKeyLength;</span>
+
+        /* Create spec, reset and return */
+<span class="fc" id="L107">        final GordianCoreStreamKeySpec mySpec = new GordianCoreStreamKeySpec(theType, theSubType, theKeyLength);</span>
+<span class="fc" id="L108">        reset();</span>
+<span class="fc" id="L109">        return mySpec;</span>
+    }
+
+    /**
+     * Reset state.
+     */
+    private void reset() {
+<span class="fc" id="L116">        theType = null;</span>
+<span class="fc" id="L117">        theSubType = null;</span>
+<span class="fc" id="L118">        theKeyLength = null;</span>
+<span class="fc" id="L119">    }</span>
+
+    /**
+     * Default length.
+     *
+     * @return the default
+     */
+    private GordianLength defaultKeyLength() {
+        /* Switch on keyType */
+<span class="nc bnc" id="L128" title="All 4 branches missed.">        return switch (theType) {</span>
+            case GRAIN, HC, RABBIT, SNOW3G, SALSA20, CHACHA20, ZUC, SOSEMANUK, RC4, VMPC, ASCON, ELEPHANT, ISAP,
+<span class="nc" id="L130">                 PHOTONBEETLE, ROMULUS, XOODYAK -&gt; GordianLength.LEN_128;</span>
+<span class="nc" id="L131">            case ISAAC, SKEINXOF, BLAKE2XOF, BLAKE3XOF -&gt; GordianLength.LEN_256;</span>
+<span class="nc" id="L132">            case SPARKLE -&gt; GordianCoreStreamKeySubType.requiredSparkleKeyLength((GordianSparkleKey) theSubType);</span>
+<span class="nc" id="L133">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    /**
+     * List all possible streamKeySpecs for the keyLength.
+     *
+     * @param pKeyLen the keyLength
+     * @return the list
+     */
+    public static List&lt;GordianStreamKeySpec&gt; listAllPossibleStreamKeySpecs(final GordianLength pKeyLen) {
+        /* Create the array list */
+<span class="fc" id="L145">        final List&lt;GordianStreamKeySpec&gt; myList = new ArrayList&lt;&gt;();</span>
+
+        /* Check that the keyLength is supported */
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">        if (!GordianKeyLengths.isSupportedLength(pKeyLen)) {</span>
+<span class="nc" id="L149">            return myList;</span>
+        }
+
+        /* For each streamKey type */
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        for (final GordianCoreStreamKeyType myType : GordianCoreStreamKeyType.values()) {</span>
+            /* if valid for keyLength */
+<span class="fc bfc" id="L155" title="All 2 branches covered.">            if (myType.validForKeyLength(pKeyLen)) {</span>
+                /* If we need a subType */
+<span class="fc bfc" id="L157" title="All 2 branches covered.">                if (myType.needsSubKeyType()) {</span>
+                    /* Add all valid subKeyTypes */
+<span class="fc" id="L159">                    myList.addAll(listStreamSubKeys(myType, pKeyLen));</span>
+
+                    /* Else just add the spec */
+                } else {
+<span class="fc" id="L163">                    myList.add(new GordianCoreStreamKeySpec(myType.getType(), null, pKeyLen));</span>
+                }
+            }
+        }
+
+        /* Return the list */
+<span class="fc" id="L169">        return myList;</span>
+    }
+
+    /**
+     * List all possible subKeyTypes Specs.
+     *
+     * @param pKeyType the keyType
+     * @param pKeyLen  the keyLength
+     * @return the list
+     */
+    private static List&lt;GordianStreamKeySpec&gt; listStreamSubKeys(final GordianCoreStreamKeyType pKeyType,
+                                                                final GordianLength pKeyLen) {
+        /* Create the array list */
+<span class="fc" id="L182">        final List&lt;GordianStreamKeySpec&gt; myList = new ArrayList&lt;&gt;();</span>
+
+        /* Loop through the subKeyTypes */
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        for (GordianStreamKeySubType mySubKeyType : listStreamSubKeys(pKeyType)) {</span>
+            /* Add valid subKeySpec */
+<span class="fc" id="L187">            final GordianCoreStreamKeySpec mySpec = new GordianCoreStreamKeySpec(pKeyType.getType(), mySubKeyType, pKeyLen);</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">            if (mySpec.isValid()) {</span>
+<span class="fc" id="L189">                myList.add(mySpec);</span>
+            }
+<span class="fc" id="L191">        }</span>
+
+        /* Return the list */
+<span class="fc" id="L194">        return myList;</span>
+    }
+
+    /**
+     * List all possible subKeyTypes.
+     *
+     * @param pKeyType the keyType
+     * @return the list
+     */
+    private static List&lt;GordianStreamKeySubType&gt; listStreamSubKeys(final GordianCoreStreamKeyType pKeyType) {
+        /* Switch on keyType */
+<span class="pc bpc" id="L205" title="1 of 10 branches missed.">        return switch (pKeyType.getType()) {</span>
+<span class="fc" id="L206">            case SALSA20 -&gt; Arrays.asList(GordianSalsa20Key.values());</span>
+<span class="fc" id="L207">            case CHACHA20 -&gt; Arrays.asList(GordianChaCha20Key.values());</span>
+<span class="fc" id="L208">            case VMPC -&gt; Arrays.asList(GordianVMPCKey.values());</span>
+<span class="fc" id="L209">            case SKEINXOF -&gt; Arrays.asList(GordianSkeinXofKey.values());</span>
+<span class="fc" id="L210">            case BLAKE2XOF -&gt; Arrays.asList(GordianBlakeXofKey.values());</span>
+<span class="fc" id="L211">            case ELEPHANT -&gt; Arrays.asList(GordianElephantKey.values());</span>
+<span class="fc" id="L212">            case ISAP -&gt; Arrays.asList(GordianISAPKey.values());</span>
+<span class="fc" id="L213">            case ROMULUS -&gt; Arrays.asList(GordianRomulusKey.values());</span>
+<span class="fc" id="L214">            case SPARKLE -&gt; Arrays.asList(GordianSparkleKey.values());</span>
+<span class="nc" id="L215">            default -&gt; Collections.emptyList();</span>
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

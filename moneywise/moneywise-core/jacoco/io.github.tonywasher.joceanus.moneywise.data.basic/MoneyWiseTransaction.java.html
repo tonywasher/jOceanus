@@ -16,16 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -43,6 +33,16 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoCl
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataMapItem;
@@ -923,51 +923,50 @@ public class MoneyWiseTransaction
     @Override
     public boolean applyChanges(final PrometheusDataItem pTrans) {
         /* Can only update from a transaction */
-<span class="nc bnc" id="L926" title="All 2 branches missed.">        if (!(pTrans instanceof MoneyWiseTransaction)) {</span>
+<span class="nc bnc" id="L926" title="All 2 branches missed.">        if (!(pTrans instanceof MoneyWiseTransaction myTrans)) {</span>
 <span class="nc" id="L927">            return false;</span>
         }
-<span class="nc" id="L929">        final MoneyWiseTransaction myTrans = (MoneyWiseTransaction) pTrans;</span>
 
         /* Store the current detail into history */
-<span class="nc" id="L932">        pushHistory();</span>
+<span class="nc" id="L931">        pushHistory();</span>
 
         /* Update the Date if required */
-<span class="nc bnc" id="L935" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDate(), myTrans.getDate())) {</span>
-<span class="nc" id="L936">            setValueDate(myTrans.getDate());</span>
+<span class="nc bnc" id="L934" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDate(), myTrans.getDate())) {</span>
+<span class="nc" id="L935">            setValueDate(myTrans.getDate());</span>
         }
 
         /* Apply basic changes */
-<span class="nc" id="L940">        applyBasicChanges(myTrans);</span>
+<span class="nc" id="L939">        applyBasicChanges(myTrans);</span>
 
         /* Check for changes */
-<span class="nc" id="L943">        return checkForHistory();</span>
+<span class="nc" id="L942">        return checkForHistory();</span>
     }
 
     @Override
     public void flipAssets() throws OceanusException {
         /* Handle underlying values */
-<span class="nc" id="L949">        super.flipAssets();</span>
+<span class="nc" id="L948">        super.flipAssets();</span>
 
         /* Flip deltas */
-<span class="nc" id="L952">        final OceanusUnits myActDelta = getAccountDeltaUnits();</span>
-<span class="nc" id="L953">        final OceanusUnits myPartDelta = getPartnerDeltaUnits();</span>
-<span class="nc" id="L954">        setAccountDeltaUnits(myPartDelta);</span>
-<span class="nc" id="L955">        setPartnerDeltaUnits(myActDelta);</span>
+<span class="nc" id="L951">        final OceanusUnits myActDelta = getAccountDeltaUnits();</span>
+<span class="nc" id="L952">        final OceanusUnits myPartDelta = getPartnerDeltaUnits();</span>
+<span class="nc" id="L953">        setAccountDeltaUnits(myPartDelta);</span>
+<span class="nc" id="L954">        setPartnerDeltaUnits(myActDelta);</span>
 
         /* If we need to wipe memory of AccountDelta/PartnerDelta */
-<span class="nc bnc" id="L958" title="All 4 branches missed.">        if (myActDelta != null &amp;&amp; myPartDelta == null) {</span>
-<span class="nc" id="L959">            theInfoSet.wipeInfo(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS);</span>
+<span class="nc bnc" id="L957" title="All 4 branches missed.">        if (myActDelta != null &amp;&amp; myPartDelta == null) {</span>
+<span class="nc" id="L958">            theInfoSet.wipeInfo(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS);</span>
         }
-<span class="nc bnc" id="L961" title="All 4 branches missed.">        if (myPartDelta != null &amp;&amp; myActDelta == null) {</span>
-<span class="nc" id="L962">            theInfoSet.wipeInfo(MoneyWiseTransInfoClass.PARTNERDELTAUNITS);</span>
+<span class="nc bnc" id="L960" title="All 4 branches missed.">        if (myPartDelta != null &amp;&amp; myActDelta == null) {</span>
+<span class="nc" id="L961">            theInfoSet.wipeInfo(MoneyWiseTransInfoClass.PARTNERDELTAUNITS);</span>
         }
-<span class="nc" id="L964">    }</span>
+<span class="nc" id="L963">    }</span>
 
     @Override
     public void removeItem() {
-<span class="fc" id="L968">        theInfoSet.removeItems();</span>
-<span class="fc" id="L969">        super.removeItem();</span>
-<span class="fc" id="L970">    }</span>
+<span class="fc" id="L967">        theInfoSet.removeItems();</span>
+<span class="fc" id="L968">        super.removeItem();</span>
+<span class="fc" id="L969">    }</span>
 
     /**
      * The Transaction List class.
@@ -977,7 +976,7 @@ public class MoneyWiseTransaction
         /**
          * Report fields.
          */
-<span class="fc" id="L980">        private static final MetisFieldSet&lt;MoneyWiseTransactionList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTransactionList.class);</span>
+<span class="fc" id="L979">        private static final MetisFieldSet&lt;MoneyWiseTransactionList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTransactionList.class);</span>
 
         /**
          * The TransactionInfo List.
@@ -1000,8 +999,8 @@ public class MoneyWiseTransaction
          * @param pData the DataSet for the list
          */
         public MoneyWiseTransactionList(final MoneyWiseDataSet pData) {
-<span class="fc" id="L1003">            super(pData, MoneyWiseTransaction.class, MoneyWiseBasicDataType.TRANSACTION);</span>
-<span class="fc" id="L1004">        }</span>
+<span class="fc" id="L1002">            super(pData, MoneyWiseTransaction.class, MoneyWiseBasicDataType.TRANSACTION);</span>
+<span class="fc" id="L1003">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -1009,22 +1008,22 @@ public class MoneyWiseTransaction
          * @param pSource the source List
          */
         protected MoneyWiseTransactionList(final MoneyWiseTransactionList pSource) {
-<span class="fc" id="L1012">            super(pSource);</span>
-<span class="fc" id="L1013">        }</span>
+<span class="fc" id="L1011">            super(pSource);</span>
+<span class="fc" id="L1012">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWiseTransactionList&gt; getDataFieldSet() {
-<span class="nc" id="L1017">            return FIELD_DEFS;</span>
+<span class="nc" id="L1016">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String listName() {
-<span class="fc" id="L1022">            return LIST_NAME;</span>
+<span class="fc" id="L1021">            return LIST_NAME;</span>
         }
 
         @Override
         public MetisFieldSetDef getItemFields() {
-<span class="fc" id="L1027">            return MoneyWiseTransaction.FIELD_DEFS;</span>
+<span class="fc" id="L1026">            return MoneyWiseTransaction.FIELD_DEFS;</span>
         }
 
         /**
@@ -1033,10 +1032,10 @@ public class MoneyWiseTransaction
          * @return the transaction info list
          */
         public MoneyWiseTransInfoList getTransactionInfo() {
-<span class="fc bfc" id="L1036" title="All 2 branches covered.">            if (theInfoList == null) {</span>
-<span class="fc" id="L1037">                theInfoList = getDataSet().getTransactionInfo();</span>
+<span class="fc bfc" id="L1035" title="All 2 branches covered.">            if (theInfoList == null) {</span>
+<span class="fc" id="L1036">                theInfoList = getDataSet().getTransactionInfo();</span>
             }
-<span class="fc" id="L1039">            return theInfoList;</span>
+<span class="fc" id="L1038">            return theInfoList;</span>
         }
 
         /**
@@ -1045,8 +1044,8 @@ public class MoneyWiseTransaction
          * @param pInfoList the info type list
          */
         protected void setTransactionInfo(final MoneyWiseTransInfoList pInfoList) {
-<span class="nc" id="L1048">            theInfoList = pInfoList;</span>
-<span class="nc" id="L1049">        }</span>
+<span class="nc" id="L1047">            theInfoList = pInfoList;</span>
+<span class="nc" id="L1048">        }</span>
 
         /**
          * Obtain the transactionInfoTypeList.
@@ -1054,10 +1053,10 @@ public class MoneyWiseTransaction
          * @return the transaction info type list
          */
         public MoneyWiseTransInfoTypeList getTransInfoTypes() {
-<span class="fc bfc" id="L1057" title="All 2 branches covered.">            if (theInfoTypeList == null) {</span>
-<span class="fc" id="L1058">                theInfoTypeList = getDataSet().getTransInfoTypes();</span>
+<span class="fc bfc" id="L1056" title="All 2 branches covered.">            if (theInfoTypeList == null) {</span>
+<span class="fc" id="L1057">                theInfoTypeList = getDataSet().getTransInfoTypes();</span>
             }
-<span class="fc" id="L1060">            return theInfoTypeList;</span>
+<span class="fc" id="L1059">            return theInfoTypeList;</span>
         }
 
         /**
@@ -1066,8 +1065,8 @@ public class MoneyWiseTransaction
          * @param pInfoTypeList the info type list
          */
         protected void setTransInfoTypes(final MoneyWiseTransInfoTypeList pInfoTypeList) {
-<span class="nc" id="L1069">            theInfoTypeList = pInfoTypeList;</span>
-<span class="nc" id="L1070">        }</span>
+<span class="nc" id="L1068">            theInfoTypeList = pInfoTypeList;</span>
+<span class="nc" id="L1069">        }</span>
 
         /**
          * Obtain editSet.
@@ -1075,7 +1074,7 @@ public class MoneyWiseTransaction
          * @return the editSet
          */
         public PrometheusEditSet getEditSet() {
-<span class="fc" id="L1078">            return theEditSet;</span>
+<span class="fc" id="L1077">            return theEditSet;</span>
         }
 
         /**
@@ -1084,14 +1083,14 @@ public class MoneyWiseTransaction
          * @param pEditSet the editSet
          */
         public void setEditSet(final PrometheusEditSet pEditSet) {
-<span class="nc" id="L1087">            theEditSet = pEditSet;</span>
-<span class="nc" id="L1088">        }</span>
+<span class="nc" id="L1086">            theEditSet = pEditSet;</span>
+<span class="nc" id="L1087">        }</span>
 
         @Override
         protected MoneyWiseTransactionList getEmptyList(final PrometheusListStyle pStyle) {
-<span class="fc" id="L1092">            final MoneyWiseTransactionList myList = new MoneyWiseTransactionList(this);</span>
-<span class="fc" id="L1093">            myList.setStyle(pStyle);</span>
-<span class="fc" id="L1094">            return myList;</span>
+<span class="fc" id="L1091">            final MoneyWiseTransactionList myList = new MoneyWiseTransactionList(this);</span>
+<span class="fc" id="L1092">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L1093">            return myList;</span>
         }
 
         /**
@@ -1103,42 +1102,42 @@ public class MoneyWiseTransaction
          */
         public MoneyWiseTransactionList deriveEditList(final PrometheusEditSet pEditSet) throws OceanusException {
             /* Build an empty List */
-<span class="fc" id="L1106">            final MoneyWiseTransactionList myList = getEmptyList(PrometheusListStyle.EDIT);</span>
-<span class="fc" id="L1107">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSACTION, myList);</span>
+<span class="fc" id="L1105">            final MoneyWiseTransactionList myList = getEmptyList(PrometheusListStyle.EDIT);</span>
+<span class="fc" id="L1106">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSACTION, myList);</span>
 
             /* Store InfoType list */
-<span class="fc" id="L1110">            myList.theInfoTypeList = pEditSet.getDataList(MoneyWiseStaticDataType.TRANSINFOTYPE, MoneyWiseTransInfoTypeList.class);</span>
+<span class="fc" id="L1109">            myList.theInfoTypeList = pEditSet.getDataList(MoneyWiseStaticDataType.TRANSINFOTYPE, MoneyWiseTransInfoTypeList.class);</span>
 
             /* Create info List */
-<span class="fc" id="L1113">            final MoneyWiseTransInfoList myTransInfo = getTransactionInfo();</span>
-<span class="fc" id="L1114">            myList.theInfoList = myTransInfo.getEmptyList(PrometheusListStyle.EDIT);</span>
-<span class="fc" id="L1115">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSACTIONINFO, myList.theInfoList);</span>
+<span class="fc" id="L1112">            final MoneyWiseTransInfoList myTransInfo = getTransactionInfo();</span>
+<span class="fc" id="L1113">            myList.theInfoList = myTransInfo.getEmptyList(PrometheusListStyle.EDIT);</span>
+<span class="fc" id="L1114">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSACTIONINFO, myList.theInfoList);</span>
 
             /* Store the editSet */
-<span class="fc" id="L1118">            myList.theEditSet = pEditSet;</span>
-<span class="fc" id="L1119">            myList.getValidator().setEditSet(pEditSet);</span>
+<span class="fc" id="L1117">            myList.theEditSet = pEditSet;</span>
+<span class="fc" id="L1118">            myList.getValidator().setEditSet(pEditSet);</span>
 
             /* Loop through the portfolios */
-<span class="fc" id="L1122">            final Iterator&lt;MoneyWiseTransaction&gt; myIterator = iterator();</span>
-<span class="fc bfc" id="L1123" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
-<span class="fc" id="L1124">                final MoneyWiseTransaction myCurr = myIterator.next();</span>
+<span class="fc" id="L1121">            final Iterator&lt;MoneyWiseTransaction&gt; myIterator = iterator();</span>
+<span class="fc bfc" id="L1122" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L1123">                final MoneyWiseTransaction myCurr = myIterator.next();</span>
 
                 /* Ignore deleted transactions */
-<span class="pc bpc" id="L1127" title="1 of 2 branches missed.">                if (myCurr.isDeleted()) {</span>
-<span class="nc" id="L1128">                    continue;</span>
+<span class="pc bpc" id="L1126" title="1 of 2 branches missed.">                if (myCurr.isDeleted()) {</span>
+<span class="nc" id="L1127">                    continue;</span>
                 }
 
                 /* Build the new linked transaction and add it to the list */
-<span class="fc" id="L1132">                final MoneyWiseTransaction myTrans = new MoneyWiseTransaction(myList, myCurr);</span>
-<span class="fc" id="L1133">                myList.add(myTrans);</span>
-<span class="fc" id="L1134">                myTrans.resolveEditSetLinks();</span>
+<span class="fc" id="L1131">                final MoneyWiseTransaction myTrans = new MoneyWiseTransaction(myList, myCurr);</span>
+<span class="fc" id="L1132">                myList.add(myTrans);</span>
+<span class="fc" id="L1133">                myTrans.resolveEditSetLinks();</span>
 
                 /* Adjust the map */
-<span class="fc" id="L1137">                myTrans.adjustMapForItem();</span>
-<span class="fc" id="L1138">            }</span>
+<span class="fc" id="L1136">                myTrans.adjustMapForItem();</span>
+<span class="fc" id="L1137">            }</span>
 
             /* Return the list */
-<span class="fc" id="L1141">            return myList;</span>
+<span class="fc" id="L1140">            return myList;</span>
         }
 
         /**
@@ -1147,16 +1146,16 @@ public class MoneyWiseTransaction
          * @throws OceanusException on error
          */
         public void relinkEditAssetEvents() throws OceanusException {
-<span class="fc" id="L1150">            final PrometheusEditSet myEditSet = getEditSet();</span>
-<span class="fc" id="L1151">            final Iterator&lt;PrometheusEditEntry&lt;?&gt;&gt; myIterator = myEditSet.listIterator();</span>
-<span class="fc bfc" id="L1152" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
-<span class="fc" id="L1153">                final PrometheusEditEntry&lt;?&gt; myEntry = myIterator.next();</span>
-<span class="fc" id="L1154">                final PrometheusDataList&lt;?&gt; myList = myEntry.getDataList();</span>
-<span class="fc bfc" id="L1155" title="All 2 branches covered.">                if (myList instanceof MoneyWiseAssetBaseList&lt;?&gt; myAssetList) {</span>
-<span class="fc" id="L1156">                    myAssetList.resolveLateEditSetLinks();</span>
+<span class="fc" id="L1149">            final PrometheusEditSet myEditSet = getEditSet();</span>
+<span class="fc" id="L1150">            final Iterator&lt;PrometheusEditEntry&lt;?&gt;&gt; myIterator = myEditSet.listIterator();</span>
+<span class="fc bfc" id="L1151" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L1152">                final PrometheusEditEntry&lt;?&gt; myEntry = myIterator.next();</span>
+<span class="fc" id="L1153">                final PrometheusDataList&lt;?&gt; myList = myEntry.getDataList();</span>
+<span class="fc bfc" id="L1154" title="All 2 branches covered.">                if (myList instanceof MoneyWiseAssetBaseList&lt;?&gt; myAssetList) {</span>
+<span class="fc" id="L1155">                    myAssetList.resolveLateEditSetLinks();</span>
                 }
-<span class="fc" id="L1158">            }</span>
-<span class="fc" id="L1159">        }</span>
+<span class="fc" id="L1157">            }</span>
+<span class="fc" id="L1158">        }</span>
 
         /**
          * Add a new item to the list.
@@ -1166,12 +1165,12 @@ public class MoneyWiseTransaction
          */
         @Override
         public MoneyWiseTransaction addCopyItem(final PrometheusDataItem pItem) {
-<span class="pc bpc" id="L1169" title="1 of 2 branches missed.">            if (pItem instanceof MoneyWiseTransaction) {</span>
-<span class="fc" id="L1170">                final MoneyWiseTransaction myTrans = new MoneyWiseTransaction(this, (MoneyWiseTransaction) pItem);</span>
-<span class="fc" id="L1171">                add(myTrans);</span>
-<span class="fc" id="L1172">                return myTrans;</span>
+<span class="pc bpc" id="L1168" title="1 of 2 branches missed.">            if (pItem instanceof MoneyWiseTransaction myItem) {</span>
+<span class="fc" id="L1169">                final MoneyWiseTransaction myTrans = new MoneyWiseTransaction(this, myItem);</span>
+<span class="fc" id="L1170">                add(myTrans);</span>
+<span class="fc" id="L1171">                return myTrans;</span>
             }
-<span class="nc" id="L1174">            throw new UnsupportedOperationException();</span>
+<span class="nc" id="L1173">            throw new UnsupportedOperationException();</span>
         }
 
         /**
@@ -1182,69 +1181,69 @@ public class MoneyWiseTransaction
         @Override
         public MoneyWiseTransaction addNewItem() {
             /* Create a new Transaction */
-<span class="fc" id="L1185">            final MoneyWiseTransaction myTrans = new MoneyWiseTransaction(this);</span>
+<span class="fc" id="L1184">            final MoneyWiseTransaction myTrans = new MoneyWiseTransaction(this);</span>
 
             /* Set the Date as the start of the range */
-<span class="fc" id="L1188">            OceanusDate myDate = new OceanusDate();</span>
-<span class="fc" id="L1189">            final OceanusDateRange myRange = getDataSet().getDateRange();</span>
-<span class="pc bpc" id="L1190" title="1 of 2 branches missed.">            if (myRange.compareToDate(myDate) != 0) {</span>
-<span class="nc" id="L1191">                myDate = myRange.getStart();</span>
+<span class="fc" id="L1187">            OceanusDate myDate = new OceanusDate();</span>
+<span class="fc" id="L1188">            final OceanusDateRange myRange = getDataSet().getDateRange();</span>
+<span class="pc bpc" id="L1189" title="1 of 2 branches missed.">            if (myRange.compareToDate(myDate) != 0) {</span>
+<span class="nc" id="L1190">                myDate = myRange.getStart();</span>
             }
-<span class="fc" id="L1193">            myTrans.setDate(myDate);</span>
+<span class="fc" id="L1192">            myTrans.setDate(myDate);</span>
 
             /* Add to list and return */
-<span class="fc" id="L1196">            add(myTrans);</span>
-<span class="fc" id="L1197">            return myTrans;</span>
+<span class="fc" id="L1195">            add(myTrans);</span>
+<span class="fc" id="L1196">            return myTrans;</span>
         }
 
         @Override
         public MoneyWiseTransaction addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
             /* Create the transaction */
-<span class="fc" id="L1203">            final MoneyWiseTransaction myTrans = new MoneyWiseTransaction(this, pValues);</span>
+<span class="fc" id="L1202">            final MoneyWiseTransaction myTrans = new MoneyWiseTransaction(this, pValues);</span>
 
             /* Check that this TransId has not been previously added */
-<span class="pc bpc" id="L1206" title="1 of 2 branches missed.">            if (!isIdUnique(myTrans.getIndexedId())) {</span>
-<span class="nc" id="L1207">                myTrans.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L1208">                throw new MoneyWiseDataException(myTrans, ERROR_VALIDATION);</span>
+<span class="pc bpc" id="L1205" title="1 of 2 branches missed.">            if (!isIdUnique(myTrans.getIndexedId())) {</span>
+<span class="nc" id="L1206">                myTrans.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L1207">                throw new MoneyWiseDataException(myTrans, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="fc" id="L1212">            add(myTrans);</span>
+<span class="fc" id="L1211">            add(myTrans);</span>
 
             /* Loop through the info items */
-<span class="fc bfc" id="L1215" title="All 2 branches covered.">            if (pValues.hasInfoItems()) {</span>
+<span class="fc bfc" id="L1214" title="All 2 branches covered.">            if (pValues.hasInfoItems()) {</span>
                 /* Loop through the items */
-<span class="fc" id="L1217">                final Iterator&lt;PrometheusInfoItem&gt; myIterator = pValues.infoIterator();</span>
-<span class="fc bfc" id="L1218" title="All 2 branches covered.">                while (myIterator.hasNext()) {</span>
-<span class="fc" id="L1219">                    final PrometheusInfoItem myItem = myIterator.next();</span>
+<span class="fc" id="L1216">                final Iterator&lt;PrometheusInfoItem&gt; myIterator = pValues.infoIterator();</span>
+<span class="fc bfc" id="L1217" title="All 2 branches covered.">                while (myIterator.hasNext()) {</span>
+<span class="fc" id="L1218">                    final PrometheusInfoItem myItem = myIterator.next();</span>
 
                     /* Build info */
-<span class="fc" id="L1222">                    final PrometheusDataValues myValues = myItem.getValues(myTrans);</span>
-<span class="fc" id="L1223">                    getTransactionInfo().addValuesItem(myValues);</span>
-<span class="fc" id="L1224">                }</span>
+<span class="fc" id="L1221">                    final PrometheusDataValues myValues = myItem.getValues(myTrans);</span>
+<span class="fc" id="L1222">                    getTransactionInfo().addValuesItem(myValues);</span>
+<span class="fc" id="L1223">                }</span>
             }
 
             /* Return it */
-<span class="fc" id="L1228">            return myTrans;</span>
+<span class="fc" id="L1227">            return myTrans;</span>
         }
 
         @Override
         protected PrometheusDataMapItem allocateDataMap() {
             /* Unused */
-<span class="nc" id="L1234">            throw new UnsupportedOperationException();</span>
+<span class="nc" id="L1233">            throw new UnsupportedOperationException();</span>
         }
 
         @Override
         public void postProcessOnLoad() throws OceanusException {
             /* Resolve links and sort the data */
-<span class="fc" id="L1240">            super.resolveDataSetLinks();</span>
-<span class="fc" id="L1241">            reSort();</span>
-<span class="fc" id="L1242">        }</span>
+<span class="fc" id="L1239">            super.resolveDataSetLinks();</span>
+<span class="fc" id="L1240">            reSort();</span>
+<span class="fc" id="L1241">        }</span>
 
         @Override
         public void updateMaps() {
             /* Null operation */
-<span class="fc" id="L1247">        }</span>
+<span class="fc" id="L1246">        }</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

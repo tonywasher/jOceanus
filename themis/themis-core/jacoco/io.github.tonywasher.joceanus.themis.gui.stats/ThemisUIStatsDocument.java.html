@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisUIStatsDocument.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.gui.stats</a> &gt; <span class="el_source">ThemisUIStatsDocument.java</span></div><h1>ThemisUIStatsDocument.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.gui.stats;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIBaseDocument;
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIHTMLTag;
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIResource;
+import io.github.tonywasher.joceanus.themis.stats.ThemisStat;
+import io.github.tonywasher.joceanus.themis.stats.ThemisStats;
+import io.github.tonywasher.joceanus.themis.stats.ThemisStatsElement;
+import org.w3c.dom.Element;
+
+import java.util.Map;
+
+/**
+ * Document Builder for stats.
+ */
+public class ThemisUIStatsDocument
+        extends ThemisUIBaseDocument {
+    /**
+     * Constructor.
+     *
+     * @throws OceanusException on error
+     */
+    ThemisUIStatsDocument() throws OceanusException {
+<span class="nc" id="L42">        super();</span>
+<span class="nc" id="L43">    }</span>
+
+    /**
+     * Create document for element.
+     *
+     * @param pElement the element
+     * @return the formatted document
+     */
+    public String formatElement(final ThemisStatsElement pElement) {
+        /* Create new document and obtain the body */
+<span class="nc" id="L53">        final Element myBody = newDocument();</span>
+
+        /* Add the header */
+<span class="nc" id="L56">        final Element myHdr = createElement(ThemisUIHTMLTag.H1);</span>
+<span class="nc" id="L57">        myBody.appendChild(myHdr);</span>
+<span class="nc" id="L58">        myHdr.setTextContent(pElement.getName());</span>
+
+        /* Add local stats */
+<span class="nc" id="L61">        final ThemisStats myStats = pElement.getStats();</span>
+<span class="nc" id="L62">        final Element myHdr1 = createElement(ThemisUIHTMLTag.H3);</span>
+<span class="nc" id="L63">        myBody.appendChild(myHdr1);</span>
+<span class="nc" id="L64">        myHdr1.setTextContent(ThemisUIResource.STATS_LOCAL.getValue());</span>
+<span class="nc" id="L65">        myBody.appendChild(formatStats(myStats.getStats()));</span>
+
+        /* Add separator */
+<span class="nc" id="L68">        myBody.appendChild(createElement(ThemisUIHTMLTag.HR));</span>
+
+        /* Add totals stats */
+<span class="nc" id="L71">        final Element myHdr2 = createElement(ThemisUIHTMLTag.H3);</span>
+<span class="nc" id="L72">        myBody.appendChild(myHdr2);</span>
+<span class="nc" id="L73">        myHdr2.setTextContent(ThemisUIResource.STATS_TOTAL.getValue());</span>
+<span class="nc" id="L74">        myBody.appendChild(formatStats(myStats.getTotals()));</span>
+
+        /* Return the formatted HTML */
+<span class="nc" id="L77">        return formatXML();</span>
+    }
+
+    /**
+     * Create table for stats.
+     *
+     * @param pStats the stats
+     * @return the stats element
+     */
+    private Element formatStats(final Map&lt;ThemisStat, Number&gt; pStats) {
+        /* Create table body */
+<span class="nc" id="L88">        final Element myTable = createElement(ThemisUIHTMLTag.TABLE);</span>
+<span class="nc" id="L89">        addClassToElement(myTable, CLASSTBLSTD);</span>
+<span class="nc" id="L90">        final Element myBody = createElement(ThemisUIHTMLTag.TBODY);</span>
+<span class="nc" id="L91">        myTable.appendChild(myBody);</span>
+<span class="nc" id="L92">        addClassToElement(myBody, CLASSTBLZEBRA);</span>
+
+        /* Add header row */
+<span class="nc" id="L95">        addHeaderRow(myBody);</span>
+
+        /* Loop through the stats */
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        for (ThemisStat myStat : ThemisStat.values()) {</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">            if (myStat.isInteger()) {</span>
+<span class="nc" id="L100">                final Integer myValue = (Integer) pStats.get(myStat);</span>
+                //if (myValue != 0) {
+<span class="nc" id="L102">                addStatsRow(myBody, myStat, myValue);</span>
+                //}
+<span class="nc" id="L104">            } else {</span>
+<span class="nc" id="L105">                final Double myValue = (Double) pStats.get(myStat);</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">                if (myValue != 0) {</span>
+<span class="nc" id="L107">                    addStatsRow(myBody, myStat, myValue);</span>
+                }
+            }
+        }
+<span class="nc" id="L111">        return myTable;</span>
+    }
+
+    /**
+     * Add header row for stats.
+     *
+     * @param pTable the table
+     */
+    private void addHeaderRow(final Element pTable) {
+<span class="nc" id="L120">        final Element myHeaderRow = createElement(ThemisUIHTMLTag.TR);</span>
+<span class="nc" id="L121">        addHeaderCell(myHeaderRow, ThemisUIResource.STATS_DESC.getValue());</span>
+<span class="nc" id="L122">        addHeaderCell(myHeaderRow, ThemisUIResource.STATS_KEY.getValue());</span>
+<span class="nc" id="L123">        addHeaderCell(myHeaderRow, ThemisUIResource.STATS_VALUE.getValue());</span>
+<span class="nc" id="L124">        pTable.appendChild(myHeaderRow);</span>
+<span class="nc" id="L125">    }</span>
+
+    /**
+     * Add header cell for stats.
+     *
+     * @param pHeaderRow the headerRow
+     * @param pTitle     the header title
+     */
+    private void addHeaderCell(final Element pHeaderRow,
+                               final String pTitle) {
+<span class="nc" id="L135">        final Element myHeader = createElement(ThemisUIHTMLTag.TH);</span>
+<span class="nc" id="L136">        pHeaderRow.appendChild(myHeader);</span>
+<span class="nc" id="L137">        myHeader.setTextContent(pTitle);</span>
+<span class="nc" id="L138">    }</span>
+
+    /**
+     * Add data row for integer stat.
+     *
+     * @param pTable the table
+     * @param pStat  the stat
+     * @param pValue the value
+     * @return the row
+     */
+    private Element addStatsRow(final Element pTable,
+                                final ThemisStat pStat,
+                                final Integer pValue) {
+<span class="nc" id="L151">        final Element myDataRow = createElement(ThemisUIHTMLTag.TR);</span>
+<span class="nc" id="L152">        addDataCell(myDataRow, pStat.getDesc());</span>
+<span class="nc" id="L153">        addDataCell(myDataRow, pStat.name());</span>
+<span class="nc" id="L154">        addDataCell(myDataRow, Integer.toString(pValue));</span>
+<span class="nc" id="L155">        pTable.appendChild(myDataRow);</span>
+<span class="nc" id="L156">        return myDataRow;</span>
+    }
+
+    /**
+     * Add data row for integer stat.
+     *
+     * @param pTable the table
+     * @param pStat  the stat
+     * @param pValue the value
+     * @return the row
+     */
+    private Element addStatsRow(final Element pTable,
+                                final ThemisStat pStat,
+                                final Double pValue) {
+<span class="nc" id="L170">        final Element myDataRow = createElement(ThemisUIHTMLTag.TR);</span>
+<span class="nc" id="L171">        addDataCell(myDataRow, pStat.getDesc());</span>
+<span class="nc" id="L172">        addDataCell(myDataRow, pStat.name());</span>
+<span class="nc" id="L173">        addDataCell(myDataRow, Double.toString(pValue));</span>
+<span class="nc" id="L174">        pTable.appendChild(myDataRow);</span>
+<span class="nc" id="L175">        return myDataRow;</span>
+    }
+
+    /**
+     * Add data cell for stat.
+     *
+     * @param pDataRow the dataRow
+     * @param pData    the data
+     */
+    private void addDataCell(final Element pDataRow,
+                             final String pData) {
+<span class="nc" id="L186">        final Element myData = createElement(ThemisUIHTMLTag.TD);</span>
+<span class="nc" id="L187">        pDataRow.appendChild(myData);</span>
+<span class="nc" id="L188">        myData.setTextContent(pData);</span>
+<span class="nc" id="L189">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

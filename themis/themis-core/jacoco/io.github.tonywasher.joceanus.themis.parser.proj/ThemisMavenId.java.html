@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisMavenId.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.parser.proj</a> &gt; <span class="el_source">ThemisMavenId.java</span></div><h1>ThemisMavenId.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.parser.proj;
+
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import org.w3c.dom.Element;
+
+import java.io.File;
+import java.util.Objects;
+
+/**
+ * Maven Module Id.
+ */
+public final class ThemisMavenId {
+    /**
+     * ElementParser.
+     */
+    interface ThemisElementParser {
+        /**
+         * Obtain element value.
+         *
+         * @param pElement the element
+         * @param pValue   the value name
+         * @return the value
+         */
+        String getElementValue(Element pElement,
+                               String pValue);
+    }
+
+    /**
+     * GroupId element.
+     */
+    private static final String EL_GROUPID = &quot;groupId&quot;;
+
+    /**
+     * ArtifactId element.
+     */
+    private static final String EL_ARTIFACTID = &quot;artifactId&quot;;
+
+    /**
+     * Version element.
+     */
+    private static final String EL_VERSION = &quot;version&quot;;
+
+    /**
+     * Scope element.
+     */
+    private static final String EL_SCOPE = &quot;scope&quot;;
+
+    /**
+     * Classifier element.
+     */
+    private static final String EL_CLASSIFIER = &quot;classifier&quot;;
+
+    /**
+     * Optional element.
+     */
+    private static final String EL_OPTIONAL = &quot;optional&quot;;
+
+    /**
+     * The artifactId.
+     */
+    private final String theArtifactId;
+
+    /**
+     * The groupId.
+     */
+    private String theGroupId;
+
+    /**
+     * The version.
+     */
+    private String theVersion;
+
+    /**
+     * The scope.
+     */
+    private final String theScope;
+
+    /**
+     * The classifier.
+     */
+    private final String theClassifier;
+
+    /**
+     * Optional.
+     */
+    private final String isOptional;
+
+    /**
+     * Constructor.
+     *
+     * @param pParser  the parser
+     * @param pElement the element containing the values
+     */
+    ThemisMavenId(final ThemisElementParser pParser,
+<span class="fc" id="L112">                  final Element pElement) {</span>
+        /* Access the values */
+<span class="fc" id="L114">        theGroupId = pParser.getElementValue(pElement, EL_GROUPID);</span>
+<span class="fc" id="L115">        theArtifactId = pParser.getElementValue(pElement, EL_ARTIFACTID);</span>
+<span class="fc" id="L116">        theVersion = pParser.getElementValue(pElement, EL_VERSION);</span>
+<span class="fc" id="L117">        theScope = pParser.getElementValue(pElement, EL_SCOPE);</span>
+<span class="fc" id="L118">        theClassifier = pParser.getElementValue(pElement, EL_CLASSIFIER);</span>
+<span class="fc" id="L119">        isOptional = pParser.getElementValue(pElement, EL_OPTIONAL);</span>
+<span class="fc" id="L120">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pParser  the parser
+     * @param pElement the element containing the values
+     * @param pParent  the parentId
+     */
+    ThemisMavenId(final ThemisElementParser pParser,
+                  final Element pElement,
+                  final ThemisMavenId pParent) {
+        /* Process as much as we can */
+<span class="fc" id="L133">        this(pParser, pElement);</span>
+
+        /* Handle missing groupId/version */
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        if (theGroupId == null) {</span>
+<span class="fc" id="L137">            theGroupId = pParent.getGroupId();</span>
+        }
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        if (theVersion == null) {</span>
+<span class="fc" id="L140">            theVersion = pParent.getVersion();</span>
+        }
+
+        /* If we have a ranged version, set to null */
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        if (theVersion != null</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">                &amp;&amp; theVersion.startsWith(String.valueOf(ThemisChar.ARRAY_OPEN))) {</span>
+<span class="nc" id="L146">            theVersion = null;</span>
+        }
+<span class="fc" id="L148">    }</span>
+
+    /**
+     * Obtain the groupId.
+     *
+     * @return the groupId
+     */
+    public String getGroupId() {
+<span class="fc" id="L156">        return theGroupId;</span>
+    }
+
+    /**
+     * Obtain the artifactId.
+     *
+     * @return the artifactId
+     */
+    public String getArtifactId() {
+<span class="fc" id="L165">        return theArtifactId;</span>
+    }
+
+    /**
+     * Obtain the version.
+     *
+     * @return the version
+     */
+    public String getVersion() {
+<span class="fc" id="L174">        return theVersion;</span>
+    }
+
+    /**
+     * Obtain the scope.
+     *
+     * @return the scope
+     */
+    public String getScope() {
+<span class="fc" id="L183">        return theScope;</span>
+    }
+
+    /**
+     * Obtain the classifier.
+     *
+     * @return the classifier
+     */
+    public String getClassifier() {
+<span class="fc" id="L192">        return theClassifier;</span>
+    }
+
+    /**
+     * Obtain the optional.
+     *
+     * @return the optional
+     */
+    public String isOptional() {
+<span class="nc" id="L201">        return isOptional;</span>
+    }
+
+    /**
+     * is the dependency skippable?
+     *
+     * @return true/false
+     */
+    public boolean isSkippable() {
+<span class="fc bfc" id="L210" title="All 2 branches covered.">        return &quot;test&quot;.equals(theScope)</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">                || &quot;runtime&quot;.equals(theScope)</span>
+<span class="fc bfc" id="L212" title="All 4 branches covered.">                || &quot;provided&quot;.equals(theScope)</span>
+                //|| theVersion == null
+                || isOptional != null;
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="pc bpc" id="L220" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L221">            return true;</span>
+        }
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L224">            return false;</span>
+        }
+
+        /* Make sure that the object is a MavenId */
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">        if (!(pThat instanceof ThemisMavenId myThat)) {</span>
+<span class="nc" id="L229">            return false;</span>
+        }
+
+        /* Check components */
+<span class="fc bfc" id="L233" title="All 2 branches covered.">        return Objects.equals(theGroupId, myThat.getGroupId())</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">                &amp;&amp; Objects.equals(theArtifactId, myThat.getArtifactId())</span>
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">                &amp;&amp; Objects.equals(theVersion, myThat.getVersion())</span>
+<span class="pc bpc" id="L236" title="1 of 2 branches missed.">                &amp;&amp; Objects.equals(theScope, myThat.getScope())</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">                &amp;&amp; Objects.equals(theClassifier, myThat.getClassifier());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L242">        return Objects.hash(theGroupId, theArtifactId, theVersion, theScope, theClassifier);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L247">        final String myName = theGroupId + ThemisChar.COLON + theArtifactId + ThemisChar.COLON + theVersion;</span>
+<span class="nc bnc" id="L248" title="All 2 branches missed.">        return theClassifier == null ? myName : myName + ThemisChar.COLON + theClassifier;</span>
+    }
+
+    /**
+     * Obtain the mavenBase.
+     *
+     * @return the mavenBase path
+     */
+    private File getMavenBasePath() {
+        /* Determine the repository base */
+<span class="fc" id="L258">        File myBase = getMavenCorePath();</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">        if (theVersion == null) {</span>
+<span class="fc" id="L260">            getLatestVersion();</span>
+        }
+<span class="fc" id="L262">        myBase = new File(myBase, theVersion);</span>
+<span class="fc" id="L263">        return myBase;</span>
+    }
+
+    /**
+     * Obtain the latest version for an artifact.
+     */
+    private void getLatestVersion() {
+<span class="fc" id="L270">        final File myBase = getMavenCorePath();</span>
+<span class="fc" id="L271">        ThemisMavenVersion myLatest = null;</span>
+<span class="fc bfc" id="L272" title="All 2 branches covered.">        for (File myFile : Objects.requireNonNull(myBase.listFiles())) {</span>
+<span class="pc bpc" id="L273" title="1 of 2 branches missed.">            if (myFile.isDirectory()) {</span>
+<span class="fc" id="L274">                final ThemisMavenVersion myVersion = ThemisMavenVersion.parseVersion(myFile.getName());</span>
+<span class="pc bpc" id="L275" title="1 of 2 branches missed.">                if (myVersion != null) {</span>
+<span class="fc bfc" id="L276" title="All 2 branches covered.">                    if (myLatest == null</span>
+<span class="pc bpc" id="L277" title="1 of 2 branches missed.">                            || myLatest.compareTo(myVersion) &lt; 0) {</span>
+<span class="fc" id="L278">                        myLatest = myVersion;</span>
+                    }
+                }
+            }
+        }
+<span class="pc bpc" id="L283" title="1 of 2 branches missed.">        if (myLatest != null) {</span>
+<span class="fc" id="L284">            theVersion = myLatest.getVersion();</span>
+        }
+<span class="fc" id="L286">    }</span>
+
+    /**
+     * Obtain the mavenBase.
+     *
+     * @return the mavenBase path
+     */
+    private File getMavenCorePath() {
+        /* Determine the repository base */
+<span class="fc" id="L295">        File myBase = new File(System.getProperty(&quot;user.home&quot;));</span>
+<span class="fc" id="L296">        myBase = new File(myBase, &quot;.m2&quot;);</span>
+<span class="fc" id="L297">        myBase = new File(myBase, &quot;repository&quot;);</span>
+<span class="fc" id="L298">        myBase = new File(myBase, theGroupId.replace(ThemisChar.PERIOD, ThemisChar.COMMENT));</span>
+<span class="fc" id="L299">        myBase = new File(myBase, theArtifactId);</span>
+<span class="fc" id="L300">        return myBase;</span>
+    }
+
+    /**
+     * Obtain the mavenJar.
+     *
+     * @return the mavenJar path
+     */
+    public File getMavenJarPath() {
+        /* Determine the repository base */
+<span class="fc" id="L310">        File myBase = getMavenBasePath();</span>
+<span class="fc" id="L311">        String myName = theArtifactId + ThemisChar.HYPHEN + theVersion;</span>
+<span class="fc bfc" id="L312" title="All 2 branches covered.">        if (theClassifier != null) {</span>
+<span class="fc" id="L313">            myName += ThemisChar.HYPHEN + theClassifier;</span>
+        }
+<span class="fc" id="L315">        myBase = new File(myBase, myName + &quot;.jar&quot;);</span>
+<span class="fc" id="L316">        return myBase;</span>
+    }
+
+    /**
+     * Obtain the mavenJar.
+     *
+     * @return the mavenJar path
+     */
+    public File getMavenPomPath() {
+        /* Determine the repository base */
+<span class="fc" id="L326">        File myBase = getMavenBasePath();</span>
+<span class="fc" id="L327">        myBase = new File(myBase, theArtifactId + ThemisChar.HYPHEN + theVersion + &quot;.pom&quot;);</span>
+<span class="fc" id="L328">        return myBase;</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

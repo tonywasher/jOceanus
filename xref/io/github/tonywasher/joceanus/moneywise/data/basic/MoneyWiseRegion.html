@@ -24,15 +24,15 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.moneywise.data.basic;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataResource;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorDefaults;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataResource;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorDefaults;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
@@ -329,241 +329,240 @@
 <a class="jxr_linenumber" name="L321" href="#L321">321</a>     @Override
 <a class="jxr_linenumber" name="L322" href="#L322">322</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> applyChanges(<strong class="jxr_keyword">final</strong> <a name="PrometheusDataItem" href="../../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataItem.html#PrometheusDataItem">PrometheusDataItem</a> pTag) {
 <a class="jxr_linenumber" name="L323" href="#L323">323</a>         <em class="jxr_comment">/* Can only update from a region */</em>
-<a class="jxr_linenumber" name="L324" href="#L324">324</a>         <strong class="jxr_keyword">if</strong> (!(pTag instanceof <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a>)) {
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>         <strong class="jxr_keyword">if</strong> (!(pTag instanceof <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> myRegion)) {
 <a class="jxr_linenumber" name="L325" href="#L325">325</a>             <strong class="jxr_keyword">return</strong> false;
 <a class="jxr_linenumber" name="L326" href="#L326">326</a>         }
-<a class="jxr_linenumber" name="L327" href="#L327">327</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> myRegion = (<a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a>) pTag;
-<a class="jxr_linenumber" name="L328" href="#L328">328</a> 
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>         <em class="jxr_comment">/* Store the current detail into history */</em>
-<a class="jxr_linenumber" name="L330" href="#L330">330</a>         pushHistory();
-<a class="jxr_linenumber" name="L331" href="#L331">331</a> 
-<a class="jxr_linenumber" name="L332" href="#L332">332</a>         <em class="jxr_comment">/* Update the Name if required */</em>
-<a class="jxr_linenumber" name="L333" href="#L333">333</a>         <strong class="jxr_keyword">if</strong> (!MetisDataDifference.isEqual(getName(), myRegion.getName())) {
-<a class="jxr_linenumber" name="L334" href="#L334">334</a>             setValueName(myRegion.getNameField());
-<a class="jxr_linenumber" name="L335" href="#L335">335</a>         }
-<a class="jxr_linenumber" name="L336" href="#L336">336</a> 
-<a class="jxr_linenumber" name="L337" href="#L337">337</a>         <em class="jxr_comment">/* Update the description if required */</em>
-<a class="jxr_linenumber" name="L338" href="#L338">338</a>         <strong class="jxr_keyword">if</strong> (!MetisDataDifference.isEqual(getDesc(), myRegion.getDesc())) {
-<a class="jxr_linenumber" name="L339" href="#L339">339</a>             setValueDesc(myRegion.getDescField());
-<a class="jxr_linenumber" name="L340" href="#L340">340</a>         }
-<a class="jxr_linenumber" name="L341" href="#L341">341</a> 
-<a class="jxr_linenumber" name="L342" href="#L342">342</a>         <em class="jxr_comment">/* Check for changes */</em>
-<a class="jxr_linenumber" name="L343" href="#L343">343</a>         <strong class="jxr_keyword">return</strong> checkForHistory();
-<a class="jxr_linenumber" name="L344" href="#L344">344</a>     }
-<a class="jxr_linenumber" name="L345" href="#L345">345</a> 
-<a class="jxr_linenumber" name="L346" href="#L346">346</a>     @Override
-<a class="jxr_linenumber" name="L347" href="#L347">347</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> adjustMapForItem() {
-<a class="jxr_linenumber" name="L348" href="#L348">348</a>         <strong class="jxr_keyword">final</strong> MoneyWiseRegionList myList = getList();
-<a class="jxr_linenumber" name="L349" href="#L349">349</a>         <strong class="jxr_keyword">final</strong> MoneyWiseRegionDataMap myMap = myList.getDataMap();
-<a class="jxr_linenumber" name="L350" href="#L350">350</a>         myMap.adjustForItem(<strong class="jxr_keyword">this</strong>);
-<a class="jxr_linenumber" name="L351" href="#L351">351</a>     }
-<a class="jxr_linenumber" name="L352" href="#L352">352</a> 
-<a class="jxr_linenumber" name="L353" href="#L353">353</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L354" href="#L354">354</a> <em class="jxr_javadoccomment">     * The Region List class.</em>
-<a class="jxr_linenumber" name="L355" href="#L355">355</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L356" href="#L356">356</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> MoneyWiseRegionList
-<a class="jxr_linenumber" name="L357" href="#L357">357</a>             <strong class="jxr_keyword">extends</strong> PrometheusEncryptedList&lt;MoneyWiseRegion&gt; {
-<a class="jxr_linenumber" name="L358" href="#L358">358</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L359" href="#L359">359</a> <em class="jxr_javadoccomment">         * Report fields.</em>
-<a class="jxr_linenumber" name="L360" href="#L360">360</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L361" href="#L361">361</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> MetisFieldSet&lt;MoneyWiseRegionList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseRegionList.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L362" href="#L362">362</a> 
-<a class="jxr_linenumber" name="L363" href="#L363">363</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L364" href="#L364">364</a> <em class="jxr_javadoccomment">         * Construct an empty CORE Tag list.</em>
-<a class="jxr_linenumber" name="L365" href="#L365">365</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L366" href="#L366">366</a> <em class="jxr_javadoccomment">         * @param pData the DataSet for the list</em>
-<a class="jxr_linenumber" name="L367" href="#L367">367</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L368" href="#L368">368</a>         <strong class="jxr_keyword">protected</strong> MoneyWiseRegionList(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseDataSet" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDataSet.html#MoneyWiseDataSet">MoneyWiseDataSet</a> pData) {
-<a class="jxr_linenumber" name="L369" href="#L369">369</a>             <strong class="jxr_keyword">super</strong>(MoneyWiseRegion.<strong class="jxr_keyword">class</strong>, pData, MoneyWiseBasicDataType.REGION, PrometheusListStyle.CORE);
-<a class="jxr_linenumber" name="L370" href="#L370">370</a>         }
-<a class="jxr_linenumber" name="L371" href="#L371">371</a> 
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L373" href="#L373">373</a> <em class="jxr_javadoccomment">         * Constructor for a cloned List.</em>
-<a class="jxr_linenumber" name="L374" href="#L374">374</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L375" href="#L375">375</a> <em class="jxr_javadoccomment">         * @param pSource the source List</em>
-<a class="jxr_linenumber" name="L376" href="#L376">376</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L377" href="#L377">377</a>         <strong class="jxr_keyword">protected</strong> MoneyWiseRegionList(<strong class="jxr_keyword">final</strong> MoneyWiseRegionList pSource) {
-<a class="jxr_linenumber" name="L378" href="#L378">378</a>             <strong class="jxr_keyword">super</strong>(pSource);
-<a class="jxr_linenumber" name="L379" href="#L379">379</a>         }
-<a class="jxr_linenumber" name="L380" href="#L380">380</a> 
-<a class="jxr_linenumber" name="L381" href="#L381">381</a>         @Override
-<a class="jxr_linenumber" name="L382" href="#L382">382</a>         <strong class="jxr_keyword">public</strong> MetisFieldSet&lt;MoneyWiseRegionList&gt; getDataFieldSet() {
-<a class="jxr_linenumber" name="L383" href="#L383">383</a>             <strong class="jxr_keyword">return</strong> FIELD_DEFS;
-<a class="jxr_linenumber" name="L384" href="#L384">384</a>         }
-<a class="jxr_linenumber" name="L385" href="#L385">385</a> 
-<a class="jxr_linenumber" name="L386" href="#L386">386</a>         @Override
-<a class="jxr_linenumber" name="L387" href="#L387">387</a>         <strong class="jxr_keyword">public</strong> String listName() {
-<a class="jxr_linenumber" name="L388" href="#L388">388</a>             <strong class="jxr_keyword">return</strong> LIST_NAME;
-<a class="jxr_linenumber" name="L389" href="#L389">389</a>         }
-<a class="jxr_linenumber" name="L390" href="#L390">390</a> 
-<a class="jxr_linenumber" name="L391" href="#L391">391</a>         @Override
-<a class="jxr_linenumber" name="L392" href="#L392">392</a>         <strong class="jxr_keyword">public</strong> MetisFieldSetDef getItemFields() {
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>             <strong class="jxr_keyword">return</strong> MoneyWiseRegion.FIELD_DEFS;
-<a class="jxr_linenumber" name="L394" href="#L394">394</a>         }
-<a class="jxr_linenumber" name="L395" href="#L395">395</a> 
-<a class="jxr_linenumber" name="L396" href="#L396">396</a>         @Override
-<a class="jxr_linenumber" name="L397" href="#L397">397</a>         <strong class="jxr_keyword">public</strong> <a name="MoneyWiseDataSet" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDataSet.html#MoneyWiseDataSet">MoneyWiseDataSet</a> getDataSet() {
-<a class="jxr_linenumber" name="L398" href="#L398">398</a>             <strong class="jxr_keyword">return</strong> (<a name="MoneyWiseDataSet" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDataSet.html#MoneyWiseDataSet">MoneyWiseDataSet</a>) <strong class="jxr_keyword">super</strong>.getDataSet();
-<a class="jxr_linenumber" name="L399" href="#L399">399</a>         }
-<a class="jxr_linenumber" name="L400" href="#L400">400</a> 
-<a class="jxr_linenumber" name="L401" href="#L401">401</a>         @Override
-<a class="jxr_linenumber" name="L402" href="#L402">402</a>         <strong class="jxr_keyword">public</strong> MoneyWiseRegionDataMap getDataMap() {
-<a class="jxr_linenumber" name="L403" href="#L403">403</a>             <strong class="jxr_keyword">return</strong> (MoneyWiseRegionDataMap) <strong class="jxr_keyword">super</strong>.getDataMap();
-<a class="jxr_linenumber" name="L404" href="#L404">404</a>         }
-<a class="jxr_linenumber" name="L405" href="#L405">405</a> 
-<a class="jxr_linenumber" name="L406" href="#L406">406</a>         @Override
-<a class="jxr_linenumber" name="L407" href="#L407">407</a>         @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
-<a class="jxr_linenumber" name="L408" href="#L408">408</a>         <strong class="jxr_keyword">public</strong> MoneyWiseDataValidatorDefaults&lt;MoneyWiseRegion&gt; getValidator() {
-<a class="jxr_linenumber" name="L409" href="#L409">409</a>             <strong class="jxr_keyword">return</strong> (MoneyWiseDataValidatorDefaults&lt;MoneyWiseRegion&gt;) <strong class="jxr_keyword">super</strong>.getValidator();
-<a class="jxr_linenumber" name="L410" href="#L410">410</a>         }
-<a class="jxr_linenumber" name="L411" href="#L411">411</a> 
-<a class="jxr_linenumber" name="L412" href="#L412">412</a>         @Override
-<a class="jxr_linenumber" name="L413" href="#L413">413</a>         <strong class="jxr_keyword">protected</strong> MoneyWiseRegionList getEmptyList(<strong class="jxr_keyword">final</strong> PrometheusListStyle pStyle) {
-<a class="jxr_linenumber" name="L414" href="#L414">414</a>             <strong class="jxr_keyword">final</strong> MoneyWiseRegionList myList = <strong class="jxr_keyword">new</strong> MoneyWiseRegionList(<strong class="jxr_keyword">this</strong>);
-<a class="jxr_linenumber" name="L415" href="#L415">415</a>             myList.setStyle(pStyle);
-<a class="jxr_linenumber" name="L416" href="#L416">416</a>             <strong class="jxr_keyword">return</strong> myList;
-<a class="jxr_linenumber" name="L417" href="#L417">417</a>         }
-<a class="jxr_linenumber" name="L418" href="#L418">418</a> 
-<a class="jxr_linenumber" name="L419" href="#L419">419</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L420" href="#L420">420</a> <em class="jxr_javadoccomment">         * Derive Edit list.</em>
-<a class="jxr_linenumber" name="L421" href="#L421">421</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L422" href="#L422">422</a> <em class="jxr_javadoccomment">         * @param pEditSet the editSet</em>
-<a class="jxr_linenumber" name="L423" href="#L423">423</a> <em class="jxr_javadoccomment">         * @return the edit list</em>
-<a class="jxr_linenumber" name="L424" href="#L424">424</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L425" href="#L425">425</a>         <strong class="jxr_keyword">public</strong> MoneyWiseRegionList deriveEditList(<strong class="jxr_keyword">final</strong> <a name="PrometheusEditSet" href="../../../../../../../io/github/tonywasher/joceanus/prometheus/views/PrometheusEditSet.html#PrometheusEditSet">PrometheusEditSet</a> pEditSet) {
-<a class="jxr_linenumber" name="L426" href="#L426">426</a>             <em class="jxr_comment">/* Build an empty List */</em>
-<a class="jxr_linenumber" name="L427" href="#L427">427</a>             <strong class="jxr_keyword">final</strong> MoneyWiseRegionList myList = getEmptyList(PrometheusListStyle.EDIT);
-<a class="jxr_linenumber" name="L428" href="#L428">428</a>             myList.ensureMap();
-<a class="jxr_linenumber" name="L429" href="#L429">429</a>             pEditSet.setEditEntryList(MoneyWiseBasicDataType.REGION, myList);
-<a class="jxr_linenumber" name="L430" href="#L430">430</a>             myList.getValidator().setEditSet(pEditSet);
-<a class="jxr_linenumber" name="L431" href="#L431">431</a> 
-<a class="jxr_linenumber" name="L432" href="#L432">432</a>             <em class="jxr_comment">/* Loop through the regions */</em>
-<a class="jxr_linenumber" name="L433" href="#L433">433</a>             <strong class="jxr_keyword">final</strong> Iterator&lt;MoneyWiseRegion&gt; myIterator = iterator();
-<a class="jxr_linenumber" name="L434" href="#L434">434</a>             <strong class="jxr_keyword">while</strong> (myIterator.hasNext()) {
-<a class="jxr_linenumber" name="L435" href="#L435">435</a>                 <strong class="jxr_keyword">final</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> myCurr = myIterator.next();
-<a class="jxr_linenumber" name="L436" href="#L436">436</a> 
-<a class="jxr_linenumber" name="L437" href="#L437">437</a>                 <em class="jxr_comment">/* Ignore deleted regions */</em>
-<a class="jxr_linenumber" name="L438" href="#L438">438</a>                 <strong class="jxr_keyword">if</strong> (myCurr.isDeleted()) {
-<a class="jxr_linenumber" name="L439" href="#L439">439</a>                     <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="L440" href="#L440">440</a>                 }
-<a class="jxr_linenumber" name="L441" href="#L441">441</a> 
-<a class="jxr_linenumber" name="L442" href="#L442">442</a>                 <em class="jxr_comment">/* Build the new linked region and add it to the list */</em>
-<a class="jxr_linenumber" name="L443" href="#L443">443</a>                 <strong class="jxr_keyword">final</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> myRegion = <strong class="jxr_keyword">new</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a>(myList, myCurr);
-<a class="jxr_linenumber" name="L444" href="#L444">444</a>                 myList.add(myRegion);
-<a class="jxr_linenumber" name="L445" href="#L445">445</a> 
-<a class="jxr_linenumber" name="L446" href="#L446">446</a>                 <em class="jxr_comment">/* Adjust the map */</em>
-<a class="jxr_linenumber" name="L447" href="#L447">447</a>                 myRegion.adjustMapForItem();
-<a class="jxr_linenumber" name="L448" href="#L448">448</a>             }
-<a class="jxr_linenumber" name="L449" href="#L449">449</a> 
-<a class="jxr_linenumber" name="L450" href="#L450">450</a>             <em class="jxr_comment">/* Return the list */</em>
-<a class="jxr_linenumber" name="L451" href="#L451">451</a>             <strong class="jxr_keyword">return</strong> myList;
-<a class="jxr_linenumber" name="L452" href="#L452">452</a>         }
-<a class="jxr_linenumber" name="L453" href="#L453">453</a> 
-<a class="jxr_linenumber" name="L454" href="#L454">454</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L455" href="#L455">455</a> <em class="jxr_javadoccomment">         * Add a new item to the core list.</em>
-<a class="jxr_linenumber" name="L456" href="#L456">456</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L457" href="#L457">457</a> <em class="jxr_javadoccomment">         * @param pRegion item</em>
-<a class="jxr_linenumber" name="L458" href="#L458">458</a> <em class="jxr_javadoccomment">         * @return the newly added item</em>
-<a class="jxr_linenumber" name="L459" href="#L459">459</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L460" href="#L460">460</a>         @Override
-<a class="jxr_linenumber" name="L461" href="#L461">461</a>         <strong class="jxr_keyword">public</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> addCopyItem(<strong class="jxr_keyword">final</strong> <a name="PrometheusDataItem" href="../../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataItem.html#PrometheusDataItem">PrometheusDataItem</a> pRegion) {
-<a class="jxr_linenumber" name="L462" href="#L462">462</a>             <em class="jxr_comment">/* Can only clone a Region */</em>
-<a class="jxr_linenumber" name="L463" href="#L463">463</a>             <strong class="jxr_keyword">if</strong> (!(pRegion instanceof <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a>)) {
-<a class="jxr_linenumber" name="L464" href="#L464">464</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException();
-<a class="jxr_linenumber" name="L465" href="#L465">465</a>             }
-<a class="jxr_linenumber" name="L466" href="#L466">466</a> 
-<a class="jxr_linenumber" name="L467" href="#L467">467</a>             <strong class="jxr_keyword">final</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> myRegion = <strong class="jxr_keyword">new</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a>(<strong class="jxr_keyword">this</strong>, (<a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a>) pRegion);
-<a class="jxr_linenumber" name="L468" href="#L468">468</a>             add(myRegion);
-<a class="jxr_linenumber" name="L469" href="#L469">469</a>             <strong class="jxr_keyword">return</strong> myRegion;
-<a class="jxr_linenumber" name="L470" href="#L470">470</a>         }
-<a class="jxr_linenumber" name="L471" href="#L471">471</a> 
-<a class="jxr_linenumber" name="L472" href="#L472">472</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L473" href="#L473">473</a> <em class="jxr_javadoccomment">         * Add a new item to the edit list.</em>
-<a class="jxr_linenumber" name="L474" href="#L474">474</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L475" href="#L475">475</a> <em class="jxr_javadoccomment">         * @return the new item</em>
-<a class="jxr_linenumber" name="L476" href="#L476">476</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L477" href="#L477">477</a>         @Override
-<a class="jxr_linenumber" name="L478" href="#L478">478</a>         <strong class="jxr_keyword">public</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> addNewItem() {
-<a class="jxr_linenumber" name="L479" href="#L479">479</a>             <strong class="jxr_keyword">final</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> myRegion = <strong class="jxr_keyword">new</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a>(<strong class="jxr_keyword">this</strong>);
-<a class="jxr_linenumber" name="L480" href="#L480">480</a>             add(myRegion);
-<a class="jxr_linenumber" name="L481" href="#L481">481</a>             <strong class="jxr_keyword">return</strong> myRegion;
-<a class="jxr_linenumber" name="L482" href="#L482">482</a>         }
-<a class="jxr_linenumber" name="L483" href="#L483">483</a> 
-<a class="jxr_linenumber" name="L484" href="#L484">484</a>         @Override
-<a class="jxr_linenumber" name="L485" href="#L485">485</a>         <strong class="jxr_keyword">public</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> findItemByName(<strong class="jxr_keyword">final</strong> String pName) {
-<a class="jxr_linenumber" name="L486" href="#L486">486</a>             <em class="jxr_comment">/* look up the name in the map */</em>
-<a class="jxr_linenumber" name="L487" href="#L487">487</a>             <strong class="jxr_keyword">return</strong> getDataMap().findItemByName(pName);
-<a class="jxr_linenumber" name="L488" href="#L488">488</a>         }
-<a class="jxr_linenumber" name="L489" href="#L489">489</a> 
-<a class="jxr_linenumber" name="L490" href="#L490">490</a>         @Override
-<a class="jxr_linenumber" name="L491" href="#L491">491</a>         <strong class="jxr_keyword">public</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> addValuesItem(<strong class="jxr_keyword">final</strong> <a name="PrometheusDataValues" href="../../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataValues.html#PrometheusDataValues">PrometheusDataValues</a> pValues) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
-<a class="jxr_linenumber" name="L492" href="#L492">492</a>             <em class="jxr_comment">/* Create the region */</em>
-<a class="jxr_linenumber" name="L493" href="#L493">493</a>             <strong class="jxr_keyword">final</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> myRegion = <strong class="jxr_keyword">new</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a>(<strong class="jxr_keyword">this</strong>, pValues);
-<a class="jxr_linenumber" name="L494" href="#L494">494</a> 
-<a class="jxr_linenumber" name="L495" href="#L495">495</a>             <em class="jxr_comment">/* Check that this regionId has not been previously added */</em>
-<a class="jxr_linenumber" name="L496" href="#L496">496</a>             <strong class="jxr_keyword">if</strong> (!isIdUnique(myRegion.getIndexedId())) {
-<a class="jxr_linenumber" name="L497" href="#L497">497</a>                 myRegion.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);
-<a class="jxr_linenumber" name="L498" href="#L498">498</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="MoneyWiseDataException" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/exc/MoneyWiseDataException.html#MoneyWiseDataException">MoneyWiseDataException</a>(myRegion, ERROR_VALIDATION);
-<a class="jxr_linenumber" name="L499" href="#L499">499</a>             }
-<a class="jxr_linenumber" name="L500" href="#L500">500</a> 
-<a class="jxr_linenumber" name="L501" href="#L501">501</a>             <em class="jxr_comment">/* Add to the list */</em>
-<a class="jxr_linenumber" name="L502" href="#L502">502</a>             add(myRegion);
-<a class="jxr_linenumber" name="L503" href="#L503">503</a> 
-<a class="jxr_linenumber" name="L504" href="#L504">504</a>             <em class="jxr_comment">/* Return it */</em>
-<a class="jxr_linenumber" name="L505" href="#L505">505</a>             <strong class="jxr_keyword">return</strong> myRegion;
-<a class="jxr_linenumber" name="L506" href="#L506">506</a>         }
-<a class="jxr_linenumber" name="L507" href="#L507">507</a> 
-<a class="jxr_linenumber" name="L508" href="#L508">508</a>         @Override
-<a class="jxr_linenumber" name="L509" href="#L509">509</a>         <strong class="jxr_keyword">protected</strong> MoneyWiseRegionDataMap allocateDataMap() {
-<a class="jxr_linenumber" name="L510" href="#L510">510</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> MoneyWiseRegionDataMap();
-<a class="jxr_linenumber" name="L511" href="#L511">511</a>         }
-<a class="jxr_linenumber" name="L512" href="#L512">512</a>     }
-<a class="jxr_linenumber" name="L513" href="#L513">513</a> 
-<a class="jxr_linenumber" name="L514" href="#L514">514</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L515" href="#L515">515</a> <em class="jxr_javadoccomment">     * The dataMap class.</em>
-<a class="jxr_linenumber" name="L516" href="#L516">516</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L517" href="#L517">517</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> MoneyWiseRegionDataMap
-<a class="jxr_linenumber" name="L518" href="#L518">518</a>             <strong class="jxr_keyword">extends</strong> PrometheusDataInstanceMap&lt;MoneyWiseRegion, String&gt; {
-<a class="jxr_linenumber" name="L519" href="#L519">519</a>         @Override
-<a class="jxr_linenumber" name="L520" href="#L520">520</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> adjustForItem(<strong class="jxr_keyword">final</strong> <a name="PrometheusDataItem" href="../../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataItem.html#PrometheusDataItem">PrometheusDataItem</a> pItem) {
-<a class="jxr_linenumber" name="L521" href="#L521">521</a>             <em class="jxr_comment">/* Access item */</em>
-<a class="jxr_linenumber" name="L522" href="#L522">522</a>             <strong class="jxr_keyword">final</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> myItem = (<a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a>) pItem;
-<a class="jxr_linenumber" name="L523" href="#L523">523</a> 
-<a class="jxr_linenumber" name="L524" href="#L524">524</a>             <em class="jxr_comment">/* Adjust name count */</em>
-<a class="jxr_linenumber" name="L525" href="#L525">525</a>             adjustForItem(myItem, myItem.getName());
-<a class="jxr_linenumber" name="L526" href="#L526">526</a>         }
-<a class="jxr_linenumber" name="L527" href="#L527">527</a> 
-<a class="jxr_linenumber" name="L528" href="#L528">528</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L529" href="#L529">529</a> <em class="jxr_javadoccomment">         * find item by name.</em>
-<a class="jxr_linenumber" name="L530" href="#L530">530</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L531" href="#L531">531</a> <em class="jxr_javadoccomment">         * @param pName the name to look up</em>
-<a class="jxr_linenumber" name="L532" href="#L532">532</a> <em class="jxr_javadoccomment">         * @return the matching item</em>
-<a class="jxr_linenumber" name="L533" href="#L533">533</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L534" href="#L534">534</a>         <strong class="jxr_keyword">public</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> findItemByName(<strong class="jxr_keyword">final</strong> String pName) {
-<a class="jxr_linenumber" name="L535" href="#L535">535</a>             <strong class="jxr_keyword">return</strong> findItemByKey(pName);
-<a class="jxr_linenumber" name="L536" href="#L536">536</a>         }
-<a class="jxr_linenumber" name="L537" href="#L537">537</a> 
-<a class="jxr_linenumber" name="L538" href="#L538">538</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L539" href="#L539">539</a> <em class="jxr_javadoccomment">         * Check validity of name.</em>
-<a class="jxr_linenumber" name="L540" href="#L540">540</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L541" href="#L541">541</a> <em class="jxr_javadoccomment">         * @param pName the name to look up</em>
-<a class="jxr_linenumber" name="L542" href="#L542">542</a> <em class="jxr_javadoccomment">         * @return true/false</em>
-<a class="jxr_linenumber" name="L543" href="#L543">543</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L544" href="#L544">544</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> validNameCount(<strong class="jxr_keyword">final</strong> String pName) {
-<a class="jxr_linenumber" name="L545" href="#L545">545</a>             <strong class="jxr_keyword">return</strong> validKeyCount(pName);
-<a class="jxr_linenumber" name="L546" href="#L546">546</a>         }
-<a class="jxr_linenumber" name="L547" href="#L547">547</a> 
-<a class="jxr_linenumber" name="L548" href="#L548">548</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L549" href="#L549">549</a> <em class="jxr_javadoccomment">         * Check availability of name.</em>
-<a class="jxr_linenumber" name="L550" href="#L550">550</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L551" href="#L551">551</a> <em class="jxr_javadoccomment">         * @param pName the key to look up</em>
-<a class="jxr_linenumber" name="L552" href="#L552">552</a> <em class="jxr_javadoccomment">         * @return true/false</em>
-<a class="jxr_linenumber" name="L553" href="#L553">553</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L554" href="#L554">554</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> availableName(<strong class="jxr_keyword">final</strong> String pName) {
-<a class="jxr_linenumber" name="L555" href="#L555">555</a>             <strong class="jxr_keyword">return</strong> availableKey(pName);
-<a class="jxr_linenumber" name="L556" href="#L556">556</a>         }
-<a class="jxr_linenumber" name="L557" href="#L557">557</a>     }
-<a class="jxr_linenumber" name="L558" href="#L558">558</a> }
+<a class="jxr_linenumber" name="L327" href="#L327">327</a> 
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>         <em class="jxr_comment">/* Store the current detail into history */</em>
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>         pushHistory();
+<a class="jxr_linenumber" name="L330" href="#L330">330</a> 
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>         <em class="jxr_comment">/* Update the Name if required */</em>
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>         <strong class="jxr_keyword">if</strong> (!MetisDataDifference.isEqual(getName(), myRegion.getName())) {
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>             setValueName(myRegion.getNameField());
+<a class="jxr_linenumber" name="L334" href="#L334">334</a>         }
+<a class="jxr_linenumber" name="L335" href="#L335">335</a> 
+<a class="jxr_linenumber" name="L336" href="#L336">336</a>         <em class="jxr_comment">/* Update the description if required */</em>
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>         <strong class="jxr_keyword">if</strong> (!MetisDataDifference.isEqual(getDesc(), myRegion.getDesc())) {
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>             setValueDesc(myRegion.getDescField());
+<a class="jxr_linenumber" name="L339" href="#L339">339</a>         }
+<a class="jxr_linenumber" name="L340" href="#L340">340</a> 
+<a class="jxr_linenumber" name="L341" href="#L341">341</a>         <em class="jxr_comment">/* Check for changes */</em>
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>         <strong class="jxr_keyword">return</strong> checkForHistory();
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>     }
+<a class="jxr_linenumber" name="L344" href="#L344">344</a> 
+<a class="jxr_linenumber" name="L345" href="#L345">345</a>     @Override
+<a class="jxr_linenumber" name="L346" href="#L346">346</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> adjustMapForItem() {
+<a class="jxr_linenumber" name="L347" href="#L347">347</a>         <strong class="jxr_keyword">final</strong> MoneyWiseRegionList myList = getList();
+<a class="jxr_linenumber" name="L348" href="#L348">348</a>         <strong class="jxr_keyword">final</strong> MoneyWiseRegionDataMap myMap = myList.getDataMap();
+<a class="jxr_linenumber" name="L349" href="#L349">349</a>         myMap.adjustForItem(<strong class="jxr_keyword">this</strong>);
+<a class="jxr_linenumber" name="L350" href="#L350">350</a>     }
+<a class="jxr_linenumber" name="L351" href="#L351">351</a> 
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L353" href="#L353">353</a> <em class="jxr_javadoccomment">     * The Region List class.</em>
+<a class="jxr_linenumber" name="L354" href="#L354">354</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L355" href="#L355">355</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> MoneyWiseRegionList
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>             <strong class="jxr_keyword">extends</strong> PrometheusEncryptedList&lt;MoneyWiseRegion&gt; {
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L358" href="#L358">358</a> <em class="jxr_javadoccomment">         * Report fields.</em>
+<a class="jxr_linenumber" name="L359" href="#L359">359</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> MetisFieldSet&lt;MoneyWiseRegionList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseRegionList.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L361" href="#L361">361</a> 
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L363" href="#L363">363</a> <em class="jxr_javadoccomment">         * Construct an empty CORE Tag list.</em>
+<a class="jxr_linenumber" name="L364" href="#L364">364</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="L365" href="#L365">365</a> <em class="jxr_javadoccomment">         * @param pData the DataSet for the list</em>
+<a class="jxr_linenumber" name="L366" href="#L366">366</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>         <strong class="jxr_keyword">protected</strong> MoneyWiseRegionList(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseDataSet" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDataSet.html#MoneyWiseDataSet">MoneyWiseDataSet</a> pData) {
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>             <strong class="jxr_keyword">super</strong>(MoneyWiseRegion.<strong class="jxr_keyword">class</strong>, pData, MoneyWiseBasicDataType.REGION, PrometheusListStyle.CORE);
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>         }
+<a class="jxr_linenumber" name="L370" href="#L370">370</a> 
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L372" href="#L372">372</a> <em class="jxr_javadoccomment">         * Constructor for a cloned List.</em>
+<a class="jxr_linenumber" name="L373" href="#L373">373</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="L374" href="#L374">374</a> <em class="jxr_javadoccomment">         * @param pSource the source List</em>
+<a class="jxr_linenumber" name="L375" href="#L375">375</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L376" href="#L376">376</a>         <strong class="jxr_keyword">protected</strong> MoneyWiseRegionList(<strong class="jxr_keyword">final</strong> MoneyWiseRegionList pSource) {
+<a class="jxr_linenumber" name="L377" href="#L377">377</a>             <strong class="jxr_keyword">super</strong>(pSource);
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>         }
+<a class="jxr_linenumber" name="L379" href="#L379">379</a> 
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>         @Override
+<a class="jxr_linenumber" name="L381" href="#L381">381</a>         <strong class="jxr_keyword">public</strong> MetisFieldSet&lt;MoneyWiseRegionList&gt; getDataFieldSet() {
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>             <strong class="jxr_keyword">return</strong> FIELD_DEFS;
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>         }
+<a class="jxr_linenumber" name="L384" href="#L384">384</a> 
+<a class="jxr_linenumber" name="L385" href="#L385">385</a>         @Override
+<a class="jxr_linenumber" name="L386" href="#L386">386</a>         <strong class="jxr_keyword">public</strong> String listName() {
+<a class="jxr_linenumber" name="L387" href="#L387">387</a>             <strong class="jxr_keyword">return</strong> LIST_NAME;
+<a class="jxr_linenumber" name="L388" href="#L388">388</a>         }
+<a class="jxr_linenumber" name="L389" href="#L389">389</a> 
+<a class="jxr_linenumber" name="L390" href="#L390">390</a>         @Override
+<a class="jxr_linenumber" name="L391" href="#L391">391</a>         <strong class="jxr_keyword">public</strong> MetisFieldSetDef getItemFields() {
+<a class="jxr_linenumber" name="L392" href="#L392">392</a>             <strong class="jxr_keyword">return</strong> MoneyWiseRegion.FIELD_DEFS;
+<a class="jxr_linenumber" name="L393" href="#L393">393</a>         }
+<a class="jxr_linenumber" name="L394" href="#L394">394</a> 
+<a class="jxr_linenumber" name="L395" href="#L395">395</a>         @Override
+<a class="jxr_linenumber" name="L396" href="#L396">396</a>         <strong class="jxr_keyword">public</strong> <a name="MoneyWiseDataSet" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDataSet.html#MoneyWiseDataSet">MoneyWiseDataSet</a> getDataSet() {
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>             <strong class="jxr_keyword">return</strong> (<a name="MoneyWiseDataSet" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDataSet.html#MoneyWiseDataSet">MoneyWiseDataSet</a>) <strong class="jxr_keyword">super</strong>.getDataSet();
+<a class="jxr_linenumber" name="L398" href="#L398">398</a>         }
+<a class="jxr_linenumber" name="L399" href="#L399">399</a> 
+<a class="jxr_linenumber" name="L400" href="#L400">400</a>         @Override
+<a class="jxr_linenumber" name="L401" href="#L401">401</a>         <strong class="jxr_keyword">public</strong> MoneyWiseRegionDataMap getDataMap() {
+<a class="jxr_linenumber" name="L402" href="#L402">402</a>             <strong class="jxr_keyword">return</strong> (MoneyWiseRegionDataMap) <strong class="jxr_keyword">super</strong>.getDataMap();
+<a class="jxr_linenumber" name="L403" href="#L403">403</a>         }
+<a class="jxr_linenumber" name="L404" href="#L404">404</a> 
+<a class="jxr_linenumber" name="L405" href="#L405">405</a>         @Override
+<a class="jxr_linenumber" name="L406" href="#L406">406</a>         @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
+<a class="jxr_linenumber" name="L407" href="#L407">407</a>         <strong class="jxr_keyword">public</strong> MoneyWiseDataValidatorDefaults&lt;MoneyWiseRegion&gt; getValidator() {
+<a class="jxr_linenumber" name="L408" href="#L408">408</a>             <strong class="jxr_keyword">return</strong> (MoneyWiseDataValidatorDefaults&lt;MoneyWiseRegion&gt;) <strong class="jxr_keyword">super</strong>.getValidator();
+<a class="jxr_linenumber" name="L409" href="#L409">409</a>         }
+<a class="jxr_linenumber" name="L410" href="#L410">410</a> 
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>         @Override
+<a class="jxr_linenumber" name="L412" href="#L412">412</a>         <strong class="jxr_keyword">protected</strong> MoneyWiseRegionList getEmptyList(<strong class="jxr_keyword">final</strong> PrometheusListStyle pStyle) {
+<a class="jxr_linenumber" name="L413" href="#L413">413</a>             <strong class="jxr_keyword">final</strong> MoneyWiseRegionList myList = <strong class="jxr_keyword">new</strong> MoneyWiseRegionList(<strong class="jxr_keyword">this</strong>);
+<a class="jxr_linenumber" name="L414" href="#L414">414</a>             myList.setStyle(pStyle);
+<a class="jxr_linenumber" name="L415" href="#L415">415</a>             <strong class="jxr_keyword">return</strong> myList;
+<a class="jxr_linenumber" name="L416" href="#L416">416</a>         }
+<a class="jxr_linenumber" name="L417" href="#L417">417</a> 
+<a class="jxr_linenumber" name="L418" href="#L418">418</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L419" href="#L419">419</a> <em class="jxr_javadoccomment">         * Derive Edit list.</em>
+<a class="jxr_linenumber" name="L420" href="#L420">420</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="L421" href="#L421">421</a> <em class="jxr_javadoccomment">         * @param pEditSet the editSet</em>
+<a class="jxr_linenumber" name="L422" href="#L422">422</a> <em class="jxr_javadoccomment">         * @return the edit list</em>
+<a class="jxr_linenumber" name="L423" href="#L423">423</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L424" href="#L424">424</a>         <strong class="jxr_keyword">public</strong> MoneyWiseRegionList deriveEditList(<strong class="jxr_keyword">final</strong> <a name="PrometheusEditSet" href="../../../../../../../io/github/tonywasher/joceanus/prometheus/views/PrometheusEditSet.html#PrometheusEditSet">PrometheusEditSet</a> pEditSet) {
+<a class="jxr_linenumber" name="L425" href="#L425">425</a>             <em class="jxr_comment">/* Build an empty List */</em>
+<a class="jxr_linenumber" name="L426" href="#L426">426</a>             <strong class="jxr_keyword">final</strong> MoneyWiseRegionList myList = getEmptyList(PrometheusListStyle.EDIT);
+<a class="jxr_linenumber" name="L427" href="#L427">427</a>             myList.ensureMap();
+<a class="jxr_linenumber" name="L428" href="#L428">428</a>             pEditSet.setEditEntryList(MoneyWiseBasicDataType.REGION, myList);
+<a class="jxr_linenumber" name="L429" href="#L429">429</a>             myList.getValidator().setEditSet(pEditSet);
+<a class="jxr_linenumber" name="L430" href="#L430">430</a> 
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>             <em class="jxr_comment">/* Loop through the regions */</em>
+<a class="jxr_linenumber" name="L432" href="#L432">432</a>             <strong class="jxr_keyword">final</strong> Iterator&lt;MoneyWiseRegion&gt; myIterator = iterator();
+<a class="jxr_linenumber" name="L433" href="#L433">433</a>             <strong class="jxr_keyword">while</strong> (myIterator.hasNext()) {
+<a class="jxr_linenumber" name="L434" href="#L434">434</a>                 <strong class="jxr_keyword">final</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> myCurr = myIterator.next();
+<a class="jxr_linenumber" name="L435" href="#L435">435</a> 
+<a class="jxr_linenumber" name="L436" href="#L436">436</a>                 <em class="jxr_comment">/* Ignore deleted regions */</em>
+<a class="jxr_linenumber" name="L437" href="#L437">437</a>                 <strong class="jxr_keyword">if</strong> (myCurr.isDeleted()) {
+<a class="jxr_linenumber" name="L438" href="#L438">438</a>                     <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="L439" href="#L439">439</a>                 }
+<a class="jxr_linenumber" name="L440" href="#L440">440</a> 
+<a class="jxr_linenumber" name="L441" href="#L441">441</a>                 <em class="jxr_comment">/* Build the new linked region and add it to the list */</em>
+<a class="jxr_linenumber" name="L442" href="#L442">442</a>                 <strong class="jxr_keyword">final</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> myRegion = <strong class="jxr_keyword">new</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a>(myList, myCurr);
+<a class="jxr_linenumber" name="L443" href="#L443">443</a>                 myList.add(myRegion);
+<a class="jxr_linenumber" name="L444" href="#L444">444</a> 
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>                 <em class="jxr_comment">/* Adjust the map */</em>
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>                 myRegion.adjustMapForItem();
+<a class="jxr_linenumber" name="L447" href="#L447">447</a>             }
+<a class="jxr_linenumber" name="L448" href="#L448">448</a> 
+<a class="jxr_linenumber" name="L449" href="#L449">449</a>             <em class="jxr_comment">/* Return the list */</em>
+<a class="jxr_linenumber" name="L450" href="#L450">450</a>             <strong class="jxr_keyword">return</strong> myList;
+<a class="jxr_linenumber" name="L451" href="#L451">451</a>         }
+<a class="jxr_linenumber" name="L452" href="#L452">452</a> 
+<a class="jxr_linenumber" name="L453" href="#L453">453</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L454" href="#L454">454</a> <em class="jxr_javadoccomment">         * Add a new item to the core list.</em>
+<a class="jxr_linenumber" name="L455" href="#L455">455</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="L456" href="#L456">456</a> <em class="jxr_javadoccomment">         * @param pRegion item</em>
+<a class="jxr_linenumber" name="L457" href="#L457">457</a> <em class="jxr_javadoccomment">         * @return the newly added item</em>
+<a class="jxr_linenumber" name="L458" href="#L458">458</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L459" href="#L459">459</a>         @Override
+<a class="jxr_linenumber" name="L460" href="#L460">460</a>         <strong class="jxr_keyword">public</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> addCopyItem(<strong class="jxr_keyword">final</strong> <a name="PrometheusDataItem" href="../../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataItem.html#PrometheusDataItem">PrometheusDataItem</a> pRegion) {
+<a class="jxr_linenumber" name="L461" href="#L461">461</a>             <em class="jxr_comment">/* Can only clone a Region */</em>
+<a class="jxr_linenumber" name="L462" href="#L462">462</a>             <strong class="jxr_keyword">if</strong> (!(pRegion instanceof <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a>)) {
+<a class="jxr_linenumber" name="L463" href="#L463">463</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException();
+<a class="jxr_linenumber" name="L464" href="#L464">464</a>             }
+<a class="jxr_linenumber" name="L465" href="#L465">465</a> 
+<a class="jxr_linenumber" name="L466" href="#L466">466</a>             <strong class="jxr_keyword">final</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> myRegion = <strong class="jxr_keyword">new</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a>(<strong class="jxr_keyword">this</strong>, (<a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a>) pRegion);
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>             add(myRegion);
+<a class="jxr_linenumber" name="L468" href="#L468">468</a>             <strong class="jxr_keyword">return</strong> myRegion;
+<a class="jxr_linenumber" name="L469" href="#L469">469</a>         }
+<a class="jxr_linenumber" name="L470" href="#L470">470</a> 
+<a class="jxr_linenumber" name="L471" href="#L471">471</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L472" href="#L472">472</a> <em class="jxr_javadoccomment">         * Add a new item to the edit list.</em>
+<a class="jxr_linenumber" name="L473" href="#L473">473</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="L474" href="#L474">474</a> <em class="jxr_javadoccomment">         * @return the new item</em>
+<a class="jxr_linenumber" name="L475" href="#L475">475</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L476" href="#L476">476</a>         @Override
+<a class="jxr_linenumber" name="L477" href="#L477">477</a>         <strong class="jxr_keyword">public</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> addNewItem() {
+<a class="jxr_linenumber" name="L478" href="#L478">478</a>             <strong class="jxr_keyword">final</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> myRegion = <strong class="jxr_keyword">new</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a>(<strong class="jxr_keyword">this</strong>);
+<a class="jxr_linenumber" name="L479" href="#L479">479</a>             add(myRegion);
+<a class="jxr_linenumber" name="L480" href="#L480">480</a>             <strong class="jxr_keyword">return</strong> myRegion;
+<a class="jxr_linenumber" name="L481" href="#L481">481</a>         }
+<a class="jxr_linenumber" name="L482" href="#L482">482</a> 
+<a class="jxr_linenumber" name="L483" href="#L483">483</a>         @Override
+<a class="jxr_linenumber" name="L484" href="#L484">484</a>         <strong class="jxr_keyword">public</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> findItemByName(<strong class="jxr_keyword">final</strong> String pName) {
+<a class="jxr_linenumber" name="L485" href="#L485">485</a>             <em class="jxr_comment">/* look up the name in the map */</em>
+<a class="jxr_linenumber" name="L486" href="#L486">486</a>             <strong class="jxr_keyword">return</strong> getDataMap().findItemByName(pName);
+<a class="jxr_linenumber" name="L487" href="#L487">487</a>         }
+<a class="jxr_linenumber" name="L488" href="#L488">488</a> 
+<a class="jxr_linenumber" name="L489" href="#L489">489</a>         @Override
+<a class="jxr_linenumber" name="L490" href="#L490">490</a>         <strong class="jxr_keyword">public</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> addValuesItem(<strong class="jxr_keyword">final</strong> <a name="PrometheusDataValues" href="../../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataValues.html#PrometheusDataValues">PrometheusDataValues</a> pValues) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
+<a class="jxr_linenumber" name="L491" href="#L491">491</a>             <em class="jxr_comment">/* Create the region */</em>
+<a class="jxr_linenumber" name="L492" href="#L492">492</a>             <strong class="jxr_keyword">final</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> myRegion = <strong class="jxr_keyword">new</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a>(<strong class="jxr_keyword">this</strong>, pValues);
+<a class="jxr_linenumber" name="L493" href="#L493">493</a> 
+<a class="jxr_linenumber" name="L494" href="#L494">494</a>             <em class="jxr_comment">/* Check that this regionId has not been previously added */</em>
+<a class="jxr_linenumber" name="L495" href="#L495">495</a>             <strong class="jxr_keyword">if</strong> (!isIdUnique(myRegion.getIndexedId())) {
+<a class="jxr_linenumber" name="L496" href="#L496">496</a>                 myRegion.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);
+<a class="jxr_linenumber" name="L497" href="#L497">497</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="MoneyWiseDataException" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/exc/MoneyWiseDataException.html#MoneyWiseDataException">MoneyWiseDataException</a>(myRegion, ERROR_VALIDATION);
+<a class="jxr_linenumber" name="L498" href="#L498">498</a>             }
+<a class="jxr_linenumber" name="L499" href="#L499">499</a> 
+<a class="jxr_linenumber" name="L500" href="#L500">500</a>             <em class="jxr_comment">/* Add to the list */</em>
+<a class="jxr_linenumber" name="L501" href="#L501">501</a>             add(myRegion);
+<a class="jxr_linenumber" name="L502" href="#L502">502</a> 
+<a class="jxr_linenumber" name="L503" href="#L503">503</a>             <em class="jxr_comment">/* Return it */</em>
+<a class="jxr_linenumber" name="L504" href="#L504">504</a>             <strong class="jxr_keyword">return</strong> myRegion;
+<a class="jxr_linenumber" name="L505" href="#L505">505</a>         }
+<a class="jxr_linenumber" name="L506" href="#L506">506</a> 
+<a class="jxr_linenumber" name="L507" href="#L507">507</a>         @Override
+<a class="jxr_linenumber" name="L508" href="#L508">508</a>         <strong class="jxr_keyword">protected</strong> MoneyWiseRegionDataMap allocateDataMap() {
+<a class="jxr_linenumber" name="L509" href="#L509">509</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> MoneyWiseRegionDataMap();
+<a class="jxr_linenumber" name="L510" href="#L510">510</a>         }
+<a class="jxr_linenumber" name="L511" href="#L511">511</a>     }
+<a class="jxr_linenumber" name="L512" href="#L512">512</a> 
+<a class="jxr_linenumber" name="L513" href="#L513">513</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L514" href="#L514">514</a> <em class="jxr_javadoccomment">     * The dataMap class.</em>
+<a class="jxr_linenumber" name="L515" href="#L515">515</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L516" href="#L516">516</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> MoneyWiseRegionDataMap
+<a class="jxr_linenumber" name="L517" href="#L517">517</a>             <strong class="jxr_keyword">extends</strong> PrometheusDataInstanceMap&lt;MoneyWiseRegion, String&gt; {
+<a class="jxr_linenumber" name="L518" href="#L518">518</a>         @Override
+<a class="jxr_linenumber" name="L519" href="#L519">519</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> adjustForItem(<strong class="jxr_keyword">final</strong> <a name="PrometheusDataItem" href="../../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataItem.html#PrometheusDataItem">PrometheusDataItem</a> pItem) {
+<a class="jxr_linenumber" name="L520" href="#L520">520</a>             <em class="jxr_comment">/* Access item */</em>
+<a class="jxr_linenumber" name="L521" href="#L521">521</a>             <strong class="jxr_keyword">final</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> myItem = (<a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a>) pItem;
+<a class="jxr_linenumber" name="L522" href="#L522">522</a> 
+<a class="jxr_linenumber" name="L523" href="#L523">523</a>             <em class="jxr_comment">/* Adjust name count */</em>
+<a class="jxr_linenumber" name="L524" href="#L524">524</a>             adjustForItem(myItem, myItem.getName());
+<a class="jxr_linenumber" name="L525" href="#L525">525</a>         }
+<a class="jxr_linenumber" name="L526" href="#L526">526</a> 
+<a class="jxr_linenumber" name="L527" href="#L527">527</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L528" href="#L528">528</a> <em class="jxr_javadoccomment">         * find item by name.</em>
+<a class="jxr_linenumber" name="L529" href="#L529">529</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="L530" href="#L530">530</a> <em class="jxr_javadoccomment">         * @param pName the name to look up</em>
+<a class="jxr_linenumber" name="L531" href="#L531">531</a> <em class="jxr_javadoccomment">         * @return the matching item</em>
+<a class="jxr_linenumber" name="L532" href="#L532">532</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L533" href="#L533">533</a>         <strong class="jxr_keyword">public</strong> <a name="MoneyWiseRegion" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseRegion.html#MoneyWiseRegion">MoneyWiseRegion</a> findItemByName(<strong class="jxr_keyword">final</strong> String pName) {
+<a class="jxr_linenumber" name="L534" href="#L534">534</a>             <strong class="jxr_keyword">return</strong> findItemByKey(pName);
+<a class="jxr_linenumber" name="L535" href="#L535">535</a>         }
+<a class="jxr_linenumber" name="L536" href="#L536">536</a> 
+<a class="jxr_linenumber" name="L537" href="#L537">537</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L538" href="#L538">538</a> <em class="jxr_javadoccomment">         * Check validity of name.</em>
+<a class="jxr_linenumber" name="L539" href="#L539">539</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="L540" href="#L540">540</a> <em class="jxr_javadoccomment">         * @param pName the name to look up</em>
+<a class="jxr_linenumber" name="L541" href="#L541">541</a> <em class="jxr_javadoccomment">         * @return true/false</em>
+<a class="jxr_linenumber" name="L542" href="#L542">542</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L543" href="#L543">543</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> validNameCount(<strong class="jxr_keyword">final</strong> String pName) {
+<a class="jxr_linenumber" name="L544" href="#L544">544</a>             <strong class="jxr_keyword">return</strong> validKeyCount(pName);
+<a class="jxr_linenumber" name="L545" href="#L545">545</a>         }
+<a class="jxr_linenumber" name="L546" href="#L546">546</a> 
+<a class="jxr_linenumber" name="L547" href="#L547">547</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L548" href="#L548">548</a> <em class="jxr_javadoccomment">         * Check availability of name.</em>
+<a class="jxr_linenumber" name="L549" href="#L549">549</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="L550" href="#L550">550</a> <em class="jxr_javadoccomment">         * @param pName the key to look up</em>
+<a class="jxr_linenumber" name="L551" href="#L551">551</a> <em class="jxr_javadoccomment">         * @return true/false</em>
+<a class="jxr_linenumber" name="L552" href="#L552">552</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L553" href="#L553">553</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> availableName(<strong class="jxr_keyword">final</strong> String pName) {
+<a class="jxr_linenumber" name="L554" href="#L554">554</a>             <strong class="jxr_keyword">return</strong> availableKey(pName);
+<a class="jxr_linenumber" name="L555" href="#L555">555</a>         }
+<a class="jxr_linenumber" name="L556" href="#L556">556</a>     }
+<a class="jxr_linenumber" name="L557" href="#L557">557</a> }
 </pre>
 <hr/>
 <div id="footer">© 2012–2026</div>

@@ -153,7 +153,7 @@ public abstract class GordianBlake2Base
 <span class="fc" id="L153">        theMaxDepth = 1;</span>
 
         /* Determine maxXofLen */
-<span class="fc bfc" id="L156" title="All 2 branches covered.">        theMaxXofLen = this instanceof GordianBlake2bDigest ? 0xFFFFFFFEL : 0xFFFEL;</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        theMaxXofLen = isBlake2b() ? 0xFFFFFFFEL : 0xFFFEL;</span>
 <span class="fc" id="L157">    }</span>
 
     /**
@@ -171,20 +171,27 @@ public abstract class GordianBlake2Base
 <span class="fc" id="L171">    }</span>
 
     /**
+     * Is the digest a blake2b digest?
+     *
+     * @return true/false
+     */
+    public abstract boolean isBlake2b();
+
+    /**
      * Set the digestLength.
      *
      * @param pLength the digestLength.
      */
     void setDigestLength(final int pLength) {
-<span class="pc bpc" id="L179" title="2 of 4 branches missed.">        if (pLength &lt; 0 || pLength &gt; theBuffer.length &lt;&lt; 2) {</span>
-<span class="nc" id="L180">            throw new IllegalArgumentException(&quot;DigestLength out of range&quot;);</span>
+<span class="pc bpc" id="L186" title="2 of 4 branches missed.">        if (pLength &lt; 0 || pLength &gt; theBuffer.length &lt;&lt; 2) {</span>
+<span class="nc" id="L187">            throw new IllegalArgumentException(&quot;DigestLength out of range&quot;);</span>
         }
-<span class="fc" id="L182">        theDigestLen = (short) pLength;</span>
-<span class="fc" id="L183">    }</span>
+<span class="fc" id="L189">        theDigestLen = (short) pLength;</span>
+<span class="fc" id="L190">    }</span>
 
     @Override
     public int getDigestSize() {
-<span class="fc" id="L187">        return theDigestLen;</span>
+<span class="fc" id="L194">        return theDigestLen;</span>
     }
 
     /**
@@ -194,15 +201,15 @@ public abstract class GordianBlake2Base
      */
     public void init(final GordianBlake2Parameters pParams) {
         /* Store parameters */
-<span class="fc" id="L197">        setKey(pParams.getKey());</span>
-<span class="fc" id="L198">        setSalt(pParams.getSalt());</span>
-<span class="fc" id="L199">        setPersonalisation(pParams.getPersonalisation());</span>
-<span class="fc" id="L200">        setXofLen(pParams.getMaxOutputLength());</span>
-<span class="fc" id="L201">        setTreeConfig(pParams.getTreeFanOut(), pParams.getTreeMaxDepth(), pParams.getTreeLeafLen());</span>
+<span class="fc" id="L204">        setKey(pParams.getKey());</span>
+<span class="fc" id="L205">        setSalt(pParams.getSalt());</span>
+<span class="fc" id="L206">        setPersonalisation(pParams.getPersonalisation());</span>
+<span class="fc" id="L207">        setXofLen(pParams.getMaxOutputLength());</span>
+<span class="fc" id="L208">        setTreeConfig(pParams.getTreeFanOut(), pParams.getTreeMaxDepth(), pParams.getTreeLeafLen());</span>
 
         /* Reset the cipher */
-<span class="fc" id="L204">        reset();</span>
-<span class="fc" id="L205">    }</span>
+<span class="fc" id="L211">        reset();</span>
+<span class="fc" id="L212">    }</span>
 
     /**
      * Set the key.
@@ -210,26 +217,26 @@ public abstract class GordianBlake2Base
      * @param pKey the key.
      */
     void setKey(final byte[] pKey) {
-<span class="fc bfc" id="L213" title="All 4 branches covered.">        if (pKey == null || pKey.length == 0) {</span>
-<span class="fc" id="L214">            clearKey();</span>
-<span class="fc" id="L215">            theKey = null;</span>
+<span class="fc bfc" id="L220" title="All 4 branches covered.">        if (pKey == null || pKey.length == 0) {</span>
+<span class="fc" id="L221">            clearKey();</span>
+<span class="fc" id="L222">            theKey = null;</span>
         } else {
-<span class="pc bpc" id="L217" title="1 of 2 branches missed.">            if (pKey.length &gt; theBuffer.length &gt;&gt; 1) {</span>
-<span class="nc" id="L218">                throw new IllegalArgumentException(&quot;Key too long&quot;);</span>
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">            if (pKey.length &gt; theBuffer.length &gt;&gt; 1) {</span>
+<span class="nc" id="L225">                throw new IllegalArgumentException(&quot;Key too long&quot;);</span>
             }
-<span class="fc" id="L220">            clearKey();</span>
-<span class="fc" id="L221">            theKey = Arrays.copyOf(pKey, pKey.length);</span>
+<span class="fc" id="L227">            clearKey();</span>
+<span class="fc" id="L228">            theKey = Arrays.copyOf(pKey, pKey.length);</span>
         }
-<span class="fc" id="L223">    }</span>
+<span class="fc" id="L230">    }</span>
 
     /**
      * Clear the key.
      */
     private void clearKey() {
-<span class="fc bfc" id="L229" title="All 2 branches covered.">        if (theKey != null) {</span>
-<span class="fc" id="L230">            Arrays.fill(theKey, (byte) 0);</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">        if (theKey != null) {</span>
+<span class="fc" id="L237">            Arrays.fill(theKey, (byte) 0);</span>
         }
-<span class="fc" id="L232">    }</span>
+<span class="fc" id="L239">    }</span>
 
     /**
      * Obtain the keyLength.
@@ -237,7 +244,7 @@ public abstract class GordianBlake2Base
      * @return the keyLength
      */
     int getKeyLen() {
-<span class="fc bfc" id="L240" title="All 2 branches covered.">        return theKey == null ? 0 : theKey.length;</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">        return theKey == null ? 0 : theKey.length;</span>
     }
 
     /**
@@ -246,15 +253,15 @@ public abstract class GordianBlake2Base
      * @param pSalt the salt.
      */
     void setSalt(final byte[] pSalt) {
-<span class="pc bpc" id="L249" title="1 of 4 branches missed.">        if (pSalt == null || pSalt.length == 0) {</span>
-<span class="fc" id="L250">            theSalt = null;</span>
+<span class="pc bpc" id="L256" title="1 of 4 branches missed.">        if (pSalt == null || pSalt.length == 0) {</span>
+<span class="fc" id="L257">            theSalt = null;</span>
         } else {
-<span class="pc bpc" id="L252" title="1 of 2 branches missed.">            if (pSalt.length != theBuffer.length &gt;&gt; 3) {</span>
-<span class="nc" id="L253">                throw new IllegalArgumentException(&quot;Salt incorrect length&quot;);</span>
+<span class="pc bpc" id="L259" title="1 of 2 branches missed.">            if (pSalt.length != theBuffer.length &gt;&gt; 3) {</span>
+<span class="nc" id="L260">                throw new IllegalArgumentException(&quot;Salt incorrect length&quot;);</span>
             }
-<span class="fc" id="L255">            theSalt = Arrays.copyOf(pSalt, pSalt.length);</span>
+<span class="fc" id="L262">            theSalt = Arrays.copyOf(pSalt, pSalt.length);</span>
         }
-<span class="fc" id="L257">    }</span>
+<span class="fc" id="L264">    }</span>
 
     /**
      * Obtain the salt.
@@ -262,7 +269,7 @@ public abstract class GordianBlake2Base
      * @return the salt
      */
     byte[] getSalt() {
-<span class="fc" id="L265">        return theSalt;</span>
+<span class="fc" id="L272">        return theSalt;</span>
     }
 
     /**
@@ -271,15 +278,15 @@ public abstract class GordianBlake2Base
      * @param pPersonal the personalisation.
      */
     void setPersonalisation(final byte[] pPersonal) {
-<span class="pc bpc" id="L274" title="3 of 4 branches missed.">        if (pPersonal == null || pPersonal.length == 0) {</span>
-<span class="fc" id="L275">            thePersonal = null;</span>
+<span class="pc bpc" id="L281" title="3 of 4 branches missed.">        if (pPersonal == null || pPersonal.length == 0) {</span>
+<span class="fc" id="L282">            thePersonal = null;</span>
         } else {
-<span class="nc bnc" id="L277" title="All 2 branches missed.">            if (pPersonal.length != theBuffer.length &gt;&gt; 3) {</span>
-<span class="nc" id="L278">                throw new IllegalArgumentException(&quot;Personalisation incorrect length&quot;);</span>
+<span class="nc bnc" id="L284" title="All 2 branches missed.">            if (pPersonal.length != theBuffer.length &gt;&gt; 3) {</span>
+<span class="nc" id="L285">                throw new IllegalArgumentException(&quot;Personalisation incorrect length&quot;);</span>
             }
-<span class="nc" id="L280">            thePersonal = Arrays.copyOf(pPersonal, pPersonal.length);</span>
+<span class="nc" id="L287">            thePersonal = Arrays.copyOf(pPersonal, pPersonal.length);</span>
         }
-<span class="fc" id="L282">    }</span>
+<span class="fc" id="L289">    }</span>
 
     /**
      * Obtain the personalisation.
@@ -287,7 +294,7 @@ public abstract class GordianBlake2Base
      * @return the personalisation
      */
     byte[] getPersonal() {
-<span class="fc" id="L290">        return thePersonal;</span>
+<span class="fc" id="L297">        return thePersonal;</span>
     }
 
     /**
@@ -296,11 +303,11 @@ public abstract class GordianBlake2Base
      * @param pXofLen the xofLength.
      */
     void setXofLen(final long pXofLen) {
-<span class="pc bpc" id="L299" title="2 of 4 branches missed.">        if (pXofLen &lt; -1 || pXofLen &gt; theMaxXofLen) {</span>
-<span class="nc" id="L300">            throw new IllegalArgumentException(&quot;XofLength out of range&quot;);</span>
+<span class="pc bpc" id="L306" title="2 of 4 branches missed.">        if (pXofLen &lt; -1 || pXofLen &gt; theMaxXofLen) {</span>
+<span class="nc" id="L307">            throw new IllegalArgumentException(&quot;XofLength out of range&quot;);</span>
         }
-<span class="fc" id="L302">        theXofLen = (int) pXofLen;</span>
-<span class="fc" id="L303">    }</span>
+<span class="fc" id="L309">        theXofLen = (int) pXofLen;</span>
+<span class="fc" id="L310">    }</span>
 
     /**
      * Obtain the xofLength.
@@ -308,7 +315,7 @@ public abstract class GordianBlake2Base
      * @return the xofLength
      */
     int getXofLen() {
-<span class="fc" id="L311">        return theXofLen;</span>
+<span class="fc" id="L318">        return theXofLen;</span>
     }
 
     /**
@@ -322,36 +329,36 @@ public abstract class GordianBlake2Base
                        final int pMaxDepth,
                        final int pLeafLen) {
         /* Check that fanOut value makes sense */
-<span class="pc bpc" id="L325" title="2 of 4 branches missed.">        if (pFanOut &lt; 0 || pFanOut &gt; MAXBYTE) {</span>
-<span class="nc" id="L326">            throw new IllegalArgumentException(&quot;FanOut out of range&quot;);</span>
+<span class="pc bpc" id="L332" title="2 of 4 branches missed.">        if (pFanOut &lt; 0 || pFanOut &gt; MAXBYTE) {</span>
+<span class="nc" id="L333">            throw new IllegalArgumentException(&quot;FanOut out of range&quot;);</span>
         }
-<span class="fc bfc" id="L328" title="All 2 branches covered.">        final boolean seqMode = pFanOut == 1;</span>
+<span class="fc bfc" id="L335" title="All 2 branches covered.">        final boolean seqMode = pFanOut == 1;</span>
 
         /* Check that maxDepth value makes sense */
-<span class="fc bfc" id="L331" title="All 2 branches covered.">        final boolean xofMode = pMaxDepth == 0;</span>
-<span class="pc bpc" id="L332" title="2 of 4 branches missed.">        if (pMaxDepth &lt; 0 || pMaxDepth &gt; MAXBYTE) {</span>
-<span class="nc" id="L333">            throw new IllegalArgumentException(&quot;MaxDepth out of range&quot;);</span>
+<span class="fc bfc" id="L338" title="All 2 branches covered.">        final boolean xofMode = pMaxDepth == 0;</span>
+<span class="pc bpc" id="L339" title="2 of 4 branches missed.">        if (pMaxDepth &lt; 0 || pMaxDepth &gt; MAXBYTE) {</span>
+<span class="nc" id="L340">            throw new IllegalArgumentException(&quot;MaxDepth out of range&quot;);</span>
         }
-<span class="pc bpc" id="L335" title="1 of 4 branches missed.">        if (seqMode != (pMaxDepth == 1)) {</span>
-<span class="nc" id="L336">            throw new IllegalArgumentException(&quot;Inconsistent treeConfig for sequentialMode&quot;);</span>
+<span class="pc bpc" id="L342" title="1 of 4 branches missed.">        if (seqMode != (pMaxDepth == 1)) {</span>
+<span class="nc" id="L343">            throw new IllegalArgumentException(&quot;Inconsistent treeConfig for sequentialMode&quot;);</span>
         }
 
         /* Check that leaf value makes sense */
-<span class="pc bpc" id="L340" title="1 of 2 branches missed.">        if (pLeafLen &lt; 0) {</span>
-<span class="nc" id="L341">            throw new IllegalArgumentException(&quot;LeafLength out of range&quot;);</span>
+<span class="pc bpc" id="L347" title="1 of 2 branches missed.">        if (pLeafLen &lt; 0) {</span>
+<span class="nc" id="L348">            throw new IllegalArgumentException(&quot;LeafLength out of range&quot;);</span>
         }
-<span class="pc bpc" id="L343" title="1 of 4 branches missed.">        if (seqMode != (pLeafLen == 0)) {</span>
-<span class="nc" id="L344">            throw new IllegalArgumentException(&quot;Inconsistent treeConfig for LeafLen and fanOut&quot;);</span>
+<span class="pc bpc" id="L350" title="1 of 4 branches missed.">        if (seqMode != (pLeafLen == 0)) {</span>
+<span class="nc" id="L351">            throw new IllegalArgumentException(&quot;Inconsistent treeConfig for LeafLen and fanOut&quot;);</span>
         }
-<span class="pc bpc" id="L346" title="1 of 4 branches missed.">        if (xofMode &amp;&amp; pFanOut != 0) {</span>
-<span class="nc" id="L347">            throw new IllegalArgumentException(&quot;Inconsistent treeConfig for xofMode&quot;);</span>
+<span class="pc bpc" id="L353" title="1 of 4 branches missed.">        if (xofMode &amp;&amp; pFanOut != 0) {</span>
+<span class="nc" id="L354">            throw new IllegalArgumentException(&quot;Inconsistent treeConfig for xofMode&quot;);</span>
         }
 
         /* Record the values */
-<span class="fc" id="L351">        theFanOut = (short) pFanOut;</span>
-<span class="fc" id="L352">        theMaxDepth = (short) pMaxDepth;</span>
-<span class="fc" id="L353">        theLeafLen = pLeafLen;</span>
-<span class="fc" id="L354">    }</span>
+<span class="fc" id="L358">        theFanOut = (short) pFanOut;</span>
+<span class="fc" id="L359">        theMaxDepth = (short) pMaxDepth;</span>
+<span class="fc" id="L360">        theLeafLen = pLeafLen;</span>
+<span class="fc" id="L361">    }</span>
 
     /**
      * Obtain the fanout.
@@ -359,7 +366,7 @@ public abstract class GordianBlake2Base
      * @return the fanout
      */
     short getFanOut() {
-<span class="fc" id="L362">        return theFanOut;</span>
+<span class="fc" id="L369">        return theFanOut;</span>
     }
 
     /**
@@ -368,7 +375,7 @@ public abstract class GordianBlake2Base
      * @return the maxDepth
      */
     short getMaxDepth() {
-<span class="fc" id="L371">        return theMaxDepth;</span>
+<span class="fc" id="L378">        return theMaxDepth;</span>
     }
 
     /**
@@ -377,7 +384,7 @@ public abstract class GordianBlake2Base
      * @return the leafLength
      */
     int getLeafLen() {
-<span class="fc" id="L380">        return theLeafLen;</span>
+<span class="fc" id="L387">        return theLeafLen;</span>
     }
 
     /**
@@ -388,16 +395,16 @@ public abstract class GordianBlake2Base
      */
     void setNodePosition(final int pOffset,
                          final int pDepth) {
-<span class="pc bpc" id="L391" title="1 of 2 branches missed.">        if (pOffset &lt; 0) {</span>
-<span class="nc" id="L392">            throw new IllegalArgumentException(&quot;NodeOffset out of range&quot;);</span>
+<span class="pc bpc" id="L398" title="1 of 2 branches missed.">        if (pOffset &lt; 0) {</span>
+<span class="nc" id="L399">            throw new IllegalArgumentException(&quot;NodeOffset out of range&quot;);</span>
         }
-<span class="fc" id="L394">        theNodeOffset = pOffset;</span>
-<span class="pc bpc" id="L395" title="2 of 4 branches missed.">        if (pDepth &lt; 0 || pDepth &gt; MAXBYTE) {</span>
-<span class="nc" id="L396">            throw new IllegalArgumentException(&quot;NodeDepth out of range&quot;);</span>
+<span class="fc" id="L401">        theNodeOffset = pOffset;</span>
+<span class="pc bpc" id="L402" title="2 of 4 branches missed.">        if (pDepth &lt; 0 || pDepth &gt; MAXBYTE) {</span>
+<span class="nc" id="L403">            throw new IllegalArgumentException(&quot;NodeDepth out of range&quot;);</span>
         }
-<span class="fc" id="L398">        theNodeDepth = (byte) pDepth;</span>
-<span class="fc" id="L399">        reset();</span>
-<span class="fc" id="L400">    }</span>
+<span class="fc" id="L405">        theNodeDepth = (byte) pDepth;</span>
+<span class="fc" id="L406">        reset();</span>
+<span class="fc" id="L407">    }</span>
 
     /**
      * Obtain the nodeOffset.
@@ -405,7 +412,7 @@ public abstract class GordianBlake2Base
      * @return the nodeOffset
      */
     int getNodeOffset() {
-<span class="fc" id="L408">        return theNodeOffset;</span>
+<span class="fc" id="L415">        return theNodeOffset;</span>
     }
 
     /**
@@ -414,7 +421,7 @@ public abstract class GordianBlake2Base
      * @return the nodeDepth
      */
     short getNodeDepth() {
-<span class="fc" id="L417">        return theNodeDepth;</span>
+<span class="fc" id="L424">        return theNodeDepth;</span>
     }
 
     /**
@@ -423,15 +430,15 @@ public abstract class GordianBlake2Base
      * @return true/false
      */
     boolean isLastBlock() {
-<span class="fc" id="L426">        return isLastBlock;</span>
+<span class="fc" id="L433">        return isLastBlock;</span>
     }
 
     /**
      * Set the lastNode indicator.
      */
     void setLastNode() {
-<span class="fc" id="L433">        isLastNode = true;</span>
-<span class="fc" id="L434">    }</span>
+<span class="fc" id="L440">        isLastNode = true;</span>
+<span class="fc" id="L441">    }</span>
 
     /**
      * is this the last node?
@@ -439,7 +446,7 @@ public abstract class GordianBlake2Base
      * @return true/false
      */
     boolean isLastNode() {
-<span class="fc" id="L442">        return isLastNode;</span>
+<span class="fc" id="L449">        return isLastNode;</span>
     }
 
     /**
@@ -448,11 +455,11 @@ public abstract class GordianBlake2Base
      * @param pInnerLen the innerLength.
      */
     void setInnerLength(final int pInnerLen) {
-<span class="pc bpc" id="L451" title="2 of 4 branches missed.">        if (pInnerLen &lt; 0 || pInnerLen &gt; MAXBYTE) {</span>
-<span class="nc" id="L452">            throw new IllegalArgumentException(&quot;InnerLength out of range&quot;);</span>
+<span class="pc bpc" id="L458" title="2 of 4 branches missed.">        if (pInnerLen &lt; 0 || pInnerLen &gt; MAXBYTE) {</span>
+<span class="nc" id="L459">            throw new IllegalArgumentException(&quot;InnerLength out of range&quot;);</span>
         }
-<span class="fc" id="L454">        theInnerLen = (short) pInnerLen;</span>
-<span class="fc" id="L455">    }</span>
+<span class="fc" id="L461">        theInnerLen = (short) pInnerLen;</span>
+<span class="fc" id="L462">    }</span>
 
     /**
      * Obtain the innerLength.
@@ -460,118 +467,118 @@ public abstract class GordianBlake2Base
      * @return the innerLength
      */
     short getInnerLen() {
-<span class="fc" id="L463">        return theInnerLen;</span>
+<span class="fc" id="L470">        return theInnerLen;</span>
     }
 
     @Override
     public void update(final byte b) {
         /* If the buffer is full */
-<span class="fc" id="L469">        final int blockLen = theBuffer.length;</span>
-<span class="fc" id="L470">        final int remainingLength = blockLen - thePos;</span>
-<span class="pc bpc" id="L471" title="1 of 2 branches missed.">        if (remainingLength == 0) {</span>
+<span class="fc" id="L476">        final int blockLen = theBuffer.length;</span>
+<span class="fc" id="L477">        final int remainingLength = blockLen - thePos;</span>
+<span class="pc bpc" id="L478" title="1 of 2 branches missed.">        if (remainingLength == 0) {</span>
             /* Process the buffer */
-<span class="nc" id="L473">            adjustCounter(blockLen);</span>
-<span class="nc" id="L474">            compressF(theBuffer, 0);</span>
+<span class="nc" id="L480">            adjustCounter(blockLen);</span>
+<span class="nc" id="L481">            compressF(theBuffer, 0);</span>
 
             /* Reset the buffer */
-<span class="nc" id="L477">            Arrays.fill(theBuffer, (byte) 0);</span>
-<span class="nc" id="L478">            thePos = 0;</span>
+<span class="nc" id="L484">            Arrays.fill(theBuffer, (byte) 0);</span>
+<span class="nc" id="L485">            thePos = 0;</span>
         }
 
         /* Store the byte */
-<span class="fc" id="L482">        theBuffer[thePos] = b;</span>
-<span class="fc" id="L483">        thePos++;</span>
-<span class="fc" id="L484">    }</span>
+<span class="fc" id="L489">        theBuffer[thePos] = b;</span>
+<span class="fc" id="L490">        thePos++;</span>
+<span class="fc" id="L491">    }</span>
 
     @Override
     public void update(final byte[] pMessage,
                        final int pOffset,
                        final int pLen) {
         /* Ignore null operation */
-<span class="pc bpc" id="L491" title="1 of 4 branches missed.">        if (pMessage == null || pLen == 0) {</span>
-<span class="fc" id="L492">            return;</span>
+<span class="pc bpc" id="L498" title="1 of 4 branches missed.">        if (pMessage == null || pLen == 0) {</span>
+<span class="fc" id="L499">            return;</span>
         }
 
         /* Process any bytes currently in the buffer */
-<span class="fc" id="L496">        final int blockLen = theBuffer.length;</span>
-<span class="fc" id="L497">        int remainingLen = 0; // left bytes of buffer</span>
-<span class="fc bfc" id="L498" title="All 2 branches covered.">        if (thePos != 0) {</span>
+<span class="fc" id="L503">        final int blockLen = theBuffer.length;</span>
+<span class="fc" id="L504">        int remainingLen = 0; // left bytes of buffer</span>
+<span class="fc bfc" id="L505" title="All 2 branches covered.">        if (thePos != 0) {</span>
             /* Calculate space remaining in the buffer */
-<span class="fc" id="L500">            remainingLen = blockLen - thePos;</span>
+<span class="fc" id="L507">            remainingLen = blockLen - thePos;</span>
 
             /* If there is sufficient space in the buffer */
-<span class="fc bfc" id="L503" title="All 2 branches covered.">            if (remainingLen &gt;= pLen) {</span>
+<span class="fc bfc" id="L510" title="All 2 branches covered.">            if (remainingLen &gt;= pLen) {</span>
                 /* Copy date into byffer and return */
-<span class="fc" id="L505">                System.arraycopy(pMessage, pOffset, theBuffer, thePos, pLen);</span>
-<span class="fc" id="L506">                thePos += pLen;</span>
-<span class="fc" id="L507">                return;</span>
+<span class="fc" id="L512">                System.arraycopy(pMessage, pOffset, theBuffer, thePos, pLen);</span>
+<span class="fc" id="L513">                thePos += pLen;</span>
+<span class="fc" id="L514">                return;</span>
             }
 
             /* Fill the buffer */
-<span class="fc" id="L511">            System.arraycopy(pMessage, pOffset, theBuffer, thePos, remainingLen);</span>
+<span class="fc" id="L518">            System.arraycopy(pMessage, pOffset, theBuffer, thePos, remainingLen);</span>
 
             /* Adjust bytes count */
-<span class="fc" id="L514">            adjustCounter(blockLen);</span>
+<span class="fc" id="L521">            adjustCounter(blockLen);</span>
 
             /* Process the buffer */
-<span class="fc" id="L517">            compressF(theBuffer, 0);</span>
+<span class="fc" id="L524">            compressF(theBuffer, 0);</span>
 
             /* Reset the buffer */
-<span class="fc" id="L520">            thePos = 0;</span>
-<span class="fc" id="L521">            Arrays.fill(theBuffer, (byte) 0);</span>
+<span class="fc" id="L527">            thePos = 0;</span>
+<span class="fc" id="L528">            Arrays.fill(theBuffer, (byte) 0);</span>
         }
 
         /* process all blocks except the last one */
         int messagePos;
-<span class="fc" id="L526">        final int blockWiseLastPos = pOffset + pLen - blockLen;</span>
-<span class="fc bfc" id="L527" title="All 2 branches covered.">        for (messagePos = pOffset + remainingLen; messagePos &lt; blockWiseLastPos; messagePos += blockLen) {</span>
+<span class="fc" id="L533">        final int blockWiseLastPos = pOffset + pLen - blockLen;</span>
+<span class="fc bfc" id="L534" title="All 2 branches covered.">        for (messagePos = pOffset + remainingLen; messagePos &lt; blockWiseLastPos; messagePos += blockLen) {</span>
             /* Adjust bytes count */
-<span class="fc" id="L529">            adjustCounter(blockLen);</span>
+<span class="fc" id="L536">            adjustCounter(blockLen);</span>
 
             /* Process the buffer */
-<span class="fc" id="L532">            compressF(pMessage, messagePos);</span>
+<span class="fc" id="L539">            compressF(pMessage, messagePos);</span>
         }
 
         /* Fill the buffer with the remaining bytes of the message */
-<span class="fc" id="L536">        final int len = pLen - messagePos;</span>
-<span class="fc" id="L537">        System.arraycopy(pMessage, messagePos, theBuffer, 0, pOffset + len);</span>
-<span class="fc" id="L538">        thePos += pOffset + len;</span>
-<span class="fc" id="L539">    }</span>
+<span class="fc" id="L543">        final int len = pLen - messagePos;</span>
+<span class="fc" id="L544">        System.arraycopy(pMessage, messagePos, theBuffer, 0, pOffset + len);</span>
+<span class="fc" id="L545">        thePos += pOffset + len;</span>
+<span class="fc" id="L546">    }</span>
 
     @Override
     public int doFinal(final byte[] pOut,
                        final int pOutOffset) {
         /* Adjust flags and counter */
-<span class="fc" id="L545">        isLastBlock = true;</span>
-<span class="fc" id="L546">        completeCounter(thePos);</span>
+<span class="fc" id="L552">        isLastBlock = true;</span>
+<span class="fc" id="L553">        completeCounter(thePos);</span>
 
         /* Process the buffer */
-<span class="fc" id="L549">        compressF(theBuffer, 0);</span>
-<span class="fc" id="L550">        Arrays.fill(theBuffer, (byte) 0);</span>
+<span class="fc" id="L556">        compressF(theBuffer, 0);</span>
+<span class="fc" id="L557">        Arrays.fill(theBuffer, (byte) 0);</span>
 
         /* Output the digest */
-<span class="fc" id="L553">        outputDigest(pOut, pOutOffset);</span>
+<span class="fc" id="L560">        outputDigest(pOut, pOutOffset);</span>
 
         /* Reset the state */
-<span class="fc" id="L556">        reset();</span>
+<span class="fc" id="L563">        reset();</span>
 
         /* Return the digest length */
-<span class="fc" id="L559">        return theDigestLen;</span>
+<span class="fc" id="L566">        return theDigestLen;</span>
     }
 
     @Override
     public void reset() {
         /* Reset flags */
-<span class="fc" id="L565">        isLastBlock = false;</span>
-<span class="fc" id="L566">        isLastNode = false;</span>
+<span class="fc" id="L572">        isLastBlock = false;</span>
+<span class="fc" id="L573">        isLastNode = false;</span>
 
         /* Reset the data Buffer */
-<span class="fc" id="L569">        thePos = 0;</span>
-<span class="fc" id="L570">        Arrays.fill(theBuffer, (byte) 0);</span>
+<span class="fc" id="L576">        thePos = 0;</span>
+<span class="fc" id="L577">        Arrays.fill(theBuffer, (byte) 0);</span>
 
         /* Activate */
-<span class="fc" id="L573">        activateH();</span>
-<span class="fc" id="L574">    }</span>
+<span class="fc" id="L580">        activateH();</span>
+<span class="fc" id="L581">    }</span>
 
     /**
      * Copy state from source.
@@ -580,27 +587,27 @@ public abstract class GordianBlake2Base
      */
     void reset(final GordianBlake2Base pSource) {
         /* Copy config */
-<span class="fc" id="L583">        theDigestLen = pSource.theDigestLen;</span>
-<span class="fc" id="L584">        theInnerLen = pSource.theInnerLen;</span>
-<span class="fc" id="L585">        theLeafLen = pSource.theLeafLen;</span>
-<span class="fc" id="L586">        theXofLen = pSource.theXofLen;</span>
-<span class="fc" id="L587">        theFanOut = pSource.theFanOut;</span>
-<span class="fc" id="L588">        theMaxDepth = pSource.theMaxDepth;</span>
-<span class="fc" id="L589">        theNodeDepth = pSource.theNodeDepth;</span>
-<span class="fc" id="L590">        theNodeOffset = pSource.theNodeOffset;</span>
+<span class="fc" id="L590">        theDigestLen = pSource.theDigestLen;</span>
+<span class="fc" id="L591">        theInnerLen = pSource.theInnerLen;</span>
+<span class="fc" id="L592">        theLeafLen = pSource.theLeafLen;</span>
+<span class="fc" id="L593">        theXofLen = pSource.theXofLen;</span>
+<span class="fc" id="L594">        theFanOut = pSource.theFanOut;</span>
+<span class="fc" id="L595">        theMaxDepth = pSource.theMaxDepth;</span>
+<span class="fc" id="L596">        theNodeDepth = pSource.theNodeDepth;</span>
+<span class="fc" id="L597">        theNodeOffset = pSource.theNodeOffset;</span>
 
         /* Copy flags */
-<span class="fc" id="L593">        isLastNode = pSource.isLastNode;</span>
+<span class="fc" id="L600">        isLastNode = pSource.isLastNode;</span>
 
         /* Clone arrays */
-<span class="fc" id="L596">        theKey = Arrays.clone(pSource.theKey);</span>
-<span class="fc" id="L597">        theSalt = Arrays.clone(pSource.theSalt);</span>
-<span class="fc" id="L598">        thePersonal = Arrays.clone(pSource.thePersonal);</span>
+<span class="fc" id="L603">        theKey = Arrays.clone(pSource.theKey);</span>
+<span class="fc" id="L604">        theSalt = Arrays.clone(pSource.theSalt);</span>
+<span class="fc" id="L605">        thePersonal = Arrays.clone(pSource.thePersonal);</span>
 
         /* Copy buffer */
-<span class="fc" id="L601">        System.arraycopy(pSource.theBuffer, 0, theBuffer, 0, theBuffer.length);</span>
-<span class="fc" id="L602">        thePos = pSource.thePos;</span>
-<span class="fc" id="L603">    }</span>
+<span class="fc" id="L608">        System.arraycopy(pSource.theBuffer, 0, theBuffer, 0, theBuffer.length);</span>
+<span class="fc" id="L609">        thePos = pSource.thePos;</span>
+<span class="fc" id="L610">    }</span>
 
     /**
      * Adjust Counter.
@@ -630,12 +637,12 @@ public abstract class GordianBlake2Base
      */
     void initKeyBlock() {
         /* If we have a key */
-<span class="fc bfc" id="L633" title="All 2 branches covered.">        if (theKey != null) {</span>
+<span class="fc bfc" id="L640" title="All 2 branches covered.">        if (theKey != null) {</span>
             /* Initialise the first data block */
-<span class="fc" id="L635">            System.arraycopy(theKey, 0, theBuffer, 0, theKey.length);</span>
-<span class="fc" id="L636">            thePos = theBuffer.length;</span>
+<span class="fc" id="L642">            System.arraycopy(theKey, 0, theBuffer, 0, theKey.length);</span>
+<span class="fc" id="L643">            thePos = theBuffer.length;</span>
         }
-<span class="fc" id="L638">    }</span>
+<span class="fc" id="L645">    }</span>
 
     /**
      * ActivateH.
@@ -649,7 +656,7 @@ public abstract class GordianBlake2Base
      * @return the Sigma
      */
     private static byte[] getSigmaForRound(final int pRound) {
-<span class="fc" id="L652">        return SIGMA[pRound % SIGMA.length];</span>
+<span class="fc" id="L659">        return SIGMA[pRound % SIGMA.length];</span>
     }
 
     /**
@@ -661,30 +668,30 @@ public abstract class GordianBlake2Base
     private void compressF(final byte[] pMessage,
                            final int pMsgPos) {
         /* Initialise the buffers */
-<span class="fc" id="L664">        initV();</span>
-<span class="fc" id="L665">        initM(pMessage, pMsgPos);</span>
+<span class="fc" id="L671">        initV();</span>
+<span class="fc" id="L672">        initM(pMessage, pMsgPos);</span>
 
         /* Loop through the rounds */
-<span class="fc bfc" id="L668" title="All 2 branches covered.">        for (int round = 0; round &lt; theRounds; round++) {</span>
+<span class="fc bfc" id="L675" title="All 2 branches covered.">        for (int round = 0; round &lt; theRounds; round++) {</span>
             /* Obtain the relevant SIGMA */
-<span class="fc" id="L670">            final byte[] sigma = getSigmaForRound(round);</span>
+<span class="fc" id="L677">            final byte[] sigma = getSigmaForRound(round);</span>
 
             /* Apply to columns of V */
-<span class="fc" id="L673">            mixG(sigma[0], sigma[1], 0, 4, 8, 12);</span>
-<span class="fc" id="L674">            mixG(sigma[2], sigma[3], 1, 5, 9, 13);</span>
-<span class="fc" id="L675">            mixG(sigma[4], sigma[5], 2, 6, 10, 14);</span>
-<span class="fc" id="L676">            mixG(sigma[6], sigma[7], 3, 7, 11, 15);</span>
+<span class="fc" id="L680">            mixG(sigma[0], sigma[1], 0, 4, 8, 12);</span>
+<span class="fc" id="L681">            mixG(sigma[2], sigma[3], 1, 5, 9, 13);</span>
+<span class="fc" id="L682">            mixG(sigma[4], sigma[5], 2, 6, 10, 14);</span>
+<span class="fc" id="L683">            mixG(sigma[6], sigma[7], 3, 7, 11, 15);</span>
 
             /* Apply to diagonals of V */
-<span class="fc" id="L679">            mixG(sigma[8], sigma[9], 0, 5, 10, 15);</span>
-<span class="fc" id="L680">            mixG(sigma[10], sigma[11], 1, 6, 11, 12);</span>
-<span class="fc" id="L681">            mixG(sigma[12], sigma[13], 2, 7, 8, 13);</span>
-<span class="fc" id="L682">            mixG(sigma[14], sigma[15], 3, 4, 9, 14);</span>
+<span class="fc" id="L686">            mixG(sigma[8], sigma[9], 0, 5, 10, 15);</span>
+<span class="fc" id="L687">            mixG(sigma[10], sigma[11], 1, 6, 11, 12);</span>
+<span class="fc" id="L688">            mixG(sigma[12], sigma[13], 2, 7, 8, 13);</span>
+<span class="fc" id="L689">            mixG(sigma[14], sigma[15], 3, 4, 9, 14);</span>
         }
 
         /* Adjust H */
-<span class="fc" id="L686">        adjustH();</span>
-<span class="fc" id="L687">    }</span>
+<span class="fc" id="L693">        adjustH();</span>
+<span class="fc" id="L694">    }</span>
 
     /**
      * Initialise V.

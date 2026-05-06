@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreKeySetSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset</a> &gt; <span class="el_source">GordianCoreKeySetSpec.java</span></div><h1>GordianCoreKeySetSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
+
+import java.util.Objects;
+
+/**
+ * KeySet Specification.
+ */
+public class GordianCoreKeySetSpec
+        implements GordianKeySetSpec {
+    /**
+     * Default KeyLength.
+     */
+<span class="fc" id="L34">    public static final GordianLength DEFAULT_KEYLEN = GordianLength.LEN_256;</span>
+
+    /**
+     * KeyLength.
+     */
+    private final GordianLength theKeyLength;
+
+    /**
+     * Number of CipherSteps.
+     */
+    private final int theCipherSteps;
+
+    /**
+     * Is the Spec valid?.
+     */
+    private final boolean isValid;
+
+    /**
+     * Constructor.
+     */
+    GordianCoreKeySetSpec() {
+<span class="fc" id="L55">        this(DEFAULT_KEYLEN);</span>
+<span class="fc" id="L56">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pKeyLen the keyLength.
+     */
+    GordianCoreKeySetSpec(final GordianLength pKeyLen) {
+<span class="fc" id="L64">        this(pKeyLen, DEFAULT_CIPHER_STEPS);</span>
+<span class="fc" id="L65">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pKeyLen   the keyLength.
+     * @param pNumSteps the number of cipherSteps
+     */
+    GordianCoreKeySetSpec(final GordianLength pKeyLen,
+<span class="fc" id="L74">                          final int pNumSteps) {</span>
+<span class="fc" id="L75">        theKeyLength = pKeyLen;</span>
+<span class="fc" id="L76">        theCipherSteps = pNumSteps;</span>
+<span class="fc" id="L77">        isValid = validateKeySetSpec();</span>
+<span class="fc" id="L78">    }</span>
+
+    @Override
+    public boolean isValid() {
+<span class="fc" id="L82">        return isValid;</span>
+    }
+
+    @Override
+    public GordianLength getKeyLength() {
+<span class="fc" id="L87">        return theKeyLength;</span>
+    }
+
+    @Override
+    public int getCipherSteps() {
+<span class="fc" id="L92">        return theCipherSteps;</span>
+    }
+
+    /**
+     * Validate the Parameters.
+     *
+     * @return valid true/false
+     */
+    private boolean validateKeySetSpec() {
+        /* Check keyLength */
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if (theKeyLength == null</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">                || !GordianKeyLengths.isSupportedLength(theKeyLength)) {</span>
+<span class="nc" id="L104">            return false;</span>
+        }
+
+        /* Check cipher steps is in range */
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        return !(theCipherSteps &lt; MINIMUM_CIPHER_STEPS</span>
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">                || theCipherSteps &gt; MAXIMUM_CIPHER_STEPS);</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L116">            return true;</span>
+        }
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L119">            return false;</span>
+        }
+
+        /* Check Length and cipherSteps */
+<span class="fc" id="L123">        return pThat instanceof GordianCoreKeySetSpec myThat</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">                &amp;&amp; theKeyLength == myThat.getKeyLength()</span>
+<span class="pc bpc" id="L125" title="2 of 4 branches missed.">                &amp;&amp; theCipherSteps == myThat.getCipherSteps();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L130">        return Objects.hash(theKeyLength, theCipherSteps);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L135">        return &quot;KeySet&quot; + theKeyLength + &quot;-&quot; + theCipherSteps;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

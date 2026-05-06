@@ -17,10 +17,11 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -37,17 +38,18 @@ public class JcaDigestFactory
      */
     JcaDigestFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
-<span class="fc" id="L40">        super(pFactory);</span>
-<span class="fc" id="L41">    }</span>
+<span class="fc" id="L41">        super(pFactory);</span>
+<span class="fc" id="L42">    }</span>
 
     @Override
     public JcaDigest createDigest(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Check validity of DigestSpec */
-<span class="fc" id="L46">        checkDigestSpec(pDigestSpec);</span>
+<span class="fc" id="L47">        checkDigestSpec(pDigestSpec);</span>
+<span class="fc" id="L48">        final GordianCoreDigestSpec mySpec = (GordianCoreDigestSpec) pDigestSpec;</span>
 
         /* Create digest */
-<span class="fc" id="L49">        final MessageDigest myJavaDigest = getJavaDigest(pDigestSpec);</span>
-<span class="fc" id="L50">        return new JcaDigest(pDigestSpec, myJavaDigest);</span>
+<span class="fc" id="L51">        final MessageDigest myJavaDigest = getJavaDigest(mySpec);</span>
+<span class="fc" id="L52">        return new JcaDigest(mySpec, myJavaDigest);</span>
     }
 
     /**
@@ -57,16 +59,16 @@ public class JcaDigestFactory
      * @return the digest
      * @throws GordianException on error
      */
-    private static MessageDigest getJavaDigest(final GordianDigestSpec pDigestSpec) throws GordianException {
+    private static MessageDigest getJavaDigest(final GordianCoreDigestSpec pDigestSpec) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Return a digest for the algorithm */
-<span class="fc" id="L64">            return MessageDigest.getInstance(JcaDigest.getFullAlgorithm(pDigestSpec), JcaProvider.BCPROV);</span>
+<span class="fc" id="L66">            return MessageDigest.getInstance(JcaDigest.getFullAlgorithm(pDigestSpec), JcaProvider.BCPROV);</span>
 
             /* Catch exceptions */
-<span class="nc" id="L67">        } catch (NoSuchAlgorithmException e) {</span>
+<span class="nc" id="L69">        } catch (NoSuchAlgorithmException e) {</span>
             /* Throw the exception */
-<span class="nc" id="L69">            throw new GordianCryptoException(&quot;Failed to create Digest&quot;, e);</span>
+<span class="nc" id="L71">            throw new GordianCryptoException(&quot;Failed to create Digest&quot;, e);</span>
         }
     }
 }

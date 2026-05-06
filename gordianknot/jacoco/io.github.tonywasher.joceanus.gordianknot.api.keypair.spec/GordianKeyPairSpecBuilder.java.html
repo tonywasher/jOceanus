@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianKeyPairSpecBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.keypair.spec</a> &gt; <span class="el_source">GordianKeyPairSpecBuilder.java</span></div><h1>GordianKeyPairSpecBuilder.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.api.keypair.spec;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSHash;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSHeight;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSWidth;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSHeight;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSMTLayers;
+
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Asymmetric KeyPair Specification Builder.
+ */
+public interface GordianKeyPairSpecBuilder {
+    /**
+     * Define keyPairType.
+     *
+     * @param pType the type
+     * @return the Builder
+     */
+    GordianKeyPairSpecBuilder withKeyPairType(GordianKeyPairType pType);
+
+    /**
+     * Define enum subSpec.
+     *
+     * @param pSubSpec the subSpec
+     * @return the Builder
+     */
+    GordianKeyPairSpecBuilder withEnumSubSpec(Enum&lt;?&gt; pSubSpec);
+
+    /**
+     * Define xmss subSpec.
+     *
+     * @param pDigestType the digestType
+     * @param pHeight     the height
+     * @return the Builder
+     */
+    GordianKeyPairSpecBuilder withXMSSSubSpec(GordianXMSSDigestType pDigestType,
+                                              GordianXMSSHeight pHeight);
+
+    /**
+     * Define xmssMT subSpec.
+     *
+     * @param pDigestType the digestType
+     * @param pHeight     the height
+     * @param pLayers     the layers
+     * @return the Builder
+     */
+    GordianKeyPairSpecBuilder withXMSSMTSubSpec(GordianXMSSDigestType pDigestType,
+                                                GordianXMSSHeight pHeight,
+                                                GordianXMSSMTLayers pLayers);
+
+    /**
+     * Define hss subSpec.
+     *
+     * @param pHashType the hashType
+     * @param pHeight   the height
+     * @param pWidth    the width
+     * @param pLength   the length
+     * @param pDepth    the treeDepth
+     * @return the Builder
+     */
+    GordianKeyPairSpecBuilder withLMSSubSpec(GordianLMSHash pHashType,
+                                             GordianLMSHeight pHeight,
+                                             GordianLMSWidth pWidth,
+                                             GordianLength pLength,
+                                             int pDepth);
+
+    /**
+     * Define ntruPrime subSpec.
+     *
+     * @param pType   the Type
+     * @param pParams the params
+     * @return the Builder
+     */
+    GordianKeyPairSpecBuilder withNTRUPrimeSubSpec(GordianNTRUPrimeType pType,
+                                                   GordianNTRUPrimeParams pParams);
+
+    /**
+     * Define keyPairSpec list.
+     *
+     * @param pSpecs the specs
+     * @return the builder
+     */
+    GordianKeyPairSpecBuilder withKeyPairSpecs(List&lt;GordianKeyPairSpec&gt; pSpecs);
+
+    /**
+     * Build the keyPairSpec.
+     *
+     * @return the keyPairSpec
+     */
+    GordianKeyPairSpec build();
+
+    /**
+     * Create RSAKey.
+     *
+     * @param pSpec the subSpec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec rsa(final GordianRSASpec pSpec) {
+<span class="fc" id="L123">        return withKeyPairType(GordianKeyPairType.RSA).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create ECKey.
+     *
+     * @param pCurve the curve
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec ec(final GordianECSpec pCurve) {
+<span class="fc" id="L133">        return withKeyPairType(GordianKeyPairType.EC).withEnumSubSpec(pCurve).build();</span>
+    }
+
+    /**
+     * Create SM2Key.
+     *
+     * @param pCurve the curve
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec sm2(final GordianSM2Spec pCurve) {
+<span class="fc" id="L143">        return withKeyPairType(GordianKeyPairType.SM2).withEnumSubSpec(pCurve).build();</span>
+    }
+
+    /**
+     * Create DSTU4145Key.
+     *
+     * @param pCurve the curve
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec dstu4145(final GordianDSTUSpec pCurve) {
+<span class="fc" id="L153">        return withKeyPairType(GordianKeyPairType.DSTU).withEnumSubSpec(pCurve).build();</span>
+    }
+
+    /**
+     * Create GOST2012Key.
+     *
+     * @param pCurve the curve
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec gost2012(final GordianGOSTSpec pCurve) {
+<span class="fc" id="L163">        return withKeyPairType(GordianKeyPairType.GOST).withEnumSubSpec(pCurve).build();</span>
+    }
+
+    /**
+     * Create DSAKey.
+     *
+     * @param pSpec the subSpec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec dsa(final GordianDSASpec pSpec) {
+<span class="fc" id="L173">        return withKeyPairType(GordianKeyPairType.DSA).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create DHKey.
+     *
+     * @param pSpec the subSpec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec dh(final GordianDHSpec pSpec) {
+<span class="fc" id="L183">        return withKeyPairType(GordianKeyPairType.DH).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create ElGamalKey.
+     *
+     * @param pSpec the spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec elGamal(final GordianDHSpec pSpec) {
+<span class="fc" id="L193">        return withKeyPairType(GordianKeyPairType.ELGAMAL).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create EdDSA25519 Key.
+     *
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec x25519() {
+<span class="fc" id="L202">        return withKeyPairType(GordianKeyPairType.XDH).withEnumSubSpec(GordianEdwardsSpec.CURVE25519).build();</span>
+    }
+
+    /**
+     * Create EdX448 Key.
+     *
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec x448() {
+<span class="fc" id="L211">        return withKeyPairType(GordianKeyPairType.XDH).withEnumSubSpec(GordianEdwardsSpec.CURVE448).build();</span>
+    }
+
+    /**
+     * Create EdDSA25519 Key.
+     *
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec ed25519() {
+<span class="fc" id="L220">        return withKeyPairType(GordianKeyPairType.EDDSA).withEnumSubSpec(GordianEdwardsSpec.CURVE25519).build();</span>
+    }
+
+    /**
+     * Create EdDSA448 Key.
+     *
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec ed448() {
+<span class="fc" id="L229">        return withKeyPairType(GordianKeyPairType.EDDSA).withEnumSubSpec(GordianEdwardsSpec.CURVE448).build();</span>
+    }
+
+    /**
+     * Create xmssKey.
+     *
+     * @param pDigestType the xmss digestType
+     * @param pHeight     the height
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec xmss(final GordianXMSSDigestType pDigestType,
+                                    final GordianXMSSHeight pHeight) {
+<span class="fc" id="L241">        return withKeyPairType(GordianKeyPairType.XMSS).withXMSSSubSpec(pDigestType, pHeight).build();</span>
+    }
+
+    /**
+     * Create xmssMTKey.
+     *
+     * @param pDigestType the xmss digestType
+     * @param pHeight     the height
+     * @param pLayers     the layers
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec xmssmt(final GordianXMSSDigestType pDigestType,
+                                      final GordianXMSSHeight pHeight,
+                                      final GordianXMSSMTLayers pLayers) {
+<span class="nc" id="L255">        return withKeyPairType(GordianKeyPairType.XMSS).withXMSSMTSubSpec(pDigestType, pHeight, pLayers).build();</span>
+    }
+
+    /**
+     * Create lmsKey.
+     *
+     * @param pHashType the hashType
+     * @param pHeight   the height
+     * @param pWidth    the width
+     * @param pLength   the length
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec lms(final GordianLMSHash pHashType,
+                                   final GordianLMSHeight pHeight,
+                                   final GordianLMSWidth pWidth,
+                                   final GordianLength pLength) {
+<span class="fc" id="L271">        return hss(pHashType, pHeight, pWidth, pLength, 1);</span>
+    }
+
+    /**
+     * Create hssKey.
+     *
+     * @param pHashType the hashType
+     * @param pHeight   the height
+     * @param pWidth    the width
+     * @param pLength   the length
+     * @param pDepth    the treeDepth
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec hss(final GordianLMSHash pHashType,
+                                   final GordianLMSHeight pHeight,
+                                   final GordianLMSWidth pWidth,
+                                   final GordianLength pLength,
+                                   final int pDepth) {
+<span class="fc" id="L289">        return withKeyPairType(GordianKeyPairType.LMS).withLMSSubSpec(pHashType, pHeight, pWidth, pLength, pDepth).build();</span>
+    }
+
+    /**
+     * Create newHopeKey.
+     *
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec newHope() {
+<span class="fc" id="L298">        return withKeyPairType(GordianKeyPairType.NEWHOPE).build();</span>
+    }
+
+    /**
+     * Create SLHDSAKey.
+     *
+     * @param pSpec the SLHDSA Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec slhdsa(final GordianSLHDSASpec pSpec) {
+<span class="fc" id="L308">        return withKeyPairType(GordianKeyPairType.SLHDSA).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create CMCEKey.
+     *
+     * @param pSpec the CMCE Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec cmce(final GordianCMCESpec pSpec) {
+<span class="fc" id="L318">        return withKeyPairType(GordianKeyPairType.CMCE).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create FRODOKey.
+     *
+     * @param pSpec the FRODO Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec frodo(final GordianFRODOSpec pSpec) {
+<span class="fc" id="L328">        return withKeyPairType(GordianKeyPairType.FRODO).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create SABERKey.
+     *
+     * @param pSpec the SABER Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec saber(final GordianSABERSpec pSpec) {
+<span class="fc" id="L338">        return withKeyPairType(GordianKeyPairType.SABER).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create MLKEMKey.
+     *
+     * @param pSpec the MLKEM Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec mlkem(final GordianMLKEMSpec pSpec) {
+<span class="fc" id="L348">        return withKeyPairType(GordianKeyPairType.MLKEM).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create MLDSAKey.
+     *
+     * @param pSpec the MLDSA Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec mldsa(final GordianMLDSASpec pSpec) {
+<span class="fc" id="L358">        return withKeyPairType(GordianKeyPairType.MLDSA).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create HQCKey.
+     *
+     * @param pSpec the HQC Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec hqc(final GordianHQCSpec pSpec) {
+<span class="fc" id="L368">        return withKeyPairType(GordianKeyPairType.HQC).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create BIKEKey.
+     *
+     * @param pSpec the BIKE Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec bike(final GordianBIKESpec pSpec) {
+<span class="fc" id="L378">        return withKeyPairType(GordianKeyPairType.BIKE).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create NTRUKey.
+     *
+     * @param pSpec the NTRU Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec ntru(final GordianNTRUSpec pSpec) {
+<span class="fc" id="L388">        return withKeyPairType(GordianKeyPairType.NTRU).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create NTRUPlusKey.
+     *
+     * @param pSpec the NTRUPlus Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec ntruPlus(final GordianNTRUPlusSpec pSpec) {
+<span class="fc" id="L398">        return withKeyPairType(GordianKeyPairType.NTRUPLUS).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create NTRUPRIMEKey.
+     *
+     * @param pType   the Type
+     * @param pParams the params
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec ntruprime(final GordianNTRUPrimeType pType,
+                                         final GordianNTRUPrimeParams pParams) {
+<span class="fc" id="L410">        return withKeyPairType(GordianKeyPairType.NTRUPRIME).withNTRUPrimeSubSpec(pType, pParams).build();</span>
+    }
+
+    /**
+     * Create FalconKey.
+     *
+     * @param pSpec the FALCON Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec falcon(final GordianFalconSpec pSpec) {
+<span class="fc" id="L420">        return withKeyPairType(GordianKeyPairType.FALCON).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create PicnicKey.
+     *
+     * @param pSpec the Picnic Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec picnic(final GordianPicnicSpec pSpec) {
+<span class="fc" id="L430">        return withKeyPairType(GordianKeyPairType.PICNIC).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create MayoKey.
+     *
+     * @param pSpec the Mayo Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec mayo(final GordianMayoSpec pSpec) {
+<span class="fc" id="L440">        return withKeyPairType(GordianKeyPairType.MAYO).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create SnovaKey.
+     *
+     * @param pSpec the Snova Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec snova(final GordianSnovaSpec pSpec) {
+<span class="fc" id="L450">        return withKeyPairType(GordianKeyPairType.SNOVA).withEnumSubSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create CompositeKey.
+     *
+     * @param pSpecs the list of keySpecs
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec composite(final GordianKeyPairSpec... pSpecs) {
+<span class="fc" id="L460">        return composite(Arrays.asList(pSpecs));</span>
+    }
+
+    /**
+     * Create CompositeKey.
+     *
+     * @param pSpecs the list of keySpecs
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec composite(final List&lt;GordianKeyPairSpec&gt; pSpecs) {
+<span class="fc" id="L470">        return withKeyPairType(GordianKeyPairType.COMPOSITE).withKeyPairSpecs(pSpecs).build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

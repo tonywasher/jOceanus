@@ -19,8 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.key;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
@@ -30,6 +30,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSou
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFMulti;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -69,19 +70,19 @@ public abstract class GordianCoreKeyGenerator&lt;T extends GordianKeySpec&gt;
      * @param pKeyType the keyType
      */
     protected GordianCoreKeyGenerator(final GordianBaseFactory pFactory,
-<span class="fc" id="L72">                                      final T pKeyType) {</span>
+<span class="fc" id="L73">                                      final T pKeyType) {</span>
         /* Store parameters */
-<span class="fc" id="L74">        theKeyType = pKeyType;</span>
-<span class="fc" id="L75">        theFactory = pFactory;</span>
+<span class="fc" id="L75">        theKeyType = pKeyType;</span>
+<span class="fc" id="L76">        theFactory = pFactory;</span>
 
         /* Cache some values */
-<span class="fc" id="L78">        theKeyLength = pKeyType.getKeyLength().getLength();</span>
-<span class="fc" id="L79">        theRandom = pFactory.getRandomSource();</span>
-<span class="fc" id="L80">    }</span>
+<span class="fc" id="L79">        theKeyLength = pKeyType.getKeyLength().getLength();</span>
+<span class="fc" id="L80">        theRandom = pFactory.getRandomSource();</span>
+<span class="fc" id="L81">    }</span>
 
     @Override
     public T getKeyType() {
-<span class="fc" id="L84">        return theKeyType;</span>
+<span class="fc" id="L85">        return theKeyType;</span>
     }
 
     /**
@@ -90,7 +91,7 @@ public abstract class GordianCoreKeyGenerator&lt;T extends GordianKeySpec&gt;
      * @return the generator
      */
     protected SecureRandom getRandom() {
-<span class="fc" id="L93">        return theRandom.getRandom();</span>
+<span class="fc" id="L94">        return theRandom.getRandom();</span>
     }
 
     /**
@@ -99,7 +100,7 @@ public abstract class GordianCoreKeyGenerator&lt;T extends GordianKeySpec&gt;
      * @return the factory
      */
     protected GordianBaseFactory getFactory() {
-<span class="nc" id="L102">        return theFactory;</span>
+<span class="nc" id="L103">        return theFactory;</span>
     }
 
     /**
@@ -121,43 +122,44 @@ public abstract class GordianCoreKeyGenerator&lt;T extends GordianKeySpec&gt;
     public GordianKey&lt;T&gt; generateKeyFromSecret(final byte[] pSecret,
                                                final Random pSeededRandom) throws GordianException {
         /* Determine the key length in bytes */
-<span class="fc" id="L124">        final int myKeyLen = theKeyLength</span>
+<span class="fc" id="L125">        final int myKeyLen = theKeyLength</span>
                 / Byte.SIZE;
 
         /* Create data that will be cleared */
-<span class="fc" id="L128">        byte[] myKeyBytes = null;</span>
-<span class="fc" id="L129">        GordianHKDFParams myParams = null;</span>
+<span class="fc" id="L129">        byte[] myKeyBytes = null;</span>
+<span class="fc" id="L130">        GordianHKDFParams myParams = null;</span>
 
         /* Derive the two digestTypes from the seededRandom */
-<span class="fc" id="L132">        final GordianDigestType[] myDigestTypes = theFactory.getIdManager().deriveKeyGenDigestTypesFromSeed(pSeededRandom, 2);</span>
+<span class="fc" id="L133">        final GordianDigestType[] myDigestTypes = theFactory.getIdManager().deriveKeyGenDigestTypesFromSeed(pSeededRandom, 2);</span>
 
         /* Determine info bytes */
-<span class="fc" id="L135">        final byte[] myAlgo = GordianDataConverter.stringToByteArray(theKeyType.toString());</span>
-<span class="fc" id="L136">        final byte[] myKeyLenBytes = GordianDataConverter.integerToByteArray(theKeyLength);</span>
-<span class="fc" id="L137">        final byte[] mySeed = new byte[Long.BYTES];</span>
-<span class="fc" id="L138">        pSeededRandom.nextBytes(mySeed);</span>
+<span class="fc" id="L136">        final byte[] myAlgo = GordianDataConverter.stringToByteArray(theKeyType.toString());</span>
+<span class="fc" id="L137">        final byte[] myKeyLenBytes = GordianDataConverter.integerToByteArray(theKeyLength);</span>
+<span class="fc" id="L138">        final byte[] mySeed = new byte[Long.BYTES];</span>
+<span class="fc" id="L139">        pSeededRandom.nextBytes(mySeed);</span>
 
         /* Protect against exceptions */
         try {
+<span class="fc" id="L143">            final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();</span>
             /* Create the HKDF and parameters */
-<span class="fc" id="L143">            final GordianHKDFMulti myEngine = new GordianHKDFMulti(theFactory,</span>
-                    new GordianDigestSpec(myDigestTypes[0], GordianLength.LEN_512),
-                    new GordianDigestSpec(myDigestTypes[1], GordianLength.LEN_512));
-<span class="fc" id="L146">            myParams = GordianHKDFParams.expandOnly(pSecret, myKeyLen)</span>
-<span class="fc" id="L147">                    .withInfo(myAlgo).withInfo(myKeyLenBytes).withInfo(mySeed);</span>
-<span class="fc" id="L148">            theFactory.getPersonalisation().updateInfo(myParams);</span>
-<span class="fc" id="L149">            myKeyBytes = myEngine.deriveBytes(myParams);</span>
+<span class="fc" id="L145">            final GordianHKDFMulti myEngine = new GordianHKDFMulti(theFactory,</span>
+<span class="fc" id="L146">                    myBuilder.digest(myDigestTypes[0], GordianLength.LEN_512),</span>
+<span class="fc" id="L147">                    myBuilder.digest(myDigestTypes[1], GordianLength.LEN_512));</span>
+<span class="fc" id="L148">            myParams = GordianHKDFParams.expandOnly(pSecret, myKeyLen)</span>
+<span class="fc" id="L149">                    .withInfo(myAlgo).withInfo(myKeyLenBytes).withInfo(mySeed);</span>
+<span class="fc" id="L150">            theFactory.getPersonalisation().updateInfo(myParams);</span>
+<span class="fc" id="L151">            myKeyBytes = myEngine.deriveBytes(myParams);</span>
 
             /* Return the new key */
-<span class="fc" id="L152">            return buildKeyFromBytes(myKeyBytes);</span>
+<span class="fc" id="L154">            return buildKeyFromBytes(myKeyBytes);</span>
 
             /* Clear build buffer */
         } finally {
-<span class="pc bpc" id="L156" title="1 of 2 branches missed.">            if (myKeyBytes != null) {</span>
-<span class="fc" id="L157">                Arrays.fill(myKeyBytes, (byte) 0);</span>
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">            if (myKeyBytes != null) {</span>
+<span class="fc" id="L159">                Arrays.fill(myKeyBytes, (byte) 0);</span>
             }
-<span class="pc bpc" id="L159" title="1 of 2 branches missed.">            if (myParams != null) {</span>
-<span class="fc" id="L160">                myParams.clearParameters();</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">            if (myParams != null) {</span>
+<span class="fc" id="L162">                myParams.clearParameters();</span>
             }
         }
     }
@@ -165,13 +167,13 @@ public abstract class GordianCoreKeyGenerator&lt;T extends GordianKeySpec&gt;
     @Override
     public &lt;X extends GordianKeySpec&gt; GordianKey&lt;T&gt; translateKey(final GordianKey&lt;X&gt; pSource) throws GordianException {
         /* Check that the keyLengths are compatible */
-<span class="nc bnc" id="L168" title="All 2 branches missed.">        if (pSource.getKeyType().getKeyLength() != theKeyType.getKeyLength()) {</span>
-<span class="nc" id="L169">            throw new GordianDataException(&quot;Incorrect length for key&quot;);</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">        if (pSource.getKeyType().getKeyLength() != theKeyType.getKeyLength()) {</span>
+<span class="nc" id="L171">            throw new GordianDataException(&quot;Incorrect length for key&quot;);</span>
         }
 
         /* Build the key */
-<span class="nc" id="L173">        final GordianCoreKey&lt;X&gt; mySource = (GordianCoreKey&lt;X&gt;) pSource;</span>
-<span class="nc" id="L174">        return buildKeyFromBytes(mySource.getKeyBytes());</span>
+<span class="nc" id="L175">        final GordianCoreKey&lt;X&gt; mySource = (GordianCoreKey&lt;X&gt;) pSource;</span>
+<span class="nc" id="L176">        return buildKeyFromBytes(mySource.getKeyBytes());</span>
     }
 
     /**

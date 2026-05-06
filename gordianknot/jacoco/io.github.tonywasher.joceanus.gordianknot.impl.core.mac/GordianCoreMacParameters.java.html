@@ -19,11 +19,12 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.mac;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParams;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpec;
 
 /**
  * Core Mac parameters implementation.
@@ -66,11 +67,11 @@ public class GordianCoreMacParameters {
      * @param pMacSpec the CipherSpec
      */
     GordianCoreMacParameters(final GordianBaseFactory pFactory,
-<span class="fc" id="L69">                             final GordianMacSpec pMacSpec) {</span>
-<span class="fc" id="L70">        theFactory = pFactory;</span>
-<span class="fc" id="L71">        theSpec = pMacSpec;</span>
-<span class="fc" id="L72">        theRandom = theFactory.getRandomSource();</span>
-<span class="fc" id="L73">    }</span>
+<span class="fc" id="L70">                             final GordianMacSpec pMacSpec) {</span>
+<span class="fc" id="L71">        theFactory = pFactory;</span>
+<span class="fc" id="L72">        theSpec = pMacSpec;</span>
+<span class="fc" id="L73">        theRandom = theFactory.getRandomSource();</span>
+<span class="fc" id="L74">    }</span>
 
     /**
      * Obtain the key.
@@ -78,7 +79,7 @@ public class GordianCoreMacParameters {
      * @return the key
      */
     public GordianKey&lt;GordianMacSpec&gt; getKey() {
-<span class="fc" id="L81">        return theKey;</span>
+<span class="fc" id="L82">        return theKey;</span>
     }
 
     /**
@@ -87,16 +88,15 @@ public class GordianCoreMacParameters {
      * @return the initVector
      */
     byte[] getInitVector() {
-<span class="fc" id="L90">        return theInitVector;</span>
+<span class="fc" id="L91">        return theInitVector;</span>
     }
 
     /**
      * Process macParameters.
      *
      * @param pParams the mac parameters
-     * @throws GordianException on error
      */
-    void processParameters(final GordianMacParameters pParams) throws GordianException {
+    void processParameters(final GordianMacParams pParams) {
         /* Access the key details */
 <span class="fc" id="L101">        theKey = pParams.getKey();</span>
 <span class="fc" id="L102">        theInitVector = obtainNonceFromParameters(pParams);</span>
@@ -126,10 +126,10 @@ public class GordianCoreMacParameters {
      * @param pParams parameters
      * @return the nonce
      */
-    private byte[] obtainNonceFromParameters(final GordianMacParameters pParams) {
+    private byte[] obtainNonceFromParameters(final GordianMacParams pParams) {
         /* Access IV */
 <span class="fc" id="L131">        byte[] myIV = pParams.getNonce();</span>
-<span class="fc" id="L132">        final int myIVLen = theSpec.getIVLen();</span>
+<span class="fc" id="L132">        final int myIVLen = ((GordianCoreMacSpec) theSpec).getIVLen();</span>
 
         /* If we need a random nonce */
 <span class="fc bfc" id="L135" title="All 4 branches covered.">        if (pParams.randomNonce() &amp;&amp; myIVLen != 0) {</span>

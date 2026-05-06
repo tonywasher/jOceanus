@@ -19,13 +19,14 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 
 import java.security.SecureRandom;
 
@@ -42,7 +43,7 @@ public abstract class GordianCoreSignature
     /**
      * The Signature Spec.
      */
-    private final GordianSignatureSpec theSpec;
+    private final GordianCoreSignatureSpec theSpec;
 
     /**
      * Signature Mode.
@@ -66,10 +67,10 @@ public abstract class GordianCoreSignature
      * @param pSpec    the signature Spec
      */
     protected GordianCoreSignature(final GordianBaseFactory pFactory,
-<span class="fc" id="L69">                                   final GordianSignatureSpec pSpec) {</span>
-<span class="fc" id="L70">        theFactory = pFactory;</span>
-<span class="fc" id="L71">        theSpec = pSpec;</span>
-<span class="fc" id="L72">    }</span>
+<span class="fc" id="L70">                                   final GordianSignatureSpec pSpec) {</span>
+<span class="fc" id="L71">        theFactory = pFactory;</span>
+<span class="fc" id="L72">        theSpec = (GordianCoreSignatureSpec) pSpec;</span>
+<span class="fc" id="L73">    }</span>
 
     /**
      * Obtain the factory.
@@ -77,7 +78,7 @@ public abstract class GordianCoreSignature
      * @return the factory
      */
     public GordianBaseFactory getFactory() {
-<span class="nc" id="L80">        return theFactory;</span>
+<span class="nc" id="L81">        return theFactory;</span>
     }
 
     /**
@@ -86,7 +87,7 @@ public abstract class GordianCoreSignature
      * @return the digest factory
      */
     public GordianCoreDigestFactory getDigestFactory() {
-<span class="fc" id="L89">        return (GordianCoreDigestFactory) theFactory.getDigestFactory();</span>
+<span class="fc" id="L90">        return (GordianCoreDigestFactory) theFactory.getDigestFactory();</span>
     }
 
     /**
@@ -95,12 +96,12 @@ public abstract class GordianCoreSignature
      * @return the random
      */
     public SecureRandom getRandom() {
-<span class="fc" id="L98">        return theFactory.getRandomSource().getRandom();</span>
+<span class="fc" id="L99">        return theFactory.getRandomSource().getRandom();</span>
     }
 
     @Override
-    public GordianSignatureSpec getSignatureSpec() {
-<span class="fc" id="L103">        return theSpec;</span>
+    public GordianCoreSignatureSpec getSignatureSpec() {
+<span class="fc" id="L104">        return theSpec;</span>
     }
 
     /**
@@ -109,7 +110,7 @@ public abstract class GordianCoreSignature
      * @return the keyPair
      */
     protected GordianKeyPair getKeyPair() {
-<span class="fc" id="L112">        return theKeyPair;</span>
+<span class="fc" id="L113">        return theKeyPair;</span>
     }
 
     /**
@@ -118,7 +119,7 @@ public abstract class GordianCoreSignature
      * @return the context
      */
     protected byte[] getContext() {
-<span class="fc" id="L121">        return theContext;</span>
+<span class="fc" id="L122">        return theContext;</span>
     }
 
     /**
@@ -128,12 +129,12 @@ public abstract class GordianCoreSignature
      * @throws GordianException on error
      */
     private void checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
-<span class="fc" id="L131">        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();</span>
-<span class="fc" id="L132">        final GordianSignatureFactory mySigns = myFactory.getSignatureFactory();</span>
-<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        if (!mySigns.validSignatureSpecForKeyPair(pKeyPair, theSpec)) {</span>
-<span class="nc" id="L134">            throw new GordianDataException(&quot;Incorrect KeyPair type&quot;);</span>
+<span class="fc" id="L132">        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();</span>
+<span class="fc" id="L133">        final GordianSignatureFactory mySigns = myFactory.getSignatureFactory();</span>
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        if (!mySigns.validSignatureSpecForKeyPair(pKeyPair, theSpec)) {</span>
+<span class="nc" id="L135">            throw new GordianDataException(&quot;Incorrect KeyPair type&quot;);</span>
         }
-<span class="fc" id="L136">    }</span>
+<span class="fc" id="L137">    }</span>
 
     /**
      * Check that the Context is supported.
@@ -142,38 +143,38 @@ public abstract class GordianCoreSignature
      * @throws GordianException on error
      */
     private void checkContext(final byte[] pContext) throws GordianException {
-<span class="pc bpc" id="L145" title="3 of 4 branches missed.">        if (pContext != null &amp;&amp; !theSpec.supportsContext()) {</span>
-<span class="nc" id="L146">            throw new GordianDataException(&quot;Unsupported context&quot;);</span>
+<span class="pc bpc" id="L146" title="3 of 4 branches missed.">        if (pContext != null &amp;&amp; !theSpec.supportsContext()) {</span>
+<span class="nc" id="L147">            throw new GordianDataException(&quot;Unsupported context&quot;);</span>
         }
-<span class="fc" id="L148">    }</span>
+<span class="fc" id="L149">    }</span>
 
     @Override
-    public void initForSigning(final GordianSignParams pParams) throws GordianException {
+    public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
         /* Store details */
-<span class="fc" id="L153">        theMode = GordianSignatureMode.SIGN;</span>
-<span class="fc" id="L154">        theKeyPair = pParams.getKeyPair();</span>
-<span class="fc" id="L155">        theContext = pParams.getContext();</span>
+<span class="fc" id="L154">        theMode = GordianSignatureMode.SIGN;</span>
+<span class="fc" id="L155">        theKeyPair = pParams.getKeyPair();</span>
+<span class="fc" id="L156">        theContext = pParams.getContext();</span>
 
         /* Check that the keyPair matches and that any context is supported */
-<span class="fc" id="L158">        checkKeyPair(theKeyPair);</span>
-<span class="fc" id="L159">        checkContext(theContext);</span>
+<span class="fc" id="L159">        checkKeyPair(theKeyPair);</span>
+<span class="fc" id="L160">        checkContext(theContext);</span>
 
         /* Check that we have the private key */
-<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        if (theKeyPair.isPublicOnly()) {</span>
-<span class="nc" id="L163">            throw new GordianDataException(&quot;Missing privateKey&quot;);</span>
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">        if (theKeyPair.isPublicOnly()) {</span>
+<span class="nc" id="L164">            throw new GordianDataException(&quot;Missing privateKey&quot;);</span>
         }
-<span class="fc" id="L165">    }</span>
+<span class="fc" id="L166">    }</span>
 
     @Override
-    public void initForVerify(final GordianSignParams pParams) throws GordianException {
+    public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
         /* Store details */
-<span class="fc" id="L170">        theMode = GordianSignatureMode.VERIFY;</span>
-<span class="fc" id="L171">        theKeyPair = pParams.getKeyPair();</span>
-<span class="fc" id="L172">        theContext = pParams.getContext();</span>
+<span class="fc" id="L171">        theMode = GordianSignatureMode.VERIFY;</span>
+<span class="fc" id="L172">        theKeyPair = pParams.getKeyPair();</span>
+<span class="fc" id="L173">        theContext = pParams.getContext();</span>
 
         /* Check that the keyPair matches */
-<span class="fc" id="L175">        checkKeyPair(theKeyPair);</span>
-<span class="fc" id="L176">    }</span>
+<span class="fc" id="L176">        checkKeyPair(theKeyPair);</span>
+<span class="fc" id="L177">    }</span>
 
     /**
      * Check that we are in the correct mode.
@@ -182,24 +183,24 @@ public abstract class GordianCoreSignature
      * @throws GordianException on error
      */
     protected void checkMode(final GordianSignatureMode pMode) throws GordianException {
-<span class="pc bpc" id="L185" title="1 of 2 branches missed.">        if (!pMode.equals(theMode)) {</span>
-<span class="nc" id="L186">            throw new GordianDataException(&quot;Incorrect signature Mode&quot;);</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        if (!pMode.equals(theMode)) {</span>
+<span class="nc" id="L187">            throw new GordianDataException(&quot;Incorrect signature Mode&quot;);</span>
         }
-<span class="fc" id="L188">    }</span>
+<span class="fc" id="L189">    }</span>
 
     /**
      * SignatureMode.
      */
-<span class="fc" id="L193">    public enum GordianSignatureMode {</span>
+<span class="fc" id="L194">    public enum GordianSignatureMode {</span>
         /**
          * Signing.
          */
-<span class="fc" id="L197">        SIGN,</span>
+<span class="fc" id="L198">        SIGN,</span>
 
         /**
          * Verify.
          */
-<span class="fc" id="L202">        VERIFY;</span>
+<span class="fc" id="L203">        VERIFY;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

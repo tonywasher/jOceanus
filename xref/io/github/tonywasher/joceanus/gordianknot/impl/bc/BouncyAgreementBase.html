@@ -24,14 +24,14 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment"> * Base Agreement Engine class.</em>
@@ -46,7 +46,7 @@
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">     * @throws GordianException on error</em>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>      <a name="BouncyAgreementBase" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/bc/BouncyAgreementBase.html#BouncyAgreementBase">BouncyAgreementBase</a>(<strong class="jxr_keyword">final</strong> <a name="GordianCoreAgreementFactory" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/agree/GordianCoreAgreementFactory.html#GordianCoreAgreementFactory">GordianCoreAgreementFactory</a> pFactory,
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>                          <strong class="jxr_keyword">final</strong> <a name="GordianAgreementSpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/agree/GordianAgreementSpec.html#GordianAgreementSpec">GordianAgreementSpec</a> pSpec) <strong class="jxr_keyword">throws</strong> <a name="GordianException" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/base/GordianException.html#GordianException">GordianException</a> {
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>                          <strong class="jxr_keyword">final</strong> <a name="GordianCoreAgreementSpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/spec/agree/GordianCoreAgreementSpec.html#GordianCoreAgreementSpec">GordianCoreAgreementSpec</a> pSpec) <strong class="jxr_keyword">throws</strong> <a name="GordianException" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/base/GordianException.html#GordianException">GordianException</a> {
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>          <em class="jxr_comment">/* Invoke underlying constructor */</em>
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>          <strong class="jxr_keyword">super</strong>(pFactory, pSpec);
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  

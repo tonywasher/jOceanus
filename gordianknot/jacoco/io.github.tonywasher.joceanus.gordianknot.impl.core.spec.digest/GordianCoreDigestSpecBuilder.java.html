@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreDigestSpecBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest</a> &gt; <span class="el_source">GordianCoreDigestSpecBuilder.java</span></div><h1>GordianCoreDigestSpecBuilder.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSubSpec.GordianCoreDigestState;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Digest Specification Builder.
+ */
+public final class GordianCoreDigestSpecBuilder
+        implements GordianDigestSpecBuilder {
+    /**
+     * The type.
+     */
+    private GordianDigestType theType;
+
+    /**
+     * The subSpec.
+     */
+    private GordianDigestSubSpec theSubSpec;
+
+    /**
+     * The length.
+     */
+    private GordianLength theLength;
+
+    /**
+     * The type.
+     */
+    private boolean asXof;
+
+    /**
+     * Private constructor.
+     */
+    private GordianCoreDigestSpecBuilder() {
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreDigestSpecBuilder newInstance() {
+<span class="fc" id="L68">        return new GordianCoreDigestSpecBuilder();</span>
+    }
+
+    @Override
+    public GordianCoreDigestSpecBuilder withType(final GordianDigestType pType) {
+<span class="fc" id="L73">        theType = pType;</span>
+<span class="fc" id="L74">        return this;</span>
+    }
+
+    @Override
+    public GordianCoreDigestSpecBuilder withState(final GordianDigestState pState) {
+<span class="fc" id="L79">        theSubSpec = pState;</span>
+<span class="fc" id="L80">        return this;</span>
+    }
+
+    @Override
+    public GordianCoreDigestSpecBuilder withLength(final GordianLength pLength) {
+<span class="fc" id="L85">        theLength = pLength;</span>
+<span class="fc" id="L86">        return this;</span>
+    }
+
+    @Override
+    public GordianCoreDigestSpecBuilder asXof() {
+<span class="fc" id="L91">        asXof = true;</span>
+<span class="fc" id="L92">        return this;</span>
+    }
+
+    @Override
+    public GordianCoreDigestSpec build() {
+        /* Handle null type */
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if (theType == null) {</span>
+<span class="nc" id="L99">            throw new NullPointerException(&quot;digestType is null&quot;);</span>
+        }
+
+        /* Handle defaults */
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        theLength = theLength == null ? GordianCoreDigestType.getDefaultLength(theType) : theLength;</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        theSubSpec = theSubSpec == null ? GordianCoreDigestSubSpec.getDefaultSubSpecForTypeAndLength(theType, theLength) : theSubSpec;</span>
+
+        /* Create subSpec, reset and return */
+<span class="fc" id="L107">        final GordianCoreDigestSpec mySpec = new GordianCoreDigestSpec(theType, theSubSpec, theLength, asXof);</span>
+<span class="fc" id="L108">        reset();</span>
+<span class="fc" id="L109">        return mySpec;</span>
+    }
+
+    /**
+     * Reset state.
+     */
+    private void reset() {
+<span class="fc" id="L116">        theType = null;</span>
+<span class="fc" id="L117">        theSubSpec = null;</span>
+<span class="fc" id="L118">        theLength = null;</span>
+<span class="fc" id="L119">        asXof = false;</span>
+<span class="fc" id="L120">    }</span>
+
+    /**
+     * List possible digestSpecs.
+     *
+     * @return the possible digestSpecs
+     */
+    public static List&lt;GordianDigestSpec&gt; listAllPossibleSpecs() {
+        /* Create the array list */
+<span class="fc" id="L129">        final List&lt;GordianDigestSpec&gt; myList = new ArrayList&lt;&gt;();</span>
+
+        /* For each digest type */
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        for (final GordianCoreDigestType myType : GordianCoreDigestType.values()) {</span>
+<span class="fc" id="L133">            final GordianDigestType myBaseType = myType.getType();</span>
+
+            /* For each subSpecType */
+<span class="fc bfc" id="L136" title="All 2 branches covered.">            for (GordianDigestSubSpec mySubSpec : GordianCoreDigestSubSpec.getPossibleSubSpecsForType(myBaseType)) {</span>
+                /* For each length */
+<span class="fc bfc" id="L138" title="All 2 branches covered.">                for (final GordianLength myLength : myType.getSupportedLengths()) {</span>
+<span class="fc" id="L139">                    final GordianDigestSpec mySpec = new GordianCoreDigestSpec(myBaseType, mySubSpec, myLength, false);</span>
+
+                    /* Add if valid */
+<span class="fc bfc" id="L142" title="All 2 branches covered.">                    if (mySpec.isValid()) {</span>
+<span class="fc" id="L143">                        myList.add(mySpec);</span>
+                    }
+                }
+
+                /* If we have a possible Xof */
+<span class="fc bfc" id="L148" title="All 2 branches covered.">                if (mySubSpec instanceof GordianDigestState myState) {</span>
+<span class="fc" id="L149">                    final GordianCoreDigestState myCoreState = GordianCoreDigestState.mapCoreState(myState);</span>
+<span class="fc" id="L150">                    final GordianDigestSpec mySpec = new GordianCoreDigestSpec(myBaseType, myState, myCoreState.getLength(), Boolean.TRUE);</span>
+
+                    /* Add if valid */
+<span class="fc bfc" id="L153" title="All 2 branches covered.">                    if (mySpec.isValid()) {</span>
+<span class="fc" id="L154">                        myList.add(mySpec);</span>
+                    }
+
+                    /* Else look for null Xof type */
+<span class="fc" id="L158">                } else {</span>
+<span class="fc" id="L159">                    final GordianDigestSpec mySpec = new GordianCoreDigestSpec(myBaseType, null,</span>
+<span class="fc" id="L160">                            GordianCoreDigestType.getDefaultLength(myBaseType), Boolean.TRUE);</span>
+
+                    /* Add if valid */
+<span class="fc bfc" id="L163" title="All 2 branches covered.">                    if (mySpec.isValid()) {</span>
+<span class="fc" id="L164">                        myList.add(mySpec);</span>
+                    }
+                }
+            }
+        }
+
+        /* Return the list */
+<span class="fc" id="L171">        return myList;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

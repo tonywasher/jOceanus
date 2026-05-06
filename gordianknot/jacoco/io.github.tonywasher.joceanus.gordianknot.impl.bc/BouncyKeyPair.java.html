@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
@@ -154,21 +154,18 @@ public class BouncyKeyPair
             }
 
             /* Make sure that the object is the same class */
-<span class="pc bpc" id="L157" title="1 of 2 branches missed.">            if (!(pThat instanceof BouncyPublicKey)) {</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">            if (!(pThat instanceof BouncyPublicKey&lt;?&gt; myThat)) {</span>
 <span class="nc" id="L158">                return false;</span>
             }
 
-            /* Access the target field */
-<span class="fc" id="L162">            final BouncyPublicKey&lt;?&gt; myThat = (BouncyPublicKey&lt;?&gt;) pThat;</span>
-
             /* Check differences */
-<span class="pc bpc" id="L165" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
-<span class="pc bpc" id="L166" title="1 of 2 branches missed.">                    &amp;&amp; matchKey(myThat.getPublicKey());</span>
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">                    &amp;&amp; matchKey(myThat.getPublicKey());</span>
         }
 
         @Override
         public int hashCode() {
-<span class="nc" id="L171">            return Objects.hash(getKeySpec().hashCode(), theKey);</span>
+<span class="nc" id="L168">            return Objects.hash(getKeySpec().hashCode(), theKey);</span>
         }
     }
 
@@ -192,9 +189,9 @@ public class BouncyKeyPair
          */
         protected BouncyPrivateKey(final GordianKeyPairSpec pKeySpec,
                                    final T pKey) {
-<span class="fc" id="L195">            super(pKeySpec);</span>
-<span class="fc" id="L196">            theKey = pKey;</span>
-<span class="fc" id="L197">        }</span>
+<span class="fc" id="L192">            super(pKeySpec);</span>
+<span class="fc" id="L193">            theKey = pKey;</span>
+<span class="fc" id="L194">        }</span>
 
         /**
          * Obtain the private key.
@@ -202,7 +199,7 @@ public class BouncyKeyPair
          * @return the key
          */
         public T getPrivateKey() {
-<span class="fc" id="L205">            return theKey;</span>
+<span class="fc" id="L202">            return theKey;</span>
         }
 
         /**
@@ -216,29 +213,26 @@ public class BouncyKeyPair
         @Override
         public boolean equals(final Object pThat) {
             /* Handle the trivial cases */
-<span class="pc bpc" id="L219" title="1 of 2 branches missed.">            if (pThat == this) {</span>
-<span class="nc" id="L220">                return true;</span>
+<span class="pc bpc" id="L216" title="1 of 2 branches missed.">            if (pThat == this) {</span>
+<span class="nc" id="L217">                return true;</span>
             }
-<span class="pc bpc" id="L222" title="1 of 2 branches missed.">            if (pThat == null) {</span>
-<span class="nc" id="L223">                return false;</span>
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L220">                return false;</span>
             }
 
             /* Make sure that the object is the same class */
-<span class="pc bpc" id="L227" title="1 of 2 branches missed.">            if (!(pThat instanceof BouncyPrivateKey)) {</span>
-<span class="nc" id="L228">                return false;</span>
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">            if (!(pThat instanceof BouncyPrivateKey&lt;?&gt; myThat)) {</span>
+<span class="nc" id="L225">                return false;</span>
             }
 
-            /* Access the target field */
-<span class="fc" id="L232">            final BouncyPrivateKey&lt;?&gt; myThat = (BouncyPrivateKey&lt;?&gt;) pThat;</span>
-
             /* Check differences */
-<span class="pc bpc" id="L235" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
-<span class="pc bpc" id="L236" title="1 of 2 branches missed.">                    &amp;&amp; matchKey(myThat.getPrivateKey());</span>
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
+<span class="pc bpc" id="L230" title="1 of 2 branches missed.">                    &amp;&amp; matchKey(myThat.getPrivateKey());</span>
         }
 
         @Override
         public int hashCode() {
-<span class="nc" id="L241">            return Objects.hash(getKeySpec(), theKey);</span>
+<span class="nc" id="L235">            return Objects.hash(getKeySpec(), theKey);</span>
         }
     }
 
@@ -263,13 +257,13 @@ public class BouncyKeyPair
          */
         protected BouncyStateAwarePrivateKey(final GordianKeyPairSpec pKeySpec,
                                              final T pKey) {
-<span class="fc" id="L266">            super(pKeySpec, pKey);</span>
-<span class="fc" id="L267">            thePrivateKey = pKey;</span>
-<span class="fc" id="L268">        }</span>
+<span class="fc" id="L260">            super(pKeySpec, pKey);</span>
+<span class="fc" id="L261">            thePrivateKey = pKey;</span>
+<span class="fc" id="L262">        }</span>
 
         @Override
         public T getPrivateKey() {
-<span class="fc" id="L272">            return thePrivateKey;</span>
+<span class="fc" id="L266">            return thePrivateKey;</span>
         }
 
         @Override
@@ -278,29 +272,26 @@ public class BouncyKeyPair
         @Override
         public boolean equals(final Object pThat) {
             /* Handle the trivial cases */
-<span class="pc bpc" id="L281" title="1 of 2 branches missed.">            if (pThat == this) {</span>
-<span class="nc" id="L282">                return true;</span>
+<span class="pc bpc" id="L275" title="1 of 2 branches missed.">            if (pThat == this) {</span>
+<span class="nc" id="L276">                return true;</span>
             }
-<span class="pc bpc" id="L284" title="1 of 2 branches missed.">            if (pThat == null) {</span>
-<span class="nc" id="L285">                return false;</span>
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L279">                return false;</span>
             }
 
             /* Make sure that the object is the same class */
-<span class="pc bpc" id="L289" title="1 of 2 branches missed.">            if (!(pThat instanceof BouncyStateAwarePrivateKey)) {</span>
-<span class="nc" id="L290">                return false;</span>
+<span class="pc bpc" id="L283" title="1 of 2 branches missed.">            if (!(pThat instanceof BouncyStateAwarePrivateKey&lt;?&gt; myThat)) {</span>
+<span class="nc" id="L284">                return false;</span>
             }
 
-            /* Access the target field */
-<span class="fc" id="L294">            final BouncyStateAwarePrivateKey&lt;?&gt; myThat = (BouncyStateAwarePrivateKey&lt;?&gt;) pThat;</span>
-
             /* Check differences */
-<span class="pc bpc" id="L297" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
-<span class="pc bpc" id="L298" title="1 of 2 branches missed.">                    &amp;&amp; matchKey(myThat.getPrivateKey());</span>
+<span class="pc bpc" id="L288" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
+<span class="pc bpc" id="L289" title="1 of 2 branches missed.">                    &amp;&amp; matchKey(myThat.getPrivateKey());</span>
         }
 
         @Override
         public int hashCode() {
-<span class="nc" id="L303">            return Objects.hash(getKeySpec(), thePrivateKey);</span>
+<span class="nc" id="L294">            return Objects.hash(getKeySpec(), thePrivateKey);</span>
         }
     }
 
@@ -318,22 +309,22 @@ public class BouncyKeyPair
          */
         BouncyStateAwareKeyPair(final BouncyPublicKey&lt;?&gt; pPublic,
                                 final BouncyStateAwarePrivateKey&lt;?&gt; pPrivate) {
-<span class="fc" id="L321">            super(pPublic, pPrivate);</span>
-<span class="fc" id="L322">        }</span>
+<span class="fc" id="L312">            super(pPublic, pPrivate);</span>
+<span class="fc" id="L313">        }</span>
 
         @Override
         public BouncyStateAwarePrivateKey&lt;?&gt; getPrivateKey() {
-<span class="fc" id="L326">            return (BouncyStateAwarePrivateKey&lt;?&gt;) super.getPrivateKey();</span>
+<span class="fc" id="L317">            return (BouncyStateAwarePrivateKey&lt;?&gt;) super.getPrivateKey();</span>
         }
 
         @Override
         public long getUsagesRemaining() {
-<span class="nc" id="L331">            return getPrivateKey().getUsagesRemaining();</span>
+<span class="nc" id="L322">            return getPrivateKey().getUsagesRemaining();</span>
         }
 
         @Override
         public BouncyStateAwareKeyPair getKeyPairShard(final int pNumUsages) {
-<span class="nc" id="L336">            return new BouncyStateAwareKeyPair(getPublicKey(), getPrivateKey().getKeyShard(pNumUsages));</span>
+<span class="nc" id="L327">            return new BouncyStateAwareKeyPair(getPublicKey(), getPrivateKey().getKeyShard(pNumUsages));</span>
         }
     }
 }

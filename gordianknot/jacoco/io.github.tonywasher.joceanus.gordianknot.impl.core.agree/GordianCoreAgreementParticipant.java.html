@@ -56,6 +56,11 @@ import java.security.spec.X509EncodedKeySpec;
     private Long theId;
 
     /**
+     * Name.
+     */
+    private byte[] theName;
+
+    /**
      * Confirm.
      */
     private byte[] theConfirm;
@@ -66,7 +71,7 @@ import java.security.spec.X509EncodedKeySpec;
      * @return the certificate
      */
     GordianCertificate getCertificate() {
-<span class="fc" id="L69">        return theCertificate;</span>
+<span class="fc" id="L74">        return theCertificate;</span>
     }
 
     /**
@@ -76,9 +81,9 @@ import java.security.spec.X509EncodedKeySpec;
      * @return the state
      */
     GordianCoreAgreementParticipant setCertificate(final GordianCertificate pCertificate) {
-<span class="fc" id="L79">        theCertificate = pCertificate;</span>
-<span class="fc bfc" id="L80" title="All 2 branches covered.">        theKeyPair = theCertificate == null ? null : theCertificate.getKeyPair();</span>
-<span class="fc" id="L81">        return this;</span>
+<span class="fc" id="L84">        theCertificate = pCertificate;</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        theKeyPair = theCertificate == null ? null : theCertificate.getKeyPair();</span>
+<span class="fc" id="L86">        return this;</span>
     }
 
     /**
@@ -87,7 +92,7 @@ import java.security.spec.X509EncodedKeySpec;
      * @return the keyPair
      */
     public GordianKeyPair getKeyPair() {
-<span class="fc" id="L90">        return theKeyPair;</span>
+<span class="fc" id="L95">        return theKeyPair;</span>
     }
 
     /**
@@ -97,8 +102,8 @@ import java.security.spec.X509EncodedKeySpec;
      * @return the state
      */
     GordianCoreAgreementParticipant setKeyPair(final GordianKeyPair pKeyPair) {
-<span class="fc" id="L100">        theKeyPair = pKeyPair;</span>
-<span class="fc" id="L101">        return this;</span>
+<span class="fc" id="L105">        theKeyPair = pKeyPair;</span>
+<span class="fc" id="L106">        return this;</span>
     }
 
     /**
@@ -107,7 +112,7 @@ import java.security.spec.X509EncodedKeySpec;
      * @return the keyPair
      */
     public GordianKeyPair getEphemeralKeyPair() {
-<span class="fc" id="L110">        return theEphemeral;</span>
+<span class="fc" id="L115">        return theEphemeral;</span>
     }
 
     /**
@@ -117,8 +122,8 @@ import java.security.spec.X509EncodedKeySpec;
      * @return the state
      */
     GordianCoreAgreementParticipant setEphemeralKeyPair(final GordianKeyPair pKeyPair) {
-<span class="fc" id="L120">        theEphemeral = pKeyPair;</span>
-<span class="fc" id="L121">        return this;</span>
+<span class="fc" id="L125">        theEphemeral = pKeyPair;</span>
+<span class="fc" id="L126">        return this;</span>
     }
 
     /**
@@ -127,7 +132,7 @@ import java.security.spec.X509EncodedKeySpec;
      * @return the keySpec
      */
     X509EncodedKeySpec getEphemeralKeySpec() {
-<span class="fc" id="L130">        return theKeySpec;</span>
+<span class="fc" id="L135">        return theKeySpec;</span>
     }
 
     /**
@@ -137,16 +142,16 @@ import java.security.spec.X509EncodedKeySpec;
      * @return the state
      */
     GordianCoreAgreementParticipant setEphemeralKeySpec(final X509EncodedKeySpec pKeySpec) {
-<span class="fc" id="L140">        theKeySpec = pKeySpec;</span>
-<span class="fc" id="L141">        return this;</span>
+<span class="fc" id="L145">        theKeySpec = pKeySpec;</span>
+<span class="fc" id="L146">        return this;</span>
     }
 
     /**
      * Copy ephemeral keyPair to main keyPair.
      */
     void copyEphemeral() {
-<span class="fc" id="L148">        theKeyPair = theEphemeral;</span>
-<span class="fc" id="L149">    }</span>
+<span class="fc" id="L153">        theKeyPair = theEphemeral;</span>
+<span class="fc" id="L154">    }</span>
 
     /**
      * Obtain the certificate.
@@ -154,7 +159,7 @@ import java.security.spec.X509EncodedKeySpec;
      * @return the certificate
      */
     byte[] getInitVector() {
-<span class="fc" id="L157">        return theInitVector;</span>
+<span class="fc" id="L162">        return theInitVector;</span>
     }
 
     /**
@@ -164,8 +169,8 @@ import java.security.spec.X509EncodedKeySpec;
      * @return the state
      */
     GordianCoreAgreementParticipant setInitVector(final byte[] pInitVector) {
-<span class="fc" id="L167">        theInitVector = pInitVector;</span>
-<span class="fc" id="L168">        return this;</span>
+<span class="fc" id="L172">        theInitVector = pInitVector;</span>
+<span class="fc" id="L173">        return this;</span>
     }
 
     /**
@@ -174,7 +179,7 @@ import java.security.spec.X509EncodedKeySpec;
      * @return the id
      */
     Long getId() {
-<span class="fc" id="L177">        return theId;</span>
+<span class="fc" id="L182">        return theId;</span>
     }
 
     /**
@@ -184,8 +189,28 @@ import java.security.spec.X509EncodedKeySpec;
      * @return the state
      */
     GordianCoreAgreementParticipant setId(final Long pId) {
-<span class="fc" id="L187">        theId = pId;</span>
-<span class="fc" id="L188">        return this;</span>
+<span class="fc" id="L192">        theId = pId;</span>
+<span class="fc" id="L193">        return this;</span>
+    }
+
+    /**
+     * Obtain the name.
+     *
+     * @return the name
+     */
+    byte[] getName() {
+<span class="fc" id="L202">        return theName;</span>
+    }
+
+    /**
+     * Set the name.
+     *
+     * @param pName the id
+     * @return the state
+     */
+    GordianCoreAgreementParticipant setName(final byte[] pName) {
+<span class="fc" id="L212">        theName = pName;</span>
+<span class="fc" id="L213">        return this;</span>
     }
 
     /**
@@ -194,7 +219,7 @@ import java.security.spec.X509EncodedKeySpec;
      * @return the confirmation
      */
     public byte[] getConfirm() {
-<span class="fc" id="L197">        return theConfirm;</span>
+<span class="fc" id="L222">        return theConfirm;</span>
     }
 
     /**
@@ -204,8 +229,8 @@ import java.security.spec.X509EncodedKeySpec;
      * @return the state
      */
     GordianCoreAgreementParticipant setConfirm(final byte[] pConfirm) {
-<span class="fc" id="L207">        theConfirm = pConfirm;</span>
-<span class="fc" id="L208">        return this;</span>
+<span class="fc" id="L232">        theConfirm = pConfirm;</span>
+<span class="fc" id="L233">        return this;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

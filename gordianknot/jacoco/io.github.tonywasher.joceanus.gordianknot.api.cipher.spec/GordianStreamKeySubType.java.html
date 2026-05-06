@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianStreamKeySubType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.cipher.spec</a> &gt; <span class="el_source">GordianStreamKeySubType.java</span></div><h1>GordianStreamKeySubType.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;
+
+/**
+ * StreamKey SubSpec.
+ */
+public interface GordianStreamKeySubType {
+    /**
+     * VMPC Key styles.
+     */
+<span class="fc" id="L27">    enum GordianVMPCKey</span>
+            implements GordianStreamKeySubType {
+        /**
+         * VMPC.
+         */
+<span class="fc" id="L32">        STD,</span>
+
+        /**
+         * VMPC-KSA.
+         */
+<span class="fc" id="L37">        KSA;</span>
+    }
+
+    /**
+     * Salsa20 Key styles.
+     */
+<span class="fc" id="L43">    enum GordianSalsa20Key</span>
+            implements GordianStreamKeySubType {
+        /**
+         * Salsa20.
+         */
+<span class="fc" id="L48">        STD,</span>
+
+        /**
+         * XSalsa20.
+         */
+<span class="fc" id="L53">        XSALSA;</span>
+    }
+
+    /**
+     * ChaCha20 Key styles.
+     */
+<span class="fc" id="L59">    enum GordianChaCha20Key</span>
+            implements GordianStreamKeySubType {
+        /**
+         * ChaCha20.
+         */
+<span class="fc" id="L64">        STD,</span>
+
+        /**
+         * ChaCha7539.
+         */
+<span class="fc" id="L69">        ISO7539,</span>
+
+        /**
+         * XChaCha20.
+         */
+<span class="fc" id="L74">        XCHACHA;</span>
+    }
+
+    /**
+     * SkeinXof Key styles.
+     */
+<span class="fc" id="L80">    enum GordianSkeinXofKey</span>
+            implements GordianStreamKeySubType {
+        /**
+         * 256State.
+         */
+<span class="fc" id="L85">        STATE256,</span>
+
+        /**
+         * 512State.
+         */
+<span class="fc" id="L90">        STATE512,</span>
+
+        /**
+         * 1024State.
+         */
+<span class="fc" id="L95">        STATE1024;</span>
+    }
+
+    /**
+     * BlakeXof Key styles.
+     */
+<span class="fc" id="L101">    enum GordianBlakeXofKey</span>
+            implements GordianStreamKeySubType {
+        /**
+         * Blake2S.
+         */
+<span class="fc" id="L106">        BLAKE2XS,</span>
+
+        /**
+         * Blake2B.
+         */
+<span class="fc" id="L111">        BLAKE2XB;</span>
+    }
+
+    /**
+     * Elephant Key styles.
+     */
+<span class="fc" id="L117">    enum GordianElephantKey</span>
+            implements GordianStreamKeySubType {
+        /**
+         * Elephant160.
+         */
+<span class="fc" id="L122">        ELEPHANT160,</span>
+
+        /**
+         * Elephant176.
+         */
+<span class="fc" id="L127">        ELEPHANT176,</span>
+
+        /**
+         * Elephant200.
+         */
+<span class="fc" id="L132">        ELEPHANT200;</span>
+    }
+
+    /**
+     * ISAP Key styles.
+     */
+<span class="fc" id="L138">    enum GordianISAPKey</span>
+            implements GordianStreamKeySubType {
+        /**
+         * ISAPA128.
+         */
+<span class="fc" id="L143">        ISAPA128,</span>
+
+        /**
+         * ISAPA128A.
+         */
+<span class="fc" id="L148">        ISAPA128A,</span>
+
+        /**
+         * ISAPK128.
+         */
+<span class="fc" id="L153">        ISAPK128,</span>
+
+        /**
+         * ISAPK128A.
+         */
+<span class="fc" id="L158">        ISAPK128A;</span>
+    }
+
+    /**
+     * Romulus Key styles.
+     */
+<span class="fc" id="L164">    enum GordianRomulusKey</span>
+            implements GordianStreamKeySubType {
+        /**
+         * Romulus-M.
+         */
+<span class="fc" id="L169">        ROMULUS_M,</span>
+
+        /**
+         * Romulus-N.
+         */
+<span class="fc" id="L174">        ROMULUS_N,</span>
+
+        /**
+         * Romulus-T.
+         */
+<span class="fc" id="L179">        ROMULUS_T;</span>
+    }
+
+    /**
+     * Sparkle Key styles.
+     */
+<span class="fc" id="L185">    enum GordianSparkleKey</span>
+            implements GordianStreamKeySubType {
+        /**
+         * Sparkle128_128.
+         */
+<span class="fc" id="L190">        SPARKLE128_128,</span>
+
+        /**
+         * Sparkle256_128.
+         */
+<span class="fc" id="L195">        SPARKLE256_128,</span>
+
+        /**
+         * Sparkle192_192.
+         */
+<span class="fc" id="L200">        SPARKLE192_192,</span>
+
+        /**
+         * Sparkle256_256.
+         */
+<span class="fc" id="L205">        SPARKLE256_256;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

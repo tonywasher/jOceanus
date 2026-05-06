@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreMacSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac</a> &gt; <span class="el_source">GordianCoreMacSpec.java</span></div><h1>GordianCoreMacSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianSipHashType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSubSpec.GordianCoreDigestState;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
+
+import java.util.Objects;
+
+/**
+ * ♦
+ * MacSpec implementation.
+ */
+public class GordianCoreMacSpec
+        implements GordianMacSpec {
+    /**
+     * The Mac Type.
+     */
+    private final GordianCoreMacType theMacType;
+
+    /**
+     * The KeyLength.
+     */
+    private final GordianLength theKeyLength;
+
+    /**
+     * The SubSpec.
+     */
+    private final Object theSubSpec;
+
+    /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pMacType   the macType
+     * @param pKeyLength the keyLength
+     * @param pSubSpec   the subSpec
+     */
+    GordianCoreMacSpec(final GordianMacType pMacType,
+                       final GordianLength pKeyLength,
+<span class="fc" id="L76">                       final Object pSubSpec) {</span>
+        /* Store parameters */
+<span class="fc" id="L78">        theMacType = GordianCoreMacType.mapCoreType(pMacType);</span>
+<span class="fc" id="L79">        theKeyLength = pKeyLength;</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        theSubSpec = pSubSpec instanceof GordianSipHashType mySip ? GordianCoreSipHashType.mapCoreType(mySip) : pSubSpec;</span>
+<span class="fc" id="L81">        isValid = checkValidity();</span>
+<span class="fc" id="L82">    }</span>
+
+    /**
+     * Obtain Core Mac Type.
+     *
+     * @return the MacType
+     */
+    public GordianCoreMacType getCoreMacType() {
+<span class="fc" id="L90">        return theMacType;</span>
+    }
+
+    @Override
+    public GordianMacType getMacType() {
+<span class="fc" id="L95">        return theMacType.getType();</span>
+    }
+
+    @Override
+    public GordianLength getKeyLength() {
+<span class="fc" id="L100">        return theKeyLength;</span>
+    }
+
+    @Override
+    public Object getSubSpec() {
+<span class="fc" id="L105">        return theSubSpec;</span>
+    }
+
+    @Override
+    public boolean isValid() {
+<span class="fc" id="L110">        return isValid;</span>
+    }
+
+    /**
+     * Obtain DigestSpec.
+     *
+     * @return the DigestSpec
+     */
+    public GordianCoreDigestSpec getDigestSpec() {
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        return theSubSpec instanceof GordianCoreDigestSpec mySpec</span>
+<span class="fc" id="L120">                ? mySpec</span>
+<span class="fc" id="L121">                : null;</span>
+    }
+
+    /**
+     * Obtain DigestState.
+     *
+     * @return the State
+     */
+    private GordianCoreDigestState getDigestState() {
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        return theSubSpec instanceof GordianCoreDigestSpec mySpec</span>
+<span class="fc" id="L131">                ? mySpec.getCoreDigestState()</span>
+<span class="nc" id="L132">                : null;</span>
+    }
+
+    /**
+     * Obtain DigestLength.
+     *
+     * @return the Length
+     */
+    private GordianLength getDigestLength() {
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">        return theSubSpec instanceof GordianCoreDigestSpec mySpec</span>
+<span class="fc" id="L142">                ? mySpec.getDigestLength()</span>
+<span class="nc" id="L143">                : null;</span>
+    }
+
+    /**
+     * Obtain SymKeySpec.
+     *
+     * @return the SymKeySpec
+     */
+    public GordianCoreSymKeySpec getSymKeySpec() {
+<span class="fc bfc" id="L152" title="All 2 branches covered.">        return theSubSpec instanceof GordianCoreSymKeySpec mySpec</span>
+<span class="fc" id="L153">                ? mySpec</span>
+<span class="fc" id="L154">                : null;</span>
+    }
+
+    /**
+     * Obtain SymKeyType.
+     *
+     * @return the Type
+     */
+    private GordianCoreSymKeyType getSymKeyType() {
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">        return theSubSpec instanceof GordianCoreSymKeySpec mySpec</span>
+<span class="fc" id="L164">                ? mySpec.getCoreSymKeyType()</span>
+<span class="nc" id="L165">                : null;</span>
+    }
+
+    /**
+     * Obtain SymKeyBlockLength.
+     *
+     * @return the BlockLength
+     */
+    private GordianLength getSymKeyBlockLength() {
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">        return theSubSpec instanceof GordianCoreSymKeySpec mySpec</span>
+<span class="fc" id="L175">                ? mySpec.getBlockLength()</span>
+<span class="nc" id="L176">                : null;</span>
+    }
+
+    /**
+     * Obtain SymKeyBlockLength.
+     *
+     * @return the BlockLength
+     */
+    private int getSymKeyBlockByteLength() {
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">        return theSubSpec instanceof GordianCoreSymKeySpec mySpec</span>
+<span class="fc" id="L186">                ? Objects.requireNonNull(mySpec.getBlockLength()).getByteLength()</span>
+<span class="nc" id="L187">                : 0;</span>
+    }
+
+    /**
+     * Obtain SymKeyHalfBlockLength.
+     *
+     * @return the HalfBlockLength
+     */
+    private GordianLength getSymKeyHalfBlockLength() {
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">        return theSubSpec instanceof GordianCoreSymKeySpec mySpec</span>
+<span class="fc" id="L197">                ? mySpec.getHalfBlockLength()</span>
+<span class="nc" id="L198">                : null;</span>
+    }
+
+    /**
+     * Obtain SipHashSpec.
+     *
+     * @return the Spec
+     */
+    public GordianCoreSipHashType getSipHashSpec() {
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">        return theSubSpec instanceof GordianCoreSipHashType mySpec</span>
+<span class="fc" id="L208">                ? mySpec</span>
+<span class="nc" id="L209">                : null;</span>
+    }
+
+    /**
+     * Obtain MacLength.
+     *
+     * @return the Length
+     */
+    public GordianLength getMacLength() {
+<span class="pc bpc" id="L218" title="1 of 9 branches missed.">        return switch (theMacType.getType()) {</span>
+<span class="fc" id="L219">            case HMAC, BLAKE2, BLAKE3, SKEIN, KUPYNA, KMAC -&gt; getDigestLength();</span>
+<span class="fc" id="L220">            case GMAC, POLY1305 -&gt; GordianLength.LEN_128;</span>
+<span class="fc" id="L221">            case CMAC, KALYNA -&gt; getSymKeyBlockLength();</span>
+<span class="fc" id="L222">            case CBCMAC, CFBMAC -&gt; getSymKeyHalfBlockLength();</span>
+<span class="fc" id="L223">            case ZUC -&gt; (GordianLength) theSubSpec;</span>
+<span class="fc" id="L224">            case VMPC -&gt; GordianLength.LEN_160;</span>
+<span class="fc" id="L225">            case GOST -&gt; GordianLength.LEN_32;</span>
+<span class="fc" id="L226">            case SIPHASH -&gt; ((GordianCoreSipHashType) theSubSpec).getOutLength();</span>
+<span class="nc" id="L227">            default -&gt; GordianLength.LEN_64;</span>
+        };
+    }
+
+    /**
+     * Obtain the IV length.
+     *
+     * @return the IV Length
+     */
+    public int getIVLen() {
+<span class="fc bfc" id="L237" title="All 8 branches covered.">        return switch (theMacType.getType()) {</span>
+<span class="fc" id="L238">            case VMPC, SKEIN -&gt; GordianLength.LEN_128.getByteLength();</span>
+<span class="fc bfc" id="L239" title="All 2 branches covered.">            case POLY1305 -&gt; theSubSpec == null</span>
+<span class="fc" id="L240">                    ? 0</span>
+<span class="fc" id="L241">                    : GordianLength.LEN_128.getByteLength();</span>
+<span class="fc bfc" id="L242" title="All 2 branches covered.">            case BLAKE2 -&gt; Objects.requireNonNull(getDigestState()).isBlake2bState()</span>
+<span class="fc" id="L243">                    ? GordianLength.LEN_128.getByteLength()</span>
+<span class="fc" id="L244">                    : GordianLength.LEN_64.getByteLength();</span>
+<span class="fc" id="L245">            case GMAC -&gt; GordianLength.LEN_96.getByteLength();</span>
+<span class="fc" id="L246">            case CBCMAC, CFBMAC -&gt; getSymKeyBlockByteLength();</span>
+<span class="fc" id="L247">            case GOST -&gt; GordianLength.LEN_64.getByteLength();</span>
+<span class="fc bfc" id="L248" title="All 2 branches covered.">            case ZUC -&gt; GordianLength.LEN_128 == theKeyLength</span>
+<span class="fc" id="L249">                    ? GordianLength.LEN_128.getByteLength()</span>
+<span class="fc" id="L250">                    : GordianLength.LEN_200.getByteLength();</span>
+<span class="fc" id="L251">            default -&gt; 0;</span>
+        };
+    }
+
+    /**
+     * Check spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        /* Make sure that macType and keyLength are non-null */
+<span class="pc bpc" id="L262" title="2 of 4 branches missed.">        if (theMacType == null || theKeyLength == null) {</span>
+<span class="nc" id="L263">            return false;</span>
+        }
+
+        /* Switch on MacType */
+<span class="pc bpc" id="L267" title="1 of 14 branches missed.">        return switch (theMacType.getType()) {</span>
+<span class="fc" id="L268">            case HMAC -&gt; checkDigestValidity(null);</span>
+<span class="fc" id="L269">            case KUPYNA -&gt; checkDigestValidity(GordianDigestType.KUPYNA);</span>
+<span class="fc" id="L270">            case SKEIN -&gt; checkDigestValidity(GordianDigestType.SKEIN);</span>
+<span class="fc" id="L271">            case BLAKE2 -&gt; checkBlake2Validity();</span>
+<span class="fc" id="L272">            case BLAKE3 -&gt; checkDigestValidity(GordianDigestType.BLAKE3);</span>
+<span class="fc" id="L273">            case KALYNA -&gt; checkSymKeyValidity(GordianSymKeyType.KALYNA);</span>
+<span class="fc" id="L274">            case KMAC -&gt; checkKMACValidity();</span>
+<span class="fc" id="L275">            case CMAC, GMAC, CBCMAC, CFBMAC -&gt; checkSymKeyValidity(null);</span>
+<span class="fc" id="L276">            case POLY1305 -&gt; checkPoly1305Validity();</span>
+<span class="fc" id="L277">            case ZUC -&gt; checkZucValidity();</span>
+<span class="pc bpc" id="L278" title="2 of 4 branches missed.">            case SIPHASH -&gt; theSubSpec instanceof GordianCoreSipHashType</span>
+                    &amp;&amp; theKeyLength == GordianLength.LEN_128;
+<span class="pc bpc" id="L280" title="2 of 4 branches missed.">            case GOST -&gt; theSubSpec == null</span>
+                    &amp;&amp; theKeyLength == GordianLength.LEN_256;
+<span class="pc bpc" id="L282" title="1 of 2 branches missed.">            case VMPC -&gt; theSubSpec == null;</span>
+<span class="nc" id="L283">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Check digest validity.
+     *
+     * @param pDigestType required digestType (or null)
+     * @return valid true/false
+     */
+    private boolean checkDigestValidity(final GordianDigestType pDigestType) {
+        /* Check that the digestSpec is valid */
+<span class="pc bpc" id="L295" title="1 of 2 branches missed.">        if (!(theSubSpec instanceof GordianCoreDigestSpec mySpec)</span>
+<span class="fc bfc" id="L296" title="All 2 branches covered.">                || !mySpec.isValid()) {</span>
+<span class="fc" id="L297">            return false;</span>
+        }
+
+        /* Check for digestType restrictions */
+<span class="fc" id="L301">        final GordianCoreDigestType myType = mySpec.getCoreDigestType();</span>
+<span class="fc bfc" id="L302" title="All 2 branches covered.">        return pDigestType == null</span>
+<span class="fc" id="L303">                ? myType.supportsLargeData()</span>
+<span class="pc bpc" id="L304" title="1 of 2 branches missed.">                : myType.getType() == pDigestType;</span>
+    }
+
+    /**
+     * Check symKey validity.
+     *
+     * @param pSymKeyType required symKeyType (or null)
+     * @return valid true/false
+     */
+    private boolean checkSymKeyValidity(final GordianSymKeyType pSymKeyType) {
+        /* Check that the symKeySpec is valid */
+<span class="pc bpc" id="L315" title="1 of 2 branches missed.">        if (!(theSubSpec instanceof GordianSymKeySpec mySpec)</span>
+<span class="pc bpc" id="L316" title="1 of 2 branches missed.">                || !mySpec.isValid()) {</span>
+<span class="nc" id="L317">            return false;</span>
+        }
+
+        /* Check for symKeyType restrictions */
+<span class="fc bfc" id="L321" title="All 2 branches covered.">        return pSymKeyType == null</span>
+<span class="pc bpc" id="L322" title="1 of 2 branches missed.">                || mySpec.getSymKeyType() == pSymKeyType;</span>
+    }
+
+    /**
+     * Check poly1305 validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkPoly1305Validity() {
+        /* Check that the subSpec is reasonable */
+<span class="fc bfc" id="L332" title="All 2 branches covered.">        if (theSubSpec != null</span>
+<span class="pc bpc" id="L333" title="1 of 2 branches missed.">                &amp;&amp; !checkSymKeyValidity(null)) {</span>
+<span class="nc" id="L334">            return false;</span>
+        }
+
+        /* Restrict keyLengths */
+<span class="fc" id="L338">        final GordianSymKeySpec mySpec = (GordianSymKeySpec) theSubSpec;</span>
+<span class="pc bpc" id="L339" title="1 of 4 branches missed.">        return theKeyLength == GordianLength.LEN_256</span>
+                &amp;&amp; (mySpec == null
+<span class="pc bpc" id="L341" title="1 of 2 branches missed.">                || mySpec.getKeyLength() == GordianLength.LEN_128);</span>
+    }
+
+    /**
+     * Check blake validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkBlake2Validity() {
+        /* Check that the spec is reasonable */
+<span class="fc bfc" id="L351" title="All 2 branches covered.">        if (!checkDigestValidity(GordianDigestType.BLAKE2)) {</span>
+<span class="fc" id="L352">            return false;</span>
+        }
+
+        /* Check keyLength */
+<span class="fc" id="L356">        return checkBlake2KeyLength(theKeyLength, (GordianCoreDigestSpec) theSubSpec);</span>
+    }
+
+    /**
+     * Check blake2 keyLength validity.
+     *
+     * @param pKeyLen the keyLength
+     * @param pSpec   the digestSpec
+     * @return valid true/false
+     */
+    private static boolean checkBlake2KeyLength(final GordianLength pKeyLen,
+                                                final GordianCoreDigestSpec pSpec) {
+        /* Key length must be less or equal to the stateLength */
+<span class="fc bfc" id="L369" title="All 2 branches covered.">        return pKeyLen.getLength() &lt;= pSpec.getCoreDigestState().getLength().getLength();</span>
+    }
+
+    /**
+     * Check blake validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkKMACValidity() {
+        /* Check that the spec is reasonable */
+<span class="pc bpc" id="L379" title="1 of 2 branches missed.">        if (!checkDigestValidity(GordianDigestType.SHAKE)) {</span>
+<span class="nc" id="L380">            return false;</span>
+        }
+
+        /* Check keyLength */
+<span class="fc" id="L384">        return checkKMACKeyLength(theKeyLength, (GordianCoreDigestSpec) theSubSpec);</span>
+    }
+
+    /**
+     * Check KMAC keyLength validity.
+     *
+     * @param pKeyLen the keyLength
+     * @param pSpec   the digestSpec
+     * @return valid true/false
+     */
+    private static boolean checkKMACKeyLength(final GordianLength pKeyLen,
+                                              final GordianCoreDigestSpec pSpec) {
+        /* Key length must be greater or equal to the stateLength */
+<span class="fc bfc" id="L397" title="All 2 branches covered.">        return pKeyLen.getLength() &gt;= pSpec.getCoreDigestState().getLength().getLength();</span>
+    }
+
+    /**
+     * Check zuc validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkZucValidity() {
+<span class="pc bpc" id="L406" title="1 of 3 branches missed.">        return switch (theKeyLength) {</span>
+<span class="pc bpc" id="L407" title="1 of 2 branches missed.">            case LEN_128 -&gt; GordianLength.LEN_32 == theSubSpec;</span>
+<span class="pc bpc" id="L408" title="1 of 6 branches missed.">            case LEN_256 -&gt; GordianLength.LEN_32 == theSubSpec</span>
+                    || GordianLength.LEN_64 == theSubSpec
+                    || GordianLength.LEN_128 == theSubSpec;
+<span class="nc" id="L411">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Is this a Xof Mac?
+     *
+     * @return true/false
+     */
+    public boolean isXof() {
+<span class="fc bfc" id="L421" title="All 3 branches covered.">        return switch (theMacType.getType()) {</span>
+<span class="fc" id="L422">            case KMAC, BLAKE3 -&gt; true;</span>
+<span class="fc" id="L423">            case BLAKE2, SKEIN -&gt; Objects.requireNonNull(getDigestSpec()).isXof();</span>
+<span class="fc" id="L424">            default -&gt; false;</span>
+        };
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L431" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* If the macSpec is invalid */
+<span class="pc bpc" id="L433" title="1 of 2 branches missed.">            if (!isValid) {</span>
+                /* Report invalid spec */
+<span class="nc" id="L435">                theName = &quot;InvalidMacSpec: &quot; + theMacType + &quot;:&quot; + theSubSpec + &quot;:&quot; + theKeyLength;</span>
+<span class="nc" id="L436">                return theName;</span>
+            }
+
+            /* Load the name */
+<span class="fc" id="L440">            theName = theMacType.toString();</span>
+<span class="fc bfc" id="L441" title="All 12 branches covered.">            switch (theMacType.getType()) {</span>
+                case SIPHASH:
+<span class="fc" id="L443">                    theName = theSubSpec.toString();</span>
+<span class="fc" id="L444">                    break;</span>
+                case POLY1305:
+<span class="fc bfc" id="L446" title="All 2 branches covered.">                    theName += theSubSpec == null ? &quot;&quot; : GordianSpecConstants.SEP + getSymKeyType();</span>
+<span class="fc" id="L447">                    break;</span>
+                case GMAC, CMAC, CFBMAC, CBCMAC:
+<span class="fc" id="L449">                    theName += GordianSpecConstants.SEP + theSubSpec.toString();</span>
+<span class="fc" id="L450">                    break;</span>
+                case KALYNA:
+<span class="fc" id="L452">                    theName += getSymKeyBlockLength() + GordianSpecConstants.SEP + theKeyLength;</span>
+<span class="fc" id="L453">                    break;</span>
+                case KUPYNA:
+<span class="fc" id="L455">                    theName += GordianSpecConstants.SEP + getDigestLength() + GordianSpecConstants.SEP + theKeyLength;</span>
+<span class="fc" id="L456">                    break;</span>
+                case KMAC:
+<span class="fc" id="L458">                    theName += getDigestState() + GordianSpecConstants.SEP + theKeyLength;</span>
+<span class="fc" id="L459">                    break;</span>
+                case SKEIN:
+<span class="fc" id="L461">                    final boolean isSkeinXof = Objects.requireNonNull(getDigestSpec()).isXofMode();</span>
+<span class="fc" id="L462">                    theName = GordianDigestType.SKEIN</span>
+<span class="fc bfc" id="L463" title="All 2 branches covered.">                            + (isSkeinXof ? &quot;X&quot; : &quot;&quot;)</span>
+                            + &quot;Mac&quot;
+<span class="fc" id="L465">                            + GordianSpecConstants.SEP + getDigestState()</span>
+<span class="fc bfc" id="L466" title="All 2 branches covered.">                            + (isSkeinXof ? &quot;&quot; : GordianSpecConstants.SEP + getDigestLength())</span>
+                            + GordianSpecConstants.SEP + theKeyLength;
+<span class="fc" id="L468">                    break;</span>
+                case HMAC, ZUC:
+<span class="fc" id="L470">                    theName += theSubSpec.toString() + GordianSpecConstants.SEP + theKeyLength;</span>
+<span class="fc" id="L471">                    break;</span>
+                case BLAKE2:
+<span class="fc" id="L473">                    final boolean isBlakeXof = Objects.requireNonNull(getDigestSpec()).isXofMode();</span>
+<span class="fc" id="L474">                    theName = GordianDigestType.BLAKE2</span>
+<span class="fc" id="L475">                            + Objects.requireNonNull(getDigestState())</span>
+<span class="fc" id="L476">                            .getBlake2Algorithm(isBlakeXof)</span>
+<span class="fc bfc" id="L477" title="All 2 branches covered.">                            + &quot;Mac&quot; + (isBlakeXof ? &quot;&quot; : GordianSpecConstants.SEP + getDigestLength())</span>
+                            + GordianSpecConstants.SEP + theKeyLength;
+<span class="fc" id="L479">                    break;</span>
+                case BLAKE3:
+<span class="fc" id="L481">                    theName += GordianSpecConstants.SEP + getDigestLength();</span>
+<span class="fc" id="L482">                    break;</span>
+                case VMPC:
+<span class="fc" id="L484">                    theName += theKeyLength;</span>
+<span class="fc" id="L485">                    break;</span>
+                case GOST:
+                default:
+                    break;
+            }
+        }
+
+        /* return the name */
+<span class="fc" id="L493">        return theName;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="fc bfc" id="L499" title="All 2 branches covered.">        if (this == pThat) {</span>
+<span class="fc" id="L500">            return true;</span>
+        }
+<span class="pc bpc" id="L502" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L503">            return false;</span>
+        }
+
+        /* Check MacType, keyLength and subSpec */
+<span class="fc" id="L507">        return pThat instanceof GordianCoreMacSpec myThat</span>
+<span class="fc bfc" id="L508" title="All 2 branches covered.">                &amp;&amp; Objects.equals(theMacType, myThat.getCoreMacType())</span>
+<span class="fc bfc" id="L509" title="All 2 branches covered.">                &amp;&amp; theKeyLength == myThat.getKeyLength()</span>
+<span class="pc bpc" id="L510" title="1 of 4 branches missed.">                &amp;&amp; Objects.equals(theSubSpec, myThat.getSubSpec());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L515">        return Objects.hash(theMacType, theKeyLength, theSubSpec);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

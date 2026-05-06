@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
@@ -152,21 +152,18 @@ public class JcaKeyPair
             }
 
             /* Make sure that the object is the same class */
-<span class="pc bpc" id="L155" title="1 of 2 branches missed.">            if (!(pThat instanceof JcaPublicKey)) {</span>
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">            if (!(pThat instanceof JcaPublicKey myThat)) {</span>
 <span class="nc" id="L156">                return false;</span>
             }
 
-            /* Access the target field */
-<span class="fc" id="L160">            final JcaPublicKey myThat = (JcaPublicKey) pThat;</span>
-
             /* Check differences */
-<span class="pc bpc" id="L163" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
-<span class="pc bpc" id="L164" title="1 of 2 branches missed.">                    &amp;&amp; theKey.equals(myThat.getPublicKey());</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">                    &amp;&amp; theKey.equals(myThat.getPublicKey());</span>
         }
 
         @Override
         public int hashCode() {
-<span class="nc" id="L169">            return Objects.hash(getKeySpec(), theKey);</span>
+<span class="nc" id="L166">            return Objects.hash(getKeySpec(), theKey);</span>
         }
     }
 
@@ -188,9 +185,9 @@ public class JcaKeyPair
          */
         protected JcaPrivateKey(final GordianKeyPairSpec pKeySpec,
                                 final PrivateKey pPrivateKey) {
-<span class="fc" id="L191">            super(pKeySpec);</span>
-<span class="fc" id="L192">            theKey = pPrivateKey;</span>
-<span class="fc" id="L193">        }</span>
+<span class="fc" id="L188">            super(pKeySpec);</span>
+<span class="fc" id="L189">            theKey = pPrivateKey;</span>
+<span class="fc" id="L190">        }</span>
 
         /**
          * Obtain the private key.
@@ -198,35 +195,32 @@ public class JcaKeyPair
          * @return the key
          */
         protected PrivateKey getPrivateKey() {
-<span class="fc" id="L201">            return theKey;</span>
+<span class="fc" id="L198">            return theKey;</span>
         }
 
         @Override
         public boolean equals(final Object pThat) {
             /* Handle the trivial cases */
-<span class="pc bpc" id="L207" title="1 of 2 branches missed.">            if (pThat == this) {</span>
-<span class="nc" id="L208">                return true;</span>
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">            if (pThat == this) {</span>
+<span class="nc" id="L205">                return true;</span>
             }
-<span class="pc bpc" id="L210" title="1 of 2 branches missed.">            if (pThat == null) {</span>
-<span class="nc" id="L211">                return false;</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L208">                return false;</span>
             }
 
             /* Make sure that the object is the same class */
-<span class="pc bpc" id="L215" title="1 of 2 branches missed.">            if (!(pThat instanceof JcaPrivateKey)) {</span>
-<span class="nc" id="L216">                return false;</span>
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">            if (!(pThat instanceof JcaPrivateKey myThat)) {</span>
+<span class="nc" id="L213">                return false;</span>
             }
 
-            /* Access the target field */
-<span class="fc" id="L220">            final JcaPrivateKey myThat = (JcaPrivateKey) pThat;</span>
-
             /* Check differences */
-<span class="pc bpc" id="L223" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
-<span class="pc bpc" id="L224" title="1 of 2 branches missed.">                    &amp;&amp; theKey.equals(myThat.getPrivateKey());</span>
+<span class="pc bpc" id="L217" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">                    &amp;&amp; theKey.equals(myThat.getPrivateKey());</span>
         }
 
         @Override
         public int hashCode() {
-<span class="nc" id="L229">            return Objects.hash(getKeySpec(), theKey);</span>
+<span class="nc" id="L223">            return Objects.hash(getKeySpec(), theKey);</span>
         }
     }
 
@@ -249,67 +243,64 @@ public class JcaKeyPair
          */
         JcaStateAwarePrivateKey(final GordianKeyPairSpec pKeySpec,
                                 final PrivateKey pKey) {
-<span class="fc" id="L252">            super(pKeySpec, pKey);</span>
-<span class="fc" id="L253">            thePrivateKey = pKey;</span>
-<span class="fc" id="L254">        }</span>
+<span class="fc" id="L246">            super(pKeySpec, pKey);</span>
+<span class="fc" id="L247">            thePrivateKey = pKey;</span>
+<span class="fc" id="L248">        }</span>
 
         @Override
         public PrivateKey getPrivateKey() {
-<span class="fc" id="L258">            return thePrivateKey;</span>
+<span class="fc" id="L252">            return thePrivateKey;</span>
         }
 
         @Override
         public long getUsagesRemaining() {
-<span class="nc bnc" id="L263" title="All 2 branches missed.">            if (thePrivateKey instanceof LMSPrivateKey) {</span>
-<span class="nc" id="L264">                return ((LMSPrivateKey) getPrivateKey()).getUsagesRemaining();</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">            if (thePrivateKey instanceof LMSPrivateKey) {</span>
+<span class="nc" id="L258">                return ((LMSPrivateKey) getPrivateKey()).getUsagesRemaining();</span>
             }
-<span class="nc bnc" id="L266" title="All 2 branches missed.">            if (thePrivateKey instanceof XMSSMTPrivateKey) {</span>
-<span class="nc" id="L267">                return ((XMSSMTPrivateKey) getPrivateKey()).getUsagesRemaining();</span>
+<span class="nc bnc" id="L260" title="All 2 branches missed.">            if (thePrivateKey instanceof XMSSMTPrivateKey) {</span>
+<span class="nc" id="L261">                return ((XMSSMTPrivateKey) getPrivateKey()).getUsagesRemaining();</span>
             }
-<span class="nc bnc" id="L269" title="All 2 branches missed.">            return thePrivateKey instanceof XMSSPrivateKey</span>
-<span class="nc" id="L270">                    ? ((XMSSPrivateKey) getPrivateKey()).getUsagesRemaining()</span>
-<span class="nc" id="L271">                    : 0;</span>
+<span class="nc bnc" id="L263" title="All 2 branches missed.">            return thePrivateKey instanceof XMSSPrivateKey</span>
+<span class="nc" id="L264">                    ? ((XMSSPrivateKey) getPrivateKey()).getUsagesRemaining()</span>
+<span class="nc" id="L265">                    : 0;</span>
         }
 
         @Override
         public JcaStateAwarePrivateKey getKeyShard(final int pNumUsages) {
-<span class="nc bnc" id="L276" title="All 2 branches missed.">            if (thePrivateKey instanceof LMSPrivateKey) {</span>
-<span class="nc" id="L277">                return new JcaStateAwarePrivateKey(getKeySpec(), ((LMSPrivateKey) getPrivateKey()).extractKeyShard(pNumUsages));</span>
+<span class="nc bnc" id="L270" title="All 2 branches missed.">            if (thePrivateKey instanceof LMSPrivateKey) {</span>
+<span class="nc" id="L271">                return new JcaStateAwarePrivateKey(getKeySpec(), ((LMSPrivateKey) getPrivateKey()).extractKeyShard(pNumUsages));</span>
             }
-<span class="nc bnc" id="L279" title="All 2 branches missed.">            if (thePrivateKey instanceof XMSSMTPrivateKey) {</span>
-<span class="nc" id="L280">                return new JcaStateAwarePrivateKey(getKeySpec(), ((XMSSMTPrivateKey) getPrivateKey()).extractKeyShard(pNumUsages));</span>
+<span class="nc bnc" id="L273" title="All 2 branches missed.">            if (thePrivateKey instanceof XMSSMTPrivateKey) {</span>
+<span class="nc" id="L274">                return new JcaStateAwarePrivateKey(getKeySpec(), ((XMSSMTPrivateKey) getPrivateKey()).extractKeyShard(pNumUsages));</span>
             }
-<span class="nc bnc" id="L282" title="All 2 branches missed.">            return thePrivateKey instanceof XMSSPrivateKey</span>
-<span class="nc" id="L283">                    ? new JcaStateAwarePrivateKey(getKeySpec(), ((XMSSPrivateKey) getPrivateKey()).extractKeyShard(pNumUsages))</span>
-<span class="nc" id="L284">                    : null;</span>
+<span class="nc bnc" id="L276" title="All 2 branches missed.">            return thePrivateKey instanceof XMSSPrivateKey</span>
+<span class="nc" id="L277">                    ? new JcaStateAwarePrivateKey(getKeySpec(), ((XMSSPrivateKey) getPrivateKey()).extractKeyShard(pNumUsages))</span>
+<span class="nc" id="L278">                    : null;</span>
         }
 
         @Override
         public boolean equals(final Object pThat) {
             /* Handle the trivial cases */
-<span class="pc bpc" id="L290" title="1 of 2 branches missed.">            if (pThat == this) {</span>
-<span class="nc" id="L291">                return true;</span>
+<span class="pc bpc" id="L284" title="1 of 2 branches missed.">            if (pThat == this) {</span>
+<span class="nc" id="L285">                return true;</span>
             }
-<span class="pc bpc" id="L293" title="1 of 2 branches missed.">            if (pThat == null) {</span>
-<span class="nc" id="L294">                return false;</span>
+<span class="pc bpc" id="L287" title="1 of 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L288">                return false;</span>
             }
 
             /* Make sure that the object is the same class */
-<span class="pc bpc" id="L298" title="1 of 2 branches missed.">            if (!(pThat instanceof JcaStateAwarePrivateKey)) {</span>
-<span class="nc" id="L299">                return false;</span>
+<span class="pc bpc" id="L292" title="1 of 2 branches missed.">            if (!(pThat instanceof JcaStateAwarePrivateKey myThat)) {</span>
+<span class="nc" id="L293">                return false;</span>
             }
 
-            /* Access the target field */
-<span class="fc" id="L303">            final JcaStateAwarePrivateKey myThat = (JcaStateAwarePrivateKey) pThat;</span>
-
             /* Check differences */
-<span class="pc bpc" id="L306" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
-<span class="pc bpc" id="L307" title="1 of 2 branches missed.">                    &amp;&amp; thePrivateKey.equals(myThat.getPrivateKey());</span>
+<span class="pc bpc" id="L297" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
+<span class="pc bpc" id="L298" title="1 of 2 branches missed.">                    &amp;&amp; thePrivateKey.equals(myThat.getPrivateKey());</span>
         }
 
         @Override
         public int hashCode() {
-<span class="nc" id="L312">            return Objects.hash(getKeySpec(), thePrivateKey);</span>
+<span class="nc" id="L303">            return Objects.hash(getKeySpec(), thePrivateKey);</span>
         }
     }
 
@@ -331,42 +322,39 @@ public class JcaKeyPair
          */
         protected JcaDHPublicKey(final GordianKeyPairSpec pKeySpec,
                                  final BCDHPublicKey pPublicKey) {
-<span class="fc" id="L334">            super(pKeySpec, pPublicKey);</span>
-<span class="fc" id="L335">            theKey = pPublicKey;</span>
-<span class="fc" id="L336">        }</span>
+<span class="fc" id="L325">            super(pKeySpec, pPublicKey);</span>
+<span class="fc" id="L326">            theKey = pPublicKey;</span>
+<span class="fc" id="L327">        }</span>
 
         @Override
         protected BCDHPublicKey getPublicKey() {
-<span class="fc" id="L340">            return theKey;</span>
+<span class="fc" id="L331">            return theKey;</span>
         }
 
         @Override
         public boolean equals(final Object pThat) {
             /* Handle the trivial cases */
-<span class="fc bfc" id="L346" title="All 2 branches covered.">            if (pThat == this) {</span>
-<span class="fc" id="L347">                return true;</span>
+<span class="fc bfc" id="L337" title="All 2 branches covered.">            if (pThat == this) {</span>
+<span class="fc" id="L338">                return true;</span>
             }
-<span class="pc bpc" id="L349" title="1 of 2 branches missed.">            if (pThat == null) {</span>
-<span class="nc" id="L350">                return false;</span>
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L341">                return false;</span>
             }
 
             /* Make sure that the object is the same class */
-<span class="pc bpc" id="L354" title="1 of 2 branches missed.">            if (!(pThat instanceof JcaDHPublicKey)) {</span>
-<span class="nc" id="L355">                return false;</span>
+<span class="pc bpc" id="L345" title="1 of 2 branches missed.">            if (!(pThat instanceof JcaDHPublicKey myThat)) {</span>
+<span class="nc" id="L346">                return false;</span>
             }
 
-            /* Access the target field */
-<span class="fc" id="L359">            final JcaDHPublicKey myThat = (JcaDHPublicKey) pThat;</span>
-
             /* Check differences */
-<span class="pc bpc" id="L362" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
-<span class="pc bpc" id="L363" title="1 of 2 branches missed.">                    &amp;&amp; theKey.getY().equals(myThat.getPublicKey().getY())</span>
-<span class="pc bpc" id="L364" title="1 of 2 branches missed.">                    &amp;&amp; dhParamsAreEqual(theKey.getParams(), myThat.getPublicKey().getParams());</span>
+<span class="pc bpc" id="L350" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
+<span class="pc bpc" id="L351" title="1 of 2 branches missed.">                    &amp;&amp; theKey.getY().equals(myThat.getPublicKey().getY())</span>
+<span class="pc bpc" id="L352" title="1 of 2 branches missed.">                    &amp;&amp; dhParamsAreEqual(theKey.getParams(), myThat.getPublicKey().getParams());</span>
         }
 
         @Override
         public int hashCode() {
-<span class="nc" id="L369">            return Objects.hash(getKeySpec(), theKey);</span>
+<span class="nc" id="L357">            return Objects.hash(getKeySpec(), theKey);</span>
         }
     }
 
@@ -379,11 +367,11 @@ public class JcaKeyPair
      */
     private static boolean dhParamsAreEqual(final DHParameterSpec pFirst,
                                             final DHParameterSpec pSecond) {
-<span class="fc" id="L382">        final DHDomainParameterSpec myFirst = (DHDomainParameterSpec) pFirst;</span>
-<span class="fc" id="L383">        final DHDomainParameterSpec mySecond = (DHDomainParameterSpec) pSecond;</span>
-<span class="pc bpc" id="L384" title="1 of 2 branches missed.">        return myFirst.getP().equals(mySecond.getP())</span>
-<span class="pc bpc" id="L385" title="1 of 2 branches missed.">                &amp;&amp; myFirst.getG().equals(mySecond.getG())</span>
-<span class="pc bpc" id="L386" title="1 of 2 branches missed.">                &amp;&amp; myFirst.getQ().equals(mySecond.getQ());</span>
+<span class="fc" id="L370">        final DHDomainParameterSpec myFirst = (DHDomainParameterSpec) pFirst;</span>
+<span class="fc" id="L371">        final DHDomainParameterSpec mySecond = (DHDomainParameterSpec) pSecond;</span>
+<span class="pc bpc" id="L372" title="1 of 2 branches missed.">        return myFirst.getP().equals(mySecond.getP())</span>
+<span class="pc bpc" id="L373" title="1 of 2 branches missed.">                &amp;&amp; myFirst.getG().equals(mySecond.getG())</span>
+<span class="pc bpc" id="L374" title="1 of 2 branches missed.">                &amp;&amp; myFirst.getQ().equals(mySecond.getQ());</span>
     }
 
     /**
@@ -404,42 +392,39 @@ public class JcaKeyPair
          */
         JcaDHPrivateKey(final GordianKeyPairSpec pKeySpec,
                         final BCDHPrivateKey pKey) {
-<span class="fc" id="L407">            super(pKeySpec, pKey);</span>
-<span class="fc" id="L408">            thePrivateKey = pKey;</span>
-<span class="fc" id="L409">        }</span>
+<span class="fc" id="L395">            super(pKeySpec, pKey);</span>
+<span class="fc" id="L396">            thePrivateKey = pKey;</span>
+<span class="fc" id="L397">        }</span>
 
         @Override
         public BCDHPrivateKey getPrivateKey() {
-<span class="fc" id="L413">            return thePrivateKey;</span>
+<span class="fc" id="L401">            return thePrivateKey;</span>
         }
 
         @Override
         public boolean equals(final Object pThat) {
             /* Handle the trivial cases */
-<span class="pc bpc" id="L419" title="1 of 2 branches missed.">            if (pThat == this) {</span>
-<span class="nc" id="L420">                return true;</span>
+<span class="pc bpc" id="L407" title="1 of 2 branches missed.">            if (pThat == this) {</span>
+<span class="nc" id="L408">                return true;</span>
             }
-<span class="pc bpc" id="L422" title="1 of 2 branches missed.">            if (pThat == null) {</span>
-<span class="nc" id="L423">                return false;</span>
+<span class="pc bpc" id="L410" title="1 of 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L411">                return false;</span>
             }
 
             /* Make sure that the object is the same class */
-<span class="pc bpc" id="L427" title="1 of 2 branches missed.">            if (!(pThat instanceof JcaDHPrivateKey)) {</span>
-<span class="nc" id="L428">                return false;</span>
+<span class="pc bpc" id="L415" title="1 of 2 branches missed.">            if (!(pThat instanceof JcaDHPrivateKey myThat)) {</span>
+<span class="nc" id="L416">                return false;</span>
             }
 
-            /* Access the target field */
-<span class="fc" id="L432">            final JcaDHPrivateKey myThat = (JcaDHPrivateKey) pThat;</span>
-
             /* Check differences */
-<span class="pc bpc" id="L435" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
-<span class="pc bpc" id="L436" title="1 of 2 branches missed.">                    &amp;&amp; thePrivateKey.getX().equals(myThat.getPrivateKey().getX())</span>
-<span class="pc bpc" id="L437" title="1 of 2 branches missed.">                    &amp;&amp; dhParamsAreEqual(thePrivateKey.getParams(), myThat.getPrivateKey().getParams());</span>
+<span class="pc bpc" id="L420" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
+<span class="pc bpc" id="L421" title="1 of 2 branches missed.">                    &amp;&amp; thePrivateKey.getX().equals(myThat.getPrivateKey().getX())</span>
+<span class="pc bpc" id="L422" title="1 of 2 branches missed.">                    &amp;&amp; dhParamsAreEqual(thePrivateKey.getParams(), myThat.getPrivateKey().getParams());</span>
         }
 
         @Override
         public int hashCode() {
-<span class="nc" id="L442">            return Objects.hash(getKeySpec(), thePrivateKey);</span>
+<span class="nc" id="L427">            return Objects.hash(getKeySpec(), thePrivateKey);</span>
         }
     }
 
@@ -457,22 +442,22 @@ public class JcaKeyPair
          */
         JcaStateAwareKeyPair(final JcaPublicKey pPublic,
                              final JcaStateAwarePrivateKey pPrivate) {
-<span class="fc" id="L460">            super(pPublic, pPrivate);</span>
-<span class="fc" id="L461">        }</span>
+<span class="fc" id="L445">            super(pPublic, pPrivate);</span>
+<span class="fc" id="L446">        }</span>
 
         @Override
         public JcaStateAwarePrivateKey getPrivateKey() {
-<span class="fc" id="L465">            return (JcaStateAwarePrivateKey) super.getPrivateKey();</span>
+<span class="fc" id="L450">            return (JcaStateAwarePrivateKey) super.getPrivateKey();</span>
         }
 
         @Override
         public long getUsagesRemaining() {
-<span class="nc" id="L470">            return getPrivateKey().getUsagesRemaining();</span>
+<span class="nc" id="L455">            return getPrivateKey().getUsagesRemaining();</span>
         }
 
         @Override
         public JcaStateAwareKeyPair getKeyPairShard(final int pNumUsages) {
-<span class="nc" id="L475">            return new JcaStateAwareKeyPair(getPublicKey(), getPrivateKey().getKeyShard(pNumUsages));</span>
+<span class="nc" id="L460">            return new JcaStateAwareKeyPair(getPublicKey(), getPrivateKey().getKeyShard(pNumUsages));</span>
         }
     }
 }

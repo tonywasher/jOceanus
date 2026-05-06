@@ -17,15 +17,15 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.digest;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSubSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public abstract class GordianCoreDigestFactory
     /**
      * The Digest AlgIds.
      */
-    private GordianDigestAlgId theDigestAlgIds;
+    private GordianCoreDigestAlgId theDigestAlgIds;
 
     /**
      * Constructor.
@@ -67,6 +67,10 @@ public abstract class GordianCoreDigestFactory
 <span class="nc" id="L67">        return theFactory;</span>
     }
 
+    @Override
+    public GordianDigestSpecBuilder newDigestSpecBuilder() {
+<span class="fc" id="L72">        return GordianCoreDigestSpecBuilder.newInstance();</span>
+    }
 
     /**
      * Obtain Identifier for DigestSpec.
@@ -75,7 +79,7 @@ public abstract class GordianCoreDigestFactory
      * @return the Identifier
      */
     public AlgorithmIdentifier getIdentifierForSpec(final GordianDigestSpec pSpec) {
-<span class="fc" id="L78">        return getDigestAlgIds().getIdentifierForSpec(pSpec);</span>
+<span class="fc" id="L82">        return getDigestAlgIds().getIdentifierForSpec(pSpec);</span>
     }
 
     /**
@@ -84,8 +88,8 @@ public abstract class GordianCoreDigestFactory
      * @param pIdentifier the identifier.
      * @return the digestSpec (or null if not found)
      */
-    public GordianDigestSpec getDigestSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
-<span class="fc" id="L88">        return getDigestAlgIds().getSpecForIdentifier(pIdentifier);</span>
+    public GordianCoreDigestSpec getDigestSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+<span class="fc" id="L92">        return getDigestAlgIds().getSpecForIdentifier(pIdentifier);</span>
     }
 
     /**
@@ -93,21 +97,21 @@ public abstract class GordianCoreDigestFactory
      *
      * @return the digest Algorithm Ids
      */
-    private GordianDigestAlgId getDigestAlgIds() {
-<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (theDigestAlgIds == null) {</span>
-<span class="fc" id="L98">            theDigestAlgIds = new GordianDigestAlgId(theFactory);</span>
+    private GordianCoreDigestAlgId getDigestAlgIds() {
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (theDigestAlgIds == null) {</span>
+<span class="fc" id="L102">            theDigestAlgIds = new GordianCoreDigestAlgId(theFactory);</span>
         }
-<span class="fc" id="L100">        return theDigestAlgIds;</span>
+<span class="fc" id="L104">        return theDigestAlgIds;</span>
     }
 
     @Override
     public Predicate&lt;GordianDigestSpec&gt; supportedDigestSpecs() {
-<span class="fc" id="L105">        return this::validDigestSpec;</span>
+<span class="fc" id="L109">        return this::validDigestSpec;</span>
     }
 
     @Override
     public Predicate&lt;GordianDigestType&gt; supportedDigestTypes() {
-<span class="fc" id="L110">        return t -&gt; theFactory.getValidator().validDigestType(t);</span>
+<span class="fc" id="L114">        return t -&gt; theFactory.getValidator().validDigestType(t);</span>
     }
 
     /**
@@ -118,10 +122,10 @@ public abstract class GordianCoreDigestFactory
      */
     public void checkDigestSpec(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Check validity of DigestType */
-<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        if (!supportedDigestSpecs().test(pDigestSpec)) {</span>
-<span class="nc" id="L122">            throw new GordianDataException(GordianBaseData.getInvalidText(pDigestSpec));</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        if (!supportedDigestSpecs().test(pDigestSpec)) {</span>
+<span class="nc" id="L126">            throw new GordianDataException(GordianBaseData.getInvalidText(pDigestSpec));</span>
         }
-<span class="fc" id="L124">    }</span>
+<span class="fc" id="L128">    }</span>
 
     /**
      * Check DigestSpec.
@@ -131,77 +135,38 @@ public abstract class GordianCoreDigestFactory
      */
     public boolean validDigestSpec(final GordianDigestSpec pDigestSpec) {
         /* Reject invalid digestSpec */
-<span class="pc bpc" id="L134" title="1 of 4 branches missed.">        if (pDigestSpec == null || !pDigestSpec.isValid()) {</span>
-<span class="fc" id="L135">            return false;</span>
+<span class="pc bpc" id="L138" title="1 of 4 branches missed.">        if (pDigestSpec == null || !pDigestSpec.isValid()) {</span>
+<span class="fc" id="L139">            return false;</span>
         }
 
         /* If we have an explicit Xof, check support */
-<span class="fc bfc" id="L139" title="All 2 branches covered.">        if (pDigestSpec.isXofMode()</span>
-<span class="fc bfc" id="L140" title="All 2 branches covered.">                &amp;&amp; !theFactory.getValidator().isXofSupported()) {</span>
-<span class="fc" id="L141">            return false;</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        if (pDigestSpec.isXofMode()</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">                &amp;&amp; !theFactory.getValidator().isXofSupported()) {</span>
+<span class="fc" id="L145">            return false;</span>
         }
 
         /* Check validity */
-<span class="fc" id="L145">        return supportedDigestTypes().test(pDigestSpec.getDigestType());</span>
+<span class="fc" id="L149">        return supportedDigestTypes().test(pDigestSpec.getDigestType());</span>
     }
 
     @Override
     public List&lt;GordianDigestSpec&gt; listAllSupportedSpecs() {
-<span class="fc" id="L150">        return listAllPossibleSpecs()</span>
-<span class="fc" id="L151">                .stream()</span>
-<span class="fc" id="L152">                .filter(supportedDigestSpecs())</span>
-<span class="fc" id="L153">                .collect(Collectors.toCollection(ArrayList::new));</span>
+<span class="fc" id="L154">        return listAllPossibleSpecs()</span>
+<span class="fc" id="L155">                .stream()</span>
+<span class="fc" id="L156">                .filter(supportedDigestSpecs())</span>
+<span class="fc" id="L157">                .collect(Collectors.toCollection(ArrayList::new));</span>
     }
 
     @Override
     public List&lt;GordianDigestType&gt; listAllSupportedTypes() {
-<span class="fc" id="L158">        return Arrays.stream(GordianDigestType.values())</span>
-<span class="fc" id="L159">                .filter(supportedDigestTypes())</span>
-<span class="fc" id="L160">                .collect(Collectors.toCollection(ArrayList::new));</span>
+<span class="fc" id="L162">        return Arrays.stream(GordianDigestType.values())</span>
+<span class="fc" id="L163">                .filter(supportedDigestTypes())</span>
+<span class="fc" id="L164">                .collect(Collectors.toCollection(ArrayList::new));</span>
     }
 
     @Override
     public List&lt;GordianDigestSpec&gt; listAllPossibleSpecs() {
-        /* Create the array list */
-<span class="fc" id="L166">        final List&lt;GordianDigestSpec&gt; myList = new ArrayList&lt;&gt;();</span>
-
-        /* For each digest type */
-<span class="fc bfc" id="L169" title="All 2 branches covered.">        for (final GordianDigestType myType : GordianDigestType.values()) {</span>
-            /* For each subSpecType */
-<span class="fc bfc" id="L171" title="All 2 branches covered.">            for (GordianDigestSubSpec mySubSpec : GordianDigestSubSpec.getPossibleSubSpecsForType(myType)) {</span>
-                /* For each length */
-<span class="fc bfc" id="L173" title="All 2 branches covered.">                for (final GordianLength myLength : myType.getSupportedLengths()) {</span>
-<span class="fc" id="L174">                    final GordianDigestSpec mySpec = new GordianDigestSpec(myType, mySubSpec, myLength);</span>
-
-                    /* Add if valid */
-<span class="fc bfc" id="L177" title="All 2 branches covered.">                    if (mySpec.isValid()) {</span>
-<span class="fc" id="L178">                        myList.add(mySpec);</span>
-                    }
-                }
-
-                /* If we have a possible Xof */
-<span class="fc bfc" id="L183" title="All 2 branches covered.">                if (mySubSpec instanceof GordianDigestState myState) {</span>
-<span class="fc" id="L184">                    final GordianDigestSpec mySpec = new GordianDigestSpec(myType, myState, myState.getLength(), Boolean.TRUE);</span>
-
-                    /* Add if valid */
-<span class="fc bfc" id="L187" title="All 2 branches covered.">                    if (mySpec.isValid()) {</span>
-<span class="fc" id="L188">                        myList.add(mySpec);</span>
-                    }
-
-                    /* Else look for null Xof type */
-<span class="fc" id="L192">                } else {</span>
-<span class="fc" id="L193">                    final GordianDigestSpec mySpec = new GordianDigestSpec(myType, null, myType.getDefaultLength(), Boolean.TRUE);</span>
-
-                    /* Add if valid */
-<span class="fc bfc" id="L196" title="All 2 branches covered.">                    if (mySpec.isValid()) {</span>
-<span class="fc" id="L197">                        myList.add(mySpec);</span>
-                    }
-                }
-            }
-        }
-
-        /* Return the list */
-<span class="fc" id="L204">        return myList;</span>
+<span class="fc" id="L169">        return GordianCoreDigestSpecBuilder.listAllPossibleSpecs();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

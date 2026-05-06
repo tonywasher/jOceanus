@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreRSASpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair</a> &gt; <span class="el_source">GordianCoreRSASpec.java</span></div><h1>GordianCoreRSASpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianRSASpec;
+
+import java.math.BigInteger;
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * Modulus Key lengths.
+ */
+public final class GordianCoreRSASpec {
+    /**
+     * The specMap.
+     */
+<span class="fc" id="L34">    private static final Map&lt;GordianRSASpec, GordianCoreRSASpec&gt; SPECMAP = newSpecMap();</span>
+
+    /**
+     * The specArray.
+     */
+<span class="fc" id="L39">    private static final GordianCoreRSASpec[] VALUES = SPECMAP.values().toArray(new GordianCoreRSASpec[0]);</span>
+
+    /**
+     * The Spec.
+     */
+    private final GordianRSASpec theSpec;
+
+    /**
+     * Constructor.
+     *
+     * @param pSpec the spec
+     */
+<span class="fc" id="L51">    private GordianCoreRSASpec(final GordianRSASpec pSpec) {</span>
+<span class="fc" id="L52">        theSpec = pSpec;</span>
+<span class="fc" id="L53">    }</span>
+
+    /**
+     * Obtain the spec.
+     *
+     * @return the spec
+     */
+    public GordianRSASpec getSpec() {
+<span class="fc" id="L61">        return theSpec;</span>
+    }
+
+    /**
+     * Obtain the length for a spec.
+     *
+     * @return the length
+     */
+    public int getLength() {
+<span class="pc bpc" id="L70" title="1 of 8 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L71">            case MOD1024 -&gt; GordianLength.LEN_1024.getLength();</span>
+<span class="fc" id="L72">            case MOD1536 -&gt; GordianLength.LEN_1536.getLength();</span>
+<span class="fc" id="L73">            case MOD2048 -&gt; GordianLength.LEN_2048.getLength();</span>
+<span class="fc" id="L74">            case MOD3072 -&gt; GordianLength.LEN_3072.getLength();</span>
+<span class="fc" id="L75">            case MOD4096 -&gt; GordianLength.LEN_4096.getLength();</span>
+<span class="fc" id="L76">            case MOD6144 -&gt; GordianLength.LEN_6144.getLength();</span>
+<span class="fc" id="L77">            case MOD8192 -&gt; GordianLength.LEN_8192.getLength();</span>
+<span class="nc" id="L78">            default -&gt; throw new IllegalArgumentException(&quot;Unknown GordianNewRSASpec&quot;);</span>
+        };
+    }
+
+    /**
+     * Obtain the matching spec for a BigInteger.
+     *
+     * @param pValue the integer
+     * @return the modulus
+     */
+    public static GordianCoreRSASpec getRSASpecForInteger(final BigInteger pValue) {
+        /* Loop through the values */
+<span class="fc" id="L90">        final int myLen = pValue.bitLength();</span>
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">        for (GordianCoreRSASpec mySpec : values()) {</span>
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">            if (mySpec.getLength() == myLen) {</span>
+<span class="fc" id="L93">                return mySpec;</span>
+            }
+        }
+<span class="nc" id="L96">        return null;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L101">        return theSpec.toString();</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L108">            return true;</span>
+        }
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L111">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="nc" id="L115">        return pThat instanceof GordianCoreRSASpec myThat</span>
+<span class="nc bnc" id="L116" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L121">        return theSpec.hashCode();</span>
+    }
+
+    /**
+     * Obtain the core spec.
+     *
+     * @param pSpec the base spec
+     * @return the core spec
+     */
+    public static GordianCoreRSASpec mapCoreSpec(final Object pSpec) {
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">        return pSpec instanceof GordianRSASpec mySpec ? SPECMAP.get(mySpec) : null;</span>
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map&lt;GordianRSASpec, GordianCoreRSASpec&gt; newSpecMap() {
+<span class="fc" id="L140">        final Map&lt;GordianRSASpec, GordianCoreRSASpec&gt; myMap = new EnumMap&lt;&gt;(GordianRSASpec.class);</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        for (GordianRSASpec mySpec : GordianRSASpec.values()) {</span>
+<span class="fc" id="L142">            myMap.put(mySpec, new GordianCoreRSASpec(mySpec));</span>
+        }
+<span class="fc" id="L144">        return myMap;</span>
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static GordianCoreRSASpec[] values() {
+<span class="fc" id="L153">        return VALUES;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

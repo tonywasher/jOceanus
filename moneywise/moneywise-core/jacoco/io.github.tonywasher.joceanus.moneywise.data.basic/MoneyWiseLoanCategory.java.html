@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
@@ -28,6 +27,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategor
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType.MoneyWiseLoanCategoryTypeList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
@@ -230,24 +230,23 @@ public final class MoneyWiseLoanCategory
     @Override
     public boolean applyChanges(final PrometheusDataItem pCategory) {
         /* Can only update from a loan category */
-<span class="nc bnc" id="L233" title="All 2 branches missed.">        if (!(pCategory instanceof MoneyWiseLoanCategory)) {</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">        if (!(pCategory instanceof MoneyWiseLoanCategory myCategory)) {</span>
 <span class="nc" id="L234">            return false;</span>
         }
-<span class="nc" id="L236">        final MoneyWiseLoanCategory myCategory = (MoneyWiseLoanCategory) pCategory;</span>
 
         /* Store the current detail into history */
-<span class="nc" id="L239">        pushHistory();</span>
+<span class="nc" id="L238">        pushHistory();</span>
 
         /* Apply basic changes */
-<span class="nc" id="L242">        applyBasicChanges(myCategory);</span>
+<span class="nc" id="L241">        applyBasicChanges(myCategory);</span>
 
         /* Update the category type if required */
-<span class="nc bnc" id="L245" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getCategoryType(), myCategory.getCategoryType())) {</span>
-<span class="nc" id="L246">            setValueType(myCategory.getCategoryType());</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getCategoryType(), myCategory.getCategoryType())) {</span>
+<span class="nc" id="L245">            setValueType(myCategory.getCategoryType());</span>
         }
 
         /* Check for changes */
-<span class="nc" id="L250">        return checkForHistory();</span>
+<span class="nc" id="L249">        return checkForHistory();</span>
     }
 
     /**
@@ -258,7 +257,7 @@ public final class MoneyWiseLoanCategory
         /**
          * Report fields.
          */
-<span class="fc" id="L261">        private static final MetisFieldSet&lt;MoneyWiseLoanCategoryList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseLoanCategoryList.class);</span>
+<span class="fc" id="L260">        private static final MetisFieldSet&lt;MoneyWiseLoanCategoryList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseLoanCategoryList.class);</span>
 
         /**
          * The EditSet.
@@ -271,8 +270,8 @@ public final class MoneyWiseLoanCategory
          * @param pData the DataSet for the list
          */
         protected MoneyWiseLoanCategoryList(final MoneyWiseDataSet pData) {
-<span class="fc" id="L274">            super(pData, MoneyWiseLoanCategory.class, MoneyWiseBasicDataType.LOANCATEGORY);</span>
-<span class="fc" id="L275">        }</span>
+<span class="fc" id="L273">            super(pData, MoneyWiseLoanCategory.class, MoneyWiseBasicDataType.LOANCATEGORY);</span>
+<span class="fc" id="L274">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -280,22 +279,22 @@ public final class MoneyWiseLoanCategory
          * @param pSource the source List
          */
         protected MoneyWiseLoanCategoryList(final MoneyWiseLoanCategoryList pSource) {
-<span class="fc" id="L283">            super(pSource);</span>
-<span class="fc" id="L284">        }</span>
+<span class="fc" id="L282">            super(pSource);</span>
+<span class="fc" id="L283">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWiseLoanCategoryList&gt; getDataFieldSet() {
-<span class="nc" id="L288">            return FIELD_DEFS;</span>
+<span class="nc" id="L287">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String listName() {
-<span class="fc" id="L293">            return LIST_NAME;</span>
+<span class="fc" id="L292">            return LIST_NAME;</span>
         }
 
         @Override
         public MetisFieldSetDef getItemFields() {
-<span class="fc" id="L298">            return MoneyWiseLoanCategory.FIELD_DEFS;</span>
+<span class="fc" id="L297">            return MoneyWiseLoanCategory.FIELD_DEFS;</span>
         }
 
         /**
@@ -304,14 +303,14 @@ public final class MoneyWiseLoanCategory
          * @return the editSet
          */
         public PrometheusEditSet getEditSet() {
-<span class="fc" id="L307">            return theEditSet;</span>
+<span class="fc" id="L306">            return theEditSet;</span>
         }
 
         @Override
         protected MoneyWiseLoanCategoryList getEmptyList(final PrometheusListStyle pStyle) {
-<span class="fc" id="L312">            final MoneyWiseLoanCategoryList myList = new MoneyWiseLoanCategoryList(this);</span>
-<span class="fc" id="L313">            myList.setStyle(pStyle);</span>
-<span class="fc" id="L314">            return myList;</span>
+<span class="fc" id="L311">            final MoneyWiseLoanCategoryList myList = new MoneyWiseLoanCategoryList(this);</span>
+<span class="fc" id="L312">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L313">            return myList;</span>
         }
 
         /**
@@ -323,35 +322,35 @@ public final class MoneyWiseLoanCategory
          */
         public MoneyWiseLoanCategoryList deriveEditList(final PrometheusEditSet pEditSet) throws OceanusException {
             /* Build an empty List */
-<span class="fc" id="L326">            final MoneyWiseLoanCategoryList myList = getEmptyList(PrometheusListStyle.EDIT);</span>
-<span class="fc" id="L327">            myList.ensureMap();</span>
-<span class="fc" id="L328">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.LOANCATEGORY, myList);</span>
-<span class="fc" id="L329">            myList.getValidator().setEditSet(pEditSet);</span>
+<span class="fc" id="L325">            final MoneyWiseLoanCategoryList myList = getEmptyList(PrometheusListStyle.EDIT);</span>
+<span class="fc" id="L326">            myList.ensureMap();</span>
+<span class="fc" id="L327">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.LOANCATEGORY, myList);</span>
+<span class="fc" id="L328">            myList.getValidator().setEditSet(pEditSet);</span>
 
             /* Store the editSet */
-<span class="fc" id="L332">            myList.theEditSet = pEditSet;</span>
+<span class="fc" id="L331">            myList.theEditSet = pEditSet;</span>
 
             /* Loop through the categories */
-<span class="fc" id="L335">            final Iterator&lt;MoneyWiseLoanCategory&gt; myIterator = iterator();</span>
-<span class="fc bfc" id="L336" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
-<span class="fc" id="L337">                final MoneyWiseLoanCategory myCurr = myIterator.next();</span>
+<span class="fc" id="L334">            final Iterator&lt;MoneyWiseLoanCategory&gt; myIterator = iterator();</span>
+<span class="fc bfc" id="L335" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L336">                final MoneyWiseLoanCategory myCurr = myIterator.next();</span>
 
                 /* Ignore deleted events */
-<span class="pc bpc" id="L340" title="1 of 2 branches missed.">                if (myCurr.isDeleted()) {</span>
-<span class="nc" id="L341">                    continue;</span>
+<span class="pc bpc" id="L339" title="1 of 2 branches missed.">                if (myCurr.isDeleted()) {</span>
+<span class="nc" id="L340">                    continue;</span>
                 }
 
                 /* Build the new linked category and add it to the list */
-<span class="fc" id="L345">                final MoneyWiseLoanCategory myCategory = new MoneyWiseLoanCategory(myList, myCurr);</span>
-<span class="fc" id="L346">                myList.add(myCategory);</span>
-<span class="fc" id="L347">                myCategory.resolveEditSetLinks();</span>
+<span class="fc" id="L344">                final MoneyWiseLoanCategory myCategory = new MoneyWiseLoanCategory(myList, myCurr);</span>
+<span class="fc" id="L345">                myList.add(myCategory);</span>
+<span class="fc" id="L346">                myCategory.resolveEditSetLinks();</span>
 
                 /* Adjust the map */
-<span class="fc" id="L350">                myCategory.adjustMapForItem();</span>
-<span class="fc" id="L351">            }</span>
+<span class="fc" id="L349">                myCategory.adjustMapForItem();</span>
+<span class="fc" id="L350">            }</span>
 
             /* Return the list */
-<span class="fc" id="L354">            return myList;</span>
+<span class="fc" id="L353">            return myList;</span>
         }
 
         /**
@@ -363,13 +362,13 @@ public final class MoneyWiseLoanCategory
         @Override
         public MoneyWiseLoanCategory addCopyItem(final PrometheusDataItem pCategory) {
             /* Can only clone a LoanCategory */
-<span class="pc bpc" id="L366" title="1 of 2 branches missed.">            if (!(pCategory instanceof MoneyWiseLoanCategory)) {</span>
-<span class="nc" id="L367">                throw new UnsupportedOperationException();</span>
+<span class="pc bpc" id="L365" title="1 of 2 branches missed.">            if (!(pCategory instanceof MoneyWiseLoanCategory)) {</span>
+<span class="nc" id="L366">                throw new UnsupportedOperationException();</span>
             }
 
-<span class="fc" id="L370">            final MoneyWiseLoanCategory myCategory = new MoneyWiseLoanCategory(this, (MoneyWiseLoanCategory) pCategory);</span>
-<span class="fc" id="L371">            add(myCategory);</span>
-<span class="fc" id="L372">            return myCategory;</span>
+<span class="fc" id="L369">            final MoneyWiseLoanCategory myCategory = new MoneyWiseLoanCategory(this, (MoneyWiseLoanCategory) pCategory);</span>
+<span class="fc" id="L370">            add(myCategory);</span>
+<span class="fc" id="L371">            return myCategory;</span>
         }
 
         /**
@@ -379,27 +378,27 @@ public final class MoneyWiseLoanCategory
          */
         @Override
         public MoneyWiseLoanCategory addNewItem() {
-<span class="fc" id="L382">            final MoneyWiseLoanCategory myCategory = new MoneyWiseLoanCategory(this);</span>
-<span class="fc" id="L383">            add(myCategory);</span>
-<span class="fc" id="L384">            return myCategory;</span>
+<span class="fc" id="L381">            final MoneyWiseLoanCategory myCategory = new MoneyWiseLoanCategory(this);</span>
+<span class="fc" id="L382">            add(myCategory);</span>
+<span class="fc" id="L383">            return myCategory;</span>
         }
 
         @Override
         public MoneyWiseLoanCategory addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
             /* Create the category */
-<span class="fc" id="L390">            final MoneyWiseLoanCategory myCategory = new MoneyWiseLoanCategory(this, pValues);</span>
+<span class="fc" id="L389">            final MoneyWiseLoanCategory myCategory = new MoneyWiseLoanCategory(this, pValues);</span>
 
             /* Check that this CategoryId has not been previously added */
-<span class="pc bpc" id="L393" title="1 of 2 branches missed.">            if (!isIdUnique(myCategory.getIndexedId())) {</span>
-<span class="nc" id="L394">                myCategory.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L395">                throw new MoneyWiseDataException(myCategory, ERROR_VALIDATION);</span>
+<span class="pc bpc" id="L392" title="1 of 2 branches missed.">            if (!isIdUnique(myCategory.getIndexedId())) {</span>
+<span class="nc" id="L393">                myCategory.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L394">                throw new MoneyWiseDataException(myCategory, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="fc" id="L399">            add(myCategory);</span>
+<span class="fc" id="L398">            add(myCategory);</span>
 
             /* Return it */
-<span class="fc" id="L402">            return myCategory;</span>
+<span class="fc" id="L401">            return myCategory;</span>
         }
     }
 }

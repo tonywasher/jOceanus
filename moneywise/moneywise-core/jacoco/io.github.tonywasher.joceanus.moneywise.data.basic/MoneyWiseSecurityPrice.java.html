@@ -16,12 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -30,6 +24,12 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataMapItem;
@@ -456,34 +456,33 @@ public class MoneyWiseSecurityPrice
     @Override
     public boolean applyChanges(final PrometheusDataItem pPrice) {
         /* Can only update from a SecurityPrice */
-<span class="nc bnc" id="L459" title="All 2 branches missed.">        if (!(pPrice instanceof MoneyWiseSecurityPrice)) {</span>
+<span class="nc bnc" id="L459" title="All 2 branches missed.">        if (!(pPrice instanceof MoneyWiseSecurityPrice myPrice)) {</span>
 <span class="nc" id="L460">            return false;</span>
         }
-<span class="nc" id="L462">        final MoneyWiseSecurityPrice myPrice = (MoneyWiseSecurityPrice) pPrice;</span>
 
         /* Store the current detail into history */
-<span class="nc" id="L465">        pushHistory();</span>
+<span class="nc" id="L464">        pushHistory();</span>
 
         /* Update the price if required */
-<span class="nc bnc" id="L468" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getPrice(), myPrice.getPrice())) {</span>
-<span class="nc" id="L469">            setValuePrice(myPrice.getPriceField());</span>
+<span class="nc bnc" id="L467" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getPrice(), myPrice.getPrice())) {</span>
+<span class="nc" id="L468">            setValuePrice(myPrice.getPriceField());</span>
         }
 
         /* Update the date if required */
-<span class="nc bnc" id="L473" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDate(), myPrice.getDate())) {</span>
-<span class="nc" id="L474">            setValueDate(myPrice.getDate());</span>
+<span class="nc bnc" id="L472" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDate(), myPrice.getDate())) {</span>
+<span class="nc" id="L473">            setValueDate(myPrice.getDate());</span>
         }
 
         /* Check for changes */
-<span class="nc" id="L478">        return checkForHistory();</span>
+<span class="nc" id="L477">        return checkForHistory();</span>
     }
 
     @Override
     public void adjustMapForItem() {
-<span class="fc" id="L483">        final MoneyWiseSecurityPriceBaseList&lt;? extends MoneyWiseSecurityPrice&gt; myList = getList();</span>
-<span class="fc" id="L484">        final MoneyWiseSecurityPriceDataMap myMap = myList.getDataMap();</span>
-<span class="fc" id="L485">        myMap.adjustForItem(this);</span>
-<span class="fc" id="L486">    }</span>
+<span class="fc" id="L482">        final MoneyWiseSecurityPriceBaseList&lt;? extends MoneyWiseSecurityPrice&gt; myList = getList();</span>
+<span class="fc" id="L483">        final MoneyWiseSecurityPriceDataMap myMap = myList.getDataMap();</span>
+<span class="fc" id="L484">        myMap.adjustForItem(this);</span>
+<span class="fc" id="L485">    }</span>
 
     /**
      * Price List.
@@ -496,8 +495,8 @@ public class MoneyWiseSecurityPrice
          * Report fields.
          */
         static {
-<span class="fc" id="L499">            MetisFieldSet.newFieldSet(MoneyWiseSecurityPriceBaseList.class);</span>
-<span class="fc" id="L500">        }</span>
+<span class="fc" id="L498">            MetisFieldSet.newFieldSet(MoneyWiseSecurityPriceBaseList.class);</span>
+<span class="fc" id="L499">        }</span>
 
         /**
          * Construct an empty CORE Price list.
@@ -510,8 +509,8 @@ public class MoneyWiseSecurityPrice
                                                  final Class&lt;T&gt; pClass,
                                                  final MoneyWiseBasicDataType pItemType) {
             /* Call super-constructor */
-<span class="fc" id="L513">            super(pClass, pData, pItemType, PrometheusListStyle.CORE);</span>
-<span class="fc" id="L514">        }</span>
+<span class="fc" id="L512">            super(pClass, pData, pItemType, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L513">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -520,17 +519,17 @@ public class MoneyWiseSecurityPrice
          */
         protected MoneyWiseSecurityPriceBaseList(final MoneyWiseSecurityPriceBaseList&lt;T&gt; pSource) {
             /* Call super-constructor */
-<span class="fc" id="L523">            super(pSource);</span>
-<span class="fc" id="L524">        }</span>
+<span class="fc" id="L522">            super(pSource);</span>
+<span class="fc" id="L523">        }</span>
 
         @Override
         public MoneyWiseSecurityPriceDataMap getDataMap() {
-<span class="fc" id="L528">            return (MoneyWiseSecurityPriceDataMap) super.getDataMap();</span>
+<span class="fc" id="L527">            return (MoneyWiseSecurityPriceDataMap) super.getDataMap();</span>
         }
 
         @Override
         protected MoneyWiseSecurityPriceDataMap allocateDataMap() {
-<span class="fc" id="L533">            return new MoneyWiseSecurityPriceDataMap();</span>
+<span class="fc" id="L532">            return new MoneyWiseSecurityPriceDataMap();</span>
         }
     }
 
@@ -542,7 +541,7 @@ public class MoneyWiseSecurityPrice
         /**
          * Report fields.
          */
-<span class="fc" id="L545">        private static final MetisFieldSet&lt;MoneyWiseSecurityPriceList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSecurityPriceList.class);</span>
+<span class="fc" id="L544">        private static final MetisFieldSet&lt;MoneyWiseSecurityPriceList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSecurityPriceList.class);</span>
 
         /**
          * Construct an empty CORE price list.
@@ -550,8 +549,8 @@ public class MoneyWiseSecurityPrice
          * @param pData the DataSet for the list
          */
         protected MoneyWiseSecurityPriceList(final MoneyWiseDataSet pData) {
-<span class="fc" id="L553">            super(pData, MoneyWiseSecurityPrice.class, MoneyWiseBasicDataType.SECURITYPRICE);</span>
-<span class="fc" id="L554">        }</span>
+<span class="fc" id="L552">            super(pData, MoneyWiseSecurityPrice.class, MoneyWiseBasicDataType.SECURITYPRICE);</span>
+<span class="fc" id="L553">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -559,34 +558,34 @@ public class MoneyWiseSecurityPrice
          * @param pSource the source List
          */
         private MoneyWiseSecurityPriceList(final MoneyWiseSecurityPriceList pSource) {
-<span class="fc" id="L562">            super(pSource);</span>
-<span class="fc" id="L563">        }</span>
+<span class="fc" id="L561">            super(pSource);</span>
+<span class="fc" id="L562">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWiseSecurityPriceList&gt; getDataFieldSet() {
-<span class="nc" id="L567">            return FIELD_DEFS;</span>
+<span class="nc" id="L566">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String listName() {
-<span class="fc" id="L572">            return LIST_NAME;</span>
+<span class="fc" id="L571">            return LIST_NAME;</span>
         }
 
         @Override
         public MetisFieldSetDef getItemFields() {
-<span class="fc" id="L577">            return MoneyWiseSecurityPrice.FIELD_DEFS;</span>
+<span class="fc" id="L576">            return MoneyWiseSecurityPrice.FIELD_DEFS;</span>
         }
 
         @Override
         public MoneyWiseDataSet getDataSet() {
-<span class="fc" id="L582">            return (MoneyWiseDataSet) super.getDataSet();</span>
+<span class="fc" id="L581">            return (MoneyWiseDataSet) super.getDataSet();</span>
         }
 
         @Override
         protected MoneyWiseSecurityPriceList getEmptyList(final PrometheusListStyle pStyle) {
-<span class="fc" id="L587">            final MoneyWiseSecurityPriceList myList = new MoneyWiseSecurityPriceList(this);</span>
-<span class="fc" id="L588">            myList.setStyle(pStyle);</span>
-<span class="fc" id="L589">            return myList;</span>
+<span class="fc" id="L586">            final MoneyWiseSecurityPriceList myList = new MoneyWiseSecurityPriceList(this);</span>
+<span class="fc" id="L587">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L588">            return myList;</span>
         }
 
         /**
@@ -598,26 +597,26 @@ public class MoneyWiseSecurityPrice
          */
         public MoneyWiseSecurityPriceList deriveEditList(final PrometheusEditSet pEditSet) throws OceanusException {
             /* Build an empty List */
-<span class="fc" id="L601">            final MoneyWiseSecurityPriceList myList = getEmptyList(PrometheusListStyle.EDIT);</span>
-<span class="fc" id="L602">            myList.ensureMap();</span>
-<span class="fc" id="L603">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.SECURITYPRICE, myList);</span>
+<span class="fc" id="L600">            final MoneyWiseSecurityPriceList myList = getEmptyList(PrometheusListStyle.EDIT);</span>
+<span class="fc" id="L601">            myList.ensureMap();</span>
+<span class="fc" id="L602">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.SECURITYPRICE, myList);</span>
 
             /* Loop through the list */
-<span class="fc" id="L606">            final Iterator&lt;MoneyWiseSecurityPrice&gt; myIterator = iterator();</span>
-<span class="fc bfc" id="L607" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
-<span class="fc" id="L608">                final MoneyWiseSecurityPrice myCurr = myIterator.next();</span>
+<span class="fc" id="L605">            final Iterator&lt;MoneyWiseSecurityPrice&gt; myIterator = iterator();</span>
+<span class="fc bfc" id="L606" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L607">                final MoneyWiseSecurityPrice myCurr = myIterator.next();</span>
 
                 /* Copy the item */
-<span class="fc" id="L611">                final MoneyWiseSecurityPrice myItem = new MoneyWiseSecurityPrice(myList, myCurr);</span>
-<span class="fc" id="L612">                myItem.resolveEditSetLinks(pEditSet);</span>
-<span class="fc" id="L613">                myList.add(myItem);</span>
+<span class="fc" id="L610">                final MoneyWiseSecurityPrice myItem = new MoneyWiseSecurityPrice(myList, myCurr);</span>
+<span class="fc" id="L611">                myItem.resolveEditSetLinks(pEditSet);</span>
+<span class="fc" id="L612">                myList.add(myItem);</span>
 
                 /* Adjust the map */
-<span class="fc" id="L616">                myItem.adjustMapForItem();</span>
-<span class="fc" id="L617">            }</span>
+<span class="fc" id="L615">                myItem.adjustMapForItem();</span>
+<span class="fc" id="L616">            }</span>
 
             /* Return the List */
-<span class="fc" id="L620">            return myList;</span>
+<span class="fc" id="L619">            return myList;</span>
         }
 
         /**
@@ -628,12 +627,12 @@ public class MoneyWiseSecurityPrice
          */
         @Override
         public MoneyWiseSecurityPrice addCopyItem(final PrometheusDataItem pPrice) {
-<span class="pc bpc" id="L631" title="1 of 2 branches missed.">            if (pPrice instanceof MoneyWiseSecurityPrice p) {</span>
-<span class="fc" id="L632">                final MoneyWiseSecurityPrice myPrice = new MoneyWiseSecurityPrice(this, p);</span>
-<span class="fc" id="L633">                add(myPrice);</span>
-<span class="fc" id="L634">                return myPrice;</span>
+<span class="pc bpc" id="L630" title="1 of 2 branches missed.">            if (pPrice instanceof MoneyWiseSecurityPrice p) {</span>
+<span class="fc" id="L631">                final MoneyWiseSecurityPrice myPrice = new MoneyWiseSecurityPrice(this, p);</span>
+<span class="fc" id="L632">                add(myPrice);</span>
+<span class="fc" id="L633">                return myPrice;</span>
             } else {
-<span class="nc" id="L636">                throw new UnsupportedOperationException();</span>
+<span class="nc" id="L635">                throw new UnsupportedOperationException();</span>
             }
         }
 
@@ -644,27 +643,27 @@ public class MoneyWiseSecurityPrice
          */
         @Override
         public MoneyWiseSecurityPrice addNewItem() {
-<span class="fc" id="L647">            final MoneyWiseSecurityPrice myPrice = new MoneyWiseSecurityPrice(this);</span>
-<span class="fc" id="L648">            add(myPrice);</span>
-<span class="fc" id="L649">            return myPrice;</span>
+<span class="fc" id="L646">            final MoneyWiseSecurityPrice myPrice = new MoneyWiseSecurityPrice(this);</span>
+<span class="fc" id="L647">            add(myPrice);</span>
+<span class="fc" id="L648">            return myPrice;</span>
         }
 
         @Override
         public MoneyWiseSecurityPrice addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
             /* Create the price */
-<span class="fc" id="L655">            final MoneyWiseSecurityPrice myPrice = new MoneyWiseSecurityPrice(this, pValues);</span>
+<span class="fc" id="L654">            final MoneyWiseSecurityPrice myPrice = new MoneyWiseSecurityPrice(this, pValues);</span>
 
             /* Check that this PriceId has not been previously added */
-<span class="pc bpc" id="L658" title="1 of 2 branches missed.">            if (!isIdUnique(myPrice.getIndexedId())) {</span>
-<span class="nc" id="L659">                myPrice.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L660">                throw new MoneyWiseDataException(myPrice, ERROR_VALIDATION);</span>
+<span class="pc bpc" id="L657" title="1 of 2 branches missed.">            if (!isIdUnique(myPrice.getIndexedId())) {</span>
+<span class="nc" id="L658">                myPrice.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L659">                throw new MoneyWiseDataException(myPrice, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="fc" id="L664">            add(myPrice);</span>
+<span class="fc" id="L663">            add(myPrice);</span>
 
             /* Return it */
-<span class="fc" id="L667">            return myPrice;</span>
+<span class="fc" id="L666">            return myPrice;</span>
         }
     }
 
@@ -677,15 +676,15 @@ public class MoneyWiseSecurityPrice
          * Report fields.
          */
         @SuppressWarnings(&quot;rawtypes&quot;)
-<span class="fc" id="L680">        private static final MetisFieldSet&lt;MoneyWiseSecurityPriceDataMap&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSecurityPriceDataMap.class);</span>
+<span class="fc" id="L679">        private static final MetisFieldSet&lt;MoneyWiseSecurityPriceDataMap&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSecurityPriceDataMap.class);</span>
 
         /*
          * UnderlyingMap Field Id.
          */
         static {
-<span class="fc" id="L686">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_MAPOFMAPS, MoneyWiseSecurityPriceDataMap::getMapOfMaps);</span>
-<span class="fc" id="L687">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.SECURITYPRICE_MAP_MAPOFPRICES, MoneyWiseSecurityPriceDataMap::getMapOfPrices);</span>
-<span class="fc" id="L688">        }</span>
+<span class="fc" id="L685">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_MAPOFMAPS, MoneyWiseSecurityPriceDataMap::getMapOfMaps);</span>
+<span class="fc" id="L686">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.SECURITYPRICE_MAP_MAPOFPRICES, MoneyWiseSecurityPriceDataMap::getMapOfPrices);</span>
+<span class="fc" id="L687">        }</span>
 
         /**
          * Map of Maps.
@@ -700,21 +699,21 @@ public class MoneyWiseSecurityPrice
         /**
          * Constructor.
          */
-<span class="fc" id="L703">        public MoneyWiseSecurityPriceDataMap() {</span>
+<span class="fc" id="L702">        public MoneyWiseSecurityPriceDataMap() {</span>
             /* Create the maps */
-<span class="fc" id="L705">            theMapOfMaps = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L706">            theMapOfPrices = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L707">        }</span>
+<span class="fc" id="L704">            theMapOfMaps = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L705">            theMapOfPrices = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L706">        }</span>
 
         @SuppressWarnings(&quot;rawtypes&quot;)
         @Override
         public MetisFieldSet&lt;MoneyWiseSecurityPriceDataMap&gt; getDataFieldSet() {
-<span class="nc" id="L712">            return FIELD_DEFS;</span>
+<span class="nc" id="L711">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L717">            return FIELD_DEFS.getName();</span>
+<span class="nc" id="L716">            return FIELD_DEFS.getName();</span>
         }
 
         /**
@@ -723,7 +722,7 @@ public class MoneyWiseSecurityPrice
          * @return the map
          */
         private Map&lt;MoneyWiseSecurity, Map&lt;OceanusDate, Integer&gt;&gt; getMapOfMaps() {
-<span class="nc" id="L726">            return theMapOfMaps;</span>
+<span class="nc" id="L725">            return theMapOfMaps;</span>
         }
 
         /**
@@ -732,42 +731,42 @@ public class MoneyWiseSecurityPrice
          * @return the map
          */
         private Map&lt;MoneyWiseSecurity, MoneyWiseSecurityPriceList&gt; getMapOfPrices() {
-<span class="nc" id="L735">            return theMapOfPrices;</span>
+<span class="nc" id="L734">            return theMapOfPrices;</span>
         }
 
         @Override
         public void resetMap() {
-<span class="fc" id="L740">            theMapOfMaps.clear();</span>
-<span class="fc" id="L741">            theMapOfPrices.clear();</span>
-<span class="fc" id="L742">        }</span>
+<span class="fc" id="L739">            theMapOfMaps.clear();</span>
+<span class="fc" id="L740">            theMapOfPrices.clear();</span>
+<span class="fc" id="L741">        }</span>
 
         @Override
         public void adjustForItem(final PrometheusDataItem pItem) {
             /* Access the Security Id */
-<span class="fc" id="L747">            final MoneyWiseSecurityPrice myItem = (MoneyWiseSecurityPrice) pItem;</span>
-<span class="fc" id="L748">            final MoneyWiseSecurity mySecurity = myItem.getSecurity();</span>
-<span class="pc bpc" id="L749" title="1 of 2 branches missed.">            if (mySecurity == null) {</span>
-<span class="nc" id="L750">                return;</span>
+<span class="fc" id="L746">            final MoneyWiseSecurityPrice myItem = (MoneyWiseSecurityPrice) pItem;</span>
+<span class="fc" id="L747">            final MoneyWiseSecurity mySecurity = myItem.getSecurity();</span>
+<span class="pc bpc" id="L748" title="1 of 2 branches missed.">            if (mySecurity == null) {</span>
+<span class="nc" id="L749">                return;</span>
             }
 
             /* Access the map */
-<span class="fc" id="L754">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.computeIfAbsent(mySecurity, s -&gt; new HashMap&lt;&gt;());</span>
+<span class="fc" id="L753">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.computeIfAbsent(mySecurity, s -&gt; new HashMap&lt;&gt;());</span>
 
             /* Adjust price count */
-<span class="fc" id="L757">            final OceanusDate myDate = myItem.getDate();</span>
-<span class="fc" id="L758">            final Integer myCount = myMap.get(myDate);</span>
-<span class="pc bpc" id="L759" title="1 of 2 branches missed.">            if (myCount == null) {</span>
-<span class="fc" id="L760">                myMap.put(myDate, PrometheusDataInstanceMap.ONE);</span>
+<span class="fc" id="L756">            final OceanusDate myDate = myItem.getDate();</span>
+<span class="fc" id="L757">            final Integer myCount = myMap.get(myDate);</span>
+<span class="pc bpc" id="L758" title="1 of 2 branches missed.">            if (myCount == null) {</span>
+<span class="fc" id="L759">                myMap.put(myDate, PrometheusDataInstanceMap.ONE);</span>
             } else {
-<span class="nc" id="L762">                myMap.put(myDate, myCount + 1);</span>
+<span class="nc" id="L761">                myMap.put(myDate, myCount + 1);</span>
             }
 
             /* Access the list */
-<span class="fc" id="L766">            final MoneyWiseSecurityPriceList myList = theMapOfPrices.computeIfAbsent(mySecurity, MoneyWiseSecurityPriceList::new);</span>
+<span class="fc" id="L765">            final MoneyWiseSecurityPriceList myList = theMapOfPrices.computeIfAbsent(mySecurity, MoneyWiseSecurityPriceList::new);</span>
 
             /* Add element to the list */
-<span class="fc" id="L769">            myList.add(myItem);</span>
-<span class="fc" id="L770">        }</span>
+<span class="fc" id="L768">            myList.add(myItem);</span>
+<span class="fc" id="L769">        }</span>
 
         /**
          * Check validity of Price.
@@ -777,16 +776,16 @@ public class MoneyWiseSecurityPrice
          */
         public boolean validPriceCount(final MoneyWiseSecurityPrice pItem) {
             /* Access the Details */
-<span class="fc" id="L780">            final MoneyWiseSecurity mySecurity = pItem.getSecurity();</span>
-<span class="fc" id="L781">            final OceanusDate myDate = pItem.getDate();</span>
+<span class="fc" id="L779">            final MoneyWiseSecurity mySecurity = pItem.getSecurity();</span>
+<span class="fc" id="L780">            final OceanusDate myDate = pItem.getDate();</span>
 
             /* Access the map */
-<span class="fc" id="L784">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.get(mySecurity);</span>
-<span class="pc bpc" id="L785" title="1 of 2 branches missed.">            if (myMap != null) {</span>
-<span class="fc" id="L786">                final Integer myResult = myMap.get(myDate);</span>
-<span class="fc" id="L787">                return PrometheusDataInstanceMap.ONE.equals(myResult);</span>
+<span class="fc" id="L783">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.get(mySecurity);</span>
+<span class="pc bpc" id="L784" title="1 of 2 branches missed.">            if (myMap != null) {</span>
+<span class="fc" id="L785">                final Integer myResult = myMap.get(myDate);</span>
+<span class="fc" id="L786">                return PrometheusDataInstanceMap.ONE.equals(myResult);</span>
             }
-<span class="nc" id="L789">            return false;</span>
+<span class="nc" id="L788">            return false;</span>
         }
 
         /**
@@ -799,9 +798,9 @@ public class MoneyWiseSecurityPrice
         public boolean availableDate(final MoneyWiseSecurity pSecurity,
                                      final OceanusDate pDate) {
             /* Access the map */
-<span class="nc" id="L802">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.get(pSecurity);</span>
-<span class="nc bnc" id="L803" title="All 2 branches missed.">            return myMap == null</span>
-<span class="nc bnc" id="L804" title="All 2 branches missed.">                    || myMap.get(pDate) == null;</span>
+<span class="nc" id="L801">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.get(pSecurity);</span>
+<span class="nc bnc" id="L802" title="All 2 branches missed.">            return myMap == null</span>
+<span class="nc bnc" id="L803" title="All 2 branches missed.">                    || myMap.get(pDate) == null;</span>
         }
 
         /**
@@ -814,26 +813,26 @@ public class MoneyWiseSecurityPrice
         public OceanusPrice getPriceForDate(final MoneyWiseAssetBase pSecurity,
                                             final OceanusDate pDate) {
             /* Access as security */
-<span class="nc" id="L817">            final MoneyWiseSecurity mySecurity = MoneyWiseSecurity.class.cast(pSecurity);</span>
+<span class="nc" id="L816">            final MoneyWiseSecurity mySecurity = MoneyWiseSecurity.class.cast(pSecurity);</span>
 
             /* Access list for security */
-<span class="nc" id="L820">            final MoneyWiseSecurityPriceList myList = theMapOfPrices.get(mySecurity);</span>
-<span class="nc bnc" id="L821" title="All 2 branches missed.">            if (myList != null) {</span>
+<span class="nc" id="L819">            final MoneyWiseSecurityPriceList myList = theMapOfPrices.get(mySecurity);</span>
+<span class="nc bnc" id="L820" title="All 2 branches missed.">            if (myList != null) {</span>
                 /* Loop through the prices */
-<span class="nc" id="L823">                final Iterator&lt;MoneyWiseSecurityPrice&gt; myIterator = myList.iterator();</span>
-<span class="nc bnc" id="L824" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
-<span class="nc" id="L825">                    final MoneyWiseSecurityPrice myCurr = myIterator.next();</span>
+<span class="nc" id="L822">                final Iterator&lt;MoneyWiseSecurityPrice&gt; myIterator = myList.iterator();</span>
+<span class="nc bnc" id="L823" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
+<span class="nc" id="L824">                    final MoneyWiseSecurityPrice myCurr = myIterator.next();</span>
 
                     /* Return this price if this is earlier or equal to the the date */
-<span class="nc bnc" id="L828" title="All 2 branches missed.">                    if (pDate.compareTo(myCurr.getDate()) &gt;= 0) {</span>
-<span class="nc" id="L829">                        return myCurr.getPrice();</span>
+<span class="nc bnc" id="L827" title="All 2 branches missed.">                    if (pDate.compareTo(myCurr.getDate()) &gt;= 0) {</span>
+<span class="nc" id="L828">                        return myCurr.getPrice();</span>
                     }
-<span class="nc" id="L831">                }</span>
+<span class="nc" id="L830">                }</span>
             }
 
             /* return single unit price */
-<span class="nc" id="L835">            final Currency myCurrency = mySecurity.getCurrency();</span>
-<span class="nc" id="L836">            return OceanusPrice.getWholeUnits(PrometheusDataInstanceMap.ONE, myCurrency);</span>
+<span class="nc" id="L834">            final Currency myCurrency = mySecurity.getCurrency();</span>
+<span class="nc" id="L835">            return OceanusPrice.getWholeUnits(PrometheusDataInstanceMap.ONE, myCurrency);</span>
         }
 
         /**
@@ -846,41 +845,41 @@ public class MoneyWiseSecurityPrice
         public OceanusPrice[] getPricesForRange(final MoneyWiseSecurity pSecurity,
                                                 final OceanusDateRange pRange) {
             /* Set price */
-<span class="nc" id="L849">            final Currency myCurrency = pSecurity.getCurrency();</span>
-<span class="nc" id="L850">            OceanusPrice myFirst = OceanusPrice.getWholeUnits(PrometheusDataInstanceMap.ONE, myCurrency);</span>
-<span class="nc" id="L851">            OceanusPrice myLatest = myFirst;</span>
-<span class="nc" id="L852">            final OceanusDate myStart = pRange.getStart();</span>
+<span class="nc" id="L848">            final Currency myCurrency = pSecurity.getCurrency();</span>
+<span class="nc" id="L849">            OceanusPrice myFirst = OceanusPrice.getWholeUnits(PrometheusDataInstanceMap.ONE, myCurrency);</span>
+<span class="nc" id="L850">            OceanusPrice myLatest = myFirst;</span>
+<span class="nc" id="L851">            final OceanusDate myStart = pRange.getStart();</span>
 
             /* Access list for security */
-<span class="nc" id="L855">            final MoneyWiseSecurityPriceList myList = theMapOfPrices.get(pSecurity);</span>
-<span class="nc bnc" id="L856" title="All 2 branches missed.">            if (myList != null) {</span>
+<span class="nc" id="L854">            final MoneyWiseSecurityPriceList myList = theMapOfPrices.get(pSecurity);</span>
+<span class="nc bnc" id="L855" title="All 2 branches missed.">            if (myList != null) {</span>
                 /* Loop through the prices */
-<span class="nc" id="L858">                final ListIterator&lt;MoneyWiseSecurityPrice&gt; myIterator = myList.listIterator(myList.size());</span>
-<span class="nc bnc" id="L859" title="All 2 branches missed.">                while (myIterator.hasPrevious()) {</span>
-<span class="nc" id="L860">                    final MoneyWiseSecurityPrice myCurr = myIterator.previous();</span>
+<span class="nc" id="L857">                final ListIterator&lt;MoneyWiseSecurityPrice&gt; myIterator = myList.listIterator(myList.size());</span>
+<span class="nc bnc" id="L858" title="All 2 branches missed.">                while (myIterator.hasPrevious()) {</span>
+<span class="nc" id="L859">                    final MoneyWiseSecurityPrice myCurr = myIterator.previous();</span>
 
                     /* Check for the range of the date */
-<span class="nc" id="L863">                    final OceanusDate myDate = myCurr.getDate();</span>
-<span class="nc" id="L864">                    final int iComp = pRange.compareToDate(myDate);</span>
+<span class="nc" id="L862">                    final OceanusDate myDate = myCurr.getDate();</span>
+<span class="nc" id="L863">                    final int iComp = pRange.compareToDate(myDate);</span>
 
                     /* If this is later than the range we are finished */
-<span class="nc bnc" id="L867" title="All 2 branches missed.">                    if (iComp &lt; 0) {</span>
-<span class="nc" id="L868">                        break;</span>
+<span class="nc bnc" id="L866" title="All 2 branches missed.">                    if (iComp &lt; 0) {</span>
+<span class="nc" id="L867">                        break;</span>
                     }
 
                     /* Record as best price */
-<span class="nc" id="L872">                    myLatest = myCurr.getPrice();</span>
+<span class="nc" id="L871">                    myLatest = myCurr.getPrice();</span>
 
                     /* Record early price */
-<span class="nc bnc" id="L875" title="All 2 branches missed.">                    if (iComp &gt; 0</span>
-<span class="nc bnc" id="L876" title="All 2 branches missed.">                            || myDate.compareTo(myStart) == 0) {</span>
-<span class="nc" id="L877">                        myFirst = myLatest;</span>
+<span class="nc bnc" id="L874" title="All 2 branches missed.">                    if (iComp &gt; 0</span>
+<span class="nc bnc" id="L875" title="All 2 branches missed.">                            || myDate.compareTo(myStart) == 0) {</span>
+<span class="nc" id="L876">                        myFirst = myLatest;</span>
                     }
-<span class="nc" id="L879">                }</span>
+<span class="nc" id="L878">                }</span>
             }
 
             /* Return the prices */
-<span class="nc" id="L883">            return new OceanusPrice[]</span>
+<span class="nc" id="L882">            return new OceanusPrice[]</span>
                     {myFirst, myLatest};
         }
 
@@ -892,10 +891,10 @@ public class MoneyWiseSecurityPrice
          */
         public ListIterator&lt;MoneyWiseSecurityPrice&gt; priceIterator(final MoneyWiseSecurity pSecurity) {
             /* Access list for currency */
-<span class="nc" id="L895">            final MoneyWiseSecurityPriceList myList = theMapOfPrices.get(pSecurity);</span>
-<span class="nc bnc" id="L896" title="All 2 branches missed.">            return myList != null</span>
-<span class="nc" id="L897">                    ? myList.listIterator(myList.size())</span>
-<span class="nc" id="L898">                    : null;</span>
+<span class="nc" id="L894">            final MoneyWiseSecurityPriceList myList = theMapOfPrices.get(pSecurity);</span>
+<span class="nc bnc" id="L895" title="All 2 branches missed.">            return myList != null</span>
+<span class="nc" id="L896">                    ? myList.listIterator(myList.size())</span>
+<span class="nc" id="L897">                    : null;</span>
         }
 
         /**
@@ -906,14 +905,14 @@ public class MoneyWiseSecurityPrice
             /**
              * Report fields.
              */
-<span class="fc" id="L909">            private static final MetisFieldSet&lt;MoneyWiseSecurityPriceList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSecurityPriceList.class);</span>
+<span class="fc" id="L908">            private static final MetisFieldSet&lt;MoneyWiseSecurityPriceList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSecurityPriceList.class);</span>
 
             /*
              * UnderlyingMap Field Id.
              */
             static {
-<span class="fc" id="L915">                FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, MoneyWiseSecurityPriceList::size);</span>
-<span class="fc" id="L916">            }</span>
+<span class="fc" id="L914">                FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, MoneyWiseSecurityPriceList::size);</span>
+<span class="fc" id="L915">            }</span>
 
             /**
              * The list.
@@ -930,35 +929,35 @@ public class MoneyWiseSecurityPrice
              *
              * @param pSecurity the security
              */
-<span class="fc" id="L933">            private MoneyWiseSecurityPriceList(final MoneyWiseSecurity pSecurity) {</span>
-<span class="fc" id="L934">                theSecurity = pSecurity;</span>
-<span class="fc" id="L935">                theList = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L936">            }</span>
+<span class="fc" id="L932">            private MoneyWiseSecurityPriceList(final MoneyWiseSecurity pSecurity) {</span>
+<span class="fc" id="L933">                theSecurity = pSecurity;</span>
+<span class="fc" id="L934">                theList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L935">            }</span>
 
             @Override
             public MetisFieldSet&lt;MoneyWiseSecurityPriceList&gt; getDataFieldSet() {
-<span class="nc" id="L940">                return FIELD_DEFS;</span>
+<span class="nc" id="L939">                return FIELD_DEFS;</span>
             }
 
             @Override
             public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L945">                return theSecurity.formatObject(pFormatter)</span>
+<span class="nc" id="L944">                return theSecurity.formatObject(pFormatter)</span>
                         + &quot;(&quot;
-<span class="nc" id="L947">                        + size()</span>
+<span class="nc" id="L946">                        + size()</span>
                         + &quot;)&quot;;
             }
 
             @Override
             public String toString() {
-<span class="nc" id="L953">                return theSecurity.toString()</span>
+<span class="nc" id="L952">                return theSecurity.toString()</span>
                         + &quot;(&quot;
-<span class="nc" id="L955">                        + size()</span>
+<span class="nc" id="L954">                        + size()</span>
                         + &quot;)&quot;;
             }
 
             @Override
             public List&lt;MoneyWiseSecurityPrice&gt; getUnderlyingList() {
-<span class="fc" id="L961">                return theList;</span>
+<span class="fc" id="L960">                return theList;</span>
             }
         }
     }

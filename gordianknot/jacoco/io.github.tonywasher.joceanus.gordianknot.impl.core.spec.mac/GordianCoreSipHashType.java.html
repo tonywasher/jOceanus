@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreSipHashType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac</a> &gt; <span class="el_source">GordianCoreSipHashType.java</span></div><h1>GordianCoreSipHashType.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianSipHashType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * SipHashSpec.
+ */
+public final class GordianCoreSipHashType {
+    /**
+     * The sipHashMap.
+     */
+<span class="fc" id="L34">    private static final Map&lt;GordianSipHashType, GordianCoreSipHashType&gt; SIPMAP = newSipHashMap();</span>
+
+    /**
+     * The sipHashTypeArray.
+     */
+<span class="fc" id="L39">    private static final GordianCoreSipHashType[] VALUES = SIPMAP.values().toArray(new GordianCoreSipHashType[0]);</span>
+
+    /**
+     * Small compression.
+     */
+    private static final int SMALLCOMPRESSION = 2;
+
+    /**
+     * Large compression.
+     */
+    private static final int LARGECOMPRESSION = 4;
+
+    /**
+     * The type.
+     */
+    private final GordianSipHashType theType;
+
+    /**
+     * The output length.
+     */
+    private final GordianLength theOutLen;
+
+    /**
+     * The number of compression rounds.
+     */
+    private final int theCompression;
+
+    /**
+     * The name of the hash.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pType the SipHashType
+     */
+<span class="fc" id="L76">    private GordianCoreSipHashType(final GordianSipHashType pType) {</span>
+<span class="fc" id="L77">        theType = pType;</span>
+<span class="fc" id="L78">        theOutLen = determineOutLength();</span>
+<span class="fc" id="L79">        theCompression = determineCompression();</span>
+<span class="fc" id="L80">    }</span>
+
+    /**
+     * Obtain the type.
+     *
+     * @return the type
+     */
+    public GordianSipHashType getType() {
+<span class="fc" id="L88">        return theType;</span>
+    }
+
+    /**
+     * Obtain the output length.
+     *
+     * @return the length
+     */
+    public GordianLength getOutLength() {
+<span class="fc" id="L97">        return theOutLen;</span>
+    }
+
+    /**
+     * Is this a long output?
+     *
+     * @return true/false
+     */
+    public boolean isLong() {
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        return theOutLen == GordianLength.LEN_128;</span>
+    }
+
+    /**
+     * Obtain the number of compression rounds.
+     *
+     * @return the number of rounds
+     */
+    public int getCompression() {
+<span class="fc" id="L115">        return theCompression;</span>
+    }
+
+    /**
+     * Obtain the number of finalization rounds.
+     *
+     * @return the number of rounds
+     */
+    public int getFinalisation() {
+<span class="fc" id="L124">        return theCompression &lt;&lt; 1;</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* Build the name */
+<span class="fc" id="L132">            theName = &quot;SipHash&quot;;</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">            if (GordianLength.LEN_128 == theOutLen) {</span>
+<span class="fc" id="L134">                theName += theOutLen;</span>
+            }
+<span class="fc" id="L136">            theName += GordianSpecConstants.SEP + getCompression()</span>
+<span class="fc" id="L137">                    + GordianSpecConstants.SEP + getFinalisation();</span>
+        }
+
+        /* return the name */
+<span class="fc" id="L141">        return theName;</span>
+    }
+
+
+    /**
+     * Determine outputLength.
+     *
+     * @return the outputLength
+     */
+    private GordianLength determineOutLength() {
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        return switch (theType) {</span>
+<span class="fc" id="L152">            case SIPHASH_2_4, SIPHASH_4_8 -&gt; GordianLength.LEN_64;</span>
+<span class="fc" id="L153">            default -&gt; GordianLength.LEN_128;</span>
+        };
+    }
+
+    /**
+     * Determine compression.
+     *
+     * @return the compression
+     */
+    private int determineCompression() {
+<span class="fc bfc" id="L163" title="All 2 branches covered.">        return switch (theType) {</span>
+<span class="fc" id="L164">            case SIPHASH_2_4, SIPHASH128_2_4 -&gt; SMALLCOMPRESSION;</span>
+<span class="fc" id="L165">            default -&gt; LARGECOMPRESSION;</span>
+        };
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L173">            return true;</span>
+        }
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L176">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="fc" id="L180">        return pThat instanceof GordianCoreSipHashType myThat</span>
+<span class="pc bpc" id="L181" title="2 of 4 branches missed.">                &amp;&amp; theType == myThat.getType();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L186">        return theType.hashCode();</span>
+    }
+
+    /**
+     * Obtain the core type.
+     *
+     * @param pType the base type
+     * @return the core type
+     */
+    public static GordianCoreSipHashType mapCoreType(final Object pType) {
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">        return pType instanceof GordianSipHashType myType ? SIPMAP.get(myType) : null;</span>
+    }
+
+    /**
+     * Build the sipHash map.
+     *
+     * @return the sipHash map
+     */
+    private static Map&lt;GordianSipHashType, GordianCoreSipHashType&gt; newSipHashMap() {
+<span class="fc" id="L205">        final Map&lt;GordianSipHashType, GordianCoreSipHashType&gt; myMap = new EnumMap&lt;&gt;(GordianSipHashType.class);</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">        for (GordianSipHashType myType : GordianSipHashType.values()) {</span>
+<span class="fc" id="L207">            myMap.put(myType, new GordianCoreSipHashType(myType));</span>
+        }
+<span class="fc" id="L209">        return myMap;</span>
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static GordianCoreSipHashType[] values() {
+<span class="nc" id="L218">        return VALUES;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

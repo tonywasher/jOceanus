@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisUISourcePackageSelect.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.gui.source</a> &gt; <span class="el_source">ThemisUISourcePackageSelect.java</span></div><h1>ThemisUISourcePackageSelect.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.gui.source;
+
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIScrollButtonManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControlFactory;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUILabel;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIResource;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.parser.proj.ThemisModule;
+import io.github.tonywasher.joceanus.themis.parser.proj.ThemisPackage;
+
+/**
+ * Button to select package from module.
+ */
+public class ThemisUISourcePackageSelect
+        implements OceanusEventProvider&lt;TethysUIEvent&gt;, TethysUIComponent {
+    /**
+     * The Event Manager.
+     */
+    private final OceanusEventManager&lt;TethysUIEvent&gt; theEventManager;
+
+    /**
+     * The scroll button.
+     */
+    private final TethysUIScrollButtonManager&lt;ThemisPackage&gt; theButton;
+
+    /**
+     * The package menu.
+     */
+    private final TethysUIScrollMenu&lt;ThemisPackage&gt; thePackageMenu;
+
+    /**
+     * The package select.
+     */
+    private final ThemisUISourceFileSelect theFileSelect;
+
+    /**
+     * The prefixLabel.
+     */
+    private final TethysUILabel thePrefixLabel;
+
+    /**
+     * The panel.
+     */
+    private final TethysUIBoxPaneManager thePanel;
+
+    /**
+     * The current module.
+     */
+    private ThemisModule theModule;
+
+    /**
+     * The current package.
+     */
+    private ThemisPackage thePackage;
+
+    /**
+     * The current prefix.
+     */
+    private String thePrefix;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory    the factory
+     * @param pFileSelect the fileSelectButton
+     */
+    ThemisUISourcePackageSelect(final TethysUIFactory&lt;?&gt; pFactory,
+<span class="nc" id="L95">                                final ThemisUISourceFileSelect pFileSelect) {</span>
+        /* Store the file select */
+<span class="nc" id="L97">        theFileSelect = pFileSelect;</span>
+
+        /* Create Event Manager */
+<span class="nc" id="L100">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+        /* Create the labels */
+<span class="nc" id="L103">        final TethysUIControlFactory myControls = pFactory.controlFactory();</span>
+<span class="nc" id="L104">        thePrefixLabel = myControls.newLabel();</span>
+<span class="nc" id="L105">        final TethysUILabel myPromptLabel = myControls.newLabel(ThemisUIResource.PROMPT_PACKAGE.getValue());</span>
+
+        /* Create the button */
+<span class="nc" id="L108">        theButton = pFactory.buttonFactory().newScrollButton(ThemisPackage.class);</span>
+<span class="nc" id="L109">        thePackageMenu = theButton.getMenu();</span>
+
+        /* Create the panel */
+<span class="nc" id="L112">        final TethysUIPaneFactory myPanes = pFactory.paneFactory();</span>
+<span class="nc" id="L113">        thePanel = myPanes.newHBoxPane();</span>
+<span class="nc" id="L114">        thePanel.addNode(myPromptLabel);</span>
+<span class="nc" id="L115">        thePanel.addNode(thePrefixLabel);</span>
+<span class="nc" id="L116">        thePanel.addNode(theButton);</span>
+
+        /* Set listeners */
+<span class="nc" id="L119">        final OceanusEventRegistrar&lt;TethysUIEvent&gt; myRegistrar = theButton.getEventRegistrar();</span>
+<span class="nc" id="L120">        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewPackage());</span>
+<span class="nc" id="L121">        theButton.setMenuConfigurator(e -&gt; buildPackageMenu());</span>
+<span class="nc" id="L122">    }</span>
+
+    @Override
+    public OceanusEventRegistrar&lt;TethysUIEvent&gt; getEventRegistrar() {
+<span class="nc" id="L126">        return theEventManager.getEventRegistrar();</span>
+    }
+
+    @Override
+    public TethysUIComponent getUnderlying() {
+<span class="nc" id="L131">        return thePanel;</span>
+    }
+
+    /**
+     * Obtain the current package.
+     *
+     * @return the current package
+     */
+    ThemisPackage getCurrentPackage() {
+<span class="nc" id="L140">        return thePackage;</span>
+    }
+
+    /**
+     * Set the current module.
+     *
+     * @param pModule the current module
+     */
+    void setCurrentModule(final ThemisModule pModule) {
+        /* Store the module */
+<span class="nc" id="L150">        theModule = pModule;</span>
+
+        /* Determine the prefix */
+<span class="nc" id="L153">        determinePrefix();</span>
+
+        /* Set the default package */
+<span class="nc" id="L156">        final ThemisPackage myPackage = getDefaultPackage();</span>
+<span class="nc" id="L157">        theButton.setValue(myPackage, getDisplayName(myPackage));</span>
+<span class="nc" id="L158">        handleNewPackage();</span>
+<span class="nc" id="L159">    }</span>
+
+    /**
+     * Obtain the default package.
+     *
+     * @return the default package
+     */
+    private ThemisPackage getDefaultPackage() {
+        /* If we have a non-null module */
+<span class="nc bnc" id="L168" title="All 2 branches missed.">        if (theModule != null) {</span>
+            /* Loop through the available packages */
+<span class="nc bnc" id="L170" title="All 2 branches missed.">            for (ThemisPackage myPackage : theModule.getPackages()) {</span>
+                /* Skip package if necessary */
+<span class="nc bnc" id="L172" title="All 2 branches missed.">                if (skipPackage(myPackage)) {</span>
+<span class="nc" id="L173">                    continue;</span>
+                }
+
+                /* Return the valid package */
+<span class="nc" id="L177">                return myPackage;</span>
+            }
+        }
+
+        /* No package */
+<span class="nc" id="L182">        return null;</span>
+    }
+
+    /**
+     * Determine the prefix.
+     */
+    private void determinePrefix() {
+        /* Initialise the prefix */
+<span class="nc" id="L190">        thePrefix = null;</span>
+<span class="nc" id="L191">        theButton.setVisible(false);</span>
+
+        /* If we have a non-null modules */
+<span class="nc bnc" id="L194" title="All 2 branches missed.">        if (theModule != null) {</span>
+            /* Loop through the available packages */
+<span class="nc bnc" id="L196" title="All 2 branches missed.">            for (ThemisPackage myPackage : theModule.getPackages()) {</span>
+                /* Adjust the prefix */
+<span class="nc" id="L198">                adjustPrefix(myPackage);</span>
+<span class="nc" id="L199">            }</span>
+        }
+
+        /* Update the prefixLabel */
+<span class="nc" id="L203">        thePrefixLabel.setText(thePrefix);</span>
+<span class="nc bnc" id="L204" title="All 4 branches missed.">        thePrefixLabel.setVisible(thePrefix != null &amp;&amp; !thePrefix.isEmpty());</span>
+<span class="nc" id="L205">    }</span>
+
+    /**
+     * Adjust prefix.
+     *
+     * @param pPackage the package
+     */
+    private void adjustPrefix(final ThemisPackage pPackage) {
+        /* Ignore placeHolder */
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        if (skipPackage(pPackage)) {</span>
+<span class="nc" id="L215">            return;</span>
+        }
+
+        /* If we do not have a prefix */
+<span class="nc" id="L219">        final String myName = pPackage.getPackage();</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">        if (thePrefix == null) {</span>
+<span class="nc" id="L221">            thePrefix = myName;</span>
+
+            /* else if we need to change the prefix */
+        } else {
+            /* We have more than one package so display selection button */
+<span class="nc" id="L226">            theButton.setVisible(true);</span>
+
+            /* Determine common prefix */
+<span class="nc" id="L229">            thePrefix = getCommonPrefix(myName, thePrefix);</span>
+        }
+<span class="nc" id="L231">    }</span>
+
+    /**
+     * Obtain common prefix.
+     *
+     * @param pFirst  the first name
+     * @param pSecond the second name
+     * @return the prefix
+     */
+    private String getCommonPrefix(final String pFirst,
+                                   final String pSecond) {
+<span class="nc bnc" id="L242" title="All 2 branches missed.">        if (pFirst.equals(pSecond)) {</span>
+<span class="nc" id="L243">            return pFirst;</span>
+        }
+<span class="nc bnc" id="L245" title="All 2 branches missed.">        return pFirst.length() &gt;= pSecond.length()</span>
+<span class="nc" id="L246">                ? getCommonPrefix(getParentName(pFirst), pSecond)</span>
+<span class="nc" id="L247">                : getCommonPrefix(pFirst, getParentName(pSecond));</span>
+    }
+
+    /**
+     * Obtain Parent Name.
+     *
+     * @param pName the name
+     * @return the parent name
+     */
+    private String getParentName(final String pName) {
+        /* Determine the short name */
+<span class="nc" id="L258">        final int iIndex = pName.lastIndexOf(ThemisChar.PERIOD);</span>
+<span class="nc bnc" id="L259" title="All 2 branches missed.">        return iIndex == -1 ? &quot;&quot; : pName.substring(0, iIndex);</span>
+    }
+
+    /**
+     * Obtain the displayName of the package.
+     *
+     * @param pPackage the package
+     * @return the displayName
+     */
+    private String getDisplayName(final ThemisPackage pPackage) {
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        final int myPrefixLen = thePrefix == null ? 0 : thePrefix.length();</span>
+<span class="nc bnc" id="L270" title="All 2 branches missed.">        return pPackage == null ? &quot;&quot; : pPackage.getPackage().substring(myPrefixLen);</span>
+    }
+
+    /**
+     * Build the package menu.
+     */
+    private void buildPackageMenu() {
+        /* Reset the popUp menu */
+<span class="nc" id="L278">        thePackageMenu.removeAllItems();</span>
+
+        /* Record active item */
+<span class="nc" id="L281">        TethysUIScrollItem&lt;ThemisPackage&gt; myActive = null;</span>
+<span class="nc" id="L282">        final ThemisPackage myCurr = theButton.getValue();</span>
+
+        /* Loop through the available packages */
+<span class="nc bnc" id="L285" title="All 2 branches missed.">        for (ThemisPackage myPackage : theModule.getPackages()) {</span>
+            /* skip package if required */
+<span class="nc bnc" id="L287" title="All 2 branches missed.">            if (skipPackage(myPackage)) {</span>
+<span class="nc" id="L288">                continue;</span>
+            }
+
+            /* Create a new MenuItem and add it to the popUp */
+<span class="nc" id="L292">            final TethysUIScrollItem&lt;ThemisPackage&gt; myItem = thePackageMenu.addItem(myPackage, getDisplayName(myPackage));</span>
+
+            /* If this is the active package */
+<span class="nc bnc" id="L295" title="All 2 branches missed.">            if (myPackage.equals(myCurr)) {</span>
+                /* Record it */
+<span class="nc" id="L297">                myActive = myItem;</span>
+            }
+<span class="nc" id="L299">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L302" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L303">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L305">    }</span>
+
+    /**
+     * Should we skip the package?
+     *
+     * @param pPackage the package
+     * @return true/false
+     */
+    private boolean skipPackage(final ThemisPackage pPackage) {
+        /* Skip placeholders */
+<span class="nc" id="L315">        return pPackage.isPlaceHolder();</span>
+    }
+
+    /**
+     * Handle new Package.
+     */
+    private void handleNewPackage() {
+        /* Select the new package */
+<span class="nc" id="L323">        thePackage = theButton.getValue();</span>
+<span class="nc" id="L324">        theEventManager.fireEvent(TethysUIEvent.NEWVALUE);</span>
+<span class="nc" id="L325">        theFileSelect.setCurrentPackage(thePackage);</span>
+<span class="nc" id="L326">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

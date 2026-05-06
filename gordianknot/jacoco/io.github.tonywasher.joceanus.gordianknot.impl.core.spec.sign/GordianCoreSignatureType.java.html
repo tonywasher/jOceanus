@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreSignatureType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign</a> &gt; <span class="el_source">GordianCoreSignatureType.java</span></div><h1>GordianCoreSignatureType.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign;
+
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+public final class GordianCoreSignatureType {
+    /**
+     * The signatureTypeMap.
+     */
+<span class="fc" id="L30">    private static final Map&lt;GordianSignatureType, GordianCoreSignatureType&gt; TYPEMAP = newTypeMap();</span>
+
+    /**
+     * The signatureTypeArray.
+     */
+<span class="fc" id="L35">    private static final GordianCoreSignatureType[] VALUES = TYPEMAP.values().toArray(new GordianCoreSignatureType[0]);</span>
+
+    /**
+     * The signatureType.
+     */
+    private final GordianSignatureType theType;
+
+    /**
+     * Constructor.
+     *
+     * @param pType the type
+     */
+<span class="fc" id="L47">    private GordianCoreSignatureType(final GordianSignatureType pType) {</span>
+<span class="fc" id="L48">        theType = pType;</span>
+<span class="fc" id="L49">    }</span>
+
+    /**
+     * Obtain the type.
+     *
+     * @return the type
+     */
+    public GordianSignatureType getType() {
+<span class="fc" id="L57">        return theType;</span>
+    }
+
+    /**
+     * Is this Signature supported for this AsymKeyType?
+     *
+     * @param pKeyType the asymKeyType
+     * @return true/false
+     */
+    public boolean isSupported(final GordianKeyPairType pKeyType) {
+<span class="pc bpc" id="L67" title="1 of 6 branches missed.">        return switch (theType) {</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">            case ISO9796D2, PSSMGF1, PSS128, PSS256, X931 -&gt; GordianKeyPairType.RSA == pKeyType;</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">            case NR -&gt; GordianKeyPairType.EC == pKeyType;</span>
+<span class="fc" id="L70">            case PREHASH -&gt; hasPreHash(pKeyType);</span>
+<span class="fc" id="L71">            case NATIVE -&gt; hasNative(pKeyType);</span>
+<span class="fc" id="L72">            case DSA, DDSA -&gt; hasDSA(pKeyType);</span>
+<span class="nc" id="L73">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Does the AsymKeyType have a PreHash signature?
+     *
+     * @param pKeyType the asymKeyType
+     * @return true/false
+     */
+    public static boolean hasPreHash(final GordianKeyPairType pKeyType) {
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        return switch (pKeyType) {</span>
+<span class="fc" id="L85">            case XMSS, RSA -&gt; true;</span>
+<span class="fc" id="L86">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Does the AsymKeyType have a DSA signature?
+     *
+     * @param pKeyType the asymKeyType
+     * @return true/false
+     */
+    public static boolean hasDSA(final GordianKeyPairType pKeyType) {
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        return switch (pKeyType) {</span>
+<span class="fc" id="L98">            case EC, DSA -&gt; true;</span>
+<span class="fc" id="L99">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Does the AsymKeyType have a Native signature?
+     *
+     * @param pKeyType the asymKeyType
+     * @return true/false
+     */
+    public static boolean hasNative(final GordianKeyPairType pKeyType) {
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        return switch (pKeyType) {</span>
+<span class="fc" id="L111">            case SM2, EDDSA, DSTU, GOST, SLHDSA, MLDSA, FALCON, PICNIC, MAYO, SNOVA, XMSS, LMS, COMPOSITE -&gt; true;</span>
+<span class="fc" id="L112">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Is this signature type PSS?
+     *
+     * @return true/false
+     */
+    public boolean isPSS() {
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        return switch (theType) {</span>
+<span class="fc" id="L123">            case PSSMGF1, PSS128, PSS256 -&gt; true;</span>
+<span class="fc" id="L124">            default -&gt; false;</span>
+        };
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L130">        return theType.toString();</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L137">            return true;</span>
+        }
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L140">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="nc" id="L144">        return pThat instanceof GordianCoreSignatureType myThat</span>
+<span class="nc bnc" id="L145" title="All 4 branches missed.">                &amp;&amp; theType == myThat.getType();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L150">        return theType.hashCode();</span>
+    }
+
+    /**
+     * Obtain the core type.
+     *
+     * @param pType the base type
+     * @return the core type
+     */
+    public static GordianCoreSignatureType mapCoreType(final Object pType) {
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">        return pType instanceof GordianSignatureType myType ? TYPEMAP.get(myType) : null;</span>
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map&lt;GordianSignatureType, GordianCoreSignatureType&gt; newTypeMap() {
+<span class="fc" id="L169">        final Map&lt;GordianSignatureType, GordianCoreSignatureType&gt; myMap = new EnumMap&lt;&gt;(GordianSignatureType.class);</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        for (GordianSignatureType myType : GordianSignatureType.values()) {</span>
+<span class="fc" id="L171">            myMap.put(myType, new GordianCoreSignatureType(myType));</span>
+        }
+<span class="fc" id="L173">        return myMap;</span>
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static GordianCoreSignatureType[] values() {
+<span class="fc" id="L182">        return VALUES;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -22,7 +22,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataExcept
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -52,7 +51,7 @@ public class GordianZipFileProperties {
     /**
      * The Value buffer length.
      */
-    private static final char BUFFER_VALLEN = 200;
+    private static final int BUFFER_VALLEN = 200;
 
     /**
      * List of properties.
@@ -62,10 +61,10 @@ public class GordianZipFileProperties {
     /**
      * Constructor.
      */
-<span class="fc" id="L65">    protected GordianZipFileProperties() {</span>
+<span class="fc" id="L64">    protected GordianZipFileProperties() {</span>
         /* Allocate the array */
-<span class="fc" id="L67">        theList = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L68">    }</span>
+<span class="fc" id="L66">        theList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L67">    }</span>
 
     /**
      * Constructor from encoded string.
@@ -75,28 +74,28 @@ public class GordianZipFileProperties {
      */
     protected GordianZipFileProperties(final String pCodedString) throws GordianException {
         /* Initialise normally */
-<span class="fc" id="L78">        this();</span>
+<span class="fc" id="L77">        this();</span>
 
         /* Wrap string in a string builder */
-<span class="fc" id="L81">        final StringBuilder myString = new StringBuilder(pCodedString);</span>
-<span class="fc" id="L82">        final String myPropSep = Character.toString(SEP_PROPERTY);</span>
+<span class="fc" id="L80">        final StringBuilder myString = new StringBuilder(pCodedString);</span>
+<span class="fc" id="L81">        final String myPropSep = Character.toString(SEP_PROPERTY);</span>
 
         /* while we have separators in the string */
         while (true) {
             /* Locate next separator and break if not found */
-<span class="fc" id="L87">            final int myLoc = myString.indexOf(myPropSep);</span>
-<span class="fc bfc" id="L88" title="All 2 branches covered.">            if (myLoc == -1) {</span>
-<span class="fc" id="L89">                break;</span>
+<span class="fc" id="L86">            final int myLoc = myString.indexOf(myPropSep);</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">            if (myLoc == -1) {</span>
+<span class="fc" id="L88">                break;</span>
             }
 
             /* Parse the encoded property and remove it from the buffer */
-<span class="fc" id="L93">            parseEncodedProperty(myString.substring(0, myLoc));</span>
-<span class="fc" id="L94">            myString.delete(0, myLoc + 1);</span>
-<span class="fc" id="L95">        }</span>
+<span class="fc" id="L92">            parseEncodedProperty(myString.substring(0, myLoc));</span>
+<span class="fc" id="L93">            myString.delete(0, myLoc + 1);</span>
+<span class="fc" id="L94">        }</span>
 
         /* Parse the remaining property */
-<span class="fc" id="L98">        parseEncodedProperty(myString.toString());</span>
-<span class="fc" id="L99">    }</span>
+<span class="fc" id="L97">        parseEncodedProperty(myString.toString());</span>
+<span class="fc" id="L98">    }</span>
 
     /**
      * Set the named property.
@@ -107,8 +106,8 @@ public class GordianZipFileProperties {
     protected void setProperty(final String pName,
                                final String pValue) {
         /* Set the new value */
-<span class="fc" id="L110">        setProperty(pName, GordianDataConverter.stringToByteArray(pValue));</span>
-<span class="fc" id="L111">    }</span>
+<span class="fc" id="L109">        setProperty(pName, GordianDataConverter.stringToByteArray(pValue));</span>
+<span class="fc" id="L110">    }</span>
 
     /**
      * Set the named property.
@@ -119,34 +118,34 @@ public class GordianZipFileProperties {
     protected void setProperty(final String pName,
                                final byte[] pValue) {
         /* Determine whether we are setting a null value */
-<span class="fc bfc" id="L122" title="All 2 branches covered.">        final boolean isNull = pValue == null;</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        final boolean isNull = pValue == null;</span>
 
         /* Access any existing property */
-<span class="fc" id="L125">        Property myProperty = getProperty(pName);</span>
+<span class="fc" id="L124">        Property myProperty = getProperty(pName);</span>
 
         /* If the property does not exist */
-<span class="fc bfc" id="L128" title="All 2 branches covered.">        if (myProperty == null) {</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">        if (myProperty == null) {</span>
             /* If we have a value */
-<span class="fc bfc" id="L130" title="All 2 branches covered.">            if (!isNull) {</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">            if (!isNull) {</span>
                 /* Create the new property */
-<span class="fc" id="L132">                myProperty = new Property(theList, pName);</span>
+<span class="fc" id="L131">                myProperty = new Property(theList, pName);</span>
 
                 /* Set the new value */
-<span class="fc" id="L135">                myProperty.setByteValue(pValue);</span>
+<span class="fc" id="L134">                myProperty.setByteValue(pValue);</span>
             }
 
             /* else if the property now has no value */
-<span class="fc bfc" id="L139" title="All 2 branches covered.">        } else if (isNull</span>
-<span class="pc bpc" id="L140" title="1 of 2 branches missed.">                &amp;&amp; myProperty.getLongValue() == null) {</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        } else if (isNull</span>
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">                &amp;&amp; myProperty.getLongValue() == null) {</span>
             /* Remove the value from the list */
-<span class="nc" id="L142">            theList.remove(myProperty);</span>
+<span class="nc" id="L141">            theList.remove(myProperty);</span>
 
             /* else just set the value */
         } else {
             /* Set the new value */
-<span class="fc" id="L147">            myProperty.setByteValue(pValue);</span>
+<span class="fc" id="L146">            myProperty.setByteValue(pValue);</span>
         }
-<span class="fc" id="L149">    }</span>
+<span class="fc" id="L148">    }</span>
 
     /**
      * Set the named property.
@@ -157,34 +156,34 @@ public class GordianZipFileProperties {
     protected void setProperty(final String pName,
                                final Long pValue) {
         /* Determine whether we are setting a null value */
-<span class="pc bpc" id="L160" title="1 of 2 branches missed.">        final boolean isNull = pValue == null;</span>
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">        final boolean isNull = pValue == null;</span>
 
         /* Access any existing property */
-<span class="fc" id="L163">        Property myProperty = getProperty(pName);</span>
+<span class="fc" id="L162">        Property myProperty = getProperty(pName);</span>
 
         /* If the property does not exist */
-<span class="fc bfc" id="L166" title="All 2 branches covered.">        if (myProperty == null) {</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">        if (myProperty == null) {</span>
             /* If we have a value */
-<span class="pc bpc" id="L168" title="1 of 2 branches missed.">            if (!isNull) {</span>
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">            if (!isNull) {</span>
                 /* Create the new property */
-<span class="fc" id="L170">                myProperty = new Property(theList, pName);</span>
+<span class="fc" id="L169">                myProperty = new Property(theList, pName);</span>
 
                 /* Set the new value */
-<span class="fc" id="L173">                myProperty.setLongValue(pValue);</span>
+<span class="fc" id="L172">                myProperty.setLongValue(pValue);</span>
             }
 
             /* else if the property now has no value */
-<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        } else if (isNull</span>
-<span class="nc bnc" id="L178" title="All 2 branches missed.">                &amp;&amp; myProperty.getByteValue() == null) {</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        } else if (isNull</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">                &amp;&amp; myProperty.getByteValue() == null) {</span>
             /* Remove the value from the list */
-<span class="nc" id="L180">            theList.remove(myProperty);</span>
+<span class="nc" id="L179">            theList.remove(myProperty);</span>
 
             /* else just set the value */
         } else {
             /* Set the new value */
-<span class="fc" id="L185">            myProperty.setLongValue(pValue);</span>
+<span class="fc" id="L184">            myProperty.setLongValue(pValue);</span>
         }
-<span class="fc" id="L187">    }</span>
+<span class="fc" id="L186">    }</span>
 
     /**
      * Obtain the string value of the named property.
@@ -194,12 +193,12 @@ public class GordianZipFileProperties {
      */
     protected String getStringProperty(final String pName) {
         /* Access the property */
-<span class="fc" id="L197">        final byte[] myValue = getByteProperty(pName);</span>
+<span class="fc" id="L196">        final byte[] myValue = getByteProperty(pName);</span>
 
         /* Return the value */
-<span class="pc bpc" id="L200" title="1 of 2 branches missed.">        return (myValue == null)</span>
-<span class="nc" id="L201">                ? null</span>
-<span class="fc" id="L202">                : GordianDataConverter.byteArrayToString(myValue);</span>
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">        return (myValue == null)</span>
+<span class="nc" id="L200">                ? null</span>
+<span class="fc" id="L201">                : GordianDataConverter.byteArrayToString(myValue);</span>
     }
 
     /**
@@ -210,12 +209,12 @@ public class GordianZipFileProperties {
      */
     protected byte[] getByteProperty(final String pName) {
         /* Access the property */
-<span class="fc" id="L213">        final Property myProperty = getProperty(pName);</span>
+<span class="fc" id="L212">        final Property myProperty = getProperty(pName);</span>
 
         /* Return the value */
-<span class="fc bfc" id="L216" title="All 2 branches covered.">        return (myProperty == null)</span>
-<span class="fc" id="L217">                ? null</span>
-<span class="fc" id="L218">                : myProperty.getByteValue();</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">        return (myProperty == null)</span>
+<span class="fc" id="L216">                ? null</span>
+<span class="fc" id="L217">                : myProperty.getByteValue();</span>
     }
 
     /**
@@ -226,12 +225,12 @@ public class GordianZipFileProperties {
      */
     protected Long getLongProperty(final String pName) {
         /* Access the property */
-<span class="fc" id="L229">        final Property myProperty = getProperty(pName);</span>
+<span class="fc" id="L228">        final Property myProperty = getProperty(pName);</span>
 
         /* Return the value */
-<span class="fc bfc" id="L232" title="All 2 branches covered.">        return (myProperty == null)</span>
-<span class="fc" id="L233">                ? null</span>
-<span class="fc" id="L234">                : myProperty.getLongValue();</span>
+<span class="fc bfc" id="L231" title="All 2 branches covered.">        return (myProperty == null)</span>
+<span class="fc" id="L232">                ? null</span>
+<span class="fc" id="L233">                : myProperty.getLongValue();</span>
     }
 
     /**
@@ -242,27 +241,24 @@ public class GordianZipFileProperties {
      */
     private Property getProperty(final String pName) {
         /* Loop through the properties */
-<span class="fc" id="L245">        final Iterator&lt;Property&gt; myIterator = theList.iterator();</span>
-<span class="fc bfc" id="L246" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">        for (Property myProperty : theList) {</span>
             /* Access next property */
-<span class="fc" id="L248">            final Property myProperty = myIterator.next();</span>
-
             /* Check the property name */
-<span class="fc" id="L251">            final int iDiff = pName.compareTo(myProperty.getName());</span>
+<span class="fc" id="L247">            final int iDiff = pName.compareTo(myProperty.getName());</span>
 
             /* If this is the required property, return it */
-<span class="fc bfc" id="L254" title="All 2 branches covered.">            if (iDiff == 0) {</span>
-<span class="fc" id="L255">                return myProperty;</span>
+<span class="fc bfc" id="L250" title="All 2 branches covered.">            if (iDiff == 0) {</span>
+<span class="fc" id="L251">                return myProperty;</span>
             }
 
             /* If this property is later than the required name, no such property */
-<span class="fc bfc" id="L259" title="All 2 branches covered.">            if (iDiff &lt; 0) {</span>
-<span class="fc" id="L260">                break;</span>
+<span class="fc bfc" id="L255" title="All 2 branches covered.">            if (iDiff &lt; 0) {</span>
+<span class="fc" id="L256">                break;</span>
             }
-<span class="fc" id="L262">        }</span>
+<span class="fc" id="L258">        }</span>
 
         /* Return not found */
-<span class="fc" id="L265">        return null;</span>
+<span class="fc" id="L261">        return null;</span>
     }
 
     /**
@@ -271,44 +267,41 @@ public class GordianZipFileProperties {
      * @return the encoded string
      */
     protected String encodeProperties() {
-<span class="fc" id="L274">        final StringBuilder myString = new StringBuilder(BUFFER_LEN);</span>
-<span class="fc" id="L275">        final StringBuilder myValue = new StringBuilder(BUFFER_VALLEN);</span>
+<span class="fc" id="L270">        final StringBuilder myString = new StringBuilder(BUFFER_LEN);</span>
+<span class="fc" id="L271">        final StringBuilder myValue = new StringBuilder(BUFFER_VALLEN);</span>
 
         /* Loop through the properties */
-<span class="fc" id="L278">        final Iterator&lt;Property&gt; myIterator = theList.iterator();</span>
-<span class="fc bfc" id="L279" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+<span class="fc bfc" id="L274" title="All 2 branches covered.">        for (Property myProperty : theList) {</span>
             /* Access next property */
-<span class="fc" id="L281">            final Property myProperty = myIterator.next();</span>
-
             /* Build the value string */
-<span class="fc" id="L284">            myValue.setLength(0);</span>
-<span class="fc" id="L285">            myValue.append(myProperty.getName());</span>
-<span class="fc" id="L286">            myValue.append(SEP_VALUE);</span>
+<span class="fc" id="L277">            myValue.setLength(0);</span>
+<span class="fc" id="L278">            myValue.append(myProperty.getName());</span>
+<span class="fc" id="L279">            myValue.append(SEP_VALUE);</span>
 
             /* If we have a byte value */
-<span class="fc bfc" id="L289" title="All 2 branches covered.">            if (myProperty.getByteValue() != null) {</span>
+<span class="fc bfc" id="L282" title="All 2 branches covered.">            if (myProperty.getByteValue() != null) {</span>
                 /* Add the byte value as a Hex String */
-<span class="fc" id="L291">                myValue.append(GordianDataConverter.bytesToHexString(myProperty.getByteValue()));</span>
+<span class="fc" id="L284">                myValue.append(GordianDataConverter.bytesToHexString(myProperty.getByteValue()));</span>
             }
 
             /* Add the value separator */
-<span class="fc" id="L295">            myValue.append(SEP_LONG);</span>
+<span class="fc" id="L288">            myValue.append(SEP_LONG);</span>
 
             /* If we have a long value */
-<span class="fc bfc" id="L298" title="All 2 branches covered.">            if (myProperty.getLongValue() != null) {</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">            if (myProperty.getLongValue() != null) {</span>
                 /* Add the long value as a Hex String */
-<span class="fc" id="L300">                myValue.append(GordianDataConverter.longToHexString(myProperty.getLongValue()));</span>
+<span class="fc" id="L293">                myValue.append(GordianDataConverter.longToHexString(myProperty.getLongValue()));</span>
             }
 
             /* Add the value to the string */
-<span class="fc bfc" id="L304" title="All 2 branches covered.">            if (myString.length() &gt; 0) {</span>
-<span class="fc" id="L305">                myString.append(SEP_PROPERTY);</span>
+<span class="fc bfc" id="L297" title="All 2 branches covered.">            if (!myString.isEmpty()) {</span>
+<span class="fc" id="L298">                myString.append(SEP_PROPERTY);</span>
             }
-<span class="fc" id="L307">            myString.append(myValue);</span>
-<span class="fc" id="L308">        }</span>
+<span class="fc" id="L300">            myString.append(myValue);</span>
+<span class="fc" id="L301">        }</span>
 
         /* Return the encoded string */
-<span class="fc" id="L311">        return myString.toString();</span>
+<span class="fc" id="L304">        return myString.toString();</span>
     }
 
     /**
@@ -319,64 +312,64 @@ public class GordianZipFileProperties {
      */
     private void parseEncodedProperty(final String pValue) throws GordianException {
         /* Locate the Value separator in the string */
-<span class="fc" id="L322">        int myLoc = pValue.indexOf(SEP_VALUE);</span>
+<span class="fc" id="L315">        int myLoc = pValue.indexOf(SEP_VALUE);</span>
 
         /* Check that we found the value separator */
-<span class="pc bpc" id="L325" title="1 of 2 branches missed.">        if (myLoc == -1) {</span>
-<span class="nc" id="L326">            throw new GordianDataException(&quot;Missing value separator: &quot;</span>
+<span class="pc bpc" id="L318" title="1 of 2 branches missed.">        if (myLoc == -1) {</span>
+<span class="nc" id="L319">            throw new GordianDataException(&quot;Missing value separator: &quot;</span>
                     + pValue);
         }
 
         /* Split the values and name */
-<span class="fc" id="L331">        final String myName = pValue.substring(0, myLoc);</span>
+<span class="fc" id="L324">        final String myName = pValue.substring(0, myLoc);</span>
 
         /* If the name is already present reject it */
-<span class="pc bpc" id="L334" title="1 of 2 branches missed.">        if (getProperty(myName) != null) {</span>
-<span class="nc" id="L335">            throw new GordianDataException(&quot;Duplicate name: &quot;</span>
+<span class="pc bpc" id="L327" title="1 of 2 branches missed.">        if (getProperty(myName) != null) {</span>
+<span class="nc" id="L328">            throw new GordianDataException(&quot;Duplicate name: &quot;</span>
                     + pValue);
         }
 
         /* Locate the Long separator in the string */
-<span class="fc" id="L340">        String myBytes = pValue.substring(myLoc + 1);</span>
-<span class="fc" id="L341">        myLoc = myBytes.indexOf(SEP_LONG);</span>
+<span class="fc" id="L333">        String myBytes = pValue.substring(myLoc + 1);</span>
+<span class="fc" id="L334">        myLoc = myBytes.indexOf(SEP_LONG);</span>
 
         /* Check that we found the long separator */
-<span class="pc bpc" id="L344" title="1 of 2 branches missed.">        if (myLoc == -1) {</span>
-<span class="nc" id="L345">            throw new GordianDataException(&quot;Missing long separator: &quot;</span>
+<span class="pc bpc" id="L337" title="1 of 2 branches missed.">        if (myLoc == -1) {</span>
+<span class="nc" id="L338">            throw new GordianDataException(&quot;Missing long separator: &quot;</span>
                     + pValue);
         }
 
         /* Access the separate byte and long values */
-<span class="fc" id="L350">        final int myLen = myBytes.length();</span>
-<span class="fc bfc" id="L351" title="All 2 branches covered.">        final String myLong = myLoc &lt; myLen - 1</span>
-<span class="fc" id="L352">                ? myBytes.substring(myLoc + 1)</span>
-<span class="fc" id="L353">                : null;</span>
-<span class="fc bfc" id="L354" title="All 2 branches covered.">        myBytes = myLoc &gt; 0</span>
-<span class="fc" id="L355">                ? myBytes.substring(0, myLoc)</span>
-<span class="fc" id="L356">                : null;</span>
+<span class="fc" id="L343">        final int myLen = myBytes.length();</span>
+<span class="fc bfc" id="L344" title="All 2 branches covered.">        final String myLong = myLoc &lt; myLen - 1</span>
+<span class="fc" id="L345">                ? myBytes.substring(myLoc + 1)</span>
+<span class="fc" id="L346">                : null;</span>
+<span class="fc bfc" id="L347" title="All 2 branches covered.">        myBytes = myLoc &gt; 0</span>
+<span class="fc" id="L348">                ? myBytes.substring(0, myLoc)</span>
+<span class="fc" id="L349">                : null;</span>
 
         /* Must have at least one of Bytes/Long */
-<span class="pc bpc" id="L359" title="1 of 4 branches missed.">        if (myBytes == null</span>
+<span class="pc bpc" id="L352" title="1 of 4 branches missed.">        if (myBytes == null</span>
                 &amp;&amp; myLong == null) {
-<span class="nc" id="L361">            throw new GordianDataException(&quot;Invalid property: &quot;</span>
+<span class="nc" id="L354">            throw new GordianDataException(&quot;Invalid property: &quot;</span>
                     + myName);
         }
 
         /* Create a new property */
-<span class="fc" id="L366">        final Property myProperty = new Property(theList, myName);</span>
+<span class="fc" id="L359">        final Property myProperty = new Property(theList, myName);</span>
 
         /* If we have a bytes array */
-<span class="fc bfc" id="L369" title="All 2 branches covered.">        if (myBytes != null) {</span>
+<span class="fc bfc" id="L362" title="All 2 branches covered.">        if (myBytes != null) {</span>
             /* Set the bytes value */
-<span class="fc" id="L371">            myProperty.setByteValue(GordianDataConverter.hexStringToBytes(myBytes));</span>
+<span class="fc" id="L364">            myProperty.setByteValue(GordianDataConverter.hexStringToBytes(myBytes));</span>
         }
 
         /* If we have a long value */
-<span class="fc bfc" id="L375" title="All 2 branches covered.">        if (myLong != null) {</span>
+<span class="fc bfc" id="L368" title="All 2 branches covered.">        if (myLong != null) {</span>
             /* Access the bytes value */
-<span class="fc" id="L377">            myProperty.setLongValue(GordianDataConverter.hexStringToLong(myLong));</span>
+<span class="fc" id="L370">            myProperty.setLongValue(GordianDataConverter.hexStringToLong(myLong));</span>
         }
-<span class="fc" id="L379">    }</span>
+<span class="fc" id="L372">    }</span>
 
     /**
      * Individual Property.
@@ -404,44 +397,41 @@ public class GordianZipFileProperties {
          * @param pName the name of the property
          */
         Property(final List&lt;Property&gt; pList,
-<span class="fc" id="L407">                 final String pName) {</span>
+<span class="fc" id="L400">                 final String pName) {</span>
             /* Check for invalid name */
-<span class="pc bpc" id="L409" title="1 of 2 branches missed.">            if (pName.indexOf(SEP_VALUE) != -1) {</span>
-<span class="nc" id="L410">                throw new IllegalArgumentException(&quot;Invalid property name - &quot;</span>
+<span class="pc bpc" id="L402" title="1 of 2 branches missed.">            if (pName.indexOf(SEP_VALUE) != -1) {</span>
+<span class="nc" id="L403">                throw new IllegalArgumentException(&quot;Invalid property name - &quot;</span>
                         + pName);
             }
 
             /* Store name */
-<span class="fc" id="L415">            theName = pName;</span>
+<span class="fc" id="L408">            theName = pName;</span>
 
             /* Loop through the properties in the list */
-<span class="fc" id="L418">            int iIndex = 0;</span>
-<span class="fc" id="L419">            final Iterator&lt;Property&gt; myIterator = pList.iterator();</span>
-<span class="fc bfc" id="L420" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L411">            int iIndex = 0;</span>
+<span class="fc bfc" id="L412" title="All 2 branches covered.">            for (Property myProperty : pList) {</span>
                 /* Access next property */
-<span class="fc" id="L422">                final Property myProperty = myIterator.next();</span>
-
                 /* Check the property name */
-<span class="fc" id="L425">                final int iDiff = pName.compareTo(myProperty.getName());</span>
+<span class="fc" id="L415">                final int iDiff = pName.compareTo(myProperty.getName());</span>
 
                 /* If this property is later than us */
-<span class="fc bfc" id="L428" title="All 2 branches covered.">                if (iDiff &lt; 0) {</span>
-<span class="fc" id="L429">                    break;</span>
+<span class="fc bfc" id="L418" title="All 2 branches covered.">                if (iDiff &lt; 0) {</span>
+<span class="fc" id="L419">                    break;</span>
                 }
 
                 /* Reject attempt to add duplicate name */
-<span class="pc bpc" id="L433" title="1 of 2 branches missed.">                if (iDiff == 0) {</span>
-<span class="nc" id="L434">                    throw new IllegalArgumentException(&quot;Duplicate property - &quot;</span>
+<span class="pc bpc" id="L423" title="1 of 2 branches missed.">                if (iDiff == 0) {</span>
+<span class="nc" id="L424">                    throw new IllegalArgumentException(&quot;Duplicate property - &quot;</span>
                             + pName);
                 }
 
                 /* Increment index */
-<span class="fc" id="L439">                iIndex++;</span>
-<span class="fc" id="L440">            }</span>
+<span class="fc" id="L429">                iIndex++;</span>
+<span class="fc" id="L430">            }</span>
 
             /* Add into the list at the correct point */
-<span class="fc" id="L443">            pList.add(iIndex, this);</span>
-<span class="fc" id="L444">        }</span>
+<span class="fc" id="L433">            pList.add(iIndex, this);</span>
+<span class="fc" id="L434">        }</span>
 
         /**
          * Obtain the name of the property.
@@ -449,7 +439,7 @@ public class GordianZipFileProperties {
          * @return the name of the property
          */
         String getName() {
-<span class="fc" id="L452">            return theName;</span>
+<span class="fc" id="L442">            return theName;</span>
         }
 
         /**
@@ -458,7 +448,7 @@ public class GordianZipFileProperties {
          * @return the value of the property
          */
         byte[] getByteValue() {
-<span class="fc" id="L461">            return theByteValue;</span>
+<span class="fc" id="L451">            return theByteValue;</span>
         }
 
         /**
@@ -467,7 +457,7 @@ public class GordianZipFileProperties {
          * @return the value of the property
          */
         Long getLongValue() {
-<span class="fc" id="L470">            return theLongValue;</span>
+<span class="fc" id="L460">            return theLongValue;</span>
         }
 
         /**
@@ -476,10 +466,10 @@ public class GordianZipFileProperties {
          * @param pValue the new value
          */
         void setByteValue(final byte[] pValue) {
-<span class="fc bfc" id="L479" title="All 2 branches covered.">            theByteValue = (pValue == null)</span>
-<span class="fc" id="L480">                    ? null</span>
-<span class="fc" id="L481">                    : Arrays.copyOf(pValue, pValue.length);</span>
-<span class="fc" id="L482">        }</span>
+<span class="fc bfc" id="L469" title="All 2 branches covered.">            theByteValue = (pValue == null)</span>
+<span class="fc" id="L470">                    ? null</span>
+<span class="fc" id="L471">                    : Arrays.copyOf(pValue, pValue.length);</span>
+<span class="fc" id="L472">        }</span>
 
         /**
          * Set the long value.
@@ -487,8 +477,8 @@ public class GordianZipFileProperties {
          * @param pValue the new value
          */
         void setLongValue(final Long pValue) {
-<span class="fc" id="L490">            theLongValue = pValue;</span>
-<span class="fc" id="L491">        }</span>
+<span class="fc" id="L480">            theLongValue = pValue;</span>
+<span class="fc" id="L481">        }</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

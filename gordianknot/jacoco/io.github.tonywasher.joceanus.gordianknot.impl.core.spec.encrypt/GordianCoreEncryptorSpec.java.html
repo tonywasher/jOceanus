@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreEncryptorSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt</a> &gt; <span class="el_source">GordianCoreEncryptorSpec.java</span></div><h1>GordianCoreEncryptorSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt;
+
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairType;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Asymmetric Encryption Specification.
+ */
+public class GordianCoreEncryptorSpec
+        implements GordianEncryptorSpec {
+    /**
+     * The EC-ElGamal name.
+     */
+    private static final String ECELGAMAL = &quot;ElGamal&quot;;
+
+    /**
+     * KeyPairType.
+     */
+    private final GordianCoreKeyPairType theKeyPairType;
+
+    /**
+     * EncryptorType.
+     */
+    private final Object theEncryptorType;
+
+    /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pKeyPairType   the keyPairType
+     * @param pEncryptorType the encryptor type
+     */
+    GordianCoreEncryptorSpec(final GordianKeyPairType pKeyPairType,
+<span class="fc" id="L70">                             final Object pEncryptorType) {</span>
+<span class="fc" id="L71">        theKeyPairType = GordianCoreKeyPairType.mapCoreType(pKeyPairType);</span>
+<span class="fc" id="L72">        theEncryptorType = pEncryptorType;</span>
+<span class="fc" id="L73">        isValid = checkValidity();</span>
+<span class="fc" id="L74">    }</span>
+
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+<span class="fc" id="L78">        return theKeyPairType.getType();</span>
+    }
+
+    /**
+     * Obtain core keyPairType.
+     *
+     * @return the core type
+     */
+    public GordianCoreKeyPairType getCoreKeyPairType() {
+<span class="fc" id="L87">        return theKeyPairType;</span>
+    }
+
+    @Override
+    public Object getEncryptorType() {
+<span class="fc" id="L92">        return theEncryptorType;</span>
+    }
+
+    /**
+     * Obtain the encryptorType as a particular class.
+     *
+     * @param &lt;T&gt;    the required type
+     * @param pClazz the required class
+     * @return the properly cast value.
+     */
+    private &lt;T&gt; T castValue(final Class&lt;T&gt; pClazz) {
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        if (pClazz.isInstance(theEncryptorType)) {</span>
+<span class="fc" id="L104">            return pClazz.cast(theEncryptorType);</span>
+        }
+<span class="nc" id="L106">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the digestSpec.
+     *
+     * @return the digestSpec.
+     */
+    public GordianCoreDigestSpec getDigestSpec() {
+<span class="fc" id="L115">        return castValue(GordianCoreDigestSpec.class);</span>
+    }
+
+    /**
+     * Obtain the SM2 encryption Spec.
+     *
+     * @return the encryptionSpec.
+     */
+    public GordianCoreSM2EncryptionSpec getSM2EncryptionSpec() {
+<span class="fc" id="L124">        return castValue(GordianCoreSM2EncryptionSpec.class);</span>
+    }
+
+    /**
+     * Obtain the composite encryptorSpec iterator.
+     *
+     * @return the encryptorSpec iterator.
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public Iterator&lt;GordianEncryptorSpec&gt; encryptorSpecIterator() {
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        if (theEncryptorType instanceof List) {</span>
+<span class="fc" id="L135">            return ((List&lt;GordianEncryptorSpec&gt;) theEncryptorType).iterator();</span>
+        }
+<span class="nc" id="L137">        throw new IllegalArgumentException();</span>
+    }
+
+    @Override
+    public boolean isValid() {
+<span class="fc" id="L142">        return isValid;</span>
+    }
+
+    /**
+     * Check spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">        if (theKeyPairType == null) {</span>
+<span class="nc" id="L152">            return false;</span>
+        }
+<span class="pc bpc" id="L154" title="1 of 5 branches missed.">        return switch (theKeyPairType.getType()) {</span>
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">            case RSA, ELGAMAL -&gt; theEncryptorType instanceof GordianDigestSpec s</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">                    &amp;&amp; s.isValid();</span>
+            case SM2 -&gt; theEncryptorType == null
+<span class="pc bpc" id="L158" title="2 of 4 branches missed.">                    || (theEncryptorType instanceof GordianSM2EncryptionSpec s</span>
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">                    &amp;&amp; s.isValid());</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">            case EC, GOST -&gt; theEncryptorType == null;</span>
+<span class="pc bpc" id="L161" title="1 of 4 branches missed.">            case COMPOSITE -&gt; theEncryptorType instanceof List &amp;&amp; checkComposite();</span>
+<span class="nc" id="L162">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Is the Spec supported?
+     *
+     * @return true/false
+     */
+    public boolean isSupported() {
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        if (!isValid) {</span>
+<span class="nc" id="L173">            return false;</span>
+        }
+<span class="pc bpc" id="L175" title="1 of 3 branches missed.">        return switch (theKeyPairType.getType()) {</span>
+            case RSA, ELGAMAL -&gt; {
+<span class="fc" id="L177">                final GordianCoreDigestSpec mySpec = getDigestSpec();</span>
+<span class="pc bpc" id="L178" title="2 of 4 branches missed.">                yield GordianDigestType.SHA2.equals(mySpec.getDigestType()) &amp;&amp; !mySpec.isSha2Hybrid();</span>
+            }
+<span class="fc" id="L180">            case EC, GOST, SM2, COMPOSITE -&gt; true;</span>
+<span class="nc" id="L181">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Check composite spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkComposite() {
+<span class="fc" id="L191">        final Iterator&lt;GordianEncryptorSpec&gt; myIterator = encryptorSpecIterator();</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+            /* Check that each spec is valid */
+<span class="fc" id="L194">            final GordianEncryptorSpec mySpec = myIterator.next();</span>
+<span class="pc bpc" id="L195" title="1 of 4 branches missed.">            if (mySpec == null || !mySpec.isValid()) {</span>
+<span class="fc" id="L196">                return false;</span>
+            }
+<span class="fc" id="L198">        }</span>
+<span class="fc" id="L199">        return true;</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L205" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* If the encryptorSpec is valid */
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">            if (isValid) {</span>
+                /* Load the name */
+<span class="fc" id="L209">                theName = theKeyPairType.toString();</span>
+<span class="pc bpc" id="L210" title="1 of 5 branches missed.">                switch (theKeyPairType.getType()) {</span>
+                    case RSA, ELGAMAL:
+<span class="fc" id="L212">                        theName += GordianSpecConstants.SEP + theEncryptorType;</span>
+<span class="fc" id="L213">                        break;</span>
+                    case EC, GOST:
+<span class="fc" id="L215">                        theName += GordianSpecConstants.SEP + ECELGAMAL;</span>
+<span class="fc" id="L216">                        break;</span>
+                    case SM2:
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">                        theName += GordianSpecConstants.SEP + (theEncryptorType == null ? ECELGAMAL : theEncryptorType);</span>
+<span class="fc" id="L219">                        break;</span>
+                    case COMPOSITE:
+<span class="fc" id="L221">                        final Iterator&lt;GordianEncryptorSpec&gt; myIterator = encryptorSpecIterator();</span>
+<span class="fc" id="L222">                        final StringBuilder myBuilder = new StringBuilder(theName);</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">                        while (myIterator.hasNext()) {</span>
+<span class="fc" id="L224">                            myBuilder.append(GordianSpecConstants.SEP).append(myIterator.next().toString());</span>
+                        }
+<span class="fc" id="L226">                        theName = myBuilder.toString();</span>
+<span class="fc" id="L227">                        break;</span>
+                    default:
+<span class="nc" id="L229">                        break;</span>
+                }
+            } else {
+                /* Report invalid spec */
+<span class="nc" id="L233">                theName = &quot;InvalidEncryptorSpec: &quot; + theKeyPairType + &quot;:&quot; + theEncryptorType;</span>
+            }
+        }
+
+        /* return the name */
+<span class="fc" id="L238">        return theName;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="pc bpc" id="L244" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L245">            return true;</span>
+        }
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L248">            return false;</span>
+        }
+
+        /* Match fields */
+<span class="fc" id="L252">        return pThat instanceof GordianCoreEncryptorSpec myThat</span>
+<span class="pc bpc" id="L253" title="1 of 2 branches missed.">                &amp;&amp; Objects.equals(theKeyPairType, myThat.getCoreKeyPairType())</span>
+<span class="pc bpc" id="L254" title="2 of 4 branches missed.">                &amp;&amp; Objects.equals(theEncryptorType, myThat.theEncryptorType);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L259">        return Objects.hash(theKeyPairType, theEncryptorType);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

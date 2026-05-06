@@ -19,16 +19,19 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacType;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianSipHashSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreSipHashType;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianBlake2Mac;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianBlake2XMac;
@@ -78,29 +81,29 @@ public class BouncyMacFactory
      */
     BouncyMacFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
-<span class="fc" id="L81">        super(pFactory);</span>
+<span class="fc" id="L84">        super(pFactory);</span>
 
         /* Create the cache */
-<span class="fc" id="L84">        theCache = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L85">    }</span>
+<span class="fc" id="L87">        theCache = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L88">    }</span>
 
     @Override
     @SuppressWarnings(&quot;unchecked&quot;)
     public &lt;T extends GordianKeySpec&gt; BouncyKeyGenerator&lt;T&gt; getKeyGenerator(final T pMacSpec) throws GordianException {
         /* Look up in the cache */
-<span class="fc" id="L91">        BouncyKeyGenerator&lt;T&gt; myGenerator = (BouncyKeyGenerator&lt;T&gt;) theCache.get(pMacSpec);</span>
-<span class="fc bfc" id="L92" title="All 2 branches covered.">        if (myGenerator == null) {</span>
+<span class="fc" id="L94">        BouncyKeyGenerator&lt;T&gt; myGenerator = (BouncyKeyGenerator&lt;T&gt;) theCache.get(pMacSpec);</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        if (myGenerator == null) {</span>
             /* Check validity of MacSpec */
-<span class="fc" id="L94">            checkMacSpec(pMacSpec);</span>
+<span class="fc" id="L97">            checkMacSpec(pMacSpec);</span>
 
             /* Create the new generator */
-<span class="fc" id="L97">            final CipherKeyGenerator myBCGenerator = getBCKeyGenerator((GordianMacSpec) pMacSpec);</span>
-<span class="fc" id="L98">            myGenerator = new BouncyKeyGenerator&lt;&gt;(getFactory(), pMacSpec, myBCGenerator);</span>
+<span class="fc" id="L100">            final CipherKeyGenerator myBCGenerator = getBCKeyGenerator((GordianMacSpec) pMacSpec);</span>
+<span class="fc" id="L101">            myGenerator = new BouncyKeyGenerator&lt;&gt;(getFactory(), pMacSpec, myBCGenerator);</span>
 
             /* Add to cache */
-<span class="fc" id="L101">            theCache.put(pMacSpec, myGenerator);</span>
+<span class="fc" id="L104">            theCache.put(pMacSpec, myGenerator);</span>
         }
-<span class="fc" id="L103">        return myGenerator;</span>
+<span class="fc" id="L106">        return myGenerator;</span>
     }
 
     /**
@@ -110,21 +113,21 @@ public class BouncyMacFactory
      * @return the KeyGenerator
      */
     private static CipherKeyGenerator getBCKeyGenerator(final GordianMacSpec pKeyType) {
-<span class="fc bfc" id="L113" title="All 2 branches covered.">        return GordianMacType.POLY1305.equals(pKeyType.getMacType())</span>
-<span class="fc" id="L114">                ? new Poly1305KeyGenerator()</span>
-<span class="fc" id="L115">                : new CipherKeyGenerator();</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        return GordianMacType.POLY1305.equals(pKeyType.getMacType())</span>
+<span class="fc" id="L117">                ? new Poly1305KeyGenerator()</span>
+<span class="fc" id="L118">                : new CipherKeyGenerator();</span>
     }
 
     @Override
     public BouncyMac createMac(final GordianMacSpec pMacSpec) throws GordianException {
         /* Check validity of MacSpec */
-<span class="fc" id="L121">        checkMacSpec(pMacSpec);</span>
+<span class="fc" id="L124">        checkMacSpec(pMacSpec);</span>
 
         /* Create Mac */
-<span class="fc" id="L124">        final Mac myBCMac = getBCMac(pMacSpec);</span>
-<span class="fc bfc" id="L125" title="All 2 branches covered.">        return myBCMac instanceof Xof myXof</span>
-<span class="fc" id="L126">                ? new BouncyMacXof(getFactory(), pMacSpec, myXof)</span>
-<span class="fc" id="L127">                : new BouncyMac(getFactory(), pMacSpec, myBCMac);</span>
+<span class="fc" id="L127">        final Mac myBCMac = getBCMac((GordianCoreMacSpec) pMacSpec);</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        return myBCMac instanceof Xof myXof</span>
+<span class="fc" id="L129">                ? new BouncyMacXof(getFactory(), pMacSpec, myXof)</span>
+<span class="fc" id="L130">                : new BouncyMac(getFactory(), pMacSpec, myBCMac);</span>
     }
 
     /**
@@ -134,43 +137,26 @@ public class BouncyMacFactory
      * @return the MAC
      * @throws GordianException on error
      */
-    private Mac getBCMac(final GordianMacSpec pMacSpec) throws GordianException {
-<span class="pc bpc" id="L138" title="1 of 17 branches missed.">        switch (pMacSpec.getMacType()) {</span>
-            case HMAC:
-<span class="fc" id="L140">                return getBCHMac(pMacSpec);</span>
-            case GMAC:
-<span class="fc" id="L142">                return getBCGMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));</span>
-            case CMAC:
-<span class="fc" id="L144">                return getBCCMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));</span>
-            case POLY1305:
-<span class="fc" id="L146">                return getBCPoly1305Mac(pMacSpec.getSymKeySpec());</span>
-            case SKEIN:
-<span class="fc" id="L148">                return getBCSkeinMac(Objects.requireNonNull(pMacSpec.getDigestSpec()));</span>
-            case BLAKE2:
-<span class="fc" id="L150">                return getBCBlake2Mac(Objects.requireNonNull(pMacSpec.getDigestSpec()));</span>
-            case BLAKE3:
-<span class="fc" id="L152">                return getBCBlake3Mac(Objects.requireNonNull(pMacSpec.getDigestSpec()));</span>
-            case KMAC:
-<span class="fc" id="L154">                return getBCKMAC(Objects.requireNonNull(pMacSpec.getDigestSpec()));</span>
-            case KALYNA:
-<span class="fc" id="L156">                return getBCKalynaMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));</span>
-            case KUPYNA:
-<span class="fc" id="L158">                return getBCKupynaMac(Objects.requireNonNull(pMacSpec.getDigestSpec()));</span>
-            case VMPC:
-<span class="fc" id="L160">                return getBCVMPCMac();</span>
-            case CBCMAC:
-<span class="fc" id="L162">                return getBCCBCMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));</span>
-            case CFBMAC:
-<span class="fc" id="L164">                return getBCCFBMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));</span>
-            case SIPHASH:
-<span class="fc" id="L166">                return getBCSipHash(Objects.requireNonNull(pMacSpec.getSipHashSpec()));</span>
-            case GOST:
-<span class="fc" id="L168">                return getBCGOSTMac();</span>
-            case ZUC:
-<span class="fc" id="L170">                return getBCZucMac(pMacSpec);</span>
-            default:
-<span class="nc" id="L172">                throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));</span>
-        }
+    private Mac getBCMac(final GordianCoreMacSpec pMacSpec) throws GordianException {
+<span class="pc bpc" id="L141" title="1 of 17 branches missed.">        return switch (pMacSpec.getMacType()) {</span>
+<span class="fc" id="L142">            case HMAC -&gt; getBCHMac(pMacSpec);</span>
+<span class="fc" id="L143">            case GMAC -&gt; getBCGMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));</span>
+<span class="fc" id="L144">            case CMAC -&gt; getBCCMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));</span>
+<span class="fc" id="L145">            case POLY1305 -&gt; getBCPoly1305Mac(pMacSpec.getSymKeySpec());</span>
+<span class="fc" id="L146">            case SKEIN -&gt; getBCSkeinMac(Objects.requireNonNull(pMacSpec.getDigestSpec()));</span>
+<span class="fc" id="L147">            case BLAKE2 -&gt; getBCBlake2Mac(Objects.requireNonNull(pMacSpec.getDigestSpec()));</span>
+<span class="fc" id="L148">            case BLAKE3 -&gt; getBCBlake3Mac(Objects.requireNonNull(pMacSpec.getDigestSpec()));</span>
+<span class="fc" id="L149">            case KMAC -&gt; getBCKMAC(Objects.requireNonNull(pMacSpec.getDigestSpec()));</span>
+<span class="fc" id="L150">            case KALYNA -&gt; getBCKalynaMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));</span>
+<span class="fc" id="L151">            case KUPYNA -&gt; getBCKupynaMac(Objects.requireNonNull(pMacSpec.getDigestSpec()));</span>
+<span class="fc" id="L152">            case VMPC -&gt; getBCVMPCMac();</span>
+<span class="fc" id="L153">            case CBCMAC -&gt; getBCCBCMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));</span>
+<span class="fc" id="L154">            case CFBMAC -&gt; getBCCFBMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));</span>
+<span class="fc" id="L155">            case SIPHASH -&gt; getBCSipHash(Objects.requireNonNull(pMacSpec.getSipHashSpec()));</span>
+<span class="fc" id="L156">            case GOST -&gt; getBCGOSTMac();</span>
+<span class="fc" id="L157">            case ZUC -&gt; getBCZucMac(pMacSpec);</span>
+<span class="nc" id="L158">            default -&gt; throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));</span>
+        };
     }
 
     /**
@@ -181,7 +167,7 @@ public class BouncyMacFactory
      * @throws GordianException on error
      */
     private Mac getBCHMac(final GordianMacSpec pMacSpec) throws GordianException {
-<span class="fc" id="L184">        return new BouncyHMac(getFactory().getDigestFactory(), pMacSpec);</span>
+<span class="fc" id="L170">        return new BouncyHMac(getFactory().getDigestFactory(), pMacSpec);</span>
     }
 
     /**
@@ -192,9 +178,10 @@ public class BouncyMacFactory
      * @throws GordianException on error
      */
     private static Mac getBCGMac(final GordianSymKeySpec pSymKeySpec) throws GordianException {
-<span class="fc bfc" id="L195" title="All 2 branches covered.">        return GordianSymKeyType.KALYNA.equals(pSymKeySpec.getSymKeyType())</span>
-<span class="fc" id="L196">                ? new GordianKGMac(new GordianKGCMBlockCipher(BouncyCipherFactory.getBCSymEngine(pSymKeySpec)))</span>
-<span class="fc" id="L197">                : new GMac(GCMBlockCipher.newInstance(BouncyCipherFactory.getBCSymEngine(pSymKeySpec)));</span>
+<span class="fc" id="L181">        final GordianCoreSymKeySpec mySpec = (GordianCoreSymKeySpec) pSymKeySpec;</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">        return GordianSymKeyType.KALYNA.equals(pSymKeySpec.getSymKeyType())</span>
+<span class="fc" id="L183">                ? new GordianKGMac(new GordianKGCMBlockCipher(BouncyCipherFactory.getBCSymEngine(mySpec)))</span>
+<span class="fc" id="L184">                : new GMac(GCMBlockCipher.newInstance(BouncyCipherFactory.getBCSymEngine(mySpec)));</span>
     }
 
     /**
@@ -205,7 +192,8 @@ public class BouncyMacFactory
      * @throws GordianException on error
      */
     private static Mac getBCCMac(final GordianSymKeySpec pSymKeySpec) throws GordianException {
-<span class="fc" id="L208">        return new CMac(BouncyCipherFactory.getBCSymEngine(pSymKeySpec));</span>
+<span class="fc" id="L195">        final GordianCoreSymKeySpec mySpec = (GordianCoreSymKeySpec) pSymKeySpec;</span>
+<span class="fc" id="L196">        return new CMac(BouncyCipherFactory.getBCSymEngine(mySpec));</span>
     }
 
     /**
@@ -216,9 +204,10 @@ public class BouncyMacFactory
      * @throws GordianException on error
      */
     private static Mac getBCPoly1305Mac(final GordianSymKeySpec pSymKeySpec) throws GordianException {
-<span class="fc bfc" id="L219" title="All 2 branches covered.">        return pSymKeySpec == null</span>
-<span class="fc" id="L220">                ? new Poly1305()</span>
-<span class="fc" id="L221">                : new Poly1305(BouncyCipherFactory.getBCSymEngine(pSymKeySpec));</span>
+<span class="fc" id="L207">        final GordianCoreSymKeySpec mySpec = (GordianCoreSymKeySpec) pSymKeySpec;</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">        return pSymKeySpec == null</span>
+<span class="fc" id="L209">                ? new Poly1305()</span>
+<span class="fc" id="L210">                : new Poly1305(BouncyCipherFactory.getBCSymEngine(mySpec));</span>
     }
 
     /**
@@ -228,9 +217,10 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCSkeinMac(final GordianDigestSpec pSpec) {
-<span class="fc bfc" id="L231" title="All 2 branches covered.">        return pSpec.isXofMode()</span>
-<span class="fc" id="L232">                ? new GordianSkeinXMac(pSpec.getDigestState().getLength().getLength())</span>
-<span class="fc" id="L233">                : new GordianSkeinMac(pSpec.getDigestState().getLength().getLength(), pSpec.getDigestLength().getLength());</span>
+<span class="fc" id="L220">        final GordianCoreDigestSpec mySpec = (GordianCoreDigestSpec) pSpec;</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        return pSpec.isXofMode()</span>
+<span class="fc" id="L222">                ? new GordianSkeinXMac(mySpec.getCoreDigestState().getLength().getLength())</span>
+<span class="fc" id="L223">                : new GordianSkeinMac(mySpec.getCoreDigestState().getLength().getLength(), pSpec.getDigestLength().getLength());</span>
     }
 
     /**
@@ -240,8 +230,8 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCKalynaMac(final GordianSymKeySpec pSymKeySpec) {
-<span class="fc" id="L243">        final GordianLength myLen = pSymKeySpec.getBlockLength();</span>
-<span class="fc" id="L244">        return new GordianDSTU7624Mac(myLen.getLength(), myLen.getLength());</span>
+<span class="fc" id="L233">        final GordianLength myLen = pSymKeySpec.getBlockLength();</span>
+<span class="fc" id="L234">        return new GordianDSTU7624Mac(myLen.getLength(), myLen.getLength());</span>
     }
 
     /**
@@ -251,7 +241,7 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCKupynaMac(final GordianDigestSpec pSpec) {
-<span class="fc" id="L254">        return new DSTU7564Mac(pSpec.getDigestLength().getLength());</span>
+<span class="fc" id="L244">        return new DSTU7564Mac(pSpec.getDigestLength().getLength());</span>
     }
 
     /**
@@ -261,9 +251,9 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCBlake2Mac(final GordianDigestSpec pSpec) {
-<span class="fc bfc" id="L264" title="All 2 branches covered.">        return pSpec.isXofMode()</span>
-<span class="fc" id="L265">                ? new GordianBlake2XMac(BouncyDigestFactory.getBlake2Xof(pSpec))</span>
-<span class="fc" id="L266">                : new GordianBlake2Mac(BouncyDigestFactory.getBlake2Digest(pSpec));</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">        return pSpec.isXofMode()</span>
+<span class="fc" id="L255">                ? new GordianBlake2XMac(BouncyDigestFactory.getBlake2Xof((GordianCoreDigestSpec) pSpec))</span>
+<span class="fc" id="L256">                : new GordianBlake2Mac(BouncyDigestFactory.getBlake2Digest((GordianCoreDigestSpec) pSpec));</span>
     }
 
     /**
@@ -273,8 +263,8 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCBlake3Mac(final GordianDigestSpec pSpec) {
-<span class="fc" id="L276">        final GordianBlake3Digest myDigest = new GordianBlake3Digest(pSpec.getDigestLength().getByteLength());</span>
-<span class="fc" id="L277">        return new GordianBlake3Mac(myDigest);</span>
+<span class="fc" id="L266">        final GordianBlake3Digest myDigest = new GordianBlake3Digest(pSpec.getDigestLength().getByteLength());</span>
+<span class="fc" id="L267">        return new GordianBlake3Mac(myDigest);</span>
     }
 
     /**
@@ -284,7 +274,7 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCKMAC(final GordianDigestSpec pSpec) {
-<span class="fc" id="L287">        return new GordianKMACWrapper(pSpec.getDigestState().getLength().getLength());</span>
+<span class="fc" id="L277">        return new GordianKMACWrapper(((GordianCoreDigestSpec) pSpec).getCoreDigestState().getLength().getLength());</span>
     }
 
     /**
@@ -293,7 +283,7 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCVMPCMac() {
-<span class="fc" id="L296">        return new VMPCMac();</span>
+<span class="fc" id="L286">        return new VMPCMac();</span>
     }
 
     /**
@@ -304,7 +294,8 @@ public class BouncyMacFactory
      * @throws GordianException on error
      */
     private static Mac getBCCBCMac(final GordianSymKeySpec pSymKeySpec) throws GordianException {
-<span class="fc" id="L307">        return new CBCBlockCipherMac(BouncyCipherFactory.getBCSymEngine(pSymKeySpec));</span>
+<span class="fc" id="L297">        final GordianCoreSymKeySpec mySpec = (GordianCoreSymKeySpec) pSymKeySpec;</span>
+<span class="fc" id="L298">        return new CBCBlockCipherMac(BouncyCipherFactory.getBCSymEngine(mySpec));</span>
     }
 
     /**
@@ -315,7 +306,8 @@ public class BouncyMacFactory
      * @throws GordianException on error
      */
     private static Mac getBCCFBMac(final GordianSymKeySpec pSymKeySpec) throws GordianException {
-<span class="fc" id="L318">        return new CFBBlockCipherMac(BouncyCipherFactory.getBCSymEngine(pSymKeySpec));</span>
+<span class="fc" id="L309">        final GordianCoreSymKeySpec mySpec = (GordianCoreSymKeySpec) pSymKeySpec;</span>
+<span class="fc" id="L310">        return new CFBBlockCipherMac(BouncyCipherFactory.getBCSymEngine(mySpec));</span>
     }
 
     /**
@@ -324,10 +316,10 @@ public class BouncyMacFactory
      * @param pSpec the SipHashSpec
      * @return the MAC
      */
-    private static Mac getBCSipHash(final GordianSipHashSpec pSpec) {
-<span class="fc bfc" id="L328" title="All 2 branches covered.">        return pSpec.isLong()</span>
-<span class="fc" id="L329">                ? new SipHash128(pSpec.getCompression(), pSpec.getFinalisation())</span>
-<span class="fc" id="L330">                : new SipHash(pSpec.getCompression(), pSpec.getFinalisation());</span>
+    private static Mac getBCSipHash(final GordianCoreSipHashType pSpec) {
+<span class="fc bfc" id="L320" title="All 2 branches covered.">        return pSpec.isLong()</span>
+<span class="fc" id="L321">                ? new SipHash128(pSpec.getCompression(), pSpec.getFinalisation())</span>
+<span class="fc" id="L322">                : new SipHash(pSpec.getCompression(), pSpec.getFinalisation());</span>
     }
 
     /**
@@ -336,7 +328,7 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCGOSTMac() {
-<span class="fc" id="L339">        return new GOST28147Mac();</span>
+<span class="fc" id="L331">        return new GOST28147Mac();</span>
     }
 
     /**
@@ -345,10 +337,10 @@ public class BouncyMacFactory
      * @param pMacSpec the macSpec
      * @return the MAC
      */
-    private static Mac getBCZucMac(final GordianMacSpec pMacSpec) {
-<span class="fc bfc" id="L349" title="All 2 branches covered.">        return GordianLength.LEN_128 == pMacSpec.getKeyLength()</span>
-<span class="fc" id="L350">                ? new GordianZuc128Mac()</span>
-<span class="fc" id="L351">                : new GordianZuc256Mac(pMacSpec.getMacLength().getLength());</span>
+    private static Mac getBCZucMac(final GordianCoreMacSpec pMacSpec) {
+<span class="fc bfc" id="L341" title="All 2 branches covered.">        return GordianLength.LEN_128 == pMacSpec.getKeyLength()</span>
+<span class="fc" id="L342">                ? new GordianZuc128Mac()</span>
+<span class="fc" id="L343">                : new GordianZuc256Mac(pMacSpec.getMacLength().getLength());</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

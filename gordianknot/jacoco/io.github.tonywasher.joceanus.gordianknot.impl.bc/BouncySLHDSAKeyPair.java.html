@@ -18,34 +18,35 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
+import org.bouncycastle.crypto.generators.SLHDSAKeyPairGenerator;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithContext;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
-import org.bouncycastle.pqc.crypto.slhdsa.HashSLHDSASigner;
-import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAParameters;
-import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.slhdsa.SLHDSASigner;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
-import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
-import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
+import org.bouncycastle.crypto.params.SLHDSAKeyGenerationParameters;
+import org.bouncycastle.crypto.params.SLHDSAParameters;
+import org.bouncycastle.crypto.params.SLHDSAPrivateKeyParameters;
+import org.bouncycastle.crypto.params.SLHDSAPublicKeyParameters;
+import org.bouncycastle.crypto.signers.HashSLHDSASigner;
+import org.bouncycastle.crypto.signers.SLHDSASigner;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
+import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
 
 import java.io.IOException;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -75,17 +76,17 @@ public final class BouncySLHDSAKeyPair {
          */
         BouncySLHDSAPublicKey(final GordianKeyPairSpec pKeySpec,
                               final SLHDSAPublicKeyParameters pPublicKey) {
-<span class="fc" id="L78">            super(pKeySpec, pPublicKey);</span>
-<span class="fc" id="L79">        }</span>
+<span class="fc" id="L79">            super(pKeySpec, pPublicKey);</span>
+<span class="fc" id="L80">        }</span>
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-<span class="fc" id="L84">            final SLHDSAPublicKeyParameters myThis = getPublicKey();</span>
-<span class="fc" id="L85">            final SLHDSAPublicKeyParameters myThat = (SLHDSAPublicKeyParameters) pThat;</span>
+<span class="fc" id="L85">            final SLHDSAPublicKeyParameters myThis = getPublicKey();</span>
+<span class="fc" id="L86">            final SLHDSAPublicKeyParameters myThat = (SLHDSAPublicKeyParameters) pThat;</span>
 
             /* Compare keys */
-<span class="fc" id="L88">            return compareKeys(myThis, myThat);</span>
+<span class="fc" id="L89">            return compareKeys(myThis, myThat);</span>
         }
 
         /**
@@ -97,8 +98,8 @@ public final class BouncySLHDSAKeyPair {
          */
         private static boolean compareKeys(final SLHDSAPublicKeyParameters pFirst,
                                            final SLHDSAPublicKeyParameters pSecond) {
-<span class="pc bpc" id="L100" title="1 of 2 branches missed.">            return Arrays.equals(pFirst.getSeed(), pSecond.getSeed())</span>
-<span class="pc bpc" id="L101" title="1 of 2 branches missed.">                    &amp;&amp; Arrays.equals(pFirst.getRoot(), pSecond.getRoot());</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">            return Arrays.equals(pFirst.getSeed(), pSecond.getSeed())</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">                    &amp;&amp; Arrays.equals(pFirst.getRoot(), pSecond.getRoot());</span>
         }
     }
 
@@ -115,18 +116,18 @@ public final class BouncySLHDSAKeyPair {
          */
         BouncySLHDSAPrivateKey(final GordianKeyPairSpec pKeySpec,
                                final SLHDSAPrivateKeyParameters pPrivateKey) {
-<span class="fc" id="L118">            super(pKeySpec, pPrivateKey);</span>
-<span class="fc" id="L119">        }</span>
+<span class="fc" id="L119">            super(pKeySpec, pPrivateKey);</span>
+<span class="fc" id="L120">        }</span>
 
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-<span class="fc" id="L125">            final SLHDSAPrivateKeyParameters myThis = getPrivateKey();</span>
-<span class="fc" id="L126">            final SLHDSAPrivateKeyParameters myThat = (SLHDSAPrivateKeyParameters) pThat;</span>
+<span class="fc" id="L126">            final SLHDSAPrivateKeyParameters myThis = getPrivateKey();</span>
+<span class="fc" id="L127">            final SLHDSAPrivateKeyParameters myThat = (SLHDSAPrivateKeyParameters) pThat;</span>
 
             /* Compare keys */
-<span class="fc" id="L129">            return compareKeys(myThis, myThat);</span>
+<span class="fc" id="L130">            return compareKeys(myThis, myThat);</span>
         }
 
         /**
@@ -138,8 +139,8 @@ public final class BouncySLHDSAKeyPair {
          */
         private static boolean compareKeys(final SLHDSAPrivateKeyParameters pFirst,
                                            final SLHDSAPrivateKeyParameters pSecond) {
-<span class="pc bpc" id="L141" title="1 of 2 branches missed.">            return Arrays.equals(pFirst.getSeed(), pSecond.getSeed())</span>
-<span class="pc bpc" id="L142" title="1 of 2 branches missed.">                    &amp;&amp; Arrays.equals(pFirst.getPrf(), pSecond.getPrf());</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">            return Arrays.equals(pFirst.getSeed(), pSecond.getSeed())</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">                    &amp;&amp; Arrays.equals(pFirst.getPrf(), pSecond.getPrf());</span>
         }
     }
 
@@ -162,24 +163,25 @@ public final class BouncySLHDSAKeyPair {
         BouncySLHDSAKeyPairGenerator(final GordianBaseFactory pFactory,
                                      final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
-<span class="fc" id="L165">            super(pFactory, pKeySpec);</span>
+<span class="fc" id="L166">            super(pFactory, pKeySpec);</span>
 
             /* Determine the parameters */
-<span class="fc" id="L168">            final SLHDSAParameters myParms = pKeySpec.getSLHDSAKeySpec().getParameters();</span>
+<span class="fc" id="L169">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;</span>
+<span class="fc" id="L170">            final SLHDSAParameters myParms = myKeySpec.getSLHDSASpec().getParameters();</span>
 
             /* Create and initialise the generator */
-<span class="fc" id="L171">            theGenerator = new SLHDSAKeyPairGenerator();</span>
-<span class="fc" id="L172">            final SLHDSAKeyGenerationParameters myParams = new SLHDSAKeyGenerationParameters(getRandom(), myParms);</span>
-<span class="fc" id="L173">            theGenerator.init(myParams);</span>
-<span class="fc" id="L174">        }</span>
+<span class="fc" id="L173">            theGenerator = new SLHDSAKeyPairGenerator();</span>
+<span class="fc" id="L174">            final SLHDSAKeyGenerationParameters myParams = new SLHDSAKeyGenerationParameters(getRandom(), myParms);</span>
+<span class="fc" id="L175">            theGenerator.init(myParams);</span>
+<span class="fc" id="L176">        }</span>
 
         @Override
         public BouncyKeyPair generateKeyPair() {
             /* Generate and return the keyPair */
-<span class="fc" id="L179">            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();</span>
-<span class="fc" id="L180">            final BouncySLHDSAPublicKey myPublic = new BouncySLHDSAPublicKey(getKeySpec(), (SLHDSAPublicKeyParameters) myPair.getPublic());</span>
-<span class="fc" id="L181">            final BouncySLHDSAPrivateKey myPrivate = new BouncySLHDSAPrivateKey(getKeySpec(), (SLHDSAPrivateKeyParameters) myPair.getPrivate());</span>
-<span class="fc" id="L182">            return new BouncyKeyPair(myPublic, myPrivate);</span>
+<span class="fc" id="L181">            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L182">            final BouncySLHDSAPublicKey myPublic = new BouncySLHDSAPublicKey(getKeySpec(), (SLHDSAPublicKeyParameters) myPair.getPublic());</span>
+<span class="fc" id="L183">            final BouncySLHDSAPrivateKey myPrivate = new BouncySLHDSAPrivateKey(getKeySpec(), (SLHDSAPrivateKeyParameters) myPair.getPrivate());</span>
+<span class="fc" id="L184">            return new BouncyKeyPair(myPublic, myPrivate);</span>
         }
 
         @Override
@@ -187,16 +189,16 @@ public final class BouncySLHDSAKeyPair {
             /* Protect against exceptions */
             try {
                 /* Check the keyPair type and keySpecs */
-<span class="fc" id="L190">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+<span class="fc" id="L192">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
 
                 /* build and return the encoding */
-<span class="fc" id="L193">                final BouncySLHDSAPrivateKey myPrivateKey = (BouncySLHDSAPrivateKey) getPrivateKey(pKeyPair);</span>
-<span class="fc" id="L194">                final SLHDSAPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();</span>
-<span class="fc" id="L195">                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);</span>
-<span class="fc" id="L196">                return new PKCS8EncodedKeySpec(myInfo.getEncoded());</span>
+<span class="fc" id="L195">                final BouncySLHDSAPrivateKey myPrivateKey = (BouncySLHDSAPrivateKey) getPrivateKey(pKeyPair);</span>
+<span class="fc" id="L196">                final SLHDSAPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();</span>
+<span class="fc" id="L197">                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);</span>
+<span class="fc" id="L198">                return new PKCS8EncodedKeySpec(myInfo.getEncoded());</span>
 
-<span class="nc" id="L198">            } catch (IOException e) {</span>
-<span class="nc" id="L199">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+<span class="nc" id="L200">            } catch (IOException e) {</span>
+<span class="nc" id="L201">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
             }
         }
 
@@ -206,23 +208,23 @@ public final class BouncySLHDSAKeyPair {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
-<span class="fc" id="L209">                checkKeySpec(pPrivateKey);</span>
+<span class="fc" id="L211">                checkKeySpec(pPrivateKey);</span>
 
                 /* derive keyPair */
-<span class="fc" id="L212">                final BouncySLHDSAPublicKey myPublic = derivePublicKey(pPublicKey);</span>
-<span class="fc" id="L213">                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());</span>
-<span class="fc" id="L214">                final SLHDSAPrivateKeyParameters myParms = (SLHDSAPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);</span>
-<span class="fc" id="L215">                final BouncySLHDSAPrivateKey myPrivate = new BouncySLHDSAPrivateKey(getKeySpec(), myParms);</span>
-<span class="fc" id="L216">                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);</span>
+<span class="fc" id="L214">                final BouncySLHDSAPublicKey myPublic = derivePublicKey(pPublicKey);</span>
+<span class="fc" id="L215">                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());</span>
+<span class="fc" id="L216">                final SLHDSAPrivateKeyParameters myParms = (SLHDSAPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);</span>
+<span class="fc" id="L217">                final BouncySLHDSAPrivateKey myPrivate = new BouncySLHDSAPrivateKey(getKeySpec(), myParms);</span>
+<span class="fc" id="L218">                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);</span>
 
                 /* Check that we have a matching pair */
-<span class="fc" id="L219">                GordianKeyPairValidity.checkValidity(getFactory(), myPair);</span>
+<span class="fc" id="L221">                GordianKeyPairValidity.checkValidity(getFactory(), myPair);</span>
 
                 /* Return the keyPair */
-<span class="fc" id="L222">                return myPair;</span>
+<span class="fc" id="L224">                return myPair;</span>
 
-<span class="nc" id="L224">            } catch (IOException e) {</span>
-<span class="nc" id="L225">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+<span class="nc" id="L226">            } catch (IOException e) {</span>
+<span class="nc" id="L227">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
             }
         }
 
@@ -231,23 +233,23 @@ public final class BouncySLHDSAKeyPair {
             /* Protect against exceptions */
             try {
                 /* Check the keyPair type and keySpecs */
-<span class="fc" id="L234">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+<span class="fc" id="L236">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
 
                 /* build and return the encoding */
-<span class="fc" id="L237">                final BouncySLHDSAPublicKey myPublicKey = (BouncySLHDSAPublicKey) getPublicKey(pKeyPair);</span>
-<span class="fc" id="L238">                final SLHDSAPublicKeyParameters myParms = myPublicKey.getPublicKey();</span>
-<span class="fc" id="L239">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);</span>
-<span class="fc" id="L240">                return new X509EncodedKeySpec(myInfo.getEncoded());</span>
+<span class="fc" id="L239">                final BouncySLHDSAPublicKey myPublicKey = (BouncySLHDSAPublicKey) getPublicKey(pKeyPair);</span>
+<span class="fc" id="L240">                final SLHDSAPublicKeyParameters myParms = myPublicKey.getPublicKey();</span>
+<span class="fc" id="L241">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);</span>
+<span class="fc" id="L242">                return new X509EncodedKeySpec(myInfo.getEncoded());</span>
 
-<span class="nc" id="L242">            } catch (IOException e) {</span>
-<span class="nc" id="L243">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+<span class="nc" id="L244">            } catch (IOException e) {</span>
+<span class="nc" id="L245">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
             }
         }
 
         @Override
         public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-<span class="fc" id="L249">            final BouncySLHDSAPublicKey myPublic = derivePublicKey(pEncodedKey);</span>
-<span class="fc" id="L250">            return new BouncyKeyPair(myPublic);</span>
+<span class="fc" id="L251">            final BouncySLHDSAPublicKey myPublic = derivePublicKey(pEncodedKey);</span>
+<span class="fc" id="L252">            return new BouncyKeyPair(myPublic);</span>
         }
 
         /**
@@ -261,15 +263,15 @@ public final class BouncySLHDSAKeyPair {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
-<span class="fc" id="L264">                checkKeySpec(pEncodedKey);</span>
+<span class="fc" id="L266">                checkKeySpec(pEncodedKey);</span>
 
                 /* derive publicKey */
-<span class="fc" id="L267">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());</span>
-<span class="fc" id="L268">                final SLHDSAPublicKeyParameters myParms = (SLHDSAPublicKeyParameters) PublicKeyFactory.createKey(myInfo);</span>
-<span class="fc" id="L269">                return new BouncySLHDSAPublicKey(getKeySpec(), myParms);</span>
+<span class="fc" id="L269">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());</span>
+<span class="fc" id="L270">                final SLHDSAPublicKeyParameters myParms = (SLHDSAPublicKeyParameters) PublicKeyFactory.createKey(myInfo);</span>
+<span class="fc" id="L271">                return new BouncySLHDSAPublicKey(getKeySpec(), myParms);</span>
 
-<span class="nc" id="L271">            } catch (IOException e) {</span>
-<span class="nc" id="L272">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+<span class="nc" id="L273">            } catch (IOException e) {</span>
+<span class="nc" id="L274">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
             }
         }
     }
@@ -304,121 +306,123 @@ public final class BouncySLHDSAKeyPair {
         BouncySLHDSASignature(final GordianBaseFactory pFactory,
                               final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
-<span class="fc" id="L307">            super(pFactory, pSpec);</span>
-<span class="fc" id="L308">            theSigner = new SLHDSASigner();</span>
-<span class="fc" id="L309">            theHashSigner = new HashSLHDSASigner();</span>
-<span class="fc" id="L310">        }</span>
+<span class="fc" id="L309">            super(pFactory, pSpec);</span>
+<span class="fc" id="L310">            theSigner = new SLHDSASigner();</span>
+<span class="fc" id="L311">            theHashSigner = new HashSLHDSASigner();</span>
+<span class="fc" id="L312">        }</span>
 
         @Override
-        public void initForSigning(final GordianSignParams pParams) throws GordianException {
+        public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
             /* Initialise detail */
-<span class="fc" id="L315">            super.initForSigning(pParams);</span>
-<span class="fc" id="L316">            final BouncyKeyPair myPair = getKeyPair();</span>
-<span class="fc" id="L317">            final byte[] myContext = getContext();</span>
-<span class="fc" id="L318">            BouncyKeyPair.checkKeyPair(myPair);</span>
+<span class="fc" id="L317">            super.initForSigning(pParams);</span>
+<span class="fc" id="L318">            final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L319">            final byte[] myContext = getContext();</span>
+<span class="fc" id="L320">            BouncyKeyPair.checkKeyPair(myPair);</span>
 
             /* Determine whether this is a hashSigner */
-<span class="fc" id="L321">            isHash = myPair.getKeyPairSpec().getSLHDSAKeySpec().isHash();</span>
+<span class="fc" id="L323">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) myPair.getKeyPairSpec();</span>
+<span class="fc" id="L324">            isHash = myKeySpec.getSLHDSASpec().isHash();</span>
 
             /* Initialise and set the signer */
-<span class="fc" id="L324">            final BouncySLHDSAPrivateKey myPrivate = (BouncySLHDSAPrivateKey) myPair.getPrivateKey();</span>
-<span class="fc" id="L325">            CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());</span>
-<span class="pc bpc" id="L326" title="1 of 2 branches missed.">            if (myContext != null) {</span>
-<span class="nc" id="L327">                myParms = new ParametersWithContext(myParms, myContext);</span>
+<span class="fc" id="L327">            final BouncySLHDSAPrivateKey myPrivate = (BouncySLHDSAPrivateKey) myPair.getPrivateKey();</span>
+<span class="fc" id="L328">            CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());</span>
+<span class="pc bpc" id="L329" title="1 of 2 branches missed.">            if (myContext != null) {</span>
+<span class="nc" id="L330">                myParms = new ParametersWithContext(myParms, myContext);</span>
             }
-<span class="pc bpc" id="L329" title="1 of 2 branches missed.">            if (isHash) {</span>
-<span class="nc" id="L330">                theHashSigner.init(true, myParms);</span>
+<span class="pc bpc" id="L332" title="1 of 2 branches missed.">            if (isHash) {</span>
+<span class="nc" id="L333">                theHashSigner.init(true, myParms);</span>
             } else {
-<span class="fc" id="L332">                theSigner.init(true, myParms);</span>
+<span class="fc" id="L335">                theSigner.init(true, myParms);</span>
             }
-<span class="fc" id="L334">        }</span>
+<span class="fc" id="L337">        }</span>
 
         @Override
-        public void initForVerify(final GordianSignParams pParams) throws GordianException {
+        public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
             /* Initialise detail */
-<span class="fc" id="L339">            super.initForVerify(pParams);</span>
-<span class="fc" id="L340">            final BouncyKeyPair myPair = getKeyPair();</span>
-<span class="fc" id="L341">            final byte[] myContext = getContext();</span>
-<span class="fc" id="L342">            BouncyKeyPair.checkKeyPair(myPair);</span>
+<span class="fc" id="L342">            super.initForVerify(pParams);</span>
+<span class="fc" id="L343">            final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L344">            final byte[] myContext = getContext();</span>
+<span class="fc" id="L345">            BouncyKeyPair.checkKeyPair(myPair);</span>
 
             /* Determine whether this is a hashSigner */
-<span class="fc" id="L345">            isHash = myPair.getKeyPairSpec().getSLHDSAKeySpec().isHash();</span>
+<span class="fc" id="L348">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) myPair.getKeyPairSpec();</span>
+<span class="fc" id="L349">            isHash = myKeySpec.getSLHDSASpec().isHash();</span>
 
             /* Initialise and set the signer */
-<span class="fc" id="L348">            final BouncySLHDSAPublicKey myPublic = (BouncySLHDSAPublicKey) myPair.getPublicKey();</span>
-<span class="fc" id="L349">            CipherParameters myParms = myPublic.getPublicKey();</span>
-<span class="pc bpc" id="L350" title="1 of 2 branches missed.">            if (myContext != null) {</span>
-<span class="nc" id="L351">                myParms = new ParametersWithContext(myParms, myContext);</span>
+<span class="fc" id="L352">            final BouncySLHDSAPublicKey myPublic = (BouncySLHDSAPublicKey) myPair.getPublicKey();</span>
+<span class="fc" id="L353">            CipherParameters myParms = myPublic.getPublicKey();</span>
+<span class="pc bpc" id="L354" title="1 of 2 branches missed.">            if (myContext != null) {</span>
+<span class="nc" id="L355">                myParms = new ParametersWithContext(myParms, myContext);</span>
             }
-<span class="pc bpc" id="L353" title="1 of 2 branches missed.">            if (isHash) {</span>
-<span class="nc" id="L354">                theHashSigner.init(false, myParms);</span>
+<span class="pc bpc" id="L357" title="1 of 2 branches missed.">            if (isHash) {</span>
+<span class="nc" id="L358">                theHashSigner.init(false, myParms);</span>
             } else {
-<span class="fc" id="L356">                theSigner.init(false, myParms);</span>
+<span class="fc" id="L360">                theSigner.init(false, myParms);</span>
             }
-<span class="fc" id="L358">        }</span>
+<span class="fc" id="L362">        }</span>
 
         @Override
         public void update(final byte[] pBytes,
                            final int pOffset,
                            final int pLength) {
-<span class="pc bpc" id="L364" title="1 of 2 branches missed.">            if (isHash) {</span>
-<span class="nc" id="L365">                theHashSigner.update(pBytes, pOffset, pLength);</span>
+<span class="pc bpc" id="L368" title="1 of 2 branches missed.">            if (isHash) {</span>
+<span class="nc" id="L369">                theHashSigner.update(pBytes, pOffset, pLength);</span>
             } else {
-<span class="fc" id="L367">                super.update(pBytes, pOffset, pLength);</span>
+<span class="fc" id="L371">                super.update(pBytes, pOffset, pLength);</span>
             }
-<span class="fc" id="L369">        }</span>
+<span class="fc" id="L373">        }</span>
 
         @Override
         public void update(final byte pByte) {
-<span class="nc bnc" id="L373" title="All 2 branches missed.">            if (isHash) {</span>
-<span class="nc" id="L374">                theHashSigner.update(pByte);</span>
+<span class="nc bnc" id="L377" title="All 2 branches missed.">            if (isHash) {</span>
+<span class="nc" id="L378">                theHashSigner.update(pByte);</span>
             } else {
-<span class="nc" id="L376">                super.update(pByte);</span>
+<span class="nc" id="L380">                super.update(pByte);</span>
             }
-<span class="nc" id="L378">        }</span>
+<span class="nc" id="L382">        }</span>
 
         @Override
         public void update(final byte[] pBytes) {
-<span class="pc bpc" id="L382" title="1 of 2 branches missed.">            if (isHash) {</span>
-<span class="nc" id="L383">                theHashSigner.update(pBytes, 0, pBytes.length);</span>
+<span class="pc bpc" id="L386" title="1 of 2 branches missed.">            if (isHash) {</span>
+<span class="nc" id="L387">                theHashSigner.update(pBytes, 0, pBytes.length);</span>
             } else {
-<span class="fc" id="L385">                super.update(pBytes);</span>
+<span class="fc" id="L389">                super.update(pBytes);</span>
             }
-<span class="fc" id="L387">        }</span>
+<span class="fc" id="L391">        }</span>
 
         @Override
         public void reset() {
-<span class="nc bnc" id="L391" title="All 2 branches missed.">            if (isHash) {</span>
-<span class="nc" id="L392">                theHashSigner.reset();</span>
+<span class="nc bnc" id="L395" title="All 2 branches missed.">            if (isHash) {</span>
+<span class="nc" id="L396">                theHashSigner.reset();</span>
             } else {
-<span class="nc" id="L394">                super.reset();</span>
+<span class="nc" id="L398">                super.reset();</span>
             }
-<span class="nc" id="L396">        }</span>
+<span class="nc" id="L400">        }</span>
 
         @Override
         public byte[] sign() throws GordianException {
             /* Check that we are in signing mode */
-<span class="fc" id="L401">            checkMode(GordianSignatureMode.SIGN);</span>
+<span class="fc" id="L405">            checkMode(GordianSignatureMode.SIGN);</span>
 
             /* Sign the message */
             try {
-<span class="pc bpc" id="L405" title="1 of 2 branches missed.">                return isHash</span>
-<span class="nc" id="L406">                        ? theHashSigner.generateSignature()</span>
-<span class="fc" id="L407">                        : theSigner.generateSignature(getDigest());</span>
-<span class="nc" id="L408">            } catch (CryptoException e) {</span>
-<span class="nc" id="L409">                throw new GordianCryptoException(&quot;Failed to sign message&quot;, e);</span>
+<span class="pc bpc" id="L409" title="1 of 2 branches missed.">                return isHash</span>
+<span class="nc" id="L410">                        ? theHashSigner.generateSignature()</span>
+<span class="fc" id="L411">                        : theSigner.generateSignature(getDigest());</span>
+<span class="nc" id="L412">            } catch (CryptoException e) {</span>
+<span class="nc" id="L413">                throw new GordianCryptoException(&quot;Failed to sign message&quot;, e);</span>
             }
         }
 
         @Override
         public boolean verify(final byte[] pSignature) throws GordianException {
             /* Check that we are in verify mode */
-<span class="fc" id="L416">            checkMode(GordianSignatureMode.VERIFY);</span>
+<span class="fc" id="L420">            checkMode(GordianSignatureMode.VERIFY);</span>
 
             /* Verify the message */
-<span class="pc bpc" id="L419" title="1 of 2 branches missed.">            return isHash</span>
-<span class="nc" id="L420">                    ? theHashSigner.verifySignature(pSignature)</span>
-<span class="fc" id="L421">                    : theSigner.verifySignature(getDigest(), pSignature);</span>
+<span class="pc bpc" id="L423" title="1 of 2 branches missed.">            return isHash</span>
+<span class="nc" id="L424">                    ? theHashSigner.verifySignature(pSignature)</span>
+<span class="fc" id="L425">                    : theSigner.verifySignature(getDigest(), pSignature);</span>
         }
     }
 }

@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>ThemisStmtParser xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../../apidocs/io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtParser.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_comment"> * Themis: Java Project Framework</em>
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_comment"> * Copyright 2012-2026. Tony Washer</em>
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_comment"> *</em>
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_comment"> * Licensed under the Apache License, Version 2.0 (the "License"); you may not</em>
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <em class="jxr_comment"> * use this file except in compliance with the License.  You may obtain a copy</em>
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <em class="jxr_comment"> * of the License at</em>
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <em class="jxr_comment"> *</em>
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <em class="jxr_comment"> *   <a href="http://www.apache.org/licenses/LICENSE-2.0" target="alexandria_uri">http://www.apache.org/licenses/LICENSE-2.0</a></em>
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_comment"> *</em>
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <em class="jxr_comment"> * Unless required by applicable law or agreed to in writing, software</em>
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <em class="jxr_comment"> * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT</em>
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <em class="jxr_comment"> * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the</em>
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <em class="jxr_comment"> * License for the specific language governing permissions and limitations under</em>
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <em class="jxr_comment"> * the License.</em>
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.themis.parser.stmt;
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> com.github.javaparser.ast.stmt.Statement;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisStatementInstance;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.base.ThemisParserDef;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <em class="jxr_javadoccomment"> * Analysis Statement Parser.</em>
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a name="ThemisStmtParser" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtParser.html#ThemisStmtParser">ThemisStmtParser</a> {
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment">     * Private Constructor.</em>
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>      <strong class="jxr_keyword">private</strong> <a name="ThemisStmtParser" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtParser.html#ThemisStmtParser">ThemisStmtParser</a>() {
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>      }
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment">     * Parse a statement.</em>
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment">     * @param pParser    the parser</em>
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">     * @param pStatement the statement</em>
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment">     * @return the parsed statement</em>
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment">     * @throws OceanusException on error</em>
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> ThemisStatementInstance parseStatement(<strong class="jxr_keyword">final</strong> <a name="ThemisParserDef" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/base/ThemisParserDef.html#ThemisParserDef">ThemisParserDef</a> pParser,
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>                                                           <strong class="jxr_keyword">final</strong> Statement pStatement) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>          <em class="jxr_comment">/* Handle null Statement */</em>
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>          <strong class="jxr_keyword">if</strong> (pStatement == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>          }
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>          <em class="jxr_comment">/* Allocate correct Statement */</em>
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">switch</strong> (ThemisStatement.determineStatement(pParser, pStatement)) {
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>              <strong class="jxr_keyword">case</strong> ASSERT -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtAssert" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtAssert.html#ThemisStmtAssert">ThemisStmtAssert</a>(pParser, pStatement.asAssertStmt());
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>              <strong class="jxr_keyword">case</strong> BLOCK -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtBlock" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtBlock.html#ThemisStmtBlock">ThemisStmtBlock</a>(pParser, pStatement.asBlockStmt());
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>              <strong class="jxr_keyword">case</strong> BREAK -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtBreak" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtBreak.html#ThemisStmtBreak">ThemisStmtBreak</a>(pParser, pStatement.asBreakStmt());
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>              <strong class="jxr_keyword">case</strong> CONSTRUCTOR -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtConstructor" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtConstructor.html#ThemisStmtConstructor">ThemisStmtConstructor</a>(pParser, pStatement.asExplicitConstructorInvocationStmt());
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>              <strong class="jxr_keyword">case</strong> CONTINUE -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtContinue" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtContinue.html#ThemisStmtContinue">ThemisStmtContinue</a>(pParser, pStatement.asContinueStmt());
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>              <strong class="jxr_keyword">case</strong> DO -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtDo" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtDo.html#ThemisStmtDo">ThemisStmtDo</a>(pParser, pStatement.asDoStmt());
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>              <strong class="jxr_keyword">case</strong> EMPTY -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtEmpty" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtEmpty.html#ThemisStmtEmpty">ThemisStmtEmpty</a>(pParser, pStatement.asEmptyStmt());
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>              <strong class="jxr_keyword">case</strong> EXPRESSION -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtExpression" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtExpression.html#ThemisStmtExpression">ThemisStmtExpression</a>(pParser, pStatement.asExpressionStmt());
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>              <strong class="jxr_keyword">case</strong> FOR -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtFor" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtFor.html#ThemisStmtFor">ThemisStmtFor</a>(pParser, pStatement.asForStmt());
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>              <strong class="jxr_keyword">case</strong> FOREACH -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtForEach" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtForEach.html#ThemisStmtForEach">ThemisStmtForEach</a>(pParser, pStatement.asForEachStmt());
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>              <strong class="jxr_keyword">case</strong> IF -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtIf" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtIf.html#ThemisStmtIf">ThemisStmtIf</a>(pParser, pStatement.asIfStmt());
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>              <strong class="jxr_keyword">case</strong> LABELED -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtLabeled" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtLabeled.html#ThemisStmtLabeled">ThemisStmtLabeled</a>(pParser, pStatement.asLabeledStmt());
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>              <strong class="jxr_keyword">case</strong> LOCALCLASS -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtClass" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtClass.html#ThemisStmtClass">ThemisStmtClass</a>(pParser, pStatement.asLocalClassDeclarationStmt());
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>              <strong class="jxr_keyword">case</strong> LOCALRECORD -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtRecord" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtRecord.html#ThemisStmtRecord">ThemisStmtRecord</a>(pParser, pStatement.asLocalRecordDeclarationStmt());
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>              <strong class="jxr_keyword">case</strong> RETURN -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtReturn" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtReturn.html#ThemisStmtReturn">ThemisStmtReturn</a>(pParser, pStatement.asReturnStmt());
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>              <strong class="jxr_keyword">case</strong> SWITCH -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtSwitch" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtSwitch.html#ThemisStmtSwitch">ThemisStmtSwitch</a>(pParser, pStatement.asSwitchStmt());
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>              <strong class="jxr_keyword">case</strong> SYNCHRONIZED -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtSynch" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtSynch.html#ThemisStmtSynch">ThemisStmtSynch</a>(pParser, pStatement.asSynchronizedStmt());
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>              <strong class="jxr_keyword">case</strong> THROW -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtThrow" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtThrow.html#ThemisStmtThrow">ThemisStmtThrow</a>(pParser, pStatement.asThrowStmt());
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>              <strong class="jxr_keyword">case</strong> TRY -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtTry" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtTry.html#ThemisStmtTry">ThemisStmtTry</a>(pParser, pStatement.asTryStmt());
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>              <strong class="jxr_keyword">case</strong> WHILE -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtWhile" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtWhile.html#ThemisStmtWhile">ThemisStmtWhile</a>(pParser, pStatement.asWhileStmt());
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>              <strong class="jxr_keyword">case</strong> YIELD -&gt; <strong class="jxr_keyword">new</strong> <a name="ThemisStmtYield" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/stmt/ThemisStmtYield.html#ThemisStmtYield">ThemisStmtYield</a>(pParser, pStatement.asYieldStmt());
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>              <strong class="jxr_keyword">default</strong> -&gt; <strong class="jxr_keyword">throw</strong> pParser.buildException(<span class="jxr_string">"Unsupported Statement Type"</span>, pStatement);
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          };
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>      }
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>  }
+</pre>
+<hr/>
+<div id="footer">© 2012–2026</div>
+</body>
+</html>

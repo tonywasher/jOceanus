@@ -183,24 +183,22 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
 <span class="fc" id="L183">        CipherParameters myParams = params;</span>
 <span class="fc" id="L184">        byte[] newKey = null;</span>
 <span class="fc" id="L185">        byte[] newIV = null;</span>
-<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        if ((myParams instanceof ParametersWithIV)) {</span>
-<span class="fc" id="L187">            final ParametersWithIV ivParams = (ParametersWithIV) myParams;</span>
-<span class="fc" id="L188">            newIV = ivParams.getIV();</span>
-<span class="fc" id="L189">            myParams = ivParams.getParameters();</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        if ((myParams instanceof ParametersWithIV ivParams)) {</span>
+<span class="fc" id="L187">            newIV = ivParams.getIV();</span>
+<span class="fc" id="L188">            myParams = ivParams.getParameters();</span>
         }
-<span class="pc bpc" id="L191" title="1 of 2 branches missed.">        if (myParams instanceof KeyParameter) {</span>
-<span class="fc" id="L192">            final KeyParameter keyParam = (KeyParameter) myParams;</span>
-<span class="fc" id="L193">            newKey = keyParam.getKey();</span>
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">        if (myParams instanceof KeyParameter keyParam) {</span>
+<span class="fc" id="L191">            newKey = keyParam.getKey();</span>
         }
 
         /* Initialise engine and mark as initialised */
-<span class="fc" id="L197">        theIndex = 0;</span>
-<span class="fc" id="L198">        theIterations = 0;</span>
-<span class="fc" id="L199">        setKeyAndIV(newKey, newIV);</span>
+<span class="fc" id="L195">        theIndex = 0;</span>
+<span class="fc" id="L196">        theIterations = 0;</span>
+<span class="fc" id="L197">        setKeyAndIV(newKey, newIV);</span>
 
         /* Save reset state */
-<span class="fc" id="L202">        theResetState = copy();</span>
-<span class="fc" id="L203">    }</span>
+<span class="fc" id="L200">        theResetState = copy();</span>
+<span class="fc" id="L201">    }</span>
 
     /**
      * Obtain Max iterations.
@@ -208,7 +206,7 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
      * @return the maximum iterations
      */
     protected int getMaxIterations() {
-<span class="fc" id="L211">        return 2047;</span>
+<span class="fc" id="L209">        return 2047;</span>
     }
 
     /**
@@ -217,7 +215,7 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
      * @return the name
      */
     public String getAlgorithmName() {
-<span class="nc" id="L220">        return &quot;Zuc-128&quot;;</span>
+<span class="nc" id="L218">        return &quot;Zuc-128&quot;;</span>
     }
 
     /**
@@ -236,31 +234,31 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
                             final byte[] out,
                             final int outOff) {
         /* Check for errors */
-<span class="pc bpc" id="L239" title="1 of 2 branches missed.">        if (theResetState == null) {</span>
-<span class="nc" id="L240">            throw new IllegalStateException(getAlgorithmName() + &quot; not initialised&quot;);</span>
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">        if (theResetState == null) {</span>
+<span class="nc" id="L238">            throw new IllegalStateException(getAlgorithmName() + &quot; not initialised&quot;);</span>
         }
-<span class="pc bpc" id="L242" title="1 of 2 branches missed.">        if ((inOff + len) &gt; in.length) {</span>
-<span class="nc" id="L243">            throw new DataLengthException(&quot;input buffer too short&quot;);</span>
+<span class="pc bpc" id="L240" title="1 of 2 branches missed.">        if ((inOff + len) &gt; in.length) {</span>
+<span class="nc" id="L241">            throw new DataLengthException(&quot;input buffer too short&quot;);</span>
         }
-<span class="pc bpc" id="L245" title="1 of 2 branches missed.">        if ((outOff + len) &gt; out.length) {</span>
-<span class="nc" id="L246">            throw new OutputLengthException(&quot;output buffer too short&quot;);</span>
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">        if ((outOff + len) &gt; out.length) {</span>
+<span class="nc" id="L244">            throw new OutputLengthException(&quot;output buffer too short&quot;);</span>
         }
 
         /* Loop through the input bytes */
-<span class="fc bfc" id="L250" title="All 2 branches covered.">        for (int i = 0; i &lt; len; i++) {</span>
-<span class="fc" id="L251">            out[i + outOff] = returnByte(in[i + inOff]);</span>
+<span class="fc bfc" id="L248" title="All 2 branches covered.">        for (int i = 0; i &lt; len; i++) {</span>
+<span class="fc" id="L249">            out[i + outOff] = returnByte(in[i + inOff]);</span>
         }
-<span class="fc" id="L253">        return len;</span>
+<span class="fc" id="L251">        return len;</span>
     }
 
     /**
      * Reset the engine.
      */
     public void reset() {
-<span class="pc bpc" id="L260" title="1 of 2 branches missed.">        if (theResetState != null) {</span>
-<span class="fc" id="L261">            reset(theResetState);</span>
+<span class="pc bpc" id="L258" title="1 of 2 branches missed.">        if (theResetState != null) {</span>
+<span class="fc" id="L259">            reset(theResetState);</span>
         }
-<span class="fc" id="L263">    }</span>
+<span class="fc" id="L261">    }</span>
 
     /**
      * Process single byte.
@@ -270,16 +268,16 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
      */
     public byte returnByte(final byte in) {
         /* Make the keyStream if required */
-<span class="fc bfc" id="L273" title="All 2 branches covered.">        if (theIndex == 0) {</span>
-<span class="fc" id="L274">            makeKeyStream();</span>
+<span class="fc bfc" id="L271" title="All 2 branches covered.">        if (theIndex == 0) {</span>
+<span class="fc" id="L272">            makeKeyStream();</span>
         }
 
         /* Map the next byte and adjust index */
-<span class="fc" id="L278">        final byte out = (byte) (keyStream[theIndex] ^ in);</span>
-<span class="fc" id="L279">        theIndex = (theIndex + 1) % Integer.BYTES;</span>
+<span class="fc" id="L276">        final byte out = (byte) (keyStream[theIndex] ^ in);</span>
+<span class="fc" id="L277">        theIndex = (theIndex + 1) % Integer.BYTES;</span>
 
         /* Return the mapped character */
-<span class="fc" id="L282">        return out;</span>
+<span class="fc" id="L280">        return out;</span>
     }
 
     /**
@@ -290,11 +288,11 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
      * @param off the output offset
      */
     public static void encode32be(final int val, final byte[] buf, final int off) {
-<span class="fc" id="L293">        buf[off] = (byte) (val &gt;&gt; 24);</span>
-<span class="fc" id="L294">        buf[off + 1] = (byte) (val &gt;&gt; 16);</span>
-<span class="fc" id="L295">        buf[off + 2] = (byte) (val &gt;&gt; 8);</span>
-<span class="fc" id="L296">        buf[off + 3] = (byte) val;</span>
-<span class="fc" id="L297">    }</span>
+<span class="fc" id="L291">        buf[off] = (byte) (val &gt;&gt; 24);</span>
+<span class="fc" id="L292">        buf[off + 1] = (byte) (val &gt;&gt; 16);</span>
+<span class="fc" id="L293">        buf[off + 2] = (byte) (val &gt;&gt; 8);</span>
+<span class="fc" id="L294">        buf[off + 3] = (byte) val;</span>
+<span class="fc" id="L295">    }</span>
 
     /* ——————————————————————- */
 
@@ -306,8 +304,8 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
      * @return the result
      */
     private int addM(final int a, final int b) {
-<span class="fc" id="L309">        final int c = a + b;</span>
-<span class="fc" id="L310">        return (c &amp; 0x7FFFFFFF) + (c &gt;&gt;&gt; 31);</span>
+<span class="fc" id="L307">        final int c = a + b;</span>
+<span class="fc" id="L308">        return (c &amp; 0x7FFFFFFF) + (c &gt;&gt;&gt; 31);</span>
     }
 
     /**
@@ -318,7 +316,7 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
      * @return the result
      */
     private static int mulByPow2(final int x, final int k) {
-<span class="fc" id="L321">        return ((((x) &lt;&lt; k) | ((x) &gt;&gt;&gt; (31 - k))) &amp; 0x7FFFFFFF);</span>
+<span class="fc" id="L319">        return ((((x) &lt;&lt; k) | ((x) &gt;&gt;&gt; (31 - k))) &amp; 0x7FFFFFFF);</span>
     }
 
     /**
@@ -327,82 +325,82 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
      * @param u
      */
     private void lfsrWithInitialisationMode(final int u) {
-<span class="fc" id="L330">        int f = lfsrState[0];</span>
-<span class="fc" id="L331">        int v = mulByPow2(lfsrState[0], 8);</span>
+<span class="fc" id="L328">        int f = lfsrState[0];</span>
+<span class="fc" id="L329">        int v = mulByPow2(lfsrState[0], 8);</span>
+<span class="fc" id="L330">        f = addM(f, v);</span>
+<span class="fc" id="L331">        v = mulByPow2(lfsrState[4], 20);</span>
 <span class="fc" id="L332">        f = addM(f, v);</span>
-<span class="fc" id="L333">        v = mulByPow2(lfsrState[4], 20);</span>
+<span class="fc" id="L333">        v = mulByPow2(lfsrState[10], 21);</span>
 <span class="fc" id="L334">        f = addM(f, v);</span>
-<span class="fc" id="L335">        v = mulByPow2(lfsrState[10], 21);</span>
+<span class="fc" id="L335">        v = mulByPow2(lfsrState[13], 17);</span>
 <span class="fc" id="L336">        f = addM(f, v);</span>
-<span class="fc" id="L337">        v = mulByPow2(lfsrState[13], 17);</span>
+<span class="fc" id="L337">        v = mulByPow2(lfsrState[15], 15);</span>
 <span class="fc" id="L338">        f = addM(f, v);</span>
-<span class="fc" id="L339">        v = mulByPow2(lfsrState[15], 15);</span>
-<span class="fc" id="L340">        f = addM(f, v);</span>
-<span class="fc" id="L341">        f = addM(f, u);</span>
+<span class="fc" id="L339">        f = addM(f, u);</span>
 
         /* update the state */
-<span class="fc" id="L344">        lfsrState[0] = lfsrState[1];</span>
-<span class="fc" id="L345">        lfsrState[1] = lfsrState[2];</span>
-<span class="fc" id="L346">        lfsrState[2] = lfsrState[3];</span>
-<span class="fc" id="L347">        lfsrState[3] = lfsrState[4];</span>
-<span class="fc" id="L348">        lfsrState[4] = lfsrState[5];</span>
-<span class="fc" id="L349">        lfsrState[5] = lfsrState[6];</span>
-<span class="fc" id="L350">        lfsrState[6] = lfsrState[7];</span>
-<span class="fc" id="L351">        lfsrState[7] = lfsrState[8];</span>
-<span class="fc" id="L352">        lfsrState[8] = lfsrState[9];</span>
-<span class="fc" id="L353">        lfsrState[9] = lfsrState[10];</span>
-<span class="fc" id="L354">        lfsrState[10] = lfsrState[11];</span>
-<span class="fc" id="L355">        lfsrState[11] = lfsrState[12];</span>
-<span class="fc" id="L356">        lfsrState[12] = lfsrState[13];</span>
-<span class="fc" id="L357">        lfsrState[13] = lfsrState[14];</span>
-<span class="fc" id="L358">        lfsrState[14] = lfsrState[15];</span>
-<span class="fc" id="L359">        lfsrState[15] = f;</span>
-<span class="fc" id="L360">    }</span>
+<span class="fc" id="L342">        lfsrState[0] = lfsrState[1];</span>
+<span class="fc" id="L343">        lfsrState[1] = lfsrState[2];</span>
+<span class="fc" id="L344">        lfsrState[2] = lfsrState[3];</span>
+<span class="fc" id="L345">        lfsrState[3] = lfsrState[4];</span>
+<span class="fc" id="L346">        lfsrState[4] = lfsrState[5];</span>
+<span class="fc" id="L347">        lfsrState[5] = lfsrState[6];</span>
+<span class="fc" id="L348">        lfsrState[6] = lfsrState[7];</span>
+<span class="fc" id="L349">        lfsrState[7] = lfsrState[8];</span>
+<span class="fc" id="L350">        lfsrState[8] = lfsrState[9];</span>
+<span class="fc" id="L351">        lfsrState[9] = lfsrState[10];</span>
+<span class="fc" id="L352">        lfsrState[10] = lfsrState[11];</span>
+<span class="fc" id="L353">        lfsrState[11] = lfsrState[12];</span>
+<span class="fc" id="L354">        lfsrState[12] = lfsrState[13];</span>
+<span class="fc" id="L355">        lfsrState[13] = lfsrState[14];</span>
+<span class="fc" id="L356">        lfsrState[14] = lfsrState[15];</span>
+<span class="fc" id="L357">        lfsrState[15] = f;</span>
+<span class="fc" id="L358">    }</span>
 
     /**
      * LFSR with work mode.
      */
     private void lfsrWithWorkMode() {
-<span class="fc" id="L366">        int f = lfsrState[0];</span>
-<span class="fc" id="L367">        int v = mulByPow2(lfsrState[0], 8);</span>
+<span class="fc" id="L364">        int f = lfsrState[0];</span>
+<span class="fc" id="L365">        int v = mulByPow2(lfsrState[0], 8);</span>
+<span class="fc" id="L366">        f = addM(f, v);</span>
+<span class="fc" id="L367">        v = mulByPow2(lfsrState[4], 20);</span>
 <span class="fc" id="L368">        f = addM(f, v);</span>
-<span class="fc" id="L369">        v = mulByPow2(lfsrState[4], 20);</span>
+<span class="fc" id="L369">        v = mulByPow2(lfsrState[10], 21);</span>
 <span class="fc" id="L370">        f = addM(f, v);</span>
-<span class="fc" id="L371">        v = mulByPow2(lfsrState[10], 21);</span>
+<span class="fc" id="L371">        v = mulByPow2(lfsrState[13], 17);</span>
 <span class="fc" id="L372">        f = addM(f, v);</span>
-<span class="fc" id="L373">        v = mulByPow2(lfsrState[13], 17);</span>
+<span class="fc" id="L373">        v = mulByPow2(lfsrState[15], 15);</span>
 <span class="fc" id="L374">        f = addM(f, v);</span>
-<span class="fc" id="L375">        v = mulByPow2(lfsrState[15], 15);</span>
-<span class="fc" id="L376">        f = addM(f, v);</span>
 
         /* update the state */
-<span class="fc" id="L379">        lfsrState[0] = lfsrState[1];</span>
-<span class="fc" id="L380">        lfsrState[1] = lfsrState[2];</span>
-<span class="fc" id="L381">        lfsrState[2] = lfsrState[3];</span>
-<span class="fc" id="L382">        lfsrState[3] = lfsrState[4];</span>
-<span class="fc" id="L383">        lfsrState[4] = lfsrState[5];</span>
-<span class="fc" id="L384">        lfsrState[5] = lfsrState[6];</span>
-<span class="fc" id="L385">        lfsrState[6] = lfsrState[7];</span>
-<span class="fc" id="L386">        lfsrState[7] = lfsrState[8];</span>
-<span class="fc" id="L387">        lfsrState[8] = lfsrState[9];</span>
-<span class="fc" id="L388">        lfsrState[9] = lfsrState[10];</span>
-<span class="fc" id="L389">        lfsrState[10] = lfsrState[11];</span>
-<span class="fc" id="L390">        lfsrState[11] = lfsrState[12];</span>
-<span class="fc" id="L391">        lfsrState[12] = lfsrState[13];</span>
-<span class="fc" id="L392">        lfsrState[13] = lfsrState[14];</span>
-<span class="fc" id="L393">        lfsrState[14] = lfsrState[15];</span>
-<span class="fc" id="L394">        lfsrState[15] = f;</span>
-<span class="fc" id="L395">    }</span>
+<span class="fc" id="L377">        lfsrState[0] = lfsrState[1];</span>
+<span class="fc" id="L378">        lfsrState[1] = lfsrState[2];</span>
+<span class="fc" id="L379">        lfsrState[2] = lfsrState[3];</span>
+<span class="fc" id="L380">        lfsrState[3] = lfsrState[4];</span>
+<span class="fc" id="L381">        lfsrState[4] = lfsrState[5];</span>
+<span class="fc" id="L382">        lfsrState[5] = lfsrState[6];</span>
+<span class="fc" id="L383">        lfsrState[6] = lfsrState[7];</span>
+<span class="fc" id="L384">        lfsrState[7] = lfsrState[8];</span>
+<span class="fc" id="L385">        lfsrState[8] = lfsrState[9];</span>
+<span class="fc" id="L386">        lfsrState[9] = lfsrState[10];</span>
+<span class="fc" id="L387">        lfsrState[10] = lfsrState[11];</span>
+<span class="fc" id="L388">        lfsrState[11] = lfsrState[12];</span>
+<span class="fc" id="L389">        lfsrState[12] = lfsrState[13];</span>
+<span class="fc" id="L390">        lfsrState[13] = lfsrState[14];</span>
+<span class="fc" id="L391">        lfsrState[14] = lfsrState[15];</span>
+<span class="fc" id="L392">        lfsrState[15] = f;</span>
+<span class="fc" id="L393">    }</span>
 
     /**
      * BitReorganization.
      */
     private void bitReorganization() {
-<span class="fc" id="L401">        brcState[0] = ((lfsrState[15] &amp; 0x7FFF8000) &lt;&lt; 1) | (lfsrState[14] &amp; 0xFFFF);</span>
-<span class="fc" id="L402">        brcState[1] = ((lfsrState[11] &amp; 0xFFFF) &lt;&lt; 16) | (lfsrState[9] &gt;&gt;&gt; 15);</span>
-<span class="fc" id="L403">        brcState[2] = ((lfsrState[7] &amp; 0xFFFF) &lt;&lt; 16) | (lfsrState[5] &gt;&gt;&gt; 15);</span>
-<span class="fc" id="L404">        brcState[3] = ((lfsrState[2] &amp; 0xFFFF) &lt;&lt; 16) | (lfsrState[0] &gt;&gt;&gt; 15);</span>
-<span class="fc" id="L405">    }</span>
+<span class="fc" id="L399">        brcState[0] = ((lfsrState[15] &amp; 0x7FFF8000) &lt;&lt; 1) | (lfsrState[14] &amp; 0xFFFF);</span>
+<span class="fc" id="L400">        brcState[1] = ((lfsrState[11] &amp; 0xFFFF) &lt;&lt; 16) | (lfsrState[9] &gt;&gt;&gt; 15);</span>
+<span class="fc" id="L401">        brcState[2] = ((lfsrState[7] &amp; 0xFFFF) &lt;&lt; 16) | (lfsrState[5] &gt;&gt;&gt; 15);</span>
+<span class="fc" id="L402">        brcState[3] = ((lfsrState[2] &amp; 0xFFFF) &lt;&lt; 16) | (lfsrState[0] &gt;&gt;&gt; 15);</span>
+<span class="fc" id="L403">    }</span>
 
     /**
      * Rotate integer.
@@ -412,7 +410,7 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
      * @return the result
      */
     static int rot(final int a, final int k) {
-<span class="fc" id="L415">        return (((a) &lt;&lt; k) | ((a) &gt;&gt;&gt; (32 - k)));</span>
+<span class="fc" id="L413">        return (((a) &lt;&lt; k) | ((a) &gt;&gt;&gt; (32 - k)));</span>
     }
 
     /**
@@ -422,7 +420,7 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
      * @return the result
      */
     private static int l1(final int x) {
-<span class="fc" id="L425">        return (x ^ rot(x, 2) ^ rot(x, 10) ^ rot(x, 18) ^ rot(x, 24));</span>
+<span class="fc" id="L423">        return (x ^ rot(x, 2) ^ rot(x, 10) ^ rot(x, 18) ^ rot(x, 24));</span>
     }
 
     /**
@@ -432,7 +430,7 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
      * @return the result
      */
     private static int l2(final int x) {
-<span class="fc" id="L435">        return (x ^ rot(x, 8) ^ rot(x, 14) ^ rot(x, 22) ^ rot(x, 30));</span>
+<span class="fc" id="L433">        return (x ^ rot(x, 8) ^ rot(x, 14) ^ rot(x, 22) ^ rot(x, 30));</span>
     }
 
     /**
@@ -448,7 +446,7 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
                                final byte b,
                                final byte c,
                                final byte d) {
-<span class="fc" id="L451">        return (((a &amp; 0xFF) &lt;&lt; 24) | ((b &amp; 0xFF) &lt;&lt; 16) | ((c &amp; 0xFF) &lt;&lt; 8) | (d &amp; 0xFF));</span>
+<span class="fc" id="L449">        return (((a &amp; 0xFF) &lt;&lt; 24) | ((b &amp; 0xFF) &lt;&lt; 16) | ((c &amp; 0xFF) &lt;&lt; 8) | (d &amp; 0xFF));</span>
     }
 
     /**
@@ -457,16 +455,16 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
      * @return the new state
      */
     int f() {
-<span class="fc" id="L460">        final int w = (brcState[0] ^ fState[0]) + fState[1];</span>
-<span class="fc" id="L461">        final int w1 = fState[0] + brcState[1];</span>
-<span class="fc" id="L462">        final int w2 = fState[1] ^ brcState[2];</span>
-<span class="fc" id="L463">        final int u = l1((w1 &lt;&lt; 16) | (w2 &gt;&gt;&gt; 16));</span>
-<span class="fc" id="L464">        final int v = l2((w2 &lt;&lt; 16) | (w1 &gt;&gt;&gt; 16));</span>
-<span class="fc" id="L465">        fState[0] = makeU32(S0[u &gt;&gt;&gt; 24], S1[(u &gt;&gt;&gt; 16) &amp; 0xFF],</span>
+<span class="fc" id="L458">        final int w = (brcState[0] ^ fState[0]) + fState[1];</span>
+<span class="fc" id="L459">        final int w1 = fState[0] + brcState[1];</span>
+<span class="fc" id="L460">        final int w2 = fState[1] ^ brcState[2];</span>
+<span class="fc" id="L461">        final int u = l1((w1 &lt;&lt; 16) | (w2 &gt;&gt;&gt; 16));</span>
+<span class="fc" id="L462">        final int v = l2((w2 &lt;&lt; 16) | (w1 &gt;&gt;&gt; 16));</span>
+<span class="fc" id="L463">        fState[0] = makeU32(S0[u &gt;&gt;&gt; 24], S1[(u &gt;&gt;&gt; 16) &amp; 0xFF],</span>
                 S0[(u &gt;&gt;&gt; 8) &amp; 0xFF], S1[u &amp; 0xFF]);
-<span class="fc" id="L467">        fState[1] = makeU32(S0[v &gt;&gt;&gt; 24], S1[(v &gt;&gt;&gt; 16) &amp; 0xFF],</span>
+<span class="fc" id="L465">        fState[1] = makeU32(S0[v &gt;&gt;&gt; 24], S1[(v &gt;&gt;&gt; 16) &amp; 0xFF],</span>
                 S0[(v &gt;&gt;&gt; 8) &amp; 0xFF], S1[v &amp; 0xFF]);
-<span class="fc" id="L469">        return w;</span>
+<span class="fc" id="L467">        return w;</span>
     }
 
     /**
@@ -480,7 +478,7 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
     private static int makeU31(final byte a,
                                final short b,
                                final byte c) {
-<span class="fc" id="L483">        return (((a &amp; 0xFF) &lt;&lt; 23) | ((b &amp; 0xFFFF) &lt;&lt; 8) | (c &amp; 0xFF));</span>
+<span class="fc" id="L481">        return (((a &amp; 0xFF) &lt;&lt; 23) | ((b &amp; 0xFFFF) &lt;&lt; 8) | (c &amp; 0xFF));</span>
     }
 
     /**
@@ -494,31 +492,31 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
                                final byte[] k,
                                final byte[] iv) {
         /* Check lengths */
-<span class="pc bpc" id="L497" title="2 of 4 branches missed.">        if (k == null || k.length != 16) {</span>
-<span class="nc" id="L498">            throw new IllegalArgumentException(&quot;A key of 16 bytes is needed&quot;);</span>
+<span class="pc bpc" id="L495" title="2 of 4 branches missed.">        if (k == null || k.length != 16) {</span>
+<span class="nc" id="L496">            throw new IllegalArgumentException(&quot;A key of 16 bytes is needed&quot;);</span>
         }
-<span class="pc bpc" id="L500" title="2 of 4 branches missed.">        if (iv == null || iv.length != 16) {</span>
-<span class="nc" id="L501">            throw new IllegalArgumentException(&quot;An IV of 16 bytes is needed&quot;);</span>
+<span class="pc bpc" id="L498" title="2 of 4 branches missed.">        if (iv == null || iv.length != 16) {</span>
+<span class="nc" id="L499">            throw new IllegalArgumentException(&quot;An IV of 16 bytes is needed&quot;);</span>
         }
 
         /* expand key */
-<span class="fc" id="L505">        lfsrState[0] = makeU31(k[0], EK_D[0], iv[0]);</span>
-<span class="fc" id="L506">        lfsrState[1] = makeU31(k[1], EK_D[1], iv[1]);</span>
-<span class="fc" id="L507">        lfsrState[2] = makeU31(k[2], EK_D[2], iv[2]);</span>
-<span class="fc" id="L508">        lfsrState[3] = makeU31(k[3], EK_D[3], iv[3]);</span>
-<span class="fc" id="L509">        lfsrState[4] = makeU31(k[4], EK_D[4], iv[4]);</span>
-<span class="fc" id="L510">        lfsrState[5] = makeU31(k[5], EK_D[5], iv[5]);</span>
-<span class="fc" id="L511">        lfsrState[6] = makeU31(k[6], EK_D[6], iv[6]);</span>
-<span class="fc" id="L512">        lfsrState[7] = makeU31(k[7], EK_D[7], iv[7]);</span>
-<span class="fc" id="L513">        lfsrState[8] = makeU31(k[8], EK_D[8], iv[8]);</span>
-<span class="fc" id="L514">        lfsrState[9] = makeU31(k[9], EK_D[9], iv[9]);</span>
-<span class="fc" id="L515">        lfsrState[10] = makeU31(k[10], EK_D[10], iv[10]);</span>
-<span class="fc" id="L516">        lfsrState[11] = makeU31(k[11], EK_D[11], iv[11]);</span>
-<span class="fc" id="L517">        lfsrState[12] = makeU31(k[12], EK_D[12], iv[12]);</span>
-<span class="fc" id="L518">        lfsrState[13] = makeU31(k[13], EK_D[13], iv[13]);</span>
-<span class="fc" id="L519">        lfsrState[14] = makeU31(k[14], EK_D[14], iv[14]);</span>
-<span class="fc" id="L520">        lfsrState[15] = makeU31(k[15], EK_D[15], iv[15]);</span>
-<span class="fc" id="L521">    }</span>
+<span class="fc" id="L503">        lfsrState[0] = makeU31(k[0], EK_D[0], iv[0]);</span>
+<span class="fc" id="L504">        lfsrState[1] = makeU31(k[1], EK_D[1], iv[1]);</span>
+<span class="fc" id="L505">        lfsrState[2] = makeU31(k[2], EK_D[2], iv[2]);</span>
+<span class="fc" id="L506">        lfsrState[3] = makeU31(k[3], EK_D[3], iv[3]);</span>
+<span class="fc" id="L507">        lfsrState[4] = makeU31(k[4], EK_D[4], iv[4]);</span>
+<span class="fc" id="L508">        lfsrState[5] = makeU31(k[5], EK_D[5], iv[5]);</span>
+<span class="fc" id="L509">        lfsrState[6] = makeU31(k[6], EK_D[6], iv[6]);</span>
+<span class="fc" id="L510">        lfsrState[7] = makeU31(k[7], EK_D[7], iv[7]);</span>
+<span class="fc" id="L511">        lfsrState[8] = makeU31(k[8], EK_D[8], iv[8]);</span>
+<span class="fc" id="L512">        lfsrState[9] = makeU31(k[9], EK_D[9], iv[9]);</span>
+<span class="fc" id="L513">        lfsrState[10] = makeU31(k[10], EK_D[10], iv[10]);</span>
+<span class="fc" id="L514">        lfsrState[11] = makeU31(k[11], EK_D[11], iv[11]);</span>
+<span class="fc" id="L515">        lfsrState[12] = makeU31(k[12], EK_D[12], iv[12]);</span>
+<span class="fc" id="L516">        lfsrState[13] = makeU31(k[13], EK_D[13], iv[13]);</span>
+<span class="fc" id="L517">        lfsrState[14] = makeU31(k[14], EK_D[14], iv[14]);</span>
+<span class="fc" id="L518">        lfsrState[15] = makeU31(k[15], EK_D[15], iv[15]);</span>
+<span class="fc" id="L519">    }</span>
 
     /**
      * Process key and IV.
@@ -529,29 +527,29 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
     private void setKeyAndIV(final byte[] k,
                              final byte[] iv) {
         /* Initialise LFSR */
-<span class="fc" id="L532">        setKeyAndIV(lfsrState, k, iv);</span>
+<span class="fc" id="L530">        setKeyAndIV(lfsrState, k, iv);</span>
 
         /* set F_R1 and F_R2 to zero */
-<span class="fc" id="L535">        fState[0] = 0;</span>
-<span class="fc" id="L536">        fState[1] = 0;</span>
-<span class="fc" id="L537">        int nCount = 32;</span>
-<span class="fc bfc" id="L538" title="All 2 branches covered.">        while (nCount &gt; 0) {</span>
-<span class="fc" id="L539">            bitReorganization();</span>
-<span class="fc" id="L540">            final int w = f();</span>
-<span class="fc" id="L541">            lfsrWithInitialisationMode(w &gt;&gt;&gt; 1);</span>
-<span class="fc" id="L542">            nCount--;</span>
-<span class="fc" id="L543">        }</span>
-<span class="fc" id="L544">        bitReorganization();</span>
-<span class="fc" id="L545">        f(); // discard the output of F */</span>
-<span class="fc" id="L546">        lfsrWithWorkMode();</span>
-<span class="fc" id="L547">    }</span>
+<span class="fc" id="L533">        fState[0] = 0;</span>
+<span class="fc" id="L534">        fState[1] = 0;</span>
+<span class="fc" id="L535">        int nCount = 32;</span>
+<span class="fc bfc" id="L536" title="All 2 branches covered.">        while (nCount &gt; 0) {</span>
+<span class="fc" id="L537">            bitReorganization();</span>
+<span class="fc" id="L538">            final int w = f();</span>
+<span class="fc" id="L539">            lfsrWithInitialisationMode(w &gt;&gt;&gt; 1);</span>
+<span class="fc" id="L540">            nCount--;</span>
+<span class="fc" id="L541">        }</span>
+<span class="fc" id="L542">        bitReorganization();</span>
+<span class="fc" id="L543">        f(); // discard the output of F */</span>
+<span class="fc" id="L544">        lfsrWithWorkMode();</span>
+<span class="fc" id="L545">    }</span>
 
     /**
      * Create the next byte keyStream.
      */
     private void makeKeyStream() {
-<span class="fc" id="L553">        encode32be(makeKeyStreamWord(), keyStream, 0);</span>
-<span class="fc" id="L554">    }</span>
+<span class="fc" id="L551">        encode32be(makeKeyStreamWord(), keyStream, 0);</span>
+<span class="fc" id="L552">    }</span>
 
     /**
      * Create the next keyStream word.
@@ -559,13 +557,13 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
      * @return the next word
      */
     public int makeKeyStreamWord() {
-<span class="fc bfc" id="L562" title="All 2 branches covered.">        if (theIterations++ &gt;= getMaxIterations()) {</span>
-<span class="fc" id="L563">            throw new IllegalStateException(&quot;Too much data processed by singleKey/IV&quot;);</span>
+<span class="fc bfc" id="L560" title="All 2 branches covered.">        if (theIterations++ &gt;= getMaxIterations()) {</span>
+<span class="fc" id="L561">            throw new IllegalStateException(&quot;Too much data processed by singleKey/IV&quot;);</span>
         }
-<span class="fc" id="L565">        bitReorganization();</span>
-<span class="fc" id="L566">        final int result = f() ^ brcState[3];</span>
-<span class="fc" id="L567">        lfsrWithWorkMode();</span>
-<span class="fc" id="L568">        return result;</span>
+<span class="fc" id="L563">        bitReorganization();</span>
+<span class="fc" id="L564">        final int result = f() ^ brcState[3];</span>
+<span class="fc" id="L565">        lfsrWithWorkMode();</span>
+<span class="fc" id="L566">        return result;</span>
     }
 
     /**
@@ -574,7 +572,7 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
      * @return the copy
      */
     public GordianZuc128Engine copy() {
-<span class="fc" id="L577">        return new GordianZuc128Engine(this);</span>
+<span class="fc" id="L575">        return new GordianZuc128Engine(this);</span>
     }
 
     /**
@@ -583,14 +581,14 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
      * @param pState teh state to restore
      */
     public void reset(final Memoable pState) {
-<span class="fc" id="L586">        final GordianZuc128Engine e = (GordianZuc128Engine) pState;</span>
-<span class="fc" id="L587">        System.arraycopy(e.lfsrState, 0, lfsrState, 0, lfsrState.length);</span>
-<span class="fc" id="L588">        System.arraycopy(e.fState, 0, fState, 0, fState.length);</span>
-<span class="fc" id="L589">        System.arraycopy(e.brcState, 0, brcState, 0, brcState.length);</span>
-<span class="fc" id="L590">        System.arraycopy(e.keyStream, 0, keyStream, 0, keyStream.length);</span>
-<span class="fc" id="L591">        theIndex = e.theIndex;</span>
-<span class="fc" id="L592">        theIterations = e.theIterations;</span>
-<span class="fc" id="L593">        theResetState = e;</span>
-<span class="fc" id="L594">    }</span>
+<span class="fc" id="L584">        final GordianZuc128Engine e = (GordianZuc128Engine) pState;</span>
+<span class="fc" id="L585">        System.arraycopy(e.lfsrState, 0, lfsrState, 0, lfsrState.length);</span>
+<span class="fc" id="L586">        System.arraycopy(e.fState, 0, fState, 0, fState.length);</span>
+<span class="fc" id="L587">        System.arraycopy(e.brcState, 0, brcState, 0, brcState.length);</span>
+<span class="fc" id="L588">        System.arraycopy(e.keyStream, 0, keyStream, 0, keyStream.length);</span>
+<span class="fc" id="L589">        theIndex = e.theIndex;</span>
+<span class="fc" id="L590">        theIterations = e.theIterations;</span>
+<span class="fc" id="L591">        theResetState = e;</span>
+<span class="fc" id="L592">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

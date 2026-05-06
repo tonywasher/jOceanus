@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisStatsPackage.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.stats</a> &gt; <span class="el_source">ThemisStatsPackage.java</span></div><h1>ThemisStatsPackage.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.stats;
+
+import io.github.tonywasher.joceanus.themis.parser.proj.ThemisFile;
+import io.github.tonywasher.joceanus.themis.parser.proj.ThemisPackage;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Statistics Package.
+ */
+public class ThemisStatsPackage
+        implements ThemisStatsElement {
+    /**
+     * The underlying package.
+     */
+    private final ThemisPackage thePackage;
+
+    /**
+     * The stats.
+     */
+    private final ThemisStats theStats;
+
+    /**
+     * The files.
+     */
+    private final List&lt;ThemisStatsFile&gt; theFiles;
+
+    /**
+     * Constructor.
+     *
+     * @param pPackage the parsed package
+     */
+<span class="fc" id="L50">    ThemisStatsPackage(final ThemisPackage pPackage) {</span>
+        /* Store the package */
+<span class="fc" id="L52">        thePackage = pPackage;</span>
+
+        /* Create the stats */
+<span class="fc" id="L55">        theStats = new ThemisStats();</span>
+
+        /* Create the List */
+<span class="fc" id="L58">        theFiles = new ArrayList&lt;&gt;();</span>
+
+        /* Populate the fileList */
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        for (ThemisFile myFile : thePackage.getFiles()) {</span>
+<span class="fc" id="L62">            theFiles.add(new ThemisStatsFile(myFile));</span>
+<span class="fc" id="L63">        }</span>
+<span class="fc" id="L64">    }</span>
+
+    @Override
+    public String getName() {
+<span class="nc" id="L68">        return thePackage.getPackage();</span>
+    }
+
+    /**
+     * Obtain the package.
+     *
+     * @return the package
+     */
+    public ThemisPackage getUnderlying() {
+<span class="nc" id="L77">        return thePackage;</span>
+    }
+
+    @Override
+    public ThemisStats getStats() {
+<span class="nc" id="L82">        return theStats;</span>
+    }
+
+    /**
+     * Obtain the package name.
+     *
+     * @return the package name
+     */
+    public String getPackageName() {
+<span class="nc" id="L91">        return thePackage.getPackage();</span>
+    }
+
+    /**
+     * Obtain the class map.
+     *
+     * @return the class map
+     */
+    public List&lt;ThemisStatsFile&gt; getFiles() {
+<span class="nc" id="L100">        return theFiles;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L107">            return true;</span>
+        }
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L110">            return false;</span>
+        }
+
+        /* Make sure that the object is a StatsPackage */
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        if (!(pThat instanceof ThemisStatsPackage myThat)) {</span>
+<span class="nc" id="L115">            return false;</span>
+        }
+
+        /* Check name of package */
+<span class="nc" id="L119">        return getPackageName().equals(myThat.getPackageName());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L124">        return getPackageName().hashCode();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L129">        return thePackage.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

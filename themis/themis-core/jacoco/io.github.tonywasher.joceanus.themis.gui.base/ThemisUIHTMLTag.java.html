@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisUIHTMLTag.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.gui.base</a> &gt; <span class="el_source">ThemisUIHTMLTag.java</span></div><h1>ThemisUIHTMLTag.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.gui.base;
+
+/**
+ * HTML Tags.
+ */
+<span class="nc" id="L23">public enum ThemisUIHTMLTag {</span>
+    /**
+     * Html.
+     */
+<span class="nc" id="L27">    HTML(&quot;html&quot;),</span>
+
+    /**
+     * Head.
+     */
+<span class="nc" id="L32">    HEAD(&quot;head&quot;),</span>
+
+    /**
+     * Style.
+     */
+<span class="nc" id="L37">    STYLE(&quot;style&quot;),</span>
+
+    /**
+     * Body.
+     */
+<span class="nc" id="L42">    BODY(&quot;body&quot;),</span>
+
+    /**
+     * PreFormatted.
+     */
+<span class="nc" id="L47">    PRE(&quot;pre&quot;),</span>
+
+    /**
+     * A.
+     */
+<span class="nc" id="L52">    A(&quot;a&quot;),</span>
+
+    /**
+     * H1.
+     */
+<span class="nc" id="L57">    H1(&quot;h1&quot;),</span>
+
+    /**
+     * H2.
+     */
+<span class="nc" id="L62">    H2(&quot;h2&quot;),</span>
+
+    /**
+     * H3.
+     */
+<span class="nc" id="L67">    H3(&quot;h3&quot;),</span>
+
+    /**
+     * H4.
+     */
+<span class="nc" id="L72">    H4(&quot;h4&quot;),</span>
+
+    /**
+     * H5.
+     */
+<span class="nc" id="L77">    H5(&quot;h5&quot;),</span>
+
+    /**
+     * HR.
+     */
+<span class="nc" id="L82">    HR(&quot;hr&quot;),</span>
+
+    /**
+     * Table.
+     */
+<span class="nc" id="L87">    TABLE(&quot;table&quot;),</span>
+
+    /**
+     * THead.
+     */
+<span class="nc" id="L92">    THEAD(&quot;thead&quot;),</span>
+
+    /**
+     * TBody.
+     */
+<span class="nc" id="L97">    TBODY(&quot;tbody&quot;),</span>
+
+    /**
+     * Table Header.
+     */
+<span class="nc" id="L102">    TH(&quot;th&quot;),</span>
+
+    /**
+     * Table Row.
+     */
+<span class="nc" id="L107">    TR(&quot;tr&quot;),</span>
+
+    /**
+     * Table Cell.
+     */
+<span class="nc" id="L112">    TD(&quot;td&quot;),</span>
+
+    /**
+     * Div.
+     */
+<span class="nc" id="L117">    DIV(&quot;div&quot;),</span>
+
+    /**
+     * Span.
+     */
+<span class="nc" id="L122">    SPAN(&quot;span&quot;),</span>
+
+    /**
+     * Break.
+     */
+<span class="nc" id="L127">    BR(&quot;br&quot;);</span>
+
+    /**
+     * Tag text.
+     */
+    private final String theTag;
+
+    /**
+     * Constructor.
+     *
+     * @param pTag the tag text
+     */
+<span class="nc" id="L139">    ThemisUIHTMLTag(final String pTag) {</span>
+<span class="nc" id="L140">        theTag = pTag;</span>
+<span class="nc" id="L141">    }</span>
+
+    /**
+     * Obtain the tag.
+     *
+     * @return the tag
+     */
+    public String getTag() {
+<span class="nc" id="L149">        return theTag;</span>
+    }
+
+    /**
+     * Obtain the tag.
+     *
+     * @return the tag
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L159">        return getTag();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

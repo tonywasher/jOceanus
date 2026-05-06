@@ -93,15 +93,10 @@ package io.github.tonywasher.joceanus.moneywise.atlas.reports;
      * @return true/false
      */
     public boolean isPointInTime() {
-<span class="nc bnc" id="L96" title="All 2 branches missed.">        switch (this) {</span>
-            case NETWORTH:
-            case PORTFOLIO:
-            case ASSETGAINS:
-            case CAPITALGAINS:
-<span class="nc" id="L101">                return true;</span>
-            default:
-<span class="nc" id="L103">                return false;</span>
-        }
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L97">            case NETWORTH, PORTFOLIO, ASSETGAINS, CAPITALGAINS -&gt; true;</span>
+<span class="nc" id="L98">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -110,15 +105,10 @@ package io.github.tonywasher.joceanus.moneywise.atlas.reports;
      * @return true/false
      */
     public boolean needSecurities() {
-<span class="nc bnc" id="L113" title="All 2 branches missed.">        switch (this) {</span>
-            case MARKETGROWTH:
-            case PORTFOLIO:
-            case ASSETGAINS:
-            case CAPITALGAINS:
-<span class="nc" id="L118">                return true;</span>
-            default:
-<span class="nc" id="L120">                return false;</span>
-        }
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L109">            case MARKETGROWTH, PORTFOLIO, ASSETGAINS, CAPITALGAINS -&gt; true;</span>
+<span class="nc" id="L110">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -127,7 +117,7 @@ package io.github.tonywasher.joceanus.moneywise.atlas.reports;
      * @return the default
      */
     public static MoneyWiseXReportType getDefault() {
-<span class="nc" id="L130">        return NETWORTH;</span>
+<span class="nc" id="L120">        return NETWORTH;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

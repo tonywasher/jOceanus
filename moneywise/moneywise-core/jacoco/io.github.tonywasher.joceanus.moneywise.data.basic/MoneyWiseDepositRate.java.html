@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -29,6 +24,11 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataMapItem;
@@ -568,39 +568,38 @@ public class MoneyWiseDepositRate
     @Override
     public boolean applyChanges(final PrometheusDataItem pRate) {
         /* Can only update from an DepositRate */
-<span class="nc bnc" id="L571" title="All 2 branches missed.">        if (!(pRate instanceof MoneyWiseDepositRate)) {</span>
+<span class="nc bnc" id="L571" title="All 2 branches missed.">        if (!(pRate instanceof MoneyWiseDepositRate myRate)) {</span>
 <span class="nc" id="L572">            return false;</span>
         }
-<span class="nc" id="L574">        final MoneyWiseDepositRate myRate = (MoneyWiseDepositRate) pRate;</span>
 
         /* Store the current detail into history */
-<span class="nc" id="L577">        pushHistory();</span>
+<span class="nc" id="L576">        pushHistory();</span>
 
         /* Update the rate if required */
-<span class="nc bnc" id="L580" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getRate(), myRate.getRate())) {</span>
-<span class="nc" id="L581">            setValueRate(myRate.getRateField());</span>
+<span class="nc bnc" id="L579" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getRate(), myRate.getRate())) {</span>
+<span class="nc" id="L580">            setValueRate(myRate.getRateField());</span>
         }
 
         /* Update the bonus if required */
-<span class="nc bnc" id="L585" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getBonus(), myRate.getBonus())) {</span>
-<span class="nc" id="L586">            setValueBonus(myRate.getBonusField());</span>
+<span class="nc bnc" id="L584" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getBonus(), myRate.getBonus())) {</span>
+<span class="nc" id="L585">            setValueBonus(myRate.getBonusField());</span>
         }
 
         /* Update the date if required */
-<span class="nc bnc" id="L590" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getEndDate(), myRate.getEndDate())) {</span>
-<span class="nc" id="L591">            setValueEndDate(myRate.getEndDate());</span>
+<span class="nc bnc" id="L589" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getEndDate(), myRate.getEndDate())) {</span>
+<span class="nc" id="L590">            setValueEndDate(myRate.getEndDate());</span>
         }
 
         /* Check for changes */
-<span class="nc" id="L595">        return checkForHistory();</span>
+<span class="nc" id="L594">        return checkForHistory();</span>
     }
 
     @Override
     public void adjustMapForItem() {
-<span class="nc" id="L600">        final MoneyWiseDepositRateList myList = getList();</span>
-<span class="nc" id="L601">        final MoneyWiseDepositRateDataMap myMap = myList.getDataMap();</span>
-<span class="nc" id="L602">        myMap.adjustForItem(this);</span>
-<span class="nc" id="L603">    }</span>
+<span class="nc" id="L599">        final MoneyWiseDepositRateList myList = getList();</span>
+<span class="nc" id="L600">        final MoneyWiseDepositRateDataMap myMap = myList.getDataMap();</span>
+<span class="nc" id="L601">        myMap.adjustForItem(this);</span>
+<span class="nc" id="L602">    }</span>
 
     /**
      * List class.
@@ -610,7 +609,7 @@ public class MoneyWiseDepositRate
         /**
          * Report fields.
          */
-<span class="fc" id="L613">        private static final MetisFieldSet&lt;MoneyWiseDepositRateList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseDepositRateList.class);</span>
+<span class="fc" id="L612">        private static final MetisFieldSet&lt;MoneyWiseDepositRateList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseDepositRateList.class);</span>
 
         /**
          * Construct an empty CORE rate list.
@@ -618,8 +617,8 @@ public class MoneyWiseDepositRate
          * @param pData the DataSet for the list
          */
         protected MoneyWiseDepositRateList(final MoneyWiseDataSet pData) {
-<span class="fc" id="L621">            super(MoneyWiseDepositRate.class, pData, MoneyWiseBasicDataType.DEPOSITRATE);</span>
-<span class="fc" id="L622">        }</span>
+<span class="fc" id="L620">            super(MoneyWiseDepositRate.class, pData, MoneyWiseBasicDataType.DEPOSITRATE);</span>
+<span class="fc" id="L621">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -627,39 +626,39 @@ public class MoneyWiseDepositRate
          * @param pSource the source List
          */
         private MoneyWiseDepositRateList(final MoneyWiseDepositRateList pSource) {
-<span class="fc" id="L630">            super(pSource);</span>
-<span class="fc" id="L631">        }</span>
+<span class="fc" id="L629">            super(pSource);</span>
+<span class="fc" id="L630">        }</span>
 
         @Override
         protected MoneyWiseDepositRateList getEmptyList(final PrometheusListStyle pStyle) {
-<span class="fc" id="L635">            final MoneyWiseDepositRateList myList = new MoneyWiseDepositRateList(this);</span>
-<span class="fc" id="L636">            myList.setStyle(pStyle);</span>
-<span class="fc" id="L637">            return myList;</span>
+<span class="fc" id="L634">            final MoneyWiseDepositRateList myList = new MoneyWiseDepositRateList(this);</span>
+<span class="fc" id="L635">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L636">            return myList;</span>
         }
 
         @Override
         public MetisFieldSet&lt;MoneyWiseDepositRateList&gt; getDataFieldSet() {
-<span class="nc" id="L642">            return FIELD_DEFS;</span>
+<span class="nc" id="L641">            return FIELD_DEFS;</span>
         }
 
         @Override
         public MetisFieldSetDef getItemFields() {
-<span class="fc" id="L647">            return MoneyWiseDepositRate.FIELD_DEFS;</span>
+<span class="fc" id="L646">            return MoneyWiseDepositRate.FIELD_DEFS;</span>
         }
 
         @Override
         public String listName() {
-<span class="fc" id="L652">            return LIST_NAME;</span>
+<span class="fc" id="L651">            return LIST_NAME;</span>
         }
 
         @Override
         public MoneyWiseDataSet getDataSet() {
-<span class="fc" id="L657">            return (MoneyWiseDataSet) super.getDataSet();</span>
+<span class="fc" id="L656">            return (MoneyWiseDataSet) super.getDataSet();</span>
         }
 
         @Override
         public MoneyWiseDepositRateDataMap getDataMap() {
-<span class="nc" id="L662">            return (MoneyWiseDepositRateDataMap) super.getDataMap();</span>
+<span class="nc" id="L661">            return (MoneyWiseDepositRateDataMap) super.getDataMap();</span>
         }
 
         /**
@@ -671,26 +670,26 @@ public class MoneyWiseDepositRate
          */
         public MoneyWiseDepositRateList deriveEditList(final PrometheusEditSet pEditSet) throws OceanusException {
             /* Build an empty List */
-<span class="fc" id="L674">            final MoneyWiseDepositRateList myList = getEmptyList(PrometheusListStyle.EDIT);</span>
-<span class="fc" id="L675">            myList.ensureMap();</span>
-<span class="fc" id="L676">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.DEPOSITRATE, myList);</span>
+<span class="fc" id="L673">            final MoneyWiseDepositRateList myList = getEmptyList(PrometheusListStyle.EDIT);</span>
+<span class="fc" id="L674">            myList.ensureMap();</span>
+<span class="fc" id="L675">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.DEPOSITRATE, myList);</span>
 
             /* Loop through the list */
-<span class="fc" id="L679">            final Iterator&lt;MoneyWiseDepositRate&gt; myIterator = iterator();</span>
-<span class="pc bpc" id="L680" title="1 of 2 branches missed.">            while (myIterator.hasNext()) {</span>
-<span class="nc" id="L681">                final MoneyWiseDepositRate myCurr = myIterator.next();</span>
+<span class="fc" id="L678">            final Iterator&lt;MoneyWiseDepositRate&gt; myIterator = iterator();</span>
+<span class="pc bpc" id="L679" title="1 of 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L680">                final MoneyWiseDepositRate myCurr = myIterator.next();</span>
 
                 /* Copy the item */
-<span class="nc" id="L684">                final MoneyWiseDepositRate myItem = new MoneyWiseDepositRate(myList, myCurr);</span>
-<span class="nc" id="L685">                myItem.resolveEditSetLinks(pEditSet);</span>
-<span class="nc" id="L686">                myList.add(myItem);</span>
+<span class="nc" id="L683">                final MoneyWiseDepositRate myItem = new MoneyWiseDepositRate(myList, myCurr);</span>
+<span class="nc" id="L684">                myItem.resolveEditSetLinks(pEditSet);</span>
+<span class="nc" id="L685">                myList.add(myItem);</span>
 
                 /* Adjust the map */
-<span class="nc" id="L689">                myItem.adjustMapForItem();</span>
-<span class="nc" id="L690">            }</span>
+<span class="nc" id="L688">                myItem.adjustMapForItem();</span>
+<span class="nc" id="L689">            }</span>
 
             /* Return the List */
-<span class="fc" id="L693">            return myList;</span>
+<span class="fc" id="L692">            return myList;</span>
         }
 
         /**
@@ -702,13 +701,13 @@ public class MoneyWiseDepositRate
         @Override
         public MoneyWiseDepositRate addCopyItem(final PrometheusDataItem pRate) {
             /* Can only clone a DepositRate */
-<span class="nc bnc" id="L705" title="All 2 branches missed.">            if (!(pRate instanceof MoneyWiseDepositRate)) {</span>
-<span class="nc" id="L706">                throw new UnsupportedOperationException();</span>
+<span class="nc bnc" id="L704" title="All 2 branches missed.">            if (!(pRate instanceof MoneyWiseDepositRate)) {</span>
+<span class="nc" id="L705">                throw new UnsupportedOperationException();</span>
             }
 
-<span class="nc" id="L709">            final MoneyWiseDepositRate myRate = new MoneyWiseDepositRate(this, (MoneyWiseDepositRate) pRate);</span>
-<span class="nc" id="L710">            add(myRate);</span>
-<span class="nc" id="L711">            return myRate;</span>
+<span class="nc" id="L708">            final MoneyWiseDepositRate myRate = new MoneyWiseDepositRate(this, (MoneyWiseDepositRate) pRate);</span>
+<span class="nc" id="L709">            add(myRate);</span>
+<span class="nc" id="L710">            return myRate;</span>
         }
 
         /**
@@ -718,32 +717,32 @@ public class MoneyWiseDepositRate
          */
         @Override
         public MoneyWiseDepositRate addNewItem() {
-<span class="nc" id="L721">            final MoneyWiseDepositRate myRate = new MoneyWiseDepositRate(this);</span>
-<span class="nc" id="L722">            add(myRate);</span>
-<span class="nc" id="L723">            return myRate;</span>
+<span class="nc" id="L720">            final MoneyWiseDepositRate myRate = new MoneyWiseDepositRate(this);</span>
+<span class="nc" id="L721">            add(myRate);</span>
+<span class="nc" id="L722">            return myRate;</span>
         }
 
         @Override
         public MoneyWiseDepositRate addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
             /* Create the rate */
-<span class="nc" id="L729">            final MoneyWiseDepositRate myRate = new MoneyWiseDepositRate(this, pValues);</span>
+<span class="nc" id="L728">            final MoneyWiseDepositRate myRate = new MoneyWiseDepositRate(this, pValues);</span>
 
             /* Check that this RateId has not been previously added */
-<span class="nc bnc" id="L732" title="All 2 branches missed.">            if (!isIdUnique(myRate.getIndexedId())) {</span>
-<span class="nc" id="L733">                myRate.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L734">                throw new MoneyWiseDataException(myRate, ERROR_VALIDATION);</span>
+<span class="nc bnc" id="L731" title="All 2 branches missed.">            if (!isIdUnique(myRate.getIndexedId())) {</span>
+<span class="nc" id="L732">                myRate.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L733">                throw new MoneyWiseDataException(myRate, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="nc" id="L738">            add(myRate);</span>
+<span class="nc" id="L737">            add(myRate);</span>
 
             /* Return it */
-<span class="nc" id="L741">            return myRate;</span>
+<span class="nc" id="L740">            return myRate;</span>
         }
 
         @Override
         protected MoneyWiseDepositRateDataMap allocateDataMap() {
-<span class="fc" id="L746">            return new MoneyWiseDepositRateDataMap();</span>
+<span class="fc" id="L745">            return new MoneyWiseDepositRateDataMap();</span>
         }
     }
 
@@ -755,15 +754,15 @@ public class MoneyWiseDepositRate
         /**
          * Report fields.
          */
-<span class="fc" id="L758">        private static final MetisFieldSet&lt;MoneyWiseDepositRateDataMap&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseDepositRateDataMap.class);</span>
+<span class="fc" id="L757">        private static final MetisFieldSet&lt;MoneyWiseDepositRateDataMap&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseDepositRateDataMap.class);</span>
 
         /*
          * UnderlyingMap Field Id.
          */
         static {
-<span class="fc" id="L764">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_MAPOFMAPS, MoneyWiseDepositRateDataMap::getMapOfMaps);</span>
-<span class="fc" id="L765">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.DEPOSITRATE_MAP_MAPOFRATES, MoneyWiseDepositRateDataMap::getMapOfRates);</span>
-<span class="fc" id="L766">        }</span>
+<span class="fc" id="L763">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_MAPOFMAPS, MoneyWiseDepositRateDataMap::getMapOfMaps);</span>
+<span class="fc" id="L764">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.DEPOSITRATE_MAP_MAPOFRATES, MoneyWiseDepositRateDataMap::getMapOfRates);</span>
+<span class="fc" id="L765">        }</span>
 
         /**
          * Map of Maps.
@@ -778,20 +777,20 @@ public class MoneyWiseDepositRate
         /**
          * Constructor.
          */
-<span class="fc" id="L781">        public MoneyWiseDepositRateDataMap() {</span>
+<span class="fc" id="L780">        public MoneyWiseDepositRateDataMap() {</span>
             /* Create the maps */
-<span class="fc" id="L783">            theMapOfMaps = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L784">            theMapOfRates = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L785">        }</span>
+<span class="fc" id="L782">            theMapOfMaps = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L783">            theMapOfRates = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L784">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWiseDepositRateDataMap&gt; getDataFieldSet() {
-<span class="nc" id="L789">            return FIELD_DEFS;</span>
+<span class="nc" id="L788">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L794">            return FIELD_DEFS.getName();</span>
+<span class="nc" id="L793">            return FIELD_DEFS.getName();</span>
         }
 
         /**
@@ -800,7 +799,7 @@ public class MoneyWiseDepositRate
          * @return the map
          */
         private Map&lt;MoneyWiseDeposit, Map&lt;OceanusDate, Integer&gt;&gt; getMapOfMaps() {
-<span class="nc" id="L803">            return theMapOfMaps;</span>
+<span class="nc" id="L802">            return theMapOfMaps;</span>
         }
 
         /**
@@ -809,42 +808,42 @@ public class MoneyWiseDepositRate
          * @return the map
          */
         private Map&lt;MoneyWiseDeposit, MoneyWiseRateList&gt; getMapOfRates() {
-<span class="nc" id="L812">            return theMapOfRates;</span>
+<span class="nc" id="L811">            return theMapOfRates;</span>
         }
 
         @Override
         public void resetMap() {
-<span class="fc" id="L817">            theMapOfMaps.clear();</span>
-<span class="fc" id="L818">            theMapOfRates.clear();</span>
-<span class="fc" id="L819">        }</span>
+<span class="fc" id="L816">            theMapOfMaps.clear();</span>
+<span class="fc" id="L817">            theMapOfRates.clear();</span>
+<span class="fc" id="L818">        }</span>
 
         @Override
         public void adjustForItem(final PrometheusDataItem pItem) {
             /* Access the Deposit Id */
-<span class="nc" id="L824">            final MoneyWiseDepositRate myItem = (MoneyWiseDepositRate) pItem;</span>
-<span class="nc" id="L825">            final MoneyWiseDeposit myDeposit = myItem.getDeposit();</span>
-<span class="nc bnc" id="L826" title="All 2 branches missed.">            if (myDeposit == null) {</span>
-<span class="nc" id="L827">                return;</span>
+<span class="nc" id="L823">            final MoneyWiseDepositRate myItem = (MoneyWiseDepositRate) pItem;</span>
+<span class="nc" id="L824">            final MoneyWiseDeposit myDeposit = myItem.getDeposit();</span>
+<span class="nc bnc" id="L825" title="All 2 branches missed.">            if (myDeposit == null) {</span>
+<span class="nc" id="L826">                return;</span>
             }
 
             /* Access the map */
-<span class="nc" id="L831">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.computeIfAbsent(myDeposit, m -&gt; new HashMap&lt;&gt;());</span>
+<span class="nc" id="L830">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.computeIfAbsent(myDeposit, m -&gt; new HashMap&lt;&gt;());</span>
 
             /* Adjust rate count */
-<span class="nc" id="L834">            final OceanusDate myDate = myItem.getEndDate();</span>
-<span class="nc" id="L835">            final Integer myCount = myMap.get(myDate);</span>
-<span class="nc bnc" id="L836" title="All 2 branches missed.">            if (myCount == null) {</span>
-<span class="nc" id="L837">                myMap.put(myDate, PrometheusDataInstanceMap.ONE);</span>
+<span class="nc" id="L833">            final OceanusDate myDate = myItem.getEndDate();</span>
+<span class="nc" id="L834">            final Integer myCount = myMap.get(myDate);</span>
+<span class="nc bnc" id="L835" title="All 2 branches missed.">            if (myCount == null) {</span>
+<span class="nc" id="L836">                myMap.put(myDate, PrometheusDataInstanceMap.ONE);</span>
             } else {
-<span class="nc" id="L839">                myMap.put(myDate, myCount + 1);</span>
+<span class="nc" id="L838">                myMap.put(myDate, myCount + 1);</span>
             }
 
             /* Access the list */
-<span class="nc" id="L843">            final MoneyWiseRateList myList = theMapOfRates.computeIfAbsent(myDeposit, MoneyWiseRateList::new);</span>
+<span class="nc" id="L842">            final MoneyWiseRateList myList = theMapOfRates.computeIfAbsent(myDeposit, MoneyWiseRateList::new);</span>
 
             /* Add element to the list */
-<span class="nc" id="L846">            myList.add(myItem);</span>
-<span class="nc" id="L847">        }</span>
+<span class="nc" id="L845">            myList.add(myItem);</span>
+<span class="nc" id="L846">        }</span>
 
         /**
          * Check validity of Rate.
@@ -854,16 +853,16 @@ public class MoneyWiseDepositRate
          */
         public boolean validRateCount(final MoneyWiseDepositRate pItem) {
             /* Access the Details */
-<span class="nc" id="L857">            final MoneyWiseDeposit myDeposit = pItem.getDeposit();</span>
-<span class="nc" id="L858">            final OceanusDate myDate = pItem.getEndDate();</span>
+<span class="nc" id="L856">            final MoneyWiseDeposit myDeposit = pItem.getDeposit();</span>
+<span class="nc" id="L857">            final OceanusDate myDate = pItem.getEndDate();</span>
 
             /* Access the map */
-<span class="nc" id="L861">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.get(myDeposit);</span>
-<span class="nc bnc" id="L862" title="All 2 branches missed.">            if (myMap != null) {</span>
-<span class="nc" id="L863">                final Integer myResult = myMap.get(myDate);</span>
-<span class="nc" id="L864">                return PrometheusDataInstanceMap.ONE.equals(myResult);</span>
+<span class="nc" id="L860">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.get(myDeposit);</span>
+<span class="nc bnc" id="L861" title="All 2 branches missed.">            if (myMap != null) {</span>
+<span class="nc" id="L862">                final Integer myResult = myMap.get(myDate);</span>
+<span class="nc" id="L863">                return PrometheusDataInstanceMap.ONE.equals(myResult);</span>
             }
-<span class="nc" id="L866">            return false;</span>
+<span class="nc" id="L865">            return false;</span>
         }
 
         /**
@@ -876,9 +875,9 @@ public class MoneyWiseDepositRate
         public boolean availableDate(final MoneyWiseDeposit pDeposit,
                                      final OceanusDate pDate) {
             /* Access the map */
-<span class="nc" id="L879">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.get(pDeposit);</span>
-<span class="nc bnc" id="L880" title="All 2 branches missed.">            return myMap == null</span>
-<span class="nc bnc" id="L881" title="All 2 branches missed.">                    || myMap.get(pDate) == null;</span>
+<span class="nc" id="L878">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.get(pDeposit);</span>
+<span class="nc bnc" id="L879" title="All 2 branches missed.">            return myMap == null</span>
+<span class="nc bnc" id="L880" title="All 2 branches missed.">                    || myMap.get(pDate) == null;</span>
         }
 
         /**
@@ -891,26 +890,26 @@ public class MoneyWiseDepositRate
         public MoneyWiseDepositRate getRateForDate(final MoneyWiseDeposit pDeposit,
                                                    final OceanusDate pDate) {
             /* Access list for deposit */
-<span class="nc" id="L894">            final MoneyWiseRateList myList = theMapOfRates.get(pDeposit);</span>
-<span class="nc bnc" id="L895" title="All 2 branches missed.">            if (myList != null) {</span>
+<span class="nc" id="L893">            final MoneyWiseRateList myList = theMapOfRates.get(pDeposit);</span>
+<span class="nc bnc" id="L894" title="All 2 branches missed.">            if (myList != null) {</span>
                 /* Loop through the rates */
-<span class="nc" id="L897">                final ListIterator&lt;MoneyWiseDepositRate&gt; myIterator = myList.listIterator(myList.size());</span>
-<span class="nc bnc" id="L898" title="All 2 branches missed.">                while (myIterator.hasPrevious()) {</span>
-<span class="nc" id="L899">                    final MoneyWiseDepositRate myCurr = myIterator.previous();</span>
+<span class="nc" id="L896">                final ListIterator&lt;MoneyWiseDepositRate&gt; myIterator = myList.listIterator(myList.size());</span>
+<span class="nc bnc" id="L897" title="All 2 branches missed.">                while (myIterator.hasPrevious()) {</span>
+<span class="nc" id="L898">                    final MoneyWiseDepositRate myCurr = myIterator.previous();</span>
 
                     /* Access the date */
-<span class="nc" id="L902">                    final OceanusDate myDate = myCurr.getDate();</span>
+<span class="nc" id="L901">                    final OceanusDate myDate = myCurr.getDate();</span>
 
                     /* break loop if we have the correct record */
-<span class="nc bnc" id="L905" title="All 2 branches missed.">                    if (myDate == null</span>
-<span class="nc bnc" id="L906" title="All 2 branches missed.">                            || myDate.compareTo(pDate) &gt;= 0) {</span>
-<span class="nc" id="L907">                        return myCurr;</span>
+<span class="nc bnc" id="L904" title="All 2 branches missed.">                    if (myDate == null</span>
+<span class="nc bnc" id="L905" title="All 2 branches missed.">                            || myDate.compareTo(pDate) &gt;= 0) {</span>
+<span class="nc" id="L906">                        return myCurr;</span>
                     }
-<span class="nc" id="L909">                }</span>
+<span class="nc" id="L908">                }</span>
             }
 
             /* return null */
-<span class="nc" id="L913">            return null;</span>
+<span class="nc" id="L912">            return null;</span>
         }
 
         /**
@@ -921,14 +920,14 @@ public class MoneyWiseDepositRate
             /**
              * Report fields.
              */
-<span class="nc" id="L924">            private static final MetisFieldSet&lt;MoneyWiseRateList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseRateList.class);</span>
+<span class="nc" id="L923">            private static final MetisFieldSet&lt;MoneyWiseRateList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseRateList.class);</span>
 
             /*
              * UnderlyingMap Field Id.
              */
             static {
-<span class="nc" id="L930">                FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, MoneyWiseRateList::size);</span>
-<span class="nc" id="L931">            }</span>
+<span class="nc" id="L929">                FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, MoneyWiseRateList::size);</span>
+<span class="nc" id="L930">            }</span>
 
             /**
              * The list.
@@ -945,35 +944,35 @@ public class MoneyWiseDepositRate
              *
              * @param pDeposit the deposit
              */
-<span class="nc" id="L948">            private MoneyWiseRateList(final MoneyWiseDeposit pDeposit) {</span>
-<span class="nc" id="L949">                theDeposit = pDeposit;</span>
-<span class="nc" id="L950">                theList = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L951">            }</span>
+<span class="nc" id="L947">            private MoneyWiseRateList(final MoneyWiseDeposit pDeposit) {</span>
+<span class="nc" id="L948">                theDeposit = pDeposit;</span>
+<span class="nc" id="L949">                theList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L950">            }</span>
 
             @Override
             public MetisFieldSet&lt;MoneyWiseRateList&gt; getDataFieldSet() {
-<span class="nc" id="L955">                return FIELD_DEFS;</span>
+<span class="nc" id="L954">                return FIELD_DEFS;</span>
             }
 
             @Override
             public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L960">                return theDeposit.formatObject(pFormatter)</span>
+<span class="nc" id="L959">                return theDeposit.formatObject(pFormatter)</span>
                         + &quot;(&quot;
-<span class="nc" id="L962">                        + size()</span>
+<span class="nc" id="L961">                        + size()</span>
                         + &quot;)&quot;;
             }
 
             @Override
             public String toString() {
-<span class="nc" id="L968">                return theDeposit.toString()</span>
+<span class="nc" id="L967">                return theDeposit.toString()</span>
                         + &quot;(&quot;
-<span class="nc" id="L970">                        + size()</span>
+<span class="nc" id="L969">                        + size()</span>
                         + &quot;)&quot;;
             }
 
             @Override
             public List&lt;MoneyWiseDepositRate&gt; getUnderlyingList() {
-<span class="nc" id="L976">                return theList;</span>
+<span class="nc" id="L975">                return theList;</span>
             }
         }
     }

@@ -25,8 +25,8 @@
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherSpec;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> java.util.Objects;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  
@@ -39,7 +39,7 @@
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment">     * The PBESpec.</em>
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="GordianPBESpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/GordianPBESpec.html#GordianPBESpec">GordianPBESpec</a> thePBESpec;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="GordianPBESpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/spec/GordianPBESpec.html#GordianPBESpec">GordianPBESpec</a> thePBESpec;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment">     * The CipherSpec.</em>
@@ -49,7 +49,7 @@
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment">     * Is the Spec valid?</em>
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> isValid;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isValid;
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">     * Constructor.</em>
@@ -57,7 +57,7 @@
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment">     * @param pPBESpec    the PBE Spec</em>
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  <em class="jxr_javadoccomment">     * @param pCipherSpec the CipherSpec</em>
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">public</strong> <a name="GordianPBECipherSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/cipher/GordianPBECipherSpec.html#GordianPBECipherSpec">GordianPBECipherSpec</a>(<strong class="jxr_keyword">final</strong> <a name="GordianPBESpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/GordianPBESpec.html#GordianPBESpec">GordianPBESpec</a> pPBESpec,
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">public</strong> <a name="GordianPBECipherSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/cipher/GordianPBECipherSpec.html#GordianPBECipherSpec">GordianPBECipherSpec</a>(<strong class="jxr_keyword">final</strong> <a name="GordianPBESpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/spec/GordianPBESpec.html#GordianPBESpec">GordianPBESpec</a> pPBESpec,
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>                                  <strong class="jxr_keyword">final</strong> GordianCipherSpec&lt;T&gt; pCipherSpec) {
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>          thePBESpec = pPBESpec;
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>          theCipherSpec = pCipherSpec;
@@ -70,7 +70,7 @@
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     * @return the pbeSpec</em>
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">public</strong> <a name="GordianPBESpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/GordianPBESpec.html#GordianPBESpec">GordianPBESpec</a> getPBESpec() {
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">public</strong> <a name="GordianPBESpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/spec/GordianPBESpec.html#GordianPBESpec">GordianPBESpec</a> getPBESpec() {
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">return</strong> thePBESpec;
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      }
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  
@@ -94,7 +94,7 @@
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>      @Override
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>      <strong class="jxr_keyword">public</strong> String toString() {
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">return</strong> <span class="jxr_string">""</span> + theCipherSpec + <span class="jxr_string">":"</span> + thePBESpec;
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">return</strong> theCipherSpec + <span class="jxr_string">":"</span> + thePBESpec;
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>      }
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>      @Override
@@ -108,21 +108,20 @@
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>         }
 <a class="jxr_linenumber" name="L101" href="#L101">101</a> 
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>         <em class="jxr_comment">/* Make sure that the classes are the same */</em>
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>         <strong class="jxr_keyword">if</strong> (!(pThat instanceof <a name="GordianPBECipherSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/cipher/GordianPBECipherSpec.html#GordianPBECipherSpec">GordianPBECipherSpec</a>)) {
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>         <strong class="jxr_keyword">if</strong> (!(pThat instanceof GordianPBECipherSpec&lt;?&gt; myThat)) {
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>             <strong class="jxr_keyword">return</strong> false;
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>         }
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>         <strong class="jxr_keyword">final</strong> GordianPBECipherSpec&lt;?&gt; myThat = (GordianPBECipherSpec&lt;?&gt;) pThat;
-<a class="jxr_linenumber" name="L107" href="#L107">107</a> 
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>         <em class="jxr_comment">/* Check that the fields are equal */</em>
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>         <strong class="jxr_keyword">return</strong> Objects.equals(theCipherSpec, myThat.getCipherSpec())
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>                 &amp;&amp; Objects.equals(thePBESpec, myThat.getPBESpec());
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>     }
-<a class="jxr_linenumber" name="L112" href="#L112">112</a> 
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>     @Override
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> hashCode() {
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>         <strong class="jxr_keyword">return</strong> theCipherSpec.hashCode() + thePBESpec.hashCode();
-<a class="jxr_linenumber" name="L116" href="#L116">116</a>     }
-<a class="jxr_linenumber" name="L117" href="#L117">117</a> }
+<a class="jxr_linenumber" name="L106" href="#L106">106</a> 
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>         <em class="jxr_comment">/* Check that the fields are equal */</em>
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>         <strong class="jxr_keyword">return</strong> Objects.equals(theCipherSpec, myThat.getCipherSpec())
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>                 &amp;&amp; Objects.equals(thePBESpec, myThat.getPBESpec());
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>     }
+<a class="jxr_linenumber" name="L111" href="#L111">111</a> 
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>     @Override
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> hashCode() {
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>         <strong class="jxr_keyword">return</strong> theCipherSpec.hashCode() + thePBESpec.hashCode();
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>     }
+<a class="jxr_linenumber" name="L116" href="#L116">116</a> }
 </pre>
 <hr/>
 <div id="footer">© 2012–2026</div>

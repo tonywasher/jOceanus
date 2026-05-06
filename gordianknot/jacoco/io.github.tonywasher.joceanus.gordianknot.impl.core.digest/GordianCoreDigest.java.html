@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.digest;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 
 /**
  * Core Digest implementation.
@@ -29,19 +29,19 @@ public abstract class GordianCoreDigest
     /**
      * DigestSpec.
      */
-    private final GordianDigestSpec theDigestSpec;
+    private final GordianCoreDigestSpec theDigestSpec;
 
     /**
      * Constructor.
      *
      * @param pDigestSpec the digestSpec
      */
-<span class="fc" id="L39">    protected GordianCoreDigest(final GordianDigestSpec pDigestSpec) {</span>
+<span class="fc" id="L39">    protected GordianCoreDigest(final GordianCoreDigestSpec pDigestSpec) {</span>
 <span class="fc" id="L40">        theDigestSpec = pDigestSpec;</span>
 <span class="fc" id="L41">    }</span>
 
     @Override
-    public GordianDigestSpec getDigestSpec() {
+    public GordianCoreDigestSpec getDigestSpec() {
 <span class="fc" id="L45">        return theDigestSpec;</span>
     }
 

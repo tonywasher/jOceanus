@@ -26,9 +26,9 @@
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianIdManager;
@@ -77,7 +77,7 @@
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">     * @param pAEAD    true/false is AEAD in use?</em>
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      <strong class="jxr_keyword">private</strong> <a name="GordianKeySetRecipe" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/keyset/GordianKeySetRecipe.html#GordianKeySetRecipe">GordianKeySetRecipe</a>(<strong class="jxr_keyword">final</strong> <a name="GordianBaseFactory" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/base/GordianBaseFactory.html#GordianBaseFactory">GordianBaseFactory</a> pFactory,
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>                                  <strong class="jxr_keyword">final</strong> <a name="GordianKeySetSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keyset/GordianKeySetSpec.html#GordianKeySetSpec">GordianKeySetSpec</a> pSpec,
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>                                  <strong class="jxr_keyword">final</strong> <a name="GordianKeySetSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keyset/spec/GordianKeySetSpec.html#GordianKeySetSpec">GordianKeySetSpec</a> pSpec,
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>                                  <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> pAEAD) {
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>          <em class="jxr_comment">/* Allocate new set of parameters */</em>
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          theParams = <strong class="jxr_keyword">new</strong> GordianKeySetParameters(pFactory, pSpec, pAEAD);
@@ -93,7 +93,7 @@
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_javadoccomment">     * @param pAEAD    true/false is AEAD in use?</em>
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>      <strong class="jxr_keyword">private</strong> <a name="GordianKeySetRecipe" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/keyset/GordianKeySetRecipe.html#GordianKeySetRecipe">GordianKeySetRecipe</a>(<strong class="jxr_keyword">final</strong> <a name="GordianBaseFactory" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/base/GordianBaseFactory.html#GordianBaseFactory">GordianBaseFactory</a> pFactory,
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>                                  <strong class="jxr_keyword">final</strong> <a name="GordianKeySetSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keyset/GordianKeySetSpec.html#GordianKeySetSpec">GordianKeySetSpec</a> pSpec,
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>                                  <strong class="jxr_keyword">final</strong> <a name="GordianKeySetSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keyset/spec/GordianKeySetSpec.html#GordianKeySetSpec">GordianKeySetSpec</a> pSpec,
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>                                  <strong class="jxr_keyword">final</strong> byte[] pHeader,
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>                                  <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> pAEAD) {
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>          <em class="jxr_comment">/* Allocate buffers */</em>
@@ -117,7 +117,7 @@
 <a class="jxr_linenumber" name="L109" href="#L109">109</a> <em class="jxr_javadoccomment">     * @return the recipe</em>
 <a class="jxr_linenumber" name="L110" href="#L110">110</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>     <strong class="jxr_keyword">static</strong> <a name="GordianKeySetRecipe" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/keyset/GordianKeySetRecipe.html#GordianKeySetRecipe">GordianKeySetRecipe</a> newRecipe(<strong class="jxr_keyword">final</strong> <a name="GordianBaseFactory" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/base/GordianBaseFactory.html#GordianBaseFactory">GordianBaseFactory</a> pFactory,
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>                                          <strong class="jxr_keyword">final</strong> <a name="GordianKeySetSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keyset/GordianKeySetSpec.html#GordianKeySetSpec">GordianKeySetSpec</a> pSpec,
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>                                          <strong class="jxr_keyword">final</strong> <a name="GordianKeySetSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keyset/spec/GordianKeySetSpec.html#GordianKeySetSpec">GordianKeySetSpec</a> pSpec,
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>                                          <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> pAEAD) {
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="GordianKeySetRecipe" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/keyset/GordianKeySetRecipe.html#GordianKeySetRecipe">GordianKeySetRecipe</a>(pFactory, pSpec, pAEAD);
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>     }
@@ -133,7 +133,7 @@
 <a class="jxr_linenumber" name="L125" href="#L125">125</a> <em class="jxr_javadoccomment">     * @throws GordianException on error</em>
 <a class="jxr_linenumber" name="L126" href="#L126">126</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L127" href="#L127">127</a>     <strong class="jxr_keyword">static</strong> <a name="GordianKeySetRecipe" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/keyset/GordianKeySetRecipe.html#GordianKeySetRecipe">GordianKeySetRecipe</a> parseRecipe(<strong class="jxr_keyword">final</strong> <a name="GordianBaseFactory" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/base/GordianBaseFactory.html#GordianBaseFactory">GordianBaseFactory</a> pFactory,
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>                                            <strong class="jxr_keyword">final</strong> <a name="GordianKeySetSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keyset/GordianKeySetSpec.html#GordianKeySetSpec">GordianKeySetSpec</a> pSpec,
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>                                            <strong class="jxr_keyword">final</strong> <a name="GordianKeySetSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keyset/spec/GordianKeySetSpec.html#GordianKeySetSpec">GordianKeySetSpec</a> pSpec,
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>                                            <strong class="jxr_keyword">final</strong> byte[] pHeader,
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>                                            <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> pAEAD) <strong class="jxr_keyword">throws</strong> <a name="GordianException" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/base/GordianException.html#GordianException">GordianException</a> {
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>         <em class="jxr_comment">/* Check that the input data is long enough */</em>
@@ -182,17 +182,17 @@
 <a class="jxr_linenumber" name="L174" href="#L174">174</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L175" href="#L175">175</a> <em class="jxr_javadoccomment">         * The SymKeySet.</em>
 <a class="jxr_linenumber" name="L176" href="#L176">176</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>         <strong class="jxr_keyword">private</strong> <a name="GordianSymKeyType" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/GordianSymKeyType.html#GordianSymKeyType">GordianSymKeyType</a>[] theSymKeyTypes;
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>         <strong class="jxr_keyword">private</strong> <a name="GordianSymKeyType" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/spec/GordianSymKeyType.html#GordianSymKeyType">GordianSymKeyType</a>[] theSymKeyTypes;
 <a class="jxr_linenumber" name="L178" href="#L178">178</a> 
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L180" href="#L180">180</a> <em class="jxr_javadoccomment">         * The DigestType.</em>
 <a class="jxr_linenumber" name="L181" href="#L181">181</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>         <strong class="jxr_keyword">private</strong> <a name="GordianDigestType" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/digest/GordianDigestType.html#GordianDigestType">GordianDigestType</a> theDigestType;
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>         <strong class="jxr_keyword">private</strong> <a name="GordianDigestType" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/digest/spec/GordianDigestType.html#GordianDigestType">GordianDigestType</a> theDigestType;
 <a class="jxr_linenumber" name="L183" href="#L183">183</a> 
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L185" href="#L185">185</a> <em class="jxr_javadoccomment">         * The Poly1305 SymKeyType.</em>
 <a class="jxr_linenumber" name="L186" href="#L186">186</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>         <strong class="jxr_keyword">private</strong> <a name="GordianSymKeyType" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/GordianSymKeyType.html#GordianSymKeyType">GordianSymKeyType</a> thePoly1305SymKeyType;
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>         <strong class="jxr_keyword">private</strong> <a name="GordianSymKeyType" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/spec/GordianSymKeyType.html#GordianSymKeyType">GordianSymKeyType</a> thePoly1305SymKeyType;
 <a class="jxr_linenumber" name="L188" href="#L188">188</a> 
 <a class="jxr_linenumber" name="L189" href="#L189">189</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L190" href="#L190">190</a> <em class="jxr_javadoccomment">         * The Initialisation Vector.</em>
@@ -207,7 +207,7 @@
 <a class="jxr_linenumber" name="L199" href="#L199">199</a> <em class="jxr_javadoccomment">         * @param pAEAD    true/false is AEAD in use?</em>
 <a class="jxr_linenumber" name="L200" href="#L200">200</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>         GordianKeySetParameters(<strong class="jxr_keyword">final</strong> <a name="GordianBaseFactory" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/base/GordianBaseFactory.html#GordianBaseFactory">GordianBaseFactory</a> pFactory,
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>                                 <strong class="jxr_keyword">final</strong> <a name="GordianKeySetSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keyset/GordianKeySetSpec.html#GordianKeySetSpec">GordianKeySetSpec</a> pSpec,
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>                                 <strong class="jxr_keyword">final</strong> <a name="GordianKeySetSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keyset/spec/GordianKeySetSpec.html#GordianKeySetSpec">GordianKeySetSpec</a> pSpec,
 <a class="jxr_linenumber" name="L203" href="#L203">203</a>                                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> pAEAD) {
 <a class="jxr_linenumber" name="L204" href="#L204">204</a>             <em class="jxr_comment">/* Obtain random */</em>
 <a class="jxr_linenumber" name="L205" href="#L205">205</a>             <strong class="jxr_keyword">final</strong> SecureRandom myRandom = pFactory.getRandomSource().getRandom();
@@ -234,7 +234,7 @@
 <a class="jxr_linenumber" name="L226" href="#L226">226</a> <em class="jxr_javadoccomment">         * @param pAEAD    true/false is AEAD in use?</em>
 <a class="jxr_linenumber" name="L227" href="#L227">227</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L228" href="#L228">228</a>         GordianKeySetParameters(<strong class="jxr_keyword">final</strong> <a name="GordianBaseFactory" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/base/GordianBaseFactory.html#GordianBaseFactory">GordianBaseFactory</a> pFactory,
-<a class="jxr_linenumber" name="L229" href="#L229">229</a>                                 <strong class="jxr_keyword">final</strong> <a name="GordianKeySetSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keyset/GordianKeySetSpec.html#GordianKeySetSpec">GordianKeySetSpec</a> pSpec,
+<a class="jxr_linenumber" name="L229" href="#L229">229</a>                                 <strong class="jxr_keyword">final</strong> <a name="GordianKeySetSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keyset/spec/GordianKeySetSpec.html#GordianKeySetSpec">GordianKeySetSpec</a> pSpec,
 <a class="jxr_linenumber" name="L230" href="#L230">230</a>                                 <strong class="jxr_keyword">final</strong> byte[] pRecipe,
 <a class="jxr_linenumber" name="L231" href="#L231">231</a>                                 <strong class="jxr_keyword">final</strong> byte[] pSalt,
 <a class="jxr_linenumber" name="L232" href="#L232">232</a>                                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> pAEAD) {
@@ -254,7 +254,7 @@
 <a class="jxr_linenumber" name="L246" href="#L246">246</a> <em class="jxr_javadoccomment">         * @param pAEAD    true/false is AEAD in use?</em>
 <a class="jxr_linenumber" name="L247" href="#L247">247</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L248" href="#L248">248</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> processRecipe(<strong class="jxr_keyword">final</strong> <a name="GordianBaseFactory" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/base/GordianBaseFactory.html#GordianBaseFactory">GordianBaseFactory</a> pFactory,
-<a class="jxr_linenumber" name="L249" href="#L249">249</a>                                    <strong class="jxr_keyword">final</strong> <a name="GordianKeySetSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keyset/GordianKeySetSpec.html#GordianKeySetSpec">GordianKeySetSpec</a> pSpec,
+<a class="jxr_linenumber" name="L249" href="#L249">249</a>                                    <strong class="jxr_keyword">final</strong> <a name="GordianKeySetSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keyset/spec/GordianKeySetSpec.html#GordianKeySetSpec">GordianKeySetSpec</a> pSpec,
 <a class="jxr_linenumber" name="L250" href="#L250">250</a>                                    <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> pAEAD) {
 <a class="jxr_linenumber" name="L251" href="#L251">251</a>             <em class="jxr_comment">/* Obtain Id manager and random */</em>
 <a class="jxr_linenumber" name="L252" href="#L252">252</a>             <strong class="jxr_keyword">final</strong> <a name="GordianIdManager" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/base/GordianIdManager.html#GordianIdManager">GordianIdManager</a> myManager = pFactory.getIdManager();
@@ -292,7 +292,7 @@
 <a class="jxr_linenumber" name="L284" href="#L284">284</a> <em class="jxr_javadoccomment">         *</em>
 <a class="jxr_linenumber" name="L285" href="#L285">285</a> <em class="jxr_javadoccomment">         * @return the symKeyTypes</em>
 <a class="jxr_linenumber" name="L286" href="#L286">286</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L287" href="#L287">287</a>         <a name="GordianSymKeyType" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/GordianSymKeyType.html#GordianSymKeyType">GordianSymKeyType</a>[] getSymKeyTypes() {
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>         <a name="GordianSymKeyType" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/spec/GordianSymKeyType.html#GordianSymKeyType">GordianSymKeyType</a>[] getSymKeyTypes() {
 <a class="jxr_linenumber" name="L288" href="#L288">288</a>             <strong class="jxr_keyword">return</strong> theSymKeyTypes;
 <a class="jxr_linenumber" name="L289" href="#L289">289</a>         }
 <a class="jxr_linenumber" name="L290" href="#L290">290</a> 
@@ -301,7 +301,7 @@
 <a class="jxr_linenumber" name="L293" href="#L293">293</a> <em class="jxr_javadoccomment">         *</em>
 <a class="jxr_linenumber" name="L294" href="#L294">294</a> <em class="jxr_javadoccomment">         * @return the digestType</em>
 <a class="jxr_linenumber" name="L295" href="#L295">295</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L296" href="#L296">296</a>         <a name="GordianDigestType" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/digest/GordianDigestType.html#GordianDigestType">GordianDigestType</a> getDigestType() {
+<a class="jxr_linenumber" name="L296" href="#L296">296</a>         <a name="GordianDigestType" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/digest/spec/GordianDigestType.html#GordianDigestType">GordianDigestType</a> getDigestType() {
 <a class="jxr_linenumber" name="L297" href="#L297">297</a>             <strong class="jxr_keyword">return</strong> theDigestType;
 <a class="jxr_linenumber" name="L298" href="#L298">298</a>         }
 <a class="jxr_linenumber" name="L299" href="#L299">299</a> 
@@ -310,7 +310,7 @@
 <a class="jxr_linenumber" name="L302" href="#L302">302</a> <em class="jxr_javadoccomment">         *</em>
 <a class="jxr_linenumber" name="L303" href="#L303">303</a> <em class="jxr_javadoccomment">         * @return the symKeyType</em>
 <a class="jxr_linenumber" name="L304" href="#L304">304</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L305" href="#L305">305</a>         <a name="GordianSymKeyType" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/GordianSymKeyType.html#GordianSymKeyType">GordianSymKeyType</a> getPoly1305SymKeyType() {
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>         <a name="GordianSymKeyType" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/spec/GordianSymKeyType.html#GordianSymKeyType">GordianSymKeyType</a> getPoly1305SymKeyType() {
 <a class="jxr_linenumber" name="L306" href="#L306">306</a>             <strong class="jxr_keyword">return</strong> thePoly1305SymKeyType;
 <a class="jxr_linenumber" name="L307" href="#L307">307</a>         }
 <a class="jxr_linenumber" name="L308" href="#L308">308</a> 

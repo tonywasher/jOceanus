@@ -16,13 +16,13 @@
  */
 package io.github.tonywasher.joceanus.prometheus.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 
 import java.util.ArrayList;
@@ -191,60 +191,58 @@ public abstract class PrometheusStaticDataItem
 
             /* Store the Enabled flag */
 <span class="nc" id="L193">            myValue = pValues.getValue(PrometheusDataResource.STATICDATA_ENABLED);</span>
-<span class="nc bnc" id="L194" title="All 2 branches missed.">            if (myValue instanceof Boolean b) {</span>
-<span class="nc" id="L195">                setValueEnabled(b);</span>
-<span class="nc bnc" id="L196" title="All 2 branches missed.">            } else if (myValue instanceof String s) {</span>
-<span class="nc" id="L197">                setValueEnabled(myFormatter.parseValue(s, Boolean.class));</span>
-            } else {
-<span class="nc" id="L199">                setValueEnabled(Boolean.TRUE);</span>
+<span class="nc bnc" id="L194" title="All 3 branches missed.">            switch (myValue) {</span>
+<span class="nc" id="L195">                case Boolean b -&gt; setValueEnabled(b);</span>
+<span class="nc" id="L196">                case String s -&gt; setValueEnabled(myFormatter.parseValue(s, Boolean.class));</span>
+<span class="nc" id="L197">                case null, default -&gt; setValueEnabled(Boolean.TRUE);</span>
             }
 
             /* Catch Exceptions */
-<span class="nc" id="L203">        } catch (NumberFormatException</span>
+<span class="nc" id="L201">        } catch (NumberFormatException</span>
                  | OceanusException e) {
             /* Pass on exception */
-<span class="nc" id="L206">            throw new PrometheusDataException(this, ERROR_CREATEITEM, e);</span>
-<span class="nc" id="L207">        }</span>
-<span class="nc" id="L208">    }</span>
+<span class="nc" id="L204">            throw new PrometheusDataException(this, ERROR_CREATEITEM, e);</span>
+<span class="nc" id="L205">        }</span>
+<span class="nc" id="L206">    }</span>
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
-<span class="nc" id="L212">        return FIELD_DEFS;</span>
+<span class="nc" id="L210">        return FIELD_DEFS;</span>
     }
 
     @Override
     public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L217">        return toString();</span>
+<span class="nc" id="L215">        return toString();</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L222">        return getName();</span>
+<span class="nc" id="L220">        return getName();</span>
     }
 
     @Override
     public boolean includeXmlField(final MetisDataFieldId pField) {
         /* Determine whether fields should be included */
-<span class="nc bnc" id="L228" title="All 2 branches missed.">        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(pField)) {</span>
-<span class="nc" id="L229">            return true;</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(pField)) {</span>
+<span class="nc" id="L227">            return true;</span>
         }
-<span class="nc bnc" id="L231" title="All 2 branches missed.">        if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(pField)) {</span>
-<span class="nc bnc" id="L232" title="All 2 branches missed.">            return getDesc() != null;</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">        if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(pField)) {</span>
+<span class="nc bnc" id="L230" title="All 2 branches missed.">            return getDesc() != null;</span>
         }
-<span class="nc bnc" id="L234" title="All 2 branches missed.">        if (PrometheusDataResource.STATICDATA_ENABLED.equals(pField)) {</span>
-<span class="nc bnc" id="L235" title="All 2 branches missed.">            return !getEnabled();</span>
+<span class="nc bnc" id="L232" title="All 2 branches missed.">        if (PrometheusDataResource.STATICDATA_ENABLED.equals(pField)) {</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">            return !getEnabled();</span>
         }
-<span class="nc bnc" id="L237" title="All 2 branches missed.">        if (PrometheusDataResource.STATICDATA_CLASS.equals(pField)) {</span>
-<span class="nc bnc" id="L238" title="All 2 branches missed.">            return !getName().equalsIgnoreCase(getStaticClass().name());</span>
+<span class="nc bnc" id="L235" title="All 2 branches missed.">        if (PrometheusDataResource.STATICDATA_CLASS.equals(pField)) {</span>
+<span class="nc bnc" id="L236" title="All 2 branches missed.">            return !getName().equalsIgnoreCase(getStaticClass().name());</span>
         }
 
         /* Pass call on */
-<span class="nc" id="L242">        return super.includeXmlField(pField);</span>
+<span class="nc" id="L240">        return super.includeXmlField(pField);</span>
     }
 
     @Override
     public final String getName() {
-<span class="nc" id="L247">        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_NAME, String.class);</span>
+<span class="nc" id="L245">        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_NAME, String.class);</span>
     }
 
     /**
@@ -253,7 +251,7 @@ public abstract class PrometheusStaticDataItem
      * @return the encrypted name
      */
     public final byte[] getNameBytes() {
-<span class="nc" id="L256">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="nc" id="L254">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
     }
 
     /**
@@ -262,7 +260,7 @@ public abstract class PrometheusStaticDataItem
      * @return the encrypted field
      */
     private PrometheusEncryptedPair getNameField() {
-<span class="nc" id="L265">        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="nc" id="L263">        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
     }
 
     /**
@@ -271,7 +269,7 @@ public abstract class PrometheusStaticDataItem
      * @return the description
      */
     public final String getDesc() {
-<span class="nc" id="L274">        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_DESC, String.class);</span>
+<span class="nc" id="L272">        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_DESC, String.class);</span>
     }
 
     /**
@@ -280,7 +278,7 @@ public abstract class PrometheusStaticDataItem
      * @return the encrypted description
      */
     public final byte[] getDescBytes() {
-<span class="nc" id="L283">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
+<span class="nc" id="L281">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
     }
 
     /**
@@ -289,7 +287,7 @@ public abstract class PrometheusStaticDataItem
      * @return the encrypted name
      */
     private PrometheusEncryptedPair getDescField() {
-<span class="nc" id="L292">        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
+<span class="nc" id="L290">        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
     }
 
     /**
@@ -298,7 +296,7 @@ public abstract class PrometheusStaticDataItem
      * @return the order
      */
     public final Integer getOrder() {
-<span class="nc" id="L301">        return getValues().getValue(PrometheusDataResource.STATICDATA_SORT, Integer.class);</span>
+<span class="nc" id="L299">        return getValues().getValue(PrometheusDataResource.STATICDATA_SORT, Integer.class);</span>
     }
 
     /**
@@ -307,7 +305,7 @@ public abstract class PrometheusStaticDataItem
      * @return the class
      */
     public final PrometheusStaticDataClass getStaticClass() {
-<span class="nc" id="L310">        return getValues().getValue(PrometheusDataResource.STATICDATA_CLASS, PrometheusStaticDataClass.class);</span>
+<span class="nc" id="L308">        return getValues().getValue(PrometheusDataResource.STATICDATA_CLASS, PrometheusStaticDataClass.class);</span>
     }
 
     /**
@@ -316,12 +314,12 @@ public abstract class PrometheusStaticDataItem
      * @return &lt;code&gt;true/false&lt;/code&gt;
      */
     public final boolean getEnabled() {
-<span class="nc" id="L319">        return getValues().getValue(PrometheusDataResource.STATICDATA_ENABLED, Boolean.class);</span>
+<span class="nc" id="L317">        return getValues().getValue(PrometheusDataResource.STATICDATA_ENABLED, Boolean.class);</span>
     }
 
     @Override
     public boolean isDisabled() {
-<span class="nc bnc" id="L324" title="All 2 branches missed.">        return !getEnabled();</span>
+<span class="nc bnc" id="L322" title="All 2 branches missed.">        return !getEnabled();</span>
     }
 
     /**
@@ -330,7 +328,7 @@ public abstract class PrometheusStaticDataItem
      * @return the class
      */
     protected final Class&lt;? extends PrometheusStaticDataClass&gt; getEnumClass() {
-<span class="nc" id="L333">        return theEnumClass;</span>
+<span class="nc" id="L331">        return theEnumClass;</span>
     }
 
     /**
@@ -340,8 +338,8 @@ public abstract class PrometheusStaticDataItem
      * @throws OceanusException on error
      */
     private void setValueName(final String pValue) throws OceanusException {
-<span class="nc" id="L343">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);</span>
-<span class="nc" id="L344">    }</span>
+<span class="nc" id="L341">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);</span>
+<span class="nc" id="L342">    }</span>
 
     /**
      * Set the Name.
@@ -350,8 +348,8 @@ public abstract class PrometheusStaticDataItem
      * @throws OceanusException on error
      */
     private void setValueName(final byte[] pBytes) throws OceanusException {
-<span class="nc" id="L353">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pBytes, String.class);</span>
-<span class="nc" id="L354">    }</span>
+<span class="nc" id="L351">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pBytes, String.class);</span>
+<span class="nc" id="L352">    }</span>
 
     /**
      * Set the Name field.
@@ -359,8 +357,8 @@ public abstract class PrometheusStaticDataItem
      * @param pField the encrypted name
      */
     private void setValueName(final PrometheusEncryptedPair pField) {
-<span class="nc" id="L362">        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pField);</span>
-<span class="nc" id="L363">    }</span>
+<span class="nc" id="L360">        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pField);</span>
+<span class="nc" id="L361">    }</span>
 
     /**
      * Set the Description.
@@ -369,8 +367,8 @@ public abstract class PrometheusStaticDataItem
      * @throws OceanusException on error
      */
     protected final void setValueDesc(final String pValue) throws OceanusException {
-<span class="nc" id="L372">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);</span>
-<span class="nc" id="L373">    }</span>
+<span class="nc" id="L370">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);</span>
+<span class="nc" id="L371">    }</span>
 
     /**
      * Set the Description.
@@ -379,8 +377,8 @@ public abstract class PrometheusStaticDataItem
      * @throws OceanusException on error
      */
     private void setValueDesc(final byte[] pBytes) throws OceanusException {
-<span class="nc" id="L382">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pBytes, String.class);</span>
-<span class="nc" id="L383">    }</span>
+<span class="nc" id="L380">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pBytes, String.class);</span>
+<span class="nc" id="L381">    }</span>
 
     /**
      * Set the Description field.
@@ -388,8 +386,8 @@ public abstract class PrometheusStaticDataItem
      * @param pField the encrypted description
      */
     private void setValueDesc(final PrometheusEncryptedPair pField) {
-<span class="nc" id="L391">        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pField);</span>
-<span class="nc" id="L392">    }</span>
+<span class="nc" id="L389">        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pField);</span>
+<span class="nc" id="L390">    }</span>
 
     /**
      * Set the Enabled flag.
@@ -397,8 +395,8 @@ public abstract class PrometheusStaticDataItem
      * @param isEnabled TRUE/FALSE
      */
     protected final void setValueEnabled(final Boolean isEnabled) {
-<span class="nc" id="L400">        getValues().setUncheckedValue(PrometheusDataResource.STATICDATA_ENABLED, isEnabled);</span>
-<span class="nc" id="L401">    }</span>
+<span class="nc" id="L398">        getValues().setUncheckedValue(PrometheusDataResource.STATICDATA_ENABLED, isEnabled);</span>
+<span class="nc" id="L399">    }</span>
 
     /**
      * Set the Order.
@@ -406,8 +404,8 @@ public abstract class PrometheusStaticDataItem
      * @param pOrder the order
      */
     private void setValueOrder(final Integer pOrder) {
-<span class="nc" id="L409">        getValues().setUncheckedValue(PrometheusDataResource.STATICDATA_SORT, pOrder);</span>
-<span class="nc" id="L410">    }</span>
+<span class="nc" id="L407">        getValues().setUncheckedValue(PrometheusDataResource.STATICDATA_SORT, pOrder);</span>
+<span class="nc" id="L408">    }</span>
 
     /**
      * Set the Class.
@@ -415,28 +413,28 @@ public abstract class PrometheusStaticDataItem
      * @param pClass the class
      */
     private void setValueClass(final PrometheusStaticDataClass pClass) {
-<span class="nc" id="L418">        getValues().setUncheckedValue(PrometheusDataResource.STATICDATA_CLASS, pClass);</span>
-<span class="nc" id="L419">    }</span>
+<span class="nc" id="L416">        getValues().setUncheckedValue(PrometheusDataResource.STATICDATA_CLASS, pClass);</span>
+<span class="nc" id="L417">    }</span>
 
     @Override
     public int compareValues(final PrometheusDataItem pThat) {
         /* Access as StaticDataItem */
-<span class="nc" id="L424">        final PrometheusStaticDataItem myThat = (PrometheusStaticDataItem) pThat;</span>
+<span class="nc" id="L422">        final PrometheusStaticDataItem myThat = (PrometheusStaticDataItem) pThat;</span>
 
         /* Make sure that the object is the same enumeration class */
-<span class="nc bnc" id="L427" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getEnumClass(), myThat.getEnumClass())) {</span>
+<span class="nc bnc" id="L425" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getEnumClass(), myThat.getEnumClass())) {</span>
             /* Order the classes by canonical name */
-<span class="nc" id="L429">            return getEnumClass().getCanonicalName().compareTo(myThat.getEnumClass().getCanonicalName());</span>
+<span class="nc" id="L427">            return getEnumClass().getCanonicalName().compareTo(myThat.getEnumClass().getCanonicalName());</span>
         }
 
         /* Compare on order and name */
-<span class="nc" id="L433">        final int iDiff = getOrder() - myThat.getOrder();</span>
-<span class="nc bnc" id="L434" title="All 2 branches missed.">        return iDiff != 0 ? iDiff : MetisDataDifference.compareObject(getName(), myThat.getName());</span>
+<span class="nc" id="L431">        final int iDiff = getOrder() - myThat.getOrder();</span>
+<span class="nc bnc" id="L432" title="All 2 branches missed.">        return iDiff != 0 ? iDiff : MetisDataDifference.compareObject(getName(), myThat.getName());</span>
     }
 
     @Override
     public PrometheusStaticList&lt;?&gt; getList() {
-<span class="nc" id="L439">        return (PrometheusStaticList&lt;?&gt;) super.getList();</span>
+<span class="nc" id="L437">        return (PrometheusStaticList&lt;?&gt;) super.getList();</span>
     }
 
     /**
@@ -446,28 +444,28 @@ public abstract class PrometheusStaticDataItem
      * @throws OceanusException on error
      */
     private void parseEnumValue(final String pValue) throws OceanusException {
-<span class="nc" id="L449">        final Class&lt;? extends PrometheusStaticDataClass&gt; myClass = getEnumClass();</span>
-<span class="nc" id="L450">        final PrometheusStaticDataClass[] myEnums = myClass.getEnumConstants();</span>
+<span class="nc" id="L447">        final Class&lt;? extends PrometheusStaticDataClass&gt; myClass = getEnumClass();</span>
+<span class="nc" id="L448">        final PrometheusStaticDataClass[] myEnums = myClass.getEnumConstants();</span>
 
         /* Loop through the enum constants */
-<span class="nc bnc" id="L453" title="All 2 branches missed.">        for (PrometheusStaticDataClass myValue : myEnums) {</span>
+<span class="nc bnc" id="L451" title="All 2 branches missed.">        for (PrometheusStaticDataClass myValue : myEnums) {</span>
             /* If this is the desired value */
-<span class="nc bnc" id="L455" title="All 2 branches missed.">            if (myValue.toString().equalsIgnoreCase(pValue)) {</span>
+<span class="nc bnc" id="L453" title="All 2 branches missed.">            if (myValue.toString().equalsIgnoreCase(pValue)) {</span>
                 /* Store the class */
-<span class="nc" id="L457">                setValueClass(myValue);</span>
+<span class="nc" id="L455">                setValueClass(myValue);</span>
 
                 /* Access classId and order */
-<span class="nc" id="L460">                setIndexedId(myValue.getClassId());</span>
-<span class="nc" id="L461">                setValueOrder(myValue.getOrder());</span>
-<span class="nc" id="L462">                break;</span>
+<span class="nc" id="L458">                setIndexedId(myValue.getClassId());</span>
+<span class="nc" id="L459">                setValueOrder(myValue.getOrder());</span>
+<span class="nc" id="L460">                break;</span>
             }
         }
 
         /* Reject if we didn't find the class */
-<span class="nc bnc" id="L467" title="All 2 branches missed.">        if (getStaticClass() == null) {</span>
-<span class="nc" id="L468">            throw new PrometheusDataException(ERROR_BADNAME + &quot; &quot; + myClass.getSimpleName() + &quot;: &quot; + pValue);</span>
+<span class="nc bnc" id="L465" title="All 2 branches missed.">        if (getStaticClass() == null) {</span>
+<span class="nc" id="L466">            throw new PrometheusDataException(ERROR_BADNAME + &quot; &quot; + myClass.getSimpleName() + &quot;: &quot; + pValue);</span>
         }
-<span class="nc" id="L470">    }</span>
+<span class="nc" id="L468">    }</span>
 
     /**
      * Parse enum type.
@@ -476,28 +474,28 @@ public abstract class PrometheusStaticDataItem
      * @throws OceanusException on error
      */
     private void parseEnumValue(final Integer pValue) throws OceanusException {
-<span class="nc" id="L479">        final Class&lt;? extends PrometheusStaticDataClass&gt; myClass = getEnumClass();</span>
-<span class="nc" id="L480">        final PrometheusStaticDataClass[] myEnums = myClass.getEnumConstants();</span>
+<span class="nc" id="L477">        final Class&lt;? extends PrometheusStaticDataClass&gt; myClass = getEnumClass();</span>
+<span class="nc" id="L478">        final PrometheusStaticDataClass[] myEnums = myClass.getEnumConstants();</span>
 
         /* Loop through the enum constants */
-<span class="nc bnc" id="L483" title="All 2 branches missed.">        for (PrometheusStaticDataClass myValue : myEnums) {</span>
+<span class="nc bnc" id="L481" title="All 2 branches missed.">        for (PrometheusStaticDataClass myValue : myEnums) {</span>
             /* If this is the desired value */
-<span class="nc bnc" id="L485" title="All 2 branches missed.">            if (pValue.equals(myValue.getClassId())) {</span>
+<span class="nc bnc" id="L483" title="All 2 branches missed.">            if (pValue.equals(myValue.getClassId())) {</span>
                 /* Store the class */
-<span class="nc" id="L487">                setValueClass(myValue);</span>
+<span class="nc" id="L485">                setValueClass(myValue);</span>
 
                 /* Access classId and order */
-<span class="nc" id="L490">                setIndexedId(myValue.getClassId());</span>
-<span class="nc" id="L491">                setValueOrder(myValue.getOrder());</span>
-<span class="nc" id="L492">                break;</span>
+<span class="nc" id="L488">                setIndexedId(myValue.getClassId());</span>
+<span class="nc" id="L489">                setValueOrder(myValue.getOrder());</span>
+<span class="nc" id="L490">                break;</span>
             }
         }
 
         /* Reject if we didn't find the class */
-<span class="nc bnc" id="L497" title="All 2 branches missed.">        if (getStaticClass() == null) {</span>
-<span class="nc" id="L498">            throw new PrometheusDataException(ERROR_BADNAME + &quot; &quot; + myClass.getSimpleName() + &quot;: &quot; + pValue);</span>
+<span class="nc bnc" id="L495" title="All 2 branches missed.">        if (getStaticClass() == null) {</span>
+<span class="nc" id="L496">            throw new PrometheusDataException(ERROR_BADNAME + &quot; &quot; + myClass.getSimpleName() + &quot;: &quot; + pValue);</span>
         }
-<span class="nc" id="L500">    }</span>
+<span class="nc" id="L498">    }</span>
 
     /**
      * Set a new name.
@@ -506,8 +504,8 @@ public abstract class PrometheusStaticDataItem
      * @throws OceanusException on error
      */
     public void setName(final String pName) throws OceanusException {
-<span class="nc" id="L509">        setValueName(pName);</span>
-<span class="nc" id="L510">    }</span>
+<span class="nc" id="L507">        setValueName(pName);</span>
+<span class="nc" id="L508">    }</span>
 
     /**
      * Set a new description.
@@ -517,8 +515,8 @@ public abstract class PrometheusStaticDataItem
      */
     public void setDescription(final String pDesc) throws OceanusException {
         /* Set the appropriate value */
-<span class="nc" id="L520">        setValueDesc(pDesc);</span>
-<span class="nc" id="L521">    }</span>
+<span class="nc" id="L518">        setValueDesc(pDesc);</span>
+<span class="nc" id="L519">    }</span>
 
     /**
      * Set Enabled indicator.
@@ -527,8 +525,8 @@ public abstract class PrometheusStaticDataItem
      */
     public void setEnabled(final boolean isEnabled) {
         /* Set the appropriate value */
-<span class="nc" id="L530">        setValueEnabled(isEnabled);</span>
-<span class="nc" id="L531">    }</span>
+<span class="nc" id="L528">        setValueEnabled(isEnabled);</span>
+<span class="nc" id="L529">    }</span>
 
     /**
      * Set Order indicator.
@@ -537,27 +535,27 @@ public abstract class PrometheusStaticDataItem
      */
     public void setOrder(final int iOrder) {
         /* Set the appropriate value */
-<span class="nc" id="L540">        setValueOrder(iOrder);</span>
-<span class="nc" id="L541">    }</span>
+<span class="nc" id="L538">        setValueOrder(iOrder);</span>
+<span class="nc" id="L539">    }</span>
 
     @Override
     public boolean applyChanges(final PrometheusDataItem pData) {
         /* Can only apply changes for Static Data */
-<span class="nc bnc" id="L546" title="All 2 branches missed.">        if (!(pData instanceof PrometheusStaticDataItem)) {</span>
-<span class="nc" id="L547">            return false;</span>
+<span class="nc bnc" id="L544" title="All 2 branches missed.">        if (!(pData instanceof PrometheusStaticDataItem)) {</span>
+<span class="nc" id="L545">            return false;</span>
         }
 
         /* Access the data */
-<span class="nc" id="L551">        final PrometheusStaticDataItem myData = (PrometheusStaticDataItem) pData;</span>
+<span class="nc" id="L549">        final PrometheusStaticDataItem myData = (PrometheusStaticDataItem) pData;</span>
 
         /* Store the current detail into history */
-<span class="nc" id="L554">        pushHistory();</span>
+<span class="nc" id="L552">        pushHistory();</span>
 
         /* Apply basic changes */
-<span class="nc" id="L557">        applyBasicChanges(myData);</span>
+<span class="nc" id="L555">        applyBasicChanges(myData);</span>
 
         /* Check for changes */
-<span class="nc" id="L560">        return checkForHistory();</span>
+<span class="nc" id="L558">        return checkForHistory();</span>
     }
 
     /**
@@ -567,32 +565,32 @@ public abstract class PrometheusStaticDataItem
      */
     protected void applyBasicChanges(final PrometheusStaticDataItem pData) {
         /* Update the name if required */
-<span class="nc bnc" id="L570" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getName(), pData.getName())) {</span>
-<span class="nc" id="L571">            setValueName(pData.getNameField());</span>
+<span class="nc bnc" id="L568" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getName(), pData.getName())) {</span>
+<span class="nc" id="L569">            setValueName(pData.getNameField());</span>
         }
 
         /* Update the description if required */
-<span class="nc bnc" id="L575" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDesc(), pData.getDesc())) {</span>
-<span class="nc" id="L576">            setValueDesc(pData.getDescField());</span>
+<span class="nc bnc" id="L573" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDesc(), pData.getDesc())) {</span>
+<span class="nc" id="L574">            setValueDesc(pData.getDescField());</span>
         }
 
         /* Update the enabled indication if required */
-<span class="nc bnc" id="L580" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getEnabled(), pData.getEnabled())) {</span>
-<span class="nc" id="L581">            setEnabled(pData.getEnabled());</span>
+<span class="nc bnc" id="L578" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getEnabled(), pData.getEnabled())) {</span>
+<span class="nc" id="L579">            setEnabled(pData.getEnabled());</span>
         }
 
         /* Update the order indication if required */
-<span class="nc bnc" id="L585" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getOrder(), pData.getOrder())) {</span>
-<span class="nc" id="L586">            setOrder(pData.getOrder());</span>
+<span class="nc bnc" id="L583" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getOrder(), pData.getOrder())) {</span>
+<span class="nc" id="L584">            setOrder(pData.getOrder());</span>
         }
-<span class="nc" id="L588">    }</span>
+<span class="nc" id="L586">    }</span>
 
     @Override
     public void adjustMapForItem() {
-<span class="nc" id="L592">        final PrometheusStaticList&lt;?&gt; myList = getList();</span>
-<span class="nc" id="L593">        final PrometheusStaticDataMap&lt;?&gt; myMap = myList.getDataMap();</span>
-<span class="nc" id="L594">        myMap.adjustForItem(myList.getBaseClass().cast(this));</span>
-<span class="nc" id="L595">    }</span>
+<span class="nc" id="L590">        final PrometheusStaticList&lt;?&gt; myList = getList();</span>
+<span class="nc" id="L591">        final PrometheusStaticDataMap&lt;?&gt; myMap = myList.getDataMap();</span>
+<span class="nc" id="L592">        myMap.adjustForItem(myList.getBaseClass().cast(this));</span>
+<span class="nc" id="L593">    }</span>
 
     /**
      * Represents a list of StaticData objects.
@@ -605,8 +603,8 @@ public abstract class PrometheusStaticDataItem
          * Report fields.
          */
         static {
-<span class="nc" id="L608">            MetisFieldSet.newFieldSet(PrometheusStaticList.class);</span>
-<span class="nc" id="L609">        }</span>
+<span class="nc" id="L606">            MetisFieldSet.newFieldSet(PrometheusStaticList.class);</span>
+<span class="nc" id="L607">        }</span>
 
         /**
          * Construct a generic static data list.
@@ -620,8 +618,8 @@ public abstract class PrometheusStaticDataItem
                                        final PrometheusDataSet pData,
                                        final MetisListKey pItemType,
                                        final PrometheusListStyle pStyle) {
-<span class="nc" id="L623">            super(pBaseClass, pData, pItemType, pStyle);</span>
-<span class="nc" id="L624">        }</span>
+<span class="nc" id="L621">            super(pBaseClass, pData, pItemType, pStyle);</span>
+<span class="nc" id="L622">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -629,8 +627,8 @@ public abstract class PrometheusStaticDataItem
          * @param pSource the source List
          */
         protected PrometheusStaticList(final PrometheusStaticList&lt;T&gt; pSource) {
-<span class="nc" id="L632">            super(pSource);</span>
-<span class="nc" id="L633">        }</span>
+<span class="nc" id="L630">            super(pSource);</span>
+<span class="nc" id="L631">        }</span>
 
         /**
          * Obtain the enumClass.
@@ -642,7 +640,7 @@ public abstract class PrometheusStaticDataItem
         @Override
         @SuppressWarnings(&quot;unchecked&quot;)
         public PrometheusStaticDataMap&lt;T&gt; getDataMap() {
-<span class="nc" id="L645">            return (PrometheusStaticDataMap&lt;T&gt;) super.getDataMap();</span>
+<span class="nc" id="L643">            return (PrometheusStaticDataMap&lt;T&gt;) super.getDataMap();</span>
         }
 
         /**
@@ -653,13 +651,13 @@ public abstract class PrometheusStaticDataItem
          */
         public T findItemByClass(final PrometheusStaticDataClass eClass) {
             /* Look for item by class Id */
-<span class="nc" id="L656">            return findItemById(eClass.getClassId());</span>
+<span class="nc" id="L654">            return findItemById(eClass.getClassId());</span>
         }
 
         @Override
         public T findItemByName(final String pName) {
             /* look up the name in the map */
-<span class="nc" id="L662">            return getDataMap().findItemByName(pName);</span>
+<span class="nc" id="L660">            return getDataMap().findItemByName(pName);</span>
         }
 
         /**
@@ -669,24 +667,24 @@ public abstract class PrometheusStaticDataItem
          */
         public boolean isFull() {
             /* We can only be full with the correct number of items */
-<span class="nc bnc" id="L672" title="All 2 branches missed.">            if (size() &lt; getEnumClass().getEnumConstants().length) {</span>
-<span class="nc" id="L673">                return false;</span>
+<span class="nc bnc" id="L670" title="All 2 branches missed.">            if (size() &lt; getEnumClass().getEnumConstants().length) {</span>
+<span class="nc" id="L671">                return false;</span>
             }
 
             /* Loop through all elements */
-<span class="nc" id="L677">            final Iterator&lt;T&gt; myIterator = iterator();</span>
-<span class="nc bnc" id="L678" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
-<span class="nc" id="L679">                final T myCurr = myIterator.next();</span>
+<span class="nc" id="L675">            final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L676" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L677">                final T myCurr = myIterator.next();</span>
 
                 /* If the item is deleted */
-<span class="nc bnc" id="L682" title="All 2 branches missed.">                if (myCurr.isDeleted()) {</span>
+<span class="nc bnc" id="L680" title="All 2 branches missed.">                if (myCurr.isDeleted()) {</span>
                     /* Not full */
-<span class="nc" id="L684">                    return false;</span>
+<span class="nc" id="L682">                    return false;</span>
                 }
-<span class="nc" id="L686">            }</span>
+<span class="nc" id="L684">            }</span>
 
             /* Must be full */
-<span class="nc" id="L689">            return true;</span>
+<span class="nc" id="L687">            return true;</span>
         }
 
         /**
@@ -696,23 +694,23 @@ public abstract class PrometheusStaticDataItem
          */
         public List&lt;PrometheusStaticDataClass&gt; getMissingClasses() {
             /* Allocate the list */
-<span class="nc" id="L699">            final List&lt;PrometheusStaticDataClass&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L697">            final List&lt;PrometheusStaticDataClass&gt; myList = new ArrayList&lt;&gt;();</span>
 
             /* Loop through all elements */
-<span class="nc bnc" id="L702" title="All 2 branches missed.">            for (PrometheusStaticDataClass myClass : getEnumClass().getEnumConstants()) {</span>
+<span class="nc bnc" id="L700" title="All 2 branches missed.">            for (PrometheusStaticDataClass myClass : getEnumClass().getEnumConstants()) {</span>
                 /* Locate the element */
-<span class="nc" id="L704">                final T myItem = findItemById(myClass.getClassId());</span>
+<span class="nc" id="L702">                final T myItem = findItemById(myClass.getClassId());</span>
 
                 /* If the item is missing or deleted */
-<span class="nc bnc" id="L707" title="All 2 branches missed.">                if ((myItem == null)</span>
-<span class="nc bnc" id="L708" title="All 2 branches missed.">                        || myItem.isDeleted()) {</span>
+<span class="nc bnc" id="L705" title="All 2 branches missed.">                if ((myItem == null)</span>
+<span class="nc bnc" id="L706" title="All 2 branches missed.">                        || myItem.isDeleted()) {</span>
                     /* Add it to the list */
-<span class="nc" id="L710">                    myList.add(myClass);</span>
+<span class="nc" id="L708">                    myList.add(myClass);</span>
                 }
             }
 
             /* Return the list */
-<span class="nc" id="L715">            return myList;</span>
+<span class="nc" id="L713">            return myList;</span>
         }
 
         /**
@@ -724,7 +722,7 @@ public abstract class PrometheusStaticDataItem
          */
         public T addNewItem(final PrometheusStaticDataClass pClass) throws OceanusException {
             /* Create the new item */
-<span class="nc" id="L727">            return newItem(pClass);</span>
+<span class="nc" id="L725">            return newItem(pClass);</span>
         }
 
         /**
@@ -743,26 +741,26 @@ public abstract class PrometheusStaticDataItem
          */
         public void populateDefaults() throws OceanusException {
             /* Loop through all elements */
-<span class="nc bnc" id="L746" title="All 2 branches missed.">            for (PrometheusStaticDataClass myClass : getEnumClass().getEnumConstants()) {</span>
+<span class="nc bnc" id="L744" title="All 2 branches missed.">            for (PrometheusStaticDataClass myClass : getEnumClass().getEnumConstants()) {</span>
                 /* Create new element */
-<span class="nc" id="L748">                final T myItem = newItem(myClass);</span>
+<span class="nc" id="L746">                final T myItem = newItem(myClass);</span>
 
                 /* Validate the item */
-<span class="nc" id="L751">                myItem.validate();</span>
+<span class="nc" id="L749">                myItem.validate();</span>
 
                 /* Handle validation failure */
-<span class="nc bnc" id="L754" title="All 2 branches missed.">                if (myItem.hasErrors()) {</span>
-<span class="nc" id="L755">                    throw new PrometheusDataException(myItem, ERROR_VALIDATION);</span>
+<span class="nc bnc" id="L752" title="All 2 branches missed.">                if (myItem.hasErrors()) {</span>
+<span class="nc" id="L753">                    throw new PrometheusDataException(myItem, ERROR_VALIDATION);</span>
                 }
             }
 
             /* Ensure that the list is sorted */
-<span class="nc" id="L760">            reSort();</span>
-<span class="nc" id="L761">        }</span>
+<span class="nc" id="L758">            reSort();</span>
+<span class="nc" id="L759">        }</span>
 
         @Override
         protected PrometheusDataMapItem allocateDataMap() {
-<span class="nc" id="L765">            return new PrometheusStaticDataMap&lt;&gt;();</span>
+<span class="nc" id="L763">            return new PrometheusStaticDataMap&lt;&gt;();</span>
         }
     }
 
@@ -777,14 +775,14 @@ public abstract class PrometheusStaticDataItem
          * Report fields.
          */
         @SuppressWarnings(&quot;rawtypes&quot;)
-<span class="nc" id="L780">        private static final MetisFieldSet&lt;PrometheusStaticDataMap&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusStaticDataMap.class);</span>
+<span class="nc" id="L778">        private static final MetisFieldSet&lt;PrometheusStaticDataMap&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusStaticDataMap.class);</span>
 
         /*
          * Declare Fields.
          */
         static {
-<span class="nc" id="L786">            FIELD_DEFS.declareLocalField(PrometheusDataResource.STATICDATAMAP_ORDERCOUNTS, PrometheusStaticDataMap::getOrderCountMap);</span>
-<span class="nc" id="L787">        }</span>
+<span class="nc" id="L784">            FIELD_DEFS.declareLocalField(PrometheusDataResource.STATICDATAMAP_ORDERCOUNTS, PrometheusStaticDataMap::getOrderCountMap);</span>
+<span class="nc" id="L785">        }</span>
 
         /**
          * Map of order counts.
@@ -794,20 +792,20 @@ public abstract class PrometheusStaticDataItem
         /**
          * Constructor.
          */
-<span class="nc" id="L797">        public PrometheusStaticDataMap() {</span>
+<span class="nc" id="L795">        public PrometheusStaticDataMap() {</span>
             /* Create the maps */
-<span class="nc" id="L799">            theOrderCountMap = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L800">        }</span>
+<span class="nc" id="L797">            theOrderCountMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L798">        }</span>
 
         @SuppressWarnings(&quot;rawtypes&quot;)
         @Override
         public MetisFieldSet&lt;? extends PrometheusStaticDataMap&gt; getDataFieldSet() {
-<span class="nc" id="L805">            return FIELD_DEFS;</span>
+<span class="nc" id="L803">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L810">            return FIELD_DEFS.getName();</span>
+<span class="nc" id="L808">            return FIELD_DEFS.getName();</span>
         }
 
         /**
@@ -816,33 +814,33 @@ public abstract class PrometheusStaticDataItem
          * @return the map
          */
         private Map&lt;Integer, Integer&gt; getOrderCountMap() {
-<span class="nc" id="L819">            return theOrderCountMap;</span>
+<span class="nc" id="L817">            return theOrderCountMap;</span>
         }
 
         @Override
         public void resetMap() {
-<span class="nc" id="L824">            super.resetMap();</span>
-<span class="nc" id="L825">            theOrderCountMap.clear();</span>
-<span class="nc" id="L826">        }</span>
+<span class="nc" id="L822">            super.resetMap();</span>
+<span class="nc" id="L823">            theOrderCountMap.clear();</span>
+<span class="nc" id="L824">        }</span>
 
         @Override
         @SuppressWarnings(&quot;unchecked&quot;)
         public void adjustForItem(final PrometheusDataItem pItem) {
             /* Access item */
-<span class="nc" id="L832">            final T myItem = (T) pItem;</span>
+<span class="nc" id="L830">            final T myItem = (T) pItem;</span>
 
             /* Adjust order count */
-<span class="nc" id="L835">            final Integer myOrder = myItem.getOrder();</span>
-<span class="nc" id="L836">            final Integer myCount = theOrderCountMap.get(myOrder);</span>
-<span class="nc bnc" id="L837" title="All 2 branches missed.">            if (myCount == null) {</span>
-<span class="nc" id="L838">                theOrderCountMap.put(myOrder, ONE);</span>
+<span class="nc" id="L833">            final Integer myOrder = myItem.getOrder();</span>
+<span class="nc" id="L834">            final Integer myCount = theOrderCountMap.get(myOrder);</span>
+<span class="nc bnc" id="L835" title="All 2 branches missed.">            if (myCount == null) {</span>
+<span class="nc" id="L836">                theOrderCountMap.put(myOrder, ONE);</span>
             } else {
-<span class="nc" id="L840">                theOrderCountMap.put(myOrder, myCount + 1);</span>
+<span class="nc" id="L838">                theOrderCountMap.put(myOrder, myCount + 1);</span>
             }
 
             /* Adjust name count */
-<span class="nc" id="L844">            adjustForItem(myItem, myItem.getName());</span>
-<span class="nc" id="L845">        }</span>
+<span class="nc" id="L842">            adjustForItem(myItem, myItem.getName());</span>
+<span class="nc" id="L843">        }</span>
 
         /**
          * find item by name.
@@ -851,7 +849,7 @@ public abstract class PrometheusStaticDataItem
          * @return the matching item
          */
         public T findItemByName(final String pName) {
-<span class="nc" id="L854">            return findItemByKey(pName);</span>
+<span class="nc" id="L852">            return findItemByKey(pName);</span>
         }
 
         /**
@@ -861,7 +859,7 @@ public abstract class PrometheusStaticDataItem
          * @return true/false
          */
         public boolean validNameCount(final String pName) {
-<span class="nc" id="L864">            return validKeyCount(pName);</span>
+<span class="nc" id="L862">            return validKeyCount(pName);</span>
         }
 
         /**
@@ -871,7 +869,7 @@ public abstract class PrometheusStaticDataItem
          * @return true/false
          */
         public boolean availableName(final String pName) {
-<span class="nc" id="L874">            return availableKey(pName);</span>
+<span class="nc" id="L872">            return availableKey(pName);</span>
         }
 
         /**
@@ -881,8 +879,8 @@ public abstract class PrometheusStaticDataItem
          * @return true/false
          */
         public boolean validOrderCount(final Integer pOrder) {
-<span class="nc" id="L884">            final Integer myResult = theOrderCountMap.get(pOrder);</span>
-<span class="nc" id="L885">            return ONE.equals(myResult);</span>
+<span class="nc" id="L882">            final Integer myResult = theOrderCountMap.get(pOrder);</span>
+<span class="nc" id="L883">            return ONE.equals(myResult);</span>
         }
     }
 }

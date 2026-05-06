@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.mac;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianConsumer;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 
 /**
  * GordianKnot interface for Message Authentication Codes.
@@ -59,7 +60,7 @@ public interface GordianMac
      * @param pParams the parameters
      * @throws GordianException on error
      */
-    void init(GordianMacParameters pParams) throws GordianException;
+    void init(GordianMacParams pParams) throws GordianException;
 
     /**
      * Init with bytes as key.
@@ -95,8 +96,8 @@ public interface GordianMac
      * @throws GordianException on error
      */
     default byte[] finish(final byte[] pBytes) throws GordianException {
-<span class="nc" id="L98">        update(pBytes);</span>
-<span class="nc" id="L99">        return finish();</span>
+<span class="nc" id="L99">        update(pBytes);</span>
+<span class="nc" id="L100">        return finish();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

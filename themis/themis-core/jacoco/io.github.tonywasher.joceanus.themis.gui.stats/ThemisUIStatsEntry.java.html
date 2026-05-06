@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisUIStatsEntry.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.gui.stats</a> &gt; <span class="el_source">ThemisUIStatsEntry.java</span></div><h1>ThemisUIStatsEntry.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.gui.stats;
+
+import io.github.tonywasher.joceanus.themis.stats.ThemisStatsElement;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class ThemisUIStatsEntry {
+    /**
+     * Entry name prefix.
+     */
+    private static final String ENTRY_PREFIX = &quot;TreeItem&quot;;
+
+    /**
+     * The Next entryId.
+     */
+<span class="nc" id="L38">    private static final AtomicInteger NEXT_ENTRY_ID = new AtomicInteger(1);</span>
+
+    /**
+     * The Parent.
+     */
+    private final ThemisUIStatsEntry theParent;
+
+    /**
+     * The id of the entry.
+     */
+    private final int theId;
+
+    /**
+     * The Child List.
+     */
+    private List&lt;ThemisUIStatsEntry&gt; theChildList;
+
+    /**
+     * The unique name of the entry.
+     */
+    private final String theUniqueName;
+
+    /**
+     * The display name of the entry.
+     */
+    private final String theDisplayName;
+
+    /**
+     * The object for the entry.
+     */
+    private final ThemisStatsElement theObject;
+
+    /**
+     * Constructor.
+     *
+     * @param pElement the statsElement
+     */
+    ThemisUIStatsEntry(final ThemisStatsElement pElement) {
+<span class="nc" id="L76">        this(null, pElement);</span>
+<span class="nc" id="L77">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pParent  the parent entry
+     * @param pElement the statsElement
+     */
+    ThemisUIStatsEntry(final ThemisUIStatsEntry pParent,
+<span class="nc" id="L86">                       final ThemisStatsElement pElement) {</span>
+        /* Store parameters */
+<span class="nc" id="L88">        theParent = pParent;</span>
+<span class="nc" id="L89">        theObject = pElement;</span>
+
+        /* Allocate id and unique name */
+<span class="nc" id="L92">        theId = NEXT_ENTRY_ID.getAndIncrement();</span>
+<span class="nc" id="L93">        theUniqueName = ENTRY_PREFIX + theId;</span>
+<span class="nc" id="L94">        theDisplayName = theObject.getName();</span>
+
+        /* If we have a parent */
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (pParent != null) {</span>
+            /* Add the entry to the child list */
+<span class="nc" id="L99">            pParent.addChild(this);</span>
+        }
+<span class="nc" id="L101">    }</span>
+
+    /**
+     * Get parent.
+     *
+     * @return the parent
+     */
+    ThemisUIStatsEntry getParent() {
+<span class="nc" id="L109">        return theParent;</span>
+    }
+
+    /**
+     * Get unique name.
+     *
+     * @return the name
+     */
+    String getUniqueName() {
+<span class="nc" id="L118">        return theUniqueName;</span>
+    }
+
+    /**
+     * Get object.
+     *
+     * @return the object
+     */
+    ThemisStatsElement getObject() {
+<span class="nc" id="L127">        return theObject;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L132">        return theDisplayName;</span>
+    }
+
+    /**
+     * Get child iterator.
+     *
+     * @return the iterator
+     */
+    Iterator&lt;ThemisUIStatsEntry&gt; childIterator() {
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        return theChildList == null</span>
+<span class="nc" id="L142">                ? Collections.emptyIterator()</span>
+<span class="nc" id="L143">                : theChildList.iterator();</span>
+    }
+
+    /**
+     * Add child.
+     *
+     * @param pChild the child to add
+     */
+    private void addChild(final ThemisUIStatsEntry pChild) {
+<span class="nc bnc" id="L152" title="All 2 branches missed.">        if (theChildList == null) {</span>
+<span class="nc" id="L153">            theChildList = new ArrayList&lt;&gt;();</span>
+        }
+<span class="nc" id="L155">        theChildList.add(pChild);</span>
+<span class="nc" id="L156">    }</span>
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L162">            return true;</span>
+        }
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L165">            return false;</span>
+        }
+
+        /* Check class */
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        if (!(pThat instanceof ThemisUIStatsEntry myThat)) {</span>
+<span class="nc" id="L170">            return false;</span>
+        }
+
+        /* Must have same id */
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        return theId == myThat.theId;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L179">        return Objects.hashCode(theId);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

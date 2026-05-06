@@ -17,10 +17,10 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
@@ -67,7 +67,7 @@ public class BouncyStreamKeyCipher
 
     @Override
     public void init(final boolean pEncrypt,
-                     final GordianCipherParameters pParams) throws GordianException {
+                     final GordianCipherParams pParams) throws GordianException {
         /* Process the parameters and access the key */
 <span class="fc" id="L72">        processParameters(pParams);</span>
 <span class="fc" id="L73">        final BouncyKey&lt;GordianStreamKeySpec&gt; myKey = BouncyKey.accessKey(getKey());</span>
@@ -145,20 +145,19 @@ public class BouncyStreamKeyCipher
         }
 
         /* Make sure that the classes are the same */
-<span class="pc bpc" id="L148" title="1 of 2 branches missed.">        if (!(pThat instanceof BouncyStreamKeyCipher)) {</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">        if (!(pThat instanceof BouncyStreamKeyCipher myThat)) {</span>
 <span class="nc" id="L149">            return false;</span>
         }
-<span class="fc" id="L151">        final BouncyStreamKeyCipher myThat = (BouncyStreamKeyCipher) pThat;</span>
 
         /* Check that the fields are equal */
-<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        return isEncrypting == myThat.isEncrypting</span>
-<span class="pc bpc" id="L155" title="1 of 2 branches missed.">                &amp;&amp; super.equals(myThat);</span>
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">        return isEncrypting == myThat.isEncrypting</span>
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">                &amp;&amp; super.equals(myThat);</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L160">        return super.hashCode()</span>
-<span class="nc bnc" id="L161" title="All 2 branches missed.">                + (isEncrypting ? 1 : 0);</span>
+<span class="nc" id="L159">        return super.hashCode()</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">                + (isEncrypting ? 1 : 0);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

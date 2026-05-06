@@ -29,11 +29,11 @@
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.factory.GordianCoreAsyncFactory;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.factory.GordianCoreAsyncFactory;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeyPairs;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeySpec;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.util.GordianGenerator;
@@ -76,7 +76,7 @@
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> GordianException {
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>          AsymmetricStore.parseOptions();
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>          createSecurityFactories();
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>          AsymmetricXAgreeScripts.createSecuritySigners(fcBCFACTORY, fcJCAFACTORY);
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>          AsymmetricAgreeScripts.createSecuritySigners(fcBCFACTORY, fcJCAFACTORY);
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      }
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      <em class="jxr_javadoccomment">/**</em>
@@ -142,8 +142,8 @@
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>             AsymmetricStore.agreementProvider(myKeySpec);
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>             <strong class="jxr_keyword">if</strong> (!myKeySpec.getAgreements().isEmpty()) {
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>                 Stream&lt;DynamicNode&gt; myTests = myKeySpec.getAgreements().stream()
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>                         .map(x -&gt; DynamicContainer.dynamicContainer(x.toString(), AsymmetricXAgreeScripts.xAgreementTests(x)));
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>                 myTests = Stream.of(DynamicContainer.dynamicContainer(<span class="jxr_string">"XAgreements"</span>, myTests));
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>                         .map(x -&gt; DynamicContainer.dynamicContainer(x.toString(), AsymmetricAgreeScripts.xAgreementTests(x)));
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>                 myTests = Stream.of(DynamicContainer.dynamicContainer(<span class="jxr_string">"Agreements"</span>, myTests));
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>                 myKeyStream = Stream.concat(myKeyStream, myTests);
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>             }
 <a class="jxr_linenumber" name="L141" href="#L141">141</a> 
@@ -192,7 +192,7 @@
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>         <em class="jxr_comment">/* Access the keyPairs */</em>
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>         <strong class="jxr_keyword">final</strong> FactoryKeyPairs myPairs = pKeySpec.getKeyPairs();
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>         <strong class="jxr_keyword">final</strong> GordianKeyPairFactory myFactory = pKeySpec.getFactory().getKeyPairFactory();
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>         <strong class="jxr_keyword">final</strong> GordianKeyPairSpec mySpec = pKeySpec.getKeySpec();
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>         <strong class="jxr_keyword">final</strong> GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeySpec.getKeySpec();
 <a class="jxr_linenumber" name="L188" href="#L188">188</a> 
 <a class="jxr_linenumber" name="L189" href="#L189">189</a>         <em class="jxr_comment">/* Check X509Encodings */</em>
 <a class="jxr_linenumber" name="L190" href="#L190">190</a>         <strong class="jxr_keyword">final</strong> X509EncodedKeySpec myPublic = myPairs.getX509Encoding();
@@ -233,7 +233,7 @@
 <a class="jxr_linenumber" name="L225" href="#L225">225</a> 
 <a class="jxr_linenumber" name="L226" href="#L226">226</a>         <em class="jxr_comment">/* Create a keySet */</em>
 <a class="jxr_linenumber" name="L227" href="#L227">227</a>         <strong class="jxr_keyword">final</strong> GordianKeySetFactory myKeySetFactory = myFactory.getFactory().getKeySetFactory();
-<a class="jxr_linenumber" name="L228" href="#L228">228</a>         <strong class="jxr_keyword">final</strong> GordianKeySet myKeySet = myKeySetFactory.generateKeySet(AsymmetricXAgreeScripts.KEYSETSPEC);
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>         <strong class="jxr_keyword">final</strong> GordianKeySet myKeySet = myKeySetFactory.generateKeySet(AsymmetricAgreeScripts.KEYSETSPEC);
 <a class="jxr_linenumber" name="L229" href="#L229">229</a>         <strong class="jxr_keyword">final</strong> byte[] mySecured = myKeySet.securePrivateKey(myPair);
 <a class="jxr_linenumber" name="L230" href="#L230">230</a>         <strong class="jxr_keyword">final</strong> GordianKeyPair myDerived = myKeySet.deriveKeyPair(myPublic, mySecured);
 <a class="jxr_linenumber" name="L231" href="#L231">231</a>         Assertions.assertEquals(myPair, myDerived, <span class="jxr_string">"Incorrect derived pair"</span>);

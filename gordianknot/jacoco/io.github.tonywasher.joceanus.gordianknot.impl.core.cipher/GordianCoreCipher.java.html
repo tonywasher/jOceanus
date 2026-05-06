@@ -19,19 +19,20 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianKeyedCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSparkleKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianElephantKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSparkleKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -66,20 +67,20 @@ public abstract class GordianCoreCipher&lt;T extends GordianKeySpec&gt;
      * @param pCipherSpec the cipherSpec
      */
     protected GordianCoreCipher(final GordianBaseFactory pFactory,
-<span class="fc" id="L69">                                final GordianCipherSpec&lt;T&gt; pCipherSpec) {</span>
-<span class="fc" id="L70">        theCipherSpec = pCipherSpec;</span>
-<span class="fc" id="L71">        theRandom = pFactory.getRandomSource();</span>
-<span class="fc" id="L72">        theParameters = new GordianCoreCipherParameters&lt;&gt;(pFactory, theCipherSpec);</span>
-<span class="fc" id="L73">    }</span>
+<span class="fc" id="L70">                                final GordianCipherSpec&lt;T&gt; pCipherSpec) {</span>
+<span class="fc" id="L71">        theCipherSpec = pCipherSpec;</span>
+<span class="fc" id="L72">        theRandom = pFactory.getRandomSource();</span>
+<span class="fc" id="L73">        theParameters = new GordianCoreCipherParameters&lt;&gt;(pFactory, theCipherSpec);</span>
+<span class="fc" id="L74">    }</span>
 
     @Override
     public T getKeyType() {
-<span class="fc" id="L77">        return theCipherSpec.getKeyType();</span>
+<span class="fc" id="L78">        return theCipherSpec.getKeySpec();</span>
     }
 
     @Override
     public GordianCipherSpec&lt;T&gt; getCipherSpec() {
-<span class="fc" id="L82">        return theCipherSpec;</span>
+<span class="fc" id="L83">        return theCipherSpec;</span>
     }
 
     /**
@@ -88,7 +89,7 @@ public abstract class GordianCoreCipher&lt;T extends GordianKeySpec&gt;
      * @return the generator
      */
     public SecureRandom getRandom() {
-<span class="nc" id="L91">        return theRandom.getRandom();</span>
+<span class="nc" id="L92">        return theRandom.getRandom();</span>
     }
 
     /**
@@ -97,7 +98,7 @@ public abstract class GordianCoreCipher&lt;T extends GordianKeySpec&gt;
      * @return the keyLength
      */
     public GordianLength getKeyLength() {
-<span class="fc" id="L100">        return getKeyType().getKeyLength();</span>
+<span class="fc" id="L101">        return getKeyType().getKeyLength();</span>
     }
 
     /**
@@ -113,38 +114,38 @@ public abstract class GordianCoreCipher&lt;T extends GordianKeySpec&gt;
      * @return the key
      */
     public GordianKey&lt;T&gt; getKey() {
-<span class="fc" id="L116">        return theParameters.getKey();</span>
+<span class="fc" id="L117">        return theParameters.getKey();</span>
     }
 
     @Override
     public byte[] getInitVector() {
-<span class="fc" id="L121">        return theParameters.getInitVector();</span>
+<span class="fc" id="L122">        return theParameters.getInitVector();</span>
     }
 
     @Override
     public byte[] getInitialAEAD() {
-<span class="fc" id="L126">        return theParameters.getInitialAEAD();</span>
+<span class="fc" id="L127">        return theParameters.getInitialAEAD();</span>
     }
 
     @Override
     public byte[] getPBESalt() {
-<span class="fc" id="L131">        return theParameters.getPBESalt();</span>
+<span class="fc" id="L132">        return theParameters.getPBESalt();</span>
     }
 
     @Override
     public GordianPBESpec getPBESpec() {
-<span class="nc" id="L136">        return theParameters.getPBESpec();</span>
+<span class="nc" id="L137">        return theParameters.getPBESpec();</span>
     }
 
     @Override
-    public void initForEncrypt(final GordianCipherParameters pParams) throws GordianException {
-<span class="fc" id="L141">        init(true, pParams);</span>
-<span class="fc" id="L142">    }</span>
+    public void initForEncrypt(final GordianCipherParams pParams) throws GordianException {
+<span class="fc" id="L142">        init(true, pParams);</span>
+<span class="fc" id="L143">    }</span>
 
     @Override
-    public void initForDecrypt(final GordianCipherParameters pParams) throws GordianException {
-<span class="fc" id="L146">        init(false, pParams);</span>
-<span class="fc" id="L147">    }</span>
+    public void initForDecrypt(final GordianCipherParams pParams) throws GordianException {
+<span class="fc" id="L147">        init(false, pParams);</span>
+<span class="fc" id="L148">    }</span>
 
     /**
      * Initialise the cipher for encryption or decryption.
@@ -154,7 +155,7 @@ public abstract class GordianCoreCipher&lt;T extends GordianKeySpec&gt;
      * @throws GordianException on error
      */
     public abstract void init(boolean pEncrypt,
-                              GordianCipherParameters pParams) throws GordianException;
+                              GordianCipherParams pParams) throws GordianException;
 
     /**
      * Init with bytes as key.
@@ -164,14 +165,15 @@ public abstract class GordianCoreCipher&lt;T extends GordianKeySpec&gt;
      */
     public void initKeyBytes(final byte[] pKeyBytes) throws GordianException {
         /* Check that the key length is correct */
-<span class="pc bpc" id="L167" title="1 of 2 branches missed.">        if (getKeyLength().getByteLength() != pKeyBytes.length) {</span>
-<span class="nc" id="L168">            throw new GordianLogicException(&quot;incorrect keyLength&quot;);</span>
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">        if (getKeyLength().getByteLength() != pKeyBytes.length) {</span>
+<span class="nc" id="L169">            throw new GordianLogicException(&quot;incorrect keyLength&quot;);</span>
         }
 
         /* Create the key and initialise */
-<span class="fc" id="L172">        final GordianKey&lt;T&gt; myKey = theParameters.buildKeyFromBytes(pKeyBytes);</span>
-<span class="fc" id="L173">        initForEncrypt(GordianCipherParameters.key(myKey));</span>
-<span class="fc" id="L174">    }</span>
+<span class="fc" id="L173">        final GordianKey&lt;T&gt; myKey = theParameters.buildKeyFromBytes(pKeyBytes);</span>
+<span class="fc" id="L174">        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();</span>
+<span class="fc" id="L175">        initForEncrypt(myBuilder.key(myKey));</span>
+<span class="fc" id="L176">    }</span>
 
     /**
      * Process cipherParameters.
@@ -179,11 +181,11 @@ public abstract class GordianCoreCipher&lt;T extends GordianKeySpec&gt;
      * @param pParams the cipher parameters
      * @throws GordianException on error
      */
-    protected void processParameters(final GordianCipherParameters pParams) throws GordianException {
+    protected void processParameters(final GordianCipherParams pParams) throws GordianException {
         /* Process the parameters */
-<span class="fc" id="L184">        theParameters.processParameters(pParams);</span>
-<span class="fc" id="L185">        checkValidKey(getKey());</span>
-<span class="fc" id="L186">    }</span>
+<span class="fc" id="L186">        theParameters.processParameters(pParams);</span>
+<span class="fc" id="L187">        checkValidKey(getKey());</span>
+<span class="fc" id="L188">    }</span>
 
     /**
      * Obtain AEAD MacSize.
@@ -192,53 +194,35 @@ public abstract class GordianCoreCipher&lt;T extends GordianKeySpec&gt;
      */
     protected int getAEADMacSize() {
         /* SymCipher depends on BlockSize */
-<span class="fc bfc" id="L195" title="All 2 branches covered.">        if (theCipherSpec instanceof GordianSymCipherSpec mySymSpec) {</span>
-<span class="fc" id="L196">            final GordianLength myBlkLen = mySymSpec.getBlockLength();</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">        if (theCipherSpec instanceof GordianCoreSymCipherSpec mySymSpec) {</span>
+<span class="fc" id="L198">            final GordianLength myBlkLen = mySymSpec.getBlockLength();</span>
 
             /* Switch on cipher Mode */
-<span class="fc bfc" id="L199" title="All 3 branches covered.">            switch (mySymSpec.getCipherMode()) {</span>
-                case CCM:
-                case EAX:
-<span class="fc" id="L202">                    return myBlkLen.getLength() / 2;</span>
-                case KCCM:
-                case KGCM:
-                case GCM:
-                case OCB:
-<span class="fc" id="L207">                    return myBlkLen.getLength();</span>
-                default:
-<span class="fc" id="L209">                    return 0;</span>
-            }
+<span class="fc bfc" id="L201" title="All 3 branches covered.">            return switch (mySymSpec.getCipherMode()) {</span>
+<span class="fc" id="L202">                case CCM, EAX -&gt; myBlkLen.getLength() / 2;</span>
+<span class="fc" id="L203">                case KCCM, KGCM, GCM, OCB -&gt; myBlkLen.getLength();</span>
+<span class="fc" id="L204">                default -&gt; 0;</span>
+            };
 
             /* Stream Cipher uses Poly1305 */
-<span class="pc bpc" id="L213" title="1 of 2 branches missed.">        } else if (theCipherSpec instanceof GordianStreamCipherSpec myCipherSpec) {</span>
-<span class="fc" id="L214">            final GordianStreamKeySpec mySpec = myCipherSpec.getKeyType();</span>
-<span class="fc bfc" id="L215" title="All 3 branches covered.">            switch (mySpec.getStreamKeyType()) {</span>
-                case SPARKLE:
-<span class="fc bfc" id="L217" title="All 3 branches covered.">                    switch ((GordianSparkleKey) mySpec.getSubKeyType()) {</span>
-                        case SPARKLE256_256:
-<span class="fc" id="L219">                            return GordianLength.LEN_256.getLength();</span>
-                        case SPARKLE192_192:
-<span class="fc" id="L221">                            return GordianLength.LEN_192.getLength();</span>
-                        default:
-<span class="fc" id="L223">                            return GordianLength.LEN_128.getLength();</span>
-                    }
-                case ELEPHANT:
-<span class="fc bfc" id="L226" title="All 2 branches covered.">                    switch ((GordianElephantKey) mySpec.getSubKeyType()) {</span>
-                        case ELEPHANT160:
-                        case ELEPHANT176:
-<span class="fc" id="L229">                            return GordianLength.LEN_64.getLength();</span>
-                        case ELEPHANT200:
-                        default:
-<span class="fc" id="L232">                            return GordianLength.LEN_128.getLength();</span>
-                    }
-                default:
-                    break;
-            }
-<span class="fc" id="L237">            return GordianLength.LEN_128.getLength();</span>
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">        } else if (theCipherSpec instanceof GordianStreamCipherSpec myCipherSpec) {</span>
+<span class="fc" id="L209">            final GordianStreamKeySpec mySpec = myCipherSpec.getKeySpec();</span>
+<span class="fc bfc" id="L210" title="All 3 branches covered.">            return switch (mySpec.getStreamKeyType()) {</span>
+<span class="fc bfc" id="L211" title="All 3 branches covered.">                case SPARKLE -&gt; switch ((GordianSparkleKey) mySpec.getSubKeyType()) {</span>
+<span class="fc" id="L212">                    case SPARKLE256_256 -&gt; GordianLength.LEN_256.getLength();</span>
+<span class="fc" id="L213">                    case SPARKLE192_192 -&gt; GordianLength.LEN_192.getLength();</span>
+<span class="fc" id="L214">                    default -&gt; GordianLength.LEN_128.getLength();</span>
+                };
+<span class="fc bfc" id="L216" title="All 2 branches covered.">                case ELEPHANT -&gt; switch ((GordianElephantKey) mySpec.getSubKeyType()) {</span>
+<span class="fc" id="L217">                    case ELEPHANT160, ELEPHANT176 -&gt; GordianLength.LEN_64.getLength();</span>
+<span class="fc" id="L218">                    default -&gt; GordianLength.LEN_128.getLength();</span>
+                };
+<span class="fc" id="L220">                default -&gt; GordianLength.LEN_128.getLength();</span>
+            };
         }
 
         /* No Mac */
-<span class="nc" id="L241">        return 0;</span>
+<span class="nc" id="L225">        return 0;</span>
     }
 
     @Override
@@ -248,16 +232,16 @@ public abstract class GordianCoreCipher&lt;T extends GordianKeySpec&gt;
                       final byte[] pOutput,
                       final int pOutOffset) throws GordianException {
         /* Make sure that there is no overlap between buffers */
-<span class="fc" id="L251">        byte[] myInput = pBytes;</span>
-<span class="fc" id="L252">        int myOffset = pOffset;</span>
-<span class="fc bfc" id="L253" title="All 2 branches covered.">        if (check4UpdateOverLap(pBytes, pOffset, pLength, pOutput, pOutOffset)) {</span>
-<span class="fc" id="L254">            myInput = new byte[pLength];</span>
-<span class="fc" id="L255">            myOffset = 0;</span>
-<span class="fc" id="L256">            System.arraycopy(pBytes, pOffset, myInput, myOffset, pLength);</span>
+<span class="fc" id="L235">        byte[] myInput = pBytes;</span>
+<span class="fc" id="L236">        int myOffset = pOffset;</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">        if (check4UpdateOverLap(pBytes, pOffset, pLength, pOutput, pOutOffset)) {</span>
+<span class="fc" id="L238">            myInput = new byte[pLength];</span>
+<span class="fc" id="L239">            myOffset = 0;</span>
+<span class="fc" id="L240">            System.arraycopy(pBytes, pOffset, myInput, myOffset, pLength);</span>
         }
 
         /* process the bytes */
-<span class="fc" id="L260">        return doUpdate(myInput, myOffset, pLength, pOutput, pOutOffset);</span>
+<span class="fc" id="L244">        return doUpdate(myInput, myOffset, pLength, pOutput, pOutOffset);</span>
     }
 
     /**
@@ -294,36 +278,36 @@ public abstract class GordianCoreCipher&lt;T extends GordianKeySpec&gt;
                                        final byte[] pOutput,
                                        final int pOutOffset) throws GordianException {
         /* Check that the buffers are sufficient */
-<span class="pc bpc" id="L297" title="1 of 2 branches missed.">        final int myInBufLen = pBytes == null ? 0 : pBytes.length;</span>
-<span class="pc bpc" id="L298" title="1 of 2 branches missed.">        if (myInBufLen &lt; (pLength + pOffset)) {</span>
-<span class="nc" id="L299">            throw new GordianLogicException(&quot;Input buffer too short.&quot;);</span>
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">        final int myInBufLen = pBytes == null ? 0 : pBytes.length;</span>
+<span class="pc bpc" id="L282" title="1 of 2 branches missed.">        if (myInBufLen &lt; (pLength + pOffset)) {</span>
+<span class="nc" id="L283">            throw new GordianLogicException(&quot;Input buffer too short.&quot;);</span>
         }
-<span class="pc bpc" id="L301" title="1 of 2 branches missed.">        final int myOutBufLen = pOutput == null ? 0 : pOutput.length;</span>
-<span class="pc bpc" id="L302" title="1 of 2 branches missed.">        if (myOutBufLen &lt; (getOutputLength(pLength) + pOutOffset)) {</span>
-<span class="nc" id="L303">            throw new GordianLogicException(&quot;Output buffer too short.&quot;);</span>
+<span class="pc bpc" id="L285" title="1 of 2 branches missed.">        final int myOutBufLen = pOutput == null ? 0 : pOutput.length;</span>
+<span class="pc bpc" id="L286" title="1 of 2 branches missed.">        if (myOutBufLen &lt; (getOutputLength(pLength) + pOutOffset)) {</span>
+<span class="nc" id="L287">            throw new GordianLogicException(&quot;Output buffer too short.&quot;);</span>
         }
 
         /* Only relevant when the two buffers are the same */
-<span class="fc bfc" id="L307" title="All 2 branches covered.">        if (pBytes != pOutput) {</span>
-<span class="fc" id="L308">            return false;</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">        if (pBytes != pOutput) {</span>
+<span class="fc" id="L292">            return false;</span>
         }
 
         /* Check for overlap */
-<span class="fc bfc" id="L312" title="All 2 branches covered.">        return pOutOffset &lt; pOffset + pLength</span>
-<span class="pc bpc" id="L313" title="1 of 2 branches missed.">                &amp;&amp; pOffset &lt; pOutOffset + getOutputLength(pLength);</span>
+<span class="fc bfc" id="L296" title="All 2 branches covered.">        return pOutOffset &lt; pOffset + pLength</span>
+<span class="pc bpc" id="L297" title="1 of 2 branches missed.">                &amp;&amp; pOffset &lt; pOutOffset + getOutputLength(pLength);</span>
     }
 
     @Override
     public int finish(final byte[] pOutput,
                       final int pOutOffset) throws GordianException {
         /* Check that the buffers are sufficient */
-<span class="pc bpc" id="L320" title="1 of 2 branches missed.">        final int myOutBufLen = pOutput == null ? 0 : pOutput.length;</span>
-<span class="pc bpc" id="L321" title="1 of 2 branches missed.">        if (myOutBufLen &lt; (getOutputLength(0) + pOutOffset)) {</span>
-<span class="nc" id="L322">            throw new GordianLogicException(&quot;Output buffer too short.&quot;);</span>
+<span class="pc bpc" id="L304" title="1 of 2 branches missed.">        final int myOutBufLen = pOutput == null ? 0 : pOutput.length;</span>
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">        if (myOutBufLen &lt; (getOutputLength(0) + pOutOffset)) {</span>
+<span class="nc" id="L306">            throw new GordianLogicException(&quot;Output buffer too short.&quot;);</span>
         }
 
         /* finish the cipher */
-<span class="fc" id="L326">        return doFinish(pOutput, pOutOffset);</span>
+<span class="fc" id="L310">        return doFinish(pOutput, pOutOffset);</span>
     }
 
     /**
@@ -344,37 +328,36 @@ public abstract class GordianCoreCipher&lt;T extends GordianKeySpec&gt;
      * @throws GordianException on error
      */
     void checkValidKey(final GordianKey&lt;T&gt; pKey) throws GordianException {
-<span class="pc bpc" id="L347" title="1 of 2 branches missed.">        if (!getKeyType().equals(pKey.getKeyType())) {</span>
-<span class="nc" id="L348">            throw new GordianLogicException(&quot;MisMatch on keyType&quot;);</span>
+<span class="pc bpc" id="L331" title="1 of 2 branches missed.">        if (!getKeyType().equals(pKey.getKeyType())) {</span>
+<span class="nc" id="L332">            throw new GordianLogicException(&quot;MisMatch on keyType&quot;);</span>
         }
-<span class="fc" id="L350">    }</span>
+<span class="fc" id="L334">    }</span>
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle trivial cases */
-<span class="pc bpc" id="L355" title="1 of 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L356">            return true;</span>
+<span class="pc bpc" id="L339" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L340">            return true;</span>
         }
-<span class="pc bpc" id="L358" title="1 of 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L359">            return false;</span>
+<span class="pc bpc" id="L342" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L343">            return false;</span>
         }
 
         /* Make sure that the classes are the same */
-<span class="pc bpc" id="L363" title="1 of 2 branches missed.">        if (!(pThat instanceof GordianCoreCipher)) {</span>
-<span class="nc" id="L364">            return false;</span>
+<span class="pc bpc" id="L347" title="1 of 2 branches missed.">        if (!(pThat instanceof GordianCoreCipher&lt;?&gt; myThat)) {</span>
+<span class="nc" id="L348">            return false;</span>
         }
-<span class="fc" id="L366">        final GordianCoreCipher&lt;?&gt; myThat = (GordianCoreCipher&lt;?&gt;) pThat;</span>
 
         /* Check that the fields are equal */
-<span class="pc bpc" id="L369" title="1 of 2 branches missed.">        return Objects.equals(theCipherSpec, myThat.getCipherSpec())</span>
-<span class="pc bpc" id="L370" title="1 of 2 branches missed.">                &amp;&amp; Objects.equals(getKey(), myThat.getKey())</span>
-<span class="pc bpc" id="L371" title="1 of 2 branches missed.">                &amp;&amp; Arrays.equals(getInitVector(), myThat.getInitVector());</span>
+<span class="pc bpc" id="L352" title="1 of 2 branches missed.">        return Objects.equals(theCipherSpec, myThat.getCipherSpec())</span>
+<span class="pc bpc" id="L353" title="1 of 2 branches missed.">                &amp;&amp; Objects.equals(getKey(), myThat.getKey())</span>
+<span class="pc bpc" id="L354" title="1 of 2 branches missed.">                &amp;&amp; Arrays.equals(getInitVector(), myThat.getInitVector());</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L376">        return Objects.hash(getKey(), getCipherSpec())</span>
-<span class="nc" id="L377">                + Arrays.hashCode(getInitVector());</span>
+<span class="nc" id="L359">        return Objects.hash(getKey(), getCipherSpec())</span>
+<span class="nc" id="L360">                + Arrays.hashCode(getInitVector());</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

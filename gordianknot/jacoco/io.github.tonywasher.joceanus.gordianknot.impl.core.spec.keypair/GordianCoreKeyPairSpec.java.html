@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreKeyPairSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair</a> &gt; <span class="el_source">GordianCoreKeyPairSpec.java</span></div><h1>GordianCoreKeyPairSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Asymmetric KeyPair Specification.
+ */
+public class GordianCoreKeyPairSpec
+        implements GordianKeyPairSpec {
+    /**
+     * The keyPairType.
+     */
+    private final GordianCoreKeyPairType theKeyPairType;
+
+    /**
+     * The subSpec.
+     */
+    private final Object theSubSpec;
+
+    /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pKeyType the keyType
+     * @param pSubSpec the subSpec
+     */
+    GordianCoreKeyPairSpec(final GordianKeyPairType pKeyType,
+<span class="fc" id="L61">                           final Object pSubSpec) {</span>
+<span class="fc" id="L62">        theKeyPairType = GordianCoreKeyPairType.mapCoreType(pKeyType);</span>
+<span class="fc" id="L63">        theSubSpec = wrapSubSpec(pSubSpec);</span>
+<span class="fc" id="L64">        isValid = checkValidity();</span>
+<span class="fc" id="L65">    }</span>
+
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+<span class="fc" id="L69">        return theKeyPairType.getType();</span>
+    }
+
+    /**
+     * Obtain core keyPairType.
+     *
+     * @return the core type
+     */
+    public GordianCoreKeyPairType getCoreKeyPairType() {
+<span class="fc" id="L78">        return theKeyPairType;</span>
+    }
+
+    @Override
+    public Object getSubSpec() {
+<span class="fc" id="L83">        return unwrapSubSpec();</span>
+    }
+
+    /**
+     * Obtain the core subSpec.
+     *
+     * @return the core subSpec
+     */
+    public Object getCoreSubSpec() {
+<span class="fc" id="L92">        return theSubSpec;</span>
+    }
+
+    @Override
+    public boolean isValid() {
+<span class="fc" id="L97">        return isValid;</span>
+    }
+
+    /**
+     * Obtain the subSpec as a particular class.
+     *
+     * @param &lt;T&gt;    the required type
+     * @param pClazz the required class
+     * @return the properly cast value.
+     */
+    private &lt;T&gt; T castValue(final Class&lt;T&gt; pClazz) {
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if (pClazz.isInstance(theSubSpec)) {</span>
+<span class="fc" id="L109">            return pClazz.cast(theSubSpec);</span>
+        }
+<span class="nc" id="L111">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the RSAspec.
+     *
+     * @return the spec.
+     */
+    public GordianCoreRSASpec getRSASpec() {
+<span class="fc" id="L120">        return castValue(GordianCoreRSASpec.class);</span>
+    }
+
+    /**
+     * Obtain the DSAspec.
+     *
+     * @return the spec.
+     */
+    public GordianCoreDSASpec getDSASpec() {
+<span class="fc" id="L129">        return castValue(GordianCoreDSASpec.class);</span>
+    }
+
+    /**
+     * Obtain the DH Group.
+     *
+     * @return the dhGroup.
+     */
+    public GordianCoreDHSpec getDHSpec() {
+<span class="fc" id="L138">        return castValue(GordianCoreDHSpec.class);</span>
+    }
+
+    /**
+     * Obtain the elliptic curve.
+     *
+     * @return the curve.
+     */
+    public GordianCoreElliptic getElliptic() {
+<span class="fc" id="L147">        return castValue(GordianCoreElliptic.class);</span>
+    }
+
+    /**
+     * Obtain the ECSpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreECSpec getECSpec() {
+<span class="fc" id="L156">        return castValue(GordianCoreECSpec.class);</span>
+    }
+
+    /**
+     * Obtain the SM2Spec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreSM2Spec getSM2Spec() {
+<span class="fc" id="L165">        return castValue(GordianCoreSM2Spec.class);</span>
+    }
+
+    /**
+     * Obtain the GOSTSpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreGOSTSpec getGOSTSpec() {
+<span class="fc" id="L174">        return castValue(GordianCoreGOSTSpec.class);</span>
+    }
+
+    /**
+     * Obtain the DSTUSpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreDSTUSpec getDSTUSpec() {
+<span class="fc" id="L183">        return castValue(GordianCoreDSTUSpec.class);</span>
+    }
+
+    /**
+     * Obtain the edwardsSpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreEdwardsSpec getEdwardsSpec() {
+<span class="fc" id="L192">        return castValue(GordianCoreEdwardsSpec.class);</span>
+    }
+
+    /**
+     * Obtain the lms keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreLMSSpec getLMSSpec() {
+<span class="fc" id="L201">        return castValue(GordianCoreLMSSpec.class);</span>
+    }
+
+    /**
+     * Obtain the XMSS keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreXMSSSpec getXMSSSpec() {
+<span class="fc" id="L210">        return castValue(GordianCoreXMSSSpec.class);</span>
+    }
+
+    /**
+     * Obtain the SLHDSA keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreSLHDSASpec getSLHDSASpec() {
+<span class="fc" id="L219">        return castValue(GordianCoreSLHDSASpec.class);</span>
+    }
+
+    /**
+     * Obtain the CMCE keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreCMCESpec getCMCESpec() {
+<span class="fc" id="L228">        return castValue(GordianCoreCMCESpec.class);</span>
+    }
+
+    /**
+     * Obtain the FRODO keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreFRODOSpec getFRODOSpec() {
+<span class="fc" id="L237">        return castValue(GordianCoreFRODOSpec.class);</span>
+    }
+
+    /**
+     * Obtain the Saber keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreSABERSpec getSABERSpec() {
+<span class="fc" id="L246">        return castValue(GordianCoreSABERSpec.class);</span>
+    }
+
+    /**
+     * Obtain the MLKEM keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreMLKEMSpec getMLKEMSpec() {
+<span class="fc" id="L255">        return castValue(GordianCoreMLKEMSpec.class);</span>
+    }
+
+    /**
+     * Obtain the MLDSA keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreMLDSASpec getMLDSASpec() {
+<span class="fc" id="L264">        return castValue(GordianCoreMLDSASpec.class);</span>
+    }
+
+    /**
+     * Obtain the HQC keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreHQCSpec getHQCSpec() {
+<span class="fc" id="L273">        return castValue(GordianCoreHQCSpec.class);</span>
+    }
+
+    /**
+     * Obtain the Bike keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreBIKESpec getBIKESpec() {
+<span class="fc" id="L282">        return castValue(GordianCoreBIKESpec.class);</span>
+    }
+
+    /**
+     * Obtain the NTRU keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreNTRUSpec getNTRUSpec() {
+<span class="fc" id="L291">        return castValue(GordianCoreNTRUSpec.class);</span>
+    }
+
+    /**
+     * Obtain the NTRUPlus keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreNTRUPlusSpec getNTRUPlusSpec() {
+<span class="fc" id="L300">        return castValue(GordianCoreNTRUPlusSpec.class);</span>
+    }
+
+    /**
+     * Obtain the NTRUPRIME keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreNTRUPrimeSpec getNTRUPrimeSpec() {
+<span class="fc" id="L309">        return castValue(GordianCoreNTRUPrimeSpec.class);</span>
+    }
+
+    /**
+     * Obtain the Falcon keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreFalconSpec getFalconSpec() {
+<span class="fc" id="L318">        return castValue(GordianCoreFalconSpec.class);</span>
+    }
+
+    /**
+     * Obtain the Mayo keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreMayoSpec getMayoSpec() {
+<span class="fc" id="L327">        return castValue(GordianCoreMayoSpec.class);</span>
+    }
+
+    /**
+     * Obtain the Snova keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreSnovaSpec getSnovaSpec() {
+<span class="fc" id="L336">        return castValue(GordianCoreSnovaSpec.class);</span>
+    }
+
+    /**
+     * Obtain the Picnic keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCorePicnicSpec getPicnicSpec() {
+<span class="fc" id="L345">        return castValue(GordianCorePicnicSpec.class);</span>
+    }
+
+    /**
+     * Obtain the composite keySpec iterator.
+     *
+     * @return the keySpec iterator.
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public Iterator&lt;GordianKeyPairSpec&gt; keySpecIterator() {
+<span class="pc bpc" id="L355" title="1 of 2 branches missed.">        if (theSubSpec instanceof List) {</span>
+<span class="fc" id="L356">            return ((List&lt;GordianKeyPairSpec&gt;) theSubSpec).iterator();</span>
+        }
+<span class="nc" id="L358">        throw new IllegalArgumentException();</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L364" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* If the keySpec is valid */
+<span class="pc bpc" id="L366" title="1 of 2 branches missed.">            if (isValid) {</span>
+                /* Derive the name */
+<span class="fc" id="L368">                deriveName();</span>
+            } else {
+                /* Report invalid spec */
+<span class="nc" id="L371">                theName = &quot;InvalidKeyPairSpec: &quot; + theKeyPairType + &quot;:&quot; + theSubSpec;</span>
+            }
+        }
+
+        /* return the name */
+<span class="fc" id="L376">        return theName;</span>
+    }
+
+    /**
+     * Derive name.
+     */
+    private void deriveName() {
+        /* Load the name */
+<span class="fc" id="L384">        theName = theKeyPairType.toString();</span>
+<span class="fc bfc" id="L385" title="All 2 branches covered.">        if (theSubSpec != null) {</span>
+<span class="fc bfc" id="L386" title="All 5 branches covered.">            switch (theKeyPairType.getType()) {</span>
+                case XMSS:
+<span class="fc" id="L388">                    theName = theSubSpec.toString();</span>
+<span class="fc" id="L389">                    break;</span>
+                case EDDSA:
+<span class="fc" id="L391">                    theName = &quot;Ed&quot; + ((GordianCoreEdwardsSpec) theSubSpec).getSuffix();</span>
+<span class="fc" id="L392">                    break;</span>
+                case XDH:
+<span class="fc" id="L394">                    theName = &quot;X&quot; + ((GordianCoreEdwardsSpec) theSubSpec).getSuffix();</span>
+<span class="fc" id="L395">                    break;</span>
+                case COMPOSITE:
+<span class="fc" id="L397">                    final Iterator&lt;GordianKeyPairSpec&gt; myIterator = keySpecIterator();</span>
+<span class="fc" id="L398">                    final StringBuilder myBuilder = new StringBuilder(theName);</span>
+<span class="fc bfc" id="L399" title="All 2 branches covered.">                    while (myIterator.hasNext()) {</span>
+<span class="fc" id="L400">                        myBuilder.append(GordianSpecConstants.SEP).append(myIterator.next().toString());</span>
+                    }
+<span class="fc" id="L402">                    theName = myBuilder.toString();</span>
+<span class="fc" id="L403">                    break;</span>
+                default:
+<span class="fc" id="L405">                    theName += GordianSpecConstants.SEP + theSubSpec;</span>
+                    break;
+            }
+        }
+<span class="fc" id="L409">    }</span>
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="fc bfc" id="L414" title="All 2 branches covered.">        if (this == pThat) {</span>
+<span class="fc" id="L415">            return true;</span>
+        }
+<span class="pc bpc" id="L417" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L418">            return false;</span>
+        }
+
+        /* Check KeyPairType and subKeyType */
+<span class="fc" id="L422">        return pThat instanceof GordianCoreKeyPairSpec myThat</span>
+<span class="pc bpc" id="L423" title="1 of 2 branches missed.">                &amp;&amp; Objects.equals(theKeyPairType, myThat.getCoreKeyPairType())</span>
+<span class="pc bpc" id="L424" title="2 of 4 branches missed.">                &amp;&amp; Objects.equals(theSubSpec, myThat.getCoreSubSpec());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L429">        return Objects.hash(theKeyPairType, theSubSpec);</span>
+    }
+
+    /**
+     * Check spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        /* Handle null keyPairType */
+<span class="pc bpc" id="L439" title="1 of 2 branches missed.">        if (theKeyPairType == null) {</span>
+<span class="nc" id="L440">            return false;</span>
+        }
+
+        /* Switch on keyPairType */
+<span class="pc bpc" id="L444" title="1 of 28 branches missed.">        return switch (theKeyPairType.getType()) {</span>
+<span class="fc" id="L445">            case RSA -&gt; theSubSpec instanceof GordianCoreRSASpec;</span>
+<span class="fc" id="L446">            case DSA -&gt; theSubSpec instanceof GordianCoreDSASpec;</span>
+<span class="fc" id="L447">            case DH, ELGAMAL -&gt; theSubSpec instanceof GordianCoreDHSpec;</span>
+<span class="fc" id="L448">            case EC -&gt; theSubSpec instanceof GordianCoreECSpec;</span>
+<span class="fc" id="L449">            case SM2 -&gt; theSubSpec instanceof GordianCoreSM2Spec;</span>
+<span class="fc" id="L450">            case GOST -&gt; theSubSpec instanceof GordianCoreGOSTSpec;</span>
+<span class="fc" id="L451">            case DSTU -&gt; theSubSpec instanceof GordianCoreDSTUSpec;</span>
+<span class="pc bpc" id="L452" title="2 of 4 branches missed.">            case XMSS -&gt; theSubSpec instanceof GordianCoreXMSSSpec s &amp;&amp; s.isValid();</span>
+<span class="fc" id="L453">            case SLHDSA -&gt; theSubSpec instanceof GordianCoreSLHDSASpec;</span>
+<span class="fc" id="L454">            case CMCE -&gt; theSubSpec instanceof GordianCoreCMCESpec;</span>
+<span class="fc" id="L455">            case FRODO -&gt; theSubSpec instanceof GordianCoreFRODOSpec;</span>
+<span class="fc" id="L456">            case SABER -&gt; theSubSpec instanceof GordianCoreSABERSpec;</span>
+<span class="fc" id="L457">            case MLKEM -&gt; theSubSpec instanceof GordianCoreMLKEMSpec;</span>
+<span class="fc" id="L458">            case MLDSA -&gt; theSubSpec instanceof GordianCoreMLDSASpec;</span>
+<span class="fc" id="L459">            case HQC -&gt; theSubSpec instanceof GordianCoreHQCSpec;</span>
+<span class="fc" id="L460">            case BIKE -&gt; theSubSpec instanceof GordianCoreBIKESpec;</span>
+<span class="fc" id="L461">            case NTRU -&gt; theSubSpec instanceof GordianCoreNTRUSpec;</span>
+<span class="fc" id="L462">            case NTRUPLUS -&gt; theSubSpec instanceof GordianCoreNTRUPlusSpec;</span>
+<span class="pc bpc" id="L463" title="2 of 4 branches missed.">            case NTRUPRIME -&gt; theSubSpec instanceof GordianCoreNTRUPrimeSpec s &amp;&amp; s.isValid();</span>
+<span class="fc" id="L464">            case FALCON -&gt; theSubSpec instanceof GordianCoreFalconSpec;</span>
+<span class="fc" id="L465">            case MAYO -&gt; theSubSpec instanceof GordianCoreMayoSpec;</span>
+<span class="fc" id="L466">            case SNOVA -&gt; theSubSpec instanceof GordianCoreSnovaSpec;</span>
+<span class="fc" id="L467">            case PICNIC -&gt; theSubSpec instanceof GordianCorePicnicSpec;</span>
+<span class="pc bpc" id="L468" title="1 of 2 branches missed.">            case NEWHOPE -&gt; theSubSpec == null;</span>
+<span class="pc bpc" id="L469" title="2 of 4 branches missed.">            case LMS -&gt; theSubSpec instanceof GordianCoreLMSSpec ls &amp;&amp; ls.isValid();</span>
+<span class="fc" id="L470">            case EDDSA, XDH -&gt; theSubSpec instanceof GordianCoreEdwardsSpec;</span>
+<span class="pc bpc" id="L471" title="1 of 4 branches missed.">            case COMPOSITE -&gt; theSubSpec instanceof List &amp;&amp; checkComposite();</span>
+<span class="nc" id="L472">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Check composite spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkComposite() {
+<span class="fc" id="L482">        Boolean stateAware = null;</span>
+<span class="fc" id="L483">        final List&lt;GordianKeyPairType&gt; myExisting = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L484">        final Iterator&lt;GordianKeyPairSpec&gt; myIterator = keySpecIterator();</span>
+<span class="fc bfc" id="L485" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+            /* Check that we have not got a null */
+<span class="fc" id="L487">            final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) myIterator.next();</span>
+<span class="pc bpc" id="L488" title="1 of 2 branches missed.">            if (mySpec == null) {</span>
+<span class="nc" id="L489">                return false;</span>
+            }
+
+            /* Check that we have not got a duplicate or COMPOSITE */
+<span class="fc" id="L493">            final GordianKeyPairType myType = mySpec.getKeyPairType();</span>
+<span class="pc bpc" id="L494" title="2 of 4 branches missed.">            if (myExisting.contains(myType) || myType == GordianKeyPairType.COMPOSITE) {</span>
+<span class="nc" id="L495">                return false;</span>
+            }
+
+            /* Check that stateAwareness is identical */
+<span class="fc bfc" id="L499" title="All 2 branches covered.">            if (stateAware == null) {</span>
+<span class="fc" id="L500">                stateAware = mySpec.isStateAware();</span>
+<span class="pc bpc" id="L501" title="1 of 2 branches missed.">            } else if (mySpec.isStateAware() != stateAware) {</span>
+<span class="nc" id="L502">                return false;</span>
+            }
+
+            /* Add to list */
+<span class="fc" id="L506">            myExisting.add(myType);</span>
+<span class="fc" id="L507">        }</span>
+
+        /* Make sure there are at least two */
+<span class="fc bfc" id="L510" title="All 2 branches covered.">        return myExisting.size() &gt; 1;</span>
+    }
+
+    /**
+     * is the use subType for signatures?
+     *
+     * @return true/false
+     */
+    public boolean isStateAware() {
+<span class="fc bfc" id="L519" title="All 3 branches covered.">        return switch (theKeyPairType.getType()) {</span>
+<span class="fc" id="L520">            case XMSS, LMS -&gt; true;</span>
+<span class="fc" id="L521">            case COMPOSITE -&gt; ((GordianCoreKeyPairSpec) keySpecIterator().next()).isStateAware();</span>
+<span class="fc" id="L522">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Wrap the subSpec.
+     *
+     * @param pSubSpec the raw subSpec
+     * @return the wrapped subSpec
+     */
+    private Object wrapSubSpec(final Object pSubSpec) {
+        /* Handle null keyPairType */
+<span class="pc bpc" id="L534" title="1 of 2 branches missed.">        if (theKeyPairType == null) {</span>
+<span class="nc" id="L535">            return pSubSpec;</span>
+        }
+
+        /* Switch on keyPairType */
+<span class="fc bfc" id="L539" title="All 23 branches covered.">        return switch (theKeyPairType.getType()) {</span>
+<span class="fc" id="L540">            case RSA -&gt; GordianCoreRSASpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L541">            case DSA -&gt; GordianCoreDSASpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L542">            case DH, ELGAMAL -&gt; GordianCoreDHSpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L543">            case EC -&gt; GordianCoreECSpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L544">            case SM2 -&gt; GordianCoreSM2Spec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L545">            case GOST -&gt; GordianCoreGOSTSpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L546">            case DSTU -&gt; GordianCoreDSTUSpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L547">            case SLHDSA -&gt; GordianCoreSLHDSASpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L548">            case CMCE -&gt; GordianCoreCMCESpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L549">            case FRODO -&gt; GordianCoreFRODOSpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L550">            case SABER -&gt; GordianCoreSABERSpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L551">            case MLKEM -&gt; GordianCoreMLKEMSpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L552">            case MLDSA -&gt; GordianCoreMLDSASpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L553">            case HQC -&gt; GordianCoreHQCSpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L554">            case BIKE -&gt; GordianCoreBIKESpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L555">            case NTRU -&gt; GordianCoreNTRUSpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L556">            case NTRUPLUS -&gt; GordianCoreNTRUPlusSpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L557">            case FALCON -&gt; GordianCoreFalconSpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L558">            case MAYO -&gt; GordianCoreMayoSpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L559">            case SNOVA -&gt; GordianCoreSnovaSpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L560">            case PICNIC -&gt; GordianCorePicnicSpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L561">            case EDDSA, XDH -&gt; GordianCoreEdwardsSpec.mapCoreSpec(pSubSpec);</span>
+<span class="fc" id="L562">            default -&gt; pSubSpec;</span>
+        };
+    }
+
+    /**
+     * Check spec validity.
+     *
+     * @return valid true/false
+     */
+    private Object unwrapSubSpec() {
+        /* Switch on keyPairType */
+<span class="pc bpc" id="L573" title="14 of 23 branches missed.">        return switch (theKeyPairType.getType()) {</span>
+<span class="nc" id="L574">            case RSA -&gt; getRSASpec().getSpec();</span>
+<span class="nc" id="L575">            case DSA -&gt; getDSASpec().getSpec();</span>
+<span class="nc" id="L576">            case DH, ELGAMAL -&gt; getDHSpec().getSpec();</span>
+<span class="nc" id="L577">            case EC -&gt; getECSpec().getSpec();</span>
+<span class="nc" id="L578">            case SM2 -&gt; getSM2Spec().getSpec();</span>
+<span class="fc" id="L579">            case GOST -&gt; getGOSTSpec().getSpec();</span>
+<span class="nc" id="L580">            case DSTU -&gt; getDSTUSpec().getSpec();</span>
+<span class="fc" id="L581">            case SLHDSA -&gt; getSLHDSASpec().getSpec();</span>
+<span class="nc" id="L582">            case CMCE -&gt; getCMCESpec().getSpec();</span>
+<span class="nc" id="L583">            case FRODO -&gt; getFRODOSpec().getSpec();</span>
+<span class="nc" id="L584">            case SABER -&gt; getSABERSpec().getSpec();</span>
+<span class="fc" id="L585">            case MLKEM -&gt; getMLKEMSpec().getSpec();</span>
+<span class="fc" id="L586">            case MLDSA -&gt; getMLDSASpec().getSpec();</span>
+<span class="nc" id="L587">            case HQC -&gt; getHQCSpec().getSpec();</span>
+<span class="nc" id="L588">            case BIKE -&gt; getBIKESpec().getSpec();</span>
+<span class="nc" id="L589">            case NTRU -&gt; getNTRUSpec().getSpec();</span>
+<span class="nc" id="L590">            case NTRUPLUS -&gt; getNTRUPlusSpec().getSpec();</span>
+<span class="fc" id="L591">            case FALCON -&gt; getFalconSpec().getSpec();</span>
+<span class="fc" id="L592">            case MAYO -&gt; getMayoSpec().getSpec();</span>
+<span class="fc" id="L593">            case SNOVA -&gt; getSnovaSpec().getSpec();</span>
+<span class="nc" id="L594">            case PICNIC -&gt; getPicnicSpec().getSpec();</span>
+<span class="fc" id="L595">            case EDDSA, XDH -&gt; getEdwardsSpec().getSpec();</span>
+<span class="fc" id="L596">            default -&gt; theSubSpec;</span>
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

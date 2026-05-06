@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Enumeration of DepositCategory Type Classes.
@@ -152,17 +152,10 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * otherwise.
      */
     public boolean isChild() {
-<span class="pc bpc" id="L155" title="1 of 2 branches missed.">        switch (this) {</span>
-            case CHECKING:
-            case SAVINGS:
-            case TAXFREESAVINGS:
-            case PEER2PEER:
-            case BOND:
-            case TAXFREEBOND:
-<span class="fc" id="L162">                return true;</span>
-            default:
-<span class="nc" id="L164">                return false;</span>
-        }
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">        return switch (this) {</span>
+<span class="fc" id="L156">            case CHECKING, SAVINGS, TAXFREESAVINGS, PEER2PEER, BOND, TAXFREEBOND -&gt; true;</span>
+<span class="nc" id="L157">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -172,13 +165,10 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * otherwise.
      */
     public boolean isTaxFree() {
-<span class="fc bfc" id="L175" title="All 2 branches covered.">        switch (this) {</span>
-            case TAXFREESAVINGS:
-            case TAXFREEBOND:
-<span class="fc" id="L178">                return true;</span>
-            default:
-<span class="fc" id="L180">                return false;</span>
-        }
+<span class="fc bfc" id="L168" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc" id="L169">            case TAXFREESAVINGS, TAXFREEBOND -&gt; true;</span>
+<span class="fc" id="L170">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -188,13 +178,10 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * otherwise.
      */
     public boolean hasMaturity() {
-<span class="pc bpc" id="L191" title="1 of 2 branches missed.">        switch (this) {</span>
-            case BOND:
-            case TAXFREEBOND:
-<span class="nc" id="L194">                return true;</span>
-            default:
-<span class="fc" id="L196">                return false;</span>
-        }
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L182">            case BOND, TAXFREEBOND -&gt; true;</span>
+<span class="fc" id="L183">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -204,7 +191,7 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * otherwise.
      */
     public boolean isGross() {
-<span class="pc bpc" id="L207" title="1 of 2 branches missed.">        return this == PEER2PEER;</span>
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">        return this == PEER2PEER;</span>
     }
 
     /**
@@ -214,13 +201,10 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean canCashBack() {
-<span class="pc bpc" id="L217" title="1 of 2 branches missed.">        switch (this) {</span>
-            case CHECKING:
-            case PEER2PEER:
-<span class="fc" id="L220">                return true;</span>
-            default:
-<span class="nc" id="L222">                return false;</span>
-        }
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">        return switch (this) {</span>
+<span class="fc" id="L205">            case CHECKING, PEER2PEER -&gt; true;</span>
+<span class="nc" id="L206">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -230,7 +214,7 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean canLoyaltyBonus() {
-<span class="nc bnc" id="L233" title="All 2 branches missed.">        return this == PEER2PEER;</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">        return this == PEER2PEER;</span>
     }
 
     /**
@@ -240,12 +224,12 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isParentCategory() {
-<span class="pc bpc" id="L243" title="1 of 2 branches missed.">        return this == PARENT;</span>
+<span class="pc bpc" id="L227" title="1 of 2 branches missed.">        return this == PARENT;</span>
     }
 
     @Override
     public boolean isTotals() {
-<span class="fc" id="L248">        return false;</span>
+<span class="fc" id="L232">        return false;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

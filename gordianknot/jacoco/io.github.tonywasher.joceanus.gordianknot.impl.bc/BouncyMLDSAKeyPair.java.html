@@ -18,35 +18,36 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.Signer;
+import org.bouncycastle.crypto.generators.MLDSAKeyPairGenerator;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.MLDSAKeyGenerationParameters;
+import org.bouncycastle.crypto.params.MLDSAParameters;
+import org.bouncycastle.crypto.params.MLDSAPrivateKeyParameters;
+import org.bouncycastle.crypto.params.MLDSAPublicKeyParameters;
 import org.bouncycastle.crypto.params.ParametersWithContext;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
-import org.bouncycastle.pqc.crypto.mldsa.HashMLDSASigner;
-import org.bouncycastle.pqc.crypto.mldsa.MLDSAKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.mldsa.MLDSAKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.mldsa.MLDSAParameters;
-import org.bouncycastle.pqc.crypto.mldsa.MLDSAPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.mldsa.MLDSAPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.mldsa.MLDSASigner;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
-import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
-import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
+import org.bouncycastle.crypto.signers.HashMLDSASigner;
+import org.bouncycastle.crypto.signers.MLDSASigner;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
+import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
 
 import java.io.IOException;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -76,17 +77,17 @@ public final class BouncyMLDSAKeyPair {
          */
         BouncyMLDSAPublicKey(final GordianKeyPairSpec pKeySpec,
                              final MLDSAPublicKeyParameters pPublicKey) {
-<span class="fc" id="L79">            super(pKeySpec, pPublicKey);</span>
-<span class="fc" id="L80">        }</span>
+<span class="fc" id="L80">            super(pKeySpec, pPublicKey);</span>
+<span class="fc" id="L81">        }</span>
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-<span class="fc" id="L85">            final MLDSAPublicKeyParameters myThis = getPublicKey();</span>
-<span class="fc" id="L86">            final MLDSAPublicKeyParameters myThat = (MLDSAPublicKeyParameters) pThat;</span>
+<span class="fc" id="L86">            final MLDSAPublicKeyParameters myThis = getPublicKey();</span>
+<span class="fc" id="L87">            final MLDSAPublicKeyParameters myThat = (MLDSAPublicKeyParameters) pThat;</span>
 
             /* Compare keys */
-<span class="fc" id="L89">            return compareKeys(myThis, myThat);</span>
+<span class="fc" id="L90">            return compareKeys(myThis, myThat);</span>
         }
 
         /**
@@ -98,7 +99,7 @@ public final class BouncyMLDSAKeyPair {
          */
         private static boolean compareKeys(final MLDSAPublicKeyParameters pFirst,
                                            final MLDSAPublicKeyParameters pSecond) {
-<span class="fc" id="L101">            return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());</span>
+<span class="fc" id="L102">            return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());</span>
         }
     }
 
@@ -115,18 +116,18 @@ public final class BouncyMLDSAKeyPair {
          */
         BouncyMLDSAPrivateKey(final GordianKeyPairSpec pKeySpec,
                               final MLDSAPrivateKeyParameters pPrivateKey) {
-<span class="fc" id="L118">            super(pKeySpec, pPrivateKey);</span>
-<span class="fc" id="L119">        }</span>
+<span class="fc" id="L119">            super(pKeySpec, pPrivateKey);</span>
+<span class="fc" id="L120">        }</span>
 
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-<span class="fc" id="L125">            final MLDSAPrivateKeyParameters myThis = getPrivateKey();</span>
-<span class="fc" id="L126">            final MLDSAPrivateKeyParameters myThat = (MLDSAPrivateKeyParameters) pThat;</span>
+<span class="fc" id="L126">            final MLDSAPrivateKeyParameters myThis = getPrivateKey();</span>
+<span class="fc" id="L127">            final MLDSAPrivateKeyParameters myThat = (MLDSAPrivateKeyParameters) pThat;</span>
 
             /* Compare keys */
-<span class="fc" id="L129">            return compareKeys(myThis, myThat);</span>
+<span class="fc" id="L130">            return compareKeys(myThis, myThat);</span>
         }
 
         /**
@@ -138,7 +139,7 @@ public final class BouncyMLDSAKeyPair {
          */
         private static boolean compareKeys(final MLDSAPrivateKeyParameters pFirst,
                                            final MLDSAPrivateKeyParameters pSecond) {
-<span class="fc" id="L141">            return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());</span>
+<span class="fc" id="L142">            return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());</span>
         }
     }
 
@@ -161,24 +162,25 @@ public final class BouncyMLDSAKeyPair {
         BouncyMLDSAKeyPairGenerator(final GordianBaseFactory pFactory,
                                     final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
-<span class="fc" id="L164">            super(pFactory, pKeySpec);</span>
+<span class="fc" id="L165">            super(pFactory, pKeySpec);</span>
 
             /* Determine the parameters */
-<span class="fc" id="L167">            final MLDSAParameters myParms = pKeySpec.getMLDSAKeySpec().getParameters();</span>
+<span class="fc" id="L168">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;</span>
+<span class="fc" id="L169">            final MLDSAParameters myParms = myKeySpec.getMLDSASpec().getParameters();</span>
 
             /* Create and initialise the generator */
-<span class="fc" id="L170">            theGenerator = new MLDSAKeyPairGenerator();</span>
-<span class="fc" id="L171">            final MLDSAKeyGenerationParameters myParams = new MLDSAKeyGenerationParameters(getRandom(), myParms);</span>
-<span class="fc" id="L172">            theGenerator.init(myParams);</span>
-<span class="fc" id="L173">        }</span>
+<span class="fc" id="L172">            theGenerator = new MLDSAKeyPairGenerator();</span>
+<span class="fc" id="L173">            final MLDSAKeyGenerationParameters myParams = new MLDSAKeyGenerationParameters(getRandom(), myParms);</span>
+<span class="fc" id="L174">            theGenerator.init(myParams);</span>
+<span class="fc" id="L175">        }</span>
 
         @Override
         public BouncyKeyPair generateKeyPair() {
             /* Generate and return the keyPair */
-<span class="fc" id="L178">            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();</span>
-<span class="fc" id="L179">            final BouncyMLDSAPublicKey myPublic = new BouncyMLDSAPublicKey(getKeySpec(), (MLDSAPublicKeyParameters) myPair.getPublic());</span>
-<span class="fc" id="L180">            final BouncyMLDSAPrivateKey myPrivate = new BouncyMLDSAPrivateKey(getKeySpec(), (MLDSAPrivateKeyParameters) myPair.getPrivate());</span>
-<span class="fc" id="L181">            return new BouncyKeyPair(myPublic, myPrivate);</span>
+<span class="fc" id="L180">            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L181">            final BouncyMLDSAPublicKey myPublic = new BouncyMLDSAPublicKey(getKeySpec(), (MLDSAPublicKeyParameters) myPair.getPublic());</span>
+<span class="fc" id="L182">            final BouncyMLDSAPrivateKey myPrivate = new BouncyMLDSAPrivateKey(getKeySpec(), (MLDSAPrivateKeyParameters) myPair.getPrivate());</span>
+<span class="fc" id="L183">            return new BouncyKeyPair(myPublic, myPrivate);</span>
         }
 
         @Override
@@ -186,16 +188,16 @@ public final class BouncyMLDSAKeyPair {
             /* Protect against exceptions */
             try {
                 /* Check the keyPair type and keySpecs */
-<span class="fc" id="L189">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+<span class="fc" id="L191">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
 
                 /* build and return the encoding */
-<span class="fc" id="L192">                final BouncyMLDSAPrivateKey myPrivateKey = (BouncyMLDSAPrivateKey) getPrivateKey(pKeyPair);</span>
-<span class="fc" id="L193">                final MLDSAPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();</span>
-<span class="fc" id="L194">                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);</span>
-<span class="fc" id="L195">                return new PKCS8EncodedKeySpec(myInfo.getEncoded());</span>
+<span class="fc" id="L194">                final BouncyMLDSAPrivateKey myPrivateKey = (BouncyMLDSAPrivateKey) getPrivateKey(pKeyPair);</span>
+<span class="fc" id="L195">                final MLDSAPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();</span>
+<span class="fc" id="L196">                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);</span>
+<span class="fc" id="L197">                return new PKCS8EncodedKeySpec(myInfo.getEncoded());</span>
 
-<span class="nc" id="L197">            } catch (IOException e) {</span>
-<span class="nc" id="L198">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+<span class="nc" id="L199">            } catch (IOException e) {</span>
+<span class="nc" id="L200">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
             }
         }
 
@@ -205,23 +207,23 @@ public final class BouncyMLDSAKeyPair {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
-<span class="fc" id="L208">                checkKeySpec(pPrivateKey);</span>
+<span class="fc" id="L210">                checkKeySpec(pPrivateKey);</span>
 
                 /* derive keyPair */
-<span class="fc" id="L211">                final BouncyMLDSAPublicKey myPublic = derivePublicKey(pPublicKey);</span>
-<span class="fc" id="L212">                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());</span>
-<span class="fc" id="L213">                final MLDSAPrivateKeyParameters myParms = (MLDSAPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);</span>
-<span class="fc" id="L214">                final BouncyMLDSAPrivateKey myPrivate = new BouncyMLDSAPrivateKey(getKeySpec(), myParms);</span>
-<span class="fc" id="L215">                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);</span>
+<span class="fc" id="L213">                final BouncyMLDSAPublicKey myPublic = derivePublicKey(pPublicKey);</span>
+<span class="fc" id="L214">                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());</span>
+<span class="fc" id="L215">                final MLDSAPrivateKeyParameters myParms = (MLDSAPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);</span>
+<span class="fc" id="L216">                final BouncyMLDSAPrivateKey myPrivate = new BouncyMLDSAPrivateKey(getKeySpec(), myParms);</span>
+<span class="fc" id="L217">                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);</span>
 
                 /* Check that we have a matching pair */
-<span class="fc" id="L218">                GordianKeyPairValidity.checkValidity(getFactory(), myPair);</span>
+<span class="fc" id="L220">                GordianKeyPairValidity.checkValidity(getFactory(), myPair);</span>
 
                 /* Return the keyPair */
-<span class="fc" id="L221">                return myPair;</span>
+<span class="fc" id="L223">                return myPair;</span>
 
-<span class="nc" id="L223">            } catch (IOException e) {</span>
-<span class="nc" id="L224">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+<span class="nc" id="L225">            } catch (IOException e) {</span>
+<span class="nc" id="L226">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
             }
         }
 
@@ -230,23 +232,23 @@ public final class BouncyMLDSAKeyPair {
             /* Protect against exceptions */
             try {
                 /* Check the keyPair type and keySpecs */
-<span class="fc" id="L233">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+<span class="fc" id="L235">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
 
                 /* build and return the encoding */
-<span class="fc" id="L236">                final BouncyMLDSAPublicKey myPublicKey = (BouncyMLDSAPublicKey) getPublicKey(pKeyPair);</span>
-<span class="fc" id="L237">                final MLDSAPublicKeyParameters myParms = myPublicKey.getPublicKey();</span>
-<span class="fc" id="L238">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);</span>
-<span class="fc" id="L239">                return new X509EncodedKeySpec(myInfo.getEncoded());</span>
+<span class="fc" id="L238">                final BouncyMLDSAPublicKey myPublicKey = (BouncyMLDSAPublicKey) getPublicKey(pKeyPair);</span>
+<span class="fc" id="L239">                final MLDSAPublicKeyParameters myParms = myPublicKey.getPublicKey();</span>
+<span class="fc" id="L240">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);</span>
+<span class="fc" id="L241">                return new X509EncodedKeySpec(myInfo.getEncoded());</span>
 
-<span class="nc" id="L241">            } catch (IOException e) {</span>
-<span class="nc" id="L242">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+<span class="nc" id="L243">            } catch (IOException e) {</span>
+<span class="nc" id="L244">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
             }
         }
 
         @Override
         public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-<span class="fc" id="L248">            final BouncyMLDSAPublicKey myPublic = derivePublicKey(pEncodedKey);</span>
-<span class="fc" id="L249">            return new BouncyKeyPair(myPublic);</span>
+<span class="fc" id="L250">            final BouncyMLDSAPublicKey myPublic = derivePublicKey(pEncodedKey);</span>
+<span class="fc" id="L251">            return new BouncyKeyPair(myPublic);</span>
         }
 
         /**
@@ -260,15 +262,15 @@ public final class BouncyMLDSAKeyPair {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
-<span class="fc" id="L263">                checkKeySpec(pEncodedKey);</span>
+<span class="fc" id="L265">                checkKeySpec(pEncodedKey);</span>
 
                 /* derive publicKey */
-<span class="fc" id="L266">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());</span>
-<span class="fc" id="L267">                final MLDSAPublicKeyParameters myParms = (MLDSAPublicKeyParameters) PublicKeyFactory.createKey(myInfo);</span>
-<span class="fc" id="L268">                return new BouncyMLDSAPublicKey(getKeySpec(), myParms);</span>
+<span class="fc" id="L268">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());</span>
+<span class="fc" id="L269">                final MLDSAPublicKeyParameters myParms = (MLDSAPublicKeyParameters) PublicKeyFactory.createKey(myInfo);</span>
+<span class="fc" id="L270">                return new BouncyMLDSAPublicKey(getKeySpec(), myParms);</span>
 
-<span class="nc" id="L270">            } catch (IOException e) {</span>
-<span class="nc" id="L271">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+<span class="nc" id="L272">            } catch (IOException e) {</span>
+<span class="nc" id="L273">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
             }
         }
     }
@@ -292,8 +294,8 @@ public final class BouncyMLDSAKeyPair {
         BouncyMLDSASignature(final GordianBaseFactory pFactory,
                              final GordianSignatureSpec pSpec) {
             /* Initialise underlying class */
-<span class="fc" id="L295">            super(pFactory, pSpec);</span>
-<span class="fc" id="L296">        }</span>
+<span class="fc" id="L297">            super(pFactory, pSpec);</span>
+<span class="fc" id="L298">        }</span>
 
         /**
          * Create the signer according to the keyPair.
@@ -303,102 +305,98 @@ public final class BouncyMLDSAKeyPair {
          */
         private static Signer createSigner(final GordianKeyPair pKeyPair) {
             /* Determine whether this is a hashSigner */
-<span class="fc" id="L306">            final boolean isHash = pKeyPair.getKeyPairSpec().getMLDSAKeySpec().isHash();</span>
+<span class="fc" id="L308">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();</span>
+<span class="fc" id="L309">            final boolean isHash = myKeySpec.getMLDSASpec().isHash();</span>
 
             /* Create the internal digests */
-<span class="pc bpc" id="L309" title="1 of 2 branches missed.">            return isHash</span>
-<span class="nc" id="L310">                    ? new HashMLDSASigner()</span>
-<span class="fc" id="L311">                    : new MLDSASigner();</span>
+<span class="pc bpc" id="L312" title="1 of 2 branches missed.">            return isHash</span>
+<span class="nc" id="L313">                    ? new HashMLDSASigner()</span>
+<span class="fc" id="L314">                    : new MLDSASigner();</span>
         }
 
         @Override
-        public void initForSigning(final GordianSignParams pParams) throws GordianException {
+        public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
             /* Initialise detail */
-<span class="fc" id="L317">            super.initForSigning(pParams);</span>
-<span class="fc" id="L318">            final BouncyKeyPair myPair = getKeyPair();</span>
-<span class="fc" id="L319">            final byte[] myContext = getContext();</span>
-<span class="fc" id="L320">            BouncyKeyPair.checkKeyPair(myPair);</span>
+<span class="fc" id="L320">            super.initForSigning(pParams);</span>
+<span class="fc" id="L321">            final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L322">            final byte[] myContext = getContext();</span>
+<span class="fc" id="L323">            BouncyKeyPair.checkKeyPair(myPair);</span>
 
             /* Initialise and set the signer */
-<span class="fc" id="L323">            theSigner = createSigner(myPair);</span>
-<span class="fc" id="L324">            final BouncyMLDSAPrivateKey myPrivate = (BouncyMLDSAPrivateKey) myPair.getPrivateKey();</span>
-<span class="fc" id="L325">            CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());</span>
-<span class="pc bpc" id="L326" title="1 of 2 branches missed.">            if (myContext != null) {</span>
-<span class="nc" id="L327">                myParms = new ParametersWithContext(myParms, myContext);</span>
+<span class="fc" id="L326">            theSigner = createSigner(myPair);</span>
+<span class="fc" id="L327">            final BouncyMLDSAPrivateKey myPrivate = (BouncyMLDSAPrivateKey) myPair.getPrivateKey();</span>
+<span class="fc" id="L328">            CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());</span>
+<span class="pc bpc" id="L329" title="1 of 2 branches missed.">            if (myContext != null) {</span>
+<span class="nc" id="L330">                myParms = new ParametersWithContext(myParms, myContext);</span>
             }
-<span class="fc" id="L329">            theSigner.init(true, myParms);</span>
-<span class="fc" id="L330">        }</span>
+<span class="fc" id="L332">            theSigner.init(true, myParms);</span>
+<span class="fc" id="L333">        }</span>
 
         @Override
-        public void initForVerify(final GordianSignParams pParams) throws GordianException {
+        public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
             /* Initialise detail */
-<span class="fc" id="L335">            super.initForVerify(pParams);</span>
-<span class="fc" id="L336">            final BouncyKeyPair myPair = getKeyPair();</span>
-<span class="fc" id="L337">            final byte[] myContext = getContext();</span>
-<span class="fc" id="L338">            BouncyKeyPair.checkKeyPair(myPair);</span>
+<span class="fc" id="L338">            super.initForVerify(pParams);</span>
+<span class="fc" id="L339">            final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L340">            final byte[] myContext = getContext();</span>
+<span class="fc" id="L341">            BouncyKeyPair.checkKeyPair(myPair);</span>
 
             /* Initialise and set the signer */
-<span class="fc" id="L341">            theSigner = createSigner(myPair);</span>
-<span class="fc" id="L342">            final BouncyMLDSAPublicKey myPublic = (BouncyMLDSAPublicKey) myPair.getPublicKey();</span>
-<span class="fc" id="L343">            CipherParameters myParms = myPublic.getPublicKey();</span>
-<span class="pc bpc" id="L344" title="1 of 2 branches missed.">            if (myContext != null) {</span>
-<span class="nc" id="L345">                myParms = new ParametersWithContext(myParms, myContext);</span>
+<span class="fc" id="L344">            theSigner = createSigner(myPair);</span>
+<span class="fc" id="L345">            final BouncyMLDSAPublicKey myPublic = (BouncyMLDSAPublicKey) myPair.getPublicKey();</span>
+<span class="fc" id="L346">            CipherParameters myParms = myPublic.getPublicKey();</span>
+<span class="pc bpc" id="L347" title="1 of 2 branches missed.">            if (myContext != null) {</span>
+<span class="nc" id="L348">                myParms = new ParametersWithContext(myParms, myContext);</span>
             }
-<span class="fc" id="L347">            theSigner.init(false, myParms);</span>
-<span class="fc" id="L348">        }</span>
+<span class="fc" id="L350">            theSigner.init(false, myParms);</span>
+<span class="fc" id="L351">        }</span>
 
         @Override
         public void update(final byte[] pBytes,
                            final int pOffset,
                            final int pLength) {
-<span class="nc" id="L354">            theSigner.update(pBytes, pOffset, pLength);</span>
-<span class="nc" id="L355">        }</span>
+<span class="nc" id="L357">            theSigner.update(pBytes, pOffset, pLength);</span>
+<span class="nc" id="L358">        }</span>
 
         @Override
         public void update(final byte pByte) {
-<span class="nc" id="L359">            theSigner.update(pByte);</span>
-<span class="nc" id="L360">        }</span>
+<span class="nc" id="L362">            theSigner.update(pByte);</span>
+<span class="nc" id="L363">        }</span>
 
         @Override
         public void update(final byte[] pBytes) {
-<span class="fc" id="L364">            theSigner.update(pBytes, 0, pBytes.length);</span>
-<span class="fc" id="L365">        }</span>
+<span class="fc" id="L367">            theSigner.update(pBytes, 0, pBytes.length);</span>
+<span class="fc" id="L368">        }</span>
 
         @Override
         public void reset() {
-<span class="nc" id="L369">            theSigner.reset();</span>
-<span class="nc" id="L370">        }</span>
+<span class="nc" id="L372">            theSigner.reset();</span>
+<span class="nc" id="L373">        }</span>
 
         @Override
         protected BouncyKeyPair getKeyPair() {
-<span class="fc" id="L374">            return (BouncyKeyPair) super.getKeyPair();</span>
-        }
-
-        @Override
-        public GordianBaseFactory getFactory() {
-<span class="nc" id="L379">            return (GordianBaseFactory) super.getFactory();</span>
+<span class="fc" id="L377">            return (BouncyKeyPair) super.getKeyPair();</span>
         }
 
         @Override
         public byte[] sign() throws GordianException {
             /* Check that we are in signing mode */
-<span class="fc" id="L385">            checkMode(GordianSignatureMode.SIGN);</span>
+<span class="fc" id="L383">            checkMode(GordianSignatureMode.SIGN);</span>
 
             /* Sign the message */
             try {
-<span class="fc" id="L389">                return theSigner.generateSignature();</span>
-<span class="nc" id="L390">            } catch (CryptoException e) {</span>
-<span class="nc" id="L391">                throw new GordianCryptoException(&quot;Failed to sign message&quot;, e);</span>
+<span class="fc" id="L387">                return theSigner.generateSignature();</span>
+<span class="nc" id="L388">            } catch (CryptoException e) {</span>
+<span class="nc" id="L389">                throw new GordianCryptoException(&quot;Failed to sign message&quot;, e);</span>
             }
         }
 
         @Override
         public boolean verify(final byte[] pSignature) throws GordianException {
             /* Check that we are in verify mode */
-<span class="fc" id="L398">            checkMode(GordianSignatureMode.VERIFY);</span>
+<span class="fc" id="L396">            checkMode(GordianSignatureMode.VERIFY);</span>
 
             /* Verify the message */
-<span class="fc" id="L401">            return theSigner.verifySignature(pSignature);</span>
+<span class="fc" id="L399">            return theSigner.verifySignature(pSignature);</span>
         }
     }
 }

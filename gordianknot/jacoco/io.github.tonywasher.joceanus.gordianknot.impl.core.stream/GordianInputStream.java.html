@@ -346,32 +346,30 @@ abstract class GordianInputStream
                     - theReadOffset;
 
             /* Determine how much data we can transfer */
-<span class="fc bfc" id="L349" title="All 2 branches covered.">            iNumRead = iNumRead &lt;= pLength</span>
-<span class="fc" id="L350">                    ? iNumRead</span>
-<span class="fc" id="L351">                    : pLength;</span>
+<span class="fc" id="L349">            iNumRead = Math.min(iNumRead, pLength);</span>
 
             /* If we have data to copy */
-<span class="fc bfc" id="L354" title="All 2 branches covered.">            if (iNumRead &gt; 0) {</span>
+<span class="fc bfc" id="L352" title="All 2 branches covered.">            if (iNumRead &gt; 0) {</span>
                 /* Transfer the bytes */
-<span class="fc" id="L356">                System.arraycopy(theStore, theReadOffset, pBuffer, pOffset, iNumRead);</span>
+<span class="fc" id="L354">                System.arraycopy(theStore, theReadOffset, pBuffer, pOffset, iNumRead);</span>
 
                 /* Adjust ReadOffset */
-<span class="fc" id="L359">                theReadOffset += iNumRead;</span>
+<span class="fc" id="L357">                theReadOffset += iNumRead;</span>
 
                 /* If we have finished with the data in the buffer */
-<span class="fc bfc" id="L362" title="All 2 branches covered.">                if (theReadOffset &gt;= theDataLen) {</span>
+<span class="fc bfc" id="L360" title="All 2 branches covered.">                if (theReadOffset &gt;= theDataLen) {</span>
                     /* Reset the values */
-<span class="fc" id="L364">                    theDataLen = 0;</span>
-<span class="fc" id="L365">                    theReadOffset = 0;</span>
+<span class="fc" id="L362">                    theDataLen = 0;</span>
+<span class="fc" id="L363">                    theReadOffset = 0;</span>
                 }
 
                 /* else if we have no data check for EOF and report it if required */
-<span class="pc bpc" id="L369" title="1 of 2 branches missed.">            } else if (hasEOFbeenSeen) {</span>
-<span class="nc" id="L370">                iNumRead = -1;</span>
+<span class="pc bpc" id="L367" title="1 of 2 branches missed.">            } else if (hasEOFbeenSeen) {</span>
+<span class="nc" id="L368">                iNumRead = -1;</span>
             }
 
             /* Return the number of bytes transferred */
-<span class="fc" id="L374">            return iNumRead;</span>
+<span class="fc" id="L372">            return iNumRead;</span>
         }
 
         /**

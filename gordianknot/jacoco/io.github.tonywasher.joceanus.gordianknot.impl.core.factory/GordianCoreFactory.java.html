@@ -27,7 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFactory;
@@ -41,10 +41,11 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSou
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianSeededRandom;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianValidator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianKeyAlgId;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyAlgId;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.zip.GordianCoreZipFactory;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -58,7 +59,7 @@ public abstract class GordianCoreFactory
     /**
      * The number of seed bytes.
      */
-<span class="fc" id="L61">    private static final int SEED_SIZE = GordianLength.LEN_256.getByteLength();</span>
+<span class="fc" id="L62">    private static final int SEED_SIZE = GordianLength.LEN_256.getByteLength();</span>
 
     /**
      * Parameters.
@@ -138,7 +139,7 @@ public abstract class GordianCoreFactory
     /**
      * The Key AlgIds.
      */
-    private GordianKeyAlgId theKeyAlgIds;
+    private GordianCoreKeyAlgId theKeyAlgIds;
 
     /**
      * Async Factory.
@@ -153,39 +154,39 @@ public abstract class GordianCoreFactory
      * @throws GordianException on error
      */
     protected GordianCoreFactory(final GordianFactoryGenerator pGenerator,
-<span class="fc" id="L156">                                 final GordianParameters pParameters) throws GordianException {</span>
+<span class="fc" id="L157">                                 final GordianParameters pParameters) throws GordianException {</span>
         /* Check parameters */
-<span class="pc bpc" id="L158" title="2 of 4 branches missed.">        if (pParameters == null || !pParameters.validate()) {</span>
-<span class="nc" id="L159">            throw new GordianDataException(&quot;Invalid Parameters&quot;);</span>
+<span class="pc bpc" id="L159" title="2 of 4 branches missed.">        if (pParameters == null || !pParameters.validate()) {</span>
+<span class="nc" id="L160">            throw new GordianDataException(&quot;Invalid Parameters&quot;);</span>
         }
 
         /* Store the parameters */
-<span class="fc" id="L163">        theGenerator = pGenerator;</span>
-<span class="fc" id="L164">        theParameters = pParameters;</span>
+<span class="fc" id="L164">        theGenerator = pGenerator;</span>
+<span class="fc" id="L165">        theParameters = pParameters;</span>
 
         /* Create the random source */
-<span class="fc" id="L167">        theRandom = new GordianRandomSource();</span>
+<span class="fc" id="L168">        theRandom = new GordianRandomSource();</span>
 
         /* Declare factories */
-<span class="fc" id="L170">        theValidator = newValidator();</span>
-<span class="fc" id="L171">        theDigestFactory = newDigestFactory(this);</span>
-<span class="fc" id="L172">        theCipherFactory = newCipherFactory(this);</span>
-<span class="fc" id="L173">        theMacFactory = newMacFactory(this);</span>
-<span class="fc" id="L174">        theRandomFactory = new GordianCoreRandomFactory(this);</span>
-<span class="fc" id="L175">        theKeySetFactory = new GordianCoreKeySetFactory(this);</span>
-<span class="fc" id="L176">        theLockFactory = new GordianCoreLockFactory(this);</span>
-<span class="fc" id="L177">        theZipFactory = new GordianCoreZipFactory(this);</span>
+<span class="fc" id="L171">        theValidator = newValidator();</span>
+<span class="fc" id="L172">        theDigestFactory = newDigestFactory(this);</span>
+<span class="fc" id="L173">        theCipherFactory = newCipherFactory(this);</span>
+<span class="fc" id="L174">        theMacFactory = newMacFactory(this);</span>
+<span class="fc" id="L175">        theRandomFactory = new GordianCoreRandomFactory(this);</span>
+<span class="fc" id="L176">        theKeySetFactory = new GordianCoreKeySetFactory(this);</span>
+<span class="fc" id="L177">        theLockFactory = new GordianCoreLockFactory(this);</span>
+<span class="fc" id="L178">        theZipFactory = new GordianCoreZipFactory(this);</span>
 
         /* Declare personalisation */
-<span class="fc" id="L180">        thePersonalisation = new GordianPersonalisation(this);</span>
-<span class="fc" id="L181">        theIdManager = new GordianIdManager(this);</span>
-<span class="fc" id="L182">        theObfuscater = new GordianCoreKnuthObfuscater(this);</span>
-<span class="fc" id="L183">        theKeySet = createEmbeddedKeySet();</span>
-<span class="fc" id="L184">    }</span>
+<span class="fc" id="L181">        thePersonalisation = new GordianPersonalisation(this);</span>
+<span class="fc" id="L182">        theIdManager = new GordianIdManager(this);</span>
+<span class="fc" id="L183">        theObfuscater = new GordianCoreKnuthObfuscater(this);</span>
+<span class="fc" id="L184">        theKeySet = createEmbeddedKeySet();</span>
+<span class="fc" id="L185">    }</span>
 
     @Override
     public GordianFactory newFactory(final GordianParameters pParameters) throws GordianException {
-<span class="fc" id="L188">        return theGenerator.newFactory(pParameters);</span>
+<span class="fc" id="L189">        return theGenerator.newFactory(pParameters);</span>
     }
 
     /**
@@ -194,7 +195,7 @@ public abstract class GordianCoreFactory
      * @return the random source
      */
     public GordianRandomSource getRandomSource() {
-<span class="fc" id="L197">        return theRandom;</span>
+<span class="fc" id="L198">        return theRandom;</span>
     }
 
     /**
@@ -203,12 +204,12 @@ public abstract class GordianCoreFactory
      * @return the parameters
      */
     public GordianParameters getParameters() {
-<span class="fc" id="L206">        return theParameters;</span>
+<span class="fc" id="L207">        return theParameters;</span>
     }
 
     @Override
     public GordianFactoryType getFactoryType() {
-<span class="fc" id="L211">        return theParameters.getFactoryType();</span>
+<span class="fc" id="L212">        return theParameters.getFactoryType();</span>
     }
 
     /**
@@ -217,7 +218,7 @@ public abstract class GordianCoreFactory
      * @return the security seed
      */
     public byte[] getSecuritySeed() {
-<span class="fc" id="L220">        return theParameters.getSecuritySeed();</span>
+<span class="fc" id="L221">        return theParameters.getSecuritySeed();</span>
     }
 
     /**
@@ -226,7 +227,7 @@ public abstract class GordianCoreFactory
      * @return the keySet seed
      */
     public byte[] getKeySetSeed() {
-<span class="fc" id="L229">        return theParameters.getKeySetSeed();</span>
+<span class="fc" id="L230">        return theParameters.getKeySetSeed();</span>
     }
 
     /**
@@ -235,7 +236,7 @@ public abstract class GordianCoreFactory
      * @return true/false
      */
     public boolean isInternal() {
-<span class="fc" id="L238">        return theParameters.isInternal();</span>
+<span class="fc" id="L239">        return theParameters.isInternal();</span>
     }
 
     /**
@@ -244,12 +245,12 @@ public abstract class GordianCoreFactory
      * @return true/false
      */
     public boolean isRandom() {
-<span class="pc bpc" id="L247" title="1 of 2 branches missed.">        return getKeySetSeed() != null;</span>
+<span class="pc bpc" id="L248" title="1 of 2 branches missed.">        return getKeySetSeed() != null;</span>
     }
 
     @Override
     public GordianKeySet getEmbeddedKeySet() {
-<span class="fc" id="L252">        return theKeySet;</span>
+<span class="fc" id="L253">        return theKeySet;</span>
     }
 
     /**
@@ -260,43 +261,43 @@ public abstract class GordianCoreFactory
      */
     private GordianKeySet createEmbeddedKeySet() throws GordianException {
         /* Obtain the keySet seed */
-<span class="fc" id="L263">        final byte[] mySeed = thePersonalisation.getKeySetVector();</span>
+<span class="fc" id="L264">        final byte[] mySeed = thePersonalisation.getKeySetVector();</span>
 
         /* Derive the keySet */
-<span class="fc" id="L266">        final GordianKeySetGenerate myKeySets = (GordianKeySetGenerate) getKeySetFactory();</span>
-<span class="fc" id="L267">        return myKeySets.generateKeySet(mySeed);</span>
+<span class="fc" id="L267">        final GordianKeySetGenerate myKeySets = (GordianKeySetGenerate) getKeySetFactory();</span>
+<span class="fc" id="L268">        return myKeySets.generateKeySet(mySeed);</span>
     }
 
     @Override
     public GordianPersonalisation getPersonalisation() {
-<span class="fc" id="L272">        return thePersonalisation;</span>
+<span class="fc" id="L273">        return thePersonalisation;</span>
     }
 
     @Override
     public GordianIdManager getIdManager() {
-<span class="fc" id="L277">        return theIdManager;</span>
+<span class="fc" id="L278">        return theIdManager;</span>
     }
 
     @Override
     public GordianCoreKnuthObfuscater getObfuscater() {
-<span class="fc" id="L282">        return theObfuscater;</span>
+<span class="fc" id="L283">        return theObfuscater;</span>
     }
 
     @Override
     public void reSeedRandom() {
         /* Access the random */
-<span class="fc" id="L288">        final SecureRandom myRandom = theRandom.getRandom();</span>
-<span class="pc bpc" id="L289" title="1 of 2 branches missed.">        if (myRandom instanceof GordianSeededRandom mySeeded) {</span>
+<span class="fc" id="L289">        final SecureRandom myRandom = theRandom.getRandom();</span>
+<span class="pc bpc" id="L290" title="1 of 2 branches missed.">        if (myRandom instanceof GordianSeededRandom mySeeded) {</span>
             /* Generate and apply the new seed */
-<span class="fc" id="L291">            final byte[] mySeed = mySeeded.generateSeed(SEED_SIZE);</span>
-<span class="fc" id="L292">            mySeeded.setSeed(mySeed);</span>
-<span class="fc" id="L293">            mySeeded.reseed(null);</span>
+<span class="fc" id="L292">            final byte[] mySeed = mySeeded.generateSeed(SEED_SIZE);</span>
+<span class="fc" id="L293">            mySeeded.setSeed(mySeed);</span>
+<span class="fc" id="L294">            mySeeded.reseed(null);</span>
         }
-<span class="fc" id="L295">    }</span>
+<span class="fc" id="L296">    }</span>
 
     @Override
     public GordianDigestFactory getDigestFactory() {
-<span class="fc" id="L299">        return theDigestFactory;</span>
+<span class="fc" id="L300">        return theDigestFactory;</span>
     }
 
     /**
@@ -309,7 +310,7 @@ public abstract class GordianCoreFactory
 
     @Override
     public GordianCipherFactory getCipherFactory() {
-<span class="fc" id="L312">        return theCipherFactory;</span>
+<span class="fc" id="L313">        return theCipherFactory;</span>
     }
 
     /**
@@ -322,7 +323,7 @@ public abstract class GordianCoreFactory
 
     @Override
     public GordianMacFactory getMacFactory() {
-<span class="fc" id="L325">        return theMacFactory;</span>
+<span class="fc" id="L326">        return theMacFactory;</span>
     }
 
     /**
@@ -335,37 +336,53 @@ public abstract class GordianCoreFactory
 
     @Override
     public GordianRandomFactory getRandomFactory() {
-<span class="fc" id="L338">        return theRandomFactory;</span>
+<span class="fc" id="L339">        return theRandomFactory;</span>
     }
 
     @Override
     public GordianKeySetFactory getKeySetFactory() {
-<span class="fc" id="L343">        return theKeySetFactory;</span>
+<span class="fc" id="L344">        return theKeySetFactory;</span>
     }
 
     @Override
     public GordianLockFactory getLockFactory() {
-<span class="fc" id="L348">        return theLockFactory;</span>
+<span class="fc" id="L349">        return theLockFactory;</span>
+    }
+
+    @Override
+    public GordianFactoryLock newFactoryLock(final GordianFactory pFactoryToLock,
+                                             final char[] pPassword) throws GordianException {
+        /* Create the factoryLock */
+<span class="fc" id="L356">        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();</span>
+<span class="fc" id="L357">        return newFactoryLock(pFactoryToLock, myBuilder.passwordLock(), pPassword);</span>
     }
 
     @Override
     public GordianFactoryLock newFactoryLock(final GordianFactory pFactoryToLock,
                                              final GordianPasswordLockSpec pLockSpec,
                                              final char[] pPassword) throws GordianException {
-<span class="fc" id="L355">        return theLockFactory.newFactoryLock(pFactoryToLock, pLockSpec, pPassword);</span>
+<span class="fc" id="L364">        return theLockFactory.newFactoryLock(pFactoryToLock, pLockSpec, pPassword);</span>
+    }
+
+    @Override
+    public GordianFactoryLock newFactoryLock(final GordianFactoryType pFactoryType,
+                                             final char[] pPassword) throws GordianException {
+        /* Create the factoryLock */
+<span class="nc" id="L371">        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();</span>
+<span class="nc" id="L372">        return newFactoryLock(myBuilder.passwordLock(), pFactoryType, pPassword);</span>
     }
 
     @Override
     public GordianFactoryLock newFactoryLock(final GordianPasswordLockSpec pLockSpec,
                                              final GordianFactoryType pFactoryType,
                                              final char[] pPassword) throws GordianException {
-<span class="fc" id="L362">        return theLockFactory.newFactoryLock(pLockSpec, pFactoryType, pPassword);</span>
+<span class="fc" id="L379">        return theLockFactory.newFactoryLock(pLockSpec, pFactoryType, pPassword);</span>
     }
 
     @Override
     public GordianFactoryLock resolveFactoryLock(final byte[] pLockBytes,
                                                  final char[] pPassword) throws GordianException {
-<span class="fc" id="L368">        return theLockFactory.resolveFactoryLock(pLockBytes, pPassword);</span>
+<span class="fc" id="L385">        return theLockFactory.resolveFactoryLock(pLockBytes, pPassword);</span>
     }
 
     /**
@@ -374,7 +391,7 @@ public abstract class GordianCoreFactory
      * @return the validator
      */
     public GordianValidator getValidator() {
-<span class="fc" id="L377">        return theValidator;</span>
+<span class="fc" id="L394">        return theValidator;</span>
     }
 
     /**
@@ -383,20 +400,20 @@ public abstract class GordianCoreFactory
      * @return the new validator
      */
     public GordianValidator newValidator() {
-<span class="fc" id="L386">        return new GordianValidator();</span>
+<span class="fc" id="L403">        return new GordianValidator();</span>
     }
 
     @Override
     public GordianZipFactory getZipFactory() {
-<span class="fc" id="L391">        return theZipFactory;</span>
+<span class="fc" id="L408">        return theZipFactory;</span>
     }
 
     @Override
     public GordianAsyncFactory getAsyncFactory() {
-<span class="fc bfc" id="L396" title="All 2 branches covered.">        if (theAsyncFactory == null) {</span>
-<span class="fc" id="L397">            theAsyncFactory = newAsyncFactory(this);</span>
+<span class="fc bfc" id="L413" title="All 2 branches covered.">        if (theAsyncFactory == null) {</span>
+<span class="fc" id="L414">            theAsyncFactory = newAsyncFactory(this);</span>
         }
-<span class="fc" id="L399">        return theAsyncFactory;</span>
+<span class="fc" id="L416">        return theAsyncFactory;</span>
     }
 
     /**
@@ -414,7 +431,7 @@ public abstract class GordianCoreFactory
      * @return the Identifier
      */
     public AlgorithmIdentifier getIdentifierForSpec(final GordianKeySpec pSpec) {
-<span class="fc" id="L417">        return getKeyAlgIds().getIdentifierForSpec(pSpec);</span>
+<span class="fc" id="L434">        return getKeyAlgIds().getIdentifierForSpec(pSpec);</span>
     }
 
     /**
@@ -424,7 +441,7 @@ public abstract class GordianCoreFactory
      * @return the keySpec (or null if not found)
      */
     public GordianKeySpec getKeySpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
-<span class="fc" id="L427">        return getKeyAlgIds().getKeySpecForIdentifier(pIdentifier);</span>
+<span class="fc" id="L444">        return getKeyAlgIds().getKeySpecForIdentifier(pIdentifier);</span>
     }
 
     /**
@@ -432,35 +449,35 @@ public abstract class GordianCoreFactory
      *
      * @return the key Algorithm Ids
      */
-    private GordianKeyAlgId getKeyAlgIds() {
-<span class="fc bfc" id="L436" title="All 2 branches covered.">        if (theKeyAlgIds == null) {</span>
-<span class="fc" id="L437">            theKeyAlgIds = new GordianKeyAlgId(this);</span>
+    private GordianCoreKeyAlgId getKeyAlgIds() {
+<span class="fc bfc" id="L453" title="All 2 branches covered.">        if (theKeyAlgIds == null) {</span>
+<span class="fc" id="L454">            theKeyAlgIds = new GordianCoreKeyAlgId(this);</span>
         }
-<span class="fc" id="L439">        return theKeyAlgIds;</span>
+<span class="fc" id="L456">        return theKeyAlgIds;</span>
     }
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-<span class="fc bfc" id="L445" title="All 2 branches covered.">        if (pThat == this) {</span>
-<span class="fc" id="L446">            return true;</span>
+<span class="fc bfc" id="L462" title="All 2 branches covered.">        if (pThat == this) {</span>
+<span class="fc" id="L463">            return true;</span>
         }
-<span class="pc bpc" id="L448" title="1 of 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L449">            return false;</span>
+<span class="pc bpc" id="L465" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L466">            return false;</span>
         }
 
         /* Make sure that the object is the same class */
-<span class="pc bpc" id="L453" title="1 of 2 branches missed.">        if (!(pThat instanceof GordianCoreFactory myThat)) {</span>
-<span class="nc" id="L454">            return false;</span>
+<span class="pc bpc" id="L470" title="1 of 2 branches missed.">        if (!(pThat instanceof GordianCoreFactory myThat)) {</span>
+<span class="nc" id="L471">            return false;</span>
         }
 
         /* Check Differences */
-<span class="fc" id="L458">        return theParameters.equals(myThat.theParameters);</span>
+<span class="fc" id="L475">        return theParameters.equals(myThat.theParameters);</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L463">        return theParameters.hashCode();</span>
+<span class="nc" id="L480">        return theParameters.hashCode();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

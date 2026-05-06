@@ -154,14 +154,14 @@
 <a class="jxr_linenumber" name="L146" href="#L146">146</a>                         <strong class="jxr_keyword">final</strong> byte[] pXtraBytes,
 <a class="jxr_linenumber" name="L147" href="#L147">147</a>                         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isPredictionResistant) {
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>         <em class="jxr_comment">/* Check valid # of bits */</em>
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> myNumBits = pOutput.length &lt;&lt; GordianCoreRandomFactory.BIT_SHIFT;
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>         <strong class="jxr_keyword">if</strong> (myNumBits &gt; GordianCoreRandomFactory.MAX_BITS_REQUEST) {
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> myNumBits = pOutput.length &lt;&lt; GordianRandomConstants.BIT_SHIFT;
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>         <strong class="jxr_keyword">if</strong> (myNumBits &gt; GordianRandomConstants.MAX_BITS_REQUEST) {
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"Number of bits per request limited to "</span>
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>                     + GordianCoreRandomFactory.MAX_BITS_REQUEST);
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>                     + GordianRandomConstants.MAX_BITS_REQUEST);
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>         }
 <a class="jxr_linenumber" name="L154" href="#L154">154</a> 
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>         <em class="jxr_comment">/* Check for reSeed required */</em>
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">if</strong> (theReseedCounter.compareLimit(GordianCoreRandomFactory.RESEED_MAX)) {
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">if</strong> (theReseedCounter.compareLimit(GordianRandomConstants.RESEED_MAX)) {
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>             <strong class="jxr_keyword">return</strong> -1;
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>         }
 <a class="jxr_linenumber" name="L159" href="#L159">159</a> 
@@ -211,7 +211,7 @@
 <a class="jxr_linenumber" name="L203" href="#L203">203</a>                            <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> pNumBits) {
 <a class="jxr_linenumber" name="L204" href="#L204">204</a>         <em class="jxr_comment">/* Determine # of iterations */</em>
 <a class="jxr_linenumber" name="L205" href="#L205">205</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> mySize = theDigest.getDigestSize();
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> myLen = pNumBits &gt;&gt; GordianCoreRandomFactory.BIT_SHIFT;
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> myLen = pNumBits &gt;&gt; GordianRandomConstants.BIT_SHIFT;
 <a class="jxr_linenumber" name="L207" href="#L207">207</a> 
 <a class="jxr_linenumber" name="L208" href="#L208">208</a>         <em class="jxr_comment">/* Allocate counters */</em>
 <a class="jxr_linenumber" name="L209" href="#L209">209</a>         <strong class="jxr_keyword">final</strong> <a name="GordianByteArrayInteger" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/base/GordianByteArrayInteger.html#GordianByteArrayInteger">GordianByteArrayInteger</a> myData = <strong class="jxr_keyword">new</strong> <a name="GordianByteArrayInteger" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/base/GordianByteArrayInteger.html#GordianByteArrayInteger">GordianByteArrayInteger</a>(pInputBytes);
@@ -253,7 +253,7 @@
 <a class="jxr_linenumber" name="L245" href="#L245">245</a>                                                <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> pSeedLength) {
 <a class="jxr_linenumber" name="L246" href="#L246">246</a>         <em class="jxr_comment">/* Determine sizes */</em>
 <a class="jxr_linenumber" name="L247" href="#L247">247</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> mySize = theDigest.getDigestSize();
-<a class="jxr_linenumber" name="L248" href="#L248">248</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> myLen = pSeedLength &gt;&gt; GordianCoreRandomFactory.BIT_SHIFT;
+<a class="jxr_linenumber" name="L248" href="#L248">248</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> myLen = pSeedLength &gt;&gt; GordianRandomConstants.BIT_SHIFT;
 <a class="jxr_linenumber" name="L249" href="#L249">249</a>         byte myCount = 1;
 <a class="jxr_linenumber" name="L250" href="#L250">250</a> 
 <a class="jxr_linenumber" name="L251" href="#L251">251</a>         <em class="jxr_comment">/* Create output buffer */</em>
@@ -305,7 +305,7 @@
 <a class="jxr_linenumber" name="L297" href="#L297">297</a> 
 <a class="jxr_linenumber" name="L298" href="#L298">298</a>     @Override
 <a class="jxr_linenumber" name="L299" href="#L299">299</a>     <strong class="jxr_keyword">public</strong> String getAlgorithm() {
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>         <strong class="jxr_keyword">return</strong> GordianCoreRandomFactory.SP800_PREFIX + theDigest.getDigestSpec().toString();
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>         <strong class="jxr_keyword">return</strong> GordianRandomConstants.SP800_PREFIX + theDigest.getDigestSpec().toString();
 <a class="jxr_linenumber" name="L301" href="#L301">301</a>     }
 <a class="jxr_linenumber" name="L302" href="#L302">302</a> }
 </pre>

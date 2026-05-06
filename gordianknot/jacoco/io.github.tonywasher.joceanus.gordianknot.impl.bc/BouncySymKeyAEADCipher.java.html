@@ -17,10 +17,10 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymAEADCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
@@ -71,7 +71,7 @@ public class BouncySymKeyAEADCipher
 
     @Override
     public void init(final boolean pEncrypt,
-                     final GordianCipherParameters pParams) throws GordianException {
+                     final GordianCipherParams pParams) throws GordianException {
         /* Process the parameters and access the key */
 <span class="fc" id="L76">        processParameters(pParams);</span>
 <span class="fc" id="L77">        final BouncyKey&lt;GordianSymKeySpec&gt; myKey = BouncyKey.accessKey(getKey());</span>
@@ -157,22 +157,21 @@ public class BouncySymKeyAEADCipher
         }
 
         /* Make sure that the classes are the same */
-<span class="nc bnc" id="L160" title="All 2 branches missed.">        if (!(pThat instanceof BouncySymKeyAEADCipher)) {</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        if (!(pThat instanceof BouncySymKeyAEADCipher myThat)) {</span>
 <span class="nc" id="L161">            return false;</span>
         }
-<span class="nc" id="L163">        final BouncySymKeyAEADCipher myThat = (BouncySymKeyAEADCipher) pThat;</span>
 
         /* Check that the fields are equal */
-<span class="nc bnc" id="L166" title="All 2 branches missed.">        return isEncrypting == myThat.isEncrypting</span>
-<span class="nc bnc" id="L167" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getInitialAEAD(), myThat.getInitialAEAD())</span>
-<span class="nc bnc" id="L168" title="All 2 branches missed.">                &amp;&amp; super.equals(myThat);</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">        return isEncrypting == myThat.isEncrypting</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getInitialAEAD(), myThat.getInitialAEAD())</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">                &amp;&amp; super.equals(myThat);</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L173">        return super.hashCode()</span>
-<span class="nc" id="L174">                + Arrays.hashCode(getInitialAEAD())</span>
-<span class="nc bnc" id="L175" title="All 2 branches missed.">                + (isEncrypting ? 1 : 0);</span>
+<span class="nc" id="L172">        return super.hashCode()</span>
+<span class="nc" id="L173">                + Arrays.hashCode(getInitialAEAD())</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">                + (isEncrypting ? 1 : 0);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

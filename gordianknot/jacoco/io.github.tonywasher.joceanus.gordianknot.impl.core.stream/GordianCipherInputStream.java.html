@@ -94,39 +94,38 @@ class GordianCipherInputStream&lt;T extends GordianKeySpec&gt;
                                 final int pLength) throws GordianException {
             /* Initialise variables */
             int iNumBytes;
-<span class="fc" id="L97">            final int iLength = pLength;</span>
 
             /* If we have EOF from the input stream */
-<span class="fc bfc" id="L100" title="All 2 branches covered.">            if (iLength == -1) {</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">            if (pLength == -1) {</span>
                 /* If we have already seen EOF */
-<span class="fc bfc" id="L102" title="All 2 branches covered.">                if (hasEOFbeenSeen()) {</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">                if (hasEOFbeenSeen()) {</span>
                     /* signal true EOF */
-<span class="fc" id="L104">                    return -1;</span>
+<span class="fc" id="L103">                    return -1;</span>
                 }
 
                 /* Record EOF */
-<span class="fc" id="L108">                setEOFSeen();</span>
+<span class="fc" id="L107">                setEOFSeen();</span>
 
                 /* Make sure the buffer is large enough */
-<span class="fc" id="L111">                iNumBytes = checkBufferLength(0);</span>
+<span class="fc" id="L110">                iNumBytes = checkBufferLength(0);</span>
 
                 /* Finish the decryption if there is work to do */
-<span class="fc bfc" id="L114" title="All 2 branches covered.">                if (iNumBytes &gt; 0) {</span>
-<span class="fc" id="L115">                    iNumBytes = theCipher.finish(theBuffer, 0);</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">                if (iNumBytes &gt; 0) {</span>
+<span class="fc" id="L114">                    iNumBytes = theCipher.finish(theBuffer, 0);</span>
                 }
 
                 /* else we have bytes to process */
             } else {
                 /* Make sure the buffer is large enough */
-<span class="fc" id="L121">                checkBufferLength(iLength);</span>
+<span class="fc" id="L120">                checkBufferLength(pLength);</span>
 
                 /* Decrypt the data */
-<span class="fc" id="L124">                iNumBytes = theCipher.update(pBuffer, 0, pLength, theBuffer, 0);</span>
+<span class="fc" id="L123">                iNumBytes = theCipher.update(pBuffer, 0, pLength, theBuffer, 0);</span>
             }
 
             /* Set up buffer variables */
-<span class="fc" id="L128">            setBuffer(theBuffer, iNumBytes);</span>
-<span class="fc" id="L129">            return iNumBytes;</span>
+<span class="fc" id="L127">            setBuffer(theBuffer, iNumBytes);</span>
+<span class="fc" id="L128">            return iNumBytes;</span>
         }
     }
 }

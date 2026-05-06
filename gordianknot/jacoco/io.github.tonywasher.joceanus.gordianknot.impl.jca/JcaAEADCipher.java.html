@@ -19,14 +19,14 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianAEADCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamAEADCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymAEADCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
@@ -83,7 +83,7 @@ public class JcaAEADCipher&lt;T extends GordianKeySpec&gt;
 
     @Override
     public void init(final boolean pEncrypt,
-                     final GordianCipherParameters pParams) throws GordianException {
+                     final GordianCipherParams pParams) throws GordianException {
         /* Process the parameters and access the key */
 <span class="fc" id="L88">        processParameters(pParams);</span>
 <span class="fc" id="L89">        final JcaKey&lt;T&gt; myJcaKey = JcaKey.accessKey(getKey());</span>
@@ -218,22 +218,21 @@ public class JcaAEADCipher&lt;T extends GordianKeySpec&gt;
         }
 
         /* Make sure that the classes are the same */
-<span class="nc bnc" id="L221" title="All 2 branches missed.">        if (!(pThat instanceof JcaAEADCipher)) {</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">        if (!(pThat instanceof JcaAEADCipher&lt;?&gt; myThat)) {</span>
 <span class="nc" id="L222">            return false;</span>
         }
-<span class="nc" id="L224">        final JcaAEADCipher&lt;?&gt; myThat = (JcaAEADCipher&lt;?&gt;) pThat;</span>
 
         /* Check that the fields are equal */
-<span class="nc bnc" id="L227" title="All 2 branches missed.">        return isEncrypting == myThat.isEncrypting</span>
-<span class="nc bnc" id="L228" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getInitialAEAD(), myThat.getInitialAEAD())</span>
-<span class="nc bnc" id="L229" title="All 2 branches missed.">                &amp;&amp; super.equals(myThat);</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">        return isEncrypting == myThat.isEncrypting</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getInitialAEAD(), myThat.getInitialAEAD())</span>
+<span class="nc bnc" id="L228" title="All 2 branches missed.">                &amp;&amp; super.equals(myThat);</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L234">        return super.hashCode()</span>
-<span class="nc" id="L235">                + Arrays.hashCode(getInitialAEAD())</span>
-<span class="nc bnc" id="L236" title="All 2 branches missed.">                + (isEncrypting ? 1 : 0);</span>
+<span class="nc" id="L233">        return super.hashCode()</span>
+<span class="nc" id="L234">                + Arrays.hashCode(getInitialAEAD())</span>
+<span class="nc bnc" id="L235" title="All 2 branches missed.">                + (isEncrypting ? 1 : 0);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

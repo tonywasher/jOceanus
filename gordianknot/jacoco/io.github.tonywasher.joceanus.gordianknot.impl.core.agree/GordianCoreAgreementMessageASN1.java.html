@@ -61,6 +61,8 @@ import java.util.Objects;
  *      messageType INTEGER
  *      clientId [1] INTEGER OPTIONAL
  *      serverId [2] INTEGER OPTIONAL
+ *      clientName [3] OCTET STRING OPTIONAL
+ *      serverName [4] OCTET STRING OPTIONAL
  * }
  *
  * Specification ::= SEQUENCE  {
@@ -122,6 +124,15 @@ public final class GordianCoreAgreementMessageASN1
      */
     private static final int TAG_SERVERID = 2;
 
+    /**
+     * The clientName tag.
+     */
+    private static final int TAG_CLIENTNAME = 3;
+
+    /**
+     * The serverName tag.
+     */
+    private static final int TAG_SERVERNAME = 4;
 
     /**
      * The resultAlgId tag.
@@ -147,6 +158,16 @@ public final class GordianCoreAgreementMessageASN1
      * The ServerId.
      */
     private Long theServerId;
+
+    /**
+     * The ClientName.
+     */
+    private byte[] theClientName;
+
+    /**
+     * The ServerName.
+     */
+    private byte[] theServerName;
 
     /**
      * The Agreement AlgorithmId.
@@ -208,9 +229,9 @@ public final class GordianCoreAgreementMessageASN1
      *
      * @param pType the messageType
      */
-<span class="fc" id="L211">    private GordianCoreAgreementMessageASN1(final GordianAgreementMessageType pType) {</span>
-<span class="fc" id="L212">        theMessageType = pType;</span>
-<span class="fc" id="L213">    }</span>
+<span class="fc" id="L232">    private GordianCoreAgreementMessageASN1(final GordianAgreementMessageType pType) {</span>
+<span class="fc" id="L233">        theMessageType = pType;</span>
+<span class="fc" id="L234">    }</span>
 
     /**
      * Constructor.
@@ -218,92 +239,98 @@ public final class GordianCoreAgreementMessageASN1
      * @param pSequence the Sequence
      * @throws GordianException on error
      */
-<span class="fc" id="L221">    private GordianCoreAgreementMessageASN1(final ASN1Sequence pSequence) throws GordianException {</span>
+<span class="fc" id="L242">    private GordianCoreAgreementMessageASN1(final ASN1Sequence pSequence) throws GordianException {</span>
         /* Protect against exceptions */
         try {
             /* Access the sequence */
-<span class="fc" id="L225">            final ASN1Sequence mySequence = ASN1Sequence.getInstance(pSequence);</span>
-<span class="fc" id="L226">            final Enumeration&lt;?&gt; en = mySequence.getObjects();</span>
+<span class="fc" id="L246">            final ASN1Sequence mySequence = ASN1Sequence.getInstance(pSequence);</span>
+<span class="fc" id="L247">            final Enumeration&lt;?&gt; en = mySequence.getObjects();</span>
 
             /* Access id element */
-<span class="fc" id="L229">            final ASN1Sequence myId = ASN1Sequence.getInstance(en.nextElement());</span>
-<span class="fc" id="L230">            final Enumeration&lt;?&gt; enIds = myId.getObjects();</span>
-<span class="fc" id="L231">            theMessageType = GordianAgreementMessageType.determineType(ASN1Integer.getInstance(enIds.nextElement()).intValueExact());</span>
+<span class="fc" id="L250">            final ASN1Sequence myId = ASN1Sequence.getInstance(en.nextElement());</span>
+<span class="fc" id="L251">            final Enumeration&lt;?&gt; enIds = myId.getObjects();</span>
+<span class="fc" id="L252">            theMessageType = GordianAgreementMessageType.determineType(ASN1Integer.getInstance(enIds.nextElement()).intValueExact());</span>
 
             /* Loop through the optional id elements */
-<span class="fc bfc" id="L234" title="All 2 branches covered.">            while (enIds.hasMoreElements()) {</span>
-<span class="fc" id="L235">                final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(enIds.nextElement());</span>
-<span class="pc bpc" id="L236" title="1 of 3 branches missed.">                switch (myTagged.getTagNo()) {</span>
+<span class="fc bfc" id="L255" title="All 2 branches covered.">            while (enIds.hasMoreElements()) {</span>
+<span class="fc" id="L256">                final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(enIds.nextElement());</span>
+<span class="pc bpc" id="L257" title="3 of 5 branches missed.">                switch (myTagged.getTagNo()) {</span>
                     case TAG_CLIENTID:
-<span class="fc" id="L238">                        theClientId = ASN1Integer.getInstance(myTagged, false).longValueExact();</span>
-<span class="fc" id="L239">                        break;</span>
+<span class="fc" id="L259">                        theClientId = ASN1Integer.getInstance(myTagged, false).longValueExact();</span>
+<span class="fc" id="L260">                        break;</span>
                     case TAG_SERVERID:
-<span class="fc" id="L241">                        theServerId = ASN1Integer.getInstance(myTagged, false).longValueExact();</span>
-<span class="fc" id="L242">                        break;</span>
+<span class="fc" id="L262">                        theServerId = ASN1Integer.getInstance(myTagged, false).longValueExact();</span>
+<span class="fc" id="L263">                        break;</span>
+                    case TAG_CLIENTNAME:
+<span class="nc" id="L265">                        theClientName = ASN1OctetString.getInstance(myTagged, false).getOctets();</span>
+<span class="nc" id="L266">                        break;</span>
+                    case TAG_SERVERNAME:
+<span class="nc" id="L268">                        theServerName = ASN1OctetString.getInstance(myTagged, false).getOctets();</span>
+<span class="nc" id="L269">                        break;</span>
                     default:
-<span class="nc" id="L244">                        throw new GordianDataException(&quot;Unexpected id tag&quot;);</span>
+<span class="nc" id="L271">                        throw new GordianDataException(&quot;Unexpected id tag&quot;);</span>
                 }
-<span class="fc" id="L246">            }</span>
+<span class="fc" id="L273">            }</span>
 
             /* Access algorithms element */
-<span class="fc" id="L249">            final ASN1Sequence myAlgs = ASN1Sequence.getInstance(en.nextElement());</span>
-<span class="fc" id="L250">            final Enumeration&lt;?&gt; enAlgs = myAlgs.getObjects();</span>
-<span class="fc" id="L251">            theAgreementId = AlgorithmIdentifier.getInstance(enAlgs.nextElement());</span>
+<span class="fc" id="L276">            final ASN1Sequence myAlgs = ASN1Sequence.getInstance(en.nextElement());</span>
+<span class="fc" id="L277">            final Enumeration&lt;?&gt; enAlgs = myAlgs.getObjects();</span>
+<span class="fc" id="L278">            theAgreementId = AlgorithmIdentifier.getInstance(enAlgs.nextElement());</span>
 
             /* Loop through the optional algorithm elements */
-<span class="fc bfc" id="L254" title="All 2 branches covered.">            while (enAlgs.hasMoreElements()) {</span>
-<span class="fc" id="L255">                final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(enAlgs.nextElement());</span>
-<span class="pc bpc" id="L256" title="1 of 3 branches missed.">                switch (myTagged.getTagNo()) {</span>
+<span class="fc bfc" id="L281" title="All 2 branches covered.">            while (enAlgs.hasMoreElements()) {</span>
+<span class="fc" id="L282">                final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(enAlgs.nextElement());</span>
+<span class="pc bpc" id="L283" title="1 of 3 branches missed.">                switch (myTagged.getTagNo()) {</span>
                     case TAG_RESULTALGID:
-<span class="fc" id="L258">                        theResultId = AlgorithmIdentifier.getInstance(myTagged, false);</span>
-<span class="fc" id="L259">                        break;</span>
+<span class="fc" id="L285">                        theResultId = AlgorithmIdentifier.getInstance(myTagged, false);</span>
+<span class="fc" id="L286">                        break;</span>
                     case TAG_SIGNALGID:
-<span class="fc" id="L261">                        theSignatureId = AlgorithmIdentifier.getInstance(myTagged, false);</span>
-<span class="fc" id="L262">                        break;</span>
+<span class="fc" id="L288">                        theSignatureId = AlgorithmIdentifier.getInstance(myTagged, false);</span>
+<span class="fc" id="L289">                        break;</span>
                     default:
-<span class="nc" id="L264">                        throw new GordianDataException(&quot;Unexpected algorithm tag&quot;);</span>
+<span class="nc" id="L291">                        throw new GordianDataException(&quot;Unexpected algorithm tag&quot;);</span>
                 }
-<span class="fc" id="L266">            }</span>
+<span class="fc" id="L293">            }</span>
 
             /* Loop through the optional elements */
-<span class="fc bfc" id="L269" title="All 2 branches covered.">            while (en.hasMoreElements()) {</span>
-<span class="fc" id="L270">                final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());</span>
-<span class="pc bpc" id="L271" title="1 of 9 branches missed.">                switch (myTagged.getTagNo()) {</span>
+<span class="fc bfc" id="L296" title="All 2 branches covered.">            while (en.hasMoreElements()) {</span>
+<span class="fc" id="L297">                final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());</span>
+<span class="pc bpc" id="L298" title="1 of 9 branches missed.">                switch (myTagged.getTagNo()) {</span>
                     case TAG_CLIENTCERTIFICATE:
-<span class="fc" id="L273">                        theClientCertificate = GordianCertificateASN1.getInstance(myTagged, false);</span>
-<span class="fc" id="L274">                        break;</span>
+<span class="fc" id="L300">                        theClientCertificate = GordianCertificateASN1.getInstance(myTagged, false);</span>
+<span class="fc" id="L301">                        break;</span>
                     case TAG_SERVERCERTIFICATE:
-<span class="fc" id="L276">                        theServerCertificate = GordianCertificateASN1.getInstance(myTagged, false);</span>
-<span class="fc" id="L277">                        break;</span>
+<span class="fc" id="L303">                        theServerCertificate = GordianCertificateASN1.getInstance(myTagged, false);</span>
+<span class="fc" id="L304">                        break;</span>
                     case TAG_SIGNERCERTIFICATE:
-<span class="fc" id="L279">                        theSignerCertificate = GordianCertificateASN1.getInstance(myTagged, false);</span>
-<span class="fc" id="L280">                        break;</span>
+<span class="fc" id="L306">                        theSignerCertificate = GordianCertificateASN1.getInstance(myTagged, false);</span>
+<span class="fc" id="L307">                        break;</span>
                     case TAG_INITVECTOR:
-<span class="fc" id="L282">                        theInitVector = ASN1OctetString.getInstance(myTagged, false).getOctets();</span>
-<span class="fc" id="L283">                        break;</span>
+<span class="fc" id="L309">                        theInitVector = ASN1OctetString.getInstance(myTagged, false).getOctets();</span>
+<span class="fc" id="L310">                        break;</span>
                     case TAG_ENCAPSULATED:
-<span class="fc" id="L285">                        theEncapsulated = ASN1OctetString.getInstance(myTagged, false).getOctets();</span>
-<span class="fc" id="L286">                        break;</span>
+<span class="fc" id="L312">                        theEncapsulated = ASN1OctetString.getInstance(myTagged, false).getOctets();</span>
+<span class="fc" id="L313">                        break;</span>
                     case TAG_EPHEMERAL:
-<span class="fc" id="L288">                        theEphemeral = new X509EncodedKeySpec(SubjectPublicKeyInfo.getInstance(myTagged, false).getEncoded());</span>
-<span class="fc" id="L289">                        break;</span>
+<span class="fc" id="L315">                        theEphemeral = new X509EncodedKeySpec(SubjectPublicKeyInfo.getInstance(myTagged, false).getEncoded());</span>
+<span class="fc" id="L316">                        break;</span>
                     case TAG_CONFIRMATION:
-<span class="fc" id="L291">                        theConfirmation = ASN1OctetString.getInstance(myTagged, false).getOctets();</span>
-<span class="fc" id="L292">                        break;</span>
+<span class="fc" id="L318">                        theConfirmation = ASN1OctetString.getInstance(myTagged, false).getOctets();</span>
+<span class="fc" id="L319">                        break;</span>
                     case TAG_SIGNATURE:
-<span class="fc" id="L294">                        theSignature = ASN1OctetString.getInstance(myTagged, false).getOctets();</span>
-<span class="fc" id="L295">                        break;</span>
+<span class="fc" id="L321">                        theSignature = ASN1OctetString.getInstance(myTagged, false).getOctets();</span>
+<span class="fc" id="L322">                        break;</span>
                     default:
-<span class="nc" id="L297">                        throw new GordianDataException(&quot;Unexpected tag&quot;);</span>
+<span class="nc" id="L324">                        throw new GordianDataException(&quot;Unexpected tag&quot;);</span>
                 }
-<span class="fc" id="L299">            }</span>
+<span class="fc" id="L326">            }</span>
 
             /* handle exceptions */
-<span class="nc" id="L302">        } catch (IllegalArgumentException</span>
+<span class="nc" id="L329">        } catch (IllegalArgumentException</span>
                  | IOException e) {
-<span class="nc" id="L304">            throw new GordianIOException(&quot;Unable to parse ASN1 sequence&quot;, e);</span>
-<span class="fc" id="L305">        }</span>
-<span class="fc" id="L306">    }</span>
+<span class="nc" id="L331">            throw new GordianIOException(&quot;Unable to parse ASN1 sequence&quot;, e);</span>
+<span class="fc" id="L332">        }</span>
+<span class="fc" id="L333">    }</span>
 
     /**
      * Create a client hello.
@@ -311,7 +338,7 @@ public final class GordianCoreAgreementMessageASN1
      * @return the clientHello
      */
     public static GordianCoreAgreementMessageASN1 newClientHello() {
-<span class="fc" id="L314">        return new GordianCoreAgreementMessageASN1(GordianAgreementMessageType.CLIENTHELLO);</span>
+<span class="fc" id="L341">        return new GordianCoreAgreementMessageASN1(GordianAgreementMessageType.CLIENTHELLO);</span>
     }
 
     /**
@@ -320,7 +347,7 @@ public final class GordianCoreAgreementMessageASN1
      * @return the serverHello
      */
     public static GordianCoreAgreementMessageASN1 newServerHello() {
-<span class="fc" id="L323">        return new GordianCoreAgreementMessageASN1(GordianAgreementMessageType.SERVERHELLO);</span>
+<span class="fc" id="L350">        return new GordianCoreAgreementMessageASN1(GordianAgreementMessageType.SERVERHELLO);</span>
     }
 
     /**
@@ -329,7 +356,7 @@ public final class GordianCoreAgreementMessageASN1
      * @return the clientConfirm
      */
     public static GordianCoreAgreementMessageASN1 newClientConfirm() {
-<span class="fc" id="L332">        return new GordianCoreAgreementMessageASN1(GordianAgreementMessageType.CLIENTCONFIRM);</span>
+<span class="fc" id="L359">        return new GordianCoreAgreementMessageASN1(GordianAgreementMessageType.CLIENTCONFIRM);</span>
     }
 
     /**
@@ -340,12 +367,12 @@ public final class GordianCoreAgreementMessageASN1
      * @throws GordianException on error
      */
     public static GordianCoreAgreementMessageASN1 getInstance(final Object pObject) throws GordianException {
-<span class="pc bpc" id="L343" title="1 of 2 branches missed.">        if (pObject instanceof GordianCoreAgreementMessageASN1 myASN1) {</span>
-<span class="nc" id="L344">            return myASN1;</span>
-<span class="pc bpc" id="L345" title="1 of 2 branches missed.">        } else if (pObject != null) {</span>
-<span class="fc" id="L346">            return new GordianCoreAgreementMessageASN1(ASN1Sequence.getInstance(pObject));</span>
+<span class="pc bpc" id="L370" title="1 of 2 branches missed.">        if (pObject instanceof GordianCoreAgreementMessageASN1 myASN1) {</span>
+<span class="nc" id="L371">            return myASN1;</span>
+<span class="pc bpc" id="L372" title="1 of 2 branches missed.">        } else if (pObject != null) {</span>
+<span class="fc" id="L373">            return new GordianCoreAgreementMessageASN1(ASN1Sequence.getInstance(pObject));</span>
         }
-<span class="nc" id="L348">        throw new GordianDataException(&quot;Null sequence&quot;);</span>
+<span class="nc" id="L375">        throw new GordianDataException(&quot;Null sequence&quot;);</span>
     }
 
     /**
@@ -354,7 +381,7 @@ public final class GordianCoreAgreementMessageASN1
      * @return the messageType
      */
     GordianAgreementMessageType getMessageType() {
-<span class="fc" id="L357">        return theMessageType;</span>
+<span class="fc" id="L384">        return theMessageType;</span>
     }
 
     /**
@@ -364,10 +391,10 @@ public final class GordianCoreAgreementMessageASN1
      * @throws GordianException on error
      */
     public void checkMessageType(final GordianAgreementMessageType pMessageType) throws GordianException {
-<span class="nc bnc" id="L367" title="All 2 branches missed.">        if (!theMessageType.equals(pMessageType)) {</span>
-<span class="nc" id="L368">            throw new GordianDataException(&quot;Unexpected Message type: &quot; + pMessageType);</span>
+<span class="nc bnc" id="L394" title="All 2 branches missed.">        if (!theMessageType.equals(pMessageType)) {</span>
+<span class="nc" id="L395">            throw new GordianDataException(&quot;Unexpected Message type: &quot; + pMessageType);</span>
         }
-<span class="nc" id="L370">    }</span>
+<span class="nc" id="L397">    }</span>
 
     /**
      * Get the clientId.
@@ -375,7 +402,7 @@ public final class GordianCoreAgreementMessageASN1
      * @return the clientId
      */
     Long getClientId() {
-<span class="fc" id="L378">        return theClientId;</span>
+<span class="fc" id="L405">        return theClientId;</span>
     }
 
     /**
@@ -385,17 +412,17 @@ public final class GordianCoreAgreementMessageASN1
      * @return this object
      */
     GordianCoreAgreementMessageASN1 setClientId(final Long pClientId) {
-<span class="fc" id="L388">        theClientId = pClientId;</span>
-<span class="fc" id="L389">        return this;</span>
+<span class="fc" id="L415">        theClientId = pClientId;</span>
+<span class="fc" id="L416">        return this;</span>
     }
 
     /**
-     * Get the clientId.
+     * Get the serverId.
      *
-     * @return the clientId
+     * @return the serverId
      */
     Long getServerId() {
-<span class="fc" id="L398">        return theServerId;</span>
+<span class="fc" id="L425">        return theServerId;</span>
     }
 
     /**
@@ -405,8 +432,48 @@ public final class GordianCoreAgreementMessageASN1
      * @return this object
      */
     GordianCoreAgreementMessageASN1 setServerId(final Long pServerId) {
-<span class="fc" id="L408">        theServerId = pServerId;</span>
-<span class="fc" id="L409">        return this;</span>
+<span class="fc" id="L435">        theServerId = pServerId;</span>
+<span class="fc" id="L436">        return this;</span>
+    }
+
+    /**
+     * Get the clientName.
+     *
+     * @return the clientName
+     */
+    byte[] getClientName() {
+<span class="fc" id="L445">        return theClientName;</span>
+    }
+
+    /**
+     * Set the clientName.
+     *
+     * @param pClientName the clientName
+     * @return this object
+     */
+    GordianCoreAgreementMessageASN1 setClientName(final byte[] pClientName) {
+<span class="fc" id="L455">        theClientName = pClientName;</span>
+<span class="fc" id="L456">        return this;</span>
+    }
+
+    /**
+     * Get the serverName.
+     *
+     * @return the serverName
+     */
+    byte[] getServerName() {
+<span class="fc" id="L465">        return theServerName;</span>
+    }
+
+    /**
+     * Set the serverName.
+     *
+     * @param pServerName the serverName
+     * @return this object
+     */
+    GordianCoreAgreementMessageASN1 setServerName(final byte[] pServerName) {
+<span class="fc" id="L475">        theServerName = pServerName;</span>
+<span class="fc" id="L476">        return this;</span>
     }
 
     /**
@@ -415,7 +482,7 @@ public final class GordianCoreAgreementMessageASN1
      * @return the agreement algorithmId (or null)
      */
     AlgorithmIdentifier getAgreementId() {
-<span class="fc" id="L418">        return theAgreementId;</span>
+<span class="fc" id="L485">        return theAgreementId;</span>
     }
 
     /**
@@ -425,8 +492,8 @@ public final class GordianCoreAgreementMessageASN1
      * @return this object
      */
     GordianCoreAgreementMessageASN1 setAgreementId(final AlgorithmIdentifier pAgreeId) {
-<span class="fc" id="L428">        theAgreementId = pAgreeId;</span>
-<span class="fc" id="L429">        return this;</span>
+<span class="fc" id="L495">        theAgreementId = pAgreeId;</span>
+<span class="fc" id="L496">        return this;</span>
     }
 
     /**
@@ -435,7 +502,7 @@ public final class GordianCoreAgreementMessageASN1
      * @return the result algorithmId (or null)
      */
     AlgorithmIdentifier getResultId() {
-<span class="fc" id="L438">        return theResultId;</span>
+<span class="fc" id="L505">        return theResultId;</span>
     }
 
     /**
@@ -445,8 +512,8 @@ public final class GordianCoreAgreementMessageASN1
      * @return this object
      */
     GordianCoreAgreementMessageASN1 setResultId(final AlgorithmIdentifier pResultId) {
-<span class="fc" id="L448">        theResultId = pResultId;</span>
-<span class="fc" id="L449">        return this;</span>
+<span class="fc" id="L515">        theResultId = pResultId;</span>
+<span class="fc" id="L516">        return this;</span>
     }
 
     /**
@@ -457,7 +524,7 @@ public final class GordianCoreAgreementMessageASN1
      * @throws GordianException on error
      */
     GordianCertificate getClientCertificate(final GordianFactory pFactory) throws GordianException {
-<span class="fc bfc" id="L460" title="All 2 branches covered.">        return theClientCertificate == null ? null : theClientCertificate.getCertificate(pFactory);</span>
+<span class="fc bfc" id="L527" title="All 2 branches covered.">        return theClientCertificate == null ? null : theClientCertificate.getCertificate(pFactory);</span>
     }
 
     /**
@@ -468,8 +535,8 @@ public final class GordianCoreAgreementMessageASN1
      * @throws GordianException on error
      */
     GordianCoreAgreementMessageASN1 setClientCertificate(final GordianCertificate pCertificate) throws GordianException {
-<span class="fc bfc" id="L471" title="All 2 branches covered.">        theClientCertificate = pCertificate == null ? null : new GordianCertificateASN1(pCertificate);</span>
-<span class="fc" id="L472">        return this;</span>
+<span class="fc bfc" id="L538" title="All 2 branches covered.">        theClientCertificate = pCertificate == null ? null : new GordianCertificateASN1(pCertificate);</span>
+<span class="fc" id="L539">        return this;</span>
     }
 
     /**
@@ -480,7 +547,7 @@ public final class GordianCoreAgreementMessageASN1
      * @throws GordianException on error
      */
     GordianCertificate getServerCertificate(final GordianFactory pFactory) throws GordianException {
-<span class="fc bfc" id="L483" title="All 2 branches covered.">        return theServerCertificate == null ? null : theServerCertificate.getCertificate(pFactory);</span>
+<span class="fc bfc" id="L550" title="All 2 branches covered.">        return theServerCertificate == null ? null : theServerCertificate.getCertificate(pFactory);</span>
     }
 
     /**
@@ -491,8 +558,8 @@ public final class GordianCoreAgreementMessageASN1
      * @throws GordianException on error
      */
     GordianCoreAgreementMessageASN1 setServerCertificate(final GordianCertificate pCertificate) throws GordianException {
-<span class="fc bfc" id="L494" title="All 2 branches covered.">        theServerCertificate = pCertificate == null ? null : new GordianCertificateASN1(pCertificate);</span>
-<span class="fc" id="L495">        return this;</span>
+<span class="fc bfc" id="L561" title="All 2 branches covered.">        theServerCertificate = pCertificate == null ? null : new GordianCertificateASN1(pCertificate);</span>
+<span class="fc" id="L562">        return this;</span>
     }
 
     /**
@@ -503,7 +570,7 @@ public final class GordianCoreAgreementMessageASN1
      * @throws GordianException on error
      */
     GordianCertificate getSignerCertificate(final GordianFactory pFactory) throws GordianException {
-<span class="fc bfc" id="L506" title="All 2 branches covered.">        return theSignerCertificate == null ? null : theSignerCertificate.getCertificate(pFactory);</span>
+<span class="fc bfc" id="L573" title="All 2 branches covered.">        return theSignerCertificate == null ? null : theSignerCertificate.getCertificate(pFactory);</span>
     }
 
     /**
@@ -514,8 +581,8 @@ public final class GordianCoreAgreementMessageASN1
      * @throws GordianException on error
      */
     GordianCoreAgreementMessageASN1 setSignerCertificate(final GordianCertificate pCertificate) throws GordianException {
-<span class="pc bpc" id="L517" title="1 of 2 branches missed.">        theSignerCertificate = pCertificate == null ? null : new GordianCertificateASN1(pCertificate);</span>
-<span class="fc" id="L518">        return this;</span>
+<span class="pc bpc" id="L584" title="1 of 2 branches missed.">        theSignerCertificate = pCertificate == null ? null : new GordianCertificateASN1(pCertificate);</span>
+<span class="fc" id="L585">        return this;</span>
     }
 
     /**
@@ -524,7 +591,7 @@ public final class GordianCoreAgreementMessageASN1
      * @return the initVector (or null)
      */
     byte[] getInitVector() {
-<span class="fc" id="L527">        return theInitVector;</span>
+<span class="fc" id="L594">        return theInitVector;</span>
     }
 
     /**
@@ -534,8 +601,8 @@ public final class GordianCoreAgreementMessageASN1
      * @return this object
      */
     GordianCoreAgreementMessageASN1 setInitVector(final byte[] pInitVector) {
-<span class="fc" id="L537">        theInitVector = pInitVector;</span>
-<span class="fc" id="L538">        return this;</span>
+<span class="fc" id="L604">        theInitVector = pInitVector;</span>
+<span class="fc" id="L605">        return this;</span>
     }
 
     /**
@@ -544,7 +611,7 @@ public final class GordianCoreAgreementMessageASN1
      * @return the encapsulated (or null)
      */
     public byte[] getEncapsulated() {
-<span class="fc" id="L547">        return theEncapsulated;</span>
+<span class="fc" id="L614">        return theEncapsulated;</span>
     }
 
     /**
@@ -554,8 +621,8 @@ public final class GordianCoreAgreementMessageASN1
      * @return this object
      */
     GordianCoreAgreementMessageASN1 setEncapsulated(final byte[] pEncapsulated) {
-<span class="fc" id="L557">        theEncapsulated = pEncapsulated;</span>
-<span class="fc" id="L558">        return this;</span>
+<span class="fc" id="L624">        theEncapsulated = pEncapsulated;</span>
+<span class="fc" id="L625">        return this;</span>
     }
 
     /**
@@ -564,7 +631,7 @@ public final class GordianCoreAgreementMessageASN1
      * @return the ephemeral (or null)
      */
     public X509EncodedKeySpec getEphemeral() {
-<span class="fc" id="L567">        return theEphemeral;</span>
+<span class="fc" id="L634">        return theEphemeral;</span>
     }
 
     /**
@@ -574,8 +641,8 @@ public final class GordianCoreAgreementMessageASN1
      * @return this object
      */
     GordianCoreAgreementMessageASN1 setEphemeral(final X509EncodedKeySpec pEphemeral) {
-<span class="fc" id="L577">        theEphemeral = pEphemeral;</span>
-<span class="fc" id="L578">        return this;</span>
+<span class="fc" id="L644">        theEphemeral = pEphemeral;</span>
+<span class="fc" id="L645">        return this;</span>
     }
 
     /**
@@ -584,7 +651,7 @@ public final class GordianCoreAgreementMessageASN1
      * @return the confirmation Tag (or null)
      */
     byte[] getConfirmation() {
-<span class="fc" id="L587">        return theConfirmation;</span>
+<span class="fc" id="L654">        return theConfirmation;</span>
     }
 
     /**
@@ -594,8 +661,8 @@ public final class GordianCoreAgreementMessageASN1
      * @return this object
      */
     GordianCoreAgreementMessageASN1 setConfirmation(final byte[] pConfirmation) {
-<span class="fc" id="L597">        theConfirmation = pConfirmation;</span>
-<span class="fc" id="L598">        return this;</span>
+<span class="fc" id="L664">        theConfirmation = pConfirmation;</span>
+<span class="fc" id="L665">        return this;</span>
     }
 
     /**
@@ -604,7 +671,7 @@ public final class GordianCoreAgreementMessageASN1
      * @return the signature algorithmId (or null)
      */
     AlgorithmIdentifier getSignatureId() {
-<span class="fc" id="L607">        return theSignatureId;</span>
+<span class="fc" id="L674">        return theSignatureId;</span>
     }
 
     /**
@@ -613,7 +680,7 @@ public final class GordianCoreAgreementMessageASN1
      * @return the signature (or null)
      */
     byte[] getSignature() {
-<span class="fc" id="L616">        return theSignature;</span>
+<span class="fc" id="L683">        return theSignature;</span>
     }
 
     /**
@@ -625,125 +692,135 @@ public final class GordianCoreAgreementMessageASN1
      */
     GordianCoreAgreementMessageASN1 setSignature(final AlgorithmIdentifier pSignatureId,
                                                  final byte[] pSignature) {
-<span class="fc" id="L628">        theSignatureId = pSignatureId;</span>
-<span class="fc" id="L629">        theSignature = pSignature;</span>
-<span class="fc" id="L630">        return this;</span>
+<span class="fc" id="L695">        theSignatureId = pSignatureId;</span>
+<span class="fc" id="L696">        theSignature = pSignature;</span>
+<span class="fc" id="L697">        return this;</span>
     }
 
     @Override
     public ASN1Primitive toASN1Primitive() {
         /* Create the vector */
-<span class="fc" id="L636">        final ASN1EncodableVector v = new ASN1EncodableVector();</span>
+<span class="fc" id="L703">        final ASN1EncodableVector v = new ASN1EncodableVector();</span>
 
         /* Add id section */
-<span class="fc" id="L639">        final ASN1EncodableVector vId = new ASN1EncodableVector();</span>
-<span class="fc" id="L640">        vId.add(new ASN1Integer(theMessageType.getId()));</span>
-<span class="fc bfc" id="L641" title="All 2 branches covered.">        if (theClientId != null) {</span>
-<span class="fc" id="L642">            vId.add(new DERTaggedObject(false, TAG_CLIENTID, new ASN1Integer(theClientId)));</span>
+<span class="fc" id="L706">        final ASN1EncodableVector vId = new ASN1EncodableVector();</span>
+<span class="fc" id="L707">        vId.add(new ASN1Integer(theMessageType.getId()));</span>
+<span class="fc bfc" id="L708" title="All 2 branches covered.">        if (theClientId != null) {</span>
+<span class="fc" id="L709">            vId.add(new DERTaggedObject(false, TAG_CLIENTID, new ASN1Integer(theClientId)));</span>
         }
-<span class="fc bfc" id="L644" title="All 2 branches covered.">        if (theServerId != null) {</span>
-<span class="fc" id="L645">            vId.add(new DERTaggedObject(false, TAG_SERVERID, new ASN1Integer(theServerId)));</span>
+<span class="fc bfc" id="L711" title="All 2 branches covered.">        if (theServerId != null) {</span>
+<span class="fc" id="L712">            vId.add(new DERTaggedObject(false, TAG_SERVERID, new ASN1Integer(theServerId)));</span>
         }
-<span class="fc" id="L647">        v.add(new DERSequence(vId));</span>
+<span class="pc bpc" id="L714" title="1 of 2 branches missed.">        if (theClientName != null) {</span>
+<span class="nc" id="L715">            vId.add(new DERTaggedObject(false, TAG_CLIENTNAME, new BEROctetString(theClientName)));</span>
+        }
+<span class="pc bpc" id="L717" title="1 of 2 branches missed.">        if (theServerName != null) {</span>
+<span class="nc" id="L718">            vId.add(new DERTaggedObject(false, TAG_SERVERNAME, new BEROctetString(theServerName)));</span>
+        }
+<span class="fc" id="L720">        v.add(new DERSequence(vId));</span>
 
         /* Add algorithm section */
-<span class="fc" id="L650">        final ASN1EncodableVector vAlg = new ASN1EncodableVector();</span>
-<span class="fc" id="L651">        vAlg.add(theAgreementId);</span>
-<span class="fc bfc" id="L652" title="All 2 branches covered.">        if (theResultId != null) {</span>
-<span class="fc" id="L653">            vAlg.add(new DERTaggedObject(false, TAG_RESULTALGID, theResultId));</span>
+<span class="fc" id="L723">        final ASN1EncodableVector vAlg = new ASN1EncodableVector();</span>
+<span class="fc" id="L724">        vAlg.add(theAgreementId);</span>
+<span class="fc bfc" id="L725" title="All 2 branches covered.">        if (theResultId != null) {</span>
+<span class="fc" id="L726">            vAlg.add(new DERTaggedObject(false, TAG_RESULTALGID, theResultId));</span>
         }
-<span class="fc bfc" id="L655" title="All 2 branches covered.">        if (theSignatureId != null) {</span>
-<span class="fc" id="L656">            vAlg.add(new DERTaggedObject(false, TAG_SIGNALGID, theSignatureId));</span>
+<span class="fc bfc" id="L728" title="All 2 branches covered.">        if (theSignatureId != null) {</span>
+<span class="fc" id="L729">            vAlg.add(new DERTaggedObject(false, TAG_SIGNALGID, theSignatureId));</span>
         }
-<span class="fc" id="L658">        v.add(new DERSequence(vAlg));</span>
+<span class="fc" id="L731">        v.add(new DERSequence(vAlg));</span>
 
         /* Add optional components */
-<span class="fc bfc" id="L661" title="All 2 branches covered.">        if (theClientCertificate != null) {</span>
-<span class="fc" id="L662">            v.add(new DERTaggedObject(false, TAG_CLIENTCERTIFICATE, theClientCertificate));</span>
+<span class="fc bfc" id="L734" title="All 2 branches covered.">        if (theClientCertificate != null) {</span>
+<span class="fc" id="L735">            v.add(new DERTaggedObject(false, TAG_CLIENTCERTIFICATE, theClientCertificate));</span>
         }
-<span class="fc bfc" id="L664" title="All 2 branches covered.">        if (theServerCertificate != null) {</span>
-<span class="fc" id="L665">            v.add(new DERTaggedObject(false, TAG_SERVERCERTIFICATE, theServerCertificate));</span>
+<span class="fc bfc" id="L737" title="All 2 branches covered.">        if (theServerCertificate != null) {</span>
+<span class="fc" id="L738">            v.add(new DERTaggedObject(false, TAG_SERVERCERTIFICATE, theServerCertificate));</span>
         }
-<span class="fc bfc" id="L667" title="All 2 branches covered.">        if (theSignerCertificate != null) {</span>
-<span class="fc" id="L668">            v.add(new DERTaggedObject(false, TAG_SIGNERCERTIFICATE, theSignerCertificate));</span>
+<span class="fc bfc" id="L740" title="All 2 branches covered.">        if (theSignerCertificate != null) {</span>
+<span class="fc" id="L741">            v.add(new DERTaggedObject(false, TAG_SIGNERCERTIFICATE, theSignerCertificate));</span>
         }
-<span class="fc bfc" id="L670" title="All 2 branches covered.">        if (theInitVector != null) {</span>
-<span class="fc" id="L671">            v.add(new DERTaggedObject(false, TAG_INITVECTOR, new BEROctetString(theInitVector)));</span>
+<span class="fc bfc" id="L743" title="All 2 branches covered.">        if (theInitVector != null) {</span>
+<span class="fc" id="L744">            v.add(new DERTaggedObject(false, TAG_INITVECTOR, new BEROctetString(theInitVector)));</span>
         }
-<span class="fc bfc" id="L673" title="All 2 branches covered.">        if (theEncapsulated != null) {</span>
-<span class="fc" id="L674">            v.add(new DERTaggedObject(false, TAG_ENCAPSULATED, new BEROctetString(theEncapsulated)));</span>
+<span class="fc bfc" id="L746" title="All 2 branches covered.">        if (theEncapsulated != null) {</span>
+<span class="fc" id="L747">            v.add(new DERTaggedObject(false, TAG_ENCAPSULATED, new BEROctetString(theEncapsulated)));</span>
         }
-<span class="fc bfc" id="L676" title="All 2 branches covered.">        if (theEphemeral != null) {</span>
-<span class="fc" id="L677">            v.add(new DERTaggedObject(false, TAG_EPHEMERAL, SubjectPublicKeyInfo.getInstance(theEphemeral.getEncoded())));</span>
+<span class="fc bfc" id="L749" title="All 2 branches covered.">        if (theEphemeral != null) {</span>
+<span class="fc" id="L750">            v.add(new DERTaggedObject(false, TAG_EPHEMERAL, SubjectPublicKeyInfo.getInstance(theEphemeral.getEncoded())));</span>
         }
-<span class="fc bfc" id="L679" title="All 2 branches covered.">        if (theConfirmation != null) {</span>
-<span class="fc" id="L680">            v.add(new DERTaggedObject(false, TAG_CONFIRMATION, new BEROctetString(theConfirmation)));</span>
+<span class="fc bfc" id="L752" title="All 2 branches covered.">        if (theConfirmation != null) {</span>
+<span class="fc" id="L753">            v.add(new DERTaggedObject(false, TAG_CONFIRMATION, new BEROctetString(theConfirmation)));</span>
         }
-<span class="fc bfc" id="L682" title="All 2 branches covered.">        if (theSignature != null) {</span>
-<span class="fc" id="L683">            v.add(new DERTaggedObject(false, TAG_SIGNATURE, new BEROctetString(theSignature)));</span>
+<span class="fc bfc" id="L755" title="All 2 branches covered.">        if (theSignature != null) {</span>
+<span class="fc" id="L756">            v.add(new DERTaggedObject(false, TAG_SIGNATURE, new BEROctetString(theSignature)));</span>
         }
 
-<span class="fc" id="L686">        return new DERSequence(v);</span>
+<span class="fc" id="L759">        return new DERSequence(v);</span>
     }
 
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle trivial cases */
-<span class="nc bnc" id="L693" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L694">            return true;</span>
+<span class="nc bnc" id="L766" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L767">            return true;</span>
         }
-<span class="nc bnc" id="L696" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L697">            return false;</span>
+<span class="nc bnc" id="L769" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L770">            return false;</span>
         }
 
         /* Check that the fields are equal */
-<span class="nc" id="L701">        return pThat instanceof GordianCoreAgreementMessageASN1 myThat</span>
-<span class="nc bnc" id="L702" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getMessageType(), myThat.getMessageType())</span>
-<span class="nc bnc" id="L703" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getClientId(), myThat.getClientId())</span>
-<span class="nc bnc" id="L704" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getServerId(), myThat.getServerId())</span>
-<span class="nc bnc" id="L705" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getAgreementId(), myThat.getAgreementId())</span>
-<span class="nc bnc" id="L706" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getResultId(), myThat.getResultId())</span>
-<span class="nc bnc" id="L707" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getSignatureId(), myThat.getSignatureId())</span>
-<span class="nc bnc" id="L708" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getEphemeral(), myThat.getEphemeral())</span>
-<span class="nc bnc" id="L709" title="All 2 branches missed.">                &amp;&amp; Objects.equals(theClientCertificate, myThat.theClientCertificate)</span>
-<span class="nc bnc" id="L710" title="All 2 branches missed.">                &amp;&amp; Objects.equals(theServerCertificate, myThat.theServerCertificate)</span>
-<span class="nc bnc" id="L711" title="All 2 branches missed.">                &amp;&amp; Objects.equals(theSignerCertificate, myThat.theSignerCertificate)</span>
-<span class="nc bnc" id="L712" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getSignature(), myThat.getSignature())</span>
-<span class="nc bnc" id="L713" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getEncapsulated(), myThat.getEncapsulated())</span>
-<span class="nc bnc" id="L714" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getConfirmation(), myThat.getConfirmation())</span>
-<span class="nc bnc" id="L715" title="All 4 branches missed.">                &amp;&amp; Arrays.equals(getInitVector(), myThat.getInitVector());</span>
+<span class="nc" id="L774">        return pThat instanceof GordianCoreAgreementMessageASN1 myThat</span>
+<span class="nc bnc" id="L775" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getMessageType(), myThat.getMessageType())</span>
+<span class="nc bnc" id="L776" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getClientId(), myThat.getClientId())</span>
+<span class="nc bnc" id="L777" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getServerId(), myThat.getServerId())</span>
+<span class="nc bnc" id="L778" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getAgreementId(), myThat.getAgreementId())</span>
+<span class="nc bnc" id="L779" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getResultId(), myThat.getResultId())</span>
+<span class="nc bnc" id="L780" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getSignatureId(), myThat.getSignatureId())</span>
+<span class="nc bnc" id="L781" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getEphemeral(), myThat.getEphemeral())</span>
+<span class="nc bnc" id="L782" title="All 2 branches missed.">                &amp;&amp; Objects.equals(theClientCertificate, myThat.theClientCertificate)</span>
+<span class="nc bnc" id="L783" title="All 2 branches missed.">                &amp;&amp; Objects.equals(theServerCertificate, myThat.theServerCertificate)</span>
+<span class="nc bnc" id="L784" title="All 2 branches missed.">                &amp;&amp; Objects.equals(theSignerCertificate, myThat.theSignerCertificate)</span>
+<span class="nc bnc" id="L785" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getClientName(), myThat.getClientName())</span>
+<span class="nc bnc" id="L786" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getServerName(), myThat.getServerName())</span>
+<span class="nc bnc" id="L787" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getSignature(), myThat.getSignature())</span>
+<span class="nc bnc" id="L788" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getEncapsulated(), myThat.getEncapsulated())</span>
+<span class="nc bnc" id="L789" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getConfirmation(), myThat.getConfirmation())</span>
+<span class="nc bnc" id="L790" title="All 4 branches missed.">                &amp;&amp; Arrays.equals(getInitVector(), myThat.getInitVector());</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L720">        return Objects.hash(getMessageType(), getClientId(), getServerId(),</span>
-<span class="nc" id="L721">                getAgreementId(), getResultId(), getSignatureId(), getEphemeral(),</span>
+<span class="nc" id="L795">        return Objects.hash(getMessageType(), getClientId(), getServerId(),</span>
+<span class="nc" id="L796">                getAgreementId(), getResultId(), getSignatureId(), getEphemeral(),</span>
                 theClientCertificate, theServerCertificate, theSignerCertificate)
-<span class="nc" id="L723">                ^ Arrays.hashCode(getSignature())</span>
-<span class="nc" id="L724">                ^ Arrays.hashCode(getEncapsulated())</span>
-<span class="nc" id="L725">                ^ Arrays.hashCode(getConfirmation())</span>
-<span class="nc" id="L726">                ^ Arrays.hashCode(getInitVector());</span>
+<span class="nc" id="L798">                ^ Arrays.hashCode(getClientName())</span>
+<span class="nc" id="L799">                ^ Arrays.hashCode(getServerName())</span>
+<span class="nc" id="L800">                ^ Arrays.hashCode(getSignature())</span>
+<span class="nc" id="L801">                ^ Arrays.hashCode(getEncapsulated())</span>
+<span class="nc" id="L802">                ^ Arrays.hashCode(getConfirmation())</span>
+<span class="nc" id="L803">                ^ Arrays.hashCode(getInitVector());</span>
     }
 
     /**
      * The messageType.
      */
-<span class="fc" id="L732">    public enum GordianAgreementMessageType {</span>
+<span class="fc" id="L809">    public enum GordianAgreementMessageType {</span>
         /**
          * ClientHello.
          */
-<span class="fc" id="L736">        CLIENTHELLO(1),</span>
+<span class="fc" id="L813">        CLIENTHELLO(1),</span>
 
         /**
          * ServerHello.
          */
-<span class="fc" id="L741">        SERVERHELLO(2),</span>
+<span class="fc" id="L818">        SERVERHELLO(2),</span>
 
         /**
          * ClientConfirm.
          */
-<span class="fc" id="L746">        CLIENTCONFIRM(3);</span>
+<span class="fc" id="L823">        CLIENTCONFIRM(3);</span>
 
         /**
          * The messageId.
@@ -755,9 +832,9 @@ public final class GordianCoreAgreementMessageASN1
          *
          * @param pId the id
          */
-<span class="fc" id="L758">        GordianAgreementMessageType(final int pId) {</span>
-<span class="fc" id="L759">            theId = pId;</span>
-<span class="fc" id="L760">        }</span>
+<span class="fc" id="L835">        GordianAgreementMessageType(final int pId) {</span>
+<span class="fc" id="L836">            theId = pId;</span>
+<span class="fc" id="L837">        }</span>
 
         /**
          * Obtain id for messageType.
@@ -765,7 +842,7 @@ public final class GordianCoreAgreementMessageASN1
          * @return the id
          */
         int getId() {
-<span class="fc" id="L768">            return theId;</span>
+<span class="fc" id="L845">            return theId;</span>
         }
 
         /**
@@ -776,12 +853,12 @@ public final class GordianCoreAgreementMessageASN1
          * @throws GordianException on error
          */
         private static GordianAgreementMessageType determineType(final int pId) throws GordianException {
-<span class="pc bpc" id="L779" title="1 of 2 branches missed.">            for (GordianAgreementMessageType myType : values()) {</span>
-<span class="fc bfc" id="L780" title="All 2 branches covered.">                if (pId == myType.getId()) {</span>
-<span class="fc" id="L781">                    return myType;</span>
+<span class="pc bpc" id="L856" title="1 of 2 branches missed.">            for (GordianAgreementMessageType myType : values()) {</span>
+<span class="fc bfc" id="L857" title="All 2 branches covered.">                if (pId == myType.getId()) {</span>
+<span class="fc" id="L858">                    return myType;</span>
                 }
             }
-<span class="nc" id="L784">            throw new GordianDataException(&quot;Unexpected messageType: &quot; + pId);</span>
+<span class="nc" id="L861">            throw new GordianDataException(&quot;Unexpected messageType: &quot; + pId);</span>
         }
     }
 }

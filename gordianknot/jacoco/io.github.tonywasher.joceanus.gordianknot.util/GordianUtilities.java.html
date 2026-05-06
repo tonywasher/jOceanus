@@ -16,10 +16,38 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.util;
 
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianRandomSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.lock.GordianFactoryLockImpl;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCorePBESpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset.GordianCoreKeySetSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.random.GordianCoreRandomSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpecBuilder;
 
 /**
  * Utilities.
@@ -47,7 +75,7 @@ public final class GordianUtilities {
      * @return the maximum keyWrap size
      */
     public static int getMaximumKeyWrapLength() {
-<span class="nc" id="L50">        return GordianCoreKeySet.getDataWrapLength(GordianLength.LEN_256.getByteLength());</span>
+<span class="nc" id="L78">        return GordianCoreKeySet.getDataWrapLength(GordianLength.LEN_256.getByteLength());</span>
     }
 
     /**
@@ -56,9 +84,9 @@ public final class GordianUtilities {
      * @return the maximum keyWrap size
      */
     public static int getMaximumKeySetWrapLength() {
-<span class="nc" id="L59">        final int my128 = GordianCoreKeySet.getKeySetWrapLength(GordianLength.LEN_128);</span>
-<span class="nc" id="L60">        final int my256 = GordianCoreKeySet.getKeySetWrapLength(GordianLength.LEN_256);</span>
-<span class="nc" id="L61">        return Math.max(my128, my256);</span>
+<span class="nc" id="L87">        final int my128 = GordianCoreKeySet.getKeySetWrapLength(GordianLength.LEN_128);</span>
+<span class="nc" id="L88">        final int my256 = GordianCoreKeySet.getKeySetWrapLength(GordianLength.LEN_256);</span>
+<span class="nc" id="L89">        return Math.max(my128, my256);</span>
     }
 
     /**
@@ -67,7 +95,7 @@ public final class GordianUtilities {
      * @return the factoryLock length
      */
     public static int getFactoryLockLen() {
-<span class="fc" id="L70">        return GordianFactoryLockImpl.getEncodedLength();</span>
+<span class="fc" id="L98">        return GordianFactoryLockImpl.getEncodedLength();</span>
     }
 
     /**
@@ -77,7 +105,133 @@ public final class GordianUtilities {
      * @return the length of encrypted data
      */
     public static int getKeySetEncryptionLength(final int pDataLength) {
-<span class="nc" id="L80">        return GordianKeySetData.getEncryptionLength(pDataLength);</span>
+<span class="nc" id="L108">        return GordianKeySetData.getEncryptionLength(pDataLength);</span>
+    }
+
+    /**
+     * Obtain DigestSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianDigestSpecBuilder newDigestSpecBuilder() {
+<span class="fc" id="L117">        return GordianCoreDigestSpecBuilder.newInstance();</span>
+    }
+
+    /**
+     * Obtain SymKeySpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianSymKeySpecBuilder newSymKeySpecBuilder() {
+<span class="fc" id="L126">        return GordianCoreSymKeySpecBuilder.newInstance();</span>
+    }
+
+    /**
+     * Obtain SymKeySpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianSymCipherSpecBuilder newSymCipherSpecBuilder() {
+<span class="fc" id="L135">        return GordianCoreSymCipherSpecBuilder.newInstance();</span>
+    }
+
+    /**
+     * Obtain SymKeySpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianStreamKeySpecBuilder newStreamKeySpecBuilder() {
+<span class="fc" id="L144">        return GordianCoreStreamKeySpecBuilder.newInstance();</span>
+    }
+
+    /**
+     * Obtain SymKeySpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianStreamCipherSpecBuilder newStreamCipherSpecBuilder() {
+<span class="fc" id="L153">        return GordianCoreStreamCipherSpecBuilder.newInstance();</span>
+    }
+
+    /**
+     * Obtain PBESpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianPBESpecBuilder newPBESpecBuilder() {
+<span class="fc" id="L162">        return GordianCorePBESpecBuilder.newInstance();</span>
+    }
+
+    /**
+     * Obtain MacSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianMacSpecBuilder newMacSpecBuilder() {
+<span class="fc" id="L171">        return GordianCoreMacSpecBuilder.newInstance();</span>
+    }
+
+    /**
+     * Obtain RandomSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianRandomSpecBuilder newRandomSpecBuilder() {
+<span class="nc" id="L180">        return GordianCoreRandomSpecBuilder.newInstance();</span>
+    }
+
+    /**
+     * Obtain KeySetSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianKeySetSpecBuilder newKeySetSpecBuilder() {
+<span class="fc" id="L189">        return GordianCoreKeySetSpecBuilder.newInstance();</span>
+    }
+
+    /**
+     * Obtain PasswordLockSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianPasswordLockSpecBuilder newPasswordLockSpecBuilder() {
+<span class="fc" id="L198">        return GordianCorePasswordLockSpecBuilder.newInstance();</span>
+    }
+
+    /**
+     * Obtain KeyPairSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianKeyPairSpecBuilder newKeyPairSpecBuilder() {
+<span class="fc" id="L207">        return GordianCoreKeyPairSpecBuilder.newInstance();</span>
+    }
+
+    /**
+     * Obtain SignatureSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianSignatureSpecBuilder newSignatureSpecBuilder() {
+<span class="nc" id="L216">        return GordianCoreSignatureSpecBuilder.newInstance();</span>
+    }
+
+    /**
+     * Obtain EncryptorSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianEncryptorSpecBuilder newEncryptorSpecBuilder() {
+<span class="nc" id="L225">        return GordianCoreEncryptorSpecBuilder.newInstance();</span>
+    }
+
+    /**
+     * Obtain AgreementSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianAgreementSpecBuilder newAgreementSpecBuilder() {
+<span class="nc" id="L234">        return GordianCoreAgreementSpecBuilder.newInstance();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

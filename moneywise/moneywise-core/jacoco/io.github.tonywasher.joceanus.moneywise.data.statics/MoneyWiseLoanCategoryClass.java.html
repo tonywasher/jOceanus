@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Enumeration of LoanCategory Type Classes.
@@ -128,14 +128,10 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * otherwise.
      */
     public boolean isChild() {
-<span class="pc bpc" id="L131" title="1 of 2 branches missed.">        switch (this) {</span>
-            case LOAN:
-            case PRIVATELOAN:
-            case CREDITCARD:
-<span class="fc" id="L135">                return true;</span>
-            default:
-<span class="nc" id="L137">                return false;</span>
-        }
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">        return switch (this) {</span>
+<span class="fc" id="L132">            case LOAN, PRIVATELOAN, CREDITCARD -&gt; true;</span>
+<span class="nc" id="L133">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -145,12 +141,7 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * otherwise.
      */
     public boolean canCashBack() {
-<span class="pc bpc" id="L148" title="1 of 2 branches missed.">        switch (this) {</span>
-            case CREDITCARD:
-<span class="fc" id="L150">                return true;</span>
-            default:
-<span class="nc" id="L152">                return false;</span>
-        }
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        return this == MoneyWiseLoanCategoryClass.CREDITCARD;</span>
     }
 
     /**
@@ -160,17 +151,12 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * otherwise.
      */
     public boolean isParentCategory() {
-<span class="pc bpc" id="L163" title="1 of 2 branches missed.">        switch (this) {</span>
-            case PARENT:
-<span class="nc" id="L165">                return true;</span>
-            default:
-<span class="fc" id="L167">                return false;</span>
-        }
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        return this == PARENT;</span>
     }
 
     @Override
     public boolean isTotals() {
-<span class="fc" id="L173">        return false;</span>
+<span class="fc" id="L159">        return false;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

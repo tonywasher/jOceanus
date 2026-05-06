@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisSolverModule.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.solver.proj</a> &gt; <span class="el_source">ThemisSolverModule.java</span></div><h1>ThemisSolverModule.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.solver.proj;
+
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.parser.proj.ThemisModule;
+import io.github.tonywasher.joceanus.themis.parser.proj.ThemisPackage;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverModuleDef;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverProjectDef;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Solver Module.
+ */
+public class ThemisSolverModule
+        implements ThemisSolverModuleDef {
+    /**
+     * The root package.
+     */
+    public static final String ROOT = &quot;&quot;;
+
+    /**
+     * The owning project.
+     */
+    private final ThemisSolverProjectDef theProject;
+
+    /**
+     * The underlying module.
+     */
+    private final ThemisModule theModule;
+
+    /**
+     * The list of packages.
+     */
+    private final Map&lt;String, ThemisSolverPackage&gt; thePackages;
+
+    /**
+     * Constructor.
+     *
+     * @param pProject the owning project
+     * @param pModule  the parsed module
+     */
+    ThemisSolverModule(final ThemisSolverProjectDef pProject,
+<span class="fc" id="L63">                       final ThemisModule pModule) {</span>
+        /* Store the parameters */
+<span class="fc" id="L65">        theProject = pProject;</span>
+<span class="fc" id="L66">        theModule = pModule;</span>
+
+        /* Initialise the packages */
+<span class="fc" id="L69">        thePackages = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        for (ThemisPackage myPackage : theModule.getPackages()) {</span>
+<span class="fc" id="L71">            final ThemisSolverPackage mySolverPackage = new ThemisSolverPackage(this, myPackage);</span>
+<span class="fc" id="L72">            thePackages.put(mySolverPackage.getPackageName(), mySolverPackage);</span>
+<span class="fc" id="L73">        }</span>
+
+        /* Create placeHolders*/
+<span class="fc" id="L76">        createPlaceHolders();</span>
+<span class="fc" id="L77">    }</span>
+
+    @Override
+    public ThemisSolverProjectDef getOwningProject() {
+<span class="nc" id="L81">        return theProject;</span>
+    }
+
+    @Override
+    public ThemisModule getUnderlyingModule() {
+<span class="nc" id="L86">        return theModule;</span>
+    }
+
+    /**
+     * Obtain the packages.
+     *
+     * @return the packages
+     */
+    public Map&lt;String, ThemisSolverPackage&gt; getPackages() {
+<span class="fc" id="L95">        return thePackages;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L100">        return theModule.toString();</span>
+    }
+
+    /**
+     * Create placeHolder packages.
+     */
+    private void createPlaceHolders() {
+        /* Create a list and map of real packages */
+<span class="fc" id="L108">        final HashMap&lt;String, ThemisSolverPackage&gt; myPackageMap = new HashMap&lt;&gt;(thePackages);</span>
+<span class="fc" id="L109">        final List&lt;ThemisSolverPackage&gt; myPackages = new ArrayList&lt;&gt;(thePackages.values());</span>
+
+        /* Loop through the full packages */
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        for (ThemisSolverPackage myPackage : myPackages) {</span>
+            /* Add the parent link */
+<span class="fc" id="L114">            addParentLink(myPackageMap, myPackage);</span>
+<span class="fc" id="L115">        }</span>
+<span class="fc" id="L116">    }</span>
+
+    /**
+     * Create placeHolder packages.
+     *
+     * @param pPackageMap the referenceMap
+     * @param pPackage    the package
+     */
+    private void addParentLink(final Map&lt;String, ThemisSolverPackage&gt; pPackageMap,
+                               final ThemisSolverPackage pPackage) {
+        /* Determine name of parent package */
+<span class="fc" id="L127">        final String myName = pPackage.getPackageName();</span>
+<span class="fc" id="L128">        final int iIndex = myName.lastIndexOf(ThemisChar.PERIOD);</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        final String myParentName = iIndex == -1 ? ROOT : myName.substring(0, iIndex);</span>
+
+        /* Look up parent */
+<span class="fc" id="L132">        ThemisSolverPackage myParent = pPackageMap.get(myParentName);</span>
+
+        /* If we did not find a parent */
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if (myParent == null) {</span>
+            /* Create a placeholder parent and put into maps */
+<span class="fc" id="L137">            myParent = new ThemisSolverPackage(this, new ThemisPackage(myParentName));</span>
+<span class="fc" id="L138">            pPackageMap.put(myParentName, myParent);</span>
+<span class="fc" id="L139">            thePackages.put(myParentName, myParent);</span>
+
+            /* Add further links if we have not reached ROOT */
+<span class="fc bfc" id="L142" title="All 2 branches covered.">            if (!ROOT.equals(myParentName)) {</span>
+<span class="fc" id="L143">                addParentLink(pPackageMap, myParent);</span>
+            }
+        }
+
+        /* Add child to parent */
+<span class="fc" id="L148">        myParent.addChild(pPackage);</span>
+<span class="fc" id="L149">    }</span>
+
+    /**
+     * Look for packages that are immediate roots.
+     *
+     * @return the immediate roots
+     */
+    public ThemisSolverPackage getRoot() {
+        /* Return the root */
+<span class="fc" id="L158">        return thePackages.get(ROOT);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

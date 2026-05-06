@@ -44,8 +44,8 @@ public final class JcaKey&lt;T extends GordianKeySpec&gt;
      * @param pKeyType the keyType
      * @param pKey     the key
      */
-    protected JcaKey(final T pKeyType,
-                     final SecretKey pKey) {
+    JcaKey(final T pKeyType,
+           final SecretKey pKey) {
         /* Initialise underlying class */
 <span class="fc" id="L50">        super(pKeyType);</span>
 
@@ -58,7 +58,7 @@ public final class JcaKey&lt;T extends GordianKeySpec&gt;
      *
      * @return the key
      */
-    protected SecretKey getKey() {
+    SecretKey getKey() {
 <span class="fc" id="L62">        return theKey;</span>
     }
 
@@ -75,7 +75,7 @@ public final class JcaKey&lt;T extends GordianKeySpec&gt;
      * @return the converted key
      * @throws GordianException on error
      */
-    protected static &lt;X extends GordianKeySpec&gt; JcaKey&lt;X&gt; accessKey(final GordianKey&lt;X&gt; pKey) throws GordianException {
+    static &lt;X extends GordianKeySpec&gt; JcaKey&lt;X&gt; accessKey(final GordianKey&lt;X&gt; pKey) throws GordianException {
         /* Check that it is a JcaKey */
 <span class="pc bpc" id="L80" title="1 of 2 branches missed.">        if (pKey instanceof JcaKey) {</span>
 <span class="fc" id="L81">            return (JcaKey&lt;X&gt;) pKey;</span>
@@ -96,23 +96,20 @@ public final class JcaKey&lt;T extends GordianKeySpec&gt;
         }
 
         /* Make sure that the object is the same class */
-<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (!(pThat instanceof JcaKey)) {</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (!(pThat instanceof JcaKey&lt;?&gt; myThat)) {</span>
 <span class="nc" id="L100">            return false;</span>
         }
 
-        /* Access the target field */
-<span class="fc" id="L104">        final JcaKey&lt;?&gt; myThat = (JcaKey&lt;?&gt;) pThat;</span>
-
         /* Check differences */
-<span class="pc bpc" id="L107" title="1 of 2 branches missed.">        if (!getKeyType().equals(myThat.getKeyType())) {</span>
-<span class="nc" id="L108">            return false;</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        if (!getKeyType().equals(myThat.getKeyType())) {</span>
+<span class="nc" id="L105">            return false;</span>
         }
-<span class="fc" id="L110">        return Arrays.areEqual(getKey().getEncoded(), myThat.getKey().getEncoded());</span>
+<span class="fc" id="L107">        return Arrays.areEqual(getKey().getEncoded(), myThat.getKey().getEncoded());</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L115">        return Objects.hash(getKeyType(), Arrays.hashCode(getKey().getEncoded()));</span>
+<span class="nc" id="L112">        return Objects.hash(getKeyType(), Arrays.hashCode(getKey().getEncoded()));</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -24,8 +24,8 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigest;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigest;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.bouncycastle.crypto.Digest;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <em class="jxr_javadoccomment">/**</em>
@@ -44,7 +44,7 @@
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment">     * @param pDigestSpec the digestSpec</em>
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment">     * @param pDigest     the digest</em>
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <a name="BouncyDigest" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/bc/BouncyDigest.html#BouncyDigest">BouncyDigest</a>(<strong class="jxr_keyword">final</strong> <a name="GordianDigestSpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/digest/GordianDigestSpec.html#GordianDigestSpec">GordianDigestSpec</a> pDigestSpec,
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <a name="BouncyDigest" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/bc/BouncyDigest.html#BouncyDigest">BouncyDigest</a>(<strong class="jxr_keyword">final</strong> <a name="GordianCoreDigestSpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/spec/digest/GordianCoreDigestSpec.html#GordianCoreDigestSpec">GordianCoreDigestSpec</a> pDigestSpec,
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>                   <strong class="jxr_keyword">final</strong> Digest pDigest) {
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>          <strong class="jxr_keyword">super</strong>(pDigestSpec);
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>          theDigest = pDigest;

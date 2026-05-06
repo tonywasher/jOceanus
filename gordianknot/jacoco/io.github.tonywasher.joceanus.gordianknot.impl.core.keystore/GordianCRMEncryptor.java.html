@@ -19,20 +19,20 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keystore;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameters;
@@ -137,20 +137,21 @@ public class GordianCRMEncryptor {
 <span class="fc" id="L137">        final GordianCoreAgreementFactory myAgreeFactory = (GordianCoreAgreementFactory) myFactory.getAgreementFactory();</span>
 <span class="fc" id="L138">        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pCertificate.getKeyPair(),</span>
                 new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
-<span class="fc" id="L140">        final GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(pAgreeSpec, new GordianKeySetSpec())</span>
-<span class="fc" id="L141">                .setServerCertificate(myCert);</span>
-<span class="fc" id="L142">        final GordianAgreement myAgree = myAgreeFactory.createAgreement(myParams);</span>
-<span class="fc" id="L143">        final byte[] myHello = myAgree.nextMessage();</span>
-<span class="fc" id="L144">        final GordianKeySet myKeySet = myAgree.getKeySetResult();</span>
+<span class="fc" id="L140">        final GordianKeySetSpecBuilder myBuilder = theFactory.getKeySetFactory().newKeySetSpecBuilder();</span>
+<span class="fc" id="L141">        final GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(pAgreeSpec, myBuilder.keySet())</span>
+<span class="fc" id="L142">                .setServerCertificate(myCert);</span>
+<span class="fc" id="L143">        final GordianAgreement myAgree = myAgreeFactory.createAgreement(myParams);</span>
+<span class="fc" id="L144">        final byte[] myHello = myAgree.nextMessage();</span>
+<span class="fc" id="L145">        final GordianKeySet myKeySet = myAgree.getKeySetResult();</span>
 
         /* Create the recipient info */
-<span class="fc" id="L147">        final AlgorithmIdentifier myAlgId = myAgreeFactory.getIdentifierForSpec(pAgreeSpec);</span>
-<span class="fc" id="L148">        final IssuerAndSerialNumber myId = new IssuerAndSerialNumber(pCertificate.getIssuer().getName(), pCertificate.getSerialNo());</span>
-<span class="fc" id="L149">        final KeyTransRecipientInfo myKTInfo = new KeyTransRecipientInfo(new RecipientIdentifier(myId), myAlgId, new BEROctetString(myHello));</span>
-<span class="fc" id="L150">        final RecipientInfo myInfo = new RecipientInfo(myKTInfo);</span>
+<span class="fc" id="L148">        final AlgorithmIdentifier myAlgId = myAgreeFactory.getIdentifierForSpec(pAgreeSpec);</span>
+<span class="fc" id="L149">        final IssuerAndSerialNumber myId = new IssuerAndSerialNumber(pCertificate.getIssuer().getName(), pCertificate.getSerialNo());</span>
+<span class="fc" id="L150">        final KeyTransRecipientInfo myKTInfo = new KeyTransRecipientInfo(new RecipientIdentifier(myId), myAlgId, new BEROctetString(myHello));</span>
+<span class="fc" id="L151">        final RecipientInfo myInfo = new RecipientInfo(myKTInfo);</span>
 
         /* Return the result */
-<span class="fc" id="L153">        return new GordianCRMResult(myInfo, myKeySet);</span>
+<span class="fc" id="L154">        return new GordianCRMResult(myInfo, myKeySet);</span>
     }
 
     /**
@@ -164,16 +165,16 @@ public class GordianCRMEncryptor {
     private GordianCRMResult prepareForEncryption(final GordianEncryptorSpec pEncryptSpec,
                                                   final GordianCoreCertificate pCertificate) throws GordianException {
         /* Create the random key */
-<span class="fc" id="L167">        final byte[] myKey = createKeyForKeySet();</span>
+<span class="fc" id="L168">        final byte[] myKey = createKeyForKeySet();</span>
 
         /* Derive the keySet from the key */
-<span class="fc" id="L170">        final GordianKeySet myKeySet = deriveKeySetFromKey(myKey.clone());</span>
+<span class="fc" id="L171">        final GordianKeySet myKeySet = deriveKeySetFromKey(myKey.clone());</span>
 
         /* Create recipientInfo */
-<span class="fc" id="L173">        final RecipientInfo myInfo = createRecipientInfo(myKey, pCertificate, pEncryptSpec);</span>
+<span class="fc" id="L174">        final RecipientInfo myInfo = createRecipientInfo(myKey, pCertificate, pEncryptSpec);</span>
 
         /* Return the result */
-<span class="fc" id="L176">        return new GordianCRMResult(myInfo, myKeySet);</span>
+<span class="fc" id="L177">        return new GordianCRMResult(myInfo, myKeySet);</span>
     }
 
     /**
@@ -182,9 +183,9 @@ public class GordianCRMEncryptor {
      * @return the new key
      */
     private byte[] createKeyForKeySet() {
-<span class="fc" id="L185">        final byte[] myKey = new byte[GordianLength.LEN_1024.getByteLength()];</span>
-<span class="fc" id="L186">        theFactory.getRandomSource().getRandom().nextBytes(myKey);</span>
-<span class="fc" id="L187">        return myKey;</span>
+<span class="fc" id="L186">        final byte[] myKey = new byte[GordianLength.LEN_1024.getByteLength()];</span>
+<span class="fc" id="L187">        theFactory.getRandomSource().getRandom().nextBytes(myKey);</span>
+<span class="fc" id="L188">        return myKey;</span>
     }
 
     /**
@@ -196,9 +197,9 @@ public class GordianCRMEncryptor {
      */
     private GordianKeySet deriveKeySetFromKey(final byte[] pKey) throws GordianException {
         /* Create a new Factory using the key */
-<span class="fc" id="L199">        final GordianParameters myParams = new GordianParameters(pKey);</span>
-<span class="fc" id="L200">        final GordianFactory myFactory = theFactory.newFactory(myParams);</span>
-<span class="fc" id="L201">        return myFactory.getEmbeddedKeySet();</span>
+<span class="fc" id="L200">        final GordianParameters myParams = new GordianParameters(pKey);</span>
+<span class="fc" id="L201">        final GordianFactory myFactory = theFactory.newFactory(myParams);</span>
+<span class="fc" id="L202">        return myFactory.getEmbeddedKeySet();</span>
     }
 
     /**
@@ -214,20 +215,20 @@ public class GordianCRMEncryptor {
                                               final GordianCoreCertificate pCertificate,
                                               final GordianEncryptorSpec pSpec) throws GordianException {
         /* Create the encrypted key */
-<span class="fc" id="L217">        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();</span>
-<span class="fc" id="L218">        final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myFactory.getEncryptorFactory();</span>
-<span class="fc" id="L219">        final GordianEncryptor myEncryptor = myEncFactory.createEncryptor(pSpec);</span>
+<span class="fc" id="L218">        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();</span>
+<span class="fc" id="L219">        final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myFactory.getEncryptorFactory();</span>
+<span class="fc" id="L220">        final GordianEncryptor myEncryptor = myEncFactory.createEncryptor(pSpec);</span>
 
         /* Create the encrypted key */
-<span class="fc" id="L222">        myEncryptor.initForEncrypt(pCertificate.getKeyPair());</span>
-<span class="fc" id="L223">        final byte[] myEncryptedKey = myEncryptor.encrypt(pKey);</span>
-<span class="fc" id="L224">        Arrays.fill(pKey, (byte) 0);</span>
+<span class="fc" id="L223">        myEncryptor.initForEncrypt(pCertificate.getKeyPair());</span>
+<span class="fc" id="L224">        final byte[] myEncryptedKey = myEncryptor.encrypt(pKey);</span>
+<span class="fc" id="L225">        Arrays.fill(pKey, (byte) 0);</span>
 
         /* Build recipientInfo */
-<span class="fc" id="L227">        final AlgorithmIdentifier myAlgId = myEncFactory.getIdentifierForSpec(pSpec);</span>
-<span class="fc" id="L228">        final IssuerAndSerialNumber myId = new IssuerAndSerialNumber(pCertificate.getIssuer().getName(), pCertificate.getSerialNo());</span>
-<span class="fc" id="L229">        final KeyTransRecipientInfo myKTInfo = new KeyTransRecipientInfo(new RecipientIdentifier(myId), myAlgId, new BEROctetString(myEncryptedKey));</span>
-<span class="fc" id="L230">        return new RecipientInfo(myKTInfo);</span>
+<span class="fc" id="L228">        final AlgorithmIdentifier myAlgId = myEncFactory.getIdentifierForSpec(pSpec);</span>
+<span class="fc" id="L229">        final IssuerAndSerialNumber myId = new IssuerAndSerialNumber(pCertificate.getIssuer().getName(), pCertificate.getSerialNo());</span>
+<span class="fc" id="L230">        final KeyTransRecipientInfo myKTInfo = new KeyTransRecipientInfo(new RecipientIdentifier(myId), myAlgId, new BEROctetString(myEncryptedKey));</span>
+<span class="fc" id="L231">        return new RecipientInfo(myKTInfo);</span>
     }
 
     /**
@@ -245,15 +246,15 @@ public class GordianCRMEncryptor {
         /* Protect against exceptions */
         try {
             /* Obtain the PrivateKeyInfo */
-<span class="nc" id="L248">            final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPKCS8Encoding.getEncoded());</span>
-<span class="nc" id="L249">            final EncKeyWithID myKeyWithId = new EncKeyWithID(myInfo, new GeneralName(pCertificate.getSubject().getName()));</span>
-<span class="nc" id="L250">            final byte[] myData = pKeySet.encryptBytes(myKeyWithId.getEncoded());</span>
-<span class="nc" id="L251">            final GordianKeySetSpecASN1 myASN1 = new GordianKeySetSpecASN1(pKeySet.getKeySetSpec());</span>
-<span class="nc" id="L252">            final AlgorithmIdentifier myAlgId = myASN1.getAlgorithmId();</span>
-<span class="nc" id="L253">            return new EncryptedContentInfo(CRMFObjectIdentifiers.id_ct_encKeyWithID, myAlgId, new BEROctetString(myData));</span>
+<span class="nc" id="L249">            final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPKCS8Encoding.getEncoded());</span>
+<span class="nc" id="L250">            final EncKeyWithID myKeyWithId = new EncKeyWithID(myInfo, new GeneralName(pCertificate.getSubject().getName()));</span>
+<span class="nc" id="L251">            final byte[] myData = pKeySet.encryptBytes(myKeyWithId.getEncoded());</span>
+<span class="nc" id="L252">            final GordianKeySetSpecASN1 myASN1 = new GordianKeySetSpecASN1(pKeySet.getKeySetSpec());</span>
+<span class="nc" id="L253">            final AlgorithmIdentifier myAlgId = myASN1.getAlgorithmId();</span>
+<span class="nc" id="L254">            return new EncryptedContentInfo(CRMFObjectIdentifiers.id_ct_encKeyWithID, myAlgId, new BEROctetString(myData));</span>
 
-<span class="nc" id="L255">        } catch (IOException e) {</span>
-<span class="nc" id="L256">            throw new GordianIOException(&quot;Failed to create EncryptedContentInfo&quot;, e);</span>
+<span class="nc" id="L256">        } catch (IOException e) {</span>
+<span class="nc" id="L257">            throw new GordianIOException(&quot;Failed to create EncryptedContentInfo&quot;, e);</span>
         }
     }
 
@@ -268,10 +269,10 @@ public class GordianCRMEncryptor {
     public static EncryptedContentInfo buildEncryptedContentInfo(final GordianKeySet pKeySet,
                                                                  final GordianCertificate pCertificate) throws GordianException {
         /* Obtain the encrypted certificate */
-<span class="fc" id="L271">        final byte[] myData = pKeySet.encryptBytes(pCertificate.getEncoded());</span>
-<span class="fc" id="L272">        final GordianKeySetSpecASN1 myASN1 = new GordianKeySetSpecASN1(pKeySet.getKeySetSpec());</span>
-<span class="fc" id="L273">        final AlgorithmIdentifier myAlgId = myASN1.getAlgorithmId();</span>
-<span class="fc" id="L274">        return new EncryptedContentInfo(PKCSObjectIdentifiers.x509Certificate, myAlgId, new BEROctetString(myData));</span>
+<span class="fc" id="L272">        final byte[] myData = pKeySet.encryptBytes(pCertificate.getEncoded());</span>
+<span class="fc" id="L273">        final GordianKeySetSpecASN1 myASN1 = new GordianKeySetSpecASN1(pKeySet.getKeySetSpec());</span>
+<span class="fc" id="L274">        final AlgorithmIdentifier myAlgId = myASN1.getAlgorithmId();</span>
+<span class="fc" id="L275">        return new EncryptedContentInfo(PKCSObjectIdentifiers.x509Certificate, myAlgId, new BEROctetString(myData));</span>
     }
 
     /**
@@ -287,14 +288,14 @@ public class GordianCRMEncryptor {
                                                  final GordianCertificate pCertificate,
                                                  final GordianKeyPair pKeyPair) throws GordianException {
         /* Extract details */
-<span class="fc" id="L290">        final AlgorithmIdentifier myAlgId = pRecInfo.getKeyEncryptionAlgorithm();</span>
-<span class="fc" id="L291">        final byte[] myEncryptedKey = pRecInfo.getEncryptedKey().getOctets();</span>
+<span class="fc" id="L291">        final AlgorithmIdentifier myAlgId = pRecInfo.getKeyEncryptionAlgorithm();</span>
+<span class="fc" id="L292">        final byte[] myEncryptedKey = pRecInfo.getEncryptedKey().getOctets();</span>
 
         /* Derive the keySet appropriately */
-<span class="fc" id="L294">        final GordianKeyPairUsage myUsage = pCertificate.getUsage();</span>
-<span class="fc bfc" id="L295" title="All 2 branches covered.">        return myUsage.hasUse(GordianKeyPairUse.KEYENCRYPT)</span>
-<span class="fc" id="L296">                ? deriveEncryptedKeySet(pKeyPair, myAlgId, myEncryptedKey)</span>
-<span class="fc" id="L297">                : deriveAgreedKeySet(pKeyPair, myEncryptedKey);</span>
+<span class="fc" id="L295">        final GordianKeyPairUsage myUsage = pCertificate.getUsage();</span>
+<span class="fc bfc" id="L296" title="All 2 branches covered.">        return myUsage.hasUse(GordianKeyPairUse.KEYENCRYPT)</span>
+<span class="fc" id="L297">                ? deriveEncryptedKeySet(pKeyPair, myAlgId, myEncryptedKey)</span>
+<span class="fc" id="L298">                : deriveAgreedKeySet(pKeyPair, myEncryptedKey);</span>
     }
 
     /**
@@ -310,15 +311,15 @@ public class GordianCRMEncryptor {
                                                 final AlgorithmIdentifier pAlgId,
                                                 final byte[] pEncryptedKey) throws GordianException {
         /* Handle decryption */
-<span class="fc" id="L313">        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();</span>
-<span class="fc" id="L314">        final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myFactory.getEncryptorFactory();</span>
-<span class="fc" id="L315">        final GordianEncryptorSpec myEncSpec = myEncFactory.getSpecForIdentifier(pAlgId);</span>
-<span class="fc" id="L316">        final GordianEncryptor myEncryptor = myEncFactory.createEncryptor(myEncSpec);</span>
-<span class="fc" id="L317">        myEncryptor.initForDecrypt(pKeyPair);</span>
-<span class="fc" id="L318">        final byte[] myKey = myEncryptor.decrypt(pEncryptedKey);</span>
-<span class="fc" id="L319">        final GordianKeySet myKeySet = deriveKeySetFromKey(myKey);</span>
-<span class="fc" id="L320">        Arrays.fill(myKey, (byte) 0);</span>
-<span class="fc" id="L321">        return myKeySet;</span>
+<span class="fc" id="L314">        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();</span>
+<span class="fc" id="L315">        final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myFactory.getEncryptorFactory();</span>
+<span class="fc" id="L316">        final GordianEncryptorSpec myEncSpec = myEncFactory.getSpecForIdentifier(pAlgId);</span>
+<span class="fc" id="L317">        final GordianEncryptor myEncryptor = myEncFactory.createEncryptor(myEncSpec);</span>
+<span class="fc" id="L318">        myEncryptor.initForDecrypt(pKeyPair);</span>
+<span class="fc" id="L319">        final byte[] myKey = myEncryptor.decrypt(pEncryptedKey);</span>
+<span class="fc" id="L320">        final GordianKeySet myKeySet = deriveKeySetFromKey(myKey);</span>
+<span class="fc" id="L321">        Arrays.fill(myKey, (byte) 0);</span>
+<span class="fc" id="L322">        return myKeySet;</span>
     }
 
     /**
@@ -332,13 +333,13 @@ public class GordianCRMEncryptor {
     private GordianKeySet deriveAgreedKeySet(final GordianKeyPair pKeyPair,
                                              final byte[] pHello) throws GordianException {
         /* Handle agreement */
-<span class="fc" id="L335">        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();</span>
-<span class="fc" id="L336">        final GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();</span>
-<span class="fc" id="L337">        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));</span>
-<span class="fc" id="L338">        final GordianAgreement myAgree = myAgreeFactory.parseAgreementMessage(pHello);</span>
-<span class="fc" id="L339">        final GordianAgreementParams myParams = myAgree.getAgreementParams().setServerCertificate(myCert);</span>
-<span class="fc" id="L340">        myAgree.updateParams(myParams);</span>
-<span class="fc" id="L341">        return myAgree.getKeySetResult();</span>
+<span class="fc" id="L336">        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();</span>
+<span class="fc" id="L337">        final GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();</span>
+<span class="fc" id="L338">        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));</span>
+<span class="fc" id="L339">        final GordianAgreement myAgree = myAgreeFactory.parseAgreementMessage(pHello);</span>
+<span class="fc" id="L340">        final GordianAgreementParams myParams = myAgree.getAgreementParams().setServerCertificate(myCert);</span>
+<span class="fc" id="L341">        myAgree.updateParams(myParams);</span>
+<span class="fc" id="L342">        return myAgree.getKeySetResult();</span>
     }
 
     /**
@@ -362,10 +363,10 @@ public class GordianCRMEncryptor {
          * @param pRecipient the recipient.
          */
         GordianCRMResult(final RecipientInfo pRecipient,
-<span class="fc" id="L365">                         final GordianKeySet pKeySet) {</span>
-<span class="fc" id="L366">            theRecipient = pRecipient;</span>
-<span class="fc" id="L367">            theKeySet = pKeySet;</span>
-<span class="fc" id="L368">        }</span>
+<span class="fc" id="L366">                         final GordianKeySet pKeySet) {</span>
+<span class="fc" id="L367">            theRecipient = pRecipient;</span>
+<span class="fc" id="L368">            theKeySet = pKeySet;</span>
+<span class="fc" id="L369">        }</span>
 
         /**
          * Obtain the recipient.
@@ -373,7 +374,7 @@ public class GordianCRMEncryptor {
          * @return the recipient
          */
         public RecipientInfo getRecipient() {
-<span class="fc" id="L376">            return theRecipient;</span>
+<span class="fc" id="L377">            return theRecipient;</span>
         }
 
         /**
@@ -382,7 +383,7 @@ public class GordianCRMEncryptor {
          * @return the keySet
          */
         public GordianKeySet getKeySet() {
-<span class="fc" id="L385">            return theKeySet;</span>
+<span class="fc" id="L386">            return theKeySet;</span>
         }
     }
 }

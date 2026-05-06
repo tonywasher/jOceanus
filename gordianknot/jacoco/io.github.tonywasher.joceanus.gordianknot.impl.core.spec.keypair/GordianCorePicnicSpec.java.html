@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCorePicnicSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair</a> &gt; <span class="el_source">GordianCorePicnicSpec.java</span></div><h1>GordianCorePicnicSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianPicnicSpec;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
+import org.bouncycastle.pqc.jcajce.spec.PicnicParameterSpec;
+import org.bouncycastle.pqc.legacy.picnic.PicnicParameters;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * PICNIC KeySpec.
+ */
+public final class GordianCorePicnicSpec {
+    /**
+     * The specMap.
+     */
+<span class="fc" id="L36">    private static final Map&lt;GordianPicnicSpec, GordianCorePicnicSpec&gt; SPECMAP = newSpecMap();</span>
+
+    /**
+     * The specArray.
+     */
+<span class="fc" id="L41">    private static final GordianCorePicnicSpec[] VALUES = SPECMAP.values().toArray(new GordianCorePicnicSpec[0]);</span>
+
+    /**
+     * The Spec.
+     */
+    private final GordianPicnicSpec theSpec;
+
+    /**
+     * Constructor.
+     *
+     * @param pSpec the spec
+     */
+<span class="fc" id="L53">    private GordianCorePicnicSpec(final GordianPicnicSpec pSpec) {</span>
+<span class="fc" id="L54">        theSpec = pSpec;</span>
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * Obtain the spec.
+     *
+     * @return the spec
+     */
+    public GordianPicnicSpec getSpec() {
+<span class="fc" id="L63">        return theSpec;</span>
+    }
+
+    /**
+     * Obtain Picnic Parameters.
+     *
+     * @return the parameters.
+     */
+    public PicnicParameters getParameters() {
+<span class="pc bpc" id="L72" title="12 of 13 branches missed.">        return switch (theSpec) {</span>
+<span class="nc" id="L73">            case L1UR -&gt; PicnicParameters.picnicl1ur;</span>
+<span class="fc" id="L74">            case L1FS -&gt; PicnicParameters.picnicl1fs;</span>
+<span class="nc" id="L75">            case L1FULL -&gt; PicnicParameters.picnicl1full;</span>
+<span class="nc" id="L76">            case L13 -&gt; PicnicParameters.picnic3l1;</span>
+<span class="nc" id="L77">            case L3UR -&gt; PicnicParameters.picnicl3ur;</span>
+<span class="nc" id="L78">            case L3FS -&gt; PicnicParameters.picnicl3fs;</span>
+<span class="nc" id="L79">            case L3FULL -&gt; PicnicParameters.picnicl3full;</span>
+<span class="nc" id="L80">            case L33 -&gt; PicnicParameters.picnic3l3;</span>
+<span class="nc" id="L81">            case L5UR -&gt; PicnicParameters.picnicl5ur;</span>
+<span class="nc" id="L82">            case L5FS -&gt; PicnicParameters.picnicl5fs;</span>
+<span class="nc" id="L83">            case L5FULL -&gt; PicnicParameters.picnicl5full;</span>
+<span class="nc" id="L84">            case L53 -&gt; PicnicParameters.picnic3l5;</span>
+<span class="nc" id="L85">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    /**
+     * Obtain Picnic ParameterSpec.
+     *
+     * @return the parameters.
+     */
+    public PicnicParameterSpec getParameterSpec() {
+<span class="pc bpc" id="L95" title="12 of 13 branches missed.">        return switch (theSpec) {</span>
+<span class="nc" id="L96">            case L1UR -&gt; PicnicParameterSpec.picnicl1ur;</span>
+<span class="fc" id="L97">            case L1FS -&gt; PicnicParameterSpec.picnicl1fs;</span>
+<span class="nc" id="L98">            case L1FULL -&gt; PicnicParameterSpec.picnicl1full;</span>
+<span class="nc" id="L99">            case L13 -&gt; PicnicParameterSpec.picnic3l1;</span>
+<span class="nc" id="L100">            case L3UR -&gt; PicnicParameterSpec.picnicl3ur;</span>
+<span class="nc" id="L101">            case L3FS -&gt; PicnicParameterSpec.picnicl3fs;</span>
+<span class="nc" id="L102">            case L3FULL -&gt; PicnicParameterSpec.picnicl3full;</span>
+<span class="nc" id="L103">            case L33 -&gt; PicnicParameterSpec.picnic3l3;</span>
+<span class="nc" id="L104">            case L5UR -&gt; PicnicParameterSpec.picnicl5ur;</span>
+<span class="nc" id="L105">            case L5FS -&gt; PicnicParameterSpec.picnicl5fs;</span>
+<span class="nc" id="L106">            case L5FULL -&gt; PicnicParameterSpec.picnicl5full;</span>
+<span class="nc" id="L107">            case L53 -&gt; PicnicParameterSpec.picnic3l5;</span>
+<span class="nc" id="L108">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    /**
+     * Obtain Picnic algorithm Identifier.
+     *
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+<span class="pc bpc" id="L118" title="1 of 13 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L119">            case L1UR -&gt; BCObjectIdentifiers.picnicl1ur;</span>
+<span class="fc" id="L120">            case L1FS -&gt; BCObjectIdentifiers.picnicl1fs;</span>
+<span class="fc" id="L121">            case L1FULL -&gt; BCObjectIdentifiers.picnicl1full;</span>
+<span class="fc" id="L122">            case L13 -&gt; BCObjectIdentifiers.picnic3l1;</span>
+<span class="fc" id="L123">            case L3UR -&gt; BCObjectIdentifiers.picnicl3ur;</span>
+<span class="fc" id="L124">            case L3FS -&gt; BCObjectIdentifiers.picnicl3fs;</span>
+<span class="fc" id="L125">            case L3FULL -&gt; BCObjectIdentifiers.picnicl3full;</span>
+<span class="fc" id="L126">            case L33 -&gt; BCObjectIdentifiers.picnic3l3;</span>
+<span class="fc" id="L127">            case L5UR -&gt; BCObjectIdentifiers.picnicl5ur;</span>
+<span class="fc" id="L128">            case L5FS -&gt; BCObjectIdentifiers.picnicl5fs;</span>
+<span class="fc" id="L129">            case L5FULL -&gt; BCObjectIdentifiers.picnicl5full;</span>
+<span class="fc" id="L130">            case L53 -&gt; BCObjectIdentifiers.picnic3l5;</span>
+<span class="nc" id="L131">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L137">        return theSpec.toString();</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L143" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L144">            return true;</span>
+        }
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L147">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="nc" id="L151">        return pThat instanceof GordianCorePicnicSpec myThat</span>
+<span class="nc bnc" id="L152" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L157">        return theSpec.hashCode();</span>
+    }
+
+    /**
+     * Obtain the core spec.
+     *
+     * @param pSpec the base spec
+     * @return the core spec
+     */
+    public static GordianCorePicnicSpec mapCoreSpec(final Object pSpec) {
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">        return pSpec instanceof GordianPicnicSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map&lt;GordianPicnicSpec, GordianCorePicnicSpec&gt; newSpecMap() {
+<span class="fc" id="L176">        final Map&lt;GordianPicnicSpec, GordianCorePicnicSpec&gt; myMap = new EnumMap&lt;&gt;(GordianPicnicSpec.class);</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        for (GordianPicnicSpec mySpec : GordianPicnicSpec.values()) {</span>
+<span class="fc" id="L178">            myMap.put(mySpec, new GordianCorePicnicSpec(mySpec));</span>
+        }
+<span class="fc" id="L180">        return myMap;</span>
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static GordianCorePicnicSpec[] values() {
+<span class="fc" id="L189">        return VALUES;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

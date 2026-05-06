@@ -25,15 +25,15 @@
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.bouncycastle.crypto.BufferedBlockCipher;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.bouncycastle.crypto.CipherParameters;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.bouncycastle.crypto.DataLengthException;
@@ -65,9 +65,9 @@
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">     * @param pCipherSpec the cipherSpec</em>
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">     * @param pCipher     the cipher</em>
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>      <strong class="jxr_keyword">protected</strong> <a name="BouncySymKeyCipher" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/bc/BouncySymKeyCipher.html#BouncySymKeyCipher">BouncySymKeyCipher</a>(<strong class="jxr_keyword">final</strong> <a name="GordianBaseFactory" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/base/GordianBaseFactory.html#GordianBaseFactory">GordianBaseFactory</a> pFactory,
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>                                   <strong class="jxr_keyword">final</strong> <a name="GordianSymCipherSpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/GordianSymCipherSpec.html#GordianSymCipherSpec">GordianSymCipherSpec</a> pCipherSpec,
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>                                   <strong class="jxr_keyword">final</strong> BufferedBlockCipher pCipher) {
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>      <a name="BouncySymKeyCipher" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/bc/BouncySymKeyCipher.html#BouncySymKeyCipher">BouncySymKeyCipher</a>(<strong class="jxr_keyword">final</strong> <a name="GordianBaseFactory" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/base/GordianBaseFactory.html#GordianBaseFactory">GordianBaseFactory</a> pFactory,
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>                         <strong class="jxr_keyword">final</strong> <a name="GordianCoreSymCipherSpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/spec/cipher/GordianCoreSymCipherSpec.html#GordianCoreSymCipherSpec">GordianCoreSymCipherSpec</a> pCipherSpec,
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>                         <strong class="jxr_keyword">final</strong> BufferedBlockCipher pCipher) {
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">super</strong>(pFactory, pCipherSpec);
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>          theCipher = pCipher;
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      }
@@ -78,13 +78,13 @@
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      }
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      @Override
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>      <strong class="jxr_keyword">public</strong> <a name="GordianSymCipherSpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/GordianSymCipherSpec.html#GordianSymCipherSpec">GordianSymCipherSpec</a> getCipherSpec() {
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>          <strong class="jxr_keyword">return</strong> (<a name="GordianSymCipherSpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/GordianSymCipherSpec.html#GordianSymCipherSpec">GordianSymCipherSpec</a>) <strong class="jxr_keyword">super</strong>.getCipherSpec();
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>      <strong class="jxr_keyword">public</strong> <a name="GordianCoreSymCipherSpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/spec/cipher/GordianCoreSymCipherSpec.html#GordianCoreSymCipherSpec">GordianCoreSymCipherSpec</a> getCipherSpec() {
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>          <strong class="jxr_keyword">return</strong> (<a name="GordianCoreSymCipherSpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/spec/cipher/GordianCoreSymCipherSpec.html#GordianCoreSymCipherSpec">GordianCoreSymCipherSpec</a>) <strong class="jxr_keyword">super</strong>.getCipherSpec();
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>      }
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>      @Override
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> init(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> pEncrypt,
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>                       <strong class="jxr_keyword">final</strong> <a name="GordianCipherParameters" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/GordianCipherParameters.html#GordianCipherParameters">GordianCipherParameters</a> pParams) <strong class="jxr_keyword">throws</strong> <a name="GordianException" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/base/GordianException.html#GordianException">GordianException</a> {
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>                       <strong class="jxr_keyword">final</strong> <a name="GordianCipherParams" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/GordianCipherParams.html#GordianCipherParams">GordianCipherParams</a> pParams) <strong class="jxr_keyword">throws</strong> <a name="GordianException" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/base/GordianException.html#GordianException">GordianException</a> {
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>          <em class="jxr_comment">/* Process the parameters and access the key */</em>
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          processParameters(pParams);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>          <strong class="jxr_keyword">final</strong> BouncyKey&lt;GordianSymKeySpec&gt; myKey = BouncyKey.accessKey(getKey());
@@ -108,9 +108,9 @@
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>         CipherParameters myParams = <strong class="jxr_keyword">new</strong> KeyParameter(pKey.getKey());
 <a class="jxr_linenumber" name="L101" href="#L101">101</a> 
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>         <em class="jxr_comment">/* Build Key parameter */</em>
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>         <strong class="jxr_keyword">final</strong> <a name="GordianSymKeySpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/GordianSymKeySpec.html#GordianSymKeySpec">GordianSymKeySpec</a> myKeySpec = pKey.getKeyType();
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>         <strong class="jxr_keyword">final</strong> <a name="GordianSymKeySpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/spec/GordianSymKeySpec.html#GordianSymKeySpec">GordianSymKeySpec</a> myKeySpec = pKey.getKeyType();
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>         <strong class="jxr_keyword">if</strong> (myKeySpec != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>             <strong class="jxr_keyword">final</strong> <a name="GordianSymKeyType" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/GordianSymKeyType.html#GordianSymKeyType">GordianSymKeyType</a> myType = myKeySpec.getSymKeyType();
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>             <strong class="jxr_keyword">final</strong> <a name="GordianSymKeyType" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/cipher/spec/GordianSymKeyType.html#GordianSymKeyType">GordianSymKeyType</a> myType = myKeySpec.getSymKeyType();
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>             <strong class="jxr_keyword">if</strong> (GordianSymKeyType.RC5.equals(myType)) {
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>                 myParams = <strong class="jxr_keyword">new</strong> RC5Parameters(pKey.getKey(), GordianBaseData.RC5_ROUNDS);
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>             }
@@ -166,7 +166,7 @@
 <a class="jxr_linenumber" name="L158" href="#L158">158</a> 
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>     @Override
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> getBlockSize() {
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>         <strong class="jxr_keyword">return</strong> getCipherSpec().getCipherMode().hasPadding()
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>         <strong class="jxr_keyword">return</strong> getCipherSpec().getCoreCipherMode().hasPadding()
 <a class="jxr_linenumber" name="L162" href="#L162">162</a>                 ? theCipher.getBlockSize() : 0;
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>     }
 <a class="jxr_linenumber" name="L164" href="#L164">164</a> 
@@ -181,22 +181,21 @@
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>         }
 <a class="jxr_linenumber" name="L174" href="#L174">174</a> 
 <a class="jxr_linenumber" name="L175" href="#L175">175</a>         <em class="jxr_comment">/* Make sure that the classes are the same */</em>
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>         <strong class="jxr_keyword">if</strong> (!(pThat instanceof <a name="BouncySymKeyCipher" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/bc/BouncySymKeyCipher.html#BouncySymKeyCipher">BouncySymKeyCipher</a>)) {
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>         <strong class="jxr_keyword">if</strong> (!(pThat instanceof <a name="BouncySymKeyCipher" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/bc/BouncySymKeyCipher.html#BouncySymKeyCipher">BouncySymKeyCipher</a> myThat)) {
 <a class="jxr_linenumber" name="L177" href="#L177">177</a>             <strong class="jxr_keyword">return</strong> false;
 <a class="jxr_linenumber" name="L178" href="#L178">178</a>         }
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>         <strong class="jxr_keyword">final</strong> <a name="BouncySymKeyCipher" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/bc/BouncySymKeyCipher.html#BouncySymKeyCipher">BouncySymKeyCipher</a> myThat = (<a name="BouncySymKeyCipher" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/bc/BouncySymKeyCipher.html#BouncySymKeyCipher">BouncySymKeyCipher</a>) pThat;
-<a class="jxr_linenumber" name="L180" href="#L180">180</a> 
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>         <em class="jxr_comment">/* Check that the fields are equal */</em>
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>         <strong class="jxr_keyword">return</strong> isEncrypting == myThat.isEncrypting
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>                 &amp;&amp; <strong class="jxr_keyword">super</strong>.equals(myThat);
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>     }
-<a class="jxr_linenumber" name="L185" href="#L185">185</a> 
-<a class="jxr_linenumber" name="L186" href="#L186">186</a>     @Override
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> hashCode() {
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">super</strong>.hashCode()
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>                 + (isEncrypting ? 1 : 0);
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>     }
-<a class="jxr_linenumber" name="L191" href="#L191">191</a> }
+<a class="jxr_linenumber" name="L179" href="#L179">179</a> 
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>         <em class="jxr_comment">/* Check that the fields are equal */</em>
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>         <strong class="jxr_keyword">return</strong> isEncrypting == myThat.isEncrypting
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>                 &amp;&amp; <strong class="jxr_keyword">super</strong>.equals(myThat);
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>     }
+<a class="jxr_linenumber" name="L184" href="#L184">184</a> 
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>     @Override
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> hashCode() {
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">super</strong>.hashCode()
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>                 + (isEncrypting ? 1 : 0);
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>     }
+<a class="jxr_linenumber" name="L190" href="#L190">190</a> }
 </pre>
 <hr/>
 <div id="footer">© 2012–2026</div>

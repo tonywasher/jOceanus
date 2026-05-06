@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 
 /**
@@ -201,28 +201,18 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
      * @return the maximum length
      */
     public int getMaximumLength() {
-<span class="pc bpc" id="L204" title="4 of 5 branches missed.">        switch (this) {</span>
-            case WEBSITE:
-<span class="nc" id="L206">                return MoneyWiseAccountInfoType.WEBSITE_LEN;</span>
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
-            case SORTCODE:
-            case ACCOUNT:
-            case REFERENCE:
-<span class="nc" id="L213">                return MoneyWiseAccountInfoType.DATA_LEN;</span>
-            case NOTES:
-<span class="nc" id="L215">                return MoneyWiseAccountInfoType.NOTES_LEN;</span>
-            case SYMBOL:
-<span class="fc" id="L217">                return MoneyWiseSecurityType.SYMBOL_LEN;</span>
-            default:
-<span class="nc" id="L219">                return 0;</span>
-        }
+<span class="pc bpc" id="L204" title="4 of 5 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L205">            case WEBSITE -&gt; MoneyWiseAccountInfoType.WEBSITE_LEN;</span>
+<span class="nc" id="L206">            case CUSTOMERNO, USERID, PASSWORD, SORTCODE, ACCOUNT, REFERENCE -&gt; MoneyWiseAccountInfoType.DATA_LEN;</span>
+<span class="nc" id="L207">            case NOTES -&gt; MoneyWiseAccountInfoType.NOTES_LEN;</span>
+<span class="fc" id="L208">            case SYMBOL -&gt; MoneyWiseSecurityType.SYMBOL_LEN;</span>
+<span class="nc" id="L209">            default -&gt; 0;</span>
+        };
     }
 
     @Override
     public String getId() {
-<span class="fc" id="L225">        return toString();</span>
+<span class="fc" id="L215">        return toString();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

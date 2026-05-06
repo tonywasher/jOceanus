@@ -38,51 +38,28 @@ import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateInfoS
     @Override
     public MetisFieldRequired isClassRequired(final PrometheusDataInfoClass pClass) {
         /* Switch on class */
-<span class="fc bfc" id="L41" title="All 2 branches covered.">        switch ((MoneyWiseAccountInfoClass) pClass) {</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        return switch ((MoneyWiseAccountInfoClass) pClass) {</span>
             /* Allowed set */
-            case NOTES:
-            case SORTCODE:
-            case ACCOUNT:
-            case REFERENCE:
-            case WEBSITE:
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
-<span class="fc" id="L51">                return MetisFieldRequired.CANEXIST;</span>
+            case NOTES, SORTCODE, ACCOUNT, REFERENCE, WEBSITE, CUSTOMERNO, USERID, PASSWORD -&gt;
+<span class="fc" id="L44">                    MetisFieldRequired.CANEXIST;</span>
 
             /* Not allowed */
-            case MATURITY:
-            case OPENINGBALANCE:
-            case AUTOEXPENSE:
-            case AUTOPAYEE:
-            case SYMBOL:
-            case REGION:
-            case UNDERLYINGSTOCK:
-            case OPTIONPRICE:
-            default:
-<span class="fc" id="L63">                return MetisFieldRequired.NOTALLOWED;</span>
-        }
+<span class="fc" id="L47">            default -&gt; MetisFieldRequired.NOTALLOWED;</span>
+        };
     }
 
     @Override
     public void validateClass(final MoneyWisePayeeInfo pInfo,
                               final PrometheusDataInfoClass pClass) {
         /* Switch on class */
-<span class="nc bnc" id="L71" title="All 2 branches missed.">        switch ((MoneyWiseAccountInfoClass) pClass) {</span>
-            case WEBSITE:
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
-            case SORTCODE:
-            case ACCOUNT:
-            case NOTES:
-            case REFERENCE:
-<span class="nc" id="L80">                validateInfoLength(pInfo);</span>
-<span class="nc" id="L81">                break;</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        switch ((MoneyWiseAccountInfoClass) pClass) {</span>
+            case WEBSITE, CUSTOMERNO, USERID, PASSWORD, SORTCODE, ACCOUNT, NOTES, REFERENCE:
+<span class="nc" id="L57">                validateInfoLength(pInfo);</span>
+<span class="nc" id="L58">                break;</span>
             default:
                 break;
         }
-<span class="nc" id="L85">    }</span>
+<span class="nc" id="L62">    }</span>
 
     /**
      * Validate the info length.
@@ -90,11 +67,11 @@ import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateInfoS
      * @param pInfo the info
      */
     private void validateInfoLength(final MoneyWisePayeeInfo pInfo) {
-<span class="nc" id="L93">        final char[] myArray = pInfo.getValue(char[].class);</span>
-<span class="nc" id="L94">        final MoneyWiseAccountInfoClass myClass = pInfo.getInfoClass();</span>
-<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (myArray.length &gt; myClass.getMaximumLength()) {</span>
-<span class="nc" id="L96">            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, MoneyWisePayeeInfoSet.getFieldForClass(myClass));</span>
+<span class="nc" id="L70">        final char[] myArray = pInfo.getValue(char[].class);</span>
+<span class="nc" id="L71">        final MoneyWiseAccountInfoClass myClass = pInfo.getInfoClass();</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if (myArray.length &gt; myClass.getMaximumLength()) {</span>
+<span class="nc" id="L73">            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, MoneyWisePayeeInfoSet.getFieldForClass(myClass));</span>
         }
-<span class="nc" id="L98">    }</span>
+<span class="nc" id="L75">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

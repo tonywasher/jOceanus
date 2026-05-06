@@ -18,11 +18,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyStateAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyStateAwarePrivateKey;
@@ -30,6 +28,8 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySignature.BouncyD
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreLMSSpec;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -45,7 +45,6 @@ import org.bouncycastle.pqc.crypto.lms.LMSKeyPairGenerator;
 import org.bouncycastle.pqc.crypto.lms.LMSParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.lms.LMSSigner;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
@@ -79,17 +78,17 @@ public final class BouncyLMSKeyPair {
          */
         BouncyLMSPublicKey(final GordianKeyPairSpec pKeySpec,
                            final LMSPublicKeyParameters pPublicKey) {
-<span class="nc" id="L82">            super(pKeySpec, pPublicKey);</span>
-<span class="nc" id="L83">        }</span>
+<span class="nc" id="L81">            super(pKeySpec, pPublicKey);</span>
+<span class="nc" id="L82">        }</span>
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-<span class="nc" id="L88">            final LMSPublicKeyParameters myThis = getPublicKey();</span>
-<span class="nc" id="L89">            final LMSPublicKeyParameters myThat = (LMSPublicKeyParameters) pThat;</span>
+<span class="nc" id="L87">            final LMSPublicKeyParameters myThis = getPublicKey();</span>
+<span class="nc" id="L88">            final LMSPublicKeyParameters myThat = (LMSPublicKeyParameters) pThat;</span>
 
             /* Check equality */
-<span class="nc" id="L92">            return myThis.equals(myThat);</span>
+<span class="nc" id="L91">            return myThis.equals(myThat);</span>
         }
     }
 
@@ -106,27 +105,27 @@ public final class BouncyLMSKeyPair {
          */
         BouncyLMSPrivateKey(final GordianKeyPairSpec pKeySpec,
                             final LMSPrivateKeyParameters pPrivateKey) {
-<span class="nc" id="L109">            super(pKeySpec, pPrivateKey);</span>
-<span class="nc" id="L110">        }</span>
+<span class="nc" id="L108">            super(pKeySpec, pPrivateKey);</span>
+<span class="nc" id="L109">        }</span>
 
         @Override
         public long getUsagesRemaining() {
-<span class="nc" id="L114">            return getPrivateKey().getUsagesRemaining();</span>
+<span class="nc" id="L113">            return getPrivateKey().getUsagesRemaining();</span>
         }
 
         @Override
         public BouncyLMSPrivateKey getKeyShard(final int pNumUsages) {
-<span class="nc" id="L119">            return new BouncyLMSPrivateKey(getKeySpec(), getPrivateKey().extractKeyShard(pNumUsages));</span>
+<span class="nc" id="L118">            return new BouncyLMSPrivateKey(getKeySpec(), getPrivateKey().extractKeyShard(pNumUsages));</span>
         }
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-<span class="nc" id="L125">            final LMSPrivateKeyParameters myThis = getPrivateKey();</span>
-<span class="nc" id="L126">            final LMSPrivateKeyParameters myThat = (LMSPrivateKeyParameters) pThat;</span>
+<span class="nc" id="L124">            final LMSPrivateKeyParameters myThis = getPrivateKey();</span>
+<span class="nc" id="L125">            final LMSPrivateKeyParameters myThat = (LMSPrivateKeyParameters) pThat;</span>
 
             /* Check equality */
-<span class="nc" id="L129">            return myThis.equals(myThat);</span>
+<span class="nc" id="L128">            return myThis.equals(myThat);</span>
         }
     }
 
@@ -149,11 +148,12 @@ public final class BouncyLMSKeyPair {
         BouncyLMSKeyPairGenerator(final GordianBaseFactory pFactory,
                                   final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
-<span class="nc" id="L152">            super(pFactory, pKeySpec);</span>
+<span class="nc" id="L151">            super(pFactory, pKeySpec);</span>
 
             /* Create and initialise the generator */
-<span class="nc" id="L155">            theGenerator = new LMSKeyPairGenerator();</span>
-<span class="nc" id="L156">            final GordianLMSKeySpec mySpec = pKeySpec.getLMSKeySpec();</span>
+<span class="nc" id="L154">            theGenerator = new LMSKeyPairGenerator();</span>
+<span class="nc" id="L155">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;</span>
+<span class="nc" id="L156">            final GordianCoreLMSSpec mySpec = myKeySpec.getLMSSpec();</span>
 <span class="nc" id="L157">            final KeyGenerationParameters myParams = new LMSKeyGenerationParameters(mySpec.getParameters(), getRandom());</span>
 <span class="nc" id="L158">            theGenerator.init(myParams);</span>
 <span class="nc" id="L159">        }</span>
@@ -348,10 +348,11 @@ public final class BouncyLMSKeyPair {
 
             /* Create and initialise the generator */
 <span class="fc" id="L350">            theGenerator = new HSSKeyPairGenerator();</span>
-<span class="fc" id="L351">            final GordianHSSKeySpec myKeySpec = pKeySpec.getHSSKeySpec();</span>
-<span class="fc" id="L352">            final KeyGenerationParameters myParams = new HSSKeyGenerationParameters(deriveParameters(myKeySpec), getRandom());</span>
-<span class="fc" id="L353">            theGenerator.init(myParams);</span>
-<span class="fc" id="L354">        }</span>
+<span class="fc" id="L351">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;</span>
+<span class="fc" id="L352">            final GordianCoreLMSSpec myHSSSpec = myKeySpec.getLMSSpec();</span>
+<span class="fc" id="L353">            final KeyGenerationParameters myParams = new HSSKeyGenerationParameters(deriveParameters(myHSSSpec), getRandom());</span>
+<span class="fc" id="L354">            theGenerator.init(myParams);</span>
+<span class="fc" id="L355">        }</span>
 
         /**
          * Derive the parameters.
@@ -359,10 +360,9 @@ public final class BouncyLMSKeyPair {
          * @param pKeySpec the keySPec
          * @return the parameters.
          */
-        private static LMSParameters[] deriveParameters(final GordianHSSKeySpec pKeySpec) {
-<span class="fc" id="L363">            final GordianLMSKeySpec myKeySpec = pKeySpec.getKeySpec();</span>
+        private static LMSParameters[] deriveParameters(final GordianCoreLMSSpec pKeySpec) {
 <span class="fc" id="L364">            final LMSParameters[] myParams = new LMSParameters[pKeySpec.getTreeDepth()];</span>
-<span class="fc" id="L365">            Arrays.fill(myParams, myKeySpec.getParameters());</span>
+<span class="fc" id="L365">            Arrays.fill(myParams, pKeySpec.getParameters());</span>
 <span class="fc" id="L366">            return myParams;</span>
         }
 
@@ -474,19 +474,9 @@ public final class BouncyLMSKeyPair {
     public static class BouncyLMSSignature
             extends BouncyDigestSignature {
         /**
-         * The LMS Signer.
-         */
-        private final LMSSigner theSigner;
-
-        /**
          * The HSS Signer.
          */
         private final HSSSigner theHSSSigner;
-
-        /**
-         * Are we using the HSS signer?
-         */
-        private boolean isHSS;
 
         /**
          * Constructor.
@@ -498,70 +488,53 @@ public final class BouncyLMSKeyPair {
         BouncyLMSSignature(final GordianBaseFactory pFactory,
                            final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
-<span class="fc" id="L501">            super(pFactory, pSpec);</span>
+<span class="fc" id="L491">            super(pFactory, pSpec);</span>
 
             /* Create the signer */
-<span class="fc" id="L504">            theSigner = new LMSSigner();</span>
-<span class="fc" id="L505">            theHSSSigner = new HSSSigner();</span>
-<span class="fc" id="L506">        }</span>
+<span class="fc" id="L494">            theHSSSigner = new HSSSigner();</span>
+<span class="fc" id="L495">        }</span>
 
 
         @Override
-        public void initForSigning(final GordianSignParams pParams) throws GordianException {
+        public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
             /* Initialise detail */
-<span class="fc" id="L512">            super.initForSigning(pParams);</span>
-<span class="fc" id="L513">            final BouncyKeyPair myPair = getKeyPair();</span>
-<span class="fc" id="L514">            BouncyKeyPair.checkKeyPair(myPair);</span>
+<span class="fc" id="L501">            super.initForSigning(pParams);</span>
+<span class="fc" id="L502">            final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L503">            BouncyKeyPair.checkKeyPair(myPair);</span>
 
             /* Initialise and set the signer */
-<span class="fc" id="L517">            isHSS = myPair.getKeyPairSpec().getSubKeyType() instanceof GordianHSSKeySpec;</span>
-<span class="pc bpc" id="L518" title="1 of 2 branches missed.">            if (isHSS) {</span>
-<span class="fc" id="L519">                final BouncyHSSPrivateKey myPrivate = (BouncyHSSPrivateKey) myPair.getPrivateKey();</span>
-<span class="fc" id="L520">                theHSSSigner.init(true, myPrivate.getPrivateKey());</span>
-<span class="fc" id="L521">            } else {</span>
-<span class="nc" id="L522">                final BouncyLMSPrivateKey myPrivate = (BouncyLMSPrivateKey) myPair.getPrivateKey();</span>
-<span class="nc" id="L523">                theSigner.init(true, myPrivate.getPrivateKey());</span>
-            }
-<span class="fc" id="L525">        }</span>
+<span class="fc" id="L506">            final BouncyHSSPrivateKey myPrivate = (BouncyHSSPrivateKey) myPair.getPrivateKey();</span>
+<span class="fc" id="L507">            theHSSSigner.init(true, myPrivate.getPrivateKey());</span>
+<span class="fc" id="L508">        }</span>
 
         @Override
-        public void initForVerify(final GordianSignParams pParams) throws GordianException {
+        public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
             /* Initialise detail */
-<span class="fc" id="L530">            super.initForVerify(pParams);</span>
-<span class="fc" id="L531">            final BouncyKeyPair myPair = getKeyPair();</span>
-<span class="fc" id="L532">            BouncyKeyPair.checkKeyPair(myPair);</span>
+<span class="fc" id="L513">            super.initForVerify(pParams);</span>
+<span class="fc" id="L514">            final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L515">            BouncyKeyPair.checkKeyPair(myPair);</span>
 
             /* Initialise and set the signer */
-<span class="fc" id="L535">            isHSS = myPair.getKeyPairSpec().getSubKeyType() instanceof GordianHSSKeySpec;</span>
-<span class="pc bpc" id="L536" title="1 of 2 branches missed.">            if (isHSS) {</span>
-<span class="fc" id="L537">                final BouncyHSSPublicKey myPublic = (BouncyHSSPublicKey) myPair.getPublicKey();</span>
-<span class="fc" id="L538">                theHSSSigner.init(false, myPublic.getPublicKey());</span>
-<span class="fc" id="L539">            } else {</span>
-<span class="nc" id="L540">                final BouncyLMSPublicKey myPublic = (BouncyLMSPublicKey) myPair.getPublicKey();</span>
-<span class="nc" id="L541">                theSigner.init(false, myPublic.getPublicKey());</span>
-            }
-<span class="fc" id="L543">        }</span>
+<span class="fc" id="L518">            final BouncyHSSPublicKey myPublic = (BouncyHSSPublicKey) myPair.getPublicKey();</span>
+<span class="fc" id="L519">            theHSSSigner.init(false, myPublic.getPublicKey());</span>
+<span class="fc" id="L520">        }</span>
 
         @Override
         public byte[] sign() throws GordianException {
             /* Check that we are in signing mode */
-<span class="fc" id="L548">            checkMode(GordianSignatureMode.SIGN);</span>
+<span class="fc" id="L525">            checkMode(GordianSignatureMode.SIGN);</span>
 
             /* Sign the message */
-<span class="pc bpc" id="L551" title="1 of 2 branches missed.">            return isHSS</span>
-<span class="fc" id="L552">                    ? theHSSSigner.generateSignature(getDigest())</span>
-<span class="nc" id="L553">                    : theSigner.generateSignature(getDigest());</span>
+<span class="fc" id="L528">            return theHSSSigner.generateSignature(getDigest());</span>
         }
 
         @Override
         public boolean verify(final byte[] pSignature) throws GordianException {
             /* Check that we are in verify mode */
-<span class="fc" id="L559">            checkMode(GordianSignatureMode.VERIFY);</span>
+<span class="fc" id="L534">            checkMode(GordianSignatureMode.VERIFY);</span>
 
             /* Verify the message */
-<span class="pc bpc" id="L562" title="1 of 2 branches missed.">            return isHSS</span>
-<span class="fc" id="L563">                    ? theHSSSigner.verifySignature(getDigest(), pSignature)</span>
-<span class="nc" id="L564">                    : theSigner.verifySignature(getDigest(), pSignature);</span>
+<span class="fc" id="L537">            return theHSSSigner.verifySignature(getDigest(), pSignature);</span>
         }
     }
 }

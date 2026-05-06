@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreECSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair</a> &gt; <span class="el_source">GordianCoreECSpec.java</span></div><h1>GordianCoreECSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianECSpec;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * Named Elliptic Curves.
+ */
+public final class GordianCoreECSpec
+        implements GordianCoreElliptic {
+    /**
+     * The specMap.
+     */
+<span class="fc" id="L34">    private static final Map&lt;GordianECSpec, GordianCoreECSpec&gt; SPECMAP = newSpecMap();</span>
+
+    /**
+     * The specArray.
+     */
+<span class="fc" id="L39">    private static final GordianCoreECSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreECSpec[0]);</span>
+
+    /**
+     * The Spec.
+     */
+    private final GordianECSpec theSpec;
+
+    /**
+     * Constructor.
+     *
+     * @param pSpec the spec
+     */
+<span class="fc" id="L51">    private GordianCoreECSpec(final GordianECSpec pSpec) {</span>
+<span class="fc" id="L52">        theSpec = pSpec;</span>
+<span class="fc" id="L53">    }</span>
+
+    /**
+     * Obtain the spec.
+     *
+     * @return the spec
+     */
+    public GordianECSpec getSpec() {
+<span class="fc" id="L61">        return theSpec;</span>
+    }
+
+    @Override
+    public String getCurveName() {
+<span class="pc bpc" id="L66" title="1 of 19 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L67">            case SECT571K1 -&gt; &quot;sect571k1&quot;;</span>
+<span class="fc" id="L68">            case SECT571R1 -&gt; &quot;sect571r1&quot;;</span>
+<span class="fc" id="L69">            case SECP521R1 -&gt; &quot;secp521r1&quot;;</span>
+<span class="fc" id="L70">            case SECT409K1 -&gt; &quot;sect409k1&quot;;</span>
+<span class="fc" id="L71">            case SECT409R1 -&gt; &quot;sect409r1&quot;;</span>
+<span class="fc" id="L72">            case SECP384R1 -&gt; &quot;secp384r1&quot;;</span>
+<span class="fc" id="L73">            case SECT283K1 -&gt; &quot;sect283k1&quot;;</span>
+<span class="fc" id="L74">            case SECT283R1 -&gt; &quot;sect283r1&quot;;</span>
+<span class="fc" id="L75">            case SECP256K1 -&gt; &quot;secp256k1&quot;;</span>
+<span class="fc" id="L76">            case SECP256R1 -&gt; &quot;secp256r1&quot;;</span>
+<span class="fc" id="L77">            case BRAINPOOLP512R1 -&gt; &quot;brainpoolP512r1&quot;;</span>
+<span class="fc" id="L78">            case BRAINPOOLP512T1 -&gt; &quot;brainpoolP512t1&quot;;</span>
+<span class="fc" id="L79">            case BRAINPOOLP384R1 -&gt; &quot;brainpoolP384r1&quot;;</span>
+<span class="fc" id="L80">            case BRAINPOOLP384T1 -&gt; &quot;brainpoolP384t1&quot;;</span>
+<span class="fc" id="L81">            case BRAINPOOLP320R1 -&gt; &quot;brainpoolP320r1&quot;;</span>
+<span class="fc" id="L82">            case BRAINPOOLP320T1 -&gt; &quot;brainpoolP320t1&quot;;</span>
+<span class="fc" id="L83">            case BRAINPOOLP256R1 -&gt; &quot;brainpoolP256r1&quot;;</span>
+<span class="fc" id="L84">            case BRAINPOOLP256T1 -&gt; &quot;brainpoolP256t1&quot;;</span>
+<span class="nc" id="L85">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    @Override
+    public int getKeySize() {
+<span class="pc bpc" id="L91" title="8 of 9 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L92">            case SECT571K1, SECT571R1 -&gt; GordianLength.LEN_571.getLength();</span>
+<span class="nc" id="L93">            case SECP521R1 -&gt; GordianLength.LEN_521.getLength();</span>
+<span class="nc" id="L94">            case BRAINPOOLP512R1, BRAINPOOLP512T1 -&gt; GordianLength.LEN_512.getLength();</span>
+<span class="nc" id="L95">            case SECT409K1, SECT409R1 -&gt; GordianLength.LEN_409.getLength();</span>
+<span class="nc" id="L96">            case SECP384R1, BRAINPOOLP384R1, BRAINPOOLP384T1 -&gt; GordianLength.LEN_384.getLength();</span>
+<span class="nc" id="L97">            case BRAINPOOLP320R1, BRAINPOOLP320T1 -&gt; GordianLength.LEN_320.getLength();</span>
+<span class="nc" id="L98">            case SECT283K1, SECT283R1 -&gt; GordianLength.LEN_283.getLength();</span>
+<span class="nc" id="L99">            case SECP256K1, SECP256R1, BRAINPOOLP256R1, BRAINPOOLP256T1 -&gt; GordianLength.LEN_256.getLength();</span>
+<span class="nc" id="L100">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    /**
+     * Obtain the curve for a Name.
+     *
+     * @param pName the name
+     * @return the curve
+     */
+    public static GordianCoreECSpec getCurveForName(final String pName) {
+        /* Loop through the curves */
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        for (GordianCoreECSpec myCurve : values()) {</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">            if (pName.equals(myCurve.getCurveName())) {</span>
+<span class="fc" id="L114">                return myCurve;</span>
+            }
+        }
+<span class="fc" id="L117">        return null;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L122">        return theSpec.toString();</span>
+    }
+
+    @Override
+    public boolean hasCustomCurve() {
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">        return switch (theSpec) {</span>
+            case SECP256K1, SECP256R1, SECP384R1, SECP521R1, SECT283K1, SECT283R1, SECT409K1, SECT409R1, SECT571K1,
+<span class="fc" id="L129">                 SECT571R1 -&gt; true;</span>
+<span class="nc" id="L130">            default -&gt; false;</span>
+        };
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L138">            return true;</span>
+        }
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L141">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="nc" id="L145">        return pThat instanceof GordianCoreECSpec myThat</span>
+<span class="nc bnc" id="L146" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L151">        return theSpec.hashCode();</span>
+    }
+
+    /**
+     * Obtain the core spec.
+     *
+     * @param pSpec the base spec
+     * @return the core spec
+     */
+    public static GordianCoreECSpec mapCoreSpec(final Object pSpec) {
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">        return pSpec instanceof GordianECSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map&lt;GordianECSpec, GordianCoreECSpec&gt; newSpecMap() {
+<span class="fc" id="L170">        final Map&lt;GordianECSpec, GordianCoreECSpec&gt; myMap = new EnumMap&lt;&gt;(GordianECSpec.class);</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">        for (GordianECSpec mySpec : GordianECSpec.values()) {</span>
+<span class="fc" id="L172">            myMap.put(mySpec, new GordianCoreECSpec(mySpec));</span>
+        }
+<span class="fc" id="L174">        return myMap;</span>
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static GordianCoreECSpec[] values() {
+<span class="fc" id="L183">        return VALUES;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

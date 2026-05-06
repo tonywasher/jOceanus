@@ -16,10 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -34,6 +30,10 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityCla
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Security analysis.
@@ -215,20 +215,15 @@ public class MoneyWiseXAnalysisSecurity {
 <span class="fc" id="L215">                theDividend.processDividend(theTransaction);</span>
 <span class="fc" id="L216">                break;</span>
             /* Process standard transfer in/out */
-            case TRANSFER:
-            case SECURITYCLOSURE:
-            case EXPENSE:
-            case INHERITED:
-            case OTHERINCOME:
-            case STOCKRIGHTSISSUE:
-<span class="fc" id="L224">                theXferOut.processTransferOut(theTransaction);</span>
-<span class="fc" id="L225">                break;</span>
+            case TRANSFER, SECURITYCLOSURE, EXPENSE, INHERITED, OTHERINCOME, STOCKRIGHTSISSUE:
+<span class="fc" id="L219">                theXferOut.processTransferOut(theTransaction);</span>
+<span class="fc" id="L220">                break;</span>
             /* Throw an Exception */
             default:
-<span class="nc" id="L228">                throw new MoneyWiseLogicException(ERROR_CATEGORY</span>
+<span class="nc" id="L223">                throw new MoneyWiseLogicException(ERROR_CATEGORY</span>
                         + myCatClass);
         }
-<span class="fc" id="L231">    }</span>
+<span class="fc" id="L226">    }</span>
 
     /**
      * Process a credit security transaction.
@@ -238,26 +233,21 @@ public class MoneyWiseXAnalysisSecurity {
      */
     void processCreditSecurity(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
         /* Store transaction */
-<span class="fc" id="L241">        theTransaction = pTrans;</span>
+<span class="fc" id="L236">        theTransaction = pTrans;</span>
 
         /* Switch on the category */
-<span class="fc" id="L244">        final MoneyWiseTransCategoryClass myCatClass = theTransaction.getCategoryClass();</span>
-<span class="pc bpc" id="L245" title="1 of 2 branches missed.">        switch (myCatClass) {</span>
+<span class="fc" id="L239">        final MoneyWiseTransCategoryClass myCatClass = theTransaction.getCategoryClass();</span>
+<span class="pc bpc" id="L240" title="1 of 2 branches missed.">        switch (myCatClass) {</span>
             /* Process standard transfer in/out */
-            case STOCKRIGHTSISSUE:
-            case TRANSFER:
-            case EXPENSE:
-            case INHERITED:
-            case OTHERINCOME:
-            case PENSIONCONTRIB:
-<span class="fc" id="L253">                theXferIn.processTransferIn(theTransaction);</span>
-<span class="fc" id="L254">                break;</span>
+            case STOCKRIGHTSISSUE, TRANSFER, EXPENSE, INHERITED, OTHERINCOME, PENSIONCONTRIB:
+<span class="fc" id="L243">                theXferIn.processTransferIn(theTransaction);</span>
+<span class="fc" id="L244">                break;</span>
             /* Throw an Exception */
             default:
-<span class="nc" id="L257">                throw new MoneyWiseLogicException(ERROR_CATEGORY</span>
+<span class="nc" id="L247">                throw new MoneyWiseLogicException(ERROR_CATEGORY</span>
                         + myCatClass);
         }
-<span class="fc" id="L260">    }</span>
+<span class="fc" id="L250">    }</span>
 
     /**
      * Process a debit+credit security transaction.
@@ -266,36 +256,34 @@ public class MoneyWiseXAnalysisSecurity {
      */
     private void processDebitCreditSecurity() throws OceanusException {
         /* Switch on the category */
-<span class="fc" id="L269">        final MoneyWiseTransCategoryClass myCatClass = theTransaction.getCategoryClass();</span>
-<span class="pc bpc" id="L270" title="4 of 6 branches missed.">        switch (myCatClass) {</span>
+<span class="fc" id="L259">        final MoneyWiseTransCategoryClass myCatClass = theTransaction.getCategoryClass();</span>
+<span class="pc bpc" id="L260" title="4 of 6 branches missed.">        switch (myCatClass) {</span>
             /* Process a stock split */
-            case STOCKSPLIT:
-            case UNITSADJUST:
-<span class="fc" id="L274">                processUnitsAdjust();</span>
-<span class="fc" id="L275">                break;</span>
+            case STOCKSPLIT, UNITSADJUST:
+<span class="fc" id="L263">                processUnitsAdjust();</span>
+<span class="fc" id="L264">                break;</span>
             /* Process a stock DeMerger */
             case STOCKDEMERGER:
-<span class="nc" id="L278">                theDeMerger.processStockDeMerger(theTransaction);</span>
-<span class="nc" id="L279">                break;</span>
+<span class="nc" id="L267">                theDeMerger.processStockDeMerger(theTransaction);</span>
+<span class="nc" id="L268">                break;</span>
             /* Process a Stock TakeOver */
-            case SECURITYREPLACE:
-            case STOCKTAKEOVER:
-<span class="nc" id="L283">                theTakeover.processStockTakeover(theTransaction);</span>
-<span class="nc" id="L284">                break;</span>
+            case SECURITYREPLACE, STOCKTAKEOVER:
+<span class="nc" id="L271">                theTakeover.processStockTakeover(theTransaction);</span>
+<span class="nc" id="L272">                break;</span>
             /* Process a dividend */
             case DIVIDEND:
-<span class="fc" id="L287">                theDividend.processDividend(theTransaction);</span>
-<span class="fc" id="L288">                break;</span>
+<span class="fc" id="L275">                theDividend.processDividend(theTransaction);</span>
+<span class="fc" id="L276">                break;</span>
             /* Process standard transfer in/out */
             case TRANSFER:
-<span class="nc" id="L291">                processStockXchange();</span>
-<span class="nc" id="L292">                break;</span>
+<span class="nc" id="L279">                processStockXchange();</span>
+<span class="nc" id="L280">                break;</span>
             /* Throw an Exception */
             default:
-<span class="nc" id="L295">                throw new MoneyWiseLogicException(ERROR_CATEGORY</span>
+<span class="nc" id="L283">                throw new MoneyWiseLogicException(ERROR_CATEGORY</span>
                         + myCatClass);
         }
-<span class="fc" id="L298">    }</span>
+<span class="fc" id="L286">    }</span>
 
     /**
      * adjust Asset Valuation.
@@ -304,14 +292,14 @@ public class MoneyWiseXAnalysisSecurity {
      */
     void adjustAssetValuation(final MoneyWiseXAnalysisSecurityBucket pAsset) {
         /* Value the asset and calculate unrealised gains */
-<span class="fc" id="L307">        pAsset.valueAsset();</span>
-<span class="fc" id="L308">        pAsset.adjustValuation();</span>
-<span class="fc" id="L309">        pAsset.calculateUnrealisedGains();</span>
+<span class="fc" id="L295">        pAsset.valueAsset();</span>
+<span class="fc" id="L296">        pAsset.adjustValuation();</span>
+<span class="fc" id="L297">        pAsset.calculateUnrealisedGains();</span>
 
         /* determine the MarketGrowth */
-<span class="fc" id="L312">        final OceanusMoney myDeltaValue = pAsset.getDeltaUnrealisedGains();</span>
-<span class="fc" id="L313">        theMarket.adjustTotalsForMarketGrowth(theTransaction.getEvent(), myDeltaValue);</span>
-<span class="fc" id="L314">    }</span>
+<span class="fc" id="L300">        final OceanusMoney myDeltaValue = pAsset.getDeltaUnrealisedGains();</span>
+<span class="fc" id="L301">        theMarket.adjustTotalsForMarketGrowth(theTransaction.getEvent(), myDeltaValue);</span>
+<span class="fc" id="L302">    }</span>
 
     /**
      * Adjust for Standard Gains.
@@ -322,76 +310,76 @@ public class MoneyWiseXAnalysisSecurity {
     void adjustStandardGain(final MoneyWiseSecurityHolding pSource,
                             final OceanusMoney pGains) {
         /* Access security and portfolio */
-<span class="fc" id="L325">        final MoneyWiseSecurity mySecurity = pSource.getSecurity();</span>
-<span class="fc" id="L326">        final MoneyWisePortfolio myPortfolio = pSource.getPortfolio();</span>
-<span class="fc" id="L327">        final MoneyWiseSecurityClass myClass = mySecurity.getCategoryClass();</span>
+<span class="fc" id="L313">        final MoneyWiseSecurity mySecurity = pSource.getSecurity();</span>
+<span class="fc" id="L314">        final MoneyWisePortfolio myPortfolio = pSource.getPortfolio();</span>
+<span class="fc" id="L315">        final MoneyWiseSecurityClass myClass = mySecurity.getCategoryClass();</span>
 
         /* Determine the type of gains */
-<span class="fc" id="L330">        MoneyWiseXAnalysisTransCategoryBucket myCategory = theCapitalCat;</span>
-<span class="fc" id="L331">        MoneyWiseXAnalysisTaxBasisBucket myTaxBasis = theCapitalTax;</span>
-<span class="pc bpc" id="L332" title="1 of 2 branches missed.">        if (myPortfolio.isTaxFree()) {</span>
-<span class="nc" id="L333">            myCategory = theTaxFreeCat;</span>
-<span class="nc" id="L334">            myTaxBasis = theTaxFreeTax;</span>
-<span class="pc bpc" id="L335" title="1 of 2 branches missed.">        } else if (myClass.isResidentialGains()) {</span>
-<span class="nc" id="L336">            myCategory = theResidentialCat;</span>
-<span class="nc" id="L337">            myTaxBasis = theResidentialTax;</span>
-<span class="pc bpc" id="L338" title="1 of 2 branches missed.">        } else if (myClass.isChargeableGains()) {</span>
-<span class="nc" id="L339">            myCategory = theChargeableCat;</span>
-<span class="nc" id="L340">            myTaxBasis = theChargeableTax;</span>
+<span class="fc" id="L318">        MoneyWiseXAnalysisTransCategoryBucket myCategory = theCapitalCat;</span>
+<span class="fc" id="L319">        MoneyWiseXAnalysisTaxBasisBucket myTaxBasis = theCapitalTax;</span>
+<span class="pc bpc" id="L320" title="1 of 2 branches missed.">        if (myPortfolio.isTaxFree()) {</span>
+<span class="nc" id="L321">            myCategory = theTaxFreeCat;</span>
+<span class="nc" id="L322">            myTaxBasis = theTaxFreeTax;</span>
+<span class="pc bpc" id="L323" title="1 of 2 branches missed.">        } else if (myClass.isResidentialGains()) {</span>
+<span class="nc" id="L324">            myCategory = theResidentialCat;</span>
+<span class="nc" id="L325">            myTaxBasis = theResidentialTax;</span>
+<span class="pc bpc" id="L326" title="1 of 2 branches missed.">        } else if (myClass.isChargeableGains()) {</span>
+<span class="nc" id="L327">            myCategory = theChargeableCat;</span>
+<span class="nc" id="L328">            myTaxBasis = theChargeableTax;</span>
         }
 
         /* Add to Capital Gains income/expense */
-<span class="fc bfc" id="L344" title="All 2 branches covered.">        if (pGains.isPositive()) {</span>
-<span class="fc" id="L345">            myCategory.addIncome(pGains);</span>
+<span class="fc bfc" id="L332" title="All 2 branches covered.">        if (pGains.isPositive()) {</span>
+<span class="fc" id="L333">            myCategory.addIncome(pGains);</span>
         } else {
-<span class="fc" id="L347">            myCategory.subtractExpense(pGains);</span>
+<span class="fc" id="L335">            myCategory.subtractExpense(pGains);</span>
         }
-<span class="fc" id="L349">        myTaxBasis.adjustGrossAndNett(pGains);</span>
-<span class="fc" id="L350">        theMarket.adjustForGains(pGains);</span>
+<span class="fc" id="L337">        myTaxBasis.adjustGrossAndNett(pGains);</span>
+<span class="fc" id="L338">        theMarket.adjustForGains(pGains);</span>
 
         /* Register the buckets */
-<span class="fc" id="L353">        theState.registerBucketInterest(myCategory);</span>
-<span class="fc" id="L354">        theState.registerBucketInterest(myTaxBasis);</span>
-<span class="fc" id="L355">    }</span>
+<span class="fc" id="L341">        theState.registerBucketInterest(myCategory);</span>
+<span class="fc" id="L342">        theState.registerBucketInterest(myTaxBasis);</span>
+<span class="fc" id="L343">    }</span>
 
     /**
      * Process a transaction that is a unitsAdjust.
      */
     void processUnitsAdjust() {
         /* Access the units */
-<span class="fc" id="L362">        final OceanusUnits myDelta = theTransaction.getDebitUnitsDelta();</span>
+<span class="fc" id="L350">        final OceanusUnits myDelta = theTransaction.getDebitUnitsDelta();</span>
 
         /* Adjust the Security Units */
-<span class="fc" id="L365">        final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) theTransaction.getDebitAccount();</span>
-<span class="fc" id="L366">        final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(myHolding);</span>
-<span class="fc" id="L367">        myAsset.adjustUnits(myDelta);</span>
+<span class="fc" id="L353">        final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) theTransaction.getDebitAccount();</span>
+<span class="fc" id="L354">        final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(myHolding);</span>
+<span class="fc" id="L355">        myAsset.adjustUnits(myDelta);</span>
 
         /* Record the price of the asset if we have a price */
-<span class="fc" id="L370">        final OceanusPrice myPrice = theTransaction.getTransaction().getPrice();</span>
-<span class="fc bfc" id="L371" title="All 2 branches covered.">        if (myPrice != null) {</span>
+<span class="fc" id="L358">        final OceanusPrice myPrice = theTransaction.getTransaction().getPrice();</span>
+<span class="fc bfc" id="L359" title="All 2 branches covered.">        if (myPrice != null) {</span>
             /* Record the new price and update the bucket */
-<span class="fc" id="L373">            theState.setNewPriceViaTransaction(myHolding.getSecurity(), myPrice);</span>
+<span class="fc" id="L361">            theState.setNewPriceViaTransaction(myHolding.getSecurity(), myPrice);</span>
 
             /* update the price and determine the value delta */
-<span class="fc" id="L376">            myAsset.recordSecurityPrice();</span>
+<span class="fc" id="L364">            myAsset.recordSecurityPrice();</span>
         }
 
         /* Adjust the valuation */
-<span class="fc" id="L380">        adjustAssetValuation(myAsset);</span>
+<span class="fc" id="L368">        adjustAssetValuation(myAsset);</span>
 
         /* Register the transaction */
-<span class="fc" id="L383">        theState.registerBucketInterest(myAsset);</span>
-<span class="fc" id="L384">    }</span>
+<span class="fc" id="L371">        theState.registerBucketInterest(myAsset);</span>
+<span class="fc" id="L372">    }</span>
 
     /**
      * Process a transaction that is a stockXchange.
      */
     void processStockXchange() {
         /* Adjust the debit transfer details */
-<span class="nc" id="L391">        theXferOut.processDebitXferOut(theTransaction);</span>
+<span class="nc" id="L379">        theXferOut.processDebitXferOut(theTransaction);</span>
 
         /* Adjust the credit transfer details */
-<span class="nc" id="L394">        theXferIn.processCreditXferIn(theTransaction);</span>
-<span class="nc" id="L395">    }</span>
+<span class="nc" id="L382">        theXferIn.processCreditXferIn(theTransaction);</span>
+<span class="nc" id="L383">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

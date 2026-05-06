@@ -18,14 +18,14 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreSM2EncryptionSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPublicKey;
 
@@ -70,7 +70,7 @@ public final class JcaEncryptor {
          * @throws GordianException on error
          */
         JcaBlockEncryptor(final GordianBaseFactory pFactory,
-                          final GordianEncryptorSpec pSpec) throws GordianException {
+                          final GordianCoreEncryptorSpec pSpec) throws GordianException {
             /* Initialise underlying cipher */
 <span class="fc" id="L75">            super(pFactory, pSpec);</span>
 <span class="fc" id="L76">            theEncryptor = getJavaEncryptor(getAlgorithmName(pSpec), false);</span>
@@ -201,22 +201,17 @@ public final class JcaEncryptor {
          * @param pSpec the Spec
          * @return the algorithm name
          */
-        private static String getAlgorithmName(final GordianEncryptorSpec pSpec) {
+        private static String getAlgorithmName(final GordianCoreEncryptorSpec pSpec) {
             /* Determine the base algorithm */
 <span class="fc" id="L206">            final String myBase = pSpec.getKeyPairType().name();</span>
 
             /* Switch on encryptor type */
-<span class="fc bfc" id="L209" title="All 4 branches covered.">            switch (pSpec.getDigestSpec().getDigestLength()) {</span>
-                case LEN_224:
-<span class="fc" id="L211">                    return myBase + &quot;/ECB/OAEPWITHSHA224ANDMGF1PADDING&quot;;</span>
-                case LEN_256:
-<span class="fc" id="L213">                    return myBase + &quot;/ECB/OAEPWITHSHA256ANDMGF1PADDING&quot;;</span>
-                case LEN_384:
-<span class="fc" id="L215">                    return myBase + &quot;/ECB/OAEPWITHSHA384ANDMGF1PADDING&quot;;</span>
-                case LEN_512:
-                default:
-<span class="fc" id="L218">                    return myBase + &quot;/ECB/OAEPWITHSHA512ANDMGF1PADDING&quot;;</span>
-            }
+<span class="fc bfc" id="L209" title="All 4 branches covered.">            return switch (pSpec.getDigestSpec().getDigestLength()) {</span>
+<span class="fc" id="L210">                case LEN_224 -&gt; myBase + &quot;/ECB/OAEPWITHSHA224ANDMGF1PADDING&quot;;</span>
+<span class="fc" id="L211">                case LEN_256 -&gt; myBase + &quot;/ECB/OAEPWITHSHA256ANDMGF1PADDING&quot;;</span>
+<span class="fc" id="L212">                case LEN_384 -&gt; myBase + &quot;/ECB/OAEPWITHSHA384ANDMGF1PADDING&quot;;</span>
+<span class="fc" id="L213">                default -&gt; myBase + &quot;/ECB/OAEPWITHSHA512ANDMGF1PADDING&quot;;</span>
+            };
         }
     }
 
@@ -238,66 +233,66 @@ public final class JcaEncryptor {
          * @throws GordianException on error
          */
         JcaHybridEncryptor(final GordianBaseFactory pFactory,
-                           final GordianEncryptorSpec pSpec) throws GordianException {
+                           final GordianCoreEncryptorSpec pSpec) throws GordianException {
             /* Initialise underlying cipher */
-<span class="fc" id="L243">            super(pFactory, pSpec);</span>
-<span class="fc" id="L244">            theEncryptor = getJavaEncryptor(getAlgorithmName(pSpec), false);</span>
-<span class="fc" id="L245">        }</span>
+<span class="fc" id="L238">            super(pFactory, pSpec);</span>
+<span class="fc" id="L239">            theEncryptor = getJavaEncryptor(getAlgorithmName(pSpec), false);</span>
+<span class="fc" id="L240">        }</span>
 
         @Override
         protected JcaPublicKey getPublicKey() {
-<span class="fc" id="L249">            return (JcaPublicKey) super.getPublicKey();</span>
+<span class="fc" id="L244">            return (JcaPublicKey) super.getPublicKey();</span>
         }
 
         @Override
         protected JcaPrivateKey getPrivateKey() {
-<span class="fc" id="L254">            return (JcaPrivateKey) super.getPrivateKey();</span>
+<span class="fc" id="L249">            return (JcaPrivateKey) super.getPrivateKey();</span>
         }
 
         @Override
         public void initForEncrypt(final GordianKeyPair pKeyPair) throws GordianException {
             try {
                 /* Initialise underlying cipher */
-<span class="fc" id="L261">                JcaKeyPair.checkKeyPair(pKeyPair);</span>
-<span class="fc" id="L262">                super.initForEncrypt(pKeyPair);</span>
+<span class="fc" id="L256">                JcaKeyPair.checkKeyPair(pKeyPair);</span>
+<span class="fc" id="L257">                super.initForEncrypt(pKeyPair);</span>
 
                 /* Initialise for encryption */
-<span class="fc" id="L265">                theEncryptor.init(Cipher.ENCRYPT_MODE, getPublicKey().getPublicKey(), getRandom());</span>
-<span class="nc" id="L266">            } catch (InvalidKeyException e) {</span>
-<span class="nc" id="L267">                throw new GordianCryptoException(ERROR_INIT, e);</span>
-<span class="fc" id="L268">            }</span>
-<span class="fc" id="L269">        }</span>
+<span class="fc" id="L260">                theEncryptor.init(Cipher.ENCRYPT_MODE, getPublicKey().getPublicKey(), getRandom());</span>
+<span class="nc" id="L261">            } catch (InvalidKeyException e) {</span>
+<span class="nc" id="L262">                throw new GordianCryptoException(ERROR_INIT, e);</span>
+<span class="fc" id="L263">            }</span>
+<span class="fc" id="L264">        }</span>
 
         @Override
         public void initForDecrypt(final GordianKeyPair pKeyPair) throws GordianException {
             try {
                 /* Initialise underlying cipher */
-<span class="fc" id="L275">                JcaKeyPair.checkKeyPair(pKeyPair);</span>
-<span class="fc" id="L276">                super.initForDecrypt(pKeyPair);</span>
+<span class="fc" id="L270">                JcaKeyPair.checkKeyPair(pKeyPair);</span>
+<span class="fc" id="L271">                super.initForDecrypt(pKeyPair);</span>
 
                 /* Initialise for decryption */
-<span class="fc" id="L279">                theEncryptor.init(Cipher.DECRYPT_MODE, getPrivateKey().getPrivateKey());</span>
-<span class="nc" id="L280">            } catch (InvalidKeyException e) {</span>
-<span class="nc" id="L281">                throw new GordianCryptoException(ERROR_INIT, e);</span>
-<span class="fc" id="L282">            }</span>
-<span class="fc" id="L283">        }</span>
+<span class="fc" id="L274">                theEncryptor.init(Cipher.DECRYPT_MODE, getPrivateKey().getPrivateKey());</span>
+<span class="nc" id="L275">            } catch (InvalidKeyException e) {</span>
+<span class="nc" id="L276">                throw new GordianCryptoException(ERROR_INIT, e);</span>
+<span class="fc" id="L277">            }</span>
+<span class="fc" id="L278">        }</span>
 
         @Override
         public byte[] encrypt(final byte[] pBytes) throws GordianException {
             /* Check that we are in encryption mode */
-<span class="fc" id="L288">            checkMode(GordianEncryptMode.ENCRYPT);</span>
+<span class="fc" id="L283">            checkMode(GordianEncryptMode.ENCRYPT);</span>
 
             /* Encrypt the message */
-<span class="fc" id="L291">            return processData(pBytes);</span>
+<span class="fc" id="L286">            return processData(pBytes);</span>
         }
 
         @Override
         public byte[] decrypt(final byte[] pBytes) throws GordianException {
             /* Check that we are in decryption mode */
-<span class="fc" id="L297">            checkMode(GordianEncryptMode.DECRYPT);</span>
+<span class="fc" id="L292">            checkMode(GordianEncryptMode.DECRYPT);</span>
 
             /* Decrypt the message */
-<span class="fc" id="L300">            return processData(pBytes);</span>
+<span class="fc" id="L295">            return processData(pBytes);</span>
         }
 
         /**
@@ -309,10 +304,10 @@ public final class JcaEncryptor {
          */
         private byte[] processData(final byte[] pData) throws GordianException {
             try {
-<span class="fc" id="L312">                return theEncryptor.doFinal(pData, 0, pData.length);</span>
-<span class="nc" id="L313">            } catch (IllegalBlockSizeException</span>
+<span class="fc" id="L307">                return theEncryptor.doFinal(pData, 0, pData.length);</span>
+<span class="nc" id="L308">            } catch (IllegalBlockSizeException</span>
                      | BadPaddingException e) {
-<span class="nc" id="L315">                throw new GordianCryptoException(&quot;Failed to process data&quot;, e);</span>
+<span class="nc" id="L310">                throw new GordianCryptoException(&quot;Failed to process data&quot;, e);</span>
             }
         }
 
@@ -322,21 +317,17 @@ public final class JcaEncryptor {
          * @param pSpec the Spec
          * @return the algorithm name
          */
-        private static String getAlgorithmName(final GordianEncryptorSpec pSpec) {
+        private static String getAlgorithmName(final GordianCoreEncryptorSpec pSpec) {
             /* Switch on encryptor type */
-<span class="fc" id="L327">            final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();</span>
-<span class="fc" id="L328">            final GordianDigestSpec myDigestSpec = mySpec.getDigestSpec();</span>
-<span class="fc" id="L329">            final GordianDigestType myDigestType = myDigestSpec.getDigestType();</span>
-<span class="fc bfc" id="L330" title="All 3 branches covered.">            switch (myDigestType) {</span>
-                case SHA2:
-<span class="fc" id="L332">                    return &quot;SM2withSHA&quot; + myDigestSpec.getDigestLength();</span>
-                case BLAKE2:
-<span class="fc bfc" id="L334" title="All 2 branches covered.">                    return &quot;SM2withBlake2&quot; + (GordianLength.LEN_512.equals(myDigestSpec.getDigestLength()) ? &quot;b&quot; : &quot;s&quot;);</span>
-                case WHIRLPOOL:
-                case SM3:
-                default:
-<span class="fc" id="L338">                    return &quot;SM2with&quot; + myDigestType;</span>
-            }
+<span class="fc" id="L322">            final GordianCoreSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();</span>
+<span class="fc" id="L323">            final GordianDigestSpec myDigestSpec = mySpec.getDigestSpec();</span>
+<span class="fc" id="L324">            final GordianDigestType myDigestType = myDigestSpec.getDigestType();</span>
+<span class="fc bfc" id="L325" title="All 3 branches covered.">            return switch (myDigestType) {</span>
+<span class="fc" id="L326">                case SHA2 -&gt; &quot;SM2withSHA&quot; + myDigestSpec.getDigestLength();</span>
+                case BLAKE2 -&gt;
+<span class="fc bfc" id="L328" title="All 2 branches covered.">                        &quot;SM2withBlake2&quot; + (GordianLength.LEN_512.equals(myDigestSpec.getDigestLength()) ? &quot;b&quot; : &quot;s&quot;);</span>
+<span class="fc" id="L329">                default -&gt; &quot;SM2with&quot; + myDigestType;</span>
+            };
         }
     }
 
@@ -353,15 +344,15 @@ public final class JcaEncryptor {
         /* Protect against exceptions */
         try {
             /* Return a Cipher for the algorithm */
-<span class="pc bpc" id="L356" title="1 of 2 branches missed.">            return Cipher.getInstance(pAlgorithm, postQuantum</span>
-<span class="nc" id="L357">                    ? JcaProvider.BCPQPROV</span>
-<span class="fc" id="L358">                    : JcaProvider.BCPROV);</span>
+<span class="pc bpc" id="L347" title="1 of 2 branches missed.">            return Cipher.getInstance(pAlgorithm, postQuantum</span>
+<span class="nc" id="L348">                    ? JcaProvider.BCPQPROV</span>
+<span class="fc" id="L349">                    : JcaProvider.BCPROV);</span>
 
             /* Catch exceptions */
-<span class="nc" id="L361">        } catch (NoSuchAlgorithmException</span>
+<span class="nc" id="L352">        } catch (NoSuchAlgorithmException</span>
                  | NoSuchPaddingException e) {
             /* Throw the exception */
-<span class="nc" id="L364">            throw new GordianCryptoException(&quot;Failed to create Cipher&quot;, e);</span>
+<span class="nc" id="L355">            throw new GordianCryptoException(&quot;Failed to create Cipher&quot;, e);</span>
         }
     }
 }

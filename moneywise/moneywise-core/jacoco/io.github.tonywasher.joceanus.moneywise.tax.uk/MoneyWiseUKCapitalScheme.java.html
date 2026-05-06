@@ -16,12 +16,12 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -222,14 +222,15 @@ public abstract class MoneyWiseUKCapitalScheme
 <span class="fc" id="L222">        private static final MetisFieldSet&lt;MoneyWiseUKCapitalAsIncomeScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKCapitalAsIncomeScheme.class);</span>
 
         /**
-         * Constructor.
+         * Default constructor.
          */
-<span class="fc" id="L227">        public MoneyWiseUKCapitalAsIncomeScheme() {</span>
-<span class="fc" id="L228">        }</span>
+<span class="fc" id="L227">        MoneyWiseUKCapitalAsIncomeScheme() {</span>
+            /* NoOp */
+<span class="fc" id="L229">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWiseUKCapitalAsIncomeScheme&gt; getDataFieldSet() {
-<span class="nc" id="L232">            return FIELD_DEFS;</span>
+<span class="nc" id="L233">            return FIELD_DEFS;</span>
         }
     }
 
@@ -241,14 +242,14 @@ public abstract class MoneyWiseUKCapitalScheme
         /**
          * Local Report fields.
          */
-<span class="fc" id="L244">        private static final MetisFieldSet&lt;MoneyWiseUKCapitalResidentialScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKCapitalResidentialScheme.class);</span>
+<span class="fc" id="L245">        private static final MetisFieldSet&lt;MoneyWiseUKCapitalResidentialScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKCapitalResidentialScheme.class);</span>
 
         /*
          * Declare Fields.
          */
         static {
-<span class="fc" id="L250">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_RESIDENTIAL, MoneyWiseUKCapitalResidentialScheme::getResidentialScheme);</span>
-<span class="fc" id="L251">        }</span>
+<span class="fc" id="L251">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_RESIDENTIAL, MoneyWiseUKCapitalResidentialScheme::getResidentialScheme);</span>
+<span class="fc" id="L252">        }</span>
 
         /**
          * The Residential Scheme.
@@ -267,9 +268,9 @@ public abstract class MoneyWiseUKCapitalScheme
                                                       final OceanusRate pHighRate,
                                                       final OceanusRate pResRate,
                                                       final OceanusRate pHighResRate) {
-<span class="fc" id="L270">            super(pRate, pHighRate);</span>
-<span class="fc" id="L271">            theResidential = new MoneyWiseUKCapitalSplitRateScheme(pResRate, pHighResRate);</span>
-<span class="fc" id="L272">        }</span>
+<span class="fc" id="L271">            super(pRate, pHighRate);</span>
+<span class="fc" id="L272">            theResidential = new MoneyWiseUKCapitalSplitRateScheme(pResRate, pHighResRate);</span>
+<span class="fc" id="L273">        }</span>
 
         /**
          * Obtain the high rate.
@@ -277,21 +278,21 @@ public abstract class MoneyWiseUKCapitalScheme
          * @return the high rate
          */
         protected MoneyWiseUKCapitalSplitRateScheme getResidentialScheme() {
-<span class="nc" id="L280">            return theResidential;</span>
+<span class="nc" id="L281">            return theResidential;</span>
         }
 
         @Override
         public MetisFieldSet&lt;MoneyWiseUKCapitalResidentialScheme&gt; getDataFieldSet() {
-<span class="nc" id="L285">            return FIELD_DEFS;</span>
+<span class="nc" id="L286">            return FIELD_DEFS;</span>
         }
 
         @Override
         protected Iterator&lt;MoneyWiseTaxBand&gt; taxBandIterator(final MoneyWiseUKTaxConfig pConfig,
                                                              final MoneyWiseTaxClass pBasis) {
             /* Switch on taxBasis */
-<span class="nc bnc" id="L292" title="All 2 branches missed.">            return MoneyWiseTaxClass.RESIDENTIALGAINS.equals(pBasis)</span>
-<span class="nc" id="L293">                    ? theResidential.taxBandIterator(pConfig, pBasis)</span>
-<span class="nc" id="L294">                    : super.taxBandIterator(pConfig, pBasis);</span>
+<span class="nc bnc" id="L293" title="All 2 branches missed.">            return MoneyWiseTaxClass.RESIDENTIALGAINS.equals(pBasis)</span>
+<span class="nc" id="L294">                    ? theResidential.taxBandIterator(pConfig, pBasis)</span>
+<span class="nc" id="L295">                    : super.taxBandIterator(pConfig, pBasis);</span>
         }
     }
 }

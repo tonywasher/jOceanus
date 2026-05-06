@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
@@ -25,6 +24,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransInfo.Mon
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -103,27 +103,22 @@ public class MoneyWiseTransInfoSet
      * @return the value to set
      */
     private Object getInfoSetValue(final MoneyWiseTransInfoClass pInfoClass) {
-        final Object myValue;
-
-<span class="fc bfc" id="L108" title="All 3 branches covered.">        switch (pInfoClass) {</span>
-            case RETURNEDCASHACCOUNT:
+<span class="fc bfc" id="L106" title="All 3 branches covered.">        final Object myValue = switch (pInfoClass) {</span>
+            case RETURNEDCASHACCOUNT -&gt;
                 /* Access deposit of object */
-<span class="fc" id="L111">                myValue = getTransAsset(pInfoClass);</span>
-<span class="fc" id="L112">                break;</span>
-            case TRANSTAG:
+<span class="fc" id="L109">                    getTransAsset(pInfoClass);</span>
+            case TRANSTAG -&gt;
                 /* Access InfoSetList */
-<span class="fc" id="L115">                myValue = getListValue(pInfoClass);</span>
-<span class="fc" id="L116">                break;</span>
-            default:
+<span class="fc" id="L112">                    getListValue(pInfoClass);</span>
+            default -&gt;
                 /* Access value of object */
-<span class="fc" id="L119">                myValue = getField(pInfoClass);</span>
-                break;
-        }
+<span class="fc" id="L115">                    getField(pInfoClass);</span>
+        };
 
         /* Return the value */
-<span class="fc bfc" id="L124" title="All 2 branches covered.">        return myValue != null</span>
-<span class="fc" id="L125">                ? myValue</span>
-<span class="fc" id="L126">                : MetisDataFieldValue.SKIP;</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        return myValue != null</span>
+<span class="fc" id="L120">                ? myValue</span>
+<span class="fc" id="L121">                : MetisDataFieldValue.SKIP;</span>
     }
 
     /**
@@ -134,7 +129,7 @@ public class MoneyWiseTransInfoSet
      */
     public static MoneyWiseTransInfoClass getClassForField(final MetisDataFieldId pField) {
         /* Look up field in map */
-<span class="fc" id="L137">        return FIELDSET_MAP.get(pField);</span>
+<span class="fc" id="L132">        return FIELDSET_MAP.get(pField);</span>
     }
 
     /**
@@ -145,18 +140,18 @@ public class MoneyWiseTransInfoSet
      */
     public static MetisDataFieldId getFieldForClass(final MoneyWiseTransInfoClass pClass) {
         /* Look up field in map */
-<span class="fc" id="L148">        return REVERSE_FIELDMAP.get(pClass);</span>
+<span class="fc" id="L143">        return REVERSE_FIELDMAP.get(pClass);</span>
     }
 
     @Override
     public MetisDataFieldId getFieldForClass(final PrometheusDataInfoClass pClass) {
-<span class="fc" id="L153">        return getFieldForClass((MoneyWiseTransInfoClass) pClass);</span>
+<span class="fc" id="L148">        return getFieldForClass((MoneyWiseTransInfoClass) pClass);</span>
     }
 
     @Override
     public Iterator&lt;PrometheusDataInfoClass&gt; classIterator() {
-<span class="fc" id="L158">        final PrometheusDataInfoClass[] myValues = MoneyWiseTransInfoClass.values();</span>
-<span class="fc" id="L159">        return Arrays.stream(myValues).iterator();</span>
+<span class="fc" id="L153">        final PrometheusDataInfoClass[] myValues = MoneyWiseTransInfoClass.values();</span>
+<span class="fc" id="L154">        return Arrays.stream(myValues).iterator();</span>
     }
 
     /**
@@ -166,8 +161,8 @@ public class MoneyWiseTransInfoSet
      */
     protected void cloneDataInfoSet(final MoneyWiseTransInfoSet pSource) {
         /* Clone the dataInfoSet */
-<span class="fc" id="L169">        cloneTheDataInfoSet(pSource);</span>
-<span class="fc" id="L170">    }</span>
+<span class="fc" id="L164">        cloneTheDataInfoSet(pSource);</span>
+<span class="fc" id="L165">    }</span>
 
     /**
      * Resolve editSetLinks.
@@ -177,10 +172,10 @@ public class MoneyWiseTransInfoSet
      */
     void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Loop through the items */
-<span class="fc bfc" id="L180" title="All 2 branches covered.">        for (MoneyWiseTransInfo myInfo : this) {</span>
-<span class="fc" id="L181">            myInfo.resolveEditSetLinks(pEditSet);</span>
-<span class="fc" id="L182">        }</span>
-<span class="fc" id="L183">    }</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">        for (MoneyWiseTransInfo myInfo : this) {</span>
+<span class="fc" id="L176">            myInfo.resolveEditSetLinks(pEditSet);</span>
+<span class="fc" id="L177">        }</span>
+<span class="fc" id="L178">    }</span>
 
     /**
      * Obtain the deposit for the infoClass.
@@ -190,15 +185,15 @@ public class MoneyWiseTransInfoSet
      */
     public MoneyWiseTransAsset getTransAsset(final MoneyWiseTransInfoClass pInfoClass) {
         /* Access existing entry */
-<span class="fc" id="L193">        final MoneyWiseTransInfo myValue = getInfo(pInfoClass);</span>
+<span class="fc" id="L188">        final MoneyWiseTransInfo myValue = getInfo(pInfoClass);</span>
 
         /* If we have no entry, return null */
-<span class="pc bpc" id="L196" title="1 of 2 branches missed.">        if (myValue == null) {</span>
-<span class="fc" id="L197">            return null;</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">        if (myValue == null) {</span>
+<span class="fc" id="L192">            return null;</span>
         }
 
         /* Return the asset */
-<span class="nc" id="L201">        return myValue.getTransAsset();</span>
+<span class="nc" id="L196">        return myValue.getTransAsset();</span>
     }
 
     /**
@@ -209,17 +204,13 @@ public class MoneyWiseTransInfoSet
      */
     public boolean isMetaData(final MoneyWiseTransInfoClass pClass) {
         /* Switch on class */
-<span class="nc bnc" id="L212" title="All 2 branches missed.">        switch (pClass) {</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">        return switch (pClass) {</span>
             /* Can always change reference/comments/tags */
-            case REFERENCE:
-            case COMMENTS:
-            case TRANSTAG:
-<span class="nc" id="L217">                return true;</span>
+<span class="nc" id="L209">            case REFERENCE, COMMENTS, TRANSTAG -&gt; true;</span>
 
             /* All others are locked */
-            default:
-<span class="nc" id="L221">                return false;</span>
-        }
+<span class="nc" id="L212">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -231,22 +222,14 @@ public class MoneyWiseTransInfoSet
      */
     public static MetisFieldRequired isAccountUnitsPositive(final MoneyWiseAssetDirection pDir,
                                                             final MoneyWiseTransCategoryClass pClass) {
-<span class="nc bnc" id="L234" title="All 4 branches missed.">        switch (pClass) {</span>
-            case TRANSFER:
-<span class="nc bnc" id="L236" title="All 2 branches missed.">                return pDir.isFrom()</span>
-<span class="nc" id="L237">                        ? MetisFieldRequired.MUSTEXIST</span>
-<span class="nc" id="L238">                        : MetisFieldRequired.NOTALLOWED;</span>
-            case UNITSADJUST:
-            case STOCKSPLIT:
-<span class="nc" id="L241">                return MetisFieldRequired.CANEXIST;</span>
-            case INHERITED:
-            case DIVIDEND:
-            case STOCKRIGHTSISSUE:
-<span class="nc" id="L245">                return MetisFieldRequired.MUSTEXIST;</span>
-            case STOCKDEMERGER:
-            default:
-<span class="nc" id="L248">                return MetisFieldRequired.NOTALLOWED;</span>
-        }
+<span class="nc bnc" id="L225" title="All 4 branches missed.">        return switch (pClass) {</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">            case TRANSFER -&gt; pDir.isFrom()</span>
+<span class="nc" id="L227">                    ? MetisFieldRequired.MUSTEXIST</span>
+<span class="nc" id="L228">                    : MetisFieldRequired.NOTALLOWED;</span>
+<span class="nc" id="L229">            case UNITSADJUST, STOCKSPLIT -&gt; MetisFieldRequired.CANEXIST;</span>
+<span class="nc" id="L230">            case INHERITED, DIVIDEND, STOCKRIGHTSISSUE -&gt; MetisFieldRequired.MUSTEXIST;</span>
+<span class="nc" id="L231">            default -&gt; MetisFieldRequired.NOTALLOWED;</span>
+        };
     }
 
     /**
@@ -258,19 +241,13 @@ public class MoneyWiseTransInfoSet
      */
     public static MetisFieldRequired isPartnerUnitsPositive(final MoneyWiseAssetDirection pDir,
                                                             final MoneyWiseTransCategoryClass pClass) {
-<span class="nc bnc" id="L261" title="All 3 branches missed.">        switch (pClass) {</span>
-            case TRANSFER:
-<span class="nc bnc" id="L263" title="All 2 branches missed.">                return pDir.isTo()</span>
-<span class="nc" id="L264">                        ? MetisFieldRequired.MUSTEXIST</span>
-<span class="nc" id="L265">                        : MetisFieldRequired.NOTALLOWED;</span>
-            case STOCKDEMERGER:
-            case SECURITYREPLACE:
-            case STOCKTAKEOVER:
-            case STOCKRIGHTSISSUE:
-<span class="nc" id="L270">                return MetisFieldRequired.MUSTEXIST;</span>
-            default:
-<span class="nc" id="L272">                return MetisFieldRequired.NOTALLOWED;</span>
-        }
+<span class="nc bnc" id="L244" title="All 3 branches missed.">        return switch (pClass) {</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">            case TRANSFER -&gt; pDir.isTo()</span>
+<span class="nc" id="L246">                    ? MetisFieldRequired.MUSTEXIST</span>
+<span class="nc" id="L247">                    : MetisFieldRequired.NOTALLOWED;</span>
+<span class="nc" id="L248">            case STOCKDEMERGER, SECURITYREPLACE, STOCKTAKEOVER, STOCKRIGHTSISSUE -&gt; MetisFieldRequired.MUSTEXIST;</span>
+<span class="nc" id="L249">            default -&gt; MetisFieldRequired.NOTALLOWED;</span>
+        };
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

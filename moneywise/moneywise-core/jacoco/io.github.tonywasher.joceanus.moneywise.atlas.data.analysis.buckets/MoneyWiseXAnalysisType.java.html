@@ -112,21 +112,10 @@ import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyW
      * @return true/false
      */
     public boolean hasBalances() {
-<span class="nc bnc" id="L115" title="All 2 branches missed.">        switch (this) {</span>
-            case DEPOSIT:
-            case CASH:
-            case LOAN:
-            case PAYEE:
-            case PORTFOLIO:
-            case SECURITY:
-            case CATEGORY:
-            case TAXBASIS:
-<span class="nc" id="L124">                return true;</span>
-            case TRANSTAG:
-            case ALL:
-            default:
-<span class="nc" id="L128">                return false;</span>
-        }
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L116">            case DEPOSIT, CASH, LOAN, PAYEE, PORTFOLIO, SECURITY, CATEGORY, TAXBASIS -&gt; true;</span>
+<span class="nc" id="L117">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -135,25 +124,14 @@ import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyW
      * @return values
      */
     public MoneyWiseXAnalysisAttribute[] getValues() {
-<span class="nc bnc" id="L138" title="All 6 branches missed.">        switch (this) {</span>
-            case DEPOSIT:
-            case CASH:
-            case LOAN:
-            case PORTFOLIO:
-            case TRANSTAG:
-            case ALL:
-<span class="nc" id="L145">                return MoneyWiseXAnalysisAccountAttr.values();</span>
-            case SECURITY:
-<span class="nc" id="L147">                return MoneyWiseXAnalysisSecurityAttr.values();</span>
-            case PAYEE:
-<span class="nc" id="L149">                return MoneyWiseXAnalysisPayeeAttr.values();</span>
-            case CATEGORY:
-<span class="nc" id="L151">                return MoneyWiseXAnalysisTransAttr.values();</span>
-            case TAXBASIS:
-<span class="nc" id="L153">                return MoneyWiseXAnalysisTaxBasisAttr.values();</span>
-            default:
-<span class="nc" id="L155">                throw new IllegalArgumentException(&quot;Invalid Attribute type &quot; + toString());</span>
-        }
+<span class="nc bnc" id="L127" title="All 6 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L128">            case DEPOSIT, CASH, LOAN, PORTFOLIO, TRANSTAG, ALL -&gt; MoneyWiseXAnalysisAccountAttr.values();</span>
+<span class="nc" id="L129">            case SECURITY -&gt; MoneyWiseXAnalysisSecurityAttr.values();</span>
+<span class="nc" id="L130">            case PAYEE -&gt; MoneyWiseXAnalysisPayeeAttr.values();</span>
+<span class="nc" id="L131">            case CATEGORY -&gt; MoneyWiseXAnalysisTransAttr.values();</span>
+<span class="nc" id="L132">            case TAXBASIS -&gt; MoneyWiseXAnalysisTaxBasisAttr.values();</span>
+<span class="nc" id="L133">            default -&gt; throw new IllegalArgumentException(&quot;Invalid Attribute type &quot; + toString());</span>
+        };
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

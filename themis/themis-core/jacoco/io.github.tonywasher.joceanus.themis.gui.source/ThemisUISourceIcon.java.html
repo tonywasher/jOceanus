@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisUISourceIcon.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.gui.source</a> &gt; <span class="el_source">ThemisUISourceIcon.java</span></div><h1>ThemisUISourceIcon.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.gui.source;
+
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisDeclarationInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisExpressionInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisNodeInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisStatementInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisTypeInstance;
+import io.github.tonywasher.joceanus.themis.parser.decl.ThemisDeclaration;
+import io.github.tonywasher.joceanus.themis.parser.expr.ThemisExpression;
+import io.github.tonywasher.joceanus.themis.parser.node.ThemisNode;
+import io.github.tonywasher.joceanus.themis.parser.stmt.ThemisStatement;
+import io.github.tonywasher.joceanus.themis.parser.type.ThemisType;
+
+import java.io.InputStream;
+
+/**
+ * Icons for SourceTree entries.
+ */
+<span class="nc" id="L38">public enum ThemisUISourceIcon</span>
+        implements TethysUIIconId {
+    /**
+     * The Red UpperCase A.
+     */
+<span class="nc" id="L43">    REDUPPERA(&quot;red/UpperA.png&quot;),</span>
+
+    /**
+     * The Red LowerCase A.
+     */
+<span class="nc" id="L48">    REDLOWERM(&quot;red/LowerM.png&quot;),</span>
+
+    /**
+     * The Red UpperCase C.
+     */
+<span class="nc" id="L53">    REDUPPERC(&quot;red/UpperC.png&quot;),</span>
+
+    /**
+     * The Red UpperCase E.
+     */
+<span class="nc" id="L58">    REDUPPERE(&quot;red/UpperE.png&quot;),</span>
+
+    /**
+     * The Red UpperCase F.
+     */
+<span class="nc" id="L63">    REDUPPERF(&quot;red/UpperF.png&quot;),</span>
+
+    /**
+     * The Red UpperCase I.
+     */
+<span class="nc" id="L68">    REDUPPERI(&quot;red/UpperI.png&quot;),</span>
+
+    /**
+     * The Red UpperCase M.
+     */
+<span class="nc" id="L73">    REDUPPERM(&quot;red/UpperM.png&quot;),</span>
+
+    /**
+     * The Red UpperCase N.
+     */
+<span class="nc" id="L78">    REDUPPERN(&quot;red/UpperN.png&quot;),</span>
+
+    /**
+     * The Red UpperCase P.
+     */
+<span class="nc" id="L83">    REDUPPERP(&quot;red/UpperP.png&quot;),</span>
+
+    /**
+     * The Red UpperCase R.
+     */
+<span class="nc" id="L88">    REDUPPERR(&quot;red/UpperR.png&quot;),</span>
+
+    /**
+     * The Red UpperCase V.
+     */
+<span class="nc" id="L93">    REDUPPERV(&quot;red/UpperV.png&quot;),</span>
+
+    /**
+     * The Pink UpperCase A.
+     */
+<span class="nc" id="L98">    PINKUPPERA(&quot;pink/UpperA.png&quot;),</span>
+
+    /**
+     * The Pink LowerCase C.
+     */
+<span class="nc" id="L103">    PINKLOWERC(&quot;pink/LowerC.png&quot;),</span>
+
+    /**
+     * The Pink UpperCase T.
+     */
+<span class="nc" id="L108">    PINKUPPERT(&quot;pink/UpperT.png&quot;),</span>
+
+    /**
+     * The Pink UpperCase C.
+     */
+<span class="nc" id="L113">    PINKUPPERC(&quot;pink/UpperC.png&quot;),</span>
+
+    /**
+     * The Pink UpperCase U.
+     */
+<span class="nc" id="L118">    PINKUPPERU(&quot;pink/UpperU.png&quot;),</span>
+
+    /**
+     * The Pink UpperCase I.
+     */
+<span class="nc" id="L123">    PINKUPPERI(&quot;pink/UpperI.png&quot;),</span>
+
+    /**
+     * The Pink UpperCase M.
+     */
+<span class="nc" id="L128">    PINKUPPERM(&quot;pink/UpperM.png&quot;),</span>
+
+    /**
+     * The Pink UpperCase N.
+     */
+<span class="nc" id="L133">    PINKUPPERN(&quot;pink/UpperN.png&quot;),</span>
+
+    /**
+     * The Pink UpperCase K.
+     */
+<span class="nc" id="L138">    PINKUPPERK(&quot;pink/UpperK.png&quot;),</span>
+
+    /**
+     * The Pink UpperCase P.
+     */
+<span class="nc" id="L143">    PINKUPPERP(&quot;pink/UpperP.png&quot;),</span>
+
+    /**
+     * The Pink LowerCase N.
+     */
+<span class="nc" id="L148">    PINKLOWERN(&quot;pink/LowerN.png&quot;),</span>
+
+    /**
+     * The Pink LowerCase P.
+     */
+<span class="nc" id="L153">    PINKLOWERP(&quot;pink/LowerP.png&quot;),</span>
+
+    /**
+     * The Pink UpperCase V.
+     */
+<span class="nc" id="L158">    PINKUPPERV(&quot;pink/UpperV.png&quot;),</span>
+
+    /**
+     * The Blue UpperCase A.
+     */
+<span class="nc" id="L163">    BLUEUPPERA(&quot;blue/UpperA.png&quot;),</span>
+
+    /**
+     * The Blue UpperCase C.
+     */
+<span class="nc" id="L168">    BLUEUPPERC(&quot;blue/UpperC.png&quot;),</span>
+
+    /**
+     * The Blue UpperCase I.
+     */
+<span class="nc" id="L173">    BLUEUPPERI(&quot;blue/UpperI.png&quot;),</span>
+
+    /**
+     * The Blue UpperCase T.
+     */
+<span class="nc" id="L178">    BLUEUPPERT(&quot;blue/UpperT.png&quot;),</span>
+
+    /**
+     * The Blue UpperCase P.
+     */
+<span class="nc" id="L183">    BLUEUPPERP(&quot;blue/UpperP.png&quot;),</span>
+
+    /**
+     * The Blue UpperCase U.
+     */
+<span class="nc" id="L188">    BLUEUPPERU(&quot;blue/UpperU.png&quot;),</span>
+
+    /**
+     * The Blue LowerCase k.
+     */
+<span class="nc" id="L193">    BLUELOWERK(&quot;blue/LowerK.png&quot;),</span>
+
+    /**
+     * The Blue UpperCase V.
+     */
+<span class="nc" id="L198">    BLUEUPPERV(&quot;blue/UpperV.png&quot;),</span>
+
+    /**
+     * The Blue Lower v.
+     */
+<span class="nc" id="L203">    BLUELOWERV(&quot;blue/LowerV.png&quot;),</span>
+
+    /**
+     * The Blue UpperCase W.
+     */
+<span class="nc" id="L208">    BLUEUPPERW(&quot;blue/UpperW.png&quot;),</span>
+
+    /**
+     * The Green UpperCase C.
+     */
+<span class="nc" id="L213">    GREENUPPERC(&quot;green/UpperC.png&quot;),</span>
+
+    /**
+     * The Green LowerCase A.
+     */
+<span class="nc" id="L218">    GREENLOWERA(&quot;green/LowerA.png&quot;),</span>
+
+    /**
+     * The Green UpperCase C.
+     */
+<span class="nc" id="L223">    GREENLOWERC(&quot;green/LowerC.png&quot;),</span>
+
+    /**
+     * The Green LowerCase I.
+     */
+<span class="nc" id="L228">    GREENLOWERI(&quot;green/LowerI.png&quot;),</span>
+
+    /**
+     * The Green UpperCase A.
+     */
+<span class="nc" id="L233">    GREENUPPERA(&quot;green/UpperA.png&quot;),</span>
+
+    /**
+     * The Green UpperCase B.
+     */
+<span class="nc" id="L238">    GREENUPPERB(&quot;green/UpperB.png&quot;),</span>
+
+    /**
+     * The Green LowerCase B.
+     */
+<span class="nc" id="L243">    GREENLOWERB(&quot;green/LowerB.png&quot;),</span>
+
+    /**
+     * The Green LowerCase N.
+     */
+<span class="nc" id="L248">    GREENLOWERN(&quot;green/LowerN.png&quot;),</span>
+
+    /**
+     * The Green UpperCase D.
+     */
+<span class="nc" id="L253">    GREENUPPERD(&quot;green/UpperD.png&quot;),</span>
+
+    /**
+     * The Green UpperCase E.
+     */
+<span class="nc" id="L258">    GREENUPPERE(&quot;green/UpperE.png&quot;),</span>
+
+    /**
+     * The Green UpperCase F.
+     */
+<span class="nc" id="L263">    GREENUPPERF(&quot;green/UpperF.png&quot;),</span>
+
+    /**
+     * The Green UpperCase I.
+     */
+<span class="nc" id="L268">    GREENUPPERI(&quot;green/UpperI.png&quot;),</span>
+
+    /**
+     * The Green UpperCase L.
+     */
+<span class="nc" id="L273">    GREENUPPERL(&quot;green/UpperL.png&quot;),</span>
+
+    /**
+     * The Green LowerCase L.
+     */
+<span class="nc" id="L278">    GREENLOWERL(&quot;green/LowerL.png&quot;),</span>
+
+    /**
+     * The Green UpperCase M.
+     */
+<span class="nc" id="L283">    GREENUPPERM(&quot;green/UpperM.png&quot;),</span>
+
+    /**
+     * The Green LowerCase M.
+     */
+<span class="nc" id="L288">    GREENLOWERM(&quot;green/LowerM.png&quot;),</span>
+
+    /**
+     * The Green UpperCase N.
+     */
+<span class="nc" id="L293">    GREENUPPERN(&quot;green/UpperN.png&quot;),</span>
+
+    /**
+     * The Green UpperCase O.
+     */
+<span class="nc" id="L298">    GREENUPPERO(&quot;green/UpperO.png&quot;),</span>
+
+    /**
+     * The Green LowerCase S.
+     */
+<span class="nc" id="L303">    GREENLOWERS(&quot;green/LowerS.png&quot;),</span>
+
+    /**
+     * The Green LowerCase P.
+     */
+<span class="nc" id="L308">    GREENLOWERP(&quot;green/LowerP.png&quot;),</span>
+
+    /**
+     * The Green UpperCase S.
+     */
+<span class="nc" id="L313">    GREENUPPERS(&quot;green/UpperS.png&quot;),</span>
+
+    /**
+     * The Green UpperCase T.
+     */
+<span class="nc" id="L318">    GREENUPPERT(&quot;green/UpperT.png&quot;),</span>
+
+    /**
+     * The Green LowerCase T.
+     */
+<span class="nc" id="L323">    GREENLOWERT(&quot;green/LowerT.png&quot;),</span>
+
+    /**
+     * The Green LowerCase Y.
+     */
+<span class="nc" id="L328">    GREENLOWERY(&quot;green/LowerY.png&quot;),</span>
+
+    /**
+     * The Green UpperCase P.
+     */
+<span class="nc" id="L333">    GREENUPPERP(&quot;green/UpperP.png&quot;),</span>
+
+    /**
+     * The Green UpperCase U.
+     */
+<span class="nc" id="L338">    GREENUPPERU(&quot;green/UpperU.png&quot;),</span>
+
+    /**
+     * The Green UpperCase V.
+     */
+<span class="nc" id="L343">    GREENUPPERV(&quot;green/UpperV.png&quot;),</span>
+
+    /**
+     * The Orange UpperCase A.
+     */
+<span class="nc" id="L348">    ORANGEUPPERA(&quot;orange/UpperA.png&quot;),</span>
+
+    /**
+     * The Orange UpperCase B.
+     */
+<span class="nc" id="L353">    ORANGEUPPERB(&quot;orange/UpperB.png&quot;),</span>
+
+    /**
+     * The Orange LowerCase B.
+     */
+<span class="nc" id="L358">    ORANGELOWERB(&quot;orange/LowerB.png&quot;),</span>
+
+    /**
+     * The Orange UpperCase C.
+     */
+<span class="nc" id="L363">    ORANGEUPPERC(&quot;orange/UpperC.png&quot;),</span>
+
+    /**
+     * The Orange UpperCase N.
+     */
+<span class="nc" id="L368">    ORANGEUPPERN(&quot;orange/UpperN.png&quot;),</span>
+
+    /**
+     * The Orange LowerCase C.
+     */
+<span class="nc" id="L373">    ORANGELOWERC(&quot;orange/LowerC.png&quot;),</span>
+
+    /**
+     * The Orange UpperCase D.
+     */
+<span class="nc" id="L378">    ORANGEUPPERD(&quot;orange/UpperD.png&quot;),</span>
+
+    /**
+     * The Orange UpperCase E.
+     */
+<span class="nc" id="L383">    ORANGEUPPERE(&quot;orange/UpperE.png&quot;),</span>
+
+    /**
+     * The Orange UpperCase F.
+     */
+<span class="nc" id="L388">    ORANGEUPPERF(&quot;orange/UpperF.png&quot;),</span>
+
+    /**
+     * The Orange LowerCase F.
+     */
+<span class="nc" id="L393">    ORANGELOWERF(&quot;orange/LowerF.png&quot;),</span>
+
+    /**
+     * The Orange UpperCase I.
+     */
+<span class="nc" id="L398">    ORANGEUPPERI(&quot;orange/UpperI.png&quot;),</span>
+
+    /**
+     * The Orange UpperCase L.
+     */
+<span class="nc" id="L403">    ORANGEUPPERL(&quot;orange/UpperL.png&quot;),</span>
+
+    /**
+     * The Orange UpperCase R.
+     */
+<span class="nc" id="L408">    ORANGEUPPERR(&quot;orange/UpperR.png&quot;),</span>
+
+    /**
+     * The Orange LowerCase R.
+     */
+<span class="nc" id="L413">    ORANGELOWERR(&quot;orange/LowerR.png&quot;),</span>
+
+    /**
+     * The Orange UpperCase S.
+     */
+<span class="nc" id="L418">    ORANGEUPPERS(&quot;orange/UpperS.png&quot;),</span>
+
+    /**
+     * The Orange LowerCase y.
+     */
+<span class="nc" id="L423">    ORANGELOWERY(&quot;orange/LowerY.png&quot;),</span>
+
+    /**
+     * The Orange LowerCase T.
+     */
+<span class="nc" id="L428">    ORANGELOWERT(&quot;orange/LowerT.png&quot;),</span>
+
+    /**
+     * The Orange UpperCase T.
+     */
+<span class="nc" id="L433">    ORANGEUPPERT(&quot;orange/UpperT.png&quot;),</span>
+
+    /**
+     * The Orange UpperCase W.
+     */
+<span class="nc" id="L438">    ORANGEUPPERW(&quot;orange/UpperW.png&quot;),</span>
+
+    /**
+     * The Orange UpperCase X.
+     */
+<span class="nc" id="L443">    ORANGEUPPERX(&quot;orange/UpperX.png&quot;),</span>
+
+    /**
+     * The Orange UpperCase Y.
+     */
+<span class="nc" id="L448">    ORANGEUPPERY(&quot;orange/UpperY.png&quot;);</span>
+
+    /**
+     * Source name.
+     */
+    private final String theSource;
+
+    /**
+     * Constructor.
+     *
+     * @param pSourceName the source name
+     */
+<span class="nc" id="L460">    ThemisUISourceIcon(final String pSourceName) {</span>
+<span class="nc" id="L461">        theSource = pSourceName;</span>
+<span class="nc" id="L462">    }</span>
+
+    @Override
+    public String getSourceName() {
+<span class="nc" id="L466">        return theSource;</span>
+    }
+
+    @Override
+    public InputStream getInputStream() {
+<span class="nc" id="L471">        return ThemisUISourceIcon.class.getResourceAsStream(theSource);</span>
+    }
+
+    /**
+     * Obtain the icon for the element.
+     *
+     * @param pElement the element
+     * @return the icon
+     */
+    static TethysUIIconId getElementIcon(final ThemisInstance pElement) {
+        /* Switch on the element type */
+<span class="nc bnc" id="L482" title="All 6 branches missed.">        return switch (pElement) {</span>
+<span class="nc" id="L483">            case ThemisDeclarationInstance myDecl -&gt; getDeclarationIcon(myDecl);</span>
+<span class="nc" id="L484">            case ThemisNodeInstance myNode -&gt; getNodeIcon(myNode);</span>
+<span class="nc" id="L485">            case ThemisExpressionInstance myExpr -&gt; getExpressionIcon(myExpr);</span>
+<span class="nc" id="L486">            case ThemisStatementInstance myStmt -&gt; getStatementIcon(myStmt);</span>
+<span class="nc" id="L487">            case ThemisTypeInstance myType -&gt; getTypeIcon(myType);</span>
+<span class="nc" id="L488">            default -&gt; throw new IllegalArgumentException(&quot;Unknown ThemisInstance&quot;);</span>
+        };
+    }
+
+    /**
+     * Obtain the icon for the declaration.
+     *
+     * @param pElement the element
+     * @return the icon
+     */
+    private static TethysUIIconId getDeclarationIcon(final ThemisDeclarationInstance pElement) {
+        /* Switch on the id */
+<span class="nc bnc" id="L500" title="All 12 branches missed.">        return switch ((ThemisDeclaration) pElement.getId()) {</span>
+<span class="nc" id="L501">            case ANNOTATION -&gt; REDUPPERA;</span>
+<span class="nc" id="L502">            case ANNOTATIONMEMBER -&gt; REDLOWERM;</span>
+<span class="nc" id="L503">            case CLASSINTERFACE -&gt; REDUPPERC;</span>
+<span class="nc" id="L504">            case COMPACT -&gt; REDUPPERP;</span>
+<span class="nc" id="L505">            case CONSTRUCTOR -&gt; REDUPPERN;</span>
+<span class="nc" id="L506">            case ENUM -&gt; REDUPPERE;</span>
+<span class="nc" id="L507">            case ENUMVALUE -&gt; REDUPPERV;</span>
+<span class="nc" id="L508">            case FIELD -&gt; REDUPPERF;</span>
+<span class="nc" id="L509">            case INITIALIZER -&gt; REDUPPERI;</span>
+<span class="nc" id="L510">            case METHOD -&gt; REDUPPERM;</span>
+<span class="nc" id="L511">            case RECORD -&gt; REDUPPERR;</span>
+<span class="nc" id="L512">            default -&gt; throw new IllegalArgumentException(&quot;Unknown ThemisDeclaration&quot;);</span>
+        };
+    }
+
+    /**
+     * Obtain the icon for the node.
+     *
+     * @param pElement the element
+     * @return the icon
+     */
+    private static TethysUIIconId getNodeIcon(final ThemisNodeInstance pElement) {
+        /* Switch on the id */
+<span class="nc bnc" id="L524" title="All 14 branches missed.">        return switch ((ThemisNode) pElement.getId()) {</span>
+<span class="nc" id="L525">            case ARRAYLEVEL -&gt; PINKUPPERA;</span>
+<span class="nc" id="L526">            case CASE -&gt; PINKLOWERC;</span>
+<span class="nc" id="L527">            case CATCH -&gt; PINKUPPERT;</span>
+<span class="nc" id="L528">            case COMMENT -&gt; PINKUPPERC;</span>
+<span class="nc" id="L529">            case COMPILATIONUNIT -&gt; PINKUPPERU;</span>
+<span class="nc" id="L530">            case IMPORT -&gt; PINKUPPERI;</span>
+<span class="nc" id="L531">            case MODIFIER -&gt; PINKUPPERM;</span>
+<span class="nc" id="L532">            case NAME -&gt; PINKUPPERN;</span>
+<span class="nc" id="L533">            case PACKAGE -&gt; PINKUPPERK;</span>
+<span class="nc" id="L534">            case PARAMETER -&gt; PINKUPPERP;</span>
+<span class="nc" id="L535">            case SIMPLENAME -&gt; PINKLOWERN;</span>
+<span class="nc" id="L536">            case VALUEPAIR -&gt; PINKLOWERP;</span>
+<span class="nc" id="L537">            case VARIABLE -&gt; PINKUPPERV;</span>
+<span class="nc" id="L538">            default -&gt; throw new IllegalArgumentException(&quot;Unknown ThemisNode&quot;);</span>
+        };
+    }
+
+    /**
+     * Obtain the icon for the expression.
+     *
+     * @param pElement the element
+     * @return the icon
+     */
+    private static TethysUIIconId getExpressionIcon(final ThemisExpressionInstance pElement) {
+        /* Switch on the id */
+<span class="nc bnc" id="L550" title="All 28 branches missed.">        return switch ((ThemisExpression) pElement.getId()) {</span>
+<span class="nc" id="L551">            case ARRAYACCESS, MARKER, NORMAL, SINGLEMEMBER -&gt; GREENLOWERA;</span>
+<span class="nc" id="L552">            case ARRAYCREATION, CAST, CHAR -&gt; GREENLOWERC;</span>
+<span class="nc" id="L553">            case ARRAYINIT, INTEGER -&gt; GREENLOWERI;</span>
+<span class="nc" id="L554">            case ASSIGN -&gt; GREENUPPERA;</span>
+<span class="nc" id="L555">            case BINARY -&gt; GREENUPPERB;</span>
+<span class="nc" id="L556">            case BOOLEAN -&gt; GREENLOWERB;</span>
+<span class="nc" id="L557">            case CLASS -&gt; GREENUPPERC;</span>
+<span class="nc" id="L558">            case CONDITIONAL, NULL -&gt; GREENLOWERN;</span>
+<span class="nc" id="L559">            case DOUBLE -&gt; GREENUPPERD;</span>
+<span class="nc" id="L560">            case ENCLOSED -&gt; GREENUPPERE;</span>
+<span class="nc" id="L561">            case FIELDACCESS -&gt; GREENUPPERF;</span>
+<span class="nc" id="L562">            case INSTANCEOF -&gt; GREENUPPERI;</span>
+<span class="nc" id="L563">            case LAMBDA -&gt; GREENUPPERL;</span>
+<span class="nc" id="L564">            case LONG -&gt; GREENLOWERL;</span>
+<span class="nc" id="L565">            case METHODCALL -&gt; GREENUPPERM;</span>
+<span class="nc" id="L566">            case METHODREFERENCE -&gt; GREENLOWERM;</span>
+<span class="nc" id="L567">            case NAME -&gt; GREENUPPERN;</span>
+<span class="nc" id="L568">            case OBJECTCREATE -&gt; GREENUPPERO;</span>
+<span class="nc" id="L569">            case STRING -&gt; GREENLOWERS;</span>
+<span class="nc" id="L570">            case SUPER -&gt; GREENLOWERP;</span>
+<span class="nc" id="L571">            case SWITCH -&gt; GREENUPPERS;</span>
+<span class="nc" id="L572">            case TEXTBLOCK -&gt; GREENLOWERT;</span>
+<span class="nc" id="L573">            case THIS -&gt; GREENUPPERT;</span>
+<span class="nc" id="L574">            case TYPE -&gt; GREENLOWERY;</span>
+<span class="nc" id="L575">            case TYPEPATTERN -&gt; GREENUPPERP;</span>
+<span class="nc" id="L576">            case UNARY -&gt; GREENUPPERU;</span>
+<span class="nc" id="L577">            case VARIABLE -&gt; GREENUPPERV;</span>
+<span class="nc" id="L578">            default -&gt; throw new IllegalArgumentException(&quot;Unknown ThemisExpression&quot;);</span>
+        };
+    }
+
+    /**
+     * Obtain the icon for the statement.
+     *
+     * @param pElement the element
+     * @return the icon
+     */
+    private static TethysUIIconId getStatementIcon(final ThemisStatementInstance pElement) {
+        /* Switch on the id */
+<span class="nc bnc" id="L590" title="All 22 branches missed.">        return switch ((ThemisStatement) pElement.getId()) {</span>
+<span class="nc" id="L591">            case ASSERT -&gt; ORANGEUPPERA;</span>
+<span class="nc" id="L592">            case BLOCK -&gt; ORANGEUPPERB;</span>
+<span class="nc" id="L593">            case BREAK -&gt; ORANGELOWERB;</span>
+<span class="nc" id="L594">            case LOCALCLASS -&gt; ORANGEUPPERC;</span>
+<span class="nc" id="L595">            case CONSTRUCTOR -&gt; ORANGEUPPERN;</span>
+<span class="nc" id="L596">            case CONTINUE -&gt; ORANGELOWERC;</span>
+<span class="nc" id="L597">            case DO -&gt; ORANGEUPPERD;</span>
+<span class="nc" id="L598">            case EMPTY -&gt; ORANGEUPPERE;</span>
+<span class="nc" id="L599">            case EXPRESSION -&gt; ORANGEUPPERX;</span>
+<span class="nc" id="L600">            case FOR -&gt; ORANGEUPPERF;</span>
+<span class="nc" id="L601">            case FOREACH -&gt; ORANGELOWERF;</span>
+<span class="nc" id="L602">            case IF -&gt; ORANGEUPPERI;</span>
+<span class="nc" id="L603">            case LABELED -&gt; ORANGEUPPERL;</span>
+<span class="nc" id="L604">            case LOCALRECORD -&gt; ORANGEUPPERR;</span>
+<span class="nc" id="L605">            case RETURN -&gt; ORANGELOWERR;</span>
+<span class="nc" id="L606">            case SWITCH -&gt; ORANGEUPPERS;</span>
+<span class="nc" id="L607">            case SYNCHRONIZED -&gt; ORANGELOWERY;</span>
+<span class="nc" id="L608">            case THROW -&gt; ORANGELOWERT;</span>
+<span class="nc" id="L609">            case TRY -&gt; ORANGEUPPERT;</span>
+<span class="nc" id="L610">            case WHILE -&gt; ORANGEUPPERW;</span>
+<span class="nc" id="L611">            case YIELD -&gt; ORANGEUPPERY;</span>
+<span class="nc" id="L612">            default -&gt; throw new IllegalArgumentException(&quot;Unknown ThemisStatement&quot;);</span>
+        };
+    }
+
+    /**
+     * Obtain the icon for the type.
+     *
+     * @param pElement the element
+     * @return the icon
+     */
+    private static TethysUIIconId getTypeIcon(final ThemisTypeInstance pElement) {
+        /* Switch on the id */
+<span class="nc bnc" id="L624" title="All 11 branches missed.">        return switch ((ThemisType) pElement.getId()) {</span>
+<span class="nc" id="L625">            case ARRAY -&gt; BLUEUPPERA;</span>
+<span class="nc" id="L626">            case CLASSINTERFACE -&gt; BLUEUPPERC;</span>
+<span class="nc" id="L627">            case INTERSECTION -&gt; BLUEUPPERI;</span>
+<span class="nc" id="L628">            case PARAMETER -&gt; BLUEUPPERT;</span>
+<span class="nc" id="L629">            case PRIMITIVE -&gt; BLUEUPPERP;</span>
+<span class="nc" id="L630">            case UNION -&gt; BLUEUPPERU;</span>
+<span class="nc" id="L631">            case UNKNOWN -&gt; BLUELOWERK;</span>
+<span class="nc" id="L632">            case VAR -&gt; BLUEUPPERV;</span>
+<span class="nc" id="L633">            case VOID -&gt; BLUELOWERV;</span>
+<span class="nc" id="L634">            case WILDCARD -&gt; BLUEUPPERW;</span>
+<span class="nc" id="L635">            default -&gt; throw new IllegalArgumentException(&quot;Unknown ThemisType&quot;);</span>
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

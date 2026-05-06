@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisMapperReference.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.solver.mapper</a> &gt; <span class="el_source">ThemisMapperReference.java</span></div><h1>ThemisMapperReference.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.solver.mapper;
+
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverClass;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverPackageDef;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverFile;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverModule;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverPackage;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverProject;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverReference;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverReference.ThemisRefType;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverReference.ThemisSolverRefClass;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverReference.ThemisSolverRefPackage;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Class to analyse references.
+ */
+<span class="fc" id="L38">public class ThemisMapperReference {</span>
+    /**
+     * Process references for a project.
+     *
+     * @param pProject the project
+     */
+    public void processReferences(final ThemisSolverProject pProject) {
+        /* Process references for all modules */
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        for (ThemisSolverModule myModule : pProject.getModules()) {</span>
+            /* Process references for root */
+<span class="fc" id="L48">            processReferences(myModule.getRoot());</span>
+<span class="fc" id="L49">        }</span>
+<span class="fc" id="L50">    }</span>
+
+    /**
+     * Process references for a package and it's children.
+     *
+     * @param pPackage the package
+     */
+    private void processReferences(final ThemisSolverPackage pPackage) {
+        /* Process references for all children */
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        for (ThemisSolverPackage myChild : pPackage.getChildren()) {</span>
+            /* Process references for all siblings */
+<span class="fc bfc" id="L61" title="All 2 branches covered.">            for (ThemisSolverPackage mySibling : pPackage.getChildren()) {</span>
+                /* Avoid self references */
+<span class="fc bfc" id="L63" title="All 2 branches covered.">                if (!myChild.equals(mySibling)) {</span>
+<span class="fc" id="L64">                    findReferences(myChild, ThemisRefType.SIBLING, mySibling);</span>
+                }
+<span class="fc" id="L66">            }</span>
+
+            /* Process sibling references */
+<span class="fc" id="L69">            determineLocalReferences(myChild);</span>
+<span class="fc" id="L70">            pPackage.processLocalReferences();</span>
+
+            /* find references from the child to the parent */
+<span class="fc" id="L73">            findReferences(myChild, ThemisRefType.PARENT, pPackage);</span>
+
+            /* find references from the parent to the child */
+<span class="fc" id="L76">            findReferences(pPackage, ThemisRefType.CHILD, myChild);</span>
+
+            /* Process child */
+<span class="fc" id="L79">            processReferences(myChild);</span>
+<span class="fc" id="L80">        }</span>
+
+        /* Process references for all children */
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        for (ThemisSolverPackage myChild : pPackage.getChildren()) {</span>
+            /* Process sibling references */
+<span class="fc" id="L85">            myChild.processLocalReferences();</span>
+
+            /* Check for incest */
+<span class="fc" id="L88">            check4Incest(pPackage, myChild);</span>
+<span class="fc" id="L89">        }</span>
+<span class="fc" id="L90">    }</span>
+
+    /**
+     * Find references from the source package plus children to the target package and it's children.
+     *
+     * @param pSource  the sourcePackage
+     * @param pRefType the referenceType
+     * @param pTarget  the targetPackage
+     */
+    private void findReferences(final ThemisSolverPackage pSource,
+                                final ThemisRefType pRefType,
+                                final ThemisSolverPackage pTarget) {
+        /* Obtain the map for the package */
+<span class="fc" id="L103">        final ThemisSolverReference myMap = pSource.getReferenceMap();</span>
+
+        /* Create result map */
+<span class="fc" id="L106">        final ThemisSolverRefPackage myReferences = new ThemisSolverRefPackage(pTarget, pRefType);</span>
+
+        /* Look for references */
+<span class="fc" id="L109">        findReferences(myReferences, pSource);</span>
+
+        /* If we have any references */
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        if (!myReferences.getReferences().isEmpty()) {</span>
+<span class="fc" id="L113">            myMap.addReferences(myReferences);</span>
+        }
+<span class="fc" id="L115">    }</span>
+
+    /**
+     * Find references to the target package and it's children.
+     *
+     * @param pReferences the referenceSet
+     * @param pSource     the source package
+     */
+    private void findReferences(final ThemisSolverRefPackage pReferences,
+                                final ThemisSolverPackage pSource) {
+        /* Loop through the files */
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        for (ThemisSolverFile myFile : pSource.getFiles()) {</span>
+<span class="fc" id="L127">            findReferences(pReferences, myFile);</span>
+<span class="fc" id="L128">        }</span>
+
+        /* Loop through the children to find further references */
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        if (!ThemisRefType.CHILD.equals(pReferences.getReferenceType())) {</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">            for (ThemisSolverPackage myChild : pSource.getChildren()) {</span>
+<span class="fc" id="L133">                findReferences(pReferences, myChild);</span>
+<span class="fc" id="L134">            }</span>
+        }
+<span class="fc" id="L136">    }</span>
+
+    /**
+     * Find references from the file to the target package and it's children.
+     *
+     * @param pReferences the referenceSet
+     * @param pFile       the source file
+     */
+    private void findReferences(final ThemisSolverRefPackage pReferences,
+                                final ThemisSolverFile pFile) {
+        /* Create list and prefix */
+<span class="fc" id="L147">        final List&lt;ThemisSolverClass&gt; myReferences = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L148">        final String myPackage = pReferences.getPackage().getPackageName();</span>
+<span class="fc" id="L149">        final String myPrefix = myPackage + ThemisChar.PERIOD;</span>
+<span class="fc" id="L150">        final boolean isParent = ThemisRefType.PARENT.equals(pReferences.getReferenceType());</span>
+
+        /* Loop through the references */
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        for (ThemisSolverClass myReference : pFile.getReferenced()) {</span>
+<span class="fc" id="L154">            final String myName = myReference.getFullName();</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">            if (isParent</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">                    ? myName.equals(myPrefix + myReference.getName())</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">                    : myName.startsWith(myPrefix)) {</span>
+<span class="fc" id="L158">                myReferences.add(myReference);</span>
+            }
+<span class="fc" id="L160">        }</span>
+
+        /* If we have references, add to map */
+<span class="fc bfc" id="L163" title="All 2 branches covered.">        if (!myReferences.isEmpty()) {</span>
+            /* Create the reference map and add to references */
+<span class="fc" id="L165">            final ThemisSolverRefClass myClass = new ThemisSolverRefClass(pFile.getTopLevel(), myReferences);</span>
+<span class="fc" id="L166">            pReferences.addReferences(myClass);</span>
+        }
+<span class="fc" id="L168">    }</span>
+
+    /**
+     * Determine local references.
+     *
+     * @param pPackage the package
+     */
+    private void determineLocalReferences(final ThemisSolverPackage pPackage) {
+        /* Create list */
+<span class="fc" id="L177">        final List&lt;ThemisSolverPackageDef&gt; myReferences = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L178">        final ThemisSolverReference myReferenceMap = pPackage.getReferenceMap();</span>
+
+        /* Add all Sibling references to the list */
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        for (ThemisSolverRefPackage myPackage : myReferenceMap.getReferences(ThemisRefType.SIBLING)) {</span>
+<span class="fc" id="L182">            myReferences.add(myPackage.getPackage());</span>
+<span class="fc" id="L183">        }</span>
+
+        /* Register the references */
+<span class="fc" id="L186">        pPackage.setReferenced(myReferences);</span>
+<span class="fc" id="L187">    }</span>
+
+    /**
+     * Check for incest.
+     *
+     * @param pParent the parent
+     * @param pChild  the child
+     */
+    private void check4Incest(final ThemisSolverPackage pParent,
+                              final ThemisSolverPackage pChild) {
+        /* Obtain the map for the package */
+<span class="fc" id="L198">        final ThemisSolverReference myParentMap = pParent.getReferenceMap();</span>
+<span class="fc" id="L199">        final ThemisSolverReference myChildMap = pChild.getReferenceMap();</span>
+
+        /* If we have two-way links parent to/from child */
+<span class="fc" id="L202">        final ThemisSolverRefPackage myParentRefs = myChildMap.getReferredPackage(pParent);</span>
+<span class="fc" id="L203">        final ThemisSolverRefPackage myChildRefs = myParentMap.getReferredPackage(pChild);</span>
+<span class="fc bfc" id="L204" title="All 4 branches covered.">        if (myParentRefs != null &amp;&amp; myChildRefs != null) {</span>
+            /* Mark child as incestuous */
+<span class="fc" id="L206">            pChild.markIncestuous();</span>
+        }
+<span class="fc" id="L208">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

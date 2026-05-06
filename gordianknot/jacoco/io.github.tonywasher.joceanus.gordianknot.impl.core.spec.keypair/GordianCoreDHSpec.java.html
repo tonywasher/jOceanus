@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreDHSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair</a> &gt; <span class="el_source">GordianCoreDHSpec.java</span></div><h1>GordianCoreDHSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDHSpec;
+import org.bouncycastle.crypto.agreement.DHStandardGroups;
+import org.bouncycastle.crypto.params.DHParameters;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * DH Groups.
+ */
+public final class GordianCoreDHSpec {
+    /**
+     * The specMap.
+     */
+<span class="fc" id="L35">    private static final Map&lt;GordianDHSpec, GordianCoreDHSpec&gt; SPECMAP = newSpecMap();</span>
+
+    /**
+     * The specArray.
+     */
+<span class="fc" id="L40">    private static final GordianCoreDHSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreDHSpec[0]);</span>
+
+    /**
+     * The Spec.
+     */
+    private final GordianDHSpec theSpec;
+
+    /**
+     * Constructor.
+     *
+     * @param pSpec the spec
+     */
+<span class="fc" id="L52">    private GordianCoreDHSpec(final GordianDHSpec pSpec) {</span>
+<span class="fc" id="L53">        theSpec = pSpec;</span>
+<span class="fc" id="L54">    }</span>
+
+    /**
+     * Obtain the spec.
+     *
+     * @return the spec
+     */
+    public GordianDHSpec getSpec() {
+<span class="fc" id="L62">        return theSpec;</span>
+    }
+
+    /**
+     * Obtain the length for a spec.
+     *
+     * @return the length
+     */
+    public int getLength() {
+<span class="pc bpc" id="L71" title="7 of 8 branches missed.">        return switch (theSpec) {</span>
+<span class="nc" id="L72">            case STD1024 -&gt; GordianLength.LEN_1024.getLength();</span>
+<span class="nc" id="L73">            case STD1536 -&gt; GordianLength.LEN_1536.getLength();</span>
+<span class="fc" id="L74">            case STD2048, FFDHE2048 -&gt; GordianLength.LEN_2048.getLength();</span>
+<span class="nc" id="L75">            case STD3072, FFDHE3072 -&gt; GordianLength.LEN_3072.getLength();</span>
+<span class="nc" id="L76">            case STD4096, FFDHE4096 -&gt; GordianLength.LEN_4096.getLength();</span>
+<span class="nc" id="L77">            case STD6144, FFDHE6144 -&gt; GordianLength.LEN_6144.getLength();</span>
+<span class="nc" id="L78">            case STD8192, FFDHE8192 -&gt; GordianLength.LEN_8192.getLength();</span>
+<span class="nc" id="L79">            default -&gt; throw new IllegalArgumentException(&quot;Unknown GordianNewRSASpec&quot;);</span>
+        };
+    }
+
+    /**
+     * Obtain the parameters.
+     *
+     * @return the parameters
+     */
+    public DHParameters getParameters() {
+<span class="pc bpc" id="L89" title="12 of 13 branches missed.">        return switch (theSpec) {</span>
+<span class="nc" id="L90">            case STD1024 -&gt; DHStandardGroups.rfc2409_1024;</span>
+<span class="nc" id="L91">            case STD1536 -&gt; DHStandardGroups.rfc3526_1536;</span>
+<span class="nc" id="L92">            case STD2048 -&gt; DHStandardGroups.rfc3526_2048;</span>
+<span class="nc" id="L93">            case STD3072 -&gt; DHStandardGroups.rfc3526_3072;</span>
+<span class="nc" id="L94">            case STD4096 -&gt; DHStandardGroups.rfc3526_4096;</span>
+<span class="nc" id="L95">            case STD6144 -&gt; DHStandardGroups.rfc3526_6144;</span>
+<span class="nc" id="L96">            case STD8192 -&gt; DHStandardGroups.rfc3526_8192;</span>
+<span class="fc" id="L97">            case FFDHE2048 -&gt; DHStandardGroups.rfc7919_ffdhe2048;</span>
+<span class="nc" id="L98">            case FFDHE3072 -&gt; DHStandardGroups.rfc7919_ffdhe3072;</span>
+<span class="nc" id="L99">            case FFDHE4096 -&gt; DHStandardGroups.rfc7919_ffdhe4096;</span>
+<span class="nc" id="L100">            case FFDHE6144 -&gt; DHStandardGroups.rfc7919_ffdhe6144;</span>
+<span class="nc" id="L101">            case FFDHE8192 -&gt; DHStandardGroups.rfc7919_ffdhe8192;</span>
+<span class="nc" id="L102">            default -&gt; throw new IllegalArgumentException(&quot;Unknown GordianDHSpec&quot;);</span>
+        };
+    }
+
+    /**
+     * Obtain the group for parameters.
+     *
+     * @param pParams the parameters
+     * @return the group
+     */
+    public static GordianCoreDHSpec getSpecForParams(final DHParameters pParams) {
+        /* Loop through the values */
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">        for (GordianCoreDHSpec myGroup : values()) {</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">            if (myGroup.getParameters().equals(pParams)) {</span>
+<span class="fc" id="L116">                return myGroup;</span>
+            }
+        }
+<span class="nc" id="L119">        return null;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L124">        return theSpec.toString();</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L131">            return true;</span>
+        }
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L134">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="nc" id="L138">        return pThat instanceof GordianCoreDHSpec myThat</span>
+<span class="nc bnc" id="L139" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L144">        return theSpec.hashCode();</span>
+    }
+
+    /**
+     * Obtain the core spec.
+     *
+     * @param pSpec the base spec
+     * @return the core spec
+     */
+    public static GordianCoreDHSpec mapCoreSpec(final Object pSpec) {
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        return pSpec instanceof GordianDHSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map&lt;GordianDHSpec, GordianCoreDHSpec&gt; newSpecMap() {
+<span class="fc" id="L163">        final Map&lt;GordianDHSpec, GordianCoreDHSpec&gt; myMap = new EnumMap&lt;&gt;(GordianDHSpec.class);</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        for (GordianDHSpec mySpec : GordianDHSpec.values()) {</span>
+<span class="fc" id="L165">            myMap.put(mySpec, new GordianCoreDHSpec(mySpec));</span>
+        }
+<span class="fc" id="L167">        return myMap;</span>
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static GordianCoreDHSpec[] values() {
+<span class="fc" id="L176">        return VALUES;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

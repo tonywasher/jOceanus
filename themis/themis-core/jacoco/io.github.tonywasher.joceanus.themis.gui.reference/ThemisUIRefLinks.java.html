@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisUIRefLinks.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.gui.reference</a> &gt; <span class="el_source">ThemisUIRefLinks.java</span></div><h1>ThemisUIRefLinks.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.gui.reference;
+
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIBaseDocument;
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIDocBuilder;
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIHTMLTag;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverClass;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverPackage;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverReference;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverReference.ThemisSolverRefClass;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverReference.ThemisSolverRefPackage;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+/**
+ * Links table builder.
+ */
+public class ThemisUIRefLinks {
+    /**
+     * The builder.
+     */
+    private final ThemisUIDocBuilder theBuilder;
+
+    /**
+     * Constructor.
+     *
+     * @param pBuilder the builder
+     */
+<span class="nc" id="L46">    ThemisUIRefLinks(final ThemisUIDocBuilder pBuilder) {</span>
+<span class="nc" id="L47">        theBuilder = pBuilder;</span>
+<span class="nc" id="L48">    }</span>
+
+    /**
+     * Create document for package links.
+     *
+     * @param pSource the source package
+     * @param pTarget the target package
+     * @param pTable  the table
+     */
+    void formatLinks(final ThemisSolverPackage pSource,
+                     final ThemisSolverPackage pTarget,
+                     final Element pTable) {
+        /* Access link map */
+<span class="nc" id="L61">        final ThemisSolverReference myMap = pSource.getReferenceMap();</span>
+<span class="nc" id="L62">        final ThemisSolverRefPackage myLinkMap = myMap.getReferences(pTarget);</span>
+
+        /* If we have links */
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (myLinkMap != null) {</span>
+            /* Create table body */
+<span class="nc" id="L67">            theBuilder.addClassToElement(pTable, ThemisUIBaseDocument.CLASSTBLSTD);</span>
+<span class="nc" id="L68">            final Element myBody = theBuilder.createElement(ThemisUIHTMLTag.TBODY);</span>
+<span class="nc" id="L69">            pTable.appendChild(myBody);</span>
+<span class="nc" id="L70">            theBuilder.addClassToElement(myBody, ThemisUIBaseDocument.CLASSTBLZEBRA);</span>
+
+            /* Create the header */
+<span class="nc" id="L73">            formatHeader(pSource, pTarget, myBody);</span>
+
+            /* Loop through the references */
+<span class="nc bnc" id="L76" title="All 2 branches missed.">            for (ThemisSolverRefClass myLink : myLinkMap.getReferences()) {</span>
+                /* Create table row */
+<span class="nc" id="L78">                final Element myRow = theBuilder.createElement(ThemisUIHTMLTag.TR);</span>
+<span class="nc" id="L79">                myBody.appendChild(myRow);</span>
+
+                /* Add row elements */
+<span class="nc" id="L82">                formatFromClass(pSource, myLink, myRow);</span>
+<span class="nc" id="L83">                formatArrow(myRow);</span>
+<span class="nc" id="L84">                formatToClasses(pTarget, myLink, myRow);</span>
+<span class="nc" id="L85">            }</span>
+        }
+<span class="nc" id="L87">    }</span>
+
+    /**
+     * Format Header.
+     *
+     * @param pSource the source package
+     * @param pTarget the target package
+     * @param pTable  the table
+     */
+    private void formatHeader(final ThemisSolverPackage pSource,
+                              final ThemisSolverPackage pTarget,
+                              final Element pTable) {
+        /* Create the table row */
+<span class="nc" id="L100">        final Element myRow = theBuilder.createElement(ThemisUIHTMLTag.TR);</span>
+<span class="nc" id="L101">        pTable.appendChild(myRow);</span>
+
+        /* Create the source header */
+<span class="nc" id="L104">        final Element mySource = theBuilder.createElement(ThemisUIHTMLTag.TH);</span>
+<span class="nc" id="L105">        mySource.setTextContent(pSource.getPackageName());</span>
+<span class="nc" id="L106">        myRow.appendChild(mySource);</span>
+
+        /* Create the null header */
+<span class="nc" id="L109">        final Element myLink = theBuilder.createElement(ThemisUIHTMLTag.TH);</span>
+<span class="nc" id="L110">        myRow.appendChild(myLink);</span>
+
+        /* Create the source header */
+<span class="nc" id="L113">        final Element myTarget = theBuilder.createElement(ThemisUIHTMLTag.TH);</span>
+<span class="nc" id="L114">        myTarget.setTextContent(pTarget.getPackageName());</span>
+<span class="nc" id="L115">        myRow.appendChild(myTarget);</span>
+<span class="nc" id="L116">    }</span>
+
+    /**
+     * Format from link.
+     *
+     * @param pSource the source package
+     * @param pLink   the link
+     * @param pTable  the table row
+     */
+    private void formatFromClass(final ThemisSolverPackage pSource,
+                                 final ThemisSolverRefClass pLink,
+                                 final Element pTable) {
+        /* Create table cell */
+<span class="nc" id="L129">        final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);</span>
+<span class="nc" id="L130">        pTable.appendChild(myCell);</span>
+
+        /* Set the text */
+<span class="nc" id="L133">        final String myName = pLink.getSubject().getFullName();</span>
+<span class="nc" id="L134">        final String myPrefix = pSource.getPackageName() + ThemisChar.PERIOD;</span>
+<span class="nc" id="L135">        myCell.setTextContent(myName.substring(myPrefix.length()));</span>
+<span class="nc" id="L136">    }</span>
+
+    /**
+     * Format arrow.
+     *
+     * @param pTable the table row
+     */
+    private void formatArrow(final Element pTable) {
+        /* Create table cell */
+<span class="nc" id="L145">        final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);</span>
+<span class="nc" id="L146">        pTable.appendChild(myCell);</span>
+
+        /* Set the text */
+<span class="nc" id="L149">        myCell.setTextContent(&quot;➤&quot;);</span>
+<span class="nc" id="L150">    }</span>
+
+    /**
+     * Format to link.
+     *
+     * @param pTarget the Target package
+     * @param pLink   the link
+     * @param pTable  the table row
+     */
+    private void formatToClasses(final ThemisSolverPackage pTarget,
+                                 final ThemisSolverRefClass pLink,
+                                 final Element pTable) {
+        /* Create table cell */
+<span class="nc" id="L163">        final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);</span>
+<span class="nc" id="L164">        pTable.appendChild(myCell);</span>
+
+        /* Loop through the classes */
+<span class="nc" id="L167">        boolean myXtra = false;</span>
+<span class="nc" id="L168">        final String myPrefix = pTarget.getPackageName() + ThemisChar.PERIOD;</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        for (ThemisSolverClass myClass : pLink.getReferences()) {</span>
+            /* If this is an extra class */
+<span class="nc bnc" id="L171" title="All 2 branches missed.">            if (myXtra) {</span>
+                /* Add a text element */
+<span class="nc" id="L173">                final Element myBreak = theBuilder.createElement(ThemisUIHTMLTag.BR);</span>
+<span class="nc" id="L174">                myCell.appendChild(myBreak);</span>
+            }
+
+            /* Add a text element */
+<span class="nc" id="L178">            final String myName = myClass.getFullName();</span>
+<span class="nc" id="L179">            final Node myText = theBuilder.createTextNode(myName.substring(myPrefix.length()));</span>
+<span class="nc" id="L180">            myCell.appendChild(myText);</span>
+
+            /* Note xtra classes */
+<span class="nc" id="L183">            myXtra = true;</span>
+<span class="nc" id="L184">        }</span>
+<span class="nc" id="L185">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

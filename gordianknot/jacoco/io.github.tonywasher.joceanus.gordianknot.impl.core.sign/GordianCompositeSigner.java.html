@@ -19,13 +19,15 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -51,7 +53,7 @@ public class GordianCompositeSigner
     /**
      * The SignatureSpec.
      */
-    private final GordianSignatureSpec theSpec;
+    private final GordianCoreSignatureSpec theSpec;
 
     /**
      * The signers.
@@ -66,52 +68,54 @@ public class GordianCompositeSigner
      * @throws GordianException on error
      */
     public GordianCompositeSigner(final GordianFactory pFactory,
-<span class="fc" id="L69">                                  final GordianSignatureSpec pSignatureSpec) throws GordianException {</span>
+<span class="fc" id="L71">                                  final GordianSignatureSpec pSignatureSpec) throws GordianException {</span>
         /* Store parameters */
-<span class="fc" id="L71">        theFactory = pFactory.getAsyncFactory().getSignatureFactory();</span>
-<span class="fc" id="L72">        theSpec = pSignatureSpec;</span>
-<span class="fc" id="L73">        theSigners = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L73">        theFactory = pFactory.getAsyncFactory().getSignatureFactory();</span>
+<span class="fc" id="L74">        theSpec = (GordianCoreSignatureSpec) pSignatureSpec;</span>
+<span class="fc" id="L75">        theSigners = new ArrayList&lt;&gt;();</span>
 
         /* Create the signers */
-<span class="fc" id="L76">        final Iterator&lt;GordianSignatureSpec&gt; myIterator = theSpec.signatureSpecIterator();</span>
-<span class="fc bfc" id="L77" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
-<span class="fc" id="L78">            final GordianSignatureSpec mySpec = myIterator.next();</span>
-<span class="fc" id="L79">            theSigners.add(theFactory.createSigner(mySpec));</span>
-<span class="fc" id="L80">        }</span>
-<span class="fc" id="L81">    }</span>
+<span class="fc" id="L78">        final Iterator&lt;GordianSignatureSpec&gt; myIterator = theSpec.signatureSpecIterator();</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+<span class="fc" id="L80">            final GordianSignatureSpec mySpec = myIterator.next();</span>
+<span class="fc" id="L81">            theSigners.add(theFactory.createSigner(mySpec));</span>
+<span class="fc" id="L82">        }</span>
+<span class="fc" id="L83">    }</span>
 
     @Override
-    public GordianSignatureSpec getSignatureSpec() {
-<span class="nc" id="L85">        return theSpec;</span>
+    public GordianCoreSignatureSpec getSignatureSpec() {
+<span class="nc" id="L87">        return theSpec;</span>
     }
 
     @Override
-    public void initForSigning(final GordianSignParams pParams) throws GordianException {
+    public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
         /* Check the keyPairSet */
-<span class="fc" id="L91">        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pParams.getKeyPair();</span>
-<span class="fc" id="L92">        checkKeySpec(myCompositePair);</span>
+<span class="fc" id="L93">        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pParams.getKeyPair();</span>
+<span class="fc" id="L94">        checkKeySpec(myCompositePair);</span>
 
         /* Initialise the signers */
-<span class="fc" id="L95">        final Iterator&lt;GordianKeyPair&gt; myIterator = myCompositePair.iterator();</span>
-<span class="fc bfc" id="L96" title="All 2 branches covered.">        for (GordianSignature mySigner : theSigners) {</span>
-<span class="fc" id="L97">            final GordianKeyPair myPair = myIterator.next();</span>
-<span class="fc" id="L98">            mySigner.initForSigning(GordianSignParams.keyPair(myPair));</span>
-<span class="fc" id="L99">        }</span>
-<span class="fc" id="L100">    }</span>
+<span class="fc" id="L97">        final Iterator&lt;GordianKeyPair&gt; myIterator = myCompositePair.iterator();</span>
+<span class="fc" id="L98">        final GordianNewSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        for (GordianSignature mySigner : theSigners) {</span>
+<span class="fc" id="L100">            final GordianKeyPair myPair = myIterator.next();</span>
+<span class="fc" id="L101">            mySigner.initForSigning(myBuilder.keyPair(myPair));</span>
+<span class="fc" id="L102">        }</span>
+<span class="fc" id="L103">    }</span>
 
     @Override
-    public void initForVerify(final GordianSignParams pParams) throws GordianException {
+    public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
         /* Check the keyPairSet */
-<span class="fc" id="L105">        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pParams.getKeyPair();</span>
-<span class="fc" id="L106">        checkKeySpec(myCompositePair);</span>
+<span class="fc" id="L108">        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pParams.getKeyPair();</span>
+<span class="fc" id="L109">        checkKeySpec(myCompositePair);</span>
 
         /* Initialise the signers */
-<span class="fc" id="L109">        final Iterator&lt;GordianKeyPair&gt; myIterator = myCompositePair.iterator();</span>
-<span class="fc bfc" id="L110" title="All 2 branches covered.">        for (GordianSignature mySigner : theSigners) {</span>
-<span class="fc" id="L111">            final GordianKeyPair myPair = myIterator.next();</span>
-<span class="fc" id="L112">            mySigner.initForVerify(GordianSignParams.keyPair(myPair));</span>
-<span class="fc" id="L113">        }</span>
-<span class="fc" id="L114">    }</span>
+<span class="fc" id="L112">        final Iterator&lt;GordianKeyPair&gt; myIterator = myCompositePair.iterator();</span>
+<span class="fc" id="L113">        final GordianNewSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        for (GordianSignature mySigner : theSigners) {</span>
+<span class="fc" id="L115">            final GordianKeyPair myPair = myIterator.next();</span>
+<span class="fc" id="L116">            mySigner.initForVerify(myBuilder.keyPair(myPair));</span>
+<span class="fc" id="L117">        }</span>
+<span class="fc" id="L118">    }</span>
 
     /**
      * check the keyPair.
@@ -120,65 +124,58 @@ public class GordianCompositeSigner
      * @throws GordianException on error
      */
     private void checkKeySpec(final GordianKeyPair pKeyPair) throws GordianException {
-<span class="pc bpc" id="L123" title="1 of 2 branches missed.">        if (!theFactory.validSignatureSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), theSpec)) {</span>
-<span class="nc" id="L124">            throw new GordianLogicException(&quot;Invalid keyPair for signer&quot;);</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">        if (!theFactory.validSignatureSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), theSpec)) {</span>
+<span class="nc" id="L128">            throw new GordianLogicException(&quot;Invalid keyPair for signer&quot;);</span>
         }
-<span class="fc" id="L126">    }</span>
+<span class="fc" id="L130">    }</span>
 
     @Override
     public void update(final byte[] pBytes,
                        final int pOffset,
                        final int pLength) {
         /* Loop through the signers */
-<span class="fc bfc" id="L133" title="All 2 branches covered.">        for (GordianSignature mySigner : theSigners) {</span>
-<span class="fc" id="L134">            mySigner.update(pBytes, pOffset, pLength);</span>
-<span class="fc" id="L135">        }</span>
-<span class="fc" id="L136">    }</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        for (GordianSignature mySigner : theSigners) {</span>
+<span class="fc" id="L138">            mySigner.update(pBytes, pOffset, pLength);</span>
+<span class="fc" id="L139">        }</span>
+<span class="fc" id="L140">    }</span>
 
     @Override
     public void update(final byte pByte) {
         /* Loop through the signers */
-<span class="nc bnc" id="L141" title="All 2 branches missed.">        for (GordianSignature mySigner : theSigners) {</span>
-<span class="nc" id="L142">            mySigner.update(pByte);</span>
-<span class="nc" id="L143">        }</span>
-<span class="nc" id="L144">    }</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        for (GordianSignature mySigner : theSigners) {</span>
+<span class="nc" id="L146">            mySigner.update(pByte);</span>
+<span class="nc" id="L147">        }</span>
+<span class="nc" id="L148">    }</span>
 
     @Override
     public void reset() {
         /* Loop through the signers */
-<span class="nc bnc" id="L149" title="All 2 branches missed.">        for (GordianSignature mySigner : theSigners) {</span>
-<span class="nc" id="L150">            mySigner.reset();</span>
-<span class="nc" id="L151">        }</span>
-<span class="nc" id="L152">    }</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        for (GordianSignature mySigner : theSigners) {</span>
+<span class="nc" id="L154">            mySigner.reset();</span>
+<span class="nc" id="L155">        }</span>
+<span class="nc" id="L156">    }</span>
 
     @Override
     public final byte[] sign() throws GordianException {
         /* Protect against exceptions */
         try {
             /* Create the signature */
-<span class="fc" id="L159">            final ASN1EncodableVector ks = new ASN1EncodableVector();</span>
+<span class="fc" id="L163">            final ASN1EncodableVector ks = new ASN1EncodableVector();</span>
 
             /* Loop through the signers */
-<span class="fc" id="L162">            byte[] mySign = null;</span>
-<span class="fc bfc" id="L163" title="All 2 branches covered.">            for (GordianSignature mySigner : theSigners) {</span>
-                /* If we have a previous signature */
-<span class="fc bfc" id="L165" title="All 2 branches covered.">                if (mySign != null) {</span>
-                    /* Process previous signature */
-<span class="fc" id="L167">                    mySigner.update(mySign);</span>
-                }
-
+<span class="fc bfc" id="L166" title="All 2 branches covered.">            for (GordianSignature mySigner : theSigners) {</span>
                 /* Sign using this signature */
-<span class="fc" id="L171">                mySign = mySigner.sign();</span>
+<span class="fc" id="L168">                final byte[] mySign = mySigner.sign();</span>
 
                 /* Add the signature */
-<span class="fc" id="L174">                ks.add(new DEROctetString(mySign));</span>
-<span class="fc" id="L175">            }</span>
+<span class="fc" id="L171">                ks.add(new DEROctetString(mySign));</span>
+<span class="fc" id="L172">            }</span>
 
             /* Return the signature */
-<span class="fc" id="L178">            return new DERSequence(ks).getEncoded();</span>
+<span class="fc" id="L175">            return new DERSequence(ks).getEncoded();</span>
 
-<span class="nc" id="L180">        } catch (IOException e) {</span>
-<span class="nc" id="L181">            throw new GordianIOException(&quot;Failed to encode signature&quot;, e);</span>
+<span class="nc" id="L177">        } catch (IOException e) {</span>
+<span class="nc" id="L178">            throw new GordianIOException(&quot;Failed to encode signature&quot;, e);</span>
         }
     }
 
@@ -187,31 +184,24 @@ public class GordianCompositeSigner
         /* Protect against exceptions */
         try {
             /* Parse the signature */
-<span class="fc" id="L190">            final ASN1Sequence mySequence = ASN1Sequence.getInstance(pSignature);</span>
+<span class="fc" id="L187">            final ASN1Sequence mySequence = ASN1Sequence.getInstance(pSignature);</span>
 
             /* Loop through the signers */
-<span class="fc" id="L193">            byte[] mySign = null;</span>
-<span class="fc" id="L194">            int numFailed = 0;</span>
-<span class="fc" id="L195">            final Enumeration&lt;?&gt; en = mySequence.getObjects();</span>
-<span class="fc bfc" id="L196" title="All 2 branches covered.">            for (GordianSignature mySigner : theSigners) {</span>
-                /* If we have a previous signature */
-<span class="fc bfc" id="L198" title="All 2 branches covered.">                if (mySign != null) {</span>
-                    /* Process previous signature */
-<span class="fc" id="L200">                    mySigner.update(mySign);</span>
-                }
-
+<span class="fc" id="L190">            int numFailed = 0;</span>
+<span class="fc" id="L191">            final Enumeration&lt;?&gt; en = mySequence.getObjects();</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">            for (GordianSignature mySigner : theSigners) {</span>
                 /* Access next signature */
-<span class="fc" id="L204">                mySign = ASN1OctetString.getInstance(en.nextElement()).getOctets();</span>
+<span class="fc" id="L194">                final byte[] mySign = ASN1OctetString.getInstance(en.nextElement()).getOctets();</span>
 
                 /* Verify using this signature */
-<span class="pc bpc" id="L207" title="1 of 2 branches missed.">                numFailed += mySigner.verify(mySign) ? 0 : 1;</span>
-<span class="fc" id="L208">            }</span>
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">                numFailed += mySigner.verify(mySign) ? 0 : 1;</span>
+<span class="fc" id="L198">            }</span>
 
             /* Return validity */
-<span class="pc bpc" id="L211" title="1 of 2 branches missed.">            return numFailed == 0;</span>
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">            return numFailed == 0;</span>
 
-<span class="nc" id="L213">        } catch (IllegalArgumentException e) {</span>
-<span class="nc" id="L214">            throw new GordianIOException(&quot;Invalid encoded signature&quot;, e);</span>
+<span class="nc" id="L203">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L204">            throw new GordianIOException(&quot;Invalid encoded signature&quot;, e);</span>
         }
     }
 }

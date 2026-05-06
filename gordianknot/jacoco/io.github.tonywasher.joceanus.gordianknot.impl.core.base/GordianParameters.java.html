@@ -267,31 +267,28 @@ public class GordianParameters {
         }
 
         /* Make sure that the object is the same class */
-<span class="pc bpc" id="L270" title="1 of 2 branches missed.">        if (!(pThat instanceof GordianParameters)) {</span>
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">        if (!(pThat instanceof GordianParameters myThat)) {</span>
 <span class="nc" id="L271">            return false;</span>
         }
 
-        /* Access the target field */
-<span class="fc" id="L275">        final GordianParameters myThat = (GordianParameters) pThat;</span>
-
         /* Check Differences */
-<span class="pc bpc" id="L278" title="1 of 2 branches missed.">        if (theFactoryType != myThat.getFactoryType()</span>
-<span class="pc bpc" id="L279" title="1 of 2 branches missed.">                || isInternal != myThat.isInternal()) {</span>
-<span class="nc" id="L280">            return false;</span>
+<span class="pc bpc" id="L275" title="1 of 2 branches missed.">        if (theFactoryType != myThat.getFactoryType()</span>
+<span class="pc bpc" id="L276" title="1 of 2 branches missed.">                || isInternal != myThat.isInternal()) {</span>
+<span class="nc" id="L277">            return false;</span>
         }
 
         /* Check Differences */
-<span class="pc bpc" id="L284" title="1 of 2 branches missed.">        if (!Arrays.equals(theKeySetSeed, myThat.getKeySetSeed())) {</span>
-<span class="nc" id="L285">            return false;</span>
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">        if (!Arrays.equals(theKeySetSeed, myThat.getKeySetSeed())) {</span>
+<span class="nc" id="L282">            return false;</span>
         }
 
         /* Check seed */
-<span class="fc" id="L289">        return Arrays.equals(theSecuritySeed, myThat.getSecuritySeed());</span>
+<span class="fc" id="L286">        return Arrays.equals(theSecuritySeed, myThat.getSecuritySeed());</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L294">        return Objects.hash(theFactoryType, isInternal, Arrays.hashCode(theSecuritySeed), Arrays.hashCode(theKeySetSeed));</span>
+<span class="nc" id="L291">        return Objects.hash(theFactoryType, isInternal, Arrays.hashCode(theSecuritySeed), Arrays.hashCode(theKeySetSeed));</span>
     }
 
     /**
@@ -302,7 +299,7 @@ public class GordianParameters {
      * @throws GordianException on error
      */
     public static GordianParameters randomParams(final GordianFactoryType pType) throws GordianException {
-<span class="fc" id="L305">        return new GordianParameters(pType, GordianRandomSource.getStrongRandom());</span>
+<span class="fc" id="L302">        return new GordianParameters(pType, GordianRandomSource.getStrongRandom());</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -17,15 +17,15 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
@@ -57,9 +57,9 @@ public final class BouncySymKeyCipher
      * @param pCipherSpec the cipherSpec
      * @param pCipher     the cipher
      */
-    protected BouncySymKeyCipher(final GordianBaseFactory pFactory,
-                                 final GordianSymCipherSpec pCipherSpec,
-                                 final BufferedBlockCipher pCipher) {
+    BouncySymKeyCipher(final GordianBaseFactory pFactory,
+                       final GordianCoreSymCipherSpec pCipherSpec,
+                       final BufferedBlockCipher pCipher) {
 <span class="fc" id="L63">        super(pFactory, pCipherSpec);</span>
 <span class="fc" id="L64">        theCipher = pCipher;</span>
 <span class="fc" id="L65">    }</span>
@@ -70,13 +70,13 @@ public final class BouncySymKeyCipher
     }
 
     @Override
-    public GordianSymCipherSpec getCipherSpec() {
-<span class="fc" id="L74">        return (GordianSymCipherSpec) super.getCipherSpec();</span>
+    public GordianCoreSymCipherSpec getCipherSpec() {
+<span class="fc" id="L74">        return (GordianCoreSymCipherSpec) super.getCipherSpec();</span>
     }
 
     @Override
     public void init(final boolean pEncrypt,
-                     final GordianCipherParameters pParams) throws GordianException {
+                     final GordianCipherParams pParams) throws GordianException {
         /* Process the parameters and access the key */
 <span class="fc" id="L81">        processParameters(pParams);</span>
 <span class="fc" id="L82">        final BouncyKey&lt;GordianSymKeySpec&gt; myKey = BouncyKey.accessKey(getKey());</span>
@@ -158,7 +158,7 @@ public final class BouncySymKeyCipher
 
     @Override
     public int getBlockSize() {
-<span class="nc bnc" id="L161" title="All 2 branches missed.">        return getCipherSpec().getCipherMode().hasPadding()</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        return getCipherSpec().getCoreCipherMode().hasPadding()</span>
 <span class="nc" id="L162">                ? theCipher.getBlockSize() : 0;</span>
     }
 
@@ -173,20 +173,19 @@ public final class BouncySymKeyCipher
         }
 
         /* Make sure that the classes are the same */
-<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        if (!(pThat instanceof BouncySymKeyCipher)) {</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        if (!(pThat instanceof BouncySymKeyCipher myThat)) {</span>
 <span class="nc" id="L177">            return false;</span>
         }
-<span class="fc" id="L179">        final BouncySymKeyCipher myThat = (BouncySymKeyCipher) pThat;</span>
 
         /* Check that the fields are equal */
-<span class="pc bpc" id="L182" title="1 of 2 branches missed.">        return isEncrypting == myThat.isEncrypting</span>
-<span class="pc bpc" id="L183" title="1 of 2 branches missed.">                &amp;&amp; super.equals(myThat);</span>
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">        return isEncrypting == myThat.isEncrypting</span>
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">                &amp;&amp; super.equals(myThat);</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L188">        return super.hashCode()</span>
-<span class="nc bnc" id="L189" title="All 2 branches missed.">                + (isEncrypting ? 1 : 0);</span>
+<span class="nc" id="L187">        return super.hashCode()</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">                + (isEncrypting ? 1 : 0);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

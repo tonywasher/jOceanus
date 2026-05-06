@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreCipherParamsBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.cipher</a> &gt; <span class="el_source">GordianCoreCipherParamsBuilder.java</span></div><h1>GordianCoreCipherParamsBuilder.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianAEADCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianKeyCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianPBECipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherParams.GordianCoreAEADCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherParams.GordianCoreKeyAndNonceCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherParams.GordianCoreKeyCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherParams.GordianCorePBECipherParameters;
+
+/**
+ * Core CipherParameters Builder.
+ */
+public final class GordianCoreCipherParamsBuilder
+        implements GordianCipherParamsBuilder {
+    /**
+     * Constructor.
+     */
+    private GordianCoreCipherParamsBuilder() {
+    }
+
+    /**
+     * Create new CipherParamsBuilder.
+     *
+     * @return the Builder
+     */
+    public static GordianCipherParamsBuilder newInstance() {
+<span class="fc" id="L49">        return new GordianCoreCipherParamsBuilder();</span>
+    }
+
+    @Override
+    public &lt;T extends GordianKeySpec&gt; GordianKeyCipherParameters&lt;T&gt; key(final GordianKey&lt;T&gt; pKey) {
+<span class="fc" id="L54">        return new GordianCoreKeyCipherParameters&lt;&gt;(pKey);</span>
+    }
+
+    @Override
+    public &lt;T extends GordianKeySpec&gt; GordianKeyCipherParameters&lt;T&gt; keyAndNonce(final GordianKey&lt;T&gt; pKey,
+                                                                                final byte[] pNonce) {
+<span class="fc" id="L60">        return new GordianCoreKeyAndNonceCipherParameters&lt;&gt;(pKey, pNonce);</span>
+    }
+
+    @Override
+    public &lt;T extends GordianKeySpec&gt; GordianKeyCipherParameters&lt;T&gt; keyWithRandomNonce(final GordianKey&lt;T&gt; pKey) {
+<span class="fc" id="L65">        return new GordianCoreKeyAndNonceCipherParameters&lt;&gt;(pKey);</span>
+    }
+
+    @Override
+    public &lt;T extends GordianKeySpec&gt; GordianAEADCipherParameters&lt;T&gt; aeadAndNonce(final GordianKey&lt;T&gt; pKey,
+                                                                                  final byte[] pInitialAEAD,
+                                                                                  final byte[] pNonce) {
+<span class="fc" id="L72">        return new GordianCoreAEADCipherParameters&lt;&gt;(pKey, pNonce, pInitialAEAD);</span>
+    }
+
+    @Override
+    public &lt;T extends GordianKeySpec&gt; GordianAEADCipherParameters&lt;T&gt; aeadWithRandomNonce(final GordianKey&lt;T&gt; pKey,
+                                                                                         final byte[] pInitialAEAD) {
+<span class="nc" id="L78">        return new GordianCoreAEADCipherParameters&lt;&gt;(pKey, null, pInitialAEAD);</span>
+    }
+
+    @Override
+    public GordianPBECipherParameters pbe(final GordianPBESpec pPBESpec,
+                                          final char[] pPassword) {
+<span class="fc" id="L84">        return new GordianCorePBECipherParameters(pPBESpec, pPassword);</span>
+    }
+
+    /**
+     * Obtain pneAndNonce Parameters.
+     *
+     * @param pPBESpec  the pbeSpec
+     * @param pPassword the password
+     * @param pNonce    the nonce
+     * @return the keySpec
+     */
+    public GordianPBECipherParameters pbeAndNonce(final GordianPBESpec pPBESpec,
+                                                  final char[] pPassword,
+                                                  final byte[] pNonce) {
+<span class="fc" id="L98">        return new GordianCorePBECipherParameters(pPBESpec, pNonce, pPassword);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -354,46 +354,44 @@
 <a class="jxr_linenumber" name="L346" href="#L346">346</a>                     - theReadOffset;
 <a class="jxr_linenumber" name="L347" href="#L347">347</a> 
 <a class="jxr_linenumber" name="L348" href="#L348">348</a>             <em class="jxr_comment">/* Determine how much data we can transfer */</em>
-<a class="jxr_linenumber" name="L349" href="#L349">349</a>             iNumRead = iNumRead &lt;= pLength
-<a class="jxr_linenumber" name="L350" href="#L350">350</a>                     ? iNumRead
-<a class="jxr_linenumber" name="L351" href="#L351">351</a>                     : pLength;
-<a class="jxr_linenumber" name="L352" href="#L352">352</a> 
-<a class="jxr_linenumber" name="L353" href="#L353">353</a>             <em class="jxr_comment">/* If we have data to copy */</em>
-<a class="jxr_linenumber" name="L354" href="#L354">354</a>             <strong class="jxr_keyword">if</strong> (iNumRead &gt; 0) {
-<a class="jxr_linenumber" name="L355" href="#L355">355</a>                 <em class="jxr_comment">/* Transfer the bytes */</em>
-<a class="jxr_linenumber" name="L356" href="#L356">356</a>                 System.arraycopy(theStore, theReadOffset, pBuffer, pOffset, iNumRead);
-<a class="jxr_linenumber" name="L357" href="#L357">357</a> 
-<a class="jxr_linenumber" name="L358" href="#L358">358</a>                 <em class="jxr_comment">/* Adjust ReadOffset */</em>
-<a class="jxr_linenumber" name="L359" href="#L359">359</a>                 theReadOffset += iNumRead;
-<a class="jxr_linenumber" name="L360" href="#L360">360</a> 
-<a class="jxr_linenumber" name="L361" href="#L361">361</a>                 <em class="jxr_comment">/* If we have finished with the data in the buffer */</em>
-<a class="jxr_linenumber" name="L362" href="#L362">362</a>                 <strong class="jxr_keyword">if</strong> (theReadOffset &gt;= theDataLen) {
-<a class="jxr_linenumber" name="L363" href="#L363">363</a>                     <em class="jxr_comment">/* Reset the values */</em>
-<a class="jxr_linenumber" name="L364" href="#L364">364</a>                     theDataLen = 0;
-<a class="jxr_linenumber" name="L365" href="#L365">365</a>                     theReadOffset = 0;
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>                 }
-<a class="jxr_linenumber" name="L367" href="#L367">367</a> 
-<a class="jxr_linenumber" name="L368" href="#L368">368</a>                 <em class="jxr_comment">/* else if we have no data check for EOF and report it if required */</em>
-<a class="jxr_linenumber" name="L369" href="#L369">369</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (hasEOFbeenSeen) {
-<a class="jxr_linenumber" name="L370" href="#L370">370</a>                 iNumRead = -1;
-<a class="jxr_linenumber" name="L371" href="#L371">371</a>             }
-<a class="jxr_linenumber" name="L372" href="#L372">372</a> 
-<a class="jxr_linenumber" name="L373" href="#L373">373</a>             <em class="jxr_comment">/* Return the number of bytes transferred */</em>
-<a class="jxr_linenumber" name="L374" href="#L374">374</a>             <strong class="jxr_keyword">return</strong> iNumRead;
-<a class="jxr_linenumber" name="L375" href="#L375">375</a>         }
-<a class="jxr_linenumber" name="L376" href="#L376">376</a> 
-<a class="jxr_linenumber" name="L377" href="#L377">377</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L378" href="#L378">378</a> <em class="jxr_javadoccomment">         * Process bytes into the buffer.</em>
-<a class="jxr_linenumber" name="L379" href="#L379">379</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L380" href="#L380">380</a> <em class="jxr_javadoccomment">         * @param pBuffer the buffer from which to store bytes</em>
-<a class="jxr_linenumber" name="L381" href="#L381">381</a> <em class="jxr_javadoccomment">         * @param pLength the number of bytes read into the buffer (must not be zero)</em>
-<a class="jxr_linenumber" name="L382" href="#L382">382</a> <em class="jxr_javadoccomment">         * @return the number of bytes now available in the buffer</em>
-<a class="jxr_linenumber" name="L383" href="#L383">383</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
-<a class="jxr_linenumber" name="L384" href="#L384">384</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L385" href="#L385">385</a>         <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">int</strong> processBytes(byte[] pBuffer,
-<a class="jxr_linenumber" name="L386" href="#L386">386</a>                                             <strong class="jxr_keyword">int</strong> pLength) <strong class="jxr_keyword">throws</strong> GordianException;
-<a class="jxr_linenumber" name="L387" href="#L387">387</a>     }
-<a class="jxr_linenumber" name="L388" href="#L388">388</a> }
+<a class="jxr_linenumber" name="L349" href="#L349">349</a>             iNumRead = Math.min(iNumRead, pLength);
+<a class="jxr_linenumber" name="L350" href="#L350">350</a> 
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>             <em class="jxr_comment">/* If we have data to copy */</em>
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>             <strong class="jxr_keyword">if</strong> (iNumRead &gt; 0) {
+<a class="jxr_linenumber" name="L353" href="#L353">353</a>                 <em class="jxr_comment">/* Transfer the bytes */</em>
+<a class="jxr_linenumber" name="L354" href="#L354">354</a>                 System.arraycopy(theStore, theReadOffset, pBuffer, pOffset, iNumRead);
+<a class="jxr_linenumber" name="L355" href="#L355">355</a> 
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>                 <em class="jxr_comment">/* Adjust ReadOffset */</em>
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>                 theReadOffset += iNumRead;
+<a class="jxr_linenumber" name="L358" href="#L358">358</a> 
+<a class="jxr_linenumber" name="L359" href="#L359">359</a>                 <em class="jxr_comment">/* If we have finished with the data in the buffer */</em>
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>                 <strong class="jxr_keyword">if</strong> (theReadOffset &gt;= theDataLen) {
+<a class="jxr_linenumber" name="L361" href="#L361">361</a>                     <em class="jxr_comment">/* Reset the values */</em>
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>                     theDataLen = 0;
+<a class="jxr_linenumber" name="L363" href="#L363">363</a>                     theReadOffset = 0;
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>                 }
+<a class="jxr_linenumber" name="L365" href="#L365">365</a> 
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>                 <em class="jxr_comment">/* else if we have no data check for EOF and report it if required */</em>
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (hasEOFbeenSeen) {
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>                 iNumRead = -1;
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>             }
+<a class="jxr_linenumber" name="L370" href="#L370">370</a> 
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>             <em class="jxr_comment">/* Return the number of bytes transferred */</em>
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>             <strong class="jxr_keyword">return</strong> iNumRead;
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>         }
+<a class="jxr_linenumber" name="L374" href="#L374">374</a> 
+<a class="jxr_linenumber" name="L375" href="#L375">375</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L376" href="#L376">376</a> <em class="jxr_javadoccomment">         * Process bytes into the buffer.</em>
+<a class="jxr_linenumber" name="L377" href="#L377">377</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="L378" href="#L378">378</a> <em class="jxr_javadoccomment">         * @param pBuffer the buffer from which to store bytes</em>
+<a class="jxr_linenumber" name="L379" href="#L379">379</a> <em class="jxr_javadoccomment">         * @param pLength the number of bytes read into the buffer (must not be zero)</em>
+<a class="jxr_linenumber" name="L380" href="#L380">380</a> <em class="jxr_javadoccomment">         * @return the number of bytes now available in the buffer</em>
+<a class="jxr_linenumber" name="L381" href="#L381">381</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L382" href="#L382">382</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>         <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">int</strong> processBytes(byte[] pBuffer,
+<a class="jxr_linenumber" name="L384" href="#L384">384</a>                                             <strong class="jxr_keyword">int</strong> pLength) <strong class="jxr_keyword">throws</strong> GordianException;
+<a class="jxr_linenumber" name="L385" href="#L385">385</a>     }
+<a class="jxr_linenumber" name="L386" href="#L386">386</a> }
 </pre>
 <hr/>
 <div id="footer">© 2012–2026</div>

@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 
 /**
@@ -133,13 +133,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the PortfolioType is pension, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isPension() {
-<span class="nc bnc" id="L136" title="All 2 branches missed.">        switch (this) {</span>
-            case PENSION:
-            case SIPP:
-<span class="nc" id="L139">                return true;</span>
-            default:
-<span class="nc" id="L141">                return false;</span>
-        }
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L137">            case PENSION, SIPP -&gt; true;</span>
+<span class="nc" id="L138">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -148,14 +145,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the PortfolioType owns securities, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean holdsSecurities() {
-<span class="nc bnc" id="L151" title="All 2 branches missed.">        switch (this) {</span>
-            case STANDARD:
-            case TAXFREE:
-            case SIPP:
-<span class="nc" id="L155">                return true;</span>
-            default:
-<span class="nc" id="L157">                return false;</span>
-        }
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L149">            case STANDARD, TAXFREE, SIPP -&gt; true;</span>
+<span class="nc" id="L150">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -164,7 +157,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the PortfolioType owns pensions, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean holdsPensions() {
-<span class="fc bfc" id="L167" title="All 2 branches covered.">        return this == PENSION;</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        return this == PENSION;</span>
     }
 
     /**
@@ -173,7 +166,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the PortfolioType is singular, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isSingular() {
-<span class="fc" id="L176">        return holdsPensions();</span>
+<span class="fc" id="L169">        return holdsPensions();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

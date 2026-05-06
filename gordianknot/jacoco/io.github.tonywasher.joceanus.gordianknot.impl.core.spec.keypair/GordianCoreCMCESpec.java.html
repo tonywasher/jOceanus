@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreCMCESpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair</a> &gt; <span class="el_source">GordianCoreCMCESpec.java</span></div><h1>GordianCoreCMCESpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianCMCESpec;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
+import org.bouncycastle.pqc.crypto.cmce.CMCEParameters;
+import org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * CMCE KeySpecs.
+ */
+
+public final class GordianCoreCMCESpec {
+    /**
+     * The specMap.
+     */
+<span class="fc" id="L37">    private static final Map&lt;GordianCMCESpec, GordianCoreCMCESpec&gt; SPECMAP = newSpecMap();</span>
+
+    /**
+     * The specArray.
+     */
+<span class="fc" id="L42">    private static final GordianCoreCMCESpec[] VALUES = SPECMAP.values().toArray(new GordianCoreCMCESpec[0]);</span>
+
+    /**
+     * The Spec.
+     */
+    private final GordianCMCESpec theSpec;
+
+    /**
+     * Constructor.
+     *
+     * @param pSpec the spec
+     */
+<span class="fc" id="L54">    private GordianCoreCMCESpec(final GordianCMCESpec pSpec) {</span>
+<span class="fc" id="L55">        theSpec = pSpec;</span>
+<span class="fc" id="L56">    }</span>
+
+    /**
+     * Obtain the spec.
+     *
+     * @return the spec
+     */
+    public GordianCMCESpec getSpec() {
+<span class="fc" id="L64">        return theSpec;</span>
+    }
+
+    /**
+     * Obtain CMCE Parameters.
+     *
+     * @return the parameters.
+     */
+    public CMCEParameters getParameters() {
+<span class="pc bpc" id="L73" title="10 of 11 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L74">            case BASE3488 -&gt; CMCEParameters.mceliece348864r3;</span>
+<span class="nc" id="L75">            case PIVOT3488 -&gt; CMCEParameters.mceliece348864fr3;</span>
+<span class="nc" id="L76">            case BASE4608 -&gt; CMCEParameters.mceliece460896r3;</span>
+<span class="nc" id="L77">            case PIVOT4608 -&gt; CMCEParameters.mceliece460896fr3;</span>
+<span class="nc" id="L78">            case BASE6688 -&gt; CMCEParameters.mceliece6688128r3;</span>
+<span class="nc" id="L79">            case PIVOT6688 -&gt; CMCEParameters.mceliece6688128fr3;</span>
+<span class="nc" id="L80">            case BASE6960 -&gt; CMCEParameters.mceliece6960119r3;</span>
+<span class="nc" id="L81">            case PIVOT6960 -&gt; CMCEParameters.mceliece6960119fr3;</span>
+<span class="nc" id="L82">            case BASE8192 -&gt; CMCEParameters.mceliece8192128r3;</span>
+<span class="nc" id="L83">            case PIVOT8192 -&gt; CMCEParameters.mceliece8192128fr3;</span>
+<span class="nc" id="L84">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    /**
+     * Obtain CMCE ParameterSpec.
+     *
+     * @return the parameters.
+     */
+    public CMCEParameterSpec getParameterSpec() {
+<span class="pc bpc" id="L94" title="10 of 11 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L95">            case BASE3488 -&gt; CMCEParameterSpec.mceliece348864;</span>
+<span class="nc" id="L96">            case PIVOT3488 -&gt; CMCEParameterSpec.mceliece348864f;</span>
+<span class="nc" id="L97">            case BASE4608 -&gt; CMCEParameterSpec.mceliece460896;</span>
+<span class="nc" id="L98">            case PIVOT4608 -&gt; CMCEParameterSpec.mceliece460896f;</span>
+<span class="nc" id="L99">            case BASE6688 -&gt; CMCEParameterSpec.mceliece6688128;</span>
+<span class="nc" id="L100">            case PIVOT6688 -&gt; CMCEParameterSpec.mceliece6688128f;</span>
+<span class="nc" id="L101">            case BASE6960 -&gt; CMCEParameterSpec.mceliece6960119;</span>
+<span class="nc" id="L102">            case PIVOT6960 -&gt; CMCEParameterSpec.mceliece6960119f;</span>
+<span class="nc" id="L103">            case BASE8192 -&gt; CMCEParameterSpec.mceliece8192128;</span>
+<span class="nc" id="L104">            case PIVOT8192 -&gt; CMCEParameterSpec.mceliece8192128f;</span>
+<span class="nc" id="L105">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    /**
+     * Obtain CMCE algorithm Identifier.
+     *
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+<span class="pc bpc" id="L115" title="1 of 11 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L116">            case BASE3488 -&gt; BCObjectIdentifiers.mceliece348864_r3;</span>
+<span class="fc" id="L117">            case PIVOT3488 -&gt; BCObjectIdentifiers.mceliece348864f_r3;</span>
+<span class="fc" id="L118">            case BASE4608 -&gt; BCObjectIdentifiers.mceliece460896_r3;</span>
+<span class="fc" id="L119">            case PIVOT4608 -&gt; BCObjectIdentifiers.mceliece460896f_r3;</span>
+<span class="fc" id="L120">            case BASE6688 -&gt; BCObjectIdentifiers.mceliece6688128_r3;</span>
+<span class="fc" id="L121">            case PIVOT6688 -&gt; BCObjectIdentifiers.mceliece6688128f_r3;</span>
+<span class="fc" id="L122">            case BASE6960 -&gt; BCObjectIdentifiers.mceliece6960119_r3;</span>
+<span class="fc" id="L123">            case PIVOT6960 -&gt; BCObjectIdentifiers.mceliece6960119f_r3;</span>
+<span class="fc" id="L124">            case BASE8192 -&gt; BCObjectIdentifiers.mceliece8192128_r3;</span>
+<span class="fc" id="L125">            case PIVOT8192 -&gt; BCObjectIdentifiers.mceliece8192128f_r3;</span>
+<span class="nc" id="L126">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L132">        return theSpec.toString();</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L138" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L139">            return true;</span>
+        }
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L142">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="nc" id="L146">        return pThat instanceof GordianCoreCMCESpec myThat</span>
+<span class="nc bnc" id="L147" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L152">        return theSpec.hashCode();</span>
+    }
+
+    /**
+     * Obtain the core spec.
+     *
+     * @param pSpec the base spec
+     * @return the core spec
+     */
+    public static GordianCoreCMCESpec mapCoreSpec(final Object pSpec) {
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        return pSpec instanceof GordianCMCESpec mySpec ? SPECMAP.get(mySpec) : null;</span>
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map&lt;GordianCMCESpec, GordianCoreCMCESpec&gt; newSpecMap() {
+<span class="fc" id="L171">        final Map&lt;GordianCMCESpec, GordianCoreCMCESpec&gt; myMap = new EnumMap&lt;&gt;(GordianCMCESpec.class);</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        for (GordianCMCESpec mySpec : GordianCMCESpec.values()) {</span>
+<span class="fc" id="L173">            myMap.put(mySpec, new GordianCoreCMCESpec(mySpec));</span>
+        }
+<span class="fc" id="L175">        return myMap;</span>
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static GordianCoreCMCESpec[] values() {
+<span class="fc" id="L184">        return VALUES;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

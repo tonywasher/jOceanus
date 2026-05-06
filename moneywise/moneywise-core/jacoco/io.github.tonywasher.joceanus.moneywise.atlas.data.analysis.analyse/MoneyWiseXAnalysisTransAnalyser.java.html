@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisAccountBucket;
@@ -40,6 +37,9 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 
 import java.util.List;
 
@@ -541,18 +541,13 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @return the bucket
      */
     MoneyWiseXAnalysisAccountBucket&lt;?&gt; getAccountBucket(final MoneyWiseAssetBase pAsset) {
-<span class="pc bpc" id="L544" title="2 of 5 branches missed.">        switch (pAsset.getAssetType()) {</span>
-            case DEPOSIT:
-<span class="fc" id="L546">                return theAnalysis.getDeposits().getBucket((MoneyWiseDeposit) pAsset);</span>
-            case CASH:
-<span class="fc" id="L548">                return theAnalysis.getCash().getBucket((MoneyWiseCash) pAsset);</span>
-            case LOAN:
-<span class="fc" id="L550">                return theAnalysis.getLoans().getBucket((MoneyWiseLoan) pAsset);</span>
-            case PORTFOLIO:
-<span class="nc" id="L552">                return theAnalysis.getPortfolios().getCashBucket((MoneyWisePortfolio) pAsset);</span>
-            default:
-<span class="nc" id="L554">                throw new IllegalArgumentException();</span>
-        }
+<span class="pc bpc" id="L544" title="2 of 5 branches missed.">        return switch (pAsset.getAssetType()) {</span>
+<span class="fc" id="L545">            case DEPOSIT -&gt; theAnalysis.getDeposits().getBucket((MoneyWiseDeposit) pAsset);</span>
+<span class="fc" id="L546">            case CASH -&gt; theAnalysis.getCash().getBucket((MoneyWiseCash) pAsset);</span>
+<span class="fc" id="L547">            case LOAN -&gt; theAnalysis.getLoans().getBucket((MoneyWiseLoan) pAsset);</span>
+<span class="nc" id="L548">            case PORTFOLIO -&gt; theAnalysis.getPortfolios().getCashBucket((MoneyWisePortfolio) pAsset);</span>
+<span class="nc" id="L549">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 
     /**
@@ -562,19 +557,10 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @return true/false
      */
     boolean isAsset(final MoneyWiseAssetBase pAccount) {
-<span class="fc bfc" id="L565" title="All 2 branches covered.">        switch (pAccount.getAssetType()) {</span>
-            case DEPOSIT:
-            case LOAN:
-            case CASH:
-            case PORTFOLIO:
-<span class="fc" id="L570">                return true;</span>
-            case SECURITY:
-            case PAYEE:
-            case SECURITYHOLDING:
-            case AUTOEXPENSE:
-            default:
-<span class="fc" id="L576">                return false;</span>
-        }
+<span class="fc bfc" id="L560" title="All 2 branches covered.">        return switch (pAccount.getAssetType()) {</span>
+<span class="fc" id="L561">            case DEPOSIT, LOAN, CASH, PORTFOLIO -&gt; true;</span>
+<span class="fc" id="L562">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -584,7 +570,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @return true/false
      */
     boolean isPayee(final MoneyWiseAssetBase pAccount) {
-<span class="fc bfc" id="L587" title="All 2 branches covered.">        return pAccount.getAssetType() == MoneyWiseAssetType.PAYEE;</span>
+<span class="fc bfc" id="L573" title="All 2 branches covered.">        return pAccount.getAssetType() == MoneyWiseAssetType.PAYEE;</span>
     }
 
     /**
@@ -594,7 +580,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @return true/false
      */
     private boolean isAutoExpense(final MoneyWiseAssetBase pAccount) {
-<span class="fc bfc" id="L597" title="All 2 branches covered.">        return pAccount.getAssetType() == MoneyWiseAssetType.AUTOEXPENSE;</span>
+<span class="fc bfc" id="L583" title="All 2 branches covered.">        return pAccount.getAssetType() == MoneyWiseAssetType.AUTOEXPENSE;</span>
     }
 
     /**
@@ -604,7 +590,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @return true/false
      */
     static boolean isSecurityHolding(final MoneyWiseTransAsset pAccount) {
-<span class="fc" id="L607">        return pAccount instanceof MoneyWiseSecurityHolding;</span>
+<span class="fc" id="L593">        return pAccount instanceof MoneyWiseSecurityHolding;</span>
     }
 
     /**
@@ -614,7 +600,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @return true/false
      */
     static boolean isPortfolio(final MoneyWiseTransAsset pAccount) {
-<span class="nc" id="L617">        return pAccount instanceof MoneyWisePortfolio;</span>
+<span class="nc" id="L603">        return pAccount instanceof MoneyWisePortfolio;</span>
     }
 
     /**
@@ -624,7 +610,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @return true/false
      */
     private static boolean isPortfolioXfer(final MoneyWiseTransCategoryClass pCategoryClass) {
-<span class="pc bpc" id="L627" title="1 of 2 branches missed.">        return pCategoryClass == MoneyWiseTransCategoryClass.PORTFOLIOXFER;</span>
+<span class="pc bpc" id="L613" title="1 of 2 branches missed.">        return pCategoryClass == MoneyWiseTransCategoryClass.PORTFOLIOXFER;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

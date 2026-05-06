@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreKeyAlgId.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.key</a> &gt; <span class="el_source">GordianCoreKeyAlgId.java</span></div><h1>GordianCoreKeyAlgId.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.key;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestAlgId;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreSipHashType;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.nsri.NSRIObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
+import org.bouncycastle.asn1.ua.UAObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+/**
+ * Mappings from EncodedId to KeySpec.
+ */
+public class GordianCoreKeyAlgId {
+    /**
+     * CipherOID branch.
+     */
+<span class="fc" id="L62">    private static final ASN1ObjectIdentifier KEYOID = GordianASN1Util.SYMOID.branch(&quot;2&quot;);</span>
+
+    /**
+     * SymKeysOID branch.
+     */
+<span class="fc" id="L67">    private static final ASN1ObjectIdentifier SYMKEYOID = KEYOID.branch(&quot;1&quot;);</span>
+
+    /**
+     * StreamKeysOID branch.
+     */
+<span class="fc" id="L72">    private static final ASN1ObjectIdentifier STREAMKEYOID = KEYOID.branch(&quot;2&quot;);</span>
+
+    /**
+     * MacOID branch.
+     */
+<span class="fc" id="L77">    private static final ASN1ObjectIdentifier MACOID = GordianASN1Util.SYMOID.branch(&quot;3&quot;);</span>
+
+    /**
+     * Map of KeySpec to Identifier.
+     */
+    private final Map&lt;GordianKeySpec, AlgorithmIdentifier&gt; theSpecMap;
+
+    /**
+     * Map of Identifier to KeySpec.
+     */
+    private final Map&lt;AlgorithmIdentifier, GordianKeySpec&gt; theIdentifierMap;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+<span class="fc" id="L94">    public GordianCoreKeyAlgId(final GordianBaseFactory pFactory) {</span>
+        /* Create the maps */
+<span class="fc" id="L96">        theSpecMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L97">        theIdentifierMap = new HashMap&lt;&gt;();</span>
+
+        /* Access the factories  */
+<span class="fc" id="L100">        final GordianCipherFactory myCipherFactory = pFactory.getCipherFactory();</span>
+<span class="fc" id="L101">        final GordianMacFactory myMacFactory = pFactory.getMacFactory();</span>
+
+        /* Populate with the public standards */
+<span class="fc" id="L104">        addWellKnownMacs();</span>
+
+        /* For each KeyLength */
+<span class="fc" id="L107">        final Iterator&lt;GordianLength&gt; myIterator = GordianKeyLengths.iterator();</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+<span class="fc" id="L109">            final GordianLength myKeyLen = myIterator.next();</span>
+
+            /* Loop through the possible SymKeySpecs */
+<span class="fc bfc" id="L112" title="All 2 branches covered.">            for (GordianSymKeySpec mySpec : myCipherFactory.listAllSupportedSymKeySpecs(myKeyLen)) {</span>
+                /* Add any non-standard symKeys */
+<span class="fc" id="L114">                ensureSymKey(mySpec);</span>
+<span class="fc" id="L115">            }</span>
+
+            /* Loop through the possible StreamKeySpecs */
+<span class="fc bfc" id="L118" title="All 2 branches covered.">            for (GordianStreamKeySpec mySpec : myCipherFactory.listAllSupportedStreamKeySpecs(myKeyLen)) {</span>
+                /* Add any non-standard streamKeys */
+<span class="fc" id="L120">                ensureStreamKey(mySpec);</span>
+<span class="fc" id="L121">            }</span>
+
+            /* Loop through the possible MacSpecs */
+<span class="fc bfc" id="L124" title="All 2 branches covered.">            for (GordianMacSpec mySpec : myMacFactory.listAllSupportedSpecs(myKeyLen)) {</span>
+                /* Add any non-standard macs */
+<span class="fc" id="L126">                ensureMac(mySpec);</span>
+<span class="fc" id="L127">            }</span>
+<span class="fc" id="L128">        }</span>
+<span class="fc" id="L129">    }</span>
+
+    /**
+     * Obtain Identifier for KeySpec.
+     *
+     * @param pSpec the keySpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianKeySpec pSpec) {
+<span class="fc" id="L138">        return theSpecMap.get(pSpec);</span>
+    }
+
+    /**
+     * Obtain symKeySpec for Identifier.
+     *
+     * @param pIdentifier the identifier.
+     * @return the keySpec (or null if not found)
+     */
+    public GordianKeySpec getKeySpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+<span class="fc" id="L148">        return theIdentifierMap.get(pIdentifier);</span>
+    }
+
+    /**
+     * Add symKeySpec to map if supported and not already present.
+     *
+     * @param pSpec the symKeySpec
+     */
+    private void ensureSymKey(final GordianSymKeySpec pSpec) {
+        /* If the key is not already known */
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">        if (!theSpecMap.containsKey(pSpec)) {</span>
+<span class="fc" id="L159">            addSymKey(pSpec);</span>
+        }
+<span class="fc" id="L161">    }</span>
+
+    /**
+     * Create Identifier for a symKeySpec.
+     *
+     * @param pSpec the keySpec
+     */
+    private void addSymKey(final GordianSymKeySpec pSpec) {
+        /* Build SymKey id */
+<span class="fc" id="L170">        final ASN1ObjectIdentifier myId = appendSymKeyOID(SYMKEYOID, true, pSpec);</span>
+
+        /* Add the spec to the maps */
+<span class="fc" id="L173">        addToMaps(pSpec, new AlgorithmIdentifier(myId, DERNull.INSTANCE));</span>
+<span class="fc" id="L174">    }</span>
+
+    /**
+     * Append Identifier for a symKeySpec.
+     *
+     * @param pBaseOID   the base OID
+     * @param pAddLength add length to id true/false
+     * @param pSpec      the keySpec
+     * @return the resulting OID
+     */
+    public static ASN1ObjectIdentifier appendSymKeyOID(final ASN1ObjectIdentifier pBaseOID,
+                                                       final boolean pAddLength,
+                                                       final GordianSymKeySpec pSpec) {
+        /* Create a branch based on the KeyType */
+<span class="fc" id="L188">        final GordianSymKeyType myType = pSpec.getSymKeyType();</span>
+<span class="fc" id="L189">        ASN1ObjectIdentifier myId = pBaseOID.branch(Integer.toString(myType.ordinal() + 1));</span>
+
+        /* Add blockLength */
+<span class="fc" id="L192">        final GordianLength myBlockLength = pSpec.getBlockLength();</span>
+<span class="fc" id="L193">        myId = myId.branch(Integer.toString(myBlockLength.ordinal() + 1));</span>
+
+        /* Add length if required */
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        if (pAddLength) {</span>
+<span class="fc" id="L197">            final GordianLength myKeyLength = pSpec.getKeyLength();</span>
+<span class="fc" id="L198">            myId = myId.branch(Integer.toString(myKeyLength.ordinal() + 1));</span>
+        }
+
+        /* Return the id */
+<span class="fc" id="L202">        return myId;</span>
+    }
+
+    /**
+     * Add keySpec to maps.
+     *
+     * @param pSpec       the keySpec
+     * @param pIdentifier the identifier
+     */
+    private void addToMaps(final GordianKeySpec pSpec,
+                           final AlgorithmIdentifier pIdentifier) {
+<span class="fc" id="L213">        theSpecMap.put(pSpec, pIdentifier);</span>
+<span class="fc" id="L214">        theIdentifierMap.put(pIdentifier, pSpec);</span>
+<span class="fc" id="L215">    }</span>
+
+    /**
+     * Add streamKeySpec to map if supported and not already present.
+     *
+     * @param pSpec the streamKeySpec
+     */
+    private void ensureStreamKey(final GordianStreamKeySpec pSpec) {
+        /* If the key is not already known */
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">        if (!theSpecMap.containsKey(pSpec)) {</span>
+<span class="fc" id="L225">            addStreamKey(pSpec);</span>
+        }
+<span class="fc" id="L227">    }</span>
+
+    /**
+     * Create Identifier for a streamKeySpec.
+     *
+     * @param pSpec the keySpec
+     */
+    private void addStreamKey(final GordianStreamKeySpec pSpec) {
+        /* Build StreamKey id */
+<span class="fc" id="L236">        final ASN1ObjectIdentifier myId = appendStreamKeyOID(STREAMKEYOID, pSpec);</span>
+
+        /* Add the spec to the maps */
+<span class="fc" id="L239">        addToMaps(pSpec, new AlgorithmIdentifier(myId, DERNull.INSTANCE));</span>
+<span class="fc" id="L240">    }</span>
+
+    /**
+     * Append Identifier for a streamKeySpec.
+     *
+     * @param pBaseOID the base OID
+     * @param pSpec    the keySpec
+     * @return the resulting OID
+     */
+    public static ASN1ObjectIdentifier appendStreamKeyOID(final ASN1ObjectIdentifier pBaseOID,
+                                                          final GordianStreamKeySpec pSpec) {
+        /* Create a branch based on the KeyType */
+<span class="fc" id="L252">        final GordianStreamKeyType myType = pSpec.getStreamKeyType();</span>
+<span class="fc" id="L253">        ASN1ObjectIdentifier myId = pBaseOID.branch(Integer.toString(myType.ordinal() + 1));</span>
+
+        /* Add keyLength */
+<span class="fc" id="L256">        final GordianLength myKeyLength = pSpec.getKeyLength();</span>
+<span class="fc" id="L257">        myId = myId.branch(Integer.toString(myKeyLength.ordinal() + 1));</span>
+
+        /* Add subKeyType if required */
+<span class="fc bfc" id="L260" title="All 2 branches covered.">        if (pSpec.getSubKeyType() != null) {</span>
+<span class="fc" id="L261">            myId = myId.branch(Integer.toString(((Enum&lt;?&gt;) pSpec.getSubKeyType()).ordinal() + 1));</span>
+        }
+
+        /* Return the id */
+<span class="fc" id="L265">        return myId;</span>
+    }
+
+    /**
+     * Add well-known macs.
+     */
+    private void addWellKnownMacs() {
+<span class="fc" id="L272">        final GordianDigestSpecBuilder myDigestBuilder = GordianCoreDigestSpecBuilder.newInstance();</span>
+<span class="fc" id="L273">        final GordianMacSpecBuilder myMacBuilder = GordianCoreMacSpecBuilder.newInstance();</span>
+<span class="fc" id="L274">        final GordianSymKeySpecBuilder mySymBuilder = GordianCoreSymKeySpecBuilder.newInstance();</span>
+<span class="fc" id="L275">        addToMaps(myMacBuilder.hMac(myDigestBuilder.gost()), new AlgorithmIdentifier(CryptoProObjectIdentifiers.gostR3411Hmac, DERNull.INSTANCE));</span>
+<span class="fc" id="L276">        addToMaps(myMacBuilder.hMac(myDigestBuilder.streebog(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_hmac_gost_3411_12_256, DERNull.INSTANCE));
+<span class="fc" id="L278">        addToMaps(myMacBuilder.hMac(myDigestBuilder.streebog(GordianLength.LEN_512)),</span>
+                new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_hmac_gost_3411_12_512, DERNull.INSTANCE));
+<span class="fc" id="L280">        addToMaps(myMacBuilder.hMac(myDigestBuilder.sha1()), new AlgorithmIdentifier(PKCSObjectIdentifiers.id_hmacWithSHA1, DERNull.INSTANCE));</span>
+<span class="fc" id="L281">        addToMaps(myMacBuilder.hMac(myDigestBuilder.sha2(GordianLength.LEN_224)), new AlgorithmIdentifier(PKCSObjectIdentifiers.id_hmacWithSHA224, DERNull.INSTANCE));</span>
+<span class="fc" id="L282">        addToMaps(myMacBuilder.hMac(myDigestBuilder.sha2(GordianLength.LEN_256)), new AlgorithmIdentifier(PKCSObjectIdentifiers.id_hmacWithSHA256, DERNull.INSTANCE));</span>
+<span class="fc" id="L283">        addToMaps(myMacBuilder.hMac(myDigestBuilder.sha2(GordianLength.LEN_384)), new AlgorithmIdentifier(PKCSObjectIdentifiers.id_hmacWithSHA384, DERNull.INSTANCE));</span>
+<span class="fc" id="L284">        addToMaps(myMacBuilder.hMac(myDigestBuilder.sha2(GordianLength.LEN_512)), new AlgorithmIdentifier(PKCSObjectIdentifiers.id_hmacWithSHA512, DERNull.INSTANCE));</span>
+<span class="fc" id="L285">        addToMaps(myMacBuilder.hMac(myDigestBuilder.sha3(GordianLength.LEN_224)), new AlgorithmIdentifier(NISTObjectIdentifiers.id_hmacWithSHA3_224, DERNull.INSTANCE));</span>
+<span class="fc" id="L286">        addToMaps(myMacBuilder.hMac(myDigestBuilder.sha3(GordianLength.LEN_256)), new AlgorithmIdentifier(NISTObjectIdentifiers.id_hmacWithSHA3_256, DERNull.INSTANCE));</span>
+<span class="fc" id="L287">        addToMaps(myMacBuilder.hMac(myDigestBuilder.sha3(GordianLength.LEN_384)), new AlgorithmIdentifier(NISTObjectIdentifiers.id_hmacWithSHA3_384, DERNull.INSTANCE));</span>
+<span class="fc" id="L288">        addToMaps(myMacBuilder.hMac(myDigestBuilder.sha3(GordianLength.LEN_512)), new AlgorithmIdentifier(NISTObjectIdentifiers.id_hmacWithSHA3_512, DERNull.INSTANCE));</span>
+<span class="fc" id="L289">        addToMaps(myMacBuilder.cMac(mySymBuilder.aria(GordianLength.LEN_128)), new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria128_cmac, DERNull.INSTANCE));</span>
+<span class="fc" id="L290">        addToMaps(myMacBuilder.cMac(mySymBuilder.aria(GordianLength.LEN_192)), new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria192_cmac, DERNull.INSTANCE));</span>
+<span class="fc" id="L291">        addToMaps(myMacBuilder.cMac(mySymBuilder.aria(GordianLength.LEN_256)), new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_cmac, DERNull.INSTANCE));</span>
+<span class="fc" id="L292">        addToMaps(myMacBuilder.kupynaMac(GordianLength.LEN_256, GordianLength.LEN_256), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564mac_256, DERNull.INSTANCE));</span>
+<span class="fc" id="L293">        addToMaps(myMacBuilder.kupynaMac(GordianLength.LEN_256, GordianLength.LEN_384), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564mac_384, DERNull.INSTANCE));</span>
+<span class="fc" id="L294">        addToMaps(myMacBuilder.kupynaMac(GordianLength.LEN_256, GordianLength.LEN_512), new AlgorithmIdentifier(UAObjectIdentifiers.dstu7564mac_512, DERNull.INSTANCE));</span>
+<span class="fc" id="L295">    }</span>
+
+    /**
+     * Add macSpec to map if supported and not already present.
+     *
+     * @param pSpec the macSpec
+     */
+    private void ensureMac(final GordianMacSpec pSpec) {
+        /* If the mac is not already known */
+<span class="fc bfc" id="L304" title="All 2 branches covered.">        if (!theSpecMap.containsKey(pSpec)) {</span>
+<span class="fc" id="L305">            addMac(pSpec);</span>
+        }
+<span class="fc" id="L307">    }</span>
+
+    /**
+     * Create Identifier for a macSpec.
+     *
+     * @param pSpec the macSpec
+     */
+    private void addMac(final GordianMacSpec pSpec) {
+        /* Create a branch for mac based on the MacType */
+<span class="fc" id="L316">        final GordianMacType myType = pSpec.getMacType();</span>
+<span class="fc" id="L317">        ASN1ObjectIdentifier myId = MACOID.branch(Integer.toString(myType.ordinal() + 1));</span>
+<span class="fc" id="L318">        myId = myId.branch(Integer.toString(pSpec.getKeyLength().ordinal() + 1));</span>
+
+        /* Obtain the subSpec */
+<span class="fc" id="L321">        final Object mySubSpec = pSpec.getSubSpec();</span>
+<span class="fc bfc" id="L322" title="All 2 branches covered.">        if (mySubSpec instanceof GordianDigestSpec mySpec) {</span>
+<span class="fc" id="L323">            myId = GordianCoreDigestAlgId.appendDigestOID(myId, mySpec);</span>
+<span class="fc bfc" id="L324" title="All 2 branches covered.">        } else if (mySubSpec instanceof GordianSymKeySpec mySpec) {</span>
+<span class="fc" id="L325">            myId = appendSymKeyOID(myId, false, mySpec);</span>
+<span class="fc bfc" id="L326" title="All 2 branches covered.">        } else if (mySubSpec instanceof GordianLength myLength) {</span>
+<span class="fc" id="L327">            myId = myId.branch(Integer.toString(myLength.ordinal() + 1));</span>
+<span class="fc bfc" id="L328" title="All 2 branches covered.">        } else if (mySubSpec instanceof GordianCoreSipHashType mySpec) {</span>
+<span class="fc" id="L329">            myId = myId.branch(Integer.toString(mySpec.getType().ordinal() + 1));</span>
+        }
+
+        /* Add the spec to the maps */
+<span class="fc" id="L333">        addToMaps(pSpec, new AlgorithmIdentifier(myId, DERNull.INSTANCE));</span>
+<span class="fc" id="L334">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

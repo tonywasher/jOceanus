@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreNTRUPrimeSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair</a> &gt; <span class="el_source">GordianCoreNTRUPrimeSpec.java</span></div><h1>GordianCoreNTRUPrimeSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
+import org.bouncycastle.pqc.crypto.ntruprime.NTRULPRimeParameters;
+import org.bouncycastle.pqc.crypto.ntruprime.SNTRUPrimeParameters;
+import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * NTRUPRIME KeySpec.
+ */
+public class GordianCoreNTRUPrimeSpec
+        implements GordianNTRUPrimeSpec {
+    /**
+     * The type.
+     */
+    private final GordianNTRUPrimeType theType;
+
+    /**
+     * The params.
+     */
+    private final GordianCoreNTRUPrimeParams theParams;
+
+    /**
+     * is the spec valid?.
+     */
+    private final boolean isValid;
+
+    /**
+     * The name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pType   the Type
+     * @param pParams the params
+     */
+    GordianCoreNTRUPrimeSpec(final GordianNTRUPrimeType pType,
+<span class="fc" id="L67">                             final GordianNTRUPrimeParams pParams) {</span>
+        /* Store parameters */
+<span class="fc" id="L69">        theType = pType;</span>
+<span class="fc" id="L70">        theParams = GordianCoreNTRUPrimeParams.mapCoreParams(pParams);</span>
+
+        /* Check validity */
+<span class="fc" id="L73">        isValid = checkValidity();</span>
+<span class="fc" id="L74">    }</span>
+
+    @Override
+    public GordianNTRUPrimeType getType() {
+<span class="fc" id="L78">        return theType;</span>
+    }
+
+    @Override
+    public GordianNTRUPrimeParams getParams() {
+<span class="fc" id="L83">        return theParams.getParams();</span>
+    }
+
+    /**
+     * Obtain the params.
+     *
+     * @return the params
+     */
+    public GordianCoreNTRUPrimeParams getCoreParams() {
+<span class="fc" id="L92">        return theParams;</span>
+    }
+
+    /**
+     * Is the keySpec valid?
+     *
+     * @return true/false.
+     */
+    public boolean isValid() {
+<span class="fc" id="L101">        return isValid;</span>
+    }
+
+    /**
+     * Check spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+<span class="pc bpc" id="L110" title="2 of 4 branches missed.">        return theType != null &amp;&amp; theParams != null;</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if (theName == null) {</span>
+            /* If the keySpec is valid */
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">            if (isValid) {</span>
+                /* Load the name */
+<span class="fc" id="L120">                theName = theType.toString() + &quot;Prime&quot; + GordianSpecConstants.SEP + theParams.toString();</span>
+            } else {
+                /* Report invalid spec */
+<span class="nc" id="L123">                theName = &quot;InvalidLMSKeySpec: &quot; + theType + GordianSpecConstants.SEP + theParams;</span>
+            }
+        }
+
+        /* return the name */
+<span class="fc" id="L128">        return theName;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L135">            return true;</span>
+        }
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L138">            return false;</span>
+        }
+
+        /* Check values */
+<span class="fc" id="L142">        return pThat instanceof GordianCoreNTRUPrimeSpec myThat</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">                &amp;&amp; theType == myThat.getType()</span>
+<span class="pc bpc" id="L144" title="2 of 4 branches missed.">                &amp;&amp; theParams == myThat.getCoreParams();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L149">        return Objects.hash(theType, theParams);</span>
+    }
+
+    /**
+     * Obtain a list of all possible specs.
+     *
+     * @return the list
+     */
+    public static List&lt;GordianNTRUPrimeSpec&gt; listAllPossibleSpecs() {
+        /* Create the list */
+<span class="fc" id="L159">        final List&lt;GordianNTRUPrimeSpec&gt; mySpecs = new ArrayList&lt;&gt;();</span>
+
+        /* Add the specs */
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        for (final GordianNTRUPrimeType myType : GordianNTRUPrimeType.values()) {</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            for (final GordianNTRUPrimeParams myParams : GordianNTRUPrimeParams.values()) {</span>
+<span class="fc" id="L164">                mySpecs.add(new GordianCoreNTRUPrimeSpec(myType, myParams));</span>
+            }
+        }
+
+        /* Return the list */
+<span class="fc" id="L169">        return mySpecs;</span>
+    }
+
+    /**
+     * NTRUPRIME Parameters.
+     */
+    public static final class GordianCoreNTRUPrimeParams {
+        /**
+         * The paramsMap.
+         */
+<span class="fc" id="L179">        private static final Map&lt;GordianNTRUPrimeParams, GordianCoreNTRUPrimeParams&gt; PARMMAP = newParamsMap();</span>
+
+        /**
+         * The parmArray.
+         */
+<span class="fc" id="L184">        private static final GordianCoreNTRUPrimeParams[] VALUES = PARMMAP.values().toArray(new GordianCoreNTRUPrimeParams[0]);</span>
+
+        /**
+         * The Params.
+         */
+        private final GordianNTRUPrimeParams theParams;
+
+        /**
+         * Constructor.
+         *
+         * @param pParams the params
+         */
+<span class="fc" id="L196">        private GordianCoreNTRUPrimeParams(final GordianNTRUPrimeParams pParams) {</span>
+<span class="fc" id="L197">            theParams = pParams;</span>
+<span class="fc" id="L198">        }</span>
+
+        /**
+         * Obtain the spec.
+         *
+         * @return the spec
+         */
+        public GordianNTRUPrimeParams getParams() {
+<span class="fc" id="L206">            return theParams;</span>
+        }
+
+        /**
+         * Obtain NTRUL Parameters.
+         *
+         * @return the parameters.
+         */
+        public NTRULPRimeParameters getNTRULParameters() {
+<span class="pc bpc" id="L215" title="6 of 7 branches missed.">            return switch (theParams) {</span>
+<span class="fc" id="L216">                case PR653 -&gt; NTRULPRimeParameters.ntrulpr653;</span>
+<span class="nc" id="L217">                case PR761 -&gt; NTRULPRimeParameters.ntrulpr761;</span>
+<span class="nc" id="L218">                case PR857 -&gt; NTRULPRimeParameters.ntrulpr857;</span>
+<span class="nc" id="L219">                case PR953 -&gt; NTRULPRimeParameters.ntrulpr953;</span>
+<span class="nc" id="L220">                case PR1013 -&gt; NTRULPRimeParameters.ntrulpr1013;</span>
+<span class="nc" id="L221">                case PR1277 -&gt; NTRULPRimeParameters.ntrulpr1277;</span>
+<span class="nc" id="L222">                default -&gt; throw new IllegalArgumentException();</span>
+            };
+        }
+
+        /**
+         * Obtain NTRUL ParameterSpec.
+         *
+         * @return the parameters.
+         */
+        public NTRULPRimeParameterSpec getNTRULParameterSpec() {
+<span class="pc bpc" id="L232" title="6 of 7 branches missed.">            return switch (theParams) {</span>
+<span class="fc" id="L233">                case PR653 -&gt; NTRULPRimeParameterSpec.ntrulpr653;</span>
+<span class="nc" id="L234">                case PR761 -&gt; NTRULPRimeParameterSpec.ntrulpr761;</span>
+<span class="nc" id="L235">                case PR857 -&gt; NTRULPRimeParameterSpec.ntrulpr857;</span>
+<span class="nc" id="L236">                case PR953 -&gt; NTRULPRimeParameterSpec.ntrulpr953;</span>
+<span class="nc" id="L237">                case PR1013 -&gt; NTRULPRimeParameterSpec.ntrulpr1013;</span>
+<span class="nc" id="L238">                case PR1277 -&gt; NTRULPRimeParameterSpec.ntrulpr1277;</span>
+<span class="nc" id="L239">                default -&gt; throw new IllegalArgumentException();</span>
+            };
+        }
+
+        /**
+         * Obtain NTRUL algorithm Identifier.
+         *
+         * @return the identifier.
+         */
+        public ASN1ObjectIdentifier getNTRULIdentifier() {
+<span class="pc bpc" id="L249" title="1 of 7 branches missed.">            return switch (theParams) {</span>
+<span class="fc" id="L250">                case PR653 -&gt; BCObjectIdentifiers.ntrulpr653;</span>
+<span class="fc" id="L251">                case PR761 -&gt; BCObjectIdentifiers.ntrulpr761;</span>
+<span class="fc" id="L252">                case PR857 -&gt; BCObjectIdentifiers.ntrulpr857;</span>
+<span class="fc" id="L253">                case PR953 -&gt; BCObjectIdentifiers.ntrulpr953;</span>
+<span class="fc" id="L254">                case PR1013 -&gt; BCObjectIdentifiers.ntrulpr1013;</span>
+<span class="fc" id="L255">                case PR1277 -&gt; BCObjectIdentifiers.ntrulpr1277;</span>
+<span class="nc" id="L256">                default -&gt; throw new IllegalArgumentException();</span>
+            };
+        }
+
+        /**
+         * Obtain NTRUL Parameters.
+         *
+         * @return the parameters.
+         */
+        public SNTRUPrimeParameters getSNTRUParameters() {
+<span class="nc bnc" id="L266" title="All 7 branches missed.">            return switch (theParams) {</span>
+<span class="nc" id="L267">                case PR653 -&gt; SNTRUPrimeParameters.sntrup653;</span>
+<span class="nc" id="L268">                case PR761 -&gt; SNTRUPrimeParameters.sntrup761;</span>
+<span class="nc" id="L269">                case PR857 -&gt; SNTRUPrimeParameters.sntrup857;</span>
+<span class="nc" id="L270">                case PR953 -&gt; SNTRUPrimeParameters.sntrup953;</span>
+<span class="nc" id="L271">                case PR1013 -&gt; SNTRUPrimeParameters.sntrup1013;</span>
+<span class="nc" id="L272">                case PR1277 -&gt; SNTRUPrimeParameters.sntrup1277;</span>
+<span class="nc" id="L273">                default -&gt; throw new IllegalArgumentException();</span>
+            };
+        }
+
+        /**
+         * Obtain NTRUL ParameterSpec.
+         *
+         * @return the parameters.
+         */
+        public SNTRUPrimeParameterSpec getSNTRUParameterSpec() {
+<span class="nc bnc" id="L283" title="All 7 branches missed.">            return switch (theParams) {</span>
+<span class="nc" id="L284">                case PR653 -&gt; SNTRUPrimeParameterSpec.sntrup653;</span>
+<span class="nc" id="L285">                case PR761 -&gt; SNTRUPrimeParameterSpec.sntrup761;</span>
+<span class="nc" id="L286">                case PR857 -&gt; SNTRUPrimeParameterSpec.sntrup857;</span>
+<span class="nc" id="L287">                case PR953 -&gt; SNTRUPrimeParameterSpec.sntrup953;</span>
+<span class="nc" id="L288">                case PR1013 -&gt; SNTRUPrimeParameterSpec.sntrup1013;</span>
+<span class="nc" id="L289">                case PR1277 -&gt; SNTRUPrimeParameterSpec.sntrup1277;</span>
+<span class="nc" id="L290">                default -&gt; throw new IllegalArgumentException();</span>
+            };
+        }
+
+        /**
+         * Obtain SNTRU algorithm Identifier.
+         *
+         * @return the identifier.
+         */
+        public ASN1ObjectIdentifier getSNTRUIdentifier() {
+<span class="pc bpc" id="L300" title="1 of 7 branches missed.">            return switch (theParams) {</span>
+<span class="fc" id="L301">                case PR653 -&gt; BCObjectIdentifiers.sntrup653;</span>
+<span class="fc" id="L302">                case PR761 -&gt; BCObjectIdentifiers.sntrup761;</span>
+<span class="fc" id="L303">                case PR857 -&gt; BCObjectIdentifiers.sntrup857;</span>
+<span class="fc" id="L304">                case PR953 -&gt; BCObjectIdentifiers.sntrup953;</span>
+<span class="fc" id="L305">                case PR1013 -&gt; BCObjectIdentifiers.sntrup1013;</span>
+<span class="fc" id="L306">                case PR1277 -&gt; BCObjectIdentifiers.sntrup1277;</span>
+<span class="nc" id="L307">                default -&gt; throw new IllegalArgumentException();</span>
+            };
+        }
+
+        @Override
+        public String toString() {
+<span class="fc" id="L313">            return theParams.toString();</span>
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+<span class="nc bnc" id="L319" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L320">                return true;</span>
+            }
+<span class="nc bnc" id="L322" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L323">                return false;</span>
+            }
+
+            /* Check subFields */
+<span class="nc" id="L327">            return pThat instanceof GordianCoreNTRUPrimeParams myThat</span>
+<span class="nc bnc" id="L328" title="All 4 branches missed.">                    &amp;&amp; theParams == myThat.getParams();</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="fc" id="L333">            return theParams.hashCode();</span>
+        }
+
+        /**
+         * Obtain the core params.
+         *
+         * @param pParams the base params
+         * @return the core params
+         */
+        public static GordianCoreNTRUPrimeParams mapCoreParams(final Object pParams) {
+<span class="pc bpc" id="L343" title="1 of 2 branches missed.">            return pParams instanceof GordianNTRUPrimeParams myParams ? PARMMAP.get(myParams) : null;</span>
+        }
+
+        /**
+         * Build the type map.
+         *
+         * @return the type map
+         */
+        private static Map&lt;GordianNTRUPrimeParams, GordianCoreNTRUPrimeParams&gt; newParamsMap() {
+<span class="fc" id="L352">            final Map&lt;GordianNTRUPrimeParams, GordianCoreNTRUPrimeParams&gt; myMap = new EnumMap&lt;&gt;(GordianNTRUPrimeParams.class);</span>
+<span class="fc bfc" id="L353" title="All 2 branches covered.">            for (GordianNTRUPrimeParams mySpec : GordianNTRUPrimeParams.values()) {</span>
+<span class="fc" id="L354">                myMap.put(mySpec, new GordianCoreNTRUPrimeParams(mySpec));</span>
+            }
+<span class="fc" id="L356">            return myMap;</span>
+        }
+
+        /**
+         * Obtain the values.
+         *
+         * @return the values
+         */
+        public static GordianCoreNTRUPrimeParams[] values() {
+<span class="fc" id="L365">            return VALUES;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

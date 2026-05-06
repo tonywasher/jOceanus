@@ -239,42 +239,39 @@ public class GordianCoreZipLock
         }
 
         /* Store the relevant keySet */
-<span class="nc bnc" id="L242" title="All 2 branches missed.">        if (pLock instanceof GordianKeySetLock myLock) {</span>
-<span class="nc" id="L243">            theKeySet = myLock.getKeySet();</span>
-<span class="nc bnc" id="L244" title="All 2 branches missed.">        } else if (pLock instanceof GordianFactoryLock myLock) {</span>
-<span class="nc" id="L245">            theKeySet = myLock.getFactory().getEmbeddedKeySet();</span>
-<span class="nc bnc" id="L246" title="All 2 branches missed.">        } else if (pLock instanceof GordianKeyPairLock myLock) {</span>
-<span class="nc" id="L247">            theKeySet = myLock.getKeySet();</span>
-        } else {
-<span class="nc" id="L249">            throw new GordianDataException(&quot;Unsupported lockType&quot;);</span>
-        }
+<span class="nc bnc" id="L242" title="All 4 branches missed.">        theKeySet = switch (pLock) {</span>
+<span class="nc" id="L243">            case GordianKeySetLock myLock -&gt; myLock.getKeySet();</span>
+<span class="nc" id="L244">            case GordianFactoryLock myLock -&gt; myLock.getFactory().getEmbeddedKeySet();</span>
+<span class="nc" id="L245">            case GordianKeyPairLock myLock -&gt; myLock.getKeySet();</span>
+<span class="nc" id="L246">            default -&gt; throw new GordianDataException(&quot;Unsupported lockType&quot;);</span>
+        };
 
         /* notify if required */
-<span class="nc bnc" id="L253" title="All 2 branches missed.">        if (theNotify != null) {</span>
-<span class="nc" id="L254">            theNotify.notifyUnlock();</span>
+<span class="nc bnc" id="L250" title="All 2 branches missed.">        if (theNotify != null) {</span>
+<span class="nc" id="L251">            theNotify.notifyUnlock();</span>
         }
-<span class="nc" id="L256">    }</span>
+<span class="nc" id="L253">    }</span>
 
     @Override
     public void unlock(final char[] pPassword) throws GordianException {
         /* Split out factoryLock */
-<span class="fc bfc" id="L261" title="All 2 branches covered.">        if (getLockType().equals(GordianZipLockType.FACTORY_PASSWORD)) {</span>
-<span class="fc" id="L262">            unlockFactory(pPassword);</span>
-<span class="fc" id="L263">            return;</span>
+<span class="fc bfc" id="L258" title="All 2 branches covered.">        if (getLockType().equals(GordianZipLockType.FACTORY_PASSWORD)) {</span>
+<span class="fc" id="L259">            unlockFactory(pPassword);</span>
+<span class="fc" id="L260">            return;</span>
         }
 
         /* Check that the state is correct */
-<span class="fc" id="L267">        checkState(GordianZipLockType.KEYSET_PASSWORD);</span>
+<span class="fc" id="L264">        checkState(GordianZipLockType.KEYSET_PASSWORD);</span>
 
         /* derive the keySet */
-<span class="fc" id="L270">        final GordianKeySetLock myLock = theLockFactory.resolveKeySetLock(theZipLock.getPasswordLockASN1(), pPassword);</span>
-<span class="fc" id="L271">        theKeySet = myLock.getKeySet();</span>
+<span class="fc" id="L267">        final GordianKeySetLock myLock = theLockFactory.resolveKeySetLock(theZipLock.getPasswordLockASN1(), pPassword);</span>
+<span class="fc" id="L268">        theKeySet = myLock.getKeySet();</span>
 
         /* notify if required */
-<span class="fc bfc" id="L274" title="All 2 branches covered.">        if (theNotify != null) {</span>
-<span class="fc" id="L275">            theNotify.notifyUnlock();</span>
+<span class="fc bfc" id="L271" title="All 2 branches covered.">        if (theNotify != null) {</span>
+<span class="fc" id="L272">            theNotify.notifyUnlock();</span>
         }
-<span class="fc" id="L277">    }</span>
+<span class="fc" id="L274">    }</span>
 
     /**
      * unlock a factory lock.
@@ -284,33 +281,33 @@ public class GordianCoreZipLock
      */
     private void unlockFactory(final char[] pPassword) throws GordianException {
         /* Check that the state is correct */
-<span class="fc" id="L287">        checkState(GordianZipLockType.FACTORY_PASSWORD);</span>
+<span class="fc" id="L284">        checkState(GordianZipLockType.FACTORY_PASSWORD);</span>
 
         /* derive the keySet */
-<span class="fc" id="L290">        final GordianFactoryLock myLock = theLockFactory.resolveFactoryLock(theZipLock.getPasswordLockASN1(), pPassword);</span>
-<span class="fc" id="L291">        theKeySet = myLock.getFactory().getEmbeddedKeySet();</span>
+<span class="fc" id="L287">        final GordianFactoryLock myLock = theLockFactory.resolveFactoryLock(theZipLock.getPasswordLockASN1(), pPassword);</span>
+<span class="fc" id="L288">        theKeySet = myLock.getFactory().getEmbeddedKeySet();</span>
 
         /* notify if required */
-<span class="pc bpc" id="L294" title="1 of 2 branches missed.">        if (theNotify != null) {</span>
-<span class="fc" id="L295">            theNotify.notifyUnlock();</span>
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">        if (theNotify != null) {</span>
+<span class="fc" id="L292">            theNotify.notifyUnlock();</span>
         }
-<span class="fc" id="L297">    }</span>
+<span class="fc" id="L294">    }</span>
 
     @Override
     public void unlock(final GordianKeyPair pKeyPair,
                        final char[] pPassword) throws GordianException {
         /* Check that the state is correct */
-<span class="fc" id="L303">        checkState(GordianZipLockType.KEYPAIR_PASSWORD);</span>
+<span class="fc" id="L300">        checkState(GordianZipLockType.KEYPAIR_PASSWORD);</span>
 
         /* derive the keySet */
-<span class="fc" id="L306">        final GordianKeyPairLock myLock = theLockFactory.resolveKeyPairLock(theZipLock.getKeyPairLockASN1(), pKeyPair, pPassword);</span>
-<span class="fc" id="L307">        theKeySet = myLock.getKeySet();</span>
+<span class="fc" id="L303">        final GordianKeyPairLock myLock = theLockFactory.resolveKeyPairLock(theZipLock.getKeyPairLockASN1(), pKeyPair, pPassword);</span>
+<span class="fc" id="L304">        theKeySet = myLock.getKeySet();</span>
 
         /* notify if required */
-<span class="pc bpc" id="L310" title="1 of 2 branches missed.">        if (theNotify != null) {</span>
-<span class="fc" id="L311">            theNotify.notifyUnlock();</span>
+<span class="pc bpc" id="L307" title="1 of 2 branches missed.">        if (theNotify != null) {</span>
+<span class="fc" id="L308">            theNotify.notifyUnlock();</span>
         }
-<span class="fc" id="L313">    }</span>
+<span class="fc" id="L310">    }</span>
 
     /**
      * unlock with keySet.
@@ -320,13 +317,13 @@ public class GordianCoreZipLock
      */
     public void unlock(final GordianKeySet pKeySet) throws GordianException {
         /* store the keySet */
-<span class="nc" id="L323">        theKeySet = pKeySet;</span>
+<span class="nc" id="L320">        theKeySet = pKeySet;</span>
 
         /* notify if required */
-<span class="nc bnc" id="L326" title="All 2 branches missed.">        if (theNotify != null) {</span>
-<span class="nc" id="L327">            theNotify.notifyUnlock();</span>
+<span class="nc bnc" id="L323" title="All 2 branches missed.">        if (theNotify != null) {</span>
+<span class="nc" id="L324">            theNotify.notifyUnlock();</span>
         }
-<span class="nc" id="L329">    }</span>
+<span class="nc" id="L326">    }</span>
 
     /**
      * Obtain the keySetHash.
@@ -334,7 +331,7 @@ public class GordianCoreZipLock
      * @return the keySetHash
      */
     public GordianKeySet getKeySet() {
-<span class="fc" id="L337">        return theKeySet;</span>
+<span class="fc" id="L334">        return theKeySet;</span>
     }
 
     /**
@@ -343,7 +340,7 @@ public class GordianCoreZipLock
      * @return the encoded bytes
      */
     public byte[] getEncodedBytes() {
-<span class="fc" id="L346">        return theLockBytes;</span>
+<span class="fc" id="L343">        return theLockBytes;</span>
     }
 
     /**
@@ -352,15 +349,15 @@ public class GordianCoreZipLock
      * @return the algorithmId
      */
     public AlgorithmIdentifier getAlgorithmId() {
-<span class="fc" id="L355">        return theZipLock.getAlgorithmId();</span>
+<span class="fc" id="L352">        return theZipLock.getAlgorithmId();</span>
     }
 
     /**
      * Mark as used.
      */
     public void markAsUsed() {
-<span class="fc" id="L362">        isFresh = false;</span>
-<span class="fc" id="L363">    }</span>
+<span class="fc" id="L359">        isFresh = false;</span>
+<span class="fc" id="L360">    }</span>
 
     /**
      * Check the status.
@@ -370,39 +367,38 @@ public class GordianCoreZipLock
      */
     public void checkState(final GordianZipLockType pLockType) throws GordianException {
         /* Must be locked */
-<span class="pc bpc" id="L373" title="1 of 2 branches missed.">        if (!isLocked()) {</span>
-<span class="nc" id="L374">            throw new GordianLogicException(&quot;Already unlocked&quot;);</span>
+<span class="pc bpc" id="L370" title="1 of 2 branches missed.">        if (!isLocked()) {</span>
+<span class="nc" id="L371">            throw new GordianLogicException(&quot;Already unlocked&quot;);</span>
         }
 
         /* Check state */
-<span class="pc bpc" id="L378" title="1 of 2 branches missed.">        if (!getLockType().equals(pLockType)) {</span>
-<span class="nc" id="L379">            throw new GordianLogicException(&quot;Incorrect lockType&quot;);</span>
+<span class="pc bpc" id="L375" title="1 of 2 branches missed.">        if (!getLockType().equals(pLockType)) {</span>
+<span class="nc" id="L376">            throw new GordianLogicException(&quot;Incorrect lockType&quot;);</span>
         }
-<span class="fc" id="L381">    }</span>
+<span class="fc" id="L378">    }</span>
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle trivial cases */
-<span class="nc bnc" id="L386" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L387">            return true;</span>
+<span class="nc bnc" id="L383" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L384">            return true;</span>
         }
-<span class="nc bnc" id="L389" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L390">            return false;</span>
+<span class="nc bnc" id="L386" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L387">            return false;</span>
         }
 
         /* Make sure that the classes are the same */
-<span class="nc bnc" id="L394" title="All 2 branches missed.">        if (!(pThat instanceof GordianCoreZipLock)) {</span>
-<span class="nc" id="L395">            return false;</span>
+<span class="nc bnc" id="L391" title="All 2 branches missed.">        if (!(pThat instanceof GordianCoreZipLock myThat)) {</span>
+<span class="nc" id="L392">            return false;</span>
         }
-<span class="nc" id="L397">        final GordianCoreZipLock myThat = (GordianCoreZipLock) pThat;</span>
 
         /* Check that the fields are equal */
-<span class="nc" id="L400">        return Objects.equals(theZipLock, myThat.theZipLock);</span>
+<span class="nc" id="L396">        return Objects.equals(theZipLock, myThat.theZipLock);</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L405">        return Objects.hash(theZipLock);</span>
+<span class="nc" id="L401">        return Objects.hash(theZipLock);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

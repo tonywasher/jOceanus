@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Enumeration of TransactionCategory Classes.
@@ -441,35 +441,13 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category is hidden, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isHiddenType() {
-<span class="fc bfc" id="L444" title="All 2 branches covered.">        switch (this) {</span>
-            case SHAREDIVIDEND:
-            case UNITTRUSTDIVIDEND:
-            case FOREIGNDIVIDEND:
-            case TAXFREEDIVIDEND:
-            case TAXEDINTEREST:
-            case GROSSINTEREST:
-            case TAXFREEINTEREST:
-            case PEER2PEERINTEREST:
-            case TAXEDLOYALTYBONUS:
-            case GROSSLOYALTYBONUS:
-            case TAXFREELOYALTYBONUS:
-            case MARKETGROWTH:
-            case CURRENCYFLUCTUATION:
-            case WITHHELD:
-            case TAXRELIEF:
-            case CHARGEABLEGAIN:
-            case RESIDENTIALGAIN:
-            case CAPITALGAIN:
-            case TAXFREEGAIN:
-            case VIRTUALINCOME:
-            case EMPLOYEENATINS:
-            case EMPLOYERNATINS:
-            case OPENINGBALANCE:
-            case TOTALS:
-<span class="fc" id="L469">                return true;</span>
-            default:
-<span class="fc" id="L471">                return false;</span>
-        }
+<span class="fc bfc" id="L444" title="All 2 branches covered.">        return switch (this) {</span>
+            case SHAREDIVIDEND, UNITTRUSTDIVIDEND, FOREIGNDIVIDEND, TAXFREEDIVIDEND, TAXEDINTEREST, GROSSINTEREST,
+                 TAXFREEINTEREST, PEER2PEERINTEREST, TAXEDLOYALTYBONUS, GROSSLOYALTYBONUS, TAXFREELOYALTYBONUS,
+                 MARKETGROWTH, CURRENCYFLUCTUATION, WITHHELD, TAXRELIEF, CHARGEABLEGAIN, RESIDENTIALGAIN, CAPITALGAIN,
+<span class="fc" id="L448">                 TAXFREEGAIN, VIRTUALINCOME, EMPLOYEENATINS, EMPLOYERNATINS, OPENINGBALANCE, TOTALS -&gt; true;</span>
+<span class="fc" id="L449">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -478,21 +456,11 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category uses parent payee, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isSecretPayee() {
-<span class="nc bnc" id="L481" title="All 2 branches missed.">        switch (this) {</span>
-            case INTEREST:
-            case DIVIDEND:
-            case CASHBACK:
-            case LOYALTYBONUS:
-            case LOANINTERESTEARNED:
-            case RENTALINCOME:
-            case ROOMRENTALINCOME:
-            case WRITEOFF:
-            case LOANINTERESTCHARGED:
-            case OPTIONSEXERCISE:
-<span class="nc" id="L492">                return true;</span>
-            default:
-<span class="nc" id="L494">                return false;</span>
-        }
+<span class="nc bnc" id="L459" title="All 2 branches missed.">        return switch (this) {</span>
+            case INTEREST, DIVIDEND, CASHBACK, LOYALTYBONUS, LOANINTERESTEARNED, RENTALINCOME, ROOMRENTALINCOME,
+<span class="nc" id="L461">                 WRITEOFF, LOANINTERESTCHARGED, OPTIONSEXERCISE -&gt; true;</span>
+<span class="nc" id="L462">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -501,20 +469,11 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category uses parent payee, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isSwitchDirection() {
-<span class="nc bnc" id="L504" title="All 2 branches missed.">        switch (this) {</span>
-            case INTEREST:
-            case DIVIDEND:
-            case CASHBACK:
-            case LOYALTYBONUS:
-            case RENTALINCOME:
-            case ROOMRENTALINCOME:
-            case WRITEOFF:
-            case LOANINTERESTCHARGED:
-            case TRANSFER:
-<span class="nc" id="L514">                return true;</span>
-            default:
-<span class="nc" id="L516">                return false;</span>
-        }
+<span class="nc bnc" id="L472" title="All 2 branches missed.">        return switch (this) {</span>
+            case INTEREST, DIVIDEND, CASHBACK, LOYALTYBONUS, RENTALINCOME, ROOMRENTALINCOME, WRITEOFF,
+<span class="nc" id="L474">                 LOANINTERESTCHARGED, TRANSFER -&gt; true;</span>
+<span class="nc" id="L475">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -524,7 +483,7 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * otherwise.
      */
     public boolean isSingular() {
-<span class="fc bfc" id="L527" title="All 4 branches covered.">        return INCOMETAX.equals(this) || isHiddenType();</span>
+<span class="fc bfc" id="L486" title="All 4 branches covered.">        return INCOMETAX.equals(this) || isHiddenType();</span>
     }
 
     /**
@@ -533,42 +492,15 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category is income, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isIncome() {
-<span class="fc bfc" id="L536" title="All 2 branches covered.">        switch (this) {</span>
-            case TAXEDINCOME:
-            case VIRTUALINCOME:
-            case GROSSINCOME:
-            case PENSIONCONTRIB:
-            case LOYALTYBONUS:
-            case CASHBACK:
-            case OTHERINCOME:
-            case RECOVEREDEXPENSES:
-            case GIFTEDINCOME:
-            case INTEREST:
-            case TAXEDINTEREST:
-            case GROSSINTEREST:
-            case TAXFREEINTEREST:
-            case PEER2PEERINTEREST:
-            case DIVIDEND:
-            case SHAREDIVIDEND:
-            case UNITTRUSTDIVIDEND:
-            case FOREIGNDIVIDEND:
-            case TAXFREEDIVIDEND:
-            case TAXEDLOYALTYBONUS:
-            case GROSSLOYALTYBONUS:
-            case TAXFREELOYALTYBONUS:
-            case INHERITED:
-            case LOANINTERESTEARNED:
-            case RENTALINCOME:
-            case ROOMRENTALINCOME:
-            case OPTIONSEXERCISE:
-            case EMPLOYEENATINS:
-            case EMPLOYERNATINS:
-            case OPENINGBALANCE:
-            case INCOMETOTALS:
-<span class="fc" id="L568">                return true;</span>
-            default:
-<span class="fc" id="L570">                return false;</span>
-        }
+<span class="fc bfc" id="L495" title="All 2 branches covered.">        return switch (this) {</span>
+            case TAXEDINCOME, VIRTUALINCOME, GROSSINCOME, PENSIONCONTRIB, LOYALTYBONUS, CASHBACK, OTHERINCOME,
+                 RECOVEREDEXPENSES, GIFTEDINCOME, INTEREST, TAXEDINTEREST, GROSSINTEREST, TAXFREEINTEREST,
+                 PEER2PEERINTEREST, DIVIDEND, SHAREDIVIDEND, UNITTRUSTDIVIDEND, FOREIGNDIVIDEND, TAXFREEDIVIDEND,
+                 TAXEDLOYALTYBONUS, GROSSLOYALTYBONUS, TAXFREELOYALTYBONUS, INHERITED, LOANINTERESTEARNED, RENTALINCOME,
+                 ROOMRENTALINCOME, OPTIONSEXERCISE, EMPLOYEENATINS, EMPLOYERNATINS, OPENINGBALANCE, INCOMETOTALS -&gt;
+<span class="fc" id="L501">                    true;</span>
+<span class="fc" id="L502">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -577,7 +509,7 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category is expense, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isExpense() {
-<span class="pc bpc" id="L580" title="1 of 4 branches missed.">        return !isIncome() &amp;&amp; !isTransfer();</span>
+<span class="pc bpc" id="L512" title="1 of 4 branches missed.">        return !isIncome() &amp;&amp; !isTransfer();</span>
     }
 
     /**
@@ -586,13 +518,10 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category is dilutable, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isDilutable() {
-<span class="nc bnc" id="L589" title="All 2 branches missed.">        switch (this) {</span>
-            case STOCKSPLIT:
-            case STOCKDEMERGER:
-<span class="nc" id="L592">                return true;</span>
-            default:
-<span class="nc" id="L594">                return false;</span>
-        }
+<span class="nc bnc" id="L521" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L522">            case STOCKSPLIT, STOCKDEMERGER -&gt; true;</span>
+<span class="nc" id="L523">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -601,16 +530,10 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category is dividend, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isDividend() {
-<span class="nc bnc" id="L604" title="All 2 branches missed.">        switch (this) {</span>
-            case DIVIDEND:
-            case SHAREDIVIDEND:
-            case UNITTRUSTDIVIDEND:
-            case FOREIGNDIVIDEND:
-            case TAXFREEDIVIDEND:
-<span class="nc" id="L610">                return true;</span>
-            default:
-<span class="nc" id="L612">                return false;</span>
-        }
+<span class="nc bnc" id="L533" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L534">            case DIVIDEND, SHAREDIVIDEND, UNITTRUSTDIVIDEND, FOREIGNDIVIDEND, TAXFREEDIVIDEND -&gt; true;</span>
+<span class="nc" id="L535">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -619,16 +542,10 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category is interest, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isInterest() {
-<span class="nc bnc" id="L622" title="All 2 branches missed.">        switch (this) {</span>
-            case INTEREST:
-            case TAXEDINTEREST:
-            case GROSSINTEREST:
-            case TAXFREEINTEREST:
-            case PEER2PEERINTEREST:
-<span class="nc" id="L628">                return true;</span>
-            default:
-<span class="nc" id="L630">                return false;</span>
-        }
+<span class="nc bnc" id="L545" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L546">            case INTEREST, TAXEDINTEREST, GROSSINTEREST, TAXFREEINTEREST, PEER2PEERINTEREST -&gt; true;</span>
+<span class="nc" id="L547">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -637,20 +554,11 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category needs dual units, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isStockAdjustment() {
-<span class="nc bnc" id="L640" title="All 2 branches missed.">        switch (this) {</span>
-            case STOCKSPLIT:
-            case UNITSADJUST:
-            case STOCKDEMERGER:
-            case SECURITYREPLACE:
-            case STOCKTAKEOVER:
-            case PORTFOLIOXFER:
-            case OPTIONSGRANT:
-            case OPTIONSVEST:
-            case OPTIONSEXPIRE:
-<span class="nc" id="L650">                return true;</span>
-            default:
-<span class="nc" id="L652">                return false;</span>
-        }
+<span class="nc bnc" id="L557" title="All 2 branches missed.">        return switch (this) {</span>
+            case STOCKSPLIT, UNITSADJUST, STOCKDEMERGER, SECURITYREPLACE, STOCKTAKEOVER, PORTFOLIOXFER, OPTIONSGRANT,
+<span class="nc" id="L559">                 OPTIONSVEST, OPTIONSEXPIRE -&gt; true;</span>
+<span class="nc" id="L560">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -659,20 +567,11 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category needs null amount, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean needsNullAmount() {
-<span class="fc bfc" id="L662" title="All 2 branches covered.">        switch (this) {</span>
-            case STOCKSPLIT:
-            case UNITSADJUST:
-            case STOCKDEMERGER:
-            case STOCKTAKEOVER:
-            case PORTFOLIOXFER:
-            case OPTIONSGRANT:
-            case OPTIONSVEST:
-            case OPTIONSEXPIRE:
-            case SECURITYREPLACE:
-<span class="fc" id="L672">                return true;</span>
-            default:
-<span class="fc" id="L674">                return false;</span>
-        }
+<span class="fc bfc" id="L570" title="All 2 branches covered.">        return switch (this) {</span>
+            case STOCKSPLIT, UNITSADJUST, STOCKDEMERGER, STOCKTAKEOVER, PORTFOLIOXFER, OPTIONSGRANT, OPTIONSVEST,
+<span class="fc" id="L572">                 OPTIONSEXPIRE, SECURITYREPLACE -&gt; true;</span>
+<span class="fc" id="L573">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -682,15 +581,10 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean canParentCategory() {
-<span class="fc bfc" id="L685" title="All 2 branches covered.">        switch (this) {</span>
-            case INCOMETOTALS:
-            case EXPENSETOTALS:
-            case SECURITYPARENT:
-            case TOTALS:
-<span class="fc" id="L690">                return true;</span>
-            default:
-<span class="fc" id="L692">                return false;</span>
-        }
+<span class="fc bfc" id="L584" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc" id="L585">            case INCOMETOTALS, EXPENSETOTALS, SECURITYPARENT, TOTALS -&gt; true;</span>
+<span class="fc" id="L586">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -700,14 +594,10 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * otherwise.
      */
     public boolean isSubTotal() {
-<span class="nc bnc" id="L703" title="All 2 branches missed.">        switch (this) {</span>
-            case INCOMETOTALS:
-            case EXPENSETOTALS:
-            case SECURITYPARENT:
-<span class="nc" id="L707">                return true;</span>
-            default:
-<span class="nc" id="L709">                return false;</span>
-        }
+<span class="nc bnc" id="L597" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L598">            case INCOMETOTALS, EXPENSETOTALS, SECURITYPARENT -&gt; true;</span>
+<span class="nc" id="L599">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -716,7 +606,7 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return true/false
      */
     public boolean isTransfer() {
-<span class="fc bfc" id="L719" title="All 4 branches covered.">        return this == TRANSFER || isSecurityTransfer();</span>
+<span class="fc bfc" id="L609" title="All 4 branches covered.">        return this == TRANSFER || isSecurityTransfer();</span>
     }
 
     /**
@@ -725,13 +615,10 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return true/false
      */
     public boolean isNatInsurance() {
-<span class="fc bfc" id="L728" title="All 2 branches covered.">        switch (this) {</span>
-            case TAXEDINCOME:
-            case PENSIONCONTRIB:
-<span class="fc" id="L731">                return true;</span>
-            default:
-<span class="fc" id="L733">                return false;</span>
-        }
+<span class="fc bfc" id="L618" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc" id="L619">            case TAXEDINCOME, PENSIONCONTRIB -&gt; true;</span>
+<span class="fc" id="L620">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -740,25 +627,12 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return true/false
      */
     public boolean isSecurityTransfer() {
-<span class="fc bfc" id="L743" title="All 2 branches covered.">        switch (this) {</span>
-            case UNITSADJUST:
-            case STOCKSPLIT:
-            case STOCKDEMERGER:
-            case SECURITYREPLACE:
-            case STOCKTAKEOVER:
-            case STOCKRIGHTSISSUE:
-            case PORTFOLIOXFER:
-            case OPTIONSGRANT:
-            case OPTIONSVEST:
-            case OPTIONSEXPIRE:
-            case SECURITYCLOSURE:
-            case SECURITYPARENT:
-            case PENSIONDRAWDOWN:
-            case PENSIONTAXFREE:
-<span class="fc" id="L758">                return true;</span>
-            default:
-<span class="fc" id="L760">                return false;</span>
-        }
+<span class="fc bfc" id="L630" title="All 2 branches covered.">        return switch (this) {</span>
+            case UNITSADJUST, STOCKSPLIT, STOCKDEMERGER, SECURITYREPLACE, STOCKTAKEOVER, STOCKRIGHTSISSUE,
+                 PORTFOLIOXFER, OPTIONSGRANT, OPTIONSVEST, OPTIONSEXPIRE, SECURITYCLOSURE, SECURITYPARENT,
+<span class="fc" id="L633">                 PENSIONDRAWDOWN, PENSIONTAXFREE -&gt; true;</span>
+<span class="fc" id="L634">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -767,12 +641,12 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return true/false
      */
     public boolean isSecurityClosure() {
-<span class="fc bfc" id="L770" title="All 2 branches covered.">        return this == SECURITYCLOSURE;</span>
+<span class="fc bfc" id="L644" title="All 2 branches covered.">        return this == SECURITYCLOSURE;</span>
     }
 
     @Override
     public boolean isTotals() {
-<span class="fc bfc" id="L775" title="All 2 branches covered.">        return this == TOTALS;</span>
+<span class="fc bfc" id="L649" title="All 2 branches covered.">        return this == TOTALS;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

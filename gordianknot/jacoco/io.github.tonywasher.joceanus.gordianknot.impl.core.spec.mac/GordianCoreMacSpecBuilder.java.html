@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreMacSpecBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac</a> &gt; <span class="el_source">GordianCoreMacSpecBuilder.java</span></div><h1>GordianCoreMacSpecBuilder.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianSipHashType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSubSpec.GordianCoreDigestState;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Mac Specification Builder.
+ */
+public final class GordianCoreMacSpecBuilder
+        implements GordianMacSpecBuilder {
+    /**
+     * The digestSpec builder.
+     */
+    private final GordianDigestSpecBuilder theDigestBuilder;
+
+    /**
+     * The symKeySpec builder.
+     */
+    private final GordianSymKeySpecBuilder theSymKeyBuilder;
+
+    /**
+     * The type.
+     */
+    private GordianMacType theType;
+
+    /**
+     * The subSpec.
+     */
+    private GordianLength theKeyLength;
+
+    /**
+     * The subSpec.
+     */
+    private Object theSubSpec;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L73">    private GordianCoreMacSpecBuilder() {</span>
+<span class="fc" id="L74">        theDigestBuilder = GordianCoreDigestSpecBuilder.newInstance();</span>
+<span class="fc" id="L75">        theSymKeyBuilder = GordianCoreSymKeySpecBuilder.newInstance();</span>
+<span class="fc" id="L76">    }</span>
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreMacSpecBuilder newInstance() {
+<span class="fc" id="L84">        return new GordianCoreMacSpecBuilder();</span>
+    }
+
+    @Override
+    public GordianMacSpecBuilder withType(final GordianMacType pType) {
+<span class="fc" id="L89">        theType = pType;</span>
+<span class="fc" id="L90">        return this;</span>
+    }
+
+    @Override
+    public GordianMacSpecBuilder withKeyLength(final GordianLength pKeyLength) {
+<span class="fc" id="L95">        theKeyLength = pKeyLength;</span>
+<span class="fc" id="L96">        return this;</span>
+    }
+
+    @Override
+    public GordianMacSpecBuilder withDigestSubSpec(final GordianDigestSpec pDigest) {
+<span class="fc" id="L101">        theSubSpec = pDigest;</span>
+<span class="fc" id="L102">        return this;</span>
+    }
+
+    @Override
+    public GordianMacSpecBuilder withSymKeySubSpec(final GordianSymKeySpec pSymKey) {
+<span class="fc" id="L107">        theSubSpec = pSymKey;</span>
+<span class="fc" id="L108">        return this;</span>
+    }
+
+    @Override
+    public GordianMacSpecBuilder withSipHashSubSpec(final GordianSipHashType pSipHash) {
+<span class="fc" id="L113">        theSubSpec = pSipHash;</span>
+<span class="fc" id="L114">        return this;</span>
+    }
+
+    @Override
+    public GordianMacSpecBuilder withLengthSubSpec(final GordianLength pLength) {
+<span class="fc" id="L119">        theSubSpec = pLength;</span>
+<span class="fc" id="L120">        return this;</span>
+    }
+
+    @Override
+    public GordianDigestSpecBuilder usingDigestSpecBuilder() {
+<span class="fc" id="L125">        return theDigestBuilder;</span>
+    }
+
+    @Override
+    public GordianSymKeySpecBuilder usingSymKeySpecBuilder() {
+<span class="nc" id="L130">        return theSymKeyBuilder;</span>
+    }
+
+    @Override
+    public GordianMacSpec build() {
+        /* Handle defaults */
+<span class="fc" id="L136">        theKeyLength = determineKeyLength(theKeyLength);</span>
+
+        /* Create spec, reset and return */
+<span class="fc" id="L139">        final GordianCoreMacSpec mySpec = new GordianCoreMacSpec(theType, theKeyLength, theSubSpec);</span>
+<span class="fc" id="L140">        reset();</span>
+<span class="fc" id="L141">        return mySpec;</span>
+    }
+
+    /**
+     * Reset state.
+     */
+    private void reset() {
+<span class="fc" id="L148">        theType = null;</span>
+<span class="fc" id="L149">        theSubSpec = null;</span>
+<span class="fc" id="L150">        theKeyLength = null;</span>
+<span class="fc" id="L151">    }</span>
+
+    /**
+     * Determine keyLength.
+     *
+     * @param pKeyLength the proposed keyLength
+     * @return the keyLength
+     */
+    private GordianLength determineKeyLength(final GordianLength pKeyLength) {
+        /* Honour proposed keyLength */
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        if (pKeyLength != null) {</span>
+<span class="fc" id="L162">            return pKeyLength;</span>
+        }
+
+        /* Handle sipHashType */
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        if (theSubSpec instanceof GordianSipHashType) {</span>
+<span class="fc" id="L167">            return GordianLength.LEN_128;</span>
+
+            /* Handle symKeySpec */
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">        } else if (theSubSpec instanceof GordianDigestSpec myDigest) {</span>
+<span class="nc" id="L171">            return myDigest.getDigestLength();</span>
+
+            /* Handle symKeySpec */
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">        } else if (theSubSpec instanceof GordianSymKeySpec mySym) {</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">            return GordianMacType.POLY1305 == theType</span>
+<span class="fc" id="L176">                    ? GordianLength.LEN_256</span>
+<span class="fc" id="L177">                    : mySym.getKeyLength();</span>
+        }
+
+        /* Default to supplied length */
+<span class="nc" id="L181">        return pKeyLength;</span>
+    }
+
+    /**
+     * List all possible macSpecs for a keyLength.
+     *
+     * @param pKeyLen the keyLength
+     * @return the list
+     */
+    public static List&lt;GordianMacSpec&gt; listAllPossibleSpecs(final GordianLength pKeyLen) {
+        /* Create the array list */
+<span class="fc" id="L192">        final List&lt;GordianMacSpec&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L193">        final GordianCoreMacSpecBuilder myBuilder = new GordianCoreMacSpecBuilder();</span>
+<span class="fc" id="L194">        final GordianCoreDigestSpecBuilder myDigestBuilder = GordianCoreDigestSpecBuilder.newInstance();</span>
+
+        /* For each digestSpec */
+<span class="fc bfc" id="L197" title="All 2 branches covered.">        for (final GordianDigestSpec mySpec : GordianCoreDigestSpecBuilder.listAllPossibleSpecs()) {</span>
+            /* Add the hMacSpec */
+<span class="fc" id="L199">            myList.add(myBuilder.hMac(mySpec, pKeyLen));</span>
+
+            /* Add KMAC for digestType of SHAKE */
+<span class="fc bfc" id="L202" title="All 2 branches covered.">            if (GordianDigestType.SHAKE == mySpec.getDigestType()) {</span>
+<span class="fc" id="L203">                myList.add(myBuilder.kMac(pKeyLen, mySpec));</span>
+            }
+<span class="fc" id="L205">        }</span>
+
+        /* For each SymKey */
+<span class="fc bfc" id="L208" title="All 2 branches covered.">        for (final GordianSymKeySpec mySymKeySpec : GordianCoreSymKeySpecBuilder.listAllPossibleSymKeySpecs(pKeyLen)) {</span>
+            /* Add gMac/cMac/cfbMac/cbcMac */
+<span class="fc" id="L210">            myList.add(myBuilder.gMac(mySymKeySpec));</span>
+<span class="fc" id="L211">            myList.add(myBuilder.cMac(mySymKeySpec));</span>
+<span class="fc" id="L212">            myList.add(myBuilder.cbcMac(mySymKeySpec));</span>
+<span class="fc" id="L213">            myList.add(myBuilder.cfbMac(mySymKeySpec));</span>
+
+            /* Add kalynaMac for keyType of Kalyna */
+<span class="fc bfc" id="L216" title="All 2 branches covered.">            if (GordianSymKeyType.KALYNA == mySymKeySpec.getSymKeyType()) {</span>
+<span class="fc" id="L217">                myList.add(myBuilder.kalynaMac(mySymKeySpec));</span>
+            }
+<span class="fc" id="L219">        }</span>
+
+        /* Only add poly1305 for 256bit keyLengths */
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        if (GordianLength.LEN_256 == pKeyLen) {</span>
+            /* For each SymKey at 128 bits*/
+<span class="fc bfc" id="L224" title="All 2 branches covered.">            for (final GordianSymKeySpec mySymKeySpec : GordianCoreSymKeySpecBuilder.listAllPossibleSymKeySpecs(GordianLength.LEN_128)) {</span>
+<span class="fc" id="L225">                myList.add(myBuilder.poly1305Mac(mySymKeySpec));</span>
+<span class="fc" id="L226">            }</span>
+
+            /* Add raw poly1305 */
+<span class="fc" id="L229">            myList.add(myBuilder.poly1305Mac());</span>
+
+            /* Add Blake3 macs */
+<span class="fc bfc" id="L232" title="All 2 branches covered.">            for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianDigestType.BLAKE3)) {</span>
+<span class="fc" id="L233">                myList.add(myBuilder.blake3Mac(myLength));</span>
+            }
+        }
+
+        /* Add kupynaMac */
+<span class="fc bfc" id="L238" title="All 2 branches covered.">        for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianDigestType.KUPYNA)) {</span>
+<span class="fc" id="L239">            myList.add(myBuilder.kupynaMac(pKeyLen, myLength));</span>
+        }
+
+        /* Loop through states */
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        for (final GordianCoreDigestState myState : GordianCoreDigestState.values()) {</span>
+<span class="fc" id="L244">            final GordianDigestState myBaseState = myState.getState();</span>
+            /* Add SkeinMacs */
+<span class="fc bfc" id="L246" title="All 2 branches covered.">            for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianDigestType.SKEIN)) {</span>
+<span class="fc" id="L247">                final GordianMacSpec mySkeinSpec = myBuilder.skeinMac(pKeyLen, myBaseState, myLength);</span>
+<span class="fc bfc" id="L248" title="All 2 branches covered.">                if (mySkeinSpec.isValid()) {</span>
+<span class="fc" id="L249">                    myList.add(mySkeinSpec);</span>
+                }
+            }
+<span class="fc" id="L252">            final GordianMacSpec mySkeinSpec = myBuilder.skeinXMac(pKeyLen, myBaseState);</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">            if (mySkeinSpec.isValid()) {</span>
+<span class="fc" id="L254">                myList.add(mySkeinSpec);</span>
+            }
+
+            /* Add blake2Macs */
+<span class="fc bfc" id="L258" title="All 2 branches covered.">            for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianDigestType.BLAKE2)) {</span>
+<span class="fc" id="L259">                final GordianMacSpec myBlakeSpec = myBuilder.blake2Mac(pKeyLen, myDigestBuilder.blake2(myBaseState, myLength));</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">                if (myBlakeSpec.isValid()) {</span>
+<span class="fc" id="L261">                    myList.add(myBlakeSpec);</span>
+                }
+            }
+
+<span class="fc" id="L265">            final GordianMacSpec myBlakeSpec = myBuilder.blake2XMac(pKeyLen, myBaseState);</span>
+<span class="fc bfc" id="L266" title="All 2 branches covered.">            if (myBlakeSpec.isValid()) {</span>
+<span class="fc" id="L267">                myList.add(myBlakeSpec);</span>
+            }
+<span class="fc" id="L269">        }</span>
+
+        /* Add vmpcMac */
+<span class="fc" id="L272">        myList.add(myBuilder.vmpcMac(pKeyLen));</span>
+
+        /* Add sipHash for 128bit keys */
+<span class="fc bfc" id="L275" title="All 2 branches covered.">        if (GordianLength.LEN_128 == pKeyLen) {</span>
+<span class="fc bfc" id="L276" title="All 2 branches covered.">            for (final GordianSipHashType myType : GordianSipHashType.values()) {</span>
+<span class="fc" id="L277">                myList.add(myBuilder.sipHash(myType));</span>
+            }
+        }
+
+        /* Add gostHash for 256bit keys */
+<span class="fc bfc" id="L282" title="All 2 branches covered.">        if (GordianLength.LEN_256 == pKeyLen) {</span>
+<span class="fc" id="L283">            myList.add(myBuilder.gostMac());</span>
+        }
+
+        /* Add zucMac */
+<span class="fc bfc" id="L287" title="All 2 branches covered.">        if (GordianLength.LEN_128 == pKeyLen) {</span>
+<span class="fc" id="L288">            myList.add(myBuilder.zucMac(pKeyLen, GordianLength.LEN_32));</span>
+<span class="fc bfc" id="L289" title="All 2 branches covered.">        } else if (GordianLength.LEN_256 == pKeyLen) {</span>
+<span class="fc" id="L290">            myList.add(myBuilder.zucMac(pKeyLen, GordianLength.LEN_32));</span>
+<span class="fc" id="L291">            myList.add(myBuilder.zucMac(pKeyLen, GordianLength.LEN_64));</span>
+<span class="fc" id="L292">            myList.add(myBuilder.zucMac(pKeyLen, GordianLength.LEN_128));</span>
+        }
+
+        /* Return the list */
+<span class="fc" id="L296">        return myList;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

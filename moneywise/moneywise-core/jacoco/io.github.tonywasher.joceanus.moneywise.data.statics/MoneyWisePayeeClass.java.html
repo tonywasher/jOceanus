@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 
 /**
@@ -177,14 +177,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the payee type is singular, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isSingular() {
-<span class="fc bfc" id="L180" title="All 2 branches covered.">        switch (this) {</span>
-            case TAXMAN:
-            case GOVERNMENT:
-            case MARKET:
-<span class="fc" id="L184">                return true;</span>
-            default:
-<span class="fc" id="L186">                return false;</span>
-        }
+<span class="fc bfc" id="L180" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc" id="L181">            case TAXMAN, GOVERNMENT, MARKET -&gt; true;</span>
+<span class="fc" id="L182">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -195,20 +191,11 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * otherwise.
      */
     public boolean canParentDeposit(final MoneyWiseDepositCategoryClass pClass) {
-<span class="pc bpc" id="L198" title="2 of 3 branches missed.">        switch (this) {</span>
-            case GOVERNMENT:
-<span class="nc bnc" id="L200" title="All 2 branches missed.">                return !MoneyWiseDepositCategoryClass.CHECKING.equals(pClass);</span>
-            case INSTITUTION:
-            case EMPLOYER:
-<span class="fc" id="L203">                return true;</span>
-            case PAYEE:
-            case INDIVIDUAL:
-            case MARKET:
-            case TAXMAN:
-            case ANNUITY:
-            default:
-<span class="nc" id="L210">                return false;</span>
-        }
+<span class="pc bpc" id="L194" title="2 of 3 branches missed.">        return switch (this) {</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">            case GOVERNMENT -&gt; !MoneyWiseDepositCategoryClass.CHECKING.equals(pClass);</span>
+<span class="fc" id="L196">            case INSTITUTION, EMPLOYER -&gt; true;</span>
+<span class="nc" id="L197">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -218,20 +205,11 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the payee type can the loan type, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean canParentLoan(final MoneyWiseLoanCategoryClass pClass) {
-<span class="pc bpc" id="L221" title="1 of 3 branches missed.">        switch (this) {</span>
-            case TAXMAN:
-            case GOVERNMENT:
-            case INSTITUTION:
-            case EMPLOYER:
-<span class="pc bpc" id="L226" title="1 of 2 branches missed.">                return !MoneyWiseLoanCategoryClass.PRIVATELOAN.equals(pClass);</span>
-            case INDIVIDUAL:
-<span class="fc" id="L228">                return MoneyWiseLoanCategoryClass.PRIVATELOAN.equals(pClass);</span>
-            case MARKET:
-            case PAYEE:
-            case ANNUITY:
-            default:
-<span class="nc" id="L233">                return false;</span>
-        }
+<span class="pc bpc" id="L208" title="1 of 3 branches missed.">        return switch (this) {</span>
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">            case TAXMAN, GOVERNMENT, INSTITUTION, EMPLOYER -&gt; !MoneyWiseLoanCategoryClass.PRIVATELOAN.equals(pClass);</span>
+<span class="fc" id="L210">            case INDIVIDUAL -&gt; MoneyWiseLoanCategoryClass.PRIVATELOAN.equals(pClass);</span>
+<span class="nc" id="L211">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -242,21 +220,12 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * otherwise.
      */
     public boolean canParentSecurity(final MoneyWiseSecurityClass pClass) {
-<span class="pc bpc" id="L245" title="2 of 4 branches missed.">        switch (this) {</span>
-            case MARKET:
-<span class="nc" id="L247">                return pClass.needsMarketParent();</span>
-            case INSTITUTION:
-            case EMPLOYER:
-<span class="pc bpc" id="L250" title="1 of 2 branches missed.">                return !pClass.needsMarketParent();</span>
-            case GOVERNMENT:
-<span class="fc" id="L252">                return pClass.isStatePension();</span>
-            case TAXMAN:
-            case INDIVIDUAL:
-            case PAYEE:
-            case ANNUITY:
-            default:
-<span class="nc" id="L258">                return false;</span>
-        }
+<span class="pc bpc" id="L223" title="2 of 4 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L224">            case MARKET -&gt; pClass.needsMarketParent();</span>
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">            case INSTITUTION, EMPLOYER -&gt; !pClass.needsMarketParent();</span>
+<span class="fc" id="L226">            case GOVERNMENT -&gt; pClass.isStatePension();</span>
+<span class="nc" id="L227">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -266,19 +235,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * otherwise.
      */
     public boolean canParentPortfolio() {
-<span class="pc bpc" id="L269" title="1 of 2 branches missed.">        switch (this) {</span>
-            case MARKET:
-            case INSTITUTION:
-            case EMPLOYER:
-            case GOVERNMENT:
-<span class="fc" id="L274">                return true;</span>
-            case TAXMAN:
-            case INDIVIDUAL:
-            case PAYEE:
-            case ANNUITY:
-            default:
-<span class="nc" id="L280">                return false;</span>
-        }
+<span class="pc bpc" id="L238" title="1 of 2 branches missed.">        return switch (this) {</span>
+<span class="fc" id="L239">            case MARKET, INSTITUTION, EMPLOYER, GOVERNMENT -&gt; true;</span>
+<span class="nc" id="L240">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -288,19 +248,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * otherwise.
      */
     public boolean canContribPension() {
-<span class="nc bnc" id="L291" title="All 2 branches missed.">        switch (this) {</span>
-            case INSTITUTION:
-            case EMPLOYER:
-            case GOVERNMENT:
-            case TAXMAN:
-<span class="nc" id="L296">                return true;</span>
-            case MARKET:
-            case INDIVIDUAL:
-            case PAYEE:
-            case ANNUITY:
-            default:
-<span class="nc" id="L302">                return false;</span>
-        }
+<span class="nc bnc" id="L251" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L252">            case INSTITUTION, EMPLOYER, GOVERNMENT, TAXMAN -&gt; true;</span>
+<span class="nc" id="L253">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -310,18 +261,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * otherwise.
      */
     public boolean canProvideTaxedIncome() {
-<span class="pc bpc" id="L313" title="1 of 2 branches missed.">        switch (this) {</span>
-            case GOVERNMENT:
-            case EMPLOYER:
-            case INDIVIDUAL:
-            case ANNUITY:
-<span class="fc" id="L318">                return true;</span>
-            case MARKET:
-            case TAXMAN:
-            case PAYEE:
-            default:
-<span class="nc" id="L323">                return false;</span>
-        }
+<span class="pc bpc" id="L264" title="1 of 2 branches missed.">        return switch (this) {</span>
+<span class="fc" id="L265">            case GOVERNMENT, EMPLOYER, INDIVIDUAL, ANNUITY -&gt; true;</span>
+<span class="nc" id="L266">            default -&gt; false;</span>
+        };
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

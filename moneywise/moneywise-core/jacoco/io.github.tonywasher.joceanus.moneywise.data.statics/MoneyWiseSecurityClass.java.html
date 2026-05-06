@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 
 /**
@@ -199,14 +199,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the security type is a pension, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isPension() {
-<span class="pc bpc" id="L202" title="1 of 2 branches missed.">        switch (this) {</span>
-            case DEFINEDBENEFIT:
-            case DEFINEDCONTRIBUTION:
-            case STATEPENSION:
-<span class="nc" id="L206">                return true;</span>
-            default:
-<span class="fc" id="L208">                return false;</span>
-        }
+<span class="pc bpc" id="L202" title="1 of 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L203">            case DEFINEDBENEFIT, DEFINEDCONTRIBUTION, STATEPENSION -&gt; true;</span>
+<span class="fc" id="L204">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -216,14 +212,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * otherwise.
      */
     public boolean isDividend() {
-<span class="nc bnc" id="L219" title="All 2 branches missed.">        switch (this) {</span>
-            case SHARES:
-            case INCOMEUNITTRUST:
-            case GROWTHUNITTRUST:
-<span class="nc" id="L223">                return true;</span>
-            default:
-<span class="nc" id="L225">                return false;</span>
-        }
+<span class="nc bnc" id="L215" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L216">            case SHARES, INCOMEUNITTRUST, GROWTHUNITTRUST -&gt; true;</span>
+<span class="nc" id="L217">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -232,7 +224,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the security type is shares, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isShares() {
-<span class="nc bnc" id="L235" title="All 2 branches missed.">        return this == SHARES;</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">        return this == SHARES;</span>
     }
 
     /**
@@ -241,7 +233,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the security type is option, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isOption() {
-<span class="pc bpc" id="L244" title="1 of 2 branches missed.">        return this == STOCKOPTION;</span>
+<span class="pc bpc" id="L236" title="1 of 2 branches missed.">        return this == STOCKOPTION;</span>
     }
 
     /**
@@ -250,15 +242,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the security type needs a symbol, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean needsSymbol() {
-<span class="fc bfc" id="L253" title="All 2 branches covered.">        switch (this) {</span>
-            case SHARES:
-            case GROWTHUNITTRUST:
-            case INCOMEUNITTRUST:
-            case LIFEBOND:
-<span class="fc" id="L258">                return true;</span>
-            default:
-<span class="fc" id="L260">                return false;</span>
-        }
+<span class="fc bfc" id="L245" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc" id="L246">            case SHARES, GROWTHUNITTRUST, INCOMEUNITTRUST, LIFEBOND -&gt; true;</span>
+<span class="fc" id="L247">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -267,14 +254,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the security type needs a region, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean needsRegion() {
-<span class="pc bpc" id="L270" title="1 of 2 branches missed.">        switch (this) {</span>
-            case INCOMEUNITTRUST:
-            case GROWTHUNITTRUST:
-            case LIFEBOND:
-<span class="nc" id="L274">                return true;</span>
-            default:
-<span class="fc" id="L276">                return false;</span>
-        }
+<span class="pc bpc" id="L257" title="1 of 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L258">            case INCOMEUNITTRUST, GROWTHUNITTRUST, LIFEBOND -&gt; true;</span>
+<span class="fc" id="L259">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -284,15 +267,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * otherwise.
      */
     public boolean needsMarketParent() {
-<span class="pc bpc" id="L287" title="1 of 2 branches missed.">        switch (this) {</span>
-            case ASSET:
-            case PROPERTY:
-            case VEHICLE:
-            case ENDOWMENT:
-<span class="nc" id="L292">                return true;</span>
-            default:
-<span class="fc" id="L294">                return false;</span>
-        }
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L271">            case ASSET, PROPERTY, VEHICLE, ENDOWMENT -&gt; true;</span>
+<span class="fc" id="L272">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -301,15 +279,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the security type can be tax free, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean canTaxFree() {
-<span class="nc bnc" id="L304" title="All 2 branches missed.">        switch (this) {</span>
-            case SHARES:
-            case INCOMEUNITTRUST:
-            case GROWTHUNITTRUST:
-            case PROPERTY:
-<span class="nc" id="L309">                return true;</span>
-            default:
-<span class="nc" id="L311">                return false;</span>
-        }
+<span class="nc bnc" id="L282" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L283">            case SHARES, INCOMEUNITTRUST, GROWTHUNITTRUST, PROPERTY -&gt; true;</span>
+<span class="nc" id="L284">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -319,15 +292,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isCapitalGains() {
-<span class="nc bnc" id="L322" title="All 2 branches missed.">        switch (this) {</span>
-            case SHARES:
-            case INCOMEUNITTRUST:
-            case GROWTHUNITTRUST:
-            case PROPERTY:
-<span class="nc" id="L327">                return true;</span>
-            default:
-<span class="nc" id="L329">                return false;</span>
-        }
+<span class="nc bnc" id="L295" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L296">            case SHARES, INCOMEUNITTRUST, GROWTHUNITTRUST, PROPERTY -&gt; true;</span>
+<span class="nc" id="L297">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -337,7 +305,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isResidentialGains() {
-<span class="pc bpc" id="L340" title="1 of 2 branches missed.">        return this == PROPERTY;</span>
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">        return this == PROPERTY;</span>
     }
 
     /**
@@ -347,7 +315,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isChargeableGains() {
-<span class="pc bpc" id="L350" title="1 of 2 branches missed.">        return this == LIFEBOND;</span>
+<span class="pc bpc" id="L318" title="1 of 2 branches missed.">        return this == LIFEBOND;</span>
     }
 
     /**
@@ -356,15 +324,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the security type is Capital, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isCapital() {
-<span class="nc bnc" id="L359" title="All 2 branches missed.">        switch (this) {</span>
-            case SHARES:
-            case LIFEBOND:
-            case INCOMEUNITTRUST:
-            case GROWTHUNITTRUST:
-<span class="nc" id="L364">                return true;</span>
-            default:
-<span class="nc" id="L366">                return false;</span>
-        }
+<span class="nc bnc" id="L327" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L328">            case SHARES, LIFEBOND, INCOMEUNITTRUST, GROWTHUNITTRUST -&gt; true;</span>
+<span class="nc" id="L329">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -373,13 +336,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the security type is Capital, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isUnitTrust() {
-<span class="nc bnc" id="L376" title="All 2 branches missed.">        switch (this) {</span>
-            case INCOMEUNITTRUST:
-            case GROWTHUNITTRUST:
-<span class="nc" id="L379">                return true;</span>
-            default:
-<span class="nc" id="L381">                return false;</span>
-        }
+<span class="nc bnc" id="L339" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L340">            case INCOMEUNITTRUST, GROWTHUNITTRUST -&gt; true;</span>
+<span class="nc" id="L341">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -388,7 +348,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the SecurityType is statePension, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isStatePension() {
-<span class="fc bfc" id="L391" title="All 2 branches covered.">        return this == STATEPENSION;</span>
+<span class="fc bfc" id="L351" title="All 2 branches covered.">        return this == STATEPENSION;</span>
     }
 
     /**
@@ -397,7 +357,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the SecurityType is singular, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isSingular() {
-<span class="fc" id="L400">        return isStatePension();</span>
+<span class="fc" id="L360">        return isStatePension();</span>
     }
 
     /**
@@ -406,15 +366,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the SecurityType is an autoUnits, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isAutoUnits() {
-<span class="pc bpc" id="L409" title="1 of 2 branches missed.">        switch (this) {</span>
-            case ENDOWMENT:
-            case STATEPENSION:
-            case DEFINEDCONTRIBUTION:
-            case DEFINEDBENEFIT:
-<span class="nc" id="L414">                return true;</span>
-            default:
-<span class="fc" id="L416">                return false;</span>
-        }
+<span class="pc bpc" id="L369" title="1 of 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L370">            case ENDOWMENT, STATEPENSION, DEFINEDCONTRIBUTION, DEFINEDBENEFIT -&gt; true;</span>
+<span class="fc" id="L371">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -423,17 +378,12 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return the number of units for this security if active.
      */
     public int getAutoUnits() {
-<span class="nc bnc" id="L426" title="All 4 branches missed.">        switch (this) {</span>
-            case ENDOWMENT:
-            case DEFINEDCONTRIBUTION:
-<span class="nc" id="L429">                return 1;</span>
-            case STATEPENSION:
-<span class="nc" id="L431">                return PENSION_YEARS * PENSION_WEEKS;</span>
-            case DEFINEDBENEFIT:
-<span class="nc" id="L433">                return PENSION_YEARS;</span>
-            default:
-<span class="nc" id="L435">                return 0;</span>
-        }
+<span class="nc bnc" id="L381" title="All 4 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L382">            case ENDOWMENT, DEFINEDCONTRIBUTION -&gt; 1;</span>
+<span class="nc" id="L383">            case STATEPENSION -&gt; PENSION_YEARS * PENSION_WEEKS;</span>
+<span class="nc" id="L384">            case DEFINEDBENEFIT -&gt; PENSION_YEARS;</span>
+<span class="nc" id="L385">            default -&gt; 0;</span>
+        };
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

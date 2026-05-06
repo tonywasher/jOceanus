@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisUISourceEntry.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.gui.source</a> &gt; <span class="el_source">ThemisUISourceEntry.java</span></div><h1>ThemisUISourceEntry.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.gui.source;
+
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIResource;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisDeclarationInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisExpressionInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisNodeInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisStatementInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisTypeInstance;
+import io.github.tonywasher.joceanus.themis.parser.decl.ThemisDeclClassInterface;
+import io.github.tonywasher.joceanus.themis.parser.decl.ThemisDeclEnum;
+import io.github.tonywasher.joceanus.themis.parser.decl.ThemisDeclEnumValue;
+import io.github.tonywasher.joceanus.themis.parser.decl.ThemisDeclMethod;
+import io.github.tonywasher.joceanus.themis.parser.decl.ThemisDeclRecord;
+import io.github.tonywasher.joceanus.themis.parser.decl.ThemisDeclaration;
+import io.github.tonywasher.joceanus.themis.parser.expr.ThemisExpression;
+import io.github.tonywasher.joceanus.themis.parser.node.ThemisNode;
+import io.github.tonywasher.joceanus.themis.parser.node.ThemisNodeModifier;
+import io.github.tonywasher.joceanus.themis.parser.node.ThemisNodeParameter;
+import io.github.tonywasher.joceanus.themis.parser.node.ThemisNodeSimpleName;
+import io.github.tonywasher.joceanus.themis.parser.node.ThemisNodeVariable;
+import io.github.tonywasher.joceanus.themis.parser.stmt.ThemisStatement;
+import io.github.tonywasher.joceanus.themis.parser.stmt.ThemisStmtClass;
+import io.github.tonywasher.joceanus.themis.parser.stmt.ThemisStmtRecord;
+import io.github.tonywasher.joceanus.themis.parser.type.ThemisType;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * Source Panel Tree Entry.
+ */
+public class ThemisUISourceEntry {
+    /**
+     * Entry name prefix.
+     */
+    private static final String ENTRY_PREFIX = &quot;TreeItem&quot;;
+
+    /**
+     * The Next entryId.
+     */
+<span class="nc" id="L64">    private static final AtomicInteger NEXT_ENTRY_ID = new AtomicInteger(1);</span>
+
+    /**
+     * The Parent.
+     */
+    private final ThemisUISourceEntry theParent;
+
+    /**
+     * The id of the entry.
+     */
+    private final int theId;
+
+    /**
+     * The Child List.
+     */
+    private List&lt;ThemisUISourceEntry&gt; theChildList;
+
+    /**
+     * The unique name of the entry.
+     */
+    private final String theUniqueName;
+
+    /**
+     * The display name of the entry.
+     */
+    private final String theDisplayName;
+
+    /**
+     * The icon of the entry.
+     */
+    private final TethysUIIconId theIcon;
+
+    /**
+     * The object for the entry.
+     */
+    private final ThemisInstance theObject;
+
+    /**
+     * Constructor.
+     *
+     * @param pElement the sourceElement
+     */
+    ThemisUISourceEntry(final ThemisInstance pElement) {
+<span class="nc" id="L107">        this(null, pElement);</span>
+<span class="nc" id="L108">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pParent  the parent entry
+     * @param pElement the sourceElement
+     */
+    ThemisUISourceEntry(final ThemisUISourceEntry pParent,
+<span class="nc" id="L117">                        final ThemisInstance pElement) {</span>
+        /* Store parameters */
+<span class="nc" id="L119">        theParent = pParent;</span>
+<span class="nc" id="L120">        theObject = pElement;</span>
+
+        /* Allocate id and unique name */
+<span class="nc" id="L123">        theId = NEXT_ENTRY_ID.getAndIncrement();</span>
+<span class="nc" id="L124">        theUniqueName = ENTRY_PREFIX + theId;</span>
+<span class="nc" id="L125">        theDisplayName = getElementDisplay(pElement);</span>
+<span class="nc" id="L126">        theIcon = ThemisUISourceIcon.getElementIcon(pElement);</span>
+
+        /* If we have a parent */
+<span class="nc bnc" id="L129" title="All 2 branches missed.">        if (pParent != null) {</span>
+            /* Add the entry to the child list */
+<span class="nc" id="L131">            pParent.addChild(this);</span>
+        }
+<span class="nc" id="L133">    }</span>
+
+    /**
+     * Get parent.
+     *
+     * @return the parent
+     */
+    ThemisUISourceEntry getParent() {
+<span class="nc" id="L141">        return theParent;</span>
+    }
+
+    /**
+     * Get unique name.
+     *
+     * @return the name
+     */
+    String getUniqueName() {
+<span class="nc" id="L150">        return theUniqueName;</span>
+    }
+
+    /**
+     * Get object.
+     *
+     * @return the object
+     */
+    ThemisInstance getObject() {
+<span class="nc" id="L159">        return theObject;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L164">        return theDisplayName;</span>
+    }
+
+    /**
+     * Obtain the icon.
+     *
+     * @return the icon
+     */
+    TethysUIIconId getIcon() {
+<span class="nc" id="L173">        return theIcon;</span>
+    }
+
+    /**
+     * Get child iterator.
+     *
+     * @return the iterator
+     */
+    Iterator&lt;ThemisUISourceEntry&gt; childIterator() {
+<span class="nc bnc" id="L182" title="All 2 branches missed.">        return theChildList == null</span>
+<span class="nc" id="L183">                ? Collections.emptyIterator()</span>
+<span class="nc" id="L184">                : theChildList.iterator();</span>
+    }
+
+    /**
+     * Add child.
+     *
+     * @param pChild the child to add
+     */
+    private void addChild(final ThemisUISourceEntry pChild) {
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        if (theChildList == null) {</span>
+<span class="nc" id="L194">            theChildList = new ArrayList&lt;&gt;();</span>
+        }
+<span class="nc" id="L196">        theChildList.add(pChild);</span>
+<span class="nc" id="L197">    }</span>
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L203">            return true;</span>
+        }
+<span class="nc bnc" id="L205" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L206">            return false;</span>
+        }
+
+        /* Check class */
+<span class="nc bnc" id="L210" title="All 2 branches missed.">        if (!(pThat instanceof ThemisUISourceEntry myThat)) {</span>
+<span class="nc" id="L211">            return false;</span>
+        }
+
+        /* Must have same id */
+<span class="nc bnc" id="L215" title="All 2 branches missed.">        return theId == myThat.theId;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L220">        return Objects.hashCode(theId);</span>
+    }
+
+    /**
+     * Obtain the displayName for the element.
+     *
+     * @param pElement the element
+     * @return the displayName
+     */
+    static String getElementDisplay(final ThemisInstance pElement) {
+        /* Switch on the element type */
+<span class="nc bnc" id="L231" title="All 6 branches missed.">        return switch (pElement) {</span>
+<span class="nc" id="L232">            case ThemisDeclarationInstance myDecl -&gt; getDeclarationDisplay(myDecl);</span>
+<span class="nc" id="L233">            case ThemisNodeInstance myNode -&gt; getNodeDisplay(myNode);</span>
+<span class="nc" id="L234">            case ThemisExpressionInstance myExpr -&gt; getExpressionDisplay(myExpr);</span>
+<span class="nc" id="L235">            case ThemisStatementInstance myStmt -&gt; getStatementDisplay(myStmt);</span>
+<span class="nc" id="L236">            case ThemisTypeInstance myType -&gt; getTypeDisplay(myType);</span>
+<span class="nc" id="L237">            default -&gt; throw new IllegalArgumentException(&quot;Unknown ThemisInstance&quot;);</span>
+        };
+    }
+
+    /**
+     * Obtain the displayName for the declaration.
+     *
+     * @param pElement the element
+     * @return the icon
+     */
+    private static String getDeclarationDisplay(final ThemisDeclarationInstance pElement) {
+        /* Switch on the id */
+<span class="nc bnc" id="L249" title="All 12 branches missed.">        return switch ((ThemisDeclaration) pElement.getId()) {</span>
+<span class="nc" id="L250">            case ANNOTATION -&gt; ThemisUIResource.SOURCEDECL_ANNOT.getValue();</span>
+<span class="nc" id="L251">            case ANNOTATIONMEMBER -&gt; ThemisUIResource.SOURCEDECL_ANNOTMEMBER.getValue();</span>
+<span class="nc" id="L252">            case CLASSINTERFACE -&gt; ((ThemisDeclClassInterface) pElement).getName();</span>
+<span class="nc" id="L253">            case COMPACT -&gt; ThemisUIResource.SOURCEDECL_COMPACT.getValue();</span>
+<span class="nc" id="L254">            case CONSTRUCTOR -&gt; ThemisUIResource.SOURCEDECL_CONSTRUCT.getValue();</span>
+<span class="nc" id="L255">            case ENUM -&gt; ((ThemisDeclEnum) pElement).getName();</span>
+<span class="nc" id="L256">            case ENUMVALUE -&gt; ((ThemisDeclEnumValue) pElement).getNode().getNameAsString();</span>
+<span class="nc" id="L257">            case FIELD -&gt; ThemisUIResource.SOURCEDECL_FIELD.getValue();</span>
+<span class="nc" id="L258">            case INITIALIZER -&gt; ThemisUIResource.SOURCEDECL_INIT.getValue();</span>
+<span class="nc" id="L259">            case METHOD -&gt; ((ThemisDeclMethod) pElement).getName();</span>
+<span class="nc" id="L260">            case RECORD -&gt; ((ThemisDeclRecord) pElement).getName();</span>
+<span class="nc" id="L261">            default -&gt; throw new IllegalArgumentException(&quot;Unknown ThemisDeclaration&quot;);</span>
+        };
+    }
+
+    /**
+     * Obtain the displayName for the node.
+     *
+     * @param pElement the element
+     * @return the icon
+     */
+    private static String getNodeDisplay(final ThemisNodeInstance pElement) {
+        /* Switch on the id */
+<span class="nc bnc" id="L273" title="All 14 branches missed.">        return switch ((ThemisNode) pElement.getId()) {</span>
+<span class="nc" id="L274">            case ARRAYLEVEL -&gt; ThemisUIResource.SOURCENODE_ARRAYLVL.getValue();</span>
+<span class="nc" id="L275">            case CASE -&gt; ThemisUIResource.SOURCENODE_CASE.getValue();</span>
+<span class="nc" id="L276">            case CATCH -&gt; ThemisUIResource.SOURCENODE_CATCH.getValue();</span>
+<span class="nc" id="L277">            case COMMENT -&gt; ThemisUIResource.SOURCENODE_COMMENT.getValue();</span>
+<span class="nc" id="L278">            case COMPILATIONUNIT -&gt; ThemisUIResource.SOURCENODE_COMPUNIT.getValue();</span>
+<span class="nc" id="L279">            case IMPORT -&gt; ThemisUIResource.SOURCENODE_IMPORT.getValue();</span>
+<span class="nc" id="L280">            case MODIFIER -&gt; ((ThemisNodeModifier) pElement).getKeyword().toString();</span>
+<span class="nc" id="L281">            case NAME -&gt; ThemisUIResource.SOURCENODE_NAME.getValue();</span>
+<span class="nc" id="L282">            case PACKAGE -&gt; ThemisUIResource.SOURCENODE_PACKAGE.getValue();</span>
+<span class="nc" id="L283">            case PARAMETER -&gt; ((ThemisNodeParameter) pElement).getNode().getNameAsString();</span>
+<span class="nc" id="L284">            case SIMPLENAME -&gt; ((ThemisNodeSimpleName) pElement).getName();</span>
+<span class="nc" id="L285">            case VALUEPAIR -&gt; ThemisUIResource.SOURCENODE_VALUEPAIR.getValue();</span>
+<span class="nc" id="L286">            case VARIABLE -&gt; ((ThemisNodeVariable) pElement).getNode().getNameAsString();</span>
+<span class="nc" id="L287">            default -&gt; throw new IllegalArgumentException(&quot;Unknown ThemisNode&quot;);</span>
+        };
+    }
+
+    /**
+     * Obtain the displayName for the expression.
+     *
+     * @param pElement the element
+     * @return the icon
+     */
+    private static String getExpressionDisplay(final ThemisExpressionInstance pElement) {
+        /* Switch on the id */
+<span class="nc bnc" id="L299" title="All 35 branches missed.">        return switch ((ThemisExpression) pElement.getId()) {</span>
+<span class="nc" id="L300">            case ARRAYACCESS -&gt; ThemisUIResource.SOURCEEXPR_ARRAYACCESS.getValue();</span>
+<span class="nc" id="L301">            case MARKER -&gt; ThemisUIResource.SOURCEEXPR_MARKER.getValue();</span>
+<span class="nc" id="L302">            case NORMAL -&gt; ThemisUIResource.SOURCEEXPR_NORMAL.getValue();</span>
+<span class="nc" id="L303">            case SINGLEMEMBER -&gt; ThemisUIResource.SOURCEEXPR_SINGLE.getValue();</span>
+<span class="nc" id="L304">            case ARRAYCREATION -&gt; ThemisUIResource.SOURCEEXPR_ARRAYCREATE.getValue();</span>
+<span class="nc" id="L305">            case CAST -&gt; ThemisUIResource.SOURCEEXPR_CAST.getValue();</span>
+<span class="nc" id="L306">            case CHAR -&gt; ThemisUIResource.SOURCEEXPR_CHAR.getValue();</span>
+<span class="nc" id="L307">            case ARRAYINIT -&gt; ThemisUIResource.SOURCEEXPR_ARRAYINIT.getValue();</span>
+<span class="nc" id="L308">            case INTEGER -&gt; ThemisUIResource.SOURCEEXPR_INTEGER.getValue();</span>
+<span class="nc" id="L309">            case ASSIGN -&gt; ThemisUIResource.SOURCEEXPR_ASSIGN.getValue();</span>
+<span class="nc" id="L310">            case BINARY -&gt; ThemisUIResource.SOURCEEXPR_BINARY.getValue();</span>
+<span class="nc" id="L311">            case BOOLEAN -&gt; ThemisUIResource.SOURCEEXPR_BOOLEAN.getValue();</span>
+<span class="nc" id="L312">            case CLASS -&gt; ThemisUIResource.SOURCEEXPR_CLASS.getValue();</span>
+<span class="nc" id="L313">            case CONDITIONAL -&gt; ThemisUIResource.SOURCEEXPR_CONDITIONAL.getValue();</span>
+<span class="nc" id="L314">            case NULL -&gt; ThemisUIResource.SOURCEEXPR_NULL.getValue();</span>
+<span class="nc" id="L315">            case DOUBLE -&gt; ThemisUIResource.SOURCEEXPR_DOUBLE.getValue();</span>
+<span class="nc" id="L316">            case ENCLOSED -&gt; ThemisUIResource.SOURCEEXPR_ENCLOSED.getValue();</span>
+<span class="nc" id="L317">            case FIELDACCESS -&gt; ThemisUIResource.SOURCEEXPR_FIELDACCESS.getValue();</span>
+<span class="nc" id="L318">            case INSTANCEOF -&gt; ThemisUIResource.SOURCEEXPR_INSTANCEOF.getValue();</span>
+<span class="nc" id="L319">            case LAMBDA -&gt; ThemisUIResource.SOURCEEXPR_LAMBDA.getValue();</span>
+<span class="nc" id="L320">            case LONG -&gt; ThemisUIResource.SOURCEEXPR_LONG.getValue();</span>
+<span class="nc" id="L321">            case METHODCALL -&gt; ThemisUIResource.SOURCEEXPR_METHODCALL.getValue();</span>
+<span class="nc" id="L322">            case METHODREFERENCE -&gt; ThemisUIResource.SOURCEEXPR_METHODREF.getValue();</span>
+<span class="nc" id="L323">            case NAME -&gt; ThemisUIResource.SOURCEEXPR_NAME.getValue();</span>
+<span class="nc" id="L324">            case OBJECTCREATE -&gt; ThemisUIResource.SOURCEEXPR_OBJCREATE.getValue();</span>
+<span class="nc" id="L325">            case STRING -&gt; ThemisUIResource.SOURCEEXPR_STRING.getValue();</span>
+<span class="nc" id="L326">            case SUPER -&gt; ThemisUIResource.SOURCEEXPR_SUPER.getValue();</span>
+<span class="nc" id="L327">            case SWITCH -&gt; ThemisUIResource.SOURCEEXPR_SWITCH.getValue();</span>
+<span class="nc" id="L328">            case TEXTBLOCK -&gt; ThemisUIResource.SOURCEEXPR_TEXT.getValue();</span>
+<span class="nc" id="L329">            case THIS -&gt; ThemisUIResource.SOURCEEXPR_THIS.getValue();</span>
+<span class="nc" id="L330">            case TYPE -&gt; ThemisUIResource.SOURCEEXPR_TYPE.getValue();</span>
+<span class="nc" id="L331">            case TYPEPATTERN -&gt; ThemisUIResource.SOURCEEXPR_TYPEPATTERN.getValue();</span>
+<span class="nc" id="L332">            case UNARY -&gt; ThemisUIResource.SOURCEEXPR_UNARY.getValue();</span>
+<span class="nc" id="L333">            case VARIABLE -&gt; ThemisUIResource.SOURCEEXPR_VARIABLE.getValue();</span>
+<span class="nc" id="L334">            default -&gt; throw new IllegalArgumentException(&quot;Unknown ThemisExpression&quot;);</span>
+        };
+    }
+
+    /**
+     * Obtain the icon for the statement.
+     *
+     * @param pElement the element
+     * @return the icon
+     */
+    private static String getStatementDisplay(final ThemisStatementInstance pElement) {
+        /* Switch on the id */
+<span class="nc bnc" id="L346" title="All 22 branches missed.">        return switch ((ThemisStatement) pElement.getId()) {</span>
+<span class="nc" id="L347">            case ASSERT -&gt; ThemisUIResource.SOURCESTMT_ASSERT.getValue();</span>
+<span class="nc" id="L348">            case BLOCK -&gt; ThemisUIResource.SOURCESTMT_BLOCK.getValue();</span>
+<span class="nc" id="L349">            case BREAK -&gt; ThemisUIResource.SOURCESTMT_BREAK.getValue();</span>
+<span class="nc" id="L350">            case LOCALCLASS -&gt; getDeclarationDisplay(((ThemisStmtClass) pElement).getBody());</span>
+<span class="nc" id="L351">            case CONSTRUCTOR -&gt; ThemisUIResource.SOURCESTMT_CONSTRUCT.getValue();</span>
+<span class="nc" id="L352">            case CONTINUE -&gt; ThemisUIResource.SOURCESTMT_CONTINUE.getValue();</span>
+<span class="nc" id="L353">            case DO -&gt; ThemisUIResource.SOURCESTMT_DO.getValue();</span>
+<span class="nc" id="L354">            case EMPTY -&gt; ThemisUIResource.SOURCESTMT_EMPTY.getValue();</span>
+<span class="nc" id="L355">            case EXPRESSION -&gt; ThemisUIResource.SOURCESTMT_EXPR.getValue();</span>
+<span class="nc" id="L356">            case FOR -&gt; ThemisUIResource.SOURCESTMT_FOR.getValue();</span>
+<span class="nc" id="L357">            case FOREACH -&gt; ThemisUIResource.SOURCESTMT_FOREACH.getValue();</span>
+<span class="nc" id="L358">            case IF -&gt; ThemisUIResource.SOURCESTMT_IF.getValue();</span>
+<span class="nc" id="L359">            case LABELED -&gt; ThemisUIResource.SOURCESTMT_LABELED.getValue();</span>
+<span class="nc" id="L360">            case LOCALRECORD -&gt; getDeclarationDisplay(((ThemisStmtRecord) pElement).getBody());</span>
+<span class="nc" id="L361">            case RETURN -&gt; ThemisUIResource.SOURCESTMT_RETURN.getValue();</span>
+<span class="nc" id="L362">            case SWITCH -&gt; ThemisUIResource.SOURCESTMT_SWITCH.getValue();</span>
+<span class="nc" id="L363">            case SYNCHRONIZED -&gt; ThemisUIResource.SOURCESTMT_SYNC.getValue();</span>
+<span class="nc" id="L364">            case THROW -&gt; ThemisUIResource.SOURCESTMT_THROW.getValue();</span>
+<span class="nc" id="L365">            case TRY -&gt; ThemisUIResource.SOURCESTMT_TRY.getValue();</span>
+<span class="nc" id="L366">            case WHILE -&gt; ThemisUIResource.SOURCESTMT_WHILE.getValue();</span>
+<span class="nc" id="L367">            case YIELD -&gt; ThemisUIResource.SOURCESTMT_YIELD.getValue();</span>
+<span class="nc" id="L368">            default -&gt; throw new IllegalArgumentException(&quot;Unknown ThemisStatement&quot;);</span>
+        };
+    }
+
+    /**
+     * Obtain the icon for the type.
+     *
+     * @param pElement the element
+     * @return the icon
+     */
+    private static String getTypeDisplay(final ThemisTypeInstance pElement) {
+        /* Switch on the id */
+<span class="nc bnc" id="L380" title="All 11 branches missed.">        return switch ((ThemisType) pElement.getId()) {</span>
+<span class="nc" id="L381">            case ARRAY -&gt; ThemisUIResource.SOURCETYPE_ARRAY.getValue();</span>
+<span class="nc" id="L382">            case CLASSINTERFACE -&gt; ThemisUIResource.SOURCETYPE_CLASS.getValue();</span>
+<span class="nc" id="L383">            case INTERSECTION -&gt; ThemisUIResource.SOURCETYPE_INTERSECT.getValue();</span>
+<span class="nc" id="L384">            case PARAMETER -&gt; ThemisUIResource.SOURCETYPE_PARAMETER.getValue();</span>
+<span class="nc" id="L385">            case PRIMITIVE -&gt; ThemisUIResource.SOURCETYPE_PRIMITIVE.getValue();</span>
+<span class="nc" id="L386">            case UNION -&gt; ThemisUIResource.SOURCETYPE_UNION.getValue();</span>
+<span class="nc" id="L387">            case UNKNOWN -&gt; ThemisUIResource.SOURCETYPE_UNKNOWN.getValue();</span>
+<span class="nc" id="L388">            case VAR -&gt; ThemisUIResource.SOURCETYPE_VAR.getValue();</span>
+<span class="nc" id="L389">            case VOID -&gt; ThemisUIResource.SOURCETYPE_VOID.getValue();</span>
+<span class="nc" id="L390">            case WILDCARD -&gt; ThemisUIResource.SOURCETYPE_WILDCARD.getValue();</span>
+<span class="nc" id="L391">            default -&gt; throw new IllegalArgumentException(&quot;Unknown ThemisType&quot;);</span>
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

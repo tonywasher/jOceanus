@@ -40,10 +40,10 @@ public final class GordianSignParams {
      * @param pContext the Context
      */
     private GordianSignParams(final GordianKeyPair pKeyPair,
-<span class="fc" id="L43">                              final byte[] pContext) {</span>
-<span class="fc" id="L44">        theKeyPair = pKeyPair;</span>
-<span class="pc bpc" id="L45" title="1 of 2 branches missed.">        theContext = pContext != null ? Arrays.clone(pContext) : null;</span>
-<span class="fc" id="L46">    }</span>
+<span class="nc" id="L43">                              final byte[] pContext) {</span>
+<span class="nc" id="L44">        theKeyPair = pKeyPair;</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        theContext = pContext != null ? Arrays.clone(pContext) : null;</span>
+<span class="nc" id="L46">    }</span>
 
     /**
      * Create keyPair parameters.
@@ -52,7 +52,7 @@ public final class GordianSignParams {
      * @return the new params
      */
     public static GordianSignParams keyPair(final GordianKeyPair pKeyPair) {
-<span class="fc" id="L55">        return new GordianSignParams(pKeyPair, null);</span>
+<span class="nc" id="L55">        return new GordianSignParams(pKeyPair, null);</span>
     }
 
     /**
@@ -73,7 +73,7 @@ public final class GordianSignParams {
      * @return the keyPair
      */
     public GordianKeyPair getKeyPair() {
-<span class="fc" id="L76">        return theKeyPair;</span>
+<span class="nc" id="L76">        return theKeyPair;</span>
     }
 
     /**
@@ -82,7 +82,7 @@ public final class GordianSignParams {
      * @return the context
      */
     public byte[] getContext() {
-<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        return theContext == null ? null : Arrays.clone(theContext);</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        return theContext == null ? null : Arrays.clone(theContext);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

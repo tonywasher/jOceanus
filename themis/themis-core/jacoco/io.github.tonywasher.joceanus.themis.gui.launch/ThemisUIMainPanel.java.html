@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisUIMainPanel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.gui.launch</a> &gt; <span class="el_source">ThemisUIMainPanel.java</span></div><h1>ThemisUIMainPanel.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.gui.launch;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButton;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButtonFactory;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControlFactory;
+import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIDialogFactory;
+import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIDirectorySelector;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUILogTextArea;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIMainPanel;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUITabPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUITabItem;
+import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIResource;
+import io.github.tonywasher.joceanus.themis.gui.reference.ThemisUIRefPanel;
+import io.github.tonywasher.joceanus.themis.gui.source.ThemisUISourcePanel;
+import io.github.tonywasher.joceanus.themis.gui.stats.ThemisUIStatsPanel;
+import io.github.tonywasher.joceanus.themis.parser.ThemisParser;
+import io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
+import io.github.tonywasher.joceanus.themis.solver.ThemisSolver;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverProject;
+import io.github.tonywasher.joceanus.themis.stats.ThemisStatsProject;
+
+import java.io.File;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+
+/**
+ * Main panel.
+ */
+public class ThemisUIMainPanel
+        implements TethysUIMainPanel {
+    /**
+     * Default Project Preference.
+     */
+    private static final String PREF_PROJECT = &quot;DefaultLocation&quot;;
+
+    /**
+     * The GUI Factory.
+     */
+    private final TethysUIFactory&lt;?&gt; theGuiFactory;
+
+    /**
+     * Source Panel.
+     */
+    private final ThemisUISourcePanel theSource;
+
+    /**
+     * Stats Panel.
+     */
+    private final ThemisUIStatsPanel theStats;
+
+    /**
+     * Reference Panel.
+     */
+    private final ThemisUIRefPanel theRefs;
+
+    /**
+     * The Source Tab.
+     */
+    private final TethysUITabItem theSourceTab;
+
+    /**
+     * The Stats Tab.
+     */
+    private final TethysUITabItem theStatsTab;
+
+    /**
+     * The Refs Tab.
+     */
+    private final TethysUITabItem theRefsTab;
+
+    /**
+     * The Log Tab.
+     */
+    private final TethysUITabItem theLogTab;
+
+    /**
+     * The log sink.
+     */
+    private final TethysUILogTextArea theLogSink;
+
+    /**
+     * The ProjectButton.
+     */
+    private final TethysUIButton theProjectButton;
+
+    /**
+     * The ProjectButton.
+     */
+    private final TethysUIBorderPaneManager thePanel;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the GuiFactory
+     * @throws OceanusException on error
+     */
+<span class="nc" id="L122">    public ThemisUIMainPanel(final TethysUIFactory&lt;?&gt; pFactory) throws OceanusException {</span>
+        /* Store guiFactory */
+<span class="nc" id="L124">        theGuiFactory = pFactory;</span>
+
+        /* Create the subPanels */
+<span class="nc" id="L127">        theSource = new ThemisUISourcePanel(theGuiFactory);</span>
+<span class="nc" id="L128">        theStats = new ThemisUIStatsPanel(theGuiFactory);</span>
+<span class="nc" id="L129">        theRefs = new ThemisUIRefPanel(theGuiFactory);</span>
+
+        /* Create the tabs */
+<span class="nc" id="L132">        final TethysUIPaneFactory myPanes = theGuiFactory.paneFactory();</span>
+<span class="nc" id="L133">        final TethysUITabPaneManager myTabs = myPanes.newTabPane();</span>
+<span class="nc" id="L134">        theSourceTab = myTabs.addTabItem(ThemisUIResource.TAB_SOURCE.getValue(), theSource);</span>
+<span class="nc" id="L135">        theRefsTab = myTabs.addTabItem(ThemisUIResource.TAB_REFERENCES.getValue(), theRefs);</span>
+<span class="nc" id="L136">        theStatsTab = myTabs.addTabItem(ThemisUIResource.TAB_STATS.getValue(), theStats);</span>
+
+        /* Hide tabs */
+<span class="nc" id="L139">        theSourceTab.setVisible(false);</span>
+<span class="nc" id="L140">        theStatsTab.setVisible(false);</span>
+<span class="nc" id="L141">        theRefsTab.setVisible(false);</span>
+
+        /* Create the log tab */
+<span class="nc" id="L144">        theLogSink = theGuiFactory.getLogSink();</span>
+<span class="nc" id="L145">        theLogTab = myTabs.addTabItem(ThemisUIResource.TAB_LOG.getValue(), theLogSink);</span>
+<span class="nc" id="L146">        theLogSink.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -&gt; theLogTab.setVisible(true));</span>
+<span class="nc" id="L147">        theLogSink.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -&gt; theLogTab.setVisible(false));</span>
+<span class="nc" id="L148">        theLogTab.setVisible(theLogSink.isActive());</span>
+
+        /* Create the project selection panel */
+<span class="nc" id="L151">        final TethysUIControlFactory myControls = theGuiFactory.controlFactory();</span>
+<span class="nc" id="L152">        final TethysUIButtonFactory&lt;?&gt; myButtons = theGuiFactory.buttonFactory();</span>
+<span class="nc" id="L153">        final TethysUIBoxPaneManager myProjectSelect = myPanes.newHBoxPane();</span>
+<span class="nc" id="L154">        myProjectSelect.addNode(myControls.newLabel(ThemisUIResource.PROMPT_PROJECT.getValue()));</span>
+<span class="nc" id="L155">        theProjectButton = myButtons.newButton();</span>
+<span class="nc" id="L156">        theProjectButton.setTextOnly();</span>
+<span class="nc" id="L157">        myProjectSelect.addNode(theProjectButton);</span>
+<span class="nc" id="L158">        theProjectButton.getEventRegistrar().addEventListener(e -&gt; selectProject());</span>
+<span class="nc" id="L159">        theProjectButton.setText(&quot;None&quot;);</span>
+
+        /* create the overall project select panel */
+<span class="nc" id="L162">        final TethysUIBoxPaneManager myProjectControl = myPanes.newHBoxPane();</span>
+<span class="nc" id="L163">        myProjectControl.addSpacer();</span>
+<span class="nc" id="L164">        myProjectControl.addNode(myProjectSelect);</span>
+<span class="nc" id="L165">        myProjectControl.addSpacer();</span>
+
+        /* create the overall panel */
+<span class="nc" id="L168">        thePanel = myPanes.newBorderPane();</span>
+<span class="nc" id="L169">        thePanel.setNorth(myProjectControl);</span>
+<span class="nc" id="L170">        thePanel.setCentre(myTabs);</span>
+
+        /* Handle the default location */
+<span class="nc" id="L173">        final File myLocation = getDefaultLocation();</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if (myLocation != null) {</span>
+<span class="nc" id="L175">            handleNewProject(myLocation);</span>
+        }
+<span class="nc" id="L177">    }</span>
+
+    @Override
+    public TethysUIComponent getComponent() {
+<span class="nc" id="L181">        return thePanel;</span>
+    }
+
+    /**
+     * Handle select project.
+     */
+    void selectProject() {
+        /* Determine initial directory */
+<span class="nc" id="L189">        final File myInit = new File(System.getProperty(&quot;user.home&quot;));</span>
+
+        /* Determine the name of the directory to load */
+<span class="nc" id="L192">        final TethysUIDialogFactory myDialogs = theGuiFactory.dialogFactory();</span>
+<span class="nc" id="L193">        final TethysUIDirectorySelector myDialog = myDialogs.newDirectorySelector();</span>
+<span class="nc" id="L194">        myDialog.setTitle(ThemisUIResource.SELECT_PROJECT.getValue());</span>
+<span class="nc" id="L195">        myDialog.setInitialDirectory(myInit);</span>
+<span class="nc" id="L196">        final File myFile = myDialog.selectDirectory();</span>
+
+        /* If we selected a file */
+<span class="nc bnc" id="L199" title="All 2 branches missed.">        if (myFile != null) {</span>
+            /* Handle the new project */
+<span class="nc" id="L201">            handleNewProject(myFile);</span>
+        }
+<span class="nc" id="L203">    }</span>
+
+    /**
+     * Handle the new project.
+     *
+     * @param pProjectDir the new project directory
+     */
+    private void handleNewProject(final File pProjectDir) {
+        /* Hide tabs */
+<span class="nc" id="L212">        theSourceTab.setVisible(false);</span>
+<span class="nc" id="L213">        theRefsTab.setVisible(false);</span>
+<span class="nc" id="L214">        theStatsTab.setVisible(false);</span>
+
+        /* Save details */
+<span class="nc" id="L217">        OceanusException myError = storeDefaultLocation(pProjectDir);</span>
+<span class="nc bnc" id="L218" title="All 2 branches missed.">        if (myError != null) {</span>
+<span class="nc" id="L219">            writeErrorToLog(myError);</span>
+<span class="nc" id="L220">            return;</span>
+        }
+
+        /* Parse the project */
+<span class="nc" id="L224">        final ThemisParser myParser = new ThemisParser(pProjectDir);</span>
+<span class="nc" id="L225">        myError = myParser.getError();</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">        if (myError == null) {</span>
+<span class="nc" id="L227">            final ThemisProject myProject = myParser.getProject();</span>
+<span class="nc" id="L228">            theSource.setCurrentProject(myProject);</span>
+<span class="nc" id="L229">            theProjectButton.setText(myProject.toString());</span>
+<span class="nc" id="L230">            theSourceTab.setVisible(true);</span>
+        }
+
+        /* If we parsed successfully */
+<span class="nc bnc" id="L234" title="All 2 branches missed.">        if (myError == null) {</span>
+            /* Resolve references */
+<span class="nc" id="L236">            final ThemisSolverProject myProject = new ThemisSolverProject(myParser);</span>
+<span class="nc" id="L237">            final ThemisSolver mySolver = new ThemisSolver(myProject);</span>
+<span class="nc" id="L238">            myError = mySolver.getError();</span>
+<span class="nc bnc" id="L239" title="All 2 branches missed.">            if (myError == null) {</span>
+<span class="nc" id="L240">                theRefs.setCurrentProject(myProject);</span>
+<span class="nc" id="L241">                theRefsTab.setVisible(true);</span>
+            }
+        }
+
+        /* If we parsed successfully */
+<span class="nc bnc" id="L246" title="All 2 branches missed.">        if (myError == null) {</span>
+            /* Resolve stats */
+<span class="nc" id="L248">            final ThemisStatsProject myStats = new ThemisStatsProject(myParser);</span>
+<span class="nc" id="L249">            myError = myStats.getError();</span>
+<span class="nc bnc" id="L250" title="All 2 branches missed.">            if (myError == null) {</span>
+<span class="nc" id="L251">                theStats.setCurrentProject(myStats);</span>
+<span class="nc" id="L252">                theStatsTab.setVisible(true);</span>
+            }
+        }
+
+        /* Display any error */
+<span class="nc bnc" id="L257" title="All 2 branches missed.">        if (myError != null) {</span>
+<span class="nc" id="L258">            writeErrorToLog(myError);</span>
+        }
+<span class="nc" id="L260">    }</span>
+
+    /**
+     * Write error to log.
+     *
+     * @param pError the error
+     */
+    private void writeErrorToLog(final OceanusException pError) {
+<span class="nc" id="L268">        theLogSink.writeLogMessage(pError.getMessage());</span>
+<span class="nc" id="L269">        theLogTab.setVisible(true);</span>
+<span class="nc" id="L270">    }</span>
+
+    /**
+     * Obtain the default location.
+     *
+     * @return the default location
+     */
+    private File getDefaultLocation() {
+<span class="nc" id="L278">        final Preferences myPreferences = deriveHandle();</span>
+<span class="nc" id="L279">        final String myLocation = myPreferences.get(PREF_PROJECT, null);</span>
+<span class="nc bnc" id="L280" title="All 2 branches missed.">        return myLocation == null ? null : new File(myLocation);</span>
+    }
+
+    /**
+     * Store the default location.
+     *
+     * @param pLocation the default location
+     * @return exception or null
+     */
+    private OceanusException storeDefaultLocation(final File pLocation) {
+        /* Protect against exceptions */
+        try {
+<span class="nc" id="L292">            final Preferences myPreferences = deriveHandle();</span>
+<span class="nc" id="L293">            myPreferences.put(PREF_PROJECT, pLocation.getAbsolutePath());</span>
+<span class="nc" id="L294">            myPreferences.flush();</span>
+<span class="nc" id="L295">            return null;</span>
+<span class="nc" id="L296">        } catch (BackingStoreException e) {</span>
+<span class="nc" id="L297">            return new ThemisIOException(&quot;Failed to save preference&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Derive handle for node.
+     *
+     * @return the class name
+     */
+    private Preferences deriveHandle() {
+        /* Obtain the class name */
+<span class="nc" id="L308">        final Class&lt;?&gt; myClass = this.getClass();</span>
+<span class="nc" id="L309">        String myName = myClass.getCanonicalName();</span>
+
+        /* Obtain the package name */
+<span class="nc" id="L312">        final String myPackage = myClass.getPackage().getName();</span>
+
+        /* Strip off the package name */
+<span class="nc" id="L315">        myName = myName.substring(myPackage.length() + 1);</span>
+
+        /* Derive the handle */
+<span class="nc" id="L318">        final Preferences myHandle = Preferences.userNodeForPackage(myClass);</span>
+<span class="nc" id="L319">        return myHandle.node(myName);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

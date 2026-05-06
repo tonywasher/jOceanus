@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Enumeration of CashCategory Type Classes.
@@ -119,17 +119,12 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * otherwise.
      */
     public boolean isParentCategory() {
-<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        switch (this) {</span>
-            case PARENT:
-<span class="nc" id="L124">                return true;</span>
-            default:
-<span class="fc" id="L126">                return false;</span>
-        }
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        return this == MoneyWiseCashCategoryClass.PARENT;</span>
     }
 
     @Override
     public boolean isTotals() {
-<span class="fc" id="L132">        return false;</span>
+<span class="fc" id="L127">        return false;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreNTRUSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair</a> &gt; <span class="el_source">GordianCoreNTRUSpec.java</span></div><h1>GordianCoreNTRUSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUSpec;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
+import org.bouncycastle.pqc.crypto.ntru.NTRUParameters;
+import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * NTRU KeySpec.
+ */
+public final class GordianCoreNTRUSpec {
+    /**
+     * The specMap.
+     */
+<span class="fc" id="L36">    private static final Map&lt;GordianNTRUSpec, GordianCoreNTRUSpec&gt; SPECMAP = newSpecMap();</span>
+
+    /**
+     * The specArray.
+     */
+<span class="fc" id="L41">    private static final GordianCoreNTRUSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreNTRUSpec[0]);</span>
+
+    /**
+     * The Spec.
+     */
+    private final GordianNTRUSpec theSpec;
+
+    /**
+     * Constructor.
+     *
+     * @param pSpec the spec
+     */
+<span class="fc" id="L53">    private GordianCoreNTRUSpec(final GordianNTRUSpec pSpec) {</span>
+<span class="fc" id="L54">        theSpec = pSpec;</span>
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * Obtain the spec.
+     *
+     * @return the spec
+     */
+    public GordianNTRUSpec getSpec() {
+<span class="fc" id="L63">        return theSpec;</span>
+    }
+
+    /**
+     * Obtain NTRU Parameters.
+     *
+     * @return the parameters.
+     */
+    public NTRUParameters getParameters() {
+<span class="pc bpc" id="L72" title="5 of 7 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L73">            case HPS509 -&gt; NTRUParameters.ntruhps2048509;</span>
+<span class="nc" id="L74">            case HPS677 -&gt; NTRUParameters.ntruhps2048677;</span>
+<span class="fc" id="L75">            case HPS821 -&gt; NTRUParameters.ntruhps4096821;</span>
+<span class="nc" id="L76">            case HPS1229 -&gt; NTRUParameters.ntruhps40961229;</span>
+<span class="nc" id="L77">            case HRSS701 -&gt; NTRUParameters.ntruhrss701;</span>
+<span class="nc" id="L78">            case HRSS1373 -&gt; NTRUParameters.ntruhrss1373;</span>
+<span class="nc" id="L79">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    /**
+     * Obtain NTRU ParameterSpec.
+     *
+     * @return the parameters.
+     */
+    public NTRUParameterSpec getParameterSpec() {
+<span class="pc bpc" id="L89" title="5 of 7 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L90">            case HPS509 -&gt; NTRUParameterSpec.ntruhps2048509;</span>
+<span class="nc" id="L91">            case HPS677 -&gt; NTRUParameterSpec.ntruhps2048677;</span>
+<span class="fc" id="L92">            case HPS821 -&gt; NTRUParameterSpec.ntruhps4096821;</span>
+<span class="nc" id="L93">            case HPS1229 -&gt; NTRUParameterSpec.ntruhps40961229;</span>
+<span class="nc" id="L94">            case HRSS701 -&gt; NTRUParameterSpec.ntruhrss701;</span>
+<span class="nc" id="L95">            case HRSS1373 -&gt; NTRUParameterSpec.ntruhrss1373;</span>
+<span class="nc" id="L96">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    /**
+     * Obtain NTRU algorithm Identifier.
+     *
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+<span class="pc bpc" id="L106" title="1 of 7 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L107">            case HPS509 -&gt; BCObjectIdentifiers.ntruhps2048509;</span>
+<span class="fc" id="L108">            case HPS677 -&gt; BCObjectIdentifiers.ntruhps2048677;</span>
+<span class="fc" id="L109">            case HPS821 -&gt; BCObjectIdentifiers.ntruhps4096821;</span>
+<span class="fc" id="L110">            case HPS1229 -&gt; BCObjectIdentifiers.ntruhps40961229;</span>
+<span class="fc" id="L111">            case HRSS701 -&gt; BCObjectIdentifiers.ntruhrss701;</span>
+<span class="fc" id="L112">            case HRSS1373 -&gt; BCObjectIdentifiers.ntruhrss1373;</span>
+<span class="nc" id="L113">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L119">        return theSpec.toString();</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L126">            return true;</span>
+        }
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L129">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="nc" id="L133">        return pThat instanceof GordianCoreNTRUSpec myThat</span>
+<span class="nc bnc" id="L134" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L139">        return theSpec.hashCode();</span>
+    }
+
+    /**
+     * Obtain the core spec.
+     *
+     * @param pSpec the base spec
+     * @return the core spec
+     */
+    public static GordianCoreNTRUSpec mapCoreSpec(final Object pSpec) {
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">        return pSpec instanceof GordianNTRUSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map&lt;GordianNTRUSpec, GordianCoreNTRUSpec&gt; newSpecMap() {
+<span class="fc" id="L158">        final Map&lt;GordianNTRUSpec, GordianCoreNTRUSpec&gt; myMap = new EnumMap&lt;&gt;(GordianNTRUSpec.class);</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">        for (GordianNTRUSpec mySpec : GordianNTRUSpec.values()) {</span>
+<span class="fc" id="L160">            myMap.put(mySpec, new GordianCoreNTRUSpec(mySpec));</span>
+        }
+<span class="fc" id="L162">        return myMap;</span>
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static GordianCoreNTRUSpec[] values() {
+<span class="fc" id="L171">        return VALUES;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

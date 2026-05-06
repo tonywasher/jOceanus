@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKCapitalScheme.MoneyWiseUKCapitalAsIncomeScheme;
 import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKCapitalScheme.MoneyWiseUKCapitalFlatRateScheme;
 import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKCapitalScheme.MoneyWiseUKCapitalResidentialScheme;
@@ -29,6 +28,7 @@ import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKDividendScheme.
 import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestAsIncomeScheme;
 import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestBaseRateScheme;
 import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestLoBaseRateScheme;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * The scheme factory.
@@ -84,56 +84,62 @@ public final class MoneyWiseUKSchemeFactory {
 <span class="fc" id="L84">            getTenthFractionalRate(3375), getTenthFractionalRate(3935), Boolean.TRUE);</span>
 
     /**
+     * The Dividends Additional Rate Scheme with no TaxCredit and newer rates.
+     */
+<span class="fc" id="L89">    static final MoneyWiseUKDividendScheme DIVIDEND_NOTAXCREDIT2 = new MoneyWiseUKDividendAdditionalRateScheme(getTenthFractionalRate(1075),</span>
+<span class="fc" id="L90">            getTenthFractionalRate(3575), getTenthFractionalRate(3935), Boolean.TRUE);</span>
+
+    /**
      * The Interest asIncome Scheme.
      */
-<span class="fc" id="L89">    static final MoneyWiseUKInterestScheme INTEREST_ASINCOME = new MoneyWiseUKInterestAsIncomeScheme();</span>
+<span class="fc" id="L95">    static final MoneyWiseUKInterestScheme INTEREST_ASINCOME = new MoneyWiseUKInterestAsIncomeScheme();</span>
 
     /**
      * The Interest base Scheme.
      */
-<span class="fc" id="L94">    static final MoneyWiseUKInterestScheme INTEREST_BASE = new MoneyWiseUKInterestBaseRateScheme(getRate(20));</span>
+<span class="fc" id="L100">    static final MoneyWiseUKInterestScheme INTEREST_BASE = new MoneyWiseUKInterestBaseRateScheme(getRate(20));</span>
 
     /**
      * The LowInterest base Scheme.
      */
-<span class="fc" id="L99">    static final MoneyWiseUKInterestScheme INTEREST_LOBASE = new MoneyWiseUKInterestLoBaseRateScheme(getRate(20));</span>
+<span class="fc" id="L105">    static final MoneyWiseUKInterestScheme INTEREST_LOBASE = new MoneyWiseUKInterestLoBaseRateScheme(getRate(20));</span>
 
     /**
      * The Old Capital Gains Scheme.
      */
-<span class="fc" id="L104">    static final MoneyWiseUKCapitalScheme CAPITAL_OLD = new MoneyWiseUKCapitalFlatRateScheme(getRate(30));</span>
+<span class="fc" id="L110">    static final MoneyWiseUKCapitalScheme CAPITAL_OLD = new MoneyWiseUKCapitalFlatRateScheme(getRate(30));</span>
 
     /**
      * The Capital Gains asIncome Scheme.
      */
-<span class="fc" id="L109">    static final MoneyWiseUKCapitalScheme CAPITAL_ASINCOME = new MoneyWiseUKCapitalAsIncomeScheme();</span>
+<span class="fc" id="L115">    static final MoneyWiseUKCapitalScheme CAPITAL_ASINCOME = new MoneyWiseUKCapitalAsIncomeScheme();</span>
 
     /**
      * The New Capital Gains Scheme.
      */
-<span class="fc" id="L114">    static final MoneyWiseUKCapitalScheme CAPITAL_NEW = new MoneyWiseUKCapitalFlatRateScheme(getRate(18));</span>
+<span class="fc" id="L120">    static final MoneyWiseUKCapitalScheme CAPITAL_NEW = new MoneyWiseUKCapitalFlatRateScheme(getRate(18));</span>
 
     /**
      * The Split Capital Gains Scheme.
      */
-<span class="fc" id="L119">    static final MoneyWiseUKCapitalScheme CAPITAL_SPLIT = new MoneyWiseUKCapitalSplitRateScheme(getRate(18), getRate(28));</span>
+<span class="fc" id="L125">    static final MoneyWiseUKCapitalScheme CAPITAL_SPLIT = new MoneyWiseUKCapitalSplitRateScheme(getRate(18), getRate(28));</span>
 
     /**
      * The Residential Capital Gains Scheme.
      */
-<span class="fc" id="L124">    static final MoneyWiseUKCapitalScheme CAPITAL_RESIDENTIAL = new MoneyWiseUKCapitalResidentialScheme(getRate(10),</span>
-<span class="fc" id="L125">            getRate(20), getRate(18), getRate(28));</span>
+<span class="fc" id="L130">    static final MoneyWiseUKCapitalScheme CAPITAL_RESIDENTIAL = new MoneyWiseUKCapitalResidentialScheme(getRate(10),</span>
+<span class="fc" id="L131">            getRate(20), getRate(18), getRate(28));</span>
 
     /**
      * The Residential Capital Gains Scheme2.
      */
-<span class="fc" id="L130">    static final MoneyWiseUKCapitalScheme CAPITAL_RESIDENTIAL2 = new MoneyWiseUKCapitalResidentialScheme(getRate(10),</span>
-<span class="fc" id="L131">            getRate(20), getRate(18), getRate(24));</span>
+<span class="fc" id="L136">    static final MoneyWiseUKCapitalScheme CAPITAL_RESIDENTIAL2 = new MoneyWiseUKCapitalResidentialScheme(getRate(10),</span>
+<span class="fc" id="L137">            getRate(20), getRate(18), getRate(24));</span>
 
     /**
      * The Split Capital Gains Scheme2.
      */
-<span class="fc" id="L136">    static final MoneyWiseUKCapitalScheme CAPITAL_SPLIT2 = new MoneyWiseUKCapitalSplitRateScheme(getRate(18), getRate(24));</span>
+<span class="fc" id="L142">    static final MoneyWiseUKCapitalScheme CAPITAL_SPLIT2 = new MoneyWiseUKCapitalSplitRateScheme(getRate(18), getRate(24));</span>
 
     /**
      * Constructor.
@@ -148,7 +154,7 @@ public final class MoneyWiseUKSchemeFactory {
      * @return the amount
      */
     private static OceanusRate getRate(final int pUnits) {
-<span class="fc" id="L151">        return MoneyWiseUKTaxBandsFactory.getRate(pUnits);</span>
+<span class="fc" id="L157">        return MoneyWiseUKTaxBandsFactory.getRate(pUnits);</span>
     }
 
     /**
@@ -158,7 +164,7 @@ public final class MoneyWiseUKSchemeFactory {
      * @return the amount
      */
     private static OceanusRate getFractionalRate(final int pUnits) {
-<span class="fc" id="L161">        return OceanusRate.getWholePermille(pUnits);</span>
+<span class="fc" id="L167">        return OceanusRate.getWholePermille(pUnits);</span>
     }
 
     /**
@@ -168,7 +174,7 @@ public final class MoneyWiseUKSchemeFactory {
      * @return the amount
      */
     private static OceanusRate getTenthFractionalRate(final int pUnits) {
-<span class="fc" id="L171">        return OceanusRate.getTenthPermille(pUnits);</span>
+<span class="fc" id="L177">        return OceanusRate.getTenthPermille(pUnits);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

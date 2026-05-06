@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreMacType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac</a> &gt; <span class="el_source">GordianCoreMacType.java</span></div><h1>GordianCoreMacType.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianBundleLoader.GordianBundleId;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCipherResource;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeyType;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * Mac types. Available algorithms.
+ */
+public final class GordianCoreMacType {
+    /**
+     * The macTypeMap.
+     */
+<span class="fc" id="L37">    private static final Map&lt;GordianMacType, GordianCoreMacType&gt; TYPEMAP = newTypeMap();</span>
+
+    /**
+     * The macTypeArray.
+     */
+<span class="fc" id="L42">    private static final GordianCoreMacType[] VALUES = TYPEMAP.values().toArray(new GordianCoreMacType[0]);</span>
+
+    /**
+     * The MacType.
+     */
+    private final GordianMacType theType;
+
+    /**
+     * The Name.
+     */
+    private final String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pType the type
+     */
+<span class="fc" id="L59">    private GordianCoreMacType(final GordianMacType pType) {</span>
+<span class="fc" id="L60">        theType = pType;</span>
+<span class="fc" id="L61">        theName = bundleIdForMacType(pType).getValue();</span>
+<span class="fc" id="L62">    }</span>
+
+    /**
+     * Obtain the type.
+     *
+     * @return the type
+     */
+    public GordianMacType getType() {
+<span class="fc" id="L70">        return theType;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L75">        return theName;</span>
+    }
+
+    /**
+     * Needs re-initialisation after final.
+     *
+     * @return true/false
+     */
+    public boolean needsReInitialisation() {
+<span class="nc" id="L84">        return needsReInitialisation(theType);</span>
+    }
+
+    /**
+     * Does the macType need re-initialisation after final.
+     *
+     * @param pMacType the macType
+     * @return true/false
+     */
+    public static boolean needsReInitialisation(final GordianMacType pMacType) {
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        return pMacType == GordianMacType.GMAC;</span>
+    }
+
+    /**
+     * Is this MacType valid for largeData?
+     *
+     * @return true/false
+     */
+    public boolean supportsLargeData() {
+<span class="nc" id="L103">        return supportsLargeData(theType);</span>
+    }
+
+    /**
+     * Is the MacType valid for largeData?
+     *
+     * @param pMacType the macType
+     * @return true/false
+     */
+    public static boolean supportsLargeData(final GordianMacType pMacType) {
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        return pMacType != GordianMacType.ZUC;</span>
+    }
+
+    /**
+     * Is this MacType valid for keyLength?
+     *
+     * @param pKeyLen the keyLength
+     * @return true/false
+     */
+    public boolean validForKeyLength(final GordianLength pKeyLen) {
+<span class="nc bnc" id="L123" title="All 5 branches missed.">        return switch (theType) {</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">            case POLY1305, GOST, BLAKE3 -&gt; GordianLength.LEN_256 == pKeyLen;</span>
+<span class="nc bnc" id="L125" title="All 4 branches missed.">            case ZUC -&gt; GordianLength.LEN_128 == pKeyLen</span>
+                    || GordianLength.LEN_256 == pKeyLen;
+<span class="nc" id="L127">            case KALYNA -&gt; GordianCoreSymKeyType.validForKeyLength(GordianSymKeyType.KALYNA, pKeyLen);</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">            case SIPHASH -&gt; GordianLength.LEN_128 == pKeyLen;</span>
+<span class="nc" id="L129">            default -&gt; true;</span>
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for this macType.
+     *
+     * @param pType the macType
+     * @return the resource bundleId
+     */
+    private static GordianBundleId bundleIdForMacType(final GordianMacType pType) {
+        /* Create the map and return it */
+<span class="pc bpc" id="L141" title="1 of 17 branches missed.">        return switch (pType) {</span>
+<span class="fc" id="L142">            case HMAC -&gt; GordianMacResource.MAC_HMAC;</span>
+<span class="fc" id="L143">            case GMAC -&gt; GordianMacResource.MAC_GMAC;</span>
+<span class="fc" id="L144">            case CMAC -&gt; GordianMacResource.MAC_CMAC;</span>
+<span class="fc" id="L145">            case KMAC -&gt; GordianMacResource.MAC_KMAC;</span>
+<span class="fc" id="L146">            case POLY1305 -&gt; GordianMacResource.MAC_POLY;</span>
+<span class="fc" id="L147">            case SKEIN -&gt; GordianMacResource.MAC_SKEIN;</span>
+<span class="fc" id="L148">            case KALYNA -&gt; GordianMacResource.MAC_KALYNA;</span>
+<span class="fc" id="L149">            case KUPYNA -&gt; GordianMacResource.MAC_KUPYNA;</span>
+<span class="fc" id="L150">            case BLAKE2 -&gt; GordianMacResource.MAC_BLAKE2;</span>
+<span class="fc" id="L151">            case BLAKE3 -&gt; GordianMacResource.MAC_BLAKE3;</span>
+<span class="fc" id="L152">            case VMPC -&gt; GordianMacResource.MAC_VMPC;</span>
+<span class="fc" id="L153">            case ZUC -&gt; GordianCipherResource.STREAMKEY_ZUC;</span>
+<span class="fc" id="L154">            case CBCMAC -&gt; GordianMacResource.MAC_CBC;</span>
+<span class="fc" id="L155">            case CFBMAC -&gt; GordianMacResource.MAC_CFB;</span>
+<span class="fc" id="L156">            case SIPHASH -&gt; GordianMacResource.MAC_SIPHASH;</span>
+<span class="fc" id="L157">            case GOST -&gt; GordianMacResource.MAC_GOST;</span>
+<span class="nc" id="L158">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L166">            return true;</span>
+        }
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L169">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="fc" id="L173">        return pThat instanceof GordianCoreMacType myThat</span>
+<span class="pc bpc" id="L174" title="2 of 4 branches missed.">                &amp;&amp; theType == myThat.getType();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L179">        return theType.hashCode();</span>
+    }
+
+    /**
+     * Obtain the core type.
+     *
+     * @param pType the base type
+     * @return the core type
+     */
+    public static GordianCoreMacType mapCoreType(final Object pType) {
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">        return pType instanceof GordianMacType myType ? TYPEMAP.get(myType) : null;</span>
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map&lt;GordianMacType, GordianCoreMacType&gt; newTypeMap() {
+<span class="fc" id="L198">        final Map&lt;GordianMacType, GordianCoreMacType&gt; myMap = new EnumMap&lt;&gt;(GordianMacType.class);</span>
+<span class="fc bfc" id="L199" title="All 2 branches covered.">        for (GordianMacType myType : GordianMacType.values()) {</span>
+<span class="fc" id="L200">            myMap.put(myType, new GordianCoreMacType(myType));</span>
+        }
+<span class="fc" id="L202">        return myMap;</span>
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static GordianCoreMacType[] values() {
+<span class="nc" id="L211">        return VALUES;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

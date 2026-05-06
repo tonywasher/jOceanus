@@ -16,18 +16,19 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDHGroup;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairAlgId.GordianDHEncodedParser;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairAlgId.GordianDHEncodedParser;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreDHSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.pkcs.DHParameter;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -83,17 +84,17 @@ public final class BouncyDHKeyPair {
          */
         BouncyDHPublicKey(final GordianKeyPairSpec pKeySpec,
                           final DHPublicKeyParameters pPublicKey) {
-<span class="fc" id="L86">            super(pKeySpec, pPublicKey);</span>
-<span class="fc" id="L87">        }</span>
+<span class="fc" id="L87">            super(pKeySpec, pPublicKey);</span>
+<span class="fc" id="L88">        }</span>
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-<span class="fc" id="L92">            final DHPublicKeyParameters myThis = getPublicKey();</span>
-<span class="fc" id="L93">            final DHPublicKeyParameters myThat = (DHPublicKeyParameters) pThat;</span>
+<span class="fc" id="L93">            final DHPublicKeyParameters myThis = getPublicKey();</span>
+<span class="fc" id="L94">            final DHPublicKeyParameters myThat = (DHPublicKeyParameters) pThat;</span>
 
             /* Compare keys */
-<span class="fc" id="L96">            return compareKeys(myThis, myThat);</span>
+<span class="fc" id="L97">            return compareKeys(myThis, myThat);</span>
         }
 
         /**
@@ -103,8 +104,8 @@ public final class BouncyDHKeyPair {
          * @return true/false
          */
         public boolean validPrivate(final BouncyDHPrivateKey pPrivate) {
-<span class="nc" id="L106">            final DHPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();</span>
-<span class="nc" id="L107">            return getPublicKey().getParameters().equals(myPrivate.getParameters());</span>
+<span class="nc" id="L107">            final DHPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();</span>
+<span class="nc" id="L108">            return getPublicKey().getParameters().equals(myPrivate.getParameters());</span>
         }
 
         /**
@@ -116,8 +117,8 @@ public final class BouncyDHKeyPair {
          */
         private static boolean compareKeys(final DHPublicKeyParameters pFirst,
                                            final DHPublicKeyParameters pSecond) {
-<span class="pc bpc" id="L119" title="1 of 2 branches missed.">            return pFirst.getY().equals(pSecond.getY())</span>
-<span class="pc bpc" id="L120" title="1 of 2 branches missed.">                    &amp;&amp; pFirst.getParameters().equals(pSecond.getParameters());</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">            return pFirst.getY().equals(pSecond.getY())</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">                    &amp;&amp; pFirst.getParameters().equals(pSecond.getParameters());</span>
         }
     }
 
@@ -134,17 +135,17 @@ public final class BouncyDHKeyPair {
          */
         BouncyDHPrivateKey(final GordianKeyPairSpec pKeySpec,
                            final DHPrivateKeyParameters pPrivateKey) {
-<span class="fc" id="L137">            super(pKeySpec, pPrivateKey);</span>
-<span class="fc" id="L138">        }</span>
+<span class="fc" id="L138">            super(pKeySpec, pPrivateKey);</span>
+<span class="fc" id="L139">        }</span>
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-<span class="fc" id="L143">            final DHPrivateKeyParameters myThis = getPrivateKey();</span>
-<span class="fc" id="L144">            final DHPrivateKeyParameters myThat = (DHPrivateKeyParameters) pThat;</span>
+<span class="fc" id="L144">            final DHPrivateKeyParameters myThis = getPrivateKey();</span>
+<span class="fc" id="L145">            final DHPrivateKeyParameters myThat = (DHPrivateKeyParameters) pThat;</span>
 
             /* Compare keys */
-<span class="fc" id="L147">            return compareKeys(myThis, myThat);</span>
+<span class="fc" id="L148">            return compareKeys(myThis, myThat);</span>
         }
 
         /**
@@ -156,8 +157,8 @@ public final class BouncyDHKeyPair {
          */
         private static boolean compareKeys(final DHPrivateKeyParameters pFirst,
                                            final DHPrivateKeyParameters pSecond) {
-<span class="pc bpc" id="L159" title="1 of 2 branches missed.">            return pFirst.getX().equals(pSecond.getX())</span>
-<span class="pc bpc" id="L160" title="1 of 2 branches missed.">                    &amp;&amp; pFirst.getParameters().equals(pSecond.getParameters());</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">            return pFirst.getX().equals(pSecond.getX())</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">                    &amp;&amp; pFirst.getParameters().equals(pSecond.getParameters());</span>
         }
     }
 
@@ -180,25 +181,26 @@ public final class BouncyDHKeyPair {
         BouncyDHKeyPairGenerator(final GordianBaseFactory pFactory,
                                  final GordianKeyPairSpec pKeySpec) {
             /* Initialize underlying class */
-<span class="fc" id="L183">            super(pFactory, pKeySpec);</span>
+<span class="fc" id="L184">            super(pFactory, pKeySpec);</span>
 
             /* Create the parameter generator */
-<span class="fc" id="L186">            final GordianDHGroup myGroup = pKeySpec.getDHGroup();</span>
-<span class="fc" id="L187">            final DHParameters myParms = myGroup.getParameters();</span>
-<span class="fc" id="L188">            final DHKeyGenerationParameters myParams = new DHKeyGenerationParameters(getRandom(), myParms);</span>
+<span class="fc" id="L187">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;</span>
+<span class="fc" id="L188">            final GordianCoreDHSpec myGroup = myKeySpec.getDHSpec();</span>
+<span class="fc" id="L189">            final DHParameters myParms = myGroup.getParameters();</span>
+<span class="fc" id="L190">            final DHKeyGenerationParameters myParams = new DHKeyGenerationParameters(getRandom(), myParms);</span>
 
             /* Create and initialize the generator */
-<span class="fc" id="L191">            theGenerator = new DHKeyPairGenerator();</span>
-<span class="fc" id="L192">            theGenerator.init(myParams);</span>
-<span class="fc" id="L193">        }</span>
+<span class="fc" id="L193">            theGenerator = new DHKeyPairGenerator();</span>
+<span class="fc" id="L194">            theGenerator.init(myParams);</span>
+<span class="fc" id="L195">        }</span>
 
         @Override
         public BouncyKeyPair generateKeyPair() {
             /* Generate and return the keyPair */
-<span class="fc" id="L198">            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();</span>
-<span class="fc" id="L199">            final BouncyDHPublicKey myPublic = new BouncyDHPublicKey(getKeySpec(), (DHPublicKeyParameters) myPair.getPublic());</span>
-<span class="fc" id="L200">            final BouncyDHPrivateKey myPrivate = new BouncyDHPrivateKey(getKeySpec(), (DHPrivateKeyParameters) myPair.getPrivate());</span>
-<span class="fc" id="L201">            return new BouncyKeyPair(myPublic, myPrivate);</span>
+<span class="fc" id="L200">            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L201">            final BouncyDHPublicKey myPublic = new BouncyDHPublicKey(getKeySpec(), (DHPublicKeyParameters) myPair.getPublic());</span>
+<span class="fc" id="L202">            final BouncyDHPrivateKey myPrivate = new BouncyDHPrivateKey(getKeySpec(), (DHPrivateKeyParameters) myPair.getPrivate());</span>
+<span class="fc" id="L203">            return new BouncyKeyPair(myPublic, myPrivate);</span>
         }
 
         @Override
@@ -206,18 +208,18 @@ public final class BouncyDHKeyPair {
             /* Protect against exceptions */
             try {
                 /* Check the keyPair type and keySpecs */
-<span class="fc" id="L209">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+<span class="fc" id="L211">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
 
                 /* build and return the encoding */
-<span class="fc" id="L212">                final BouncyDHPrivateKey myPrivateKey = (BouncyDHPrivateKey) getPrivateKey(pKeyPair);</span>
-<span class="fc" id="L213">                final DHPrivateKeyParameters myKey = myPrivateKey.getPrivateKey();</span>
-<span class="fc" id="L214">                final DHParameters myParms = myKey.getParameters();</span>
-<span class="fc" id="L215">                final AlgorithmIdentifier myId = getAlgorithmIdentifier(myParms);</span>
-<span class="fc" id="L216">                final PrivateKeyInfo myInfo = new PrivateKeyInfo(myId, new ASN1Integer(myKey.getX()));</span>
-<span class="fc" id="L217">                return new PKCS8EncodedKeySpec(myInfo.getEncoded());</span>
+<span class="fc" id="L214">                final BouncyDHPrivateKey myPrivateKey = (BouncyDHPrivateKey) getPrivateKey(pKeyPair);</span>
+<span class="fc" id="L215">                final DHPrivateKeyParameters myKey = myPrivateKey.getPrivateKey();</span>
+<span class="fc" id="L216">                final DHParameters myParms = myKey.getParameters();</span>
+<span class="fc" id="L217">                final AlgorithmIdentifier myId = getAlgorithmIdentifier(myParms);</span>
+<span class="fc" id="L218">                final PrivateKeyInfo myInfo = new PrivateKeyInfo(myId, new ASN1Integer(myKey.getX()));</span>
+<span class="fc" id="L219">                return new PKCS8EncodedKeySpec(myInfo.getEncoded());</span>
 
-<span class="nc" id="L219">            } catch (IOException e) {</span>
-<span class="nc" id="L220">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+<span class="nc" id="L221">            } catch (IOException e) {</span>
+<span class="nc" id="L222">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
             }
         }
 
@@ -227,45 +229,45 @@ public final class BouncyDHKeyPair {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
-<span class="fc" id="L230">                checkKeySpec(pPrivateKey);</span>
+<span class="fc" id="L232">                checkKeySpec(pPrivateKey);</span>
 
                 /* derive keyPair */
-<span class="fc" id="L233">                final BouncyDHPublicKey myPublic = derivePublicKey(pPublicKey);</span>
-<span class="fc" id="L234">                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());</span>
-<span class="fc" id="L235">                final BCDHPrivateKey myKey = new BCDHPrivateKey(myInfo);</span>
-<span class="fc" id="L236">                final DHParameters myParms = GordianDHEncodedParser.determineParameters(myInfo.getPrivateKeyAlgorithm());</span>
-<span class="fc" id="L237">                final BouncyDHPrivateKey myPrivate = new BouncyDHPrivateKey(getKeySpec(), new DHPrivateKeyParameters(myKey.getX(), myParms));</span>
-<span class="fc" id="L238">                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);</span>
+<span class="fc" id="L235">                final BouncyDHPublicKey myPublic = derivePublicKey(pPublicKey);</span>
+<span class="fc" id="L236">                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());</span>
+<span class="fc" id="L237">                final BCDHPrivateKey myKey = new BCDHPrivateKey(myInfo);</span>
+<span class="fc" id="L238">                final DHParameters myParms = GordianDHEncodedParser.determineParameters(myInfo.getPrivateKeyAlgorithm());</span>
+<span class="fc" id="L239">                final BouncyDHPrivateKey myPrivate = new BouncyDHPrivateKey(getKeySpec(), new DHPrivateKeyParameters(myKey.getX(), myParms));</span>
+<span class="fc" id="L240">                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);</span>
 
                 /* Check that we have a matching pair */
-<span class="fc" id="L241">                GordianKeyPairValidity.checkValidity(getFactory(), myPair);</span>
+<span class="fc" id="L243">                GordianKeyPairValidity.checkValidity(getFactory(), myPair);</span>
 
                 /* Return the keyPair */
-<span class="fc" id="L244">                return myPair;</span>
+<span class="fc" id="L246">                return myPair;</span>
 
-<span class="nc" id="L246">            } catch (IOException e) {</span>
-<span class="nc" id="L247">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+<span class="nc" id="L248">            } catch (IOException e) {</span>
+<span class="nc" id="L249">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
             }
         }
 
         @Override
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
             /* Check the keyPair type and keySpecs */
-<span class="fc" id="L254">            BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+<span class="fc" id="L256">            BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
 
             /* build and return the encoding */
-<span class="fc" id="L257">            final BouncyDHPublicKey myPublicKey = (BouncyDHPublicKey) getPublicKey(pKeyPair);</span>
-<span class="fc" id="L258">            final DHPublicKeyParameters myKey = myPublicKey.getPublicKey();</span>
-<span class="fc" id="L259">            final DHParameters myParms = myKey.getParameters();</span>
-<span class="fc" id="L260">            final AlgorithmIdentifier myId = getAlgorithmIdentifier(myParms);</span>
-<span class="fc" id="L261">            final byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(myId, new ASN1Integer(myKey.getY()));</span>
-<span class="fc" id="L262">            return new X509EncodedKeySpec(myBytes);</span>
+<span class="fc" id="L259">            final BouncyDHPublicKey myPublicKey = (BouncyDHPublicKey) getPublicKey(pKeyPair);</span>
+<span class="fc" id="L260">            final DHPublicKeyParameters myKey = myPublicKey.getPublicKey();</span>
+<span class="fc" id="L261">            final DHParameters myParms = myKey.getParameters();</span>
+<span class="fc" id="L262">            final AlgorithmIdentifier myId = getAlgorithmIdentifier(myParms);</span>
+<span class="fc" id="L263">            final byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(myId, new ASN1Integer(myKey.getY()));</span>
+<span class="fc" id="L264">            return new X509EncodedKeySpec(myBytes);</span>
         }
 
         @Override
         public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-<span class="fc" id="L267">            final BouncyDHPublicKey myPublic = derivePublicKey(pEncodedKey);</span>
-<span class="fc" id="L268">            return new BouncyKeyPair(myPublic);</span>
+<span class="fc" id="L269">            final BouncyDHPublicKey myPublic = derivePublicKey(pEncodedKey);</span>
+<span class="fc" id="L270">            return new BouncyKeyPair(myPublic);</span>
         }
 
         /**
@@ -277,12 +279,12 @@ public final class BouncyDHKeyPair {
          */
         private BouncyDHPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             /* Check the keySpecs */
-<span class="fc" id="L280">            checkKeySpec(pEncodedKey);</span>
+<span class="fc" id="L282">            checkKeySpec(pEncodedKey);</span>
 
             /* derive publicKey */
-<span class="fc" id="L283">            final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());</span>
-<span class="fc" id="L284">            final BCDHPublicKey myKey = new BCDHPublicKey(myInfo);</span>
-<span class="fc" id="L285">            return new BouncyDHPublicKey(getKeySpec(), myKey.engineGetKeyParameters());</span>
+<span class="fc" id="L285">            final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());</span>
+<span class="fc" id="L286">            final BCDHPublicKey myKey = new BCDHPublicKey(myInfo);</span>
+<span class="fc" id="L287">            return new BouncyDHPublicKey(getKeySpec(), myKey.engineGetKeyParameters());</span>
         }
 
         /**
@@ -293,11 +295,11 @@ public final class BouncyDHKeyPair {
          */
         private static AlgorithmIdentifier getAlgorithmIdentifier(final DHParameters pParams) {
             /* If this is a public # algorithm */
-<span class="pc bpc" id="L296" title="1 of 2 branches missed.">            return pParams.getQ() != null</span>
-<span class="fc" id="L297">                    ? new AlgorithmIdentifier(X9ObjectIdentifiers.dhpublicnumber,</span>
-<span class="fc" id="L298">                    new DomainParameters(pParams.getP(), pParams.getG(), pParams.getQ(), pParams.getJ(), null).toASN1Primitive())</span>
-<span class="nc" id="L299">                    : new AlgorithmIdentifier(PKCSObjectIdentifiers.dhKeyAgreement,</span>
-<span class="nc" id="L300">                    new DHParameter(pParams.getP(), pParams.getG(), pParams.getL()).toASN1Primitive());</span>
+<span class="pc bpc" id="L298" title="1 of 2 branches missed.">            return pParams.getQ() != null</span>
+<span class="fc" id="L299">                    ? new AlgorithmIdentifier(X9ObjectIdentifiers.dhpublicnumber,</span>
+<span class="fc" id="L300">                    new DomainParameters(pParams.getP(), pParams.getG(), pParams.getQ(), pParams.getJ(), null).toASN1Primitive())</span>
+<span class="nc" id="L301">                    : new AlgorithmIdentifier(PKCSObjectIdentifiers.dhKeyAgreement,</span>
+<span class="nc" id="L302">                    new DHParameter(pParams.getP(), pParams.getG(), pParams.getL()).toASN1Primitive());</span>
         }
     }
 
@@ -319,43 +321,43 @@ public final class BouncyDHKeyPair {
          * @throws GordianException on error
          */
         BouncyDHAnonAgreementEngine(final GordianCoreAgreementFactory pFactory,
-                                    final GordianAgreementSpec pSpec) throws GordianException {
+                                    final GordianCoreAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
-<span class="fc" id="L324">            super(pFactory, pSpec);</span>
+<span class="fc" id="L326">            super(pFactory, pSpec);</span>
 
             /* Create the agreement */
-<span class="fc" id="L327">            theAgreement = new DHBasicAgreement();</span>
-<span class="fc" id="L328">        }</span>
+<span class="fc" id="L329">            theAgreement = new DHBasicAgreement();</span>
+<span class="fc" id="L330">        }</span>
 
         @Override
         public void buildClientHello() throws GordianException {
             /* Access keys */
-<span class="fc" id="L333">            final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(getServerKeyPair());</span>
-<span class="fc" id="L334">            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientEphemeral());</span>
+<span class="fc" id="L335">            final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="fc" id="L336">            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientEphemeral());</span>
 
             /* Derive the secret */
-<span class="fc" id="L337">            theAgreement.init(myPrivate.getPrivateKey());</span>
-<span class="fc" id="L338">            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());</span>
-<span class="fc" id="L339">            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);</span>
+<span class="fc" id="L339">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="fc" id="L340">            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());</span>
+<span class="fc" id="L341">            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);</span>
 
             /* Store secret */
-<span class="fc" id="L342">            storeSecret(mySecret);</span>
-<span class="fc" id="L343">        }</span>
+<span class="fc" id="L344">            storeSecret(mySecret);</span>
+<span class="fc" id="L345">        }</span>
 
         @Override
         public void processClientHello() throws GordianException {
             /* Access keys */
-<span class="fc" id="L348">            final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(getClientEphemeral());</span>
-<span class="fc" id="L349">            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getServerKeyPair());</span>
+<span class="fc" id="L350">            final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="fc" id="L351">            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getServerKeyPair());</span>
 
             /* Derive the secret */
-<span class="fc" id="L352">            theAgreement.init(myPrivate.getPrivateKey());</span>
-<span class="fc" id="L353">            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());</span>
-<span class="fc" id="L354">            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);</span>
+<span class="fc" id="L354">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="fc" id="L355">            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());</span>
+<span class="fc" id="L356">            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);</span>
 
             /* Store secret */
-<span class="fc" id="L357">            storeSecret(mySecret);</span>
-<span class="fc" id="L358">        }</span>
+<span class="fc" id="L359">            storeSecret(mySecret);</span>
+<span class="fc" id="L360">        }</span>
     }
 
     /**
@@ -376,43 +378,43 @@ public final class BouncyDHKeyPair {
          * @throws GordianException on error
          */
         BouncyDHBasicAgreementEngine(final GordianCoreAgreementFactory pFactory,
-                                     final GordianAgreementSpec pSpec) throws GordianException {
+                                     final GordianCoreAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
-<span class="fc" id="L381">            super(pFactory, pSpec);</span>
+<span class="fc" id="L383">            super(pFactory, pSpec);</span>
 
             /* Create the agreement */
-<span class="fc" id="L384">            theAgreement = new DHBasicAgreement();</span>
-<span class="fc" id="L385">        }</span>
+<span class="fc" id="L386">            theAgreement = new DHBasicAgreement();</span>
+<span class="fc" id="L387">        }</span>
 
         @Override
         public void processClientHello() throws GordianException {
             /* Access keys */
-<span class="fc" id="L390">            final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(getClientKeyPair());</span>
-<span class="fc" id="L391">            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getServerKeyPair());</span>
+<span class="fc" id="L392">            final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(getClientKeyPair());</span>
+<span class="fc" id="L393">            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getServerKeyPair());</span>
 
             /* Derive the secret */
-<span class="fc" id="L394">            theAgreement.init(myPrivate.getPrivateKey());</span>
-<span class="fc" id="L395">            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());</span>
-<span class="fc" id="L396">            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);</span>
+<span class="fc" id="L396">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="fc" id="L397">            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());</span>
+<span class="fc" id="L398">            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);</span>
 
             /* Store secret */
-<span class="fc" id="L399">            storeSecret(mySecret);</span>
-<span class="fc" id="L400">        }</span>
+<span class="fc" id="L401">            storeSecret(mySecret);</span>
+<span class="fc" id="L402">        }</span>
 
         @Override
         public void processServerHello() throws GordianException {
             /* Access keys */
-<span class="fc" id="L405">            final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(getServerKeyPair());</span>
-<span class="fc" id="L406">            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientKeyPair());</span>
+<span class="fc" id="L407">            final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="fc" id="L408">            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientKeyPair());</span>
 
             /* Derive the secret */
-<span class="fc" id="L409">            theAgreement.init(myPrivate.getPrivateKey());</span>
-<span class="fc" id="L410">            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());</span>
-<span class="fc" id="L411">            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);</span>
+<span class="fc" id="L411">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="fc" id="L412">            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());</span>
+<span class="fc" id="L413">            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);</span>
 
             /* Store secret */
-<span class="fc" id="L414">            storeSecret(mySecret);</span>
-<span class="fc" id="L415">        }</span>
+<span class="fc" id="L416">            storeSecret(mySecret);</span>
+<span class="fc" id="L417">        }</span>
     }
 
     /**
@@ -433,53 +435,53 @@ public final class BouncyDHKeyPair {
          * @throws GordianException on error
          */
         BouncyDHUnifiedAgreementEngine(final GordianCoreAgreementFactory pFactory,
-                                       final GordianAgreementSpec pSpec) throws GordianException {
+                                       final GordianCoreAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
-<span class="fc" id="L438">            super(pFactory, pSpec);</span>
+<span class="fc" id="L440">            super(pFactory, pSpec);</span>
 
             /* Create the agreement */
-<span class="fc" id="L441">            theAgreement = new DHUnifiedAgreement();</span>
-<span class="fc" id="L442">        }</span>
+<span class="fc" id="L443">            theAgreement = new DHUnifiedAgreement();</span>
+<span class="fc" id="L444">        }</span>
 
         @Override
         public void processClientHello() throws GordianException {
             /* Access keys */
-<span class="fc" id="L447">            final BouncyDHPublicKey myClientPublic = (BouncyDHPublicKey) getPublicKey(getClientKeyPair());</span>
-<span class="fc" id="L448">            final BouncyDHPublicKey myClientEphPublic = (BouncyDHPublicKey) getPublicKey(getClientEphemeral());</span>
-<span class="fc" id="L449">            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getServerKeyPair());</span>
-<span class="fc" id="L450">            final BouncyDHPublicKey myEphPublic = (BouncyDHPublicKey) getPublicKey(getServerEphemeral());</span>
-<span class="fc" id="L451">            final BouncyDHPrivateKey myEphPrivate = (BouncyDHPrivateKey) getPrivateKey(getServerEphemeral());</span>
+<span class="fc" id="L449">            final BouncyDHPublicKey myClientPublic = (BouncyDHPublicKey) getPublicKey(getClientKeyPair());</span>
+<span class="fc" id="L450">            final BouncyDHPublicKey myClientEphPublic = (BouncyDHPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="fc" id="L451">            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getServerKeyPair());</span>
+<span class="fc" id="L452">            final BouncyDHPublicKey myEphPublic = (BouncyDHPublicKey) getPublicKey(getServerEphemeral());</span>
+<span class="fc" id="L453">            final BouncyDHPrivateKey myEphPrivate = (BouncyDHPrivateKey) getPrivateKey(getServerEphemeral());</span>
 
             /* Derive the secret */
-<span class="fc" id="L454">            final DHUPrivateParameters myPrivParams</span>
-<span class="fc" id="L455">                    = new DHUPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
-<span class="fc" id="L456">            theAgreement.init(myPrivParams);</span>
+<span class="fc" id="L456">            final DHUPrivateParameters myPrivParams</span>
+<span class="fc" id="L457">                    = new DHUPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
+<span class="fc" id="L458">            theAgreement.init(myPrivParams);</span>
 
             /* Store secret */
-<span class="fc" id="L459">            final DHUPublicParameters myPubParams</span>
-<span class="fc" id="L460">                    = new DHUPublicParameters(myClientPublic.getPublicKey(), myClientEphPublic.getPublicKey());</span>
-<span class="fc" id="L461">            storeSecret(theAgreement.calculateAgreement(myPubParams));</span>
-<span class="fc" id="L462">        }</span>
+<span class="fc" id="L461">            final DHUPublicParameters myPubParams</span>
+<span class="fc" id="L462">                    = new DHUPublicParameters(myClientPublic.getPublicKey(), myClientEphPublic.getPublicKey());</span>
+<span class="fc" id="L463">            storeSecret(theAgreement.calculateAgreement(myPubParams));</span>
+<span class="fc" id="L464">        }</span>
 
         @Override
         public void processServerHello() throws GordianException {
             /* Access keys */
-<span class="fc" id="L467">            final BouncyDHPublicKey myServerPublic = (BouncyDHPublicKey) getPublicKey(getServerKeyPair());</span>
-<span class="fc" id="L468">            final BouncyDHPublicKey myServerEphPublic = (BouncyDHPublicKey) getPublicKey(getServerEphemeral());</span>
-<span class="fc" id="L469">            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientKeyPair());</span>
-<span class="fc" id="L470">            final BouncyDHPublicKey myEphPublic = (BouncyDHPublicKey) getPublicKey(getClientEphemeral());</span>
-<span class="fc" id="L471">            final BouncyDHPrivateKey myEphPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientEphemeral());</span>
+<span class="fc" id="L469">            final BouncyDHPublicKey myServerPublic = (BouncyDHPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="fc" id="L470">            final BouncyDHPublicKey myServerEphPublic = (BouncyDHPublicKey) getPublicKey(getServerEphemeral());</span>
+<span class="fc" id="L471">            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientKeyPair());</span>
+<span class="fc" id="L472">            final BouncyDHPublicKey myEphPublic = (BouncyDHPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="fc" id="L473">            final BouncyDHPrivateKey myEphPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientEphemeral());</span>
 
             /* Derive the secret */
-<span class="fc" id="L474">            final DHUPrivateParameters myPrivParams</span>
-<span class="fc" id="L475">                    = new DHUPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
-<span class="fc" id="L476">            theAgreement.init(myPrivParams);</span>
+<span class="fc" id="L476">            final DHUPrivateParameters myPrivParams</span>
+<span class="fc" id="L477">                    = new DHUPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
+<span class="fc" id="L478">            theAgreement.init(myPrivParams);</span>
 
             /* Store secret */
-<span class="fc" id="L479">            final DHUPublicParameters myPubParams</span>
-<span class="fc" id="L480">                    = new DHUPublicParameters(myServerPublic.getPublicKey(), myServerEphPublic.getPublicKey());</span>
-<span class="fc" id="L481">            storeSecret(theAgreement.calculateAgreement(myPubParams));</span>
-<span class="fc" id="L482">        }</span>
+<span class="fc" id="L481">            final DHUPublicParameters myPubParams</span>
+<span class="fc" id="L482">                    = new DHUPublicParameters(myServerPublic.getPublicKey(), myServerEphPublic.getPublicKey());</span>
+<span class="fc" id="L483">            storeSecret(theAgreement.calculateAgreement(myPubParams));</span>
+<span class="fc" id="L484">        }</span>
     }
 
     /**
@@ -500,55 +502,55 @@ public final class BouncyDHKeyPair {
          * @throws GordianException on error
          */
         BouncyDHMQVAgreementEngine(final GordianCoreAgreementFactory pFactory,
-                                   final GordianAgreementSpec pSpec) throws GordianException {
+                                   final GordianCoreAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
-<span class="fc" id="L505">            super(pFactory, pSpec);</span>
+<span class="fc" id="L507">            super(pFactory, pSpec);</span>
 
             /* Create the agreement */
-<span class="fc" id="L508">            theAgreement = new MQVBasicAgreement();</span>
-<span class="fc" id="L509">        }</span>
+<span class="fc" id="L510">            theAgreement = new MQVBasicAgreement();</span>
+<span class="fc" id="L511">        }</span>
 
         @Override
         public void processClientHello() throws GordianException {
             /* Access keys */
-<span class="fc" id="L514">            final BouncyDHPublicKey myClientPublic = (BouncyDHPublicKey) getPublicKey(getClientKeyPair());</span>
-<span class="fc" id="L515">            final BouncyDHPublicKey myClientEphPublic = (BouncyDHPublicKey) getPublicKey(getClientEphemeral());</span>
-<span class="fc" id="L516">            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getServerKeyPair());</span>
-<span class="fc" id="L517">            final BouncyDHPublicKey myEphPublic = (BouncyDHPublicKey) getPublicKey(getServerEphemeral());</span>
-<span class="fc" id="L518">            final BouncyDHPrivateKey myEphPrivate = (BouncyDHPrivateKey) getPrivateKey(getServerEphemeral());</span>
+<span class="fc" id="L516">            final BouncyDHPublicKey myClientPublic = (BouncyDHPublicKey) getPublicKey(getClientKeyPair());</span>
+<span class="fc" id="L517">            final BouncyDHPublicKey myClientEphPublic = (BouncyDHPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="fc" id="L518">            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getServerKeyPair());</span>
+<span class="fc" id="L519">            final BouncyDHPublicKey myEphPublic = (BouncyDHPublicKey) getPublicKey(getServerEphemeral());</span>
+<span class="fc" id="L520">            final BouncyDHPrivateKey myEphPrivate = (BouncyDHPrivateKey) getPrivateKey(getServerEphemeral());</span>
 
             /* Derive the secret */
-<span class="fc" id="L521">            final DHMQVPrivateParameters myPrivParams</span>
-<span class="fc" id="L522">                    = new DHMQVPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
-<span class="fc" id="L523">            theAgreement.init(myPrivParams);</span>
+<span class="fc" id="L523">            final DHMQVPrivateParameters myPrivParams</span>
+<span class="fc" id="L524">                    = new DHMQVPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
+<span class="fc" id="L525">            theAgreement.init(myPrivParams);</span>
 
             /* Store secret */
-<span class="fc" id="L526">            final DHMQVPublicParameters myPubParams</span>
-<span class="fc" id="L527">                    = new DHMQVPublicParameters(myClientPublic.getPublicKey(), myClientEphPublic.getPublicKey());</span>
-<span class="fc" id="L528">            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(),</span>
-<span class="fc" id="L529">                    theAgreement.calculateAgreement(myPubParams)));</span>
-<span class="fc" id="L530">        }</span>
+<span class="fc" id="L528">            final DHMQVPublicParameters myPubParams</span>
+<span class="fc" id="L529">                    = new DHMQVPublicParameters(myClientPublic.getPublicKey(), myClientEphPublic.getPublicKey());</span>
+<span class="fc" id="L530">            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(),</span>
+<span class="fc" id="L531">                    theAgreement.calculateAgreement(myPubParams)));</span>
+<span class="fc" id="L532">        }</span>
 
         @Override
         public void processServerHello() throws GordianException {
             /* Access keys */
-<span class="fc" id="L535">            final BouncyDHPublicKey myServerPublic = (BouncyDHPublicKey) getPublicKey(getServerKeyPair());</span>
-<span class="fc" id="L536">            final BouncyDHPublicKey myServerEphPublic = (BouncyDHPublicKey) getPublicKey(getServerEphemeral());</span>
-<span class="fc" id="L537">            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientKeyPair());</span>
-<span class="fc" id="L538">            final BouncyDHPublicKey myEphPublic = (BouncyDHPublicKey) getPublicKey(getClientEphemeral());</span>
-<span class="fc" id="L539">            final BouncyDHPrivateKey myEphPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientEphemeral());</span>
+<span class="fc" id="L537">            final BouncyDHPublicKey myServerPublic = (BouncyDHPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="fc" id="L538">            final BouncyDHPublicKey myServerEphPublic = (BouncyDHPublicKey) getPublicKey(getServerEphemeral());</span>
+<span class="fc" id="L539">            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientKeyPair());</span>
+<span class="fc" id="L540">            final BouncyDHPublicKey myEphPublic = (BouncyDHPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="fc" id="L541">            final BouncyDHPrivateKey myEphPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientEphemeral());</span>
 
             /* Derive the secret */
-<span class="fc" id="L542">            final DHMQVPrivateParameters myPrivParams</span>
-<span class="fc" id="L543">                    = new DHMQVPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
-<span class="fc" id="L544">            theAgreement.init(myPrivParams);</span>
+<span class="fc" id="L544">            final DHMQVPrivateParameters myPrivParams</span>
+<span class="fc" id="L545">                    = new DHMQVPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
+<span class="fc" id="L546">            theAgreement.init(myPrivParams);</span>
 
             /* Store secret */
-<span class="fc" id="L547">            final DHMQVPublicParameters myPubParams</span>
-<span class="fc" id="L548">                    = new DHMQVPublicParameters(myServerPublic.getPublicKey(), myServerEphPublic.getPublicKey());</span>
-<span class="fc" id="L549">            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(),</span>
-<span class="fc" id="L550">                    theAgreement.calculateAgreement(myPubParams)));</span>
-<span class="fc" id="L551">        }</span>
+<span class="fc" id="L549">            final DHMQVPublicParameters myPubParams</span>
+<span class="fc" id="L550">                    = new DHMQVPublicParameters(myServerPublic.getPublicKey(), myServerEphPublic.getPublicKey());</span>
+<span class="fc" id="L551">            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(),</span>
+<span class="fc" id="L552">                    theAgreement.calculateAgreement(myPubParams)));</span>
+<span class="fc" id="L553">        }</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

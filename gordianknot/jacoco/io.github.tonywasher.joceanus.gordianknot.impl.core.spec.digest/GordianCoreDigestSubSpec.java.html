@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreDigestSubSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest</a> &gt; <span class="el_source">GordianCoreDigestSubSpec.java</span></div><h1>GordianCoreDigestSubSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * Digest SubSpec.
+ */
+public interface GordianCoreDigestSubSpec {
+    /**
+     * Obtain the subSpec.
+     *
+     * @return the subSpec
+     */
+    GordianDigestSubSpec getSubSpec();
+
+    /**
+     * Obtain the possible subSpecTypes for the digestType.
+     *
+     * @param pType the digestType
+     * @return the subSpec types
+     */
+    static GordianDigestSubSpec[] getPossibleSubSpecsForType(final GordianDigestType pType) {
+<span class="fc bfc" id="L47" title="All 4 branches covered.">        return switch (pType) {</span>
+            case SHA2, BLAKE2, HARAKA -&gt;
+<span class="fc" id="L49">                    new GordianDigestState[]{GordianDigestState.STATE256, GordianDigestState.STATE512};</span>
+            case SKEIN -&gt;
+<span class="fc" id="L51">                    new GordianDigestState[]{GordianDigestState.STATE256, GordianDigestState.STATE512, GordianDigestState.STATE1024};</span>
+<span class="fc" id="L52">            case SHAKE, KANGAROO -&gt; new GordianDigestState[]{GordianDigestState.STATE128, GordianDigestState.STATE256};</span>
+<span class="fc" id="L53">            default -&gt; new GordianDigestState[]{null};</span>
+        };
+    }
+
+    /**
+     * Obtain the subSpec for the type and length.
+     *
+     * @param pType   the digestType
+     * @param pLength the length
+     * @return the subSpec
+     */
+    static GordianDigestSubSpec getDefaultSubSpecForTypeAndLength(final GordianDigestType pType,
+                                                                  final GordianLength pLength) {
+<span class="fc bfc" id="L66" title="All 6 branches covered.">        return switch (pType) {</span>
+<span class="fc bfc" id="L67" title="All 4 branches covered.">            case SHA2 -&gt; pLength == GordianLength.LEN_224 || pLength == GordianLength.LEN_256</span>
+<span class="fc" id="L68">                    ? GordianDigestState.STATE256</span>
+<span class="fc" id="L69">                    : GordianDigestState.STATE512;</span>
+<span class="pc bpc" id="L70" title="1 of 3 branches missed.">            case SKEIN -&gt; switch (pLength) {</span>
+<span class="nc" id="L71">                case LEN_1024 -&gt; GordianDigestState.STATE1024;</span>
+<span class="fc" id="L72">                case LEN_512, LEN_384 -&gt; GordianDigestState.STATE512;</span>
+<span class="fc" id="L73">                default -&gt; GordianDigestState.STATE256;</span>
+            };
+<span class="fc bfc" id="L75" title="All 2 branches covered.">            case SHAKE, KANGAROO -&gt; pLength == GordianLength.LEN_256</span>
+<span class="fc" id="L76">                    ? GordianDigestState.STATE128</span>
+<span class="fc" id="L77">                    : GordianDigestState.STATE256;</span>
+<span class="pc bpc" id="L78" title="2 of 4 branches missed.">            case BLAKE2 -&gt; pLength == GordianLength.LEN_128 || pLength == GordianLength.LEN_224</span>
+<span class="nc" id="L79">                    ? GordianDigestState.STATE256</span>
+<span class="fc" id="L80">                    : GordianDigestState.STATE512;</span>
+<span class="fc" id="L81">            case HARAKA -&gt; GordianDigestState.STATE256;</span>
+<span class="fc" id="L82">            default -&gt; null;</span>
+        };
+    }
+
+    /**
+     * State subSpecification.
+     */
+    final class GordianCoreDigestState
+            implements GordianCoreDigestSubSpec {
+        /**
+         * The digestStateMap.
+         */
+<span class="fc" id="L94">        private static final Map&lt;GordianDigestState, GordianCoreDigestState&gt; STATEMAP = newStateMap();</span>
+
+        /**
+         * The State.
+         */
+        private final GordianDigestState theState;
+
+        /**
+         * The length.
+         */
+        private final GordianLength theLength;
+
+        /**
+         * Constructor.
+         *
+         * @param pState the state
+         */
+<span class="fc" id="L111">        private GordianCoreDigestState(final GordianDigestState pState) {</span>
+<span class="fc" id="L112">            theState = pState;</span>
+<span class="fc" id="L113">            theLength = lengthForDigestState();</span>
+<span class="fc" id="L114">        }</span>
+
+        @Override
+        public GordianDigestSubSpec getSubSpec() {
+<span class="fc" id="L118">            return getState();</span>
+        }
+
+        /**
+         * Obtain the state.
+         *
+         * @return the state
+         */
+        public GordianDigestState getState() {
+<span class="fc" id="L127">            return theState;</span>
+        }
+
+        /**
+         * Obtain length for state.
+         *
+         * @return the length
+         */
+        public GordianLength getLength() {
+<span class="fc" id="L136">            return theLength;</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="fc" id="L141">            return theLength.toString();</span>
+        }
+
+        /**
+         * Is this state a hybrid for sha2 length?
+         *
+         * @param pLength the length
+         * @return true/false
+         */
+        public boolean isSha2Hybrid(final GordianLength pLength) {
+<span class="nc bnc" id="L151" title="All 2 branches missed.">            return theState == GordianDigestState.STATE512</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">                    &amp;&amp; (GordianLength.LEN_224.equals(pLength)</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">                    || GordianLength.LEN_256.equals(pLength));</span>
+        }
+
+        /**
+         * Obtain the length for an explicit Xof variant.
+         *
+         * @param pType the digestType
+         * @return the length
+         */
+        GordianLength lengthForXofType(final GordianCoreDigestType pType) {
+<span class="pc bpc" id="L163" title="1 of 3 branches missed.">            return switch (pType.getType()) {</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                case SKEIN -&gt; switch (theState) {</span>
+<span class="fc" id="L165">                    case STATE256, STATE512, STATE1024 -&gt; theLength;</span>
+<span class="fc" id="L166">                    default -&gt; null;</span>
+                };
+<span class="fc bfc" id="L168" title="All 2 branches covered.">                case BLAKE2 -&gt; switch (theState) {</span>
+<span class="fc" id="L169">                    case STATE256, STATE512 -&gt; theLength;</span>
+<span class="fc" id="L170">                    default -&gt; null;</span>
+                };
+<span class="nc" id="L172">                default -&gt; null;</span>
+            };
+        }
+
+        /**
+         * is length available for this type and length?
+         *
+         * @param pType   the digestType
+         * @param pLength the length
+         * @return true/false
+         */
+        boolean validForTypeAndLength(final GordianCoreDigestType pType,
+                                      final GordianLength pLength) {
+<span class="pc bpc" id="L185" title="1 of 6 branches missed.">            return switch (pType.getType()) {</span>
+<span class="fc" id="L186">                case SHA2 -&gt; validForSha2Length(pLength);</span>
+<span class="fc" id="L187">                case SHAKE, KANGAROO -&gt; validForSHAKELength(pLength);</span>
+<span class="fc" id="L188">                case SKEIN -&gt; validForSkeinLength(pLength);</span>
+<span class="fc" id="L189">                case BLAKE2 -&gt; validForBlake2Length(pLength);</span>
+<span class="fc" id="L190">                case HARAKA -&gt; validForHarakaLength(pLength);</span>
+<span class="nc" id="L191">                default -&gt; false;</span>
+            };
+        }
+
+        /**
+         * Is this state valid for the skeinLength?
+         *
+         * @param pLength the length
+         * @return true/false
+         */
+        private boolean validForSha2Length(final GordianLength pLength) {
+<span class="pc bpc" id="L202" title="1 of 3 branches missed.">            return switch (theState) {</span>
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">                case STATE512 -&gt; switch (pLength) {</span>
+<span class="fc" id="L204">                    case LEN_224, LEN_256, LEN_384, LEN_512 -&gt; true;</span>
+<span class="nc" id="L205">                    default -&gt; false;</span>
+                };
+<span class="fc bfc" id="L207" title="All 2 branches covered.">                case STATE256 -&gt; switch (pLength) {</span>
+<span class="fc" id="L208">                    case LEN_224, LEN_256 -&gt; true;</span>
+<span class="fc" id="L209">                    default -&gt; false;</span>
+                };
+<span class="nc" id="L211">                default -&gt; false;</span>
+            };
+        }
+
+        /**
+         * Is this state valid for the skeinLength?
+         *
+         * @param pLength the length
+         * @return true/false
+         */
+        private boolean validForSHAKELength(final GordianLength pLength) {
+<span class="pc bpc" id="L222" title="1 of 3 branches missed.">            return switch (theState) {</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">                case STATE256 -&gt; pLength == GordianLength.LEN_512;</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">                case STATE128 -&gt; pLength == GordianLength.LEN_256;</span>
+<span class="nc" id="L225">                default -&gt; false;</span>
+            };
+        }
+
+        /**
+         * Is this state valid for the skeinLength?
+         *
+         * @param pLength the length
+         * @return true/false
+         */
+        private boolean validForSkeinLength(final GordianLength pLength) {
+<span class="fc bfc" id="L236" title="All 4 branches covered.">            return switch (theState) {</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">                case STATE1024 -&gt; switch (pLength) {</span>
+<span class="fc" id="L238">                    case LEN_384, LEN_512, LEN_1024 -&gt; true;</span>
+<span class="fc" id="L239">                    default -&gt; false;</span>
+                };
+<span class="fc bfc" id="L241" title="All 2 branches covered.">                case STATE512 -&gt; switch (pLength) {</span>
+<span class="fc" id="L242">                    case LEN_128, LEN_160, LEN_224, LEN_256, LEN_384, LEN_512 -&gt; true;</span>
+<span class="fc" id="L243">                    default -&gt; false;</span>
+                };
+<span class="fc bfc" id="L245" title="All 2 branches covered.">                case STATE256 -&gt; switch (pLength) {</span>
+<span class="fc" id="L246">                    case LEN_128, LEN_160, LEN_224, LEN_256 -&gt; true;</span>
+<span class="fc" id="L247">                    default -&gt; false;</span>
+                };
+<span class="fc" id="L249">                default -&gt; false;</span>
+            };
+        }
+
+        /**
+         * Is this state valid for the blake2Length.
+         *
+         * @param pLength the length
+         * @return true/false
+         */
+        private boolean validForBlake2Length(final GordianLength pLength) {
+<span class="fc bfc" id="L260" title="All 3 branches covered.">            return switch (theState) {</span>
+<span class="fc bfc" id="L261" title="All 2 branches covered.">                case STATE512 -&gt; switch (pLength) {</span>
+<span class="fc" id="L262">                    case LEN_160, LEN_256, LEN_384, LEN_512 -&gt; true;</span>
+<span class="fc" id="L263">                    default -&gt; false;</span>
+                };
+<span class="fc bfc" id="L265" title="All 2 branches covered.">                case STATE256 -&gt; switch (pLength) {</span>
+<span class="fc" id="L266">                    case LEN_128, LEN_160, LEN_224, LEN_256 -&gt; true;</span>
+<span class="fc" id="L267">                    default -&gt; false;</span>
+                };
+<span class="fc" id="L269">                default -&gt; false;</span>
+            };
+        }
+
+        /**
+         * Is this state valid for the harakaLength.
+         *
+         * @param pLength the length
+         * @return true/false
+         */
+        private boolean validForHarakaLength(final GordianLength pLength) {
+<span class="pc bpc" id="L280" title="1 of 2 branches missed.">            return switch (theState) {</span>
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">                case STATE512, STATE256 -&gt; pLength == GordianLength.LEN_256;</span>
+<span class="nc" id="L282">                default -&gt; false;</span>
+            };
+        }
+
+        /**
+         * Is this the Blake2b algorithm?
+         *
+         * @return true/false
+         */
+        public boolean isBlake2bState() {
+<span class="fc" id="L292">            return GordianDigestState.STATE512.equals(theState);</span>
+        }
+
+        /**
+         * Obtain the blake2Algorithm name for State.
+         *
+         * @param pXofMode is this a Xof variant
+         * @return the algorithm name
+         */
+        public String getBlake2Algorithm(final boolean pXofMode) {
+<span class="fc bfc" id="L302" title="All 2 branches covered.">            return (pXofMode ? &quot;X&quot; : &quot;&quot;)</span>
+<span class="fc bfc" id="L303" title="All 2 branches covered.">                    + (isBlake2bState() ? &quot;b&quot; : &quot;s&quot;);</span>
+        }
+
+        /**
+         * Obtain the kangarooAlgorithm name for State.
+         *
+         * @return the algorithmName
+         */
+        String getKangarooAlgorithm() {
+<span class="fc bfc" id="L312" title="All 2 branches covered.">            return theState == GordianDigestState.STATE256</span>
+<span class="fc" id="L313">                    ? GordianDigestResource.DIGEST_MARSUPILAMI.getValue()</span>
+<span class="fc" id="L314">                    : GordianDigestResource.DIGEST_KANGAROO.getValue();</span>
+        }
+
+        /**
+         * Obtain length for state.
+         *
+         * @return the length
+         */
+        public GordianLength lengthForDigestState() {
+<span class="pc bpc" id="L323" title="1 of 5 branches missed.">            return switch (theState) {</span>
+<span class="fc" id="L324">                case STATE128 -&gt; GordianLength.LEN_128;</span>
+<span class="fc" id="L325">                case STATE256 -&gt; GordianLength.LEN_256;</span>
+<span class="fc" id="L326">                case STATE512 -&gt; GordianLength.LEN_512;</span>
+<span class="fc" id="L327">                case STATE1024 -&gt; GordianLength.LEN_1024;</span>
+<span class="nc" id="L328">                default -&gt; throw new IllegalArgumentException();</span>
+            };
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+<span class="pc bpc" id="L335" title="1 of 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L336">                return true;</span>
+            }
+<span class="pc bpc" id="L338" title="1 of 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L339">                return false;</span>
+            }
+
+            /* Check subFields */
+<span class="fc" id="L343">            return pThat instanceof GordianCoreDigestState myThat</span>
+<span class="pc bpc" id="L344" title="2 of 4 branches missed.">                    &amp;&amp; theState == myThat.getState();</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="fc" id="L349">            return theState.hashCode();</span>
+        }
+
+        /**
+         * Obtain the core state.
+         *
+         * @param pState the base state
+         * @return the core state
+         */
+        public static GordianCoreDigestState mapCoreState(final Object pState) {
+<span class="fc bfc" id="L359" title="All 2 branches covered.">            return pState instanceof GordianDigestState myState ? STATEMAP.get(myState) : null;</span>
+        }
+
+        /**
+         * Build the state map.
+         *
+         * @return the state map
+         */
+        private static Map&lt;GordianDigestState, GordianCoreDigestState&gt; newStateMap() {
+<span class="fc" id="L368">            final Map&lt;GordianDigestState, GordianCoreDigestState&gt; myMap = new EnumMap&lt;&gt;(GordianDigestState.class);</span>
+<span class="fc bfc" id="L369" title="All 2 branches covered.">            for (GordianDigestState myState : GordianDigestState.values()) {</span>
+<span class="fc" id="L370">                myMap.put(myState, new GordianCoreDigestState(myState));</span>
+            }
+<span class="fc" id="L372">            return myMap;</span>
+        }
+
+        /**
+         * Obtain the values.
+         *
+         * @return the values
+         */
+        public static Collection&lt;GordianCoreDigestState&gt; values() {
+<span class="fc" id="L381">            return STATEMAP.values();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

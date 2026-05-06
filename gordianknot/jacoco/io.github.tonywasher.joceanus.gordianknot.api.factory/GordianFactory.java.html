@@ -23,7 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFactory;
@@ -122,11 +122,8 @@ public interface GordianFactory {
      * @return the factoryLock
      * @throws GordianException on error
      */
-    default GordianFactoryLock newFactoryLock(final GordianFactory pFactoryToLock,
-                                              final char[] pPassword) throws GordianException {
-        /* Create the factoryLock */
-<span class="fc" id="L128">        return newFactoryLock(pFactoryToLock, new GordianPasswordLockSpec(), pPassword);</span>
-    }
+    GordianFactoryLock newFactoryLock(GordianFactory pFactoryToLock,
+                                      char[] pPassword) throws GordianException;
 
     /**
      * Create a new factoryLock for a factory.
@@ -149,11 +146,8 @@ public interface GordianFactory {
      * @return the factoryLock
      * @throws GordianException on error
      */
-    default GordianFactoryLock newFactoryLock(final GordianFactoryType pFactoryType,
-                                              final char[] pPassword) throws GordianException {
-        /* Create the factoryLock */
-<span class="nc" id="L155">        return newFactoryLock(new GordianPasswordLockSpec(), pFactoryType, pPassword);</span>
-    }
+    GordianFactoryLock newFactoryLock(GordianFactoryType pFactoryType,
+                                      char[] pPassword) throws GordianException;
 
     /**
      * Create a new factoryLock for a new random factory.
@@ -190,7 +184,7 @@ public interface GordianFactory {
          * @return the factory
          */
         default GordianFactory getFactory() {
-<span class="fc" id="L193">            return getLockedObject();</span>
+<span class="fc" id="L187">            return getLockedObject();</span>
         }
     }
 }

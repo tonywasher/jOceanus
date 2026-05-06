@@ -92,37 +92,35 @@ public class GordianSkeinXofEngine
 <span class="fc" id="L92">        CipherParameters myParams = params;</span>
 <span class="fc" id="L93">        byte[] newKey = null;</span>
 <span class="fc" id="L94">        byte[] newIV = null;</span>
-<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        if ((myParams instanceof ParametersWithIV)) {</span>
-<span class="fc" id="L96">            final ParametersWithIV ivParams = (ParametersWithIV) myParams;</span>
-<span class="fc" id="L97">            newIV = ivParams.getIV();</span>
-<span class="fc" id="L98">            myParams = ivParams.getParameters();</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        if ((myParams instanceof ParametersWithIV ivParams)) {</span>
+<span class="fc" id="L96">            newIV = ivParams.getIV();</span>
+<span class="fc" id="L97">            myParams = ivParams.getParameters();</span>
         }
-<span class="pc bpc" id="L100" title="1 of 2 branches missed.">        if (myParams instanceof KeyParameter) {</span>
-<span class="fc" id="L101">            final KeyParameter keyParam = (KeyParameter) myParams;</span>
-<span class="fc" id="L102">            newKey = keyParam.getKey();</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (myParams instanceof KeyParameter keyParam) {</span>
+<span class="fc" id="L100">            newKey = keyParam.getKey();</span>
         }
-<span class="pc bpc" id="L104" title="2 of 4 branches missed.">        if (newKey == null || newIV == null) {</span>
-<span class="nc" id="L105">            throw new IllegalArgumentException(&quot;A key and IV must be provided&quot;);</span>
+<span class="pc bpc" id="L102" title="2 of 4 branches missed.">        if (newKey == null || newIV == null) {</span>
+<span class="nc" id="L103">            throw new IllegalArgumentException(&quot;A key and IV must be provided&quot;);</span>
         }
 
         /* Initialise engine and mark as initialised */
-<span class="fc" id="L109">        final GordianSkeinParametersBuilder myBuilder = new GordianSkeinParametersBuilder()</span>
-<span class="fc" id="L110">                .setKey(newKey)</span>
-<span class="fc" id="L111">                .setNonce(newIV)</span>
-<span class="fc" id="L112">                .setMaxOutputLen(-1);</span>
-<span class="fc" id="L113">        theSkeinXof.init(myBuilder.build());</span>
+<span class="fc" id="L107">        final GordianSkeinParametersBuilder myBuilder = new GordianSkeinParametersBuilder()</span>
+<span class="fc" id="L108">                .setKey(newKey)</span>
+<span class="fc" id="L109">                .setNonce(newIV)</span>
+<span class="fc" id="L110">                .setMaxOutputLen(-1);</span>
+<span class="fc" id="L111">        theSkeinXof.init(myBuilder.build());</span>
 
         /* Save reset state */
-<span class="fc" id="L116">        theResetState = theSkeinXof.copy();</span>
+<span class="fc" id="L114">        theResetState = theSkeinXof.copy();</span>
 
         /* Initialise the stream block */
-<span class="fc" id="L119">        theIndex = 0;</span>
-<span class="fc" id="L120">        makeStreamBlock();</span>
-<span class="fc" id="L121">    }</span>
+<span class="fc" id="L117">        theIndex = 0;</span>
+<span class="fc" id="L118">        makeStreamBlock();</span>
+<span class="fc" id="L119">    }</span>
 
     @Override
     public String getAlgorithmName() {
-<span class="nc" id="L125">        return theSkeinXof.getAlgorithmName();</span>
+<span class="nc" id="L123">        return theSkeinXof.getAlgorithmName();</span>
     }
 
     @Override
@@ -132,41 +130,41 @@ public class GordianSkeinXofEngine
                             final byte[] out,
                             final int outOff) {
         /* Check for errors */
-<span class="pc bpc" id="L135" title="1 of 2 branches missed.">        if (theResetState == null) {</span>
-<span class="nc" id="L136">            throw new IllegalStateException(getAlgorithmName() + &quot; not initialised&quot;);</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        if (theResetState == null) {</span>
+<span class="nc" id="L134">            throw new IllegalStateException(getAlgorithmName() + &quot; not initialised&quot;);</span>
         }
-<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        if ((inOff + len) &gt; in.length) {</span>
-<span class="nc" id="L139">            throw new DataLengthException(&quot;input buffer too short&quot;);</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        if ((inOff + len) &gt; in.length) {</span>
+<span class="nc" id="L137">            throw new DataLengthException(&quot;input buffer too short&quot;);</span>
         }
-<span class="pc bpc" id="L141" title="1 of 2 branches missed.">        if ((outOff + len) &gt; out.length) {</span>
-<span class="nc" id="L142">            throw new OutputLengthException(&quot;output buffer too short&quot;);</span>
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if ((outOff + len) &gt; out.length) {</span>
+<span class="nc" id="L140">            throw new OutputLengthException(&quot;output buffer too short&quot;);</span>
         }
 
         /* Loop through the input bytes */
-<span class="fc bfc" id="L146" title="All 2 branches covered.">        for (int i = 0; i &lt; len; i++) {</span>
-<span class="fc" id="L147">            out[i + outOff] = returnByte(in[i + inOff]);</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        for (int i = 0; i &lt; len; i++) {</span>
+<span class="fc" id="L145">            out[i + outOff] = returnByte(in[i + inOff]);</span>
         }
-<span class="fc" id="L149">        return len;</span>
+<span class="fc" id="L147">        return len;</span>
     }
 
     @Override
     public void reset() {
-<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        if (theResetState != null) {</span>
-<span class="fc" id="L155">            theSkeinXof.reset(theResetState);</span>
-<span class="fc" id="L156">            theIndex = 0;</span>
-<span class="fc" id="L157">            makeStreamBlock();</span>
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">        if (theResetState != null) {</span>
+<span class="fc" id="L153">            theSkeinXof.reset(theResetState);</span>
+<span class="fc" id="L154">            theIndex = 0;</span>
+<span class="fc" id="L155">            makeStreamBlock();</span>
         }
-<span class="fc" id="L159">    }</span>
+<span class="fc" id="L157">    }</span>
 
     @Override
     public byte returnByte(final byte in) {
-<span class="fc" id="L163">        final byte out = (byte) (theKeyStream[theIndex] ^ in);</span>
-<span class="fc" id="L164">        theIndex = (theIndex + 1) % theKeyStream.length;</span>
+<span class="fc" id="L161">        final byte out = (byte) (theKeyStream[theIndex] ^ in);</span>
+<span class="fc" id="L162">        theIndex = (theIndex + 1) % theKeyStream.length;</span>
 
-<span class="fc bfc" id="L166" title="All 2 branches covered.">        if (theIndex == 0) {</span>
-<span class="fc" id="L167">            makeStreamBlock();</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        if (theIndex == 0) {</span>
+<span class="fc" id="L165">            makeStreamBlock();</span>
         }
-<span class="fc" id="L169">        return out;</span>
+<span class="fc" id="L167">        return out;</span>
     }
 
     /**
@@ -174,25 +172,25 @@ public class GordianSkeinXofEngine
      */
     private void makeStreamBlock() {
         /* Generate next output block */
-<span class="fc" id="L177">        theSkeinXof.doOutput(theKeyStream, 0, theKeyStream.length);</span>
-<span class="fc" id="L178">    }</span>
+<span class="fc" id="L175">        theSkeinXof.doOutput(theKeyStream, 0, theKeyStream.length);</span>
+<span class="fc" id="L176">    }</span>
 
     @Override
     public GordianSkeinXofEngine copy() {
-<span class="nc" id="L182">        return new GordianSkeinXofEngine(this);</span>
+<span class="nc" id="L180">        return new GordianSkeinXofEngine(this);</span>
     }
 
     @Override
     public void reset(final Memoable pState) {
-<span class="nc" id="L187">        final GordianSkeinXofEngine e = (GordianSkeinXofEngine) pState;</span>
-<span class="nc bnc" id="L188" title="All 2 branches missed.">        if (theKeyStream.length != e.theKeyStream.length) {</span>
-<span class="nc" id="L189">            throw new IllegalArgumentException();</span>
+<span class="nc" id="L185">        final GordianSkeinXofEngine e = (GordianSkeinXofEngine) pState;</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">        if (theKeyStream.length != e.theKeyStream.length) {</span>
+<span class="nc" id="L187">            throw new IllegalArgumentException();</span>
         }
-<span class="nc" id="L191">        theSkeinXof.reset(e.theSkeinXof);</span>
-<span class="nc" id="L192">        System.arraycopy(e.theKeyStream, 0, theKeyStream, 0, theKeyStream.length);</span>
-<span class="nc" id="L193">        theIndex = e.theIndex;</span>
-<span class="nc" id="L194">        theResetState = e.theResetState;</span>
-<span class="nc" id="L195">    }</span>
+<span class="nc" id="L189">        theSkeinXof.reset(e.theSkeinXof);</span>
+<span class="nc" id="L190">        System.arraycopy(e.theKeyStream, 0, theKeyStream, 0, theKeyStream.length);</span>
+<span class="nc" id="L191">        theIndex = e.theIndex;</span>
+<span class="nc" id="L192">        theResetState = e.theResetState;</span>
+<span class="nc" id="L193">    }</span>
 }
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

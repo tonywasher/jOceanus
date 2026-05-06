@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.random;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
@@ -119,9 +119,9 @@ public class GordianSP800CTRDRBG
     private byte[] blockCipherDF(final byte[] pInput,
                                  final int pNumBits) throws GordianException {
         /* Check valid # of bits */
-<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if (pNumBits &gt; GordianCoreRandomFactory.MAX_BITS_REQUEST) {</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if (pNumBits &gt; GordianRandomConstants.MAX_BITS_REQUEST) {</span>
 <span class="nc" id="L123">            throw new IllegalArgumentException(&quot;Number of bits per request limited to &quot;</span>
-                    + GordianCoreRandomFactory.MAX_BITS_REQUEST);
+                    + GordianRandomConstants.MAX_BITS_REQUEST);
         }
 
         /* Allocate the lengths */
@@ -301,14 +301,14 @@ public class GordianSP800CTRDRBG
                         final byte[] pXtraBytes,
                         final boolean isPredictionResistant) {
         /* Check valid # of bits */
-<span class="fc" id="L304">        final int myNumBits = pOutput.length &lt;&lt; GordianCoreRandomFactory.BIT_SHIFT;</span>
-<span class="pc bpc" id="L305" title="1 of 2 branches missed.">        if (myNumBits &gt; GordianCoreRandomFactory.MAX_BITS_REQUEST) {</span>
+<span class="fc" id="L304">        final int myNumBits = pOutput.length &lt;&lt; GordianRandomConstants.BIT_SHIFT;</span>
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">        if (myNumBits &gt; GordianRandomConstants.MAX_BITS_REQUEST) {</span>
 <span class="nc" id="L306">            throw new IllegalArgumentException(&quot;Number of bits per request limited to &quot;</span>
-                    + GordianCoreRandomFactory.MAX_BITS_REQUEST);
+                    + GordianRandomConstants.MAX_BITS_REQUEST);
         }
 
         /* Check for reSeed required */
-<span class="pc bpc" id="L311" title="1 of 2 branches missed.">        if (theReseedCounter.compareLimit(GordianCoreRandomFactory.RESEED_MAX)) {</span>
+<span class="pc bpc" id="L311" title="1 of 2 branches missed.">        if (theReseedCounter.compareLimit(GordianRandomConstants.RESEED_MAX)) {</span>
 <span class="nc" id="L312">            return -1;</span>
         }
 
@@ -379,7 +379,7 @@ public class GordianSP800CTRDRBG
 
     @Override
     public String getAlgorithm() {
-<span class="nc" id="L382">        return GordianCoreRandomFactory.SP800_PREFIX + theCipher.getCipherSpec().toString();</span>
+<span class="nc" id="L382">        return GordianRandomConstants.SP800_PREFIX + theCipher.getCipherSpec().toString();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

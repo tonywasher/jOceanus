@@ -17,8 +17,8 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -43,26 +43,38 @@ public class GordianCompositeKeyPair
     /**
      * is the keyPair public only?
      */
-    private boolean isPublicOnly;
+    private final boolean isPublicOnly;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-<span class="fc" id="L53">    public GordianCompositeKeyPair(final GordianKeyPairSpec pSpec) {</span>
-<span class="fc" id="L54">        theSpec = pSpec;</span>
-<span class="fc" id="L55">        theKeyPairs = new LinkedHashMap&lt;&gt;();</span>
-<span class="fc" id="L56">    }</span>
+    GordianCompositeKeyPair(final GordianKeyPairSpec pSpec) {
+<span class="fc" id="L54">        this(pSpec, false);</span>
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSpec       the spec
+     * @param pPublicOnly is the keyPair publicOnly?
+     */
+    GordianCompositeKeyPair(final GordianKeyPairSpec pSpec,
+<span class="fc" id="L64">                            final boolean pPublicOnly) {</span>
+<span class="fc" id="L65">        theSpec = pSpec;</span>
+<span class="fc" id="L66">        isPublicOnly = pPublicOnly;</span>
+<span class="fc" id="L67">        theKeyPairs = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L68">    }</span>
 
     @Override
     public GordianKeyPairSpec getKeyPairSpec() {
-<span class="fc" id="L60">        return theSpec;</span>
+<span class="fc" id="L72">        return theSpec;</span>
     }
 
     @Override
     public boolean isPublicOnly() {
-<span class="fc" id="L65">        return isPublicOnly;</span>
+<span class="fc" id="L77">        return isPublicOnly;</span>
     }
 
     /**
@@ -71,11 +83,11 @@ public class GordianCompositeKeyPair
      * @return the publicOnly keyPair
      */
     public GordianCompositeKeyPair getPublicOnly() {
-<span class="fc" id="L74">        final GordianCompositeKeyPair myPublicOnly = new GordianCompositeKeyPair(theSpec);</span>
-<span class="fc bfc" id="L75" title="All 2 branches covered.">        for (GordianKeyPair myPair : theKeyPairs.values()) {</span>
-<span class="fc" id="L76">            myPublicOnly.theKeyPairs.put(myPair.getKeyPairSpec(), ((GordianCoreKeyPair) myPair).getPublicOnly());</span>
-<span class="fc" id="L77">        }</span>
-<span class="fc" id="L78">        return myPublicOnly;</span>
+<span class="fc" id="L86">        final GordianCompositeKeyPair myPublicOnly = new GordianCompositeKeyPair(theSpec);</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        for (GordianKeyPair myPair : theKeyPairs.values()) {</span>
+<span class="fc" id="L88">            myPublicOnly.theKeyPairs.put(myPair.getKeyPairSpec(), ((GordianCoreKeyPair) myPair).getPublicOnly());</span>
+<span class="fc" id="L89">        }</span>
+<span class="fc" id="L90">        return myPublicOnly;</span>
     }
 
     /**
@@ -86,25 +98,25 @@ public class GordianCompositeKeyPair
      */
     public boolean checkMatchingPublicKey(final GordianKeyPair pPair) {
         /* Must be composite and matching spec */
-<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        if (!(pPair instanceof GordianCompositeKeyPair)</span>
-<span class="pc bpc" id="L90" title="1 of 2 branches missed.">                || !theSpec.equals(pPair.getKeyPairSpec())) {</span>
-<span class="nc" id="L91">            return false;</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        if (!(pPair instanceof GordianCompositeKeyPair)</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">                || !theSpec.equals(pPair.getKeyPairSpec())) {</span>
+<span class="nc" id="L103">            return false;</span>
         }
 
         /* Loop through the keyPairs */
-<span class="fc" id="L95">        final Iterator&lt;GordianKeyPair&gt; mySrcIterator = iterator();</span>
-<span class="fc" id="L96">        final Iterator&lt;GordianKeyPair&gt; myTgtIterator = ((GordianCompositeKeyPair) pPair).iterator();</span>
-<span class="fc bfc" id="L97" title="All 2 branches covered.">        while (mySrcIterator.hasNext()) {</span>
+<span class="fc" id="L107">        final Iterator&lt;GordianKeyPair&gt; mySrcIterator = iterator();</span>
+<span class="fc" id="L108">        final Iterator&lt;GordianKeyPair&gt; myTgtIterator = ((GordianCompositeKeyPair) pPair).iterator();</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        while (mySrcIterator.hasNext()) {</span>
             /* Check that publicKey matches */
-<span class="fc" id="L99">            final GordianCoreKeyPair mySrcPair = (GordianCoreKeyPair) mySrcIterator.next();</span>
-<span class="fc" id="L100">            final GordianCoreKeyPair myTgtPair = (GordianCoreKeyPair) myTgtIterator.next();</span>
-<span class="pc bpc" id="L101" title="1 of 2 branches missed.">            if (!mySrcPair.getPublicKey().equals(myTgtPair.getPublicKey())) {</span>
-<span class="nc" id="L102">                return false;</span>
+<span class="fc" id="L111">            final GordianCoreKeyPair mySrcPair = (GordianCoreKeyPair) mySrcIterator.next();</span>
+<span class="fc" id="L112">            final GordianCoreKeyPair myTgtPair = (GordianCoreKeyPair) myTgtIterator.next();</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">            if (!mySrcPair.getPublicKey().equals(myTgtPair.getPublicKey())) {</span>
+<span class="nc" id="L114">                return false;</span>
             }
-<span class="fc" id="L104">        }</span>
+<span class="fc" id="L116">        }</span>
 
         /* All OK */
-<span class="fc" id="L107">        return true;</span>
+<span class="fc" id="L119">        return true;</span>
     }
 
     /**
@@ -113,7 +125,7 @@ public class GordianCompositeKeyPair
      * @return the iterator
      */
     public Iterator&lt;GordianKeyPair&gt; iterator() {
-<span class="fc" id="L116">        return theKeyPairs.values().iterator();</span>
+<span class="fc" id="L128">        return theKeyPairs.values().iterator();</span>
     }
 
     /**
@@ -122,31 +134,35 @@ public class GordianCompositeKeyPair
      * @param pKeyPair the keyPair
      */
     void addKeyPair(final GordianKeyPair pKeyPair) {
+        /* Check publicOnly */
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        if (pKeyPair.isPublicOnly() != isPublicOnly) {</span>
+<span class="nc" id="L139">            throw new IllegalStateException(&quot;PublicOnly mismatch&quot;);</span>
+        }
+
         /* Add the keyPair */
-<span class="fc" id="L126">        theKeyPairs.put(pKeyPair.getKeyPairSpec(), pKeyPair);</span>
-<span class="fc" id="L127">    }</span>
+<span class="fc" id="L143">        theKeyPairs.put(pKeyPair.getKeyPairSpec(), pKeyPair);</span>
+<span class="fc" id="L144">    }</span>
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle trivial cases */
-<span class="pc bpc" id="L132" title="1 of 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L133">            return true;</span>
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L150">            return true;</span>
         }
-<span class="pc bpc" id="L135" title="1 of 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L136">            return false;</span>
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L153">            return false;</span>
         }
 
         /* Check object is same class */
-<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        if (!(pThat instanceof GordianCompositeKeyPair)) {</span>
-<span class="nc" id="L141">            return false;</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        if (!(pThat instanceof GordianCompositeKeyPair myThat)) {</span>
+<span class="nc" id="L158">            return false;</span>
         }
-<span class="fc" id="L143">        final GordianCompositeKeyPair myThat = (GordianCompositeKeyPair) pThat;</span>
-<span class="fc" id="L144">        return Objects.equals(theKeyPairs, myThat.theKeyPairs);</span>
+<span class="fc" id="L160">        return Objects.equals(theKeyPairs, myThat.theKeyPairs);</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L149">        return Objects.hashCode(theKeyPairs);</span>
+<span class="nc" id="L165">        return Objects.hashCode(theKeyPairs);</span>
     }
 
     /**
@@ -161,35 +177,35 @@ public class GordianCompositeKeyPair
          * @param pSpec the spec
          */
         GordianStateAwareCompositeKeyPair(final GordianKeyPairSpec pSpec) {
-<span class="fc" id="L164">            super(pSpec);</span>
-<span class="fc" id="L165">        }</span>
+<span class="fc" id="L180">            super(pSpec);</span>
+<span class="fc" id="L181">        }</span>
 
         @Override
         public long getUsagesRemaining() {
-<span class="nc" id="L169">            long myUsages = 0;</span>
-<span class="nc" id="L170">            boolean myFirst = true;</span>
-<span class="nc" id="L171">            final Iterator&lt;GordianKeyPair&gt; myIterator = iterator();</span>
-<span class="nc bnc" id="L172" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
-<span class="nc" id="L173">                final GordianStateAwareKeyPair myKeyPair = (GordianStateAwareKeyPair) myIterator.next();</span>
-<span class="nc bnc" id="L174" title="All 2 branches missed.">                if (myFirst) {</span>
-<span class="nc" id="L175">                    myUsages = myKeyPair.getUsagesRemaining();</span>
-<span class="nc" id="L176">                    myFirst = false;</span>
+<span class="nc" id="L185">            long myUsages = 0;</span>
+<span class="nc" id="L186">            boolean myFirst = true;</span>
+<span class="nc" id="L187">            final Iterator&lt;GordianKeyPair&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L189">                final GordianStateAwareKeyPair myKeyPair = (GordianStateAwareKeyPair) myIterator.next();</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                if (myFirst) {</span>
+<span class="nc" id="L191">                    myUsages = myKeyPair.getUsagesRemaining();</span>
+<span class="nc" id="L192">                    myFirst = false;</span>
                 } else {
-<span class="nc" id="L178">                    myUsages = Math.min(myUsages, myKeyPair.getUsagesRemaining());</span>
+<span class="nc" id="L194">                    myUsages = Math.min(myUsages, myKeyPair.getUsagesRemaining());</span>
                 }
-<span class="nc" id="L180">            }</span>
-<span class="nc" id="L181">            return myUsages;</span>
+<span class="nc" id="L196">            }</span>
+<span class="nc" id="L197">            return myUsages;</span>
         }
 
         @Override
         public GordianStateAwareCompositeKeyPair getKeyPairShard(final int pNumUsages) {
-<span class="nc" id="L186">            final GordianStateAwareCompositeKeyPair myCompositeShard = new GordianStateAwareCompositeKeyPair(getKeyPairSpec());</span>
-<span class="nc" id="L187">            final Iterator&lt;GordianKeyPair&gt; myIterator = iterator();</span>
-<span class="nc bnc" id="L188" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
-<span class="nc" id="L189">                final GordianStateAwareKeyPair myKeyPair = (GordianStateAwareKeyPair) myIterator.next();</span>
-<span class="nc" id="L190">                myCompositeShard.addKeyPair(myKeyPair.getKeyPairShard(pNumUsages));</span>
-<span class="nc" id="L191">            }</span>
-<span class="nc" id="L192">            return myCompositeShard;</span>
+<span class="nc" id="L202">            final GordianStateAwareCompositeKeyPair myCompositeShard = new GordianStateAwareCompositeKeyPair(getKeyPairSpec());</span>
+<span class="nc" id="L203">            final Iterator&lt;GordianKeyPair&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L205">                final GordianStateAwareKeyPair myKeyPair = (GordianStateAwareKeyPair) myIterator.next();</span>
+<span class="nc" id="L206">                myCompositeShard.addKeyPair(myKeyPair.getKeyPairShard(pNumUsages));</span>
+<span class="nc" id="L207">            }</span>
+<span class="nc" id="L208">            return myCompositeShard;</span>
         }
     }
 }

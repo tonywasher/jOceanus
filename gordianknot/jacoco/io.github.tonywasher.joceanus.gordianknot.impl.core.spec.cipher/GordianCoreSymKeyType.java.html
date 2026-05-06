@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreSymKeyType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher</a> &gt; <span class="el_source">GordianCoreSymKeyType.java</span></div><h1>GordianCoreSymKeyType.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianBundleLoader.GordianBundleId;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * Symmetric Key Types. Available algorithms.
+ */
+public final class GordianCoreSymKeyType {
+    /**
+     * The symKeyTypeMap.
+     */
+<span class="fc" id="L35">    private static final Map&lt;GordianSymKeyType, GordianCoreSymKeyType&gt; TYPEMAP = newTypeMap();</span>
+
+    /**
+     * The symKeyTypeArray.
+     */
+<span class="fc" id="L40">    private static final GordianCoreSymKeyType[] VALUES = TYPEMAP.values().toArray(new GordianCoreSymKeyType[0]);</span>
+
+    /**
+     * The SymKeyType.
+     */
+    private final GordianSymKeyType theType;
+
+    /**
+     * The Supported blockLengths.
+     */
+    private final GordianLength[] theLengths;
+
+    /**
+     * The Name.
+     */
+    private final String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pType the type
+     */
+<span class="fc" id="L62">    private GordianCoreSymKeyType(final GordianSymKeyType pType) {</span>
+<span class="fc" id="L63">        theType = pType;</span>
+<span class="fc" id="L64">        theLengths = blockLengthsForSymKeyType(pType);</span>
+<span class="fc" id="L65">        theName = bundleIdForSymKeyType(pType).getValue();</span>
+<span class="fc" id="L66">    }</span>
+
+    /**
+     * Obtain the type.
+     *
+     * @return the type
+     */
+    public GordianSymKeyType getType() {
+<span class="fc" id="L74">        return theType;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L79">        return theName;</span>
+    }
+
+    /**
+     * Obtain default block length.
+     *
+     * @return the default length
+     */
+    public GordianLength getDefaultBlockLength() {
+<span class="fc" id="L88">        return theLengths[0];</span>
+    }
+
+    /**
+     * Obtain default block length.
+     *
+     * @param pType the type
+     * @return the default length
+     */
+    public static GordianLength getDefaultBlockLength(final GordianSymKeyType pType) {
+<span class="fc" id="L98">        final GordianCoreSymKeyType myType = mapCoreType(pType);</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        return myType == null ? null : myType.getDefaultBlockLength();</span>
+    }
+
+    /**
+     * Obtain supported block lengths.
+     *
+     * @return the supported lengths (first is default)
+     */
+    public GordianLength[] getSupportedBlockLengths() {
+<span class="fc" id="L108">        return theLengths;</span>
+    }
+
+    /**
+     * is block length valid?
+     *
+     * @param pLength the length
+     * @return true/false
+     */
+    private boolean isBlockLengthValid(final GordianLength pLength) {
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        for (final GordianLength myLength : theLengths) {</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">            if (myLength.equals(pLength)) {</span>
+<span class="fc" id="L120">                return true;</span>
+            }
+        }
+<span class="nc" id="L123">        return false;</span>
+    }
+
+    /**
+     * Does this KeyType have multiple block lengths?
+     *
+     * @return true/false
+     */
+    public boolean hasMultipleBlockLengths() {
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        return theLengths.length &gt; 1;</span>
+    }
+
+    /**
+     * Is the KeyType valid for keyLength?
+     *
+     * @param pKeyType the key type
+     * @param pKeyLen  the key length
+     * @return true/false
+     */
+    public static boolean validForKeyLength(final GordianSymKeyType pKeyType,
+                                            final GordianLength pKeyLen) {
+<span class="fc" id="L144">        final GordianCoreSymKeyType myType = mapCoreType(pKeyType);</span>
+<span class="pc bpc" id="L145" title="1 of 4 branches missed.">        return myType != null &amp;&amp; myType.validForKeyLength(pKeyLen);</span>
+    }
+
+    /**
+     * Is this KeyType valid for keyLength?
+     *
+     * @param pKeyLen the key length
+     * @return true/false
+     */
+    public boolean validForKeyLength(final GordianLength pKeyLen) {
+        /* Reject unsupported keyLengths */
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">        if (!GordianKeyLengths.isSupportedLength(pKeyLen)) {</span>
+<span class="nc" id="L157">            return false;</span>
+        }
+
+        /* switch on keyLength */
+<span class="fc bfc" id="L161" title="All 8 branches covered.">        return switch (theType) {</span>
+<span class="fc bfc" id="L162" title="All 6 branches covered.">            case THREEFISH -&gt; GordianLength.LEN_256 == pKeyLen</span>
+                    || GordianLength.LEN_512 == pKeyLen
+                    || GordianLength.LEN_1024 == pKeyLen;
+<span class="fc bfc" id="L165" title="All 4 branches covered.">            case SHACAL2 -&gt; GordianLength.LEN_256 == pKeyLen</span>
+                    || GordianLength.LEN_512 == pKeyLen;
+<span class="fc bfc" id="L167" title="All 2 branches covered.">            case GOST, KUZNYECHIK -&gt; GordianLength.LEN_256 == pKeyLen;</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">            case SM4, SEED, NOEKEON, CAST5, RC5, SKIPJACK, TEA, XTEA, IDEA -&gt; GordianLength.LEN_128 == pKeyLen;</span>
+<span class="fc" id="L169">            case RC2 -&gt; true;</span>
+<span class="fc bfc" id="L170" title="All 4 branches covered.">            case DESEDE -&gt; GordianLength.LEN_128 == pKeyLen</span>
+                    || GordianLength.LEN_192 == pKeyLen;
+<span class="fc bfc" id="L172" title="All 6 branches covered.">            case KALYNA -&gt; GordianLength.LEN_128 == pKeyLen</span>
+                    || GordianLength.LEN_256 == pKeyLen
+                    || GordianLength.LEN_512 == pKeyLen;
+<span class="fc bfc" id="L175" title="All 6 branches covered.">            default -&gt; GordianLength.LEN_128 == pKeyLen</span>
+                    || GordianLength.LEN_192 == pKeyLen
+                    || GordianLength.LEN_256 == pKeyLen;
+        };
+    }
+
+    /**
+     * Is this KeyType valid for blockLength and keyLength?
+     *
+     * @param pBlkLen the block Length
+     * @param pKeyLen the key length
+     * @return true/false
+     */
+    public boolean validBlockAndKeyLengths(final GordianLength pBlkLen,
+                                           final GordianLength pKeyLen) {
+        /* Reject unsupported blockLengths */
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">        if (!isBlockLengthValid(pBlkLen)) {</span>
+<span class="nc" id="L192">            return false;</span>
+        }
+
+        /* Reject unsupported keyLengths */
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        if (!validForKeyLength(pKeyLen)) {</span>
+<span class="fc" id="L197">            return false;</span>
+        }
+
+        /* Reject keys that are shorter than the block length */
+<span class="fc bfc" id="L201" title="All 2 branches covered.">        if (pBlkLen.getLength() &gt; pKeyLen.getLength()) {</span>
+<span class="fc" id="L202">            return false;</span>
+        }
+
+        /* Switch on keyType */
+<span class="fc bfc" id="L206" title="All 3 branches covered.">        return switch (theType) {</span>
+            /* ThreeFish keys must be same length as blockSize */
+<span class="fc bfc" id="L208" title="All 2 branches covered.">            case THREEFISH -&gt; pKeyLen == pBlkLen;</span>
+            /* Explicitly disallow Kalyna128-512 */
+<span class="fc bfc" id="L210" title="All 4 branches covered.">            case KALYNA -&gt; GordianLength.LEN_128 != pBlkLen</span>
+                    || GordianLength.LEN_512 != pKeyLen;
+<span class="fc" id="L212">            default -&gt; true;</span>
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for this symKeyType.
+     *
+     * @param pType the symKeyType
+     * @return the resource bundleId
+     */
+    private static GordianBundleId bundleIdForSymKeyType(final GordianSymKeyType pType) {
+        /* Create the map and return it */
+<span class="pc bpc" id="L224" title="1 of 30 branches missed.">        return switch (pType) {</span>
+<span class="fc" id="L225">            case AES -&gt; GordianCipherResource.SYMKEY_AES;</span>
+<span class="fc" id="L226">            case SERPENT -&gt; GordianCipherResource.SYMKEY_SERPENT;</span>
+<span class="fc" id="L227">            case TWOFISH -&gt; GordianCipherResource.SYMKEY_TWOFISH;</span>
+<span class="fc" id="L228">            case CAMELLIA -&gt; GordianCipherResource.SYMKEY_CAMELLIA;</span>
+<span class="fc" id="L229">            case RC6 -&gt; GordianCipherResource.SYMKEY_RC6;</span>
+<span class="fc" id="L230">            case CAST6 -&gt; GordianCipherResource.SYMKEY_CAST6;</span>
+<span class="fc" id="L231">            case ARIA -&gt; GordianCipherResource.SYMKEY_ARIA;</span>
+<span class="fc" id="L232">            case THREEFISH -&gt; GordianCipherResource.SYMKEY_THREEFISH;</span>
+<span class="fc" id="L233">            case NOEKEON -&gt; GordianCipherResource.SYMKEY_NOEKEON;</span>
+<span class="fc" id="L234">            case SEED -&gt; GordianCipherResource.SYMKEY_SEED;</span>
+<span class="fc" id="L235">            case SM4 -&gt; GordianCipherResource.SYMKEY_SM4;</span>
+<span class="fc" id="L236">            case RC2 -&gt; GordianCipherResource.SYMKEY_RC2;</span>
+<span class="fc" id="L237">            case RC5 -&gt; GordianCipherResource.SYMKEY_RC5;</span>
+<span class="fc" id="L238">            case CAST5 -&gt; GordianCipherResource.SYMKEY_CAST5;</span>
+<span class="fc" id="L239">            case TEA -&gt; GordianCipherResource.SYMKEY_TEA;</span>
+<span class="fc" id="L240">            case XTEA -&gt; GordianCipherResource.SYMKEY_XTEA;</span>
+<span class="fc" id="L241">            case IDEA -&gt; GordianCipherResource.SYMKEY_IDEA;</span>
+<span class="fc" id="L242">            case SKIPJACK -&gt; GordianCipherResource.SYMKEY_SKIPJACK;</span>
+<span class="fc" id="L243">            case BLOWFISH -&gt; GordianCipherResource.SYMKEY_BLOWFISH;</span>
+<span class="fc" id="L244">            case DESEDE -&gt; GordianCipherResource.SYMKEY_DESEDE;</span>
+<span class="fc" id="L245">            case GOST -&gt; GordianCipherResource.SYMKEY_GOST;</span>
+<span class="fc" id="L246">            case KUZNYECHIK -&gt; GordianCipherResource.SYMKEY_KUZNYECHIK;</span>
+<span class="fc" id="L247">            case KALYNA -&gt; GordianCipherResource.SYMKEY_KALYNA;</span>
+<span class="fc" id="L248">            case SHACAL2 -&gt; GordianCipherResource.SYMKEY_SHACAL2;</span>
+<span class="fc" id="L249">            case SPECK -&gt; GordianCipherResource.SYMKEY_SPECK;</span>
+<span class="fc" id="L250">            case ANUBIS -&gt; GordianCipherResource.SYMKEY_ANUBIS;</span>
+<span class="fc" id="L251">            case SIMON -&gt; GordianCipherResource.SYMKEY_SIMON;</span>
+<span class="fc" id="L252">            case MARS -&gt; GordianCipherResource.SYMKEY_MARS;</span>
+<span class="fc" id="L253">            case LEA -&gt; GordianCipherResource.SYMKEY_LEA;</span>
+<span class="nc" id="L254">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    /**
+     * Obtain the available block lengths for the symKeyType.
+     *
+     * @param pType the symKeyType
+     * @return the block lengths
+     */
+    private static GordianLength[] blockLengthsForSymKeyType(final GordianSymKeyType pType) {
+        /* Create the map and return it */
+<span class="pc bpc" id="L266" title="1 of 7 branches missed.">        return switch (pType) {</span>
+            case AES, TWOFISH, SERPENT, CAMELLIA, RC6, CAST6, ARIA, SM4, NOEKEON, KUZNYECHIK, SPECK, ANUBIS, SIMON,
+<span class="fc" id="L268">                 MARS, LEA, SEED -&gt; new GordianLength[]{GordianLength.LEN_128};</span>
+<span class="fc" id="L269">            case THREEFISH -&gt; new GordianLength[]{GordianLength.LEN_256, GordianLength.LEN_512, GordianLength.LEN_1024};</span>
+            case TEA, XTEA, IDEA, SKIPJACK, RC2, DESEDE, CAST5, BLOWFISH, GOST -&gt;
+<span class="fc" id="L271">                    new GordianLength[]{GordianLength.LEN_64};</span>
+<span class="fc" id="L272">            case RC5 -&gt; new GordianLength[]{GordianLength.LEN_128, GordianLength.LEN_64};</span>
+<span class="fc" id="L273">            case KALYNA -&gt; new GordianLength[]{GordianLength.LEN_128, GordianLength.LEN_256, GordianLength.LEN_512};</span>
+<span class="fc" id="L274">            case SHACAL2 -&gt; new GordianLength[]{GordianLength.LEN_256};</span>
+<span class="nc" id="L275">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    /**
+     * Obtain the default block lengths for the symKeyType and keyLength.
+     *
+     * @param pType      the symKeyType
+     * @param pKeyLength the keyLength
+     * @return the block lengths
+     */
+    static GordianLength defaultBlockLengthForSymKeyTypeAndKeyLength(final GordianSymKeyType pType,
+                                                                     final GordianLength pKeyLength) {
+        /* Create the map and return it */
+<span class="pc bpc" id="L289" title="4 of 6 branches missed.">        return switch (pType) {</span>
+            case AES, TWOFISH, SERPENT, CAMELLIA, RC6, CAST6, ARIA, SM4, NOEKEON, KUZNYECHIK, SPECK, ANUBIS, SIMON,
+<span class="fc" id="L291">                 MARS, LEA, RC5, SEED -&gt; GordianLength.LEN_128;</span>
+<span class="nc" id="L292">            case THREEFISH -&gt; pKeyLength;</span>
+<span class="pc bpc" id="L293" title="1 of 2 branches missed.">            case KALYNA -&gt; GordianLength.LEN_512.equals(pKeyLength) ? GordianLength.LEN_256 : GordianLength.LEN_128;</span>
+<span class="nc" id="L294">            case TEA, XTEA, IDEA, SKIPJACK, RC2, DESEDE, CAST5, BLOWFISH, GOST -&gt; GordianLength.LEN_64;</span>
+<span class="nc" id="L295">            case SHACAL2 -&gt; GordianLength.LEN_256;</span>
+<span class="nc" id="L296">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    /**
+     * Obtain the default length for the symKeyType.
+     *
+     * @param pType the symKeyType
+     * @return the block lengths
+     */
+    static GordianLength defaultKeyLengthForSymKeyType(final GordianSymKeyType pType) {
+        /* Create the map and return it */
+<span class="pc bpc" id="L308" title="2 of 3 branches missed.">        return switch (pType) {</span>
+            case AES, TWOFISH, SERPENT, CAMELLIA, RC6, CAST6, THREEFISH, ARIA, KALYNA, KUZNYECHIK, SPECK, ANUBIS, SIMON,
+<span class="nc" id="L310">                 MARS, LEA, GOST, SHACAL2 -&gt; GordianLength.LEN_256;</span>
+            case RC2, NOEKEON, RC5, DESEDE, CAST5, BLOWFISH, SEED, TEA, XTEA, IDEA, SKIPJACK, SM4 -&gt;
+<span class="fc" id="L312">                    GordianLength.LEN_128;</span>
+<span class="nc" id="L313">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="pc bpc" id="L320" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L321">            return true;</span>
+        }
+<span class="pc bpc" id="L323" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L324">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="fc" id="L328">        return pThat instanceof GordianCoreSymKeyType myThat</span>
+<span class="pc bpc" id="L329" title="2 of 4 branches missed.">                &amp;&amp; theType == myThat.getType();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L334">        return theType.hashCode();</span>
+    }
+
+    /**
+     * Obtain the core type.
+     *
+     * @param pType the base type
+     * @return the core type
+     */
+    public static GordianCoreSymKeyType mapCoreType(final Object pType) {
+<span class="pc bpc" id="L344" title="1 of 2 branches missed.">        return pType instanceof GordianSymKeyType myType ? TYPEMAP.get(myType) : null;</span>
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map&lt;GordianSymKeyType, GordianCoreSymKeyType&gt; newTypeMap() {
+<span class="fc" id="L353">        final Map&lt;GordianSymKeyType, GordianCoreSymKeyType&gt; myMap = new EnumMap&lt;&gt;(GordianSymKeyType.class);</span>
+<span class="fc bfc" id="L354" title="All 2 branches covered.">        for (GordianSymKeyType myType : GordianSymKeyType.values()) {</span>
+<span class="fc" id="L355">            myMap.put(myType, new GordianCoreSymKeyType(myType));</span>
+        }
+<span class="fc" id="L357">        return myMap;</span>
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static GordianCoreSymKeyType[] values() {
+<span class="fc" id="L366">        return VALUES;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

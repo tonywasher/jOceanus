@@ -19,14 +19,14 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -396,8 +396,9 @@ public class GordianCoreWrapper
      * @throws GordianException on error
      */
     protected void initCipherForWrapping() throws GordianException {
-<span class="fc" id="L399">        theCipher.initForEncrypt(GordianCipherParameters.key(theKey));</span>
-<span class="fc" id="L400">    }</span>
+<span class="fc" id="L399">        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();</span>
+<span class="fc" id="L400">        theCipher.initForEncrypt(myBuilder.key(theKey));</span>
+<span class="fc" id="L401">    }</span>
 
     /**
      * Initialise cipher for unwrapping.
@@ -405,8 +406,9 @@ public class GordianCoreWrapper
      * @throws GordianException on error
      */
     protected void initCipherForUnwrapping() throws GordianException {
-<span class="fc" id="L408">        theCipher.initForDecrypt(GordianCipherParameters.key(theKey));</span>
-<span class="fc" id="L409">    }</span>
+<span class="fc" id="L409">        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();</span>
+<span class="fc" id="L410">        theCipher.initForDecrypt(myBuilder.key(theKey));</span>
+<span class="fc" id="L411">    }</span>
 
     /**
      * Perform Cipher operation.
@@ -419,36 +421,36 @@ public class GordianCoreWrapper
     protected void iterateCipher(final byte[] pInBuffer,
                                  final int pBufferLen,
                                  final byte[] pResult) throws GordianException {
-<span class="fc" id="L422">        theCipher.finish(pInBuffer, 0, pBufferLen, pResult, 0);</span>
-<span class="fc" id="L423">    }</span>
+<span class="fc" id="L424">        theCipher.finish(pInBuffer, 0, pBufferLen, pResult, 0);</span>
+<span class="fc" id="L425">    }</span>
 
     @Override
     public int getKeyWrapLength(final GordianKey&lt;?&gt; pKey) {
         /* Obtain the id of the keySpec */
-<span class="fc" id="L428">        final GordianKeySpec mySpec = pKey.getKeyType();</span>
-<span class="fc" id="L429">        final AlgorithmIdentifier myAlgId = theFactory.getIdentifierForSpec(mySpec);</span>
+<span class="fc" id="L430">        final GordianKeySpec mySpec = pKey.getKeyType();</span>
+<span class="fc" id="L431">        final AlgorithmIdentifier myAlgId = theFactory.getIdentifierForSpec(mySpec);</span>
 
         /* Determine wrapped key length */
-<span class="fc" id="L432">        final int myDataLen = getDataWrapLength(mySpec.getKeyLength().getByteLength());</span>
+<span class="fc" id="L434">        final int myDataLen = getDataWrapLength(mySpec.getKeyLength().getByteLength());</span>
 
         /* return the calculated length */
-<span class="fc" id="L435">        return GordianWrappedKeyASN1.getEncodedLength(myAlgId, myDataLen);</span>
+<span class="fc" id="L437">        return GordianWrappedKeyASN1.getEncodedLength(myAlgId, myDataLen);</span>
     }
 
     @Override
     public int getDataWrapLength(final int pDataLength) {
-<span class="fc" id="L440">        final GordianLength myBlockLen = getKeySpec().getBlockLength();</span>
-<span class="fc" id="L441">        return getKeyWrapLength(pDataLength, myBlockLen)</span>
-<span class="fc" id="L442">                + getKeyWrapExpansion(myBlockLen);</span>
+<span class="fc" id="L442">        final GordianLength myBlockLen = getKeySpec().getBlockLength();</span>
+<span class="fc" id="L443">        return getKeyWrapLength(pDataLength, myBlockLen)</span>
+<span class="fc" id="L444">                + getKeyWrapExpansion(myBlockLen);</span>
     }
 
     @Override
     public int getPrivateKeyWrapLength(final GordianKeyPair pKeyPair) throws GordianException {
         /* Determine and check the keySpec */
-<span class="nc" id="L448">        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();</span>
-<span class="nc" id="L449">        final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myFactory.getKeyPairGenerator(pKeyPair.getKeyPairSpec());</span>
-<span class="nc" id="L450">        final PKCS8EncodedKeySpec myPrivateKey = myGenerator.getPKCS8Encoding(pKeyPair);</span>
-<span class="nc" id="L451">        return getDataWrapLength(myPrivateKey.getEncoded().length);</span>
+<span class="nc" id="L450">        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();</span>
+<span class="nc" id="L451">        final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myFactory.getKeyPairGenerator(pKeyPair.getKeyPairSpec());</span>
+<span class="nc" id="L452">        final PKCS8EncodedKeySpec myPrivateKey = myGenerator.getPKCS8Encoding(pKeyPair);</span>
+<span class="nc" id="L453">        return getDataWrapLength(myPrivateKey.getEncoded().length);</span>
     }
 
     /**
@@ -460,9 +462,9 @@ public class GordianCoreWrapper
      */
     public static int getKeyWrapLength(final int pDataLength,
                                        final GordianLength pBlockLen) {
-<span class="fc" id="L463">        final int myBlockLen = pBlockLen.getByteLength() &gt;&gt; 1;</span>
-<span class="fc" id="L464">        final int myNumBlocks = (pDataLength + myBlockLen - 1) / myBlockLen;</span>
-<span class="fc" id="L465">        return myNumBlocks * myBlockLen;</span>
+<span class="fc" id="L465">        final int myBlockLen = pBlockLen.getByteLength() &gt;&gt; 1;</span>
+<span class="fc" id="L466">        final int myNumBlocks = (pDataLength + myBlockLen - 1) / myBlockLen;</span>
+<span class="fc" id="L467">        return myNumBlocks * myBlockLen;</span>
     }
 
     /**
@@ -472,11 +474,11 @@ public class GordianCoreWrapper
      * @return the keyWrap expansion
      */
     public static int getKeyWrapExpansion(final GordianLength pBlockLen) {
-<span class="fc" id="L475">        final int myBlockLen = pBlockLen.getByteLength() &gt;&gt; 1;</span>
-<span class="fc bfc" id="L476" title="All 2 branches covered.">        final int myNumBlocks = 1 + (myBlockLen &lt;= Integer.BYTES</span>
-<span class="fc" id="L477">                ? 2</span>
-<span class="fc" id="L478">                : 1);</span>
-<span class="fc" id="L479">        return myNumBlocks * myBlockLen;</span>
+<span class="fc" id="L477">        final int myBlockLen = pBlockLen.getByteLength() &gt;&gt; 1;</span>
+<span class="fc bfc" id="L478" title="All 2 branches covered.">        final int myNumBlocks = 1 + (myBlockLen &lt;= Integer.BYTES</span>
+<span class="fc" id="L479">                ? 2</span>
+<span class="fc" id="L480">                : 1);</span>
+<span class="fc" id="L481">        return myNumBlocks * myBlockLen;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -87,34 +87,32 @@ public class GordianBlake3Engine
 <span class="fc" id="L87">        CipherParameters myParams = params;</span>
 <span class="fc" id="L88">        byte[] newKey = null;</span>
 <span class="fc" id="L89">        byte[] newIV = null;</span>
-<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        if ((myParams instanceof ParametersWithIV)) {</span>
-<span class="fc" id="L91">            final ParametersWithIV ivParams = (ParametersWithIV) myParams;</span>
-<span class="fc" id="L92">            newIV = ivParams.getIV();</span>
-<span class="fc" id="L93">            myParams = ivParams.getParameters();</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        if ((myParams instanceof ParametersWithIV ivParams)) {</span>
+<span class="fc" id="L91">            newIV = ivParams.getIV();</span>
+<span class="fc" id="L92">            myParams = ivParams.getParameters();</span>
         }
-<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        if (myParams instanceof KeyParameter) {</span>
-<span class="fc" id="L96">            final KeyParameter keyParam = (KeyParameter) myParams;</span>
-<span class="fc" id="L97">            newKey = keyParam.getKey();</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if (myParams instanceof KeyParameter keyParam) {</span>
+<span class="fc" id="L95">            newKey = keyParam.getKey();</span>
         }
-<span class="pc bpc" id="L99" title="2 of 4 branches missed.">        if (newKey == null || newIV == null) {</span>
-<span class="nc" id="L100">            throw new IllegalArgumentException(&quot;A key and IV  must be provided&quot;);</span>
+<span class="pc bpc" id="L97" title="2 of 4 branches missed.">        if (newKey == null || newIV == null) {</span>
+<span class="nc" id="L98">            throw new IllegalArgumentException(&quot;A key and IV  must be provided&quot;);</span>
         }
 
         /* Initialise engine and mark as initialised */
-<span class="fc" id="L104">        theDigest.init(GordianBlake3Parameters.key(newKey));</span>
-<span class="fc" id="L105">        theDigest.update(newIV, 0, newIV.length);</span>
+<span class="fc" id="L102">        theDigest.init(GordianBlake3Parameters.key(newKey));</span>
+<span class="fc" id="L103">        theDigest.update(newIV, 0, newIV.length);</span>
 
         /* Save reset state */
-<span class="fc" id="L108">        theResetState = theDigest.copy();</span>
+<span class="fc" id="L106">        theResetState = theDigest.copy();</span>
 
         /* Initialise the stream block */
-<span class="fc" id="L111">        theIndex = 0;</span>
-<span class="fc" id="L112">        makeStreamBlock();</span>
-<span class="fc" id="L113">    }</span>
+<span class="fc" id="L109">        theIndex = 0;</span>
+<span class="fc" id="L110">        makeStreamBlock();</span>
+<span class="fc" id="L111">    }</span>
 
     @Override
     public String getAlgorithmName() {
-<span class="nc" id="L117">        return theDigest.getAlgorithmName();</span>
+<span class="nc" id="L115">        return theDigest.getAlgorithmName();</span>
     }
 
     @Override
@@ -124,41 +122,41 @@ public class GordianBlake3Engine
                             final byte[] out,
                             final int outOff) {
         /* Check for errors */
-<span class="pc bpc" id="L127" title="1 of 2 branches missed.">        if (theResetState == null) {</span>
-<span class="nc" id="L128">            throw new IllegalStateException(getAlgorithmName() + &quot; not initialised&quot;);</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        if (theResetState == null) {</span>
+<span class="nc" id="L126">            throw new IllegalStateException(getAlgorithmName() + &quot; not initialised&quot;);</span>
         }
-<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if ((inOff + len) &gt; in.length) {</span>
-<span class="nc" id="L131">            throw new DataLengthException(&quot;input buffer too short&quot;);</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        if ((inOff + len) &gt; in.length) {</span>
+<span class="nc" id="L129">            throw new DataLengthException(&quot;input buffer too short&quot;);</span>
         }
-<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        if ((outOff + len) &gt; out.length) {</span>
-<span class="nc" id="L134">            throw new OutputLengthException(&quot;output buffer too short&quot;);</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">        if ((outOff + len) &gt; out.length) {</span>
+<span class="nc" id="L132">            throw new OutputLengthException(&quot;output buffer too short&quot;);</span>
         }
 
         /* Loop through the input bytes */
-<span class="fc bfc" id="L138" title="All 2 branches covered.">        for (int i = 0; i &lt; len; i++) {</span>
-<span class="fc" id="L139">            out[i + outOff] = returnByte(in[i + inOff]);</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        for (int i = 0; i &lt; len; i++) {</span>
+<span class="fc" id="L137">            out[i + outOff] = returnByte(in[i + inOff]);</span>
         }
-<span class="fc" id="L141">        return len;</span>
+<span class="fc" id="L139">        return len;</span>
     }
 
     @Override
     public void reset() {
-<span class="pc bpc" id="L146" title="1 of 2 branches missed.">        if (theResetState != null) {</span>
-<span class="fc" id="L147">            theDigest.reset(theResetState);</span>
-<span class="fc" id="L148">            theIndex = 0;</span>
-<span class="fc" id="L149">            makeStreamBlock();</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        if (theResetState != null) {</span>
+<span class="fc" id="L145">            theDigest.reset(theResetState);</span>
+<span class="fc" id="L146">            theIndex = 0;</span>
+<span class="fc" id="L147">            makeStreamBlock();</span>
         }
-<span class="fc" id="L151">    }</span>
+<span class="fc" id="L149">    }</span>
 
     @Override
     public byte returnByte(final byte in) {
-<span class="fc" id="L155">        final byte out = (byte) (theKeyStream[theIndex] ^ in);</span>
-<span class="fc" id="L156">        theIndex = (theIndex + 1) % theKeyStream.length;</span>
+<span class="fc" id="L153">        final byte out = (byte) (theKeyStream[theIndex] ^ in);</span>
+<span class="fc" id="L154">        theIndex = (theIndex + 1) % theKeyStream.length;</span>
 
-<span class="fc bfc" id="L158" title="All 2 branches covered.">        if (theIndex == 0) {</span>
-<span class="fc" id="L159">            makeStreamBlock();</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        if (theIndex == 0) {</span>
+<span class="fc" id="L157">            makeStreamBlock();</span>
         }
-<span class="fc" id="L161">        return out;</span>
+<span class="fc" id="L159">        return out;</span>
     }
 
     /**
@@ -166,24 +164,24 @@ public class GordianBlake3Engine
      */
     private void makeStreamBlock() {
         /* Generate next output block */
-<span class="fc" id="L169">        theDigest.doOutput(theKeyStream, 0, theKeyStream.length);</span>
-<span class="fc" id="L170">    }</span>
+<span class="fc" id="L167">        theDigest.doOutput(theKeyStream, 0, theKeyStream.length);</span>
+<span class="fc" id="L168">    }</span>
 
     @Override
     public GordianBlake3Engine copy() {
-<span class="nc" id="L174">        return new GordianBlake3Engine(this);</span>
+<span class="nc" id="L172">        return new GordianBlake3Engine(this);</span>
     }
 
     @Override
     public void reset(final Memoable pState) {
-<span class="nc" id="L179">        final GordianBlake3Engine e = (GordianBlake3Engine) pState;</span>
-<span class="nc bnc" id="L180" title="All 2 branches missed.">        if (theKeyStream.length != e.theKeyStream.length) {</span>
-<span class="nc" id="L181">            throw new IllegalArgumentException();</span>
+<span class="nc" id="L177">        final GordianBlake3Engine e = (GordianBlake3Engine) pState;</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">        if (theKeyStream.length != e.theKeyStream.length) {</span>
+<span class="nc" id="L179">            throw new IllegalArgumentException();</span>
         }
-<span class="nc" id="L183">        theDigest.reset(e.theDigest);</span>
-<span class="nc" id="L184">        System.arraycopy(e.theKeyStream, 0, theKeyStream, 0, theKeyStream.length);</span>
-<span class="nc" id="L185">        theIndex = e.theIndex;</span>
-<span class="nc" id="L186">        theResetState = e.theResetState;</span>
-<span class="nc" id="L187">    }</span>
+<span class="nc" id="L181">        theDigest.reset(e.theDigest);</span>
+<span class="nc" id="L182">        System.arraycopy(e.theKeyStream, 0, theKeyStream, 0, theKeyStream.length);</span>
+<span class="nc" id="L183">        theIndex = e.theIndex;</span>
+<span class="nc" id="L184">        theResetState = e.theResetState;</span>
+<span class="nc" id="L185">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

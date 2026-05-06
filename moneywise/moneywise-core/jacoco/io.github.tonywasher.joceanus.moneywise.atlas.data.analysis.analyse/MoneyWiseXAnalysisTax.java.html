@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisCursor;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
@@ -34,6 +31,9 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 
 /**
  * Tax Analysis.
@@ -695,71 +695,28 @@ public class MoneyWiseXAnalysisTax {
      */
     private MoneyWiseTaxClass determineTaxClass(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
         /* Switch on the category type */
-<span class="pc bpc" id="L698" title="12 of 19 branches missed.">        switch (pTrans.getCategoryClass()) {</span>
-            case TAXEDINCOME:
-            case GROSSINCOME:
-<span class="fc" id="L701">                return MoneyWiseTaxClass.SALARY;</span>
-            case OTHERINCOME:
-<span class="nc" id="L703">                return MoneyWiseTaxClass.OTHERINCOME;</span>
-            case INTEREST:
-            case TAXEDINTEREST:
-            case TAXEDLOYALTYBONUS:
-<span class="fc" id="L707">                return MoneyWiseTaxClass.TAXEDINTEREST;</span>
-            case GROSSINTEREST:
-            case GROSSLOYALTYBONUS:
-<span class="fc" id="L710">                return MoneyWiseTaxClass.UNTAXEDINTEREST;</span>
-            case PEER2PEERINTEREST:
-<span class="nc" id="L712">                return MoneyWiseTaxClass.PEER2PEERINTEREST;</span>
-            case DIVIDEND:
-            case SHAREDIVIDEND:
-<span class="fc" id="L715">                return MoneyWiseTaxClass.DIVIDEND;</span>
-            case UNITTRUSTDIVIDEND:
-<span class="nc" id="L717">                return MoneyWiseTaxClass.UNITTRUSTDIVIDEND;</span>
-            case FOREIGNDIVIDEND:
-<span class="nc" id="L719">                return MoneyWiseTaxClass.FOREIGNDIVIDEND;</span>
-            case RENTALINCOME:
-<span class="nc" id="L721">                return MoneyWiseTaxClass.RENTALINCOME;</span>
-            case ROOMRENTALINCOME:
-<span class="nc" id="L723">                return MoneyWiseTaxClass.ROOMRENTAL;</span>
-            case INCOMETAX:
-<span class="nc" id="L725">                return MoneyWiseTaxClass.TAXPAID;</span>
-            case TAXFREEINTEREST:
-            case TAXFREEDIVIDEND:
-            case LOANINTERESTEARNED:
-            case INHERITED:
-            case CASHBACK:
-            case LOYALTYBONUS:
-            case TAXFREELOYALTYBONUS:
-            case GIFTEDINCOME:
-<span class="fc" id="L734">                return MoneyWiseTaxClass.TAXFREE;</span>
-            case PENSIONCONTRIB:
-<span class="nc" id="L736">                return MoneyWiseTaxClass.TAXFREE;</span>
-            case BADDEBTCAPITAL:
-<span class="nc" id="L738">                return MoneyWiseTaxClass.CAPITALGAINS;</span>
-            case BADDEBTINTEREST:
-<span class="nc" id="L740">                return MoneyWiseTaxClass.PEER2PEERINTEREST;</span>
-            case EXPENSE:
-            case LOCALTAXES:
-            case WRITEOFF:
-            case LOANINTERESTCHARGED:
-            case TAXRELIEF:
-            case RECOVEREDEXPENSES:
-<span class="fc" id="L747">                return MoneyWiseTaxClass.EXPENSE;</span>
-            case RENTALEXPENSE:
-<span class="nc" id="L749">                return MoneyWiseTaxClass.RENTALINCOME;</span>
-            case UNITSADJUST:
-            case SECURITYREPLACE:
-            case SECURITYCLOSURE:
-            case STOCKTAKEOVER:
-            case STOCKSPLIT:
-            case STOCKDEMERGER:
-            case STOCKRIGHTSISSUE:
-            case PORTFOLIOXFER:
-            case TRANSFER:
-<span class="fc" id="L759">                return null;</span>
-            default:
-<span class="nc" id="L761">                throw new MoneyWiseLogicException(&quot;Unexpected Category: &quot; + pTrans.getCategoryClass());</span>
-        }
+<span class="pc bpc" id="L698" title="10 of 17 branches missed.">        return switch (pTrans.getCategoryClass()) {</span>
+<span class="fc" id="L699">            case TAXEDINCOME, GROSSINCOME -&gt; MoneyWiseTaxClass.SALARY;</span>
+<span class="nc" id="L700">            case OTHERINCOME -&gt; MoneyWiseTaxClass.OTHERINCOME;</span>
+<span class="fc" id="L701">            case INTEREST, TAXEDINTEREST, TAXEDLOYALTYBONUS -&gt; MoneyWiseTaxClass.TAXEDINTEREST;</span>
+<span class="fc" id="L702">            case GROSSINTEREST, GROSSLOYALTYBONUS -&gt; MoneyWiseTaxClass.UNTAXEDINTEREST;</span>
+<span class="nc" id="L703">            case PEER2PEERINTEREST, BADDEBTINTEREST -&gt; MoneyWiseTaxClass.PEER2PEERINTEREST;</span>
+<span class="fc" id="L704">            case DIVIDEND, SHAREDIVIDEND -&gt; MoneyWiseTaxClass.DIVIDEND;</span>
+<span class="nc" id="L705">            case UNITTRUSTDIVIDEND -&gt; MoneyWiseTaxClass.UNITTRUSTDIVIDEND;</span>
+<span class="nc" id="L706">            case FOREIGNDIVIDEND -&gt; MoneyWiseTaxClass.FOREIGNDIVIDEND;</span>
+<span class="nc" id="L707">            case RENTALINCOME -&gt; MoneyWiseTaxClass.RENTALINCOME;</span>
+<span class="nc" id="L708">            case ROOMRENTALINCOME -&gt; MoneyWiseTaxClass.ROOMRENTAL;</span>
+<span class="nc" id="L709">            case INCOMETAX -&gt; MoneyWiseTaxClass.TAXPAID;</span>
+            case TAXFREEINTEREST, TAXFREEDIVIDEND, LOANINTERESTEARNED, INHERITED, CASHBACK, LOYALTYBONUS,
+<span class="fc" id="L711">                 TAXFREELOYALTYBONUS, GIFTEDINCOME, PENSIONCONTRIB -&gt; MoneyWiseTaxClass.TAXFREE;</span>
+<span class="nc" id="L712">            case BADDEBTCAPITAL -&gt; MoneyWiseTaxClass.CAPITALGAINS;</span>
+            case EXPENSE, LOCALTAXES, WRITEOFF, LOANINTERESTCHARGED, TAXRELIEF, RECOVEREDEXPENSES -&gt;
+<span class="fc" id="L714">                    MoneyWiseTaxClass.EXPENSE;</span>
+<span class="nc" id="L715">            case RENTALEXPENSE -&gt; MoneyWiseTaxClass.RENTALINCOME;</span>
+            case UNITSADJUST, SECURITYREPLACE, SECURITYCLOSURE, STOCKTAKEOVER, STOCKSPLIT, STOCKDEMERGER,
+<span class="fc" id="L717">                 STOCKRIGHTSISSUE, PORTFOLIOXFER, TRANSFER -&gt; null;</span>
+<span class="nc" id="L718">            default -&gt; throw new MoneyWiseLogicException(&quot;Unexpected Category: &quot; + pTrans.getCategoryClass());</span>
+        };
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

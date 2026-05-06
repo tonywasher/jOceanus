@@ -24,24 +24,24 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket.MoneyWiseXAnalysisTaxBasisBucketList;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket.MoneyWiseXAnalysisTransCategoryBucketList;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket.MoneyWiseXAnalysisTaxBasisBucketList;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket.MoneyWiseXAnalysisTransCategoryBucketList;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment"> * Security analysis.</em>
@@ -223,185 +223,173 @@
 <a class="jxr_linenumber" name="L215" href="#L215">215</a>                 theDividend.processDividend(theTransaction);
 <a class="jxr_linenumber" name="L216" href="#L216">216</a>                 <strong class="jxr_keyword">break</strong>;
 <a class="jxr_linenumber" name="L217" href="#L217">217</a>             <em class="jxr_comment">/* Process standard transfer in/out */</em>
-<a class="jxr_linenumber" name="L218" href="#L218">218</a>             <strong class="jxr_keyword">case</strong> TRANSFER:
-<a class="jxr_linenumber" name="L219" href="#L219">219</a>             <strong class="jxr_keyword">case</strong> SECURITYCLOSURE:
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>             <strong class="jxr_keyword">case</strong> EXPENSE:
-<a class="jxr_linenumber" name="L221" href="#L221">221</a>             <strong class="jxr_keyword">case</strong> INHERITED:
-<a class="jxr_linenumber" name="L222" href="#L222">222</a>             <strong class="jxr_keyword">case</strong> OTHERINCOME:
-<a class="jxr_linenumber" name="L223" href="#L223">223</a>             <strong class="jxr_keyword">case</strong> STOCKRIGHTSISSUE:
-<a class="jxr_linenumber" name="L224" href="#L224">224</a>                 theXferOut.processTransferOut(theTransaction);
-<a class="jxr_linenumber" name="L225" href="#L225">225</a>                 <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="L226" href="#L226">226</a>             <em class="jxr_comment">/* Throw an Exception */</em>
-<a class="jxr_linenumber" name="L227" href="#L227">227</a>             <strong class="jxr_keyword">default</strong>:
-<a class="jxr_linenumber" name="L228" href="#L228">228</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="MoneyWiseLogicException" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/exc/MoneyWiseLogicException.html#MoneyWiseLogicException">MoneyWiseLogicException</a>(ERROR_CATEGORY
-<a class="jxr_linenumber" name="L229" href="#L229">229</a>                         + myCatClass);
-<a class="jxr_linenumber" name="L230" href="#L230">230</a>         }
-<a class="jxr_linenumber" name="L231" href="#L231">231</a>     }
-<a class="jxr_linenumber" name="L232" href="#L232">232</a> 
-<a class="jxr_linenumber" name="L233" href="#L233">233</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L234" href="#L234">234</a> <em class="jxr_javadoccomment">     * Process a credit security transaction.</em>
-<a class="jxr_linenumber" name="L235" href="#L235">235</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L236" href="#L236">236</a> <em class="jxr_javadoccomment">     * @param pTrans the transaction</em>
-<a class="jxr_linenumber" name="L237" href="#L237">237</a> <em class="jxr_javadoccomment">     * @throws OceanusException on error</em>
-<a class="jxr_linenumber" name="L238" href="#L238">238</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L239" href="#L239">239</a>     <strong class="jxr_keyword">void</strong> processCreditSecurity(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisTransaction" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/analyse/MoneyWiseXAnalysisTransaction.html#MoneyWiseXAnalysisTransaction">MoneyWiseXAnalysisTransaction</a> pTrans) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
-<a class="jxr_linenumber" name="L240" href="#L240">240</a>         <em class="jxr_comment">/* Store transaction */</em>
-<a class="jxr_linenumber" name="L241" href="#L241">241</a>         theTransaction = pTrans;
-<a class="jxr_linenumber" name="L242" href="#L242">242</a> 
-<a class="jxr_linenumber" name="L243" href="#L243">243</a>         <em class="jxr_comment">/* Switch on the category */</em>
-<a class="jxr_linenumber" name="L244" href="#L244">244</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseTransCategoryClass" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/statics/MoneyWiseTransCategoryClass.html#MoneyWiseTransCategoryClass">MoneyWiseTransCategoryClass</a> myCatClass = theTransaction.getCategoryClass();
-<a class="jxr_linenumber" name="L245" href="#L245">245</a>         <strong class="jxr_keyword">switch</strong> (myCatClass) {
-<a class="jxr_linenumber" name="L246" href="#L246">246</a>             <em class="jxr_comment">/* Process standard transfer in/out */</em>
-<a class="jxr_linenumber" name="L247" href="#L247">247</a>             <strong class="jxr_keyword">case</strong> STOCKRIGHTSISSUE:
-<a class="jxr_linenumber" name="L248" href="#L248">248</a>             <strong class="jxr_keyword">case</strong> TRANSFER:
-<a class="jxr_linenumber" name="L249" href="#L249">249</a>             <strong class="jxr_keyword">case</strong> EXPENSE:
-<a class="jxr_linenumber" name="L250" href="#L250">250</a>             <strong class="jxr_keyword">case</strong> INHERITED:
-<a class="jxr_linenumber" name="L251" href="#L251">251</a>             <strong class="jxr_keyword">case</strong> OTHERINCOME:
-<a class="jxr_linenumber" name="L252" href="#L252">252</a>             <strong class="jxr_keyword">case</strong> PENSIONCONTRIB:
-<a class="jxr_linenumber" name="L253" href="#L253">253</a>                 theXferIn.processTransferIn(theTransaction);
-<a class="jxr_linenumber" name="L254" href="#L254">254</a>                 <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="L255" href="#L255">255</a>             <em class="jxr_comment">/* Throw an Exception */</em>
-<a class="jxr_linenumber" name="L256" href="#L256">256</a>             <strong class="jxr_keyword">default</strong>:
-<a class="jxr_linenumber" name="L257" href="#L257">257</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="MoneyWiseLogicException" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/exc/MoneyWiseLogicException.html#MoneyWiseLogicException">MoneyWiseLogicException</a>(ERROR_CATEGORY
-<a class="jxr_linenumber" name="L258" href="#L258">258</a>                         + myCatClass);
-<a class="jxr_linenumber" name="L259" href="#L259">259</a>         }
-<a class="jxr_linenumber" name="L260" href="#L260">260</a>     }
-<a class="jxr_linenumber" name="L261" href="#L261">261</a> 
-<a class="jxr_linenumber" name="L262" href="#L262">262</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L263" href="#L263">263</a> <em class="jxr_javadoccomment">     * Process a debit+credit security transaction.</em>
-<a class="jxr_linenumber" name="L264" href="#L264">264</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L265" href="#L265">265</a> <em class="jxr_javadoccomment">     * @throws OceanusException on error</em>
-<a class="jxr_linenumber" name="L266" href="#L266">266</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L267" href="#L267">267</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> processDebitCreditSecurity() <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
-<a class="jxr_linenumber" name="L268" href="#L268">268</a>         <em class="jxr_comment">/* Switch on the category */</em>
-<a class="jxr_linenumber" name="L269" href="#L269">269</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseTransCategoryClass" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/statics/MoneyWiseTransCategoryClass.html#MoneyWiseTransCategoryClass">MoneyWiseTransCategoryClass</a> myCatClass = theTransaction.getCategoryClass();
-<a class="jxr_linenumber" name="L270" href="#L270">270</a>         <strong class="jxr_keyword">switch</strong> (myCatClass) {
-<a class="jxr_linenumber" name="L271" href="#L271">271</a>             <em class="jxr_comment">/* Process a stock split */</em>
-<a class="jxr_linenumber" name="L272" href="#L272">272</a>             <strong class="jxr_keyword">case</strong> STOCKSPLIT:
-<a class="jxr_linenumber" name="L273" href="#L273">273</a>             <strong class="jxr_keyword">case</strong> UNITSADJUST:
-<a class="jxr_linenumber" name="L274" href="#L274">274</a>                 processUnitsAdjust();
-<a class="jxr_linenumber" name="L275" href="#L275">275</a>                 <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="L276" href="#L276">276</a>             <em class="jxr_comment">/* Process a stock DeMerger */</em>
-<a class="jxr_linenumber" name="L277" href="#L277">277</a>             <strong class="jxr_keyword">case</strong> STOCKDEMERGER:
-<a class="jxr_linenumber" name="L278" href="#L278">278</a>                 theDeMerger.processStockDeMerger(theTransaction);
-<a class="jxr_linenumber" name="L279" href="#L279">279</a>                 <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="L280" href="#L280">280</a>             <em class="jxr_comment">/* Process a Stock TakeOver */</em>
-<a class="jxr_linenumber" name="L281" href="#L281">281</a>             <strong class="jxr_keyword">case</strong> SECURITYREPLACE:
-<a class="jxr_linenumber" name="L282" href="#L282">282</a>             <strong class="jxr_keyword">case</strong> STOCKTAKEOVER:
-<a class="jxr_linenumber" name="L283" href="#L283">283</a>                 theTakeover.processStockTakeover(theTransaction);
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>                 <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="L285" href="#L285">285</a>             <em class="jxr_comment">/* Process a dividend */</em>
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>             <strong class="jxr_keyword">case</strong> DIVIDEND:
-<a class="jxr_linenumber" name="L287" href="#L287">287</a>                 theDividend.processDividend(theTransaction);
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>                 <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="L289" href="#L289">289</a>             <em class="jxr_comment">/* Process standard transfer in/out */</em>
-<a class="jxr_linenumber" name="L290" href="#L290">290</a>             <strong class="jxr_keyword">case</strong> TRANSFER:
-<a class="jxr_linenumber" name="L291" href="#L291">291</a>                 processStockXchange();
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>                 <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="L293" href="#L293">293</a>             <em class="jxr_comment">/* Throw an Exception */</em>
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>             <strong class="jxr_keyword">default</strong>:
-<a class="jxr_linenumber" name="L295" href="#L295">295</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="MoneyWiseLogicException" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/exc/MoneyWiseLogicException.html#MoneyWiseLogicException">MoneyWiseLogicException</a>(ERROR_CATEGORY
-<a class="jxr_linenumber" name="L296" href="#L296">296</a>                         + myCatClass);
-<a class="jxr_linenumber" name="L297" href="#L297">297</a>         }
-<a class="jxr_linenumber" name="L298" href="#L298">298</a>     }
-<a class="jxr_linenumber" name="L299" href="#L299">299</a> 
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L301" href="#L301">301</a> <em class="jxr_javadoccomment">     * adjust Asset Valuation.</em>
-<a class="jxr_linenumber" name="L302" href="#L302">302</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L303" href="#L303">303</a> <em class="jxr_javadoccomment">     * @param pAsset the asset</em>
-<a class="jxr_linenumber" name="L304" href="#L304">304</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L305" href="#L305">305</a>     <strong class="jxr_keyword">void</strong> adjustAssetValuation(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisSecurityBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisSecurityBucket.html#MoneyWiseXAnalysisSecurityBucket">MoneyWiseXAnalysisSecurityBucket</a> pAsset) {
-<a class="jxr_linenumber" name="L306" href="#L306">306</a>         <em class="jxr_comment">/* Value the asset and calculate unrealised gains */</em>
-<a class="jxr_linenumber" name="L307" href="#L307">307</a>         pAsset.valueAsset();
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>         pAsset.adjustValuation();
-<a class="jxr_linenumber" name="L309" href="#L309">309</a>         pAsset.calculateUnrealisedGains();
-<a class="jxr_linenumber" name="L310" href="#L310">310</a> 
-<a class="jxr_linenumber" name="L311" href="#L311">311</a>         <em class="jxr_comment">/* determine the MarketGrowth */</em>
-<a class="jxr_linenumber" name="L312" href="#L312">312</a>         <strong class="jxr_keyword">final</strong> <a name="OceanusMoney" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusMoney.html#OceanusMoney">OceanusMoney</a> myDeltaValue = pAsset.getDeltaUnrealisedGains();
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>         theMarket.adjustTotalsForMarketGrowth(theTransaction.getEvent(), myDeltaValue);
-<a class="jxr_linenumber" name="L314" href="#L314">314</a>     }
-<a class="jxr_linenumber" name="L315" href="#L315">315</a> 
-<a class="jxr_linenumber" name="L316" href="#L316">316</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L317" href="#L317">317</a> <em class="jxr_javadoccomment">     * Adjust for Standard Gains.</em>
-<a class="jxr_linenumber" name="L318" href="#L318">318</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L319" href="#L319">319</a> <em class="jxr_javadoccomment">     * @param pSource the source security holding</em>
-<a class="jxr_linenumber" name="L320" href="#L320">320</a> <em class="jxr_javadoccomment">     * @param pGains  the gains</em>
-<a class="jxr_linenumber" name="L321" href="#L321">321</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L322" href="#L322">322</a>     <strong class="jxr_keyword">void</strong> adjustStandardGain(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseSecurityHolding" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHolding.html#MoneyWiseSecurityHolding">MoneyWiseSecurityHolding</a> pSource,
-<a class="jxr_linenumber" name="L323" href="#L323">323</a>                             <strong class="jxr_keyword">final</strong> <a name="OceanusMoney" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusMoney.html#OceanusMoney">OceanusMoney</a> pGains) {
-<a class="jxr_linenumber" name="L324" href="#L324">324</a>         <em class="jxr_comment">/* Access security and portfolio */</em>
-<a class="jxr_linenumber" name="L325" href="#L325">325</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseSecurity" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurity.html#MoneyWiseSecurity">MoneyWiseSecurity</a> mySecurity = pSource.getSecurity();
-<a class="jxr_linenumber" name="L326" href="#L326">326</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWisePortfolio" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWisePortfolio.html#MoneyWisePortfolio">MoneyWisePortfolio</a> myPortfolio = pSource.getPortfolio();
-<a class="jxr_linenumber" name="L327" href="#L327">327</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseSecurityClass" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/statics/MoneyWiseSecurityClass.html#MoneyWiseSecurityClass">MoneyWiseSecurityClass</a> myClass = mySecurity.getCategoryClass();
-<a class="jxr_linenumber" name="L328" href="#L328">328</a> 
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>         <em class="jxr_comment">/* Determine the type of gains */</em>
-<a class="jxr_linenumber" name="L330" href="#L330">330</a>         <a name="MoneyWiseXAnalysisTransCategoryBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisTransCategoryBucket.html#MoneyWiseXAnalysisTransCategoryBucket">MoneyWiseXAnalysisTransCategoryBucket</a> myCategory = theCapitalCat;
-<a class="jxr_linenumber" name="L331" href="#L331">331</a>         <a name="MoneyWiseXAnalysisTaxBasisBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisTaxBasisBucket.html#MoneyWiseXAnalysisTaxBasisBucket">MoneyWiseXAnalysisTaxBasisBucket</a> myTaxBasis = theCapitalTax;
-<a class="jxr_linenumber" name="L332" href="#L332">332</a>         <strong class="jxr_keyword">if</strong> (myPortfolio.isTaxFree()) {
-<a class="jxr_linenumber" name="L333" href="#L333">333</a>             myCategory = theTaxFreeCat;
-<a class="jxr_linenumber" name="L334" href="#L334">334</a>             myTaxBasis = theTaxFreeTax;
-<a class="jxr_linenumber" name="L335" href="#L335">335</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (myClass.isResidentialGains()) {
-<a class="jxr_linenumber" name="L336" href="#L336">336</a>             myCategory = theResidentialCat;
-<a class="jxr_linenumber" name="L337" href="#L337">337</a>             myTaxBasis = theResidentialTax;
-<a class="jxr_linenumber" name="L338" href="#L338">338</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (myClass.isChargeableGains()) {
-<a class="jxr_linenumber" name="L339" href="#L339">339</a>             myCategory = theChargeableCat;
-<a class="jxr_linenumber" name="L340" href="#L340">340</a>             myTaxBasis = theChargeableTax;
-<a class="jxr_linenumber" name="L341" href="#L341">341</a>         }
-<a class="jxr_linenumber" name="L342" href="#L342">342</a> 
-<a class="jxr_linenumber" name="L343" href="#L343">343</a>         <em class="jxr_comment">/* Add to Capital Gains income/expense */</em>
-<a class="jxr_linenumber" name="L344" href="#L344">344</a>         <strong class="jxr_keyword">if</strong> (pGains.isPositive()) {
-<a class="jxr_linenumber" name="L345" href="#L345">345</a>             myCategory.addIncome(pGains);
-<a class="jxr_linenumber" name="L346" href="#L346">346</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L347" href="#L347">347</a>             myCategory.subtractExpense(pGains);
-<a class="jxr_linenumber" name="L348" href="#L348">348</a>         }
-<a class="jxr_linenumber" name="L349" href="#L349">349</a>         myTaxBasis.adjustGrossAndNett(pGains);
-<a class="jxr_linenumber" name="L350" href="#L350">350</a>         theMarket.adjustForGains(pGains);
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>             <strong class="jxr_keyword">case</strong> TRANSFER, SECURITYCLOSURE, EXPENSE, INHERITED, OTHERINCOME, STOCKRIGHTSISSUE:
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>                 theXferOut.processTransferOut(theTransaction);
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>                 <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>             <em class="jxr_comment">/* Throw an Exception */</em>
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>             <strong class="jxr_keyword">default</strong>:
+<a class="jxr_linenumber" name="L223" href="#L223">223</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="MoneyWiseLogicException" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/exc/MoneyWiseLogicException.html#MoneyWiseLogicException">MoneyWiseLogicException</a>(ERROR_CATEGORY
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>                         + myCatClass);
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>         }
+<a class="jxr_linenumber" name="L226" href="#L226">226</a>     }
+<a class="jxr_linenumber" name="L227" href="#L227">227</a> 
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L229" href="#L229">229</a> <em class="jxr_javadoccomment">     * Process a credit security transaction.</em>
+<a class="jxr_linenumber" name="L230" href="#L230">230</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L231" href="#L231">231</a> <em class="jxr_javadoccomment">     * @param pTrans the transaction</em>
+<a class="jxr_linenumber" name="L232" href="#L232">232</a> <em class="jxr_javadoccomment">     * @throws OceanusException on error</em>
+<a class="jxr_linenumber" name="L233" href="#L233">233</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L234" href="#L234">234</a>     <strong class="jxr_keyword">void</strong> processCreditSecurity(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisTransaction" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/analyse/MoneyWiseXAnalysisTransaction.html#MoneyWiseXAnalysisTransaction">MoneyWiseXAnalysisTransaction</a> pTrans) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
+<a class="jxr_linenumber" name="L235" href="#L235">235</a>         <em class="jxr_comment">/* Store transaction */</em>
+<a class="jxr_linenumber" name="L236" href="#L236">236</a>         theTransaction = pTrans;
+<a class="jxr_linenumber" name="L237" href="#L237">237</a> 
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>         <em class="jxr_comment">/* Switch on the category */</em>
+<a class="jxr_linenumber" name="L239" href="#L239">239</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseTransCategoryClass" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/statics/MoneyWiseTransCategoryClass.html#MoneyWiseTransCategoryClass">MoneyWiseTransCategoryClass</a> myCatClass = theTransaction.getCategoryClass();
+<a class="jxr_linenumber" name="L240" href="#L240">240</a>         <strong class="jxr_keyword">switch</strong> (myCatClass) {
+<a class="jxr_linenumber" name="L241" href="#L241">241</a>             <em class="jxr_comment">/* Process standard transfer in/out */</em>
+<a class="jxr_linenumber" name="L242" href="#L242">242</a>             <strong class="jxr_keyword">case</strong> STOCKRIGHTSISSUE, TRANSFER, EXPENSE, INHERITED, OTHERINCOME, PENSIONCONTRIB:
+<a class="jxr_linenumber" name="L243" href="#L243">243</a>                 theXferIn.processTransferIn(theTransaction);
+<a class="jxr_linenumber" name="L244" href="#L244">244</a>                 <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L245" href="#L245">245</a>             <em class="jxr_comment">/* Throw an Exception */</em>
+<a class="jxr_linenumber" name="L246" href="#L246">246</a>             <strong class="jxr_keyword">default</strong>:
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="MoneyWiseLogicException" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/exc/MoneyWiseLogicException.html#MoneyWiseLogicException">MoneyWiseLogicException</a>(ERROR_CATEGORY
+<a class="jxr_linenumber" name="L248" href="#L248">248</a>                         + myCatClass);
+<a class="jxr_linenumber" name="L249" href="#L249">249</a>         }
+<a class="jxr_linenumber" name="L250" href="#L250">250</a>     }
+<a class="jxr_linenumber" name="L251" href="#L251">251</a> 
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L253" href="#L253">253</a> <em class="jxr_javadoccomment">     * Process a debit+credit security transaction.</em>
+<a class="jxr_linenumber" name="L254" href="#L254">254</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L255" href="#L255">255</a> <em class="jxr_javadoccomment">     * @throws OceanusException on error</em>
+<a class="jxr_linenumber" name="L256" href="#L256">256</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> processDebitCreditSecurity() <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>         <em class="jxr_comment">/* Switch on the category */</em>
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseTransCategoryClass" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/statics/MoneyWiseTransCategoryClass.html#MoneyWiseTransCategoryClass">MoneyWiseTransCategoryClass</a> myCatClass = theTransaction.getCategoryClass();
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>         <strong class="jxr_keyword">switch</strong> (myCatClass) {
+<a class="jxr_linenumber" name="L261" href="#L261">261</a>             <em class="jxr_comment">/* Process a stock split */</em>
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>             <strong class="jxr_keyword">case</strong> STOCKSPLIT, UNITSADJUST:
+<a class="jxr_linenumber" name="L263" href="#L263">263</a>                 processUnitsAdjust();
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>                 <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L265" href="#L265">265</a>             <em class="jxr_comment">/* Process a stock DeMerger */</em>
+<a class="jxr_linenumber" name="L266" href="#L266">266</a>             <strong class="jxr_keyword">case</strong> STOCKDEMERGER:
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>                 theDeMerger.processStockDeMerger(theTransaction);
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>                 <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>             <em class="jxr_comment">/* Process a Stock TakeOver */</em>
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>             <strong class="jxr_keyword">case</strong> SECURITYREPLACE, STOCKTAKEOVER:
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>                 theTakeover.processStockTakeover(theTransaction);
+<a class="jxr_linenumber" name="L272" href="#L272">272</a>                 <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>             <em class="jxr_comment">/* Process a dividend */</em>
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>             <strong class="jxr_keyword">case</strong> DIVIDEND:
+<a class="jxr_linenumber" name="L275" href="#L275">275</a>                 theDividend.processDividend(theTransaction);
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>                 <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L277" href="#L277">277</a>             <em class="jxr_comment">/* Process standard transfer in/out */</em>
+<a class="jxr_linenumber" name="L278" href="#L278">278</a>             <strong class="jxr_keyword">case</strong> TRANSFER:
+<a class="jxr_linenumber" name="L279" href="#L279">279</a>                 processStockXchange();
+<a class="jxr_linenumber" name="L280" href="#L280">280</a>                 <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L281" href="#L281">281</a>             <em class="jxr_comment">/* Throw an Exception */</em>
+<a class="jxr_linenumber" name="L282" href="#L282">282</a>             <strong class="jxr_keyword">default</strong>:
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="MoneyWiseLogicException" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/exc/MoneyWiseLogicException.html#MoneyWiseLogicException">MoneyWiseLogicException</a>(ERROR_CATEGORY
+<a class="jxr_linenumber" name="L284" href="#L284">284</a>                         + myCatClass);
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>         }
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>     }
+<a class="jxr_linenumber" name="L287" href="#L287">287</a> 
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L289" href="#L289">289</a> <em class="jxr_javadoccomment">     * adjust Asset Valuation.</em>
+<a class="jxr_linenumber" name="L290" href="#L290">290</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L291" href="#L291">291</a> <em class="jxr_javadoccomment">     * @param pAsset the asset</em>
+<a class="jxr_linenumber" name="L292" href="#L292">292</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L293" href="#L293">293</a>     <strong class="jxr_keyword">void</strong> adjustAssetValuation(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisSecurityBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisSecurityBucket.html#MoneyWiseXAnalysisSecurityBucket">MoneyWiseXAnalysisSecurityBucket</a> pAsset) {
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>         <em class="jxr_comment">/* Value the asset and calculate unrealised gains */</em>
+<a class="jxr_linenumber" name="L295" href="#L295">295</a>         pAsset.valueAsset();
+<a class="jxr_linenumber" name="L296" href="#L296">296</a>         pAsset.adjustValuation();
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>         pAsset.calculateUnrealisedGains();
+<a class="jxr_linenumber" name="L298" href="#L298">298</a> 
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>         <em class="jxr_comment">/* determine the MarketGrowth */</em>
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>         <strong class="jxr_keyword">final</strong> <a name="OceanusMoney" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusMoney.html#OceanusMoney">OceanusMoney</a> myDeltaValue = pAsset.getDeltaUnrealisedGains();
+<a class="jxr_linenumber" name="L301" href="#L301">301</a>         theMarket.adjustTotalsForMarketGrowth(theTransaction.getEvent(), myDeltaValue);
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>     }
+<a class="jxr_linenumber" name="L303" href="#L303">303</a> 
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L305" href="#L305">305</a> <em class="jxr_javadoccomment">     * Adjust for Standard Gains.</em>
+<a class="jxr_linenumber" name="L306" href="#L306">306</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L307" href="#L307">307</a> <em class="jxr_javadoccomment">     * @param pSource the source security holding</em>
+<a class="jxr_linenumber" name="L308" href="#L308">308</a> <em class="jxr_javadoccomment">     * @param pGains  the gains</em>
+<a class="jxr_linenumber" name="L309" href="#L309">309</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L310" href="#L310">310</a>     <strong class="jxr_keyword">void</strong> adjustStandardGain(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseSecurityHolding" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHolding.html#MoneyWiseSecurityHolding">MoneyWiseSecurityHolding</a> pSource,
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>                             <strong class="jxr_keyword">final</strong> <a name="OceanusMoney" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusMoney.html#OceanusMoney">OceanusMoney</a> pGains) {
+<a class="jxr_linenumber" name="L312" href="#L312">312</a>         <em class="jxr_comment">/* Access security and portfolio */</em>
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseSecurity" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurity.html#MoneyWiseSecurity">MoneyWiseSecurity</a> mySecurity = pSource.getSecurity();
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWisePortfolio" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWisePortfolio.html#MoneyWisePortfolio">MoneyWisePortfolio</a> myPortfolio = pSource.getPortfolio();
+<a class="jxr_linenumber" name="L315" href="#L315">315</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseSecurityClass" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/statics/MoneyWiseSecurityClass.html#MoneyWiseSecurityClass">MoneyWiseSecurityClass</a> myClass = mySecurity.getCategoryClass();
+<a class="jxr_linenumber" name="L316" href="#L316">316</a> 
+<a class="jxr_linenumber" name="L317" href="#L317">317</a>         <em class="jxr_comment">/* Determine the type of gains */</em>
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>         <a name="MoneyWiseXAnalysisTransCategoryBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisTransCategoryBucket.html#MoneyWiseXAnalysisTransCategoryBucket">MoneyWiseXAnalysisTransCategoryBucket</a> myCategory = theCapitalCat;
+<a class="jxr_linenumber" name="L319" href="#L319">319</a>         <a name="MoneyWiseXAnalysisTaxBasisBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisTaxBasisBucket.html#MoneyWiseXAnalysisTaxBasisBucket">MoneyWiseXAnalysisTaxBasisBucket</a> myTaxBasis = theCapitalTax;
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>         <strong class="jxr_keyword">if</strong> (myPortfolio.isTaxFree()) {
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>             myCategory = theTaxFreeCat;
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>             myTaxBasis = theTaxFreeTax;
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (myClass.isResidentialGains()) {
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>             myCategory = theResidentialCat;
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>             myTaxBasis = theResidentialTax;
+<a class="jxr_linenumber" name="L326" href="#L326">326</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (myClass.isChargeableGains()) {
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>             myCategory = theChargeableCat;
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>             myTaxBasis = theChargeableTax;
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>         }
+<a class="jxr_linenumber" name="L330" href="#L330">330</a> 
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>         <em class="jxr_comment">/* Add to Capital Gains income/expense */</em>
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>         <strong class="jxr_keyword">if</strong> (pGains.isPositive()) {
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>             myCategory.addIncome(pGains);
+<a class="jxr_linenumber" name="L334" href="#L334">334</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L335" href="#L335">335</a>             myCategory.subtractExpense(pGains);
+<a class="jxr_linenumber" name="L336" href="#L336">336</a>         }
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>         myTaxBasis.adjustGrossAndNett(pGains);
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>         theMarket.adjustForGains(pGains);
+<a class="jxr_linenumber" name="L339" href="#L339">339</a> 
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>         <em class="jxr_comment">/* Register the buckets */</em>
+<a class="jxr_linenumber" name="L341" href="#L341">341</a>         theState.registerBucketInterest(myCategory);
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>         theState.registerBucketInterest(myTaxBasis);
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>     }
+<a class="jxr_linenumber" name="L344" href="#L344">344</a> 
+<a class="jxr_linenumber" name="L345" href="#L345">345</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L346" href="#L346">346</a> <em class="jxr_javadoccomment">     * Process a transaction that is a unitsAdjust.</em>
+<a class="jxr_linenumber" name="L347" href="#L347">347</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L348" href="#L348">348</a>     <strong class="jxr_keyword">void</strong> processUnitsAdjust() {
+<a class="jxr_linenumber" name="L349" href="#L349">349</a>         <em class="jxr_comment">/* Access the units */</em>
+<a class="jxr_linenumber" name="L350" href="#L350">350</a>         <strong class="jxr_keyword">final</strong> <a name="OceanusUnits" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusUnits.html#OceanusUnits">OceanusUnits</a> myDelta = theTransaction.getDebitUnitsDelta();
 <a class="jxr_linenumber" name="L351" href="#L351">351</a> 
-<a class="jxr_linenumber" name="L352" href="#L352">352</a>         <em class="jxr_comment">/* Register the buckets */</em>
-<a class="jxr_linenumber" name="L353" href="#L353">353</a>         theState.registerBucketInterest(myCategory);
-<a class="jxr_linenumber" name="L354" href="#L354">354</a>         theState.registerBucketInterest(myTaxBasis);
-<a class="jxr_linenumber" name="L355" href="#L355">355</a>     }
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>         <em class="jxr_comment">/* Adjust the Security Units */</em>
+<a class="jxr_linenumber" name="L353" href="#L353">353</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseSecurityHolding" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHolding.html#MoneyWiseSecurityHolding">MoneyWiseSecurityHolding</a> myHolding = (<a name="MoneyWiseSecurityHolding" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHolding.html#MoneyWiseSecurityHolding">MoneyWiseSecurityHolding</a>) theTransaction.getDebitAccount();
+<a class="jxr_linenumber" name="L354" href="#L354">354</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisSecurityBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisSecurityBucket.html#MoneyWiseXAnalysisSecurityBucket">MoneyWiseXAnalysisSecurityBucket</a> myAsset = thePortfolios.getBucket(myHolding);
+<a class="jxr_linenumber" name="L355" href="#L355">355</a>         myAsset.adjustUnits(myDelta);
 <a class="jxr_linenumber" name="L356" href="#L356">356</a> 
-<a class="jxr_linenumber" name="L357" href="#L357">357</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L358" href="#L358">358</a> <em class="jxr_javadoccomment">     * Process a transaction that is a unitsAdjust.</em>
-<a class="jxr_linenumber" name="L359" href="#L359">359</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L360" href="#L360">360</a>     <strong class="jxr_keyword">void</strong> processUnitsAdjust() {
-<a class="jxr_linenumber" name="L361" href="#L361">361</a>         <em class="jxr_comment">/* Access the units */</em>
-<a class="jxr_linenumber" name="L362" href="#L362">362</a>         <strong class="jxr_keyword">final</strong> <a name="OceanusUnits" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusUnits.html#OceanusUnits">OceanusUnits</a> myDelta = theTransaction.getDebitUnitsDelta();
-<a class="jxr_linenumber" name="L363" href="#L363">363</a> 
-<a class="jxr_linenumber" name="L364" href="#L364">364</a>         <em class="jxr_comment">/* Adjust the Security Units */</em>
-<a class="jxr_linenumber" name="L365" href="#L365">365</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseSecurityHolding" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHolding.html#MoneyWiseSecurityHolding">MoneyWiseSecurityHolding</a> myHolding = (<a name="MoneyWiseSecurityHolding" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHolding.html#MoneyWiseSecurityHolding">MoneyWiseSecurityHolding</a>) theTransaction.getDebitAccount();
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisSecurityBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisSecurityBucket.html#MoneyWiseXAnalysisSecurityBucket">MoneyWiseXAnalysisSecurityBucket</a> myAsset = thePortfolios.getBucket(myHolding);
-<a class="jxr_linenumber" name="L367" href="#L367">367</a>         myAsset.adjustUnits(myDelta);
-<a class="jxr_linenumber" name="L368" href="#L368">368</a> 
-<a class="jxr_linenumber" name="L369" href="#L369">369</a>         <em class="jxr_comment">/* Record the price of the asset if we have a price */</em>
-<a class="jxr_linenumber" name="L370" href="#L370">370</a>         <strong class="jxr_keyword">final</strong> <a name="OceanusPrice" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusPrice.html#OceanusPrice">OceanusPrice</a> myPrice = theTransaction.getTransaction().getPrice();
-<a class="jxr_linenumber" name="L371" href="#L371">371</a>         <strong class="jxr_keyword">if</strong> (myPrice != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>             <em class="jxr_comment">/* Record the new price and update the bucket */</em>
-<a class="jxr_linenumber" name="L373" href="#L373">373</a>             theState.setNewPriceViaTransaction(myHolding.getSecurity(), myPrice);
-<a class="jxr_linenumber" name="L374" href="#L374">374</a> 
-<a class="jxr_linenumber" name="L375" href="#L375">375</a>             <em class="jxr_comment">/* update the price and determine the value delta */</em>
-<a class="jxr_linenumber" name="L376" href="#L376">376</a>             myAsset.recordSecurityPrice();
-<a class="jxr_linenumber" name="L377" href="#L377">377</a>         }
-<a class="jxr_linenumber" name="L378" href="#L378">378</a> 
-<a class="jxr_linenumber" name="L379" href="#L379">379</a>         <em class="jxr_comment">/* Adjust the valuation */</em>
-<a class="jxr_linenumber" name="L380" href="#L380">380</a>         adjustAssetValuation(myAsset);
-<a class="jxr_linenumber" name="L381" href="#L381">381</a> 
-<a class="jxr_linenumber" name="L382" href="#L382">382</a>         <em class="jxr_comment">/* Register the transaction */</em>
-<a class="jxr_linenumber" name="L383" href="#L383">383</a>         theState.registerBucketInterest(myAsset);
-<a class="jxr_linenumber" name="L384" href="#L384">384</a>     }
-<a class="jxr_linenumber" name="L385" href="#L385">385</a> 
-<a class="jxr_linenumber" name="L386" href="#L386">386</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L387" href="#L387">387</a> <em class="jxr_javadoccomment">     * Process a transaction that is a stockXchange.</em>
-<a class="jxr_linenumber" name="L388" href="#L388">388</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L389" href="#L389">389</a>     <strong class="jxr_keyword">void</strong> processStockXchange() {
-<a class="jxr_linenumber" name="L390" href="#L390">390</a>         <em class="jxr_comment">/* Adjust the debit transfer details */</em>
-<a class="jxr_linenumber" name="L391" href="#L391">391</a>         theXferOut.processDebitXferOut(theTransaction);
-<a class="jxr_linenumber" name="L392" href="#L392">392</a> 
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>         <em class="jxr_comment">/* Adjust the credit transfer details */</em>
-<a class="jxr_linenumber" name="L394" href="#L394">394</a>         theXferIn.processCreditXferIn(theTransaction);
-<a class="jxr_linenumber" name="L395" href="#L395">395</a>     }
-<a class="jxr_linenumber" name="L396" href="#L396">396</a> }
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>         <em class="jxr_comment">/* Record the price of the asset if we have a price */</em>
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>         <strong class="jxr_keyword">final</strong> <a name="OceanusPrice" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusPrice.html#OceanusPrice">OceanusPrice</a> myPrice = theTransaction.getTransaction().getPrice();
+<a class="jxr_linenumber" name="L359" href="#L359">359</a>         <strong class="jxr_keyword">if</strong> (myPrice != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>             <em class="jxr_comment">/* Record the new price and update the bucket */</em>
+<a class="jxr_linenumber" name="L361" href="#L361">361</a>             theState.setNewPriceViaTransaction(myHolding.getSecurity(), myPrice);
+<a class="jxr_linenumber" name="L362" href="#L362">362</a> 
+<a class="jxr_linenumber" name="L363" href="#L363">363</a>             <em class="jxr_comment">/* update the price and determine the value delta */</em>
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>             myAsset.recordSecurityPrice();
+<a class="jxr_linenumber" name="L365" href="#L365">365</a>         }
+<a class="jxr_linenumber" name="L366" href="#L366">366</a> 
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>         <em class="jxr_comment">/* Adjust the valuation */</em>
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>         adjustAssetValuation(myAsset);
+<a class="jxr_linenumber" name="L369" href="#L369">369</a> 
+<a class="jxr_linenumber" name="L370" href="#L370">370</a>         <em class="jxr_comment">/* Register the transaction */</em>
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>         theState.registerBucketInterest(myAsset);
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>     }
+<a class="jxr_linenumber" name="L373" href="#L373">373</a> 
+<a class="jxr_linenumber" name="L374" href="#L374">374</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L375" href="#L375">375</a> <em class="jxr_javadoccomment">     * Process a transaction that is a stockXchange.</em>
+<a class="jxr_linenumber" name="L376" href="#L376">376</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L377" href="#L377">377</a>     <strong class="jxr_keyword">void</strong> processStockXchange() {
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>         <em class="jxr_comment">/* Adjust the debit transfer details */</em>
+<a class="jxr_linenumber" name="L379" href="#L379">379</a>         theXferOut.processDebitXferOut(theTransaction);
+<a class="jxr_linenumber" name="L380" href="#L380">380</a> 
+<a class="jxr_linenumber" name="L381" href="#L381">381</a>         <em class="jxr_comment">/* Adjust the credit transfer details */</em>
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>         theXferIn.processCreditXferIn(theTransaction);
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>     }
+<a class="jxr_linenumber" name="L384" href="#L384">384</a> }
 </pre>
 <hr/>
 <div id="footer">© 2012–2026</div>

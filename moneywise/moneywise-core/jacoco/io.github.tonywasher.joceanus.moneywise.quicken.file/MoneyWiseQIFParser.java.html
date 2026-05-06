@@ -110,7 +110,7 @@ public class MoneyWiseQIFParser {
                 /* else normal line */
             } else {
                 /* Ignore blank lines */
-<span class="nc bnc" id="L113" title="All 2 branches missed.">                if (myLine.length() &gt; 0) {</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">                if (!myLine.isEmpty()) {</span>
 <span class="nc" id="L114">                    myLines.add(myLine);</span>
                 }
             }

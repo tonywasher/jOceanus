@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisUIStatsPanel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.gui.stats</a> &gt; <span class="el_source">ThemisUIStatsPanel.java</span></div><h1>ThemisUIStatsPanel.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.gui.stats;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUISplitTreeManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUITreeManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUITreeManager.TethysUITreeItem;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIStyleSheet;
+import io.github.tonywasher.joceanus.themis.stats.ThemisStatsClass;
+import io.github.tonywasher.joceanus.themis.stats.ThemisStatsElement;
+import io.github.tonywasher.joceanus.themis.stats.ThemisStatsFile;
+import io.github.tonywasher.joceanus.themis.stats.ThemisStatsMethod;
+import io.github.tonywasher.joceanus.themis.stats.ThemisStatsModule;
+import io.github.tonywasher.joceanus.themis.stats.ThemisStatsPackage;
+import io.github.tonywasher.joceanus.themis.stats.ThemisStatsProject;
+
+public class ThemisUIStatsPanel
+        implements TethysUIComponent {
+    /**
+     * The SplitTree Manager.
+     */
+    private final TethysUISplitTreeManager&lt;ThemisUIStatsEntry&gt; theSplitTree;
+
+    /**
+     * The Tree Manager.
+     */
+    private final TethysUITreeManager&lt;ThemisUIStatsEntry&gt; theTree;
+
+    /**
+     * The HTML Manager.
+     */
+    private final TethysUIHTMLManager theHTML;
+
+    /**
+     * The Document Builder.
+     */
+    private final ThemisUIStatsDocument theDoc;
+
+    /**
+     * The Current root.
+     */
+    private TethysUITreeItem&lt;ThemisUIStatsEntry&gt; theRoot;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the GuiFactory
+     * @throws OceanusException on error
+     */
+<span class="nc" id="L71">    public ThemisUIStatsPanel(final TethysUIFactory&lt;?&gt; pFactory) throws OceanusException {</span>
+        /* Create the splitTree Manager */
+<span class="nc" id="L73">        theSplitTree = pFactory.controlFactory().newSplitTreeManager();</span>
+<span class="nc" id="L74">        theTree = theSplitTree.getTreeManager();</span>
+<span class="nc" id="L75">        theHTML = theSplitTree.getHTMLManager();</span>
+<span class="nc" id="L76">        theHTML.setCSSContent(ThemisUIStyleSheet.CSS);</span>
+<span class="nc" id="L77">        theTree.setVisible(true);</span>
+
+        /* Create the document builder */
+<span class="nc" id="L80">        theDoc = new ThemisUIStatsDocument();</span>
+
+        /* Create listeners */
+<span class="nc" id="L83">        theSplitTree.getEventRegistrar().addEventListener(this::handleSplitTreeAction);</span>
+<span class="nc" id="L84">    }</span>
+
+    @Override
+    public TethysUIComponent getUnderlying() {
+<span class="nc" id="L88">        return theSplitTree;</span>
+    }
+
+    /**
+     * Set the current project.
+     *
+     * @param pProject the current project
+     */
+    public void setCurrentProject(final ThemisStatsProject pProject) {
+        /* Initialise the tree */
+<span class="nc" id="L98">        initialiseTree(pProject);</span>
+<span class="nc" id="L99">    }</span>
+
+    /**
+     * Initialise tree.
+     *
+     * @param pProject the stats project
+     */
+    private void initialiseTree(final ThemisStatsProject pProject) {
+        /* If there is currently a root item */
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        if (theRoot != null) {</span>
+            /* Hide it */
+<span class="nc" id="L110">            theRoot.setVisible(false);</span>
+        }
+
+        /* If we have a project */
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        if (pProject != null) {</span>
+<span class="nc" id="L115">            final ThemisUIStatsEntry myEntry = new ThemisUIStatsEntry(pProject);</span>
+<span class="nc" id="L116">            theRoot = theTree.addRootItem(myEntry.getUniqueName(), myEntry);</span>
+<span class="nc" id="L117">            theRoot.setVisible(true);</span>
+<span class="nc" id="L118">            handleNewTreeItem(myEntry);</span>
+
+            /* Loop through the modules */
+<span class="nc bnc" id="L121" title="All 2 branches missed.">            for (ThemisStatsModule myModule : pProject.getModules()) {</span>
+<span class="nc" id="L122">                addModule(theRoot, myModule);</span>
+<span class="nc" id="L123">            }</span>
+        }
+<span class="nc" id="L125">    }</span>
+
+    /**
+     * Create moduleNode.
+     *
+     * @param pParent the parent
+     * @param pModule the module
+     */
+    private void addModule(final TethysUITreeItem&lt;ThemisUIStatsEntry&gt; pParent,
+                           final ThemisStatsModule pModule) {
+        /* Create a new root entry */
+<span class="nc" id="L136">        final ThemisUIStatsEntry myEntry = new ThemisUIStatsEntry(pParent.getItem(), pModule);</span>
+<span class="nc" id="L137">        final TethysUITreeItem&lt;ThemisUIStatsEntry&gt; myTreeItem = theTree.addChildItem(pParent, myEntry.getUniqueName(), myEntry);</span>
+<span class="nc" id="L138">        myTreeItem.setVisible(true);</span>
+
+        /* Loop through the packages */
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        for (ThemisStatsPackage myPackage : pModule.getPackages()) {</span>
+<span class="nc bnc" id="L142" title="All 2 branches missed.">            if (!myPackage.getUnderlying().isPlaceHolder()) {</span>
+<span class="nc" id="L143">                addPackage(myTreeItem, myPackage);</span>
+            }
+<span class="nc" id="L145">        }</span>
+<span class="nc" id="L146">    }</span>
+
+    /**
+     * Create packageNode.
+     *
+     * @param pParent  the parent
+     * @param pPackage the package
+     */
+    private void addPackage(final TethysUITreeItem&lt;ThemisUIStatsEntry&gt; pParent,
+                            final ThemisStatsPackage pPackage) {
+        /* Create a new root entry */
+<span class="nc" id="L157">        final ThemisUIStatsEntry myEntry = new ThemisUIStatsEntry(pParent.getItem(), pPackage);</span>
+<span class="nc" id="L158">        final TethysUITreeItem&lt;ThemisUIStatsEntry&gt; myTreeItem = theTree.addChildItem(pParent, myEntry.getUniqueName(), myEntry);</span>
+<span class="nc" id="L159">        myTreeItem.setVisible(true);</span>
+
+        /* Loop through the packages */
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        for (ThemisStatsFile myFile : pPackage.getFiles()) {</span>
+<span class="nc" id="L163">            addFile(myTreeItem, myFile);</span>
+<span class="nc" id="L164">        }</span>
+<span class="nc" id="L165">    }</span>
+
+    /**
+     * Create fileNode.
+     *
+     * @param pParent the parent
+     * @param pFile   the file
+     */
+    private void addFile(final TethysUITreeItem&lt;ThemisUIStatsEntry&gt; pParent,
+                         final ThemisStatsFile pFile) {
+        /* Create a new root entry */
+<span class="nc" id="L176">        final ThemisUIStatsEntry myEntry = new ThemisUIStatsEntry(pParent.getItem(), pFile);</span>
+<span class="nc" id="L177">        final TethysUITreeItem&lt;ThemisUIStatsEntry&gt; myTreeItem = theTree.addChildItem(pParent, myEntry.getUniqueName(), myEntry);</span>
+<span class="nc" id="L178">        myTreeItem.setVisible(true);</span>
+
+        /* Loop through the classes */
+<span class="nc bnc" id="L181" title="All 2 branches missed.">        for (ThemisStatsClass myClass : pFile.getClasses()) {</span>
+<span class="nc" id="L182">            addClass(myTreeItem, myClass);</span>
+<span class="nc" id="L183">        }</span>
+<span class="nc" id="L184">    }</span>
+
+    /**
+     * Create classNode.
+     *
+     * @param pParent the parent
+     * @param pClass  the class
+     */
+    private void addClass(final TethysUITreeItem&lt;ThemisUIStatsEntry&gt; pParent,
+                          final ThemisStatsClass pClass) {
+        /* Create a new root entry */
+<span class="nc" id="L195">        final ThemisUIStatsEntry myEntry = new ThemisUIStatsEntry(pParent.getItem(), pClass);</span>
+<span class="nc" id="L196">        final TethysUITreeItem&lt;ThemisUIStatsEntry&gt; myTreeItem = theTree.addChildItem(pParent, myEntry.getUniqueName(), myEntry);</span>
+<span class="nc" id="L197">        myTreeItem.setVisible(true);</span>
+
+        /* Loop through the classes */
+<span class="nc bnc" id="L200" title="All 2 branches missed.">        for (ThemisStatsElement myClass : pClass.getClasses()) {</span>
+<span class="nc" id="L201">            addClass(myTreeItem, (ThemisStatsClass) myClass);</span>
+<span class="nc" id="L202">        }</span>
+
+        /* Loop through the methods */
+<span class="nc bnc" id="L205" title="All 2 branches missed.">        for (ThemisStatsElement myMethod : pClass.getMethods()) {</span>
+<span class="nc" id="L206">            addMethod(myTreeItem, (ThemisStatsMethod) myMethod);</span>
+<span class="nc" id="L207">        }</span>
+<span class="nc" id="L208">    }</span>
+
+    /**
+     * Create methodNode.
+     *
+     * @param pParent the parent
+     * @param pMethod the method
+     */
+    private void addMethod(final TethysUITreeItem&lt;ThemisUIStatsEntry&gt; pParent,
+                           final ThemisStatsMethod pMethod) {
+        /* Create a new root entry */
+<span class="nc" id="L219">        final ThemisUIStatsEntry myEntry = new ThemisUIStatsEntry(pParent.getItem(), pMethod);</span>
+<span class="nc" id="L220">        final TethysUITreeItem&lt;ThemisUIStatsEntry&gt; myTreeItem = theTree.addChildItem(pParent, myEntry.getUniqueName(), myEntry);</span>
+<span class="nc" id="L221">        myTreeItem.setVisible(true);</span>
+
+        /* Loop through the classes */
+<span class="nc bnc" id="L224" title="All 2 branches missed.">        for (ThemisStatsElement myClass : pMethod.getClasses()) {</span>
+<span class="nc" id="L225">            addClass(myTreeItem, (ThemisStatsClass) myClass);</span>
+<span class="nc" id="L226">        }</span>
+<span class="nc" id="L227">    }</span>
+
+    /**
+     * Handle the split tree action event.
+     *
+     * @param pEvent the event
+     */
+    private void handleSplitTreeAction(final OceanusEvent&lt;TethysUIEvent&gt; pEvent) {
+        /* If this is a new value */
+<span class="nc bnc" id="L236" title="All 2 branches missed.">        if (pEvent.getEventId() == TethysUIEvent.NEWVALUE) {</span>
+<span class="nc" id="L237">            handleNewTreeItem(pEvent.getDetails(ThemisUIStatsEntry.class));</span>
+        }
+<span class="nc" id="L239">    }</span>
+
+    /**
+     * Handle the new tree item.
+     *
+     * @param pEntry the new entry
+     */
+    private void handleNewTreeItem(final ThemisUIStatsEntry pEntry) {
+        /* If we have an entry */
+<span class="nc bnc" id="L248" title="All 2 branches missed.">        if (pEntry != null) {</span>
+            /* Access the Element */
+<span class="nc" id="L250">            final ThemisStatsElement myElement = pEntry.getObject();</span>
+
+            /* Build report */
+<span class="nc" id="L253">            final String myDoc = theDoc.formatElement(myElement);</span>
+<span class="nc" id="L254">            theHTML.setHTMLContent(myDoc, &quot;&quot;);</span>
+        }
+<span class="nc" id="L256">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

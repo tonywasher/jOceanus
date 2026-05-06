@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisMapperNameState.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.solver.mapper</a> &gt; <span class="el_source">ThemisMapperNameState.java</span></div><h1>ThemisMapperNameState.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.solver.mapper;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisDeclarationInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisId;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisNodeInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisTypeInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisModifierList;
+import io.github.tonywasher.joceanus.themis.parser.decl.ThemisDeclEnum;
+import io.github.tonywasher.joceanus.themis.parser.decl.ThemisDeclEnumValue;
+import io.github.tonywasher.joceanus.themis.parser.decl.ThemisDeclField;
+import io.github.tonywasher.joceanus.themis.parser.decl.ThemisDeclaration;
+import io.github.tonywasher.joceanus.themis.parser.expr.ThemisExprTypePattern;
+import io.github.tonywasher.joceanus.themis.parser.node.ThemisNodeParameter;
+import io.github.tonywasher.joceanus.themis.parser.node.ThemisNodeVariable;
+import io.github.tonywasher.joceanus.themis.parser.stmt.ThemisStatement;
+import io.github.tonywasher.joceanus.themis.parser.type.ThemisTypeClassInterface;
+import io.github.tonywasher.joceanus.themis.solver.reflect.ThemisReflectExternal;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Name state.
+ */
+public class ThemisMapperNameState {
+    /**
+     * The nameState stack.
+     */
+    private final Deque&lt;ThemisMapperNameMap&gt; theStack;
+
+    /**
+     * The active nameState.
+     */
+    private ThemisMapperNameMap theName;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L62">    ThemisMapperNameState() {</span>
+        /* create stack */
+<span class="fc" id="L64">        theStack = new ArrayDeque&lt;&gt;();</span>
+
+        /* Create initial Name Map */
+<span class="fc" id="L67">        theName = new ThemisMapperNameMap();</span>
+<span class="fc" id="L68">    }</span>
+
+    /**
+     * Reset.
+     */
+    void reset() {
+<span class="fc" id="L74">        theStack.clear();</span>
+<span class="fc" id="L75">        theName = new ThemisMapperNameMap();</span>
+<span class="fc" id="L76">    }</span>
+
+    /**
+     * Process the start of an instance.
+     *
+     * @param pInstance the instance
+     * @return should cleanUp be called after processing this instance?
+     * @throws OceanusException on error
+     */
+    boolean processInstance(final ThemisInstance pInstance) throws OceanusException {
+        /* Determine whether we should bump the stack */
+<span class="fc" id="L87">        final boolean doBump = bumpStack(pInstance);</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        if (doBump) {</span>
+<span class="fc" id="L89">            bumpStack();</span>
+        }
+
+        /* Process interesting elements */
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (pInstance instanceof ThemisClassInstance myClass) {</span>
+<span class="fc" id="L94">            processClass(myClass);</span>
+        }
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (pInstance instanceof ThemisDeclEnum myEnum) {</span>
+<span class="fc" id="L97">            return processEnum(myEnum);</span>
+        }
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (pInstance instanceof ThemisNodeVariable myVar) {</span>
+<span class="fc" id="L100">            return processVariable(myVar);</span>
+        }
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        if (pInstance instanceof ThemisNodeParameter myParam) {</span>
+<span class="fc" id="L103">            return processParameter(myParam);</span>
+        }
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        if (pInstance instanceof ThemisExprTypePattern myPattern) {</span>
+<span class="fc" id="L106">            return processPattern(myPattern);</span>
+        }
+
+        /* Return bump indication */
+<span class="fc" id="L110">        return doBump;</span>
+    }
+
+    /**
+     * Bump the stack.
+     */
+    private void bumpStack() {
+<span class="fc" id="L117">        theStack.push(theName);</span>
+<span class="fc" id="L118">        theName = new ThemisMapperNameMap(theName);</span>
+<span class="fc" id="L119">    }</span>
+
+    /**
+     * cleanUp after stacked instance.
+     */
+    void cleanUpAfterInstance() {
+<span class="fc" id="L125">        theName = theStack.pop();</span>
+<span class="fc" id="L126">    }</span>
+
+    /**
+     * Look up type.
+     *
+     * @param pName the name of the type
+     * @return the type
+     */
+    ThemisTypeInstance lookUpName(final String pName) {
+<span class="fc" id="L135">        return theName.lookUpName(pName);</span>
+    }
+
+    /**
+     * Process enumValue.
+     *
+     * @param pElement the element
+     * @return false
+     */
+    private boolean processEnum(final ThemisDeclEnum pElement) {
+<span class="fc" id="L145">        final ThemisMapperTypeRef myRef = new ThemisMapperTypeRef(pElement);</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        for (ThemisDeclarationInstance myInstance : pElement.getValues()) {</span>
+<span class="fc" id="L147">            final ThemisDeclEnumValue myValue = (ThemisDeclEnumValue) myInstance;</span>
+<span class="fc" id="L148">            theName.declareEnum(myRef, myValue);</span>
+<span class="fc" id="L149">        }</span>
+<span class="fc" id="L150">        return false;</span>
+    }
+
+    /**
+     * Process variableDecl element.
+     *
+     * @param pElement the element
+     * @return false
+     */
+    private boolean processVariable(final ThemisNodeVariable pElement) {
+<span class="fc" id="L160">        theName.declareVariable(pElement);</span>
+<span class="fc" id="L161">        return false;</span>
+    }
+
+    /**
+     * Process parameter.
+     *
+     * @param pElement the parameter
+     * @return false
+     */
+    private boolean processParameter(final ThemisNodeParameter pElement) {
+<span class="fc" id="L171">        theName.declareParameter(pElement);</span>
+<span class="fc" id="L172">        return false;</span>
+    }
+
+    /**
+     * Process pattern element.
+     *
+     * @param pElement the element
+     * @return false
+     */
+    private boolean processPattern(final ThemisExprTypePattern pElement) {
+<span class="fc" id="L182">        theName.declarePattern(pElement);</span>
+<span class="fc" id="L183">        return false;</span>
+    }
+
+    /**
+     * Process class element.
+     *
+     * @param pClass the element
+     * @throws OceanusException on error
+     */
+    private void processClass(final ThemisClassInstance pClass) throws OceanusException {
+<span class="fc bfc" id="L193" title="All 2 branches covered.">        for (ThemisTypeInstance myClass : pClass.getExtends()) {</span>
+<span class="fc" id="L194">            final ThemisTypeClassInterface myExtend = (ThemisTypeClassInterface) myClass;</span>
+<span class="fc" id="L195">            ThemisClassInstance myClassInstance = myExtend.getClassInstance();</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">            if (myClassInstance instanceof ThemisReflectExternal myExternal) {</span>
+<span class="fc" id="L197">                myClassInstance = myExternal.getClassInstance();</span>
+            }
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">            if (myClassInstance == null) {</span>
+<span class="nc" id="L200">                throw new ThemisDataException(&quot;Class Instance not found: &quot; + pClass.getFullName());</span>
+            }
+
+            /* Loop through all the field declarations */
+<span class="fc bfc" id="L204" title="All 2 branches covered.">            for (ThemisInstance myChild : myClassInstance.getBody()) {</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">                if (myChild instanceof ThemisDeclField myField) {</span>
+<span class="fc" id="L206">                    processField(myField);</span>
+                }
+<span class="fc" id="L208">            }</span>
+
+            /* Follow the chain */
+<span class="fc" id="L211">            processClass(myClassInstance);</span>
+<span class="fc" id="L212">        }</span>
+<span class="fc" id="L213">    }</span>
+
+    /**
+     * Process field element.
+     *
+     * @param pField the element
+     */
+    private void processField(final ThemisDeclField pField) {
+        /* If the field is public or protected */
+<span class="fc" id="L222">        final ThemisModifierList myModifiers = pField.getModifiers();</span>
+<span class="fc bfc" id="L223" title="All 4 branches covered.">        if (myModifiers.isProtected() || myModifiers.isPublic()) {</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">            for (ThemisNodeInstance myVarNode : pField.getVariables()) {</span>
+<span class="fc" id="L225">                final ThemisNodeVariable myVar = (ThemisNodeVariable) myVarNode;</span>
+<span class="fc" id="L226">                processVariable(myVar);</span>
+<span class="fc" id="L227">            }</span>
+        }
+<span class="fc" id="L229">    }</span>
+
+    /**
+     * Should an instance bump the name stack?
+     *
+     * @param pInstance the instance
+     * @return true/false
+     */
+    private boolean bumpStack(final ThemisInstance pInstance) {
+        /* Process interesting ids */
+<span class="fc" id="L239">        final ThemisId myId = pInstance.getId();</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">        if (myId instanceof ThemisDeclaration myDeclType) {</span>
+<span class="fc" id="L241">            return bumpStack(myDeclType);</span>
+        }
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        if (myId instanceof ThemisStatement myStmtType) {</span>
+<span class="fc" id="L244">            return bumpStack(myStmtType);</span>
+        }
+<span class="fc" id="L246">        return false;</span>
+    }
+
+    /**
+     * Should a declaration bump the name stack?
+     *
+     * @param pDeclType the declaration type
+     * @return true/false
+     */
+    private boolean bumpStack(final ThemisDeclaration pDeclType) {
+<span class="fc bfc" id="L256" title="All 2 branches covered.">        return switch (pDeclType) {</span>
+<span class="fc" id="L257">            case CLASSINTERFACE, ENUM, RECORD, METHOD, CONSTRUCTOR -&gt; true;</span>
+<span class="fc" id="L258">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Should a statement bump the name stack?
+     *
+     * @param pStmtType the declaration type
+     * @return true/false
+     */
+    private boolean bumpStack(final ThemisStatement pStmtType) {
+<span class="fc bfc" id="L269" title="All 2 branches covered.">        return switch (pStmtType) {</span>
+<span class="fc" id="L270">            case BLOCK, FOR, FOREACH, TRY -&gt; true;</span>
+<span class="fc" id="L271">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * The cascading map of names.
+     */
+    private static class ThemisMapperNameMap {
+        /**
+         * The parent map.
+         */
+        private final ThemisMapperNameMap theParent;
+
+        /**
+         * The type variables map.
+         */
+        private final Map&lt;String, ThemisTypeInstance&gt; theNames;
+
+        /**
+         * Constructor.
+         */
+        ThemisMapperNameMap() {
+<span class="fc" id="L293">            this(null);</span>
+<span class="fc" id="L294">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pParent the parent
+         */
+<span class="fc" id="L301">        ThemisMapperNameMap(final ThemisMapperNameMap pParent) {</span>
+<span class="fc" id="L302">            theParent = pParent;</span>
+<span class="fc" id="L303">            theNames = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L304">        }</span>
+
+        /**
+         * Declare enumValue.
+         *
+         * @param pRef  the reference
+         * @param pEnum the enumValue
+         */
+        void declareEnum(final ThemisMapperTypeRef pRef,
+                         final ThemisDeclEnumValue pEnum) {
+<span class="fc" id="L314">            theNames.put(pEnum.getName().toString(), pRef);</span>
+<span class="fc" id="L315">        }</span>
+
+        /**
+         * Declare variable.
+         *
+         * @param pVar the variable declarator
+         */
+        void declareVariable(final ThemisNodeVariable pVar) {
+<span class="fc" id="L323">            theNames.put(pVar.getName().toString(), pVar.getType());</span>
+<span class="fc" id="L324">        }</span>
+
+        /**
+         * Declare parameter.
+         *
+         * @param pParam the parameter
+         */
+        void declareParameter(final ThemisNodeParameter pParam) {
+<span class="fc" id="L332">            theNames.put(pParam.getName().toString(), pParam.getType());</span>
+<span class="fc" id="L333">        }</span>
+
+        /**
+         * Declare pattern.
+         *
+         * @param pPattern the pattern
+         */
+        void declarePattern(final ThemisExprTypePattern pPattern) {
+<span class="fc" id="L341">            theNames.put(pPattern.getName().toString(), pPattern.getType());</span>
+<span class="fc" id="L342">        }</span>
+
+        /**
+         * Look up name.
+         *
+         * @param pName the name of the variable
+         * @return the type
+         */
+        ThemisTypeInstance lookUpName(final String pName) {
+            /* Look up name in map */
+<span class="fc" id="L352">            final ThemisTypeInstance myType = theNames.get(pName);</span>
+<span class="fc bfc" id="L353" title="All 2 branches covered.">            if (myType != null) {</span>
+<span class="fc" id="L354">                return myType;</span>
+            }
+
+            /* If we did not find the name, try the parent map */
+<span class="fc bfc" id="L358" title="All 2 branches covered.">            return theParent == null ? null : theParent.lookUpName(pName);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreSLHDSASpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair</a> &gt; <span class="el_source">GordianCoreSLHDSASpec.java</span></div><h1>GordianCoreSLHDSASpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSLHDSASpec;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.crypto.params.SLHDSAParameters;
+import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * SphincsPlus KeySpecs.
+ */
+public final class GordianCoreSLHDSASpec {
+    /**
+     * The specMap.
+     */
+<span class="fc" id="L36">    private static final Map&lt;GordianSLHDSASpec, GordianCoreSLHDSASpec&gt; SPECMAP = newSpecMap();</span>
+
+    /**
+     * The specArray.
+     */
+<span class="fc" id="L41">    private static final GordianCoreSLHDSASpec[] VALUES = SPECMAP.values().toArray(new GordianCoreSLHDSASpec[0]);</span>
+
+    /**
+     * The Spec.
+     */
+    private final GordianSLHDSASpec theSpec;
+
+    /**
+     * Constructor.
+     *
+     * @param pSpec the spec
+     */
+<span class="fc" id="L53">    private GordianCoreSLHDSASpec(final GordianSLHDSASpec pSpec) {</span>
+<span class="fc" id="L54">        theSpec = pSpec;</span>
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * Obtain the spec.
+     *
+     * @return the spec
+     */
+    public GordianSLHDSASpec getSpec() {
+<span class="fc" id="L63">        return theSpec;</span>
+    }
+
+    /**
+     * Is this a hash signer?
+     *
+     * @return true/false
+     */
+    public boolean isHash() {
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        return switch (theSpec) {</span>
+            case SHA128F, SHA128S, SHA192F, SHA192S, SHA256F, SHA256S, SHAKE128F, SHAKE128S, SHAKE192F, SHAKE192S,
+<span class="fc" id="L74">                 SHAKE256F, SHAKE256S -&gt; false;</span>
+<span class="nc" id="L75">            default -&gt; true;</span>
+        };
+    }
+
+    /**
+     * Obtain SLHDSA Parameters.
+     *
+     * @return the parameters.
+     */
+    public SLHDSAParameters getParameters() {
+<span class="pc bpc" id="L85" title="24 of 25 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L86">            case SHA128F -&gt; SLHDSAParameters.sha2_128f;</span>
+<span class="nc" id="L87">            case SHA128S -&gt; SLHDSAParameters.sha2_128s;</span>
+<span class="nc" id="L88">            case SHA192F -&gt; SLHDSAParameters.sha2_192f;</span>
+<span class="nc" id="L89">            case SHA192S -&gt; SLHDSAParameters.sha2_192s;</span>
+<span class="nc" id="L90">            case SHA256F -&gt; SLHDSAParameters.sha2_256f;</span>
+<span class="nc" id="L91">            case SHA256S -&gt; SLHDSAParameters.sha2_256s;</span>
+<span class="nc" id="L92">            case SHAKE128F -&gt; SLHDSAParameters.shake_128f;</span>
+<span class="nc" id="L93">            case SHAKE128S -&gt; SLHDSAParameters.shake_128s;</span>
+<span class="nc" id="L94">            case SHAKE192F -&gt; SLHDSAParameters.shake_192f;</span>
+<span class="nc" id="L95">            case SHAKE192S -&gt; SLHDSAParameters.shake_192s;</span>
+<span class="nc" id="L96">            case SHAKE256F -&gt; SLHDSAParameters.shake_256f;</span>
+<span class="nc" id="L97">            case SHAKE256S -&gt; SLHDSAParameters.shake_256s;</span>
+<span class="nc" id="L98">            case SHA128F_HASH -&gt; SLHDSAParameters.sha2_128f_with_sha256;</span>
+<span class="nc" id="L99">            case SHA128S_HASH -&gt; SLHDSAParameters.sha2_128s_with_sha256;</span>
+<span class="nc" id="L100">            case SHA192F_HASH -&gt; SLHDSAParameters.sha2_192f_with_sha512;</span>
+<span class="nc" id="L101">            case SHA192S_HASH -&gt; SLHDSAParameters.sha2_192s_with_sha512;</span>
+<span class="nc" id="L102">            case SHA256F_HASH -&gt; SLHDSAParameters.sha2_256f_with_sha512;</span>
+<span class="nc" id="L103">            case SHA256S_HASH -&gt; SLHDSAParameters.sha2_256s_with_sha512;</span>
+<span class="nc" id="L104">            case SHAKE128F_HASH -&gt; SLHDSAParameters.shake_128f_with_shake128;</span>
+<span class="nc" id="L105">            case SHAKE128S_HASH -&gt; SLHDSAParameters.shake_128s_with_shake128;</span>
+<span class="nc" id="L106">            case SHAKE192F_HASH -&gt; SLHDSAParameters.shake_192f_with_shake256;</span>
+<span class="nc" id="L107">            case SHAKE192S_HASH -&gt; SLHDSAParameters.shake_192s_with_shake256;</span>
+<span class="nc" id="L108">            case SHAKE256F_HASH -&gt; SLHDSAParameters.shake_256f_with_shake256;</span>
+<span class="nc" id="L109">            case SHAKE256S_HASH -&gt; SLHDSAParameters.shake_256s_with_shake256;</span>
+<span class="nc" id="L110">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    /**
+     * Obtain SPHINCSPlus ParameterSpec.
+     *
+     * @return the parameters.
+     */
+    public SLHDSAParameterSpec getParameterSpec() {
+<span class="pc bpc" id="L120" title="24 of 25 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L121">            case SHA128F -&gt; SLHDSAParameterSpec.slh_dsa_sha2_128f;</span>
+<span class="nc" id="L122">            case SHA128S -&gt; SLHDSAParameterSpec.slh_dsa_sha2_128s;</span>
+<span class="nc" id="L123">            case SHA192F -&gt; SLHDSAParameterSpec.slh_dsa_sha2_192f;</span>
+<span class="nc" id="L124">            case SHA192S -&gt; SLHDSAParameterSpec.slh_dsa_sha2_192s;</span>
+<span class="nc" id="L125">            case SHA256F -&gt; SLHDSAParameterSpec.slh_dsa_sha2_256f;</span>
+<span class="nc" id="L126">            case SHA256S -&gt; SLHDSAParameterSpec.slh_dsa_sha2_256s;</span>
+<span class="nc" id="L127">            case SHAKE128F -&gt; SLHDSAParameterSpec.slh_dsa_shake_128f;</span>
+<span class="nc" id="L128">            case SHAKE128S -&gt; SLHDSAParameterSpec.slh_dsa_shake_128s;</span>
+<span class="nc" id="L129">            case SHAKE192F -&gt; SLHDSAParameterSpec.slh_dsa_shake_192f;</span>
+<span class="nc" id="L130">            case SHAKE192S -&gt; SLHDSAParameterSpec.slh_dsa_shake_192s;</span>
+<span class="nc" id="L131">            case SHAKE256F -&gt; SLHDSAParameterSpec.slh_dsa_shake_256f;</span>
+<span class="nc" id="L132">            case SHAKE256S -&gt; SLHDSAParameterSpec.slh_dsa_shake_256s;</span>
+<span class="nc" id="L133">            case SHA128F_HASH -&gt; SLHDSAParameterSpec.slh_dsa_sha2_128f_with_sha256;</span>
+<span class="nc" id="L134">            case SHA128S_HASH -&gt; SLHDSAParameterSpec.slh_dsa_sha2_128s_with_sha256;</span>
+<span class="nc" id="L135">            case SHA192F_HASH -&gt; SLHDSAParameterSpec.slh_dsa_sha2_192f_with_sha512;</span>
+<span class="nc" id="L136">            case SHA192S_HASH -&gt; SLHDSAParameterSpec.slh_dsa_sha2_192s_with_sha512;</span>
+<span class="nc" id="L137">            case SHA256F_HASH -&gt; SLHDSAParameterSpec.slh_dsa_sha2_256f_with_sha512;</span>
+<span class="nc" id="L138">            case SHA256S_HASH -&gt; SLHDSAParameterSpec.slh_dsa_sha2_256s_with_sha512;</span>
+<span class="nc" id="L139">            case SHAKE128F_HASH -&gt; SLHDSAParameterSpec.slh_dsa_shake_128f_with_shake128;</span>
+<span class="nc" id="L140">            case SHAKE128S_HASH -&gt; SLHDSAParameterSpec.slh_dsa_shake_128s_with_shake128;</span>
+<span class="nc" id="L141">            case SHAKE192F_HASH -&gt; SLHDSAParameterSpec.slh_dsa_shake_192f_with_shake256;</span>
+<span class="nc" id="L142">            case SHAKE192S_HASH -&gt; SLHDSAParameterSpec.slh_dsa_shake_192s_with_shake256;</span>
+<span class="nc" id="L143">            case SHAKE256F_HASH -&gt; SLHDSAParameterSpec.slh_dsa_shake_256f_with_shake256;</span>
+<span class="nc" id="L144">            case SHAKE256S_HASH -&gt; SLHDSAParameterSpec.slh_dsa_shake_256s_with_shake256;</span>
+<span class="nc" id="L145">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    /**
+     * Obtain SLHDSA algorithm Identifier.
+     *
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+<span class="pc bpc" id="L155" title="1 of 25 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L156">            case SHA128F -&gt; NISTObjectIdentifiers.id_slh_dsa_sha2_128f;</span>
+<span class="fc" id="L157">            case SHA128S -&gt; NISTObjectIdentifiers.id_slh_dsa_sha2_128s;</span>
+<span class="fc" id="L158">            case SHA192F -&gt; NISTObjectIdentifiers.id_slh_dsa_sha2_192f;</span>
+<span class="fc" id="L159">            case SHA192S -&gt; NISTObjectIdentifiers.id_slh_dsa_sha2_192s;</span>
+<span class="fc" id="L160">            case SHA256F -&gt; NISTObjectIdentifiers.id_slh_dsa_sha2_256f;</span>
+<span class="fc" id="L161">            case SHA256S -&gt; NISTObjectIdentifiers.id_slh_dsa_sha2_256s;</span>
+<span class="fc" id="L162">            case SHAKE128F -&gt; NISTObjectIdentifiers.id_slh_dsa_shake_128f;</span>
+<span class="fc" id="L163">            case SHAKE128S -&gt; NISTObjectIdentifiers.id_slh_dsa_shake_128s;</span>
+<span class="fc" id="L164">            case SHAKE192F -&gt; NISTObjectIdentifiers.id_slh_dsa_shake_192f;</span>
+<span class="fc" id="L165">            case SHAKE192S -&gt; NISTObjectIdentifiers.id_slh_dsa_shake_192s;</span>
+<span class="fc" id="L166">            case SHAKE256F -&gt; NISTObjectIdentifiers.id_slh_dsa_shake_256f;</span>
+<span class="fc" id="L167">            case SHAKE256S -&gt; NISTObjectIdentifiers.id_slh_dsa_shake_256s;</span>
+<span class="fc" id="L168">            case SHA128F_HASH -&gt; NISTObjectIdentifiers.id_hash_slh_dsa_sha2_128f_with_sha256;</span>
+<span class="fc" id="L169">            case SHA128S_HASH -&gt; NISTObjectIdentifiers.id_hash_slh_dsa_sha2_128s_with_sha256;</span>
+<span class="fc" id="L170">            case SHA192F_HASH -&gt; NISTObjectIdentifiers.id_hash_slh_dsa_sha2_192f_with_sha512;</span>
+<span class="fc" id="L171">            case SHA192S_HASH -&gt; NISTObjectIdentifiers.id_hash_slh_dsa_sha2_192s_with_sha512;</span>
+<span class="fc" id="L172">            case SHA256F_HASH -&gt; NISTObjectIdentifiers.id_hash_slh_dsa_sha2_256f_with_sha512;</span>
+<span class="fc" id="L173">            case SHA256S_HASH -&gt; NISTObjectIdentifiers.id_hash_slh_dsa_sha2_256s_with_sha512;</span>
+<span class="fc" id="L174">            case SHAKE128F_HASH -&gt; NISTObjectIdentifiers.id_hash_slh_dsa_shake_128f_with_shake128;</span>
+<span class="fc" id="L175">            case SHAKE128S_HASH -&gt; NISTObjectIdentifiers.id_hash_slh_dsa_shake_128s_with_shake128;</span>
+<span class="fc" id="L176">            case SHAKE192F_HASH -&gt; NISTObjectIdentifiers.id_hash_slh_dsa_shake_192f_with_shake256;</span>
+<span class="fc" id="L177">            case SHAKE192S_HASH -&gt; NISTObjectIdentifiers.id_hash_slh_dsa_shake_192s_with_shake256;</span>
+<span class="fc" id="L178">            case SHAKE256F_HASH -&gt; NISTObjectIdentifiers.id_hash_slh_dsa_shake_256f_with_shake256;</span>
+<span class="fc" id="L179">            case SHAKE256S_HASH -&gt; NISTObjectIdentifiers.id_hash_slh_dsa_shake_256s_with_shake256;</span>
+<span class="nc" id="L180">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L186">        return theSpec.toString();</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L192" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L193">            return true;</span>
+        }
+<span class="nc bnc" id="L195" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L196">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="nc" id="L200">        return pThat instanceof GordianCoreSLHDSASpec myThat</span>
+<span class="nc bnc" id="L201" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L206">        return theSpec.hashCode();</span>
+    }
+
+    /**
+     * Obtain the core spec.
+     *
+     * @param pSpec the base spec
+     * @return the core spec
+     */
+    public static GordianCoreSLHDSASpec mapCoreSpec(final Object pSpec) {
+<span class="pc bpc" id="L216" title="1 of 2 branches missed.">        return pSpec instanceof GordianSLHDSASpec mySpec ? SPECMAP.get(mySpec) : null;</span>
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map&lt;GordianSLHDSASpec, GordianCoreSLHDSASpec&gt; newSpecMap() {
+<span class="fc" id="L225">        final Map&lt;GordianSLHDSASpec, GordianCoreSLHDSASpec&gt; myMap = new EnumMap&lt;&gt;(GordianSLHDSASpec.class);</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">        for (GordianSLHDSASpec mySpec : GordianSLHDSASpec.values()) {</span>
+<span class="fc" id="L227">            myMap.put(mySpec, new GordianCoreSLHDSASpec(mySpec));</span>
+        }
+<span class="fc" id="L229">        return myMap;</span>
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static GordianCoreSLHDSASpec[] values() {
+<span class="fc" id="L238">        return VALUES;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

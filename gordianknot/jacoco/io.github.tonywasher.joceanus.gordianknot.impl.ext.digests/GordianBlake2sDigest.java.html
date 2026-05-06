@@ -111,151 +111,156 @@ public class GordianBlake2sDigest
 <span class="fc" id="L111">    }</span>
 
     @Override
+    public boolean isBlake2b() {
+<span class="fc" id="L115">        return false;</span>
+    }
+
+    @Override
     public String getAlgorithmName() {
-<span class="fc" id="L115">        return &quot;Blake2s-&quot; + getDigestSize() * Byte.SIZE;</span>
+<span class="fc" id="L120">        return &quot;Blake2s-&quot; + getDigestSize() * Byte.SIZE;</span>
     }
 
     @Override
     public int getByteLength() {
-<span class="fc" id="L120">        return BLOCK_LENGTH_BYTES;</span>
+<span class="fc" id="L125">        return BLOCK_LENGTH_BYTES;</span>
     }
 
     @Override
     public void reset() {
         /* Reset counter */
-<span class="fc" id="L126">        t0 = 0;</span>
-<span class="fc" id="L127">        t1 = 0;</span>
+<span class="fc" id="L131">        t0 = 0;</span>
+<span class="fc" id="L132">        t1 = 0;</span>
 
         /* reset underlying class */
-<span class="fc" id="L130">        super.reset();</span>
-<span class="fc" id="L131">    }</span>
+<span class="fc" id="L135">        super.reset();</span>
+<span class="fc" id="L136">    }</span>
 
     @Override
     public void reset(final Memoable pSource) {
         /* Access source */
-<span class="fc" id="L136">        final GordianBlake2sDigest mySource = (GordianBlake2sDigest) pSource;</span>
+<span class="fc" id="L141">        final GordianBlake2sDigest mySource = (GordianBlake2sDigest) pSource;</span>
 
         /* reset underlying class */
-<span class="fc" id="L139">        super.reset(mySource);</span>
+<span class="fc" id="L144">        super.reset(mySource);</span>
 
         /* Reset counter */
-<span class="fc" id="L142">        t0 = mySource.t0;</span>
-<span class="fc" id="L143">        t1 = mySource.t1;</span>
+<span class="fc" id="L147">        t0 = mySource.t0;</span>
+<span class="fc" id="L148">        t1 = mySource.t1;</span>
 
         /* Copy state */
-<span class="fc" id="L146">        System.arraycopy(mySource.theH, 0, theH, 0, theH.length);</span>
-<span class="fc" id="L147">    }</span>
+<span class="fc" id="L151">        System.arraycopy(mySource.theH, 0, theH, 0, theH.length);</span>
+<span class="fc" id="L152">    }</span>
 
     @Override
     public GordianBlake2sDigest copy() {
-<span class="fc" id="L151">        return new GordianBlake2sDigest(this);</span>
+<span class="fc" id="L156">        return new GordianBlake2sDigest(this);</span>
     }
 
     @Override
     void adjustCounter(final int pCount) {
-<span class="fc" id="L156">        t0 += pCount;</span>
-<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        if (t0 == 0) {</span>
-<span class="nc" id="L158">            t1++;</span>
+<span class="fc" id="L161">        t0 += pCount;</span>
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        if (t0 == 0) {</span>
+<span class="nc" id="L163">            t1++;</span>
         }
-<span class="fc" id="L160">    }</span>
+<span class="fc" id="L165">    }</span>
 
     @Override
     void completeCounter(final int pCount) {
-<span class="fc" id="L164">        t0 += pCount;</span>
-<span class="pc bpc" id="L165" title="1 of 4 branches missed.">        if (pCount &gt; 0 &amp;&amp; t0 == 0) {</span>
-<span class="nc" id="L166">            t1++;</span>
+<span class="fc" id="L169">        t0 += pCount;</span>
+<span class="pc bpc" id="L170" title="1 of 4 branches missed.">        if (pCount &gt; 0 &amp;&amp; t0 == 0) {</span>
+<span class="nc" id="L171">            t1++;</span>
         }
-<span class="fc" id="L168">    }</span>
+<span class="fc" id="L173">    }</span>
 
     @Override
     void outputDigest(final byte[] pOut,
                       final int pOutOffset) {
         /* Loop to provide the output */
-<span class="fc" id="L174">        final int myDigestLen = getDigestSize();</span>
-<span class="fc bfc" id="L175" title="All 4 branches covered.">        for (int i = 0, j = 0; i &lt; NUMWORDS &amp;&amp; j &lt; myDigestLen; i++, j += Integer.BYTES) {</span>
+<span class="fc" id="L179">        final int myDigestLen = getDigestSize();</span>
+<span class="fc bfc" id="L180" title="All 4 branches covered.">        for (int i = 0, j = 0; i &lt; NUMWORDS &amp;&amp; j &lt; myDigestLen; i++, j += Integer.BYTES) {</span>
             /* Convert the next word to bytes */
-<span class="fc" id="L177">            final byte[] bytes = Pack.intToLittleEndian(theH[i]);</span>
+<span class="fc" id="L182">            final byte[] bytes = Pack.intToLittleEndian(theH[i]);</span>
 
-<span class="fc bfc" id="L179" title="All 2 branches covered.">            if (j + Integer.BYTES &lt; myDigestLen) {</span>
-<span class="fc" id="L180">                System.arraycopy(bytes, 0, pOut, pOutOffset + j, Integer.BYTES);</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">            if (j + Integer.BYTES &lt; myDigestLen) {</span>
+<span class="fc" id="L185">                System.arraycopy(bytes, 0, pOut, pOutOffset + j, Integer.BYTES);</span>
             } else {
-<span class="fc" id="L182">                System.arraycopy(bytes, 0, pOut, pOutOffset + j, myDigestLen - j);</span>
+<span class="fc" id="L187">                System.arraycopy(bytes, 0, pOut, pOutOffset + j, myDigestLen - j);</span>
             }
         }
-<span class="fc" id="L185">    }</span>
+<span class="fc" id="L190">    }</span>
 
     @Override
     protected void activateH() {
         /* Initialise from IV */
-<span class="fc" id="L190">        System.arraycopy(IV, 0, theH, 0, IV.length);</span>
+<span class="fc" id="L195">        System.arraycopy(IV, 0, theH, 0, IV.length);</span>
 
         /* Initialise first word */
-<span class="fc" id="L193">        theH[0] ^= getDigestSize() | (getKeyLen() &lt;&lt; Byte.SIZE);</span>
-<span class="fc" id="L194">        theH[0] ^= (getFanOut() | (getMaxDepth() &lt;&lt; Byte.SIZE)) &lt;&lt; Short.SIZE;</span>
+<span class="fc" id="L198">        theH[0] ^= getDigestSize() | (getKeyLen() &lt;&lt; Byte.SIZE);</span>
+<span class="fc" id="L199">        theH[0] ^= (getFanOut() | (getMaxDepth() &lt;&lt; Byte.SIZE)) &lt;&lt; Short.SIZE;</span>
 
         /* Initialise second word */
-<span class="fc" id="L197">        theH[1] ^= getLeafLen();</span>
+<span class="fc" id="L202">        theH[1] ^= getLeafLen();</span>
 
         /* Initialise third word */
-<span class="fc" id="L200">        theH[2] ^= getNodeOffset();</span>
+<span class="fc" id="L205">        theH[2] ^= getNodeOffset();</span>
 
         /* Initialise fourth word */
-<span class="fc" id="L203">        theH[3] ^= getXofLen();</span>
-<span class="fc" id="L204">        theH[3] ^= (getNodeDepth() | (getInnerLen() &lt;&lt; Byte.SIZE)) &lt;&lt; Short.SIZE;</span>
+<span class="fc" id="L208">        theH[3] ^= getXofLen();</span>
+<span class="fc" id="L209">        theH[3] ^= (getNodeDepth() | (getInnerLen() &lt;&lt; Byte.SIZE)) &lt;&lt; Short.SIZE;</span>
 
         /* Build salt section */
-<span class="fc" id="L207">        final byte[] mySalt = getSalt();</span>
-<span class="fc bfc" id="L208" title="All 2 branches covered.">        if (mySalt != null) {</span>
-<span class="fc" id="L209">            theH[4] ^= Pack.littleEndianToInt(mySalt, 0);</span>
-<span class="fc" id="L210">            theH[5] ^= Pack.littleEndianToInt(mySalt, Integer.BYTES);</span>
+<span class="fc" id="L212">        final byte[] mySalt = getSalt();</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">        if (mySalt != null) {</span>
+<span class="fc" id="L214">            theH[4] ^= Pack.littleEndianToInt(mySalt, 0);</span>
+<span class="fc" id="L215">            theH[5] ^= Pack.littleEndianToInt(mySalt, Integer.BYTES);</span>
         }
 
         /* Build personalisation section */
-<span class="fc" id="L214">        final byte[] myPersonal = getPersonal();</span>
-<span class="pc bpc" id="L215" title="1 of 2 branches missed.">        if (myPersonal != null) {</span>
-<span class="nc" id="L216">            theH[6] ^= Pack.littleEndianToInt(myPersonal, 0);</span>
-<span class="nc" id="L217">            theH[7] ^= Pack.littleEndianToInt(myPersonal, Integer.BYTES);</span>
+<span class="fc" id="L219">        final byte[] myPersonal = getPersonal();</span>
+<span class="pc bpc" id="L220" title="1 of 2 branches missed.">        if (myPersonal != null) {</span>
+<span class="nc" id="L221">            theH[6] ^= Pack.littleEndianToInt(myPersonal, 0);</span>
+<span class="nc" id="L222">            theH[7] ^= Pack.littleEndianToInt(myPersonal, Integer.BYTES);</span>
         }
 
         /* Initialise any keyBlock */
-<span class="fc" id="L221">        initKeyBlock();</span>
-<span class="fc" id="L222">    }</span>
+<span class="fc" id="L226">        initKeyBlock();</span>
+<span class="fc" id="L227">    }</span>
 
     @Override
     protected void initV() {
         /* Copy in H and IV */
-<span class="fc" id="L227">        System.arraycopy(theH, 0, theV, 0, NUMWORDS);</span>
-<span class="fc" id="L228">        System.arraycopy(IV, 0, theV, NUMWORDS, NUMWORDS);</span>
+<span class="fc" id="L232">        System.arraycopy(theH, 0, theV, 0, NUMWORDS);</span>
+<span class="fc" id="L233">        System.arraycopy(IV, 0, theV, NUMWORDS, NUMWORDS);</span>
 
         /* Fold in counters */
-<span class="fc" id="L231">        theV[12] ^= t0;</span>
-<span class="fc" id="L232">        theV[13] ^= t1;</span>
+<span class="fc" id="L236">        theV[12] ^= t0;</span>
+<span class="fc" id="L237">        theV[13] ^= t1;</span>
 
         /* Fold in finalisation flags */
-<span class="fc bfc" id="L235" title="All 2 branches covered.">        if (isLastBlock()) {</span>
-<span class="fc" id="L236">            theV[14] ^= -1;</span>
-<span class="pc bpc" id="L237" title="1 of 2 branches missed.">            if (isLastNode()) {</span>
-<span class="nc" id="L238">                theV[15] ^= -1;</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">        if (isLastBlock()) {</span>
+<span class="fc" id="L241">            theV[14] ^= -1;</span>
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">            if (isLastNode()) {</span>
+<span class="nc" id="L243">                theV[15] ^= -1;</span>
             }
         }
-<span class="fc" id="L241">    }</span>
+<span class="fc" id="L246">    }</span>
 
     @Override
     protected void initM(final byte[] pMessage,
                          final int pMsgPos) {
         /* Copy message bytes into word array */
-<span class="fc bfc" id="L247" title="All 2 branches covered.">        for (int i = 0; i &lt; NUMWORDS &lt;&lt; 1; i++) {</span>
-<span class="fc" id="L248">            theM[i] = Pack.littleEndianToInt(pMessage, pMsgPos + i * Integer.BYTES);</span>
+<span class="fc bfc" id="L252" title="All 2 branches covered.">        for (int i = 0; i &lt; NUMWORDS &lt;&lt; 1; i++) {</span>
+<span class="fc" id="L253">            theM[i] = Pack.littleEndianToInt(pMessage, pMsgPos + i * Integer.BYTES);</span>
         }
-<span class="fc" id="L250">    }</span>
+<span class="fc" id="L255">    }</span>
 
     @Override
     protected void adjustH() {
         /* Combine V into H */
-<span class="fc bfc" id="L255" title="All 2 branches covered.">        for (int i = 0; i &lt; NUMWORDS; i++) {</span>
-<span class="fc" id="L256">            theH[i] ^= theV[i] ^ theV[i + NUMWORDS];</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">        for (int i = 0; i &lt; NUMWORDS; i++) {</span>
+<span class="fc" id="L261">            theH[i] ^= theV[i] ^ theV[i + NUMWORDS];</span>
         }
-<span class="fc" id="L258">    }</span>
+<span class="fc" id="L263">    }</span>
 
     @Override
     protected void mixG(final int msgIdx1,
@@ -265,15 +270,15 @@ public class GordianBlake2sDigest
                         final int posC,
                         final int posD) {
         /* Perform the Round */
-<span class="fc" id="L268">        theV[posA] += theV[posB] + theM[msgIdx1];</span>
-<span class="fc" id="L269">        theV[posD] = rotr32(theV[posD] ^ theV[posA], 16);</span>
-<span class="fc" id="L270">        theV[posC] += theV[posD];</span>
-<span class="fc" id="L271">        theV[posB] = rotr32(theV[posB] ^ theV[posC], 12);</span>
-<span class="fc" id="L272">        theV[posA] += theV[posB] + theM[msgIdx2];</span>
-<span class="fc" id="L273">        theV[posD] = rotr32(theV[posD] ^ theV[posA], 8);</span>
-<span class="fc" id="L274">        theV[posC] += theV[posD];</span>
-<span class="fc" id="L275">        theV[posB] = rotr32(theV[posB] ^ theV[posC], 7);</span>
-<span class="fc" id="L276">    }</span>
+<span class="fc" id="L273">        theV[posA] += theV[posB] + theM[msgIdx1];</span>
+<span class="fc" id="L274">        theV[posD] = rotr32(theV[posD] ^ theV[posA], 16);</span>
+<span class="fc" id="L275">        theV[posC] += theV[posD];</span>
+<span class="fc" id="L276">        theV[posB] = rotr32(theV[posB] ^ theV[posC], 12);</span>
+<span class="fc" id="L277">        theV[posA] += theV[posB] + theM[msgIdx2];</span>
+<span class="fc" id="L278">        theV[posD] = rotr32(theV[posD] ^ theV[posA], 8);</span>
+<span class="fc" id="L279">        theV[posC] += theV[posD];</span>
+<span class="fc" id="L280">        theV[posB] = rotr32(theV[posB] ^ theV[posC], 7);</span>
+<span class="fc" id="L281">    }</span>
 
     /**
      * Rotate an int right.
@@ -284,7 +289,7 @@ public class GordianBlake2sDigest
      */
     private static int rotr32(final int x,
                               final int rot) {
-<span class="fc" id="L287">        return x &gt;&gt;&gt; rot | (x &lt;&lt; (Integer.SIZE - rot));</span>
+<span class="fc" id="L292">        return x &gt;&gt;&gt; rot | (x &lt;&lt; (Integer.SIZE - rot));</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreAgreementType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree</a> &gt; <span class="el_source">GordianCoreAgreementType.java</span></div><h1>GordianCoreAgreementType.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree;
+
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * Agreement Type.
+ */
+public final class GordianCoreAgreementType {
+    /**
+     * The agreementTypeMap.
+     */
+<span class="fc" id="L33">    private static final Map&lt;GordianAgreementType, GordianCoreAgreementType&gt; TYPEMAP = newTypeMap();</span>
+
+    /**
+     * The agreementTypeArray.
+     */
+<span class="fc" id="L38">    private static final GordianCoreAgreementType[] VALUES = TYPEMAP.values().toArray(new GordianCoreAgreementType[0]);</span>
+
+    /**
+     * The type.
+     */
+    private final GordianAgreementType theType;
+
+    /**
+     * Constructor.
+     *
+     * @param pType the agreementType
+     */
+<span class="fc" id="L50">    private GordianCoreAgreementType(final GordianAgreementType pType) {</span>
+<span class="fc" id="L51">        theType = pType;</span>
+<span class="fc" id="L52">    }</span>
+
+    /**
+     * Obtain the Type.
+     *
+     * @return the Type
+     */
+    public GordianAgreementType getType() {
+<span class="fc" id="L60">        return theType;</span>
+    }
+
+    /**
+     * Is this an anonymous agreement?
+     *
+     * @return true/false
+     */
+    public boolean isAnonymous() {
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        return switch (theType) {</span>
+<span class="fc" id="L70">            case KEM, ANON -&gt; true;</span>
+<span class="fc" id="L71">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Is this a signed agreement?
+     *
+     * @return true/false
+     */
+    public boolean isSigned() {
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        return theType == GordianAgreementType.SIGNED;</span>
+    }
+
+    /**
+     * Is this an confirmable agreement?
+     *
+     * @return true/false
+     */
+    public boolean canConfirm() {
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        return switch (theType) {</span>
+<span class="fc" id="L91">            case UNIFIED, MQV, SM2 -&gt; true;</span>
+<span class="nc" id="L92">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Is this Agreement supported for this KeyPairType?
+     *
+     * @param pKeyPairType the keyPair
+     * @return true/false
+     */
+    public boolean isSupported(final GordianKeyPairType pKeyPairType) {
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        if (pKeyPairType == GordianKeyPairType.COMPOSITE) {</span>
+<span class="fc" id="L104">            return true;</span>
+        }
+<span class="pc bpc" id="L106" title="1 of 7 branches missed.">        return switch (theType) {</span>
+<span class="fc" id="L107">            case KEM -&gt; hasKEM(pKeyPairType);</span>
+<span class="fc" id="L108">            case ANON -&gt; hasAnon(pKeyPairType);</span>
+<span class="fc" id="L109">            case BASIC, SIGNED -&gt; hasBasic(pKeyPairType);</span>
+<span class="fc" id="L110">            case SM2 -&gt; hasSM2(pKeyPairType);</span>
+<span class="fc" id="L111">            case MQV -&gt; hasMQV(pKeyPairType);</span>
+<span class="fc" id="L112">            case UNIFIED -&gt; hasUnified(pKeyPairType);</span>
+<span class="nc" id="L113">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Does the keyPairType have an KEM agreement?
+     *
+     * @param pKeyPairType the keyPairType
+     * @return true/false
+     */
+    public static boolean hasKEM(final GordianKeyPairType pKeyPairType) {
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        return switch (pKeyPairType) {</span>
+            case RSA, EC, GOST, DSTU, SM2, CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE -&gt;
+<span class="fc" id="L126">                    true;</span>
+<span class="fc" id="L127">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Does the keyPairType have an ANON agreement?
+     *
+     * @param pKeyPairType the keyPairType
+     * @return true/false
+     */
+    public static boolean hasAnon(final GordianKeyPairType pKeyPairType) {
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        return switch (pKeyPairType) {</span>
+<span class="fc" id="L139">            case DH, EC, SM2, GOST, DSTU, XDH -&gt; true;</span>
+<span class="fc" id="L140">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Does the keyPairType have an SM2 agreement?
+     *
+     * @param pKeyPairType the keyPairType
+     * @return true/false
+     */
+    public static boolean hasSM2(final GordianKeyPairType pKeyPairType) {
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        return switch (pKeyPairType) {</span>
+<span class="fc" id="L152">            case EC, SM2, GOST -&gt; true;</span>
+<span class="fc" id="L153">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Does the keyPairType have a Basic agreement?
+     *
+     * @param pKeyPairType the keyPairType
+     * @return true/false
+     */
+    public static boolean hasBasic(final GordianKeyPairType pKeyPairType) {
+<span class="fc" id="L164">        return isECorDH(pKeyPairType);</span>
+    }
+
+    /**
+     * Does the keyPairType have a MQV agreement?
+     *
+     * @param pKeyPairType the keyPairType
+     * @return true/false
+     */
+    public static boolean hasMQV(final GordianKeyPairType pKeyPairType) {
+<span class="fc bfc" id="L174" title="All 4 branches covered.">        return pKeyPairType == GordianKeyPairType.DH || isEC(pKeyPairType);</span>
+    }
+
+    /**
+     * Does the keyPairType have a Unified agreement?
+     *
+     * @param pKeyPairType the keyPairType
+     * @return true/false
+     */
+    public static boolean hasUnified(final GordianKeyPairType pKeyPairType) {
+<span class="fc" id="L184">        return isECorDH(pKeyPairType);</span>
+    }
+
+    /**
+     * Is the keyPairType EC/DH?
+     *
+     * @param pKeyPairType the keyPairType
+     * @return true/false
+     */
+    private static boolean isECorDH(final GordianKeyPairType pKeyPairType) {
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        return switch (pKeyPairType) {</span>
+<span class="fc" id="L195">            case SM2, EC, GOST, DSTU, DH, XDH -&gt; true;</span>
+<span class="fc" id="L196">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Is the keyPairType EC?
+     *
+     * @param pKeyPairType the keyPairType
+     * @return true/false
+     */
+    private static boolean isEC(final GordianKeyPairType pKeyPairType) {
+<span class="fc bfc" id="L207" title="All 2 branches covered.">        return switch (pKeyPairType) {</span>
+<span class="fc" id="L208">            case SM2, EC, GOST, DSTU -&gt; true;</span>
+<span class="fc" id="L209">            default -&gt; false;</span>
+        };
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L215">        return theType.toString();</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L221" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L222">            return true;</span>
+        }
+<span class="nc bnc" id="L224" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L225">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="nc" id="L229">        return pThat instanceof GordianCoreAgreementType myThat</span>
+<span class="nc bnc" id="L230" title="All 4 branches missed.">                &amp;&amp; theType == myThat.getType();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L235">        return theType.hashCode();</span>
+    }
+
+    /**
+     * Obtain the core type.
+     *
+     * @param pType the base type
+     * @return the core type
+     */
+    public static GordianCoreAgreementType mapCoreType(final Object pType) {
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">        return pType instanceof GordianAgreementType myType ? TYPEMAP.get(myType) : null;</span>
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map&lt;GordianAgreementType, GordianCoreAgreementType&gt; newTypeMap() {
+<span class="fc" id="L254">        final Map&lt;GordianAgreementType, GordianCoreAgreementType&gt; myMap = new EnumMap&lt;&gt;(GordianAgreementType.class);</span>
+<span class="fc bfc" id="L255" title="All 2 branches covered.">        for (GordianAgreementType myType : GordianAgreementType.values()) {</span>
+<span class="fc" id="L256">            myMap.put(myType, new GordianCoreAgreementType(myType));</span>
+        }
+<span class="fc" id="L258">        return myMap;</span>
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static GordianCoreAgreementType[] values() {
+<span class="nc" id="L267">        return VALUES;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

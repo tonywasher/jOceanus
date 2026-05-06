@@ -18,11 +18,13 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory.GordianKeySetGenerate;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset.GordianCoreKeySetSpecBuilder;
 
 import java.util.function.Predicate;
 
@@ -40,11 +42,10 @@ public class GordianCoreKeySetFactory
      * Constructor.
      *
      * @param pFactory the factory.
-     * @throws GordianException on error
      */
-<span class="fc" id="L45">    public GordianCoreKeySetFactory(final GordianBaseFactory pFactory) throws GordianException {</span>
-<span class="fc" id="L46">        theFactory = pFactory;</span>
-<span class="fc" id="L47">    }</span>
+<span class="fc" id="L46">    public GordianCoreKeySetFactory(final GordianBaseFactory pFactory) {</span>
+<span class="fc" id="L47">        theFactory = pFactory;</span>
+<span class="fc" id="L48">    }</span>
 
     /**
      * Obtain the factory.
@@ -52,39 +53,45 @@ public class GordianCoreKeySetFactory
      * @return the factory
      */
     public GordianBaseFactory getFactory() {
-<span class="fc" id="L55">        return theFactory;</span>
+<span class="fc" id="L56">        return theFactory;</span>
+    }
+
+    @Override
+    public GordianKeySetSpecBuilder newKeySetSpecBuilder() {
+<span class="fc" id="L61">        return GordianCoreKeySetSpecBuilder.newInstance();</span>
     }
 
     @Override
     public GordianCoreKeySet createKeySet(final GordianKeySetSpec pSpec) throws GordianException {
         /* Check Spec */
-<span class="fc" id="L61">        checkKeySetSpec(pSpec);</span>
+<span class="fc" id="L67">        checkKeySetSpec(pSpec);</span>
 
         /* Generate an empty keySet */
-<span class="fc" id="L64">        return new GordianCoreKeySet(getFactory(), pSpec);</span>
+<span class="fc" id="L70">        return new GordianCoreKeySet(getFactory(), pSpec);</span>
     }
 
     @Override
     public GordianCoreKeySet generateKeySet(final GordianKeySetSpec pSpec) throws GordianException {
         /* Check Spec */
-<span class="fc" id="L70">        checkKeySetSpec(pSpec);</span>
+<span class="fc" id="L76">        checkKeySetSpec(pSpec);</span>
 
         /* Generate a random keySet */
-<span class="fc" id="L73">        final GordianCoreKeySet myKeySet = new GordianCoreKeySet(theFactory, pSpec);</span>
-<span class="fc" id="L74">        myKeySet.buildFromRandom();</span>
-<span class="fc" id="L75">        return myKeySet;</span>
+<span class="fc" id="L79">        final GordianCoreKeySet myKeySet = new GordianCoreKeySet(theFactory, pSpec);</span>
+<span class="fc" id="L80">        myKeySet.buildFromRandom();</span>
+<span class="fc" id="L81">        return myKeySet;</span>
     }
 
     @Override
     public GordianKeySet generateKeySet(final byte[] pSeed) throws GordianException {
-<span class="fc" id="L80">        final GordianCoreKeySet myKeySet = generateKeySet(new GordianKeySetSpec());</span>
-<span class="fc" id="L81">        myKeySet.buildFromSecret(pSeed);</span>
-<span class="fc" id="L82">        return myKeySet;</span>
+<span class="fc" id="L86">        final GordianCoreKeySetSpecBuilder myBuilder = GordianCoreKeySetSpecBuilder.newInstance();</span>
+<span class="fc" id="L87">        final GordianCoreKeySet myKeySet = generateKeySet(myBuilder.keySet());</span>
+<span class="fc" id="L88">        myKeySet.buildFromSecret(pSeed);</span>
+<span class="fc" id="L89">        return myKeySet;</span>
     }
 
     @Override
     public Predicate&lt;GordianKeySetSpec&gt; supportedKeySetSpecs() {
-<span class="fc" id="L87">        return GordianCoreKeySetFactory::validKeySetSpec;</span>
+<span class="fc" id="L94">        return GordianCoreKeySetFactory::validKeySetSpec;</span>
     }
 
     /**
@@ -95,10 +102,10 @@ public class GordianCoreKeySetFactory
      */
     public void checkKeySetSpec(final GordianKeySetSpec pSpec) throws GordianException {
         /* Check validity of KeySet */
-<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if (!supportedKeySetSpecs().test(pSpec)) {</span>
-<span class="nc" id="L99">            throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">        if (!supportedKeySetSpecs().test(pSpec)) {</span>
+<span class="nc" id="L106">            throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));</span>
         }
-<span class="fc" id="L101">    }</span>
+<span class="fc" id="L108">    }</span>
 
     /**
      * check valid keySetSpec.
@@ -108,19 +115,15 @@ public class GordianCoreKeySetFactory
      */
     public static boolean validKeySetSpec(final GordianKeySetSpec pSpec) {
         /* Check for invalid spec */
-<span class="pc bpc" id="L111" title="2 of 4 branches missed.">        if (pSpec == null || !pSpec.isValid()) {</span>
-<span class="nc" id="L112">            return false;</span>
+<span class="pc bpc" id="L118" title="2 of 4 branches missed.">        if (pSpec == null || !pSpec.isValid()) {</span>
+<span class="nc" id="L119">            return false;</span>
         }
 
         /* Check on length */
-<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        switch (pSpec.getKeyLength()) {</span>
-            case LEN_128:
-            case LEN_192:
-            case LEN_256:
-<span class="fc" id="L120">                return true;</span>
-            default:
-<span class="nc" id="L122">                return false;</span>
-        }
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">        return switch (pSpec.getKeyLength()) {</span>
+<span class="fc" id="L124">            case LEN_128, LEN_192, LEN_256 -&gt; true;</span>
+<span class="nc" id="L125">            default -&gt; false;</span>
+        };
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

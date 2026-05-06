@@ -112,24 +112,14 @@ public class GordianCoreAgreementDerivation {
      * @return the derivation method
      */
     private GordianCoreAgreementDerivationMethod derivationMethod() {
-<span class="pc bpc" id="L115" title="1 of 6 branches missed.">        switch (theState.getSpec().getKDFType()) {</span>
-            case SHA256KDF:
-            case SHA512KDF:
-<span class="fc" id="L118">                return this::deriveKDF;</span>
-            case SHA256CKDF:
-            case SHA512CKDF:
-<span class="fc" id="L121">                return this::deriveCKDF;</span>
-            case SHA256HKDF:
-            case SHA512HKDF:
-<span class="fc" id="L124">                return this::deriveHKDF;</span>
-            case KMAC128:
-            case KMAC256:
-<span class="fc" id="L127">                return this::deriveKMAC;</span>
-            case SHAKE256:
-<span class="fc" id="L129">                return this::deriveSHAKE;</span>
-            default:
-<span class="nc" id="L131">                throw new IllegalArgumentException();</span>
-        }
+<span class="pc bpc" id="L115" title="1 of 6 branches missed.">        return switch (theState.getSpec().getKDFType()) {</span>
+<span class="fc" id="L116">            case SHA256KDF, SHA512KDF -&gt; this::deriveKDF;</span>
+<span class="fc" id="L117">            case SHA256CKDF, SHA512CKDF -&gt; this::deriveCKDF;</span>
+<span class="fc" id="L118">            case SHA256HKDF, SHA512HKDF -&gt; this::deriveHKDF;</span>
+<span class="fc" id="L119">            case KMAC128, KMAC256 -&gt; this::deriveKMAC;</span>
+<span class="fc" id="L120">            case SHAKE256 -&gt; this::deriveSHAKE;</span>
+<span class="nc" id="L121">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 
     /**
@@ -138,11 +128,11 @@ public class GordianCoreAgreementDerivation {
      * @param pSecret the secret
      */
     private void deriveKDF(final byte[] pSecret) {
-<span class="fc" id="L141">        final byte[] myAdditional = getAdditional();</span>
-<span class="fc" id="L142">        final DerivationFunction myKDF = new KDF2BytesGenerator(getDigest());</span>
-<span class="fc" id="L143">        myKDF.init(new KDFParameters(pSecret, myAdditional));</span>
-<span class="fc" id="L144">        myKDF.generateBytes(theResult, 0, theResult.length);</span>
-<span class="fc" id="L145">    }</span>
+<span class="fc" id="L131">        final byte[] myAdditional = getAdditional();</span>
+<span class="fc" id="L132">        final DerivationFunction myKDF = new KDF2BytesGenerator(getDigest());</span>
+<span class="fc" id="L133">        myKDF.init(new KDFParameters(pSecret, myAdditional));</span>
+<span class="fc" id="L134">        myKDF.generateBytes(theResult, 0, theResult.length);</span>
+<span class="fc" id="L135">    }</span>
 
     /**
      * derive bytes via CKDF.
@@ -150,11 +140,11 @@ public class GordianCoreAgreementDerivation {
      * @param pSecret the secret
      */
     private void deriveCKDF(final byte[] pSecret) {
-<span class="fc" id="L153">        final byte[] myAdditional = getAdditional();</span>
-<span class="fc" id="L154">        final DerivationFunction myKDF = new ConcatenationKDFGenerator(getDigest());</span>
-<span class="fc" id="L155">        myKDF.init(new KDFParameters(pSecret, myAdditional));</span>
-<span class="fc" id="L156">        myKDF.generateBytes(theResult, 0, theResult.length);</span>
-<span class="fc" id="L157">    }</span>
+<span class="fc" id="L143">        final byte[] myAdditional = getAdditional();</span>
+<span class="fc" id="L144">        final DerivationFunction myKDF = new ConcatenationKDFGenerator(getDigest());</span>
+<span class="fc" id="L145">        myKDF.init(new KDFParameters(pSecret, myAdditional));</span>
+<span class="fc" id="L146">        myKDF.generateBytes(theResult, 0, theResult.length);</span>
+<span class="fc" id="L147">    }</span>
 
     /**
      * derive bytes via HKDF.
@@ -162,11 +152,11 @@ public class GordianCoreAgreementDerivation {
      * @param pSecret the secret
      */
     private void deriveHKDF(final byte[] pSecret) {
-<span class="fc" id="L165">        final byte[] myAdditional = getAdditional();</span>
-<span class="fc" id="L166">        final DerivationFunction myKDF = new HKDFBytesGenerator(getDigest());</span>
-<span class="fc" id="L167">        myKDF.init(new HKDFParameters(pSecret, null, myAdditional));</span>
-<span class="fc" id="L168">        myKDF.generateBytes(theResult, 0, theResult.length);</span>
-<span class="fc" id="L169">    }</span>
+<span class="fc" id="L155">        final byte[] myAdditional = getAdditional();</span>
+<span class="fc" id="L156">        final DerivationFunction myKDF = new HKDFBytesGenerator(getDigest());</span>
+<span class="fc" id="L157">        myKDF.init(new HKDFParameters(pSecret, null, myAdditional));</span>
+<span class="fc" id="L158">        myKDF.generateBytes(theResult, 0, theResult.length);</span>
+<span class="fc" id="L159">    }</span>
 
     /**
      * derive bytes via KMAC.
@@ -174,12 +164,12 @@ public class GordianCoreAgreementDerivation {
      * @param pSecret the secret
      */
     private void deriveKMAC(final byte[] pSecret) {
-<span class="fc" id="L177">        final byte[] myAdditional = getAdditional();</span>
-<span class="fc" id="L178">        final KMAC myKMAC = new KMAC(getLength(), EMPTY);</span>
-<span class="fc" id="L179">        myKMAC.init(new KeyParameter(pSecret, 0, pSecret.length));</span>
-<span class="fc" id="L180">        myKMAC.update(myAdditional, 0, myAdditional.length);</span>
-<span class="fc" id="L181">        myKMAC.doFinal(theResult, 0, theResult.length);</span>
-<span class="fc" id="L182">    }</span>
+<span class="fc" id="L167">        final byte[] myAdditional = getAdditional();</span>
+<span class="fc" id="L168">        final KMAC myKMAC = new KMAC(getLength(), EMPTY);</span>
+<span class="fc" id="L169">        myKMAC.init(new KeyParameter(pSecret, 0, pSecret.length));</span>
+<span class="fc" id="L170">        myKMAC.update(myAdditional, 0, myAdditional.length);</span>
+<span class="fc" id="L171">        myKMAC.doFinal(theResult, 0, theResult.length);</span>
+<span class="fc" id="L172">    }</span>
 
     /**
      * derive bytes via SHAKE.
@@ -187,12 +177,12 @@ public class GordianCoreAgreementDerivation {
      * @param pSecret the secret
      */
     private void deriveSHAKE(final byte[] pSecret) {
-<span class="fc" id="L190">        final byte[] myAdditional = getAdditional();</span>
-<span class="fc" id="L191">        final Xof mySHAKE = new SHAKEDigest(getLength());</span>
-<span class="fc" id="L192">        mySHAKE.update(pSecret, 0, pSecret.length);</span>
-<span class="fc" id="L193">        mySHAKE.update(myAdditional, 0, myAdditional.length);</span>
-<span class="fc" id="L194">        mySHAKE.doFinal(theResult, 0, theResult.length);</span>
-<span class="fc" id="L195">    }</span>
+<span class="fc" id="L180">        final byte[] myAdditional = getAdditional();</span>
+<span class="fc" id="L181">        final Xof mySHAKE = new SHAKEDigest(getLength());</span>
+<span class="fc" id="L182">        mySHAKE.update(pSecret, 0, pSecret.length);</span>
+<span class="fc" id="L183">        mySHAKE.update(myAdditional, 0, myAdditional.length);</span>
+<span class="fc" id="L184">        mySHAKE.doFinal(theResult, 0, theResult.length);</span>
+<span class="fc" id="L185">    }</span>
 
     /**
      * Obtain the additionalInfo.
@@ -200,8 +190,8 @@ public class GordianCoreAgreementDerivation {
      * @return the additionalData
      */
     private byte[] getAdditional() {
-<span class="fc" id="L203">        final byte[] myAdditional = theState.getAdditionalData();</span>
-<span class="fc bfc" id="L204" title="All 2 branches covered.">        return myAdditional == null ? EMPTY : myAdditional;</span>
+<span class="fc" id="L193">        final byte[] myAdditional = theState.getAdditionalData();</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        return myAdditional == null ? EMPTY : myAdditional;</span>
     }
 
     /**
@@ -210,15 +200,11 @@ public class GordianCoreAgreementDerivation {
      * @return the length
      */
     private int getLength() {
-<span class="pc bpc" id="L213" title="1 of 3 branches missed.">        switch (theState.getSpec().getKDFType()) {</span>
-            case KMAC256:
-            case SHAKE256:
-<span class="fc" id="L216">                return GordianLength.LEN_256.getLength();</span>
-            case KMAC128:
-<span class="fc" id="L218">                return GordianLength.LEN_128.getLength();</span>
-            default:
-<span class="nc" id="L220">                throw new IllegalArgumentException();</span>
-        }
+<span class="pc bpc" id="L203" title="1 of 3 branches missed.">        return switch (theState.getSpec().getKDFType()) {</span>
+<span class="fc" id="L204">            case KMAC256, SHAKE256 -&gt; GordianLength.LEN_256.getLength();</span>
+<span class="fc" id="L205">            case KMAC128 -&gt; GordianLength.LEN_128.getLength();</span>
+<span class="nc" id="L206">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 
     /**
@@ -227,18 +213,11 @@ public class GordianCoreAgreementDerivation {
      * @return the digest
      */
     private Digest getDigest() {
-<span class="pc bpc" id="L230" title="1 of 3 branches missed.">        switch (theState.getSpec().getKDFType()) {</span>
-            case SHA256KDF:
-            case SHA256CKDF:
-            case SHA256HKDF:
-<span class="fc" id="L234">                return new SHA256Digest();</span>
-            case SHA512KDF:
-            case SHA512CKDF:
-            case SHA512HKDF:
-<span class="fc" id="L238">                return new SHA512Digest();</span>
-            default:
-<span class="nc" id="L240">                throw new IllegalArgumentException();</span>
-        }
+<span class="pc bpc" id="L216" title="1 of 3 branches missed.">        return switch (theState.getSpec().getKDFType()) {</span>
+<span class="fc" id="L217">            case SHA256KDF, SHA256CKDF, SHA256HKDF -&gt; new SHA256Digest();</span>
+<span class="fc" id="L218">            case SHA512KDF, SHA512CKDF, SHA512HKDF -&gt; new SHA512Digest();</span>
+<span class="nc" id="L219">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 
     /**
@@ -247,25 +226,16 @@ public class GordianCoreAgreementDerivation {
      * @param pSecret the secret
      */
     private void allocateResult(final byte[] pSecret) {
-<span class="fc bfc" id="L250" title="All 2 branches covered.">        switch (theState.getSpec().getKeyPairSpec().getKeyPairType()) {</span>
-            case EC:
-            case GOST2012:
-            case DSTU4145:
-            case SM2:
-            case DH:
-            case XDH:
-<span class="fc" id="L257">                theResult = new byte[pSecret.length];</span>
-<span class="fc" id="L258">                break;</span>
-            default:
-<span class="fc" id="L260">                theResult = new byte[GordianLength.LEN_256.getByteLength()];</span>
-                break;
-        }
-<span class="fc" id="L263">    }</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">        theResult = switch (theState.getSpec().getKeyPairSpec().getKeyPairType()) {</span>
+<span class="fc" id="L230">            case EC, GOST, DSTU, SM2, DH, XDH -&gt; new byte[pSecret.length];</span>
+<span class="fc" id="L231">            default -&gt; new byte[GordianLength.LEN_256.getByteLength()];</span>
+        };
+<span class="fc" id="L233">    }</span>
 
     /**
      * NullKeyDerivation.
      */
-<span class="fc" id="L268">    static final class GordianCoreNullKeyDerivation</span>
+<span class="fc" id="L238">    static final class GordianCoreNullKeyDerivation</span>
             implements DerivationFunction {
         /**
          * The key.
@@ -276,16 +246,16 @@ public class GordianCoreAgreementDerivation {
         public int generateBytes(final byte[] pBuffer,
                                  final int pOffset,
                                  final int pLength) {
-<span class="fc" id="L279">            System.arraycopy(theKey, 0, pBuffer, pOffset, pLength);</span>
-<span class="fc" id="L280">            Arrays.fill(theKey, (byte) 0);</span>
-<span class="fc" id="L281">            return pLength;</span>
+<span class="fc" id="L249">            System.arraycopy(theKey, 0, pBuffer, pOffset, pLength);</span>
+<span class="fc" id="L250">            Arrays.fill(theKey, (byte) 0);</span>
+<span class="fc" id="L251">            return pLength;</span>
         }
 
         @Override
         public void init(final DerivationParameters pParms) {
-<span class="fc" id="L286">            final byte[] mySecret = ((KDFParameters) pParms).getSharedSecret();</span>
-<span class="fc" id="L287">            theKey = Arrays.copyOf(mySecret, mySecret.length);</span>
-<span class="fc" id="L288">        }</span>
+<span class="fc" id="L256">            final byte[] mySecret = ((KDFParameters) pParms).getSharedSecret();</span>
+<span class="fc" id="L257">            theKey = Arrays.copyOf(mySecret, mySecret.length);</span>
+<span class="fc" id="L258">        }</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

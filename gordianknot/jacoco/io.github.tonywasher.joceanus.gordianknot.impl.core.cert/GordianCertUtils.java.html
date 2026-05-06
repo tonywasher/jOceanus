@@ -23,8 +23,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import org.bouncycastle.asn1.ASN1BitString;
@@ -221,13 +221,14 @@ public final class GordianCertUtils {
     static byte[] createKeyId(final GordianFactory pFactory,
                               final byte[] pEncodedPublicKey) throws GordianException {
         /* Build the hash */
-<span class="fc" id="L224">        final GordianDigestSpec mySpec = GordianDigestSpecBuilder.sha3(GordianLength.LEN_256);</span>
-<span class="fc" id="L225">        final GordianDigestFactory myDigests = pFactory.getDigestFactory();</span>
-<span class="fc" id="L226">        final GordianDigest myDigest = myDigests.createDigest(mySpec);</span>
-<span class="fc" id="L227">        myDigest.update(pEncodedPublicKey);</span>
+<span class="fc" id="L224">        final GordianDigestFactory myDigests = pFactory.getDigestFactory();</span>
+<span class="fc" id="L225">        final GordianDigestSpecBuilder myBuilder = myDigests.newDigestSpecBuilder();</span>
+<span class="fc" id="L226">        final GordianDigestSpec mySpec = myBuilder.sha3(GordianLength.LEN_256);</span>
+<span class="fc" id="L227">        final GordianDigest myDigest = myDigests.createDigest(mySpec);</span>
+<span class="fc" id="L228">        myDigest.update(pEncodedPublicKey);</span>
 
         /* Create the keyId */
-<span class="fc" id="L230">        return myDigest.finish();</span>
+<span class="fc" id="L231">        return myDigest.finish();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

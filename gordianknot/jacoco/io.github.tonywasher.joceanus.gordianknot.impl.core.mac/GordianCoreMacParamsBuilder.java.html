@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreMacParamsBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.mac</a> &gt; <span class="el_source">GordianCoreMacParamsBuilder.java</span></div><h1>GordianCoreMacParamsBuilder.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.mac;
+
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParams;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import org.bouncycastle.util.Arrays;
+
+/**
+ * Core MacParams Builder.
+ */
+public final class GordianCoreMacParamsBuilder
+        implements GordianMacParamsBuilder {
+    /**
+     * The Key.
+     */
+    private GordianKey&lt;GordianMacSpec&gt; theKey;
+
+    /**
+     * The Nonce.
+     */
+    private byte[] theNonce;
+
+    /**
+     * Random Nonce requested?
+     */
+    private boolean randomNonce;
+
+    /**
+     * Personalisation.
+     */
+    private byte[] thePersonal;
+
+    /**
+     * Output length.
+     */
+    private long theOutLen;
+
+    /**
+     * The fanOut.
+     */
+<span class="fc" id="L59">    private short theFanOut = 1;</span>
+
+    /**
+     * The maxDepth.
+     */
+<span class="fc" id="L64">    private short theMaxDepth = 1;</span>
+
+    /**
+     * The leafLength.
+     */
+    private int theLeafLen;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L74">    private GordianCoreMacParamsBuilder() {</span>
+<span class="fc" id="L75">    }</span>
+
+    /**
+     * Create new MacParamsBuilder.
+     *
+     * @return the Builder
+     */
+    public static GordianMacParamsBuilder newInstance() {
+<span class="fc" id="L83">        return new GordianCoreMacParamsBuilder();</span>
+    }
+
+    /**
+     * Generate keyOnly Parameters.
+     *
+     * @param pKey the key
+     * @return the macParameters
+     */
+    public GordianMacParams key(final GordianKey&lt;GordianMacSpec&gt; pKey) {
+<span class="fc" id="L93">        final GordianCoreMacParams myParams = new GordianCoreMacParams();</span>
+<span class="fc" id="L94">        myParams.setKey(pKey);</span>
+<span class="fc" id="L95">        return myParams;</span>
+    }
+
+    /**
+     * Obtain keyAndNonce Parameters.
+     *
+     * @param pKey   the key
+     * @param pNonce the nonce
+     * @return the macParameters
+     */
+    public GordianMacParams keyAndNonce(final GordianKey&lt;GordianMacSpec&gt; pKey,
+                                        final byte[] pNonce) {
+<span class="fc" id="L107">        final GordianCoreMacParams myParams = new GordianCoreMacParams();</span>
+<span class="fc" id="L108">        myParams.setKey(pKey);</span>
+<span class="fc" id="L109">        myParams.setNonce(pNonce);</span>
+<span class="fc" id="L110">        return myParams;</span>
+    }
+
+    /**
+     * Obtain keyAndRandomNonce Parameters.
+     *
+     * @param pKey the key
+     * @return the macParameters
+     */
+    public GordianMacParams keyWithRandomNonce(final GordianKey&lt;GordianMacSpec&gt; pKey) {
+<span class="fc" id="L120">        final GordianCoreMacParams myParams = new GordianCoreMacParams();</span>
+<span class="fc" id="L121">        myParams.setKey(pKey);</span>
+<span class="fc" id="L122">        myParams.setRandomNonce();</span>
+<span class="fc" id="L123">        return myParams;</span>
+    }
+
+    @Override
+    public GordianMacParamsBuilder setKey(final GordianKey&lt;GordianMacSpec&gt; pKey) {
+<span class="nc" id="L128">        theKey = pKey;</span>
+<span class="nc" id="L129">        return this;</span>
+    }
+
+    @Override
+    public GordianMacParamsBuilder setNonce(final byte[] pNonce) {
+<span class="nc" id="L134">        theNonce = Arrays.clone(pNonce);</span>
+<span class="nc" id="L135">        randomNonce = false;</span>
+<span class="nc" id="L136">        return this;</span>
+    }
+
+    @Override
+    public GordianMacParamsBuilder withRandomNonce() {
+<span class="nc" id="L141">        theNonce = null;</span>
+<span class="nc" id="L142">        randomNonce = true;</span>
+<span class="nc" id="L143">        return this;</span>
+    }
+
+    @Override
+    public GordianMacParamsBuilder setPersonalisation(final byte[] pPersonal) {
+<span class="nc" id="L148">        thePersonal = Arrays.clone(pPersonal);</span>
+<span class="nc" id="L149">        return this;</span>
+    }
+
+    @Override
+    public GordianMacParamsBuilder setOutputLength(final long pOutLen) {
+<span class="nc" id="L154">        theOutLen = pOutLen;</span>
+<span class="nc" id="L155">        return this;</span>
+    }
+
+    @Override
+    public GordianMacParamsBuilder setTreeConfig(final int pFanOut,
+                                                 final int pMaxDepth,
+                                                 final int pLeafLen) {
+<span class="nc" id="L162">        theFanOut = (short) pFanOut;</span>
+<span class="nc" id="L163">        theMaxDepth = (short) pMaxDepth;</span>
+<span class="nc" id="L164">        theLeafLen = pLeafLen;</span>
+<span class="nc" id="L165">        return this;</span>
+    }
+
+    @Override
+    public GordianMacParams build() {
+        /* Create params */
+<span class="nc" id="L171">        final GordianCoreMacParams myParams = new GordianCoreMacParams();</span>
+
+        /* Record key and Nonce */
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if (theKey != null) {</span>
+<span class="nc" id="L175">            myParams.setKey(theKey);</span>
+        }
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        if (theNonce != null) {</span>
+<span class="nc" id="L178">            myParams.setNonce(theNonce);</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        } else if (randomNonce) {</span>
+<span class="nc" id="L180">            myParams.setRandomNonce();</span>
+        }
+
+        /* Record personalisation and output length */
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        if (thePersonal != null) {</span>
+<span class="nc" id="L185">            myParams.setPersonal(thePersonal);</span>
+        }
+<span class="nc" id="L187">        myParams.setOutLen(theOutLen);</span>
+
+        /* Record tree details */
+<span class="nc" id="L190">        myParams.setTreeFanOut(theFanOut);</span>
+<span class="nc" id="L191">        myParams.setTreeMaxDepth(theMaxDepth);</span>
+<span class="nc" id="L192">        myParams.setTreeLeafLen(theLeafLen);</span>
+
+        /* Reset state */
+<span class="nc" id="L195">        reset();</span>
+
+        /* Return the parameters */
+<span class="nc" id="L198">        return myParams;</span>
+    }
+
+    /**
+     * Reset state.
+     */
+    private void reset() {
+        /* Reset data */
+<span class="nc" id="L206">        theKey = null;</span>
+<span class="nc" id="L207">        theNonce = null;</span>
+<span class="nc" id="L208">        thePersonal = null;</span>
+
+<span class="nc" id="L210">        randomNonce = false;</span>
+
+<span class="nc" id="L212">        theOutLen = 0;</span>
+<span class="nc" id="L213">        theFanOut = 1;</span>
+<span class="nc" id="L214">        theMaxDepth = 1;</span>
+<span class="nc" id="L215">        theLeafLen = 0;</span>
+<span class="nc" id="L216">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

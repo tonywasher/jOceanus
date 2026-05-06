@@ -18,12 +18,13 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpecBuilder;
 
 /**
  * Class to contain the symmetric key ciphers.
@@ -57,17 +58,18 @@ final class GordianSymKeyCipherSet {
      * @throws GordianException on error
      */
     GordianSymKeyCipherSet(final GordianBaseFactory pFactory,
-<span class="fc" id="L60">                           final GordianKey&lt;GordianSymKeySpec&gt; pKey) throws GordianException {</span>
+<span class="fc" id="L61">                           final GordianKey&lt;GordianSymKeySpec&gt; pKey) throws GordianException {</span>
         /* Store parameters */
-<span class="fc" id="L62">        theKey = pKey;</span>
-<span class="fc" id="L63">        final GordianSymKeySpec myKeySpec = theKey.getKeyType();</span>
-<span class="fc" id="L64">        final GordianCipherFactory myFactory = pFactory.getCipherFactory();</span>
+<span class="fc" id="L63">        theKey = pKey;</span>
+<span class="fc" id="L64">        final GordianSymKeySpec myKeySpec = theKey.getKeyType();</span>
+<span class="fc" id="L65">        final GordianCipherFactory myFactory = pFactory.getCipherFactory();</span>
 
         /* Create the standard ciphers */
-<span class="fc" id="L67">        thePaddingCipher = myFactory.createSymKeyCipher(GordianSymCipherSpecBuilder.ecb(myKeySpec, GordianPadding.PKCS7));</span>
-<span class="fc" id="L68">        theStandardCipher = myFactory.createSymKeyCipher(GordianSymCipherSpecBuilder.ecb(myKeySpec, GordianPadding.NONE));</span>
-<span class="fc" id="L69">        theStreamCipher = myFactory.createSymKeyCipher(GordianSymCipherSpecBuilder.sic(myKeySpec));</span>
-<span class="fc" id="L70">    }</span>
+<span class="fc" id="L68">        final GordianSymCipherSpecBuilder myBuilder = GordianCoreSymCipherSpecBuilder.newInstance();</span>
+<span class="fc" id="L69">        thePaddingCipher = myFactory.createSymKeyCipher(myBuilder.ecb(myKeySpec, GordianPadding.PKCS7));</span>
+<span class="fc" id="L70">        theStandardCipher = myFactory.createSymKeyCipher(myBuilder.ecb(myKeySpec, GordianPadding.NONE));</span>
+<span class="fc" id="L71">        theStreamCipher = myFactory.createSymKeyCipher(myBuilder.sic(myKeySpec));</span>
+<span class="fc" id="L72">    }</span>
 
     /**
      * Obtain the key.
@@ -75,7 +77,7 @@ final class GordianSymKeyCipherSet {
      * @return the Key
      */
     GordianKey&lt;GordianSymKeySpec&gt; getKey() {
-<span class="fc" id="L78">        return theKey;</span>
+<span class="fc" id="L80">        return theKey;</span>
     }
 
     /**
@@ -84,7 +86,7 @@ final class GordianSymKeyCipherSet {
      * @return the Padding Cipher
      */
     GordianSymCipher getPaddingCipher() {
-<span class="fc" id="L87">        return thePaddingCipher;</span>
+<span class="fc" id="L89">        return thePaddingCipher;</span>
     }
 
     /**
@@ -93,7 +95,7 @@ final class GordianSymKeyCipherSet {
      * @return the Stream Cipher
      */
     GordianSymCipher getStreamCipher() {
-<span class="fc" id="L96">        return theStreamCipher;</span>
+<span class="fc" id="L98">        return theStreamCipher;</span>
     }
 
     /**
@@ -102,7 +104,7 @@ final class GordianSymKeyCipherSet {
      * @return the Standard Cipher
      */
     GordianSymCipher getStandardCipher() {
-<span class="fc" id="L105">        return theStandardCipher;</span>
+<span class="fc" id="L107">        return theStandardCipher;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

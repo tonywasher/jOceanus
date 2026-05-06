@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisMapperTypeRef.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.solver.mapper</a> &gt; <span class="el_source">ThemisMapperTypeRef.java</span></div><h1>ThemisMapperTypeRef.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.solver.mapper;
+
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisTypeInstance;
+import io.github.tonywasher.joceanus.themis.parser.decl.ThemisDeclEnum;
+import io.github.tonywasher.joceanus.themis.parser.type.ThemisType;
+import io.github.tonywasher.joceanus.themis.solver.reflect.ThemisReflectBaseUtils;
+
+import java.util.List;
+import java.util.function.Predicate;
+
+/**
+ * Class to wrap self reference.
+ */
+public class ThemisMapperTypeRef
+        implements ThemisTypeInstance {
+    /**
+     * The parent.
+     */
+    private final ThemisDeclEnum theParent;
+
+    /**
+     * The node.
+     */
+    private final ClassOrInterfaceType theType;
+
+    /**
+     * Constructor.
+     *
+     * @param pEnum the enum to wrap.
+     */
+<span class="fc" id="L51">    ThemisMapperTypeRef(final ThemisDeclEnum pEnum) {</span>
+        /* Store parent */
+<span class="fc" id="L53">        theParent = pEnum;</span>
+
+        /* Create the classOrInterface reference */
+<span class="fc" id="L56">        theType = ThemisReflectBaseUtils.createTypeForName(pEnum.getFullName());</span>
+<span class="fc" id="L57">    }</span>
+
+    @Override
+    public Node getNode() {
+<span class="nc" id="L61">        return theType;</span>
+    }
+
+    @Override
+    public ThemisId getId() {
+<span class="nc" id="L66">        return ThemisType.CLASSINTERFACE;</span>
+    }
+
+    @Override
+    public void registerChild(final ThemisInstance pChild) {
+<span class="nc" id="L71">        throw new UnsupportedOperationException();</span>
+    }
+
+    @Override
+    public ThemisInstance getParent() {
+<span class="nc" id="L76">        return theParent;</span>
+    }
+
+    @Override
+    public List&lt;ThemisInstance&gt; getChildren() {
+<span class="nc" id="L81">        return List.of();</span>
+    }
+
+    @Override
+    public List&lt;ThemisInstance&gt; discoverChildren(final Predicate&lt;ThemisInstance&gt; pTest) {
+<span class="nc" id="L86">        return List.of();</span>
+    }
+
+    @Override
+    public void discoverNodes(final List&lt;ThemisInstance&gt; pList,
+                              final Predicate&lt;ThemisInstance&gt; pTest) {
+        /* NoOp */
+<span class="nc" id="L93">    }</span>
+
+    /**
+     * Obtain the class instance.
+     *
+     * @return the class instance
+     */
+    public ThemisClassInstance getClassInstance() {
+<span class="nc" id="L101">        return theParent;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

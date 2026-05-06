@@ -16,10 +16,11 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementStatus;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 
 /**
  * Agreement State.
@@ -28,7 +29,7 @@ public class GordianCoreAgreementState {
     /**
      * The Spec.
      */
-    private final GordianAgreementSpec theSpec;
+    private final GordianCoreAgreementSpec theSpec;
 
     /**
      * The status.
@@ -80,22 +81,22 @@ public class GordianCoreAgreementState {
      *
      * @param pSpec the agreementSpec
      */
-<span class="fc" id="L83">    GordianCoreAgreementState(final GordianAgreementSpec pSpec) {</span>
+<span class="fc" id="L84">    GordianCoreAgreementState(final GordianAgreementSpec pSpec) {</span>
         /* Store parameters */
-<span class="fc" id="L85">        theSpec = pSpec;</span>
+<span class="fc" id="L86">        theSpec = (GordianCoreAgreementSpec) pSpec;</span>
 
         /* Create participants */
-<span class="fc" id="L88">        theClient = new GordianCoreAgreementParticipant();</span>
-<span class="fc" id="L89">        theServer = new GordianCoreAgreementParticipant();</span>
-<span class="fc" id="L90">    }</span>
+<span class="fc" id="L89">        theClient = new GordianCoreAgreementParticipant();</span>
+<span class="fc" id="L90">        theServer = new GordianCoreAgreementParticipant();</span>
+<span class="fc" id="L91">    }</span>
 
     /**
      * Obtain the Agreement Spec.
      *
      * @return the agreementSpec
      */
-    public GordianAgreementSpec getSpec() {
-<span class="fc" id="L98">        return theSpec;</span>
+    public GordianCoreAgreementSpec getSpec() {
+<span class="fc" id="L99">        return theSpec;</span>
     }
 
     /**
@@ -104,7 +105,7 @@ public class GordianCoreAgreementState {
      * @return the status
      */
     GordianAgreementStatus getStatus() {
-<span class="fc" id="L107">        return theStatus;</span>
+<span class="fc" id="L108">        return theStatus;</span>
     }
 
     /**
@@ -114,8 +115,8 @@ public class GordianCoreAgreementState {
      * @return the state
      */
     GordianCoreAgreementState setStatus(final GordianAgreementStatus pStatus) {
-<span class="fc" id="L117">        theStatus = pStatus;</span>
-<span class="fc" id="L118">        return this;</span>
+<span class="fc" id="L118">        theStatus = pStatus;</span>
+<span class="fc" id="L119">        return this;</span>
     }
 
     /**
@@ -124,7 +125,7 @@ public class GordianCoreAgreementState {
      * @return the resultType
      */
     Object getResultType() {
-<span class="fc" id="L127">        return theResultType;</span>
+<span class="fc" id="L128">        return theResultType;</span>
     }
 
     /**
@@ -134,8 +135,8 @@ public class GordianCoreAgreementState {
      * @return the state
      */
     GordianCoreAgreementState setResultType(final Object pResultType) {
-<span class="fc" id="L137">        theResultType = pResultType;</span>
-<span class="fc" id="L138">        return this;</span>
+<span class="fc" id="L138">        theResultType = pResultType;</span>
+<span class="fc" id="L139">        return this;</span>
     }
 
     /**
@@ -144,7 +145,7 @@ public class GordianCoreAgreementState {
      * @return the result
      */
     Object getResult() {
-<span class="fc" id="L147">        return theResult;</span>
+<span class="fc" id="L148">        return theResult;</span>
     }
 
     /**
@@ -154,8 +155,8 @@ public class GordianCoreAgreementState {
      * @return the state
      */
     GordianCoreAgreementState setResult(final Object pResult) {
-<span class="fc" id="L157">        theResult = pResult;</span>
-<span class="fc" id="L158">        return this;</span>
+<span class="fc" id="L158">        theResult = pResult;</span>
+<span class="fc" id="L159">        return this;</span>
     }
 
     /**
@@ -164,7 +165,7 @@ public class GordianCoreAgreementState {
      * @return the state
      */
     public GordianCoreAgreementParticipant getClient() {
-<span class="fc" id="L167">        return theClient;</span>
+<span class="fc" id="L168">        return theClient;</span>
     }
 
     /**
@@ -173,7 +174,7 @@ public class GordianCoreAgreementState {
      * @return the state
      */
     public GordianCoreAgreementParticipant getServer() {
-<span class="fc" id="L176">        return theServer;</span>
+<span class="fc" id="L177">        return theServer;</span>
     }
 
     /**
@@ -182,7 +183,7 @@ public class GordianCoreAgreementState {
      * @return the encapsulated
      */
     public byte[] getEncapsulated() {
-<span class="fc" id="L185">        return theEncapsulated;</span>
+<span class="fc" id="L186">        return theEncapsulated;</span>
     }
 
     /**
@@ -192,8 +193,8 @@ public class GordianCoreAgreementState {
      * @return the state
      */
     public GordianCoreAgreementState setEncapsulated(final byte[] pEncapsulated) {
-<span class="fc" id="L195">        theEncapsulated = pEncapsulated;</span>
-<span class="fc" id="L196">        return this;</span>
+<span class="fc" id="L196">        theEncapsulated = pEncapsulated;</span>
+<span class="fc" id="L197">        return this;</span>
     }
 
     /**
@@ -202,7 +203,7 @@ public class GordianCoreAgreementState {
      * @return the certificate
      */
     GordianCertificate getSignerCertificate() {
-<span class="fc" id="L205">        return theSignerCertificate;</span>
+<span class="fc" id="L206">        return theSignerCertificate;</span>
     }
 
     /**
@@ -212,8 +213,8 @@ public class GordianCoreAgreementState {
      * @return the state
      */
     GordianCoreAgreementState setSignerCertificate(final GordianCertificate pCertificate) {
-<span class="fc" id="L215">        theSignerCertificate = pCertificate;</span>
-<span class="fc" id="L216">        return this;</span>
+<span class="fc" id="L216">        theSignerCertificate = pCertificate;</span>
+<span class="fc" id="L217">        return this;</span>
     }
 
     /**
@@ -222,7 +223,7 @@ public class GordianCoreAgreementState {
      * @return the signatureSpec
      */
     GordianSignatureSpec getSignSpec() {
-<span class="fc" id="L225">        return theSignSpec;</span>
+<span class="fc" id="L226">        return theSignSpec;</span>
     }
 
     /**
@@ -232,8 +233,8 @@ public class GordianCoreAgreementState {
      * @return the state
      */
     GordianCoreAgreementState setSignSpec(final GordianSignatureSpec pSignSpec) {
-<span class="fc" id="L235">        theSignSpec = pSignSpec;</span>
-<span class="fc" id="L236">        return this;</span>
+<span class="fc" id="L236">        theSignSpec = pSignSpec;</span>
+<span class="fc" id="L237">        return this;</span>
     }
 
     /**
@@ -242,7 +243,7 @@ public class GordianCoreAgreementState {
      * @return the data
      */
     public byte[] getAdditionalData() {
-<span class="fc" id="L245">        return theAdditional;</span>
+<span class="fc" id="L246">        return theAdditional;</span>
     }
 
     /**
@@ -252,8 +253,8 @@ public class GordianCoreAgreementState {
      * @return the state
      */
     public GordianCoreAgreementState setAdditionalData(final byte[] pAdditional) {
-<span class="fc" id="L255">        theAdditional = pAdditional;</span>
-<span class="fc" id="L256">        return this;</span>
+<span class="fc" id="L256">        theAdditional = pAdditional;</span>
+<span class="fc" id="L257">        return this;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

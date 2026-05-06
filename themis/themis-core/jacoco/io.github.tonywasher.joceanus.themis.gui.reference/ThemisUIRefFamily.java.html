@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisUIRefFamily.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.gui.reference</a> &gt; <span class="el_source">ThemisUIRefFamily.java</span></div><h1>ThemisUIRefFamily.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.gui.reference;
+
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIBaseDocument;
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIDocBuilder;
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIHTMLAttr;
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIHTMLTag;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverPackage;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverReference;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverReference.ThemisSolverRefClass;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverReference.ThemisSolverRefPackage;
+import org.w3c.dom.Element;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Family table builder.
+ */
+public class ThemisUIRefFamily {
+    /**
+     * The builder.
+     */
+    private final ThemisUIDocBuilder theBuilder;
+
+    /**
+     * The package.
+     */
+    private ThemisSolverPackage thePackage;
+
+    /**
+     * Does the package have files?
+     */
+    private boolean hasFiles;
+
+    /**
+     * The list of child packages.
+     */
+    private List&lt;ThemisSolverPackage&gt; theChildren;
+
+    /**
+     * Constructor.
+     *
+     * @param pBuilder the builder
+     */
+<span class="nc" id="L63">    ThemisUIRefFamily(final ThemisUIDocBuilder pBuilder) {</span>
+<span class="nc" id="L64">        theBuilder = pBuilder;</span>
+<span class="nc" id="L65">    }</span>
+
+    /**
+     * Set details.
+     *
+     * @param pPackage the package
+     */
+    private void setDetails(final ThemisSolverPackage pPackage) {
+        /* Access children and determine whether we have files */
+<span class="nc" id="L74">        thePackage = pPackage;</span>
+<span class="nc" id="L75">        theChildren = new ArrayList&lt;&gt;(pPackage.getChildren());</span>
+<span class="nc" id="L76">        Collections.sort(theChildren);</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        hasFiles = !pPackage.getFiles().isEmpty();</span>
+<span class="nc" id="L78">    }</span>
+
+    /**
+     * Create document for package family.
+     *
+     * @param pPackage the package
+     * @param pTable   the table
+     */
+    void formatFamily(final ThemisSolverPackage pPackage,
+                      final Element pTable) {
+        /* Set the details */
+<span class="nc" id="L89">        setDetails(pPackage);</span>
+
+        /* Create table body */
+<span class="nc" id="L92">        final Element myTblBody = theBuilder.createElement(ThemisUIHTMLTag.TBODY);</span>
+<span class="nc" id="L93">        pTable.appendChild(myTblBody);</span>
+<span class="nc" id="L94">        theBuilder.addClassToElement(myTblBody, ThemisUIBaseDocument.CLASSTBLZEBRA);</span>
+
+        /* Create the Local Column header */
+<span class="nc" id="L97">        Element myLocalRow = null;</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        if (hasFiles) {</span>
+<span class="nc" id="L99">            myLocalRow = theBuilder.createElement(ThemisUIHTMLTag.TR);</span>
+<span class="nc" id="L100">            myTblBody.appendChild(myLocalRow);</span>
+<span class="nc" id="L101">            createRowLocalHeader(myLocalRow, pPackage);</span>
+<span class="nc" id="L102">            createSelfLocalCell(myLocalRow, pPackage);</span>
+        }
+
+        /* Loop through the children */
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        for (ThemisSolverPackage myChild : theChildren) {</span>
+            /* Create a new row */
+<span class="nc" id="L108">            final Element myRow = theBuilder.createElement(ThemisUIHTMLTag.TR);</span>
+<span class="nc" id="L109">            myTblBody.appendChild(myRow);</span>
+
+            /* Create a new cell for the package short name */
+<span class="nc" id="L112">            createRowHeader(myRow, myChild);</span>
+
+            /* Create the link row for local to child and vice versa */
+<span class="nc bnc" id="L115" title="All 2 branches missed.">            if (myLocalRow != null) {</span>
+<span class="nc" id="L116">                createLinkCell(myLocalRow, myChild, pPackage);</span>
+<span class="nc" id="L117">                createLinkCell(myRow, pPackage, myChild);</span>
+            }
+
+            /* Loop through the siblings */
+<span class="nc bnc" id="L121" title="All 2 branches missed.">            for (ThemisSolverPackage mySibling : theChildren) {</span>
+                /* If this is a self-reference */
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                if (myChild.equals(mySibling)) {</span>
+                    /* Create the self cell */
+<span class="nc" id="L125">                    createSelfCell(myRow, myChild);</span>
+
+                    /* else create the standard cell */
+                } else {
+                    /* Create the link row */
+<span class="nc" id="L130">                    createLinkCell(myRow, mySibling, myChild);</span>
+                }
+<span class="nc" id="L132">            }</span>
+<span class="nc" id="L133">        }</span>
+<span class="nc" id="L134">    }</span>
+
+    /**
+     * Create row header cell.
+     *
+     * @param pRow    the row
+     * @param pTarget the target package
+     */
+    private void createRowHeader(final Element pRow,
+                                 final ThemisSolverPackage pTarget) {
+        /* Create the cell */
+<span class="nc" id="L145">        final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);</span>
+<span class="nc" id="L146">        theBuilder.addClassToElement(myCell, ThemisUIRefConstants.CLASSLINK);</span>
+<span class="nc" id="L147">        pRow.appendChild(myCell);</span>
+
+        /* Create the link */
+<span class="nc" id="L150">        final Element myLink = theBuilder.createElement(ThemisUIHTMLTag.A);</span>
+<span class="nc" id="L151">        myCell.appendChild(myLink);</span>
+
+        /* Determine the linkReference */
+<span class="nc" id="L154">        final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + pTarget.getPackageName();</span>
+<span class="nc" id="L155">        theBuilder.setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);</span>
+
+        /* Populate the cell */
+<span class="nc" id="L158">        myLink.setTextContent(pTarget.getShortName());</span>
+<span class="nc" id="L159">    }</span>
+
+    /**
+     * Create local row header cell.
+     *
+     * @param pRow    the row
+     * @param pTarget the target package
+     */
+    private void createRowLocalHeader(final Element pRow,
+                                      final ThemisSolverPackage pTarget) {
+        /* Create the cell */
+<span class="nc" id="L170">        final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);</span>
+<span class="nc" id="L171">        theBuilder.addClassToElement(myCell, ThemisUIRefConstants.CLASSLINK);</span>
+<span class="nc" id="L172">        pRow.appendChild(myCell);</span>
+
+        /* Create the link */
+<span class="nc" id="L175">        final Element myLink = theBuilder.createElement(ThemisUIHTMLTag.A);</span>
+<span class="nc" id="L176">        myCell.appendChild(myLink);</span>
+
+        /* Determine the linkReference */
+<span class="nc" id="L179">        final String myLinkRef = ThemisUIRefConstants.LINKLOCAL + pTarget.getPackageName();</span>
+<span class="nc" id="L180">        theBuilder.setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);</span>
+
+        /* Populate the cell */
+<span class="nc" id="L183">        myLink.setTextContent(ThemisUIRefConstants.LOCALPACKAGE);</span>
+<span class="nc" id="L184">    }</span>
+
+    /**
+     * Create self-link cell.
+     *
+     * @param pRow     the row
+     * @param pPackage the package
+     */
+    private void createSelfCell(final Element pRow,
+                                final ThemisSolverPackage pPackage) {
+        /* Determine whether we are circular */
+<span class="nc" id="L195">        final boolean isCircular = pPackage.isCircular();</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">        final String myClass = isCircular</span>
+<span class="nc" id="L197">                ? ThemisUIRefConstants.CLASSSELFERROR</span>
+<span class="nc" id="L198">                : ThemisUIRefConstants.CLASSSELFOK;</span>
+
+        /* Create the cell */
+<span class="nc" id="L201">        final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);</span>
+<span class="nc" id="L202">        theBuilder.addClassToElement(myCell, myClass);</span>
+<span class="nc" id="L203">        theBuilder.addClassToElement(myCell, ThemisUIRefConstants.CLASSLINKLIST);</span>
+<span class="nc" id="L204">        pRow.appendChild(myCell);</span>
+<span class="nc" id="L205">    }</span>
+
+    /**
+     * Create self-link cell.
+     *
+     * @param pRow     the row
+     * @param pPackage the package
+     */
+    private void createSelfLocalCell(final Element pRow,
+                                     final ThemisSolverPackage pPackage) {
+        /* Determine whether we are incestuous */
+<span class="nc" id="L216">        final boolean isIncestuous = pPackage.isIncestuous();</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">        final String myClass = isIncestuous</span>
+<span class="nc" id="L218">                ? ThemisUIRefConstants.CLASSSELFERROR</span>
+<span class="nc" id="L219">                : ThemisUIRefConstants.CLASSSELFOK;</span>
+
+        /* Create the cell */
+<span class="nc" id="L222">        final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);</span>
+<span class="nc" id="L223">        theBuilder.addClassToElement(myCell, myClass);</span>
+<span class="nc" id="L224">        theBuilder.addClassToElement(myCell, ThemisUIRefConstants.CLASSLINKLIST);</span>
+<span class="nc" id="L225">        pRow.appendChild(myCell);</span>
+<span class="nc" id="L226">    }</span>
+
+    /**
+     * Create linking cell.
+     *
+     * @param pRow    the row
+     * @param pSource the source package
+     * @param pTarget the target package
+     */
+    private void createLinkCell(final Element pRow,
+                                final ThemisSolverPackage pSource,
+                                final ThemisSolverPackage pTarget) {
+        /* Access links between from the sibling to the child */
+<span class="nc" id="L239">        final ThemisSolverReference myMap = pSource.getReferenceMap();</span>
+<span class="nc" id="L240">        final ThemisSolverRefPackage myLinkMap = myMap.getReferences(pTarget);</span>
+<span class="nc" id="L241">        final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);</span>
+<span class="nc" id="L242">        theBuilder.addClassToElement(myCell, ThemisUIRefConstants.CLASSLINKLIST);</span>
+<span class="nc" id="L243">        pRow.appendChild(myCell);</span>
+
+        /* If we have links */
+<span class="nc bnc" id="L246" title="All 2 branches missed.">        if (myLinkMap != null) {</span>
+            /* Create the link */
+<span class="nc" id="L248">            final Element myLink = theBuilder.createElement(ThemisUIHTMLTag.A);</span>
+<span class="nc" id="L249">            myCell.appendChild(myLink);</span>
+
+            /* Determine the linkReference */
+<span class="nc" id="L252">            final String myLinkRef = ThemisUIRefConstants.LINKLIST + pSource.getPackageName()</span>
+<span class="nc" id="L253">                    + ThemisUIRefConstants.SEPCHAR + pTarget.getPackageName();</span>
+<span class="nc" id="L254">            theBuilder.setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);</span>
+
+            /* Populate the cell */
+<span class="nc" id="L257">            final List&lt;ThemisSolverRefClass&gt; myReferences = myLinkMap.getReferences();</span>
+<span class="nc" id="L258">            final String myText = Integer.toString(myReferences.size());</span>
+<span class="nc" id="L259">            myLink.setTextContent(myText);</span>
+
+            /* Add toolTip */
+<span class="nc" id="L262">            theBuilder.addToolTipToElement(myCell,</span>
+<span class="nc" id="L263">                    getTooltipName(pSource) + &quot; -&gt; &quot; + getTooltipName(pTarget));</span>
+        }
+<span class="nc" id="L265">    }</span>
+
+    /**
+     * Obtain package name.
+     *
+     * @param pPackage the package
+     * @return the tooltip name
+     */
+    private String getTooltipName(final ThemisSolverPackage pPackage) {
+<span class="nc bnc" id="L274" title="All 2 branches missed.">        return pPackage.equals(thePackage) ? ThemisUIRefConstants.LOCALPACKAGE : pPackage.getShortName();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

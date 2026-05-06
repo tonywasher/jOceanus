@@ -131,26 +131,23 @@
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>         @Override
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> processBytes(<strong class="jxr_keyword">final</strong> byte[] pBuffer,
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>                                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> pLength) <strong class="jxr_keyword">throws</strong> <a name="GordianException" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/base/GordianException.html#GordianException">GordianException</a> {
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>             <em class="jxr_comment">/* Initialise variables */</em>
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> iLength = pLength;
-<a class="jxr_linenumber" name="L128" href="#L128">128</a> 
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>             <em class="jxr_comment">/* If we have EOF from the input stream */</em>
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>             <strong class="jxr_keyword">if</strong> (iLength == -1) {
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>                 <em class="jxr_comment">/* Record the fact and reset the read length to zero */</em>
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>                 setEOFSeen();
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>                 theStream.checkResult();
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>                 <strong class="jxr_keyword">return</strong> -1;
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>             }
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>             <em class="jxr_comment">/* If we have EOF from the input stream */</em>
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>             <strong class="jxr_keyword">if</strong> (pLength == -1) {
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>                 <em class="jxr_comment">/* Record the fact and reset the read length to zero */</em>
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>                 setEOFSeen();
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>                 theStream.checkResult();
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>                 <strong class="jxr_keyword">return</strong> -1;
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>             }
+<a class="jxr_linenumber" name="L133" href="#L133">133</a> 
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>             <em class="jxr_comment">/* Update the digest */</em>
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>             theDigest.update(pBuffer, 0, pLength);
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> 
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>             <em class="jxr_comment">/* Update the digest */</em>
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>             theDigest.update(pBuffer, 0, iLength);
-<a class="jxr_linenumber" name="L139" href="#L139">139</a> 
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>             <em class="jxr_comment">/* Set up buffer variables */</em>
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>             setBuffer(pBuffer, iLength);
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>             <strong class="jxr_keyword">return</strong> iLength;
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>         }
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>     }
-<a class="jxr_linenumber" name="L145" href="#L145">145</a> }
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>             <em class="jxr_comment">/* Set up buffer variables */</em>
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>             setBuffer(pBuffer, pLength);
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>             <strong class="jxr_keyword">return</strong> pLength;
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>         }
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>     }
+<a class="jxr_linenumber" name="L142" href="#L142">142</a> }
 </pre>
 <hr/>
 <div id="footer">© 2012–2026</div>

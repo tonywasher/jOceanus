@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSymCipherSpecBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.cipher.spec</a> &gt; <span class="el_source">GordianSymCipherSpecBuilder.java</span></div><h1>GordianSymCipherSpecBuilder.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;
+
+/**
+ * The SymCipherSpec Builder class.
+ */
+public interface GordianSymCipherSpecBuilder {
+    /**
+     * Define SymKeySpec.
+     *
+     * @param pSpec the spec
+     * @return the Builder
+     */
+    GordianSymCipherSpecBuilder withKeySpec(GordianSymKeySpec pSpec);
+
+    /**
+     * Define cipher mode.
+     *
+     * @param pMode the cipher mode
+     * @return the Builder
+     */
+    GordianSymCipherSpecBuilder withMode(GordianCipherMode pMode);
+
+    /**
+     * Define cipher padding.
+     *
+     * @param pPadding the padding
+     * @return the Builder
+     */
+    GordianSymCipherSpecBuilder withPadding(GordianPadding pPadding);
+
+    /**
+     * Access symKeySpecBuilder.
+     *
+     * @return the symKeySpec builder
+     */
+    GordianSymKeySpecBuilder usingSymKeySpecBuilder();
+
+    /**
+     * Build symCipherSpec.
+     *
+     * @return the symCipherSpec
+     */
+    GordianSymCipherSpec build();
+
+    /**
+     * Create a generic symKey cipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @param pMode    the mode
+     * @param pPadding the padding
+     * @return the cipherSpec
+     */
+    default GordianSymCipherSpec symCipher(final GordianSymKeySpec pKeySpec,
+                                           final GordianCipherMode pMode,
+                                           final GordianPadding pPadding) {
+<span class="fc" id="L73">        return withKeySpec(pKeySpec).withMode(pMode).withPadding(pPadding).build();</span>
+    }
+
+    /**
+     * Create an ECB symKey cipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @param pPadding the padding
+     * @return the cipherSpec
+     */
+    default GordianSymCipherSpec ecb(final GordianSymKeySpec pKeySpec,
+                                     final GordianPadding pPadding) {
+<span class="fc" id="L85">        return withKeySpec(pKeySpec).withMode(GordianCipherMode.ECB).withPadding(pPadding).build();</span>
+    }
+
+    /**
+     * Create a CBC symKey cipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @param pPadding the padding
+     * @return the cipherSpec
+     */
+    default GordianSymCipherSpec cbc(final GordianSymKeySpec pKeySpec,
+                                     final GordianPadding pPadding) {
+<span class="fc" id="L97">        return withKeySpec(pKeySpec).withMode(GordianCipherMode.CBC).withPadding(pPadding).build();</span>
+    }
+
+    /**
+     * Create a CFB symKey cipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @return the cipherSpec
+     */
+    default GordianSymCipherSpec cfb(final GordianSymKeySpec pKeySpec) {
+<span class="fc" id="L107">        return withKeySpec(pKeySpec).withMode(GordianCipherMode.CFB).build();</span>
+    }
+
+    /**
+     * Create a GCFB symKey cipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @return the cipherSpec
+     */
+    default GordianSymCipherSpec gcfb(final GordianSymKeySpec pKeySpec) {
+<span class="nc" id="L117">        return withKeySpec(pKeySpec).withMode(GordianCipherMode.GCFB).build();</span>
+    }
+
+    /**
+     * Create a OFB symKey cipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @return the cipherSpec
+     */
+    default GordianSymCipherSpec ofb(final GordianSymKeySpec pKeySpec) {
+<span class="fc" id="L127">        return withKeySpec(pKeySpec).withMode(GordianCipherMode.OFB).build();</span>
+    }
+
+    /**
+     * Create a GOFB symKey cipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @return the cipherSpec
+     */
+    default GordianSymCipherSpec gofb(final GordianSymKeySpec pKeySpec) {
+<span class="nc" id="L137">        return withKeySpec(pKeySpec).withMode(GordianCipherMode.GOFB).build();</span>
+    }
+
+    /**
+     * Create a SIC symKey cipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @return the cipherSpec
+     */
+    default GordianSymCipherSpec sic(final GordianSymKeySpec pKeySpec) {
+<span class="fc" id="L147">        return withKeySpec(pKeySpec).withMode(GordianCipherMode.SIC).build();</span>
+    }
+
+    /**
+     * Create a KCTR symKey cipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @return the cipherSpec
+     */
+    default GordianSymCipherSpec kctr(final GordianSymKeySpec pKeySpec) {
+<span class="nc" id="L157">        return withKeySpec(pKeySpec).withMode(GordianCipherMode.KCTR).build();</span>
+    }
+
+    /**
+     * Create a CCM symKey cipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @return the cipherSpec
+     */
+    default GordianSymCipherSpec ccm(final GordianSymKeySpec pKeySpec) {
+<span class="fc" id="L167">        return withKeySpec(pKeySpec).withMode(GordianCipherMode.CCM).build();</span>
+    }
+
+    /**
+     * Create a KCCM symKey cipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @return the cipherSpec
+     */
+    default GordianSymCipherSpec kccm(final GordianSymKeySpec pKeySpec) {
+<span class="nc" id="L177">        return withKeySpec(pKeySpec).withMode(GordianCipherMode.KCCM).build();</span>
+    }
+
+    /**
+     * Create a GCM symKey cipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @return the cipherSpec
+     */
+    default GordianSymCipherSpec gcm(final GordianSymKeySpec pKeySpec) {
+<span class="fc" id="L187">        return withKeySpec(pKeySpec).withMode(GordianCipherMode.GCM).build();</span>
+    }
+
+    /**
+     * Create a KGCM symKey cipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @return the cipherSpec
+     */
+    default GordianSymCipherSpec kgcm(final GordianSymKeySpec pKeySpec) {
+<span class="nc" id="L197">        return withKeySpec(pKeySpec).withMode(GordianCipherMode.KGCM).build();</span>
+    }
+
+    /**
+     * Create an EAX symKey cipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @return the cipherSpec
+     */
+    default GordianSymCipherSpec eax(final GordianSymKeySpec pKeySpec) {
+<span class="nc" id="L207">        return withKeySpec(pKeySpec).withMode(GordianCipherMode.EAX).build();</span>
+    }
+
+    /**
+     * Create an OCB symKey cipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @return the cipherSpec
+     */
+    default GordianSymCipherSpec ocb(final GordianSymKeySpec pKeySpec) {
+<span class="fc" id="L217">        return withKeySpec(pKeySpec).withMode(GordianCipherMode.OCB).build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * Rental Tax Scheme.
@@ -30,54 +30,55 @@ public class MoneyWiseUKRoomRentalScheme
 <span class="fc" id="L30">    private static final MetisFieldSet&lt;MoneyWiseUKRoomRentalScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKRoomRentalScheme.class);</span>
 
     /**
-     * Constructor.
+     * Default constructor.
      */
-<span class="fc" id="L35">    public MoneyWiseUKRoomRentalScheme() {</span>
-<span class="fc" id="L36">    }</span>
+<span class="fc" id="L35">    MoneyWiseUKRoomRentalScheme() {</span>
+        /* NoOp */
+<span class="fc" id="L37">    }</span>
 
     @Override
     protected OceanusMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
                                             final OceanusMoney pAmount) {
         /* Adjust against the rental allowance for room rental */
-<span class="nc" id="L42">        OceanusMoney myRemaining = adjustForAllowance(pConfig.getRentalAllowance(), pAmount);</span>
+<span class="nc" id="L43">        OceanusMoney myRemaining = adjustForAllowance(pConfig.getRentalAllowance(), pAmount);</span>
 
         /* If we have any income left */
-<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (myRemaining.isNonZero()) {</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        if (myRemaining.isNonZero()) {</span>
             /* Adjust the basic allowance */
-<span class="nc" id="L47">            myRemaining = super.adjustAllowances(pConfig, myRemaining);</span>
+<span class="nc" id="L48">            myRemaining = super.adjustAllowances(pConfig, myRemaining);</span>
         }
 
         /* Return unallocated income */
-<span class="nc" id="L51">        return myRemaining;</span>
+<span class="nc" id="L52">        return myRemaining;</span>
     }
 
     @Override
     protected OceanusMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
                                                 final OceanusMoney pAmount) {
         /* Obtain the amount covered by the room rental allowance */
-<span class="nc" id="L58">        OceanusMoney myAmount = getAmountInBand(pConfig.getCapitalAllowance(), pAmount);</span>
+<span class="nc" id="L59">        OceanusMoney myAmount = getAmountInBand(pConfig.getCapitalAllowance(), pAmount);</span>
 
         /* If we have income left over */
-<span class="nc bnc" id="L61" title="All 2 branches missed.">        if (myAmount.compareTo(pAmount) &lt; 0) {</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        if (myAmount.compareTo(pAmount) &lt; 0) {</span>
             /* Calculate remaining amount */
-<span class="nc" id="L63">            final OceanusMoney myRemaining = new OceanusMoney(pAmount);</span>
-<span class="nc" id="L64">            myRemaining.subtractAmount(myAmount);</span>
+<span class="nc" id="L64">            final OceanusMoney myRemaining = new OceanusMoney(pAmount);</span>
+<span class="nc" id="L65">            myRemaining.subtractAmount(myAmount);</span>
 
             /* Calculate the amount covered by basic allowance */
-<span class="nc" id="L67">            final OceanusMoney myXtra = super.getAmountInAllowance(pConfig, myRemaining);</span>
+<span class="nc" id="L68">            final OceanusMoney myXtra = super.getAmountInAllowance(pConfig, myRemaining);</span>
 
             /* Determine the total amount covered by the allowance */
-<span class="nc" id="L70">            myAmount = new OceanusMoney(myAmount);</span>
-<span class="nc" id="L71">            myAmount.addAmount(myXtra);</span>
+<span class="nc" id="L71">            myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L72">            myAmount.addAmount(myXtra);</span>
         }
 
         /* return the amount */
-<span class="nc" id="L75">        return myAmount;</span>
+<span class="nc" id="L76">        return myAmount;</span>
     }
 
     @Override
     public MetisFieldSet&lt;MoneyWiseUKRoomRentalScheme&gt; getDataFieldSet() {
-<span class="nc" id="L80">        return FIELD_DEFS;</span>
+<span class="nc" id="L81">        return FIELD_DEFS;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreStreamKeySpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher</a> &gt; <span class="el_source">GordianCoreStreamKeySpec.java</span></div><h1>GordianCoreStreamKeySpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianBlakeXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianChaCha20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianElephantKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianISAPKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianRomulusKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSalsa20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSkeinXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSparkleKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianVMPCKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
+
+import java.util.Objects;
+
+/**
+ * GordianKnot StreamKeySpec.
+ */
+public class GordianCoreStreamKeySpec
+        implements GordianStreamKeySpec {
+    /**
+     * The StreamKey Type.
+     */
+    private final GordianCoreStreamKeyType theType;
+
+    /**
+     * The Key Length.
+     */
+    private final GordianLength theKeyLength;
+
+    /**
+     * SubKeyType.
+     */
+    private final GordianStreamKeySubType theSubKeyType;
+
+    /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pType       the streamKeyType
+     * @param pSubKeyType the subKeyTypeType
+     * @param pKeyLength  the keyLength
+     */
+    GordianCoreStreamKeySpec(final GordianStreamKeyType pType,
+                             final GordianStreamKeySubType pSubKeyType,
+<span class="fc" id="L76">                             final GordianLength pKeyLength) {</span>
+<span class="fc" id="L77">        theType = GordianCoreStreamKeyType.mapCoreType(pType);</span>
+<span class="fc" id="L78">        theSubKeyType = pSubKeyType;</span>
+<span class="fc" id="L79">        theKeyLength = pKeyLength;</span>
+<span class="fc" id="L80">        isValid = checkValidity();</span>
+<span class="fc" id="L81">    }</span>
+
+    /**
+     * Obtain the Core streamKeyType.
+     *
+     * @return the keyType
+     */
+    public GordianCoreStreamKeyType getCoreStreamKeyType() {
+<span class="fc" id="L89">        return theType;</span>
+    }
+
+    @Override
+    public GordianStreamKeyType getStreamKeyType() {
+<span class="fc" id="L94">        return theType.getType();</span>
+    }
+
+    @Override
+    public GordianStreamKeySubType getSubKeyType() {
+<span class="fc" id="L99">        return theSubKeyType;</span>
+    }
+
+    @Override
+    public GordianLength getKeyLength() {
+<span class="fc" id="L104">        return theKeyLength;</span>
+    }
+
+    @Override
+    public boolean isValid() {
+<span class="fc" id="L109">        return isValid;</span>
+    }
+
+    /**
+     * Does this cipher need an IV?
+     *
+     * @return true/false
+     */
+    public boolean needsIV() {
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        return getIVLength() &gt; 0;</span>
+    }
+
+    /**
+     * Check spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        /* Stream KeyType and Key length must be non-null */
+<span class="pc bpc" id="L128" title="2 of 4 branches missed.">        if (theType == null</span>
+                || theKeyLength == null) {
+<span class="nc" id="L130">            return false;</span>
+        }
+
+        /* Check subKeyTypes */
+<span class="fc bfc" id="L134" title="All 10 branches covered.">        return switch (theType.getType()) {</span>
+<span class="fc" id="L135">            case SALSA20 -&gt; checkSalsaValidity();</span>
+<span class="fc" id="L136">            case CHACHA20 -&gt; checkChaChaValidity();</span>
+<span class="fc" id="L137">            case VMPC -&gt; checkVMPCValidity();</span>
+<span class="fc" id="L138">            case SKEINXOF -&gt; checkSkeinValidity();</span>
+<span class="fc" id="L139">            case BLAKE2XOF -&gt; checkBlake2Validity();</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">            case ELEPHANT -&gt; theSubKeyType instanceof GordianElephantKey</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">                    &amp;&amp; theType.validForKeyLength(theKeyLength);</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">            case ISAP -&gt; theSubKeyType instanceof GordianISAPKey</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">                    &amp;&amp; theType.validForKeyLength(theKeyLength);</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">            case ROMULUS -&gt; theSubKeyType instanceof GordianRomulusKey</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">                    &amp;&amp; theType.validForKeyLength(theKeyLength);</span>
+<span class="fc" id="L146">            case SPARKLE -&gt; checkSparkleValidity();</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">            default -&gt; theSubKeyType == null</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">                    &amp;&amp; theType.validForKeyLength(theKeyLength);</span>
+        };
+    }
+
+    /**
+     * Check salsa spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkSalsaValidity() {
+        /* SubKeyType must be a SalsaKey */
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">        if (!(theSubKeyType instanceof GordianSalsa20Key)) {</span>
+<span class="nc" id="L160">            return false;</span>
+        }
+
+        /* Check keyLength validity */
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        return theSubKeyType != GordianSalsa20Key.STD</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">                ? theKeyLength == GordianLength.LEN_256</span>
+<span class="fc" id="L166">                : theType.validForKeyLength(theKeyLength);</span>
+    }
+
+    /**
+     * Check chacha spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkChaChaValidity() {
+        /* SubKeyType must be a ChaChaKey */
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        if (!(theSubKeyType instanceof GordianChaCha20Key)) {</span>
+<span class="nc" id="L177">            return false;</span>
+        }
+
+        /* Check keyLength validity */
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        return theSubKeyType != GordianChaCha20Key.STD</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">                ? theKeyLength == GordianLength.LEN_256</span>
+<span class="fc" id="L183">                : theType.validForKeyLength(theKeyLength);</span>
+    }
+
+    /**
+     * Check vmpc spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkVMPCValidity() {
+        /* SubKeyType must be a GordianVMPCKey */
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">        if (!(theSubKeyType instanceof GordianVMPCKey)) {</span>
+<span class="nc" id="L194">            return false;</span>
+        }
+
+        /* Check keyLength validity */
+<span class="fc" id="L198">        return theType.validForKeyLength(theKeyLength);</span>
+    }
+
+    /**
+     * Check skein spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkSkeinValidity() {
+        /* SubKeyType must be a GordianSkeinXofKey */
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">        if (!(theSubKeyType instanceof GordianSkeinXofKey)) {</span>
+<span class="nc" id="L209">            return false;</span>
+        }
+
+        /* Check keyLength validity */
+<span class="fc" id="L213">        return theType.validForKeyLength(theKeyLength);</span>
+    }
+
+    /**
+     * Check blake2 spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkBlake2Validity() {
+        /* SubKeyType must be a GordianBlakeXofKey */
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">        if (!(theSubKeyType instanceof GordianBlakeXofKey myType)) {</span>
+<span class="nc" id="L224">            return false;</span>
+        }
+
+        /* Check keyLength validity */
+<span class="pc bpc" id="L228" title="1 of 6 branches missed.">        return theType.validForKeyLength(theKeyLength)</span>
+                &amp;&amp; (myType != GordianBlakeXofKey.BLAKE2XS
+                || theKeyLength != GordianLength.LEN_512);
+    }
+
+    /**
+     * Check sparkle spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkSparkleValidity() {
+        /* SubKeyType must be a GordianSparkleKey */
+<span class="pc bpc" id="L240" title="1 of 2 branches missed.">        if (!(theSubKeyType instanceof GordianSparkleKey)) {</span>
+<span class="nc" id="L241">            return false;</span>
+        }
+
+        /* Check keyLength validity */
+<span class="fc bfc" id="L245" title="All 2 branches covered.">        return theKeyLength == GordianCoreStreamKeySubType.requiredSparkleKeyLength((GordianSparkleKey) theSubKeyType);</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L251" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* If the keySpec is valid */
+<span class="pc bpc" id="L253" title="1 of 2 branches missed.">            if (isValid) {</span>
+                /* Load the name */
+<span class="fc" id="L255">                theName = getName();</span>
+<span class="fc" id="L256">                theName += GordianSpecConstants.SEP + theKeyLength;</span>
+            } else {
+                /* Report invalid spec */
+<span class="nc" id="L259">                theName = &quot;InvalidStreamKeySpec: &quot; + theType + &quot;:&quot; + theKeyLength;</span>
+            }
+        }
+
+        /* return the name */
+<span class="fc" id="L264">        return theName;</span>
+    }
+
+    /**
+     * Determine the name for the KeySpec.
+     *
+     * @return the name
+     */
+    private String getName() {
+<span class="fc bfc" id="L273" title="All 6 branches covered.">        return switch (theType.getType()) {</span>
+<span class="fc bfc" id="L274" title="All 2 branches covered.">            case VMPC -&gt; theSubKeyType == GordianVMPCKey.KSA ? theType + &quot;KSA3&quot; : theType.toString();</span>
+<span class="fc bfc" id="L275" title="All 2 branches covered.">            case SALSA20 -&gt; theSubKeyType == GordianSalsa20Key.XSALSA ? &quot;X&quot; + theType : theType.toString();</span>
+<span class="fc bfc" id="L276" title="All 3 branches covered.">            case CHACHA20 -&gt; switch ((GordianChaCha20Key) theSubKeyType) {</span>
+<span class="fc" id="L277">                case XCHACHA -&gt; &quot;X&quot; + theType;</span>
+<span class="fc" id="L278">                case ISO7539 -&gt; &quot;ChaCha7539&quot;;</span>
+<span class="fc" id="L279">                default -&gt; theType.toString();</span>
+            };
+<span class="fc" id="L281">            case SKEINXOF -&gt; theType + GordianSpecConstants.SEP</span>
+<span class="fc" id="L282">                    + GordianCoreStreamKeySubType.getLengthForSkeinXofKey((GordianSkeinXofKey) theSubKeyType);</span>
+            case BLAKE2XOF, ELEPHANT, ISAP, ROMULUS, SPARKLE -&gt;
+<span class="fc" id="L284">                    GordianCoreStreamKeySubType.toSubTypeString(theType.getType(), theSubKeyType);</span>
+<span class="fc" id="L285">            default -&gt; theType.toString();</span>
+        };
+    }
+
+    /**
+     * Obtain the IV Length.
+     *
+     * @return the IV length.
+     */
+    public int getIVLength() {
+<span class="fc bfc" id="L295" title="All 11 branches covered.">        return switch (theType.getType()) {</span>
+<span class="fc" id="L296">            case RABBIT -&gt; GordianLength.LEN_64.getByteLength();</span>
+<span class="fc" id="L297">            case GRAIN, ELEPHANT -&gt; GordianLength.LEN_96.getByteLength();</span>
+            case SOSEMANUK, SNOW3G, BLAKE3XOF, SKEINXOF, ASCON, ISAP, PHOTONBEETLE, ROMULUS, XOODYAK -&gt;
+<span class="fc" id="L299">                    GordianLength.LEN_128.getByteLength();</span>
+<span class="fc bfc" id="L300" title="All 2 branches covered.">            case HC -&gt; GordianLength.LEN_128 == theKeyLength</span>
+<span class="fc" id="L301">                    ? GordianLength.LEN_128.getByteLength()</span>
+<span class="fc" id="L302">                    : GordianLength.LEN_256.getByteLength();</span>
+<span class="fc bfc" id="L303" title="All 2 branches covered.">            case ZUC -&gt; GordianLength.LEN_128 == theKeyLength</span>
+<span class="fc" id="L304">                    ? GordianLength.LEN_128.getByteLength()</span>
+<span class="fc" id="L305">                    : GordianLength.LEN_200.getByteLength();</span>
+<span class="fc" id="L306">            case VMPC -&gt; theKeyLength.getByteLength();</span>
+            case BLAKE2XOF -&gt;
+<span class="fc" id="L308">                    GordianCoreStreamKeySubType.requiredBlakeIVLength((GordianBlakeXofKey) theSubKeyType).getByteLength();</span>
+            case CHACHA20 -&gt;
+<span class="fc" id="L310">                    GordianCoreStreamKeySubType.requiredChaChaIVLength((GordianChaCha20Key) theSubKeyType).getByteLength();</span>
+            case SALSA20 -&gt;
+<span class="fc" id="L312">                    GordianCoreStreamKeySubType.requiredSalsaIVLength((GordianSalsa20Key) theSubKeyType).getByteLength();</span>
+            case SPARKLE -&gt;
+<span class="fc" id="L314">                    GordianCoreStreamKeySubType.requiredSparkleIVLength((GordianSparkleKey) theSubKeyType).getByteLength();</span>
+<span class="fc" id="L315">            default -&gt; 0;</span>
+        };
+    }
+
+    /**
+     * Does this keySpec optionally support AEAD?
+     *
+     * @return true/false
+     */
+    public boolean supportsAEAD() {
+<span class="fc bfc" id="L325" title="All 4 branches covered.">        return GordianStreamKeyType.CHACHA20.equals(theType.getType())</span>
+                &amp;&amp; theSubKeyType != GordianChaCha20Key.STD;
+    }
+
+    /**
+     * Is this keySpec an AEAD keySpec?
+     *
+     * @return true/false
+     */
+    public boolean isAEAD() {
+<span class="fc bfc" id="L335" title="All 2 branches covered.">        return switch (theType.getType()) {</span>
+<span class="fc" id="L336">            case ASCON, ELEPHANT, ISAP, PHOTONBEETLE, ROMULUS, SPARKLE, XOODYAK -&gt; true;</span>
+<span class="fc" id="L337">            default -&gt; false;</span>
+        };
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="fc bfc" id="L344" title="All 2 branches covered.">        if (this == pThat) {</span>
+<span class="fc" id="L345">            return true;</span>
+        }
+<span class="pc bpc" id="L347" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L348">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="fc" id="L352">        return pThat instanceof GordianCoreStreamKeySpec myThat</span>
+<span class="fc bfc" id="L353" title="All 2 branches covered.">                &amp;&amp; Objects.equals(theType, myThat.getCoreStreamKeyType())</span>
+<span class="pc bpc" id="L354" title="1 of 2 branches missed.">                &amp;&amp; theKeyLength == myThat.getKeyLength()</span>
+<span class="pc bpc" id="L355" title="1 of 4 branches missed.">                &amp;&amp; theSubKeyType == myThat.getSubKeyType();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L360">        return Objects.hash(theType, theKeyLength, theSubKeyType);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

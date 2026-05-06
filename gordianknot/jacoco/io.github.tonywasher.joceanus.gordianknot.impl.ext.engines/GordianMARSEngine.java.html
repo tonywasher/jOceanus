@@ -44,24 +44,29 @@ import org.bouncycastle.crypto.params.KeyParameter;
     private static final int INTLENGTH = BLOCKSIZEB / Integer.BYTES;
 
     /**
+     * Initialised flag.
+     */
+    private boolean initialised;
+
+    /**
      * Encryption flag.
      */
-    private Boolean forEncryption;
+    private boolean forEncryption;
 
     /**
      * Input buffer.
      */
-<span class="fc" id="L54">    private final int[] input = new int[INTLENGTH];</span>
+<span class="fc" id="L59">    private final int[] input = new int[INTLENGTH];</span>
 
     /**
      * Output buffer.
      */
-<span class="fc" id="L59">    private final int[] output = new int[INTLENGTH];</span>
+<span class="fc" id="L64">    private final int[] output = new int[INTLENGTH];</span>
 
     /**
      * SBox.
      */
-<span class="fc" id="L64">    private static final int[] S_BOX = {</span>
+<span class="fc" id="L69">    private static final int[] S_BOX = {</span>
             0x09d0c479, 0x28c8ffe0, 0x84aa6c39, 0x9dad7287, /* 0x000 */
             0x7dff9be3, 0xd4268361, 0xc96da1d4, 0x7974cc93,
             0x85d0582e, 0x2a4b5705, 0x1ca16a62, 0xc3bd279d,
@@ -195,7 +200,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
     /**
      * VK.
      */
-<span class="fc" id="L198">    private final int[] vk = {</span>
+<span class="fc" id="L203">    private final int[] vk = {</span>
             0x09d0c479, 0x28c8ffe0, 0x84aa6c39, 0x9dad7287, 0x7dff9be3, 0xd4268361, /* 6 */
             0xc96da1d4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* 20 */
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* 37 */
@@ -205,109 +210,109 @@ import org.bouncycastle.crypto.params.KeyParameter;
     /**
      * lKey.
      */
-<span class="fc" id="L208">    private final int[] lKey = new int[40];</span>
+<span class="fc" id="L213">    private final int[] lKey = new int[40];</span>
 
     private static int rotr(final int x, final int n) {
-<span class="fc" id="L211">        return ((x &gt;&gt;&gt; n) | (x &lt;&lt; (32 - n)));</span>
+<span class="fc" id="L216">        return ((x &gt;&gt;&gt; n) | (x &lt;&lt; (32 - n)));</span>
     }
 
     private static int rotl(final int x, final int n) {
-<span class="fc" id="L215">        return ((x &lt;&lt; n) | (x &gt;&gt;&gt; (32 - n)));</span>
+<span class="fc" id="L220">        return ((x &lt;&lt; n) | (x &gt;&gt;&gt; (32 - n)));</span>
     }
 
     private static void fMix(final int[] vals, final int offset) {
         /* Decide correct offsets */
-<span class="fc" id="L220">        int myOffset = offset;</span>
-<span class="fc" id="L221">        final int a = myOffset++ % 4;</span>
-<span class="fc" id="L222">        final int b = myOffset++ % 4;</span>
-<span class="fc" id="L223">        final int c = myOffset++ % 4;</span>
-<span class="fc" id="L224">        final int d = myOffset % 4;</span>
+<span class="fc" id="L225">        int myOffset = offset;</span>
+<span class="fc" id="L226">        final int a = myOffset++ % 4;</span>
+<span class="fc" id="L227">        final int b = myOffset++ % 4;</span>
+<span class="fc" id="L228">        final int c = myOffset++ % 4;</span>
+<span class="fc" id="L229">        final int d = myOffset % 4;</span>
 
         /* Perform mix */
-<span class="fc" id="L227">        int r = rotr(vals[a], 8);</span>
-<span class="fc" id="L228">        vals[b] ^= S_BOX[vals[a] &amp; 255];</span>
-<span class="fc" id="L229">        vals[b] += S_BOX[(r &amp; 255) + 256];</span>
-<span class="fc" id="L230">        r = rotr(vals[a], 16);</span>
-<span class="fc" id="L231">        vals[a] = rotr(vals[a], 24);</span>
-<span class="fc" id="L232">        vals[c] += S_BOX[r &amp; 255];</span>
-<span class="fc" id="L233">        vals[d] ^= S_BOX[(vals[a] &amp; 255) + 256];</span>
-<span class="fc" id="L234">    }</span>
+<span class="fc" id="L232">        int r = rotr(vals[a], 8);</span>
+<span class="fc" id="L233">        vals[b] ^= S_BOX[vals[a] &amp; 255];</span>
+<span class="fc" id="L234">        vals[b] += S_BOX[(r &amp; 255) + 256];</span>
+<span class="fc" id="L235">        r = rotr(vals[a], 16);</span>
+<span class="fc" id="L236">        vals[a] = rotr(vals[a], 24);</span>
+<span class="fc" id="L237">        vals[c] += S_BOX[r &amp; 255];</span>
+<span class="fc" id="L238">        vals[d] ^= S_BOX[(vals[a] &amp; 255) + 256];</span>
+<span class="fc" id="L239">    }</span>
 
     private static void bMix(final int[] vals, final int offset) {
         /* Decide correct offsets */
-<span class="fc" id="L238">        int myOffset = offset;</span>
-<span class="fc" id="L239">        final int a = myOffset++ % 4;</span>
-<span class="fc" id="L240">        final int b = myOffset++ % 4;</span>
-<span class="fc" id="L241">        final int c = myOffset++ % 4;</span>
-<span class="fc" id="L242">        final int d = myOffset % 4;</span>
+<span class="fc" id="L243">        int myOffset = offset;</span>
+<span class="fc" id="L244">        final int a = myOffset++ % 4;</span>
+<span class="fc" id="L245">        final int b = myOffset++ % 4;</span>
+<span class="fc" id="L246">        final int c = myOffset++ % 4;</span>
+<span class="fc" id="L247">        final int d = myOffset % 4;</span>
 
         /* Perform mix */
-<span class="fc" id="L245">        int r = rotl(vals[a], 8);</span>
-<span class="fc" id="L246">        vals[b] ^= S_BOX[(vals[a] &amp; 255) + 256];</span>
-<span class="fc" id="L247">        vals[c] -= S_BOX[r &amp; 255];</span>
-<span class="fc" id="L248">        r = rotl(vals[a], 16);</span>
-<span class="fc" id="L249">        vals[a] = rotl(vals[a], 24);</span>
-<span class="fc" id="L250">        vals[d] -= S_BOX[(r &amp; 255) + 256];</span>
-<span class="fc" id="L251">        vals[d] ^= S_BOX[vals[a] &amp; 255];</span>
-<span class="fc" id="L252">    }</span>
+<span class="fc" id="L250">        int r = rotl(vals[a], 8);</span>
+<span class="fc" id="L251">        vals[b] ^= S_BOX[(vals[a] &amp; 255) + 256];</span>
+<span class="fc" id="L252">        vals[c] -= S_BOX[r &amp; 255];</span>
+<span class="fc" id="L253">        r = rotl(vals[a], 16);</span>
+<span class="fc" id="L254">        vals[a] = rotl(vals[a], 24);</span>
+<span class="fc" id="L255">        vals[d] -= S_BOX[(r &amp; 255) + 256];</span>
+<span class="fc" id="L256">        vals[d] ^= S_BOX[vals[a] &amp; 255];</span>
+<span class="fc" id="L257">    }</span>
 
     private void fKtr(final int[] vals, final int i, final int offset, final boolean doSwitch) {
         /* Decide correct offsets */
-<span class="fc" id="L256">        int myOffset = offset;</span>
-<span class="fc" id="L257">        final int a = myOffset++ % 4;</span>
-<span class="fc" id="L258">        int b = myOffset++ % 4;</span>
-<span class="fc" id="L259">        final int c = myOffset++ % 4;</span>
-<span class="fc" id="L260">        int d = myOffset % 4;</span>
+<span class="fc" id="L261">        int myOffset = offset;</span>
+<span class="fc" id="L262">        final int a = myOffset++ % 4;</span>
+<span class="fc" id="L263">        int b = myOffset++ % 4;</span>
+<span class="fc" id="L264">        final int c = myOffset++ % 4;</span>
+<span class="fc" id="L265">        int d = myOffset % 4;</span>
 
         /* Switch b and c if required */
-<span class="fc bfc" id="L263" title="All 2 branches covered.">        if (doSwitch) {</span>
-<span class="fc" id="L264">            final int temp = b;</span>
-<span class="fc" id="L265">            b = d;</span>
-<span class="fc" id="L266">            d = temp;</span>
+<span class="fc bfc" id="L268" title="All 2 branches covered.">        if (doSwitch) {</span>
+<span class="fc" id="L269">            final int temp = b;</span>
+<span class="fc" id="L270">            b = d;</span>
+<span class="fc" id="L271">            d = temp;</span>
         }
 
         /* Perform operation */
-<span class="fc" id="L270">        final int m = vals[a] + lKey[i];</span>
-<span class="fc" id="L271">        vals[a] = rotl(vals[a], 13);</span>
-<span class="fc" id="L272">        int r = vals[a] * lKey[i + 1];</span>
-<span class="fc" id="L273">        int l = S_BOX[m &amp; 511];</span>
-<span class="fc" id="L274">        r = rotl(r, 5);</span>
-<span class="fc" id="L275">        vals[c] += rotl(m, r);</span>
-<span class="fc" id="L276">        l ^= r;</span>
-<span class="fc" id="L277">        r = rotl(r, 5);</span>
-<span class="fc" id="L278">        l ^= r;</span>
-<span class="fc" id="L279">        vals[d] ^= r;</span>
-<span class="fc" id="L280">        vals[b] += rotl(l, r);</span>
-<span class="fc" id="L281">    }</span>
+<span class="fc" id="L275">        final int m = vals[a] + lKey[i];</span>
+<span class="fc" id="L276">        vals[a] = rotl(vals[a], 13);</span>
+<span class="fc" id="L277">        int r = vals[a] * lKey[i + 1];</span>
+<span class="fc" id="L278">        int l = S_BOX[m &amp; 511];</span>
+<span class="fc" id="L279">        r = rotl(r, 5);</span>
+<span class="fc" id="L280">        vals[c] += rotl(m, r);</span>
+<span class="fc" id="L281">        l ^= r;</span>
+<span class="fc" id="L282">        r = rotl(r, 5);</span>
+<span class="fc" id="L283">        l ^= r;</span>
+<span class="fc" id="L284">        vals[d] ^= r;</span>
+<span class="fc" id="L285">        vals[b] += rotl(l, r);</span>
+<span class="fc" id="L286">    }</span>
 
     private void rKtr(final int[] vals, final int i, final int offset, final boolean doSwitch) {
         /* Decide correct offsets */
-<span class="fc" id="L285">        int myOffset = offset;</span>
-<span class="fc" id="L286">        final int a = myOffset++ % 4;</span>
-<span class="fc" id="L287">        int b = myOffset++ % 4;</span>
-<span class="fc" id="L288">        final int c = myOffset++ % 4;</span>
-<span class="fc" id="L289">        int d = myOffset % 4;</span>
+<span class="fc" id="L290">        int myOffset = offset;</span>
+<span class="fc" id="L291">        final int a = myOffset++ % 4;</span>
+<span class="fc" id="L292">        int b = myOffset++ % 4;</span>
+<span class="fc" id="L293">        final int c = myOffset++ % 4;</span>
+<span class="fc" id="L294">        int d = myOffset % 4;</span>
 
         /* Switch b and c if required */
-<span class="fc bfc" id="L292" title="All 2 branches covered.">        if (doSwitch) {</span>
-<span class="fc" id="L293">            final int temp = b;</span>
-<span class="fc" id="L294">            b = d;</span>
-<span class="fc" id="L295">            d = temp;</span>
+<span class="fc bfc" id="L297" title="All 2 branches covered.">        if (doSwitch) {</span>
+<span class="fc" id="L298">            final int temp = b;</span>
+<span class="fc" id="L299">            b = d;</span>
+<span class="fc" id="L300">            d = temp;</span>
         }
 
         /* Perform operation */
-<span class="fc" id="L299">        int r = vals[a] * lKey[i + 1];</span>
-<span class="fc" id="L300">        vals[a] = rotr(vals[a], 13);</span>
-<span class="fc" id="L301">        final int m = vals[a] + lKey[i];</span>
-<span class="fc" id="L302">        int l = S_BOX[m &amp; 511];</span>
-<span class="fc" id="L303">        r = rotl(r, 5);</span>
-<span class="fc" id="L304">        l ^= r;</span>
-<span class="fc" id="L305">        vals[c] -= rotl(m, r);</span>
-<span class="fc" id="L306">        r = rotl(r, 5);</span>
-<span class="fc" id="L307">        l ^= r;</span>
-<span class="fc" id="L308">        vals[d] ^= r;</span>
-<span class="fc" id="L309">        vals[b] -= rotl(l, r);</span>
-<span class="fc" id="L310">    }</span>
+<span class="fc" id="L304">        int r = vals[a] * lKey[i + 1];</span>
+<span class="fc" id="L305">        vals[a] = rotr(vals[a], 13);</span>
+<span class="fc" id="L306">        final int m = vals[a] + lKey[i];</span>
+<span class="fc" id="L307">        int l = S_BOX[m &amp; 511];</span>
+<span class="fc" id="L308">        r = rotl(r, 5);</span>
+<span class="fc" id="L309">        l ^= r;</span>
+<span class="fc" id="L310">        vals[c] -= rotl(m, r);</span>
+<span class="fc" id="L311">        r = rotl(r, 5);</span>
+<span class="fc" id="L312">        l ^= r;</span>
+<span class="fc" id="L313">        vals[d] ^= r;</span>
+<span class="fc" id="L314">        vals[b] -= rotl(l, r);</span>
+<span class="fc" id="L315">    }</span>
 
     /* For a 32 bit word (x) generate a mask (m) such that a bit in */
     /* m is set to 1 if and only if the corresponding bit in x is: */
@@ -328,19 +333,19 @@ import org.bouncycastle.crypto.params.KeyParameter;
         /* x{bn} == x{bn+1} for 0 &lt;= bn &lt;= 30. That is, set a bit */
         /* in m if the corresponding bit and the next higher bit in */
         /* x are equal in value (set m{31} = 0). */
-<span class="fc" id="L331">        int m = (~x ^ (x &gt;&gt;&gt; 1)) &amp; 0x7fffffff;</span>
+<span class="fc" id="L336">        int m = (~x ^ (x &gt;&gt;&gt; 1)) &amp; 0x7fffffff;</span>
 
         /* Sequences of 9 '1' bits in m now correspond to sequences */
         /* of 10 '0's or 10 '1' bits in x. Shift and 'and' bits in */
         /* m to find sequences of 9 or more '1' bits. As a result */
         /* bits in m are set if they are at the bottom of sequences */
         /* of 10 adjacent '0's or 10 adjacent '1's in x. */
-<span class="fc" id="L338">        m &amp;= (m &gt;&gt;&gt; 1) &amp; (m &gt;&gt;&gt; 2);</span>
-<span class="fc" id="L339">        m &amp;= (m &gt;&gt;&gt; 3) &amp; (m &gt;&gt;&gt; 6);</span>
+<span class="fc" id="L343">        m &amp;= (m &gt;&gt;&gt; 1) &amp; (m &gt;&gt;&gt; 2);</span>
+<span class="fc" id="L344">        m &amp;= (m &gt;&gt;&gt; 3) &amp; (m &gt;&gt;&gt; 6);</span>
 
         /* return if mask is empty - no key fixing needed */
-<span class="fc bfc" id="L342" title="All 2 branches covered.">        if (m == 0) {</span>
-<span class="fc" id="L343">            return 0;</span>
+<span class="fc bfc" id="L347" title="All 2 branches covered.">        if (m == 0) {</span>
+<span class="fc" id="L348">            return 0;</span>
         }
 
         /* We need the internal bits in each continuous sequence of */
@@ -348,173 +353,173 @@ import org.bouncycastle.crypto.params.KeyParameter;
         /* We thus propagate each set bit into the 8 internal bits */
         /* that it represents, starting 1 left and finsihing 8 left */
         /* of its position. */
-<span class="fc" id="L351">        m &lt;&lt;= 1;</span>
-<span class="fc" id="L352">        m |= (m &lt;&lt; 1);</span>
-<span class="fc" id="L353">        m |= (m &lt;&lt; 2);</span>
-<span class="fc" id="L354">        m |= (m &lt;&lt; 4);</span>
+<span class="fc" id="L356">        m &lt;&lt;= 1;</span>
+<span class="fc" id="L357">        m |= (m &lt;&lt; 1);</span>
+<span class="fc" id="L358">        m |= (m &lt;&lt; 2);</span>
+<span class="fc" id="L359">        m |= (m &lt;&lt; 4);</span>
 
         /* m is now correct except for the odd behaviour of bit 31, */
         /* that is, it will be set if it is in a sequence of 10 or */
         /* more '0's and clear otherwise. */
-<span class="fc" id="L359">        m |= (m &lt;&lt; 1) &amp; ~x &amp; 0x80000000;</span>
-<span class="fc" id="L360">        return m &amp; 0xfffffffc;</span>
+<span class="fc" id="L364">        m |= (m &lt;&lt; 1) &amp; ~x &amp; 0x80000000;</span>
+<span class="fc" id="L365">        return m &amp; 0xfffffffc;</span>
     }
 
     /* My thanks to Louis Granboulan for spotting an error in the */
     /* previous version of set_key. */
     private int[] setKey(final int[] inKey, final int keyLen) {
         int w;
-<span class="fc" id="L367">        int m = keyLen / 32 - 1;</span>
-<span class="fc bfc" id="L368" title="All 2 branches covered.">        for (int i = 0, j = 0; i &lt; 39; ++i) {</span>
-<span class="fc" id="L369">            vk[i + 7] = rotl(vk[i] ^ vk[i + 5], 3) ^ inKey[j] ^ i;</span>
-<span class="fc bfc" id="L370" title="All 2 branches covered.">            j = (j == m</span>
-<span class="fc" id="L371">                    ? 0</span>
-<span class="fc" id="L372">                    : j + 1);</span>
+<span class="fc" id="L372">        int m = keyLen / 32 - 1;</span>
+<span class="fc bfc" id="L373" title="All 2 branches covered.">        for (int i = 0, j = 0; i &lt; 39; ++i) {</span>
+<span class="fc" id="L374">            vk[i + 7] = rotl(vk[i] ^ vk[i + 5], 3) ^ inKey[j] ^ i;</span>
+<span class="fc bfc" id="L375" title="All 2 branches covered.">            j = (j == m</span>
+<span class="fc" id="L376">                    ? 0</span>
+<span class="fc" id="L377">                    : j + 1);</span>
         }
 
-<span class="fc" id="L375">        vk[46] = keyLen / 32;</span>
+<span class="fc" id="L380">        vk[46] = keyLen / 32;</span>
 
-<span class="fc bfc" id="L377" title="All 2 branches covered.">        for (int j = 0; j &lt; 7; ++j) {</span>
-<span class="fc bfc" id="L378" title="All 2 branches covered.">            for (int i = 1; i &lt; 40; ++i) {</span>
-<span class="fc" id="L379">                vk[i + 7] = rotl(vk[i + 7] + S_BOX[vk[i + 6] &amp; 511], 9);</span>
+<span class="fc bfc" id="L382" title="All 2 branches covered.">        for (int j = 0; j &lt; 7; ++j) {</span>
+<span class="fc bfc" id="L383" title="All 2 branches covered.">            for (int i = 1; i &lt; 40; ++i) {</span>
+<span class="fc" id="L384">                vk[i + 7] = rotl(vk[i + 7] + S_BOX[vk[i + 6] &amp; 511], 9);</span>
             }
-<span class="fc" id="L381">            vk[7] = rotl(vk[7] + S_BOX[vk[46] &amp; 511], 9);</span>
+<span class="fc" id="L386">            vk[7] = rotl(vk[7] + S_BOX[vk[46] &amp; 511], 9);</span>
         }
 
-<span class="fc bfc" id="L384" title="All 2 branches covered.">        for (int i = 0, j = 0; i &lt; 40; ++i) {</span>
-<span class="fc" id="L385">            lKey[j] = vk[i + 7];</span>
-<span class="fc bfc" id="L386" title="All 2 branches covered.">            j = (j &lt; 33</span>
-<span class="fc" id="L387">                    ? j + 7</span>
-<span class="fc" id="L388">                    : j - 33);</span>
+<span class="fc bfc" id="L389" title="All 2 branches covered.">        for (int i = 0, j = 0; i &lt; 40; ++i) {</span>
+<span class="fc" id="L390">            lKey[j] = vk[i + 7];</span>
+<span class="fc bfc" id="L391" title="All 2 branches covered.">            j = (j &lt; 33</span>
+<span class="fc" id="L392">                    ? j + 7</span>
+<span class="fc" id="L393">                    : j - 33);</span>
         }
 
-<span class="fc bfc" id="L391" title="All 2 branches covered.">        for (int i = 5; i &lt; 37; i += 2) {</span>
-<span class="fc" id="L392">            w = lKey[i] | 3;</span>
-<span class="fc" id="L393">            m = genMask(w);</span>
-<span class="fc bfc" id="L394" title="All 2 branches covered.">            if (m != 0) {</span>
-<span class="fc" id="L395">                w ^= (rotl(S_BOX[265 + (lKey[i] &amp; 3)], lKey[i + 3] &amp; 31) &amp; m);</span>
+<span class="fc bfc" id="L396" title="All 2 branches covered.">        for (int i = 5; i &lt; 37; i += 2) {</span>
+<span class="fc" id="L397">            w = lKey[i] | 3;</span>
+<span class="fc" id="L398">            m = genMask(w);</span>
+<span class="fc bfc" id="L399" title="All 2 branches covered.">            if (m != 0) {</span>
+<span class="fc" id="L400">                w ^= (rotl(S_BOX[265 + (lKey[i] &amp; 3)], lKey[i + 3] &amp; 31) &amp; m);</span>
             }
-<span class="fc" id="L397">            lKey[i] = w;</span>
+<span class="fc" id="L402">            lKey[i] = w;</span>
         }
-<span class="fc" id="L399">        return lKey;</span>
+<span class="fc" id="L404">        return lKey;</span>
     }
 
     private void encrypt(final int[] inBlk, final int[] outBlk) {
-<span class="fc" id="L403">        final int[] vals = new int[4];</span>
+<span class="fc" id="L408">        final int[] vals = new int[4];</span>
 
-<span class="fc" id="L405">        vals[0] = inBlk[0] + lKey[0];</span>
-<span class="fc" id="L406">        vals[1] = inBlk[1] + lKey[1];</span>
-<span class="fc" id="L407">        vals[2] = inBlk[2] + lKey[2];</span>
-<span class="fc" id="L408">        vals[3] = inBlk[3] + lKey[3];</span>
+<span class="fc" id="L410">        vals[0] = inBlk[0] + lKey[0];</span>
+<span class="fc" id="L411">        vals[1] = inBlk[1] + lKey[1];</span>
+<span class="fc" id="L412">        vals[2] = inBlk[2] + lKey[2];</span>
+<span class="fc" id="L413">        vals[3] = inBlk[3] + lKey[3];</span>
 
-<span class="fc" id="L410">        fMix(vals, 0);</span>
-<span class="fc" id="L411">        vals[0] += vals[3];</span>
-<span class="fc" id="L412">        fMix(vals, 1);</span>
-<span class="fc" id="L413">        vals[1] += vals[2];</span>
-<span class="fc" id="L414">        fMix(vals, 2);</span>
-<span class="fc" id="L415">        fMix(vals, 3);</span>
+<span class="fc" id="L415">        fMix(vals, 0);</span>
+<span class="fc" id="L416">        vals[0] += vals[3];</span>
+<span class="fc" id="L417">        fMix(vals, 1);</span>
+<span class="fc" id="L418">        vals[1] += vals[2];</span>
+<span class="fc" id="L419">        fMix(vals, 2);</span>
+<span class="fc" id="L420">        fMix(vals, 3);</span>
 
-<span class="fc" id="L417">        fMix(vals, 0);</span>
-<span class="fc" id="L418">        vals[0] += vals[3];</span>
-<span class="fc" id="L419">        fMix(vals, 1);</span>
-<span class="fc" id="L420">        vals[1] += vals[2];</span>
-<span class="fc" id="L421">        fMix(vals, 2);</span>
-<span class="fc" id="L422">        fMix(vals, 3);</span>
+<span class="fc" id="L422">        fMix(vals, 0);</span>
+<span class="fc" id="L423">        vals[0] += vals[3];</span>
+<span class="fc" id="L424">        fMix(vals, 1);</span>
+<span class="fc" id="L425">        vals[1] += vals[2];</span>
+<span class="fc" id="L426">        fMix(vals, 2);</span>
+<span class="fc" id="L427">        fMix(vals, 3);</span>
 
-<span class="fc" id="L424">        fKtr(vals, 4, 0, false);</span>
-<span class="fc" id="L425">        fKtr(vals, 6, 1, false);</span>
-<span class="fc" id="L426">        fKtr(vals, 8, 2, false);</span>
-<span class="fc" id="L427">        fKtr(vals, 10, 3, false);</span>
-<span class="fc" id="L428">        fKtr(vals, 12, 0, false);</span>
-<span class="fc" id="L429">        fKtr(vals, 14, 1, false);</span>
-<span class="fc" id="L430">        fKtr(vals, 16, 2, false);</span>
-<span class="fc" id="L431">        fKtr(vals, 18, 3, false);</span>
-<span class="fc" id="L432">        fKtr(vals, 20, 0, true);</span>
-<span class="fc" id="L433">        fKtr(vals, 22, 1, true);</span>
-<span class="fc" id="L434">        fKtr(vals, 24, 2, true);</span>
-<span class="fc" id="L435">        fKtr(vals, 26, 3, true);</span>
-<span class="fc" id="L436">        fKtr(vals, 28, 0, true);</span>
-<span class="fc" id="L437">        fKtr(vals, 30, 1, true);</span>
-<span class="fc" id="L438">        fKtr(vals, 32, 2, true);</span>
-<span class="fc" id="L439">        fKtr(vals, 34, 3, true);</span>
+<span class="fc" id="L429">        fKtr(vals, 4, 0, false);</span>
+<span class="fc" id="L430">        fKtr(vals, 6, 1, false);</span>
+<span class="fc" id="L431">        fKtr(vals, 8, 2, false);</span>
+<span class="fc" id="L432">        fKtr(vals, 10, 3, false);</span>
+<span class="fc" id="L433">        fKtr(vals, 12, 0, false);</span>
+<span class="fc" id="L434">        fKtr(vals, 14, 1, false);</span>
+<span class="fc" id="L435">        fKtr(vals, 16, 2, false);</span>
+<span class="fc" id="L436">        fKtr(vals, 18, 3, false);</span>
+<span class="fc" id="L437">        fKtr(vals, 20, 0, true);</span>
+<span class="fc" id="L438">        fKtr(vals, 22, 1, true);</span>
+<span class="fc" id="L439">        fKtr(vals, 24, 2, true);</span>
+<span class="fc" id="L440">        fKtr(vals, 26, 3, true);</span>
+<span class="fc" id="L441">        fKtr(vals, 28, 0, true);</span>
+<span class="fc" id="L442">        fKtr(vals, 30, 1, true);</span>
+<span class="fc" id="L443">        fKtr(vals, 32, 2, true);</span>
+<span class="fc" id="L444">        fKtr(vals, 34, 3, true);</span>
 
-<span class="fc" id="L441">        bMix(vals, 0);</span>
-<span class="fc" id="L442">        bMix(vals, 1);</span>
-<span class="fc" id="L443">        vals[2] -= vals[1];</span>
-<span class="fc" id="L444">        bMix(vals, 2);</span>
-<span class="fc" id="L445">        vals[3] -= vals[0];</span>
-<span class="fc" id="L446">        bMix(vals, 3);</span>
+<span class="fc" id="L446">        bMix(vals, 0);</span>
+<span class="fc" id="L447">        bMix(vals, 1);</span>
+<span class="fc" id="L448">        vals[2] -= vals[1];</span>
+<span class="fc" id="L449">        bMix(vals, 2);</span>
+<span class="fc" id="L450">        vals[3] -= vals[0];</span>
+<span class="fc" id="L451">        bMix(vals, 3);</span>
 
-<span class="fc" id="L448">        bMix(vals, 0);</span>
-<span class="fc" id="L449">        bMix(vals, 1);</span>
-<span class="fc" id="L450">        vals[2] -= vals[1];</span>
-<span class="fc" id="L451">        bMix(vals, 2);</span>
-<span class="fc" id="L452">        vals[3] -= vals[0];</span>
-<span class="fc" id="L453">        bMix(vals, 3);</span>
+<span class="fc" id="L453">        bMix(vals, 0);</span>
+<span class="fc" id="L454">        bMix(vals, 1);</span>
+<span class="fc" id="L455">        vals[2] -= vals[1];</span>
+<span class="fc" id="L456">        bMix(vals, 2);</span>
+<span class="fc" id="L457">        vals[3] -= vals[0];</span>
+<span class="fc" id="L458">        bMix(vals, 3);</span>
 
-<span class="fc" id="L455">        outBlk[0] = vals[0] - lKey[36];</span>
-<span class="fc" id="L456">        outBlk[1] = vals[1] - lKey[37];</span>
-<span class="fc" id="L457">        outBlk[2] = vals[2] - lKey[38];</span>
-<span class="fc" id="L458">        outBlk[3] = vals[3] - lKey[39];</span>
-<span class="fc" id="L459">    }</span>
+<span class="fc" id="L460">        outBlk[0] = vals[0] - lKey[36];</span>
+<span class="fc" id="L461">        outBlk[1] = vals[1] - lKey[37];</span>
+<span class="fc" id="L462">        outBlk[2] = vals[2] - lKey[38];</span>
+<span class="fc" id="L463">        outBlk[3] = vals[3] - lKey[39];</span>
+<span class="fc" id="L464">    }</span>
 
     private void decrypt(final int[] inBlk, final int[] outBlk) {
-<span class="fc" id="L462">        final int[] vals = new int[4];</span>
+<span class="fc" id="L467">        final int[] vals = new int[4];</span>
 
-<span class="fc" id="L464">        vals[3] = inBlk[0] + lKey[36];</span>
-<span class="fc" id="L465">        vals[2] = inBlk[1] + lKey[37];</span>
-<span class="fc" id="L466">        vals[1] = inBlk[2] + lKey[38];</span>
-<span class="fc" id="L467">        vals[0] = inBlk[3] + lKey[39];</span>
+<span class="fc" id="L469">        vals[3] = inBlk[0] + lKey[36];</span>
+<span class="fc" id="L470">        vals[2] = inBlk[1] + lKey[37];</span>
+<span class="fc" id="L471">        vals[1] = inBlk[2] + lKey[38];</span>
+<span class="fc" id="L472">        vals[0] = inBlk[3] + lKey[39];</span>
 
-<span class="fc" id="L469">        fMix(vals, 0);</span>
-<span class="fc" id="L470">        vals[0] += vals[3];</span>
-<span class="fc" id="L471">        fMix(vals, 1);</span>
-<span class="fc" id="L472">        vals[1] += vals[2];</span>
-<span class="fc" id="L473">        fMix(vals, 2);</span>
-<span class="fc" id="L474">        fMix(vals, 3);</span>
+<span class="fc" id="L474">        fMix(vals, 0);</span>
+<span class="fc" id="L475">        vals[0] += vals[3];</span>
+<span class="fc" id="L476">        fMix(vals, 1);</span>
+<span class="fc" id="L477">        vals[1] += vals[2];</span>
+<span class="fc" id="L478">        fMix(vals, 2);</span>
+<span class="fc" id="L479">        fMix(vals, 3);</span>
 
-<span class="fc" id="L476">        fMix(vals, 0);</span>
-<span class="fc" id="L477">        vals[0] += vals[3];</span>
-<span class="fc" id="L478">        fMix(vals, 1);</span>
-<span class="fc" id="L479">        vals[1] += vals[2];</span>
-<span class="fc" id="L480">        fMix(vals, 2);</span>
-<span class="fc" id="L481">        fMix(vals, 3);</span>
+<span class="fc" id="L481">        fMix(vals, 0);</span>
+<span class="fc" id="L482">        vals[0] += vals[3];</span>
+<span class="fc" id="L483">        fMix(vals, 1);</span>
+<span class="fc" id="L484">        vals[1] += vals[2];</span>
+<span class="fc" id="L485">        fMix(vals, 2);</span>
+<span class="fc" id="L486">        fMix(vals, 3);</span>
 
-<span class="fc" id="L483">        rKtr(vals, 34, 0, false);</span>
-<span class="fc" id="L484">        rKtr(vals, 32, 1, false);</span>
-<span class="fc" id="L485">        rKtr(vals, 30, 2, false);</span>
-<span class="fc" id="L486">        rKtr(vals, 28, 3, false);</span>
-<span class="fc" id="L487">        rKtr(vals, 26, 0, false);</span>
-<span class="fc" id="L488">        rKtr(vals, 24, 1, false);</span>
-<span class="fc" id="L489">        rKtr(vals, 22, 2, false);</span>
-<span class="fc" id="L490">        rKtr(vals, 20, 3, false);</span>
-<span class="fc" id="L491">        rKtr(vals, 18, 0, true);</span>
-<span class="fc" id="L492">        rKtr(vals, 16, 1, true);</span>
-<span class="fc" id="L493">        rKtr(vals, 14, 2, true);</span>
-<span class="fc" id="L494">        rKtr(vals, 12, 3, true);</span>
-<span class="fc" id="L495">        rKtr(vals, 10, 0, true);</span>
-<span class="fc" id="L496">        rKtr(vals, 8, 1, true);</span>
-<span class="fc" id="L497">        rKtr(vals, 6, 2, true);</span>
-<span class="fc" id="L498">        rKtr(vals, 4, 3, true);</span>
+<span class="fc" id="L488">        rKtr(vals, 34, 0, false);</span>
+<span class="fc" id="L489">        rKtr(vals, 32, 1, false);</span>
+<span class="fc" id="L490">        rKtr(vals, 30, 2, false);</span>
+<span class="fc" id="L491">        rKtr(vals, 28, 3, false);</span>
+<span class="fc" id="L492">        rKtr(vals, 26, 0, false);</span>
+<span class="fc" id="L493">        rKtr(vals, 24, 1, false);</span>
+<span class="fc" id="L494">        rKtr(vals, 22, 2, false);</span>
+<span class="fc" id="L495">        rKtr(vals, 20, 3, false);</span>
+<span class="fc" id="L496">        rKtr(vals, 18, 0, true);</span>
+<span class="fc" id="L497">        rKtr(vals, 16, 1, true);</span>
+<span class="fc" id="L498">        rKtr(vals, 14, 2, true);</span>
+<span class="fc" id="L499">        rKtr(vals, 12, 3, true);</span>
+<span class="fc" id="L500">        rKtr(vals, 10, 0, true);</span>
+<span class="fc" id="L501">        rKtr(vals, 8, 1, true);</span>
+<span class="fc" id="L502">        rKtr(vals, 6, 2, true);</span>
+<span class="fc" id="L503">        rKtr(vals, 4, 3, true);</span>
 
-<span class="fc" id="L500">        bMix(vals, 0);</span>
-<span class="fc" id="L501">        bMix(vals, 1);</span>
-<span class="fc" id="L502">        vals[2] -= vals[1];</span>
-<span class="fc" id="L503">        bMix(vals, 2);</span>
-<span class="fc" id="L504">        vals[3] -= vals[0];</span>
-<span class="fc" id="L505">        bMix(vals, 3);</span>
-<span class="fc" id="L506">        bMix(vals, 0);</span>
-<span class="fc" id="L507">        bMix(vals, 1);</span>
-<span class="fc" id="L508">        vals[2] -= vals[1];</span>
-<span class="fc" id="L509">        bMix(vals, 2);</span>
-<span class="fc" id="L510">        vals[3] -= vals[0];</span>
-<span class="fc" id="L511">        bMix(vals, 3);</span>
+<span class="fc" id="L505">        bMix(vals, 0);</span>
+<span class="fc" id="L506">        bMix(vals, 1);</span>
+<span class="fc" id="L507">        vals[2] -= vals[1];</span>
+<span class="fc" id="L508">        bMix(vals, 2);</span>
+<span class="fc" id="L509">        vals[3] -= vals[0];</span>
+<span class="fc" id="L510">        bMix(vals, 3);</span>
+<span class="fc" id="L511">        bMix(vals, 0);</span>
+<span class="fc" id="L512">        bMix(vals, 1);</span>
+<span class="fc" id="L513">        vals[2] -= vals[1];</span>
+<span class="fc" id="L514">        bMix(vals, 2);</span>
+<span class="fc" id="L515">        vals[3] -= vals[0];</span>
+<span class="fc" id="L516">        bMix(vals, 3);</span>
 
-<span class="fc" id="L513">        outBlk[0] = vals[3] - lKey[0];</span>
-<span class="fc" id="L514">        outBlk[1] = vals[2] - lKey[1];</span>
-<span class="fc" id="L515">        outBlk[2] = vals[1] - lKey[2];</span>
-<span class="fc" id="L516">        outBlk[3] = vals[0] - lKey[3];</span>
-<span class="fc" id="L517">    }</span>
+<span class="fc" id="L518">        outBlk[0] = vals[3] - lKey[0];</span>
+<span class="fc" id="L519">        outBlk[1] = vals[2] - lKey[1];</span>
+<span class="fc" id="L520">        outBlk[2] = vals[1] - lKey[2];</span>
+<span class="fc" id="L521">        outBlk[3] = vals[0] - lKey[3];</span>
+<span class="fc" id="L522">    }</span>
 
     /**
      * Set key from bytes.
@@ -523,23 +528,23 @@ import org.bouncycastle.crypto.params.KeyParameter;
      */
     public void setKey(final byte[] pKey) {
         /* Determine the key and array length */
-<span class="fc" id="L526">        int keyLength = pKey.length;</span>
-<span class="fc" id="L527">        final int intLength = keyLength / Integer.BYTES;</span>
-<span class="fc" id="L528">        keyLength *= Byte.SIZE;</span>
+<span class="fc" id="L531">        int keyLength = pKey.length;</span>
+<span class="fc" id="L532">        final int intLength = keyLength / Integer.BYTES;</span>
+<span class="fc" id="L533">        keyLength *= Byte.SIZE;</span>
 
 
         /* map cipher key to initial key state */
-<span class="fc" id="L532">        final int[] myIntKey = new int[intLength];</span>
-<span class="fc bfc" id="L533" title="All 2 branches covered.">        for (int i = 0, pos = 0; i &lt; intLength; i++, pos += Integer.BYTES) {</span>
-<span class="fc" id="L534">            myIntKey[i] = ((pKey[pos + 3] &amp; 255) &lt;&lt; 24)</span>
+<span class="fc" id="L537">        final int[] myIntKey = new int[intLength];</span>
+<span class="fc bfc" id="L538" title="All 2 branches covered.">        for (int i = 0, pos = 0; i &lt; intLength; i++, pos += Integer.BYTES) {</span>
+<span class="fc" id="L539">            myIntKey[i] = ((pKey[pos + 3] &amp; 255) &lt;&lt; 24)</span>
                     | ((pKey[pos + 2] &amp; 255) &lt;&lt; 16)
                     | ((pKey[pos + 1] &amp; 255) &lt;&lt; 8)
                     | (pKey[pos] &amp; 255);
         }
 
         /* Set the key */
-<span class="fc" id="L541">        setKey(myIntKey, keyLength);</span>
-<span class="fc" id="L542">    }</span>
+<span class="fc" id="L546">        setKey(myIntKey, keyLength);</span>
+<span class="fc" id="L547">    }</span>
 
     /**
      * Build inputArray from input.
@@ -549,13 +554,13 @@ import org.bouncycastle.crypto.params.KeyParameter;
      */
     private void buildInput(final byte[] pInput, final int pOffset) {
         /* map input to intArray */
-<span class="fc bfc" id="L552" title="All 2 branches covered.">        for (int i = 0, pos = pOffset; i &lt; INTLENGTH; i++, pos += Integer.BYTES) {</span>
-<span class="fc" id="L553">            input[i] = ((pInput[pos + 3] &amp; 255) &lt;&lt; 24)</span>
+<span class="fc bfc" id="L557" title="All 2 branches covered.">        for (int i = 0, pos = pOffset; i &lt; INTLENGTH; i++, pos += Integer.BYTES) {</span>
+<span class="fc" id="L558">            input[i] = ((pInput[pos + 3] &amp; 255) &lt;&lt; 24)</span>
                     | ((pInput[pos + 2] &amp; 255) &lt;&lt; 16)
                     | ((pInput[pos + 1] &amp; 255) &lt;&lt; 8)
                     | (pInput[pos] &amp; 255);
         }
-<span class="fc" id="L558">    }</span>
+<span class="fc" id="L563">    }</span>
 
     /**
      * Build output from intArray.
@@ -565,73 +570,74 @@ import org.bouncycastle.crypto.params.KeyParameter;
      */
     private void buildOutput(final byte[] pOutput, final int pOffset) {
         /* Determine the key and array length */
-<span class="fc" id="L568">        final int intLength = 4;</span>
+<span class="fc" id="L573">        final int intLength = 4;</span>
 
         /* map input to intArray */
-<span class="fc bfc" id="L571" title="All 2 branches covered.">        for (int i = 0, pos = pOffset; i &lt; intLength; i++, pos += Integer.BYTES) {</span>
-<span class="fc" id="L572">            final int w = output[i];</span>
-<span class="fc" id="L573">            pOutput[pos] = (byte) (w);</span>
-<span class="fc" id="L574">            pOutput[pos + 1] = (byte) (w &gt;&gt; 8);</span>
-<span class="fc" id="L575">            pOutput[pos + 2] = (byte) (w &gt;&gt; 16);</span>
-<span class="fc" id="L576">            pOutput[pos + 3] = (byte) (w &gt;&gt; 24);</span>
+<span class="fc bfc" id="L576" title="All 2 branches covered.">        for (int i = 0, pos = pOffset; i &lt; intLength; i++, pos += Integer.BYTES) {</span>
+<span class="fc" id="L577">            final int w = output[i];</span>
+<span class="fc" id="L578">            pOutput[pos] = (byte) (w);</span>
+<span class="fc" id="L579">            pOutput[pos + 1] = (byte) (w &gt;&gt; 8);</span>
+<span class="fc" id="L580">            pOutput[pos + 2] = (byte) (w &gt;&gt; 16);</span>
+<span class="fc" id="L581">            pOutput[pos + 3] = (byte) (w &gt;&gt; 24);</span>
         }
-<span class="fc" id="L578">    }</span>
+<span class="fc" id="L583">    }</span>
 
     @Override
     public String getAlgorithmName() {
-<span class="fc" id="L582">        return &quot;MARS&quot;;</span>
+<span class="fc" id="L587">        return &quot;MARS&quot;;</span>
     }
 
     @Override
     public int getBlockSize() {
-<span class="fc" id="L587">        return BLOCKSIZEB;</span>
+<span class="fc" id="L592">        return BLOCKSIZEB;</span>
     }
 
     @Override
     public void init(final boolean forEncrypt, final CipherParameters pParameters) throws IllegalArgumentException {
         /* Reject invalid parameters */
-<span class="pc bpc" id="L593" title="1 of 2 branches missed.">        if (!(pParameters instanceof KeyParameter)) {</span>
-<span class="nc" id="L594">            throw new IllegalArgumentException(&quot;Invalid parameter passed to MARS init - &quot;</span>
-<span class="nc" id="L595">                    + pParameters.getClass().getName());</span>
+<span class="pc bpc" id="L598" title="1 of 2 branches missed.">        if (!(pParameters instanceof KeyParameter)) {</span>
+<span class="nc" id="L599">            throw new IllegalArgumentException(&quot;Invalid parameter passed to MARS init - &quot;</span>
+<span class="nc" id="L600">                    + pParameters.getClass().getName());</span>
         }
 
         /* Determine keySize */
-<span class="fc" id="L599">        final byte[] keyBytes = ((KeyParameter) pParameters).getKey();</span>
-<span class="fc" id="L600">        final int keyBitSize = keyBytes.length * Byte.SIZE;</span>
-<span class="pc bpc" id="L601" title="1 of 6 branches missed.">        if (keyBitSize != 128 &amp;&amp; keyBitSize != 192 &amp;&amp; keyBitSize != 256) {</span>
-<span class="nc" id="L602">            throw new IllegalArgumentException(&quot;KeyBitSize must be 128, 192 or 256&quot;);</span>
+<span class="fc" id="L604">        final byte[] keyBytes = ((KeyParameter) pParameters).getKey();</span>
+<span class="fc" id="L605">        final int keyBitSize = keyBytes.length * Byte.SIZE;</span>
+<span class="pc bpc" id="L606" title="1 of 6 branches missed.">        if (keyBitSize != 128 &amp;&amp; keyBitSize != 192 &amp;&amp; keyBitSize != 256) {</span>
+<span class="nc" id="L607">            throw new IllegalArgumentException(&quot;KeyBitSize must be 128, 192 or 256&quot;);</span>
         }
 
         /* Set up key */
-<span class="fc" id="L606">        this.forEncryption = forEncrypt;</span>
-<span class="fc" id="L607">        setKey(keyBytes);</span>
-<span class="fc" id="L608">    }</span>
+<span class="fc" id="L611">        initialised = true;</span>
+<span class="fc" id="L612">        this.forEncryption = forEncrypt;</span>
+<span class="fc" id="L613">        setKey(keyBytes);</span>
+<span class="fc" id="L614">    }</span>
 
     @Override
     public int processBlock(final byte[] in, final int inOff, final byte[] out, final int outOff) throws DataLengthException, IllegalStateException {
-<span class="pc bpc" id="L612" title="1 of 2 branches missed.">        if (forEncryption == null) {</span>
-<span class="nc" id="L613">            throw new IllegalStateException(&quot;Anubis engine not initialised&quot;);</span>
+<span class="pc bpc" id="L618" title="1 of 2 branches missed.">        if (!initialised) {</span>
+<span class="nc" id="L619">            throw new IllegalStateException(&quot;MARS engine not initialised&quot;);</span>
         }
-<span class="pc bpc" id="L615" title="1 of 2 branches missed.">        if (inOff &gt; (in.length - BLOCKSIZEB)) {</span>
-<span class="nc" id="L616">            throw new DataLengthException(&quot;input buffer too short&quot;);</span>
+<span class="pc bpc" id="L621" title="1 of 2 branches missed.">        if (inOff &gt; (in.length - BLOCKSIZEB)) {</span>
+<span class="nc" id="L622">            throw new DataLengthException(&quot;input buffer too short&quot;);</span>
         }
-<span class="pc bpc" id="L618" title="1 of 2 branches missed.">        if (outOff &gt; (out.length - BLOCKSIZEB)) {</span>
-<span class="nc" id="L619">            throw new OutputLengthException(&quot;output buffer too short&quot;);</span>
+<span class="pc bpc" id="L624" title="1 of 2 branches missed.">        if (outOff &gt; (out.length - BLOCKSIZEB)) {</span>
+<span class="nc" id="L625">            throw new OutputLengthException(&quot;output buffer too short&quot;);</span>
         }
 
-<span class="fc" id="L622">        buildInput(in, inOff);</span>
-<span class="fc bfc" id="L623" title="All 2 branches covered.">        if (forEncryption) {</span>
-<span class="fc" id="L624">            encrypt(input, output);</span>
+<span class="fc" id="L628">        buildInput(in, inOff);</span>
+<span class="fc bfc" id="L629" title="All 2 branches covered.">        if (forEncryption) {</span>
+<span class="fc" id="L630">            encrypt(input, output);</span>
         } else {
-<span class="fc" id="L626">            decrypt(input, output);</span>
+<span class="fc" id="L632">            decrypt(input, output);</span>
         }
-<span class="fc" id="L628">        buildOutput(out, outOff);</span>
-<span class="fc" id="L629">        return BLOCKSIZEB;</span>
+<span class="fc" id="L634">        buildOutput(out, outOff);</span>
+<span class="fc" id="L635">        return BLOCKSIZEB;</span>
     }
 
     @Override
     public void reset() {
         /* NoOp */
-<span class="fc" id="L635">    }</span>
+<span class="fc" id="L641">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

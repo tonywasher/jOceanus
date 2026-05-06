@@ -16,19 +16,23 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaAnonEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaBasicEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaMQVEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaNewHopeEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaPostQuantumEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaSM2Engine;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaUnifiedEngine;
 
 /**
@@ -52,36 +56,22 @@ public class JcaAgreementFactory
      * @param pFactory the factory
      */
     JcaAgreementFactory(final GordianBaseFactory pFactory) {
-<span class="fc" id="L55">        super(pFactory);</span>
-<span class="fc" id="L56">    }</span>
+<span class="fc" id="L59">        super(pFactory);</span>
+<span class="fc" id="L60">    }</span>
 
     @Override
     public GordianCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
-<span class="fc bfc" id="L60" title="All 6 branches covered.">        switch (pSpec.getKeyPairSpec().getKeyPairType()) {</span>
-            case EC:
-            case GOST2012:
-            case DSTU4145:
-            case SM2:
-<span class="fc" id="L65">                return getECEngine(pSpec);</span>
-            case DH:
-<span class="fc" id="L67">                return getDHEngine(pSpec);</span>
-            case NEWHOPE:
-<span class="fc" id="L69">                return getNHEngine(pSpec);</span>
-            case CMCE:
-            case FRODO:
-            case SABER:
-            case MLKEM:
-            case HQC:
-            case BIKE:
-            case NTRU:
-            case NTRUPRIME:
-<span class="fc" id="L78">                return getPostQuantumEngine(pSpec);</span>
-            case XDH:
-<span class="fc" id="L80">                return getXDHEngine(pSpec);</span>
-            case COMPOSITE:
-            default:
-<span class="fc" id="L83">                return super.createEngine(pSpec);</span>
-        }
+<span class="fc" id="L64">        final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pSpec;</span>
+<span class="fc bfc" id="L65" title="All 7 branches covered.">        return switch (pSpec.getKeyPairSpec().getKeyPairType()) {</span>
+<span class="fc" id="L66">            case EC, GOST, DSTU -&gt; getECEngine(mySpec);</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">            case SM2 -&gt; mySpec.getAgreementType() == GordianAgreementType.SM2</span>
+<span class="fc" id="L68">                    ? getSM2Engine(mySpec) : getECEngine(mySpec);</span>
+<span class="fc" id="L69">            case DH -&gt; getDHEngine(mySpec);</span>
+<span class="fc" id="L70">            case NEWHOPE -&gt; getNHEngine(mySpec);</span>
+<span class="fc" id="L71">            case CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME -&gt; getPostQuantumEngine(mySpec);</span>
+<span class="fc" id="L72">            case XDH -&gt; getXDHEngine(mySpec);</span>
+<span class="fc" id="L73">            default -&gt; super.createEngine(pSpec);</span>
+        };
     }
 
     /**
@@ -91,8 +81,8 @@ public class JcaAgreementFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianCoreAgreementEngine getPostQuantumEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
-<span class="fc" id="L95">        return new JcaPostQuantumEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyGenerator(pAgreementSpec.getKeyPairSpec()));</span>
+    private GordianCoreAgreementEngine getPostQuantumEngine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
+<span class="fc" id="L85">        return new JcaPostQuantumEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyGenerator(pAgreementSpec.getKeyPairSpec()));</span>
     }
 
     /**
@@ -102,8 +92,19 @@ public class JcaAgreementFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianCoreAgreementEngine getNHEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
-<span class="fc" id="L106">        return new JcaNewHopeEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyAgreement(&quot;NH&quot;, true));</span>
+    private GordianCoreAgreementEngine getNHEngine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
+<span class="fc" id="L96">        return new JcaNewHopeEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyAgreement(&quot;NH&quot;, true));</span>
+    }
+
+    /**
+     * Create the SM2 Agreement.
+     *
+     * @param pAgreementSpec the agreementSpec
+     * @return the Agreement
+     * @throws GordianException on error
+     */
+    private GordianCoreAgreementEngine getSM2Engine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
+<span class="fc" id="L107">        return new JcaSM2Engine(this, pAgreementSpec, JcaAgreement.getJavaKeyAgreement(&quot;SM2&quot;, false));</span>
     }
 
     /**
@@ -113,24 +114,18 @@ public class JcaAgreementFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianCoreAgreementEngine getDHEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
-<span class="pc bpc" id="L117" title="1 of 5 branches missed.">        switch (pAgreementSpec.getAgreementType()) {</span>
-            case ANON:
-<span class="fc" id="L119">                return new JcaAnonEngine(this, pAgreementSpec,</span>
-<span class="fc" id="L120">                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(DH_ALGO, pAgreementSpec), false));</span>
-            case SIGNED:
-            case BASIC:
-<span class="fc" id="L123">                return new JcaBasicEngine(this, pAgreementSpec,</span>
-<span class="fc" id="L124">                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(DH_ALGO, pAgreementSpec), false));</span>
-            case UNIFIED:
-<span class="fc" id="L126">                return new JcaUnifiedEngine(this, pAgreementSpec,</span>
-<span class="fc" id="L127">                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(DH_ALGO + &quot;U&quot;, pAgreementSpec), false));</span>
-            case MQV:
-<span class="fc" id="L129">                return new JcaMQVEngine(this, pAgreementSpec,</span>
-<span class="fc" id="L130">                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(&quot;MQV&quot;, pAgreementSpec), false));</span>
-            default:
-<span class="nc" id="L132">                throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));</span>
-        }
+    private GordianCoreAgreementEngine getDHEngine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
+<span class="pc bpc" id="L118" title="1 of 5 branches missed.">        return switch (pAgreementSpec.getAgreementType()) {</span>
+<span class="fc" id="L119">            case ANON -&gt; new JcaAnonEngine(this, pAgreementSpec,</span>
+<span class="fc" id="L120">                    JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(DH_ALGO, pAgreementSpec), false));</span>
+<span class="fc" id="L121">            case SIGNED, BASIC -&gt; new JcaBasicEngine(this, pAgreementSpec,</span>
+<span class="fc" id="L122">                    JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(DH_ALGO, pAgreementSpec), false));</span>
+<span class="fc" id="L123">            case UNIFIED -&gt; new JcaUnifiedEngine(this, pAgreementSpec,</span>
+<span class="fc" id="L124">                    JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(DH_ALGO + &quot;U&quot;, pAgreementSpec), false));</span>
+<span class="fc" id="L125">            case MQV -&gt; new JcaMQVEngine(this, pAgreementSpec,</span>
+<span class="fc" id="L126">                    JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(&quot;MQV&quot;, pAgreementSpec), false));</span>
+<span class="nc" id="L127">            default -&gt; throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));</span>
+        };
     }
 
     /**
@@ -140,24 +135,19 @@ public class JcaAgreementFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianCoreAgreementEngine getECEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
-<span class="pc bpc" id="L144" title="1 of 5 branches missed.">        switch (pAgreementSpec.getAgreementType()) {</span>
-            case ANON:
-<span class="fc" id="L146">                return new JcaAnonEngine(this, pAgreementSpec,</span>
-<span class="fc" id="L147">                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));</span>
-            case SIGNED:
-            case BASIC:
-<span class="fc" id="L150">                return new JcaBasicEngine(this, pAgreementSpec,</span>
-<span class="fc" id="L151">                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));</span>
-            case UNIFIED:
-<span class="fc" id="L153">                return new JcaUnifiedEngine(this, pAgreementSpec,</span>
-<span class="fc" id="L154">                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(ECCDH_ALGO + &quot;U&quot;, pAgreementSpec), false));</span>
-            case MQV:
-<span class="fc" id="L156">                return new JcaMQVEngine(this, pAgreementSpec,</span>
-<span class="fc" id="L157">                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(&quot;ECMQV&quot;, pAgreementSpec), false));</span>
-            default:
-<span class="nc" id="L159">                throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));</span>
-        }
+    private GordianCoreAgreementEngine getECEngine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
+<span class="pc bpc" id="L139" title="1 of 6 branches missed.">        return switch (pAgreementSpec.getAgreementType()) {</span>
+<span class="fc" id="L140">            case ANON -&gt; new JcaAnonEngine(this, pAgreementSpec,</span>
+<span class="fc" id="L141">                    JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));</span>
+<span class="fc" id="L142">            case SIGNED, BASIC -&gt; new JcaBasicEngine(this, pAgreementSpec,</span>
+<span class="fc" id="L143">                    JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));</span>
+<span class="fc" id="L144">            case UNIFIED -&gt; new JcaUnifiedEngine(this, pAgreementSpec,</span>
+<span class="fc" id="L145">                    JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(ECCDH_ALGO + &quot;U&quot;, pAgreementSpec), false));</span>
+<span class="fc" id="L146">            case MQV -&gt; new JcaMQVEngine(this, pAgreementSpec,</span>
+<span class="fc" id="L147">                    JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(&quot;ECMQV&quot;, pAgreementSpec), false));</span>
+<span class="fc" id="L148">            case SM2 -&gt; getSM2Engine(pAgreementSpec);</span>
+<span class="nc" id="L149">            default -&gt; throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));</span>
+        };
     }
 
     /**
@@ -167,59 +157,38 @@ public class JcaAgreementFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianCoreAgreementEngine getXDHEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
-<span class="pc bpc" id="L171" title="1 of 4 branches missed.">        switch (pAgreementSpec.getAgreementType()) {</span>
-            case ANON:
-<span class="fc" id="L173">                return new JcaAnonEngine(this, pAgreementSpec, null);</span>
-            case SIGNED:
-            case BASIC:
-<span class="fc" id="L176">                return new JcaBasicEngine(this, pAgreementSpec, null);</span>
-            case UNIFIED:
-<span class="fc" id="L178">                return new JcaUnifiedEngine(this, pAgreementSpec, null);</span>
-            default:
-<span class="nc" id="L180">                throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));</span>
-        }
+    private GordianCoreAgreementEngine getXDHEngine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
+<span class="pc bpc" id="L161" title="1 of 4 branches missed.">        return switch (pAgreementSpec.getAgreementType()) {</span>
+<span class="fc" id="L162">            case ANON -&gt; new JcaAnonEngine(this, pAgreementSpec, null);</span>
+<span class="fc" id="L163">            case SIGNED, BASIC -&gt; new JcaBasicEngine(this, pAgreementSpec, null);</span>
+<span class="fc" id="L164">            case UNIFIED -&gt; new JcaUnifiedEngine(this, pAgreementSpec, null);</span>
+<span class="nc" id="L165">            default -&gt; throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));</span>
+        };
     }
 
     @Override
     protected boolean validAgreementSpec(final GordianAgreementSpec pSpec) {
         /* validate the agreementSpec */
-<span class="fc bfc" id="L187" title="All 2 branches covered.">        if (!super.validAgreementSpec(pSpec)) {</span>
-<span class="fc" id="L188">            return false;</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        if (!super.validAgreementSpec(pSpec)) {</span>
+<span class="fc" id="L173">            return false;</span>
         }
 
-        /* Disallow SM2 */
-<span class="fc" id="L192">        final GordianAgreementType myType = pSpec.getAgreementType();</span>
-<span class="fc bfc" id="L193" title="All 2 branches covered.">        if (GordianAgreementType.SM2.equals(myType)) {</span>
-<span class="fc" id="L194">            return false;</span>
+        /* Only allow SM2 for NoKDF */
+<span class="fc" id="L177">        final GordianAgreementType myType = pSpec.getAgreementType();</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        if (GordianAgreementType.SM2.equals(myType)) {</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">            return GordianAgreementKDF.NONE.equals(pSpec.getKDFType())</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">                    &amp;&amp; !GordianKeyPairType.GOST.equals(pSpec.getKeyPairSpec().getKeyPairType())</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">                    &amp;&amp; !pSpec.withConfirm();</span>
         }
 
         /* Switch on KeyType */
-<span class="fc bfc" id="L198" title="All 4 branches covered.">        switch (pSpec.getKeyPairSpec().getKeyPairType()) {</span>
-            case NEWHOPE:
-            case CMCE:
-            case FRODO:
-            case SABER:
-            case MLKEM:
-            case HQC:
-            case BIKE:
-            case NTRU:
-            case NTRUPRIME:
-            case COMPOSITE:
-<span class="fc" id="L209">                return true;</span>
-            case EC:
-            case GOST2012:
-            case DSTU4145:
-            case SM2:
-            case DH:
-<span class="fc bfc" id="L215" title="All 2 branches covered.">                return !GordianAgreementType.KEM.equals(myType);</span>
-            case XDH:
-<span class="pc bpc" id="L217" title="1 of 2 branches missed.">                return !GordianAgreementType.KEM.equals(myType)</span>
-<span class="pc bpc" id="L218" title="1 of 2 branches missed.">                        &amp;&amp; !GordianAgreementType.MQV.equals(myType);</span>
-            case RSA:
-            default:
-<span class="fc" id="L221">                return false;</span>
-        }
+<span class="fc bfc" id="L185" title="All 4 branches covered.">        return switch (pSpec.getKeyPairSpec().getKeyPairType()) {</span>
+<span class="fc" id="L186">            case NEWHOPE, CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, COMPOSITE -&gt; true;</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">            case EC, GOST, DSTU, SM2, DH -&gt; !GordianAgreementType.KEM.equals(myType);</span>
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">            case XDH -&gt; !GordianAgreementType.KEM.equals(myType)</span>
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">                    &amp;&amp; !GordianAgreementType.MQV.equals(myType);</span>
+<span class="fc" id="L190">            default -&gt; false;</span>
+        };
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

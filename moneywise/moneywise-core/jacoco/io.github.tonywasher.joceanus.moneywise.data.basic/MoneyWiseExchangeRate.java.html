@@ -16,13 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -34,6 +27,13 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
@@ -502,44 +502,43 @@ public class MoneyWiseExchangeRate
     @Override
     public boolean applyChanges(final PrometheusDataItem pRate) {
         /* Can only update from an event exchange rate */
-<span class="nc bnc" id="L505" title="All 2 branches missed.">        if (!(pRate instanceof MoneyWiseExchangeRate)) {</span>
+<span class="nc bnc" id="L505" title="All 2 branches missed.">        if (!(pRate instanceof MoneyWiseExchangeRate myRate)) {</span>
 <span class="nc" id="L506">            return false;</span>
         }
-<span class="nc" id="L508">        final MoneyWiseExchangeRate myRate = (MoneyWiseExchangeRate) pRate;</span>
 
         /* Store the current detail into history */
-<span class="nc" id="L511">        pushHistory();</span>
+<span class="nc" id="L510">        pushHistory();</span>
 
         /* Update the Date if required */
-<span class="nc bnc" id="L514" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDate(), myRate.getDate())) {</span>
-<span class="nc" id="L515">            setValueDate(myRate.getDate());</span>
+<span class="nc bnc" id="L513" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDate(), myRate.getDate())) {</span>
+<span class="nc" id="L514">            setValueDate(myRate.getDate());</span>
         }
 
         /* Update the from currency if required */
-<span class="nc bnc" id="L519" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getFromCurrency(), myRate.getFromCurrency())) {</span>
-<span class="nc" id="L520">            setValueFromCurrency(myRate.getFromCurrency());</span>
+<span class="nc bnc" id="L518" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getFromCurrency(), myRate.getFromCurrency())) {</span>
+<span class="nc" id="L519">            setValueFromCurrency(myRate.getFromCurrency());</span>
         }
 
         /* Update the to currency if required */
-<span class="nc bnc" id="L524" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getToCurrency(), myRate.getToCurrency())) {</span>
-<span class="nc" id="L525">            setValueToCurrency(myRate.getToCurrency());</span>
+<span class="nc bnc" id="L523" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getToCurrency(), myRate.getToCurrency())) {</span>
+<span class="nc" id="L524">            setValueToCurrency(myRate.getToCurrency());</span>
         }
 
         /* Update the rate if required */
-<span class="nc bnc" id="L529" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getExchangeRate(), myRate.getExchangeRate())) {</span>
-<span class="nc" id="L530">            setValueExchangeRate(myRate.getExchangeRate());</span>
+<span class="nc bnc" id="L528" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getExchangeRate(), myRate.getExchangeRate())) {</span>
+<span class="nc" id="L529">            setValueExchangeRate(myRate.getExchangeRate());</span>
         }
 
         /* Check for changes */
-<span class="nc" id="L534">        return checkForHistory();</span>
+<span class="nc" id="L533">        return checkForHistory();</span>
     }
 
     @Override
     public void adjustMapForItem() {
-<span class="fc" id="L539">        final MoneyWiseExchangeRateBaseList&lt;? extends MoneyWiseExchangeRate&gt; myList = getList();</span>
-<span class="fc" id="L540">        final MoneyWiseExchangeRateDataMap myMap = myList.getDataMap();</span>
-<span class="fc" id="L541">        myMap.adjustForItem(this);</span>
-<span class="fc" id="L542">    }</span>
+<span class="fc" id="L538">        final MoneyWiseExchangeRateBaseList&lt;? extends MoneyWiseExchangeRate&gt; myList = getList();</span>
+<span class="fc" id="L539">        final MoneyWiseExchangeRateDataMap myMap = myList.getDataMap();</span>
+<span class="fc" id="L540">        myMap.adjustForItem(this);</span>
+<span class="fc" id="L541">    }</span>
 
     /**
      * Price List.
@@ -552,8 +551,8 @@ public class MoneyWiseExchangeRate
          * Report fields.
          */
         static {
-<span class="fc" id="L555">            MetisFieldSet.newFieldSet(MoneyWiseExchangeRateBaseList.class);</span>
-<span class="fc" id="L556">        }</span>
+<span class="fc" id="L554">            MetisFieldSet.newFieldSet(MoneyWiseExchangeRateBaseList.class);</span>
+<span class="fc" id="L555">        }</span>
 
         /**
          * Construct an empty CORE Price list.
@@ -566,8 +565,8 @@ public class MoneyWiseExchangeRate
                                                 final Class&lt;T&gt; pClass,
                                                 final MoneyWiseBasicDataType pItemType) {
             /* Call super-constructor */
-<span class="fc" id="L569">            super(pClass, pData, pItemType, PrometheusListStyle.CORE);</span>
-<span class="fc" id="L570">        }</span>
+<span class="fc" id="L568">            super(pClass, pData, pItemType, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L569">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -576,17 +575,17 @@ public class MoneyWiseExchangeRate
          */
         protected MoneyWiseExchangeRateBaseList(final MoneyWiseExchangeRateBaseList&lt;T&gt; pSource) {
             /* Call super-constructor */
-<span class="fc" id="L579">            super(pSource);</span>
-<span class="fc" id="L580">        }</span>
+<span class="fc" id="L578">            super(pSource);</span>
+<span class="fc" id="L579">        }</span>
 
         @Override
         public MoneyWiseExchangeRateDataMap getDataMap() {
-<span class="fc" id="L584">            return (MoneyWiseExchangeRateDataMap) super.getDataMap();</span>
+<span class="fc" id="L583">            return (MoneyWiseExchangeRateDataMap) super.getDataMap();</span>
         }
 
         @Override
         protected MoneyWiseExchangeRateDataMap allocateDataMap() {
-<span class="fc" id="L589">            return new MoneyWiseExchangeRateDataMap();</span>
+<span class="fc" id="L588">            return new MoneyWiseExchangeRateDataMap();</span>
         }
     }
 
@@ -598,14 +597,14 @@ public class MoneyWiseExchangeRate
         /**
          * Report fields.
          */
-<span class="fc" id="L601">        private static final MetisFieldSet&lt;MoneyWiseExchangeRateList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseExchangeRateList.class);</span>
+<span class="fc" id="L600">        private static final MetisFieldSet&lt;MoneyWiseExchangeRateList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseExchangeRateList.class);</span>
 
         /*
          * Declare Fields.
          */
         static {
-<span class="fc" id="L607">            FIELD_DEFS.declareLocalField(MoneyWiseStaticResource.CURRENCY_REPORTING, MoneyWiseExchangeRateList::getReportingCurrency);</span>
-<span class="fc" id="L608">        }</span>
+<span class="fc" id="L606">            FIELD_DEFS.declareLocalField(MoneyWiseStaticResource.CURRENCY_REPORTING, MoneyWiseExchangeRateList::getReportingCurrency);</span>
+<span class="fc" id="L607">        }</span>
 
         /**
          * The reporting currency.
@@ -618,8 +617,8 @@ public class MoneyWiseExchangeRate
          * @param pData the DataSet for the list
          */
         protected MoneyWiseExchangeRateList(final MoneyWiseDataSet pData) {
-<span class="fc" id="L621">            super(pData, MoneyWiseExchangeRate.class, MoneyWiseBasicDataType.EXCHANGERATE);</span>
-<span class="fc" id="L622">        }</span>
+<span class="fc" id="L620">            super(pData, MoneyWiseExchangeRate.class, MoneyWiseBasicDataType.EXCHANGERATE);</span>
+<span class="fc" id="L621">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -627,12 +626,12 @@ public class MoneyWiseExchangeRate
          * @param pSource the source List
          */
         protected MoneyWiseExchangeRateList(final MoneyWiseExchangeRateList pSource) {
-<span class="fc" id="L630">            super(pSource);</span>
-<span class="fc" id="L631">        }</span>
+<span class="fc" id="L629">            super(pSource);</span>
+<span class="fc" id="L630">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWiseExchangeRateList&gt; getDataFieldSet() {
-<span class="nc" id="L635">            return FIELD_DEFS;</span>
+<span class="nc" id="L634">            return FIELD_DEFS;</span>
         }
 
         /**
@@ -641,29 +640,29 @@ public class MoneyWiseExchangeRate
          * @return the reporting currency
          */
         public MoneyWiseCurrency getReportingCurrency() {
-<span class="nc" id="L644">            return theReporting;</span>
+<span class="nc" id="L643">            return theReporting;</span>
         }
 
         @Override
         public String listName() {
-<span class="fc" id="L649">            return LIST_NAME;</span>
+<span class="fc" id="L648">            return LIST_NAME;</span>
         }
 
         @Override
         public MetisFieldSetDef getItemFields() {
-<span class="fc" id="L654">            return MoneyWiseExchangeRate.FIELD_DEFS;</span>
+<span class="fc" id="L653">            return MoneyWiseExchangeRate.FIELD_DEFS;</span>
         }
 
         @Override
         public MoneyWiseDataSet getDataSet() {
-<span class="fc" id="L659">            return (MoneyWiseDataSet) super.getDataSet();</span>
+<span class="fc" id="L658">            return (MoneyWiseDataSet) super.getDataSet();</span>
         }
 
         @Override
         protected MoneyWiseExchangeRateList getEmptyList(final PrometheusListStyle pStyle) {
-<span class="fc" id="L664">            final MoneyWiseExchangeRateList myList = new MoneyWiseExchangeRateList(this);</span>
-<span class="fc" id="L665">            myList.setStyle(pStyle);</span>
-<span class="fc" id="L666">            return myList;</span>
+<span class="fc" id="L663">            final MoneyWiseExchangeRateList myList = new MoneyWiseExchangeRateList(this);</span>
+<span class="fc" id="L664">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L665">            return myList;</span>
         }
 
         /**
@@ -675,13 +674,13 @@ public class MoneyWiseExchangeRate
         @Override
         public MoneyWiseExchangeRate addCopyItem(final PrometheusDataItem pRate) {
             /* Can only clone an ExchangeRate */
-<span class="pc bpc" id="L678" title="1 of 2 branches missed.">            if (!(pRate instanceof MoneyWiseExchangeRate)) {</span>
-<span class="nc" id="L679">                throw new UnsupportedOperationException();</span>
+<span class="pc bpc" id="L677" title="1 of 2 branches missed.">            if (!(pRate instanceof MoneyWiseExchangeRate)) {</span>
+<span class="nc" id="L678">                throw new UnsupportedOperationException();</span>
             }
 
-<span class="fc" id="L682">            final MoneyWiseExchangeRate myRate = new MoneyWiseExchangeRate(this, (MoneyWiseExchangeRate) pRate);</span>
-<span class="fc" id="L683">            add(myRate);</span>
-<span class="fc" id="L684">            return myRate;</span>
+<span class="fc" id="L681">            final MoneyWiseExchangeRate myRate = new MoneyWiseExchangeRate(this, (MoneyWiseExchangeRate) pRate);</span>
+<span class="fc" id="L682">            add(myRate);</span>
+<span class="fc" id="L683">            return myRate;</span>
         }
 
         /**
@@ -691,28 +690,28 @@ public class MoneyWiseExchangeRate
          */
         @Override
         public MoneyWiseExchangeRate addNewItem() {
-<span class="fc" id="L694">            final MoneyWiseExchangeRate myRate = new MoneyWiseExchangeRate(this);</span>
-<span class="fc" id="L695">            add(myRate);</span>
-<span class="fc" id="L696">            return myRate;</span>
+<span class="fc" id="L693">            final MoneyWiseExchangeRate myRate = new MoneyWiseExchangeRate(this);</span>
+<span class="fc" id="L694">            add(myRate);</span>
+<span class="fc" id="L695">            return myRate;</span>
         }
 
         @Override
         public MoneyWiseExchangeRate addValuesItem(final PrometheusDataValues pValues)
                 throws OceanusException {
             /* Create the rate */
-<span class="fc" id="L703">            final MoneyWiseExchangeRate myRate = new MoneyWiseExchangeRate(this, pValues);</span>
+<span class="fc" id="L702">            final MoneyWiseExchangeRate myRate = new MoneyWiseExchangeRate(this, pValues);</span>
 
             /* Check that this RateId has not been previously added */
-<span class="pc bpc" id="L706" title="1 of 2 branches missed.">            if (!isIdUnique(myRate.getIndexedId())) {</span>
-<span class="nc" id="L707">                myRate.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L708">                throw new MoneyWiseDataException(myRate, ERROR_VALIDATION);</span>
+<span class="pc bpc" id="L705" title="1 of 2 branches missed.">            if (!isIdUnique(myRate.getIndexedId())) {</span>
+<span class="nc" id="L706">                myRate.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L707">                throw new MoneyWiseDataException(myRate, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="fc" id="L712">            add(myRate);</span>
+<span class="fc" id="L711">            add(myRate);</span>
 
             /* Return it */
-<span class="fc" id="L715">            return myRate;</span>
+<span class="fc" id="L714">            return myRate;</span>
         }
 
         /**
@@ -727,37 +726,37 @@ public class MoneyWiseExchangeRate
                                             final MoneyWiseCurrency pCurrency,
                                             final OceanusDate pDate) {
             /* Obtain the existing currency */
-<span class="nc" id="L730">            OceanusMoney myValue = pValue;</span>
-<span class="nc" id="L731">            final MoneyWiseCurrencyList myCurrencies = getDataSet().getAccountCurrencies();</span>
-<span class="nc" id="L732">            final Currency myCurrent = pValue.getCurrency();</span>
-<span class="nc" id="L733">            final Currency myReporting = theReporting.getCurrency();</span>
-<span class="nc" id="L734">            final Currency myTarget = pCurrency.getCurrency();</span>
+<span class="nc" id="L729">            OceanusMoney myValue = pValue;</span>
+<span class="nc" id="L730">            final MoneyWiseCurrencyList myCurrencies = getDataSet().getAccountCurrencies();</span>
+<span class="nc" id="L731">            final Currency myCurrent = pValue.getCurrency();</span>
+<span class="nc" id="L732">            final Currency myReporting = theReporting.getCurrency();</span>
+<span class="nc" id="L733">            final Currency myTarget = pCurrency.getCurrency();</span>
 
             /* Handle no conversion required */
-<span class="nc bnc" id="L737" title="All 2 branches missed.">            if (myCurrent.equals(myTarget)) {</span>
-<span class="nc" id="L738">                return pValue;</span>
+<span class="nc bnc" id="L736" title="All 2 branches missed.">            if (myCurrent.equals(myTarget)) {</span>
+<span class="nc" id="L737">                return pValue;</span>
             }
 
             /* If the value is not already the reporting currency */
-<span class="nc bnc" id="L742" title="All 2 branches missed.">            if (!myCurrent.equals(myReporting)) {</span>
+<span class="nc bnc" id="L741" title="All 2 branches missed.">            if (!myCurrent.equals(myReporting)) {</span>
                 /* Find the required exchange rate */
-<span class="nc" id="L744">                final OceanusRatio myRate = findRate(myCurrencies.findCurrency(myCurrent), pDate);</span>
+<span class="nc" id="L743">                final OceanusRatio myRate = findRate(myCurrencies.findCurrency(myCurrent), pDate);</span>
 
                 /* Convert the currency */
-<span class="nc" id="L747">                myValue = myValue.convertCurrency(myReporting, myRate);</span>
+<span class="nc" id="L746">                myValue = myValue.convertCurrency(myReporting, myRate);</span>
             }
 
             /* If we need to convert to a non-default currency */
-<span class="nc bnc" id="L751" title="All 2 branches missed.">            if (!myReporting.equals(myTarget)) {</span>
+<span class="nc bnc" id="L750" title="All 2 branches missed.">            if (!myReporting.equals(myTarget)) {</span>
                 /* Find the required exchange rate */
-<span class="nc" id="L753">                final OceanusRatio myRate = findRate(pCurrency, pDate);</span>
+<span class="nc" id="L752">                final OceanusRatio myRate = findRate(pCurrency, pDate);</span>
 
                 /* Convert the currency */
-<span class="nc" id="L756">                myValue = myValue.convertCurrency(myTarget, myRate);</span>
+<span class="nc" id="L755">                myValue = myValue.convertCurrency(myTarget, myRate);</span>
             }
 
             /* Return the converted currency */
-<span class="nc" id="L760">            return myValue;</span>
+<span class="nc" id="L759">            return myValue;</span>
         }
 
         /**
@@ -770,7 +769,7 @@ public class MoneyWiseExchangeRate
         private OceanusRatio findRate(final MoneyWiseCurrency pCurrency,
                                       final OceanusDate pDate) {
             /* pass call to data map */
-<span class="nc" id="L773">            return getDataMap().getRateForDate(pCurrency, pDate);</span>
+<span class="nc" id="L772">            return getDataMap().getRateForDate(pCurrency, pDate);</span>
         }
 
         /**
@@ -780,54 +779,54 @@ public class MoneyWiseExchangeRate
          */
         public void setReportingCurrency(final MoneyWiseCurrency pCurrency) {
             /* Access the iterator */
-<span class="nc" id="L783">            final Iterator&lt;MoneyWiseExchangeRate&gt; myIterator = iterator();</span>
-<span class="nc" id="L784">            OceanusRatio myCurrRate = null;</span>
-<span class="nc" id="L785">            OceanusDate myCurrDate = null;</span>
+<span class="nc" id="L782">            final Iterator&lt;MoneyWiseExchangeRate&gt; myIterator = iterator();</span>
+<span class="nc" id="L783">            OceanusRatio myCurrRate = null;</span>
+<span class="nc" id="L784">            OceanusDate myCurrDate = null;</span>
 
             /* Loop through the items to find the entry */
-<span class="nc bnc" id="L788" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
-<span class="nc" id="L789">                final MoneyWiseExchangeRate myCurr = myIterator.next();</span>
+<span class="nc bnc" id="L787" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L788">                final MoneyWiseExchangeRate myCurr = myIterator.next();</span>
 
                 /* Access details */
-<span class="nc" id="L792">                final OceanusDate myDate = myCurr.getDate();</span>
-<span class="nc" id="L793">                final MoneyWiseCurrency myTo = myCurr.getToCurrency();</span>
-<span class="nc" id="L794">                final OceanusRatio myRatio = myCurr.getExchangeRate();</span>
+<span class="nc" id="L791">                final OceanusDate myDate = myCurr.getDate();</span>
+<span class="nc" id="L792">                final MoneyWiseCurrency myTo = myCurr.getToCurrency();</span>
+<span class="nc" id="L793">                final OceanusRatio myRatio = myCurr.getExchangeRate();</span>
 
                 /* If this is a new date */
-<span class="nc bnc" id="L797" title="All 4 branches missed.">                if (myCurrDate == null || !myDate.equals(myCurrDate)) {</span>
+<span class="nc bnc" id="L796" title="All 4 branches missed.">                if (myCurrDate == null || !myDate.equals(myCurrDate)) {</span>
                     /* Access the current rate for the new default currency */
                     /*
                      * TODO This must exist on the same date or else the currency cannot be set as
                      * default
                      */
-<span class="nc" id="L803">                    myCurrRate = findRate(pCurrency, myDate);</span>
-<span class="nc" id="L804">                    myCurrDate = myDate;</span>
+<span class="nc" id="L802">                    myCurrRate = findRate(pCurrency, myDate);</span>
+<span class="nc" id="L803">                    myCurrDate = myDate;</span>
                 }
 
                 /* Update the item */
-<span class="nc" id="L808">                myCurr.pushHistory();</span>
+<span class="nc" id="L807">                myCurr.pushHistory();</span>
 
                 /* If this is a conversion to the new default */
-<span class="nc bnc" id="L811" title="All 2 branches missed.">                if (myTo.equals(pCurrency)) {</span>
+<span class="nc bnc" id="L810" title="All 2 branches missed.">                if (myTo.equals(pCurrency)) {</span>
                     /* Switch the direction of the currencies */
-<span class="nc" id="L813">                    myCurr.setToCurrency(myCurr.getFromCurrency());</span>
+<span class="nc" id="L812">                    myCurr.setToCurrency(myCurr.getFromCurrency());</span>
 
                     /* Invert the ratio */
-<span class="nc" id="L816">                    myCurr.setExchangeRate(myRatio.getInverseRatio());</span>
+<span class="nc" id="L815">                    myCurr.setExchangeRate(myRatio.getInverseRatio());</span>
 
                     /* Else does not currently involve the new currency */
                 } else {
                     /* Need to combine the rates */
-<span class="nc" id="L821">                    myCurr.setExchangeRate(new OceanusRatio(myRatio, myCurrRate));</span>
+<span class="nc" id="L820">                    myCurr.setExchangeRate(new OceanusRatio(myRatio, myCurrRate));</span>
                 }
 
                 /* Set from currency */
-<span class="nc" id="L825">                myCurr.setFromCurrency(pCurrency);</span>
-<span class="nc" id="L826">            }</span>
+<span class="nc" id="L824">                myCurr.setFromCurrency(pCurrency);</span>
+<span class="nc" id="L825">            }</span>
 
             /* Set the new reporting currency */
-<span class="nc" id="L829">            theReporting = pCurrency;</span>
-<span class="nc" id="L830">        }</span>
+<span class="nc" id="L828">            theReporting = pCurrency;</span>
+<span class="nc" id="L829">        }</span>
     }
 
     /**
@@ -839,15 +838,15 @@ public class MoneyWiseExchangeRate
          * Report fields.
          */
         @SuppressWarnings(&quot;rawtypes&quot;)
-<span class="fc" id="L842">        private static final MetisFieldSet&lt;MoneyWiseExchangeRateDataMap&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseExchangeRateDataMap.class);</span>
+<span class="fc" id="L841">        private static final MetisFieldSet&lt;MoneyWiseExchangeRateDataMap&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseExchangeRateDataMap.class);</span>
 
         /*
          * UnderlyingMap Field Id.
          */
         static {
-<span class="fc" id="L848">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_MAPOFMAPS, MoneyWiseExchangeRateDataMap::getMapOfMaps);</span>
-<span class="fc" id="L849">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.XCHGRATE_MAP_MAPOFRATES, MoneyWiseExchangeRateDataMap::getMapOfRates);</span>
-<span class="fc" id="L850">        }</span>
+<span class="fc" id="L847">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_MAPOFMAPS, MoneyWiseExchangeRateDataMap::getMapOfMaps);</span>
+<span class="fc" id="L848">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.XCHGRATE_MAP_MAPOFRATES, MoneyWiseExchangeRateDataMap::getMapOfRates);</span>
+<span class="fc" id="L849">        }</span>
 
         /**
          * Map of Maps.
@@ -862,21 +861,21 @@ public class MoneyWiseExchangeRate
         /**
          * Constructor.
          */
-<span class="fc" id="L865">        public MoneyWiseExchangeRateDataMap() {</span>
+<span class="fc" id="L864">        public MoneyWiseExchangeRateDataMap() {</span>
             /* Create the maps */
-<span class="fc" id="L867">            theMapOfMaps = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L868">            theMapOfRates = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L869">        }</span>
+<span class="fc" id="L866">            theMapOfMaps = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L867">            theMapOfRates = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L868">        }</span>
 
         @SuppressWarnings(&quot;rawtypes&quot;)
         @Override
         public MetisFieldSet&lt;MoneyWiseExchangeRateDataMap&gt; getDataFieldSet() {
-<span class="nc" id="L874">            return FIELD_DEFS;</span>
+<span class="nc" id="L873">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L879">            return FIELD_DEFS.getName();</span>
+<span class="nc" id="L878">            return FIELD_DEFS.getName();</span>
         }
 
         /**
@@ -885,7 +884,7 @@ public class MoneyWiseExchangeRate
          * @return the map
          */
         private Map&lt;MoneyWiseCurrency, Map&lt;OceanusDate, Integer&gt;&gt; getMapOfMaps() {
-<span class="nc" id="L888">            return theMapOfMaps;</span>
+<span class="nc" id="L887">            return theMapOfMaps;</span>
         }
 
         /**
@@ -894,42 +893,42 @@ public class MoneyWiseExchangeRate
          * @return the map
          */
         private Map&lt;MoneyWiseCurrency, MoneyWiseRateList&gt; getMapOfRates() {
-<span class="nc" id="L897">            return theMapOfRates;</span>
+<span class="nc" id="L896">            return theMapOfRates;</span>
         }
 
         @Override
         public void resetMap() {
-<span class="fc" id="L902">            theMapOfMaps.clear();</span>
-<span class="fc" id="L903">            theMapOfRates.clear();</span>
-<span class="fc" id="L904">        }</span>
+<span class="fc" id="L901">            theMapOfMaps.clear();</span>
+<span class="fc" id="L902">            theMapOfRates.clear();</span>
+<span class="fc" id="L903">        }</span>
 
         @Override
         public void adjustForItem(final PrometheusDataItem pItem) {
             /* Access the Currency Id */
-<span class="fc" id="L909">            final MoneyWiseExchangeRate myItem = (MoneyWiseExchangeRate) pItem;</span>
-<span class="fc" id="L910">            final MoneyWiseCurrency myCurrency = myItem.getToCurrency();</span>
-<span class="pc bpc" id="L911" title="1 of 2 branches missed.">            if (myCurrency == null) {</span>
-<span class="nc" id="L912">                return;</span>
+<span class="fc" id="L908">            final MoneyWiseExchangeRate myItem = (MoneyWiseExchangeRate) pItem;</span>
+<span class="fc" id="L909">            final MoneyWiseCurrency myCurrency = myItem.getToCurrency();</span>
+<span class="pc bpc" id="L910" title="1 of 2 branches missed.">            if (myCurrency == null) {</span>
+<span class="nc" id="L911">                return;</span>
             }
 
             /* Access the map */
-<span class="fc" id="L916">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.computeIfAbsent(myCurrency, c -&gt; new HashMap&lt;&gt;());</span>
+<span class="fc" id="L915">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.computeIfAbsent(myCurrency, c -&gt; new HashMap&lt;&gt;());</span>
 
             /* Adjust rate count */
-<span class="fc" id="L919">            final OceanusDate myDate = myItem.getDate();</span>
-<span class="fc" id="L920">            final Integer myCount = myMap.get(myDate);</span>
-<span class="pc bpc" id="L921" title="1 of 2 branches missed.">            if (myCount == null) {</span>
-<span class="fc" id="L922">                myMap.put(myDate, PrometheusDataInstanceMap.ONE);</span>
+<span class="fc" id="L918">            final OceanusDate myDate = myItem.getDate();</span>
+<span class="fc" id="L919">            final Integer myCount = myMap.get(myDate);</span>
+<span class="pc bpc" id="L920" title="1 of 2 branches missed.">            if (myCount == null) {</span>
+<span class="fc" id="L921">                myMap.put(myDate, PrometheusDataInstanceMap.ONE);</span>
             } else {
-<span class="nc" id="L924">                myMap.put(myDate, myCount + 1);</span>
+<span class="nc" id="L923">                myMap.put(myDate, myCount + 1);</span>
             }
 
             /* Access the list */
-<span class="fc" id="L928">            final MoneyWiseRateList myList = theMapOfRates.computeIfAbsent(myCurrency, MoneyWiseRateList::new);</span>
+<span class="fc" id="L927">            final MoneyWiseRateList myList = theMapOfRates.computeIfAbsent(myCurrency, MoneyWiseRateList::new);</span>
 
             /* Add element to the list */
-<span class="fc" id="L931">            myList.add(myItem);</span>
-<span class="fc" id="L932">        }</span>
+<span class="fc" id="L930">            myList.add(myItem);</span>
+<span class="fc" id="L931">        }</span>
 
         /**
          * Check validity of Rate.
@@ -939,16 +938,16 @@ public class MoneyWiseExchangeRate
          */
         public boolean validRateCount(final MoneyWiseExchangeRate pItem) {
             /* Access the Details */
-<span class="fc" id="L942">            final MoneyWiseCurrency myCurrency = pItem.getToCurrency();</span>
-<span class="fc" id="L943">            final OceanusDate myDate = pItem.getDate();</span>
+<span class="fc" id="L941">            final MoneyWiseCurrency myCurrency = pItem.getToCurrency();</span>
+<span class="fc" id="L942">            final OceanusDate myDate = pItem.getDate();</span>
 
             /* Access the map */
-<span class="fc" id="L946">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.get(myCurrency);</span>
-<span class="pc bpc" id="L947" title="1 of 2 branches missed.">            if (myMap != null) {</span>
-<span class="fc" id="L948">                final Integer myResult = myMap.get(myDate);</span>
-<span class="fc" id="L949">                return PrometheusDataInstanceMap.ONE.equals(myResult);</span>
+<span class="fc" id="L945">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.get(myCurrency);</span>
+<span class="pc bpc" id="L946" title="1 of 2 branches missed.">            if (myMap != null) {</span>
+<span class="fc" id="L947">                final Integer myResult = myMap.get(myDate);</span>
+<span class="fc" id="L948">                return PrometheusDataInstanceMap.ONE.equals(myResult);</span>
             }
-<span class="nc" id="L951">            return false;</span>
+<span class="nc" id="L950">            return false;</span>
         }
 
         /**
@@ -961,9 +960,9 @@ public class MoneyWiseExchangeRate
         public boolean availableDate(final MoneyWiseCurrency pCurrency,
                                      final OceanusDate pDate) {
             /* Access the map */
-<span class="nc" id="L964">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.get(pCurrency);</span>
-<span class="nc bnc" id="L965" title="All 2 branches missed.">            return myMap == null</span>
-<span class="nc bnc" id="L966" title="All 2 branches missed.">                    || myMap.get(pDate) == null;</span>
+<span class="nc" id="L963">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.get(pCurrency);</span>
+<span class="nc bnc" id="L964" title="All 2 branches missed.">            return myMap == null</span>
+<span class="nc bnc" id="L965" title="All 2 branches missed.">                    || myMap.get(pDate) == null;</span>
         }
 
         /**
@@ -976,25 +975,25 @@ public class MoneyWiseExchangeRate
         public OceanusRatio getRateForDate(final MoneyWiseCurrency pCurrency,
                                            final OceanusDate pDate) {
             /* Access list for currency */
-<span class="nc" id="L979">            final MoneyWiseRateList myList = theMapOfRates.get(pCurrency);</span>
-<span class="nc bnc" id="L980" title="All 2 branches missed.">            if (myList != null) {</span>
+<span class="nc" id="L978">            final MoneyWiseRateList myList = theMapOfRates.get(pCurrency);</span>
+<span class="nc bnc" id="L979" title="All 2 branches missed.">            if (myList != null) {</span>
                 /* Loop through the rates */
-<span class="nc" id="L982">                final Iterator&lt;MoneyWiseExchangeRate&gt; myIterator = myList.iterator();</span>
-<span class="nc bnc" id="L983" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
-<span class="nc" id="L984">                    final MoneyWiseExchangeRate myCurr = myIterator.next();</span>
+<span class="nc" id="L981">                final Iterator&lt;MoneyWiseExchangeRate&gt; myIterator = myList.iterator();</span>
+<span class="nc bnc" id="L982" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
+<span class="nc" id="L983">                    final MoneyWiseExchangeRate myCurr = myIterator.next();</span>
 
                     /* Access the date */
-<span class="nc" id="L987">                    final OceanusDate myDate = myCurr.getDate();</span>
+<span class="nc" id="L986">                    final OceanusDate myDate = myCurr.getDate();</span>
 
                     /* break loop if we have the correct record */
-<span class="nc bnc" id="L990" title="All 2 branches missed.">                    if (myDate.compareTo(pDate) &gt;= 0) {</span>
-<span class="nc" id="L991">                        return myCurr.getExchangeRate();</span>
+<span class="nc bnc" id="L989" title="All 2 branches missed.">                    if (myDate.compareTo(pDate) &gt;= 0) {</span>
+<span class="nc" id="L990">                        return myCurr.getExchangeRate();</span>
                     }
-<span class="nc" id="L993">                }</span>
+<span class="nc" id="L992">                }</span>
             }
 
             /* return null */
-<span class="nc" id="L997">            return null;</span>
+<span class="nc" id="L996">            return null;</span>
         }
 
         /**
@@ -1007,40 +1006,40 @@ public class MoneyWiseExchangeRate
         public OceanusRatio[] getRatesForRange(final MoneyWiseCurrency pCurrency,
                                                final OceanusDateRange pRange) {
             /* Set rate */
-<span class="nc" id="L1010">            OceanusRatio myFirst = OceanusRatio.ONE;</span>
-<span class="nc" id="L1011">            OceanusRatio myLatest = OceanusRatio.ONE;</span>
-<span class="nc" id="L1012">            final OceanusDate myStart = pRange.getStart();</span>
+<span class="nc" id="L1009">            OceanusRatio myFirst = OceanusRatio.ONE;</span>
+<span class="nc" id="L1010">            OceanusRatio myLatest = OceanusRatio.ONE;</span>
+<span class="nc" id="L1011">            final OceanusDate myStart = pRange.getStart();</span>
 
             /* Access list for security */
-<span class="nc" id="L1015">            final MoneyWiseRateList myList = theMapOfRates.get(pCurrency);</span>
-<span class="nc bnc" id="L1016" title="All 2 branches missed.">            if (myList != null) {</span>
+<span class="nc" id="L1014">            final MoneyWiseRateList myList = theMapOfRates.get(pCurrency);</span>
+<span class="nc bnc" id="L1015" title="All 2 branches missed.">            if (myList != null) {</span>
                 /* Loop through the rates */
-<span class="nc" id="L1018">                final ListIterator&lt;MoneyWiseExchangeRate&gt; myIterator = myList.listIterator(myList.size());</span>
-<span class="nc bnc" id="L1019" title="All 2 branches missed.">                while (myIterator.hasPrevious()) {</span>
-<span class="nc" id="L1020">                    final MoneyWiseExchangeRate myCurr = myIterator.previous();</span>
+<span class="nc" id="L1017">                final ListIterator&lt;MoneyWiseExchangeRate&gt; myIterator = myList.listIterator(myList.size());</span>
+<span class="nc bnc" id="L1018" title="All 2 branches missed.">                while (myIterator.hasPrevious()) {</span>
+<span class="nc" id="L1019">                    final MoneyWiseExchangeRate myCurr = myIterator.previous();</span>
 
                     /* Check for the range of the date */
-<span class="nc" id="L1023">                    final OceanusDate myDate = myCurr.getDate();</span>
-<span class="nc" id="L1024">                    final int iComp = pRange.compareToDate(myDate);</span>
+<span class="nc" id="L1022">                    final OceanusDate myDate = myCurr.getDate();</span>
+<span class="nc" id="L1023">                    final int iComp = pRange.compareToDate(myDate);</span>
 
                     /* If this is later than the range we are finished */
-<span class="nc bnc" id="L1027" title="All 2 branches missed.">                    if (iComp &lt; 0) {</span>
-<span class="nc" id="L1028">                        break;</span>
+<span class="nc bnc" id="L1026" title="All 2 branches missed.">                    if (iComp &lt; 0) {</span>
+<span class="nc" id="L1027">                        break;</span>
                     }
 
                     /* Record as best rate */
-<span class="nc" id="L1032">                    myLatest = myCurr.getExchangeRate();</span>
+<span class="nc" id="L1031">                    myLatest = myCurr.getExchangeRate();</span>
 
                     /* Adjust first rate */
-<span class="nc bnc" id="L1035" title="All 2 branches missed.">                    if (iComp &gt; 0</span>
-<span class="nc bnc" id="L1036" title="All 2 branches missed.">                            || myDate.compareTo(myStart) == 0) {</span>
-<span class="nc" id="L1037">                        myFirst = myLatest;</span>
+<span class="nc bnc" id="L1034" title="All 2 branches missed.">                    if (iComp &gt; 0</span>
+<span class="nc bnc" id="L1035" title="All 2 branches missed.">                            || myDate.compareTo(myStart) == 0) {</span>
+<span class="nc" id="L1036">                        myFirst = myLatest;</span>
                     }
-<span class="nc" id="L1039">                }</span>
+<span class="nc" id="L1038">                }</span>
             }
 
             /* Return the rates */
-<span class="nc" id="L1043">            return new OceanusRatio[]</span>
+<span class="nc" id="L1042">            return new OceanusRatio[]</span>
                     {myFirst, myLatest};
         }
 
@@ -1052,10 +1051,10 @@ public class MoneyWiseExchangeRate
          */
         public ListIterator&lt;MoneyWiseExchangeRate&gt; rateIterator(final MoneyWiseCurrency pCurrency) {
             /* Access list for currency */
-<span class="nc" id="L1055">            final MoneyWiseRateList myList = theMapOfRates.get(pCurrency);</span>
-<span class="nc bnc" id="L1056" title="All 2 branches missed.">            return myList != null</span>
-<span class="nc" id="L1057">                    ? myList.listIterator(myList.size())</span>
-<span class="nc" id="L1058">                    : null;</span>
+<span class="nc" id="L1054">            final MoneyWiseRateList myList = theMapOfRates.get(pCurrency);</span>
+<span class="nc bnc" id="L1055" title="All 2 branches missed.">            return myList != null</span>
+<span class="nc" id="L1056">                    ? myList.listIterator(myList.size())</span>
+<span class="nc" id="L1057">                    : null;</span>
         }
 
         /**
@@ -1066,14 +1065,14 @@ public class MoneyWiseExchangeRate
             /**
              * Report fields.
              */
-<span class="fc" id="L1069">            private static final MetisFieldSet&lt;MoneyWiseRateList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseRateList.class);</span>
+<span class="fc" id="L1068">            private static final MetisFieldSet&lt;MoneyWiseRateList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseRateList.class);</span>
 
             /*
              * UnderlyingMap Field Id.
              */
             static {
-<span class="fc" id="L1075">                FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, MoneyWiseRateList::size);</span>
-<span class="fc" id="L1076">            }</span>
+<span class="fc" id="L1074">                FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, MoneyWiseRateList::size);</span>
+<span class="fc" id="L1075">            }</span>
 
             /**
              * The list.
@@ -1090,35 +1089,35 @@ public class MoneyWiseExchangeRate
              *
              * @param pCurrency the currency
              */
-<span class="fc" id="L1093">            private MoneyWiseRateList(final MoneyWiseCurrency pCurrency) {</span>
-<span class="fc" id="L1094">                theCurrency = pCurrency;</span>
-<span class="fc" id="L1095">                theList = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L1096">            }</span>
+<span class="fc" id="L1092">            private MoneyWiseRateList(final MoneyWiseCurrency pCurrency) {</span>
+<span class="fc" id="L1093">                theCurrency = pCurrency;</span>
+<span class="fc" id="L1094">                theList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L1095">            }</span>
 
             @Override
             public MetisFieldSet&lt;MoneyWiseRateList&gt; getDataFieldSet() {
-<span class="nc" id="L1100">                return FIELD_DEFS;</span>
+<span class="nc" id="L1099">                return FIELD_DEFS;</span>
             }
 
             @Override
             public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L1105">                return theCurrency.formatObject(pFormatter)</span>
+<span class="nc" id="L1104">                return theCurrency.formatObject(pFormatter)</span>
                         + &quot;(&quot;
-<span class="nc" id="L1107">                        + size()</span>
+<span class="nc" id="L1106">                        + size()</span>
                         + &quot;)&quot;;
             }
 
             @Override
             public String toString() {
-<span class="nc" id="L1113">                return theCurrency.toString()</span>
+<span class="nc" id="L1112">                return theCurrency.toString()</span>
                         + &quot;(&quot;
-<span class="nc" id="L1115">                        + size()</span>
+<span class="nc" id="L1114">                        + size()</span>
                         + &quot;)&quot;;
             }
 
             @Override
             public List&lt;MoneyWiseExchangeRate&gt; getUnderlyingList() {
-<span class="fc" id="L1121">                return theList;</span>
+<span class="fc" id="L1120">                return theList;</span>
             }
         }
     }

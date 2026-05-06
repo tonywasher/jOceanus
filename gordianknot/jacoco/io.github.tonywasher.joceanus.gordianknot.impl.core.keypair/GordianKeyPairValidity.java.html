@@ -18,29 +18,33 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -59,7 +63,7 @@ public final class GordianKeyPairValidity {
     /**
      * Server X500Name.
      */
-<span class="fc" id="L62">    private static final X500Name SERVER = new X500NameBuilder(BCStyle.INSTANCE).addRDN(BCStyle.CN, &quot;Server&quot;).build();</span>
+<span class="fc" id="L66">    private static final X500Name SERVER = new X500NameBuilder(BCStyle.INSTANCE).addRDN(BCStyle.CN, &quot;Server&quot;).build();</span>
 
     /**
      * Private constructor.
@@ -76,17 +80,15 @@ public final class GordianKeyPairValidity {
      */
     public static void checkValidity(final GordianBaseFactory pFactory,
                                      final GordianKeyPair pKeyPair) throws GordianException {
-<span class="fc" id="L79">        final Object myCheck = getValidityCheck(pFactory, pKeyPair);</span>
-<span class="fc bfc" id="L80" title="All 2 branches covered.">        if (myCheck instanceof GordianSignatureSpec mySpec) {</span>
-<span class="fc" id="L81">            checkValidity(pFactory, pKeyPair, mySpec);</span>
-<span class="fc bfc" id="L82" title="All 2 branches covered.">        } else if (myCheck instanceof GordianEncryptorSpec mySpec) {</span>
-<span class="fc" id="L83">            checkValidity(pFactory, pKeyPair, mySpec);</span>
-<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        } else if (myCheck instanceof GordianAgreementSpec mySpec) {</span>
-<span class="fc" id="L85">            checkValidity(pFactory, pKeyPair, mySpec);</span>
-        } else {
-<span class="nc" id="L87">            throw new GordianLogicException(&quot;Unexpected keyPairType&quot;);</span>
+<span class="fc" id="L83">        final Object myCheck = getValidityCheck(pFactory, pKeyPair);</span>
+<span class="pc bpc" id="L84" title="1 of 4 branches missed.">        switch (myCheck) {</span>
+<span class="fc" id="L85">            case GordianSignatureSpec mySpec -&gt; checkValidity(pFactory, pKeyPair, mySpec);</span>
+<span class="fc" id="L86">            case GordianEncryptorSpec mySpec -&gt; checkValidity(pFactory, pKeyPair, mySpec);</span>
+
+<span class="fc" id="L88">            case GordianAgreementSpec mySpec -&gt; checkValidity(pFactory, pKeyPair, mySpec);</span>
+<span class="nc" id="L89">            default -&gt; throw new GordianLogicException(&quot;Unexpected keyPairType&quot;);</span>
         }
-<span class="fc" id="L89">    }</span>
+<span class="fc" id="L91">    }</span>
 
     /**
      * Check keyPair validity via signature.
@@ -100,25 +102,26 @@ public final class GordianKeyPairValidity {
                                       final GordianKeyPair pKeyPair,
                                       final GordianSignatureSpec pSignSpec) throws GordianException {
         /* Use default personalisation as the data to sign */
-<span class="fc" id="L103">        final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();</span>
+<span class="fc" id="L105">        final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();</span>
 
         /* Create signer */
-<span class="fc" id="L106">        final GordianSignatureFactory mySigns = pFactory.getAsyncFactory().getSignatureFactory();</span>
-<span class="fc" id="L107">        final GordianSignature mySigner = mySigns.createSigner(pSignSpec);</span>
+<span class="fc" id="L108">        final GordianSignatureFactory mySigns = pFactory.getAsyncFactory().getSignatureFactory();</span>
+<span class="fc" id="L109">        final GordianSignature mySigner = mySigns.createSigner(pSignSpec);</span>
 
         /* Create signature */
-<span class="fc" id="L110">        final GordianSignParams myParams = GordianSignParams.keyPair(pKeyPair);</span>
-<span class="fc" id="L111">        mySigner.initForSigning(myParams);</span>
-<span class="fc" id="L112">        mySigner.update(myData);</span>
-<span class="fc" id="L113">        final byte[] mySignature = mySigner.sign();</span>
+<span class="fc" id="L112">        final GordianNewSignParamsBuilder myBuilder = mySigns.newSignParamsBuilder();</span>
+<span class="fc" id="L113">        final GordianNewSignParams myParams = myBuilder.keyPair(pKeyPair);</span>
+<span class="fc" id="L114">        mySigner.initForSigning(myParams);</span>
+<span class="fc" id="L115">        mySigner.update(myData);</span>
+<span class="fc" id="L116">        final byte[] mySignature = mySigner.sign();</span>
 
         /* Validate signature */
-<span class="fc" id="L116">        mySigner.initForVerify(myParams);</span>
-<span class="fc" id="L117">        mySigner.update(myData);</span>
-<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        if (!mySigner.verify(mySignature)) {</span>
-<span class="nc" id="L119">            throw new GordianDataException(ERRORMSG + &quot; &quot; + pSignSpec);</span>
+<span class="fc" id="L119">        mySigner.initForVerify(myParams);</span>
+<span class="fc" id="L120">        mySigner.update(myData);</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        if (!mySigner.verify(mySignature)) {</span>
+<span class="nc" id="L122">            throw new GordianDataException(ERRORMSG + &quot; &quot; + pSignSpec);</span>
         }
-<span class="fc" id="L121">    }</span>
+<span class="fc" id="L124">    }</span>
 
     /**
      * Check keyPair validity via encryption.
@@ -132,25 +135,25 @@ public final class GordianKeyPairValidity {
                                       final GordianKeyPair pKeyPair,
                                       final GordianEncryptorSpec pEncryptSpec) throws GordianException {
         /* Use default personalisation as the data to encrypt */
-<span class="fc" id="L135">        final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();</span>
+<span class="fc" id="L138">        final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();</span>
 
         /* Create encryptor */
-<span class="fc" id="L138">        final GordianEncryptorFactory myEncrypts = pFactory.getAsyncFactory().getEncryptorFactory();</span>
-<span class="fc" id="L139">        final GordianEncryptor myEncryptor = myEncrypts.createEncryptor(pEncryptSpec);</span>
+<span class="fc" id="L141">        final GordianEncryptorFactory myEncrypts = pFactory.getAsyncFactory().getEncryptorFactory();</span>
+<span class="fc" id="L142">        final GordianEncryptor myEncryptor = myEncrypts.createEncryptor(pEncryptSpec);</span>
 
         /* Encrypt data */
-<span class="fc" id="L142">        myEncryptor.initForEncrypt(pKeyPair);</span>
-<span class="fc" id="L143">        final byte[] myEncrypted = myEncryptor.encrypt(myData);</span>
+<span class="fc" id="L145">        myEncryptor.initForEncrypt(pKeyPair);</span>
+<span class="fc" id="L146">        final byte[] myEncrypted = myEncryptor.encrypt(myData);</span>
 
         /* decrypt encrypted data */
-<span class="fc" id="L146">        myEncryptor.initForDecrypt(pKeyPair);</span>
-<span class="fc" id="L147">        final byte[] myResult = myEncryptor.decrypt(myEncrypted);</span>
+<span class="fc" id="L149">        myEncryptor.initForDecrypt(pKeyPair);</span>
+<span class="fc" id="L150">        final byte[] myResult = myEncryptor.decrypt(myEncrypted);</span>
 
         /* Check that we have arrived back at the original data */
-<span class="pc bpc" id="L150" title="1 of 2 branches missed.">        if (!Arrays.equals(myData, myResult)) {</span>
-<span class="nc" id="L151">            throw new GordianDataException(ERRORMSG + &quot; &quot; + pEncryptSpec);</span>
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">        if (!Arrays.equals(myData, myResult)) {</span>
+<span class="nc" id="L154">            throw new GordianDataException(ERRORMSG + &quot; &quot; + pEncryptSpec);</span>
         }
-<span class="fc" id="L153">    }</span>
+<span class="fc" id="L156">    }</span>
 
     /**
      * Check keyPair validity via agreement.
@@ -164,25 +167,25 @@ public final class GordianKeyPairValidity {
                                       final GordianKeyPair pKeyPair,
                                       final GordianAgreementSpec pAgreeSpec) throws GordianException {
         /* Create agreement on client side */
-<span class="fc" id="L167">        final GordianAgreementFactory myAgrees = pFactory.getAsyncFactory().getAgreementFactory();</span>
-<span class="fc" id="L168">        final GordianCertificate myCert = myAgrees.newMiniCertificate(SERVER, pKeyPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));</span>
-<span class="fc" id="L169">        GordianAgreementParams myParams = myAgrees.newAgreementParams(pAgreeSpec, GordianLength.LEN_256.getByteLength())</span>
-<span class="fc" id="L170">                .setServerCertificate(myCert);</span>
-<span class="fc" id="L171">        GordianAgreement myAgreement = myAgrees.createAgreement(myParams);</span>
-<span class="fc" id="L172">        final byte[] myHello = myAgreement.nextMessage();</span>
-<span class="fc" id="L173">        final byte[] myClient = (byte[]) myAgreement.getResult();</span>
+<span class="fc" id="L170">        final GordianAgreementFactory myAgrees = pFactory.getAsyncFactory().getAgreementFactory();</span>
+<span class="fc" id="L171">        final GordianCertificate myCert = myAgrees.newMiniCertificate(SERVER, pKeyPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));</span>
+<span class="fc" id="L172">        GordianAgreementParams myParams = myAgrees.newAgreementParams(pAgreeSpec, GordianLength.LEN_256.getByteLength())</span>
+<span class="fc" id="L173">                .setServerCertificate(myCert);</span>
+<span class="fc" id="L174">        GordianAgreement myAgreement = myAgrees.createAgreement(myParams);</span>
+<span class="fc" id="L175">        final byte[] myHello = myAgreement.nextMessage();</span>
+<span class="fc" id="L176">        final byte[] myClient = (byte[]) myAgreement.getResult();</span>
 
         /* Accept agreement on server side */
-<span class="fc" id="L176">        myAgreement = myAgrees.parseAgreementMessage(myHello);</span>
-<span class="fc" id="L177">        myParams = myAgreement.getAgreementParams().setServerCertificate(myCert);</span>
-<span class="fc" id="L178">        myAgreement.updateParams(myParams);</span>
-<span class="fc" id="L179">        final byte[] myServer = (byte[]) myAgreement.getResult();</span>
+<span class="fc" id="L179">        myAgreement = myAgrees.parseAgreementMessage(myHello);</span>
+<span class="fc" id="L180">        myParams = myAgreement.getAgreementParams().setServerCertificate(myCert);</span>
+<span class="fc" id="L181">        myAgreement.updateParams(myParams);</span>
+<span class="fc" id="L182">        final byte[] myServer = (byte[]) myAgreement.getResult();</span>
 
         /* Check that we have the same result at either end */
-<span class="pc bpc" id="L182" title="1 of 2 branches missed.">        if (!Arrays.equals(myClient, myServer)) {</span>
-<span class="nc" id="L183">            throw new GordianDataException(ERRORMSG + &quot; &quot; + pAgreeSpec);</span>
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">        if (!Arrays.equals(myClient, myServer)) {</span>
+<span class="nc" id="L186">            throw new GordianDataException(ERRORMSG + &quot; &quot; + pAgreeSpec);</span>
         }
-<span class="fc" id="L185">    }</span>
+<span class="fc" id="L188">    }</span>
 
     /**
      * Obtain validity check for keyPair.
@@ -190,49 +193,27 @@ public final class GordianKeyPairValidity {
      * @param pFactory the factory
      * @param pKeyPair the keyPair
      * @return the validity check
+     * @throws GordianException on error
      */
     private static Object getValidityCheck(final GordianBaseFactory pFactory,
-                                           final GordianKeyPair pKeyPair) {
+                                           final GordianKeyPair pKeyPair) throws GordianException {
         /* Switch on keyType */
-<span class="fc" id="L197">        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();</span>
-<span class="pc bpc" id="L198" title="1 of 6 branches missed.">        switch (mySpec.getKeyPairType()) {</span>
-            case RSA:
-            case DSA:
-            case EDDSA:
-            case EC:
-            case GOST2012:
-            case DSTU4145:
-            case SM2:
-            case SLHDSA:
-            case MLDSA:
-            case FALCON:
-            case MAYO:
-            case SNOVA:
-            case PICNIC:
-            case XMSS:
-            case LMS:
-<span class="fc" id="L214">                return pFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);</span>
-            case ELGAMAL:
-<span class="fc" id="L216">                return GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));</span>
-            case DH:
-<span class="fc" id="L218">                return GordianAgreementSpecBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);</span>
-            case XDH:
-<span class="fc bfc" id="L220" title="All 2 branches covered.">                return mySpec.getEdwardsElliptic().is25519()</span>
-<span class="fc" id="L221">                        ? GordianAgreementSpecBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF)</span>
-<span class="fc" id="L222">                        : GordianAgreementSpecBuilder.anon(mySpec, GordianAgreementKDF.SHA512KDF);</span>
-            case CMCE:
-            case FRODO:
-            case SABER:
-            case MLKEM:
-            case HQC:
-            case BIKE:
-            case NTRU:
-            case NTRUPRIME:
-            case NEWHOPE:
-<span class="fc" id="L232">                return GordianAgreementSpecBuilder.kem(mySpec, GordianAgreementKDF.NONE);</span>
-            default:
-<span class="nc" id="L234">                return null;</span>
-        }
+<span class="fc" id="L201">        final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();</span>
+<span class="fc" id="L202">        final GordianEncryptorSpecBuilder myEncBuilder = GordianCoreEncryptorSpecBuilder.newInstance();</span>
+<span class="fc" id="L203">        final GordianAgreementSpecBuilder myAgreeBuilder = GordianCoreAgreementSpecBuilder.newInstance();</span>
+<span class="fc" id="L204">        final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();</span>
+<span class="pc bpc" id="L205" title="1 of 6 branches missed.">        return switch (mySpec.getKeyPairType()) {</span>
+            case RSA, DSA, EDDSA, EC, GOST, DSTU, SM2, SLHDSA, MLDSA, FALCON, MAYO, SNOVA, PICNIC, XMSS, LMS -&gt;
+<span class="fc" id="L207">                    pFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);</span>
+<span class="fc" id="L208">            case ELGAMAL -&gt; myEncBuilder.elGamal(myBuilder.sha2(GordianLength.LEN_256));</span>
+<span class="fc" id="L209">            case DH -&gt; myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">            case XDH -&gt; mySpec.getEdwardsSpec().is25519()</span>
+<span class="fc" id="L211">                    ? myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF)</span>
+<span class="fc" id="L212">                    : myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA512KDF);</span>
+            case CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE -&gt;
+<span class="fc" id="L214">                    myAgreeBuilder.kem(mySpec, GordianAgreementKDF.NONE);</span>
+<span class="nc" id="L215">            default -&gt; throw new GordianDataException(&quot;No validity check found for :&quot; + mySpec.getKeyPairType());</span>
+        };
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

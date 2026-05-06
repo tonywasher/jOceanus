@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreMacParams.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.mac</a> &gt; <span class="el_source">GordianCoreMacParams.java</span></div><h1>GordianCoreMacParams.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.mac;
+
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParams;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import org.bouncycastle.util.Arrays;
+
+/**
+ * Core Mac Parameters.
+ */
+public class GordianCoreMacParams
+        implements GordianMacParams {
+    /**
+     * The Key.
+     */
+    private GordianKey&lt;GordianMacSpec&gt; theKey;
+
+    /**
+     * The Nonce.
+     */
+    private byte[] theNonce;
+
+    /**
+     * Random Nonce requested?
+     */
+    private boolean randomNonce;
+
+    /**
+     * Personalisation.
+     */
+    private byte[] thePersonal;
+
+    /**
+     * Output length.
+     */
+    private long theOutLen;
+
+    /**
+     * The fanOut.
+     */
+    private short theFanOut;
+
+    /**
+     * The maxDepth.
+     */
+    private short theMaxDepth;
+
+    /**
+     * The leafLength.
+     */
+    private int theLeafLen;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L73">    GordianCoreMacParams() {</span>
+<span class="fc" id="L74">    }</span>
+
+    @Override
+    public GordianKey&lt;GordianMacSpec&gt; getKey() {
+<span class="fc" id="L78">        return theKey;</span>
+    }
+
+    /**
+     * Set the key.
+     *
+     * @param pKey the key
+     */
+    void setKey(final GordianKey&lt;GordianMacSpec&gt; pKey) {
+<span class="fc" id="L87">        theKey = pKey;</span>
+<span class="fc" id="L88">    }</span>
+
+    @Override
+    public byte[] getNonce() {
+<span class="fc" id="L92">        return Arrays.clone(theNonce);</span>
+    }
+
+    /**
+     * Set the nonce.
+     *
+     * @param pNonce the nonce
+     */
+    void setNonce(final byte[] pNonce) {
+<span class="fc" id="L101">        theNonce = Arrays.clone(pNonce);</span>
+<span class="fc" id="L102">    }</span>
+
+    @Override
+    public boolean randomNonce() {
+<span class="fc" id="L106">        return randomNonce;</span>
+    }
+
+    /**
+     * Set the random nonce.
+     */
+    void setRandomNonce() {
+<span class="fc" id="L113">        randomNonce = true;</span>
+<span class="fc" id="L114">    }</span>
+
+    @Override
+    public byte[] getPersonal() {
+<span class="nc" id="L118">        return Arrays.clone(thePersonal);</span>
+    }
+
+    /**
+     * Set the personalisation.
+     *
+     * @param pPersonal the personalisation
+     */
+    void setPersonal(final byte[] pPersonal) {
+<span class="nc" id="L127">        thePersonal = Arrays.clone(pPersonal);</span>
+<span class="nc" id="L128">    }</span>
+
+    @Override
+    public long getOutputLength() {
+<span class="nc" id="L132">        return theOutLen;</span>
+    }
+
+    /**
+     * Set the output length.
+     *
+     * @param pLength the output length
+     */
+    void setOutLen(final long pLength) {
+<span class="nc" id="L141">        theOutLen = pLength;</span>
+<span class="nc" id="L142">    }</span>
+
+    @Override
+    public int getTreeLeafLen() {
+<span class="nc" id="L146">        return theLeafLen;</span>
+    }
+
+    /**
+     * Set the tree leaf length.
+     *
+     * @param pLength the leaf length
+     */
+    void setTreeLeafLen(final int pLength) {
+<span class="nc" id="L155">        theLeafLen = pLength;</span>
+<span class="nc" id="L156">    }</span>
+
+    @Override
+    public short getTreeFanOut() {
+<span class="nc" id="L160">        return theFanOut;</span>
+    }
+
+    /**
+     * Set the tree fanOut.
+     *
+     * @param pFanOut the fanOut
+     */
+    void setTreeFanOut(final short pFanOut) {
+<span class="nc" id="L169">        theFanOut = pFanOut;</span>
+<span class="nc" id="L170">    }</span>
+
+    @Override
+    public short getTreeMaxDepth() {
+<span class="nc" id="L174">        return theMaxDepth;</span>
+    }
+
+    /**
+     * Set the tree max depth.
+     *
+     * @param pDepth the max depth
+     */
+    void setTreeMaxDepth(final short pDepth) {
+<span class="nc" id="L183">        theMaxDepth = pDepth;</span>
+<span class="nc" id="L184">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

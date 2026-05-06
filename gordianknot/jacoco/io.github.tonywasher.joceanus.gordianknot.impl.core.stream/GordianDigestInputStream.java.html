@@ -123,23 +123,20 @@ class GordianDigestInputStream
         @Override
         public int processBytes(final byte[] pBuffer,
                                 final int pLength) throws GordianException {
-            /* Initialise variables */
-<span class="fc" id="L127">            final int iLength = pLength;</span>
-
             /* If we have EOF from the input stream */
-<span class="fc bfc" id="L130" title="All 2 branches covered.">            if (iLength == -1) {</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">            if (pLength == -1) {</span>
                 /* Record the fact and reset the read length to zero */
-<span class="fc" id="L132">                setEOFSeen();</span>
-<span class="fc" id="L133">                theStream.checkResult();</span>
-<span class="fc" id="L134">                return -1;</span>
+<span class="fc" id="L129">                setEOFSeen();</span>
+<span class="fc" id="L130">                theStream.checkResult();</span>
+<span class="fc" id="L131">                return -1;</span>
             }
 
             /* Update the digest */
-<span class="fc" id="L138">            theDigest.update(pBuffer, 0, iLength);</span>
+<span class="fc" id="L135">            theDigest.update(pBuffer, 0, pLength);</span>
 
             /* Set up buffer variables */
-<span class="fc" id="L141">            setBuffer(pBuffer, iLength);</span>
-<span class="fc" id="L142">            return iLength;</span>
+<span class="fc" id="L138">            setBuffer(pBuffer, pLength);</span>
+<span class="fc" id="L139">            return pLength;</span>
         }
     }
 }

@@ -31,8 +31,8 @@
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.bouncycastle.asn1.ASN1BitString;
@@ -229,15 +229,16 @@
 <a class="jxr_linenumber" name="L221" href="#L221">221</a>     <strong class="jxr_keyword">static</strong> byte[] createKeyId(<strong class="jxr_keyword">final</strong> <a name="GordianFactory" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/factory/GordianFactory.html#GordianFactory">GordianFactory</a> pFactory,
 <a class="jxr_linenumber" name="L222" href="#L222">222</a>                               <strong class="jxr_keyword">final</strong> byte[] pEncodedPublicKey) <strong class="jxr_keyword">throws</strong> <a name="GordianException" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/base/GordianException.html#GordianException">GordianException</a> {
 <a class="jxr_linenumber" name="L223" href="#L223">223</a>         <em class="jxr_comment">/* Build the hash */</em>
-<a class="jxr_linenumber" name="L224" href="#L224">224</a>         <strong class="jxr_keyword">final</strong> <a name="GordianDigestSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/digest/GordianDigestSpec.html#GordianDigestSpec">GordianDigestSpec</a> mySpec = GordianDigestSpecBuilder.sha3(GordianLength.LEN_256);
-<a class="jxr_linenumber" name="L225" href="#L225">225</a>         <strong class="jxr_keyword">final</strong> <a name="GordianDigestFactory" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/digest/GordianDigestFactory.html#GordianDigestFactory">GordianDigestFactory</a> myDigests = pFactory.getDigestFactory();
-<a class="jxr_linenumber" name="L226" href="#L226">226</a>         <strong class="jxr_keyword">final</strong> <a name="GordianDigest" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/digest/GordianDigest.html#GordianDigest">GordianDigest</a> myDigest = myDigests.createDigest(mySpec);
-<a class="jxr_linenumber" name="L227" href="#L227">227</a>         myDigest.update(pEncodedPublicKey);
-<a class="jxr_linenumber" name="L228" href="#L228">228</a> 
-<a class="jxr_linenumber" name="L229" href="#L229">229</a>         <em class="jxr_comment">/* Create the keyId */</em>
-<a class="jxr_linenumber" name="L230" href="#L230">230</a>         <strong class="jxr_keyword">return</strong> myDigest.finish();
-<a class="jxr_linenumber" name="L231" href="#L231">231</a>     }
-<a class="jxr_linenumber" name="L232" href="#L232">232</a> }
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>         <strong class="jxr_keyword">final</strong> <a name="GordianDigestFactory" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/digest/GordianDigestFactory.html#GordianDigestFactory">GordianDigestFactory</a> myDigests = pFactory.getDigestFactory();
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>         <strong class="jxr_keyword">final</strong> <a name="GordianDigestSpecBuilder" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/digest/spec/GordianDigestSpecBuilder.html#GordianDigestSpecBuilder">GordianDigestSpecBuilder</a> myBuilder = myDigests.newDigestSpecBuilder();
+<a class="jxr_linenumber" name="L226" href="#L226">226</a>         <strong class="jxr_keyword">final</strong> <a name="GordianDigestSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/digest/spec/GordianDigestSpec.html#GordianDigestSpec">GordianDigestSpec</a> mySpec = myBuilder.sha3(GordianLength.LEN_256);
+<a class="jxr_linenumber" name="L227" href="#L227">227</a>         <strong class="jxr_keyword">final</strong> <a name="GordianDigest" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/digest/GordianDigest.html#GordianDigest">GordianDigest</a> myDigest = myDigests.createDigest(mySpec);
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>         myDigest.update(pEncodedPublicKey);
+<a class="jxr_linenumber" name="L229" href="#L229">229</a> 
+<a class="jxr_linenumber" name="L230" href="#L230">230</a>         <em class="jxr_comment">/* Create the keyId */</em>
+<a class="jxr_linenumber" name="L231" href="#L231">231</a>         <strong class="jxr_keyword">return</strong> myDigest.finish();
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>     }
+<a class="jxr_linenumber" name="L233" href="#L233">233</a> }
 </pre>
 <hr/>
 <div id="footer">© 2012–2026</div>

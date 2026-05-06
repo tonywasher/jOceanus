@@ -165,14 +165,14 @@ public final class GordianSP800HMacDRBG
                         final boolean isPredictionResistant) {
         /* Check valid # of bits */
 <span class="fc" id="L167">        final int myLen = pOutput.length;</span>
-<span class="fc" id="L168">        final int myNumBits = myLen &lt;&lt; GordianCoreRandomFactory.BIT_SHIFT;</span>
-<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        if (myNumBits &gt; GordianCoreRandomFactory.MAX_BITS_REQUEST) {</span>
+<span class="fc" id="L168">        final int myNumBits = myLen &lt;&lt; GordianRandomConstants.BIT_SHIFT;</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        if (myNumBits &gt; GordianRandomConstants.MAX_BITS_REQUEST) {</span>
 <span class="nc" id="L170">            throw new IllegalArgumentException(&quot;Number of bits per request limited to &quot;</span>
-                    + GordianCoreRandomFactory.MAX_BITS_REQUEST);
+                    + GordianRandomConstants.MAX_BITS_REQUEST);
         }
 
         /* Check for reSeed required */
-<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        if (theReseedCounter.compareLimit(GordianCoreRandomFactory.RESEED_MAX)) {</span>
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        if (theReseedCounter.compareLimit(GordianRandomConstants.RESEED_MAX)) {</span>
 <span class="nc" id="L176">            return -1;</span>
         }
 
@@ -242,7 +242,7 @@ public final class GordianSP800HMacDRBG
 
     @Override
     public String getAlgorithm() {
-<span class="nc" id="L245">        return GordianCoreRandomFactory.SP800_PREFIX + theHMac.getMacSpec().toString();</span>
+<span class="nc" id="L245">        return GordianRandomConstants.SP800_PREFIX + theHMac.getMacSpec().toString();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

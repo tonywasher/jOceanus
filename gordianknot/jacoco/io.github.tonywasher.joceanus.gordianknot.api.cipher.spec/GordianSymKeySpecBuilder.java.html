@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSymKeySpecBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.cipher.spec</a> &gt; <span class="el_source">GordianSymKeySpecBuilder.java</span></div><h1>GordianSymKeySpecBuilder.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+
+/**
+ * SymKey specification Builder.
+ */
+public interface GordianSymKeySpecBuilder {
+    /**
+     * Define SymKeyType.
+     *
+     * @param pType the type
+     * @return the Builder
+     */
+    GordianSymKeySpecBuilder withType(GordianSymKeyType pType);
+
+    /**
+     * Define BlockLength.
+     *
+     * @param pBlockLength the blockLength
+     * @return the Builder
+     */
+    GordianSymKeySpecBuilder withBlockLength(GordianLength pBlockLength);
+
+    /**
+     * Define KeyLength.
+     *
+     * @param pKeyLength the keyLength
+     * @return the Builder
+     */
+    GordianSymKeySpecBuilder withKeyLength(GordianLength pKeyLength);
+
+    /**
+     * Build symKeySpec.
+     *
+     * @return the symKeySpec
+     */
+    GordianSymKeySpec build();
+
+    /**
+     * Create generic.
+     *
+     * @param pKeyType   the keyType
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec symKey(final GordianSymKeyType pKeyType,
+                                     final GordianLength pKeyLength) {
+<span class="fc" id="L66">        return withType(pKeyType).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create generic.
+     *
+     * @param pKeyType     the keyType
+     * @param pBlockLength the blockLength
+     * @param pKeyLength   the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec symKey(final GordianSymKeyType pKeyType,
+                                     final GordianLength pBlockLength,
+                                     final GordianLength pKeyLength) {
+<span class="fc" id="L80">        return withType(pKeyType).withBlockLength(pBlockLength).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create aes.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec aes(final GordianLength pKeyLength) {
+<span class="fc" id="L90">        return withType(GordianSymKeyType.AES).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create serpent.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec serpent(final GordianLength pKeyLength) {
+<span class="nc" id="L100">        return withType(GordianSymKeyType.SERPENT).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create twoFish.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec twoFish(final GordianLength pKeyLength) {
+<span class="nc" id="L110">        return withType(GordianSymKeyType.TWOFISH).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create threeFish.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec threeFish(final GordianLength pKeyLength) {
+<span class="nc" id="L120">        return withType(GordianSymKeyType.THREEFISH).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create camellia.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec camellia(final GordianLength pKeyLength) {
+<span class="fc" id="L130">        return withType(GordianSymKeyType.CAMELLIA).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create rc2.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec rc2(final GordianLength pKeyLength) {
+<span class="nc" id="L140">        return withType(GordianSymKeyType.RC2).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create rc5.
+     *
+     * @return the keySpec
+     */
+    default GordianSymKeySpec rc5() {
+<span class="nc" id="L149">        return withType(GordianSymKeyType.RC5).build();</span>
+    }
+
+    /**
+     * Create rc5KeySpec.
+     *
+     * @param pBlockLength the blockLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec rc5(final GordianLength pBlockLength) {
+<span class="nc" id="L159">        return withType(GordianSymKeyType.RC5).withBlockLength(pBlockLength).build();</span>
+    }
+
+    /**
+     * Create rc6.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec rc6(final GordianLength pKeyLength) {
+<span class="nc" id="L169">        return withType(GordianSymKeyType.RC6).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create cast5.
+     *
+     * @return the keySpec
+     */
+    default GordianSymKeySpec cast5() {
+<span class="nc" id="L178">        return withType(GordianSymKeyType.CAST5).build();</span>
+    }
+
+    /**
+     * Create cast6.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec cast6(final GordianLength pKeyLength) {
+<span class="nc" id="L188">        return withType(GordianSymKeyType.CAST6).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create aria.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec aria(final GordianLength pKeyLength) {
+<span class="fc" id="L198">        return withType(GordianSymKeyType.ARIA).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create sm4.
+     *
+     * @return the keySpec
+     */
+    default GordianSymKeySpec sm4() {
+<span class="fc" id="L207">        return withType(GordianSymKeyType.SM4).build();</span>
+    }
+
+    /**
+     * Create noeKeon.
+     *
+     * @return the keySpec
+     */
+    default GordianSymKeySpec noekeon() {
+<span class="nc" id="L216">        return withType(GordianSymKeyType.NOEKEON).build();</span>
+    }
+
+    /**
+     * Create seed.
+     *
+     * @return the keySpec
+     */
+    default GordianSymKeySpec seed() {
+<span class="nc" id="L225">        return withType(GordianSymKeyType.SEED).build();</span>
+    }
+
+    /**
+     * Create tea.
+     *
+     * @return the keySpec
+     */
+    default GordianSymKeySpec tea() {
+<span class="nc" id="L234">        return withType(GordianSymKeyType.TEA).build();</span>
+    }
+
+    /**
+     * Create xtea.
+     *
+     * @return the keySpec
+     */
+    default GordianSymKeySpec xtea() {
+<span class="nc" id="L243">        return withType(GordianSymKeyType.XTEA).build();</span>
+    }
+
+    /**
+     * Create idea.
+     *
+     * @return the keySpec
+     */
+    default GordianSymKeySpec idea() {
+<span class="nc" id="L252">        return withType(GordianSymKeyType.IDEA).build();</span>
+    }
+
+    /**
+     * Create skipjack.
+     *
+     * @return the keySpec
+     */
+    default GordianSymKeySpec skipjack() {
+<span class="nc" id="L261">        return withType(GordianSymKeyType.SKIPJACK).build();</span>
+    }
+
+    /**
+     * Create desede.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec desede(final GordianLength pKeyLength) {
+<span class="nc" id="L271">        return withType(GordianSymKeyType.DESEDE).build();</span>
+    }
+
+    /**
+     * Create blowfish.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec blowfish(final GordianLength pKeyLength) {
+<span class="nc" id="L281">        return withType(GordianSymKeyType.BLOWFISH).build();</span>
+    }
+
+    /**
+     * Create kalyna.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec kalyna(final GordianLength pKeyLength) {
+<span class="fc" id="L291">        return withType(GordianSymKeyType.KALYNA).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create kalyna.
+     *
+     * @param pBlockLength the block length
+     * @param pKeyLength   the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec kalyna(final GordianLength pBlockLength,
+                                     final GordianLength pKeyLength) {
+<span class="fc" id="L303">        return withType(GordianSymKeyType.KALYNA).withBlockLength(pBlockLength).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create gost.
+     *
+     * @return the keySpec
+     */
+    default GordianSymKeySpec gost() {
+<span class="nc" id="L312">        return withType(GordianSymKeyType.GOST).build();</span>
+    }
+
+    /**
+     * Create kuznyechik.
+     *
+     * @return the keySpec
+     */
+    default GordianSymKeySpec kuznyechik() {
+<span class="nc" id="L321">        return withType(GordianSymKeyType.KUZNYECHIK).build();</span>
+    }
+
+    /**
+     * Create shacal2.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec shacal2(final GordianLength pKeyLength) {
+<span class="nc" id="L331">        return withType(GordianSymKeyType.SHACAL2).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create speck.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec speck(final GordianLength pKeyLength) {
+<span class="nc" id="L341">        return withType(GordianSymKeyType.SPECK).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create simon.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec simon(final GordianLength pKeyLength) {
+<span class="nc" id="L351">        return withType(GordianSymKeyType.SIMON).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create mars.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec mars(final GordianLength pKeyLength) {
+<span class="nc" id="L361">        return withType(GordianSymKeyType.MARS).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create anubis.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec anubis(final GordianLength pKeyLength) {
+<span class="nc" id="L371">        return withType(GordianSymKeyType.ANUBIS).withKeyLength(pKeyLength).build();</span>
+    }
+
+    /**
+     * Create lea.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianSymKeySpec lea(final GordianLength pKeyLength) {
+<span class="nc" id="L381">        return withType(GordianSymKeyType.LEA).withKeyLength(pKeyLength).build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

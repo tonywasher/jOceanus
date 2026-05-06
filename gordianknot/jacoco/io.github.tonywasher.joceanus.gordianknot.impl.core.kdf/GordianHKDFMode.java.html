@@ -38,14 +38,10 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.kdf;
      * @return true/false
      */
     public boolean doExtract() {
-<span class="fc bfc" id="L41" title="All 2 branches covered.">        switch (this) {</span>
-            case EXTRACT:
-            case EXTRACTTHENEXPAND:
-<span class="fc" id="L44">                return true;</span>
-            case EXPAND:
-            default:
-<span class="fc" id="L47">                return false;</span>
-        }
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc" id="L42">            case EXTRACT, EXTRACTTHENEXPAND -&gt; true;</span>
+<span class="fc" id="L43">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -54,14 +50,10 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.kdf;
      * @return true/false
      */
     public boolean doExpand() {
-<span class="fc bfc" id="L57" title="All 2 branches covered.">        switch (this) {</span>
-            case EXPAND:
-            case EXTRACTTHENEXPAND:
-<span class="fc" id="L60">                return true;</span>
-            case EXTRACT:
-            default:
-<span class="fc" id="L63">                return false;</span>
-        }
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc" id="L54">            case EXPAND, EXTRACTTHENEXPAND -&gt; true;</span>
+<span class="fc" id="L55">            default -&gt; false;</span>
+        };
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -57,7 +57,7 @@ public final class BouncyKey&lt;T extends GordianKeySpec&gt;
      *
      * @return the key
      */
-    protected byte[] getKey() {
+    byte[] getKey() {
 <span class="fc" id="L61">        return theKey;</span>
     }
 
@@ -74,7 +74,7 @@ public final class BouncyKey&lt;T extends GordianKeySpec&gt;
      * @return the converted key
      * @throws GordianException on error
      */
-    protected static &lt;X extends GordianKeySpec&gt; BouncyKey&lt;X&gt; accessKey(final GordianKey&lt;X&gt; pKey) throws GordianException {
+    static &lt;X extends GordianKeySpec&gt; BouncyKey&lt;X&gt; accessKey(final GordianKey&lt;X&gt; pKey) throws GordianException {
         /* Check that it is a BouncyKey */
 <span class="pc bpc" id="L79" title="1 of 2 branches missed.">        if (pKey instanceof BouncyKey) {</span>
 <span class="fc" id="L80">            return (BouncyKey&lt;X&gt;) pKey;</span>
@@ -95,23 +95,20 @@ public final class BouncyKey&lt;T extends GordianKeySpec&gt;
         }
 
         /* Make sure that the object is the same class */
-<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if (!(pThat instanceof BouncyKey)) {</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if (!(pThat instanceof BouncyKey&lt;?&gt; myThat)) {</span>
 <span class="nc" id="L99">            return false;</span>
         }
 
-        /* Access the target field */
-<span class="fc" id="L103">        final BouncyKey&lt;?&gt; myThat = (BouncyKey&lt;?&gt;) pThat;</span>
-
         /* Check differences */
-<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        if (!getKeyType().equals(myThat.getKeyType())) {</span>
-<span class="nc" id="L107">            return false;</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        if (!getKeyType().equals(myThat.getKeyType())) {</span>
+<span class="nc" id="L104">            return false;</span>
         }
-<span class="fc" id="L109">        return Arrays.areEqual(getKey(), myThat.getKey());</span>
+<span class="fc" id="L106">        return Arrays.areEqual(getKey(), myThat.getKey());</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L114">        return Objects.hash(getKeyType(), Arrays.hashCode(getKey()));</span>
+<span class="nc" id="L111">        return Objects.hash(getKeyType(), Arrays.hashCode(getKey()));</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

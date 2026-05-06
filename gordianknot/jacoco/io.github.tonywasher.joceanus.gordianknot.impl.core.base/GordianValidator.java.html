@@ -17,10 +17,12 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.base;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,14 +31,14 @@ import java.util.function.Predicate;
 /**
  * Validator classes.
  */
-<span class="fc" id="L32">public class GordianValidator {</span>
+<span class="fc" id="L34">public class GordianValidator {</span>
     /**
      * Obtain predicate for supported hMac digestTypes.
      *
      * @return the predicate
      */
     public Predicate&lt;GordianDigestType&gt; supportedHMacDigestTypes() {
-<span class="fc" id="L39">        return this::validHMacDigestType;</span>
+<span class="fc" id="L41">        return this::validHMacDigestType;</span>
     }
 
     /**
@@ -46,7 +48,7 @@ import java.util.function.Predicate;
      * @return true/false
      */
     protected boolean validHMacDigestType(final GordianDigestType pDigestType) {
-<span class="pc bpc" id="L49" title="1 of 4 branches missed.">        return validDigestType(pDigestType) &amp;&amp; pDigestType.supportsLargeData();</span>
+<span class="pc bpc" id="L51" title="1 of 4 branches missed.">        return validDigestType(pDigestType) &amp;&amp; GordianCoreDigestType.supportsLargeData(pDigestType);</span>
     }
 
     /**
@@ -56,7 +58,7 @@ import java.util.function.Predicate;
      * @return true/false
      */
     public boolean validDigestType(final GordianDigestType pDigestType) {
-<span class="fc" id="L59">        return true;</span>
+<span class="fc" id="L61">        return true;</span>
     }
 
     /**
@@ -65,7 +67,7 @@ import java.util.function.Predicate;
      * @return the predicate
      */
     public Predicate&lt;GordianDigestType&gt; supportedLockDigestTypes() {
-<span class="fc" id="L68">        return supportedHMacDigestTypes().and(isCombinedHashDigest());</span>
+<span class="fc" id="L70">        return supportedHMacDigestTypes().and(isCombinedHashDigest());</span>
     }
 
     /**
@@ -74,7 +76,7 @@ import java.util.function.Predicate;
      * @return the predicate
      */
     public Predicate&lt;GordianDigestType&gt; supportedKeyGenDigestTypes() {
-<span class="fc" id="L77">        return supportedHMacDigestTypes().and(isExternalHashDigest());</span>
+<span class="fc" id="L79">        return supportedHMacDigestTypes().and(isExternalHashDigest());</span>
     }
 
     /**
@@ -83,7 +85,7 @@ import java.util.function.Predicate;
      * @return the predicate
      */
     public Predicate&lt;GordianDigestType&gt; supportedAgreementDigestTypes() {
-<span class="nc" id="L86">        return supportedHMacDigestTypes();</span>
+<span class="nc" id="L88">        return supportedHMacDigestTypes();</span>
     }
 
     /**
@@ -92,8 +94,8 @@ import java.util.function.Predicate;
      * @return the predicate
      */
     private Predicate&lt;GordianDigestType&gt; isCombinedHashDigest() {
-<span class="fc bfc" id="L95" title="All 2 branches covered.">        return s -&gt; s.getDefaultLength().getLength() &gt;= GordianLength.LEN_256.getLength()</span>
-<span class="fc bfc" id="L96" title="All 2 branches covered.">                &amp;&amp; s.supportsLargeData();</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        return s -&gt; GordianCoreDigestType.getDefaultLength(s).getLength() &gt;= GordianLength.LEN_256.getLength()</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">                &amp;&amp; GordianCoreDigestType.supportsLargeData(s);</span>
     }
 
     /**
@@ -102,7 +104,7 @@ import java.util.function.Predicate;
      * @return the predicate
      */
     public Predicate&lt;GordianDigestType&gt; isExternalHashDigest() {
-<span class="fc" id="L105">        return s -&gt; s.isLengthValid(GordianLength.LEN_512);</span>
+<span class="fc" id="L107">        return s -&gt; GordianCoreDigestType.isLengthValid(s, GordianLength.LEN_512);</span>
     }
 
     /**
@@ -111,9 +113,9 @@ import java.util.function.Predicate;
      * @return the list of supported digestTypes.
      */
     public List&lt;GordianDigestType&gt; listAllExternalDigestTypes() {
-<span class="fc" id="L114">        return Arrays.stream(GordianDigestType.values())</span>
-<span class="fc" id="L115">                .filter(supportedExternalDigestTypes())</span>
-<span class="fc" id="L116">                .toList();</span>
+<span class="fc" id="L116">        return Arrays.stream(GordianDigestType.values())</span>
+<span class="fc" id="L117">                .filter(supportedExternalDigestTypes())</span>
+<span class="fc" id="L118">                .toList();</span>
     }
 
     /**
@@ -122,7 +124,7 @@ import java.util.function.Predicate;
      * @return the predicate
      */
     public Predicate&lt;GordianDigestType&gt; supportedExternalDigestTypes() {
-<span class="fc" id="L125">        return supportedHMacDigestTypes().and(isExternalHashDigest());</span>
+<span class="fc" id="L127">        return supportedHMacDigestTypes().and(isExternalHashDigest());</span>
     }
 
     /**
@@ -132,8 +134,8 @@ import java.util.function.Predicate;
      * @return the predicate
      */
     public Predicate&lt;GordianSymKeySpec&gt; supportedKeySetSymKeySpecs(final GordianLength pKeyLen) {
-<span class="pc bpc" id="L135" title="1 of 2 branches missed.">        return s -&gt; supportedKeySetSymKeyTypes(pKeyLen).test(s.getSymKeyType())</span>
-<span class="pc bpc" id="L136" title="1 of 2 branches missed.">                &amp;&amp; s.getBlockLength() == GordianLength.LEN_128;</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        return s -&gt; supportedKeySetSymKeyTypes(pKeyLen).test(s.getSymKeyType())</span>
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">                &amp;&amp; s.getBlockLength() == GordianLength.LEN_128;</span>
     }
 
     /**
@@ -143,7 +145,7 @@ import java.util.function.Predicate;
      * @return the predicate
      */
     public Predicate&lt;GordianSymKeyType&gt; supportedKeySetSymKeyTypes(final GordianLength pKeyLen) {
-<span class="fc" id="L146">        return t -&gt; validKeySetSymKeyType(t, pKeyLen);</span>
+<span class="fc" id="L148">        return t -&gt; validKeySetSymKeyType(t, pKeyLen);</span>
     }
 
     /**
@@ -155,8 +157,8 @@ import java.util.function.Predicate;
      */
     private boolean validKeySetSymKeyType(final GordianSymKeyType pKeyType,
                                           final GordianLength pKeyLen) {
-<span class="fc bfc" id="L158" title="All 2 branches covered.">        return validSymKeyType(pKeyType)</span>
-<span class="fc bfc" id="L159" title="All 2 branches covered.">                &amp;&amp; validStdBlockSymKeyTypeForKeyLength(pKeyType, pKeyLen);</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        return validSymKeyType(pKeyType)</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">                &amp;&amp; validStdBlockSymKeyTypeForKeyLength(pKeyType, pKeyLen);</span>
     }
 
     /**
@@ -168,8 +170,8 @@ import java.util.function.Predicate;
      */
     public static boolean validStdBlockSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
                                                               final GordianLength pKeyLen) {
-<span class="fc bfc" id="L171" title="All 2 branches covered.">        return validSymKeyTypeForKeyLength(pKeyType, pKeyLen)</span>
-<span class="fc bfc" id="L172" title="All 2 branches covered.">                &amp;&amp; pKeyType.getDefaultBlockLength().equals(GordianLength.LEN_128);</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">        return validSymKeyTypeForKeyLength(pKeyType, pKeyLen)</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">                &amp;&amp; GordianLength.LEN_128.equals(GordianCoreSymKeyType.getDefaultBlockLength(pKeyType));</span>
     }
 
     /**
@@ -181,7 +183,7 @@ import java.util.function.Predicate;
      */
     public static boolean validSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
                                                       final GordianLength pKeyLen) {
-<span class="fc" id="L184">        return pKeyType.validForKeyLength(pKeyLen);</span>
+<span class="fc" id="L186">        return GordianCoreSymKeyType.validForKeyLength(pKeyType, pKeyLen);</span>
     }
 
     /**
@@ -191,7 +193,7 @@ import java.util.function.Predicate;
      * @return true/false
      */
     public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
-<span class="pc bpc" id="L194" title="1 of 2 branches missed.">        return pKeyType != null;</span>
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">        return pKeyType != null;</span>
     }
 
     /**
@@ -201,7 +203,7 @@ import java.util.function.Predicate;
      * @return true/false
      */
     public boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
-<span class="pc bpc" id="L204" title="1 of 2 branches missed.">        return pKeyType != null;</span>
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">        return pKeyType != null;</span>
     }
 
     /**
@@ -210,7 +212,7 @@ import java.util.function.Predicate;
      * @return true/false
      */
     public boolean isXofSupported() {
-<span class="fc" id="L213">        return true;</span>
+<span class="fc" id="L215">        return true;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -21,9 +21,9 @@ package io.github.tonywasher.joceanus.oceanus.logger;
  */
 public class OceanusLogger {
     /**
-     * The log manager instance.
+     * The log engine.
      */
-    private final OceanusLogManager theManager;
+    private final OceanusLogEngine theEngine;
 
     /**
      * The class for which this is the logger.
@@ -33,12 +33,12 @@ public class OceanusLogger {
     /**
      * Constructor.
      *
-     * @param pManager the manager
-     * @param pOwner   the owning class
+     * @param pEngine the engine
+     * @param pOwner  the owning class
      */
-    public OceanusLogger(final OceanusLogManager pManager,
-<span class="nc" id="L40">                         final Class&lt;?&gt; pOwner) {</span>
-<span class="nc" id="L41">        theManager = pManager;</span>
+    OceanusLogger(final OceanusLogEngine pEngine,
+<span class="nc" id="L40">                  final Class&lt;?&gt; pOwner) {</span>
+<span class="nc" id="L41">        theEngine = pEngine;</span>
 <span class="nc" id="L42">        theOwner = pOwner;</span>
 <span class="nc" id="L43">    }</span>
 
@@ -51,8 +51,8 @@ public class OceanusLogger {
     public void debug(final String pFormat,
                       final Object... pArgs) {
 <span class="nc" id="L53">        final String myMessage = String.format(pFormat, pArgs);</span>
-<span class="nc" id="L54">        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.DEBUG, myMessage);</span>
-<span class="nc" id="L55">        theManager.writeLogMessage(myLogMessage);</span>
+<span class="nc" id="L54">        final String myLogMessage = theEngine.formatMessage(theOwner, OceanusLogLevel.DEBUG, myMessage);</span>
+<span class="nc" id="L55">        theEngine.writeLogMessage(myLogMessage);</span>
 <span class="nc" id="L56">    }</span>
 
     /**
@@ -63,9 +63,9 @@ public class OceanusLogger {
      */
     public void debug(final String pMessage,
                       final byte[] pData) {
-<span class="nc" id="L66">        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.DEBUG, pMessage);</span>
-<span class="nc" id="L67">        final String myLogData = OceanusLogManager.formatData(pData);</span>
-<span class="nc" id="L68">        theManager.writeLogMessage(myLogMessage + myLogData);</span>
+<span class="nc" id="L66">        final String myLogMessage = theEngine.formatMessage(theOwner, OceanusLogLevel.DEBUG, pMessage);</span>
+<span class="nc" id="L67">        final String myLogData = OceanusLogEngine.formatData(pData);</span>
+<span class="nc" id="L68">        theEngine.writeLogMessage(myLogMessage + myLogData);</span>
 <span class="nc" id="L69">    }</span>
 
     /**
@@ -80,9 +80,9 @@ public class OceanusLogger {
                       final byte[] pData,
                       final int pOffset,
                       final int pLength) {
-<span class="nc" id="L83">        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.DEBUG, pMessage);</span>
-<span class="nc" id="L84">        final String myLogData = OceanusLogManager.formatData(pData, pOffset, pLength);</span>
-<span class="nc" id="L85">        theManager.writeLogMessage(myLogMessage + myLogData);</span>
+<span class="nc" id="L83">        final String myLogMessage = theEngine.formatMessage(theOwner, OceanusLogLevel.DEBUG, pMessage);</span>
+<span class="nc" id="L84">        final String myLogData = OceanusLogEngine.formatData(pData, pOffset, pLength);</span>
+<span class="nc" id="L85">        theEngine.writeLogMessage(myLogMessage + myLogData);</span>
 <span class="nc" id="L86">    }</span>
 
     /**
@@ -94,8 +94,8 @@ public class OceanusLogger {
     public void info(final String pFormat,
                      final Object... pArgs) {
 <span class="nc" id="L96">        final String myMessage = String.format(pFormat, pArgs);</span>
-<span class="nc" id="L97">        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.INFO, myMessage);</span>
-<span class="nc" id="L98">        theManager.writeLogMessage(myLogMessage);</span>
+<span class="nc" id="L97">        final String myLogMessage = theEngine.formatMessage(theOwner, OceanusLogLevel.INFO, myMessage);</span>
+<span class="nc" id="L98">        theEngine.writeLogMessage(myLogMessage);</span>
 <span class="nc" id="L99">    }</span>
 
     /**
@@ -107,8 +107,8 @@ public class OceanusLogger {
     public void error(final String pFormat,
                       final Object... pArgs) {
 <span class="nc" id="L109">        final String myMessage = String.format(pFormat, pArgs);</span>
-<span class="nc" id="L110">        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.ERROR, myMessage);</span>
-<span class="nc" id="L111">        theManager.writeLogMessage(myLogMessage);</span>
+<span class="nc" id="L110">        final String myLogMessage = theEngine.formatMessage(theOwner, OceanusLogLevel.ERROR, myMessage);</span>
+<span class="nc" id="L111">        theEngine.writeLogMessage(myLogMessage);</span>
 <span class="nc" id="L112">    }</span>
 
     /**
@@ -119,8 +119,8 @@ public class OceanusLogger {
      */
     public void error(final String pMessage,
                       final Throwable pException) {
-<span class="nc" id="L122">        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.ERROR, pMessage);</span>
-<span class="nc" id="L123">        theManager.writeLogMessage(myLogMessage, pException);</span>
+<span class="nc" id="L122">        final String myLogMessage = theEngine.formatMessage(theOwner, OceanusLogLevel.ERROR, pMessage);</span>
+<span class="nc" id="L123">        theEngine.writeLogMessage(myLogMessage, pException);</span>
 <span class="nc" id="L124">    }</span>
 
     /**
@@ -132,8 +132,8 @@ public class OceanusLogger {
     public void fatal(final String pFormat,
                       final Object... pArgs) {
 <span class="nc" id="L134">        final String myMessage = String.format(pFormat, pArgs);</span>
-<span class="nc" id="L135">        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.FATAL, myMessage);</span>
-<span class="nc" id="L136">        theManager.writeLogMessage(myLogMessage);</span>
+<span class="nc" id="L135">        final String myLogMessage = theEngine.formatMessage(theOwner, OceanusLogLevel.FATAL, myMessage);</span>
+<span class="nc" id="L136">        theEngine.writeLogMessage(myLogMessage);</span>
 <span class="nc" id="L137">    }</span>
 
     /**
@@ -144,8 +144,8 @@ public class OceanusLogger {
      */
     public void fatal(final String pMessage,
                       final Throwable pException) {
-<span class="nc" id="L147">        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.FATAL, pMessage);</span>
-<span class="nc" id="L148">        theManager.writeLogMessage(myLogMessage, pException);</span>
+<span class="nc" id="L147">        final String myLogMessage = theEngine.formatMessage(theOwner, OceanusLogLevel.FATAL, pMessage);</span>
+<span class="nc" id="L148">        theEngine.writeLogMessage(myLogMessage, pException);</span>
 <span class="nc" id="L149">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

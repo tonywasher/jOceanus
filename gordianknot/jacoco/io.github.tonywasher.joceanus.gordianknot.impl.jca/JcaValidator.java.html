@@ -16,9 +16,9 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianValidator;
 
 /**
@@ -46,47 +46,22 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianValidator
         }
 
         /* Disable non-JCE digests */
-<span class="fc bfc" id="L49" title="All 2 branches covered.">        switch (pDigestType) {</span>
-            case JH:
-            case GROESTL:
-            case CUBEHASH:
-            case KANGAROO:
-            case ASCON:
-            case ISAP:
-            case PHOTONBEETLE:
-            case ROMULUS:
-            case SPARKLE:
-            case XOODYAK:
-<span class="fc" id="L60">                return false;</span>
-            default:
-<span class="fc" id="L62">                return true;</span>
-        }
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        return switch (pDigestType) {</span>
+<span class="fc" id="L50">            case JH, GROESTL, CUBEHASH, KANGAROO, ASCON, ISAP, PHOTONBEETLE, ROMULUS, SPARKLE, XOODYAK -&gt; false;</span>
+<span class="fc" id="L51">            default -&gt; true;</span>
+        };
     }
 
     @Override
     public boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
-<span class="pc bpc" id="L68" title="1 of 2 branches missed.">        if (pKeyType == null) {</span>
-<span class="nc" id="L69">            return false;</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        if (pKeyType == null) {</span>
+<span class="nc" id="L58">            return false;</span>
         }
-<span class="fc bfc" id="L71" title="All 2 branches covered.">        switch (pKeyType) {</span>
-            case ISAAC:
-            case SOSEMANUK:
-            case RABBIT:
-            case SNOW3G:
-            case SKEINXOF:
-            case BLAKE2XOF:
-            case BLAKE3XOF:
-            case ASCON:
-            case ELEPHANT:
-            case ISAP:
-            case PHOTONBEETLE:
-            case ROMULUS:
-            case SPARKLE:
-            case XOODYAK:
-<span class="fc" id="L86">                return false;</span>
-            default:
-<span class="fc" id="L88">                return super.validStreamKeyType(pKeyType);</span>
-        }
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        return switch (pKeyType) {</span>
+            case ISAAC, SOSEMANUK, RABBIT, SNOW3G, SKEINXOF, BLAKE2XOF, BLAKE3XOF, ASCON, ELEPHANT, ISAP, PHOTONBEETLE,
+<span class="fc" id="L62">                 ROMULUS, SPARKLE, XOODYAK -&gt; false;</span>
+<span class="fc" id="L63">            default -&gt; super.validStreamKeyType(pKeyType);</span>
+        };
     }
 
     /**
@@ -96,24 +71,18 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianValidator
      * @return true/false
      */
     private static boolean supportedSymKeyType(final GordianSymKeyType pKeyType) {
-<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (pKeyType == null) {</span>
-<span class="nc" id="L100">            return false;</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if (pKeyType == null) {</span>
+<span class="nc" id="L75">            return false;</span>
         }
-<span class="fc bfc" id="L102" title="All 2 branches covered.">        switch (pKeyType) {</span>
-            case SPECK:
-            case ANUBIS:
-            case SIMON:
-            case MARS:
-            case LEA:
-<span class="fc" id="L108">                return false;</span>
-            default:
-<span class="fc" id="L110">                return true;</span>
-        }
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        return switch (pKeyType) {</span>
+<span class="fc" id="L78">            case SPECK, ANUBIS, SIMON, MARS, LEA -&gt; false;</span>
+<span class="fc" id="L79">            default -&gt; true;</span>
+        };
     }
 
     @Override
     public boolean isXofSupported() {
-<span class="fc" id="L116">        return false;</span>
+<span class="fc" id="L85">        return false;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

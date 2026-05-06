@@ -26,45 +26,45 @@
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyBIKEKeyPair.BouncyBIKEKeyPairGenerator;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyCMCEKeyPair.BouncyCMCEKeyPairGenerator;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHKeyPairGenerator;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDSAKeyPair.BouncyDSAKeyPairGenerator;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDSTUKeyPair.BouncyDSTUKeyPairGenerator;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEd25519KeyPairGenerator;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEd448KeyPairGenerator;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyElGamalKeyPair.BouncyElGamalKeyPairGenerator;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECKeyPairGenerator;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyFalconKeyPair.BouncyFalconKeyPairGenerator;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyFrodoKeyPair.BouncyFrodoKeyPairGenerator;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyGOSTKeyPair.BouncyGOSTKeyPairGenerator;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyHQCKeyPair.BouncyHQCKeyPairGenerator;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyLMSKeyPair.BouncyHSSKeyPairGenerator;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyLMSKeyPair.BouncyLMSKeyPairGenerator;
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyMLDSAKeyPair.BouncyMLDSAKeyPairGenerator;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyMLKEMKeyPair.BouncyMLKEMKeyPairGenerator;
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyMayoKeyPair.BouncyMayoKeyPairGenerator;
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNTRUKeyPair.BouncyNTRUKeyPairGenerator;
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeKeyPairGenerator;
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNewHopeKeyPair.BouncyNewHopeKeyPairGenerator;
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyPicnicKeyPair.BouncyPicnicKeyPairGenerator;
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAKeyPairGenerator;
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySABERKeyPair.BouncySABERKeyPairGenerator;
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySLHDSAKeyPair.BouncySLHDSAKeyPairGenerator;
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySNTRUPrimeKeyPair.BouncySNTRUPrimeKeyPairGenerator;
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySnovaKeyPair.BouncySnovaKeyPairGenerator;
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyX25519KeyPairGenerator;
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyX448KeyPairGenerator;
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSKeyPairGenerator;
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSMTKeyPairGenerator;
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyBIKEKeyPair.BouncyBIKEKeyPairGenerator;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyCMCEKeyPair.BouncyCMCEKeyPairGenerator;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHKeyPairGenerator;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDSAKeyPair.BouncyDSAKeyPairGenerator;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDSTUKeyPair.BouncyDSTUKeyPairGenerator;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEd25519KeyPairGenerator;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEd448KeyPairGenerator;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyElGamalKeyPair.BouncyElGamalKeyPairGenerator;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECKeyPairGenerator;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyFalconKeyPair.BouncyFalconKeyPairGenerator;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyFrodoKeyPair.BouncyFrodoKeyPairGenerator;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyGOSTKeyPair.BouncyGOSTKeyPairGenerator;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyHQCKeyPair.BouncyHQCKeyPairGenerator;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyLMSKeyPair.BouncyHSSKeyPairGenerator;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyMLDSAKeyPair.BouncyMLDSAKeyPairGenerator;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyMLKEMKeyPair.BouncyMLKEMKeyPairGenerator;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyMayoKeyPair.BouncyMayoKeyPairGenerator;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNTRUKeyPair.BouncyNTRUKeyPairGenerator;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeKeyPairGenerator;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNTRUPlusKeyPair.BouncyNTRUPlusKeyPairGenerator;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNewHopeKeyPair.BouncyNewHopeKeyPairGenerator;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyPicnicKeyPair.BouncyPicnicKeyPairGenerator;
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAKeyPairGenerator;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySABERKeyPair.BouncySABERKeyPairGenerator;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySLHDSAKeyPair.BouncySLHDSAKeyPairGenerator;
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySNTRUPrimeKeyPair.BouncySNTRUPrimeKeyPairGenerator;
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySnovaKeyPair.BouncySnovaKeyPairGenerator;
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyX25519KeyPairGenerator;
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyX448KeyPairGenerator;
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSKeyPairGenerator;
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSMTKeyPairGenerator;
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <strong class="jxr_keyword">import</strong> java.util.HashMap;
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
@@ -99,7 +99,7 @@
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      }
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>      @Override
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <strong class="jxr_keyword">public</strong> <a name="GordianKeyPairGenerator" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keypair/GordianKeyPairGenerator.html#GordianKeyPairGenerator">GordianKeyPairGenerator</a> getKeyPairGenerator(<strong class="jxr_keyword">final</strong> <a name="GordianKeyPairSpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keypair/GordianKeyPairSpec.html#GordianKeyPairSpec">GordianKeyPairSpec</a> pKeySpec) <strong class="jxr_keyword">throws</strong> <a name="GordianException" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/base/GordianException.html#GordianException">GordianException</a> {
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <strong class="jxr_keyword">public</strong> <a name="GordianKeyPairGenerator" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keypair/GordianKeyPairGenerator.html#GordianKeyPairGenerator">GordianKeyPairGenerator</a> getKeyPairGenerator(<strong class="jxr_keyword">final</strong> <a name="GordianKeyPairSpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keypair/spec/GordianKeyPairSpec.html#GordianKeyPairSpec">GordianKeyPairSpec</a> pKeySpec) <strong class="jxr_keyword">throws</strong> <a name="GordianException" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/base/GordianException.html#GordianException">GordianException</a> {
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>          <em class="jxr_comment">/* Handle composite keyPairGenerator */</em>
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>          <strong class="jxr_keyword">if</strong> (GordianKeyPairType.COMPOSITE.equals(pKeySpec.getKeyPairType())) {
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">super</strong>.getKeyPairGenerator(pKeySpec);
@@ -127,76 +127,48 @@
 <a class="jxr_linenumber" name="L119" href="#L119">119</a> <em class="jxr_javadoccomment">     * @return the KeyGenerator</em>
 <a class="jxr_linenumber" name="L120" href="#L120">120</a> <em class="jxr_javadoccomment">     * @throws GordianException on error</em>
 <a class="jxr_linenumber" name="L121" href="#L121">121</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L122" href="#L122">122</a>     <strong class="jxr_keyword">private</strong> <a name="BouncyKeyPairGenerator" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/bc/BouncyKeyPairGenerator.html#BouncyKeyPairGenerator">BouncyKeyPairGenerator</a> getBCKeyPairGenerator(<strong class="jxr_keyword">final</strong> <a name="GordianKeyPairSpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keypair/GordianKeyPairSpec.html#GordianKeyPairSpec">GordianKeyPairSpec</a> pKeySpec) <strong class="jxr_keyword">throws</strong> <a name="GordianException" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/base/GordianException.html#GordianException">GordianException</a> {
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>         <strong class="jxr_keyword">switch</strong> (pKeySpec.getKeyPairType()) {
-<a class="jxr_linenumber" name="L124" href="#L124">124</a>             <strong class="jxr_keyword">case</strong> RSA:
-<a class="jxr_linenumber" name="L125" href="#L125">125</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyRSAKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>             <strong class="jxr_keyword">case</strong> ELGAMAL:
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyElGamalKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>             <strong class="jxr_keyword">case</strong> EC:
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>             <strong class="jxr_keyword">case</strong> SM2:
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyECKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>             <strong class="jxr_keyword">case</strong> DSTU4145:
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyDSTUKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>             <strong class="jxr_keyword">case</strong> GOST2012:
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyGOSTKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>             <strong class="jxr_keyword">case</strong> XDH:
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>                 <strong class="jxr_keyword">return</strong> pKeySpec.getEdwardsElliptic().is25519()
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>                         ? <strong class="jxr_keyword">new</strong> BouncyX25519KeyPairGenerator(theFactory, pKeySpec)
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>                         : <strong class="jxr_keyword">new</strong> BouncyX448KeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>             <strong class="jxr_keyword">case</strong> EDDSA:
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>                 <strong class="jxr_keyword">return</strong> pKeySpec.getEdwardsElliptic().is25519()
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>                         ? <strong class="jxr_keyword">new</strong> BouncyEd25519KeyPairGenerator(theFactory, pKeySpec)
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>                         : <strong class="jxr_keyword">new</strong> BouncyEd448KeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>             <strong class="jxr_keyword">case</strong> DSA:
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyDSAKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>             <strong class="jxr_keyword">case</strong> DH:
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyDHKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>             <strong class="jxr_keyword">case</strong> SLHDSA:
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncySLHDSAKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>             <strong class="jxr_keyword">case</strong> CMCE:
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyCMCEKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>             <strong class="jxr_keyword">case</strong> FRODO:
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyFrodoKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>             <strong class="jxr_keyword">case</strong> SABER:
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncySABERKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>             <strong class="jxr_keyword">case</strong> MLKEM:
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyMLKEMKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>             <strong class="jxr_keyword">case</strong> MLDSA:
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyMLDSAKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>             <strong class="jxr_keyword">case</strong> HQC:
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyHQCKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>             <strong class="jxr_keyword">case</strong> BIKE:
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyBIKEKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>             <strong class="jxr_keyword">case</strong> NTRU:
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyNTRUKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>             <strong class="jxr_keyword">case</strong> NTRUPRIME:
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>                 <strong class="jxr_keyword">return</strong> pKeySpec.getNTRUPrimeKeySpec().getType() == GordianNTRUPrimeType.NTRUL
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>                         ? <strong class="jxr_keyword">new</strong> BouncyNTRULPrimeKeyPairGenerator(theFactory, pKeySpec)
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>                         : <strong class="jxr_keyword">new</strong> BouncySNTRUPrimeKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>             <strong class="jxr_keyword">case</strong> FALCON:
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyFalconKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>             <strong class="jxr_keyword">case</strong> MAYO:
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyMayoKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>             <strong class="jxr_keyword">case</strong> SNOVA:
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncySnovaKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>             <strong class="jxr_keyword">case</strong> PICNIC:
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyPicnicKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>             <strong class="jxr_keyword">case</strong> NEWHOPE:
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BouncyNewHopeKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>             <strong class="jxr_keyword">case</strong> XMSS:
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>                 <strong class="jxr_keyword">return</strong> pKeySpec.getXMSSKeySpec().isMT()
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>                         ? <strong class="jxr_keyword">new</strong> BouncyXMSSMTKeyPairGenerator(theFactory, pKeySpec)
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>                         : <strong class="jxr_keyword">new</strong> BouncyXMSSKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>             <strong class="jxr_keyword">case</strong> LMS:
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>                 <strong class="jxr_keyword">return</strong> pKeySpec.getSubKeyType() instanceof GordianHSSKeySpec
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>                         ? <strong class="jxr_keyword">new</strong> BouncyHSSKeyPairGenerator(theFactory, pKeySpec)
-<a class="jxr_linenumber" name="L186" href="#L186">186</a>                         : <strong class="jxr_keyword">new</strong> BouncyLMSKeyPairGenerator(theFactory, pKeySpec);
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>             <strong class="jxr_keyword">default</strong>:
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="GordianDataException" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/exc/GordianDataException.html#GordianDataException">GordianDataException</a>(GordianBaseData.getInvalidText(pKeySpec.getKeyPairType()));
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>         }
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>     }
-<a class="jxr_linenumber" name="L191" href="#L191">191</a> }
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>     <strong class="jxr_keyword">private</strong> <a name="BouncyKeyPairGenerator" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/bc/BouncyKeyPairGenerator.html#BouncyKeyPairGenerator">BouncyKeyPairGenerator</a> getBCKeyPairGenerator(<strong class="jxr_keyword">final</strong> <a name="GordianKeyPairSpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/keypair/spec/GordianKeyPairSpec.html#GordianKeyPairSpec">GordianKeyPairSpec</a> pKeySpec) <strong class="jxr_keyword">throws</strong> <a name="GordianException" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/base/GordianException.html#GordianException">GordianException</a> {
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>         <strong class="jxr_keyword">final</strong> <a name="GordianCoreKeyPairSpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/spec/keypair/GordianCoreKeyPairSpec.html#GordianCoreKeyPairSpec">GordianCoreKeyPairSpec</a> myKeySpec = (<a name="GordianCoreKeyPairSpec" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/spec/keypair/GordianCoreKeyPairSpec.html#GordianCoreKeyPairSpec">GordianCoreKeyPairSpec</a>) pKeySpec;
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">switch</strong> (pKeySpec.getKeyPairType()) {
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>             <strong class="jxr_keyword">case</strong> RSA -&gt; <strong class="jxr_keyword">new</strong> BouncyRSAKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>             <strong class="jxr_keyword">case</strong> ELGAMAL -&gt; <strong class="jxr_keyword">new</strong> BouncyElGamalKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>             <strong class="jxr_keyword">case</strong> EC, SM2 -&gt; <strong class="jxr_keyword">new</strong> BouncyECKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>             <strong class="jxr_keyword">case</strong> DSTU -&gt; <strong class="jxr_keyword">new</strong> BouncyDSTUKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>             <strong class="jxr_keyword">case</strong> GOST -&gt; <strong class="jxr_keyword">new</strong> BouncyGOSTKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>             <strong class="jxr_keyword">case</strong> XDH -&gt; myKeySpec.getEdwardsSpec().is25519()
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>                     ? <strong class="jxr_keyword">new</strong> BouncyX25519KeyPairGenerator(theFactory, pKeySpec)
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>                     : <strong class="jxr_keyword">new</strong> BouncyX448KeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>             <strong class="jxr_keyword">case</strong> EDDSA -&gt; myKeySpec.getEdwardsSpec().is25519()
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>                     ? <strong class="jxr_keyword">new</strong> BouncyEd25519KeyPairGenerator(theFactory, pKeySpec)
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>                     : <strong class="jxr_keyword">new</strong> BouncyEd448KeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>             <strong class="jxr_keyword">case</strong> DSA -&gt; <strong class="jxr_keyword">new</strong> BouncyDSAKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>             <strong class="jxr_keyword">case</strong> DH -&gt; <strong class="jxr_keyword">new</strong> BouncyDHKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>             <strong class="jxr_keyword">case</strong> SLHDSA -&gt; <strong class="jxr_keyword">new</strong> BouncySLHDSAKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>             <strong class="jxr_keyword">case</strong> CMCE -&gt; <strong class="jxr_keyword">new</strong> BouncyCMCEKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>             <strong class="jxr_keyword">case</strong> FRODO -&gt; <strong class="jxr_keyword">new</strong> BouncyFrodoKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>             <strong class="jxr_keyword">case</strong> SABER -&gt; <strong class="jxr_keyword">new</strong> BouncySABERKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>             <strong class="jxr_keyword">case</strong> MLKEM -&gt; <strong class="jxr_keyword">new</strong> BouncyMLKEMKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>             <strong class="jxr_keyword">case</strong> MLDSA -&gt; <strong class="jxr_keyword">new</strong> BouncyMLDSAKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>             <strong class="jxr_keyword">case</strong> HQC -&gt; <strong class="jxr_keyword">new</strong> BouncyHQCKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>             <strong class="jxr_keyword">case</strong> BIKE -&gt; <strong class="jxr_keyword">new</strong> BouncyBIKEKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>             <strong class="jxr_keyword">case</strong> NTRU -&gt; <strong class="jxr_keyword">new</strong> BouncyNTRUKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>             <strong class="jxr_keyword">case</strong> NTRUPLUS -&gt; <strong class="jxr_keyword">new</strong> BouncyNTRUPlusKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>             <strong class="jxr_keyword">case</strong> NTRUPRIME -&gt; myKeySpec.getNTRUPrimeSpec().getType() == GordianNTRUPrimeType.NTRUL
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>                     ? <strong class="jxr_keyword">new</strong> BouncyNTRULPrimeKeyPairGenerator(theFactory, pKeySpec)
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>                     : <strong class="jxr_keyword">new</strong> BouncySNTRUPrimeKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>             <strong class="jxr_keyword">case</strong> FALCON -&gt; <strong class="jxr_keyword">new</strong> BouncyFalconKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>             <strong class="jxr_keyword">case</strong> MAYO -&gt; <strong class="jxr_keyword">new</strong> BouncyMayoKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>             <strong class="jxr_keyword">case</strong> SNOVA -&gt; <strong class="jxr_keyword">new</strong> BouncySnovaKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>             <strong class="jxr_keyword">case</strong> PICNIC -&gt; <strong class="jxr_keyword">new</strong> BouncyPicnicKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>             <strong class="jxr_keyword">case</strong> NEWHOPE -&gt; <strong class="jxr_keyword">new</strong> BouncyNewHopeKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>             <strong class="jxr_keyword">case</strong> XMSS -&gt; myKeySpec.getXMSSSpec().isMT()
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>                     ? <strong class="jxr_keyword">new</strong> BouncyXMSSMTKeyPairGenerator(theFactory, pKeySpec)
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>                     : <strong class="jxr_keyword">new</strong> BouncyXMSSKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>             <strong class="jxr_keyword">case</strong> LMS -&gt; <strong class="jxr_keyword">new</strong> BouncyHSSKeyPairGenerator(theFactory, pKeySpec);
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>             <strong class="jxr_keyword">default</strong> -&gt; <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="GordianDataException" href="../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/exc/GordianDataException.html#GordianDataException">GordianDataException</a>(GordianBaseData.getInvalidText(pKeySpec.getKeyPairType()));
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>         };
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>     }
+<a class="jxr_linenumber" name="L163" href="#L163">163</a> }
 </pre>
 <hr/>
 <div id="footer">© 2012–2026</div>

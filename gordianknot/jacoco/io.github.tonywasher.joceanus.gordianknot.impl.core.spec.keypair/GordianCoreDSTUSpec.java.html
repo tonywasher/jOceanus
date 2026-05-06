@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreDSTUSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair</a> &gt; <span class="el_source">GordianCoreDSTUSpec.java</span></div><h1>GordianCoreDSTUSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDSTUSpec;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * Named DSTU4145 Elliptic Curves.
+ */
+public final class GordianCoreDSTUSpec
+        implements GordianCoreElliptic {
+    /**
+     * Curve Base.
+     */
+    private static final String BASE = &quot;1.2.804.2.1.1.1.1.3.1.1.2.&quot;;
+
+    /**
+     * The specMap.
+     */
+<span class="fc" id="L39">    private static final Map&lt;GordianDSTUSpec, GordianCoreDSTUSpec&gt; SPECMAP = newSpecMap();</span>
+
+    /**
+     * The specArray.
+     */
+<span class="fc" id="L44">    private static final GordianCoreDSTUSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreDSTUSpec[0]);</span>
+
+    /**
+     * The Spec.
+     */
+    private final GordianDSTUSpec theSpec;
+
+    /**
+     * Constructor.
+     *
+     * @param pSpec the spec
+     */
+<span class="fc" id="L56">    private GordianCoreDSTUSpec(final GordianDSTUSpec pSpec) {</span>
+<span class="fc" id="L57">        theSpec = pSpec;</span>
+<span class="fc" id="L58">    }</span>
+
+    /**
+     * Obtain the spec.
+     *
+     * @return the spec
+     */
+    public GordianDSTUSpec getSpec() {
+<span class="fc" id="L66">        return theSpec;</span>
+    }
+
+    @Override
+    public String getCurveName() {
+<span class="pc bpc" id="L71" title="3 of 4 branches missed.">        return switch (theSpec) {</span>
+<span class="nc" id="L72">            case DSTU7 -&gt; BASE + &quot;7&quot;;</span>
+<span class="nc" id="L73">            case DSTU8 -&gt; BASE + &quot;8&quot;;</span>
+<span class="fc" id="L74">            case DSTU9 -&gt; BASE + &quot;9&quot;;</span>
+<span class="nc" id="L75">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    @Override
+    public int getKeySize() {
+<span class="nc bnc" id="L81" title="All 4 branches missed.">        return switch (theSpec) {</span>
+<span class="nc" id="L82">            case DSTU9 -&gt; GordianLength.LEN_431.getLength();</span>
+<span class="nc" id="L83">            case DSTU8 -&gt; GordianLength.LEN_366.getLength();</span>
+<span class="nc" id="L84">            case DSTU7 -&gt; GordianLength.LEN_306.getLength();</span>
+<span class="nc" id="L85">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    /**
+     * Obtain the curve for a Name.
+     *
+     * @param pName the name
+     * @return the curve
+     */
+    public static GordianCoreDSTUSpec getCurveForName(final String pName) {
+        /* Loop through the curves */
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        for (GordianCoreDSTUSpec myCurve : values()) {</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">            if (pName.equals(myCurve.getCurveName())) {</span>
+<span class="fc" id="L99">                return myCurve;</span>
+            }
+        }
+<span class="nc" id="L102">        return null;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L107">        return theSpec.toString();</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L114">            return true;</span>
+        }
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L117">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="nc" id="L121">        return pThat instanceof GordianCoreDSTUSpec myThat</span>
+<span class="nc bnc" id="L122" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L127">        return theSpec.hashCode();</span>
+    }
+
+    /**
+     * Obtain the core spec.
+     *
+     * @param pSpec the base spec
+     * @return the core spec
+     */
+    public static GordianCoreDSTUSpec mapCoreSpec(final Object pSpec) {
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        return pSpec instanceof GordianDSTUSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map&lt;GordianDSTUSpec, GordianCoreDSTUSpec&gt; newSpecMap() {
+<span class="fc" id="L146">        final Map&lt;GordianDSTUSpec, GordianCoreDSTUSpec&gt; myMap = new EnumMap&lt;&gt;(GordianDSTUSpec.class);</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        for (GordianDSTUSpec mySpec : GordianDSTUSpec.values()) {</span>
+<span class="fc" id="L148">            myMap.put(mySpec, new GordianCoreDSTUSpec(mySpec));</span>
+        }
+<span class="fc" id="L150">        return myMap;</span>
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static GordianCoreDSTUSpec[] values() {
+<span class="fc" id="L159">        return VALUES;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisMapperFileState.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.solver.mapper</a> &gt; <span class="el_source">ThemisMapperFileState.java</span></div><h1>ThemisMapperFileState.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.solver.mapper;
+
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisNodeInstance;
+import io.github.tonywasher.joceanus.themis.parser.node.ThemisNodeImport;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverClass;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverFile;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverPackage;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * File State.
+ */
+public class ThemisMapperFileState {
+    /**
+     * The project state.
+     */
+    private final ThemisMapperProjectState theProject;
+
+    /**
+     * Map of all known short names in file.
+     */
+    private final Map&lt;String, ThemisClassInstance&gt; theKnownClasses;
+
+    /**
+     * The referenced classes.
+     */
+    private final List&lt;ThemisSolverClass&gt; theReferenced;
+
+    /**
+     * Constructor.
+     *
+     * @param pProject the project
+     */
+<span class="fc" id="L57">    ThemisMapperFileState(final ThemisMapperProjectState pProject) {</span>
+        /* Store the project */
+<span class="fc" id="L59">        theProject = pProject;</span>
+
+        /* Create the maps and lists */
+<span class="fc" id="L62">        theKnownClasses = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L63">        theReferenced = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Obtain the referenced classes.
+     *
+     * @return the referenced classes
+     */
+    List&lt;ThemisSolverClass&gt; getReferenced() {
+<span class="fc" id="L72">        return theReferenced;</span>
+    }
+
+    /**
+     * InitialiseForFile.
+     *
+     * @param pFile the file
+     */
+    void initForFile(final ThemisSolverFile pFile) {
+        /* Clear the maps and lists */
+<span class="fc" id="L82">        theKnownClasses.clear();</span>
+<span class="fc" id="L83">        theReferenced.clear();</span>
+
+        /* Determine the possible references */
+<span class="fc" id="L86">        determineKnownClasses(pFile);</span>
+<span class="fc" id="L87">    }</span>
+
+    /**
+     * Determine known classes for file.
+     *
+     * @param pFile the file to process.
+     */
+    private void determineKnownClasses(final ThemisSolverFile pFile) {
+        /* Add all the package top-level classes */
+<span class="fc" id="L96">        final ThemisSolverPackage myPackage = (ThemisSolverPackage) pFile.getOwningPackage();</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        for (ThemisSolverFile myFile : myPackage.getFiles()) {</span>
+<span class="fc" id="L98">            final ThemisSolverClass myClass = myFile.getTopLevel();</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">            if (myClass != null) {</span>
+<span class="fc" id="L100">                theKnownClasses.put(myClass.getName(), myClass.getUnderlyingClass());</span>
+            }
+<span class="fc" id="L102">        }</span>
+
+        /* Process the imports */
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        for (ThemisNodeInstance myNode : pFile.getUnderlyingFile().getContents().getImports()) {</span>
+            /* LookUp the import and record it */
+<span class="fc" id="L107">            final ThemisClassInstance myImport = lookUpImport((ThemisNodeImport) myNode);</span>
+<span class="fc" id="L108">            theKnownClasses.put(myImport.getName(), myImport);</span>
+<span class="fc" id="L109">        }</span>
+
+        /* Process the classes in the file */
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        for (ThemisSolverClass myClass : pFile.getClasses()) {</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">            if (!myClass.getUnderlyingClass().isAnonClass()) {</span>
+<span class="fc" id="L114">                theKnownClasses.put(myClass.getName(), myClass.getUnderlyingClass());</span>
+            }
+<span class="fc" id="L116">        }</span>
+<span class="fc" id="L117">    }</span>
+
+    /**
+     * Process inherited.
+     *
+     * @param pClass the class to process
+     */
+    void processInherited(final ThemisSolverClass pClass) {
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        for (ThemisClassInstance myInherited : theProject.listAllInherited(pClass.getFullName())) {</span>
+<span class="fc" id="L126">            theKnownClasses.put(myInherited.getName(), myInherited);</span>
+<span class="fc" id="L127">        }</span>
+<span class="fc" id="L128">    }</span>
+
+    /**
+     * Look up import.
+     *
+     * @param pImport the import definition.
+     * @return the import class
+     */
+    private ThemisClassInstance lookUpImport(final ThemisNodeImport pImport) {
+        /* Determine full name */
+<span class="fc" id="L138">        final String myFullName = pImport.getFullName();</span>
+
+        /* Look for project class of this name */
+<span class="fc" id="L141">        final ThemisSolverClass myClass = theProject.getProjectClassMap().get(myFullName);</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        return myClass != null</span>
+<span class="fc" id="L143">                ? myClass.getUnderlyingClass()</span>
+<span class="fc" id="L144">                : theProject.getExternalClassMap().get(myFullName);</span>
+    }
+
+    /**
+     * process possible reference.
+     *
+     * @param pReference the possible reference.
+     * @return the resolved class (if found)
+     */
+    ThemisClassInstance processPossibleReference(final String pReference) {
+        /* Look up the reference in the list of known classes */
+<span class="fc" id="L155">        ThemisClassInstance myReference = theKnownClasses.get(pReference);</span>
+
+        /* If it is not a known class */
+<span class="fc bfc" id="L158" title="All 2 branches covered.">        if (myReference == null) {</span>
+            /* If it contains a period */
+<span class="fc" id="L160">            final int iIndex = pReference.indexOf(ThemisChar.PERIOD);</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">            if (iIndex != -1) {</span>
+                /* Look for a fully qualified class in external and project classes */
+<span class="fc" id="L163">                myReference = lookUpFullyNamedClass(pReference);</span>
+
+                /* If still not found */
+<span class="fc bfc" id="L166" title="All 2 branches covered.">                if (myReference == null) {</span>
+                    /* Try just the first part */
+<span class="fc" id="L168">                    myReference = lookUpPartiallyNamedClass(pReference, iIndex);</span>
+                }
+
+                /* else just a simple name */
+            } else {
+<span class="fc" id="L173">                myReference = lookUpJavaLangClass(pReference);</span>
+            }
+        }
+
+        /* If we found the reference, process it */
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        if (myReference != null) {</span>
+<span class="fc" id="L179">            declareReferencedClass(myReference);</span>
+        }
+<span class="fc" id="L181">        return myReference;</span>
+    }
+
+    /**
+     * lookUp a fullyNamed class.
+     *
+     * @param pReference the possible reference.
+     * @return the resolved class (if found)
+     */
+    private ThemisClassInstance lookUpFullyNamedClass(final String pReference) {
+        /* Look for a fully qualified class in external and project classes */
+<span class="fc" id="L192">        ThemisClassInstance myReference = theProject.getExternalClassMap().get(pReference);</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">        if (myReference == null) {</span>
+<span class="fc" id="L194">            final ThemisSolverClass myClass = theProject.getProjectClassMap().get(pReference);</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">            if (myClass != null) {</span>
+<span class="fc" id="L196">                myReference = myClass.getUnderlyingClass();</span>
+            }
+        }
+
+        /* If not found, try to load the class */
+<span class="fc bfc" id="L201" title="All 2 branches covered.">        if (myReference == null) {</span>
+<span class="fc" id="L202">            myReference = theProject.tryNamedClass(pReference);</span>
+        }
+
+        /* If we have now found the class, add to knownClasses */
+<span class="fc bfc" id="L206" title="All 2 branches covered.">        if (myReference != null) {</span>
+<span class="fc" id="L207">            theKnownClasses.put(pReference, myReference);</span>
+        }
+
+        /* Return resolved reference (or null) */
+<span class="fc" id="L211">        return myReference;</span>
+    }
+
+    /**
+     * lookUp a partiallyNamed class.
+     *
+     * @param pReference the possible reference.
+     * @param pIndex     the index of the first period
+     * @return the resolved class (if found)
+     */
+    private ThemisClassInstance lookUpPartiallyNamedClass(final String pReference,
+                                                          final int pIndex) {
+        /* Try just the first part of the name */
+<span class="fc" id="L224">        final String myBase = pReference.substring(0, pIndex);</span>
+<span class="fc" id="L225">        ThemisClassInstance myReference = theKnownClasses.get(myBase);</span>
+
+        /* If we found a parent */
+<span class="fc bfc" id="L228" title="All 2 branches covered.">        if (myReference != null) {</span>
+            /* Build the full name of the class */
+<span class="fc" id="L230">            final String myName = myReference.getFullName() + pReference.substring(pIndex);</span>
+<span class="fc" id="L231">            final ThemisSolverClass myProjectClass = theProject.getProjectClassMap().get(myName);</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">            myReference = myProjectClass == null ? theProject.tryNamedClass(myName) : myProjectClass.getUnderlyingClass();</span>
+
+            /* If we have now found the class, add to knownClasses */
+<span class="fc bfc" id="L235" title="All 2 branches covered.">            if (myReference != null) {</span>
+<span class="fc" id="L236">                theKnownClasses.put(pReference, myReference);</span>
+            }
+        }
+
+        /* Return resolved reference (or null) */
+<span class="fc" id="L241">        return myReference;</span>
+    }
+
+    /**
+     * lookUp a javaLang class.
+     *
+     * @param pReference the possible reference.
+     * @return the resolved class (if found)
+     */
+    private ThemisClassInstance lookUpJavaLangClass(final String pReference) {
+        /* Look for a fully qualified class in external and project classes */
+<span class="fc" id="L252">        final ThemisClassInstance myReference = theProject.tryJavaLang(pReference);</span>
+
+        /* If we have now found the class, add to knownClasses */
+<span class="fc bfc" id="L255" title="All 2 branches covered.">        if (myReference != null) {</span>
+<span class="fc" id="L256">            theKnownClasses.put(pReference, myReference);</span>
+        }
+
+        /* Return resolved reference (or null) */
+<span class="fc" id="L260">        return myReference;</span>
+    }
+
+    /**
+     * Declare referenced class.
+     *
+     * @param pClass the class
+     */
+    private void declareReferencedClass(final ThemisClassInstance pClass) {
+        /* Lookup the project class and return if not in project */
+<span class="fc" id="L270">        final Map&lt;String, ThemisSolverClass&gt; myProjectClasses = theProject.getProjectClassMap();</span>
+<span class="fc" id="L271">        ThemisSolverClass myClass = myProjectClasses.get(pClass.getFullName());</span>
+<span class="fc bfc" id="L272" title="All 2 branches covered.">        if (myClass == null) {</span>
+<span class="fc" id="L273">            return;</span>
+        }
+
+        /* Convert to top-level class */
+<span class="fc bfc" id="L277" title="All 2 branches covered.">        if (!myClass.isTopLevel()) {</span>
+<span class="fc" id="L278">            myClass = ((ThemisSolverFile) myClass.getOwningFile()).getTopLevel();</span>
+        }
+
+        /* If this is the first instance of the reference */
+<span class="pc bpc" id="L282" title="1 of 4 branches missed.">        if (myClass != null &amp;&amp; !theReferenced.contains(myClass)) {</span>
+            /* Add to the list of referenced classes */
+<span class="fc" id="L284">            theReferenced.add(myClass);</span>
+        }
+<span class="fc" id="L286">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

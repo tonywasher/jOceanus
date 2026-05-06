@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianEncryptorSpecBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec</a> &gt; <span class="el_source">GordianEncryptorSpecBuilder.java</span></div><h1>GordianEncryptorSpecBuilder.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec;
+
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Asymmetric Encryption Specification Builder.
+ */
+public interface GordianEncryptorSpecBuilder {
+    /**
+     * Define keyPairType.
+     *
+     * @param pType the type
+     * @return the Builder
+     */
+    GordianEncryptorSpecBuilder withKeyPairType(GordianKeyPairType pType);
+
+    /**
+     * Define digestSpec.
+     *
+     * @param pDigestSpec the digest spec
+     * @return the Builder
+     */
+    GordianEncryptorSpecBuilder withDigestSpec(GordianDigestSpec pDigestSpec);
+
+    /**
+     * Define sm2EncryptionType.
+     *
+     * @param pType       the SM2 encryptionType
+     * @param pDigestSpec the digestSpec
+     * @return the Builder
+     */
+    GordianEncryptorSpecBuilder withSM2EncryptionSpec(GordianSM2EncryptionType pType,
+                                                      GordianDigestSpec pDigestSpec);
+
+    /**
+     * Define encryptorSpec list.
+     *
+     * @param pSpecs the specs
+     * @return the builder
+     */
+    GordianEncryptorSpecBuilder withEncryptorSpecs(List&lt;GordianEncryptorSpec&gt; pSpecs);
+
+    /**
+     * Access digestSpecBuilder.
+     *
+     * @return the digestSpec builder
+     */
+    GordianDigestSpecBuilder usingDigestSpecBuilder();
+
+    /**
+     * Build encryptorSpec.
+     *
+     * @return the encryptorSpec
+     */
+    GordianEncryptorSpec build();
+
+    /**
+     * Create RSA Encryptor.
+     *
+     * @param pSpec the digestSpec
+     * @return the encryptorSpec
+     */
+    default GordianEncryptorSpec rsa(final GordianDigestSpec pSpec) {
+<span class="fc" id="L86">        return withKeyPairType(GordianKeyPairType.RSA).withDigestSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create ElGamal Encryptor.
+     *
+     * @param pSpec the digestSpec
+     * @return the encryptorSpec
+     */
+    default GordianEncryptorSpec elGamal(final GordianDigestSpec pSpec) {
+<span class="fc" id="L96">        return withKeyPairType(GordianKeyPairType.ELGAMAL).withDigestSpec(pSpec).build();</span>
+    }
+
+    /**
+     * Create EC Encryptor.
+     *
+     * @return the encryptorSpec
+     */
+    default GordianEncryptorSpec ec() {
+<span class="fc" id="L105">        return withKeyPairType(GordianKeyPairType.EC).build();</span>
+    }
+
+    /**
+     * Create GOST Encryptor.
+     *
+     * @return the encryptorSpec
+     */
+    default GordianEncryptorSpec gost2012() {
+<span class="nc" id="L114">        return withKeyPairType(GordianKeyPairType.GOST).build();</span>
+    }
+
+    /**
+     * Create SM2 Encryptor.
+     *
+     * @return the encryptorSpec
+     */
+    default GordianEncryptorSpec sm2() {
+<span class="nc" id="L123">        return withKeyPairType(GordianKeyPairType.SM2).build();</span>
+    }
+
+    /**
+     * Create SM2 Encryptor.
+     *
+     * @param pType the sm2EncryptionType
+     * @param pSpec the digestSpec
+     * @return the encryptorSpec
+     */
+    default GordianEncryptorSpec sm2(final GordianSM2EncryptionType pType,
+                                     final GordianDigestSpec pSpec) {
+<span class="fc" id="L135">        return withKeyPairType(GordianKeyPairType.SM2).withSM2EncryptionSpec(pType, pSpec).build();</span>
+    }
+
+    /**
+     * Create CompositeSpec.
+     *
+     * @param pSpecs the list of encryptorSpecs
+     * @return the encryptorSpec
+     */
+    default GordianEncryptorSpec composite(final GordianEncryptorSpec... pSpecs) {
+<span class="nc" id="L145">        return composite(Arrays.asList(pSpecs));</span>
+    }
+
+    /**
+     * Create CompositeSpec.
+     *
+     * @param pSpecs the list of encryptorSpecs
+     * @return the encryptorSpec
+     */
+    default GordianEncryptorSpec composite(final List&lt;GordianEncryptorSpec&gt; pSpecs) {
+<span class="fc" id="L155">        return withKeyPairType(GordianKeyPairType.COMPOSITE).withEncryptorSpecs(pSpecs).build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

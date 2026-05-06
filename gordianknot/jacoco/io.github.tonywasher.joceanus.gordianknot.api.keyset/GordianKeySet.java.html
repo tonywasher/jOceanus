@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 
 import java.security.spec.X509EncodedKeySpec;
 
@@ -77,7 +78,7 @@ public interface GordianKeySet {
      * @throws GordianException on error
      */
     default byte[] encryptAADBytes(final byte[] pBytesToEncrypt) throws GordianException {
-<span class="nc" id="L80">        return encryptAADBytes(pBytesToEncrypt, null);</span>
+<span class="nc" id="L81">        return encryptAADBytes(pBytesToEncrypt, null);</span>
     }
 
     /**
@@ -99,7 +100,7 @@ public interface GordianKeySet {
      * @throws GordianException on error
      */
     default byte[] decryptAADBytes(final byte[] pBytesToDecrypt) throws GordianException {
-<span class="nc" id="L102">        return decryptAADBytes(pBytesToDecrypt, null);</span>
+<span class="nc" id="L103">        return decryptAADBytes(pBytesToDecrypt, null);</span>
     }
 
     /**

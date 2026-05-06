@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisMaven.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.parser.proj</a> &gt; <span class="el_source">ThemisMaven.java</span></div><h1>ThemisMaven.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.parser.proj;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusSystem;
+import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
+import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
+import io.github.tonywasher.joceanus.themis.parser.proj.ThemisMavenId.ThemisElementParser;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * Maven pom.xml parser.
+ */
+public class ThemisMaven
+        implements ThemisElementParser {
+    /**
+     * Project filename.
+     */
+    public static final String POM = &quot;pom.xml&quot;;
+
+    /**
+     * Document name.
+     */
+    private static final String DOC_NAME = &quot;project&quot;;
+
+    /**
+     * Properties XPath.
+     */
+    private static final String XPATH_PROPERTIES = &quot;/project/properties&quot;;
+
+    /**
+     * Parent XPath.
+     */
+    private static final String XPATH_PARENT = &quot;/project/parent&quot;;
+
+    /**
+     * Modules XPath.
+     */
+    private static final String XPATH_MODULES = &quot;/project/modules&quot;;
+
+    /**
+     * Dependencies XPath.
+     */
+    private static final String XPATH_DEPENDENCIES = &quot;/project/dependencies&quot;;
+
+    /**
+     * XtraDirs XPath.
+     */
+    private static final String XPATH_XTRADIRS = &quot;/project/build/plugins/plugin[artifactId='build-helper-maven-plugin']&quot;
+            + &quot;/executions/execution/configuration/sources&quot;;
+
+    /**
+     * Module element.
+     */
+    private static final String EL_MODULE = &quot;module&quot;;
+
+    /**
+     * Dependency element.
+     */
+    private static final String EL_DEPENDENCY = &quot;dependency&quot;;
+
+    /**
+     * Source element.
+     */
+    private static final String EL_SOURCE = &quot;source&quot;;
+
+    /**
+     * Parent groupId indication.
+     */
+    private static final String PARENT_GROUP = &quot;${parent.project.groupId}&quot;;
+
+    /**
+     * Parent version indication.
+     */
+    private static final String PARENT_VERSION = &quot;${parent.parent.version}&quot;;
+
+    /**
+     * Project groupId indication.
+     */
+    private static final String PROJECT_GROUP = &quot;${project.groupId}&quot;;
+
+    /**
+     * Project version indication.
+     */
+    private static final String PROJECT_VERSION = &quot;${project.version}&quot;;
+
+    /**
+     * The XPath.
+     */
+    private final XPath theXPath;
+
+    /**
+     * The Document.
+     */
+    private final Document theDoc;
+
+    /**
+     * The Id.
+     */
+    private final ThemisMavenId theId;
+
+    /**
+     * The modules.
+     */
+    private final List&lt;String&gt; theModules;
+
+    /**
+     * The dependencies.
+     */
+    private final List&lt;ThemisMavenId&gt; theDependencies;
+
+    /**
+     * The xtraDirs.
+     */
+    private final List&lt;String&gt; theXtraDirs;
+
+    /**
+     * The parent.
+     */
+    private final ThemisMaven theParent;
+
+    /**
+     * The properties.
+     */
+    private final Map&lt;String, String&gt; theProperties;
+
+    /**
+     * Constructor.
+     *
+     * @param pParent      the parent pom
+     * @param pInputStream the input stream to read
+     * @throws OceanusException on error
+     */
+    ThemisMaven(final ThemisMaven pParent,
+<span class="fc" id="L170">                final InputStream pInputStream) throws OceanusException {</span>
+        /* Store the parent */
+<span class="fc" id="L172">        theParent = pParent;</span>
+
+        /* Create the module list */
+<span class="fc" id="L175">        theModules = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L176">        theDependencies = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L177">        theXtraDirs = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L178">        theProperties = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L179">        theProperties.put(&quot;${javafx.platform}&quot;, OceanusSystem.determineSystem().getClassifier());</span>
+
+        /* Protect against exceptions */
+<span class="fc" id="L182">        try (BufferedInputStream myInBuffer = new BufferedInputStream(pInputStream)) {</span>
+<span class="fc" id="L183">            final DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();</span>
+<span class="fc" id="L184">            myFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);</span>
+<span class="fc" id="L185">            myFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, &quot;&quot;);</span>
+<span class="fc" id="L186">            myFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, &quot;&quot;);</span>
+<span class="fc" id="L187">            final DocumentBuilder myBuilder = myFactory.newDocumentBuilder();</span>
+
+            /* Create the XPath */
+<span class="fc" id="L190">            theXPath = XPathFactory.newInstance().newXPath();</span>
+
+            /* Build the document from the input stream */
+<span class="fc" id="L193">            theDoc = myBuilder.parse(myInBuffer);</span>
+<span class="fc" id="L194">            theId = parseProjectFile();</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L197">        } catch (IOException</span>
+                 | ParserConfigurationException
+                 | SAXException e) {
+<span class="nc" id="L200">            throw new ThemisIOException(&quot;Exception accessing Pom file&quot;, e);</span>
+<span class="fc" id="L201">        }</span>
+<span class="fc" id="L202">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L206">        return theId.toString();</span>
+    }
+
+    /**
+     * Obtain the list of modules.
+     *
+     * @return the list
+     */
+    public ThemisMavenId getMavenId() {
+<span class="fc" id="L215">        return theId;</span>
+    }
+
+    /**
+     * Obtain the list of modules.
+     *
+     * @return the modules
+     */
+    public List&lt;String&gt; getModules() {
+<span class="fc" id="L224">        return theModules;</span>
+    }
+
+    /**
+     * Obtain the list of dependencies.
+     *
+     * @return the dependencies
+     */
+    public List&lt;ThemisMavenId&gt; getDependencies() {
+<span class="fc" id="L233">        return theDependencies;</span>
+    }
+
+    /**
+     * Obtain the list of extra directories.
+     *
+     * @return the modules
+     */
+    public List&lt;String&gt; getXtraDirs() {
+<span class="fc" id="L242">        return theXtraDirs;</span>
+    }
+
+    /**
+     * Parse the project file.
+     *
+     * @return the MavenId
+     * @throws OceanusException on error
+     */
+    public ThemisMavenId parseProjectFile() throws OceanusException {
+        /* Access the document element */
+<span class="fc" id="L253">        final Element myDoc = theDoc.getDocumentElement();</span>
+
+        /* Check that the document name is correct */
+<span class="pc bpc" id="L256" title="1 of 2 branches missed.">        if (!Objects.equals(myDoc.getNodeName(), DOC_NAME)) {</span>
+<span class="nc" id="L257">            throw new ThemisDataException(&quot;Invalid document type&quot;);</span>
+        }
+
+        /* Process any properties */
+<span class="fc" id="L261">        processProperties();</span>
+
+        /* Obtain parent definition if any */
+<span class="fc" id="L264">        final Element myParentEl = (Element) findNode(XPATH_PARENT);</span>
+<span class="fc bfc" id="L265" title="All 2 branches covered.">        final ThemisMavenId myParent = myParentEl == null</span>
+<span class="fc" id="L266">                ? null</span>
+<span class="fc" id="L267">                : new ThemisMavenId(this, myParentEl);</span>
+<span class="fc" id="L268">        storeParentProperties(myParent);</span>
+
+        /* Obtain our mavenId */
+<span class="fc" id="L271">        final ThemisMavenId myId = new ThemisMavenId(this, myDoc, myParent);</span>
+<span class="fc" id="L272">        storeProjectProperties(myId);</span>
+
+        /* Process modules */
+<span class="fc" id="L275">        processModules();</span>
+
+        /* Process dependencies */
+<span class="fc" id="L278">        processDependencies();</span>
+
+        /* Process extra directories */
+<span class="fc" id="L281">        processXtraDirs();</span>
+
+        /* Return the Id */
+<span class="fc" id="L284">        return myId;</span>
+    }
+
+    @Override
+    public String getElementValue(final Element pElement,
+                                  final String pValue) {
+        /* Return null if no element */
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">        if (pElement == null) {</span>
+<span class="nc" id="L292">            return null;</span>
+        }
+
+        /* Loop through the children */
+<span class="fc" id="L296">        for (Node myChild = pElement.getFirstChild();</span>
+<span class="fc bfc" id="L297" title="All 2 branches covered.">             myChild != null;</span>
+<span class="fc" id="L298">             myChild = myChild.getNextSibling()) {</span>
+            /* Return result if we have a match */
+<span class="fc bfc" id="L300" title="All 2 branches covered.">            if (myChild instanceof Element</span>
+<span class="fc bfc" id="L301" title="All 2 branches covered.">                    &amp;&amp; pValue.equals(myChild.getNodeName())) {</span>
+<span class="fc" id="L302">                return replaceProperty(myChild.getTextContent());</span>
+            }
+        }
+
+        /* Not found */
+<span class="fc" id="L307">        return null;</span>
+    }
+
+    /**
+     * Obtain the XPath node.
+     *
+     * @param pPath the Path
+     * @return the Node (or null if not found)
+     * @throws OceanusException on error
+     */
+    private Node findNode(final String pPath) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+<span class="fc" id="L320">            return (Node) theXPath.compile(pPath).evaluate(theDoc, XPathConstants.NODE);</span>
+<span class="nc" id="L321">        } catch (XPathExpressionException e) {</span>
+<span class="nc" id="L322">            throw new ThemisDataException(&quot;Exception locating XPath: &quot; + pPath, e);</span>
+        }
+    }
+
+    /**
+     * Process properties.
+     *
+     * @throws OceanusException on error
+     */
+    private void processProperties() throws OceanusException {
+        /* Process any properties */
+<span class="fc" id="L333">        final Node myProps = findNode(XPATH_PROPERTIES);</span>
+<span class="fc bfc" id="L334" title="All 2 branches covered.">        if (myProps != null) {</span>
+<span class="fc bfc" id="L335" title="All 2 branches covered.">            for (Node myNode = myProps.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {</span>
+<span class="fc bfc" id="L336" title="All 2 branches covered.">                if (myNode instanceof Element myElement) {</span>
+<span class="fc" id="L337">                    theProperties.put(&quot;${&quot; + myElement.getNodeName() + &quot;}&quot;, myElement.getTextContent());</span>
+                }
+            }
+        }
+<span class="fc" id="L341">    }</span>
+
+    /**
+     * Store parent properties.
+     *
+     * @param pParent the parent
+     */
+    private void storeParentProperties(final ThemisMavenId pParent) {
+        /* Store parent groupId */
+<span class="fc bfc" id="L350" title="All 2 branches covered.">        theProperties.put(PARENT_GROUP, pParent == null ? null : pParent.getGroupId());</span>
+<span class="fc bfc" id="L351" title="All 2 branches covered.">        theProperties.put(PARENT_VERSION, pParent == null ? null : pParent.getVersion());</span>
+<span class="fc" id="L352">    }</span>
+
+    /**
+     * Store parent properties.
+     *
+     * @param pProject the project
+     */
+    private void storeProjectProperties(final ThemisMavenId pProject) {
+        /* Determine project groupId */
+<span class="fc" id="L361">        String myGroupId = pProject.getGroupId();</span>
+<span class="pc bpc" id="L362" title="1 of 2 branches missed.">        myGroupId = myGroupId != null ? myGroupId : theProperties.get(PARENT_GROUP);</span>
+
+        /* Determine project version */
+<span class="fc" id="L365">        String myVersion = pProject.getVersion();</span>
+<span class="pc bpc" id="L366" title="1 of 2 branches missed.">        myVersion = myVersion != null ? myVersion : theProperties.get(PARENT_VERSION);</span>
+
+        /* Store project details */
+<span class="fc" id="L369">        theProperties.put(PROJECT_GROUP, myGroupId);</span>
+<span class="fc" id="L370">        theProperties.put(PROJECT_VERSION, myVersion);</span>
+<span class="fc" id="L371">    }</span>
+
+    /**
+     * Process modules.
+     *
+     * @throws OceanusException on error
+     */
+    private void processModules() throws OceanusException {
+        /* Process any modules */
+<span class="fc" id="L380">        final Node myModules = findNode(XPATH_MODULES);</span>
+<span class="fc bfc" id="L381" title="All 2 branches covered.">        if (myModules != null) {</span>
+            /* Loop through the children */
+<span class="fc" id="L383">            for (Node myChild = myModules.getFirstChild();</span>
+<span class="fc bfc" id="L384" title="All 2 branches covered.">                 myChild != null;</span>
+<span class="fc" id="L385">                 myChild = myChild.getNextSibling()) {</span>
+                /* Return result if we have a match */
+<span class="fc bfc" id="L387" title="All 2 branches covered.">                if (myChild instanceof Element</span>
+<span class="pc bpc" id="L388" title="1 of 2 branches missed.">                        &amp;&amp; EL_MODULE.equals(myChild.getNodeName())) {</span>
+<span class="fc" id="L389">                    theModules.add(myChild.getTextContent());</span>
+                }
+            }
+        }
+<span class="fc" id="L393">    }</span>
+
+    /**
+     * Process dependencies.
+     *
+     * @throws OceanusException on error
+     */
+    private void processDependencies() throws OceanusException {
+        /* Process any dependencies */
+<span class="fc" id="L402">        final Node myDependencies = findNode(XPATH_DEPENDENCIES);</span>
+<span class="fc bfc" id="L403" title="All 2 branches covered.">        if (myDependencies != null) {</span>
+            /* Loop through the children */
+<span class="fc" id="L405">            for (Node myChild = myDependencies.getFirstChild();</span>
+<span class="fc bfc" id="L406" title="All 2 branches covered.">                 myChild != null;</span>
+<span class="fc" id="L407">                 myChild = myChild.getNextSibling()) {</span>
+                /* Return result if we have a match */
+<span class="fc bfc" id="L409" title="All 2 branches covered.">                if (myChild instanceof Element myElement</span>
+<span class="pc bpc" id="L410" title="1 of 2 branches missed.">                        &amp;&amp; EL_DEPENDENCY.equals(myChild.getNodeName())) {</span>
+<span class="fc" id="L411">                    final ThemisMavenId myId = new ThemisMavenId(this, myElement);</span>
+<span class="fc bfc" id="L412" title="All 2 branches covered.">                    if (!myId.isSkippable()) {</span>
+<span class="fc" id="L413">                        theDependencies.add(myId);</span>
+                    }
+                }
+            }
+        }
+<span class="fc" id="L418">    }</span>
+
+    /**
+     * Process extra directories.
+     *
+     * @throws OceanusException on error
+     */
+    private void processXtraDirs() throws OceanusException {
+        /* Process any modules */
+<span class="fc" id="L427">        final Node myXtraDirs = findNode(XPATH_XTRADIRS);</span>
+<span class="fc bfc" id="L428" title="All 2 branches covered.">        if (myXtraDirs != null) {</span>
+            /* Loop through the children */
+<span class="fc" id="L430">            for (Node myChild = myXtraDirs.getFirstChild();</span>
+<span class="fc bfc" id="L431" title="All 2 branches covered.">                 myChild != null;</span>
+<span class="fc" id="L432">                 myChild = myChild.getNextSibling()) {</span>
+                /* Return result if we have a match */
+<span class="fc bfc" id="L434" title="All 2 branches covered.">                if (myChild instanceof Element</span>
+<span class="pc bpc" id="L435" title="1 of 2 branches missed.">                        &amp;&amp; EL_SOURCE.equals(myChild.getNodeName())) {</span>
+<span class="fc" id="L436">                    theXtraDirs.add(myChild.getTextContent());</span>
+                }
+            }
+        }
+<span class="fc" id="L440">    }</span>
+
+    /**
+     * Replace property.
+     *
+     * @param pValue the value
+     * @return the value or the replaced property
+     */
+    private String replaceProperty(final String pValue) {
+<span class="fc" id="L449">        String myResult = pValue;</span>
+<span class="fc bfc" id="L450" title="All 2 branches covered.">        for (Map.Entry&lt;String, String&gt; myEntry : theProperties.entrySet()) {</span>
+<span class="fc bfc" id="L451" title="All 2 branches covered.">            if (myResult.contains(myEntry.getKey())) {</span>
+<span class="fc" id="L452">                myResult = myResult.replace(myEntry.getKey(), myEntry.getValue());</span>
+            }
+<span class="fc" id="L454">        }</span>
+<span class="fc bfc" id="L455" title="All 2 branches covered.">        return theParent != null ? theParent.replaceProperty(myResult) : myResult;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

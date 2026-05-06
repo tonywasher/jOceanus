@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianAgreementSpecBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.agree.spec</a> &gt; <span class="el_source">GordianAgreementSpecBuilder.java</span></div><h1>GordianAgreementSpecBuilder.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.api.agree.spec;
+
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+
+/**
+ * KeyPair Agreement Specification Builder.
+ */
+public interface GordianAgreementSpecBuilder {
+    /**
+     * Define keyPairSpec.
+     *
+     * @param pSpec the spec
+     * @return the Builder
+     */
+    GordianAgreementSpecBuilder withKeyPairSpec(GordianKeyPairSpec pSpec);
+
+    /**
+     * Define agreementType.
+     *
+     * @param pType the agreementType
+     * @return the Builder
+     */
+    GordianAgreementSpecBuilder withAgreementType(GordianAgreementType pType);
+
+    /**
+     * Define kdf.
+     *
+     * @param pKDF the kdf
+     * @return the Builder
+     */
+    GordianAgreementSpecBuilder withKDF(GordianAgreementKDF pKDF);
+
+    /**
+     * Request confirm.
+     *
+     * @return the builder
+     */
+    GordianAgreementSpecBuilder withConfirm();
+
+    /**
+     * Build signatureSpec.
+     *
+     * @return the agreementSpec
+     */
+    GordianAgreementSpec build();
+
+    /**
+     * Create generic agreement.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pAgreeType   the agreementType
+     * @param pKDFType     the KDF type
+     * @return the agreementSpec
+     */
+    default GordianAgreementSpec agree(final GordianKeyPairSpec pKeyPairSpec,
+                                       final GordianAgreementType pAgreeType,
+                                       final GordianAgreementKDF pKDFType) {
+<span class="fc" id="L75">        return withKeyPairSpec(pKeyPairSpec).withAgreementType(pAgreeType).withKDF(pKDFType).build();</span>
+    }
+
+    /**
+     * Create generic agreement.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pAgreeType   the agreementType
+     * @param pKDFType     the KDF type
+     * @param pConfirm     withConfirm(true/false)
+     * @return the agreementSpec
+     */
+    default GordianAgreementSpec agree(final GordianKeyPairSpec pKeyPairSpec,
+                                       final GordianAgreementType pAgreeType,
+                                       final GordianAgreementKDF pKDFType,
+                                       final boolean pConfirm) {
+<span class="fc" id="L91">        withKeyPairSpec(pKeyPairSpec).withAgreementType(pAgreeType).withKDF(pKDFType);</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if (pConfirm) {</span>
+<span class="fc" id="L93">            withConfirm();</span>
+        }
+<span class="fc" id="L95">        return build();</span>
+    }
+
+    /**
+     * Create the KEM agreementSpec.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pKDFType     the KDF type
+     * @return the Spec
+     */
+    default GordianAgreementSpec kem(final GordianKeyPairSpec pKeyPairSpec,
+                                     final GordianAgreementKDF pKDFType) {
+<span class="fc" id="L107">        return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianAgreementType.KEM).withKDF(pKDFType).build();</span>
+    }
+
+    /**
+     * Create the ANON agreementSpec.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pKDFType     the KDF type
+     * @return the Spec
+     */
+    default GordianAgreementSpec anon(final GordianKeyPairSpec pKeyPairSpec,
+                                      final GordianAgreementKDF pKDFType) {
+<span class="fc" id="L119">        return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianAgreementType.ANON).withKDF(pKDFType).build();</span>
+    }
+
+    /**
+     * Create the Basic agreementSpec.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pKDFType     the KDF type
+     * @return the Spec
+     */
+    default GordianAgreementSpec basic(final GordianKeyPairSpec pKeyPairSpec,
+                                       final GordianAgreementKDF pKDFType) {
+<span class="nc" id="L131">        return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianAgreementType.BASIC).withKDF(pKDFType).build();</span>
+    }
+
+    /**
+     * Create the signed agreementSpec.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pKDFType     the KDF type
+     * @return the Spec
+     */
+    default GordianAgreementSpec signed(final GordianKeyPairSpec pKeyPairSpec,
+                                        final GordianAgreementKDF pKDFType) {
+<span class="nc" id="L143">        return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianAgreementType.SIGNED).withKDF(pKDFType).build();</span>
+    }
+
+    /**
+     * Create the MQV agreementSpec.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pKDFType     the KDF type
+     * @return the Spec
+     */
+    default GordianAgreementSpec mqv(final GordianKeyPairSpec pKeyPairSpec,
+                                     final GordianAgreementKDF pKDFType) {
+<span class="nc" id="L155">        return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianAgreementType.MQV).withKDF(pKDFType).build();</span>
+    }
+
+    /**
+     * Create the MQVConfirm agreementSpec.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pKDFType     the KDF type
+     * @return the Spec
+     */
+    default GordianAgreementSpec mqvConfirm(final GordianKeyPairSpec pKeyPairSpec,
+                                            final GordianAgreementKDF pKDFType) {
+<span class="nc" id="L167">        return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianAgreementType.MQV).withKDF(pKDFType).withConfirm().build();</span>
+    }
+
+    /**
+     * Create the Unified agreementSpec.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pKDFType     the KDF type
+     * @return the Spec
+     */
+    default GordianAgreementSpec unified(final GordianKeyPairSpec pKeyPairSpec,
+                                         final GordianAgreementKDF pKDFType) {
+<span class="nc" id="L179">        return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianAgreementType.UNIFIED).withKDF(pKDFType).build();</span>
+    }
+
+    /**
+     * Create the unifiedConfirm agreementSpec.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pKDFType     the KDF type
+     * @return the Spec
+     */
+    default GordianAgreementSpec unifiedConfirm(final GordianKeyPairSpec pKeyPairSpec,
+                                                final GordianAgreementKDF pKDFType) {
+<span class="nc" id="L191">        return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianAgreementType.UNIFIED).withKDF(pKDFType).withConfirm().build();</span>
+    }
+
+    /**
+     * Create the sm2 agreementSpec.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pKDFType     the KDF type
+     * @return the Spec
+     */
+    default GordianAgreementSpec sm2(final GordianKeyPairSpec pKeyPairSpec,
+                                     final GordianAgreementKDF pKDFType) {
+<span class="nc" id="L203">        return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianAgreementType.SM2).withKDF(pKDFType).build();</span>
+    }
+
+    /**
+     * Create the sm2Confirm agreementSpec.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pKDFType     the KDF type
+     * @return the Spec
+     */
+    default GordianAgreementSpec sm2Confirm(final GordianKeyPairSpec pKeyPairSpec,
+                                            final GordianAgreementKDF pKDFType) {
+<span class="nc" id="L215">        return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianAgreementType.SM2).withKDF(pKDFType).withConfirm().build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

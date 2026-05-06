@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreAgreementKDF.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree</a> &gt; <span class="el_source">GordianCoreAgreementKDF.java</span></div><h1>GordianCoreAgreementKDF.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree;
+
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * KDF types.
+ */
+public final class GordianCoreAgreementKDF {
+    /**
+     * The agreementKDFMap.
+     */
+<span class="fc" id="L34">    private static final Map&lt;GordianAgreementKDF, GordianCoreAgreementKDF&gt; KDFMAP = newKDFMap();</span>
+
+    /**
+     * The kdfTypeArray.
+     */
+<span class="fc" id="L39">    private static final GordianCoreAgreementKDF[] VALUES = KDFMAP.values().toArray(new GordianCoreAgreementKDF[0]);</span>
+
+    /**
+     * The KDF.
+     */
+    private final GordianAgreementKDF theKDF;
+
+    /**
+     * Constructor.
+     *
+     * @param pKDF the agreementKDF
+     */
+<span class="fc" id="L51">    private GordianCoreAgreementKDF(final GordianAgreementKDF pKDF) {</span>
+<span class="fc" id="L52">        theKDF = pKDF;</span>
+<span class="fc" id="L53">    }</span>
+
+    /**
+     * Obtain the KDF.
+     *
+     * @return the KDF
+     */
+    public GordianAgreementKDF getKDF() {
+<span class="fc" id="L61">        return theKDF;</span>
+    }
+
+    /**
+     * Determine whether this is a supported kdfType.
+     *
+     * @param pKeyType   pKeyType
+     * @param pAgreeType the agreement type
+     * @return true/false
+     */
+    public boolean isSupported(final GordianKeyPairType pKeyType,
+                               final GordianAgreementType pAgreeType) {
+        /* Switch on keyType */
+<span class="fc bfc" id="L74" title="All 6 branches covered.">        return switch (pKeyType) {</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">            case RSA -&gt; !isCKDF();</span>
+<span class="fc" id="L76">            case EC, SM2, DSTU, GOST -&gt; isSupported4EC(pAgreeType);</span>
+<span class="fc" id="L77">            case DH -&gt; isSupported4DH(pAgreeType);</span>
+<span class="fc" id="L78">            case XDH -&gt; isSupported4XDH(pAgreeType);</span>
+            case CMCE, FRODO, SABER, NEWHOPE, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME -&gt;
+<span class="pc bpc" id="L80" title="2 of 4 branches missed.">                    pAgreeType == GordianAgreementType.KEM</span>
+                            &amp;&amp; theKDF == GordianAgreementKDF.NONE;
+<span class="fc" id="L82">            default -&gt; true;</span>
+        };
+    }
+
+    /**
+     * Determine whether this is a supported kdfType for RSA.
+     *
+     * @param pAgreeType the agreement type
+     * @return true/false
+     */
+    private boolean isSupported4DH(final GordianAgreementType pAgreeType) {
+        /* Switch on kdfType */
+<span class="fc bfc" id="L94" title="All 4 branches covered.">        return switch (theKDF) {</span>
+<span class="fc" id="L95">            case SHA256KDF, SHA512KDF -&gt; true;</span>
+            case SHA256CKDF, SHA512CKDF -&gt;
+<span class="fc bfc" id="L97" title="All 4 branches covered.">                    pAgreeType == GordianAgreementType.UNIFIED || pAgreeType == GordianAgreementType.MQV;</span>
+<span class="pc bpc" id="L98" title="1 of 4 branches missed.">            case NONE -&gt; pAgreeType == GordianAgreementType.BASIC || pAgreeType == GordianAgreementType.KEM;</span>
+<span class="fc" id="L99">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Determine whether this is a supported kdfType for XDH.
+     *
+     * @param pAgreeType the agreement type
+     * @return true/false
+     */
+    private boolean isSupported4XDH(final GordianAgreementType pAgreeType) {
+        /* Switch on kdfType */
+<span class="fc bfc" id="L111" title="All 3 branches covered.">        return switch (theKDF) {</span>
+<span class="fc" id="L112">            case SHA512KDF, SHA256KDF -&gt; true;</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">            case SHA512CKDF, SHA256CKDF, SHA512HKDF, SHA256HKDF, NONE -&gt; pAgreeType != GordianAgreementType.UNIFIED;</span>
+<span class="fc" id="L114">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Determine whether this is a supported kdfType for EC.
+     *
+     * @param pAgreeType the agreement type
+     * @return true/false
+     */
+    private boolean isSupported4EC(final GordianAgreementType pAgreeType) {
+        /* Switch on kdfType */
+<span class="fc bfc" id="L126" title="All 3 branches covered.">        return switch (theKDF) {</span>
+<span class="fc" id="L127">            case SHA512KDF, SHA256KDF, NONE -&gt; true;</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">            case SHA512CKDF, SHA256CKDF -&gt; pAgreeType != GordianAgreementType.KEM;</span>
+<span class="fc" id="L129">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Determine whether this is a CKDF.
+     *
+     * @return true/false
+     */
+    public boolean isCKDF() {
+<span class="fc bfc" id="L139" title="All 4 branches covered.">        return theKDF == GordianAgreementKDF.SHA256CKDF || theKDF == GordianAgreementKDF.SHA512CKDF;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L144">        return theKDF.toString();</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L151">            return true;</span>
+        }
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L154">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="nc" id="L158">        return pThat instanceof GordianCoreAgreementKDF myThat</span>
+<span class="nc bnc" id="L159" title="All 4 branches missed.">                &amp;&amp; theKDF == myThat.getKDF();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L164">        return theKDF.hashCode();</span>
+    }
+
+    /**
+     * Obtain the core KDF.
+     *
+     * @param pKDF the base KDF
+     * @return the core KDF
+     */
+    public static GordianCoreAgreementKDF mapCoreKDF(final Object pKDF) {
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">        return pKDF instanceof GordianAgreementKDF myKDF ? KDFMAP.get(myKDF) : null;</span>
+    }
+
+    /**
+     * Build the KDF map.
+     *
+     * @return the KDF map
+     */
+    private static Map&lt;GordianAgreementKDF, GordianCoreAgreementKDF&gt; newKDFMap() {
+<span class="fc" id="L183">        final Map&lt;GordianAgreementKDF, GordianCoreAgreementKDF&gt; myMap = new EnumMap&lt;&gt;(GordianAgreementKDF.class);</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">        for (GordianAgreementKDF myKDF : GordianAgreementKDF.values()) {</span>
+<span class="fc" id="L185">            myMap.put(myKDF, new GordianCoreAgreementKDF(myKDF));</span>
+        }
+<span class="fc" id="L187">        return myMap;</span>
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static GordianCoreAgreementKDF[] values() {
+<span class="nc" id="L196">        return VALUES;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

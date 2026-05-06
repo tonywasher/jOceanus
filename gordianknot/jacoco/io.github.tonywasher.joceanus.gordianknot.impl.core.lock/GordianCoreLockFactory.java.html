@@ -25,13 +25,15 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameters;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpecBuilder;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -56,9 +58,14 @@ public class GordianCoreLockFactory
      *
      * @param pFactory the factory
      */
-<span class="fc" id="L59">    public GordianCoreLockFactory(final GordianFactory pFactory) {</span>
-<span class="fc" id="L60">        theFactory = (GordianBaseFactory) pFactory;</span>
-<span class="fc" id="L61">    }</span>
+<span class="fc" id="L61">    public GordianCoreLockFactory(final GordianFactory pFactory) {</span>
+<span class="fc" id="L62">        theFactory = (GordianBaseFactory) pFactory;</span>
+<span class="fc" id="L63">    }</span>
+
+    @Override
+    public GordianPasswordLockSpecBuilder newPasswordLockSpecBuilder() {
+<span class="nc" id="L67">        return GordianCorePasswordLockSpecBuilder.newInstance();</span>
+    }
 
     /**
      * Create a new factoryLock for an existing factory.
@@ -73,10 +80,10 @@ public class GordianCoreLockFactory
                                              final GordianPasswordLockSpec pLockSpec,
                                              final char[] pPassword) throws GordianException {
         /* Check the passwordLockSpec */
-<span class="fc" id="L76">        checkPasswordLockSpec(pLockSpec);</span>
+<span class="fc" id="L83">        checkPasswordLockSpec(pLockSpec);</span>
 
         /* Create the factoryLock */
-<span class="fc" id="L79">        return new GordianFactoryLockImpl(getLockingFactory(), (GordianBaseFactory) pFactoryToLock, pLockSpec, pPassword);</span>
+<span class="fc" id="L86">        return new GordianFactoryLockImpl(getLockingFactory(), (GordianBaseFactory) pFactoryToLock, pLockSpec, pPassword);</span>
     }
 
     /**
@@ -92,11 +99,11 @@ public class GordianCoreLockFactory
                                              final GordianFactoryType pFactoryType,
                                              final char[] pPassword) throws GordianException {
         /* Create the lockFactory */
-<span class="fc" id="L95">        final GordianParameters myParams = GordianParameters.randomParams(pFactoryType);</span>
-<span class="fc" id="L96">        final GordianFactory myFactory = theFactory.newFactory(myParams);</span>
+<span class="fc" id="L102">        final GordianParameters myParams = GordianParameters.randomParams(pFactoryType);</span>
+<span class="fc" id="L103">        final GordianFactory myFactory = theFactory.newFactory(myParams);</span>
 
         /* Create the factoryLock */
-<span class="fc" id="L99">        return newFactoryLock(myFactory, pLockSpec, pPassword);</span>
+<span class="fc" id="L106">        return newFactoryLock(myFactory, pLockSpec, pPassword);</span>
     }
 
     /**
@@ -110,7 +117,7 @@ public class GordianCoreLockFactory
     public GordianFactoryLock resolveFactoryLock(final byte[] pLockBytes,
                                                  final char[] pPassword) throws GordianException {
         /* Create the factoryLock */
-<span class="fc" id="L113">        return new GordianFactoryLockImpl(getLockingFactory(), pLockBytes, pPassword);</span>
+<span class="fc" id="L120">        return new GordianFactoryLockImpl(getLockingFactory(), pLockBytes, pPassword);</span>
     }
 
     /**
@@ -124,7 +131,14 @@ public class GordianCoreLockFactory
     public GordianFactoryLock resolveFactoryLock(final GordianPasswordLockASN1 pLockASN1,
                                                  final char[] pPassword) throws GordianException {
         /* Create the factoryLock */
-<span class="fc" id="L127">        return new GordianFactoryLockImpl(getLockingFactory(), pLockASN1, pPassword);</span>
+<span class="fc" id="L134">        return new GordianFactoryLockImpl(getLockingFactory(), pLockASN1, pPassword);</span>
+    }
+
+    @Override
+    public GordianKeySetLock newKeySetLock(final GordianKeySet pKeySetToLock,
+                                           final char[] pPassword) throws GordianException {
+<span class="nc" id="L140">        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();</span>
+<span class="nc" id="L141">        return newKeySetLock(pKeySetToLock, myBuilder.passwordLock(), pPassword);</span>
     }
 
     @Override
@@ -132,27 +146,33 @@ public class GordianCoreLockFactory
                                            final GordianPasswordLockSpec pLockSpec,
                                            final char[] pPassword) throws GordianException {
         /* Check the passwordLockSpec */
-<span class="fc" id="L135">        checkPasswordLockSpec(pLockSpec);</span>
+<span class="fc" id="L149">        checkPasswordLockSpec(pLockSpec);</span>
 
         /* Create the keySetLock */
-<span class="fc" id="L138">        return new GordianKeySetLockImpl(theFactory, (GordianCoreKeySet) pKeySetToLock, pLockSpec, pPassword);</span>
+<span class="fc" id="L152">        return new GordianKeySetLockImpl(theFactory, (GordianCoreKeySet) pKeySetToLock, pLockSpec, pPassword);</span>
+    }
+
+    @Override
+    public GordianKeySetLock newKeySetLock(final char[] pPassword) throws GordianException {
+<span class="nc" id="L157">        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();</span>
+<span class="nc" id="L158">        return newKeySetLock(myBuilder.passwordLock(), pPassword);</span>
     }
 
     @Override
     public GordianKeySetLock newKeySetLock(final GordianPasswordLockSpec pLockSpec,
                                            final char[] pPassword) throws GordianException {
         /* Create a new random keySet */
-<span class="fc" id="L145">        final GordianKeySet myKeySet = theFactory.getKeySetFactory().generateKeySet(pLockSpec.getKeySetSpec());</span>
+<span class="fc" id="L165">        final GordianKeySet myKeySet = theFactory.getKeySetFactory().generateKeySet(pLockSpec.getKeySetSpec());</span>
 
         /* Create the keySetLock */
-<span class="fc" id="L148">        return newKeySetLock(myKeySet, pLockSpec, pPassword);</span>
+<span class="fc" id="L168">        return newKeySetLock(myKeySet, pLockSpec, pPassword);</span>
     }
 
     @Override
     public GordianKeySetLock resolveKeySetLock(final byte[] pLockBytes,
                                                final char[] pPassword) throws GordianException {
         /* Create the keySetLock */
-<span class="fc" id="L155">        return new GordianKeySetLockImpl(theFactory, pLockBytes, pPassword);</span>
+<span class="fc" id="L175">        return new GordianKeySetLockImpl(theFactory, pLockBytes, pPassword);</span>
     }
 
     /**
@@ -166,7 +186,14 @@ public class GordianCoreLockFactory
     public GordianKeySetLock resolveKeySetLock(final GordianPasswordLockASN1 pLockASN1,
                                                final char[] pPassword) throws GordianException {
         /* Create the keySetLock */
-<span class="fc" id="L169">        return new GordianKeySetLockImpl(theFactory, pLockASN1, pPassword);</span>
+<span class="fc" id="L189">        return new GordianKeySetLockImpl(theFactory, pLockASN1, pPassword);</span>
+    }
+
+    @Override
+    public GordianKeyPairLock newKeyPairLock(final GordianKeyPair pKeyPair,
+                                             final char[] pPassword) throws GordianException {
+<span class="nc" id="L195">        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();</span>
+<span class="nc" id="L196">        return newKeyPairLock(myBuilder.passwordLock(), pKeyPair, pPassword);</span>
     }
 
     @Override
@@ -174,10 +201,10 @@ public class GordianCoreLockFactory
                                              final GordianKeyPair pKeyPair,
                                              final char[] pPassword) throws GordianException {
         /* Check the passwordLockSpec */
-<span class="fc" id="L177">        checkPasswordLockSpec(pLockSpec);</span>
+<span class="fc" id="L204">        checkPasswordLockSpec(pLockSpec);</span>
 
         /* Create the keyPairLock */
-<span class="fc" id="L180">        return new GordianKeyPairLockImpl(theFactory, pLockSpec, pKeyPair, pPassword);</span>
+<span class="fc" id="L207">        return new GordianKeyPairLockImpl(theFactory, pLockSpec, pKeyPair, pPassword);</span>
     }
 
     @Override
@@ -185,7 +212,7 @@ public class GordianCoreLockFactory
                                                  final GordianKeyPair pKeyPair,
                                                  final char[] pPassword) throws GordianException {
         /* Create the keySetLock */
-<span class="nc" id="L188">        return new GordianKeyPairLockImpl(theFactory, pLockBytes, pKeyPair, pPassword);</span>
+<span class="nc" id="L215">        return new GordianKeyPairLockImpl(theFactory, pLockBytes, pKeyPair, pPassword);</span>
     }
 
     /**
@@ -201,7 +228,7 @@ public class GordianCoreLockFactory
                                                  final GordianKeyPair pKeyPair,
                                                  final char[] pPassword) throws GordianException {
         /* Create the keySetLock */
-<span class="fc" id="L204">        return new GordianKeyPairLockImpl(theFactory, pLockASN1, pKeyPair, pPassword);</span>
+<span class="fc" id="L231">        return new GordianKeyPairLockImpl(theFactory, pLockASN1, pKeyPair, pPassword);</span>
     }
 
     /**
@@ -212,21 +239,21 @@ public class GordianCoreLockFactory
      */
     private GordianBaseFactory getLockingFactory() throws GordianException {
         /* Return lockFactory (if created) */
-<span class="fc bfc" id="L215" title="All 2 branches covered.">        if (lockFactory != null) {</span>
-<span class="fc" id="L216">            return lockFactory;</span>
+<span class="fc bfc" id="L242" title="All 2 branches covered.">        if (lockFactory != null) {</span>
+<span class="fc" id="L243">            return lockFactory;</span>
         }
 
         /* Synchronise on class */
-<span class="fc" id="L220">        synchronized (this) {</span>
+<span class="fc" id="L247">        synchronized (this) {</span>
             /* If lockFactory is not created */
-<span class="pc bpc" id="L222" title="1 of 2 branches missed.">            if (lockFactory == null) {</span>
+<span class="pc bpc" id="L249" title="1 of 2 branches missed.">            if (lockFactory == null) {</span>
                 /* Create the lockFactory */
-<span class="fc" id="L224">                final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC, getHostName());</span>
-<span class="fc" id="L225">                lockFactory = (GordianBaseFactory) theFactory.newFactory(myParams);</span>
+<span class="fc" id="L251">                final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC, getHostName());</span>
+<span class="fc" id="L252">                lockFactory = (GordianBaseFactory) theFactory.newFactory(myParams);</span>
             }
 
             /* Return the lockFactory */
-<span class="fc" id="L229">            return lockFactory;</span>
+<span class="fc" id="L256">            return lockFactory;</span>
         }
     }
 
@@ -238,11 +265,11 @@ public class GordianCoreLockFactory
     private static char[] getHostName() {
         /* Protect against exceptions */
         try {
-<span class="fc" id="L241">            final InetAddress myAddr = InetAddress.getLocalHost();</span>
-<span class="fc" id="L242">            return myAddr.getHostName().toCharArray();</span>
+<span class="fc" id="L268">            final InetAddress myAddr = InetAddress.getLocalHost();</span>
+<span class="fc" id="L269">            return myAddr.getHostName().toCharArray();</span>
 
-<span class="nc" id="L244">        } catch (UnknownHostException e) {</span>
-<span class="nc" id="L245">            return &quot;localhost&quot;.toCharArray();</span>
+<span class="nc" id="L271">        } catch (UnknownHostException e) {</span>
+<span class="nc" id="L272">            return &quot;localhost&quot;.toCharArray();</span>
         }
     }
 
@@ -254,10 +281,10 @@ public class GordianCoreLockFactory
      */
     public void checkPasswordLockSpec(final GordianPasswordLockSpec pSpec) throws GordianException {
         /* Check validity of PasswordLockSpec */
-<span class="pc bpc" id="L257" title="1 of 2 branches missed.">        if (!validPasswordLockSpec(pSpec)) {</span>
-<span class="nc" id="L258">            throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));</span>
+<span class="pc bpc" id="L284" title="1 of 2 branches missed.">        if (!validPasswordLockSpec(pSpec)) {</span>
+<span class="nc" id="L285">            throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));</span>
         }
-<span class="fc" id="L260">    }</span>
+<span class="fc" id="L287">    }</span>
 
     /**
      * check valid passwordLockSpec.
@@ -267,12 +294,12 @@ public class GordianCoreLockFactory
      */
     private static boolean validPasswordLockSpec(final GordianPasswordLockSpec pSpec) {
         /* Check for invalid spec */
-<span class="pc bpc" id="L270" title="2 of 4 branches missed.">        if (pSpec == null || !pSpec.isValid()) {</span>
-<span class="nc" id="L271">            return false;</span>
+<span class="pc bpc" id="L297" title="2 of 4 branches missed.">        if (pSpec == null || !pSpec.isValid()) {</span>
+<span class="nc" id="L298">            return false;</span>
         }
 
         /* Check on length */
-<span class="fc" id="L275">        return GordianCoreKeySetFactory.validKeySetSpec(pSpec.getKeySetSpec());</span>
+<span class="fc" id="L302">        return GordianCoreKeySetFactory.validKeySetSpec(pSpec.getKeySetSpec());</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

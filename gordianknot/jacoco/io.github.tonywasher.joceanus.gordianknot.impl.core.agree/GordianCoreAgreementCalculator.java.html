@@ -19,28 +19,32 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameters;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 import org.bouncycastle.util.Arrays;
 
 import java.nio.charset.StandardCharsets;
@@ -67,10 +71,10 @@ public class GordianCoreAgreementCalculator {
      * @param pState   the state
      */
     GordianCoreAgreementCalculator(final GordianBaseFactory pFactory,
-<span class="fc" id="L70">                                   final GordianCoreAgreementState pState) {</span>
-<span class="fc" id="L71">        theFactory = pFactory;</span>
-<span class="fc" id="L72">        theState = pState;</span>
-<span class="fc" id="L73">    }</span>
+<span class="fc" id="L74">                                   final GordianCoreAgreementState pState) {</span>
+<span class="fc" id="L75">        theFactory = pFactory;</span>
+<span class="fc" id="L76">        theState = pState;</span>
+<span class="fc" id="L77">    }</span>
 
     /**
      * Process the secret.
@@ -83,33 +87,33 @@ public class GordianCoreAgreementCalculator {
     Object processSecret(final byte[] pSecret,
                          final Object pResultType) throws GordianException {
         /* If the resultType is a FactoryType */
-<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (pResultType instanceof GordianFactoryType myType) {</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (pResultType instanceof GordianFactoryType myType) {</span>
             /* derive the factory */
-<span class="fc" id="L88">            return deriveFactory(myType, pSecret);</span>
+<span class="fc" id="L92">            return deriveFactory(myType, pSecret);</span>
 
             /* If the resultType is a KeySetSpec */
-<span class="fc bfc" id="L91" title="All 2 branches covered.">        } else if (pResultType instanceof GordianKeySetSpec mySpec) {</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        } else if (pResultType instanceof GordianKeySetSpec mySpec) {</span>
             /* Derive the keySet */
-<span class="fc" id="L93">            return deriveKeySet(mySpec, pSecret);</span>
+<span class="fc" id="L97">            return deriveKeySet(mySpec, pSecret);</span>
 
             /* If the resultType is a SymCipherSpec */
-<span class="fc bfc" id="L96" title="All 2 branches covered.">        } else if (pResultType instanceof GordianSymCipherSpec mySpec) {</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        } else if (pResultType instanceof GordianSymCipherSpec mySpec) {</span>
             /* Derive the key */
-<span class="fc" id="L98">            return deriveCipher(mySpec, pSecret);</span>
+<span class="fc" id="L102">            return deriveCipher(mySpec, pSecret);</span>
 
             /* If the resultType is a StreamCipherSpec */
-<span class="fc bfc" id="L101" title="All 2 branches covered.">        } else if (pResultType instanceof GordianStreamCipherSpec mySpec) {</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        } else if (pResultType instanceof GordianStreamCipherSpec mySpec) {</span>
             /* Derive the key */
-<span class="fc" id="L103">            return deriveCipher(mySpec, pSecret);</span>
+<span class="fc" id="L107">            return deriveCipher(mySpec, pSecret);</span>
 
             /* If the resultType is an Integer */
-<span class="fc bfc" id="L106" title="All 2 branches covered.">        } else if (pResultType instanceof Integer myLength) {</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        } else if (pResultType instanceof Integer myLength) {</span>
             /* Derive the key */
-<span class="fc" id="L108">            return deriveBytes(pSecret, myLength);</span>
+<span class="fc" id="L112">            return deriveBytes(pSecret, myLength);</span>
         }
 
         /* Return the raw secret */
-<span class="fc" id="L112">        return Arrays.clone(pSecret);</span>
+<span class="fc" id="L116">        return Arrays.clone(pSecret);</span>
     }
 
     /**
@@ -123,19 +127,19 @@ public class GordianCoreAgreementCalculator {
     private GordianFactory deriveFactory(final GordianFactoryType pFactoryType,
                                          final byte[] pSecret) throws GordianException {
         /* Ensure that we clear out the seed */
-<span class="fc" id="L126">        byte[] mySeed = null;</span>
+<span class="fc" id="L130">        byte[] mySeed = null;</span>
         try {
             /* Calculate the seed */
-<span class="fc" id="L129">            mySeed = calculateDerivedSecret(pSecret, GordianDerivationId.FACTORY, GordianParameters.SEED_LEN.getByteLength());</span>
+<span class="fc" id="L133">            mySeed = calculateDerivedSecret(pSecret, GordianDerivationId.FACTORY, GordianParameters.SEED_LEN.getByteLength());</span>
 
             /* Create a new Factory using the phrase */
-<span class="fc" id="L132">            final GordianParameters myParams = new GordianParameters(pFactoryType, mySeed);</span>
-<span class="fc" id="L133">            return theFactory.newFactory(myParams);</span>
+<span class="fc" id="L136">            final GordianParameters myParams = new GordianParameters(pFactoryType, mySeed);</span>
+<span class="fc" id="L137">            return theFactory.newFactory(myParams);</span>
 
             /* Clear buffer */
         } finally {
-<span class="pc bpc" id="L137" title="1 of 2 branches missed.">            if (mySeed != null) {</span>
-<span class="fc" id="L138">                Arrays.fill(mySeed, (byte) 0);</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">            if (mySeed != null) {</span>
+<span class="fc" id="L142">                Arrays.fill(mySeed, (byte) 0);</span>
             }
         }
     }
@@ -151,23 +155,23 @@ public class GordianCoreAgreementCalculator {
     private GordianKeySet deriveKeySet(final GordianKeySetSpec pSpec,
                                        final byte[] pSecret) throws GordianException {
         /* Derive a shared factory */
-<span class="fc" id="L154">        final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);</span>
+<span class="fc" id="L158">        final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);</span>
 
         /* Ensure that we clear out the secret */
-<span class="fc" id="L157">        byte[] mySecret = null;</span>
+<span class="fc" id="L161">        byte[] mySecret = null;</span>
         try {
             /* Calculate the secret */
-<span class="fc" id="L160">            mySecret = calculateDerivedSecret(pSecret, GordianDerivationId.KEYSET, GordianParameters.SECRET_LEN.getByteLength());</span>
+<span class="fc" id="L164">            mySecret = calculateDerivedSecret(pSecret, GordianDerivationId.KEYSET, GordianParameters.SECRET_LEN.getByteLength());</span>
 
             /* Derive the keySet */
-<span class="fc" id="L163">            final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();</span>
-<span class="fc" id="L164">            final GordianCoreKeySet myKeySet = myKeySets.createKeySet(pSpec);</span>
-<span class="fc" id="L165">            myKeySet.buildFromSecret(mySecret);</span>
-<span class="fc" id="L166">            return myKeySet;</span>
+<span class="fc" id="L167">            final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();</span>
+<span class="fc" id="L168">            final GordianCoreKeySet myKeySet = myKeySets.createKeySet(pSpec);</span>
+<span class="fc" id="L169">            myKeySet.buildFromSecret(mySecret);</span>
+<span class="fc" id="L170">            return myKeySet;</span>
 
         } finally {
-<span class="pc bpc" id="L169" title="1 of 2 branches missed.">            if (mySecret != null) {</span>
-<span class="fc" id="L170">                Arrays.fill(mySecret, (byte) 0);</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">            if (mySecret != null) {</span>
+<span class="fc" id="L174">                Arrays.fill(mySecret, (byte) 0);</span>
             }
         }
     }
@@ -183,33 +187,34 @@ public class GordianCoreAgreementCalculator {
     private GordianSymCipher[] deriveCipher(final GordianSymCipherSpec pCipherSpec,
                                             final byte[] pSecret) throws GordianException {
         /* Derive a shared factory */
-<span class="fc" id="L186">        final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);</span>
+<span class="fc" id="L190">        final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);</span>
 
         /* Generate the key */
-<span class="fc" id="L189">        final GordianKey&lt;GordianSymKeySpec&gt; myKey = deriveKey(myFactory, pCipherSpec.getKeyType(), pSecret);</span>
+<span class="fc" id="L193">        final GordianKey&lt;GordianSymKeySpec&gt; myKey = deriveKey(myFactory, pCipherSpec.getKeySpec(), pSecret);</span>
 
         /* Create the cipher and initialise with key */
-<span class="fc" id="L192">        final GordianCipherFactory myCiphers = myFactory.getCipherFactory();</span>
-<span class="fc" id="L193">        final GordianSymCipher myOutCipher = myCiphers.createSymKeyCipher(pCipherSpec);</span>
-<span class="fc" id="L194">        final GordianSymCipher myInCipher = myCiphers.createSymKeyCipher(pCipherSpec);</span>
+<span class="fc" id="L196">        final GordianCipherFactory myCiphers = myFactory.getCipherFactory();</span>
+<span class="fc" id="L197">        final GordianSymCipher myOutCipher = myCiphers.createSymKeyCipher(pCipherSpec);</span>
+<span class="fc" id="L198">        final GordianSymCipher myInCipher = myCiphers.createSymKeyCipher(pCipherSpec);</span>
 
         /* If we need an IV */
-<span class="pc bpc" id="L197" title="1 of 2 branches missed.">        if (pCipherSpec.needsIV()) {</span>
+<span class="fc" id="L201">        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();</span>
+<span class="pc bpc" id="L202" title="1 of 2 branches missed.">        if (pCipherSpec.needsIV()) {</span>
             /* Calculate the IV */
-<span class="fc" id="L199">            final byte[] myIV = deriveIV(pSecret, pCipherSpec.getIVLength());</span>
+<span class="fc" id="L204">            final byte[] myIV = deriveIV(pSecret, pCipherSpec.getIVLength());</span>
 
             /* Initialise the ciphers */
-<span class="fc" id="L202">            final GordianCipherParameters myParms = GordianCipherParameters.keyAndNonce(myKey, myIV);</span>
-<span class="fc" id="L203">            myOutCipher.initForEncrypt(myParms);</span>
-<span class="fc" id="L204">            myInCipher.initForDecrypt(myParms);</span>
+<span class="fc" id="L207">            final GordianCipherParams myParms = myBuilder.keyAndNonce(myKey, myIV);</span>
+<span class="fc" id="L208">            myOutCipher.initForEncrypt(myParms);</span>
+<span class="fc" id="L209">            myInCipher.initForDecrypt(myParms);</span>
 
             /* else no IV */
-<span class="fc" id="L207">        } else {</span>
-<span class="nc" id="L208">            final GordianCipherParameters myParms = GordianCipherParameters.key(myKey);</span>
-<span class="nc" id="L209">            myOutCipher.initForEncrypt(myParms);</span>
-<span class="nc" id="L210">            myInCipher.initForDecrypt(myParms);</span>
+<span class="fc" id="L212">        } else {</span>
+<span class="nc" id="L213">            final GordianCipherParams myParms = myBuilder.key(myKey);</span>
+<span class="nc" id="L214">            myOutCipher.initForEncrypt(myParms);</span>
+<span class="nc" id="L215">            myInCipher.initForDecrypt(myParms);</span>
         }
-<span class="fc" id="L212">        return new GordianSymCipher[]{myOutCipher, myInCipher};</span>
+<span class="fc" id="L217">        return new GordianSymCipher[]{myOutCipher, myInCipher};</span>
     }
 
     /**
@@ -223,34 +228,35 @@ public class GordianCoreAgreementCalculator {
     private GordianStreamCipher[] deriveCipher(final GordianStreamCipherSpec pCipherSpec,
                                                final byte[] pSecret) throws GordianException {
         /* Derive a shared factory */
-<span class="fc" id="L226">        final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);</span>
+<span class="fc" id="L231">        final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);</span>
 
         /* Generate the key */
-<span class="fc" id="L229">        final GordianKey&lt;GordianStreamKeySpec&gt; myKey = deriveKey(myFactory, pCipherSpec.getKeyType(), pSecret);</span>
+<span class="fc" id="L234">        final GordianKey&lt;GordianStreamKeySpec&gt; myKey = deriveKey(myFactory, pCipherSpec.getKeySpec(), pSecret);</span>
 
         /* Create the ciphers */
-<span class="fc" id="L232">        final GordianCipherFactory myCiphers = myFactory.getCipherFactory();</span>
-<span class="fc" id="L233">        final GordianStreamCipher myOutCipher = myCiphers.createStreamKeyCipher(pCipherSpec);</span>
-<span class="fc" id="L234">        final GordianStreamCipher myInCipher = myCiphers.createStreamKeyCipher(pCipherSpec);</span>
+<span class="fc" id="L237">        final GordianCipherFactory myCiphers = myFactory.getCipherFactory();</span>
+<span class="fc" id="L238">        final GordianStreamCipher myOutCipher = myCiphers.createStreamKeyCipher(pCipherSpec);</span>
+<span class="fc" id="L239">        final GordianStreamCipher myInCipher = myCiphers.createStreamKeyCipher(pCipherSpec);</span>
 
         /* If we need an IV */
-<span class="pc bpc" id="L237" title="1 of 2 branches missed.">        if (pCipherSpec.needsIV()) {</span>
+<span class="fc" id="L242">        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();</span>
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">        if (pCipherSpec.needsIV()) {</span>
             /* Calculate the IV */
-<span class="fc" id="L239">            final byte[] myIV = deriveIV(pSecret, pCipherSpec.getIVLength());</span>
+<span class="fc" id="L245">            final byte[] myIV = deriveIV(pSecret, pCipherSpec.getIVLength());</span>
 
             /* Initialise the ciphers */
-<span class="fc" id="L242">            final GordianCipherParameters myParms = GordianCipherParameters.keyAndNonce(myKey, myIV);</span>
-<span class="fc" id="L243">            myOutCipher.initForEncrypt(myParms);</span>
-<span class="fc" id="L244">            myInCipher.initForDecrypt(myParms);</span>
+<span class="fc" id="L248">            final GordianCipherParams myParms = myBuilder.keyAndNonce(myKey, myIV);</span>
+<span class="fc" id="L249">            myOutCipher.initForEncrypt(myParms);</span>
+<span class="fc" id="L250">            myInCipher.initForDecrypt(myParms);</span>
 
             /* else no IV */
-<span class="fc" id="L247">        } else {</span>
+<span class="fc" id="L253">        } else {</span>
             /* Initialise the ciphers */
-<span class="nc" id="L249">            final GordianCipherParameters myParms = GordianCipherParameters.key(myKey);</span>
-<span class="nc" id="L250">            myOutCipher.initForEncrypt(myParms);</span>
-<span class="nc" id="L251">            myInCipher.initForDecrypt(myParms);</span>
+<span class="nc" id="L255">            final GordianCipherParams myParms = myBuilder.key(myKey);</span>
+<span class="nc" id="L256">            myOutCipher.initForEncrypt(myParms);</span>
+<span class="nc" id="L257">            myInCipher.initForDecrypt(myParms);</span>
         }
-<span class="fc" id="L253">        return new GordianStreamCipher[]{myOutCipher, myInCipher};</span>
+<span class="fc" id="L259">        return new GordianStreamCipher[]{myOutCipher, myInCipher};</span>
     }
 
     /**
@@ -267,20 +273,20 @@ public class GordianCoreAgreementCalculator {
                                                                final T pKeyType,
                                                                final byte[] pSecret) throws GordianException {
         /* Ensure that we clear out the key */
-<span class="fc" id="L270">        byte[] myKey = null;</span>
+<span class="fc" id="L276">        byte[] myKey = null;</span>
         try {
             /* Calculate the secret */
-<span class="fc" id="L273">            myKey = calculateDerivedSecret(pSecret, GordianDerivationId.KEY, pKeyType.getKeyLength().getByteLength());</span>
+<span class="fc" id="L279">            myKey = calculateDerivedSecret(pSecret, GordianDerivationId.KEY, pKeyType.getKeyLength().getByteLength());</span>
 
             /* Derive the key */
-<span class="fc" id="L276">            final GordianCipherFactory myCiphers = pFactory.getCipherFactory();</span>
-<span class="fc" id="L277">            final GordianCoreKeyGenerator&lt;T&gt; myGenerator = (GordianCoreKeyGenerator&lt;T&gt;) myCiphers.getKeyGenerator(pKeyType);</span>
-<span class="fc" id="L278">            return myGenerator.buildKeyFromBytes(myKey);</span>
+<span class="fc" id="L282">            final GordianCipherFactory myCiphers = pFactory.getCipherFactory();</span>
+<span class="fc" id="L283">            final GordianCoreKeyGenerator&lt;T&gt; myGenerator = (GordianCoreKeyGenerator&lt;T&gt;) myCiphers.getKeyGenerator(pKeyType);</span>
+<span class="fc" id="L284">            return myGenerator.buildKeyFromBytes(myKey);</span>
 
             /* Clear buffers */
         } finally {
-<span class="pc bpc" id="L282" title="1 of 2 branches missed.">            if (myKey != null) {</span>
-<span class="fc" id="L283">                Arrays.fill(myKey, (byte) 0);</span>
+<span class="pc bpc" id="L288" title="1 of 2 branches missed.">            if (myKey != null) {</span>
+<span class="fc" id="L289">                Arrays.fill(myKey, (byte) 0);</span>
             }
         }
     }
@@ -296,7 +302,7 @@ public class GordianCoreAgreementCalculator {
     private byte[] deriveIV(final byte[] pSecret,
                             final int pIVLen) throws GordianException {
         /* Calculate the secret */
-<span class="fc" id="L299">        return calculateDerivedSecret(pSecret, GordianDerivationId.IV, pIVLen);</span>
+<span class="fc" id="L305">        return calculateDerivedSecret(pSecret, GordianDerivationId.IV, pIVLen);</span>
     }
 
     /**
@@ -310,7 +316,7 @@ public class GordianCoreAgreementCalculator {
     private byte[] deriveBytes(final byte[] pSecret,
                                final int pLength) throws GordianException {
         /* Return the secret */
-<span class="fc" id="L313">        return calculateDerivedSecret(pSecret, GordianDerivationId.BYTES, pLength);</span>
+<span class="fc" id="L319">        return calculateDerivedSecret(pSecret, GordianDerivationId.BYTES, pLength);</span>
     }
 
     /**
@@ -326,68 +332,69 @@ public class GordianCoreAgreementCalculator {
                                   final GordianDerivationId pId,
                                   final int pResultLen) throws GordianException {
         /* Build the 64-bit seed and create the seeded random */
-<span class="fc" id="L329">        final long mySeed = GordianDataConverter.byteArrayToLong(pSecret);</span>
-<span class="fc" id="L330">        final Random myRandom = new Random(mySeed);</span>
+<span class="fc" id="L335">        final long mySeed = GordianDataConverter.byteArrayToLong(pSecret);</span>
+<span class="fc" id="L336">        final Random myRandom = new Random(mySeed);</span>
 
         /* Protect against exceptions */
-<span class="fc" id="L333">        final GordianHKDFParams myParams = GordianHKDFParams.extractThenExpand(pResultLen);</span>
+<span class="fc" id="L339">        final GordianHKDFParams myParams = GordianHKDFParams.extractThenExpand(pResultLen);</span>
         try {
             /* Customise the HKDF parameters */
-<span class="fc" id="L336">            final GordianDigestSpec myDigestSpec = new GordianDigestSpec(pId.getDigestType());</span>
-<span class="fc" id="L337">            final byte[] myBytes = new byte[Long.BYTES];</span>
-<span class="fc" id="L338">            myRandom.nextBytes(myBytes);</span>
-<span class="fc" id="L339">            myParams.withIKM(pSecret).withIKM(pId.getId())</span>
-<span class="fc" id="L340">                    .withSalt(theState.getClient().getInitVector())</span>
-<span class="fc" id="L341">                    .withSalt(theState.getServer().getInitVector())</span>
-<span class="fc" id="L342">                    .withInfo(myBytes);</span>
+<span class="fc" id="L342">            final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();</span>
+<span class="fc" id="L343">            final GordianDigestSpec myDigestSpec = myBuilder.digest(pId.getDigestType());</span>
+<span class="fc" id="L344">            final byte[] myBytes = new byte[Long.BYTES];</span>
+<span class="fc" id="L345">            myRandom.nextBytes(myBytes);</span>
+<span class="fc" id="L346">            myParams.withIKM(pSecret).withIKM(pId.getId())</span>
+<span class="fc" id="L347">                    .withSalt(theState.getClient().getInitVector())</span>
+<span class="fc" id="L348">                    .withSalt(theState.getServer().getInitVector())</span>
+<span class="fc" id="L349">                    .withInfo(myBytes);</span>
 
             /* Derive the bytes */
-<span class="fc" id="L345">            final GordianHKDFEngine myEngine = new GordianHKDFEngine(theFactory, myDigestSpec);</span>
-<span class="fc" id="L346">            return myEngine.deriveBytes(myParams);</span>
+<span class="fc" id="L352">            final GordianHKDFEngine myEngine = new GordianHKDFEngine(theFactory, myDigestSpec);</span>
+<span class="fc" id="L353">            return myEngine.deriveBytes(myParams);</span>
 
         } finally {
-<span class="fc" id="L349">            myParams.clearParameters();</span>
+<span class="fc" id="L356">            myParams.clearParameters();</span>
         }
     }
 
     /**
      * Derived secret id.
      */
-<span class="fc" id="L356">    public enum GordianDerivationId {</span>
+<span class="fc" id="L363">    public enum GordianDerivationId {</span>
         /**
          * Factory.
          */
-<span class="fc" id="L360">        FACTORY(&quot;Factory&quot;),</span>
+<span class="fc" id="L367">        FACTORY(&quot;Factory&quot;),</span>
 
         /**
          * KeySet.
          */
-<span class="fc" id="L365">        KEYSET(&quot;KeySet&quot;),</span>
+<span class="fc" id="L372">        KEYSET(&quot;KeySet&quot;),</span>
 
         /**
          * Key.
          */
-<span class="fc" id="L370">        KEY(&quot;Key&quot;),</span>
+<span class="fc" id="L377">        KEY(&quot;Key&quot;),</span>
 
         /**
          * IV.
          */
-<span class="fc" id="L375">        IV(&quot;IV&quot;),</span>
+<span class="fc" id="L382">        IV(&quot;IV&quot;),</span>
 
         /**
          * Bytes.
          */
-<span class="fc" id="L380">        BYTES(&quot;Bytes&quot;),</span>
+<span class="fc" id="L387">        BYTES(&quot;Bytes&quot;),</span>
 
         /**
          * Tags.
          */
-<span class="fc" id="L385">        TAGS(&quot;Tags&quot;),</span>
+<span class="fc" id="L392">        TAGS(&quot;Tags&quot;),</span>
 
         /**
          * Composite.
          */
-<span class="fc" id="L390">        COMPOSITE(&quot;Composite&quot;);</span>
+<span class="fc" id="L397">        COMPOSITE(&quot;Composite&quot;);</span>
 
         /**
          * The id.
@@ -399,9 +406,9 @@ public class GordianCoreAgreementCalculator {
          *
          * @param pId the id
          */
-<span class="fc" id="L402">        GordianDerivationId(final String pId) {</span>
-<span class="fc" id="L403">            theId = pId.getBytes(StandardCharsets.UTF_8);</span>
-<span class="fc" id="L404">        }</span>
+<span class="fc" id="L409">        GordianDerivationId(final String pId) {</span>
+<span class="fc" id="L410">            theId = pId.getBytes(StandardCharsets.UTF_8);</span>
+<span class="fc" id="L411">        }</span>
 
         /**
          * Obtain the id.
@@ -409,7 +416,7 @@ public class GordianCoreAgreementCalculator {
          * @return the id.
          */
         byte[] getId() {
-<span class="fc" id="L412">            return theId;</span>
+<span class="fc" id="L419">            return theId;</span>
         }
 
         /**
@@ -422,24 +429,16 @@ public class GordianCoreAgreementCalculator {
              * Assign a different digestType to each Id.
              * Note that each type must be available as an HMAC in JCA.
              */
-<span class="pc bpc" id="L425" title="1 of 8 branches missed.">            switch (this) {</span>
-                case FACTORY:
-<span class="fc" id="L427">                    return GordianDigestType.SHA3;</span>
-                case KEYSET:
-<span class="fc" id="L429">                    return GordianDigestType.SHA2;</span>
-                case KEY:
-<span class="fc" id="L431">                    return GordianDigestType.SKEIN;</span>
-                case IV:
-<span class="fc" id="L433">                    return GordianDigestType.RIPEMD;</span>
-                case BYTES:
-<span class="fc" id="L435">                    return GordianDigestType.STREEBOG;</span>
-                case TAGS:
-<span class="fc" id="L437">                    return GordianDigestType.WHIRLPOOL;</span>
-                case COMPOSITE:
-<span class="fc" id="L439">                    return GordianDigestType.SM3;</span>
-                default:
-<span class="nc" id="L441">                    throw new IllegalArgumentException(&quot;Invalid ID&quot;);</span>
-            }
+<span class="pc bpc" id="L432" title="1 of 8 branches missed.">            return switch (this) {</span>
+<span class="fc" id="L433">                case FACTORY -&gt; GordianDigestType.SHA3;</span>
+<span class="fc" id="L434">                case KEYSET -&gt; GordianDigestType.SHA2;</span>
+<span class="fc" id="L435">                case KEY -&gt; GordianDigestType.SKEIN;</span>
+<span class="fc" id="L436">                case IV -&gt; GordianDigestType.RIPEMD;</span>
+<span class="fc" id="L437">                case BYTES -&gt; GordianDigestType.STREEBOG;</span>
+<span class="fc" id="L438">                case TAGS -&gt; GordianDigestType.WHIRLPOOL;</span>
+<span class="fc" id="L439">                case COMPOSITE -&gt; GordianDigestType.SM3;</span>
+<span class="nc" id="L440">                default -&gt; throw new IllegalArgumentException(&quot;Invalid ID&quot;);</span>
+            };
         }
     }
 }

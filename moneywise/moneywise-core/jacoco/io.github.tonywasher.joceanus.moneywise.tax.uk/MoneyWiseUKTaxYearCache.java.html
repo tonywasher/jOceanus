@@ -16,13 +16,13 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxYearCache;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusFiscalYear;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
-import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxYearCache;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -100,15 +100,16 @@ public class MoneyWiseUKTaxYearCache
 <span class="fc" id="L100">        setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2024);</span>
 <span class="fc" id="L101">        setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2025);</span>
 <span class="fc" id="L102">        setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2026);</span>
+<span class="fc" id="L103">        setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2027);</span>
 
         /* Determine the dateRange */
-<span class="fc" id="L105">        final OceanusDate myEnd = MoneyWiseUKTaxYearFactory.YEAR_2026.getYearEnd();</span>
-<span class="fc" id="L106">        OceanusDate myStart = MoneyWiseUKTaxYearFactory.YEAR_1981.getYearEnd();</span>
-<span class="fc" id="L107">        myStart = new OceanusDate(myStart);</span>
-<span class="fc" id="L108">        myStart.adjustDay(1);</span>
-<span class="fc" id="L109">        myStart.adjustYear(-1);</span>
-<span class="fc" id="L110">        theDateRange = new OceanusDateRange(myStart, myEnd);</span>
-<span class="fc" id="L111">    }</span>
+<span class="fc" id="L106">        final OceanusDate myEnd = MoneyWiseUKTaxYearFactory.YEAR_2027.getYearEnd();</span>
+<span class="fc" id="L107">        OceanusDate myStart = MoneyWiseUKTaxYearFactory.YEAR_1981.getYearEnd();</span>
+<span class="fc" id="L108">        myStart = new OceanusDate(myStart);</span>
+<span class="fc" id="L109">        myStart.adjustDay(1);</span>
+<span class="fc" id="L110">        myStart.adjustYear(-1);</span>
+<span class="fc" id="L111">        theDateRange = new OceanusDateRange(myStart, myEnd);</span>
+<span class="fc" id="L112">    }</span>
 
     /**
      * Set into cache.
@@ -116,40 +117,40 @@ public class MoneyWiseUKTaxYearCache
      * @param pTaxYear the taxYear
      */
     private void setTaxYearInCache(final MoneyWiseUKTaxYear pTaxYear) {
-<span class="fc" id="L119">        theCache.put(pTaxYear.getYearEnd(), pTaxYear);</span>
-<span class="fc" id="L120">    }</span>
+<span class="fc" id="L120">        theCache.put(pTaxYear.getYearEnd(), pTaxYear);</span>
+<span class="fc" id="L121">    }</span>
 
     @Override
     public OceanusDateRange getDateRange() {
-<span class="fc" id="L124">        return theDateRange;</span>
+<span class="fc" id="L125">        return theDateRange;</span>
     }
 
     @Override
     public MoneyWiseUKTaxYear findTaxYearForRange(final OceanusDateRange pRange) {
-<span class="nc bnc" id="L129" title="All 2 branches missed.">        return checkTaxYearRange(pRange)</span>
-<span class="nc" id="L130">                ? findTaxYearForDate(pRange.getEnd())</span>
-<span class="nc" id="L131">                : null;</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        return checkTaxYearRange(pRange)</span>
+<span class="nc" id="L131">                ? findTaxYearForDate(pRange.getEnd())</span>
+<span class="nc" id="L132">                : null;</span>
     }
 
     @Override
     public MoneyWiseUKTaxYear findTaxYearForDate(final OceanusDate pDate) {
-<span class="fc" id="L136">        final OceanusDate myDate = getTaxYearDate(pDate);</span>
-<span class="fc" id="L137">        return theCache.get(myDate);</span>
+<span class="fc" id="L137">        final OceanusDate myDate = getTaxYearDate(pDate);</span>
+<span class="fc" id="L138">        return theCache.get(myDate);</span>
     }
 
     @Override
     public Map&lt;OceanusDate, MoneyWiseUKTaxYear&gt; getUnderlyingMap() {
-<span class="nc" id="L142">        return theCache;</span>
+<span class="nc" id="L143">        return theCache;</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L147">        return MoneyWiseUKTaxYearCache.class.getSimpleName();</span>
+<span class="nc" id="L148">        return MoneyWiseUKTaxYearCache.class.getSimpleName();</span>
     }
 
     @Override
     public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L152">        return toString();</span>
+<span class="nc" id="L153">        return toString();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

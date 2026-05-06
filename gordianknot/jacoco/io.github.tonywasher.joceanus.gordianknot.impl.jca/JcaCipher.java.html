@@ -19,19 +19,20 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -72,49 +73,49 @@ public abstract class JcaCipher&lt;T extends GordianKeySpec&gt;
     JcaCipher(final GordianBaseFactory pFactory,
               final GordianCipherSpec&lt;T&gt; pCipherSpec,
               final Cipher pCipher) {
-<span class="fc" id="L75">        super(pFactory, pCipherSpec);</span>
-<span class="fc" id="L76">        theCipher = pCipher;</span>
-<span class="fc" id="L77">    }</span>
+<span class="fc" id="L76">        super(pFactory, pCipherSpec);</span>
+<span class="fc" id="L77">        theCipher = pCipher;</span>
+<span class="fc" id="L78">    }</span>
 
     @Override
     public JcaKey&lt;T&gt; getKey() {
-<span class="fc" id="L81">        return (JcaKey&lt;T&gt;) super.getKey();</span>
+<span class="fc" id="L82">        return (JcaKey&lt;T&gt;) super.getKey();</span>
     }
 
     @Override
     public void init(final boolean pEncrypt,
-                     final GordianCipherParameters pParams) throws GordianException {
+                     final GordianCipherParams pParams) throws GordianException {
         /* Process the parameters and access the key */
-<span class="fc" id="L88">        processParameters(pParams);</span>
-<span class="fc" id="L89">        final JcaKey&lt;T&gt; myJcaKey = JcaKey.accessKey(getKey());</span>
+<span class="fc" id="L89">        processParameters(pParams);</span>
+<span class="fc" id="L90">        final JcaKey&lt;T&gt; myJcaKey = JcaKey.accessKey(getKey());</span>
 
         /* Access details */
-<span class="fc bfc" id="L92" title="All 2 branches covered.">        final int myMode = pEncrypt</span>
-<span class="fc" id="L93">                ? Cipher.ENCRYPT_MODE</span>
-<span class="fc" id="L94">                : Cipher.DECRYPT_MODE;</span>
-<span class="fc" id="L95">        final SecretKey myKey = myJcaKey.getKey();</span>
-<span class="fc" id="L96">        final byte[] myIV = getInitVector();</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        final int myMode = pEncrypt</span>
+<span class="fc" id="L94">                ? Cipher.ENCRYPT_MODE</span>
+<span class="fc" id="L95">                : Cipher.DECRYPT_MODE;</span>
+<span class="fc" id="L96">        final SecretKey myKey = myJcaKey.getKey();</span>
+<span class="fc" id="L97">        final byte[] myIV = getInitVector();</span>
 
         /* Protect against exceptions */
         try {
             /* Careful of RC5 */
-<span class="fc" id="L101">            final T myKeyType = myJcaKey.getKeyType();</span>
-<span class="fc bfc" id="L102" title="All 2 branches covered.">            final boolean isRC5 = myKeyType instanceof GordianSymKeySpec</span>
-<span class="fc bfc" id="L103" title="All 2 branches covered.">                    &amp;&amp; GordianSymKeyType.RC5.equals(((GordianSymKeySpec) myKeyType).getSymKeyType());</span>
+<span class="fc" id="L102">            final T myKeyType = myJcaKey.getKeyType();</span>
+<span class="fc" id="L103">            final boolean isRC5 = myKeyType instanceof GordianSymKeySpec mySymKeySpec</span>
+<span class="fc bfc" id="L104" title="All 4 branches covered.">                    &amp;&amp; GordianSymKeyType.RC5.equals(mySymKeySpec.getSymKeyType());</span>
 
             /* Initialise as required */
-<span class="fc bfc" id="L106" title="All 4 branches covered.">            if (myIV != null || isRC5) {</span>
-<span class="fc" id="L107">                final AlgorithmParameterSpec myParms = generateParameters(myJcaKey, myIV);</span>
-<span class="fc" id="L108">                theCipher.init(myMode, myKey, myParms);</span>
-<span class="fc" id="L109">            } else {</span>
-<span class="fc" id="L110">                theCipher.init(myMode, myKey);</span>
+<span class="fc bfc" id="L107" title="All 4 branches covered.">            if (myIV != null || isRC5) {</span>
+<span class="fc" id="L108">                final AlgorithmParameterSpec myParms = generateParameters(myJcaKey, myIV);</span>
+<span class="fc" id="L109">                theCipher.init(myMode, myKey, myParms);</span>
+<span class="fc" id="L110">            } else {</span>
+<span class="fc" id="L111">                theCipher.init(myMode, myKey);</span>
             }
-<span class="fc" id="L112">            isEncrypting = pEncrypt;</span>
-<span class="nc" id="L113">        } catch (InvalidKeyException</span>
+<span class="fc" id="L113">            isEncrypting = pEncrypt;</span>
+<span class="nc" id="L114">        } catch (InvalidKeyException</span>
                  | InvalidAlgorithmParameterException e) {
-<span class="nc" id="L115">            throw new GordianCryptoException(&quot;Failed to initialise cipher&quot;, e);</span>
-<span class="fc" id="L116">        }</span>
-<span class="fc" id="L117">    }</span>
+<span class="nc" id="L116">            throw new GordianCryptoException(&quot;Failed to initialise cipher&quot;, e);</span>
+<span class="fc" id="L117">        }</span>
+<span class="fc" id="L118">    }</span>
 
     /**
      * Generate AlgorithmParameters.
@@ -125,9 +126,8 @@ public abstract class JcaCipher&lt;T extends GordianKeySpec&gt;
      */
     static AlgorithmParameterSpec generateParameters(final JcaKey&lt;?&gt; pKey,
                                                      final byte[] pIV) {
-<span class="fc" id="L128">        final Object myKeyType = pKey.getKeyType();</span>
-<span class="fc bfc" id="L129" title="All 2 branches covered.">        if (myKeyType instanceof GordianSymKeySpec) {</span>
-<span class="fc" id="L130">            final GordianSymKeySpec mySpec = (GordianSymKeySpec) myKeyType;</span>
+<span class="fc" id="L129">        final Object myKeyType = pKey.getKeyType();</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        if (myKeyType instanceof GordianSymKeySpec mySpec) {</span>
 <span class="fc" id="L131">            final GordianSymKeyType myType = mySpec.getSymKeyType();</span>
 <span class="fc" id="L132">            final GordianLength myLen = mySpec.getBlockLength();</span>
 <span class="fc bfc" id="L133" title="All 2 branches covered.">            if (GordianSymKeyType.RC2.equals(myType)) {</span>
@@ -183,8 +183,8 @@ public abstract class JcaCipher&lt;T extends GordianKeySpec&gt;
     @Override
     public int getBlockSize() {
 <span class="nc" id="L185">        final GordianCipherSpec&lt;T&gt; mySpec = getCipherSpec();</span>
-<span class="nc bnc" id="L186" title="All 2 branches missed.">        return (mySpec instanceof GordianSymCipherSpec</span>
-<span class="nc bnc" id="L187" title="All 2 branches missed.">                &amp;&amp; ((GordianSymCipherSpec) mySpec).getCipherMode().hasPadding())</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">        return (mySpec instanceof GordianCoreSymCipherSpec mySymCipherSpec</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">                &amp;&amp; mySymCipherSpec.getCoreCipherMode().hasPadding())</span>
 <span class="nc" id="L188">                ? theCipher.getBlockSize() : 0;</span>
     }
 
@@ -239,20 +239,19 @@ public abstract class JcaCipher&lt;T extends GordianKeySpec&gt;
         }
 
         /* Make sure that the classes are the same */
-<span class="nc bnc" id="L242" title="All 2 branches missed.">        if (!(pThat instanceof JcaCipher)) {</span>
+<span class="nc bnc" id="L242" title="All 2 branches missed.">        if (!(pThat instanceof JcaCipher&lt;?&gt; myThat)) {</span>
 <span class="nc" id="L243">            return false;</span>
         }
-<span class="nc" id="L245">        final JcaCipher&lt;?&gt; myThat = (JcaCipher&lt;?&gt;) pThat;</span>
 
         /* Check that the fields are equal */
-<span class="nc bnc" id="L248" title="All 2 branches missed.">        return isEncrypting == myThat.isEncrypting</span>
-<span class="nc bnc" id="L249" title="All 2 branches missed.">                &amp;&amp; super.equals(myThat);</span>
+<span class="nc bnc" id="L247" title="All 2 branches missed.">        return isEncrypting == myThat.isEncrypting</span>
+<span class="nc bnc" id="L248" title="All 2 branches missed.">                &amp;&amp; super.equals(myThat);</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L254">        return super.hashCode()</span>
-<span class="nc bnc" id="L255" title="All 2 branches missed.">                + (isEncrypting ? 1 : 0);</span>
+<span class="nc" id="L253">        return super.hashCode()</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">                + (isEncrypting ? 1 : 0);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

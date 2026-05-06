@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianSeededRan
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.EntropyUtil;
 
+import java.io.Serial;
 import java.security.SecureRandom;
 
 /**
@@ -31,6 +32,7 @@ public class GordianSecureRandom
     /**
      * Serial Id.
      */
+    @Serial
     private static final long serialVersionUID = -6422187120154720941L;
 
     /**
@@ -74,89 +76,89 @@ public class GordianSecureRandom
     GordianSecureRandom(final GordianDRBGenerator pGenerator,
                         final SecureRandom pRandom,
                         final EntropySource pEntropy,
-<span class="fc" id="L77">                        final boolean isPredictionResistant) {</span>
+<span class="fc" id="L79">                        final boolean isPredictionResistant) {</span>
         /* Store parameters */
-<span class="fc" id="L79">        theGenerator = pGenerator;</span>
-<span class="fc" id="L80">        theRandom = pRandom;</span>
-<span class="fc" id="L81">        theEntropy = pEntropy;</span>
-<span class="fc" id="L82">        predictionResistant = isPredictionResistant;</span>
-<span class="fc" id="L83">        theBuffer = new byte[pGenerator.getBlockSize()];</span>
-<span class="fc" id="L84">    }</span>
+<span class="fc" id="L81">        theGenerator = pGenerator;</span>
+<span class="fc" id="L82">        theRandom = pRandom;</span>
+<span class="fc" id="L83">        theEntropy = pEntropy;</span>
+<span class="fc" id="L84">        predictionResistant = isPredictionResistant;</span>
+<span class="fc" id="L85">        theBuffer = new byte[pGenerator.getBlockSize()];</span>
+<span class="fc" id="L86">    }</span>
 
     @Override
     public SecureRandom getRandom() {
-<span class="nc" id="L88">        return this;</span>
+<span class="nc" id="L90">        return this;</span>
     }
 
     @Override
     public void setSeed(final byte[] seed) {
-<span class="fc" id="L93">        synchronized (this) {</span>
+<span class="fc" id="L95">        synchronized (this) {</span>
             /* Pass the call on */
-<span class="fc" id="L95">            theRandom.setSeed(seed);</span>
-<span class="fc" id="L96">            bytesAvailable = 0;</span>
-<span class="fc" id="L97">        }</span>
-<span class="fc" id="L98">    }</span>
+<span class="fc" id="L97">            theRandom.setSeed(seed);</span>
+<span class="fc" id="L98">            bytesAvailable = 0;</span>
+<span class="fc" id="L99">        }</span>
+<span class="fc" id="L100">    }</span>
 
     @Override
     public void setSeed(final long seed) {
-<span class="fc" id="L102">        synchronized (this) {</span>
-<span class="pc bpc" id="L103" title="1 of 2 branches missed.">            if (theRandom != null) {</span>
-<span class="nc" id="L104">                theRandom.setSeed(seed);</span>
-<span class="nc" id="L105">                bytesAvailable = 0;</span>
+<span class="fc" id="L104">        synchronized (this) {</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">            if (theRandom != null) {</span>
+<span class="nc" id="L106">                theRandom.setSeed(seed);</span>
+<span class="nc" id="L107">                bytesAvailable = 0;</span>
             }
-<span class="fc" id="L107">        }</span>
-<span class="fc" id="L108">    }</span>
+<span class="fc" id="L109">        }</span>
+<span class="fc" id="L110">    }</span>
 
     @Override
     public void nextBytes(final byte[] bytes) {
-<span class="fc" id="L112">        synchronized (this) {</span>
+<span class="fc" id="L114">        synchronized (this) {</span>
             /* Fill buffer directly if we are prediction resistant */
-<span class="fc bfc" id="L114" title="All 2 branches covered.">            if (predictionResistant) {</span>
-<span class="fc" id="L115">                fillBuffer(bytes);</span>
-<span class="fc" id="L116">                return;</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">            if (predictionResistant) {</span>
+<span class="fc" id="L117">                fillBuffer(bytes);</span>
+<span class="fc" id="L118">                return;</span>
             }
 
             /* Determine how many bytes are needed */
-<span class="fc" id="L120">            int bytesNeeded = bytes.length;</span>
-<span class="fc" id="L121">            int bytesBuilt = 0;</span>
+<span class="fc" id="L122">            int bytesNeeded = bytes.length;</span>
+<span class="fc" id="L123">            int bytesBuilt = 0;</span>
 
             /* If we have bytes available */
-<span class="fc bfc" id="L124" title="All 2 branches covered.">            if (bytesAvailable &gt; 0) {</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">            if (bytesAvailable &gt; 0) {</span>
                 /* Fulfil the request from the buffer as much as possible */
-<span class="fc" id="L126">                final int bytesToTransfer = Math.min(bytesNeeded, bytesAvailable);</span>
-<span class="fc" id="L127">                System.arraycopy(theBuffer, theBuffer.length - bytesAvailable, bytes, 0, bytesToTransfer);</span>
-<span class="fc" id="L128">                bytesAvailable -= bytesToTransfer;</span>
-<span class="fc" id="L129">                bytesNeeded -= bytesToTransfer;</span>
-<span class="fc" id="L130">                bytesBuilt += bytesToTransfer;</span>
+<span class="fc" id="L128">                final int bytesToTransfer = Math.min(bytesNeeded, bytesAvailable);</span>
+<span class="fc" id="L129">                System.arraycopy(theBuffer, theBuffer.length - bytesAvailable, bytes, 0, bytesToTransfer);</span>
+<span class="fc" id="L130">                bytesAvailable -= bytesToTransfer;</span>
+<span class="fc" id="L131">                bytesNeeded -= bytesToTransfer;</span>
+<span class="fc" id="L132">                bytesBuilt += bytesToTransfer;</span>
             }
 
             /* Loop to fulfil remaining bytes */
-<span class="fc bfc" id="L134" title="All 2 branches covered.">            while (bytesNeeded &gt; 0) {</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">            while (bytesNeeded &gt; 0) {</span>
                 /* Fill the buffer again */
-<span class="fc" id="L136">                nextBuffer();</span>
+<span class="fc" id="L138">                nextBuffer();</span>
 
                 /* Fulfil the request from the buffer as much as possible */
-<span class="fc" id="L139">                final int bytesToTransfer = Math.min(bytesNeeded, bytesAvailable);</span>
-<span class="fc" id="L140">                System.arraycopy(theBuffer, 0, bytes, bytesBuilt, bytesToTransfer);</span>
-<span class="fc" id="L141">                bytesAvailable -= bytesToTransfer;</span>
-<span class="fc" id="L142">                bytesNeeded -= bytesToTransfer;</span>
-<span class="fc" id="L143">                bytesBuilt += bytesToTransfer;</span>
-<span class="fc" id="L144">            }</span>
-<span class="fc" id="L145">        }</span>
-<span class="fc" id="L146">    }</span>
+<span class="fc" id="L141">                final int bytesToTransfer = Math.min(bytesNeeded, bytesAvailable);</span>
+<span class="fc" id="L142">                System.arraycopy(theBuffer, 0, bytes, bytesBuilt, bytesToTransfer);</span>
+<span class="fc" id="L143">                bytesAvailable -= bytesToTransfer;</span>
+<span class="fc" id="L144">                bytesNeeded -= bytesToTransfer;</span>
+<span class="fc" id="L145">                bytesBuilt += bytesToTransfer;</span>
+<span class="fc" id="L146">            }</span>
+<span class="fc" id="L147">        }</span>
+<span class="fc" id="L148">    }</span>
 
     /**
      * Next buffer of random data.
      */
     private void nextBuffer() {
         /* Generate, checking for reSeed request */
-<span class="pc bpc" id="L153" title="1 of 2 branches missed.">        if (theGenerator.generate(theBuffer, null, predictionResistant) &lt; 0) {</span>
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">        if (theGenerator.generate(theBuffer, null, predictionResistant) &lt; 0) {</span>
             /* ReSeed and regenerate */
-<span class="nc" id="L155">            theGenerator.reseed(null);</span>
-<span class="nc" id="L156">            theGenerator.generate(theBuffer, null, predictionResistant);</span>
+<span class="nc" id="L157">            theGenerator.reseed(null);</span>
+<span class="nc" id="L158">            theGenerator.generate(theBuffer, null, predictionResistant);</span>
         }
-<span class="fc" id="L158">        bytesAvailable = theBuffer.length;</span>
-<span class="fc" id="L159">    }</span>
+<span class="fc" id="L160">        bytesAvailable = theBuffer.length;</span>
+<span class="fc" id="L161">    }</span>
 
     /**
      * Next buffer of random data.
@@ -165,35 +167,35 @@ public class GordianSecureRandom
      */
     private void fillBuffer(final byte[] pBuffer) {
         /* Generate, checking for reSeed request */
-<span class="pc bpc" id="L168" title="1 of 2 branches missed.">        if (theGenerator.generate(pBuffer, null, predictionResistant) &lt; 0) {</span>
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">        if (theGenerator.generate(pBuffer, null, predictionResistant) &lt; 0) {</span>
             /* ReSeed and regenerate */
-<span class="nc" id="L170">            theGenerator.reseed(null);</span>
-<span class="nc" id="L171">            theGenerator.generate(pBuffer, null, predictionResistant);</span>
+<span class="nc" id="L172">            theGenerator.reseed(null);</span>
+<span class="nc" id="L173">            theGenerator.generate(pBuffer, null, predictionResistant);</span>
         }
-<span class="fc" id="L173">        bytesAvailable = 0;</span>
-<span class="fc" id="L174">    }</span>
+<span class="fc" id="L175">        bytesAvailable = 0;</span>
+<span class="fc" id="L176">    }</span>
 
     @Override
     public byte[] generateSeed(final int numBytes) {
-<span class="fc" id="L178">        return EntropyUtil.generateSeed(theEntropy, numBytes);</span>
+<span class="fc" id="L180">        return EntropyUtil.generateSeed(theEntropy, numBytes);</span>
     }
 
     @Override
     public String getAlgorithm() {
-<span class="nc" id="L183">        return theGenerator.getAlgorithm();</span>
+<span class="nc" id="L185">        return theGenerator.getAlgorithm();</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L188">        return getAlgorithm();</span>
+<span class="nc" id="L190">        return getAlgorithm();</span>
     }
 
     @Override
     public void reseed(final byte[] pXtraInput) {
-<span class="fc" id="L193">        synchronized (this) {</span>
-<span class="fc" id="L194">            theGenerator.reseed(pXtraInput);</span>
-<span class="fc" id="L195">            bytesAvailable = 0;</span>
-<span class="fc" id="L196">        }</span>
-<span class="fc" id="L197">    }</span>
+<span class="fc" id="L195">        synchronized (this) {</span>
+<span class="fc" id="L196">            theGenerator.reseed(pXtraInput);</span>
+<span class="fc" id="L197">            bytesAvailable = 0;</span>
+<span class="fc" id="L198">        }</span>
+<span class="fc" id="L199">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

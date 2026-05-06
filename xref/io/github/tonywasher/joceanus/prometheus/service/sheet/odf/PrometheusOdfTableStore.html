@@ -309,7 +309,7 @@
 <a class="jxr_linenumber" name="L301" href="#L301">301</a> <em class="jxr_javadoccomment">     * Apply Data Validation.</em>
 <a class="jxr_linenumber" name="L302" href="#L302">302</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L303" href="#L303">303</a> <em class="jxr_javadoccomment">     * @param pSheet     the workSheet containing the cells</em>
-<a class="jxr_linenumber" name="L304" href="#L304">304</a> <em class="jxr_javadoccomment">     * @param pFirstCell the the first cell in the range</em>
+<a class="jxr_linenumber" name="L304" href="#L304">304</a> <em class="jxr_javadoccomment">     * @param pFirstCell the first cell in the range</em>
 <a class="jxr_linenumber" name="L305" href="#L305">305</a> <em class="jxr_javadoccomment">     * @param pLastCell  the last cell in the range</em>
 <a class="jxr_linenumber" name="L306" href="#L306">306</a> <em class="jxr_javadoccomment">     * @param pValueList the value list</em>
 <a class="jxr_linenumber" name="L307" href="#L307">307</a> <em class="jxr_javadoccomment">     */</em>
@@ -326,7 +326,7 @@
 <a class="jxr_linenumber" name="L318" href="#L318">318</a>             <em class="jxr_comment">/* Loop through the values */</em>
 <a class="jxr_linenumber" name="L319" href="#L319">319</a>             <strong class="jxr_keyword">for</strong> (String myValue : pValueList) {
 <a class="jxr_linenumber" name="L320" href="#L320">320</a>                 <em class="jxr_comment">/* If this is not the first element */</em>
-<a class="jxr_linenumber" name="L321" href="#L321">321</a>                 <strong class="jxr_keyword">if</strong> (myBuilder.length() &gt; 0) {
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>                 <strong class="jxr_keyword">if</strong> (!myBuilder.isEmpty()) {
 <a class="jxr_linenumber" name="L322" href="#L322">322</a>                     <em class="jxr_comment">/* Add a comma */</em>
 <a class="jxr_linenumber" name="L323" href="#L323">323</a>                     myBuilder.append(',');
 <a class="jxr_linenumber" name="L324" href="#L324">324</a>                 }

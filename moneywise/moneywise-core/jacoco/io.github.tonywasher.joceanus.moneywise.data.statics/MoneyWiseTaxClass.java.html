@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 
 /**
@@ -187,25 +187,12 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return true/false
      */
     public boolean analyseAccounts() {
-<span class="fc bfc" id="L190" title="All 2 branches covered.">        switch (this) {</span>
-            case SALARY:
-            case ROOMRENTAL:
-            case RENTALINCOME:
-            case OTHERINCOME:
-            case TAXEDINTEREST:
-            case UNTAXEDINTEREST:
-            case DIVIDEND:
-            case UNITTRUSTDIVIDEND:
-            case FOREIGNDIVIDEND:
-            case CHARGEABLEGAINS:
-            case CAPITALGAINS:
-            case RESIDENTIALGAINS:
-            case TAXFREE:
-            case PEER2PEERINTEREST:
-<span class="fc" id="L205">                return true;</span>
-            default:
-<span class="fc" id="L207">                return false;</span>
-        }
+<span class="fc bfc" id="L190" title="All 2 branches covered.">        return switch (this) {</span>
+            case SALARY, ROOMRENTAL, RENTALINCOME, OTHERINCOME, TAXEDINTEREST, UNTAXEDINTEREST, DIVIDEND,
+                 UNITTRUSTDIVIDEND, FOREIGNDIVIDEND, CHARGEABLEGAINS, CAPITALGAINS, RESIDENTIALGAINS, TAXFREE,
+<span class="fc" id="L193">                 PEER2PEERINTEREST -&gt; true;</span>
+<span class="fc" id="L194">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -214,14 +201,10 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return true/false
      */
     public boolean isExpense() {
-<span class="fc bfc" id="L217" title="All 2 branches covered.">        switch (this) {</span>
-            case EXPENSE:
-            case TAXPAID:
-            case VIRTUAL:
-<span class="fc" id="L221">                return true;</span>
-            default:
-<span class="fc" id="L223">                return false;</span>
-        }
+<span class="fc bfc" id="L204" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc" id="L205">            case EXPENSE, TAXPAID, VIRTUAL -&gt; true;</span>
+<span class="fc" id="L206">            default -&gt; false;</span>
+        };
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

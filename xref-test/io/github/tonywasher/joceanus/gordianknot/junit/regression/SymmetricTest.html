@@ -32,8 +32,8 @@
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.factory.GordianKnuthObfuscater;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomFactory;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomSpec;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomType;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianRandomSpec;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianRandomType;
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryRandomSpec;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryRandomType;
@@ -176,16 +176,16 @@
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>             myStream = Stream.concat(myStream, mySubStream);
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>         }
 <a class="jxr_linenumber" name="L170" href="#L170">170</a> 
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>         <em class="jxr_comment">/* Add mac Tests */</em>
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>         mySubStream = SymmetricMacScripts.macTests(pFactory, pPartner);
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>         <em class="jxr_comment">/* Add symKey Tests */</em>
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>         mySubStream = SymmetricSymScripts.symKeyTests(pFactory, pPartner);
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>         myStream = Stream.concat(myStream, mySubStream);
 <a class="jxr_linenumber" name="L174" href="#L174">174</a> 
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>         <em class="jxr_comment">/* Add symKey Tests */</em>
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>         mySubStream = SymmetricSymScripts.symKeyTests(pFactory, pPartner);
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>         <em class="jxr_comment">/* Add streamKey Tests */</em>
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>         mySubStream = SymmetricStreamScripts.streamKeyTests(pFactory, pPartner);
 <a class="jxr_linenumber" name="L177" href="#L177">177</a>         myStream = Stream.concat(myStream, mySubStream);
 <a class="jxr_linenumber" name="L178" href="#L178">178</a> 
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>         <em class="jxr_comment">/* Add streamKey Tests */</em>
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>         mySubStream = SymmetricStreamScripts.streamKeyTests(pFactory, pPartner);
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>         <em class="jxr_comment">/* Add mac Tests */</em>
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>         mySubStream = SymmetricMacScripts.macTests(pFactory, pPartner);
 <a class="jxr_linenumber" name="L181" href="#L181">181</a>         myStream = Stream.concat(myStream, mySubStream);
 <a class="jxr_linenumber" name="L182" href="#L182">182</a> 
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>         <em class="jxr_comment">/* Add random Tests */</em>

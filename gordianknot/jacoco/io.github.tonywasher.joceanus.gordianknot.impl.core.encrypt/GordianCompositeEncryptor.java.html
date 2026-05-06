@@ -19,11 +19,12 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -43,7 +44,7 @@ public class GordianCompositeEncryptor
     /**
      * The keyPairSpec.
      */
-    private final GordianEncryptorSpec theSpec;
+    private final GordianCoreEncryptorSpec theSpec;
 
     /**
      * The encryptors.
@@ -58,52 +59,52 @@ public class GordianCompositeEncryptor
      * @throws GordianException on error
      */
     public GordianCompositeEncryptor(final GordianFactory pFactory,
-<span class="fc" id="L61">                                     final GordianEncryptorSpec pSpec) throws GordianException {</span>
+<span class="fc" id="L62">                                     final GordianCoreEncryptorSpec pSpec) throws GordianException {</span>
         /* Store parameters */
-<span class="fc" id="L63">        theFactory = pFactory.getAsyncFactory().getEncryptorFactory();</span>
-<span class="fc" id="L64">        theSpec = pSpec;</span>
-<span class="fc" id="L65">        theEncryptors = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L64">        theFactory = pFactory.getAsyncFactory().getEncryptorFactory();</span>
+<span class="fc" id="L65">        theSpec = pSpec;</span>
+<span class="fc" id="L66">        theEncryptors = new ArrayList&lt;&gt;();</span>
 
         /* Create the signers */
-<span class="fc" id="L68">        final Iterator&lt;GordianEncryptorSpec&gt; myIterator = theSpec.encryptorSpecIterator();</span>
-<span class="fc bfc" id="L69" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
-<span class="fc" id="L70">            final GordianEncryptorSpec mySpec = myIterator.next();</span>
-<span class="fc" id="L71">            theEncryptors.add(theFactory.createEncryptor(mySpec));</span>
-<span class="fc" id="L72">        }</span>
-<span class="fc" id="L73">    }</span>
+<span class="fc" id="L69">        final Iterator&lt;GordianEncryptorSpec&gt; myIterator = theSpec.encryptorSpecIterator();</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+<span class="fc" id="L71">            final GordianEncryptorSpec mySpec = myIterator.next();</span>
+<span class="fc" id="L72">            theEncryptors.add(theFactory.createEncryptor(mySpec));</span>
+<span class="fc" id="L73">        }</span>
+<span class="fc" id="L74">    }</span>
 
     @Override
-    public GordianEncryptorSpec getEncryptorSpec() {
-<span class="nc" id="L77">        return theSpec;</span>
+    public GordianCoreEncryptorSpec getEncryptorSpec() {
+<span class="nc" id="L78">        return theSpec;</span>
     }
 
     @Override
     public void initForEncrypt(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check the keyPair */
-<span class="fc" id="L83">        checkKeySpec(pKeyPair);</span>
+<span class="fc" id="L84">        checkKeySpec(pKeyPair);</span>
 
         /* Initialise the encryptors */
-<span class="fc" id="L86">        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pKeyPair;</span>
-<span class="fc" id="L87">        final Iterator&lt;GordianKeyPair&gt; myIterator = myCompositePair.iterator();</span>
-<span class="fc bfc" id="L88" title="All 2 branches covered.">        for (GordianEncryptor myEncryptor : theEncryptors) {</span>
-<span class="fc" id="L89">            final GordianKeyPair myPair = myIterator.next();</span>
-<span class="fc" id="L90">            myEncryptor.initForEncrypt(myPair);</span>
-<span class="fc" id="L91">        }</span>
-<span class="fc" id="L92">    }</span>
+<span class="fc" id="L87">        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pKeyPair;</span>
+<span class="fc" id="L88">        final Iterator&lt;GordianKeyPair&gt; myIterator = myCompositePair.iterator();</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        for (GordianEncryptor myEncryptor : theEncryptors) {</span>
+<span class="fc" id="L90">            final GordianKeyPair myPair = myIterator.next();</span>
+<span class="fc" id="L91">            myEncryptor.initForEncrypt(myPair);</span>
+<span class="fc" id="L92">        }</span>
+<span class="fc" id="L93">    }</span>
 
     @Override
     public void initForDecrypt(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check the keyPair */
-<span class="fc" id="L97">        checkKeySpec(pKeyPair);</span>
+<span class="fc" id="L98">        checkKeySpec(pKeyPair);</span>
 
         /* Initialise the signers */
-<span class="fc" id="L100">        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pKeyPair;</span>
-<span class="fc" id="L101">        final Iterator&lt;GordianKeyPair&gt; myIterator = myCompositePair.iterator();</span>
-<span class="fc bfc" id="L102" title="All 2 branches covered.">        for (GordianEncryptor myEncryptor : theEncryptors) {</span>
-<span class="fc" id="L103">            final GordianKeyPair myPair = myIterator.next();</span>
-<span class="fc" id="L104">            myEncryptor.initForDecrypt(myPair);</span>
-<span class="fc" id="L105">        }</span>
-<span class="fc" id="L106">    }</span>
+<span class="fc" id="L101">        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pKeyPair;</span>
+<span class="fc" id="L102">        final Iterator&lt;GordianKeyPair&gt; myIterator = myCompositePair.iterator();</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        for (GordianEncryptor myEncryptor : theEncryptors) {</span>
+<span class="fc" id="L104">            final GordianKeyPair myPair = myIterator.next();</span>
+<span class="fc" id="L105">            myEncryptor.initForDecrypt(myPair);</span>
+<span class="fc" id="L106">        }</span>
+<span class="fc" id="L107">    }</span>
 
     /**
      * check the keyPair.
@@ -112,37 +113,37 @@ public class GordianCompositeEncryptor
      * @throws GordianException on error
      */
     private void checkKeySpec(final GordianKeyPair pKeyPair) throws GordianException {
-<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if (!theFactory.validEncryptorSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), theSpec)) {</span>
-<span class="nc" id="L116">            throw new GordianLogicException(&quot;Invalid keyPair for encryptor&quot;);</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if (!theFactory.validEncryptorSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), theSpec)) {</span>
+<span class="nc" id="L117">            throw new GordianLogicException(&quot;Invalid keyPair for encryptor&quot;);</span>
         }
-<span class="fc" id="L118">    }</span>
+<span class="fc" id="L119">    }</span>
 
     @Override
     public byte[] encrypt(final byte[] pBytes) throws GordianException {
         /* Loop through the encryptors */
-<span class="fc" id="L123">        byte[] myData = pBytes;</span>
-<span class="fc bfc" id="L124" title="All 2 branches covered.">        for (GordianEncryptor myEncryptor : theEncryptors) {</span>
+<span class="fc" id="L124">        byte[] myData = pBytes;</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        for (GordianEncryptor myEncryptor : theEncryptors) {</span>
             /* Encrypt using this encryptor */
-<span class="fc" id="L126">            myData = myEncryptor.encrypt(myData);</span>
-<span class="fc" id="L127">        }</span>
+<span class="fc" id="L127">            myData = myEncryptor.encrypt(myData);</span>
+<span class="fc" id="L128">        }</span>
 
         /* Return the encrypted data */
-<span class="fc" id="L130">        return myData;</span>
+<span class="fc" id="L131">        return myData;</span>
     }
 
     @Override
     public byte[] decrypt(final byte[] pEncrypted) throws GordianException {
         /* Loop through the encryptors */
-<span class="fc" id="L136">        byte[] myData = pEncrypted;</span>
-<span class="fc" id="L137">        final ListIterator&lt;GordianEncryptor&gt; myIterator = theEncryptors.listIterator(theEncryptors.size());</span>
-<span class="fc bfc" id="L138" title="All 2 branches covered.">        while (myIterator.hasPrevious()) {</span>
+<span class="fc" id="L137">        byte[] myData = pEncrypted;</span>
+<span class="fc" id="L138">        final ListIterator&lt;GordianEncryptor&gt; myIterator = theEncryptors.listIterator(theEncryptors.size());</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        while (myIterator.hasPrevious()) {</span>
             /* Encrypt using this encryptor */
-<span class="fc" id="L140">            final GordianEncryptor myEncryptor = myIterator.previous();</span>
-<span class="fc" id="L141">            myData = myEncryptor.decrypt(myData);</span>
-<span class="fc" id="L142">        }</span>
+<span class="fc" id="L141">            final GordianEncryptor myEncryptor = myIterator.previous();</span>
+<span class="fc" id="L142">            myData = myEncryptor.decrypt(myData);</span>
+<span class="fc" id="L143">        }</span>
 
         /* Return the decrypted data */
-<span class="fc" id="L145">        return myData;</span>
+<span class="fc" id="L146">        return myData;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

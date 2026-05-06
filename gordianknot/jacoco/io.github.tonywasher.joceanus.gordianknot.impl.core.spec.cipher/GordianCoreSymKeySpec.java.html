@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreSymKeySpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher</a> &gt; <span class="el_source">GordianCoreSymKeySpec.java</span></div><h1>GordianCoreSymKeySpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
+
+import java.util.Objects;
+
+/**
+ * SymKey specification.
+ */
+public class GordianCoreSymKeySpec
+        implements GordianSymKeySpec {
+    /**
+     * The symKeyType.
+     */
+    private final GordianCoreSymKeyType theType;
+
+    /**
+     * The Engine Block Length.
+     */
+    private final GordianLength theBlockLength;
+
+    /**
+     * The Key Length.
+     */
+    private final GordianLength theKeyLength;
+
+    /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pType        the digestType
+     * @param pBlockLength the blockLength
+     * @param pKeyLength   the keyLength
+     */
+    GordianCoreSymKeySpec(final GordianSymKeyType pType,
+                          final GordianLength pBlockLength,
+<span class="fc" id="L66">                          final GordianLength pKeyLength) {</span>
+<span class="fc" id="L67">        theType = GordianCoreSymKeyType.mapCoreType(pType);</span>
+<span class="fc" id="L68">        theBlockLength = pBlockLength;</span>
+<span class="fc" id="L69">        theKeyLength = pKeyLength;</span>
+<span class="fc" id="L70">        isValid = checkValidity();</span>
+<span class="fc" id="L71">    }</span>
+
+    /**
+     * Obtain the core symKeyType.
+     *
+     * @return the type
+     */
+    public GordianCoreSymKeyType getCoreSymKeyType() {
+<span class="fc" id="L79">        return theType;</span>
+    }
+
+    @Override
+    public GordianSymKeyType getSymKeyType() {
+<span class="fc" id="L84">        return theType.getType();</span>
+    }
+
+    @Override
+    public GordianLength getBlockLength() {
+<span class="fc" id="L89">        return theBlockLength;</span>
+    }
+
+    @Override
+    public GordianLength getKeyLength() {
+<span class="fc" id="L94">        return theKeyLength;</span>
+    }
+
+    /**
+     * Obtain HalfBlock length.
+     *
+     * @return the Length
+     */
+    public GordianLength getHalfBlockLength() {
+<span class="pc bpc" id="L103" title="1 of 6 branches missed.">        return switch (theBlockLength) {</span>
+<span class="fc" id="L104">            case LEN_64 -&gt; GordianLength.LEN_32;</span>
+<span class="fc" id="L105">            case LEN_128 -&gt; GordianLength.LEN_64;</span>
+<span class="fc" id="L106">            case LEN_256 -&gt; GordianLength.LEN_128;</span>
+<span class="fc" id="L107">            case LEN_512 -&gt; GordianLength.LEN_256;</span>
+<span class="fc" id="L108">            case LEN_1024 -&gt; GordianLength.LEN_512;</span>
+<span class="nc" id="L109">            default -&gt; theBlockLength;</span>
+        };
+    }
+
+    /**
+     * Is the keySpec valid?
+     *
+     * @return true/false.
+     */
+    public boolean isValid() {
+<span class="fc" id="L119">        return isValid;</span>
+    }
+
+    /**
+     * Check spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        /* Everything must be non-null */
+<span class="pc bpc" id="L129" title="3 of 6 branches missed.">        if (theType == null</span>
+                || theBlockLength == null
+                || theKeyLength == null) {
+<span class="nc" id="L132">            return false;</span>
+        }
+
+        /* Check blockLength and keyLength validity */
+<span class="fc" id="L136">        return theType.validBlockAndKeyLengths(theBlockLength, theKeyLength);</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* If the keySpec is valid */
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">            if (isValid) {</span>
+                /* Load the name */
+<span class="fc" id="L146">                final GordianSymKeyType myType = getSymKeyType();</span>
+<span class="fc" id="L147">                theName = theType.toString();</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">                if (theType.hasMultipleBlockLengths()</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">                        &amp;&amp; !GordianSymKeyType.THREEFISH.equals(myType)) {</span>
+<span class="fc" id="L150">                    int myLen = theBlockLength.getLength();</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">                    if (GordianSymKeyType.RC5.equals(myType)) {</span>
+<span class="fc" id="L152">                        myLen &gt;&gt;= 1;</span>
+                    }
+<span class="fc" id="L154">                    theName += myLen;</span>
+                }
+<span class="fc" id="L156">                theName += GordianSpecConstants.SEP + theKeyLength;</span>
+<span class="fc" id="L157">            } else {</span>
+                /* Report invalid spec */
+<span class="nc" id="L159">                theName = &quot;InvalidSymKeySpec: &quot; + theType + &quot;:&quot; + theBlockLength + &quot;:&quot; + theKeyLength;</span>
+            }
+        }
+
+        /* return the name */
+<span class="fc" id="L164">        return theName;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        if (this == pThat) {</span>
+<span class="fc" id="L171">            return true;</span>
+        }
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L174">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="fc" id="L178">        return pThat instanceof GordianCoreSymKeySpec myThat</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">                &amp;&amp; Objects.equals(theType, myThat.getCoreSymKeyType())</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">                &amp;&amp; theBlockLength == myThat.getBlockLength()</span>
+<span class="pc bpc" id="L181" title="2 of 4 branches missed.">                &amp;&amp; theKeyLength == myThat.getKeyLength();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L186">        return Objects.hash(theType, theBlockLength, theKeyLength);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

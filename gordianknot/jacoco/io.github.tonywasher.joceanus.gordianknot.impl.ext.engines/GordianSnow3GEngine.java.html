@@ -170,24 +170,22 @@ public class GordianSnow3GEngine
 <span class="fc" id="L170">        CipherParameters myParams = params;</span>
 <span class="fc" id="L171">        byte[] newKey = null;</span>
 <span class="fc" id="L172">        byte[] newIV = null;</span>
-<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        if ((myParams instanceof ParametersWithIV)) {</span>
-<span class="fc" id="L174">            final ParametersWithIV ivParams = (ParametersWithIV) myParams;</span>
-<span class="fc" id="L175">            newIV = ivParams.getIV();</span>
-<span class="fc" id="L176">            myParams = ivParams.getParameters();</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        if ((myParams instanceof ParametersWithIV ivParams)) {</span>
+<span class="fc" id="L174">            newIV = ivParams.getIV();</span>
+<span class="fc" id="L175">            myParams = ivParams.getParameters();</span>
         }
-<span class="pc bpc" id="L178" title="1 of 2 branches missed.">        if (myParams instanceof KeyParameter) {</span>
-<span class="fc" id="L179">            final KeyParameter keyParam = (KeyParameter) myParams;</span>
-<span class="fc" id="L180">            newKey = keyParam.getKey();</span>
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        if (myParams instanceof KeyParameter keyParam) {</span>
+<span class="fc" id="L178">            newKey = keyParam.getKey();</span>
         }
 
         /* Initialise engine and mark as initialised */
-<span class="fc" id="L184">        theIndex = 0;</span>
-<span class="fc" id="L185">        theIterations = 0;</span>
-<span class="fc" id="L186">        setKeyAndIV(newKey, newIV);</span>
+<span class="fc" id="L182">        theIndex = 0;</span>
+<span class="fc" id="L183">        theIterations = 0;</span>
+<span class="fc" id="L184">        setKeyAndIV(newKey, newIV);</span>
 
         /* Save reset state */
-<span class="fc" id="L189">        theResetState = copy();</span>
-<span class="fc" id="L190">    }</span>
+<span class="fc" id="L187">        theResetState = copy();</span>
+<span class="fc" id="L188">    }</span>
 
     /**
      * Obtain Max iterations.
@@ -195,12 +193,12 @@ public class GordianSnow3GEngine
      * @return the maximum iterations
      */
     protected int getMaxIterations() {
-<span class="fc" id="L198">        return 625;</span>
+<span class="fc" id="L196">        return 625;</span>
     }
 
     @Override
     public String getAlgorithmName() {
-<span class="nc" id="L203">        return &quot;Snow3G&quot;;</span>
+<span class="nc" id="L201">        return &quot;Snow3G&quot;;</span>
     }
 
     @Override
@@ -210,43 +208,43 @@ public class GordianSnow3GEngine
                             final byte[] out,
                             final int outOff) {
         /* Check for errors */
-<span class="pc bpc" id="L213" title="1 of 2 branches missed.">        if (theResetState == null) {</span>
-<span class="nc" id="L214">            throw new IllegalStateException(getAlgorithmName() + &quot; not initialised&quot;);</span>
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">        if (theResetState == null) {</span>
+<span class="nc" id="L212">            throw new IllegalStateException(getAlgorithmName() + &quot; not initialised&quot;);</span>
         }
-<span class="pc bpc" id="L216" title="1 of 2 branches missed.">        if ((inOff + len) &gt; in.length) {</span>
-<span class="nc" id="L217">            throw new DataLengthException(&quot;input buffer too short&quot;);</span>
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">        if ((inOff + len) &gt; in.length) {</span>
+<span class="nc" id="L215">            throw new DataLengthException(&quot;input buffer too short&quot;);</span>
         }
-<span class="pc bpc" id="L219" title="1 of 2 branches missed.">        if ((outOff + len) &gt; out.length) {</span>
-<span class="nc" id="L220">            throw new OutputLengthException(&quot;output buffer too short&quot;);</span>
+<span class="pc bpc" id="L217" title="1 of 2 branches missed.">        if ((outOff + len) &gt; out.length) {</span>
+<span class="nc" id="L218">            throw new OutputLengthException(&quot;output buffer too short&quot;);</span>
         }
 
         /* Loop through the input bytes */
-<span class="fc bfc" id="L224" title="All 2 branches covered.">        for (int i = 0; i &lt; len; i++) {</span>
-<span class="fc" id="L225">            out[i + outOff] = returnByte(in[i + inOff]);</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        for (int i = 0; i &lt; len; i++) {</span>
+<span class="fc" id="L223">            out[i + outOff] = returnByte(in[i + inOff]);</span>
         }
-<span class="fc" id="L227">        return len;</span>
+<span class="fc" id="L225">        return len;</span>
     }
 
     @Override
     public void reset() {
-<span class="pc bpc" id="L232" title="1 of 2 branches missed.">        if (theResetState != null) {</span>
-<span class="fc" id="L233">            reset(theResetState);</span>
+<span class="pc bpc" id="L230" title="1 of 2 branches missed.">        if (theResetState != null) {</span>
+<span class="fc" id="L231">            reset(theResetState);</span>
         }
-<span class="fc" id="L235">    }</span>
+<span class="fc" id="L233">    }</span>
 
     @Override
     public byte returnByte(final byte in) {
         /* Make the keyStream if required */
-<span class="fc bfc" id="L240" title="All 2 branches covered.">        if (theIndex == 0) {</span>
-<span class="fc" id="L241">            makeKeyStream();</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">        if (theIndex == 0) {</span>
+<span class="fc" id="L239">            makeKeyStream();</span>
         }
 
         /* Map the next byte and adjust index */
-<span class="fc" id="L245">        final byte out = (byte) (keyStream[theIndex] ^ in);</span>
-<span class="fc" id="L246">        theIndex = (theIndex + 1) % Integer.BYTES;</span>
+<span class="fc" id="L243">        final byte out = (byte) (keyStream[theIndex] ^ in);</span>
+<span class="fc" id="L244">        theIndex = (theIndex + 1) % Integer.BYTES;</span>
 
         /* Return the mapped character */
-<span class="fc" id="L249">        return out;</span>
+<span class="fc" id="L247">        return out;</span>
     }
 
     /**
@@ -257,7 +255,7 @@ public class GordianSnow3GEngine
      * @return the decoded value
      */
     private static int decode32be(final byte[] buf, final int off) {
-<span class="fc" id="L260">        return ((buf[off] &amp; 0xFF) &lt;&lt; 24)</span>
+<span class="fc" id="L258">        return ((buf[off] &amp; 0xFF) &lt;&lt; 24)</span>
                 | ((buf[off + 1] &amp; 0xFF) &lt;&lt; 16)
                 | ((buf[off + 2] &amp; 0xFF) &lt;&lt; 8)
                 | (buf[off + 3] &amp; 0xFF);
@@ -271,11 +269,11 @@ public class GordianSnow3GEngine
      * @param off the output offset
      */
     private static void encode32be(final int val, final byte[] buf, final int off) {
-<span class="fc" id="L274">        buf[off] = (byte) (val &gt;&gt; 24);</span>
-<span class="fc" id="L275">        buf[off + 1] = (byte) (val &gt;&gt; 16);</span>
-<span class="fc" id="L276">        buf[off + 2] = (byte) (val &gt;&gt; 8);</span>
-<span class="fc" id="L277">        buf[off + 3] = (byte) (val);</span>
-<span class="fc" id="L278">    }</span>
+<span class="fc" id="L272">        buf[off] = (byte) (val &gt;&gt; 24);</span>
+<span class="fc" id="L273">        buf[off + 1] = (byte) (val &gt;&gt; 16);</span>
+<span class="fc" id="L274">        buf[off + 2] = (byte) (val &gt;&gt; 8);</span>
+<span class="fc" id="L275">        buf[off + 3] = (byte) (val);</span>
+<span class="fc" id="L276">    }</span>
 
     /* MULx.
      * Input v: an 8-bit input.
@@ -284,10 +282,10 @@ public class GordianSnow3GEngine
      * See section 3.1.1 for details.
      */
     int mulX(final byte v, final int c) {
-<span class="fc bfc" id="L287" title="All 2 branches covered.">        if ((v &amp; 0x80) != 0) {</span>
-<span class="fc" id="L288">            return ((v &lt;&lt; 1) ^ c) &amp; 0xFF;</span>
+<span class="fc bfc" id="L285" title="All 2 branches covered.">        if ((v &amp; 0x80) != 0) {</span>
+<span class="fc" id="L286">            return ((v &lt;&lt; 1) ^ c) &amp; 0xFF;</span>
         } else {
-<span class="fc" id="L290">            return (v &lt;&lt; 1) &amp; 0xFF;</span>
+<span class="fc" id="L288">            return (v &lt;&lt; 1) &amp; 0xFF;</span>
         }
     }
 
@@ -299,10 +297,10 @@ public class GordianSnow3GEngine
      * See section 3.1.2 for details.
      */
     int mulXpow(final byte v, final int i, final int c) {
-<span class="fc bfc" id="L302" title="All 2 branches covered.">        if (i == 0) {</span>
-<span class="fc" id="L303">            return v &amp; 0xFF;</span>
+<span class="fc bfc" id="L300" title="All 2 branches covered.">        if (i == 0) {</span>
+<span class="fc" id="L301">            return v &amp; 0xFF;</span>
         } else {
-<span class="fc" id="L305">            return mulX((byte) mulXpow(v, i - 1, c), c);</span>
+<span class="fc" id="L303">            return mulX((byte) mulXpow(v, i - 1, c), c);</span>
         }
     }
 
@@ -312,10 +310,10 @@ public class GordianSnow3GEngine
      * See section 3.4.2 for details.
      */
     int mulAlpha(final byte c) {
-<span class="fc" id="L315">        return ((mulXpow(c, 23, 0xa9) &lt;&lt; 24)</span>
-<span class="fc" id="L316">                | (mulXpow(c, 245, 0xa9) &lt;&lt; 16)</span>
-<span class="fc" id="L317">                | (mulXpow(c, 48, 0xa9) &lt;&lt; 8)</span>
-<span class="fc" id="L318">                | (mulXpow(c, 239, 0xa9)));</span>
+<span class="fc" id="L313">        return ((mulXpow(c, 23, 0xa9) &lt;&lt; 24)</span>
+<span class="fc" id="L314">                | (mulXpow(c, 245, 0xa9) &lt;&lt; 16)</span>
+<span class="fc" id="L315">                | (mulXpow(c, 48, 0xa9) &lt;&lt; 8)</span>
+<span class="fc" id="L316">                | (mulXpow(c, 239, 0xa9)));</span>
     }
 
     /* The function DIV alpha.
@@ -324,10 +322,10 @@ public class GordianSnow3GEngine
      * See section 3.4.3 for details.
      */
     int divAlpha(final byte c) {
-<span class="fc" id="L327">        return ((mulXpow(c, 16, 0xa9) &lt;&lt; 24)</span>
-<span class="fc" id="L328">                | (mulXpow(c, 39, 0xa9) &lt;&lt; 16)</span>
-<span class="fc" id="L329">                | (mulXpow(c, 6, 0xa9) &lt;&lt; 8)</span>
-<span class="fc" id="L330">                | (mulXpow(c, 64, 0xa9)));</span>
+<span class="fc" id="L325">        return ((mulXpow(c, 16, 0xa9) &lt;&lt; 24)</span>
+<span class="fc" id="L326">                | (mulXpow(c, 39, 0xa9) &lt;&lt; 16)</span>
+<span class="fc" id="L327">                | (mulXpow(c, 6, 0xa9) &lt;&lt; 8)</span>
+<span class="fc" id="L328">                | (mulXpow(c, 64, 0xa9)));</span>
     }
 
     /* The 32x32-bit S-Box S1
@@ -336,31 +334,31 @@ public class GordianSnow3GEngine
      * See section 3.3.1.
      */
     int s1(final int w) {
-<span class="fc" id="L339">        final byte srw0 = SR[((w &gt;&gt; 24) &amp; 0xff)];</span>
-<span class="fc" id="L340">        final byte srw1 = SR[((w &gt;&gt; 16) &amp; 0xff)];</span>
-<span class="fc" id="L341">        final byte srw2 = SR[((w &gt;&gt; 8) &amp; 0xff)];</span>
-<span class="fc" id="L342">        final byte srw3 = SR[((w) &amp; 0xff)];</span>
-<span class="fc" id="L343">        final int r0 = ((mulX(srw0, 0x1b))</span>
+<span class="fc" id="L337">        final byte srw0 = SR[((w &gt;&gt; 24) &amp; 0xff)];</span>
+<span class="fc" id="L338">        final byte srw1 = SR[((w &gt;&gt; 16) &amp; 0xff)];</span>
+<span class="fc" id="L339">        final byte srw2 = SR[((w &gt;&gt; 8) &amp; 0xff)];</span>
+<span class="fc" id="L340">        final byte srw3 = SR[((w) &amp; 0xff)];</span>
+<span class="fc" id="L341">        final int r0 = ((mulX(srw0, 0x1b))</span>
                 ^ (srw1)
                 ^ (srw2)
-<span class="fc" id="L346">                ^ ((mulX(srw3, 0x1b)) ^ srw3)</span>
+<span class="fc" id="L344">                ^ ((mulX(srw3, 0x1b)) ^ srw3)</span>
         ) &amp; 0xFF;
-<span class="fc" id="L348">        final int r1 = (((mulX(srw0, 0x1b)) ^ srw0)</span>
-<span class="fc" id="L349">                ^ (mulX(srw1, 0x1b))</span>
+<span class="fc" id="L346">        final int r1 = (((mulX(srw0, 0x1b)) ^ srw0)</span>
+<span class="fc" id="L347">                ^ (mulX(srw1, 0x1b))</span>
                 ^ (srw2)
                 ^ (srw3)
         ) &amp; 0xFF;
-<span class="fc" id="L353">        final int r2 = ((srw0)</span>
-<span class="fc" id="L354">                ^ ((mulX(srw1, 0x1b)) ^ srw1)</span>
-<span class="fc" id="L355">                ^ (mulX(srw2, 0x1b))</span>
+<span class="fc" id="L351">        final int r2 = ((srw0)</span>
+<span class="fc" id="L352">                ^ ((mulX(srw1, 0x1b)) ^ srw1)</span>
+<span class="fc" id="L353">                ^ (mulX(srw2, 0x1b))</span>
                 ^ (srw3)
         ) &amp; 0xFF;
-<span class="fc" id="L358">        final int r3 = ((srw0)</span>
+<span class="fc" id="L356">        final int r3 = ((srw0)</span>
                 ^ (srw1)
-<span class="fc" id="L360">                ^ ((mulX(srw2, 0x1b)) ^ srw2)</span>
-<span class="fc" id="L361">                ^ (mulX(srw3, 0x1b))</span>
+<span class="fc" id="L358">                ^ ((mulX(srw2, 0x1b)) ^ srw2)</span>
+<span class="fc" id="L359">                ^ (mulX(srw3, 0x1b))</span>
         ) &amp; 0xFF;
-<span class="fc" id="L363">        return (((r0) &lt;&lt; 24) | ((r1) &lt;&lt; 16) | ((r2) &lt;&lt; 8)</span>
+<span class="fc" id="L361">        return (((r0) &lt;&lt; 24) | ((r1) &lt;&lt; 16) | ((r2) &lt;&lt; 8)</span>
                 | (r3));
     }
 
@@ -370,31 +368,31 @@ public class GordianSnow3GEngine
      * See section 3.3.2.
      */
     int s2(final int w) {
-<span class="fc" id="L373">        final byte sqw0 = SQ[((w &gt;&gt; 24) &amp; 0xff)];</span>
-<span class="fc" id="L374">        final byte sqw1 = SQ[((w &gt;&gt; 16) &amp; 0xff)];</span>
-<span class="fc" id="L375">        final byte sqw2 = SQ[((w &gt;&gt; 8) &amp; 0xff)];</span>
-<span class="fc" id="L376">        final byte sqw3 = SQ[((w) &amp; 0xff)];</span>
-<span class="fc" id="L377">        final int r0 = ((mulX(sqw0, 0x69))</span>
+<span class="fc" id="L371">        final byte sqw0 = SQ[((w &gt;&gt; 24) &amp; 0xff)];</span>
+<span class="fc" id="L372">        final byte sqw1 = SQ[((w &gt;&gt; 16) &amp; 0xff)];</span>
+<span class="fc" id="L373">        final byte sqw2 = SQ[((w &gt;&gt; 8) &amp; 0xff)];</span>
+<span class="fc" id="L374">        final byte sqw3 = SQ[((w) &amp; 0xff)];</span>
+<span class="fc" id="L375">        final int r0 = ((mulX(sqw0, 0x69))</span>
                 ^ (sqw1)
                 ^ (sqw2)
-<span class="fc" id="L380">                ^ ((mulX(sqw3, 0x69)) ^ sqw3)</span>
+<span class="fc" id="L378">                ^ ((mulX(sqw3, 0x69)) ^ sqw3)</span>
         ) &amp; 0xFF;
-<span class="fc" id="L382">        final int r1 = (((mulX(sqw0, 0x69)) ^ sqw0)</span>
-<span class="fc" id="L383">                ^ (mulX(sqw1, 0x69))</span>
+<span class="fc" id="L380">        final int r1 = (((mulX(sqw0, 0x69)) ^ sqw0)</span>
+<span class="fc" id="L381">                ^ (mulX(sqw1, 0x69))</span>
                 ^ (sqw2)
                 ^ (sqw3)
         ) &amp; 0xFF;
-<span class="fc" id="L387">        final int r2 = ((sqw0)</span>
-<span class="fc" id="L388">                ^ ((mulX(sqw1, 0x69)) ^ sqw1)</span>
-<span class="fc" id="L389">                ^ (mulX(sqw2, 0x69))</span>
+<span class="fc" id="L385">        final int r2 = ((sqw0)</span>
+<span class="fc" id="L386">                ^ ((mulX(sqw1, 0x69)) ^ sqw1)</span>
+<span class="fc" id="L387">                ^ (mulX(sqw2, 0x69))</span>
                 ^ (sqw3)
         ) &amp; 0xFF;
-<span class="fc" id="L392">        final int r3 = ((sqw0)</span>
+<span class="fc" id="L390">        final int r3 = ((sqw0)</span>
                 ^ (sqw1)
-<span class="fc" id="L394">                ^ ((mulX(sqw2, 0x69)) ^ sqw2)</span>
-<span class="fc" id="L395">                ^ (mulX(sqw3, 0x69))</span>
+<span class="fc" id="L392">                ^ ((mulX(sqw2, 0x69)) ^ sqw2)</span>
+<span class="fc" id="L393">                ^ (mulX(sqw3, 0x69))</span>
         ) &amp; 0xFF;
-<span class="fc" id="L397">        return (((r0) &lt;&lt; 24) | ((r1) &lt;&lt; 16) | ((r2) &lt;&lt; 8)</span>
+<span class="fc" id="L395">        return (((r0) &lt;&lt; 24) | ((r1) &lt;&lt; 16) | ((r2) &lt;&lt; 8)</span>
                 | (r3));
     }
 
@@ -404,59 +402,59 @@ public class GordianSnow3GEngine
      * See section 3.4.4.
      */
     void clockLFSRInitializationMode(final int f) {
-<span class="fc" id="L407">        final int v = (((lfsrState[0] &lt;&lt; 8) &amp; 0xffffff00)</span>
-<span class="fc" id="L408">                ^ (mulAlpha((byte) ((lfsrState[0] &gt;&gt;&gt; 24) &amp; 0xff)))</span>
+<span class="fc" id="L405">        final int v = (((lfsrState[0] &lt;&lt; 8) &amp; 0xffffff00)</span>
+<span class="fc" id="L406">                ^ (mulAlpha((byte) ((lfsrState[0] &gt;&gt;&gt; 24) &amp; 0xff)))</span>
                 ^ (lfsrState[2])
                 ^ ((lfsrState[11] &gt;&gt;&gt; 8) &amp; 0x00ffffff)
-<span class="fc" id="L411">                ^ (divAlpha((byte) ((lfsrState[11]) &amp; 0xff)))</span>
+<span class="fc" id="L409">                ^ (divAlpha((byte) ((lfsrState[11]) &amp; 0xff)))</span>
                 ^ (f)
         );
-<span class="fc" id="L414">        lfsrState[0] = lfsrState[1];</span>
-<span class="fc" id="L415">        lfsrState[1] = lfsrState[2];</span>
-<span class="fc" id="L416">        lfsrState[2] = lfsrState[3];</span>
-<span class="fc" id="L417">        lfsrState[3] = lfsrState[4];</span>
-<span class="fc" id="L418">        lfsrState[4] = lfsrState[5];</span>
-<span class="fc" id="L419">        lfsrState[5] = lfsrState[6];</span>
-<span class="fc" id="L420">        lfsrState[6] = lfsrState[7];</span>
-<span class="fc" id="L421">        lfsrState[7] = lfsrState[8];</span>
-<span class="fc" id="L422">        lfsrState[8] = lfsrState[9];</span>
-<span class="fc" id="L423">        lfsrState[9] = lfsrState[10];</span>
-<span class="fc" id="L424">        lfsrState[10] = lfsrState[11];</span>
-<span class="fc" id="L425">        lfsrState[11] = lfsrState[12];</span>
-<span class="fc" id="L426">        lfsrState[12] = lfsrState[13];</span>
-<span class="fc" id="L427">        lfsrState[13] = lfsrState[14];</span>
-<span class="fc" id="L428">        lfsrState[14] = lfsrState[15];</span>
-<span class="fc" id="L429">        lfsrState[15] = v;</span>
-<span class="fc" id="L430">    }</span>
+<span class="fc" id="L412">        lfsrState[0] = lfsrState[1];</span>
+<span class="fc" id="L413">        lfsrState[1] = lfsrState[2];</span>
+<span class="fc" id="L414">        lfsrState[2] = lfsrState[3];</span>
+<span class="fc" id="L415">        lfsrState[3] = lfsrState[4];</span>
+<span class="fc" id="L416">        lfsrState[4] = lfsrState[5];</span>
+<span class="fc" id="L417">        lfsrState[5] = lfsrState[6];</span>
+<span class="fc" id="L418">        lfsrState[6] = lfsrState[7];</span>
+<span class="fc" id="L419">        lfsrState[7] = lfsrState[8];</span>
+<span class="fc" id="L420">        lfsrState[8] = lfsrState[9];</span>
+<span class="fc" id="L421">        lfsrState[9] = lfsrState[10];</span>
+<span class="fc" id="L422">        lfsrState[10] = lfsrState[11];</span>
+<span class="fc" id="L423">        lfsrState[11] = lfsrState[12];</span>
+<span class="fc" id="L424">        lfsrState[12] = lfsrState[13];</span>
+<span class="fc" id="L425">        lfsrState[13] = lfsrState[14];</span>
+<span class="fc" id="L426">        lfsrState[14] = lfsrState[15];</span>
+<span class="fc" id="L427">        lfsrState[15] = v;</span>
+<span class="fc" id="L428">    }</span>
 
     /* Clocking LFSR in keystream mode.
      * LFSR Registers S0 to S15 are updated as the LFSR receives a single clock.
      * See section 3.4.5.
      */
     void clockLFSRKeyStreamMode() {
-<span class="fc" id="L437">        final int v = (((lfsrState[0] &lt;&lt; 8) &amp; 0xffffff00)</span>
-<span class="fc" id="L438">                ^ (mulAlpha((byte) ((lfsrState[0] &gt;&gt;&gt; 24) &amp; 0xff)))</span>
+<span class="fc" id="L435">        final int v = (((lfsrState[0] &lt;&lt; 8) &amp; 0xffffff00)</span>
+<span class="fc" id="L436">                ^ (mulAlpha((byte) ((lfsrState[0] &gt;&gt;&gt; 24) &amp; 0xff)))</span>
                 ^ (lfsrState[2])
                 ^ ((lfsrState[11] &gt;&gt;&gt; 8) &amp; 0x00ffffff)
-<span class="fc" id="L441">                ^ (divAlpha((byte) ((lfsrState[11]) &amp; 0xff)))</span>
+<span class="fc" id="L439">                ^ (divAlpha((byte) ((lfsrState[11]) &amp; 0xff)))</span>
         );
-<span class="fc" id="L443">        lfsrState[0] = lfsrState[1];</span>
-<span class="fc" id="L444">        lfsrState[1] = lfsrState[2];</span>
-<span class="fc" id="L445">        lfsrState[2] = lfsrState[3];</span>
-<span class="fc" id="L446">        lfsrState[3] = lfsrState[4];</span>
-<span class="fc" id="L447">        lfsrState[4] = lfsrState[5];</span>
-<span class="fc" id="L448">        lfsrState[5] = lfsrState[6];</span>
-<span class="fc" id="L449">        lfsrState[6] = lfsrState[7];</span>
-<span class="fc" id="L450">        lfsrState[7] = lfsrState[8];</span>
-<span class="fc" id="L451">        lfsrState[8] = lfsrState[9];</span>
-<span class="fc" id="L452">        lfsrState[9] = lfsrState[10];</span>
-<span class="fc" id="L453">        lfsrState[10] = lfsrState[11];</span>
-<span class="fc" id="L454">        lfsrState[11] = lfsrState[12];</span>
-<span class="fc" id="L455">        lfsrState[12] = lfsrState[13];</span>
-<span class="fc" id="L456">        lfsrState[13] = lfsrState[14];</span>
-<span class="fc" id="L457">        lfsrState[14] = lfsrState[15];</span>
-<span class="fc" id="L458">        lfsrState[15] = v;</span>
-<span class="fc" id="L459">    }</span>
+<span class="fc" id="L441">        lfsrState[0] = lfsrState[1];</span>
+<span class="fc" id="L442">        lfsrState[1] = lfsrState[2];</span>
+<span class="fc" id="L443">        lfsrState[2] = lfsrState[3];</span>
+<span class="fc" id="L444">        lfsrState[3] = lfsrState[4];</span>
+<span class="fc" id="L445">        lfsrState[4] = lfsrState[5];</span>
+<span class="fc" id="L446">        lfsrState[5] = lfsrState[6];</span>
+<span class="fc" id="L447">        lfsrState[6] = lfsrState[7];</span>
+<span class="fc" id="L448">        lfsrState[7] = lfsrState[8];</span>
+<span class="fc" id="L449">        lfsrState[8] = lfsrState[9];</span>
+<span class="fc" id="L450">        lfsrState[9] = lfsrState[10];</span>
+<span class="fc" id="L451">        lfsrState[10] = lfsrState[11];</span>
+<span class="fc" id="L452">        lfsrState[11] = lfsrState[12];</span>
+<span class="fc" id="L453">        lfsrState[12] = lfsrState[13];</span>
+<span class="fc" id="L454">        lfsrState[13] = lfsrState[14];</span>
+<span class="fc" id="L455">        lfsrState[14] = lfsrState[15];</span>
+<span class="fc" id="L456">        lfsrState[15] = v;</span>
+<span class="fc" id="L457">    }</span>
 
     /* Clocking FSM.
      * Produces a 32-bit word F.
@@ -464,12 +462,12 @@ public class GordianSnow3GEngine
      * See Section 3.4.6.
      */
     int clockFSM() {
-<span class="fc" id="L467">        final int f = ((lfsrState[15] + fsmState[0]) &amp; 0xffffffff) ^ fsmState[1];</span>
-<span class="fc" id="L468">        final int r = (fsmState[1] + (fsmState[2] ^ lfsrState[5])) &amp; 0xffffffff;</span>
-<span class="fc" id="L469">        fsmState[2] = s2(fsmState[1]);</span>
-<span class="fc" id="L470">        fsmState[1] = s1(fsmState[0]);</span>
-<span class="fc" id="L471">        fsmState[0] = r;</span>
-<span class="fc" id="L472">        return f;</span>
+<span class="fc" id="L465">        final int f = ((lfsrState[15] + fsmState[0]) &amp; 0xffffffff) ^ fsmState[1];</span>
+<span class="fc" id="L466">        final int r = (fsmState[1] + (fsmState[2] ^ lfsrState[5])) &amp; 0xffffffff;</span>
+<span class="fc" id="L467">        fsmState[2] = s2(fsmState[1]);</span>
+<span class="fc" id="L468">        fsmState[1] = s1(fsmState[0]);</span>
+<span class="fc" id="L469">        fsmState[0] = r;</span>
+<span class="fc" id="L470">        return f;</span>
     }
 
     /* Initialization.
@@ -480,53 +478,53 @@ public class GordianSnow3GEngine
      */
     void setKeyAndIV(final byte[] key, final byte[] iv) {
         /* Check lengths */
-<span class="pc bpc" id="L483" title="2 of 4 branches missed.">        if (key == null || key.length != 16) {</span>
-<span class="nc" id="L484">            throw new IllegalArgumentException(&quot;A key of 16 bytes is needed&quot;);</span>
+<span class="pc bpc" id="L481" title="2 of 4 branches missed.">        if (key == null || key.length != 16) {</span>
+<span class="nc" id="L482">            throw new IllegalArgumentException(&quot;A key of 16 bytes is needed&quot;);</span>
         }
-<span class="pc bpc" id="L486" title="2 of 4 branches missed.">        if (iv == null || iv.length != 16) {</span>
-<span class="nc" id="L487">            throw new IllegalArgumentException(&quot;An IV of 16 bytes is needed&quot;);</span>
+<span class="pc bpc" id="L484" title="2 of 4 branches missed.">        if (iv == null || iv.length != 16) {</span>
+<span class="nc" id="L485">            throw new IllegalArgumentException(&quot;An IV of 16 bytes is needed&quot;);</span>
         }
 
         /* Generate four subkeys */
-<span class="fc" id="L491">        final int k0 = decode32be(key, 12);</span>
-<span class="fc" id="L492">        final int k1 = decode32be(key, 8);</span>
-<span class="fc" id="L493">        final int k2 = decode32be(key, 4);</span>
-<span class="fc" id="L494">        final int k3 = decode32be(key, 0);</span>
+<span class="fc" id="L489">        final int k0 = decode32be(key, 12);</span>
+<span class="fc" id="L490">        final int k1 = decode32be(key, 8);</span>
+<span class="fc" id="L491">        final int k2 = decode32be(key, 4);</span>
+<span class="fc" id="L492">        final int k3 = decode32be(key, 0);</span>
 
         /* Generate four subvectors */
-<span class="fc" id="L497">        final int i0 = decode32be(iv, 12);</span>
-<span class="fc" id="L498">        final int i1 = decode32be(iv, 8);</span>
-<span class="fc" id="L499">        final int i2 = decode32be(iv, 4);</span>
-<span class="fc" id="L500">        final int i3 = decode32be(iv, 0);</span>
+<span class="fc" id="L495">        final int i0 = decode32be(iv, 12);</span>
+<span class="fc" id="L496">        final int i1 = decode32be(iv, 8);</span>
+<span class="fc" id="L497">        final int i2 = decode32be(iv, 4);</span>
+<span class="fc" id="L498">        final int i3 = decode32be(iv, 0);</span>
 
-<span class="fc" id="L502">        lfsrState[15] = k3 ^ i0;</span>
-<span class="fc" id="L503">        lfsrState[14] = k2;</span>
-<span class="fc" id="L504">        lfsrState[13] = k1;</span>
-<span class="fc" id="L505">        lfsrState[12] = k0 ^ i1;</span>
-<span class="fc" id="L506">        lfsrState[11] = k3 ^ 0xffffffff;</span>
-<span class="fc" id="L507">        lfsrState[10] = k2 ^ 0xffffffff ^ i2;</span>
-<span class="fc" id="L508">        lfsrState[9] = k1 ^ 0xffffffff ^ i3;</span>
-<span class="fc" id="L509">        lfsrState[8] = k0 ^ 0xffffffff;</span>
-<span class="fc" id="L510">        lfsrState[7] = k3;</span>
-<span class="fc" id="L511">        lfsrState[6] = k2;</span>
-<span class="fc" id="L512">        lfsrState[5] = k1;</span>
-<span class="fc" id="L513">        lfsrState[4] = k0;</span>
-<span class="fc" id="L514">        lfsrState[3] = k3 ^ 0xffffffff;</span>
-<span class="fc" id="L515">        lfsrState[2] = k2 ^ 0xffffffff;</span>
-<span class="fc" id="L516">        lfsrState[1] = k1 ^ 0xffffffff;</span>
-<span class="fc" id="L517">        lfsrState[0] = k0 ^ 0xffffffff;</span>
-<span class="fc" id="L518">        fsmState[0] = 0x0;</span>
-<span class="fc" id="L519">        fsmState[1] = 0x0;</span>
-<span class="fc" id="L520">        fsmState[2] = 0x0;</span>
-<span class="fc bfc" id="L521" title="All 2 branches covered.">        for (int i = 0; i &lt; 32; i++) {</span>
-<span class="fc" id="L522">            final int f = clockFSM();</span>
-<span class="fc" id="L523">            clockLFSRInitializationMode(f);</span>
+<span class="fc" id="L500">        lfsrState[15] = k3 ^ i0;</span>
+<span class="fc" id="L501">        lfsrState[14] = k2;</span>
+<span class="fc" id="L502">        lfsrState[13] = k1;</span>
+<span class="fc" id="L503">        lfsrState[12] = k0 ^ i1;</span>
+<span class="fc" id="L504">        lfsrState[11] = k3 ^ 0xffffffff;</span>
+<span class="fc" id="L505">        lfsrState[10] = k2 ^ 0xffffffff ^ i2;</span>
+<span class="fc" id="L506">        lfsrState[9] = k1 ^ 0xffffffff ^ i3;</span>
+<span class="fc" id="L507">        lfsrState[8] = k0 ^ 0xffffffff;</span>
+<span class="fc" id="L508">        lfsrState[7] = k3;</span>
+<span class="fc" id="L509">        lfsrState[6] = k2;</span>
+<span class="fc" id="L510">        lfsrState[5] = k1;</span>
+<span class="fc" id="L511">        lfsrState[4] = k0;</span>
+<span class="fc" id="L512">        lfsrState[3] = k3 ^ 0xffffffff;</span>
+<span class="fc" id="L513">        lfsrState[2] = k2 ^ 0xffffffff;</span>
+<span class="fc" id="L514">        lfsrState[1] = k1 ^ 0xffffffff;</span>
+<span class="fc" id="L515">        lfsrState[0] = k0 ^ 0xffffffff;</span>
+<span class="fc" id="L516">        fsmState[0] = 0x0;</span>
+<span class="fc" id="L517">        fsmState[1] = 0x0;</span>
+<span class="fc" id="L518">        fsmState[2] = 0x0;</span>
+<span class="fc bfc" id="L519" title="All 2 branches covered.">        for (int i = 0; i &lt; 32; i++) {</span>
+<span class="fc" id="L520">            final int f = clockFSM();</span>
+<span class="fc" id="L521">            clockLFSRInitializationMode(f);</span>
         }
         /* Clock FSM once. Discard the output. */
-<span class="fc" id="L526">        clockFSM();</span>
+<span class="fc" id="L524">        clockFSM();</span>
         /* Clock LFSR in keystream mode once. */
-<span class="fc" id="L528">        clockLFSRKeyStreamMode();</span>
-<span class="fc" id="L529">    }</span>
+<span class="fc" id="L526">        clockLFSRKeyStreamMode();</span>
+<span class="fc" id="L527">    }</span>
 
     /* Generation of Keystream.
      * input n: number of 32-bit words of keystream.
@@ -536,29 +534,29 @@ public class GordianSnow3GEngine
      * See section 4.2.
      */
     void makeKeyStream() {
-<span class="fc bfc" id="L539" title="All 2 branches covered.">        if (theIterations++ &gt;= getMaxIterations()) {</span>
-<span class="fc" id="L540">            throw new IllegalStateException(&quot;Too much data processed by singleKey/IV&quot;);</span>
+<span class="fc bfc" id="L537" title="All 2 branches covered.">        if (theIterations++ &gt;= getMaxIterations()) {</span>
+<span class="fc" id="L538">            throw new IllegalStateException(&quot;Too much data processed by singleKey/IV&quot;);</span>
         }
 
-<span class="fc" id="L543">        final int f = clockFSM(); // STEP 1 */</span>
-<span class="fc" id="L544">        encode32be(f ^ lfsrState[0], keyStream, 0); // STEP 2 */</span>
+<span class="fc" id="L541">        final int f = clockFSM(); // STEP 1 */</span>
+<span class="fc" id="L542">        encode32be(f ^ lfsrState[0], keyStream, 0); // STEP 2 */</span>
         /* Note that ks[t] corresponds to z_{t+1} in section 4.2 */
-<span class="fc" id="L546">        clockLFSRKeyStreamMode(); // STEP 3 */</span>
-<span class="fc" id="L547">    }</span>
+<span class="fc" id="L544">        clockLFSRKeyStreamMode(); // STEP 3 */</span>
+<span class="fc" id="L545">    }</span>
 
     @Override
     public GordianSnow3GEngine copy() {
-<span class="fc" id="L551">        return new GordianSnow3GEngine(this);</span>
+<span class="fc" id="L549">        return new GordianSnow3GEngine(this);</span>
     }
 
     @Override
     public void reset(final Memoable pState) {
-<span class="fc" id="L556">        final GordianSnow3GEngine e = (GordianSnow3GEngine) pState;</span>
-<span class="fc" id="L557">        System.arraycopy(e.lfsrState, 0, lfsrState, 0, lfsrState.length);</span>
-<span class="fc" id="L558">        System.arraycopy(e.fsmState, 0, fsmState, 0, fsmState.length);</span>
-<span class="fc" id="L559">        System.arraycopy(e.keyStream, 0, keyStream, 0, keyStream.length);</span>
-<span class="fc" id="L560">        theIterations = e.theIterations;</span>
-<span class="fc" id="L561">        theIndex = e.theIndex;</span>
-<span class="fc" id="L562">    }</span>
+<span class="fc" id="L554">        final GordianSnow3GEngine e = (GordianSnow3GEngine) pState;</span>
+<span class="fc" id="L555">        System.arraycopy(e.lfsrState, 0, lfsrState, 0, lfsrState.length);</span>
+<span class="fc" id="L556">        System.arraycopy(e.fsmState, 0, fsmState, 0, fsmState.length);</span>
+<span class="fc" id="L557">        System.arraycopy(e.keyStream, 0, keyStream, 0, keyStream.length);</span>
+<span class="fc" id="L558">        theIterations = e.theIterations;</span>
+<span class="fc" id="L559">        theIndex = e.theIndex;</span>
+<span class="fc" id="L560">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

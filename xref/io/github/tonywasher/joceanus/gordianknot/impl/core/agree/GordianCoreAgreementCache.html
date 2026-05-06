@@ -25,7 +25,7 @@
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -81,7 +81,7 @@
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">     * @throws GordianException on error</em>
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>      <a name="GordianCoreAgreement" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/agree/GordianCoreAgreement.html#GordianCoreAgreement">GordianCoreAgreement</a> lookUpAgreement(<strong class="jxr_keyword">final</strong> Long pId,
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>                                           <strong class="jxr_keyword">final</strong> <a name="GordianAgreementSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/agree/GordianAgreementSpec.html#GordianAgreementSpec">GordianAgreementSpec</a> pSpec) <strong class="jxr_keyword">throws</strong> <a name="GordianException" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/base/GordianException.html#GordianException">GordianException</a> {
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>                                           <strong class="jxr_keyword">final</strong> <a name="GordianAgreementSpec" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/agree/spec/GordianAgreementSpec.html#GordianAgreementSpec">GordianAgreementSpec</a> pSpec) <strong class="jxr_keyword">throws</strong> <a name="GordianException" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/api/base/GordianException.html#GordianException">GordianException</a> {
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          <em class="jxr_comment">/* Look up the Agreement */</em>
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">final</strong> <a name="GordianCoreAgreement" href="../../../../../../../../io/github/tonywasher/joceanus/gordianknot/impl/core/agree/GordianCoreAgreement.html#GordianCoreAgreement">GordianCoreAgreement</a> myAgreement = theMap.get(pId);
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  

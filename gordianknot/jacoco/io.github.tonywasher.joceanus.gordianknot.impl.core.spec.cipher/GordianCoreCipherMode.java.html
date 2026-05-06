@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreCipherMode.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher</a> &gt; <span class="el_source">GordianCoreCipherMode.java</span></div><h1>GordianCoreCipherMode.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * Cipher Modes. Available algorithms.
+ */
+public final class GordianCoreCipherMode {
+    /**
+     * The modeMap.
+     */
+<span class="fc" id="L36">    private static final Map&lt;GordianCipherMode, GordianCoreCipherMode&gt; MODEMAP = newModeMap();</span>
+
+    /**
+     * The CipherMode.
+     */
+    private final GordianCipherMode theMode;
+
+    /**
+     * Constructor.
+     *
+     * @param pMode the mode
+     */
+<span class="fc" id="L48">    private GordianCoreCipherMode(final GordianCipherMode pMode) {</span>
+<span class="fc" id="L49">        theMode = pMode;</span>
+<span class="fc" id="L50">    }</span>
+
+    /**
+     * Obtain the mode.
+     *
+     * @return the mode
+     */
+    public GordianCipherMode getMode() {
+<span class="fc" id="L58">        return theMode;</span>
+    }
+
+    /**
+     * Does the mode require padding?
+     *
+     * @return true/false
+     */
+    public boolean hasPadding() {
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        return switch (theMode) {</span>
+<span class="fc" id="L68">            case ECB, CBC, G3413CBC -&gt; true;</span>
+<span class="fc" id="L69">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Is this an AAD mode?
+     *
+     * @return true/false
+     */
+    public boolean isAAD() {
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        return switch (theMode) {</span>
+<span class="fc" id="L80">            case CCM, GCM, EAX, OCB, KCCM, KGCM, GCMSIV -&gt; true;</span>
+<span class="fc" id="L81">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Can we work on a short block?
+     *
+     * @return true/false
+     */
+    public boolean allowShortBlock() {
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        return switch (theMode) {</span>
+<span class="fc" id="L92">            case CCM, GCM, OCB, SIC -&gt; false;</span>
+<span class="fc" id="L93">            default -&gt; true;</span>
+        };
+    }
+
+    /**
+     * Does the mode require a standard block?
+     *
+     * @return true/false
+     */
+    public boolean needsStdBlock() {
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        return switch (theMode) {</span>
+<span class="fc" id="L104">            case CCM, GCM, GCMSIV, OCB -&gt; true;</span>
+<span class="fc" id="L105">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Is this mode valid for the symKeySpec?
+     *
+     * @param pKeySpec the keySpec
+     * @return true/false
+     */
+    public boolean validForSymKey(final GordianSymKeySpec pKeySpec) {
+<span class="fc" id="L116">        final GordianSymKeyType myKeyType = pKeySpec.getSymKeyType();</span>
+<span class="fc" id="L117">        final GordianLength myKeyLen = pKeySpec.getKeyLength();</span>
+<span class="fc bfc" id="L118" title="All 5 branches covered.">        return switch (theMode) {</span>
+<span class="fc" id="L119">            case G3413OFB, G3413CFB, G3413CBC, G3413CTR -&gt; GordianSymKeyType.KUZNYECHIK.equals(myKeyType);</span>
+<span class="fc" id="L120">            case GOFB, GCFB -&gt; GordianSymKeyType.GOST.equals(myKeyType);</span>
+<span class="fc" id="L121">            case KCTR, KGCM, KCCM -&gt; GordianSymKeyType.KALYNA.equals(myKeyType);</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">            case GCMSIV -&gt; GordianLength.LEN_128.equals(myKeyLen)</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">                    || GordianLength.LEN_256.equals(myKeyLen);</span>
+<span class="fc" id="L124">            default -&gt; true;</span>
+        };
+    }
+
+    /**
+     * Does the mode need an IV?
+     *
+     * @return true/false
+     */
+    public boolean needsIV() {
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        return theMode != GordianCipherMode.ECB;</span>
+    }
+
+    /**
+     * Needs re-initialisation after final.
+     *
+     * @return true/false
+     */
+    public boolean needsReInitialisation() {
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        return theMode == GordianCipherMode.GCM;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L148">        return theMode.toString();</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L154" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L155">            return true;</span>
+        }
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L158">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="nc" id="L162">        return pThat instanceof GordianCoreCipherMode myThat</span>
+<span class="nc bnc" id="L163" title="All 4 branches missed.">                &amp;&amp; theMode == myThat.getMode();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L168">        return theMode.hashCode();</span>
+    }
+
+    /**
+     * Build the mode map.
+     *
+     * @return the mode map
+     */
+    private static Map&lt;GordianCipherMode, GordianCoreCipherMode&gt; newModeMap() {
+<span class="fc" id="L177">        final Map&lt;GordianCipherMode, GordianCoreCipherMode&gt; myMap = new EnumMap&lt;&gt;(GordianCipherMode.class);</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        for (GordianCipherMode myMode : GordianCipherMode.values()) {</span>
+<span class="fc" id="L179">            myMap.put(myMode, new GordianCoreCipherMode(myMode));</span>
+        }
+<span class="fc" id="L181">        return myMap;</span>
+    }
+
+    /**
+     * Obtain the core mode.
+     *
+     * @param pMode the base mode
+     * @return the core mode
+     */
+    public static GordianCoreCipherMode mapCoreMode(final GordianCipherMode pMode) {
+<span class="fc" id="L191">        return MODEMAP.get(pMode);</span>
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static Collection&lt;GordianCoreCipherMode&gt; values() {
+<span class="fc" id="L200">        return MODEMAP.values();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

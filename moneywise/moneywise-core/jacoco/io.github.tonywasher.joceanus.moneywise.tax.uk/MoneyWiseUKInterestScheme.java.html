@@ -16,12 +16,12 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -164,19 +164,20 @@ public abstract class MoneyWiseUKInterestScheme
 <span class="fc" id="L164">        private static final MetisFieldSet&lt;MoneyWiseUKInterestAsIncomeScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKInterestAsIncomeScheme.class);</span>
 
         /**
-         * Constructor.
+         * Default constructor.
          */
-<span class="fc" id="L169">        public MoneyWiseUKInterestAsIncomeScheme() {</span>
-<span class="fc" id="L170">        }</span>
+<span class="fc" id="L169">        MoneyWiseUKInterestAsIncomeScheme() {</span>
+            /* NoOp */
+<span class="fc" id="L171">        }</span>
 
         @Override
         protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
-<span class="nc" id="L174">            return pTaxYear.getTaxBands().getBasicTaxRate();</span>
+<span class="nc" id="L175">            return pTaxYear.getTaxBands().getBasicTaxRate();</span>
         }
 
         @Override
         public MetisFieldSet&lt;MoneyWiseUKInterestAsIncomeScheme&gt; getDataFieldSet() {
-<span class="nc" id="L179">            return FIELD_DEFS;</span>
+<span class="nc" id="L180">            return FIELD_DEFS;</span>
         }
     }
 
@@ -188,14 +189,14 @@ public abstract class MoneyWiseUKInterestScheme
         /**
          * Local Report fields.
          */
-<span class="fc" id="L191">        private static final MetisFieldSet&lt;MoneyWiseUKInterestBaseRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKInterestBaseRateScheme.class);</span>
+<span class="fc" id="L192">        private static final MetisFieldSet&lt;MoneyWiseUKInterestBaseRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKInterestBaseRateScheme.class);</span>
 
         /*
          * Declare Fields.
          */
         static {
-<span class="fc" id="L197">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE, MoneyWiseUKInterestBaseRateScheme::getBaseRate);</span>
-<span class="fc" id="L198">        }</span>
+<span class="fc" id="L198">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE, MoneyWiseUKInterestBaseRateScheme::getBaseRate);</span>
+<span class="fc" id="L199">        }</span>
 
         /**
          * The Base Rate.
@@ -207,23 +208,23 @@ public abstract class MoneyWiseUKInterestScheme
          *
          * @param pRate the base rate
          */
-<span class="fc" id="L210">        protected MoneyWiseUKInterestBaseRateScheme(final OceanusRate pRate) {</span>
-<span class="fc" id="L211">            theBaseRate = pRate;</span>
-<span class="fc" id="L212">        }</span>
+<span class="fc" id="L211">        protected MoneyWiseUKInterestBaseRateScheme(final OceanusRate pRate) {</span>
+<span class="fc" id="L212">            theBaseRate = pRate;</span>
+<span class="fc" id="L213">        }</span>
 
         @Override
         protected OceanusRate getBaseRate() {
-<span class="nc" id="L216">            return theBaseRate;</span>
+<span class="nc" id="L217">            return theBaseRate;</span>
         }
 
         @Override
         protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
-<span class="nc" id="L221">            return theBaseRate;</span>
+<span class="nc" id="L222">            return theBaseRate;</span>
         }
 
         @Override
         public MetisFieldSet&lt;? extends MoneyWiseUKInterestBaseRateScheme&gt; getDataFieldSet() {
-<span class="nc" id="L226">            return FIELD_DEFS;</span>
+<span class="nc" id="L227">            return FIELD_DEFS;</span>
         }
     }
 
@@ -235,7 +236,7 @@ public abstract class MoneyWiseUKInterestScheme
         /**
          * Local Report fields.
          */
-<span class="fc" id="L238">        private static final MetisFieldSet&lt;MoneyWiseUKInterestLoBaseRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKInterestLoBaseRateScheme.class);</span>
+<span class="fc" id="L239">        private static final MetisFieldSet&lt;MoneyWiseUKInterestLoBaseRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKInterestLoBaseRateScheme.class);</span>
 
         /**
          * Constructor.
@@ -243,12 +244,12 @@ public abstract class MoneyWiseUKInterestScheme
          * @param pRate the base rate
          */
         protected MoneyWiseUKInterestLoBaseRateScheme(final OceanusRate pRate) {
-<span class="fc" id="L246">            super(pRate);</span>
-<span class="fc" id="L247">        }</span>
+<span class="fc" id="L247">            super(pRate);</span>
+<span class="fc" id="L248">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWiseUKInterestLoBaseRateScheme&gt; getDataFieldSet() {
-<span class="nc" id="L251">            return FIELD_DEFS;</span>
+<span class="nc" id="L252">            return FIELD_DEFS;</span>
         }
     }
 }

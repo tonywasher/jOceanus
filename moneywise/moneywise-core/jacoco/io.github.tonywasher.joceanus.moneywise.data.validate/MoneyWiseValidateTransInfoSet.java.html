@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
@@ -42,6 +37,11 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateInfoSet;
@@ -90,71 +90,47 @@ public class MoneyWiseValidateTransInfoSet
         }
 
         /* Switch on class */
-<span class="pc bpc" id="L93" title="1 of 16 branches missed.">        switch ((MoneyWiseTransInfoClass) pClass) {</span>
+<span class="pc bpc" id="L93" title="1 of 16 branches missed.">        return switch ((MoneyWiseTransInfoClass) pClass) {</span>
             /* Reference and comments are always available */
-            case REFERENCE:
-            case COMMENTS:
-            case TRANSTAG:
-<span class="fc" id="L98">                return MetisFieldRequired.CANEXIST;</span>
+<span class="fc" id="L95">            case REFERENCE, COMMENTS, TRANSTAG -&gt; MetisFieldRequired.CANEXIST;</span>
 
             /* NatInsurance and benefit can only occur on salary/pensionContribution */
-            case EMPLOYERNATINS:
-            case EMPLOYEENATINS:
-<span class="fc bfc" id="L103" title="All 2 branches covered.">                return myClass.isNatInsurance()</span>
-<span class="fc" id="L104">                        ? MetisFieldRequired.CANEXIST</span>
-<span class="fc" id="L105">                        : MetisFieldRequired.NOTALLOWED;</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">            case EMPLOYERNATINS, EMPLOYEENATINS -&gt; myClass.isNatInsurance()</span>
+<span class="fc" id="L99">                    ? MetisFieldRequired.CANEXIST</span>
+<span class="fc" id="L100">                    : MetisFieldRequired.NOTALLOWED;</span>
 
             /* Benefit can only occur on salary */
-            case DEEMEDBENEFIT:
-<span class="fc bfc" id="L109" title="All 2 branches covered.">                return myClass == MoneyWiseTransCategoryClass.TAXEDINCOME</span>
-<span class="fc" id="L110">                        ? MetisFieldRequired.CANEXIST</span>
-<span class="fc" id="L111">                        : MetisFieldRequired.NOTALLOWED;</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">            case DEEMEDBENEFIT -&gt; myClass == MoneyWiseTransCategoryClass.TAXEDINCOME</span>
+<span class="fc" id="L104">                    ? MetisFieldRequired.CANEXIST</span>
+<span class="fc" id="L105">                    : MetisFieldRequired.NOTALLOWED;</span>
 
             /* Handle Withheld separately */
-            case WITHHELD:
-<span class="fc" id="L115">                return isWithheldAmountRequired(myClass);</span>
+<span class="fc" id="L108">            case WITHHELD -&gt; isWithheldAmountRequired(myClass);</span>
 
             /* Handle Tax Credit */
-            case TAXCREDIT:
-<span class="fc" id="L119">                return isTaxCreditClassRequired(myClass);</span>
+<span class="fc" id="L111">            case TAXCREDIT -&gt; isTaxCreditClassRequired(myClass);</span>
 
             /* Handle AccountUnits */
-            case ACCOUNTDELTAUNITS:
-<span class="fc" id="L123">                return isAccountUnitsDeltaRequired(myClass);</span>
+<span class="fc" id="L114">            case ACCOUNTDELTAUNITS -&gt; isAccountUnitsDeltaRequired(myClass);</span>
 
             /* Handle PartnerUnits */
-            case PARTNERDELTAUNITS:
-<span class="fc" id="L127">                return isPartnerUnitsDeltaRequired(myClass);</span>
+<span class="fc" id="L117">            case PARTNERDELTAUNITS -&gt; isPartnerUnitsDeltaRequired(myClass);</span>
 
             /* Handle Dilution separately */
-            case DILUTION:
-<span class="fc" id="L131">                return isDilutionClassRequired(myClass);</span>
+<span class="fc" id="L120">            case DILUTION -&gt; isDilutionClassRequired(myClass);</span>
 
             /* Qualify Years is needed only for Taxable Gain */
-            case QUALIFYYEARS:
-<span class="fc" id="L135">                return isQualifyingYearsClassRequired(myClass);</span>
+<span class="fc" id="L123">            case QUALIFYYEARS -&gt; isQualifyingYearsClassRequired(myClass);</span>
 
             /* Handle ThirdParty separately */
-            case RETURNEDCASHACCOUNT:
-<span class="fc" id="L139">                return isReturnedCashAccountRequired(myClass);</span>
-            case RETURNEDCASH:
-<span class="fc" id="L141">                return isReturnedCashRequired(myTransaction);</span>
-
-            case PARTNERAMOUNT:
-<span class="fc" id="L144">                return isPartnerAmountClassRequired(myClass);</span>
-
-            case XCHANGERATE:
-<span class="fc" id="L147">                return isXchangeRateClassRequired(myClass);</span>
-
-            case PRICE:
-<span class="fc" id="L150">                return isPriceClassRequired(myClass);</span>
-
-            case COMMISSION:
-<span class="fc" id="L153">                return isCommissionClassRequired(myClass);</span>
-
-            default:
-<span class="nc" id="L156">                return MetisFieldRequired.NOTALLOWED;</span>
-        }
+<span class="fc" id="L126">            case RETURNEDCASHACCOUNT -&gt; isReturnedCashAccountRequired(myClass);</span>
+<span class="fc" id="L127">            case RETURNEDCASH -&gt; isReturnedCashRequired(myTransaction);</span>
+<span class="fc" id="L128">            case PARTNERAMOUNT -&gt; isPartnerAmountClassRequired(myClass);</span>
+<span class="fc" id="L129">            case XCHANGERATE -&gt; isXchangeRateClassRequired(myClass);</span>
+<span class="fc" id="L130">            case PRICE -&gt; isPriceClassRequired(myClass);</span>
+<span class="fc" id="L131">            case COMMISSION -&gt; isCommissionClassRequired(myClass);</span>
+<span class="nc" id="L132">            default -&gt; MetisFieldRequired.NOTALLOWED;</span>
+        };
     }
 
     /**
@@ -165,17 +141,13 @@ public class MoneyWiseValidateTransInfoSet
      */
     public boolean isMetaData(final MoneyWiseTransInfoClass pClass) {
         /* Switch on class */
-<span class="nc bnc" id="L168" title="All 2 branches missed.">        switch (pClass) {</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">        return switch (pClass) {</span>
             /* Can always change reference/comments/tags */
-            case REFERENCE:
-            case COMMENTS:
-            case TRANSTAG:
-<span class="nc" id="L173">                return true;</span>
+<span class="nc" id="L146">            case REFERENCE, COMMENTS, TRANSTAG -&gt; true;</span>
 
             /* All others are locked */
-            default:
-<span class="nc" id="L177">                return false;</span>
-        }
+<span class="nc" id="L149">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -185,36 +157,29 @@ public class MoneyWiseValidateTransInfoSet
      * @return the status
      */
     private MetisFieldRequired isTaxCreditClassRequired(final MoneyWiseTransCategoryClass pClass) {
-<span class="fc" id="L188">        final MoneyWiseTransaction myTrans = getOwner();</span>
-<span class="fc" id="L189">        final MoneyWiseTaxCredit myYear = myTrans.getTaxYear();</span>
-<span class="fc" id="L190">        final MoneyWiseTransAsset myAccount = myTrans.getAccount();</span>
+<span class="fc" id="L160">        final MoneyWiseTransaction myTrans = getOwner();</span>
+<span class="fc" id="L161">        final MoneyWiseTaxCredit myYear = myTrans.getTaxYear();</span>
+<span class="fc" id="L162">        final MoneyWiseTransAsset myAccount = myTrans.getAccount();</span>
 
         /* Switch on class */
-<span class="fc bfc" id="L193" title="All 6 branches covered.">        switch (pClass) {</span>
-            case TAXEDINCOME:
-<span class="fc" id="L195">                return MetisFieldRequired.MUSTEXIST;</span>
-            case LOANINTERESTCHARGED:
-<span class="fc" id="L197">                return MetisFieldRequired.CANEXIST;</span>
-            case LOYALTYBONUS:
-            case INTEREST:
-<span class="fc bfc" id="L200" title="All 2 branches covered.">                return myAccount.isTaxFree()</span>
-<span class="pc bpc" id="L201" title="1 of 2 branches missed.">                        || myAccount.isGross()</span>
-<span class="fc bfc" id="L202" title="All 2 branches covered.">                        || !myYear.isTaxCreditRequired()</span>
-<span class="fc" id="L203">                        ? MetisFieldRequired.NOTALLOWED</span>
-<span class="fc" id="L204">                        : MetisFieldRequired.MUSTEXIST;</span>
-            case DIVIDEND:
-<span class="pc bpc" id="L206" title="1 of 2 branches missed.">                return !myAccount.isTaxFree()</span>
-<span class="pc bpc" id="L207" title="3 of 4 branches missed.">                        &amp;&amp; (myYear.isTaxCreditRequired() || myAccount.isForeign())</span>
-<span class="fc" id="L208">                        ? MetisFieldRequired.MUSTEXIST</span>
-<span class="nc" id="L209">                        : MetisFieldRequired.NOTALLOWED;</span>
-            case TRANSFER:
-<span class="fc" id="L211">                return myAccount instanceof MoneyWiseSecurityHolding myHolding</span>
-<span class="pc bpc" id="L212" title="1 of 4 branches missed.">                        &amp;&amp; myHolding.getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)</span>
-<span class="nc" id="L213">                        ? MetisFieldRequired.MUSTEXIST</span>
-<span class="fc" id="L214">                        : MetisFieldRequired.NOTALLOWED;</span>
-            default:
-<span class="fc" id="L216">                return MetisFieldRequired.NOTALLOWED;</span>
-        }
+<span class="fc bfc" id="L165" title="All 6 branches covered.">        return switch (pClass) {</span>
+<span class="fc" id="L166">            case TAXEDINCOME -&gt; MetisFieldRequired.MUSTEXIST;</span>
+<span class="fc" id="L167">            case LOANINTERESTCHARGED -&gt; MetisFieldRequired.CANEXIST;</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">            case LOYALTYBONUS, INTEREST -&gt; myAccount.isTaxFree()</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">                    || myAccount.isGross()</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">                    || !myYear.isTaxCreditRequired()</span>
+<span class="fc" id="L171">                    ? MetisFieldRequired.NOTALLOWED</span>
+<span class="fc" id="L172">                    : MetisFieldRequired.MUSTEXIST;</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">            case DIVIDEND -&gt; !myAccount.isTaxFree()</span>
+<span class="pc bpc" id="L174" title="3 of 4 branches missed.">                    &amp;&amp; (myYear.isTaxCreditRequired() || myAccount.isForeign())</span>
+<span class="fc" id="L175">                    ? MetisFieldRequired.MUSTEXIST</span>
+<span class="nc" id="L176">                    : MetisFieldRequired.NOTALLOWED;</span>
+<span class="fc" id="L177">            case TRANSFER -&gt; myAccount instanceof MoneyWiseSecurityHolding myHolding</span>
+<span class="pc bpc" id="L178" title="1 of 4 branches missed.">                    &amp;&amp; myHolding.getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)</span>
+<span class="nc" id="L179">                    ? MetisFieldRequired.MUSTEXIST</span>
+<span class="fc" id="L180">                    : MetisFieldRequired.NOTALLOWED;</span>
+<span class="fc" id="L181">            default -&gt; MetisFieldRequired.NOTALLOWED;</span>
+        };
     }
 
     /**
@@ -225,13 +190,10 @@ public class MoneyWiseValidateTransInfoSet
      */
     private static MetisFieldRequired isWithheldAmountRequired(final MoneyWiseTransCategoryClass pClass) {
         /* Withheld is only available for salary and interest */
-<span class="fc bfc" id="L228" title="All 2 branches covered.">        switch (pClass) {</span>
-            case TAXEDINCOME:
-            case INTEREST:
-<span class="fc" id="L231">                return MetisFieldRequired.CANEXIST;</span>
-            default:
-<span class="fc" id="L233">                return MetisFieldRequired.NOTALLOWED;</span>
-        }
+<span class="fc bfc" id="L193" title="All 2 branches covered.">        return switch (pClass) {</span>
+<span class="fc" id="L194">            case TAXEDINCOME, INTEREST -&gt; MetisFieldRequired.CANEXIST;</span>
+<span class="fc" id="L195">            default -&gt; MetisFieldRequired.NOTALLOWED;</span>
+        };
     }
 
     /**
@@ -241,42 +203,34 @@ public class MoneyWiseValidateTransInfoSet
      * @return the status
      */
     private MetisFieldRequired isAccountUnitsDeltaRequired(final MoneyWiseTransCategoryClass pClass) {
-<span class="fc" id="L244">        final MoneyWiseTransaction myTrans = getOwner();</span>
-<span class="fc" id="L245">        final MoneyWiseTransAsset myAccount = myTrans.getAccount();</span>
-<span class="fc" id="L246">        final MoneyWiseTransAsset myPartner = myTrans.getPartner();</span>
-<span class="fc" id="L247">        final MoneyWiseAssetDirection myDir = myTrans.getDirection();</span>
+<span class="fc" id="L206">        final MoneyWiseTransaction myTrans = getOwner();</span>
+<span class="fc" id="L207">        final MoneyWiseTransAsset myAccount = myTrans.getAccount();</span>
+<span class="fc" id="L208">        final MoneyWiseTransAsset myPartner = myTrans.getPartner();</span>
+<span class="fc" id="L209">        final MoneyWiseAssetDirection myDir = myTrans.getDirection();</span>
 
         /* Account must be security holding */
-<span class="fc bfc" id="L250" title="All 2 branches covered.">        if (!(myAccount instanceof MoneyWiseSecurityHolding)) {</span>
-<span class="fc" id="L251">            return MetisFieldRequired.NOTALLOWED;</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">        if (!(myAccount instanceof MoneyWiseSecurityHolding)) {</span>
+<span class="fc" id="L213">            return MetisFieldRequired.NOTALLOWED;</span>
         }
 
         /* Account cannot be autoUnits */
-<span class="fc" id="L255">        final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) myAccount;</span>
-<span class="pc bpc" id="L256" title="1 of 2 branches missed.">        if (myHolding.getSecurity().getCategoryClass().isAutoUnits()) {</span>
-<span class="nc" id="L257">            return MetisFieldRequired.NOTALLOWED;</span>
+<span class="fc" id="L217">        final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) myAccount;</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">        if (myHolding.getSecurity().getCategoryClass().isAutoUnits()) {</span>
+<span class="nc" id="L219">            return MetisFieldRequired.NOTALLOWED;</span>
         }
 
         /* Handle different transaction types */
-<span class="fc bfc" id="L261" title="All 5 branches covered.">        switch (pClass) {</span>
-            case TRANSFER:
-            case STOCKDEMERGER:
-<span class="fc" id="L264">                return MetisFieldRequired.CANEXIST;</span>
-            case UNITSADJUST:
-            case STOCKSPLIT:
-            case INHERITED:
-<span class="fc" id="L268">                return MetisFieldRequired.MUSTEXIST;</span>
-            case DIVIDEND:
-<span class="fc bfc" id="L270" title="All 2 branches covered.">                return myAccount.equals(myPartner)</span>
-<span class="fc" id="L271">                        ? MetisFieldRequired.CANEXIST</span>
-<span class="fc" id="L272">                        : MetisFieldRequired.NOTALLOWED;</span>
-            case STOCKRIGHTSISSUE:
-<span class="fc bfc" id="L274" title="All 2 branches covered.">                return myDir.isFrom()</span>
-<span class="fc" id="L275">                        ? MetisFieldRequired.MUSTEXIST</span>
-<span class="fc" id="L276">                        : MetisFieldRequired.NOTALLOWED;</span>
-            default:
-<span class="fc" id="L278">                return MetisFieldRequired.NOTALLOWED;</span>
-        }
+<span class="fc bfc" id="L223" title="All 5 branches covered.">        return switch (pClass) {</span>
+<span class="fc" id="L224">            case TRANSFER, STOCKDEMERGER -&gt; MetisFieldRequired.CANEXIST;</span>
+<span class="fc" id="L225">            case UNITSADJUST, STOCKSPLIT, INHERITED -&gt; MetisFieldRequired.MUSTEXIST;</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">            case DIVIDEND -&gt; myAccount.equals(myPartner)</span>
+<span class="fc" id="L227">                    ? MetisFieldRequired.CANEXIST</span>
+<span class="fc" id="L228">                    : MetisFieldRequired.NOTALLOWED;</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">            case STOCKRIGHTSISSUE -&gt; myDir.isFrom()</span>
+<span class="fc" id="L230">                    ? MetisFieldRequired.MUSTEXIST</span>
+<span class="fc" id="L231">                    : MetisFieldRequired.NOTALLOWED;</span>
+<span class="fc" id="L232">            default -&gt; MetisFieldRequired.NOTALLOWED;</span>
+        };
     }
 
     /**
@@ -286,36 +240,30 @@ public class MoneyWiseValidateTransInfoSet
      * @return the status
      */
     private MetisFieldRequired isPartnerUnitsDeltaRequired(final MoneyWiseTransCategoryClass pClass) {
-<span class="fc" id="L289">        final MoneyWiseTransaction myTrans = getOwner();</span>
-<span class="fc" id="L290">        final MoneyWiseTransAsset myPartner = myTrans.getPartner();</span>
-<span class="fc" id="L291">        final MoneyWiseAssetDirection myDir = myTrans.getDirection();</span>
+<span class="fc" id="L243">        final MoneyWiseTransaction myTrans = getOwner();</span>
+<span class="fc" id="L244">        final MoneyWiseTransAsset myPartner = myTrans.getPartner();</span>
+<span class="fc" id="L245">        final MoneyWiseAssetDirection myDir = myTrans.getDirection();</span>
 
         /* Partner must be security holding */
-<span class="fc bfc" id="L294" title="All 2 branches covered.">        if (!(myPartner instanceof MoneyWiseSecurityHolding)) {</span>
-<span class="fc" id="L295">            return MetisFieldRequired.NOTALLOWED;</span>
+<span class="fc bfc" id="L248" title="All 2 branches covered.">        if (!(myPartner instanceof MoneyWiseSecurityHolding)) {</span>
+<span class="fc" id="L249">            return MetisFieldRequired.NOTALLOWED;</span>
         }
 
         /* Partner cannot be autoUnits */
-<span class="fc" id="L299">        final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) myPartner;</span>
-<span class="pc bpc" id="L300" title="1 of 2 branches missed.">        if (myHolding.getSecurity().getCategoryClass().isAutoUnits()) {</span>
-<span class="nc" id="L301">            return MetisFieldRequired.NOTALLOWED;</span>
+<span class="fc" id="L253">        final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) myPartner;</span>
+<span class="pc bpc" id="L254" title="1 of 2 branches missed.">        if (myHolding.getSecurity().getCategoryClass().isAutoUnits()) {</span>
+<span class="nc" id="L255">            return MetisFieldRequired.NOTALLOWED;</span>
         }
 
         /* Handle different transaction types */
-<span class="pc bpc" id="L305" title="2 of 4 branches missed.">        switch (pClass) {</span>
-            case TRANSFER:
-<span class="fc" id="L307">                return MetisFieldRequired.CANEXIST;</span>
-            case STOCKDEMERGER:
-            case SECURITYREPLACE:
-            case STOCKTAKEOVER:
-<span class="nc" id="L311">                return MetisFieldRequired.MUSTEXIST;</span>
-            case STOCKRIGHTSISSUE:
-<span class="nc bnc" id="L313" title="All 2 branches missed.">                return myDir.isTo()</span>
-<span class="nc" id="L314">                        ? MetisFieldRequired.MUSTEXIST</span>
-<span class="nc" id="L315">                        : MetisFieldRequired.NOTALLOWED;</span>
-            default:
-<span class="fc" id="L317">                return MetisFieldRequired.NOTALLOWED;</span>
-        }
+<span class="pc bpc" id="L259" title="2 of 4 branches missed.">        return switch (pClass) {</span>
+<span class="fc" id="L260">            case TRANSFER -&gt; MetisFieldRequired.CANEXIST;</span>
+<span class="nc" id="L261">            case STOCKDEMERGER, SECURITYREPLACE, STOCKTAKEOVER -&gt; MetisFieldRequired.MUSTEXIST;</span>
+<span class="nc bnc" id="L262" title="All 2 branches missed.">            case STOCKRIGHTSISSUE -&gt; myDir.isTo()</span>
+<span class="nc" id="L263">                    ? MetisFieldRequired.MUSTEXIST</span>
+<span class="nc" id="L264">                    : MetisFieldRequired.NOTALLOWED;</span>
+<span class="fc" id="L265">            default -&gt; MetisFieldRequired.NOTALLOWED;</span>
+        };
     }
 
     /**
@@ -326,15 +274,11 @@ public class MoneyWiseValidateTransInfoSet
      */
     private static MetisFieldRequired isDilutionClassRequired(final MoneyWiseTransCategoryClass pClass) {
         /* Dilution is only required for stock split/deMerger */
-<span class="pc bpc" id="L329" title="1 of 3 branches missed.">        switch (pClass) {</span>
-            case STOCKSPLIT:
-            case UNITSADJUST:
-<span class="fc" id="L332">                return MetisFieldRequired.CANEXIST;</span>
-            case STOCKDEMERGER:
-<span class="nc" id="L334">                return MetisFieldRequired.MUSTEXIST;</span>
-            default:
-<span class="fc" id="L336">                return MetisFieldRequired.NOTALLOWED;</span>
-        }
+<span class="pc bpc" id="L277" title="1 of 3 branches missed.">        return switch (pClass) {</span>
+<span class="fc" id="L278">            case STOCKSPLIT, UNITSADJUST -&gt; MetisFieldRequired.CANEXIST;</span>
+<span class="nc" id="L279">            case STOCKDEMERGER -&gt; MetisFieldRequired.MUSTEXIST;</span>
+<span class="fc" id="L280">            default -&gt; MetisFieldRequired.NOTALLOWED;</span>
+        };
     }
 
     /**
@@ -345,9 +289,9 @@ public class MoneyWiseValidateTransInfoSet
      */
     private static MetisFieldRequired isReturnedCashAccountRequired(final MoneyWiseTransCategoryClass pClass) {
         /* Returned Cash is possible only for StockTakeOver */
-<span class="pc bpc" id="L348" title="1 of 2 branches missed.">        return pClass == MoneyWiseTransCategoryClass.STOCKTAKEOVER</span>
-<span class="nc" id="L349">                ? MetisFieldRequired.CANEXIST</span>
-<span class="fc" id="L350">                : MetisFieldRequired.NOTALLOWED;</span>
+<span class="pc bpc" id="L292" title="1 of 2 branches missed.">        return pClass == MoneyWiseTransCategoryClass.STOCKTAKEOVER</span>
+<span class="nc" id="L293">                ? MetisFieldRequired.CANEXIST</span>
+<span class="fc" id="L294">                : MetisFieldRequired.NOTALLOWED;</span>
     }
 
     /**
@@ -358,9 +302,9 @@ public class MoneyWiseValidateTransInfoSet
      */
     private static MetisFieldRequired isReturnedCashRequired(final MoneyWiseTransaction pTransaction) {
         /* Returned Cash Amount is possible only if ReturnedCashAccount exists */
-<span class="pc bpc" id="L361" title="1 of 2 branches missed.">        return pTransaction.getReturnedCashAccount() != null</span>
-<span class="nc" id="L362">                ? MetisFieldRequired.MUSTEXIST</span>
-<span class="fc" id="L363">                : MetisFieldRequired.NOTALLOWED;</span>
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">        return pTransaction.getReturnedCashAccount() != null</span>
+<span class="nc" id="L306">                ? MetisFieldRequired.MUSTEXIST</span>
+<span class="fc" id="L307">                : MetisFieldRequired.NOTALLOWED;</span>
     }
 
     /**
@@ -370,24 +314,24 @@ public class MoneyWiseValidateTransInfoSet
      * @return the status
      */
     private MetisFieldRequired isPartnerAmountClassRequired(final MoneyWiseTransCategoryClass pCategory) {
-<span class="fc" id="L373">        final MoneyWiseTransaction myTrans = getOwner();</span>
-<span class="fc" id="L374">        final MoneyWiseTransAsset myAccount = myTrans.getAccount();</span>
-<span class="fc" id="L375">        final MoneyWiseTransAsset myPartner = myTrans.getPartner();</span>
+<span class="fc" id="L317">        final MoneyWiseTransaction myTrans = getOwner();</span>
+<span class="fc" id="L318">        final MoneyWiseTransAsset myAccount = myTrans.getAccount();</span>
+<span class="fc" id="L319">        final MoneyWiseTransAsset myPartner = myTrans.getPartner();</span>
 
         /* If the transaction requires null amount, then partner amount must also be null */
-<span class="fc bfc" id="L378" title="All 2 branches covered.">        if (pCategory.needsNullAmount()) {</span>
-<span class="fc" id="L379">            return MetisFieldRequired.NOTALLOWED;</span>
+<span class="fc bfc" id="L322" title="All 2 branches covered.">        if (pCategory.needsNullAmount()) {</span>
+<span class="fc" id="L323">            return MetisFieldRequired.NOTALLOWED;</span>
         }
 
         /* If Partner currency is null or the same as Account then Partner amount is not allowed */
-<span class="fc" id="L383">        final MoneyWiseCurrency myCurrency = myAccount.getAssetCurrency();</span>
-<span class="pc bpc" id="L384" title="1 of 2 branches missed.">        final MoneyWiseCurrency myPartnerCurrency = myPartner == null ? null : myPartner.getAssetCurrency();</span>
-<span class="pc bpc" id="L385" title="1 of 4 branches missed.">        if (myCurrency == null || myPartnerCurrency == null) {</span>
-<span class="fc" id="L386">            return MetisFieldRequired.NOTALLOWED;</span>
+<span class="fc" id="L327">        final MoneyWiseCurrency myCurrency = myAccount.getAssetCurrency();</span>
+<span class="pc bpc" id="L328" title="1 of 2 branches missed.">        final MoneyWiseCurrency myPartnerCurrency = myPartner == null ? null : myPartner.getAssetCurrency();</span>
+<span class="pc bpc" id="L329" title="1 of 4 branches missed.">        if (myCurrency == null || myPartnerCurrency == null) {</span>
+<span class="fc" id="L330">            return MetisFieldRequired.NOTALLOWED;</span>
         }
-<span class="fc bfc" id="L388" title="All 2 branches covered.">        return MetisDataDifference.isEqual(myCurrency, myPartnerCurrency)</span>
-<span class="fc" id="L389">                ? MetisFieldRequired.NOTALLOWED</span>
-<span class="fc" id="L390">                : MetisFieldRequired.MUSTEXIST;</span>
+<span class="fc bfc" id="L332" title="All 2 branches covered.">        return MetisDataDifference.isEqual(myCurrency, myPartnerCurrency)</span>
+<span class="fc" id="L333">                ? MetisFieldRequired.NOTALLOWED</span>
+<span class="fc" id="L334">                : MetisFieldRequired.MUSTEXIST;</span>
     }
 
     /**
@@ -397,14 +341,14 @@ public class MoneyWiseValidateTransInfoSet
      * @return the status
      */
     private MetisFieldRequired isQualifyingYearsClassRequired(final MoneyWiseTransCategoryClass pCategory) {
-<span class="fc" id="L400">        final MoneyWiseTransaction myTrans = getOwner();</span>
-<span class="fc" id="L401">        final MoneyWiseTransAsset myAccount = myTrans.getAccount();</span>
+<span class="fc" id="L344">        final MoneyWiseTransaction myTrans = getOwner();</span>
+<span class="fc" id="L345">        final MoneyWiseTransAsset myAccount = myTrans.getAccount();</span>
 
-<span class="fc" id="L403">        return pCategory == MoneyWiseTransCategoryClass.TRANSFER</span>
-<span class="fc" id="L404">                &amp;&amp; myAccount instanceof MoneyWiseSecurityHolding myHolding</span>
-<span class="pc bpc" id="L405" title="1 of 6 branches missed.">                &amp;&amp; myHolding.getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)</span>
-<span class="nc" id="L406">                ? MetisFieldRequired.MUSTEXIST</span>
-<span class="fc" id="L407">                : MetisFieldRequired.NOTALLOWED;</span>
+<span class="fc" id="L347">        return pCategory == MoneyWiseTransCategoryClass.TRANSFER</span>
+<span class="fc" id="L348">                &amp;&amp; myAccount instanceof MoneyWiseSecurityHolding myHolding</span>
+<span class="pc bpc" id="L349" title="1 of 6 branches missed.">                &amp;&amp; myHolding.getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)</span>
+<span class="nc" id="L350">                ? MetisFieldRequired.MUSTEXIST</span>
+<span class="fc" id="L351">                : MetisFieldRequired.NOTALLOWED;</span>
     }
 
     /**
@@ -414,17 +358,17 @@ public class MoneyWiseValidateTransInfoSet
      * @return the status
      */
     private MetisFieldRequired isXchangeRateClassRequired(final MoneyWiseTransCategoryClass pCategory) {
-<span class="fc" id="L417">        final MoneyWiseTransaction myTrans = getOwner();</span>
-<span class="fc" id="L418">        final MoneyWiseDataSet myData = myTrans.getDataSet();</span>
-<span class="fc" id="L419">        final MoneyWiseTransAsset myAccount = myTrans.getAccount();</span>
+<span class="fc" id="L361">        final MoneyWiseTransaction myTrans = getOwner();</span>
+<span class="fc" id="L362">        final MoneyWiseDataSet myData = myTrans.getDataSet();</span>
+<span class="fc" id="L363">        final MoneyWiseTransAsset myAccount = myTrans.getAccount();</span>
 
-<span class="pc bpc" id="L421" title="1 of 2 branches missed.">        if (newValidation) {</span>
-<span class="fc" id="L422">            return MetisFieldRequired.CANEXIST;</span>
+<span class="pc bpc" id="L365" title="1 of 2 branches missed.">        if (newValidation) {</span>
+<span class="fc" id="L366">            return MetisFieldRequired.CANEXIST;</span>
         }
-<span class="nc bnc" id="L424" title="All 2 branches missed.">        return pCategory.isDividend()</span>
-<span class="nc bnc" id="L425" title="All 2 branches missed.">                &amp;&amp; !myAccount.getAssetCurrency().equals(myData.getReportingCurrency())</span>
-<span class="nc" id="L426">                ? MetisFieldRequired.MUSTEXIST</span>
-<span class="nc" id="L427">                : MetisFieldRequired.NOTALLOWED;</span>
+<span class="nc bnc" id="L368" title="All 2 branches missed.">        return pCategory.isDividend()</span>
+<span class="nc bnc" id="L369" title="All 2 branches missed.">                &amp;&amp; !myAccount.getAssetCurrency().equals(myData.getReportingCurrency())</span>
+<span class="nc" id="L370">                ? MetisFieldRequired.MUSTEXIST</span>
+<span class="nc" id="L371">                : MetisFieldRequired.NOTALLOWED;</span>
     }
 
     /**
@@ -435,13 +379,10 @@ public class MoneyWiseValidateTransInfoSet
      */
     private static MetisFieldRequired isPriceClassRequired(final MoneyWiseTransCategoryClass pCategory) {
         /* Only allowed for stockSplit and UnitsAdjust */
-<span class="fc bfc" id="L438" title="All 2 branches covered.">        switch (pCategory) {</span>
-            case STOCKSPLIT:
-            case UNITSADJUST:
-<span class="fc" id="L441">                return MetisFieldRequired.CANEXIST;</span>
-            default:
-<span class="fc" id="L443">                return MetisFieldRequired.NOTALLOWED;</span>
-        }
+<span class="fc bfc" id="L382" title="All 2 branches covered.">        return switch (pCategory) {</span>
+<span class="fc" id="L383">            case STOCKSPLIT, UNITSADJUST -&gt; MetisFieldRequired.CANEXIST;</span>
+<span class="fc" id="L384">            default -&gt; MetisFieldRequired.NOTALLOWED;</span>
+        };
     }
 
     /**
@@ -452,7 +393,7 @@ public class MoneyWiseValidateTransInfoSet
      */
     private static MetisFieldRequired isCommissionClassRequired(final MoneyWiseTransCategoryClass pCategory) {
         /* Don't allow yet */
-<span class="fc" id="L455">        return MetisFieldRequired.NOTALLOWED;</span>
+<span class="fc" id="L396">        return MetisFieldRequired.NOTALLOWED;</span>
         /* Account or Partner must be security holding
          if (!(pAccount instanceof SecurityHolding)
          &amp;&amp; !(pPartner instanceof SecurityHolding)) {
@@ -474,45 +415,39 @@ public class MoneyWiseValidateTransInfoSet
     public void validateClass(final MoneyWiseTransInfo pInfo,
                               final PrometheusDataInfoClass pClass) {
         /* Switch on class */
-<span class="pc bpc" id="L477" title="5 of 10 branches missed.">        switch ((MoneyWiseTransInfoClass) pClass) {</span>
+<span class="pc bpc" id="L418" title="5 of 10 branches missed.">        switch ((MoneyWiseTransInfoClass) pClass) {</span>
             case QUALIFYYEARS:
-<span class="nc" id="L479">                validateQualifyYears(pInfo);</span>
-<span class="nc" id="L480">                break;</span>
+<span class="nc" id="L420">                validateQualifyYears(pInfo);</span>
+<span class="nc" id="L421">                break;</span>
             case TAXCREDIT:
-<span class="fc" id="L482">                validateTaxCredit(pInfo);</span>
-<span class="fc" id="L483">                break;</span>
-            case EMPLOYEENATINS:
-            case EMPLOYERNATINS:
-            case DEEMEDBENEFIT:
-            case WITHHELD:
-<span class="fc" id="L488">                validateOptionalTaxCredit(pInfo);</span>
-<span class="fc" id="L489">                break;</span>
+<span class="fc" id="L423">                validateTaxCredit(pInfo);</span>
+<span class="fc" id="L424">                break;</span>
+            case EMPLOYEENATINS, EMPLOYERNATINS, DEEMEDBENEFIT, WITHHELD:
+<span class="fc" id="L426">                validateOptionalTaxCredit(pInfo);</span>
+<span class="fc" id="L427">                break;</span>
             case PARTNERAMOUNT:
-<span class="fc" id="L491">                validatePartnerAmount(pInfo);</span>
-<span class="fc" id="L492">                break;</span>
+<span class="fc" id="L429">                validatePartnerAmount(pInfo);</span>
+<span class="fc" id="L430">                break;</span>
             case RETURNEDCASHACCOUNT:
-<span class="nc" id="L494">                validateReturnedCashAccount(pInfo);</span>
-<span class="nc" id="L495">                break;</span>
+<span class="nc" id="L432">                validateReturnedCashAccount(pInfo);</span>
+<span class="nc" id="L433">                break;</span>
             case RETURNEDCASH:
-<span class="nc" id="L497">                validateReturnedCash(pInfo);</span>
-<span class="nc" id="L498">                break;</span>
-            case ACCOUNTDELTAUNITS:
-            case PARTNERDELTAUNITS:
-<span class="fc" id="L501">                validateDeltaUnits(pInfo);</span>
-<span class="fc" id="L502">                break;</span>
-            case REFERENCE:
-            case COMMENTS:
-<span class="nc" id="L505">                validateInfoLength(pInfo);</span>
-<span class="nc" id="L506">                break;</span>
+<span class="nc" id="L435">                validateReturnedCash(pInfo);</span>
+<span class="nc" id="L436">                break;</span>
+            case ACCOUNTDELTAUNITS, PARTNERDELTAUNITS:
+<span class="fc" id="L438">                validateDeltaUnits(pInfo);</span>
+<span class="fc" id="L439">                break;</span>
+            case REFERENCE, COMMENTS:
+<span class="nc" id="L441">                validateInfoLength(pInfo);</span>
+<span class="nc" id="L442">                break;</span>
             case PRICE:
-<span class="fc" id="L508">                validatePrice(pInfo);</span>
-<span class="fc" id="L509">                break;</span>
-            case TRANSTAG:
-            case DILUTION:
+<span class="fc" id="L444">                validatePrice(pInfo);</span>
+<span class="fc" id="L445">                break;</span>
+            case TRANSTAG, DILUTION:
             default:
                 break;
         }
-<span class="fc" id="L515">    }</span>
+<span class="fc" id="L450">    }</span>
 
     /**
      * Validate the qualifyingYears.
@@ -520,13 +455,13 @@ public class MoneyWiseValidateTransInfoSet
      * @param pInfo the info
      */
     private void validateQualifyYears(final MoneyWiseTransInfo pInfo) {
-<span class="nc" id="L523">        final Integer myYears = pInfo.getValue(Integer.class);</span>
-<span class="nc bnc" id="L524" title="All 2 branches missed.">        if (myYears == 0) {</span>
-<span class="nc" id="L525">            getOwner().addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.QUALIFYYEARS));</span>
-<span class="nc bnc" id="L526" title="All 2 branches missed.">        } else if (myYears &lt; 0) {</span>
-<span class="nc" id="L527">            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.QUALIFYYEARS));</span>
+<span class="nc" id="L458">        final Integer myYears = pInfo.getValue(Integer.class);</span>
+<span class="nc bnc" id="L459" title="All 2 branches missed.">        if (myYears == 0) {</span>
+<span class="nc" id="L460">            getOwner().addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.QUALIFYYEARS));</span>
+<span class="nc bnc" id="L461" title="All 2 branches missed.">        } else if (myYears &lt; 0) {</span>
+<span class="nc" id="L462">            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.QUALIFYYEARS));</span>
         }
-<span class="nc" id="L529">    }</span>
+<span class="nc" id="L464">    }</span>
 
     /**
      * Validate the taxCredit.
@@ -534,14 +469,14 @@ public class MoneyWiseValidateTransInfoSet
      * @param pInfo the info
      */
     private void validateTaxCredit(final MoneyWiseTransInfo pInfo) {
-<span class="fc" id="L537">        final OceanusMoney myAmount = pInfo.getValue(OceanusMoney.class);</span>
-<span class="fc" id="L538">        final Currency myCurrency = getOwner().getAccount().getCurrency();</span>
-<span class="pc bpc" id="L539" title="1 of 2 branches missed.">        if (!myAmount.isPositive()) {</span>
-<span class="nc" id="L540">            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.TAXCREDIT));</span>
-<span class="pc bpc" id="L541" title="1 of 2 branches missed.">        } else if (!myAmount.getCurrency().equals(myCurrency)) {</span>
-<span class="nc" id="L542">            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.TAXCREDIT));</span>
+<span class="fc" id="L472">        final OceanusMoney myAmount = pInfo.getValue(OceanusMoney.class);</span>
+<span class="fc" id="L473">        final Currency myCurrency = getOwner().getAccount().getCurrency();</span>
+<span class="pc bpc" id="L474" title="1 of 2 branches missed.">        if (!myAmount.isPositive()) {</span>
+<span class="nc" id="L475">            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.TAXCREDIT));</span>
+<span class="pc bpc" id="L476" title="1 of 2 branches missed.">        } else if (!myAmount.getCurrency().equals(myCurrency)) {</span>
+<span class="nc" id="L477">            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.TAXCREDIT));</span>
         }
-<span class="fc" id="L544">    }</span>
+<span class="fc" id="L479">    }</span>
 
     /**
      * Validate the optional taxCredits.
@@ -549,16 +484,16 @@ public class MoneyWiseValidateTransInfoSet
      * @param pInfo the info
      */
     private void validateOptionalTaxCredit(final MoneyWiseTransInfo pInfo) {
-<span class="fc" id="L552">        final OceanusMoney myAmount = pInfo.getValue(OceanusMoney.class);</span>
-<span class="fc" id="L553">        final Currency myCurrency = getOwner().getAccount().getCurrency();</span>
-<span class="pc bpc" id="L554" title="1 of 2 branches missed.">        if (myAmount.isZero()) {</span>
-<span class="nc" id="L555">            getOwner().addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseTransInfoSet.getFieldForClass(pInfo.getInfoClass()));</span>
-<span class="pc bpc" id="L556" title="1 of 2 branches missed.">        } else if (!myAmount.isPositive()) {</span>
-<span class="nc" id="L557">            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseTransInfoSet.getFieldForClass(pInfo.getInfoClass()));</span>
-<span class="pc bpc" id="L558" title="1 of 2 branches missed.">        } else if (!myAmount.getCurrency().equals(myCurrency)) {</span>
-<span class="nc" id="L559">            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, MoneyWiseTransInfoSet.getFieldForClass(pInfo.getInfoClass()));</span>
+<span class="fc" id="L487">        final OceanusMoney myAmount = pInfo.getValue(OceanusMoney.class);</span>
+<span class="fc" id="L488">        final Currency myCurrency = getOwner().getAccount().getCurrency();</span>
+<span class="pc bpc" id="L489" title="1 of 2 branches missed.">        if (myAmount.isZero()) {</span>
+<span class="nc" id="L490">            getOwner().addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseTransInfoSet.getFieldForClass(pInfo.getInfoClass()));</span>
+<span class="pc bpc" id="L491" title="1 of 2 branches missed.">        } else if (!myAmount.isPositive()) {</span>
+<span class="nc" id="L492">            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseTransInfoSet.getFieldForClass(pInfo.getInfoClass()));</span>
+<span class="pc bpc" id="L493" title="1 of 2 branches missed.">        } else if (!myAmount.getCurrency().equals(myCurrency)) {</span>
+<span class="nc" id="L494">            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, MoneyWiseTransInfoSet.getFieldForClass(pInfo.getInfoClass()));</span>
         }
-<span class="fc" id="L561">    }</span>
+<span class="fc" id="L496">    }</span>
 
     /**
      * Validate the partnerAmount.
@@ -566,14 +501,14 @@ public class MoneyWiseValidateTransInfoSet
      * @param pInfo the info
      */
     private void validatePartnerAmount(final MoneyWiseTransInfo pInfo) {
-<span class="fc" id="L569">        final MoneyWiseTransAsset myPartner = getOwner().getPartner();</span>
-<span class="fc" id="L570">        final OceanusMoney myAmount = pInfo.getValue(OceanusMoney.class);</span>
-<span class="pc bpc" id="L571" title="1 of 2 branches missed.">        if (!myAmount.isPositive()) {</span>
-<span class="nc" id="L572">            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));</span>
-<span class="pc bpc" id="L573" title="1 of 2 branches missed.">        } else if (!myAmount.getCurrency().equals(myPartner.getCurrency())) {</span>
-<span class="nc" id="L574">            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));</span>
+<span class="fc" id="L504">        final MoneyWiseTransAsset myPartner = getOwner().getPartner();</span>
+<span class="fc" id="L505">        final OceanusMoney myAmount = pInfo.getValue(OceanusMoney.class);</span>
+<span class="pc bpc" id="L506" title="1 of 2 branches missed.">        if (!myAmount.isPositive()) {</span>
+<span class="nc" id="L507">            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));</span>
+<span class="pc bpc" id="L508" title="1 of 2 branches missed.">        } else if (!myAmount.getCurrency().equals(myPartner.getCurrency())) {</span>
+<span class="nc" id="L509">            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));</span>
         }
-<span class="fc" id="L576">    }</span>
+<span class="fc" id="L511">    }</span>
 
     /**
      * Validate the returnedCashAccount.
@@ -581,12 +516,12 @@ public class MoneyWiseValidateTransInfoSet
      * @param pInfo the info
      */
     private void validateReturnedCashAccount(final MoneyWiseTransInfo pInfo) {
-<span class="nc" id="L584">        final MoneyWiseTransAsset myThirdParty = pInfo.getTransAsset();</span>
-<span class="nc" id="L585">        final Currency myCurrency = getOwner().getAccount().getCurrency();</span>
-<span class="nc bnc" id="L586" title="All 2 branches missed.">        if (!myCurrency.equals(myThirdParty.getCurrency())) {</span>
-<span class="nc" id="L587">            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT));</span>
+<span class="nc" id="L519">        final MoneyWiseTransAsset myThirdParty = pInfo.getTransAsset();</span>
+<span class="nc" id="L520">        final Currency myCurrency = getOwner().getAccount().getCurrency();</span>
+<span class="nc bnc" id="L521" title="All 2 branches missed.">        if (!myCurrency.equals(myThirdParty.getCurrency())) {</span>
+<span class="nc" id="L522">            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT));</span>
         }
-<span class="nc" id="L589">    }</span>
+<span class="nc" id="L524">    }</span>
 
     /**
      * Validate the returnedCash.
@@ -594,16 +529,16 @@ public class MoneyWiseValidateTransInfoSet
      * @param pInfo the info
      */
     private void validateReturnedCash(final MoneyWiseTransInfo pInfo) {
-<span class="nc" id="L597">        final MoneyWiseTransAsset myThirdParty = getOwner().getReturnedCashAccount();</span>
-<span class="nc" id="L598">        final OceanusMoney myAmount = pInfo.getValue(OceanusMoney.class);</span>
-<span class="nc bnc" id="L599" title="All 2 branches missed.">        if (myAmount.isZero()) {</span>
-<span class="nc" id="L600">            getOwner().addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));</span>
-<span class="nc bnc" id="L601" title="All 2 branches missed.">        } else if (!myAmount.isPositive()) {</span>
-<span class="nc" id="L602">            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));</span>
-<span class="nc bnc" id="L603" title="All 2 branches missed.">        } else if (!myAmount.getCurrency().equals(myThirdParty.getCurrency())) {</span>
-<span class="nc" id="L604">            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));</span>
+<span class="nc" id="L532">        final MoneyWiseTransAsset myThirdParty = getOwner().getReturnedCashAccount();</span>
+<span class="nc" id="L533">        final OceanusMoney myAmount = pInfo.getValue(OceanusMoney.class);</span>
+<span class="nc bnc" id="L534" title="All 2 branches missed.">        if (myAmount.isZero()) {</span>
+<span class="nc" id="L535">            getOwner().addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));</span>
+<span class="nc bnc" id="L536" title="All 2 branches missed.">        } else if (!myAmount.isPositive()) {</span>
+<span class="nc" id="L537">            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));</span>
+<span class="nc bnc" id="L538" title="All 2 branches missed.">        } else if (!myAmount.getCurrency().equals(myThirdParty.getCurrency())) {</span>
+<span class="nc" id="L539">            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));</span>
         }
-<span class="nc" id="L606">    }</span>
+<span class="nc" id="L541">    }</span>
 
     /**
      * Validate the price.
@@ -611,16 +546,16 @@ public class MoneyWiseValidateTransInfoSet
      * @param pInfo the info
      */
     private void validatePrice(final MoneyWiseTransInfo pInfo) {
-<span class="fc" id="L614">        final OceanusPrice myPrice = pInfo.getValue(OceanusPrice.class);</span>
-<span class="fc" id="L615">        final Currency myCurrency = getOwner().getAccount().getCurrency();</span>
-<span class="pc bpc" id="L616" title="1 of 2 branches missed.">        if (myPrice.isZero()) {</span>
-<span class="nc" id="L617">            getOwner().addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseTransInfoSet.getFieldForClass(pInfo.getInfoClass()));</span>
-<span class="pc bpc" id="L618" title="1 of 2 branches missed.">        } else if (!myPrice.isPositive()) {</span>
-<span class="nc" id="L619">            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseTransInfoSet.getFieldForClass(pInfo.getInfoClass()));</span>
-<span class="pc bpc" id="L620" title="1 of 2 branches missed.">        } else if (!myPrice.getCurrency().equals(myCurrency)) {</span>
-<span class="nc" id="L621">            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, MoneyWiseTransInfoSet.getFieldForClass(pInfo.getInfoClass()));</span>
+<span class="fc" id="L549">        final OceanusPrice myPrice = pInfo.getValue(OceanusPrice.class);</span>
+<span class="fc" id="L550">        final Currency myCurrency = getOwner().getAccount().getCurrency();</span>
+<span class="pc bpc" id="L551" title="1 of 2 branches missed.">        if (myPrice.isZero()) {</span>
+<span class="nc" id="L552">            getOwner().addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseTransInfoSet.getFieldForClass(pInfo.getInfoClass()));</span>
+<span class="pc bpc" id="L553" title="1 of 2 branches missed.">        } else if (!myPrice.isPositive()) {</span>
+<span class="nc" id="L554">            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseTransInfoSet.getFieldForClass(pInfo.getInfoClass()));</span>
+<span class="pc bpc" id="L555" title="1 of 2 branches missed.">        } else if (!myPrice.getCurrency().equals(myCurrency)) {</span>
+<span class="nc" id="L556">            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, MoneyWiseTransInfoSet.getFieldForClass(pInfo.getInfoClass()));</span>
         }
-<span class="fc" id="L623">    }</span>
+<span class="fc" id="L558">    }</span>
 
     /**
      * Validate the deltaUnits.
@@ -628,22 +563,22 @@ public class MoneyWiseValidateTransInfoSet
      * @param pInfo the info
      */
     private void validateDeltaUnits(final MoneyWiseTransInfo pInfo) {
-<span class="fc" id="L631">        final MoneyWiseTransaction myTrans = getOwner();</span>
-<span class="fc" id="L632">        final MoneyWiseAssetDirection myDir = myTrans.getDirection();</span>
-<span class="fc" id="L633">        final MoneyWiseTransCategoryClass myCatClass = myTrans.getCategoryClass();</span>
-<span class="fc" id="L634">        final MoneyWiseTransInfoClass myInfoClass = pInfo.getInfoClass();</span>
-<span class="fc bfc" id="L635" title="All 2 branches covered.">        final MetisFieldRequired isRequired = myInfoClass == MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS</span>
-<span class="fc" id="L636">                ? isAccountUnitsPositive(myDir, myCatClass)</span>
-<span class="fc" id="L637">                : isPartnerUnitsPositive(myDir, myCatClass);</span>
-<span class="fc" id="L638">        final OceanusUnits myUnits = pInfo.getValue(OceanusUnits.class);</span>
-<span class="pc bpc" id="L639" title="1 of 2 branches missed.">        if (myUnits.isZero()) {</span>
-<span class="nc" id="L640">            getOwner().addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseTransInfoSet.getFieldForClass(myInfoClass));</span>
-<span class="pc bpc" id="L641" title="1 of 4 branches missed.">        } else if (myUnits.isPositive() &amp;&amp; isRequired.notAllowed()) {</span>
-<span class="nc" id="L642">            getOwner().addError(PrometheusDataItem.ERROR_POSITIVE, MoneyWiseTransInfoSet.getFieldForClass(myInfoClass));</span>
-<span class="pc bpc" id="L643" title="1 of 4 branches missed.">        } else if (!myUnits.isPositive() &amp;&amp; isRequired.mustExist()) {</span>
-<span class="nc" id="L644">            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseTransInfoSet.getFieldForClass(myInfoClass));</span>
+<span class="fc" id="L566">        final MoneyWiseTransaction myTrans = getOwner();</span>
+<span class="fc" id="L567">        final MoneyWiseAssetDirection myDir = myTrans.getDirection();</span>
+<span class="fc" id="L568">        final MoneyWiseTransCategoryClass myCatClass = myTrans.getCategoryClass();</span>
+<span class="fc" id="L569">        final MoneyWiseTransInfoClass myInfoClass = pInfo.getInfoClass();</span>
+<span class="fc bfc" id="L570" title="All 2 branches covered.">        final MetisFieldRequired isRequired = myInfoClass == MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS</span>
+<span class="fc" id="L571">                ? isAccountUnitsPositive(myDir, myCatClass)</span>
+<span class="fc" id="L572">                : isPartnerUnitsPositive(myDir, myCatClass);</span>
+<span class="fc" id="L573">        final OceanusUnits myUnits = pInfo.getValue(OceanusUnits.class);</span>
+<span class="pc bpc" id="L574" title="1 of 2 branches missed.">        if (myUnits.isZero()) {</span>
+<span class="nc" id="L575">            getOwner().addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseTransInfoSet.getFieldForClass(myInfoClass));</span>
+<span class="pc bpc" id="L576" title="1 of 4 branches missed.">        } else if (myUnits.isPositive() &amp;&amp; isRequired.notAllowed()) {</span>
+<span class="nc" id="L577">            getOwner().addError(PrometheusDataItem.ERROR_POSITIVE, MoneyWiseTransInfoSet.getFieldForClass(myInfoClass));</span>
+<span class="pc bpc" id="L578" title="1 of 4 branches missed.">        } else if (!myUnits.isPositive() &amp;&amp; isRequired.mustExist()) {</span>
+<span class="nc" id="L579">            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseTransInfoSet.getFieldForClass(myInfoClass));</span>
         }
-<span class="fc" id="L646">    }</span>
+<span class="fc" id="L581">    }</span>
 
     /**
      * Validate the info length.
@@ -651,12 +586,12 @@ public class MoneyWiseValidateTransInfoSet
      * @param pInfo the info
      */
     private void validateInfoLength(final MoneyWiseTransInfo pInfo) {
-<span class="nc" id="L654">        final String myInfo = pInfo.getValue(String.class);</span>
-<span class="nc" id="L655">        final MoneyWiseTransInfoClass myClass = pInfo.getInfoClass();</span>
-<span class="nc bnc" id="L656" title="All 2 branches missed.">        if (myInfo.length() &gt; myClass.getMaximumLength()) {</span>
-<span class="nc" id="L657">            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, MoneyWiseTransInfoSet.getFieldForClass(myClass));</span>
+<span class="nc" id="L589">        final String myInfo = pInfo.getValue(String.class);</span>
+<span class="nc" id="L590">        final MoneyWiseTransInfoClass myClass = pInfo.getInfoClass();</span>
+<span class="nc bnc" id="L591" title="All 2 branches missed.">        if (myInfo.length() &gt; myClass.getMaximumLength()) {</span>
+<span class="nc" id="L592">            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, MoneyWiseTransInfoSet.getFieldForClass(myClass));</span>
         }
-<span class="nc" id="L659">    }</span>
+<span class="nc" id="L594">    }</span>
 
     /**
      * Determine if AccountDeltaUnits can/mustBe/mustNotBe positive.
@@ -667,21 +602,21 @@ public class MoneyWiseValidateTransInfoSet
      */
     public static MetisFieldRequired isAccountUnitsPositive(final MoneyWiseAssetDirection pDir,
                                                             final MoneyWiseTransCategoryClass pClass) {
-<span class="pc bpc" id="L670" title="1 of 4 branches missed.">        switch (pClass) {</span>
+<span class="pc bpc" id="L605" title="1 of 4 branches missed.">        switch (pClass) {</span>
             case TRANSFER:
-<span class="pc bpc" id="L672" title="1 of 2 branches missed.">                return pDir.isFrom()</span>
-<span class="nc" id="L673">                        ? MetisFieldRequired.MUSTEXIST</span>
-<span class="fc" id="L674">                        : MetisFieldRequired.NOTALLOWED;</span>
+<span class="pc bpc" id="L607" title="1 of 2 branches missed.">                return pDir.isFrom()</span>
+<span class="nc" id="L608">                        ? MetisFieldRequired.MUSTEXIST</span>
+<span class="fc" id="L609">                        : MetisFieldRequired.NOTALLOWED;</span>
             case UNITSADJUST:
             case STOCKSPLIT:
-<span class="fc" id="L677">                return MetisFieldRequired.CANEXIST;</span>
+<span class="fc" id="L612">                return MetisFieldRequired.CANEXIST;</span>
             case INHERITED:
             case DIVIDEND:
             case STOCKRIGHTSISSUE:
-<span class="fc" id="L681">                return MetisFieldRequired.MUSTEXIST;</span>
+<span class="fc" id="L616">                return MetisFieldRequired.MUSTEXIST;</span>
             case STOCKDEMERGER:
             default:
-<span class="nc" id="L684">                return MetisFieldRequired.NOTALLOWED;</span>
+<span class="nc" id="L619">                return MetisFieldRequired.NOTALLOWED;</span>
         }
     }
 
@@ -694,53 +629,53 @@ public class MoneyWiseValidateTransInfoSet
      */
     public static MetisFieldRequired isPartnerUnitsPositive(final MoneyWiseAssetDirection pDir,
                                                             final MoneyWiseTransCategoryClass pClass) {
-<span class="pc bpc" id="L697" title="2 of 3 branches missed.">        switch (pClass) {</span>
+<span class="pc bpc" id="L632" title="2 of 3 branches missed.">        switch (pClass) {</span>
             case TRANSFER:
-<span class="pc bpc" id="L699" title="1 of 2 branches missed.">                return pDir.isTo()</span>
-<span class="fc" id="L700">                        ? MetisFieldRequired.MUSTEXIST</span>
-<span class="nc" id="L701">                        : MetisFieldRequired.NOTALLOWED;</span>
+<span class="pc bpc" id="L634" title="1 of 2 branches missed.">                return pDir.isTo()</span>
+<span class="fc" id="L635">                        ? MetisFieldRequired.MUSTEXIST</span>
+<span class="nc" id="L636">                        : MetisFieldRequired.NOTALLOWED;</span>
             case STOCKDEMERGER:
             case SECURITYREPLACE:
             case STOCKTAKEOVER:
             case STOCKRIGHTSISSUE:
-<span class="nc" id="L706">                return MetisFieldRequired.MUSTEXIST;</span>
+<span class="nc" id="L641">                return MetisFieldRequired.MUSTEXIST;</span>
             default:
-<span class="nc" id="L708">                return MetisFieldRequired.NOTALLOWED;</span>
+<span class="nc" id="L643">                return MetisFieldRequired.NOTALLOWED;</span>
         }
     }
 
     @Override
     protected void setDefault(final PrometheusDataInfoClass pClass) throws OceanusException {
         /* Switch on the class */
-<span class="nc bnc" id="L715" title="All 9 branches missed.">        switch ((MoneyWiseTransInfoClass) pClass) {</span>
+<span class="nc bnc" id="L650" title="All 9 branches missed.">        switch ((MoneyWiseTransInfoClass) pClass) {</span>
             case ACCOUNTDELTAUNITS:
-<span class="nc" id="L717">                getInfoSet().setValue(pClass, getDefaultAccountUnits());</span>
-<span class="nc" id="L718">                break;</span>
+<span class="nc" id="L652">                getInfoSet().setValue(pClass, getDefaultAccountUnits());</span>
+<span class="nc" id="L653">                break;</span>
             case PARTNERDELTAUNITS:
-<span class="nc" id="L720">                getInfoSet().setValue(pClass, getDefaultPartnerUnits());</span>
-<span class="nc" id="L721">                break;</span>
+<span class="nc" id="L655">                getInfoSet().setValue(pClass, getDefaultPartnerUnits());</span>
+<span class="nc" id="L656">                break;</span>
             case DILUTION:
-<span class="nc" id="L723">                getInfoSet().setValue(pClass, OceanusRatio.ONE);</span>
-<span class="nc" id="L724">                break;</span>
+<span class="nc" id="L658">                getInfoSet().setValue(pClass, OceanusRatio.ONE);</span>
+<span class="nc" id="L659">                break;</span>
             case QUALIFYYEARS:
-<span class="nc" id="L726">                getInfoSet().setValue(pClass, 1);</span>
-<span class="nc" id="L727">                break;</span>
+<span class="nc" id="L661">                getInfoSet().setValue(pClass, 1);</span>
+<span class="nc" id="L662">                break;</span>
             case TAXCREDIT:
-<span class="nc" id="L729">                getInfoSet().setValue(pClass, getDefaultTaxCredit());</span>
-<span class="nc" id="L730">                break;</span>
+<span class="nc" id="L664">                getInfoSet().setValue(pClass, getDefaultTaxCredit());</span>
+<span class="nc" id="L665">                break;</span>
             case PARTNERAMOUNT:
-<span class="nc" id="L732">                getInfoSet().setValue(pClass, getDefaultPartnerAmount());</span>
-<span class="nc" id="L733">                break;</span>
+<span class="nc" id="L667">                getInfoSet().setValue(pClass, getDefaultPartnerAmount());</span>
+<span class="nc" id="L668">                break;</span>
             case RETURNEDCASHACCOUNT:
-<span class="nc" id="L735">                getInfoSet().setValue(pClass, getDefaultReturnedCashAccount());</span>
-<span class="nc" id="L736">                break;</span>
+<span class="nc" id="L670">                getInfoSet().setValue(pClass, getDefaultReturnedCashAccount());</span>
+<span class="nc" id="L671">                break;</span>
             case RETURNEDCASH:
-<span class="nc" id="L738">                getInfoSet().setValue(pClass, getDefaultReturnedCash());</span>
-<span class="nc" id="L739">                break;</span>
+<span class="nc" id="L673">                getInfoSet().setValue(pClass, getDefaultReturnedCash());</span>
+<span class="nc" id="L674">                break;</span>
             default:
                 break;
         }
-<span class="nc" id="L743">    }</span>
+<span class="nc" id="L678">    }</span>
 
     /**
      * Obtain default accountUnits.
@@ -749,13 +684,13 @@ public class MoneyWiseValidateTransInfoSet
      */
     private OceanusUnits getDefaultAccountUnits() {
         /* Determine whether the units must be +ve or -ve */
-<span class="nc" id="L752">        final MoneyWiseTransaction myTrans = getOwner();</span>
-<span class="nc" id="L753">        final MoneyWiseAssetDirection myDir = myTrans.getDirection();</span>
-<span class="nc" id="L754">        final MoneyWiseTransCategoryClass myCategoryClass = myTrans.getCategoryClass();</span>
-<span class="nc" id="L755">        final MetisFieldRequired isRequired = isAccountUnitsPositive(myDir, myCategoryClass);</span>
-<span class="nc bnc" id="L756" title="All 2 branches missed.">        return isRequired.notAllowed()</span>
-<span class="nc" id="L757">                ? OceanusUnits.getWholeUnits(-1)</span>
-<span class="nc" id="L758">                : OceanusUnits.getWholeUnits(1);</span>
+<span class="nc" id="L687">        final MoneyWiseTransaction myTrans = getOwner();</span>
+<span class="nc" id="L688">        final MoneyWiseAssetDirection myDir = myTrans.getDirection();</span>
+<span class="nc" id="L689">        final MoneyWiseTransCategoryClass myCategoryClass = myTrans.getCategoryClass();</span>
+<span class="nc" id="L690">        final MetisFieldRequired isRequired = isAccountUnitsPositive(myDir, myCategoryClass);</span>
+<span class="nc bnc" id="L691" title="All 2 branches missed.">        return isRequired.notAllowed()</span>
+<span class="nc" id="L692">                ? OceanusUnits.getWholeUnits(-1)</span>
+<span class="nc" id="L693">                : OceanusUnits.getWholeUnits(1);</span>
     }
 
     /**
@@ -765,13 +700,13 @@ public class MoneyWiseValidateTransInfoSet
      */
     private OceanusUnits getDefaultPartnerUnits() {
         /* Determine whether the units must be +ve or -ve */
-<span class="nc" id="L768">        final MoneyWiseTransaction myTrans = getOwner();</span>
-<span class="nc" id="L769">        final MoneyWiseAssetDirection myDir = myTrans.getDirection();</span>
-<span class="nc" id="L770">        final MoneyWiseTransCategoryClass myCategoryClass = myTrans.getCategoryClass();</span>
-<span class="nc" id="L771">        final MetisFieldRequired isRequired = isPartnerUnitsPositive(myDir, myCategoryClass);</span>
-<span class="nc bnc" id="L772" title="All 2 branches missed.">        return isRequired.notAllowed()</span>
-<span class="nc" id="L773">                ? OceanusUnits.getWholeUnits(-1)</span>
-<span class="nc" id="L774">                : OceanusUnits.getWholeUnits(1);</span>
+<span class="nc" id="L703">        final MoneyWiseTransaction myTrans = getOwner();</span>
+<span class="nc" id="L704">        final MoneyWiseAssetDirection myDir = myTrans.getDirection();</span>
+<span class="nc" id="L705">        final MoneyWiseTransCategoryClass myCategoryClass = myTrans.getCategoryClass();</span>
+<span class="nc" id="L706">        final MetisFieldRequired isRequired = isPartnerUnitsPositive(myDir, myCategoryClass);</span>
+<span class="nc bnc" id="L707" title="All 2 branches missed.">        return isRequired.notAllowed()</span>
+<span class="nc" id="L708">                ? OceanusUnits.getWholeUnits(-1)</span>
+<span class="nc" id="L709">                : OceanusUnits.getWholeUnits(1);</span>
     }
 
     /**
@@ -781,11 +716,11 @@ public class MoneyWiseValidateTransInfoSet
      */
     private OceanusMoney getDefaultTaxCredit() {
         /* Access the account */
-<span class="nc" id="L784">        final MoneyWiseTransAsset myAsset = getOwner().getAccount();</span>
-<span class="nc" id="L785">        final MoneyWiseCurrency myCurrency = myAsset.getAssetCurrency();</span>
+<span class="nc" id="L719">        final MoneyWiseTransAsset myAsset = getOwner().getAccount();</span>
+<span class="nc" id="L720">        final MoneyWiseCurrency myCurrency = myAsset.getAssetCurrency();</span>
 
         /* Return zero cash in the appropriate currency */
-<span class="nc" id="L788">        return new OceanusMoney(myCurrency.getCurrency());</span>
+<span class="nc" id="L723">        return new OceanusMoney(myCurrency.getCurrency());</span>
     }
 
     /**
@@ -795,11 +730,11 @@ public class MoneyWiseValidateTransInfoSet
      */
     private OceanusMoney getDefaultPartnerAmount() {
         /* Access the partner */
-<span class="nc" id="L798">        final MoneyWiseTransAsset myAsset = getOwner().getPartner();</span>
-<span class="nc" id="L799">        final MoneyWiseCurrency myCurrency = myAsset.getAssetCurrency();</span>
+<span class="nc" id="L733">        final MoneyWiseTransAsset myAsset = getOwner().getPartner();</span>
+<span class="nc" id="L734">        final MoneyWiseCurrency myCurrency = myAsset.getAssetCurrency();</span>
 
         /* Return zero cash in the appropriate currency */
-<span class="nc" id="L802">        return new OceanusMoney(myCurrency.getCurrency());</span>
+<span class="nc" id="L737">        return new OceanusMoney(myCurrency.getCurrency());</span>
     }
 
     /**
@@ -809,33 +744,33 @@ public class MoneyWiseValidateTransInfoSet
      */
     private MoneyWiseTransAsset getDefaultReturnedCashAccount() {
         /* loop through the deposits */
-<span class="nc" id="L812">        final MoneyWiseDepositList myDeposits</span>
-<span class="nc" id="L813">                = getEditSet().getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class);</span>
-<span class="nc" id="L814">        final Iterator&lt;MoneyWiseDeposit&gt; myDepIterator = myDeposits.iterator();</span>
-<span class="nc bnc" id="L815" title="All 2 branches missed.">        while (myDepIterator.hasNext()) {</span>
-<span class="nc" id="L816">            final MoneyWiseDeposit myDeposit = myDepIterator.next();</span>
+<span class="nc" id="L747">        final MoneyWiseDepositList myDeposits</span>
+<span class="nc" id="L748">                = getEditSet().getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class);</span>
+<span class="nc" id="L749">        final Iterator&lt;MoneyWiseDeposit&gt; myDepIterator = myDeposits.iterator();</span>
+<span class="nc bnc" id="L750" title="All 2 branches missed.">        while (myDepIterator.hasNext()) {</span>
+<span class="nc" id="L751">            final MoneyWiseDeposit myDeposit = myDepIterator.next();</span>
 
             /* Use if not deleted or closed */
-<span class="nc bnc" id="L819" title="All 4 branches missed.">            if (!myDeposit.isDeleted() &amp;&amp; Boolean.FALSE.equals(myDeposit.isClosed())) {</span>
-<span class="nc" id="L820">                return myDeposit;</span>
+<span class="nc bnc" id="L754" title="All 4 branches missed.">            if (!myDeposit.isDeleted() &amp;&amp; Boolean.FALSE.equals(myDeposit.isClosed())) {</span>
+<span class="nc" id="L755">                return myDeposit;</span>
             }
-<span class="nc" id="L822">        }</span>
+<span class="nc" id="L757">        }</span>
 
         /* loop through the portfolios */
-<span class="nc" id="L825">        final MoneyWisePortfolioList myPortfolios</span>
-<span class="nc" id="L826">                = getEditSet().getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);</span>
-<span class="nc" id="L827">        final Iterator&lt;MoneyWisePortfolio&gt; myPortIterator = myPortfolios.iterator();</span>
-<span class="nc bnc" id="L828" title="All 2 branches missed.">        while (myPortIterator.hasNext()) {</span>
-<span class="nc" id="L829">            final MoneyWisePortfolio myPortfolio = myPortIterator.next();</span>
+<span class="nc" id="L760">        final MoneyWisePortfolioList myPortfolios</span>
+<span class="nc" id="L761">                = getEditSet().getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);</span>
+<span class="nc" id="L762">        final Iterator&lt;MoneyWisePortfolio&gt; myPortIterator = myPortfolios.iterator();</span>
+<span class="nc bnc" id="L763" title="All 2 branches missed.">        while (myPortIterator.hasNext()) {</span>
+<span class="nc" id="L764">            final MoneyWisePortfolio myPortfolio = myPortIterator.next();</span>
 
             /* Use if not deleted or closed */
-<span class="nc bnc" id="L832" title="All 4 branches missed.">            if (!myPortfolio.isDeleted() &amp;&amp; Boolean.FALSE.equals(myPortfolio.isClosed())) {</span>
-<span class="nc" id="L833">                return myPortfolio;</span>
+<span class="nc bnc" id="L767" title="All 4 branches missed.">            if (!myPortfolio.isDeleted() &amp;&amp; Boolean.FALSE.equals(myPortfolio.isClosed())) {</span>
+<span class="nc" id="L768">                return myPortfolio;</span>
             }
-<span class="nc" id="L835">        }</span>
+<span class="nc" id="L770">        }</span>
 
         /* Return no account */
-<span class="nc" id="L838">        return null;</span>
+<span class="nc" id="L773">        return null;</span>
     }
 
     /**
@@ -845,44 +780,44 @@ public class MoneyWiseValidateTransInfoSet
      */
     private OceanusMoney getDefaultReturnedCash() {
         /* Access the returned cash account */
-<span class="nc" id="L848">        final MoneyWiseTransAsset myAsset = getOwner().getReturnedCashAccount();</span>
-<span class="nc" id="L849">        final MoneyWiseCurrency myCurrency = Objects.requireNonNull(myAsset).getAssetCurrency();</span>
+<span class="nc" id="L783">        final MoneyWiseTransAsset myAsset = getOwner().getReturnedCashAccount();</span>
+<span class="nc" id="L784">        final MoneyWiseCurrency myCurrency = Objects.requireNonNull(myAsset).getAssetCurrency();</span>
 
         /* Return zero cash in the appropriate currency */
-<span class="nc" id="L852">        return new OceanusMoney(myCurrency.getCurrency());</span>
+<span class="nc" id="L787">        return new OceanusMoney(myCurrency.getCurrency());</span>
     }
 
     @Override
     protected void autoCorrect(final PrometheusDataInfoClass pClass) throws OceanusException {
         /* Switch on class */
-<span class="nc" id="L858">        final MoneyWiseTransInfoClass myClass = (MoneyWiseTransInfoClass) pClass;</span>
-<span class="nc bnc" id="L859" title="All 7 branches missed.">        switch (myClass) {</span>
+<span class="nc" id="L793">        final MoneyWiseTransInfoClass myClass = (MoneyWiseTransInfoClass) pClass;</span>
+<span class="nc bnc" id="L794" title="All 7 branches missed.">        switch (myClass) {</span>
             case ACCOUNTDELTAUNITS:
-<span class="nc" id="L861">                autoCorrectAccountDeltaUnits();</span>
-<span class="nc" id="L862">                break;</span>
+<span class="nc" id="L796">                autoCorrectAccountDeltaUnits();</span>
+<span class="nc" id="L797">                break;</span>
             case PARTNERDELTAUNITS:
-<span class="nc" id="L864">                autoCorrectPartnerDeltaUnits();</span>
-<span class="nc" id="L865">                break;</span>
+<span class="nc" id="L799">                autoCorrectPartnerDeltaUnits();</span>
+<span class="nc" id="L800">                break;</span>
             case TAXCREDIT:
             case EMPLOYERNATINS:
             case EMPLOYEENATINS:
             case DEEMEDBENEFIT:
             case WITHHELD:
-<span class="nc" id="L871">                autoCorrectTaxCredit(myClass);</span>
-<span class="nc" id="L872">                break;</span>
+<span class="nc" id="L806">                autoCorrectTaxCredit(myClass);</span>
+<span class="nc" id="L807">                break;</span>
             case PARTNERAMOUNT:
-<span class="nc" id="L874">                autoCorrectPartnerAmount();</span>
-<span class="nc" id="L875">                break;</span>
+<span class="nc" id="L809">                autoCorrectPartnerAmount();</span>
+<span class="nc" id="L810">                break;</span>
             case RETURNEDCASH:
-<span class="nc" id="L877">                autoCorrectReturnedCash();</span>
-<span class="nc" id="L878">                break;</span>
+<span class="nc" id="L812">                autoCorrectReturnedCash();</span>
+<span class="nc" id="L813">                break;</span>
             case PRICE:
-<span class="nc" id="L880">                autoCorrectPrice();</span>
-<span class="nc" id="L881">                break;</span>
+<span class="nc" id="L815">                autoCorrectPrice();</span>
+<span class="nc" id="L816">                break;</span>
             default:
                 break;
         }
-<span class="nc" id="L885">    }</span>
+<span class="nc" id="L820">    }</span>
 
     /**
      * AutoCorrect accountDeltaUnits.
@@ -891,21 +826,21 @@ public class MoneyWiseValidateTransInfoSet
      */
     private void autoCorrectAccountDeltaUnits() throws OceanusException {
         /* Determine whether the units must be +ve or -ve */
-<span class="nc" id="L894">        final MoneyWiseTransaction myTrans = getOwner();</span>
-<span class="nc" id="L895">        final MoneyWiseAssetDirection myDir = myTrans.getDirection();</span>
-<span class="nc" id="L896">        final MoneyWiseTransCategoryClass myCategoryClass = myTrans.getCategoryClass();</span>
-<span class="nc" id="L897">        final MetisFieldRequired isRequired = isAccountUnitsPositive(myDir, myCategoryClass);</span>
-<span class="nc" id="L898">        OceanusUnits myUnits = Objects.requireNonNull(myTrans.getAccountDeltaUnits());</span>
+<span class="nc" id="L829">        final MoneyWiseTransaction myTrans = getOwner();</span>
+<span class="nc" id="L830">        final MoneyWiseAssetDirection myDir = myTrans.getDirection();</span>
+<span class="nc" id="L831">        final MoneyWiseTransCategoryClass myCategoryClass = myTrans.getCategoryClass();</span>
+<span class="nc" id="L832">        final MetisFieldRequired isRequired = isAccountUnitsPositive(myDir, myCategoryClass);</span>
+<span class="nc" id="L833">        OceanusUnits myUnits = Objects.requireNonNull(myTrans.getAccountDeltaUnits());</span>
 
         /* If the units are negative and must be positive or are positive and must be negative */
-<span class="nc bnc" id="L901" title="All 4 branches missed.">        if ((isRequired.mustExist() &amp;&amp; !myUnits.isPositive())</span>
-<span class="nc bnc" id="L902" title="All 4 branches missed.">                || (isRequired.notAllowed() &amp;&amp; myUnits.isPositive())) {</span>
+<span class="nc bnc" id="L836" title="All 4 branches missed.">        if ((isRequired.mustExist() &amp;&amp; !myUnits.isPositive())</span>
+<span class="nc bnc" id="L837" title="All 4 branches missed.">                || (isRequired.notAllowed() &amp;&amp; myUnits.isPositive())) {</span>
             /* Reverse the sign */
-<span class="nc" id="L904">            myUnits = new OceanusUnits(myUnits);</span>
-<span class="nc" id="L905">            myUnits.negate();</span>
-<span class="nc" id="L906">            getInfoSet().setValue(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS, myUnits);</span>
+<span class="nc" id="L839">            myUnits = new OceanusUnits(myUnits);</span>
+<span class="nc" id="L840">            myUnits.negate();</span>
+<span class="nc" id="L841">            getInfoSet().setValue(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS, myUnits);</span>
         }
-<span class="nc" id="L908">    }</span>
+<span class="nc" id="L843">    }</span>
 
 
     /**
@@ -915,21 +850,21 @@ public class MoneyWiseValidateTransInfoSet
      */
     private void autoCorrectPartnerDeltaUnits() throws OceanusException {
         /* Determine whether the units must be +ve or -ve */
-<span class="nc" id="L918">        final MoneyWiseTransaction myTrans = getOwner();</span>
-<span class="nc" id="L919">        final MoneyWiseAssetDirection myDir = myTrans.getDirection();</span>
-<span class="nc" id="L920">        final MoneyWiseTransCategoryClass myCategoryClass = myTrans.getCategoryClass();</span>
-<span class="nc" id="L921">        final MetisFieldRequired isRequired = isPartnerUnitsPositive(myDir, myCategoryClass);</span>
-<span class="nc" id="L922">        OceanusUnits myUnits = Objects.requireNonNull(myTrans.getPartnerDeltaUnits());</span>
+<span class="nc" id="L853">        final MoneyWiseTransaction myTrans = getOwner();</span>
+<span class="nc" id="L854">        final MoneyWiseAssetDirection myDir = myTrans.getDirection();</span>
+<span class="nc" id="L855">        final MoneyWiseTransCategoryClass myCategoryClass = myTrans.getCategoryClass();</span>
+<span class="nc" id="L856">        final MetisFieldRequired isRequired = isPartnerUnitsPositive(myDir, myCategoryClass);</span>
+<span class="nc" id="L857">        OceanusUnits myUnits = Objects.requireNonNull(myTrans.getPartnerDeltaUnits());</span>
 
         /* If the units are negative and must be positive or are positive and must be negative */
-<span class="nc bnc" id="L925" title="All 4 branches missed.">        if ((isRequired.mustExist() &amp;&amp; !myUnits.isPositive())</span>
-<span class="nc bnc" id="L926" title="All 4 branches missed.">                || (isRequired.notAllowed() &amp;&amp; myUnits.isPositive())) {</span>
+<span class="nc bnc" id="L860" title="All 4 branches missed.">        if ((isRequired.mustExist() &amp;&amp; !myUnits.isPositive())</span>
+<span class="nc bnc" id="L861" title="All 4 branches missed.">                || (isRequired.notAllowed() &amp;&amp; myUnits.isPositive())) {</span>
             /* Reverse the sign */
-<span class="nc" id="L928">            myUnits = new OceanusUnits(myUnits);</span>
-<span class="nc" id="L929">            myUnits.negate();</span>
-<span class="nc" id="L930">            getInfoSet().setValue(MoneyWiseTransInfoClass.PARTNERDELTAUNITS, myUnits);</span>
+<span class="nc" id="L863">            myUnits = new OceanusUnits(myUnits);</span>
+<span class="nc" id="L864">            myUnits.negate();</span>
+<span class="nc" id="L865">            getInfoSet().setValue(MoneyWiseTransInfoClass.PARTNERDELTAUNITS, myUnits);</span>
         }
-<span class="nc" id="L932">    }</span>
+<span class="nc" id="L867">    }</span>
 
     /**
      * AutoCorrect taxCredit.
@@ -939,16 +874,16 @@ public class MoneyWiseValidateTransInfoSet
      */
     private void autoCorrectTaxCredit(final MoneyWiseTransInfoClass pClass) throws OceanusException {
         /* Obtain the existing value */
-<span class="nc" id="L942">        OceanusMoney myValue = getInfoSet().getValue(pClass, OceanusMoney.class);</span>
-<span class="nc" id="L943">        final MoneyWiseCurrency myAssetCurrency = getOwner().getAccount().getAssetCurrency();</span>
-<span class="nc" id="L944">        final Currency myCurrency = myAssetCurrency.getCurrency();</span>
+<span class="nc" id="L877">        OceanusMoney myValue = getInfoSet().getValue(pClass, OceanusMoney.class);</span>
+<span class="nc" id="L878">        final MoneyWiseCurrency myAssetCurrency = getOwner().getAccount().getAssetCurrency();</span>
+<span class="nc" id="L879">        final Currency myCurrency = myAssetCurrency.getCurrency();</span>
 
         /* If the value is not the correct currency */
-<span class="nc bnc" id="L947" title="All 2 branches missed.">        if (!myValue.getCurrency().equals(myCurrency)) {</span>
-<span class="nc" id="L948">            myValue = myValue.changeCurrency(myCurrency);</span>
-<span class="nc" id="L949">            getInfoSet().setValue(pClass, myValue);</span>
+<span class="nc bnc" id="L882" title="All 2 branches missed.">        if (!myValue.getCurrency().equals(myCurrency)) {</span>
+<span class="nc" id="L883">            myValue = myValue.changeCurrency(myCurrency);</span>
+<span class="nc" id="L884">            getInfoSet().setValue(pClass, myValue);</span>
         }
-<span class="nc" id="L951">    }</span>
+<span class="nc" id="L886">    }</span>
 
     /**
      * AutoCorrect partnerAmount.
@@ -957,17 +892,17 @@ public class MoneyWiseValidateTransInfoSet
      */
     private void autoCorrectPartnerAmount() throws OceanusException {
         /* Obtain the existing value */
-<span class="nc" id="L960">        final MoneyWiseTransaction myTrans = getOwner();</span>
-<span class="nc" id="L961">        OceanusMoney myValue = Objects.requireNonNull(myTrans.getPartnerAmount());</span>
-<span class="nc" id="L962">        final MoneyWiseCurrency myAssetCurrency = myTrans.getPartner().getAssetCurrency();</span>
-<span class="nc" id="L963">        final Currency myCurrency = myAssetCurrency.getCurrency();</span>
+<span class="nc" id="L895">        final MoneyWiseTransaction myTrans = getOwner();</span>
+<span class="nc" id="L896">        OceanusMoney myValue = Objects.requireNonNull(myTrans.getPartnerAmount());</span>
+<span class="nc" id="L897">        final MoneyWiseCurrency myAssetCurrency = myTrans.getPartner().getAssetCurrency();</span>
+<span class="nc" id="L898">        final Currency myCurrency = myAssetCurrency.getCurrency();</span>
 
         /* If the value is not the correct currency */
-<span class="nc bnc" id="L966" title="All 2 branches missed.">        if (!myCurrency.equals(myValue.getCurrency())) {</span>
-<span class="nc" id="L967">            myValue = myValue.changeCurrency(myCurrency);</span>
-<span class="nc" id="L968">            getInfoSet().setValue(MoneyWiseTransInfoClass.PARTNERAMOUNT, myValue);</span>
+<span class="nc bnc" id="L901" title="All 2 branches missed.">        if (!myCurrency.equals(myValue.getCurrency())) {</span>
+<span class="nc" id="L902">            myValue = myValue.changeCurrency(myCurrency);</span>
+<span class="nc" id="L903">            getInfoSet().setValue(MoneyWiseTransInfoClass.PARTNERAMOUNT, myValue);</span>
         }
-<span class="nc" id="L970">    }</span>
+<span class="nc" id="L905">    }</span>
 
     /**
      * AutoCorrect returnedCash.
@@ -976,18 +911,18 @@ public class MoneyWiseValidateTransInfoSet
      */
     private void autoCorrectReturnedCash() throws OceanusException {
         /* Obtain the existing value */
-<span class="nc" id="L979">        final MoneyWiseTransaction myTrans = getOwner();</span>
-<span class="nc" id="L980">        OceanusMoney myValue = Objects.requireNonNull(myTrans.getReturnedCash());</span>
-<span class="nc" id="L981">        final MoneyWiseTransAsset myAsset = Objects.requireNonNull(myTrans.getReturnedCashAccount());</span>
-<span class="nc" id="L982">        final MoneyWiseCurrency myAssetCurrency = myAsset.getAssetCurrency();</span>
-<span class="nc" id="L983">        final Currency myCurrency = myAssetCurrency.getCurrency();</span>
+<span class="nc" id="L914">        final MoneyWiseTransaction myTrans = getOwner();</span>
+<span class="nc" id="L915">        OceanusMoney myValue = Objects.requireNonNull(myTrans.getReturnedCash());</span>
+<span class="nc" id="L916">        final MoneyWiseTransAsset myAsset = Objects.requireNonNull(myTrans.getReturnedCashAccount());</span>
+<span class="nc" id="L917">        final MoneyWiseCurrency myAssetCurrency = myAsset.getAssetCurrency();</span>
+<span class="nc" id="L918">        final Currency myCurrency = myAssetCurrency.getCurrency();</span>
 
         /* If the value is not the correct currency */
-<span class="nc bnc" id="L986" title="All 2 branches missed.">        if (!myCurrency.equals(myValue.getCurrency())) {</span>
-<span class="nc" id="L987">            myValue = myValue.changeCurrency(myCurrency);</span>
-<span class="nc" id="L988">            getInfoSet().setValue(MoneyWiseTransInfoClass.RETURNEDCASH, myValue);</span>
+<span class="nc bnc" id="L921" title="All 2 branches missed.">        if (!myCurrency.equals(myValue.getCurrency())) {</span>
+<span class="nc" id="L922">            myValue = myValue.changeCurrency(myCurrency);</span>
+<span class="nc" id="L923">            getInfoSet().setValue(MoneyWiseTransInfoClass.RETURNEDCASH, myValue);</span>
         }
-<span class="nc" id="L990">    }</span>
+<span class="nc" id="L925">    }</span>
 
     /**
      * AutoCorrect price.
@@ -996,16 +931,16 @@ public class MoneyWiseValidateTransInfoSet
      */
     private void autoCorrectPrice() throws OceanusException {
         /* Obtain the existing value */
-<span class="nc" id="L999">        final MoneyWiseTransaction myTrans = getOwner();</span>
-<span class="nc" id="L1000">        OceanusPrice myPrice = Objects.requireNonNull(myTrans.getPrice());</span>
-<span class="nc" id="L1001">        final MoneyWiseCurrency myAssetCurrency = getOwner().getAccount().getAssetCurrency();</span>
-<span class="nc" id="L1002">        final Currency myCurrency = myAssetCurrency.getCurrency();</span>
+<span class="nc" id="L934">        final MoneyWiseTransaction myTrans = getOwner();</span>
+<span class="nc" id="L935">        OceanusPrice myPrice = Objects.requireNonNull(myTrans.getPrice());</span>
+<span class="nc" id="L936">        final MoneyWiseCurrency myAssetCurrency = getOwner().getAccount().getAssetCurrency();</span>
+<span class="nc" id="L937">        final Currency myCurrency = myAssetCurrency.getCurrency();</span>
 
         /* If the value is not the correct currency */
-<span class="nc bnc" id="L1005" title="All 2 branches missed.">        if (!myPrice.getCurrency().equals(myCurrency)) {</span>
-<span class="nc" id="L1006">            myPrice = myPrice.changeCurrency(myCurrency);</span>
-<span class="nc" id="L1007">            getInfoSet().setValue(MoneyWiseTransInfoClass.PRICE, myPrice);</span>
+<span class="nc bnc" id="L940" title="All 2 branches missed.">        if (!myPrice.getCurrency().equals(myCurrency)) {</span>
+<span class="nc" id="L941">            myPrice = myPrice.changeCurrency(myCurrency);</span>
+<span class="nc" id="L942">            getInfoSet().setValue(MoneyWiseTransInfoClass.PRICE, myPrice);</span>
         }
-<span class="nc" id="L1009">    }</span>
+<span class="nc" id="L944">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

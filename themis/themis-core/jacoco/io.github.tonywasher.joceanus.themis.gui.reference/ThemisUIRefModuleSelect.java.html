@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisUIRefModuleSelect.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.gui.reference</a> &gt; <span class="el_source">ThemisUIRefModuleSelect.java</span></div><h1>ThemisUIRefModuleSelect.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.gui.reference;
+
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIScrollButtonManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControlFactory;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUILabel;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIResource;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverModule;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverProject;
+
+import java.util.List;
+
+/**
+ * Button to select module from project.
+ */
+public class ThemisUIRefModuleSelect
+        implements OceanusEventProvider&lt;TethysUIEvent&gt;, TethysUIComponent {
+    /**
+     * The Event Manager.
+     */
+    private final OceanusEventManager&lt;TethysUIEvent&gt; theEventManager;
+
+    /**
+     * The scroll button.
+     */
+    private final TethysUIScrollButtonManager&lt;ThemisSolverModule&gt; theButton;
+
+    /**
+     * The module menu.
+     */
+    private final TethysUIScrollMenu&lt;ThemisSolverModule&gt; theModuleMenu;
+
+    /**
+     * The panel.
+     */
+    private final TethysUIBoxPaneManager thePanel;
+
+    /**
+     * The current project.
+     */
+    private ThemisSolverProject theProject;
+
+    /**
+     * The current module.
+     */
+    private ThemisSolverModule theModule;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+<span class="nc" id="L79">    ThemisUIRefModuleSelect(final TethysUIFactory&lt;?&gt; pFactory) {</span>
+        /* Create Event Manager */
+<span class="nc" id="L81">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+        /* Create the label */
+<span class="nc" id="L84">        final TethysUIControlFactory myControls = pFactory.controlFactory();</span>
+<span class="nc" id="L85">        final TethysUILabel myPromptLabel = myControls.newLabel(ThemisUIResource.PROMPT_MODULE.getValue());</span>
+
+        /* Create the button */
+<span class="nc" id="L88">        theButton = pFactory.buttonFactory().newScrollButton(ThemisSolverModule.class);</span>
+<span class="nc" id="L89">        theModuleMenu = theButton.getMenu();</span>
+
+        /* Create the panel */
+<span class="nc" id="L92">        final TethysUIPaneFactory myPanes = pFactory.paneFactory();</span>
+<span class="nc" id="L93">        thePanel = myPanes.newHBoxPane();</span>
+<span class="nc" id="L94">        thePanel.addNode(myPromptLabel);</span>
+<span class="nc" id="L95">        thePanel.addNode(theButton);</span>
+
+        /* Set listeners */
+<span class="nc" id="L98">        final OceanusEventRegistrar&lt;TethysUIEvent&gt; myRegistrar = theButton.getEventRegistrar();</span>
+<span class="nc" id="L99">        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewModule());</span>
+<span class="nc" id="L100">        theButton.setMenuConfigurator(e -&gt; buildModuleMenu());</span>
+<span class="nc" id="L101">    }</span>
+
+    @Override
+    public OceanusEventRegistrar&lt;TethysUIEvent&gt; getEventRegistrar() {
+<span class="nc" id="L105">        return theEventManager.getEventRegistrar();</span>
+    }
+
+    @Override
+    public TethysUIComponent getUnderlying() {
+<span class="nc" id="L110">        return thePanel;</span>
+    }
+
+    /**
+     * Obtain the current module.
+     *
+     * @return the current module
+     */
+    ThemisSolverModule getCurrentModule() {
+<span class="nc" id="L119">        return theModule;</span>
+    }
+
+    /**
+     * Set the current project.
+     *
+     * @param pProject the current project
+     */
+    void setCurrentProject(final ThemisSolverProject pProject) {
+        /* Store the project */
+<span class="nc" id="L129">        theProject = pProject;</span>
+
+        /* Set the default module */
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        final List&lt;ThemisSolverModule&gt; myModules = theProject == null ? null : theProject.getModules();</span>
+<span class="nc bnc" id="L133" title="All 4 branches missed.">        final ThemisSolverModule myModule = (myModules == null || myModules.isEmpty()) ? null : myModules.getFirst();</span>
+<span class="nc" id="L134">        theButton.setValue(myModule);</span>
+<span class="nc" id="L135">        handleNewModule();</span>
+<span class="nc" id="L136">    }</span>
+
+    /**
+     * Build the package menu.
+     */
+    private void buildModuleMenu() {
+        /* Reset the popUp menu */
+<span class="nc" id="L143">        theModuleMenu.removeAllItems();</span>
+
+        /* Record active item */
+<span class="nc" id="L146">        TethysUIScrollItem&lt;ThemisSolverModule&gt; myActive = null;</span>
+<span class="nc" id="L147">        final ThemisSolverModule myCurr = theButton.getValue();</span>
+
+        /* Loop through the available modules */
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        for (ThemisSolverModule myModule : theProject.getModules()) {</span>
+            /* Create a new MenuItem and add it to the popUp */
+<span class="nc" id="L152">            final TethysUIScrollItem&lt;ThemisSolverModule&gt; myItem = theModuleMenu.addItem(myModule);</span>
+
+            /* If this is the active module */
+<span class="nc bnc" id="L155" title="All 2 branches missed.">            if (myModule.equals(myCurr)) {</span>
+                /* Record it */
+<span class="nc" id="L157">                myActive = myItem;</span>
+            }
+<span class="nc" id="L159">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L163">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L165">    }</span>
+
+    /**
+     * Handle new Module.
+     */
+    private void handleNewModule() {
+        /* Select the new module */
+<span class="nc" id="L172">        theModule = theButton.getValue();</span>
+<span class="nc" id="L173">        theEventManager.fireEvent(TethysUIEvent.NEWVALUE);</span>
+<span class="nc" id="L174">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

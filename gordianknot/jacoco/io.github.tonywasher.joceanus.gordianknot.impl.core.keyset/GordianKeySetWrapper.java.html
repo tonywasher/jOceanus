@@ -18,8 +18,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreWrapper;
 
 /**
@@ -42,39 +43,41 @@ public class GordianKeySetWrapper
      */
     GordianKeySetWrapper(final GordianBaseFactory pFactory,
                          final GordianSymKeyCipherSet[] pCiphers) {
-<span class="fc" id="L45">        super(pFactory, GordianLength.LEN_128.getByteLength());</span>
-<span class="fc" id="L46">        theCiphers = pCiphers;</span>
-<span class="fc" id="L47">    }</span>
+<span class="fc" id="L46">        super(pFactory, GordianLength.LEN_128.getByteLength());</span>
+<span class="fc" id="L47">        theCiphers = pCiphers;</span>
+<span class="fc" id="L48">    }</span>
 
     @Override
     protected void initCipherForWrapping() throws GordianException {
-<span class="fc bfc" id="L51" title="All 2 branches covered.">        for (GordianSymKeyCipherSet myCipher : theCiphers) {</span>
-<span class="fc" id="L52">            myCipher.getStandardCipher().initForEncrypt(GordianCipherParameters.key(myCipher.getKey()));</span>
+<span class="fc" id="L52">        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        for (GordianSymKeyCipherSet myCipher : theCiphers) {</span>
+<span class="fc" id="L54">            myCipher.getStandardCipher().initForEncrypt(myBuilder.key(myCipher.getKey()));</span>
         }
-<span class="fc" id="L54">    }</span>
+<span class="fc" id="L56">    }</span>
 
     @Override
     protected void initCipherForUnwrapping() throws GordianException {
-<span class="fc bfc" id="L58" title="All 2 branches covered.">        for (GordianSymKeyCipherSet myCipher : theCiphers) {</span>
-<span class="fc" id="L59">            myCipher.getStandardCipher().initForDecrypt(GordianCipherParameters.key(myCipher.getKey()));</span>
+<span class="fc" id="L60">        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        for (GordianSymKeyCipherSet myCipher : theCiphers) {</span>
+<span class="fc" id="L62">            myCipher.getStandardCipher().initForDecrypt(myBuilder.key(myCipher.getKey()));</span>
         }
-<span class="fc" id="L61">    }</span>
+<span class="fc" id="L64">    }</span>
 
     @Override
     protected void iterateCipher(final byte[] pInBuffer,
                                  final int pBufferLen,
                                  final byte[] pResult) throws GordianException {
-<span class="fc" id="L67">        byte[] myInBuffer = pInBuffer;</span>
-<span class="fc" id="L68">        final byte[][] myTempBuffers = {new byte[pBufferLen], new byte[pBufferLen]};</span>
-<span class="fc" id="L69">        int myNextIndex = 0;</span>
-<span class="fc" id="L70">        byte[] myOutBuffer = myTempBuffers[myNextIndex++];</span>
-<span class="fc bfc" id="L71" title="All 2 branches covered.">        for (GordianSymKeyCipherSet myCipher : theCiphers) {</span>
-<span class="fc" id="L72">            myCipher.getStandardCipher().finish(myInBuffer, 0, pBufferLen, myOutBuffer, 0);</span>
-<span class="fc" id="L73">            myInBuffer = myOutBuffer;</span>
-<span class="fc" id="L74">            myNextIndex %= 2;</span>
-<span class="fc" id="L75">            myOutBuffer = myTempBuffers[myNextIndex++];</span>
+<span class="fc" id="L70">        byte[] myInBuffer = pInBuffer;</span>
+<span class="fc" id="L71">        final byte[][] myTempBuffers = {new byte[pBufferLen], new byte[pBufferLen]};</span>
+<span class="fc" id="L72">        int myNextIndex = 0;</span>
+<span class="fc" id="L73">        byte[] myOutBuffer = myTempBuffers[myNextIndex++];</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        for (GordianSymKeyCipherSet myCipher : theCiphers) {</span>
+<span class="fc" id="L75">            myCipher.getStandardCipher().finish(myInBuffer, 0, pBufferLen, myOutBuffer, 0);</span>
+<span class="fc" id="L76">            myInBuffer = myOutBuffer;</span>
+<span class="fc" id="L77">            myNextIndex %= 2;</span>
+<span class="fc" id="L78">            myOutBuffer = myTempBuffers[myNextIndex++];</span>
         }
-<span class="fc" id="L77">        System.arraycopy(myInBuffer, 0, pResult, 0, pBufferLen);</span>
-<span class="fc" id="L78">    }</span>
+<span class="fc" id="L80">        System.arraycopy(myInBuffer, 0, pResult, 0, pBufferLen);</span>
+<span class="fc" id="L81">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

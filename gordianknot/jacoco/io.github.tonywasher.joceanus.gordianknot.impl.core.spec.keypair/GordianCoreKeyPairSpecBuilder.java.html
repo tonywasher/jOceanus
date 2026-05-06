@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreKeyPairSpecBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair</a> &gt; <span class="el_source">GordianCoreKeyPairSpecBuilder.java</span></div><h1>GordianCoreKeyPairSpecBuilder.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianBIKESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianCMCESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDHSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDSTUSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianECSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianFRODOSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianFalconSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianGOSTSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHQCSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSHash;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSHeight;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSWidth;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMLDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMLKEMSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMayoSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPlusSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianPicnicSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianRSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSABERSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSLHDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM2Spec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSnovaSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSHeight;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSMTLayers;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+
+/**
+ * Asymmetric KeyPair Specification Builder.
+ */
+public final class GordianCoreKeyPairSpecBuilder
+        implements GordianKeyPairSpecBuilder {
+    /**
+     * The keyPairType.
+     */
+    private GordianKeyPairType theKeyPairType;
+
+    /**
+     * The subSpec.
+     */
+    private Object theSubSpec;
+
+    /**
+     * Private constructor.
+     */
+    private GordianCoreKeyPairSpecBuilder() {
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreKeyPairSpecBuilder newInstance() {
+<span class="fc" id="L88">        return new GordianCoreKeyPairSpecBuilder();</span>
+    }
+
+    @Override
+    public GordianKeyPairSpecBuilder withKeyPairType(final GordianKeyPairType pType) {
+<span class="fc" id="L93">        theKeyPairType = pType;</span>
+<span class="fc" id="L94">        return this;</span>
+    }
+
+    @Override
+    public GordianKeyPairSpecBuilder withEnumSubSpec(final Enum&lt;?&gt; pSubSpec) {
+<span class="fc" id="L99">        theSubSpec = pSubSpec;</span>
+<span class="fc" id="L100">        return this;</span>
+    }
+
+    @Override
+    public GordianKeyPairSpecBuilder withXMSSSubSpec(final GordianXMSSDigestType pDigestType,
+                                                     final GordianXMSSHeight pHeight) {
+<span class="fc" id="L106">        theSubSpec = new GordianCoreXMSSSpec(pDigestType, pHeight);</span>
+<span class="fc" id="L107">        return this;</span>
+    }
+
+    @Override
+    public GordianKeyPairSpecBuilder withXMSSMTSubSpec(final GordianXMSSDigestType pDigestType,
+                                                       final GordianXMSSHeight pHeight,
+                                                       final GordianXMSSMTLayers pLayers) {
+<span class="nc" id="L114">        theSubSpec = new GordianCoreXMSSSpec(pDigestType, pHeight, pLayers);</span>
+<span class="nc" id="L115">        return this;</span>
+    }
+
+    @Override
+    public GordianKeyPairSpecBuilder withLMSSubSpec(final GordianLMSHash pHashType,
+                                                    final GordianLMSHeight pHeight,
+                                                    final GordianLMSWidth pWidth,
+                                                    final GordianLength pLength,
+                                                    final int pDepth) {
+<span class="fc" id="L124">        theSubSpec = new GordianCoreLMSSpec(pHashType, pHeight, pWidth, pLength, pDepth);</span>
+<span class="fc" id="L125">        return this;</span>
+    }
+
+    @Override
+    public GordianKeyPairSpecBuilder withNTRUPrimeSubSpec(final GordianNTRUPrimeType pType,
+                                                          final GordianNTRUPrimeParams pParams) {
+<span class="fc" id="L131">        theSubSpec = new GordianCoreNTRUPrimeSpec(pType, pParams);</span>
+<span class="fc" id="L132">        return this;</span>
+    }
+
+    @Override
+    public GordianKeyPairSpecBuilder withKeyPairSpecs(final List&lt;GordianKeyPairSpec&gt; pSpecs) {
+<span class="fc" id="L137">        theSubSpec = pSpecs;</span>
+<span class="fc" id="L138">        return this;</span>
+    }
+
+    @Override
+    public GordianKeyPairSpec build() {
+<span class="fc" id="L143">        final GordianCoreKeyPairSpec mySpec = new GordianCoreKeyPairSpec(theKeyPairType, theSubSpec);</span>
+<span class="fc" id="L144">        reset();</span>
+<span class="fc" id="L145">        return mySpec;</span>
+    }
+
+    /**
+     * Reset state.
+     */
+    private void reset() {
+<span class="fc" id="L152">        theKeyPairType = null;</span>
+<span class="fc" id="L153">        theSubSpec = null;</span>
+<span class="fc" id="L154">    }</span>
+
+    /**
+     * Create xmssKey.
+     *
+     * @param pSpec the xmssSpec
+     * @return the KeySpec
+     */
+    public GordianKeyPairSpec xmss(final GordianXMSSSpec pSpec) {
+<span class="fc" id="L163">        return new GordianCoreKeyPairSpec(GordianKeyPairType.XMSS, pSpec);</span>
+    }
+
+    /**
+     * Create hssKey.
+     *
+     * @param pSpec the lmsSpec
+     * @return the KeySpec
+     */
+    public GordianKeyPairSpec lms(final GordianLMSSpec pSpec) {
+<span class="fc" id="L173">        return new GordianCoreKeyPairSpec(GordianKeyPairType.LMS, pSpec);</span>
+    }
+
+    /**
+     * Create ntruPrimeKey.
+     *
+     * @param pSpec the ntruPrimeSpec
+     * @return the KeySpec
+     */
+    public GordianKeyPairSpec ntruprime(final GordianNTRUPrimeSpec pSpec) {
+<span class="fc" id="L183">        return new GordianCoreKeyPairSpec(GordianKeyPairType.NTRUPRIME, pSpec);</span>
+    }
+
+    /**
+     * List all possible keyPairSpecs.
+     *
+     * @return the list
+     */
+    public static List&lt;GordianKeyPairSpec&gt; listPossibleKeySpecs() {
+        /* Create the list */
+<span class="fc" id="L193">        final List&lt;GordianKeyPairSpec&gt; mySpecs = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L194">        final GordianCoreKeyPairSpecBuilder myBuilder = new GordianCoreKeyPairSpecBuilder();</span>
+
+        /* Add RSA */
+<span class="fc" id="L197">        EnumSet.allOf(GordianRSASpec.class).forEach(m -&gt; mySpecs.add(myBuilder.rsa(m)));</span>
+
+        /* Add DSA */
+<span class="fc" id="L200">        EnumSet.allOf(GordianDSASpec.class).forEach(t -&gt; mySpecs.add(myBuilder.dsa(t)));</span>
+
+        /* Add DH  */
+<span class="fc" id="L203">        EnumSet.allOf(GordianDHSpec.class).forEach(g -&gt; mySpecs.add(myBuilder.dh(g)));</span>
+
+        /* Add ElGamal  */
+<span class="fc" id="L206">        EnumSet.allOf(GordianDHSpec.class).forEach(g -&gt; mySpecs.add(myBuilder.elGamal(g)));</span>
+
+        /* Add EC */
+<span class="fc" id="L209">        EnumSet.allOf(GordianECSpec.class).forEach(c -&gt; mySpecs.add(myBuilder.ec(c)));</span>
+
+        /* Add SM2 */
+<span class="fc" id="L212">        EnumSet.allOf(GordianSM2Spec.class).forEach(c -&gt; mySpecs.add(myBuilder.sm2(c)));</span>
+
+        /* Add GOST2012 */
+<span class="fc" id="L215">        EnumSet.allOf(GordianGOSTSpec.class).forEach(c -&gt; mySpecs.add(myBuilder.gost2012(c)));</span>
+
+        /* Add DSTU4145 */
+<span class="fc" id="L218">        EnumSet.allOf(GordianDSTUSpec.class).forEach(c -&gt; mySpecs.add(myBuilder.dstu4145(c)));</span>
+
+        /* Add Ed25519/Ed448 */
+<span class="fc" id="L221">        mySpecs.add(myBuilder.ed448());</span>
+<span class="fc" id="L222">        mySpecs.add(myBuilder.ed25519());</span>
+
+        /* Add X25519/X448 */
+<span class="fc" id="L225">        mySpecs.add(myBuilder.x448());</span>
+<span class="fc" id="L226">        mySpecs.add(myBuilder.x25519());</span>
+
+        /* Add NewHope */
+<span class="fc" id="L229">        mySpecs.add(myBuilder.newHope());</span>
+
+        /* Add XMSS/XMSSMT */
+<span class="fc" id="L232">        GordianCoreXMSSSpec.listAllPossibleSpecs().forEach(t -&gt; mySpecs.add(myBuilder.xmss(t)));</span>
+
+        /* Add LMS */
+<span class="fc" id="L235">        GordianCoreLMSSpec.listAllPossibleSpecs().forEach(t -&gt; mySpecs.add(myBuilder.lms(t)));</span>
+
+        /* Add SPHINCSPlus/CMCE/Frodo/Saber */
+<span class="fc" id="L238">        EnumSet.allOf(GordianSLHDSASpec.class).forEach(t -&gt; mySpecs.add(myBuilder.slhdsa(t)));</span>
+<span class="fc" id="L239">        EnumSet.allOf(GordianCMCESpec.class).forEach(t -&gt; mySpecs.add(myBuilder.cmce(t)));</span>
+<span class="fc" id="L240">        EnumSet.allOf(GordianFRODOSpec.class).forEach(t -&gt; mySpecs.add(myBuilder.frodo(t)));</span>
+<span class="fc" id="L241">        EnumSet.allOf(GordianSABERSpec.class).forEach(t -&gt; mySpecs.add(myBuilder.saber(t)));</span>
+<span class="fc" id="L242">        EnumSet.allOf(GordianMLKEMSpec.class).forEach(t -&gt; mySpecs.add(myBuilder.mlkem(t)));</span>
+<span class="fc" id="L243">        EnumSet.allOf(GordianMLDSASpec.class).forEach(t -&gt; mySpecs.add(myBuilder.mldsa(t)));</span>
+<span class="fc" id="L244">        EnumSet.allOf(GordianHQCSpec.class).forEach(t -&gt; mySpecs.add(myBuilder.hqc(t)));</span>
+<span class="fc" id="L245">        EnumSet.allOf(GordianBIKESpec.class).forEach(t -&gt; mySpecs.add(myBuilder.bike(t)));</span>
+<span class="fc" id="L246">        EnumSet.allOf(GordianNTRUSpec.class).forEach(t -&gt; mySpecs.add(myBuilder.ntru(t)));</span>
+<span class="fc" id="L247">        EnumSet.allOf(GordianNTRUPlusSpec.class).forEach(t -&gt; mySpecs.add(myBuilder.ntruPlus(t)));</span>
+<span class="fc" id="L248">        EnumSet.allOf(GordianFalconSpec.class).forEach(t -&gt; mySpecs.add(myBuilder.falcon(t)));</span>
+<span class="fc" id="L249">        EnumSet.allOf(GordianMayoSpec.class).forEach(t -&gt; mySpecs.add(myBuilder.mayo(t)));</span>
+<span class="fc" id="L250">        EnumSet.allOf(GordianSnovaSpec.class).forEach(t -&gt; mySpecs.add(myBuilder.snova(t)));</span>
+<span class="fc" id="L251">        EnumSet.allOf(GordianPicnicSpec.class).forEach(t -&gt; mySpecs.add(myBuilder.picnic(t)));</span>
+
+        /* Add NTRUPrime */
+<span class="fc" id="L254">        GordianCoreNTRUPrimeSpec.listAllPossibleSpecs().forEach(t -&gt; mySpecs.add(myBuilder.ntruprime(t)));</span>
+
+        /* Return the list */
+<span class="fc" id="L257">        return mySpecs;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 
@@ -92,7 +93,7 @@ public interface GordianWrapper {
      * @throws GordianException on error
      */
     default byte[] deriveBytes(final byte[] pSecuredBytes) throws GordianException {
-<span class="fc" id="L95">        return deriveBytes(pSecuredBytes, 0);</span>
+<span class="fc" id="L96">        return deriveBytes(pSecuredBytes, 0);</span>
     }
 
     /**

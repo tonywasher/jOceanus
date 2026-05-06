@@ -24,13 +24,13 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.metis.data;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataIndexedItem;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataIndexedItem;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> java.util.List;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
@@ -139,66 +139,39 @@
 <a class="jxr_linenumber" name="L131" href="#L131">131</a> <em class="jxr_javadoccomment">     * @return true/false</em>
 <a class="jxr_linenumber" name="L132" href="#L132">132</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isNumeric() {
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>         <strong class="jxr_keyword">switch</strong> (<strong class="jxr_keyword">this</strong>) {
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>             <strong class="jxr_keyword">case</strong> SHORT:
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>             <strong class="jxr_keyword">case</strong> INTEGER:
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>             <strong class="jxr_keyword">case</strong> LONG:
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>             <strong class="jxr_keyword">case</strong> MONEY:
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>             <strong class="jxr_keyword">case</strong> PRICE:
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>             <strong class="jxr_keyword">case</strong> RATE:
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>             <strong class="jxr_keyword">case</strong> UNITS:
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>             <strong class="jxr_keyword">case</strong> RATIO:
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>             <strong class="jxr_keyword">default</strong>:
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>                 <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>         }
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>     }
-<a class="jxr_linenumber" name="L148" href="#L148">148</a> 
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L150" href="#L150">150</a> <em class="jxr_javadoccomment">     * Obtain class for item.</em>
-<a class="jxr_linenumber" name="L151" href="#L151">151</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L152" href="#L152">152</a> <em class="jxr_javadoccomment">     * @return the class (or null if indeterminate)</em>
-<a class="jxr_linenumber" name="L153" href="#L153">153</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>     <strong class="jxr_keyword">public</strong> Class&lt;?&gt; getDataTypeClass() {
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>         <strong class="jxr_keyword">switch</strong> (<strong class="jxr_keyword">this</strong>) {
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>             <strong class="jxr_keyword">case</strong> STRING:
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>                 <strong class="jxr_keyword">return</strong> String.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>             <strong class="jxr_keyword">case</strong> BYTEARRAY:
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>                 <strong class="jxr_keyword">return</strong> byte[].<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>             <strong class="jxr_keyword">case</strong> CHARARRAY:
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">char</strong>[].<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>             <strong class="jxr_keyword">case</strong> ENUM:
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>                 <strong class="jxr_keyword">return</strong> Enum.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>             <strong class="jxr_keyword">case</strong> BOOLEAN:
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>                 <strong class="jxr_keyword">return</strong> Boolean.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>             <strong class="jxr_keyword">case</strong> SHORT:
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>                 <strong class="jxr_keyword">return</strong> Short.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>             <strong class="jxr_keyword">case</strong> INTEGER:
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>                 <strong class="jxr_keyword">return</strong> Integer.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>             <strong class="jxr_keyword">case</strong> LONG:
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>                 <strong class="jxr_keyword">return</strong> Long.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>             <strong class="jxr_keyword">case</strong> DATE:
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>                 <strong class="jxr_keyword">return</strong> OceanusDate.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>             <strong class="jxr_keyword">case</strong> MONEY:
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>                 <strong class="jxr_keyword">return</strong> OceanusMoney.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>             <strong class="jxr_keyword">case</strong> PRICE:
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>                 <strong class="jxr_keyword">return</strong> OceanusPrice.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>             <strong class="jxr_keyword">case</strong> UNITS:
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>                 <strong class="jxr_keyword">return</strong> OceanusUnits.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>             <strong class="jxr_keyword">case</strong> RATE:
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>                 <strong class="jxr_keyword">return</strong> OceanusRate.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>             <strong class="jxr_keyword">case</strong> RATIO:
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>                 <strong class="jxr_keyword">return</strong> OceanusRatio.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>             <strong class="jxr_keyword">case</strong> LINK:
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>             <strong class="jxr_keyword">case</strong> LINKPAIR:
-<a class="jxr_linenumber" name="L186" href="#L186">186</a>                 <strong class="jxr_keyword">return</strong> MetisDataIndexedItem.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>             <strong class="jxr_keyword">case</strong> LINKSET:
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>                 <strong class="jxr_keyword">return</strong> List.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>             <strong class="jxr_keyword">default</strong>:
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L191" href="#L191">191</a>         }
-<a class="jxr_linenumber" name="L192" href="#L192">192</a>     }
-<a class="jxr_linenumber" name="L193" href="#L193">193</a> }
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">switch</strong> (<strong class="jxr_keyword">this</strong>) {
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>             <strong class="jxr_keyword">case</strong> SHORT, INTEGER, LONG, MONEY, PRICE, RATE, UNITS, RATIO -&gt; <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>             <strong class="jxr_keyword">default</strong> -&gt; false;
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>         };
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>     }
+<a class="jxr_linenumber" name="L139" href="#L139">139</a> 
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L141" href="#L141">141</a> <em class="jxr_javadoccomment">     * Obtain class for item.</em>
+<a class="jxr_linenumber" name="L142" href="#L142">142</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L143" href="#L143">143</a> <em class="jxr_javadoccomment">     * @return the class (or null if indeterminate)</em>
+<a class="jxr_linenumber" name="L144" href="#L144">144</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>     <strong class="jxr_keyword">public</strong> Class&lt;?&gt; getDataTypeClass() {
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">switch</strong> (<strong class="jxr_keyword">this</strong>) {
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>             <strong class="jxr_keyword">case</strong> STRING -&gt; String.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>             <strong class="jxr_keyword">case</strong> BYTEARRAY -&gt; byte[].<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>             <strong class="jxr_keyword">case</strong> CHARARRAY -&gt; <strong class="jxr_keyword">char</strong>[].<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>             <strong class="jxr_keyword">case</strong> ENUM -&gt; Enum.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>             <strong class="jxr_keyword">case</strong> BOOLEAN -&gt; Boolean.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>             <strong class="jxr_keyword">case</strong> SHORT -&gt; Short.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>             <strong class="jxr_keyword">case</strong> INTEGER -&gt; Integer.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>             <strong class="jxr_keyword">case</strong> LONG -&gt; Long.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>             <strong class="jxr_keyword">case</strong> DATE -&gt; OceanusDate.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>             <strong class="jxr_keyword">case</strong> MONEY -&gt; OceanusMoney.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>             <strong class="jxr_keyword">case</strong> PRICE -&gt; OceanusPrice.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>             <strong class="jxr_keyword">case</strong> UNITS -&gt; OceanusUnits.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>             <strong class="jxr_keyword">case</strong> RATE -&gt; OceanusRate.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>             <strong class="jxr_keyword">case</strong> RATIO -&gt; OceanusRatio.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>             <strong class="jxr_keyword">case</strong> LINK, LINKPAIR -&gt; MetisDataIndexedItem.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>             <strong class="jxr_keyword">case</strong> LINKSET -&gt; List.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>             <strong class="jxr_keyword">default</strong> -&gt; <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>         };
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>     }
+<a class="jxr_linenumber" name="L166" href="#L166">166</a> }
 </pre>
 <hr/>
 <div id="footer">© 2012–2026</div>

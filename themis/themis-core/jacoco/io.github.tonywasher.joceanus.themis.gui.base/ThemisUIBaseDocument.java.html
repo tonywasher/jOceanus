@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisUIBaseDocument.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.gui.base</a> &gt; <span class="el_source">ThemisUIBaseDocument.java</span></div><h1>ThemisUIBaseDocument.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.gui.base;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
+
+/**
+ * Base Document Builder for source.
+ */
+public abstract class ThemisUIBaseDocument
+        implements ThemisUIDocBuilder {
+    /**
+     * Logger.
+     */
+<span class="nc" id="L48">    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(ThemisUIBaseDocument.class);</span>
+
+    /**
+     * The Table standard class.
+     */
+    public static final String CLASSTBLSTD = &quot;tableStd&quot;;
+
+    /**
+     * The Table Zebra class.
+     */
+    public static final String CLASSTBLZEBRA = &quot;tableZebra&quot;;
+
+    /**
+     * The document builder.
+     */
+    private final DocumentBuilder theBuilder;
+
+    /**
+     * The Transformer.
+     */
+    private final Transformer theXformer;
+
+    /**
+     * The document.
+     */
+    private Document theDocument;
+
+    /**
+     * Constructor.
+     *
+     * @throws OceanusException on error
+     */
+<span class="nc" id="L80">    protected ThemisUIBaseDocument() throws OceanusException {</span>
+        /* Protect against exceptions */
+        try {
+            /* Create the document builder */
+<span class="nc" id="L84">            final DocumentBuilderFactory myDocFactory = DocumentBuilderFactory.newInstance();</span>
+<span class="nc" id="L85">            myDocFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);</span>
+<span class="nc" id="L86">            myDocFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, &quot;&quot;);</span>
+<span class="nc" id="L87">            myDocFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, &quot;&quot;);</span>
+<span class="nc" id="L88">            theBuilder = myDocFactory.newDocumentBuilder();</span>
+
+            /* Create the transformer */
+<span class="nc" id="L91">            final TransformerFactory myXformFactory = TransformerFactory.newInstance();</span>
+<span class="nc" id="L92">            myXformFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);</span>
+<span class="nc" id="L93">            myXformFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, &quot;&quot;);</span>
+<span class="nc" id="L94">            myXformFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, &quot;&quot;);</span>
+<span class="nc" id="L95">            theXformer = myXformFactory.newTransformer();</span>
+<span class="nc" id="L96">            theXformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, &quot;yes&quot;);</span>
+
+<span class="nc" id="L98">        } catch (Exception e) {</span>
+<span class="nc" id="L99">            throw new ThemisIOException(&quot;Failed to create&quot;, e);</span>
+<span class="nc" id="L100">        }</span>
+<span class="nc" id="L101">    }</span>
+
+    /**
+     * Obtain the document.
+     *
+     * @return the document
+     */
+    public Document getDocument() {
+<span class="nc" id="L109">        return theDocument;</span>
+    }
+
+    /**
+     * Create new document.
+     *
+     * @return the body
+     */
+    protected Element newDocument() {
+        /* Create the new document */
+<span class="nc" id="L119">        theDocument = theBuilder.newDocument();</span>
+
+        /* Create the standard structure */
+<span class="nc" id="L122">        final Element myHtml = createElement(ThemisUIHTMLTag.HTML);</span>
+<span class="nc" id="L123">        theDocument.appendChild(myHtml);</span>
+<span class="nc" id="L124">        final Element myBody = createElement(ThemisUIHTMLTag.BODY);</span>
+<span class="nc" id="L125">        myHtml.appendChild(myBody);</span>
+<span class="nc" id="L126">        return myBody;</span>
+    }
+
+    @Override
+    public Element createElement(final ThemisUIHTMLTag pTag) {
+<span class="nc" id="L131">        return theDocument.createElement(pTag.getTag());</span>
+    }
+
+    @Override
+    public Text createTextNode(final String pText) {
+<span class="nc" id="L136">        return theDocument.createTextNode(pText);</span>
+    }
+
+    @Override
+    public Text createTextNode(final char pChar) {
+<span class="nc" id="L141">        return createTextNode(&quot;&quot; + pChar);</span>
+    }
+
+    @Override
+    public void setAttribute(final Element pElement,
+                             final ThemisUIHTMLAttr pAttr,
+                             final String pValue) {
+<span class="nc" id="L148">        pElement.setAttribute(pAttr.getAttr(), pValue);</span>
+<span class="nc" id="L149">    }</span>
+
+    @Override
+    public void addClassToElement(final Element pElement,
+                                  final String pClass) {
+<span class="nc" id="L154">        final String myAttr = ThemisUIHTMLAttr.CLASS.getAttr();</span>
+<span class="nc" id="L155">        final String myExist = pElement.getAttribute(myAttr);</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (myExist.isEmpty()) {</span>
+<span class="nc" id="L157">            pElement.setAttribute(myAttr, pClass);</span>
+        } else {
+<span class="nc" id="L159">            pElement.setAttribute(myAttr, myExist + ThemisChar.BLANK + pClass);</span>
+        }
+<span class="nc" id="L161">    }</span>
+
+    @Override
+    public void addToolTipToElement(final Element pElement,
+                                    final String pToolTip) {
+<span class="nc" id="L166">        addClassToElement(pElement, &quot;toolTipHolder&quot;);</span>
+<span class="nc" id="L167">        final Element myToolTip = createElement(ThemisUIHTMLTag.SPAN);</span>
+<span class="nc" id="L168">        pElement.appendChild(myToolTip);</span>
+<span class="nc" id="L169">        addClassToElement(myToolTip, &quot;toolTip&quot;);</span>
+<span class="nc" id="L170">        myToolTip.setTextContent(pToolTip);</span>
+<span class="nc" id="L171">    }</span>
+
+    /**
+     * Format XML.
+     *
+     * @return the formatted XML
+     */
+    protected String formatXML() {
+        /* Protect against exceptions */
+        try {
+            /* Transform the new document */
+<span class="nc" id="L182">            final StringWriter myWriter = new StringWriter();</span>
+<span class="nc" id="L183">            theXformer.transform(new DOMSource(theDocument), new StreamResult(myWriter));</span>
+<span class="nc" id="L184">            return myWriter.getBuffer().toString();</span>
+
+<span class="nc" id="L186">        } catch (TransformerException e) {</span>
+<span class="nc" id="L187">            LOGGER.error(&quot;Failed to format&quot;, e);</span>
+<span class="nc" id="L188">            return &quot;&quot;;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

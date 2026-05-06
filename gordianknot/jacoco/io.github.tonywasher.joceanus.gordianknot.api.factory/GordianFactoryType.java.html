@@ -16,54 +16,18 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.factory;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
-
 /**
  * Factory Type.
  */
-<span class="fc" id="L24">public enum GordianFactoryType {</span>
+<span class="fc" id="L22">public enum GordianFactoryType {</span>
     /**
      * BouncyCastle.
      */
-<span class="fc" id="L28">    BC,</span>
+<span class="fc" id="L26">    BC,</span>
 
     /**
      * JCA.
      */
-<span class="fc" id="L33">    JCA;</span>
-
-    /**
-     * The String name.
-     */
-    private String theName;
-
-    @Override
-    public String toString() {
-        /* If we have not yet loaded the name */
-<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (theName == null) {</span>
-            /* Load the name */
-<span class="fc" id="L45">            theName = bundleIdForFactoryType().getValue();</span>
-        }
-
-        /* return the name */
-<span class="fc" id="L49">        return theName;</span>
-    }
-
-    /**
-     * Obtain the resource bundleId for this factoryType.
-     *
-     * @return the resource bundleId
-     */
-    private GordianBundleId bundleIdForFactoryType() {
-        /* Create the map and return it */
-<span class="pc bpc" id="L59" title="1 of 3 branches missed.">        switch (this) {</span>
-            case BC:
-<span class="fc" id="L61">                return GordianFactoryResource.FACTORY_BC;</span>
-            case JCA:
-<span class="fc" id="L63">                return GordianFactoryResource.FACTORY_JCA;</span>
-            default:
-<span class="nc" id="L65">                throw new IllegalArgumentException();</span>
-        }
-    }
+<span class="fc" id="L31">    JCA;</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

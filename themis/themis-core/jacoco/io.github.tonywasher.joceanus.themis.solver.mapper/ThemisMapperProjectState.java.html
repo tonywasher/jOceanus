@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisMapperProjectState.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.solver.mapper</a> &gt; <span class="el_source">ThemisMapperProjectState.java</span></div><h1>ThemisMapperProjectState.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.solver.mapper;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisNodeInstance;
+import io.github.tonywasher.joceanus.themis.parser.node.ThemisNodeImport;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverClass;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverFile;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverModule;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverPackage;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverProject;
+import io.github.tonywasher.joceanus.themis.solver.reflect.ThemisReflectExternal;
+import io.github.tonywasher.joceanus.themis.solver.reflect.ThemisReflectJar;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Project State.
+ */
+public class ThemisMapperProjectState
+        implements AutoCloseable {
+    /**
+     * Map of all classes defined in the project.
+     */
+    private final Map&lt;String, ThemisSolverClass&gt; theProjectClasses;
+
+    /**
+     * Map of all external classes referenced in the project.
+     */
+    private final Map&lt;String, ThemisReflectExternal&gt; theExternalClasses;
+
+    /**
+     * The Jar parser.
+     */
+    private final ThemisReflectJar theJar;
+
+    /**
+     * Constructor.
+     *
+     * @param pProject the project
+     * @throws OceanusException on error
+     */
+<span class="fc" id="L64">    ThemisMapperProjectState(final ThemisSolverProject pProject) throws OceanusException {</span>
+        /* build the project classMap */
+<span class="fc" id="L66">        theProjectClasses = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L67">        buildProjectClassMap(pProject);</span>
+
+        /* build the external classMap */
+<span class="fc" id="L70">        theExternalClasses = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L71">        buildExternalClassMap(pProject);</span>
+
+        /* Process external classes */
+<span class="fc" id="L74">        theJar = new ThemisReflectJar(pProject.getProjectParser(), theExternalClasses);</span>
+<span class="fc" id="L75">        theJar.processExternalClasses();</span>
+<span class="fc" id="L76">    }</span>
+
+    /**
+     * Obtain the project classes.
+     *
+     * @return the project classes.
+     */
+    Map&lt;String, ThemisSolverClass&gt; getProjectClassMap() {
+<span class="fc" id="L84">        return theProjectClasses;</span>
+    }
+
+    /**
+     * Obtain the external classes.
+     *
+     * @return the external classes.
+     */
+    Map&lt;String, ThemisReflectExternal&gt; getExternalClassMap() {
+<span class="fc" id="L93">        return theExternalClasses;</span>
+    }
+
+    /**
+     * Build project classMap.
+     *
+     * @param pProject the project
+     */
+    private void buildProjectClassMap(final ThemisSolverProject pProject) {
+        /* Loop through all modules */
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        for (ThemisSolverModule myModule : pProject.getModules()) {</span>
+            /* Loop through all packages */
+<span class="fc bfc" id="L105" title="All 2 branches covered.">            for (ThemisSolverPackage myPackage : myModule.getPackages().values()) {</span>
+<span class="fc" id="L106">                buildProjectClassMap(myPackage);</span>
+<span class="fc" id="L107">            }</span>
+<span class="fc" id="L108">        }</span>
+<span class="fc" id="L109">    }</span>
+
+    /**
+     * Build project classMap.
+     *
+     * @param pPackage the package
+     */
+    private void buildProjectClassMap(final ThemisSolverPackage pPackage) {
+        /* Loop through all files */
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        for (ThemisSolverFile myFile : pPackage.getFiles()) {</span>
+            /* Loop through all classes */
+<span class="fc bfc" id="L120" title="All 2 branches covered.">            for (ThemisSolverClass myClass : myFile.getClasses()) {</span>
+<span class="fc" id="L121">                theProjectClasses.put(myClass.getFullName(), myClass);</span>
+<span class="fc" id="L122">            }</span>
+<span class="fc" id="L123">        }</span>
+<span class="fc" id="L124">    }</span>
+
+    /**
+     * Build external classMap.
+     *
+     * @param pProject the project
+     */
+    private void buildExternalClassMap(final ThemisSolverProject pProject) {
+        /* Loop through all modules */
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        for (ThemisSolverModule myModule : pProject.getModules()) {</span>
+            /* Loop through all packages */
+<span class="fc bfc" id="L135" title="All 2 branches covered.">            for (ThemisSolverPackage myPackage : myModule.getPackages().values()) {</span>
+<span class="fc" id="L136">                buildExternalClassMap(myPackage);</span>
+<span class="fc" id="L137">            }</span>
+<span class="fc" id="L138">        }</span>
+<span class="fc" id="L139">    }</span>
+
+    /**
+     * Build external classMap.
+     *
+     * @param pPackage the package to process.
+     */
+    private void buildExternalClassMap(final ThemisSolverPackage pPackage) {
+        /* Loop through all files */
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        for (ThemisSolverFile myFile : pPackage.getFiles()) {</span>
+            /* Process the imports */
+<span class="fc bfc" id="L150" title="All 2 branches covered.">            for (ThemisNodeInstance myInstance : myFile.getUnderlyingFile().getContents().getImports()) {</span>
+                /* Determine full name */
+<span class="fc" id="L152">                final ThemisNodeImport myImport = (ThemisNodeImport) myInstance;</span>
+<span class="fc" id="L153">                final String myFullName = myImport.getFullName();</span>
+
+                /* If this is a previously unseen class */
+<span class="fc bfc" id="L156" title="All 2 branches covered.">                if (!theProjectClasses.containsKey(myFullName)) {</span>
+                    /* Ensure the external class map */
+<span class="fc" id="L158">                    theExternalClasses.computeIfAbsent(myFullName, n -&gt; new ThemisReflectExternal(myImport));</span>
+                }
+<span class="fc" id="L160">            }</span>
+<span class="fc" id="L161">        }</span>
+<span class="fc" id="L162">    }</span>
+
+    /**
+     * Obtain a list of all children of a project class.
+     *
+     * @param pClass the class
+     * @return the children
+     */
+    public List&lt;ThemisClassInstance&gt; listAllInherited(final String pClass) {
+        /* Create list of all ancestors */
+<span class="fc" id="L172">        final List&lt;String&gt; myAncestors = listAllAncestors(pClass);</span>
+
+        /* Build list of all children of the ancestors */
+<span class="fc" id="L175">        final List&lt;ThemisClassInstance&gt; myResult = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">        for (String myAncestor : myAncestors) {</span>
+<span class="fc" id="L177">            listAllInherited(myResult, myAncestor);</span>
+<span class="fc" id="L178">        }</span>
+<span class="fc" id="L179">        return myResult;</span>
+    }
+
+    /**
+     * Obtain a list of all inherited children of a class.
+     *
+     * @param pResult the list to populate
+     * @param pClass  the class
+     */
+    private void listAllInherited(final List&lt;ThemisClassInstance&gt; pResult,
+                                  final String pClass) {
+<span class="fc" id="L190">        final ThemisSolverClass myProjectClass = theProjectClasses.get(pClass);</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">        if (myProjectClass != null) {</span>
+<span class="fc" id="L192">            listAllProjectInherited(pResult, myProjectClass);</span>
+        } else {
+<span class="fc" id="L194">            listAllExternalInherited(pResult, theExternalClasses.get(pClass));</span>
+        }
+<span class="fc" id="L196">    }</span>
+
+    /**
+     * Obtain a list of all inherited children of a project class.
+     *
+     * @param pResult the list to populate
+     * @param pClass  the class
+     */
+    private void listAllProjectInherited(final List&lt;ThemisClassInstance&gt; pResult,
+                                         final ThemisSolverClass pClass) {
+<span class="fc" id="L206">        final String myParent = pClass.getFullName();</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">        for (ThemisSolverClass myChild : theProjectClasses.values()) {</span>
+<span class="fc" id="L208">            final String myCheckName = myParent + ThemisChar.PERIOD + myChild.getName();</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">            if (myCheckName.equals(myChild.getFullName())) {</span>
+<span class="fc" id="L210">                pResult.add(myChild.getUnderlyingClass());</span>
+            }
+<span class="fc" id="L212">        }</span>
+<span class="fc" id="L213">    }</span>
+
+    /**
+     * Obtain a list of all inherited children of an external class.
+     *
+     * @param pResult the list to populate
+     * @param pClass  the class
+     */
+    private void listAllExternalInherited(final List&lt;ThemisClassInstance&gt; pResult,
+                                          final ThemisReflectExternal pClass) {
+<span class="fc" id="L223">        final String myParent = pClass.getFullName();</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">        for (ThemisReflectExternal myChild : theExternalClasses.values()) {</span>
+<span class="fc" id="L225">            final String myCheckName = myParent + ThemisChar.PERIOD + myChild.getName();</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">            if (myCheckName.equals(myChild.getFullName())) {</span>
+<span class="fc" id="L227">                pResult.add(myChild.getClassInstance());</span>
+            }
+<span class="fc" id="L229">        }</span>
+<span class="fc" id="L230">    }</span>
+
+    /**
+     * Obtain a list of all ancestors of a class.
+     *
+     * @param pClass the class
+     * @return the ancestors
+     */
+    private List&lt;String&gt; listAllAncestors(final String pClass) {
+<span class="fc" id="L239">        final List&lt;String&gt; myResult = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L240">        final ThemisSolverClass myClass = theProjectClasses.get(pClass);</span>
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">        if (myClass != null) {</span>
+<span class="fc" id="L242">            listAllProjectAncestors(myResult, myClass);</span>
+        } else {
+<span class="nc" id="L244">            listAllExternalAncestors(myResult, theExternalClasses.get(pClass));</span>
+        }
+<span class="fc" id="L246">        return myResult;</span>
+    }
+
+    /**
+     * Populate a list of all ancestors of a project class.
+     *
+     * @param pExisting the list of existing ancestors
+     * @param pClass    the class
+     */
+    private void listAllProjectAncestors(final List&lt;String&gt; pExisting,
+                                         final ThemisSolverClass pClass) {
+<span class="fc bfc" id="L257" title="All 2 branches covered.">        for (String myAncestor : pClass.getAncestors()) {</span>
+            /* If the ancestor is unknown */
+<span class="fc bfc" id="L259" title="All 2 branches covered.">            if (!pExisting.contains(myAncestor)) {</span>
+                /* Add the ancestor */
+<span class="fc" id="L261">                pExisting.add(myAncestor);</span>
+
+                /* If the ancestor is a project file */
+<span class="fc" id="L264">                final ThemisSolverClass myClass = theProjectClasses.get(myAncestor);</span>
+<span class="fc bfc" id="L265" title="All 2 branches covered.">                if (myClass != null) {</span>
+                    /* Process all ancestors */
+<span class="fc" id="L267">                    listAllProjectAncestors(pExisting, myClass);</span>
+
+                    /* else must be external so add all ancestors */
+                } else {
+<span class="fc" id="L271">                    listAllExternalAncestors(pExisting, theExternalClasses.get(myAncestor));</span>
+                }
+            }
+<span class="fc" id="L274">        }</span>
+<span class="fc" id="L275">    }</span>
+
+    /**
+     * Populate a list of all ancestors of an external class.
+     *
+     * @param pExisting the list of existing ancestors
+     * @param pClass    the class
+     */
+    private void listAllExternalAncestors(final List&lt;String&gt; pExisting,
+                                          final ThemisReflectExternal pClass) {
+<span class="fc bfc" id="L285" title="All 2 branches covered.">        for (String myAncestor : pClass.getAncestors()) {</span>
+            /* If the ancestor is unknown */
+<span class="fc bfc" id="L287" title="All 2 branches covered.">            if (!pExisting.contains(myAncestor)) {</span>
+                /* Add the ancestor and all of its ancestors */
+<span class="fc" id="L289">                pExisting.add(myAncestor);</span>
+<span class="fc" id="L290">                listAllExternalAncestors(pExisting, theExternalClasses.get(myAncestor));</span>
+            }
+<span class="fc" id="L292">        }</span>
+<span class="fc" id="L293">    }</span>
+
+    /**
+     * Try a class as a java.lang class.
+     *
+     * @param pName the class name
+     * @return the loaded class or null if it did not exist
+     */
+    public ThemisReflectExternal tryJavaLang(final String pName) {
+<span class="fc" id="L302">        return theJar.tryJavaLang(pName);</span>
+    }
+
+    /**
+     * Try a class as a java.lang class.
+     *
+     * @param pName the class name
+     * @return the loaded class or null if it did not exist
+     */
+    public ThemisReflectExternal tryNamedClass(final String pName) {
+<span class="fc" id="L312">        return theJar.tryNamedClass(pName);</span>
+    }
+
+    @Override
+    public void close() {
+<span class="fc" id="L317">        theJar.close();</span>
+<span class="fc" id="L318">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
@@ -28,6 +26,8 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Transaction details.
@@ -306,62 +306,57 @@ public class MoneyWiseXAnalysisTransaction {
     void adjustParent() {
         /* Switch on category class */
 <span class="pc bpc" id="L308" title="1 of 5 branches missed.">        switch (getCategoryClass()) {</span>
-            case INTEREST:
-            case LOYALTYBONUS:
+            case INTEREST, LOYALTYBONUS:
                 /* Obtain detailed category */
-<span class="fc" id="L312">                theCategory = ((MoneyWiseAssetBase) theDebit).getDetailedCategory(theCategory, theTrans.getTaxYear());</span>
+<span class="fc" id="L311">                theCategory = ((MoneyWiseAssetBase) theDebit).getDetailedCategory(theCategory, theTrans.getTaxYear());</span>
 
                 /* The interest bearing account should be replaced by its parent */
-<span class="pc bpc" id="L315" title="1 of 2 branches missed.">                theChild = theDebit.equals(theCredit)</span>
-<span class="fc" id="L316">                        ? null</span>
-<span class="pc" id="L317">                        : theTrans.getAccount();</span>
-<span class="fc bfc" id="L318" title="All 2 branches covered.">                if (isTo) {</span>
-<span class="fc" id="L319">                    theDebit = theDebit.getParent();</span>
+<span class="pc bpc" id="L314" title="1 of 2 branches missed.">                theChild = theDebit.equals(theCredit)</span>
+<span class="fc" id="L315">                        ? null</span>
+<span class="pc" id="L316">                        : theTrans.getAccount();</span>
+<span class="fc bfc" id="L317" title="All 2 branches covered.">                if (isTo) {</span>
+<span class="fc" id="L318">                    theDebit = theDebit.getParent();</span>
                 } else {
-<span class="fc" id="L321">                    theCredit = theCredit.getParent();</span>
+<span class="fc" id="L320">                    theCredit = theCredit.getParent();</span>
                 }
-<span class="fc bfc" id="L323" title="All 2 branches covered.">                isTo = !isTo;</span>
-<span class="fc" id="L324">                break;</span>
+<span class="fc bfc" id="L322" title="All 2 branches covered.">                isTo = !isTo;</span>
+<span class="fc" id="L323">                break;</span>
             case DIVIDEND:
                 /* Obtain detailed category */
-<span class="fc" id="L327">                final MoneyWisePortfolio myPortfolio = ((MoneyWiseSecurityHolding) theDebit).getPortfolio();</span>
-<span class="fc" id="L328">                theCategory = myPortfolio.getDetailedCategory(theCategory, theTrans.getTaxYear());</span>
+<span class="fc" id="L326">                final MoneyWisePortfolio myPortfolio = ((MoneyWiseSecurityHolding) theDebit).getPortfolio();</span>
+<span class="fc" id="L327">                theCategory = myPortfolio.getDetailedCategory(theCategory, theTrans.getTaxYear());</span>
 
                 /* The dividend generating account should be replaced by its parent */
-<span class="fc bfc" id="L331" title="All 2 branches covered.">                theChild = theDebit.equals(theCredit)</span>
-<span class="fc" id="L332">                        ? null</span>
-<span class="fc" id="L333">                        : theTrans.getAccount();</span>
-<span class="pc bpc" id="L334" title="1 of 2 branches missed.">                if (isTo) {</span>
-<span class="fc" id="L335">                    theDebit = theDebit.getParent();</span>
+<span class="fc bfc" id="L330" title="All 2 branches covered.">                theChild = theDebit.equals(theCredit)</span>
+<span class="fc" id="L331">                        ? null</span>
+<span class="fc" id="L332">                        : theTrans.getAccount();</span>
+<span class="pc bpc" id="L333" title="1 of 2 branches missed.">                if (isTo) {</span>
+<span class="fc" id="L334">                    theDebit = theDebit.getParent();</span>
                 } else {
-<span class="nc" id="L337">                    theCredit = theCredit.getParent();</span>
+<span class="nc" id="L336">                    theCredit = theCredit.getParent();</span>
                 }
-<span class="pc bpc" id="L339" title="1 of 2 branches missed.">                isTo = !isTo;</span>
-<span class="fc" id="L340">                break;</span>
-            case LOANINTERESTEARNED:
-            case CASHBACK:
-            case WRITEOFF:
-            case LOANINTERESTCHARGED:
+<span class="pc bpc" id="L338" title="1 of 2 branches missed.">                isTo = !isTo;</span>
+<span class="fc" id="L339">                break;</span>
+            case LOANINTERESTEARNED, CASHBACK, WRITEOFF, LOANINTERESTCHARGED:
                 /* True debit account is the parent of the asset */
                 /* Note that debit and credit must be identical */
-<span class="fc bfc" id="L347" title="All 2 branches covered.">                if (isTo) {</span>
-<span class="fc" id="L348">                    theDebit = theDebit.getParent();</span>
+<span class="fc bfc" id="L343" title="All 2 branches covered.">                if (isTo) {</span>
+<span class="fc" id="L344">                    theDebit = theDebit.getParent();</span>
                 } else {
-<span class="fc" id="L350">                    theCredit = theCredit.getParent();</span>
+<span class="fc" id="L346">                    theCredit = theCredit.getParent();</span>
                 }
-<span class="fc bfc" id="L352" title="All 2 branches covered.">                isTo = !isTo;</span>
-<span class="fc" id="L353">                break;</span>
-            case RENTALINCOME:
-            case ROOMRENTALINCOME:
+<span class="fc bfc" id="L348" title="All 2 branches covered.">                isTo = !isTo;</span>
+<span class="fc" id="L349">                break;</span>
+            case RENTALINCOME, ROOMRENTALINCOME:
                 /* True debit account is the parent of the security */
-<span class="nc bnc" id="L357" title="All 2 branches missed.">                theChild = theDebit.equals(theCredit)</span>
-<span class="nc" id="L358">                        ? null</span>
-<span class="nc" id="L359">                        : theDebit;</span>
-<span class="nc" id="L360">                theDebit = theCredit.getParent();</span>
-<span class="nc" id="L361">                break;</span>
+<span class="nc bnc" id="L352" title="All 2 branches missed.">                theChild = theDebit.equals(theCredit)</span>
+<span class="nc" id="L353">                        ? null</span>
+<span class="nc" id="L354">                        : theDebit;</span>
+<span class="nc" id="L355">                theDebit = theCredit.getParent();</span>
+<span class="nc" id="L356">                break;</span>
             default:
                 break;
         }
-<span class="fc" id="L365">    }</span>
+<span class="fc" id="L360">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

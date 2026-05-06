@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 
 import java.util.Objects;
 
@@ -68,7 +68,7 @@ public abstract class GordianCoreKeyPair
 
     @Override
     public boolean isPublicOnly() {
-<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        return thePrivateKey == null;</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        return thePrivateKey == null;</span>
     }
 
     /**
@@ -124,32 +124,29 @@ public abstract class GordianCoreKeyPair
         }
 
         /* Make sure that the object is the same class */
-<span class="pc bpc" id="L127" title="1 of 2 branches missed.">        if (!(pThat instanceof GordianCoreKeyPair)) {</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">        if (!(pThat instanceof GordianCoreKeyPair myThat)) {</span>
 <span class="nc" id="L128">            return false;</span>
         }
 
-        /* Access the target field */
-<span class="fc" id="L132">        final GordianCoreKeyPair myThat = (GordianCoreKeyPair) pThat;</span>
-
         /* Check key Spec */
-<span class="pc bpc" id="L135" title="1 of 2 branches missed.">        if (!theKeySpec.equals(myThat.getKeyPairSpec())) {</span>
-<span class="nc" id="L136">            return false;</span>
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">        if (!theKeySpec.equals(myThat.getKeyPairSpec())) {</span>
+<span class="nc" id="L133">            return false;</span>
         }
 
         /* Check public key */
-<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        if (!thePublicKey.equals(myThat.getPublicKey())) {</span>
-<span class="nc" id="L141">            return false;</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        if (!thePublicKey.equals(myThat.getPublicKey())) {</span>
+<span class="nc" id="L138">            return false;</span>
         }
 
         /* Check private key */
-<span class="pc bpc" id="L145" title="1 of 2 branches missed.">        return isPublicOnly()</span>
-<span class="nc" id="L146">                ? myThat.isPublicOnly()</span>
-<span class="fc" id="L147">                : thePrivateKey.equals(myThat.getPrivateKey());</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">        return isPublicOnly()</span>
+<span class="nc" id="L143">                ? myThat.isPublicOnly()</span>
+<span class="fc" id="L144">                : thePrivateKey.equals(myThat.getPrivateKey());</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L152">        return Objects.hash(getKeyPairSpec(), thePublicKey, thePrivateKey);</span>
+<span class="nc" id="L149">        return Objects.hash(getKeyPairSpec(), thePublicKey, thePrivateKey);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

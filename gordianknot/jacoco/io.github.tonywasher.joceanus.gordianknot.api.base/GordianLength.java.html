@@ -66,24 +66,89 @@ package io.github.tonywasher.joceanus.gordianknot.api.base;
 <span class="fc" id="L66">    LEN_256(256),</span>
 
     /**
+     * 283 bits.
+     */
+<span class="fc" id="L71">    LEN_283(283),</span>
+
+    /**
+     * 306 bits.
+     */
+<span class="fc" id="L76">    LEN_306(306),</span>
+
+    /**
      * 320 bits.
      */
-<span class="fc" id="L71">    LEN_320(320),</span>
+<span class="fc" id="L81">    LEN_320(320),</span>
+
+    /**
+     * 366 bits.
+     */
+<span class="fc" id="L86">    LEN_366(366),</span>
 
     /**
      * 384 bits.
      */
-<span class="fc" id="L76">    LEN_384(384),</span>
+<span class="fc" id="L91">    LEN_384(384),</span>
+
+    /**
+     * 409 bits.
+     */
+<span class="fc" id="L96">    LEN_409(409),</span>
+
+    /**
+     * 431 bits.
+     */
+<span class="fc" id="L101">    LEN_431(431),</span>
 
     /**
      * 512 bits.
      */
-<span class="fc" id="L81">    LEN_512(512),</span>
+<span class="fc" id="L106">    LEN_512(512),</span>
+
+    /**
+     * 521 bits.
+     */
+<span class="fc" id="L111">    LEN_521(521),</span>
+
+    /**
+     * 571 bits.
+     */
+<span class="fc" id="L116">    LEN_571(571),</span>
 
     /**
      * 1024 bits.
      */
-<span class="fc" id="L86">    LEN_1024(1024);</span>
+<span class="fc" id="L121">    LEN_1024(1024),</span>
+
+    /**
+     * 1536 bits.
+     */
+<span class="fc" id="L126">    LEN_1536(1536),</span>
+
+    /**
+     * 2048 bits.
+     */
+<span class="fc" id="L131">    LEN_2048(2048),</span>
+
+    /**
+     * 3072 bits.
+     */
+<span class="fc" id="L136">    LEN_3072(3072),</span>
+
+    /**
+     * 4096 bits.
+     */
+<span class="fc" id="L141">    LEN_4096(4096),</span>
+
+    /**
+     * 6144 bits.
+     */
+<span class="fc" id="L146">    LEN_6144(6144),</span>
+
+    /**
+     * 8192 bits.
+     */
+<span class="fc" id="L151">    LEN_8192(8192);</span>
 
     /**
      * The length.
@@ -95,9 +160,9 @@ package io.github.tonywasher.joceanus.gordianknot.api.base;
      *
      * @param pLength the digest length.
      */
-<span class="fc" id="L98">    GordianLength(final int pLength) {</span>
-<span class="fc" id="L99">        theLength = pLength;</span>
-<span class="fc" id="L100">    }</span>
+<span class="fc" id="L163">    GordianLength(final int pLength) {</span>
+<span class="fc" id="L164">        theLength = pLength;</span>
+<span class="fc" id="L165">    }</span>
 
     /**
      * Obtain the length (in bits).
@@ -105,7 +170,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.base;
      * @return the length
      */
     public int getLength() {
-<span class="fc" id="L108">        return theLength;</span>
+<span class="fc" id="L173">        return theLength;</span>
     }
 
     /**
@@ -114,12 +179,12 @@ package io.github.tonywasher.joceanus.gordianknot.api.base;
      * @return the length
      */
     public int getByteLength() {
-<span class="fc" id="L117">        return theLength / Byte.SIZE;</span>
+<span class="fc" id="L182">        return theLength / Byte.SIZE;</span>
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L122">        return Integer.toString(theLength);</span>
+<span class="fc" id="L187">        return Integer.toString(theLength);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

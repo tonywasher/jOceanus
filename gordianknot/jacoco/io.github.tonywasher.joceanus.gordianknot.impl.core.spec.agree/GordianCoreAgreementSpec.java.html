@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreAgreementSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree</a> &gt; <span class="el_source">GordianCoreAgreementSpec.java</span></div><h1>GordianCoreAgreementSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree;
+
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+
+import java.util.Objects;
+
+/**
+ * KeyPair Agreement Specification.
+ */
+public class GordianCoreAgreementSpec
+        implements GordianAgreementSpec {
+    /**
+     * KeyPairSpec.
+     */
+    private final GordianCoreKeyPairSpec theKeyPairSpec;
+
+    /**
+     * AgreementType.
+     */
+    private final GordianCoreAgreementType theAgreementType;
+
+    /**
+     * KDFType.
+     */
+    private final GordianCoreAgreementKDF theKDFType;
+
+    /**
+     * With Confirmation?.
+     */
+    private final boolean withConfirm;
+
+    /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pKeyPairSpec   the keyPairSpec
+     * @param pAgreementType the agreement type
+     * @param pKDFType       the KDF type
+     */
+    GordianCoreAgreementSpec(final GordianKeyPairSpec pKeyPairSpec,
+                             final GordianAgreementType pAgreementType,
+                             final GordianAgreementKDF pKDFType) {
+<span class="fc" id="L75">        this(pKeyPairSpec, pAgreementType, pKDFType, false);</span>
+<span class="fc" id="L76">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pKeyPairSpec   the keyPairSpec
+     * @param pAgreementType the agreement type
+     * @param pKDFType       the KDF type
+     * @param pConfirm       with key confirmation
+     */
+    GordianCoreAgreementSpec(final GordianKeyPairSpec pKeyPairSpec,
+                             final GordianAgreementType pAgreementType,
+                             final GordianAgreementKDF pKDFType,
+<span class="fc" id="L89">                             final boolean pConfirm) {</span>
+<span class="fc" id="L90">        theKeyPairSpec = (GordianCoreKeyPairSpec) pKeyPairSpec;</span>
+<span class="fc" id="L91">        theAgreementType = GordianCoreAgreementType.mapCoreType(pAgreementType);</span>
+<span class="fc" id="L92">        theKDFType = GordianCoreAgreementKDF.mapCoreKDF(pKDFType);</span>
+<span class="fc" id="L93">        withConfirm = pConfirm;</span>
+<span class="fc" id="L94">        isValid = checkValidity();</span>
+<span class="fc" id="L95">    }</span>
+
+    @Override
+    public GordianKeyPairSpec getKeyPairSpec() {
+<span class="fc" id="L99">        return theKeyPairSpec;</span>
+    }
+
+    /**
+     * Obtain the core keyPairSpec.
+     *
+     * @return the core Spec
+     */
+    public GordianCoreKeyPairSpec getCoreKeyPairSpec() {
+<span class="nc" id="L108">        return theKeyPairSpec;</span>
+    }
+
+    @Override
+    public GordianAgreementType getAgreementType() {
+<span class="fc" id="L113">        return theAgreementType.getType();</span>
+    }
+
+    /**
+     * Obtain the agreementType.
+     *
+     * @return the agreementType
+     */
+    public GordianCoreAgreementType getCoreAgreementType() {
+<span class="fc" id="L122">        return theAgreementType;</span>
+    }
+
+    @Override
+    public GordianAgreementKDF getKDFType() {
+<span class="fc" id="L127">        return theKDFType.getKDF();</span>
+    }
+
+    /**
+     * Obtain the kdfType.
+     *
+     * @return the kdfType
+     */
+    public GordianCoreAgreementKDF getCoreKDFType() {
+<span class="fc" id="L136">        return theKDFType;</span>
+    }
+
+    /**
+     * Is this agreement with key confirmation?
+     *
+     * @return true/false
+     */
+    public boolean withConfirm() {
+<span class="fc" id="L145">        return withConfirm;</span>
+    }
+
+    /**
+     * Is this Agreement supported?
+     *
+     * @return true/false
+     */
+    public boolean isSupported() {
+<span class="fc" id="L154">        final GordianKeyPairType myType = theKeyPairSpec.getKeyPairType();</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        return theAgreementType.isSupported(myType)</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">                &amp;&amp; theKDFType.isSupported(myType, theAgreementType.getType());</span>
+    }
+
+    /**
+     * Is the agreementSpec valid?
+     *
+     * @return true/false.
+     */
+    public boolean isValid() {
+<span class="fc" id="L165">        return isValid;</span>
+    }
+
+    /**
+     * Check spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        /* All components must be non-null */
+<span class="pc bpc" id="L175" title="3 of 6 branches missed.">        if (theKeyPairSpec == null</span>
+                || theAgreementType == null
+                || theKDFType == null) {
+<span class="nc" id="L178">            return false;</span>
+        }
+
+        /* Confirmation is restricted to certain agreement types */
+<span class="fc bfc" id="L182" title="All 2 branches covered.">        if (withConfirm) {</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">            return switch (theAgreementType.getType()) {</span>
+<span class="fc" id="L184">                case UNIFIED, MQV, SM2 -&gt; true;</span>
+<span class="fc" id="L185">                default -&gt; false;</span>
+            };
+        }
+
+        /* Valid if supported */
+<span class="fc" id="L190">        return isSupported();</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* If the agreementSpec is valid */
+<span class="pc bpc" id="L198" title="1 of 2 branches missed.">            if (isValid) {</span>
+                /* Load the name */
+<span class="fc" id="L200">                theName = theKeyPairSpec.toString()</span>
+                        + GordianSpecConstants.SEP + theAgreementType;
+
+                /* Add KDF type if present */
+<span class="fc bfc" id="L204" title="All 2 branches covered.">                if (GordianAgreementKDF.NONE != theKDFType.getKDF()) {</span>
+<span class="fc" id="L205">                    theName += GordianSpecConstants.SEP + theKDFType;</span>
+                }
+
+                /* Add Confirm if present */
+<span class="fc bfc" id="L209" title="All 2 branches covered.">                if (withConfirm) {</span>
+<span class="fc" id="L210">                    theName += GordianSpecConstants.SEP + &quot;CONFIRM&quot;;</span>
+                }
+            } else {
+                /* Report invalid spec */
+<span class="nc" id="L214">                theName = &quot;InvalidAgreementSpec: &quot; + theKeyPairSpec + &quot;:&quot; + theAgreementType + &quot;:&quot; + theKDFType;</span>
+            }
+        }
+
+        /* return the name */
+<span class="fc" id="L219">        return theName;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L226">            return true;</span>
+        }
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L229">            return false;</span>
+        }
+
+        /* Match subfields */
+<span class="fc" id="L233">        return pThat instanceof GordianCoreAgreementSpec myThat</span>
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">                &amp;&amp; Objects.equals(theKeyPairSpec, myThat.getKeyPairSpec())</span>
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">                &amp;&amp; Objects.equals(theAgreementType, myThat.getCoreAgreementType())</span>
+<span class="pc bpc" id="L236" title="1 of 2 branches missed.">                &amp;&amp; Objects.equals(theKDFType, myThat.getCoreKDFType())</span>
+<span class="pc bpc" id="L237" title="2 of 4 branches missed.">                &amp;&amp; withConfirm == myThat.withConfirm();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L242">        return Objects.hash(theKeyPairSpec, theAgreementType, theKDFType, withConfirm);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

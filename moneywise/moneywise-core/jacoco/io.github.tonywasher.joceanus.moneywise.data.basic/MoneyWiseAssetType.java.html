@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Enumeration of Asset Types.
@@ -244,19 +244,10 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return true/false
      */
     public boolean isValued() {
-<span class="fc bfc" id="L247" title="All 2 branches covered.">        switch (this) {</span>
-            case DEPOSIT:
-            case CASH:
-            case LOAN:
-            case PORTFOLIO:
-<span class="fc" id="L252">                return true;</span>
-            case AUTOEXPENSE:
-            case SECURITY:
-            case PAYEE:
-            case SECURITYHOLDING:
-            default:
-<span class="fc" id="L258">                return false;</span>
-        }
+<span class="fc bfc" id="L247" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc" id="L248">            case DEPOSIT, CASH, LOAN, PORTFOLIO -&gt; true;</span>
+<span class="fc" id="L249">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -265,19 +256,10 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return true/false
      */
     public boolean isBaseAccount() {
-<span class="pc bpc" id="L268" title="1 of 2 branches missed.">        switch (this) {</span>
-            case DEPOSIT:
-            case AUTOEXPENSE:
-            case CASH:
-            case LOAN:
-            case PORTFOLIO:
-            case SECURITYHOLDING:
-<span class="fc" id="L275">                return true;</span>
-            case SECURITY:
-            case PAYEE:
-            default:
-<span class="nc" id="L279">                return false;</span>
-        }
+<span class="pc bpc" id="L259" title="1 of 2 branches missed.">        return switch (this) {</span>
+<span class="fc" id="L260">            case DEPOSIT, AUTOEXPENSE, CASH, LOAN, PORTFOLIO, SECURITYHOLDING -&gt; true;</span>
+<span class="nc" id="L261">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -286,19 +268,10 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return true/false
      */
     public boolean isAsset() {
-<span class="pc bpc" id="L289" title="1 of 2 branches missed.">        switch (this) {</span>
-            case DEPOSIT:
-            case AUTOEXPENSE:
-            case SECURITY:
-            case CASH:
-            case LOAN:
-            case SECURITYHOLDING:
-            case PORTFOLIO:
-<span class="fc" id="L297">                return true;</span>
-            case PAYEE:
-            default:
-<span class="nc" id="L300">                return false;</span>
-        }
+<span class="pc bpc" id="L271" title="1 of 2 branches missed.">        return switch (this) {</span>
+<span class="fc" id="L272">            case DEPOSIT, AUTOEXPENSE, SECURITY, CASH, LOAN, SECURITYHOLDING, PORTFOLIO -&gt; true;</span>
+<span class="nc" id="L273">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -307,7 +280,7 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return true/false
      */
     public boolean isDeposit() {
-<span class="fc bfc" id="L310" title="All 2 branches covered.">        return this == DEPOSIT;</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">        return this == DEPOSIT;</span>
     }
 
     /**
@@ -316,7 +289,7 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return true/false
      */
     public boolean isLoan() {
-<span class="pc bpc" id="L319" title="1 of 2 branches missed.">        return this == LOAN;</span>
+<span class="pc bpc" id="L292" title="1 of 2 branches missed.">        return this == LOAN;</span>
     }
 
     /**
@@ -325,7 +298,7 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return true/false
      */
     public boolean isSecurity() {
-<span class="nc bnc" id="L328" title="All 2 branches missed.">        return this == SECURITY;</span>
+<span class="nc bnc" id="L301" title="All 2 branches missed.">        return this == SECURITY;</span>
     }
 
     /**
@@ -334,7 +307,7 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return true/false
      */
     public boolean isSecurityHolding() {
-<span class="fc bfc" id="L337" title="All 2 branches covered.">        return this == SECURITYHOLDING;</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">        return this == SECURITYHOLDING;</span>
     }
 
     /**
@@ -343,7 +316,7 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return true/false
      */
     public boolean isPortfolio() {
-<span class="nc bnc" id="L346" title="All 2 branches missed.">        return this == PORTFOLIO;</span>
+<span class="nc bnc" id="L319" title="All 2 branches missed.">        return this == PORTFOLIO;</span>
     }
 
     /**
@@ -352,7 +325,7 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return true/false
      */
     public boolean isPayee() {
-<span class="fc bfc" id="L355" title="All 2 branches covered.">        return this == PAYEE;</span>
+<span class="fc bfc" id="L328" title="All 2 branches covered.">        return this == PAYEE;</span>
     }
 
     /**
@@ -361,7 +334,7 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return true/false
      */
     public boolean isCash() {
-<span class="fc bfc" id="L364" title="All 2 branches covered.">        return this == CASH;</span>
+<span class="fc bfc" id="L337" title="All 2 branches covered.">        return this == CASH;</span>
     }
 
     /**
@@ -370,7 +343,7 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
      * @return true/false
      */
     public boolean isAutoExpense() {
-<span class="fc bfc" id="L373" title="All 2 branches covered.">        return this == AUTOEXPENSE;</span>
+<span class="fc bfc" id="L346" title="All 2 branches covered.">        return this == AUTOEXPENSE;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

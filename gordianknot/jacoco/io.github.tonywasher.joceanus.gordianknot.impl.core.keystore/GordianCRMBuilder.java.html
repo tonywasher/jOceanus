@@ -20,21 +20,21 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
@@ -43,6 +43,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDig
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCRMEncryptor.GordianCRMResult;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -83,12 +84,12 @@ public class GordianCRMBuilder {
     /**
      * AttrOID branch.
      */
-<span class="fc" id="L86">    public static final ASN1ObjectIdentifier ATTROID = GordianASN1Util.EXTOID.branch(&quot;4&quot;);</span>
+<span class="fc" id="L87">    public static final ASN1ObjectIdentifier ATTROID = GordianASN1Util.EXTOID.branch(&quot;4&quot;);</span>
 
     /**
      * AttrOID branch.
      */
-<span class="fc" id="L91">    public static final ASN1ObjectIdentifier MACVALUEATTROID = ATTROID.branch(&quot;1&quot;);</span>
+<span class="fc" id="L92">    public static final ASN1ObjectIdentifier MACVALUEATTROID = ATTROID.branch(&quot;1&quot;);</span>
 
     /**
      * The # of hash iterations .
@@ -105,9 +106,9 @@ public class GordianCRMBuilder {
      *
      * @param pGateway the gateway
      */
-<span class="fc" id="L108">    GordianCRMBuilder(final GordianBaseKeyStoreGateway pGateway) {</span>
-<span class="fc" id="L109">        theGateway = pGateway;</span>
-<span class="fc" id="L110">    }</span>
+<span class="fc" id="L109">    GordianCRMBuilder(final GordianBaseKeyStoreGateway pGateway) {</span>
+<span class="fc" id="L110">        theGateway = pGateway;</span>
+<span class="fc" id="L111">    }</span>
 
     /**
      * Create a Certificate request.
@@ -120,26 +121,26 @@ public class GordianCRMBuilder {
     public CertReqMsg createCertificateRequest(final GordianKeyStorePair pKeyPair,
                                                final int pRequestId) throws GordianException {
         /* Access the certificate */
-<span class="fc" id="L123">        final GordianCoreCertificate myCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().get(0);</span>
+<span class="fc" id="L124">        final GordianCoreCertificate myCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().getFirst();</span>
 
         /* Create the Certificate request */
-<span class="fc" id="L126">        final CertRequest myCertReq = createCertRequest(myCert, pRequestId);</span>
+<span class="fc" id="L127">        final CertRequest myCertReq = createCertRequest(myCert, pRequestId);</span>
 
         /* Create the ProofOfPossession */
-<span class="fc" id="L129">        final ProofOfPossession myProof = createKeyPairProofOfPossession(pKeyPair, myCert, myCertReq);</span>
+<span class="fc" id="L130">        final ProofOfPossession myProof = createKeyPairProofOfPossession(pKeyPair, myCert, myCertReq);</span>
 
         /* Create control if necessary */
-<span class="fc" id="L132">        AttributeTypeAndValue[] myAttrs = null;</span>
-<span class="fc" id="L133">        final X500Name myName = myCert.getSubjectName();</span>
-<span class="fc" id="L134">        final byte[] myMACSecret = theGateway.getMACSecret(myName);</span>
-<span class="pc bpc" id="L135" title="1 of 2 branches missed.">        if (myMACSecret != null) {</span>
+<span class="fc" id="L133">        AttributeTypeAndValue[] myAttrs = null;</span>
+<span class="fc" id="L134">        final X500Name myName = myCert.getSubjectName();</span>
+<span class="fc" id="L135">        final byte[] myMACSecret = theGateway.getMACSecret(myName);</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        if (myMACSecret != null) {</span>
             /* Create the PKMACValue Control */
-<span class="fc" id="L137">            final PKMACValue myMACValue = createPKMACValue(myMACSecret, myCertReq.getCertTemplate().getPublicKey());</span>
-<span class="fc" id="L138">            myAttrs = new AttributeTypeAndValue[]{new AttributeTypeAndValue(MACVALUEATTROID, myMACValue)};</span>
+<span class="fc" id="L138">            final PKMACValue myMACValue = createPKMACValue(myMACSecret, myCertReq.getCertTemplate().getPublicKey());</span>
+<span class="fc" id="L139">            myAttrs = new AttributeTypeAndValue[]{new AttributeTypeAndValue(MACVALUEATTROID, myMACValue)};</span>
         }
 
         /* Create a CRMF */
-<span class="fc" id="L142">        return new CertReqMsg(myCertReq, myProof, myAttrs);</span>
+<span class="fc" id="L143">        return new CertReqMsg(myCertReq, myProof, myAttrs);</span>
     }
 
     /**
@@ -155,27 +156,27 @@ public class GordianCRMBuilder {
         /* Protect against exceptions */
         try {
             /* Create the Certificate template Builder */
-<span class="fc" id="L158">            final CertTemplateBuilder myBuilder = new CertTemplateBuilder();</span>
+<span class="fc" id="L159">            final CertTemplateBuilder myBuilder = new CertTemplateBuilder();</span>
 
             /* Record certificate name */
-<span class="fc" id="L161">            myBuilder.setSubject(pCertificate.getSubject().getName());</span>
+<span class="fc" id="L162">            myBuilder.setSubject(pCertificate.getSubject().getName());</span>
 
             /* Record certificate publicKey */
-<span class="fc" id="L164">            final X509EncodedKeySpec myX509 = pCertificate.getX509KeySpec();</span>
-<span class="fc" id="L165">            final SubjectPublicKeyInfo myPublicInfo = SubjectPublicKeyInfo.getInstance(myX509.getEncoded());</span>
-<span class="fc" id="L166">            myBuilder.setPublicKey(myPublicInfo);</span>
+<span class="fc" id="L165">            final X509EncodedKeySpec myX509 = pCertificate.getX509KeySpec();</span>
+<span class="fc" id="L166">            final SubjectPublicKeyInfo myPublicInfo = SubjectPublicKeyInfo.getInstance(myX509.getEncoded());</span>
+<span class="fc" id="L167">            myBuilder.setPublicKey(myPublicInfo);</span>
 
             /* record extensions */
-<span class="fc" id="L169">            final ExtensionsGenerator myGenerator = new ExtensionsGenerator();</span>
-<span class="fc" id="L170">            myGenerator.addExtension(Extension.keyUsage, true, pCertificate.getUsage().getKeyUsage());</span>
-<span class="fc" id="L171">            myGenerator.addExtension(Extension.basicConstraints, false, new BasicConstraints(false));</span>
-<span class="fc" id="L172">            myBuilder.setExtensions(myGenerator.generate());</span>
+<span class="fc" id="L170">            final ExtensionsGenerator myGenerator = new ExtensionsGenerator();</span>
+<span class="fc" id="L171">            myGenerator.addExtension(Extension.keyUsage, true, pCertificate.getUsage().getKeyUsage());</span>
+<span class="fc" id="L172">            myGenerator.addExtension(Extension.basicConstraints, false, new BasicConstraints(false));</span>
+<span class="fc" id="L173">            myBuilder.setExtensions(myGenerator.generate());</span>
 
             /* Create the Certificate request */
-<span class="fc" id="L175">            return new CertRequest(pRequestId, myBuilder.build(), null);</span>
+<span class="fc" id="L176">            return new CertRequest(pRequestId, myBuilder.build(), null);</span>
 
-<span class="nc" id="L177">        } catch (IOException e) {</span>
-<span class="nc" id="L178">            throw new GordianIOException(&quot;Failed to create Certificate request&quot;, e);</span>
+<span class="nc" id="L178">        } catch (IOException e) {</span>
+<span class="nc" id="L179">            throw new GordianIOException(&quot;Failed to create Certificate request&quot;, e);</span>
         }
     }
 
@@ -192,18 +193,18 @@ public class GordianCRMBuilder {
                                                              final GordianCoreCertificate pCertificate,
                                                              final CertRequest pCertRequest) throws GordianException {
         /* Try to send a signed proof */
-<span class="fc" id="L195">        final GordianKeyPair myKeyPair = pKeyPair.getKeyPair();</span>
-<span class="fc" id="L196">        final GordianKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();</span>
-<span class="fc" id="L197">        final GordianSignatureSpec mySignSpec = theGateway.getFactory().getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);</span>
-<span class="fc bfc" id="L198" title="All 2 branches covered.">        if (mySignSpec != null) {</span>
-<span class="fc" id="L199">            return createKeyPairSignedProof(myKeyPair, mySignSpec, pCertRequest);</span>
+<span class="fc" id="L196">        final GordianKeyPair myKeyPair = pKeyPair.getKeyPair();</span>
+<span class="fc" id="L197">        final GordianKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();</span>
+<span class="fc" id="L198">        final GordianSignatureSpec mySignSpec = theGateway.getFactory().getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);</span>
+<span class="fc bfc" id="L199" title="All 2 branches covered.">        if (mySignSpec != null) {</span>
+<span class="fc" id="L200">            return createKeyPairSignedProof(myKeyPair, mySignSpec, pCertRequest);</span>
         }
 
         /* Send encrypted key via targeted encryption or request encrypted certificate */
-<span class="fc" id="L203">        final GordianCoreCertificate myTarget = theGateway.getTarget();</span>
-<span class="pc bpc" id="L204" title="1 of 2 branches missed.">        return myTarget != null</span>
-<span class="nc" id="L205">                ? createTargetedProofOfPossession(myKeyPair, pCertificate)</span>
-<span class="fc" id="L206">                : new ProofOfPossession(ProofOfPossession.TYPE_KEY_ENCIPHERMENT, new POPOPrivKey(SubsequentMessage.encrCert));</span>
+<span class="fc" id="L204">        final GordianCoreCertificate myTarget = theGateway.getTarget();</span>
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">        return myTarget != null</span>
+<span class="nc" id="L206">                ? createTargetedProofOfPossession(myKeyPair, pCertificate)</span>
+<span class="fc" id="L207">                : new ProofOfPossession(ProofOfPossession.TYPE_KEY_ENCIPHERMENT, new POPOPrivKey(SubsequentMessage.encrCert));</span>
     }
 
     /**
@@ -217,25 +218,25 @@ public class GordianCRMBuilder {
     private ProofOfPossession createTargetedProofOfPossession(final GordianKeyPair pKeyPair,
                                                               final GordianCoreCertificate pCertificate) throws GordianException {
         /* Obtain the PKCS8Encoding of the private key */
-<span class="nc" id="L220">        final GordianKeyPairFactory myFactory = theGateway.getFactory().getAsyncFactory().getKeyPairFactory();</span>
-<span class="nc" id="L221">        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();</span>
-<span class="nc" id="L222">        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);</span>
-<span class="nc" id="L223">        final PKCS8EncodedKeySpec myPKCS8Encoding = myGenerator.getPKCS8Encoding(pKeyPair);</span>
+<span class="nc" id="L221">        final GordianKeyPairFactory myFactory = theGateway.getFactory().getAsyncFactory().getKeyPairFactory();</span>
+<span class="nc" id="L222">        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();</span>
+<span class="nc" id="L223">        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);</span>
+<span class="nc" id="L224">        final PKCS8EncodedKeySpec myPKCS8Encoding = myGenerator.getPKCS8Encoding(pKeyPair);</span>
 
         /* Prepare for encryption */
-<span class="nc" id="L226">        final GordianCRMEncryptor myEncryptor = theGateway.getEncryptor();</span>
-<span class="nc" id="L227">        final GordianCoreCertificate myTarget = theGateway.getTarget();</span>
-<span class="nc" id="L228">        final GordianCRMResult myResult = myEncryptor.prepareForEncryption(myTarget);</span>
+<span class="nc" id="L227">        final GordianCRMEncryptor myEncryptor = theGateway.getEncryptor();</span>
+<span class="nc" id="L228">        final GordianCoreCertificate myTarget = theGateway.getTarget();</span>
+<span class="nc" id="L229">        final GordianCRMResult myResult = myEncryptor.prepareForEncryption(myTarget);</span>
 
         /* Derive the keySet from the key */
-<span class="nc" id="L231">        final GordianKeySet myKeySet = myResult.getKeySet();</span>
+<span class="nc" id="L232">        final GordianKeySet myKeySet = myResult.getKeySet();</span>
 
         /* Create the encrypted data */
-<span class="nc" id="L234">        final EncryptedContentInfo myInfo = GordianCRMEncryptor.buildEncryptedContentInfo(myKeySet, myPKCS8Encoding, pCertificate);</span>
+<span class="nc" id="L235">        final EncryptedContentInfo myInfo = GordianCRMEncryptor.buildEncryptedContentInfo(myKeySet, myPKCS8Encoding, pCertificate);</span>
 
         /* Create the Proof of possession */
-<span class="nc" id="L237">        final EnvelopedData myEnvData = new EnvelopedData(null, new BERSet(myResult.getRecipient()), myInfo, (BERSet) null);</span>
-<span class="nc" id="L238">        return new ProofOfPossession(ProofOfPossession.TYPE_KEY_ENCIPHERMENT, new XPOPOPrivKey(myEnvData));</span>
+<span class="nc" id="L238">        final EnvelopedData myEnvData = new EnvelopedData(null, new BERSet(myResult.getRecipient()), myInfo, (BERSet) null);</span>
+<span class="nc" id="L239">        return new ProofOfPossession(ProofOfPossession.TYPE_KEY_ENCIPHERMENT, new XPOPOPrivKey(myEnvData));</span>
     }
 
     /**
@@ -251,13 +252,13 @@ public class GordianCRMBuilder {
                                                final GordianSignatureSpec pSignSpec,
                                                final CertRequest pCertRequest) throws GordianException {
         /* Create the signer */
-<span class="fc" id="L254">        final GordianAsyncFactory myFactory = theGateway.getFactory().getAsyncFactory();</span>
-<span class="fc" id="L255">        final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();</span>
-<span class="fc" id="L256">        final GordianSignature mySigner = mySignFactory.createSigner(pSignSpec);</span>
-<span class="fc" id="L257">        final AlgorithmIdentifier myAlgId = mySignFactory.getIdentifierForSpecAndKeyPair(pSignSpec, pKeyPair);</span>
+<span class="fc" id="L255">        final GordianAsyncFactory myFactory = theGateway.getFactory().getAsyncFactory();</span>
+<span class="fc" id="L256">        final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();</span>
+<span class="fc" id="L257">        final GordianSignature mySigner = mySignFactory.createSigner(pSignSpec);</span>
+<span class="fc" id="L258">        final AlgorithmIdentifier myAlgId = mySignFactory.getIdentifierForSpecAndKeyPair(pSignSpec, pKeyPair);</span>
 
         /* Build the signed proof */
-<span class="fc" id="L260">        return createSignedProof(pKeyPair, myAlgId, mySigner, pCertRequest);</span>
+<span class="fc" id="L261">        return createSignedProof(pKeyPair, myAlgId, mySigner, pCertRequest);</span>
     }
 
     /**
@@ -277,16 +278,17 @@ public class GordianCRMBuilder {
         /* Protect against exceptions */
         try {
             /* Create the signature */
-<span class="fc" id="L280">            pSigner.initForSigning(GordianSignParams.keyPair(pKeyPair));</span>
-<span class="fc" id="L281">            pSigner.update(pCertRequest.getEncoded());</span>
-<span class="fc" id="L282">            final byte[] mySignature = pSigner.sign();</span>
+<span class="fc" id="L281">            final GordianNewSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();</span>
+<span class="fc" id="L282">            pSigner.initForSigning(myBuilder.keyPair(pKeyPair));</span>
+<span class="fc" id="L283">            pSigner.update(pCertRequest.getEncoded());</span>
+<span class="fc" id="L284">            final byte[] mySignature = pSigner.sign();</span>
 
             /* Build the signing key */
-<span class="fc" id="L285">            final POPOSigningKey myKey = new POPOSigningKey(null, pAlgId, new DERBitString(mySignature));</span>
-<span class="fc" id="L286">            return new ProofOfPossession(myKey);</span>
+<span class="fc" id="L287">            final POPOSigningKey myKey = new POPOSigningKey(null, pAlgId, new DERBitString(mySignature));</span>
+<span class="fc" id="L288">            return new ProofOfPossession(myKey);</span>
 
-<span class="nc" id="L288">        } catch (IOException e) {</span>
-<span class="nc" id="L289">            throw new GordianIOException(&quot;Failed to create Signed Proof of Possession&quot;, e);</span>
+<span class="nc" id="L290">        } catch (IOException e) {</span>
+<span class="nc" id="L291">            throw new GordianIOException(&quot;Failed to create Signed Proof of Possession&quot;, e);</span>
         }
     }
 
@@ -305,13 +307,13 @@ public class GordianCRMBuilder {
          * @param pEncryptedKey the encryptedKey.
          */
         XPOPOPrivKey(final EnvelopedData pEncryptedKey) {
-<span class="nc" id="L308">            super((PKMACValue) null);</span>
-<span class="nc" id="L309">            theKey = pEncryptedKey;</span>
-<span class="nc" id="L310">        }</span>
+<span class="nc" id="L310">            super((PKMACValue) null);</span>
+<span class="nc" id="L311">            theKey = pEncryptedKey;</span>
+<span class="nc" id="L312">        }</span>
 
         @Override
         public ASN1Primitive toASN1Primitive() {
-<span class="nc" id="L314">            return new DERTaggedObject(false, encryptedKey, theKey);</span>
+<span class="nc" id="L316">            return new DERTaggedObject(false, encryptedKey, theKey);</span>
         }
     }
 
@@ -325,8 +327,8 @@ public class GordianCRMBuilder {
      */
     public PKMACValue createPKMACValue(final byte[] pSecret,
                                        final ASN1Object pData) throws GordianException {
-<span class="fc" id="L328">        final PBMParameter myParams = generatePBMParameters();</span>
-<span class="fc" id="L329">        return calculatePKMacValue(theGateway.getFactory(), pSecret, pData, myParams);</span>
+<span class="fc" id="L330">        final PBMParameter myParams = generatePBMParameters();</span>
+<span class="fc" id="L331">        return calculatePKMacValue(theGateway.getFactory(), pSecret, pData, myParams);</span>
     }
 
     /**
@@ -340,12 +342,12 @@ public class GordianCRMBuilder {
     public void checkPKMACValue(final byte[] pSecret,
                                 final ASN1Object pData,
                                 final PKMACValue pMACValue) throws GordianException {
-<span class="fc" id="L343">        final PBMParameter myParams = PBMParameter.getInstance(pMACValue.getAlgId().getParameters());</span>
-<span class="fc" id="L344">        final PKMACValue myMACValue = calculatePKMacValue(theGateway.getFactory(), pSecret, pData, myParams);</span>
-<span class="pc bpc" id="L345" title="1 of 2 branches missed.">        if (!pMACValue.equals(myMACValue)) {</span>
-<span class="nc" id="L346">            throw new GordianDataException(&quot;Invalid PKMacValue&quot;);</span>
+<span class="fc" id="L345">        final PBMParameter myParams = PBMParameter.getInstance(pMACValue.getAlgId().getParameters());</span>
+<span class="fc" id="L346">        final PKMACValue myMACValue = calculatePKMacValue(theGateway.getFactory(), pSecret, pData, myParams);</span>
+<span class="pc bpc" id="L347" title="1 of 2 branches missed.">        if (!pMACValue.equals(myMACValue)) {</span>
+<span class="nc" id="L348">            throw new GordianDataException(&quot;Invalid PKMacValue&quot;);</span>
         }
-<span class="fc" id="L348">    }</span>
+<span class="fc" id="L350">    }</span>
 
     /**
      * Create PBMParameters.
@@ -354,16 +356,16 @@ public class GordianCRMBuilder {
      */
     private PBMParameter generatePBMParameters() {
         /* Create the salt value */
-<span class="fc" id="L357">        final byte[] mySalt = new byte[GordianLength.LEN_256.getByteLength()];</span>
-<span class="fc" id="L358">        final GordianRandomSource mySource = theGateway.getFactory().getRandomSource();</span>
-<span class="fc" id="L359">        mySource.getRandom().nextBytes(mySalt);</span>
+<span class="fc" id="L359">        final byte[] mySalt = new byte[GordianLength.LEN_256.getByteLength()];</span>
+<span class="fc" id="L360">        final GordianRandomSource mySource = theGateway.getFactory().getRandomSource();</span>
+<span class="fc" id="L361">        mySource.getRandom().nextBytes(mySalt);</span>
 
         /* Access algorithm ids */
-<span class="fc" id="L362">        final AlgorithmIdentifier myHashId = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256, DERNull.INSTANCE);</span>
-<span class="fc" id="L363">        final AlgorithmIdentifier myMacId = new AlgorithmIdentifier(PKCSObjectIdentifiers.id_hmacWithSHA256, DERNull.INSTANCE);</span>
+<span class="fc" id="L364">        final AlgorithmIdentifier myHashId = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256, DERNull.INSTANCE);</span>
+<span class="fc" id="L365">        final AlgorithmIdentifier myMacId = new AlgorithmIdentifier(PKCSObjectIdentifiers.id_hmacWithSHA256, DERNull.INSTANCE);</span>
 
         /* Create the PBMParameter */
-<span class="fc" id="L366">        return new PBMParameter(mySalt, myHashId, PBM_ITERATIONS, myMacId);</span>
+<span class="fc" id="L368">        return new PBMParameter(mySalt, myHashId, PBM_ITERATIONS, myMacId);</span>
     }
 
     /**
@@ -383,36 +385,36 @@ public class GordianCRMBuilder {
         /* Protect against exceptions */
         try {
             /* Create the digest */
-<span class="fc" id="L386">            final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) pFactory.getDigestFactory();</span>
-<span class="fc" id="L387">            final GordianDigestSpec myDigestSpec = myDigests.getDigestSpecForIdentifier(pParams.getOwf());</span>
-<span class="fc" id="L388">            final GordianDigest myDigest = myDigests.createDigest(myDigestSpec);</span>
+<span class="fc" id="L388">            final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) pFactory.getDigestFactory();</span>
+<span class="fc" id="L389">            final GordianDigestSpec myDigestSpec = myDigests.getDigestSpecForIdentifier(pParams.getOwf());</span>
+<span class="fc" id="L390">            final GordianDigest myDigest = myDigests.createDigest(myDigestSpec);</span>
 
             /* Run through the first iteration */
-<span class="fc" id="L391">            myDigest.update(pSecret);</span>
-<span class="fc" id="L392">            myDigest.update(pParams.getSalt().getOctets());</span>
-<span class="fc" id="L393">            byte[] myKey = new byte[myDigest.getDigestSize()];</span>
-<span class="fc" id="L394">            myKey = myDigest.finish(myKey);</span>
+<span class="fc" id="L393">            myDigest.update(pSecret);</span>
+<span class="fc" id="L394">            myDigest.update(pParams.getSalt().getOctets());</span>
+<span class="fc" id="L395">            byte[] myKey = new byte[myDigest.getDigestSize()];</span>
+<span class="fc" id="L396">            myKey = myDigest.finish(myKey);</span>
 
             /* Loop through the remaining iterations */
-<span class="fc" id="L397">            final int numIterations = pParams.getIterationCount().intValueExact() - 1;</span>
-<span class="fc bfc" id="L398" title="All 2 branches covered.">            for (int i = 0; i &lt; numIterations; i++) {</span>
-<span class="fc" id="L399">                myKey = myDigest.finish(myKey);</span>
+<span class="fc" id="L399">            final int numIterations = pParams.getIterationCount().intValueExact() - 1;</span>
+<span class="fc bfc" id="L400" title="All 2 branches covered.">            for (int i = 0; i &lt; numIterations; i++) {</span>
+<span class="fc" id="L401">                myKey = myDigest.finish(myKey);</span>
             }
 
             /* Create the mac */
-<span class="fc" id="L403">            final GordianMacFactory myMacs = pFactory.getMacFactory();</span>
-<span class="fc" id="L404">            final GordianMacSpec myMacSpec = (GordianMacSpec) pFactory.getKeySpecForIdentifier(pParams.getMac());</span>
-<span class="fc" id="L405">            final GordianMac myMac = myMacs.createMac(myMacSpec);</span>
-<span class="fc" id="L406">            myMac.initKeyBytes(myKey);</span>
+<span class="fc" id="L405">            final GordianMacFactory myMacs = pFactory.getMacFactory();</span>
+<span class="fc" id="L406">            final GordianMacSpec myMacSpec = (GordianMacSpec) pFactory.getKeySpecForIdentifier(pParams.getMac());</span>
+<span class="fc" id="L407">            final GordianMac myMac = myMacs.createMac(myMacSpec);</span>
+<span class="fc" id="L408">            myMac.initKeyBytes(myKey);</span>
 
             /* Create the result */
-<span class="fc" id="L409">            myMac.update(pObject.toASN1Primitive().getEncoded());</span>
-<span class="fc" id="L410">            final byte[] myResult = myMac.finish();</span>
-<span class="fc" id="L411">            return new PKMACValue(pParams, new DERBitString(myResult));</span>
+<span class="fc" id="L411">            myMac.update(pObject.toASN1Primitive().getEncoded());</span>
+<span class="fc" id="L412">            final byte[] myResult = myMac.finish();</span>
+<span class="fc" id="L413">            return new PKMACValue(pParams, new DERBitString(myResult));</span>
 
             /* Handle exceptions */
-<span class="nc" id="L414">        } catch (IOException e) {</span>
-<span class="nc" id="L415">            throw new GordianIOException(&quot;Failed to calculate PKMACValue&quot;, e);</span>
+<span class="nc" id="L416">        } catch (IOException e) {</span>
+<span class="nc" id="L417">            throw new GordianIOException(&quot;Failed to calculate PKMACValue&quot;, e);</span>
         }
     }
 
@@ -425,20 +427,21 @@ public class GordianCRMBuilder {
      */
     public byte[] calculateAckValue(final GordianCoreCertificate pCertificate) throws GordianException {
         /* Access the MACSecret */
-<span class="fc" id="L428">        final X500Name mySubject = pCertificate.getSubjectName();</span>
-<span class="fc" id="L429">        final byte[] myMACSecret = theGateway.getMACSecret(mySubject);</span>
+<span class="fc" id="L430">        final X500Name mySubject = pCertificate.getSubjectName();</span>
+<span class="fc" id="L431">        final byte[] myMACSecret = theGateway.getMACSecret(mySubject);</span>
 
         /* Create the digest */
-<span class="fc" id="L432">        final GordianBaseFactory myFactory = theGateway.getFactory();</span>
-<span class="fc" id="L433">        final GordianDigestFactory myDigests = myFactory.getDigestFactory();</span>
-<span class="fc" id="L434">        final GordianDigest myDigest = myDigests.createDigest(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256));</span>
+<span class="fc" id="L434">        final GordianBaseFactory myFactory = theGateway.getFactory();</span>
+<span class="fc" id="L435">        final GordianDigestFactory myDigests = myFactory.getDigestFactory();</span>
+<span class="fc" id="L436">        final GordianDigestSpecBuilder myBuilder = myDigests.newDigestSpecBuilder();</span>
+<span class="fc" id="L437">        final GordianDigest myDigest = myDigests.createDigest(myBuilder.sha2(GordianLength.LEN_256));</span>
 
         /* Calculate the digest */
-<span class="pc bpc" id="L437" title="1 of 2 branches missed.">        if (myMACSecret != null) {</span>
-<span class="fc" id="L438">            myDigest.update(myMACSecret);</span>
+<span class="pc bpc" id="L440" title="1 of 2 branches missed.">        if (myMACSecret != null) {</span>
+<span class="fc" id="L441">            myDigest.update(myMACSecret);</span>
         }
-<span class="fc" id="L440">        myDigest.update(pCertificate.getEncoded());</span>
-<span class="fc" id="L441">        return myDigest.finish();</span>
+<span class="fc" id="L443">        myDigest.update(pCertificate.getEncoded());</span>
+<span class="fc" id="L444">        return myDigest.finish();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -173,72 +173,23 @@ import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWis
 
     @Override
     public boolean isPreserved() {
-<span class="fc bfc" id="L176" title="All 2 branches covered.">        switch (this) {</span>
-            case UNITS:
-            case DIVIDEND:
-            case RESIDUALCOST:
-            case VALUATION:
-            case EXCHANGERATE:
-            case VALUE:
-            case PRICE:
-            case REALISEDGAINS:
-            case UNREALISEDGAINS:
-            case GAINSADJUST:
-            case FUNDED:
-            case STARTDATE:
-<span class="fc" id="L189">                return true;</span>
-            case PROFIT:
-            case MARKETPROFIT:
-            case VALUEDELTA:
-            case XFERREDCOST:
-            case RETURNEDCASH:
-            case XFERREDVALUE:
-            case CASHINVESTED:
-            case CAPITALGAIN:
-            case ALLOWEDCOST:
-            case CONSIDERATION:
-            case COSTDILUTION:
-            case CASHTYPE:
-            default:
-<span class="fc" id="L203">                return false;</span>
-        }
+<span class="fc bfc" id="L176" title="All 2 branches covered.">        return switch (this) {</span>
+            case UNITS, DIVIDEND, RESIDUALCOST, VALUATION, EXCHANGERATE, VALUE, PRICE, REALISEDGAINS, UNREALISEDGAINS,
+<span class="fc" id="L178">                 GAINSADJUST, FUNDED, STARTDATE -&gt; true;</span>
+<span class="fc" id="L179">            default -&gt; false;</span>
+        };
     }
 
     @Override
     public MetisDataType getDataType() {
-<span class="nc bnc" id="L209" title="All 6 branches missed.">        switch (this) {</span>
-            case UNITS:
-<span class="nc" id="L211">                return MetisDataType.UNITS;</span>
-            case PRICE:
-<span class="nc" id="L213">                return MetisDataType.PRICE;</span>
-            case EXCHANGERATE:
-            case COSTDILUTION:
-<span class="nc" id="L216">                return MetisDataType.RATIO;</span>
-            case CASHTYPE:
-<span class="nc" id="L218">                return MetisDataType.ENUM;</span>
-            case STARTDATE:
-<span class="nc" id="L220">                return MetisDataType.DATE;</span>
-            case VALUE:
-            case VALUATION:
-            case VALUEDELTA:
-            case RESIDUALCOST:
-            case REALISEDGAINS:
-            case UNREALISEDGAINS:
-            case GAINSADJUST:
-            case DIVIDEND:
-            case MARKETPROFIT:
-            case PROFIT:
-            case RETURNEDCASH:
-            case XFERREDVALUE:
-            case XFERREDCOST:
-            case ALLOWEDCOST:
-            case CASHINVESTED:
-            case CAPITALGAIN:
-            case CONSIDERATION:
-            case FUNDED:
-            default:
-<span class="nc" id="L240">                return MetisDataType.MONEY;</span>
-        }
+<span class="nc bnc" id="L185" title="All 6 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L186">            case UNITS -&gt; MetisDataType.UNITS;</span>
+<span class="nc" id="L187">            case PRICE -&gt; MetisDataType.PRICE;</span>
+<span class="nc" id="L188">            case EXCHANGERATE, COSTDILUTION -&gt; MetisDataType.RATIO;</span>
+<span class="nc" id="L189">            case CASHTYPE -&gt; MetisDataType.ENUM;</span>
+<span class="nc" id="L190">            case STARTDATE -&gt; MetisDataType.DATE;</span>
+<span class="nc" id="L191">            default -&gt; MetisDataType.MONEY;</span>
+        };
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
