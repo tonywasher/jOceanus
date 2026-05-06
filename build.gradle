@@ -18,7 +18,7 @@ allprojects {
 
     /* general identity */
     group = 'io.github.tonywasher.joceanus'
-    version = '1.6.4-SNAPSHOT'
+    version = '1.6.4-b1'
 
     /* Maven repositories */
     repositories {

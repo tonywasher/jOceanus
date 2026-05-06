@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.tonywasher</groupId>
     <artifactId>joceanus</artifactId>
-    <version>1.6.4-SNAPSHOT</version>
+    <version>1.6.4-b1</version>
     <packaging>pom</packaging>
     <name>Java Oceanus package</name>
     <description>Parent project for jOceanus</description>
@@ -58,14 +58,6 @@
         <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <scmMain>main</scmMain>
-        <currentBranch>1.6.4</currentBranch>
-        <currentTag>SNAPSHOT</currentTag>
-        <baseBranch>1.6.3</baseBranch>
-        <baseTag>b6</baseTag>
-        <currentRef>${snapshotRef}</currentRef>
-        <snapshotRef>${scmMain}</snapshotRef>
-        <tagRef>${currentBranch}-${currentTag}</tagRef>
-        <baseRef>${baseBranch}-${baseTag}</baseRef>
         <packageKey>io.github.tonywasher.joceanus</packageKey>
         <packageMain/>
         <packageName/>
