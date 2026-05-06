@@ -25,6 +25,13 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator;
  */
 public class PrometheusValidateBasic
         implements PrometheusDataValidator {
+    /**
+     * Default constructor.
+     */
+    public PrometheusValidateBasic() {
+        /* NoOp */
+    }
+
     @Override
     public void validate(final PrometheusDataItem pItem) {
         if (pItem.getEditState() == MetisDataEditState.DIRTY) {

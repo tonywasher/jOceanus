@@ -57,7 +57,8 @@ public class GordianCompositeKeyPair
     /**
      * Constructor.
      *
-     * @param pSpec the spec
+     * @param pSpec       the spec
+     * @param pPublicOnly is the keyPair publicOnly?
      */
     GordianCompositeKeyPair(final GordianKeyPairSpec pSpec,
                             final boolean pPublicOnly) {

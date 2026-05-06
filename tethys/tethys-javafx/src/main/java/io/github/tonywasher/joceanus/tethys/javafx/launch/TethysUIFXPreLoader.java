@@ -40,6 +40,13 @@ public abstract class TethysUIFXPreLoader
     private TethysUIFXLaunchState theState;
 
     /**
+     * Default constructor.
+     */
+    protected TethysUIFXPreLoader() {
+        /* NoOp */
+    }
+
+    /**
      * Obtain program info.
      *
      * @return the info

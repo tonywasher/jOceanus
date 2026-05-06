@@ -41,6 +41,11 @@ public class ThemisUIRefFamily {
     private final ThemisUIDocBuilder theBuilder;
 
     /**
+     * The package.
+     */
+    private ThemisSolverPackage thePackage;
+
+    /**
      * Does the package have files?
      */
     private boolean hasFiles;
@@ -66,6 +71,7 @@ public class ThemisUIRefFamily {
      */
     private void setDetails(final ThemisSolverPackage pPackage) {
         /* Access children and determine whether we have files */
+        thePackage = pPackage;
         theChildren = new ArrayList<>(pPackage.getChildren());
         Collections.sort(theChildren);
         hasFiles = !pPackage.getFiles().isEmpty();
@@ -105,7 +111,7 @@ public class ThemisUIRefFamily {
             /* Create a new cell for the package short name */
             createRowHeader(myRow, myChild);
 
-            /* Create the link row for local to child and vice-versa */
+            /* Create the link row for local to child and vice versa */
             if (myLocalRow != null) {
                 createLinkCell(myLocalRow, myChild, pPackage);
                 createLinkCell(myRow, pPackage, myChild);
@@ -253,7 +259,18 @@ public class ThemisUIRefFamily {
             myLink.setTextContent(myText);
 
             /* Add toolTip */
-            theBuilder.addToolTipToElement(myCell, pSource.getShortName() + " -> " + pTarget.getShortName());
+            theBuilder.addToolTipToElement(myCell,
+                    getTooltipName(pSource) + " -> " + getTooltipName(pTarget));
         }
+    }
+
+    /**
+     * Obtain package name.
+     *
+     * @param pPackage the package
+     * @return the tooltip name
+     */
+    private String getTooltipName(final ThemisSolverPackage pPackage) {
+        return pPackage.equals(thePackage) ? ThemisUIRefConstants.LOCALPACKAGE : pPackage.getShortName();
     }
 }

@@ -75,6 +75,13 @@ public interface TethysUICoreDataEditConverter<T> {
      */
     class TethysUICoreStringEditConverter
             implements TethysUICoreDataEditConverter<String> {
+        /**
+         * Default constructor.
+         */
+        public TethysUICoreStringEditConverter() {
+            /* NoOp */
+        }
+
         @Override
         public boolean rightAlignFields() {
             return false;
@@ -101,6 +108,13 @@ public interface TethysUICoreDataEditConverter<T> {
      */
     class TethysUICoreCharArrayEditConverter
             implements TethysUICoreDataEditConverter<char[]> {
+        /**
+         * Default constructor.
+         */
+        public TethysUICoreCharArrayEditConverter() {
+            /* NoOp */
+        }
+
         @Override
         public boolean rightAlignFields() {
             return false;

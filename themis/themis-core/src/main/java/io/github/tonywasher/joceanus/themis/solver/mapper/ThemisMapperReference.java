@@ -82,7 +82,7 @@ public class ThemisMapperReference {
         /* Process references for all children */
         for (ThemisSolverPackage myChild : pPackage.getChildren()) {
             /* Process sibling references */
-            pPackage.processLocalReferences();
+            myChild.processLocalReferences();
 
             /* Check for incest */
             check4Incest(pPackage, myChild);

@@ -926,7 +926,7 @@ public class MoneyWiseTransaction
         if (!(pTrans instanceof MoneyWiseTransaction myTrans)) {
             return false;
         }
-        
+
         /* Store the current detail into history */
         pushHistory();
 

@@ -163,6 +163,13 @@ public abstract class MoneyWiseUKInterestScheme
          */
         private static final MetisFieldSet<MoneyWiseUKInterestAsIncomeScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKInterestAsIncomeScheme.class);
 
+        /**
+         * Default constructor.
+         */
+        MoneyWiseUKInterestAsIncomeScheme() {
+            /* NoOp */
+        }
+
         @Override
         protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
             return pTaxYear.getTaxBands().getBasicTaxRate();

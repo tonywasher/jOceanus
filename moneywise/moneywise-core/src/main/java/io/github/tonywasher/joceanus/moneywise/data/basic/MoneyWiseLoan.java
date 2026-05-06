@@ -585,7 +585,7 @@ public class MoneyWiseLoan
         if (!(pLoan instanceof MoneyWiseLoan myLoan)) {
             return false;
         }
-        
+
         /* Store the current detail into history */
         pushHistory();
 

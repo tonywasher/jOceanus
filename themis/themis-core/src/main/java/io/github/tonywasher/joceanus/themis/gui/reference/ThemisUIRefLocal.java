@@ -39,11 +39,6 @@ public class ThemisUIRefLocal {
     private final ThemisUIDocBuilder theBuilder;
 
     /**
-     * Does the package have children?
-     */
-    private boolean hasChildren;
-
-    /**
      * The list of package files.
      */
     private List<ThemisSolverFile> theFiles;
@@ -66,7 +61,6 @@ public class ThemisUIRefLocal {
         /* Access files and determine whether we have children */
         theFiles = new ArrayList<>(pPackage.getFiles());
         Collections.sort(theFiles);
-        hasChildren = !pPackage.getChildren().isEmpty();
     }
 
     /**
@@ -104,7 +98,7 @@ public class ThemisUIRefLocal {
                     /* else create the standard cell */
                 } else {
                     /* Create the link row */
-                    createLinkCell(myRow, myFile, mySibling);
+                    createLinkCell(myRow, mySibling, myFile);
                 }
             }
         }
@@ -167,8 +161,9 @@ public class ThemisUIRefLocal {
 
         /* If we have a link between the classes */
         if (myList.contains(pTarget.getTopLevel())) {
-            /* Show the link */
-            theBuilder.addClassToElement(myCell, ThemisUIRefConstants.CLASSLINKPRESENT);
+            myCell.setTextContent("✔");
+            theBuilder.addToolTipToElement(myCell,
+                    pSource.getTopLevel().getName() + " -> " + pTarget.getTopLevel().getName());
         }
     }
 }

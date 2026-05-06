@@ -28,6 +28,13 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem.Pr
  */
 public class PrometheusValidateStatic
         implements PrometheusDataValidator {
+    /**
+     * Default constructor.
+     */
+    public PrometheusValidateStatic() {
+        /* NoOp */
+    }
+
     @Override
     public void validate(final PrometheusDataItem pStatic) {
         final PrometheusStaticDataItem myStatic = (PrometheusStaticDataItem) pStatic;

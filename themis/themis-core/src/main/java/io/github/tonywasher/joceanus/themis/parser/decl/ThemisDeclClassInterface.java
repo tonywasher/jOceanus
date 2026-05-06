@@ -168,9 +168,4 @@ public class ThemisDeclClassInterface
     public List<ThemisExpressionInstance> getAnnotations() {
         return theAnnotations;
     }
-
-    @Override
-    public String toString() {
-        return theFullName;
-    }
 }

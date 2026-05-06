@@ -151,9 +151,4 @@ public class ThemisDeclRecord
     public List<ThemisExpressionInstance> getAnnotations() {
         return theAnnotations;
     }
-
-    @Override
-    public String toString() {
-        return theFullName;
-    }
 }

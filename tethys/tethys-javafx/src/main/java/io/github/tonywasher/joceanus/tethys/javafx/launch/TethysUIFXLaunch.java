@@ -42,6 +42,13 @@ public abstract class TethysUIFXLaunch
     private TethysUIFXLaunchState theState;
 
     /**
+     * Default constructor.
+     */
+    protected TethysUIFXLaunch() {
+        /* NoOp */
+    }
+
+    /**
      * Obtain program info.
      *
      * @return the info

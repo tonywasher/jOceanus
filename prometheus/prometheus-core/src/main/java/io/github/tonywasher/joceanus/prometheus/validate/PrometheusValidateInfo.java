@@ -27,6 +27,13 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
  */
 public class PrometheusValidateInfo
         implements PrometheusDataValidator {
+    /**
+     * Default constructor.
+     */
+    public PrometheusValidateInfo() {
+        /* NoOp */
+    }
+
     @Override
     public void validate(final PrometheusDataItem pInfo) {
         final PrometheusDataInfoItem myInfo = (PrometheusDataInfoItem) pInfo;

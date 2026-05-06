@@ -21,10 +21,10 @@ table.refNavigation {
 }
 
 tbody.tableZebra {
-	border-top: 2px solid;
-	border-bottom: 2px solid;
-	border-left: 2px solid;
-	border-right: 2px solid;
+	border-top: 2px solid black;
+	border-bottom: 2px solid black;
+	border-left: 2px solid black;
+	border-right: 2px solid black;
 }
 
 h1 {
@@ -40,22 +40,28 @@ th {
 }
 
 td.refLink {
-	border-right: 2px solid;
+	border-right: 2px solid black;
 }
 
 td.refSelfOK {
 	background-color: black;
 }
 
-td.refError {
+td.refSelfError {
 	background-color: red;
 }
 
+td.refLinkPresent {
+	background-color: green;
+}
+
 td.refLinkList {
+	border-left: 1px solid white;
 	min-width: 25px;
 }
 
 td.refLinkSibling {
+	border-left: 1px solid white;
 	min-width: 25px;
 }
 
@@ -75,9 +81,11 @@ span.toolTip {
 	display:none;
 	position:absolute;
 	z-index:1;
-	background-color:black;
+	background-color:white;
+	border:1px solid black;
+	border-radius: 4px;
 	padding:3px;
-	color:white;
+	color:black;
 	top:20px;
 	left:20px;
 	white-space: nowrap;

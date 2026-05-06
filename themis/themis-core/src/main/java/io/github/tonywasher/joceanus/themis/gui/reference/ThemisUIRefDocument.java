@@ -130,12 +130,7 @@ public class ThemisUIRefDocument
         if (pLink.startsWith(ThemisUIRefConstants.LINKPACKAGE)) {
             /* Strip off the header and locate the package */
             final String myName = pLink.substring(ThemisUIRefConstants.LINKPACKAGE.length());
-            final ThemisSolverPackage myPackage = thePackageMap.get(myName);
-
-            /* Handle unknown package */
-            if (myPackage == null) {
-                throw new IllegalArgumentException("Unknown package");
-            }
+            final ThemisSolverPackage myPackage = resolvePackage(myName);
 
             /* Format the packageHTML */
             return formatPackage(myPackage, false);
@@ -145,12 +140,7 @@ public class ThemisUIRefDocument
         if (pLink.startsWith(ThemisUIRefConstants.LINKLOCAL)) {
             /* Strip off the header and locate the package */
             final String myName = pLink.substring(ThemisUIRefConstants.LINKLOCAL.length());
-            final ThemisSolverPackage myPackage = thePackageMap.get(myName);
-
-            /* Handle unknown package */
-            if (myPackage == null) {
-                throw new IllegalArgumentException("Unknown package");
-            }
+            final ThemisSolverPackage myPackage = resolvePackage(myName);
 
             /* Format the packageHTML */
             return formatPackage(myPackage, true);
@@ -202,6 +192,16 @@ public class ThemisUIRefDocument
         /* Create new document and obtain the body */
         final Element myBody = newDocument();
 
+        /* Determine whether to do local classes */
+        final boolean doLocal = pPackage.getChildren().isEmpty() || pLocal;
+        final ThemisUIResource myTitle = doLocal
+                ? ThemisUIResource.HEADER_CLASS : ThemisUIResource.HEADER_PACKAGE;
+
+        /* Create the header */
+        final Element myHeader = createElement(ThemisUIHTMLTag.H1);
+        myBody.appendChild(myHeader);
+        myHeader.setTextContent(myTitle.getValue());
+
         /* Create the title */
         buildPackageTitle(myBody, pPackage);
 
@@ -212,8 +212,8 @@ public class ThemisUIRefDocument
         final Element myTable = createElement(ThemisUIHTMLTag.TABLE);
         myBody.appendChild(myTable);
 
-        /* If we have no children or should be local */
-        if (pPackage.getChildren().isEmpty() || pLocal) {
+        /* Format appropriate table */
+        if (doLocal) {
             /* Format local classes */
             theLocal.formatLocal(pPackage, myTable);
         } else {
@@ -338,7 +338,7 @@ public class ThemisUIRefDocument
     private void createParentLink(final Element pLinks,
                                   final ThemisSolverPackage pPackage) {
         /* If we are not the default package */
-        final ThemisSolverPackage myParent = pPackage.getParent();
+        final ThemisSolverPackage myParent = getParentForLink(pPackage);
         if (!pPackage.equals(theDefault)
                 && !theDefault.equals(myParent)) {
             /* Create the cell */
@@ -356,6 +356,58 @@ public class ThemisUIRefDocument
             /* Set name of package */
             myLink.setTextContent(ThemisUIResource.REF_PARENT.getValue());
         }
+    }
+
+    /**
+     * Obtain parent for link.
+     *
+     * @param pPackage the package
+     * @return the parent
+     */
+    private ThemisSolverPackage getParentForLink(final ThemisSolverPackage pPackage) {
+        /* Handle default package */
+        if (pPackage.equals(theDefault)) {
+            return theDefault;
+        }
+
+        /* Skip to non-placeholder */
+        final ThemisSolverPackage myParent = pPackage.getParent();
+        return isPlaceHolder(myParent) ? getParentForLink(myParent) : myParent;
+    }
+
+    /**
+     * Resolve package.
+     *
+     * @param pName the package name
+     * @return the package
+     */
+    private ThemisSolverPackage resolvePackage(final String pName) {
+        /* Resolve the package */
+        ThemisSolverPackage myPackage = thePackageMap.get(pName);
+
+        /* Handle unknown package */
+        if (myPackage == null) {
+            throw new IllegalArgumentException("Unknown package: " + pName);
+        }
+
+        /* Skip over placeHolders */
+        while (isPlaceHolder(myPackage)) {
+            myPackage = myPackage.getChildren().getFirst();
+        }
+
+        /* Return the package */
+        return myPackage;
+    }
+
+    /**
+     * Obtain parent for link.
+     *
+     * @param pPackage the package
+     * @return the parent
+     */
+    private boolean isPlaceHolder(final ThemisSolverPackage pPackage) {
+        return pPackage.getFiles().isEmpty()
+                && pPackage.getChildren().size() == 1;
     }
 
     /**

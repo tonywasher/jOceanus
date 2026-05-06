@@ -637,7 +637,7 @@ public class MoneyWisePayee
         if (!(pPayee instanceof MoneyWisePayee myPayee)) {
             return false;
         }
-        
+
         /* Store the current detail into history */
         pushHistory();
 

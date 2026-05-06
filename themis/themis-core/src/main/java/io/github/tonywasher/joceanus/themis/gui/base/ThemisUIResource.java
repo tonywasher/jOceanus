@@ -74,6 +74,16 @@ public enum ThemisUIResource
     PROMPT_FILE("prompt.file"),
 
     /**
+     * Package References Header.
+     */
+    HEADER_PACKAGE("header.package"),
+
+    /**
+     * Class References Header.
+     */
+    HEADER_CLASS("header.class"),
+
+    /**
      * Reference Local Package.
      */
     REF_LOCAL("reference.local"),

@@ -135,9 +135,4 @@ public class ThemisDeclEnum
     public List<ThemisExpressionInstance> getAnnotations() {
         return theAnnotations;
     }
-
-    @Override
-    public String toString() {
-        return theFullName;
-    }
 }

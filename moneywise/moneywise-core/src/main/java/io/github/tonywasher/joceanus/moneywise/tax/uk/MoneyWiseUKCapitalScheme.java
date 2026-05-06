@@ -221,6 +221,13 @@ public abstract class MoneyWiseUKCapitalScheme
          */
         private static final MetisFieldSet<MoneyWiseUKCapitalAsIncomeScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKCapitalAsIncomeScheme.class);
 
+        /**
+         * Default constructor.
+         */
+        MoneyWiseUKCapitalAsIncomeScheme() {
+            /* NoOp */
+        }
+
         @Override
         public MetisFieldSet<MoneyWiseUKCapitalAsIncomeScheme> getDataFieldSet() {
             return FIELD_DEFS;

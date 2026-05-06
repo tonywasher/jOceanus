@@ -29,6 +29,13 @@ public class MoneyWiseUKRoomRentalScheme
      */
     private static final MetisFieldSet<MoneyWiseUKRoomRentalScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKRoomRentalScheme.class);
 
+    /**
+     * Default constructor.
+     */
+    MoneyWiseUKRoomRentalScheme() {
+        /* NoOp */
+    }
+
     @Override
     protected OceanusMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
                                             final OceanusMoney pAmount) {

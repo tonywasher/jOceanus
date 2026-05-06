@@ -699,7 +699,7 @@ public class MoneyWisePortfolio
         if (!(pPortfolio instanceof MoneyWisePortfolio myPortfolio)) {
             return false;
         }
-        
+
         /* Store the current detail into history */
         pushHistory();
 

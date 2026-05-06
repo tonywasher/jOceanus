@@ -557,7 +557,7 @@ public class MoneyWiseCash
         if (!(pCash instanceof MoneyWiseCash myCash)) {
             return false;
         }
-        
+
         /* Store the current detail into history */
         pushHistory();
 
