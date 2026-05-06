@@ -17,7 +17,6 @@
         <module name="tethys-javafx" />
         <module name="themis-javafx" />
         <module name="prometheus-sheet-api" />
-        <module name="themis-swing" />
         <module name="tethys-test" />
         <module name="gordianknot" />
         <module name="prometheus-sheet-odf" />
@@ -70,6 +69,9 @@
         <module name="prometheus-core" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="themis-swing" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-Xmaxerrs 1000" />

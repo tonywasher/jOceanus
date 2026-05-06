@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.github.tonywasher</groupId>
     <artifactId>joceanus</artifactId>
-    <version>1.6.4-b1</version>
+    <version>1.6.4-SNAPSHOT</version>
   </parent>
   <groupId>io.github.tonywasher.joceanus</groupId>
   <artifactId>themis</artifactId>
@@ -13,7 +13,6 @@
   <modules>
     <module>themis-core</module>
     <module>themis-javafx</module>
-    <module>themis-swing</module>
   </modules>
   <properties>
     <scmComponent>themis</scmComponent>
