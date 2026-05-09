@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
@@ -28,6 +25,10 @@ import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWise
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxConfig;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxSource;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateUtils;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 /**
  * Tax configuration.
@@ -143,7 +144,7 @@ public class MoneyWiseUKTaxConfig
         theTaxYear = pTaxYear;
         theTaxSource = pTaxSource;
         theBirthday = pBirthday;
-        theClientAge = theBirthday.ageOn(pTaxYear.getYearEnd());
+        theClientAge = OceanusDateUtils.ageOn(theBirthday, pTaxYear.getYearEnd());
 
         /* calculate the gross taxable income and preSavings */
         theGrossPreSavings = determineGrossPreSavings();

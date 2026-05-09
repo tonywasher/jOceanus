@@ -16,14 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQActionType;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQPortfolioLineType;
@@ -39,6 +31,14 @@ import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.Mon
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFUnitsLine;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFXferAccountLine;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.List;
 
@@ -389,7 +389,7 @@ public class MoneyWiseQIFPortfolioEvent
             final OceanusUnits myUnits = myQuantity.getUnits();
 
             /* Convert to ratio line */
-            final OceanusRatio myRatio = new OceanusRatio(myUnits.toString());
+            final OceanusRatio myRatio = new OceanusRatio(myUnits);
             addLine(new MoneyWiseQIFPortfolioSplitRatioLine(myRatio));
         }
     }

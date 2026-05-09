@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.test.data.trans;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisAccountBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
@@ -40,6 +38,9 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import org.junit.jupiter.api.Assertions;
 
 /**
@@ -57,6 +58,11 @@ public abstract class MoneyWiseDataTestCase {
     private final MoneyWiseTransactionBuilder theTransBuilder;
 
     /**
+     * Decimal Parser.
+     */
+    private final OceanusDecimalParser theParser;
+
+    /**
      * The analysis.
      */
     private MoneyWiseXAnalysis theAnalysis;
@@ -72,6 +78,7 @@ public abstract class MoneyWiseDataTestCase {
 
         /* Access builder */
         theTransBuilder = pBuilder.getTransBuilder();
+        theParser = theBuilder.getDecimalParser();
     }
 
     /**
@@ -298,7 +305,7 @@ public abstract class MoneyWiseDataTestCase {
     void checkAccountValue(final String pAccount,
                            final String pValue) {
         /* Obtain the value */
-        final OceanusMoney myAmount = new OceanusMoney(pValue);
+        final OceanusMoney myAmount = theParser.parseMoneyValue(pValue);
         final MoneyWiseAssetBase myAsset = (MoneyWiseAssetBase) theTransBuilder.resolveTransactionAsset(pAccount);
         final MoneyWiseXAnalysisAccountBucket<?> myBucket = getAccountBucket(myAsset);
         Assertions.assertEquals(myAmount, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION),
@@ -316,8 +323,8 @@ public abstract class MoneyWiseDataTestCase {
                          final String pIncome,
                          final String pExpense) {
         /* Obtain the value */
-        final OceanusMoney myIncome = new OceanusMoney(pIncome);
-        final OceanusMoney myExpense = new OceanusMoney(pExpense);
+        final OceanusMoney myIncome = theParser.parseMoneyValue(pIncome);
+        final OceanusMoney myExpense = theParser.parseMoneyValue(pExpense);
         final MoneyWiseAssetBase myAsset = (MoneyWiseAssetBase) theTransBuilder.resolveTransactionAsset(pPayee);
         final MoneyWiseXAnalysisPayeeBucket myBucket = theAnalysis.getPayees().getBucket(myAsset);
         Assertions.assertEquals(myIncome, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisPayeeAttr.INCOME),
@@ -337,8 +344,8 @@ public abstract class MoneyWiseDataTestCase {
                             final String pIncome,
                             final String pExpense) {
         /* Obtain the value */
-        final OceanusMoney myIncome = new OceanusMoney(pIncome);
-        final OceanusMoney myExpense = new OceanusMoney(pExpense);
+        final OceanusMoney myIncome = theParser.parseMoneyValue(pIncome);
+        final OceanusMoney myExpense = theParser.parseMoneyValue(pExpense);
         final MoneyWiseTransCategory myCategory = theAnalysis.getData().getTransCategories().findItemByName(pCategory);
         final MoneyWiseXAnalysisTransCategoryBucket myBucket = theAnalysis.getTransCategories().getBucket(myCategory);
         Assertions.assertEquals(myIncome, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisTransAttr.INCOME),
@@ -356,7 +363,7 @@ public abstract class MoneyWiseDataTestCase {
     void checkTaxBasisValue(final MoneyWiseTaxClass pTaxBasis,
                             final String pValue) {
         /* Obtain the value */
-        final OceanusMoney myAmount = new OceanusMoney(pValue);
+        final OceanusMoney myAmount = theParser.parseMoneyValue(pValue);
         final MoneyWiseXAnalysisTaxBasisBucket myBucket = theAnalysis.getTaxBasis().getBucket(pTaxBasis);
         Assertions.assertEquals(myAmount, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS),
                 "Bad taxValue for " + pTaxBasis);

@@ -92,25 +92,11 @@ public class OceanusDecimal
     /**
      * Constructor.
      *
-     * @param pSource the decimal as a string
-     * @throws IllegalArgumentException on invalidly formatted argument
+     * @param pSource the source decimal
      */
-    public OceanusDecimal(final String pSource) {
-        /* Parse the string */
-        OceanusDecimalParser.parseDecimalValue(pSource, this);
-
-        /* Remove redundant decimals */
-        reduceScale(0);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param pSource the decimal as a double
-     */
-    public OceanusDecimal(final double pSource) {
-        /* Convert to string and parse */
-        this(Double.toString(pSource));
+    public OceanusDecimal(final OceanusDecimal pSource) {
+        /* Copy value and scale */
+        setValue(pSource.unscaledValue(), pSource.scale());
     }
 
     /**
@@ -118,9 +104,9 @@ public class OceanusDecimal
      *
      * @param pSource the source decimal
      */
-    public OceanusDecimal(final OceanusDecimal pSource) {
+    public OceanusDecimal(final BigDecimal pSource) {
         /* Copy value and scale */
-        setValue(pSource.unscaledValue(), pSource.scale());
+        setValue(pSource.unscaledValue().longValue(), pSource.scale());
     }
 
     /**
@@ -634,7 +620,13 @@ public class OceanusDecimal
     @Override
     public String toString() {
         /* Format the value */
-        return OceanusDecimalFormatter.toString(this);
+        final StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(theValue);
+        while (myBuilder.length() < theScale + 1) {
+            myBuilder.insert(0, "0");
+        }
+        myBuilder.insert(myBuilder.length() - theScale, ".");
+        return myBuilder.toString();
     }
 
     /**

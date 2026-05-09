@@ -57,40 +57,6 @@ public class OceanusPrice
     }
 
     /**
-     * Constructor for price from a decimal string.
-     *
-     * @param pSource The source decimal string
-     * @throws IllegalArgumentException on invalidly formatted argument
-     */
-    public OceanusPrice(final String pSource) {
-        /* Use default constructor */
-        this();
-
-        /* Parse the string and correct the scale */
-        OceanusDecimalParser.parseDecimalValue(pSource, this);
-        adjustToScale(getCurrency().getDefaultFractionDigits()
-                + XTRA_DECIMALS);
-    }
-
-    /**
-     * Constructor for price from a decimal string.
-     *
-     * @param pSource   The source decimal string
-     * @param pCurrency the currency
-     * @throws IllegalArgumentException on invalidly formatted argument
-     */
-    public OceanusPrice(final String pSource,
-                        final Currency pCurrency) {
-        /* Use default constructor */
-        this(pCurrency);
-
-        /* Parse the string and correct the scale */
-        OceanusDecimalParser.parseDecimalValue(pSource, this);
-        adjustToScale(getCurrency().getDefaultFractionDigits()
-                + XTRA_DECIMALS);
-    }
-
-    /**
      * Create the price from a byte array.
      *
      * @param pBuffer the buffer
@@ -162,5 +128,18 @@ public class OceanusPrice
 
         /* Subtract the value */
         super.subtractValue(pValue);
+    }
+
+    /**
+     * calculate the value of specified units at this price.
+     *
+     * @param pUnits the number of units
+     * @return the calculated value
+     */
+    public OceanusMoney unitsAtPrice(final OceanusUnits pUnits) {
+        /* Calculate value of units */
+        final OceanusPrice myPrice = new OceanusPrice(this);
+        myPrice.multiply(pUnits);
+        return new OceanusMoney(this);
     }
 }

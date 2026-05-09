@@ -392,7 +392,7 @@ public class OceanusDateConfig
         if (theEarliest != null
                 && theMonth.compareTo(theEarliest) < 0) {
             theMonth = new OceanusDate(theEarliest);
-            theMonth.startCalendarMonth();
+            theMonth = OceanusDateUtils.startCalendarMonth(theEarliest);
         }
     }
 
@@ -403,8 +403,7 @@ public class OceanusDateConfig
         theMonth.adjustYear(1);
         if (theLatest != null
                 && theMonth.compareTo(theLatest) > 0) {
-            theMonth = new OceanusDate(theLatest);
-            theMonth.startCalendarMonth();
+            theMonth = OceanusDateUtils.startCalendarMonth(theLatest);
         }
     }
 
@@ -466,8 +465,7 @@ public class OceanusDateConfig
         }
 
         /* Set to 1st of month and record it */
-        theMonth = new OceanusDate(myDate);
-        theMonth.startCalendarMonth();
+        theMonth = OceanusDateUtils.startCalendarMonth(myDate);
     }
 
     /**

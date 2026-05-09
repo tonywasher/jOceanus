@@ -19,8 +19,6 @@ package io.github.tonywasher.joceanus.oceanus.date;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -123,11 +121,6 @@ public enum OceanusDateResource implements OceanusBundleId {
     TITLE_BOX("title.box");
 
     /**
-     * The Period Map.
-     */
-    private static final Map<OceanusDatePeriod, OceanusBundleId> PERIOD_MAP = buildPeriodMap();
-
-    /**
      * The Resource Loader.
      */
     private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(OceanusDateResource.class.getCanonicalName(),
@@ -172,39 +165,5 @@ public enum OceanusDateResource implements OceanusBundleId {
 
         /* return the value */
         return theValue;
-    }
-
-    /**
-     * Build period map.
-     *
-     * @return the map
-     */
-    private static Map<OceanusDatePeriod, OceanusBundleId> buildPeriodMap() {
-        /* Create the map and return it */
-        final Map<OceanusDatePeriod, OceanusBundleId> myMap = new EnumMap<>(OceanusDatePeriod.class);
-        myMap.put(OceanusDatePeriod.ONEWEEK, PERIOD_ONEWEEK);
-        myMap.put(OceanusDatePeriod.FORTNIGHT, PERIOD_FORTNIGHT);
-        myMap.put(OceanusDatePeriod.ONEMONTH, PERIOD_ONEMONTH);
-        myMap.put(OceanusDatePeriod.QUARTERYEAR, PERIOD_QUARTERYEAR);
-        myMap.put(OceanusDatePeriod.HALFYEAR, PERIOD_HALFYEAR);
-        myMap.put(OceanusDatePeriod.ONEYEAR, PERIOD_ONEYEAR);
-        myMap.put(OceanusDatePeriod.CALENDARMONTH, PERIOD_CALENDARMONTH);
-        myMap.put(OceanusDatePeriod.CALENDARQUARTER, PERIOD_CALENDARQUARTER);
-        myMap.put(OceanusDatePeriod.CALENDARYEAR, PERIOD_CALENDARYEAR);
-        myMap.put(OceanusDatePeriod.FISCALYEAR, PERIOD_FISCALYEAR);
-        myMap.put(OceanusDatePeriod.DATESUPTO, PERIOD_DATESUPTO);
-        myMap.put(OceanusDatePeriod.CUSTOM, PERIOD_CUSTOM);
-        myMap.put(OceanusDatePeriod.ALLDATES, PERIOD_ALLDATES);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for period.
-     *
-     * @param pPeriod the period
-     * @return the resource key
-     */
-    protected static OceanusBundleId getKeyForPeriod(final OceanusDatePeriod pPeriod) {
-        return OceanusBundleLoader.getKeyForEnum(PERIOD_MAP, pPeriod);
     }
 }

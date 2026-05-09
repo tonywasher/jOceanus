@@ -32,7 +32,7 @@ public class OceanusRatio
     /**
      * Ratio of one.
      */
-    public static final OceanusRatio ONE = new OceanusRatio("1");
+    public static final OceanusRatio ONE = getWholeUnits(1);
 
     /**
      * Number of days in a standard year.
@@ -50,20 +50,21 @@ public class OceanusRatio
      *
      * @param pRatio the Ratio to copy
      */
-    public OceanusRatio(final OceanusRatio pRatio) {
+    public OceanusRatio(final OceanusDecimal pRatio) {
         super(pRatio.unscaledValue(), pRatio.scale());
+        adjustToScale(NUM_DECIMALS);
     }
 
     /**
-     * Constructor for ratio from a decimal string.
+     * Construct a new Units by setting the value explicitly.
      *
-     * @param pSource The source decimal string
-     * @throws IllegalArgumentException on invalidly formatted argument
+     * @param pValue the unscaled value
+     * @return the new Rate
      */
-    public OceanusRatio(final String pSource) {
-        /* Parse the string and correct the scale */
-        OceanusDecimalParser.parseDecimalValue(pSource, this);
-        adjustToScale(NUM_DECIMALS);
+    public static OceanusRatio getWholeUnits(final long pValue) {
+        final OceanusRatio myRatio = new OceanusRatio();
+        myRatio.setValue(adjustDecimals(pValue, NUM_DECIMALS), NUM_DECIMALS);
+        return myRatio;
     }
 
     /**
@@ -88,12 +89,12 @@ public class OceanusRatio
     }
 
     /**
-     * Obtain inverse ratio of this ratio (i.e. 100%/this rate).
+     * Obtain inverse ratio of this ratio (i.e. 1/this rate).
      *
      * @return the inverse ratio
      */
     public OceanusRatio getInverseRatio() {
-        return new OceanusRatio(OceanusRate.RATE_ONEHUNDREDPERCENT, this);
+        return new OceanusRatio(ONE, this);
     }
 
     /**
@@ -115,13 +116,13 @@ public class OceanusRatio
      * @param pDays the number of days in the period
      * @return the annualised ratio
      */
-    public OceanusRate annualise(final long pDays) {
+    public OceanusRatio annualise(final long pDays) {
         /* Calculate the annualised value and convert to rate */
         double myValue = Math.pow(doubleValue(), ((double) DAYS_IN_YEAR) / pDays);
         myValue -= 1;
         BigDecimal myDecimal = BigDecimal.valueOf(myValue);
-        myDecimal = myDecimal.setScale(OceanusRate.NUM_DECIMALS, RoundingMode.HALF_UP);
-        return new OceanusRate(myDecimal.toString());
+        myDecimal = myDecimal.setScale(NUM_DECIMALS, RoundingMode.HALF_UP);
+        return new OceanusRatio(new OceanusDecimal(myDecimal));
     }
 
     @Override

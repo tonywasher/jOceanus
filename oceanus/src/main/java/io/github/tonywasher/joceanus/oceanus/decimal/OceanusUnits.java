@@ -43,21 +43,6 @@ public class OceanusUnits
     }
 
     /**
-     * Constructor for units from a decimal string.
-     *
-     * @param pSource The source decimal string
-     * @throws IllegalArgumentException on invalidly formatted argument
-     */
-    public OceanusUnits(final String pSource) {
-        /* Use default constructor */
-        this();
-
-        /* Parse the string and correct the scale */
-        OceanusDecimalParser.parseDecimalValue(pSource, this);
-        adjustToScale(NUM_DECIMALS);
-    }
-
-    /**
      * Create the units from a byte array.
      *
      * @param pBuffer the buffer
@@ -106,16 +91,5 @@ public class OceanusUnits
     @Override
     public void subtractValue(final OceanusDecimal pValue) {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * calculate the value of these units at a given price.
-     *
-     * @param pPrice the per unit price
-     * @return the calculated value
-     */
-    public OceanusMoney valueAtPrice(final OceanusPrice pPrice) {
-        /* Calculate value of units */
-        return new OceanusMoney(this, pPrice);
     }
 }

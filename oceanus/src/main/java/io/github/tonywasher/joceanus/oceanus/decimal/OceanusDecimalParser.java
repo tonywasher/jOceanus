@@ -107,6 +107,19 @@ public class OceanusDecimalParser {
     /**
      * Parse a string into a decimal.
      *
+     * @param pValue The value to parse.
+     * @return the parsed decimal
+     * @throws IllegalArgumentException on invalid decimal
+     */
+    public static OceanusDecimal parseDecimalValue(final String pValue) {
+        final OceanusDecimal myDecimal = new OceanusDecimal();
+        parseDecimalValue(pValue, myDecimal);
+        return myDecimal;
+    }
+
+    /**
+     * Parse a string into a decimal.
+     *
      * @param pValue  The value to parse.
      * @param pResult the decimal to hold the result in
      * @throws IllegalArgumentException on invalid decimal

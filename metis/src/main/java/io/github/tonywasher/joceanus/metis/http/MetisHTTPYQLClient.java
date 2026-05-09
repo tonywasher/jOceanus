@@ -16,13 +16,13 @@
  */
 package io.github.tonywasher.joceanus.metis.http;
 
+import io.github.tonywasher.joceanus.metis.exc.MetisDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.metis.exc.MetisDataException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -311,7 +311,7 @@ public class MetisHTTPYQLClient
 
             /* return parsed rate if possible */
             return (myRate != null)
-                    ? new OceanusRatio(myRate)
+                    ? theParser.parseRatioValue(myRate)
                     : null;
 
         } catch (JSONException e) {
@@ -377,9 +377,9 @@ public class MetisHTTPYQLClient
                     String myId = myEntry.getString(YQLFLD_ID);
                     myId = myId.substring(myFrom.length());
                     final Currency myCurr = Currency.getInstance(myId);
-                    final OceanusRatio myRate = new OceanusRatio(myStrRate);
+                    final OceanusRatio myRate = theParser.parseRatioValue(myStrRate);
 
-                    /* Add the the map */
+                    /* Add to the map */
                     myMap.put(myCurr, myRate);
                 }
             }

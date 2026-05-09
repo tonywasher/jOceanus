@@ -94,7 +94,7 @@ public class TethysUISwingAreaChart
         final XYPlot myPlot = (XYPlot) theChart.getPlot();
         final StackedXYAreaRenderer2 myRenderer = new StackedXYAreaRenderer2();
         myRenderer.setDefaultToolTipGenerator((pDataset, pSeries, pItem) -> {
-            final OceanusMoney myValue = new OceanusMoney(pDataset.getY(pSeries, pItem).toString());
+            final OceanusMoney myValue = getParser().parseMoneyValue(pDataset.getY(pSeries, pItem).toString());
             return getToolTip(pDataset.getSeriesKey(pSeries).toString(), myValue);
         });
         myPlot.setRenderer(0, myRenderer);
@@ -200,7 +200,7 @@ public class TethysUISwingAreaChart
         public StringBuffer format(final double pValue,
                                    final StringBuffer pBuffer,
                                    final FieldPosition pLoc) {
-            final OceanusMoney myMoney = new OceanusMoney(Double.toString(pValue));
+            final OceanusMoney myMoney = getParser().parseMoneyValue(Double.toString(pValue));
             return new StringBuffer(getFormatter().formatMoney(myMoney));
         }
     }

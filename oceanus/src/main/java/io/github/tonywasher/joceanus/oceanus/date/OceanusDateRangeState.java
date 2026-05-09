@@ -470,11 +470,8 @@ public class OceanusDateRangeState {
      * Build the containing range.
      */
     private void buildContainingRange() {
-        /* Initialise the start date */
-        theStartDate = new OceanusDate(theBaseDate);
-
         /* Adjust the date to the start of the relevant period */
-        theStartDate.startPeriod(thePeriod);
+        theStartDate = OceanusDateUtils.startPeriod(theBaseDate, thePeriod);
 
         /* Initialise the end date */
         theEndDate = new OceanusDate(theStartDate);
