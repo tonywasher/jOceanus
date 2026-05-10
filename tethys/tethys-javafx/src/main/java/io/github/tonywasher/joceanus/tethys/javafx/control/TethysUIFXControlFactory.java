@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.tethys.javafx.control;
 
-import javafx.stage.Stage;
-
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUICheckBox;
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControlFactory;
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager;
@@ -29,12 +27,13 @@ import io.github.tonywasher.joceanus.tethys.api.control.TethysUISplitTreeManager
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUITextArea;
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUITreeManager;
 import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
+import javafx.stage.Stage;
 
 /**
  * javaFX Control factory.
  */
 public class TethysUIFXControlFactory
-        implements TethysUIControlFactory {
+        implements TethysUIControlFactory, TethysUIFXStageOwner {
     /**
      * The Factory.
      */
@@ -64,12 +63,8 @@ public class TethysUIFXControlFactory
         theStage = pStage;
     }
 
-    /**
-     * Get the stage.
-     *
-     * @return the stage
-     */
-    Stage getStage() {
+    @Override
+    public Stage getStage() {
         return theStage;
     }
 

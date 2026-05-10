@@ -31,7 +31,7 @@ import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSpreadSheet;
 import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.io.File;
 
@@ -72,16 +72,16 @@ public class PrometheusThreadCreateBackup
     }
 
     @Override
-    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public Void performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Access the thread manager */
-        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
+        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pReport.getThreadData();
         final PrometheusSecurityPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();
         boolean doDelete = false;
         File myFile = null;
 
         try {
             /* Initialise the status window */
-            pManager.initTask(getTaskName());
+            pReport.initTask(getTaskName());
 
             /* Access the Backup preferences */
             final MetisPreferenceManager myMgr = theControl.getPreferenceManager();
@@ -116,25 +116,25 @@ public class PrometheusThreadCreateBackup
             }
 
             /* Set the standard backup name */
-            myFile = new File(myName.toString() + GordianUtilities.SECUREZIPFILE_EXT);
+            myFile = new File(myName + GordianUtilities.SECUREZIPFILE_EXT);
 
             /* Create backup */
             final PrometheusSpreadSheet mySheet = theControl.getSpreadSheet();
             final PrometheusDataSet myOldData = theControl.getData();
-            mySheet.createBackup(pManager, myOldData, myFile, myType);
+            mySheet.createBackup(pReport, myOldData, myFile, myType);
 
             /* File created, so delete on error */
             doDelete = true;
 
             /* Initialise the status window */
-            pManager.initTask("Verifying Backup");
+            pReport.initTask("Verifying Backup");
 
             /* Load workbook */
             final PrometheusDataSet myNewData = theControl.getNewData();
-            mySheet.loadBackup(pManager, myPasswordMgr, myNewData, myFile);
+            mySheet.loadBackup(pReport, myPasswordMgr, myNewData, myFile);
 
             /* Create a difference set between the two data copies */
-            final PrometheusDataSet myDiff = myNewData.getDifferenceSet(pManager, myOldData);
+            final PrometheusDataSet myDiff = myNewData.getDifferenceSet(pReport, myOldData);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {
@@ -146,7 +146,7 @@ public class PrometheusThreadCreateBackup
             doDelete = false;
 
             /* State that we have completed */
-            pManager.setCompletion();
+            pReport.setCompletion();
 
             /* Delete file on error */
         } finally {

@@ -21,7 +21,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Thread to load data from the database.
@@ -48,7 +48,7 @@ public class PrometheusThreadLoadDatabase
     }
 
     @Override
-    public PrometheusDataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public PrometheusDataSet performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Access database */
         final PrometheusDataStore myDatabase = theControl.getDatabase();
 
@@ -56,17 +56,17 @@ public class PrometheusThreadLoadDatabase
         try {
             /* Load database */
             final PrometheusDataSet myData = theControl.getNewData();
-            myDatabase.loadDatabase(pManager, myData);
+            myDatabase.loadDatabase(pReport, myData);
 
             /* Check security on the database */
-            myData.checkSecurity(pManager);
+            myData.checkSecurity(pReport);
             if (myData.hasUpdates()) {
                 /* Store any updates */
-                myDatabase.updateDatabase(pManager, myData);
+                myDatabase.updateDatabase(pReport, myData);
             }
 
             /* State that we have completed */
-            pManager.setCompletion();
+            pReport.setCompletion();
 
             /* Return the loaded data */
             return myData;

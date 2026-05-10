@@ -17,12 +17,6 @@
 package io.github.tonywasher.joceanus.tethys.javafx.launch.util;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import javafx.application.Platform;
-import javafx.application.Preloader.StateChangeNotification;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIProgram;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUILaunchProgram;
@@ -32,25 +26,20 @@ import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXNode;
 import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXUtils;
 import io.github.tonywasher.joceanus.tethys.javafx.factory.TethysUIFXFactory;
 import io.github.tonywasher.joceanus.tethys.javafx.menu.TethysUIFXMenuBarManager;
+import javafx.application.Platform;
+import javafx.application.Preloader.StateChangeNotification;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 
 import java.util.Arrays;
 
 /**
  * State for javaFX program.
  */
-public class TethysUIFXLaunchState {
-    /**
-     * Set state interface.
-     */
-    public interface TethysUIFXSetState {
-        /**
-         * Set program state.
-         *
-         * @param pState the state
-         */
-        void setProgramState(TethysUIFXLaunchState pState);
-    }
-
+public class TethysUIFXLaunchState
+        implements TethysUIFXBaseState {
     /**
      * The Program definition.
      */
@@ -88,18 +77,12 @@ public class TethysUIFXLaunchState {
         theFactory = new TethysUIFXFactory(pProgram);
     }
 
-    /**
-     * Obtain the program definitions.
-     *
-     * @return the program definitions
-     */
-    TethysUIProgram getProgramDefinitions() {
+    @Override
+    public TethysUIProgram getProgramDefinitions() {
         return theApp;
     }
 
-    /**
-     * Create an FXSplash.
-     */
+    @Override
     public void createSplash() {
         /* Create a Splash if required */
         final TethysUIIconId mySplashId = theApp.getSplash();
@@ -108,11 +91,7 @@ public class TethysUIFXLaunchState {
                 : null;
     }
 
-    /**
-     * Start the preLoader.
-     *
-     * @param pStage the preLoader stage
-     */
+    @Override
     public void startPreLoader(final Stage pStage) {
         /* If we have a pane */
         if (theSplash != null) {
@@ -122,11 +101,7 @@ public class TethysUIFXLaunchState {
         }
     }
 
-    /**
-     * Initialise the main program.
-     *
-     * @throws OceanusException on error
-     */
+    @Override
     public void createMain() throws OceanusException {
         /* Create the main panel */
         theMain = createMain(theApp, theFactory);
@@ -154,11 +129,7 @@ public class TethysUIFXLaunchState {
         return pProgram.createMainPanel(pFactory);
     }
 
-    /**
-     * Start the main panel.
-     *
-     * @param pStage the main stage
-     */
+    @Override
     public void startMain(final Stage pStage) {
         /* If we have a panel */
         if (theMain != null) {
@@ -205,11 +176,7 @@ public class TethysUIFXLaunchState {
         theFactory.getActiveProfile().end();
     }
 
-    /**
-     * handle the state notification change.
-     *
-     * @param pEvent the event
-     */
+    @Override
     public void handleStateChangeNotification(final StateChangeNotification pEvent) {
         if (theSplash != null) {
             theSplash.handleStateChange(pEvent);

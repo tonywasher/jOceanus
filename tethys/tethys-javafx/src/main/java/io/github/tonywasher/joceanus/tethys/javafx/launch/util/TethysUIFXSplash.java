@@ -16,6 +16,9 @@
  */
 package io.github.tonywasher.joceanus.tethys.javafx.launch.util;
 
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIProgram;
+import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXIcon;
+import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXUtils;
 import javafx.application.Application;
 import javafx.application.Preloader.StateChangeNotification;
 import javafx.geometry.Rectangle2D;
@@ -31,11 +34,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
-import io.github.tonywasher.joceanus.tethys.api.base.TethysUIProgram;
-import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXIcon;
-import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXUtils;
-import io.github.tonywasher.joceanus.tethys.javafx.launch.util.TethysUIFXLaunchState.TethysUIFXSetState;
 
 /**
  * javaFX Splash Panel.
@@ -54,7 +52,7 @@ public class TethysUIFXSplash {
     /**
      * The program info .
      */
-    private final TethysUIFXLaunchState theState;
+    private final TethysUIFXBaseState theState;
 
     /**
      * The stage.
@@ -66,7 +64,7 @@ public class TethysUIFXSplash {
      *
      * @param pState the program state
      */
-    TethysUIFXSplash(final TethysUIFXLaunchState pState) {
+    TethysUIFXSplash(final TethysUIFXBaseState pState) {
         /* Store parameters */
         theState = pState;
 

@@ -16,16 +16,16 @@
  */
 package io.github.tonywasher.joceanus.moneywise.threads;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.archive.MoneyWiseArchiveLoader;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * LoaderThread extension to load an archive spreadsheet.
@@ -52,25 +52,25 @@ public class MoneyWiseThreadLoadArchive
     }
 
     @Override
-    public MoneyWiseDataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public MoneyWiseDataSet performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Initialise the status window */
-        pManager.initTask(getTaskName());
+        pReport.initTask(getTaskName());
 
         /* Load workbook */
-        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
+        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pReport.getThreadData();
         final PrometheusPreferenceManager myMgr = myPromToolkit.getPreferenceManager();
         final MoneyWiseDataSet myData = theView.getNewData();
         final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader(myData);
-        myLoader.loadArchive(pManager, myMgr.getPreferenceSet(PrometheusBackupPreferences.class));
+        myLoader.loadArchive(pReport, myMgr.getPreferenceSet(PrometheusBackupPreferences.class));
 
         /* Initialise the status window */
-        pManager.initTask("Analysing Data");
+        pReport.initTask("Analysing Data");
 
         /* Analyse the Data to ensure that close dates are updated */
         theView.analyseData(myData);
 
         /* Initialise the status window */
-        pManager.initTask("Accessing DataStore");
+        pReport.initTask("Accessing DataStore");
 
         /* Create interface */
         final PrometheusDataStore myDatabase = theView.getDatabase();
@@ -79,23 +79,23 @@ public class MoneyWiseThreadLoadArchive
         try {
             /* Load underlying database */
             final MoneyWiseDataSet myStore = theView.getNewData();
-            myDatabase.loadDatabase(pManager, myStore);
+            myDatabase.loadDatabase(pReport, myStore);
 
             /* Check security on the database */
-            myStore.checkSecurity(pManager);
+            myStore.checkSecurity(pReport);
             if (myStore.hasUpdates()) {
                 /* Store any updates */
-                myDatabase.updateDatabase(pManager, myStore);
+                myDatabase.updateDatabase(pReport, myStore);
             }
 
             /* Initialise the security, either from database or with a new security control */
-            myData.initialiseSecurity(pManager, myStore);
+            myData.initialiseSecurity(pReport, myStore);
 
             /* Re-base the loaded spreadsheet onto the database image */
-            myData.reBase(pManager, myStore);
+            myData.reBase(pReport, myStore);
 
             /* State that we have completed */
-            pManager.setCompletion();
+            pReport.setCompletion();
 
             /* Return the loaded data */
             return myData;

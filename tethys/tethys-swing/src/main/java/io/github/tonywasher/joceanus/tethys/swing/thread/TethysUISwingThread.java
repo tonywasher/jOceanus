@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.tethys.swing.thread;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusManager;
+import io.github.tonywasher.joceanus.tethys.core.thread.TethysUICoreThreadManager;
 import io.github.tonywasher.joceanus.tethys.core.thread.TethysUICoreThreadStatus;
 
 import javax.swing.SwingWorker;
@@ -36,7 +37,7 @@ public class TethysUISwingThread<T>
     /**
      * The ThreadManager.
      */
-    private final TethysUISwingThreadManager theManager;
+    private final TethysUICoreThreadManager theManager;
 
     /**
      * The ThreadStatusManager.
@@ -64,7 +65,7 @@ public class TethysUISwingThread<T>
      * @param pManager the thread manager
      * @param pThread  the thread to wrap
      */
-    protected TethysUISwingThread(final TethysUISwingThreadManager pManager,
+    protected TethysUISwingThread(final TethysUICoreThreadManager pManager,
                                   final TethysUIThread<T> pThread) {
         theManager = pManager;
         theStatusMgr = theManager.getStatusManager();

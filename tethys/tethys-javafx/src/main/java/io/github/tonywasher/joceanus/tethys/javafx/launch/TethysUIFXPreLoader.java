@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUILaunchProgram;
+import io.github.tonywasher.joceanus.tethys.javafx.launch.util.TethysUIFXBaseState;
 import io.github.tonywasher.joceanus.tethys.javafx.launch.util.TethysUIFXLaunchState;
 import javafx.application.Preloader;
 import javafx.stage.Stage;
@@ -37,7 +38,7 @@ public abstract class TethysUIFXPreLoader
     /**
      * javaFXState.
      */
-    private TethysUIFXLaunchState theState;
+    private TethysUIFXBaseState theState;
 
     /**
      * Default constructor.

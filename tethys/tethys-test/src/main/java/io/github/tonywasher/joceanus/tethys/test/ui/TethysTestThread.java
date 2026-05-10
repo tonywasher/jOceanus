@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.tethys.test.ui;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.util.concurrent.TimeUnit;
 
@@ -34,17 +34,17 @@ public class TethysTestThread
     }
 
     @Override
-    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public Void performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Set stages */
-        pManager.setNumStages(2);
+        pReport.setNumStages(2);
 
         /* Perform first task */
-        pManager.setNewStage("First");
-        singleTask(pManager, 500);
+        pReport.setNewStage("First");
+        singleTask(pReport, 500);
 
         /* Perform second task */
-        pManager.setNewStage("Second");
-        singleTask(pManager, 200);
+        pReport.setNewStage("Second");
+        singleTask(pReport, 200);
 
         /* No result */
         return null;
@@ -53,14 +53,14 @@ public class TethysTestThread
     /**
      * Perform one task.
      *
-     * @param pManager  the thread manager
+     * @param pReport   the thread manager
      * @param pNumSteps the number of steps
      * @throws OceanusException on error
      */
-    private static void singleTask(final TethysUIThreadManager pManager,
+    private static void singleTask(final TethysUIThreadStatusReport pReport,
                                    final int pNumSteps) throws OceanusException {
         /* Record task details */
-        pManager.setNumSteps(pNumSteps);
+        pReport.setNumSteps(pNumSteps);
 
         /* Protect against exceptions */
         try {
@@ -70,7 +70,7 @@ public class TethysTestThread
                 TimeUnit.MILLISECONDS.sleep(10);
 
                 /* Set status */
-                pManager.setNextStep();
+                pReport.setNextStep();
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

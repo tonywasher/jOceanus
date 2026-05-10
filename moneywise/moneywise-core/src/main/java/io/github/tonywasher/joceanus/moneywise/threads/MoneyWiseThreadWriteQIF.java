@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.threads;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
 import io.github.tonywasher.joceanus.metis.toolkit.MetisToolkit;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseIOException;
@@ -31,8 +28,11 @@ import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFParser;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFStreamWriter;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFWriter;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -71,9 +71,9 @@ public class MoneyWiseThreadWriteQIF
     }
 
     @Override
-    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public Void performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Initialise the status window */
-        pManager.initTask("Analysing Data");
+        pReport.initTask("Analysing Data");
 
         /* Load configuration */
         final MetisPreferenceManager myMgr = theView.getPreferenceManager();
@@ -86,7 +86,7 @@ public class MoneyWiseThreadWriteQIF
         final MoneyWiseQIFFile myQFile = MoneyWiseQIFFile.buildQIFFile(theView.getData(), myAnalysis, myPrefs);
 
         /* Initialise the status window */
-        pManager.initTask("Writing QIF file");
+        pReport.initTask("Writing QIF file");
 
         /* Determine name of output file */
         final String myDirectory = myPrefs.getStringValue(MoneyWiseQIFPreferenceKey.QIFDIR);
@@ -96,7 +96,7 @@ public class MoneyWiseThreadWriteQIF
         final File myOutFile = new File(myDirectory + File.separator + myType.getFileName());
 
         /* Create the Writer */
-        final MoneyWiseQIFWriter myQWriter = new MoneyWiseQIFWriter(theView.getGuiFactory(), pManager, myQFile);
+        final MoneyWiseQIFWriter myQWriter = new MoneyWiseQIFWriter(theView.getGuiFactory(), pReport, myQFile);
 
         /* Protect against exceptions */
         boolean writeFailed = false;
@@ -138,7 +138,7 @@ public class MoneyWiseThreadWriteQIF
         }
 
         /* State that we have completed */
-        pManager.setCompletion();
+        pReport.setCompletion();
 
         /* Return nothing */
         return null;

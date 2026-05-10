@@ -38,6 +38,11 @@ public class MoneyWiseNullThreadStatusReport
     }
 
     @Override
+    public Object getThreadData() {
+        return null;
+    }
+
+    @Override
     public void initTask(final String pTask) throws OceanusException {
     }
 

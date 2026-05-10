@@ -30,7 +30,7 @@ import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIFileSelector;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.io.File;
 
@@ -69,14 +69,14 @@ public class PrometheusThreadLoadBackup
     }
 
     @Override
-    public PrometheusDataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public PrometheusDataSet performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Access the thread manager */
-        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
+        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pReport.getThreadData();
         final MetisToolkit myToolkit = myPromToolkit.getToolkit();
         final PrometheusSecurityPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();
 
         /* Initialise the status window */
-        pManager.initTask(getTaskName());
+        pReport.initTask(getTaskName());
 
         /* Access the Sheet preferences */
         final MetisPreferenceManager myMgr = theControl.getPreferenceManager();
@@ -95,33 +95,33 @@ public class PrometheusThreadLoadBackup
         /* If we did not select a file */
         if (myFile == null) {
             /* Throw cancelled exception */
-            pManager.throwCancelException();
+            pReport.throwCancelException();
         }
 
         /* Load workbook */
         final PrometheusSpreadSheet mySheet = theControl.getSpreadSheet();
         final PrometheusDataSet myData = theControl.getNewData();
-        mySheet.loadBackup(pManager, myPasswordMgr, myData, myFile);
+        mySheet.loadBackup(pReport, myPasswordMgr, myData, myFile);
 
         /* Create interface */
         final PrometheusDataStore myDatabase = theControl.getDatabase();
 
         /* Load underlying database */
         final PrometheusDataSet myStore = theControl.getNewData();
-        myDatabase.loadDatabase(pManager, myStore);
+        myDatabase.loadDatabase(pReport, myStore);
 
         /* Check security on the database */
-        myStore.checkSecurity(pManager);
+        myStore.checkSecurity(pReport);
         if (myData.hasUpdates()) {
             /* Store any updates */
-            myDatabase.updateDatabase(pManager, myData);
+            myDatabase.updateDatabase(pReport, myData);
         }
 
         /* Re-base the loaded backup onto the database image */
-        myData.reBase(pManager, myStore);
+        myData.reBase(pReport, myStore);
 
         /* State that we have completed */
-        pManager.setCompletion();
+        pReport.setCompletion();
 
         /* Return the Data */
         return myData;

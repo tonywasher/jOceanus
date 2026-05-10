@@ -58,6 +58,20 @@ public interface TethysUIHTMLManager
     void setCSSContent(TethysUIStyleSheetId pStyleSheet) throws OceanusException;
 
     /**
+     * Obtain the HTML String.
+     *
+     * @return the string
+     */
+    String getHTMLString();
+
+    /**
+     * Obtain the processed CSS.
+     *
+     * @return the CSS
+     */
+    String getProcessedCSS();
+
+    /**
      * Scroll to reference.
      *
      * @param pReference the reference

@@ -30,7 +30,7 @@ import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPassw
 import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.io.File;
 
@@ -84,9 +84,9 @@ public class PrometheusThreadCreateXMLFile
     }
 
     @Override
-    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public Void performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Access the thread manager */
-        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
+        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pReport.getThreadData();
         final PrometheusSecurityPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();
         boolean doDelete = false;
         File myFile = null;
@@ -94,7 +94,7 @@ public class PrometheusThreadCreateXMLFile
         /* Catch Exceptions */
         try {
             /* Initialise the status window */
-            pManager.initTask(getTaskName());
+            pReport.initTask(getTaskName());
 
             /* Access the Backup preferences */
             final MetisPreferenceManager myMgr = theControl.getPreferenceManager();
@@ -137,7 +137,7 @@ public class PrometheusThreadCreateXMLFile
             final PrometheusDataSet myOldData = theControl.getData();
 
             /* Create a new formatter */
-            final PrometheusDataValuesFormatter myFormatter = new PrometheusDataValuesFormatter(pManager, myPasswordMgr);
+            final PrometheusDataValuesFormatter myFormatter = new PrometheusDataValuesFormatter(pReport, myPasswordMgr);
 
             /* Create backup */
             if (isSecure) {
@@ -154,20 +154,20 @@ public class PrometheusThreadCreateXMLFile
                 /* Check for cancellation */
 
                 /* Initialise the status window */
-                pManager.initTask("Reading Backup");
+                pReport.initTask("Reading Backup");
 
                 /* Load workbook */
                 final PrometheusDataSet myNewData = theControl.getNewData();
                 myFormatter.loadZipFile(myNewData, myFile);
 
                 /* Initialise the security, from the original data */
-                myNewData.initialiseSecurity(pManager, myOldData);
+                myNewData.initialiseSecurity(pReport, myOldData);
 
                 /* Initialise the status window */
-                pManager.initTask("Verifying Backup");
+                pReport.initTask("Verifying Backup");
 
                 /* Create a difference set between the two data copies */
-                final PrometheusDataSet myDiff = myNewData.getDifferenceSet(pManager, myOldData);
+                final PrometheusDataSet myDiff = myNewData.getDifferenceSet(pReport, myOldData);
 
                 /* If the difference set is non-empty */
                 if (!myDiff.isEmpty()) {
