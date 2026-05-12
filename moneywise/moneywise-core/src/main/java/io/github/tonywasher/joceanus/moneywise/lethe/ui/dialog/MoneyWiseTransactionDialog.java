@@ -16,14 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.ui.dialog;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
@@ -61,6 +53,14 @@ import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseIcon;
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
 import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
 import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseItemPanel;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -79,7 +79,7 @@ import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.Teth
 import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldFactory;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
-import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu.TethysUIScrollSubMenu;
 
 import java.util.ArrayList;
 import java.util.HashMap;

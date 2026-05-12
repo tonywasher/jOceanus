@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.ui.dialog;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
@@ -35,6 +33,8 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategor
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseIcon;
 import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
@@ -50,7 +50,7 @@ import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.Teth
 import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldFactory;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
-import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu.TethysUIScrollSubMenu;
 
 import java.util.HashMap;
 import java.util.Iterator;

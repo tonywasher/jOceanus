@@ -37,7 +37,7 @@ import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIGenericWrapper;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
-import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu.TethysUIScrollSubMenu;
 
 import java.util.ArrayList;
 import java.util.HashMap;

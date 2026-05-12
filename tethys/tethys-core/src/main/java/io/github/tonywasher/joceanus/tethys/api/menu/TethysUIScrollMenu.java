@@ -154,4 +154,18 @@ public interface TethysUIScrollMenu<T>
      */
     TethysUIScrollToggle<T> addToggleItem(T pItem,
                                           String pName);
+    
+    /**
+     * ScrollMenu subMenu.
+     *
+     * @param <T> the value type
+     */
+    public interface TethysUIScrollSubMenu<T> {
+        /**
+         * Obtain the subMenu.
+         *
+         * @return the subMenu
+         */
+        TethysUIScrollMenu<T> getSubMenu();
+    }
 }
