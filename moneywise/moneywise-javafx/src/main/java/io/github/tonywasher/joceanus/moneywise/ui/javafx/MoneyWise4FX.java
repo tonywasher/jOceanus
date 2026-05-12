@@ -28,7 +28,7 @@ public class MoneyWise4FX
     /**
      * Default constructor.
      */
-    MoneyWise4FX() {
+    public MoneyWise4FX() {
         /* NoOp */
     }
 

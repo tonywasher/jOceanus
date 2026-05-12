@@ -29,6 +29,7 @@ public class Themis4FX
      * Constructor.
      */
     public Themis4FX() {
+        /* NoOp */
     }
 
     @Override

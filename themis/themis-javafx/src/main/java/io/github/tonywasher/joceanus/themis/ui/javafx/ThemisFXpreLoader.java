@@ -29,6 +29,7 @@ public class ThemisFXpreLoader
      * Constructor.
      */
     public ThemisFXpreLoader() {
+        /* NoOp */
     }
 
     @Override
