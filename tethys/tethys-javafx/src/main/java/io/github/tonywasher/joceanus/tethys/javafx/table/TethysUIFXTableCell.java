@@ -33,7 +33,26 @@ import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUI
 import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldAttribute;
 import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldType;
 import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableCell;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableCharArrayColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableDateColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableIconColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableIntegerColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableListColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableLongColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableMoneyColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUITablePriceColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableRateColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableRatioColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableRawDecimalColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableScrollColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableShortColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableStringColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableUnitsColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableManager;
 import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
+import io.github.tonywasher.joceanus.tethys.core.table.TethysUICoreTableColumn;
+import io.github.tonywasher.joceanus.tethys.core.table.TethysUICoreTableManager;
 import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXNode;
 import io.github.tonywasher.joceanus.tethys.javafx.field.TethysUIFXDataTextField;
 import io.github.tonywasher.joceanus.tethys.javafx.field.TethysUIFXDataTextField.TethysUIFXCharArrayTextField;
@@ -52,21 +71,12 @@ import io.github.tonywasher.joceanus.tethys.javafx.field.TethysUIFXDateButtonFie
 import io.github.tonywasher.joceanus.tethys.javafx.field.TethysUIFXIconButtonField;
 import io.github.tonywasher.joceanus.tethys.javafx.field.TethysUIFXListButtonField;
 import io.github.tonywasher.joceanus.tethys.javafx.field.TethysUIFXScrollButtonField;
-import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableCharArrayColumn;
 import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableDateColumn;
 import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableIconColumn;
-import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableIntegerColumn;
 import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableListColumn;
-import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableLongColumn;
 import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableMoneyColumn;
 import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTablePriceColumn;
-import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableRateColumn;
-import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableRatioColumn;
 import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableRawDecimalColumn;
-import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableScrollColumn;
-import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableShortColumn;
-import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableStringColumn;
-import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableUnitsColumn;
 import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableValidatedColumn;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ContentDisplay;
@@ -93,7 +103,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
     /**
      * The Column.
      */
-    private final TethysUIFXTableColumn<T, C, R> theColumn;
+    private final TethysUICoreTableColumn<T, C, R> theColumn;
 
     /**
      * The Control field.
@@ -116,7 +126,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
      * @param pColumn the column
      * @param pField  the edit field
      */
-    TethysUIFXTableCell(final TethysUIFXTableColumn<T, C, R> pColumn,
+    TethysUIFXTableCell(final TethysUITableColumn<T, C, R> pColumn,
                         final TethysUIFXDataTextField<T> pField) {
         /* Record the parameters */
         this(pColumn, pField, null);
@@ -129,11 +139,11 @@ public abstract class TethysUIFXTableCell<T, C, R>
      * @param pControl the edit control
      * @param pClazz   the field class
      */
-    TethysUIFXTableCell(final TethysUIFXTableColumn<T, C, R> pColumn,
+    TethysUIFXTableCell(final TethysUITableColumn<T, C, R> pColumn,
                         final TethysUIFXDataTextField<T> pControl,
                         final Class<T> pClazz) {
         /* Record the parameters */
-        theColumn = pColumn;
+        theColumn = (TethysUICoreTableColumn<T, C, R>) pColumn;
         theControl = pControl;
         theClass = pClazz;
 
@@ -150,12 +160,10 @@ public abstract class TethysUIFXTableCell<T, C, R>
         myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> handleCancel());
 
         /* Apply validator to a text field */
-        if (theControl instanceof TethysUIFXTextEditField
-                && theColumn instanceof TethysUIFXTableValidatedColumn) {
-            final TethysUIFXTextEditField<T, ?> myField = (TethysUIFXTextEditField<T, ?>) theControl;
-            final TethysUIFXTableValidatedColumn<T, C, R> myColumn = (TethysUIFXTableValidatedColumn<T, C, R>) theColumn;
+        if (theControl instanceof TethysUIFXTextEditField<T, ?> myField
+                && theColumn instanceof TethysUIFXTableValidatedColumn<T, C, R> myColumn) {
             myField.setValidator(t -> myColumn.getValidator().apply(t, getActiveRow()));
-            myField.setReporter(theColumn.getTable().getOnValidateError());
+            myField.setReporter(getTable().getOnValidateError());
         }
     }
 
@@ -166,11 +174,11 @@ public abstract class TethysUIFXTableCell<T, C, R>
 
     @Override
     public TethysUIFXTableManager<C, R> getTable() {
-        return theColumn.getTable();
+        return (TethysUIFXTableManager<C, R>) theColumn.getTable();
     }
 
     @Override
-    public TethysUIFXTableColumn<T, C, R> getColumn() {
+    public TethysUITableColumn<T, C, R> getColumn() {
         return theColumn;
     }
 
@@ -223,7 +231,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
             /* Set the value of the item */
             theControl.setValue(getItem());
             theControl.startCellEditing(theControl.getLabel());
-            theColumn.getTable().processOnCellEditState(Boolean.TRUE);
+            getTable().processOnCellEditState(Boolean.TRUE);
         }
     }
 
@@ -256,7 +264,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
         /* Format the cell */
         if (!pEmpty) {
             /* Access table details */
-            final TethysUIFXTableManager<C, R> myTable = getTable();
+            final TethysUITableManager<C, R> myTable = getTable();
             final C myId = getColumnId();
             final R myRow = getActiveRow();
 
@@ -287,7 +295,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
 
                 /* Note that we are no longer editing */
                 cancelEdit();
-                theColumn.getTable().processOnCellEditState(Boolean.TRUE);
+                getTable().processOnCellEditState(Boolean.TRUE);
 
                 /* If we had an exception, report it */
             } catch (OceanusException e) {
@@ -310,13 +318,13 @@ public abstract class TethysUIFXTableCell<T, C, R>
      */
     private void handleCancel() {
         cancelEdit();
-        theColumn.getTable().processOnCellEditState(Boolean.FALSE);
+        getTable().processOnCellEditState(Boolean.FALSE);
         getTable().setActiveCell(null);
     }
 
     @Override
     public void repaintColumnCell(final C pId) {
-        final TethysUIFXTableManager<C, R> myTable = theColumn.getTable();
+        final TethysUICoreTableManager<C, R> myTable = getTable();
         myTable.repaintColumn(pId);
     }
 
@@ -342,7 +350,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pColumn  the column
          * @param pFactory the GUI Factory
          */
-        TethysUIFXTableStringCell(final TethysUIFXTableStringColumn<C, R> pColumn,
+        TethysUIFXTableStringCell(final TethysUITableStringColumn<C, R> pColumn,
                                   final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUIFXStringTextField) pFactory.fieldFactory().newStringField(), String.class);
         }
@@ -367,7 +375,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pColumn  the column
          * @param pFactory the GUI Factory
          */
-        TethysUIFXTableCharArrayCell(final TethysUIFXTableCharArrayColumn<C, R> pColumn,
+        TethysUIFXTableCharArrayCell(final TethysUITableCharArrayColumn<C, R> pColumn,
                                      final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUIFXCharArrayTextField) pFactory.fieldFactory().newCharArrayField(), char[].class);
         }
@@ -392,7 +400,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pColumn  the column
          * @param pFactory the GUI Factory
          */
-        TethysUIFXTableShortCell(final TethysUIFXTableShortColumn<C, R> pColumn,
+        TethysUIFXTableShortCell(final TethysUITableShortColumn<C, R> pColumn,
                                  final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUIFXShortTextField) pFactory.fieldFactory().newShortField(), Short.class);
         }
@@ -417,7 +425,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pColumn  the column
          * @param pFactory the GUI Factory
          */
-        TethysUIFXTableIntegerCell(final TethysUIFXTableIntegerColumn<C, R> pColumn,
+        TethysUIFXTableIntegerCell(final TethysUITableIntegerColumn<C, R> pColumn,
                                    final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUIFXIntegerTextField) pFactory.fieldFactory().newIntegerField(), Integer.class);
         }
@@ -442,7 +450,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pColumn  the column
          * @param pFactory the GUI Factory
          */
-        TethysUIFXTableLongCell(final TethysUIFXTableLongColumn<C, R> pColumn,
+        TethysUIFXTableLongCell(final TethysUITableLongColumn<C, R> pColumn,
                                 final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUIFXLongTextField) pFactory.fieldFactory().newLongField(), Long.class);
         }
@@ -467,7 +475,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pColumn  the column
          * @param pFactory the GUI Factory
          */
-        TethysUIFXTableRawDecimalCell(final TethysUIFXTableRawDecimalColumn<C, R> pColumn,
+        TethysUIFXTableRawDecimalCell(final TethysUITableRawDecimalColumn<C, R> pColumn,
                                       final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUIFXRawDecimalTextField) pFactory.fieldFactory().newRawDecimalField(), OceanusDecimal.class);
             getControl().setNumDecimals(() -> getColumn().getNumDecimals().applyAsInt(getActiveRow()));
@@ -498,7 +506,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pColumn  the column
          * @param pFactory the GUI Factory
          */
-        TethysUIFXTableMoneyCell(final TethysUIFXTableMoneyColumn<C, R> pColumn,
+        TethysUIFXTableMoneyCell(final TethysUITableMoneyColumn<C, R> pColumn,
                                  final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUIFXMoneyTextField) pFactory.fieldFactory().newMoneyField(), OceanusMoney.class);
             getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
@@ -529,7 +537,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pColumn  the column
          * @param pFactory the GUI Factory
          */
-        TethysUIFXTablePriceCell(final TethysUIFXTablePriceColumn<C, R> pColumn,
+        TethysUIFXTablePriceCell(final TethysUITablePriceColumn<C, R> pColumn,
                                  final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUIFXPriceTextField) pFactory.fieldFactory().newPriceField(), OceanusPrice.class);
             getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
@@ -560,7 +568,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pColumn  the column
          * @param pFactory the GUI Factory
          */
-        TethysUIFXTableRateCell(final TethysUIFXTableRateColumn<C, R> pColumn,
+        TethysUIFXTableRateCell(final TethysUITableRateColumn<C, R> pColumn,
                                 final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUIFXRateTextField) pFactory.fieldFactory().newRateField(), OceanusRate.class);
         }
@@ -585,7 +593,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pColumn  the column
          * @param pFactory the GUI Factory
          */
-        TethysUIFXTableUnitsCell(final TethysUIFXTableUnitsColumn<C, R> pColumn,
+        TethysUIFXTableUnitsCell(final TethysUITableUnitsColumn<C, R> pColumn,
                                  final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUIFXUnitsTextField) pFactory.fieldFactory().newUnitsField(), OceanusUnits.class);
         }
@@ -610,7 +618,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pColumn  the column
          * @param pFactory the GUI Factory
          */
-        TethysUIFXTableRatioCell(final TethysUIFXTableRatioColumn<C, R> pColumn,
+        TethysUIFXTableRatioCell(final TethysUITableRatioColumn<C, R> pColumn,
                                  final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUIFXRatioTextField) pFactory.fieldFactory().newRatioField(), OceanusRatio.class);
         }
@@ -635,7 +643,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pColumn  the column
          * @param pFactory the GUI Factory
          */
-        TethysUIFXTableDateCell(final TethysUIFXTableDateColumn<C, R> pColumn,
+        TethysUIFXTableDateCell(final TethysUITableDateColumn<C, R> pColumn,
                                 final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUIFXDateButtonField) pFactory.fieldFactory().newDateField(), OceanusDate.class);
             getControl().setDateConfigurator(c -> getColumn().getDateConfigurator().accept(getActiveRow(), c));
@@ -669,7 +677,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pClazz   the field class
          */
         @SuppressWarnings("unchecked")
-        TethysUIFXTableScrollCell(final TethysUIFXTableScrollColumn<T, C, R> pColumn,
+        TethysUIFXTableScrollCell(final TethysUITableScrollColumn<T, C, R> pColumn,
                                   final TethysUICoreFactory<?> pFactory,
                                   final Class<T> pClazz) {
             super(pColumn, (TethysUIFXScrollButtonField<T>) pFactory.fieldFactory().newScrollField(pClazz), pClazz);
@@ -682,8 +690,8 @@ public abstract class TethysUIFXTableCell<T, C, R>
         }
 
         @Override
-        public TethysUIFXTableScrollColumn<T, C, R> getColumn() {
-            return (TethysUIFXTableScrollColumn<T, C, R>) super.getColumn();
+        public TethysUITableScrollColumn<T, C, R> getColumn() {
+            return (TethysUITableScrollColumn<T, C, R>) super.getColumn();
         }
     }
 
@@ -703,7 +711,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pFactory the GUI Factory
          */
         @SuppressWarnings("unchecked")
-        TethysUIFXTableListCell(final TethysUIFXTableListColumn<T, C, R> pColumn,
+        TethysUIFXTableListCell(final TethysUITableListColumn<T, C, R> pColumn,
                                 final TethysUICoreFactory<?> pFactory) {
             super(pColumn, (TethysUIFXListButtonField<T>) pFactory.fieldFactory().newListField());
             getControl().setSelectables(() -> getColumn().getSelectables().apply(getActiveRow()));
@@ -743,7 +751,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          * @param pClazz   the field class
          */
         @SuppressWarnings("unchecked")
-        TethysUIFXTableIconCell(final TethysUIFXTableIconColumn<T, C, R> pColumn,
+        TethysUIFXTableIconCell(final TethysUITableIconColumn<T, C, R> pColumn,
                                 final TethysUICoreFactory<?> pFactory,
                                 final Class<T> pClazz) {
             super(pColumn, (TethysUIFXIconButtonField<T>) pFactory.fieldFactory().newIconField(pClazz), pClazz);

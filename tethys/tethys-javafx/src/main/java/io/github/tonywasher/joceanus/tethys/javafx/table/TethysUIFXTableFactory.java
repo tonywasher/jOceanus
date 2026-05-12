@@ -41,6 +41,6 @@ public class TethysUIFXTableFactory
 
     @Override
     public <C, R> TethysUITableManager<C, R> newTable() {
-        return new TethysUIFXTableManager<>(theFactory);
+        return new TethysUIFXTableManagerImpl<>(theFactory);
     }
 }

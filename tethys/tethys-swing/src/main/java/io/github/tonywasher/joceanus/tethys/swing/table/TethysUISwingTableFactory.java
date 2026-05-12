@@ -41,7 +41,7 @@ public class TethysUISwingTableFactory
 
     @Override
     public <C, R> TethysUITableManager<C, R> newTable() {
-        return new TethysUISwingTableManager<>(theFactory);
+        return new TethysUISwingTableManagerImpl<>(theFactory);
     }
 }
 

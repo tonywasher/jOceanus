@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
 import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldType;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableCell;
 import io.github.tonywasher.joceanus.tethys.core.field.TethysUICoreDataEditConverter.TethysUICoreRawDecimalEditConverter;
 import io.github.tonywasher.joceanus.tethys.core.table.TethysUICoreTableColumn;
 
@@ -92,8 +93,8 @@ public abstract class TethysUISwingTableColumn<T, C, R>
      *
      * @param pCell the cell
      */
-    void declareCell(final TethysUISwingTableCell<T, C, R> pCell) {
-        theCell = pCell;
+    void declareCell(final TethysUITableCell<T, C, R> pCell) {
+        theCell = (TethysUISwingTableCell<T, C, R>) pCell;
         theColumn.setCellRenderer(theCell.getRenderer());
         theColumn.setCellEditor(theCell.getEditor());
     }
@@ -689,12 +690,8 @@ public abstract class TethysUISwingTableColumn<T, C, R>
             return this;
         }
 
-        /**
-         * Obtain the menu configurator.
-         *
-         * @return the configurator
-         */
-        BiConsumer<R, TethysUIScrollMenu<T>> getMenuConfigurator() {
+        @Override
+        public BiConsumer<R, TethysUIScrollMenu<T>> getMenuConfigurator() {
             return theConfigurator;
         }
     }

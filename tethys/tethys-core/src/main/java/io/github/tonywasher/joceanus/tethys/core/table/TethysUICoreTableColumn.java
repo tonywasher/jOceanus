@@ -122,10 +122,10 @@ public abstract class TethysUICoreTableColumn<T, C, R>
         theEventManager = new OceanusEventManager<>();
 
         /* If the table already has children */
-        final TethysUICoreTableColumn<?, C, R> myChild = theTable.getLastChild();
+        final TethysUITableColumn<?, C, R> myChild = theTable.getLastChild();
         if (myChild != null) {
             /* Link to last child */
-            thePrevSibling = myChild;
+            thePrevSibling = (TethysUICoreTableColumn<?, C, R>) myChild;
         }
 
         /* Add as last child of pane */
@@ -146,7 +146,11 @@ public abstract class TethysUICoreTableColumn<T, C, R>
         return theEventManager.getEventRegistrar();
     }
 
-    @Override
+    /**
+     * Obtain the table
+     *
+     * @return the table
+     */
     public TethysUICoreTableManager<C, R> getTable() {
         return theTable;
     }

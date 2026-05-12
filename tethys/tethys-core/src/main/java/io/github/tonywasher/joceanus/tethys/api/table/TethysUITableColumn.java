@@ -50,13 +50,6 @@ import java.util.function.ToIntFunction;
 public interface TethysUITableColumn<T, C, R>
         extends OceanusEventProvider<TethysUIEvent> {
     /**
-     * Obtain the table manager.
-     *
-     * @return the table manager
-     */
-    TethysUITableManager<C, R> getTable();
-
-    /**
      * Obtain the id of the column.
      *
      * @return the column id
@@ -497,6 +490,13 @@ public interface TethysUITableColumn<T, C, R>
             TethysUITableColumn<T, C, R> {
         @Override
         TethysUITableScrollColumn<T, C, R> setMenuConfigurator(BiConsumer<R, TethysUIScrollMenu<T>> pConfigurator);
+
+        /**
+         * Obtain the menu configurator.
+         *
+         * @return the configurator
+         */
+        BiConsumer<R, TethysUIScrollMenu<T>> getMenuConfigurator();
     }
 
     /**

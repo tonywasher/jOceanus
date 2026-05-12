@@ -24,15 +24,15 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.util.Callback;
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
 import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldType;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import io.github.tonywasher.joceanus.tethys.core.field.TethysUICoreDataEditConverter.TethysUICoreRawDecimalEditConverter;
 import io.github.tonywasher.joceanus.tethys.core.table.TethysUICoreTableColumn;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.util.Callback;
 
 import java.util.Collections;
 import java.util.Currency;
@@ -622,12 +622,8 @@ public class TethysUIFXTableColumn<T, C, R>
             return this;
         }
 
-        /**
-         * Obtain the menu configurator.
-         *
-         * @return the configurator
-         */
-        BiConsumer<R, TethysUIScrollMenu<T>> getMenuConfigurator() {
+        @Override
+        public BiConsumer<R, TethysUIScrollMenu<T>> getMenuConfigurator() {
             return theConfigurator;
         }
     }
