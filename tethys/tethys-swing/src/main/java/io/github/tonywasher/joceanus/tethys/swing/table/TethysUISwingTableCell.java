@@ -59,7 +59,7 @@ public interface TethysUISwingTableCell<T, C, R>
      * @param pValue the value
      * @return the cast value
      */
-    T getCastValue(final Object pValue);
+    T getCastValue(Object pValue);
 
     /**
      * Set the active row.

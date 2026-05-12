@@ -32,7 +32,7 @@ public interface TethysUIFXBaseState {
      * @return the program definitions
      */
     TethysUIProgram getProgramDefinitions();
-    
+
     /**
      * Create the main panel.
      *

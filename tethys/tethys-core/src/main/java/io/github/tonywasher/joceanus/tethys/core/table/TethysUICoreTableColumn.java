@@ -147,7 +147,7 @@ public abstract class TethysUICoreTableColumn<T, C, R>
     }
 
     /**
-     * Obtain the table
+     * Obtain the table.
      *
      * @return the table
      */

@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.tethys.api.button.TethysUIScrollButtonManag
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu.TethysUIScrollSubMenu;
 
 import java.util.ArrayList;
 import java.util.Arrays;

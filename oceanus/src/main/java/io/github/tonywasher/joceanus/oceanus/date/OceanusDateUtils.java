@@ -77,7 +77,7 @@ public final class OceanusDateUtils {
      */
     public static OceanusDate startCalendarMonth(final OceanusDate pDate) {
         /* Move to the first of the current month */
-        LocalDate myDate = pDate.getDate().withDayOfMonth(1);
+        final LocalDate myDate = pDate.getDate().withDayOfMonth(1);
         return new OceanusDate(myDate);
     }
 

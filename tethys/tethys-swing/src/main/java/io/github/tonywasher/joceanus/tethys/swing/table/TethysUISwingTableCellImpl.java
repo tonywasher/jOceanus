@@ -219,7 +219,7 @@ public abstract class TethysUISwingTableCellImpl<T, C, R>
         return theEditor;
     }
 
-    //@Override
+    @Override
     public TableCellRenderer getRenderer() {
         return theRenderer;
     }

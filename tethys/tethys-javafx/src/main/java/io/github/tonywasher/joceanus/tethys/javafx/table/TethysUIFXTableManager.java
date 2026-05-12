@@ -49,7 +49,7 @@ public interface TethysUIFXTableManager<C, R>
      *
      * @param pCell the actively editing cell
      */
-    void setActiveCell(final TethysUITableCell<?, C, R> pCell);
+    void setActiveCell(TethysUITableCell<?, C, R> pCell);
 
     /**
      * Is the table locked for editing.

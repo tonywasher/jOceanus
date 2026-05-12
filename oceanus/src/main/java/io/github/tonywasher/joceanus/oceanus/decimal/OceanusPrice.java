@@ -138,7 +138,7 @@ public class OceanusPrice
      */
     public OceanusMoney unitsAtPrice(final OceanusUnits pUnits) {
         /* Calculate value of units */
-        OceanusPrice myPrice = new OceanusPrice(this);
+        final OceanusPrice myPrice = new OceanusPrice(this);
         myPrice.calculateProduct(myPrice, pUnits);
         return new OceanusMoney(myPrice);
     }

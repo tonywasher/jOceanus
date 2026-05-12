@@ -59,7 +59,7 @@ public interface TethysUISwingTableManager<C, R>
      * @param pIndex the index of the column
      * @return the table column
      */
-    R getIndexedRow(final int pIndex);
+    R getIndexedRow(int pIndex);
 
     /**
      * Obtain the cell factory.

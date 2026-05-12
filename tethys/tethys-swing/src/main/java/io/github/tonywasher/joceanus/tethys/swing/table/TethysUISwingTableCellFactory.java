@@ -165,7 +165,7 @@ public interface TethysUISwingTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the date cell
      */
-    TethysUITableCell<OceanusDate, C, R> dateCell(final TethysUITableDateColumn<C, R> pColumn);
+    TethysUITableCell<OceanusDate, C, R> dateCell(TethysUITableDateColumn<C, R> pColumn);
 
     /**
      * Obtain Icon Cell.
@@ -175,6 +175,6 @@ public interface TethysUISwingTableCellFactory<C, R> {
      * @param pClazz  the class of the item
      * @return the icon cell
      */
-    <T> TethysUITableCell<T, C, R> iconCell(final TethysUITableIconColumn<T, C, R> pColumn,
-                                            final Class<T> pClazz);
+    <T> TethysUITableCell<T, C, R> iconCell(TethysUITableIconColumn<T, C, R> pColumn,
+                                            Class<T> pClazz);
 }
