@@ -16,12 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.builder;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
@@ -31,6 +25,13 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,11 @@ public class MoneyWiseTransactionBuilder {
      * DataSet.
      */
     private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * Parser.
+     */
+    private final OceanusDecimalParser theParser;
 
     /**
      * The Tags.
@@ -168,6 +174,7 @@ public class MoneyWiseTransactionBuilder {
         theDataSet = pDataSet;
         theReconciled = Boolean.FALSE;
         theTags = new ArrayList<>();
+        theParser = theDataSet.getDataFormatter().getDecimalParser();
     }
 
     /**
@@ -294,7 +301,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder amount(final String pAmount) {
-        return amount(new OceanusMoney(pAmount, theAccount.getCurrency()));
+        return amount(theParser.parseMoneyValue(pAmount, theAccount.getCurrency()));
     }
 
     /**
@@ -315,7 +322,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder taxCredit(final String pTaxCredit) {
-        return taxCredit(new OceanusMoney(pTaxCredit, theAccount.getCurrency()));
+        return taxCredit(theParser.parseMoneyValue(pTaxCredit, theAccount.getCurrency()));
     }
 
     /**
@@ -336,7 +343,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder employersNI(final String pNI) {
-        return employersNI(new OceanusMoney(pNI, theAccount.getCurrency()));
+        return employersNI(theParser.parseMoneyValue(pNI, theAccount.getCurrency()));
     }
 
     /**
@@ -357,7 +364,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder employeesNI(final String pNI) {
-        return employeesNI(new OceanusMoney(pNI, theAccount.getCurrency()));
+        return employeesNI(theParser.parseMoneyValue(pNI, theAccount.getCurrency()));
     }
 
     /**
@@ -378,7 +385,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder benefit(final String pBenefit) {
-        return benefit(new OceanusMoney(pBenefit, theDataSet.getReportingCurrency().getCurrency()));
+        return benefit(theParser.parseMoneyValue(pBenefit, theDataSet.getReportingCurrency().getCurrency()));
     }
 
     /**
@@ -399,7 +406,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder withheld(final String pWithheld) {
-        return withheld(new OceanusMoney(pWithheld, theAccount.getCurrency()));
+        return withheld(theParser.parseMoneyValue(pWithheld, theAccount.getCurrency()));
     }
 
     /**
@@ -420,7 +427,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder partnerAmount(final String pAmount) {
-        return partnerAmount(new OceanusMoney(pAmount, thePartner.getCurrency()));
+        return partnerAmount(theParser.parseMoneyValue(pAmount, thePartner.getCurrency()));
     }
 
     /**
@@ -441,7 +448,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder accountUnits(final String pUnits) {
-        return accountUnits(new OceanusUnits(pUnits));
+        return accountUnits(theParser.parseUnitsValue(pUnits));
     }
 
     /**
@@ -462,7 +469,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder partnerUnits(final String pUnits) {
-        return partnerUnits(new OceanusUnits(pUnits));
+        return partnerUnits(theParser.parseUnitsValue(pUnits));
     }
 
     /**
@@ -483,7 +490,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder dilution(final String pDilution) {
-        return dilution(new OceanusRatio(pDilution));
+        return dilution(theParser.parseRatioValue(pDilution));
     }
 
     /**
@@ -521,7 +528,7 @@ public class MoneyWiseTransactionBuilder {
     public MoneyWiseTransactionBuilder returnedCash(final String pCash,
                                                     final String pAccount) {
         final MoneyWiseTransAsset myAsset = resolveTransactionAsset(pAccount);
-        return returnedCash(new OceanusMoney(pCash, myAsset == null ? null : myAsset.getCurrency()), myAsset);
+        return returnedCash(theParser.parseMoneyValue(pCash, myAsset == null ? null : myAsset.getCurrency()), myAsset);
     }
 
     /**
@@ -542,7 +549,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder price(final String pPrice) {
-        return price(new OceanusPrice(pPrice, theAccount.getCurrency()));
+        return price(theParser.parsePriceValue(pPrice, theAccount.getCurrency()));
     }
 
     /**

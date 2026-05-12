@@ -22,6 +22,7 @@ import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUINode;
 import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButton;
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUITextArea;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUILogTextArea;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
@@ -61,7 +62,7 @@ public class TethysUICoreLogTextArea
      *
      * @param pFactory the guiFactory
      */
-    TethysUICoreLogTextArea(final TethysUICoreFactory<?> pFactory) {
+    TethysUICoreLogTextArea(final TethysUIFactory<?> pFactory) {
         /* Create basics */
         theEventManager = new OceanusEventManager<>();
         theTextArea = pFactory.controlFactory().newTextArea();

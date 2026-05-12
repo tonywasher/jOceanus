@@ -372,6 +372,23 @@ public abstract class TethysUICoreThreadManager
     }
 
     /**
+     * Handle Cancellation stub.
+     */
+    public abstract void handleCancellation();
+
+    /**
+     * Handle Completion stub.
+     */
+    public abstract void handleCompletion();
+
+    /**
+     * Handle Failure stub.
+     *
+     * @param pFailure the failing exception
+     */
+    public abstract void handleFailure(Throwable pFailure);
+
+    /**
      * Set error.
      *
      * @param pException the exception

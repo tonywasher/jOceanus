@@ -21,7 +21,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Thread to purge tables in a database that represent a data set. Existing loaded data will be
@@ -49,9 +49,9 @@ public class PrometheusThreadPurgeDatabase
     }
 
     @Override
-    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public Void performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Initialise the status window */
-        pManager.initTask(getTaskName());
+        pReport.initTask(getTaskName());
 
         /* Create interface */
         final PrometheusDataStore myDatabase = theControl.getDatabase();
@@ -59,18 +59,18 @@ public class PrometheusThreadPurgeDatabase
         /* Protect against failures */
         try {
             /* Purge database */
-            myDatabase.purgeTables(pManager);
+            myDatabase.purgeTables(pReport);
 
             /* Re-base this set on a null set */
             final PrometheusDataSet myNull = theControl.getNewData();
             final PrometheusDataSet myData = theControl.getData();
-            myData.reBase(pManager, myNull);
+            myData.reBase(pReport, myNull);
 
             /* Derive the new set of updates */
             theControl.deriveUpdates();
 
             /* State that we have completed */
-            pManager.setCompletion();
+            pReport.setCompletion();
 
             /* Return null */
             return null;

@@ -16,15 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -47,6 +38,15 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisHistory;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Currency;
 import java.util.Iterator;
@@ -542,7 +542,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
         /* Calculate the value */
         theBaseValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myPrice);
-        theBaseValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myUnits.valueAtPrice(myPrice));
+        theBaseValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myPrice.unitsAtPrice(myUnits));
 
         /* Access units */
         myUnits = theValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
@@ -550,7 +550,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
         /* Calculate the value */
         setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myPrice);
-        setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myUnits.valueAtPrice(myPrice));
+        setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myPrice.unitsAtPrice(myUnits));
     }
 
     /**
@@ -573,7 +573,7 @@ public final class MoneyWiseAnalysisSecurityBucket
         OceanusRatio myRate = myRates[0];
 
         /* Calculate the value */
-        OceanusMoney myValue = myUnits.valueAtPrice(myPrice);
+        OceanusMoney myValue = myPrice.unitsAtPrice(myUnits);
         OceanusMoney myLocalValue = myValue.convertCurrency(myCurrency, myRate);
 
         /* Record it */
@@ -588,7 +588,7 @@ public final class MoneyWiseAnalysisSecurityBucket
         myRate = myRates[1];
 
         /* Calculate the value */
-        myValue = myUnits.valueAtPrice(myPrice);
+        myValue = myPrice.unitsAtPrice(myUnits);
         myLocalValue = myValue.convertCurrency(myCurrency, myRate);
 
         /* Record it */

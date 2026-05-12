@@ -86,28 +86,20 @@ public class TethysUISwingThreadManager
         theWorker.publishStatus(new TethysUICoreThreadStatus(pStatus));
     }
 
-    /**
-     * Handle completion.
-     */
-    protected void handleCompletion() {
+    @Override
+    public void handleCompletion() {
         endTask();
         getStatusManager().setCompletion();
     }
 
-    /**
-     * Handle cancellation.
-     */
-    protected void handleCancellation() {
+    @Override
+    public void handleCancellation() {
         endTask();
         getStatusManager().setCancelled();
     }
 
-    /**
-     * Handle failure.
-     *
-     * @param pException the exception
-     */
-    protected void handleFailure(final Throwable pException) {
+    @Override
+    public void handleFailure(final Throwable pException) {
         /* Handle cancellation exception as cancel */
         if (pException instanceof TethysUIThreadCancelException) {
             handleCancellation();

@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Thread to change the password. The user will be prompted for a new password and this will be used
@@ -51,19 +51,19 @@ public class PrometheusThreadUpdatePassword
     }
 
     @Override
-    public PrometheusDataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public PrometheusDataSet performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Initialise the status window */
-        pManager.initTask(getTaskName());
+        pReport.initTask(getTaskName());
 
         /* Access Data */
         PrometheusDataSet myData = theControl.getData();
         myData = myData.deriveCloneSet();
 
         /* Update password */
-        myData.updateFactoryLock(pManager, "Database");
+        myData.updateFactoryLock(pReport, "Database");
 
         /* State that we have completed */
-        pManager.setCompletion();
+        pReport.setCompletion();
 
         /* Return data */
         return myData;

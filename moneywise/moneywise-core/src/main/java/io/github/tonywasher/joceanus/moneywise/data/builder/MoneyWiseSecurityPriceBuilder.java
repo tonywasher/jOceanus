@@ -16,13 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.builder;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 
 /**
  * SecurityPrice Builder.
@@ -32,6 +33,11 @@ public class MoneyWiseSecurityPriceBuilder {
      * DataSet.
      */
     private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * Parser.
+     */
+    private final OceanusDecimalParser theParser;
 
     /**
      * The Security.
@@ -56,6 +62,7 @@ public class MoneyWiseSecurityPriceBuilder {
     public MoneyWiseSecurityPriceBuilder(final MoneyWiseDataSet pDataSet) {
         theDataSet = pDataSet;
         theDataSet.getSecurityPrices().ensureMap();
+        theParser = theDataSet.getDataFormatter().getDecimalParser();
     }
 
     /**
@@ -97,7 +104,7 @@ public class MoneyWiseSecurityPriceBuilder {
      * @return the builder
      */
     public MoneyWiseSecurityPriceBuilder price(final String pPrice) {
-        return price(new OceanusPrice(pPrice, theSecurity.getAssetCurrency().getCurrency()));
+        return price(theParser.parsePriceValue(pPrice, theSecurity.getAssetCurrency().getCurrency()));
     }
 
     /**

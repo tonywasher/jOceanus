@@ -25,7 +25,6 @@ import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIcon;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollIcon;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
-import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollToggle;
 import io.github.tonywasher.joceanus.tethys.core.menu.TethysUICoreScrollMenu;
 import io.github.tonywasher.joceanus.tethys.swing.base.TethysUISwingArrowIcon;

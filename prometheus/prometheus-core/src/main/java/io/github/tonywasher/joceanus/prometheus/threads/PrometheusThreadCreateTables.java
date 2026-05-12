@@ -21,7 +21,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Thread to create tables in a database to represent a data set. Existing tables will be dropped
@@ -50,9 +50,9 @@ public class PrometheusThreadCreateTables
     }
 
     @Override
-    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public Void performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Initialise the status window */
-        pManager.initTask(getTaskName());
+        pReport.initTask(getTaskName());
 
         /* Access Database */
         final PrometheusDataStore myDatabase = theControl.getDatabase();
@@ -60,18 +60,18 @@ public class PrometheusThreadCreateTables
         /* Protect against failures */
         try {
             /* Create database tables */
-            myDatabase.createTables(pManager);
+            myDatabase.createTables(pReport);
 
             /* Re-base this set on a null set */
             final PrometheusDataSet myNull = theControl.getNewData();
             final PrometheusDataSet myData = theControl.getData();
-            myData.reBase(pManager, myNull);
+            myData.reBase(pReport, myNull);
 
             /* Derive the new set of updates */
             theControl.deriveUpdates();
 
             /* State that we have completed */
-            pManager.setCompletion();
+            pReport.setCompletion();
 
             /* Return null value */
             return null;

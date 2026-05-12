@@ -16,10 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisAccountBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -29,6 +25,10 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseCashType;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 
 import java.util.Currency;
 import java.util.Objects;
@@ -118,7 +118,7 @@ public class MoneyWiseXAnalysisTakeover {
         final OceanusMoney myDebitXferValue = myDebitValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
         final OceanusPrice myCreditPrice = myDebitValues.getPriceValue(MoneyWiseXAnalysisSecurityAttr.PRICE);
         final OceanusUnits myCreditUnits = theTransaction.getCreditUnitsDelta();
-        OceanusMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        OceanusMoney myCreditXferValue = myCreditPrice.unitsAtPrice(myCreditUnits);
         if (myCreditAsset.isForeignCurrency()) {
             final Currency myCurrency = theTransAnalyser.getCurrency().getCurrency();
             final OceanusRatio myRate = myCreditValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE);

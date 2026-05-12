@@ -119,7 +119,7 @@ public abstract class TethysUICoreHTMLManager
      *
      * @return the string
      */
-    protected String getHTMLString() {
+    public String getHTMLString() {
         return theHTMLString;
     }
 
@@ -128,7 +128,7 @@ public abstract class TethysUICoreHTMLManager
      *
      * @return the CSS
      */
-    protected String getProcessedCSS() {
+    public String getProcessedCSS() {
         return theCSSProcessed;
     }
 

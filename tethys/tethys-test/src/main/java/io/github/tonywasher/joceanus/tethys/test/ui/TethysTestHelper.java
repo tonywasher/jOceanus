@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.tethys.test.ui;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
@@ -27,7 +28,7 @@ import io.github.tonywasher.joceanus.tethys.api.button.TethysUIScrollButtonManag
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
-import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu.TethysUIScrollSubMenu;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,29 +62,34 @@ public class TethysTestHelper {
     public static final long LONG_DEF = 300;
 
     /**
+     * The DecimalParser.
+     */
+    private static final OceanusDecimalParser PARSER = new OceanusDecimalParser();
+
+    /**
      * The default money value.
      */
-    public static final OceanusMoney MONEY_DEF = new OceanusMoney("12.45");
+    public static final OceanusMoney MONEY_DEF = PARSER.parseMoneyValue("12.45");
 
     /**
      * The default price value.
      */
-    public static final OceanusPrice PRICE_DEF = new OceanusPrice("2.2");
+    public static final OceanusPrice PRICE_DEF = PARSER.parsePriceValue("2.2");
 
     /**
      * The default units value.
      */
-    public static final OceanusUnits UNITS_DEF = new OceanusUnits("1");
+    public static final OceanusUnits UNITS_DEF = PARSER.parseUnitsValue("1");
 
     /**
      * The default rate value.
      */
-    public static final OceanusRate RATE_DEF = new OceanusRate(".10");
+    public static final OceanusRate RATE_DEF = PARSER.parseRateValue(".10");
 
     /**
      * The default ratio value.
      */
-    public static final OceanusRatio RATIO_DEF = new OceanusRatio("1.6");
+    public static final OceanusRatio RATIO_DEF = PARSER.parseRatioValue("1.6");
 
     /**
      * The factory.

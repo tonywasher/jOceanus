@@ -24,6 +24,13 @@ import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
  */
 public interface TethysUIThreadStatusReport {
     /**
+     * Obtain the thread data.
+     *
+     * @return the threadData
+     */
+    Object getThreadData();
+
+    /**
      * Initialise Task.
      *
      * @param pTask the task

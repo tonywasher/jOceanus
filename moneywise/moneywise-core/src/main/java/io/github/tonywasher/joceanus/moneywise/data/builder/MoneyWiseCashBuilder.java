@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.builder;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
@@ -26,6 +24,9 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * Cash Builder.
@@ -35,6 +36,11 @@ public class MoneyWiseCashBuilder {
      * DataSet.
      */
     private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * Parser.
+     */
+    private final OceanusDecimalParser theParser;
 
     /**
      * The Cash Name.
@@ -74,6 +80,7 @@ public class MoneyWiseCashBuilder {
     public MoneyWiseCashBuilder(final MoneyWiseDataSet pDataSet) {
         theDataSet = pDataSet;
         theDataSet.getCash().ensureMap();
+        theParser = theDataSet.getDataFormatter().getDecimalParser();
         reportingCurrency();
     }
 
@@ -192,7 +199,7 @@ public class MoneyWiseCashBuilder {
      * @return the builder
      */
     public MoneyWiseCashBuilder openingBalance(final String pOpening) {
-        return openingBalance(new OceanusMoney(pOpening, theCurrency.getCurrency()));
+        return openingBalance(theParser.parseMoneyValue(pOpening, theCurrency.getCurrency()));
     }
 
     /**

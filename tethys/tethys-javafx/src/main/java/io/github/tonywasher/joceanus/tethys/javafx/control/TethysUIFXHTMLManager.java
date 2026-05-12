@@ -18,6 +18,9 @@ package io.github.tonywasher.joceanus.tethys.javafx.control;
 
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.tethys.core.control.TethysUICoreHTMLManager;
+import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
+import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXNode;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
@@ -29,9 +32,6 @@ import javafx.print.PrinterJob;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import io.github.tonywasher.joceanus.tethys.core.control.TethysUICoreHTMLManager;
-import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
-import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXNode;
 import netscape.javascript.JSObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -110,28 +110,28 @@ public class TethysUIFXHTMLManager
     /**
      * the Stage.
      */
-    private final TethysUIFXControlFactory theControls;
+    private final TethysUIFXStageOwner theStageOwner;
 
     /**
      * Constructor.
      *
-     * @param pFactory  the GUI Factory
-     * @param pControls the controls factory
+     * @param pFactory    the GUI Factory
+     * @param pStageOwner the stage owner
      */
     TethysUIFXHTMLManager(final TethysUICoreFactory<?> pFactory,
-                          final TethysUIFXControlFactory pControls) {
+                          final TethysUIFXStageOwner pStageOwner) {
         /* Initialise underlying class */
         super(pFactory);
 
         /* Store the factory */
-        theControls = pControls;
+        theStageOwner = pStageOwner;
 
         /* Allocate the Pane */
         thePane = new BorderPane();
         theNode = new TethysUIFXNode(thePane);
 
         /* Attach a listener to the Factory */
-        if (theControls.getStage() == null) {
+        if (theStageOwner.getStage() == null) {
             pFactory.getEventRegistrar().addEventListener(e -> allocateWebView());
         } else {
             allocateWebView();
@@ -313,7 +313,7 @@ public class TethysUIFXHTMLManager
         /* Prepare to print the webPage */
         final PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null
-                && job.showPrintDialog(theControls.getStage())) {
+                && job.showPrintDialog(theStageOwner.getStage())) {
             /* Access printer and determine orientation */
             final Printer myPrinter = job.getPrinter();
 

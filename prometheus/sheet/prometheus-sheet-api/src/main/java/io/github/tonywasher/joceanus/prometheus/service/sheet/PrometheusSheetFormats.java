@@ -328,28 +328,18 @@ public final class PrometheusSheetFormats {
      * @return the format string
      */
     public static Object getDefaultValue(final PrometheusSheetCellStyleType pType) {
-        switch (pType) {
-            case STRING:
-                return STR_NULL;
-            case DATE:
-                return new OceanusDate();
-            case BOOLEAN:
-                return Boolean.TRUE;
-            case INTEGER:
-                return 0;
-            case MONEY:
-                return new OceanusMoney(STR_ZERO);
-            case PRICE:
-                return new OceanusPrice(STR_ZERO);
-            case RATE:
-                return new OceanusRate(STR_ZERO);
-            case UNITS:
-                return new OceanusUnits(STR_ZERO);
-            case RATIO:
-                return new OceanusRatio(STR_ZERO);
-            default:
-                return null;
-        }
+        return switch (pType) {
+            case STRING -> STR_NULL;
+            case DATE -> new OceanusDate();
+            case BOOLEAN -> Boolean.TRUE;
+            case INTEGER -> 0;
+            case MONEY -> OceanusMoney.getWholeUnits(0);
+            case PRICE -> OceanusPrice.getWholeUnits(0);
+            case RATE -> OceanusRate.getWholePercentage(0);
+            case UNITS -> OceanusUnits.getWholeUnits(0);
+            case RATIO -> OceanusRatio.getWholeUnits(0);
+            default -> null;
+        };
     }
 
     /**
@@ -494,19 +484,10 @@ public final class PrometheusSheetFormats {
      * @return true/false
      */
     public static boolean hasDataFormat(final PrometheusSheetCellStyleType pType) {
-        switch (pType) {
-            case DATE:
-            case BOOLEAN:
-            case INTEGER:
-            case MONEY:
-            case PRICE:
-            case RATE:
-            case UNITS:
-            case RATIO:
-                return true;
-            default:
-                return false;
-        }
+        return switch (pType) {
+            case DATE, BOOLEAN, INTEGER, MONEY, PRICE, RATE, UNITS, RATIO -> true;
+            default -> false;
+        };
     }
 
     /**

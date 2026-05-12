@@ -1,6 +1,6 @@
 /*
  * Tethys: GUI Utilities
- * Copyright 2012-2026. Tony Washer
+ * Copyright 2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -14,18 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.tethys.api.menu;
+
+package io.github.tonywasher.joceanus.tethys.javafx.launch.util;
 
 /**
- * ScrollMenu subMenu.
- *
- * @param <T> the value type
+ * Set State for javaFX program.
  */
-public interface TethysUIScrollSubMenu<T> {
+public interface TethysUIFXSetState {
     /**
-     * Obtain the subMenu.
+     * Set program state.
      *
-     * @return the subMenu
+     * @param pState the state
      */
-    TethysUIScrollMenu<T> getSubMenu();
+    void setProgramState(TethysUIFXBaseState pState);
 }

@@ -20,8 +20,9 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUILaunchProgram;
+import io.github.tonywasher.joceanus.tethys.javafx.launch.util.TethysUIFXBaseState;
 import io.github.tonywasher.joceanus.tethys.javafx.launch.util.TethysUIFXLaunchState;
-import io.github.tonywasher.joceanus.tethys.javafx.launch.util.TethysUIFXLaunchState.TethysUIFXSetState;
+import io.github.tonywasher.joceanus.tethys.javafx.launch.util.TethysUIFXSetState;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -39,7 +40,7 @@ public abstract class TethysUIFXLaunch
     /**
      * javaFXState.
      */
-    private TethysUIFXLaunchState theState;
+    private TethysUIFXBaseState theState;
 
     /**
      * Default constructor.
@@ -56,7 +57,7 @@ public abstract class TethysUIFXLaunch
     protected abstract TethysUILaunchProgram getProgramInfo();
 
     @Override
-    public void setProgramState(final TethysUIFXLaunchState pState) {
+    public void setProgramState(final TethysUIFXBaseState pState) {
         theState = pState;
     }
 

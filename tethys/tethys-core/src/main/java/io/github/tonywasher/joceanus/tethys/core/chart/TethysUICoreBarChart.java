@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.tethys.core.chart;
 
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalFormatter;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
@@ -48,6 +49,11 @@ public abstract class TethysUICoreBarChart
     private final OceanusDecimalFormatter theFormatter;
 
     /**
+     * The parser.
+     */
+    private final OceanusDecimalParser theParser;
+
+    /**
      * The id.
      */
     private final Integer theId;
@@ -72,6 +78,7 @@ public abstract class TethysUICoreBarChart
         theId = pFactory.getNextId();
         theEventManager = new OceanusEventManager<>();
         theFormatter = pFactory.getDataFormatter().getDecimalFormatter();
+        theParser = pFactory.getDataFormatter().getDecimalParser();
 
         /* Create the section map */
         theSectionMap = new HashMap<>();
@@ -94,6 +101,15 @@ public abstract class TethysUICoreBarChart
      */
     protected OceanusDecimalFormatter getFormatter() {
         return theFormatter;
+    }
+
+    /**
+     * Obtain the parser.
+     *
+     * @return the parser
+     */
+    protected OceanusDecimalParser getParser() {
+        return theParser;
     }
 
     @Override

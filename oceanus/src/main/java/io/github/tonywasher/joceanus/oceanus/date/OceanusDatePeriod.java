@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.oceanus.date;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -92,7 +94,7 @@ public enum OceanusDatePeriod {
     /**
      * The String name.
      */
-    private String theName;
+    private final String theName;
 
     /**
      * The calendar field.
@@ -115,6 +117,7 @@ public enum OceanusDatePeriod {
         /* Store values */
         theField = pField;
         theAmount = pAmount;
+        theName = bundleIdForPeriod(this).getValue();
     }
 
     /**
@@ -140,13 +143,6 @@ public enum OceanusDatePeriod {
 
     @Override
     public String toString() {
-        /* If we have not yet loaded the name */
-        if (theName == null) {
-            /* Load the name */
-            theName = OceanusDateResource.getKeyForPeriod(this).getValue();
-        }
-
-        /* return the name */
         return theName;
     }
 
@@ -174,14 +170,35 @@ public enum OceanusDatePeriod {
      * @return true/false
      */
     public boolean isContaining() {
-        switch (this) {
-            case CALENDARMONTH:
-            case CALENDARQUARTER:
-            case CALENDARYEAR:
-            case FISCALYEAR:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case CALENDARMONTH, CALENDARQUARTER, CALENDARYEAR, FISCALYEAR -> true;
+            default -> false;
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the period.
+     *
+     * @param pPeriod the period
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForPeriod(final OceanusDatePeriod pPeriod) {
+        /* Create the map and return it */
+        return switch (pPeriod) {
+            case ONEWEEK -> OceanusDateResource.PERIOD_ONEWEEK;
+            case FORTNIGHT -> OceanusDateResource.PERIOD_FORTNIGHT;
+            case ONEMONTH -> OceanusDateResource.PERIOD_ONEMONTH;
+            case QUARTERYEAR -> OceanusDateResource.PERIOD_QUARTERYEAR;
+            case HALFYEAR -> OceanusDateResource.PERIOD_HALFYEAR;
+            case ONEYEAR -> OceanusDateResource.PERIOD_ONEYEAR;
+            case CALENDARMONTH -> OceanusDateResource.PERIOD_CALENDARMONTH;
+            case CALENDARQUARTER -> OceanusDateResource.PERIOD_CALENDARQUARTER;
+            case CALENDARYEAR -> OceanusDateResource.PERIOD_CALENDARYEAR;
+            case FISCALYEAR -> OceanusDateResource.PERIOD_FISCALYEAR;
+            case DATESUPTO -> OceanusDateResource.PERIOD_DATESUPTO;
+            case CUSTOM -> OceanusDateResource.PERIOD_CUSTOM;
+            case ALLDATES -> OceanusDateResource.PERIOD_ALLDATES;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

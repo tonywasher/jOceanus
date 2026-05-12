@@ -188,7 +188,7 @@ public class TethysUISwingBarChart
         public StringBuffer format(final double pValue,
                                    final StringBuffer pBuffer,
                                    final FieldPosition pLoc) {
-            final OceanusMoney myMoney = new OceanusMoney(Double.toString(pValue));
+            final OceanusMoney myMoney = getParser().parseMoneyValue(Double.toString(pValue));
             return new StringBuffer(getFormatter().formatMoney(myMoney));
         }
     }

@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.test.data.trans;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.builder.MoneyWiseCashBuilder;
@@ -34,6 +33,8 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePortfolioCl
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -250,6 +251,15 @@ public class MoneyWiseDataTestAccounts {
      */
     MoneyWiseTransactionBuilder getTransBuilder() {
         return theTransBuilder;
+    }
+
+    /**
+     * Obtain the decimalParser.
+     *
+     * @return the Parser
+     */
+    OceanusDecimalParser getDecimalParser() {
+        return theDataSet.getDataFormatter().getDecimalParser();
     }
 
     /**

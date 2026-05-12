@@ -59,26 +59,14 @@ public class OceanusRate
     }
 
     /**
-     * Construct a new Rate from a ratio.
+     * Construct a new Rate from a decimal.
      *
      * @param pRatio the Ratio
      */
-    public OceanusRate(final OceanusRatio pRatio) {
+    public OceanusRate(final OceanusDecimal pRatio) {
         super(pRatio.unscaledValue(), pRatio.scale());
         adjustToScale(NUM_DECIMALS);
         super.subtractValue(RATE_ONEHUNDREDPERCENT);
-    }
-
-    /**
-     * Constructor for rate from a decimal string.
-     *
-     * @param pSource The source decimal string
-     * @throws IllegalArgumentException on invalidly formatted argument
-     */
-    public OceanusRate(final String pSource) {
-        /* Parse the string and correct the scale */
-        OceanusDecimalParser.parseDecimalValue(pSource, this);
-        adjustToScale(NUM_DECIMALS);
     }
 
     /**

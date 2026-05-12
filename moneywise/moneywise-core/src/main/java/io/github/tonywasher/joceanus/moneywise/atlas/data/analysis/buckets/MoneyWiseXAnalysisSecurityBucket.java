@@ -16,15 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -47,6 +38,15 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityCla
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Currency;
 import java.util.Iterator;
@@ -628,7 +628,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
         final OceanusPrice myPrice = theValues.getPriceValue(MoneyWiseXAnalysisSecurityAttr.PRICE);
 
         /* Calculate the value */
-        final OceanusMoney myLocalValue = myUnits.valueAtPrice(myPrice);
+        final OceanusMoney myLocalValue = myPrice.unitsAtPrice(myUnits);
         setValue(MoneyWiseXAnalysisSecurityAttr.VALUE, myLocalValue);
 
         /* Adjust the valuation */

@@ -78,50 +78,7 @@ public class OceanusMoney
     public OceanusMoney(final OceanusMoney pMoney) {
         super(pMoney.unscaledValue(), pMoney.scale());
         theCurrency = pMoney.getCurrency();
-    }
-
-    /**
-     * Constructor for money from a decimal string.
-     *
-     * @param pSource The source decimal string
-     * @throws IllegalArgumentException on invalidly formatted argument
-     */
-    public OceanusMoney(final String pSource) {
-        /* Use default constructor */
-        this();
-
-        /* Parse the string and correct the scale */
-        OceanusDecimalParser.parseDecimalValue(pSource, this);
         adjustToScale(theCurrency.getDefaultFractionDigits());
-    }
-
-    /**
-     * Constructor for money from a decimal string.
-     *
-     * @param pSource   The source decimal string
-     * @param pCurrency the currency
-     * @throws IllegalArgumentException on invalidly formatted argument
-     */
-    public OceanusMoney(final String pSource,
-                        final Currency pCurrency) {
-        /* Use currency constructor */
-        this(pCurrency);
-
-        /* Parse the string and correct the scale */
-        OceanusDecimalParser.parseDecimalValue(pSource, this);
-        adjustToScale(theCurrency.getDefaultFractionDigits());
-    }
-
-    /**
-     * Construct a new OceanusMoney by combining units and price.
-     *
-     * @param pUnits the number of units
-     * @param pPrice the price of each unit
-     */
-    protected OceanusMoney(final OceanusUnits pUnits,
-                           final OceanusPrice pPrice) {
-        this(pPrice.getCurrency());
-        calculateProduct(pUnits, pPrice);
     }
 
     /**

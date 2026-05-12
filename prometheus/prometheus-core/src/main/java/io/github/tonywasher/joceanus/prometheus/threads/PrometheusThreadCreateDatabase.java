@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Thread to create tables in a database to represent a data set. Existing tables will be dropped
@@ -49,9 +49,9 @@ public class PrometheusThreadCreateDatabase
     }
 
     @Override
-    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public Void performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Initialise the status window */
-        pManager.initTask(getTaskName());
+        pReport.initTask(getTaskName());
 
         /* Access Database */
         final PrometheusDataStore myNullDatabase = theControl.getNullDatabase();
@@ -59,10 +59,10 @@ public class PrometheusThreadCreateDatabase
         /* Protect against failures */
         try {
             /* Create database */
-            myNullDatabase.createDatabase(pManager, theControl.getDatabaseName());
+            myNullDatabase.createDatabase(pReport, theControl.getDatabaseName());
 
             /* State that we have completed */
-            pManager.setCompletion();
+            pReport.setCompletion();
 
             /* Return null value */
             return null;

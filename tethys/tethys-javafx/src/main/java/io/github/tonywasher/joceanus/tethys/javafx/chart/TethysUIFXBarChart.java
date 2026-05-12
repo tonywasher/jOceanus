@@ -16,7 +16,9 @@
  */
 package io.github.tonywasher.joceanus.tethys.javafx.chart;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.tethys.core.chart.TethysUICoreBarChart;
+import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
+import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXNode;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
@@ -27,9 +29,6 @@ import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.util.StringConverter;
-import io.github.tonywasher.joceanus.tethys.core.chart.TethysUICoreBarChart;
-import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
-import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXNode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,7 +68,7 @@ public class TethysUIFXBarChart
         myYAxis.setTickLabelFormatter(new StringConverter<>() {
             @Override
             public String toString(final Number pValue) {
-                return getFormatter().formatMoney(new OceanusMoney(pValue.toString()));
+                return getFormatter().formatMoney(getParser().parseMoneyValue(pValue.toString()));
             }
 
             @Override

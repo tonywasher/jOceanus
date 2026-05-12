@@ -49,6 +49,6 @@ module io.github.tonywasher.joceanus.tethys.core {
     exports io.github.tonywasher.joceanus.tethys.core.field to io.github.tonywasher.joceanus.tethys.javafx, io.github.tonywasher.joceanus.tethys.swing;
     exports io.github.tonywasher.joceanus.tethys.core.menu to io.github.tonywasher.joceanus.tethys.javafx, io.github.tonywasher.joceanus.tethys.swing;
     exports io.github.tonywasher.joceanus.tethys.core.pane to io.github.tonywasher.joceanus.tethys.javafx, io.github.tonywasher.joceanus.tethys.swing;
-    exports io.github.tonywasher.joceanus.tethys.core.table to io.github.tonywasher.joceanus.tethys.javafx, io.github.tonywasher.joceanus.tethys.swing;
     exports io.github.tonywasher.joceanus.tethys.core.thread to io.github.tonywasher.joceanus.tethys.javafx, io.github.tonywasher.joceanus.tethys.swing;
+    exports io.github.tonywasher.joceanus.tethys.core.table;
 }

@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.tethys.core.control;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager;
 import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIFileSelector;
 import io.github.tonywasher.joceanus.tethys.core.base.TethysUIDataException;
 import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
@@ -71,7 +72,7 @@ public class TethysUICoreHTMLToFile {
     /**
      * The HTML Manager.
      */
-    private final TethysUICoreHTMLManager theHTMLManager;
+    private final TethysUIHTMLManager theHTMLManager;
 
     /**
      * The File Selector.
@@ -85,7 +86,7 @@ public class TethysUICoreHTMLToFile {
      * @param pHTMLManager the HTML Manager
      */
     public TethysUICoreHTMLToFile(final TethysUICoreFactory<?> pFactory,
-                                  final TethysUICoreHTMLManager pHTMLManager) {
+                                  final TethysUIHTMLManager pHTMLManager) {
         /* Store parameters */
         theFactory = pFactory;
         theHTMLManager = pHTMLManager;
@@ -185,7 +186,7 @@ public class TethysUICoreHTMLToFile {
     private static void writeDocumentToFile(final Document pDoc,
                                             final File pFile) throws OceanusException {
         /* Protect the write */
-        try (PrintWriter myWriter = new PrintWriter(pFile, StandardCharsets.UTF_8.name())) {
+        try (PrintWriter myWriter = new PrintWriter(pFile, StandardCharsets.UTF_8)) {
             /* Format the XML and write to stream */
             final String myHTML = pDoc.outerHtml();
             myWriter.print(myHTML);

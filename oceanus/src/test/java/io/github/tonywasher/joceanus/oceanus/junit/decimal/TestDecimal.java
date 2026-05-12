@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
@@ -106,8 +107,8 @@ class TestDecimal {
     private static void checkAddition(final String pFirst,
                                       final String pSecond) {
         /* Obtain the two decimals */
-        final OceanusDecimal myD1 = new OceanusDecimal(pFirst);
-        final OceanusDecimal myD2 = new OceanusDecimal(pSecond);
+        final OceanusDecimal myD1 = OceanusDecimalParser.parseDecimalValue(pFirst);
+        final OceanusDecimal myD2 = OceanusDecimalParser.parseDecimalValue(pSecond);
         final int myScale = Math.max(myD1.scale(), myD2.scale());
 
         /* Obtain the two BigDecimals */
@@ -147,8 +148,8 @@ class TestDecimal {
     private static void checkSubtraction(final String pFirst,
                                          final String pSecond) {
         /* Obtain the two decimals */
-        final OceanusDecimal myD1 = new OceanusDecimal(pFirst);
-        final OceanusDecimal myD2 = new OceanusDecimal(pSecond);
+        final OceanusDecimal myD1 = OceanusDecimalParser.parseDecimalValue(pFirst);
+        final OceanusDecimal myD2 = OceanusDecimalParser.parseDecimalValue(pSecond);
 
         /* Obtain the two BigDecimals */
         final BigDecimal myB1 = new BigDecimal(pFirst);
@@ -188,8 +189,8 @@ class TestDecimal {
     private static void checkMultiplication(final String pFirst,
                                             final String pSecond) {
         /* Obtain the two decimals */
-        final OceanusDecimal myD1 = new OceanusDecimal(pFirst);
-        final OceanusDecimal myD2 = new OceanusDecimal(pSecond);
+        final OceanusDecimal myD1 = OceanusDecimalParser.parseDecimalValue(pFirst);
+        final OceanusDecimal myD2 = OceanusDecimalParser.parseDecimalValue(pSecond);
 
         /* Obtain the two BigDecimals */
         final BigDecimal myB1 = new BigDecimal(pFirst);
@@ -212,8 +213,8 @@ class TestDecimal {
     private static void checkDivision(final String pFirst,
                                       final String pSecond) {
         /* Obtain the two decimals */
-        final OceanusDecimal myD1 = new OceanusDecimal(pFirst);
-        final OceanusDecimal myD2 = new OceanusDecimal(pSecond);
+        final OceanusDecimal myD1 = OceanusDecimalParser.parseDecimalValue(pFirst);
+        final OceanusDecimal myD2 = OceanusDecimalParser.parseDecimalValue(pSecond);
 
         /* Obtain the two BigDecimals */
         final BigDecimal myB1 = new BigDecimal(pFirst);
@@ -232,11 +233,12 @@ class TestDecimal {
      */
     private static void checkBytes() {
         /* Obtain the two values */
-        final OceanusRate myRate = new OceanusRate("0.25");
-        final OceanusUnits myUnits = new OceanusUnits("25.678");
-        final OceanusRatio myRatio = new OceanusRatio("5425.68");
-        final OceanusMoney myMoney = new OceanusMoney("76.90");
-        final OceanusPrice myPrice = new OceanusPrice("0.9856");
+        final OceanusDecimalParser myParser = new OceanusDecimalParser();
+        final OceanusRate myRate = myParser.parseRateValue("0.25");
+        final OceanusUnits myUnits = myParser.parseUnitsValue("25.678");
+        final OceanusRatio myRatio = myParser.parseRatioValue("5425.68");
+        final OceanusMoney myMoney = myParser.parseMoneyValue("76.90");
+        final OceanusPrice myPrice = myParser.parsePriceValue("0.9856");
         final OceanusDate myDate = new OceanusDate();
 
         /* Check Rate */

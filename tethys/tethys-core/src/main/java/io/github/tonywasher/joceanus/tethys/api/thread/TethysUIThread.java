@@ -34,10 +34,10 @@ public interface TethysUIThread<T> {
     /**
      * prepare task.
      *
-     * @param pManager the thread manager
+     * @param pReport the thread manager
      * @throws OceanusException on error
      */
-    default void prepareTask(final TethysUIThreadManager pManager) throws OceanusException {
+    default void prepareTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /*
          * Overridden as needed
          */
@@ -46,11 +46,11 @@ public interface TethysUIThread<T> {
     /**
      * Perform the task.
      *
-     * @param pManager the thread manager
+     * @param pReport the thread manager
      * @return the result
      * @throws OceanusException on error
      */
-    T performTask(TethysUIThreadManager pManager) throws OceanusException;
+    T performTask(TethysUIThreadStatusReport pReport) throws OceanusException;
 
     /**
      * process result.

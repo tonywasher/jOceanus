@@ -16,15 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.analyse;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
@@ -72,6 +63,15 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWis
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseCashType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Currency;
@@ -678,7 +678,7 @@ public class MoneyWiseAnalysisTransAnalyser
 
         /* Determine value of the stock being transferred */
         final OceanusPrice myPrice = thePriceMap.getPriceForDate(pSource.getSecurity(), theHelper.getDate());
-        OceanusMoney myStockValue = myUnits.valueAtPrice(myPrice);
+        OceanusMoney myStockValue = myPrice.unitsAtPrice(myUnits);
         OceanusMoney myForeignValue = null;
         OceanusRatio myRate = null;
 
@@ -879,7 +879,7 @@ public class MoneyWiseAnalysisTransAnalyser
 
         /* Determine value of this stock after the transaction */
         myUnits = myAsset.getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        OceanusMoney myValue = myUnits.valueAtPrice(myPrice);
+        OceanusMoney myValue = myPrice.unitsAtPrice(myUnits);
 
         /* If we are foreign */
         if (isForeign) {
@@ -1090,7 +1090,7 @@ public class MoneyWiseAnalysisTransAnalyser
         }
 
         /* Determine value of this stock after the transaction */
-        OceanusMoney myValue = myUnits.valueAtPrice(myPrice);
+        OceanusMoney myValue = myPrice.unitsAtPrice(myUnits);
 
         /* If we are foreign */
         if (isForeign) {
@@ -1374,7 +1374,7 @@ public class MoneyWiseAnalysisTransAnalyser
 
         /* Determine value of the stock being deMerged */
         final OceanusUnits myCreditUnits = theHelper.getPartnerDeltaUnits();
-        OceanusMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        OceanusMoney myCreditXferValue = myCreditPrice.unitsAtPrice(myCreditUnits);
         if (isForeignCredit) {
             myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate);
         }
@@ -1450,9 +1450,9 @@ public class MoneyWiseAnalysisTransAnalyser
 
         /* Determine value of the stock in both parts of the takeOver */
         OceanusUnits myCreditUnits = theHelper.getPartnerDeltaUnits();
-        OceanusMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        OceanusMoney myCreditXferValue = myCreditPrice.unitsAtPrice(myCreditUnits);
         OceanusUnits myDebitUnits = myDebitValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        OceanusMoney myDebitValue = myDebitUnits.valueAtPrice(myDebitPrice);
+        OceanusMoney myDebitValue = myDebitPrice.unitsAtPrice(myDebitUnits);
         OceanusMoney myInvested = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED);
 
         /* Handle foreign debit */
@@ -1489,7 +1489,7 @@ public class MoneyWiseAnalysisTransAnalyser
 
         /* Determine final value of the credit stock after the takeOver */
         myCreditUnits = myCreditAsset.getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        OceanusMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        OceanusMoney myCreditValue = myCreditPrice.unitsAtPrice(myCreditUnits);
         if (isForeignCredit) {
             myCreditValue = myCreditValue.convertCurrency(myCurrency, myCreditRate);
         }
@@ -1568,11 +1568,11 @@ public class MoneyWiseAnalysisTransAnalyser
 
         /* Determine value of the base stock */
         OceanusUnits myDebitUnits = myDebitValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        OceanusMoney myDebitValue = myDebitUnits.valueAtPrice(myDebitPrice);
+        OceanusMoney myDebitValue = myDebitPrice.unitsAtPrice(myDebitUnits);
 
         /* Determine value of the stock part of the takeOver */
         OceanusUnits myCreditUnits = theHelper.getPartnerDeltaUnits();
-        OceanusMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        OceanusMoney myCreditXferValue = myCreditPrice.unitsAtPrice(myCreditUnits);
 
         /* Handle foreign debit */
         final boolean isForeignDebit = myDebitAsset.isForeignCurrency();
@@ -1655,7 +1655,7 @@ public class MoneyWiseAnalysisTransAnalyser
 
         /* Determine final value of the credit stock after the takeOver */
         myCreditUnits = myCreditAsset.getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        OceanusMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        OceanusMoney myCreditValue = myCreditPrice.unitsAtPrice(myCreditUnits);
         if (isForeignCredit) {
             myCreditValue = myCreditValue.convertCurrency(myCurrency, myCreditRate);
         }

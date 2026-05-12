@@ -16,14 +16,15 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.builder;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 
 /**
  * ExchangeRate Builder.
@@ -33,6 +34,11 @@ public class MoneyWiseXchgRateBuilder {
      * DataSet.
      */
     private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * Parser.
+     */
+    private final OceanusDecimalParser theParser;
 
     /**
      * The Currency.
@@ -57,6 +63,7 @@ public class MoneyWiseXchgRateBuilder {
     public MoneyWiseXchgRateBuilder(final MoneyWiseDataSet pDataSet) {
         theDataSet = pDataSet;
         theDataSet.getExchangeRates().ensureMap();
+        theParser = theDataSet.getDataFormatter().getDecimalParser();
     }
 
     /**
@@ -109,7 +116,7 @@ public class MoneyWiseXchgRateBuilder {
      * @return the builder
      */
     public MoneyWiseXchgRateBuilder rate(final String pRate) {
-        return rate(new OceanusRatio(pRate));
+        return rate(theParser.parseRatioValue(pRate));
     }
 
     /**

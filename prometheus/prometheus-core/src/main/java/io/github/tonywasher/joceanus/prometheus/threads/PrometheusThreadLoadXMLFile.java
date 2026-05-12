@@ -29,7 +29,7 @@ import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIFileSelector;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.io.File;
 
@@ -63,13 +63,13 @@ public class PrometheusThreadLoadXMLFile
     }
 
     @Override
-    public PrometheusDataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public PrometheusDataSet performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Access the thread manager */
-        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
+        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pReport.getThreadData();
         final PrometheusSecurityPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();
 
         /* Initialise the status window */
-        pManager.initTask(getTaskName());
+        pReport.initTask(getTaskName());
 
         /* Access the Sheet preferences */
         final MetisPreferenceManager myMgr = theControl.getPreferenceManager();
@@ -88,11 +88,11 @@ public class PrometheusThreadLoadXMLFile
         /* If we did not select a file */
         if (myFile == null) {
             /* Throw cancelled exception */
-            pManager.throwCancelException();
+            pReport.throwCancelException();
         }
 
         /* Create a new formatter */
-        final PrometheusDataValuesFormatter myFormatter = new PrometheusDataValuesFormatter(pManager, myPasswordMgr);
+        final PrometheusDataValuesFormatter myFormatter = new PrometheusDataValuesFormatter(pReport, myPasswordMgr);
 
         /* Load data */
         final PrometheusDataSet myNewData = theControl.getNewData();
@@ -103,23 +103,23 @@ public class PrometheusThreadLoadXMLFile
 
         /* Load underlying database */
         final PrometheusDataSet myStore = theControl.getNewData();
-        myDatabase.loadDatabase(pManager, myStore);
+        myDatabase.loadDatabase(pReport, myStore);
 
         /* Check security on the database */
-        myStore.checkSecurity(pManager);
+        myStore.checkSecurity(pReport);
         if (myStore.hasUpdates()) {
             /* Store any updates */
-            myDatabase.updateDatabase(pManager, myStore);
+            myDatabase.updateDatabase(pReport, myStore);
         }
 
         /* Initialise the security, either from database or with a new security control */
-        myNewData.initialiseSecurity(pManager, myStore);
+        myNewData.initialiseSecurity(pReport, myStore);
 
         /* Re-base the loaded backup onto the database image */
-        myNewData.reBase(pManager, myStore);
+        myNewData.reBase(pReport, myStore);
 
         /* State that we have completed */
-        pManager.setCompletion();
+        pReport.setCompletion();
 
         /* Return the Data */
         return myNewData;

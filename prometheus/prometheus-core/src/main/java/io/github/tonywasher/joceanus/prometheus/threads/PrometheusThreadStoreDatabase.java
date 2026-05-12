@@ -22,7 +22,7 @@ import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Thread to store changes in the DataSet to a database.
@@ -49,9 +49,9 @@ public class PrometheusThreadStoreDatabase
     }
 
     @Override
-    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public Void performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Initialise the status window */
-        pManager.initTask(getTaskName());
+        pReport.initTask(getTaskName());
 
         /* Create interface */
         final PrometheusDataStore myDatabase = theControl.getDatabase();
@@ -59,15 +59,15 @@ public class PrometheusThreadStoreDatabase
         /* Protect against failures */
         try {
             /* Store database */
-            myDatabase.updateDatabase(pManager, theControl.getUpdates());
+            myDatabase.updateDatabase(pReport, theControl.getUpdates());
 
             /* Load database */
             final PrometheusDataSet myStore = theControl.getNewData();
-            myDatabase.loadDatabase(pManager, myStore);
+            myDatabase.loadDatabase(pReport, myStore);
 
             /* Create a difference set between the two data copies */
             final PrometheusDataSet myData = theControl.getData();
-            final PrometheusDataSet myDiff = myData.getDifferenceSet(pManager, myStore);
+            final PrometheusDataSet myDiff = myData.getDifferenceSet(pReport, myStore);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {
@@ -82,7 +82,7 @@ public class PrometheusThreadStoreDatabase
             theControl.deriveUpdates();
 
             /* State that we have completed */
-            pManager.setCompletion();
+            pReport.setCompletion();
 
             /* Return null */
             return null;

@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.ui.controls;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDatePeriod;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
@@ -30,6 +25,11 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWis
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
 import io.github.tonywasher.joceanus.moneywise.lethe.reports.MoneyWiseReportType;
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDatePeriod;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
@@ -41,7 +41,7 @@ import io.github.tonywasher.joceanus.tethys.api.control.TethysUILabel;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
-import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu.TethysUIScrollSubMenu;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 
 import java.util.Iterator;

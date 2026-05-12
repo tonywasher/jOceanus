@@ -130,10 +130,8 @@ public class TethysUIFXThreadManager
         }
     }
 
-    /**
-     * Handle completion.
-     */
-    private void handleCompletion() {
+    @Override
+    public void handleCompletion() {
         /* Handle exceptions */
         try {
             /* Complete the thread */
@@ -151,20 +149,14 @@ public class TethysUIFXThreadManager
         }
     }
 
-    /**
-     * Handle cancellation.
-     */
-    private void handleCancellation() {
+    @Override
+    public void handleCancellation() {
         endTask();
         getStatusManager().setCancelled();
     }
 
-    /**
-     * Handle failure.
-     *
-     * @param pException the exception
-     */
-    private void handleFailure(final Throwable pException) {
+    @Override
+    public void handleFailure(final Throwable pException) {
         /* Handle cancellation exception as cancel */
         if (pException instanceof TethysUIThreadCancelException) {
             handleCancellation();
