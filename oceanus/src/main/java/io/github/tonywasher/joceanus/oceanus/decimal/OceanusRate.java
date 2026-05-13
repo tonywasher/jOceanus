@@ -87,7 +87,7 @@ public class OceanusRate
     public static OceanusRate getWholePercentage(final long pValue) {
         final OceanusRate myRate = new OceanusRate();
         myRate.setValue(adjustDecimals(pValue, NUM_DECIMALS
-                - OceanusDecimalParser.ADJUST_PERCENT), NUM_DECIMALS);
+                - OceanusDecimalConstants.ADJUST_PERCENT), NUM_DECIMALS);
         return myRate;
     }
 
@@ -100,7 +100,7 @@ public class OceanusRate
     public static OceanusRate getWholePermille(final long pValue) {
         final OceanusRate myRate = new OceanusRate();
         myRate.setValue(adjustDecimals(pValue, NUM_DECIMALS
-                - OceanusDecimalParser.ADJUST_PERMILLE), NUM_DECIMALS);
+                - OceanusDecimalConstants.ADJUST_PERMILLE), NUM_DECIMALS);
         return myRate;
     }
 
@@ -113,7 +113,7 @@ public class OceanusRate
     public static OceanusRate getTenthPermille(final long pValue) {
         final OceanusRate myRate = new OceanusRate();
         myRate.setValue(adjustDecimals(pValue, NUM_DECIMALS
-                - OceanusDecimalParser.ADJUST_PERMILLE - 1), NUM_DECIMALS);
+                - OceanusDecimalConstants.ADJUST_PERMILLE - 1), NUM_DECIMALS);
         return myRate;
     }
 

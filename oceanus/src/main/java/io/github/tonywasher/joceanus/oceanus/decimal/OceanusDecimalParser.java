@@ -38,16 +38,6 @@ public class OceanusDecimalParser {
     private static final String ERROR_BOUNDS = "Value out of range: ";
 
     /**
-     * PerCent adjustment.
-     */
-    public static final int ADJUST_PERCENT = 2;
-
-    /**
-     * PerMille adjustment.
-     */
-    public static final int ADJUST_PERMILLE = 3;
-
-    /**
      * The locale.
      */
     private OceanusDecimalLocale theLocale;
@@ -227,7 +217,7 @@ public class OceanusDecimalParser {
 
             /* Finish off with zeroes */
             while (myExponent > 0) {
-                myWork.append(OceanusDecimalFormatter.CHAR_ZERO);
+                myWork.append(OceanusDecimalConstants.CHAR_ZERO);
                 myExponent--;
             }
 
@@ -255,7 +245,7 @@ public class OceanusDecimalParser {
 
             /* Finish off with zeroes */
             while (myExponent < 0) {
-                myCopy.insert(0, OceanusDecimalFormatter.CHAR_ZERO);
+                myCopy.insert(0, OceanusDecimalConstants.CHAR_ZERO);
                 myExponent++;
             }
 
@@ -269,7 +259,7 @@ public class OceanusDecimalParser {
 
         /* Handle leading decimal point on value */
         if (myWork.isEmpty()) {
-            myWork.append(OceanusDecimalFormatter.CHAR_ZERO);
+            myWork.append(OceanusDecimalConstants.CHAR_ZERO);
         }
 
         /* Parse the integral part */
@@ -284,7 +274,7 @@ public class OceanusDecimalParser {
         /* If we have a decimal part */
         if (myDecimals != null) {
             /* If we have too many decimals */
-            char myLastDigit = OceanusDecimalFormatter.CHAR_ZERO;
+            char myLastDigit = OceanusDecimalConstants.CHAR_ZERO;
             myScale = myDecimals.length();
             if (myScale > OceanusDecimal.MAX_DECIMALS) {
                 /* Extract most significant trailing digit and truncate the value */
@@ -362,7 +352,7 @@ public class OceanusDecimalParser {
     private Currency parseCurrency(final StringBuilder pWork,
                                    final Currency pDeemedCurrency) {
         /* Look for a currency separator */
-        final int iPos = pWork.indexOf(OceanusDecimalFormatter.STR_CURRSEP);
+        final int iPos = pWork.indexOf(OceanusDecimalConstants.STR_CURRSEP);
         if (iPos > -1) {
             /* Extract currency detail and determine currency */
             final String myCurr = pWork.substring(0, iPos);
@@ -390,7 +380,7 @@ public class OceanusDecimalParser {
         while (iNumSymbols < iNumChars) {
             final char c = pWork.charAt(iNumSymbols);
             if (Character.isDigit(c)
-                    || (c == OceanusDecimalFormatter.CHAR_MINUS)
+                    || (c == OceanusDecimalConstants.CHAR_MINUS)
                     || Character.isWhitespace(c)) {
                 break;
             }
@@ -647,14 +637,14 @@ public class OceanusDecimalParser {
         final int myLast = myWork.length() - 1;
         if (myWork.charAt(myLast) == theLocale.getPerCent()) {
             myWork.deleteCharAt(myLast);
-            myXtraDecimals = ADJUST_PERCENT;
+            myXtraDecimals = OceanusDecimalConstants.ADJUST_PERCENT;
 
             /*
              * If there is a trailing perMille, remove any percent sign from the end of the string
              */
         } else if (myWork.charAt(myLast) == theLocale.getPerMille()) {
             myWork.deleteCharAt(myLast);
-            myXtraDecimals = ADJUST_PERMILLE;
+            myXtraDecimals = OceanusDecimalConstants.ADJUST_PERMILLE;
         }
 
         /* Create the new Rate object */

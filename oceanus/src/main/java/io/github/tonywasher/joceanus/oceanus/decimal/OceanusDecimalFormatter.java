@@ -33,36 +33,6 @@ public class OceanusDecimalFormatter {
     protected static final int INITIAL_BUFLEN = 20;
 
     /**
-     * The Blank character.
-     */
-    public static final char CHAR_BLANK = ' ';
-
-    /**
-     * The Zero character.
-     */
-    public static final char CHAR_ZERO = '0';
-
-    /**
-     * The Minus character.
-     */
-    public static final char CHAR_MINUS = '-';
-
-    /**
-     * The Group character.
-     */
-    public static final char CHAR_GROUP = ',';
-
-    /**
-     * The Decimal character.
-     */
-    public static final String STR_DEC = ".";
-
-    /**
-     * The Currency separator.
-     */
-    protected static final String STR_CURRSEP = ":";
-
-    /**
      * The locale.
      */
     static final OceanusDecimalLocale LOCALE_DEFAULT = new OceanusDecimalLocale();
@@ -153,19 +123,19 @@ public class OceanusDecimalFormatter {
         /* Add leading zeroes */
         int myLen = myString.length();
         while (myLen < (myScale + 1)) {
-            myString.insert(0, CHAR_ZERO);
+            myString.insert(0, OceanusDecimalConstants.CHAR_ZERO);
             myLen++;
         }
 
         /* Insert the decimal into correct position if needed */
         if (myScale > 0) {
             myString.insert(myLen
-                    - myScale, STR_DEC);
+                    - myScale, OceanusDecimalConstants.STR_DEC);
         }
 
         /* Add minus sign if required */
         if (isNegative) {
-            myString.insert(0, CHAR_MINUS);
+            myString.insert(0, OceanusDecimalConstants.CHAR_MINUS);
         }
 
         /* Return the string */
@@ -184,7 +154,7 @@ public class OceanusDecimalFormatter {
 
         /* Add the currency symbol */
         final Currency myCurrency = pValue.getCurrency();
-        myWork.insert(0, STR_CURRSEP);
+        myWork.insert(0, OceanusDecimalConstants.STR_CURRSEP);
         myWork.insert(0, myCurrency.getCurrencyCode());
 
         /* Return the string */
@@ -223,7 +193,7 @@ public class OceanusDecimalFormatter {
         /* Add leading zeroes */
         int myLen = myString.length();
         while (myLen < (pScale + 1)) {
-            myString.insert(0, CHAR_ZERO);
+            myString.insert(0, OceanusDecimalConstants.CHAR_ZERO);
             myLen++;
         }
 
@@ -358,7 +328,7 @@ public class OceanusDecimalFormatter {
     public String formatRate(final OceanusRate pRate) {
         /* Format the basic value */
         final StringBuilder myWork = formatDecimal(pRate.unscaledValue(), pRate.scale()
-                - OceanusDecimalParser.ADJUST_PERCENT, theLocale.getDecimal());
+                - OceanusDecimalConstants.ADJUST_PERCENT, theLocale.getDecimal());
 
         /* Append the perCent sign */
         myWork.append(theLocale.getPerCent());
@@ -376,7 +346,7 @@ public class OceanusDecimalFormatter {
     public String formatRatePerMille(final OceanusRate pRate) {
         /* Format the basic value */
         final StringBuilder myWork = formatDecimal(pRate.unscaledValue(), pRate.scale()
-                - OceanusDecimalParser.ADJUST_PERMILLE, theLocale.getDecimal());
+                - OceanusDecimalConstants.ADJUST_PERMILLE, theLocale.getDecimal());
 
         /* Append the perMille sign */
         myWork.append(theLocale.getPerMille());
@@ -449,7 +419,7 @@ public class OceanusDecimalFormatter {
         int myLen = pWork.length();
         while (myLen < theAccountingWidth) {
             /* Prefix with blank */
-            pWork.insert(0, CHAR_BLANK);
+            pWork.insert(0, OceanusDecimalConstants.CHAR_BLANK);
             myLen++;
         }
     }
@@ -465,17 +435,17 @@ public class OceanusDecimalFormatter {
         final int myScale = pCurrency.getDefaultFractionDigits();
 
         /* Create a buffer build */
-        final StringBuilder myWork = new StringBuilder(Character.toString(CHAR_MINUS));
+        final StringBuilder myWork = new StringBuilder(Character.toString(OceanusDecimalConstants.CHAR_MINUS));
 
         /* If we have decimals */
         /* Add a blank in place of the decimal digit */
-        myWork.append(String.valueOf(CHAR_BLANK).repeat(Math.max(0, myScale)));
+        myWork.repeat(String.valueOf(OceanusDecimalConstants.CHAR_BLANK), Math.max(0, myScale));
 
         /* If we are short of the width */
         int myLen = myWork.length();
         while (myLen < theAccountingWidth) {
             /* Prefix with blank */
-            myWork.insert(0, CHAR_BLANK);
+            myWork.insert(0, OceanusDecimalConstants.CHAR_BLANK);
             myLen++;
         }
 
