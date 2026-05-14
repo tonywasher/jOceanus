@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.prometheus.service.sheet.odf;
 
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalConstants;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
@@ -464,7 +464,7 @@ public class PrometheusOdfStyler {
         /* Define the number properties */
         final Element myNumber = theParser.newElement(PrometheusOdfNumberItem.NUMBER);
         myStyle.appendChild(myNumber);
-        final int myDecimals = pValue.scale() - OceanusDecimalParser.ADJUST_PERCENT;
+        final int myDecimals = pValue.scale() - OceanusDecimalConstants.ADJUST_PERCENT;
         theParser.setAttribute(myNumber, PrometheusOdfNumberItem.DECPLACES, myDecimals);
         theParser.setAttribute(myNumber, PrometheusOdfNumberItem.MININTDIGITS, 1);
 

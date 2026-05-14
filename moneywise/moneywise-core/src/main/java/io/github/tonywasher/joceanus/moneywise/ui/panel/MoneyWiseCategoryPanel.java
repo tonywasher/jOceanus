@@ -16,12 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.ui.panel;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
@@ -35,6 +29,12 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseGoToId;
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.prometheus.ui.PrometheusActionButtons;
 import io.github.tonywasher.joceanus.prometheus.ui.PrometheusGoToEvent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;

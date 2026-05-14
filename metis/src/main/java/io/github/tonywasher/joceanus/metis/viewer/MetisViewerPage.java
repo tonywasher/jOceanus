@@ -16,11 +16,11 @@
  */
 package io.github.tonywasher.joceanus.metis.viewer;
 
-import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDelta;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +30,11 @@ import java.util.Map;
  * Data Viewer Page.
  */
 public class MetisViewerPage {
+    /**
+     * Items per page.
+     */
+    static final int ITEMS_PER_PAGE = 50;
+
     /**
      * The Master entry.
      */
@@ -196,16 +201,12 @@ public class MetisViewerPage {
      * @return true/false
      */
     protected boolean validMode(final MetisViewerMode pMode) {
-        switch (pMode) {
-            case CONTENTS:
-                return hasContents(theObject);
-            case SUMMARY:
-                return isCollection(theObject);
-            case ITEMS:
-                return isNonEmptyList(theObject);
-            default:
-                return false;
-        }
+        return switch (pMode) {
+            case CONTENTS -> hasContents(theObject);
+            case SUMMARY -> isCollection(theObject);
+            case ITEMS -> isNonEmptyList(theObject);
+            default -> false;
+        };
     }
 
     /**
@@ -214,14 +215,11 @@ public class MetisViewerPage {
      * @return the index
      */
     protected int getItemNo() {
-        switch (theMode) {
-            case SUMMARY:
-                return thePageNo + 1;
-            case ITEMS:
-                return theItemNo + 1;
-            default:
-                return -1;
-        }
+        return switch (theMode) {
+            case SUMMARY -> thePageNo + 1;
+            case ITEMS -> theItemNo + 1;
+            default -> -1;
+        };
     }
 
     /**
@@ -230,14 +228,11 @@ public class MetisViewerPage {
      * @return the size
      */
     protected int getSize() {
-        switch (theMode) {
-            case SUMMARY:
-                return thePages;
-            case ITEMS:
-                return theSize;
-            default:
-                return -1;
-        }
+        return switch (theMode) {
+            case SUMMARY -> thePages;
+            case ITEMS -> theSize;
+            default -> -1;
+        };
     }
 
     /**
@@ -387,7 +382,7 @@ public class MetisViewerPage {
     private int determinePages() {
         return theSize == -1
                 ? -1
-                : ((theSize - 1) / MetisViewerFormatter.ITEMS_PER_PAGE) + 1;
+                : ((theSize - 1) / ITEMS_PER_PAGE) + 1;
     }
 
     /**

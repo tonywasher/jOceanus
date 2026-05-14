@@ -16,13 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.ui.panel;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.ui.MetisAction;
@@ -41,6 +34,13 @@ import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseSpotSecurityPrice.
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseViewResource;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseYQLDownloader;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.ui.PrometheusActionButtons;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
