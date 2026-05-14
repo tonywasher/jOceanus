@@ -18,8 +18,7 @@ package io.github.tonywasher.joceanus.prometheus.service.sheet;
 
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalFormatter;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalConstants;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
@@ -162,14 +161,9 @@ public final class PrometheusSheetFormats {
      * @return the format
      */
     private static String getIntegerFormat() {
-        /* Create String builder */
-        final StringBuilder myBuilder = new StringBuilder();
-
-        /* Start with zero */
-        myBuilder.append(OceanusDecimalFormatter.CHAR_ZERO);
-
-        /* Return the format */
-        return myBuilder.toString();
+        //* Return the format */
+        return String.valueOf(OceanusDecimalConstants.CHAR_ZERO)
+                /* Return the format */;
     }
 
     /**
@@ -183,16 +177,16 @@ public final class PrometheusSheetFormats {
         final StringBuilder myBuilder = new StringBuilder();
 
         /* Start with zero */
-        myBuilder.append(OceanusDecimalFormatter.CHAR_ZERO);
+        myBuilder.append(OceanusDecimalConstants.CHAR_ZERO);
 
         /* Determine scale */
         final int myScale = pValue.scale();
         if (myScale > 0) {
             /* Append the decimal point */
-            myBuilder.append(OceanusDecimalFormatter.STR_DEC);
+            myBuilder.append(OceanusDecimalConstants.STR_DEC);
 
             /* Append the decimal places */
-            myBuilder.append(String.valueOf(OceanusDecimalFormatter.CHAR_ZERO).repeat(myScale));
+            myBuilder.repeat(String.valueOf(OceanusDecimalConstants.CHAR_ZERO), myScale);
         }
 
         /* Return the format */
@@ -210,17 +204,17 @@ public final class PrometheusSheetFormats {
         final StringBuilder myBuilder = new StringBuilder();
 
         /* Start with zero */
-        myBuilder.append(OceanusDecimalFormatter.CHAR_ZERO);
+        myBuilder.append(OceanusDecimalConstants.CHAR_ZERO);
 
         /* Determine scale */
         final int myScale = pValue.scale()
-                - OceanusDecimalParser.ADJUST_PERCENT;
+                - OceanusDecimalConstants.ADJUST_PERCENT;
         if (myScale > 0) {
             /* Append the decimal point */
-            myBuilder.append(OceanusDecimalFormatter.STR_DEC);
+            myBuilder.append(OceanusDecimalConstants.STR_DEC);
 
             /* Append the decimal places */
-            myBuilder.append(String.valueOf(OceanusDecimalFormatter.CHAR_ZERO).repeat(myScale));
+            myBuilder.repeat(String.valueOf(OceanusDecimalConstants.CHAR_ZERO), myScale);
         }
 
         /* Append the percent */
@@ -246,7 +240,7 @@ public final class PrometheusSheetFormats {
         /* Insert initial values */
         myBuilder.insert(0, CHAR_DIGIT);
         myBuilder.insert(0, CHAR_DIGIT);
-        myBuilder.insert(0, OceanusDecimalFormatter.CHAR_GROUP);
+        myBuilder.insert(0, OceanusDecimalConstants.CHAR_GROUP);
         myBuilder.insert(0, CHAR_DIGIT);
 
         /* Return the format */
@@ -275,7 +269,7 @@ public final class PrometheusSheetFormats {
         myBuilder.append(myFormat);
         myBuilder.append(CHAR_SEP);
         myBuilder.append(STR_RED);
-        myBuilder.append(OceanusDecimalFormatter.CHAR_MINUS);
+        myBuilder.append(OceanusDecimalConstants.CHAR_MINUS);
         myBuilder.append(myCurrency);
         myBuilder.append(myFormat);
 
@@ -304,8 +298,8 @@ public final class PrometheusSheetFormats {
         myBuilder.append(myFormat);
         myBuilder.append(CHAR_SEP);
         myBuilder.append(myCurrency);
-        myBuilder.append(OceanusDecimalFormatter.CHAR_BLANK);
-        myBuilder.append(OceanusDecimalFormatter.CHAR_MINUS);
+        myBuilder.append(OceanusDecimalConstants.CHAR_BLANK);
+        myBuilder.append(OceanusDecimalConstants.CHAR_MINUS);
 
         /* Return the format */
         return myBuilder.toString();

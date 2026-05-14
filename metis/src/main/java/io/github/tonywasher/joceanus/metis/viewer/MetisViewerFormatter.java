@@ -42,11 +42,6 @@ import java.util.Map.Entry;
  */
 public class MetisViewerFormatter {
     /**
-     * Items per page.
-     */
-    protected static final int ITEMS_PER_PAGE = 50;
-
-    /**
      * The index column.
      */
     private static final String COLUMN_INDEX = "Index";
@@ -331,13 +326,13 @@ public class MetisViewerFormatter {
         /* If there are items in the list */
         if (!pList.isEmpty()) {
             /* Calculate start point */
-            final int myStart = (pStart - 1) * ITEMS_PER_PAGE;
+            final int myStart = (pStart - 1) * MetisViewerPage.ITEMS_PER_PAGE;
 
             /* Create iterator at start */
             final Iterator<?> myIterator = pList.listIterator(myStart);
 
             /* Loop up to the limit */
-            int myCount = ITEMS_PER_PAGE;
+            int myCount = MetisViewerPage.ITEMS_PER_PAGE;
             int myIndex = myStart + 1;
             while (myIterator.hasNext()
                     && myCount-- > 0) {
@@ -371,7 +366,7 @@ public class MetisViewerFormatter {
         /* If there are items in the list */
         if (!pMap.isEmpty()) {
             /* Calculate start point */
-            int myCount = (pStart - 1) * ITEMS_PER_PAGE;
+            int myCount = (pStart - 1) * MetisViewerPage.ITEMS_PER_PAGE;
             int myIndex = myCount + 1;
 
             /* Create iterator and shift to start */
@@ -385,7 +380,7 @@ public class MetisViewerFormatter {
             }
 
             /* Loop up to the limit */
-            myCount = ITEMS_PER_PAGE;
+            myCount = MetisViewerPage.ITEMS_PER_PAGE;
             while (myIterator.hasNext()
                     && (myCount-- > 0)) {
                 /* Access the key and value */

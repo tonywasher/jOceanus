@@ -16,15 +16,15 @@
  */
 package io.github.tonywasher.joceanus.metis.ui;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerErrorList;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerExceptionWrapper;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerStandardEntry;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
 import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButton;
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUILabel;

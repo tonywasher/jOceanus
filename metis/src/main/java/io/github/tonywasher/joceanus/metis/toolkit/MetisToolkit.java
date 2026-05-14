@@ -16,12 +16,6 @@
  */
 package io.github.tonywasher.joceanus.metis.toolkit;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
-import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFormatter;
 import io.github.tonywasher.joceanus.metis.help.MetisHelpWindow;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceEvent;
@@ -31,8 +25,16 @@ import io.github.tonywasher.joceanus.metis.ui.MetisFieldColours.MetisColorPrefer
 import io.github.tonywasher.joceanus.metis.ui.MetisPreferenceView;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManagerImpl;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerStandardEntry;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerWindow;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerWindowImpl;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIProgram;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIValueSet;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
@@ -124,7 +126,7 @@ public class MetisToolkit {
         theProgram = theGuiFactory.getProgramDefinitions();
 
         /* Create the viewer */
-        theViewerManager = new MetisViewerManager();
+        theViewerManager = new MetisViewerManagerImpl();
 
         /* Access the profile entries */
         theProfileEntry = theViewerManager.getStandardEntry(MetisViewerStandardEntry.PROFILE);
@@ -249,7 +251,7 @@ public class MetisToolkit {
      * @throws OceanusException on error
      */
     public MetisViewerWindow newViewerWindow() throws OceanusException {
-        return new MetisViewerWindow(getGuiFactory(), theViewerManager);
+        return new MetisViewerWindowImpl(getGuiFactory(), theViewerManager);
     }
 
     /**

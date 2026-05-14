@@ -16,13 +16,11 @@
  */
 package io.github.tonywasher.joceanus.metis.viewer;
 
-import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
-import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -176,11 +174,6 @@ public enum MetisViewerResource
     VIEWER_ERROR_STACK("exception.Stack");
 
     /**
-     * The stdEntry Map.
-     */
-    private static final Map<MetisViewerStandardEntry, OceanusBundleId> ENTRY_MAP = buildEntryMap();
-
-    /**
      * The Resource Loader.
      */
     private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MetisDataResource.class.getCanonicalName(),
@@ -230,32 +223,5 @@ public enum MetisViewerResource
     @Override
     public String getId() {
         return getValue();
-    }
-
-    /**
-     * Build entry map.
-     *
-     * @return the map
-     */
-    private static Map<MetisViewerStandardEntry, OceanusBundleId> buildEntryMap() {
-        /* Create the map and return it */
-        final Map<MetisViewerStandardEntry, OceanusBundleId> myMap = new EnumMap<>(MetisViewerStandardEntry.class);
-        myMap.put(MetisViewerStandardEntry.ERROR, VIEWER_ENTRY_ERROR);
-        myMap.put(MetisViewerStandardEntry.PROFILE, VIEWER_ENTRY_PROFILE);
-        myMap.put(MetisViewerStandardEntry.DATA, VIEWER_ENTRY_DATA);
-        myMap.put(MetisViewerStandardEntry.UPDATES, VIEWER_ENTRY_UPDATES);
-        myMap.put(MetisViewerStandardEntry.VIEW, VIEWER_ENTRY_VIEW);
-        myMap.put(MetisViewerStandardEntry.PREFERENCES, VIEWER_ENTRY_PREF);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for stdEntry.
-     *
-     * @param pEntry the entry
-     * @return the resource key
-     */
-    static OceanusBundleId getKeyForStdEntry(final MetisViewerStandardEntry pEntry) {
-        return OceanusBundleLoader.getKeyForEnum(ENTRY_MAP, pEntry);
     }
 }

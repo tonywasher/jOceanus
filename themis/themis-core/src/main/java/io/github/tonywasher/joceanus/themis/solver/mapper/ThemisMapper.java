@@ -259,34 +259,25 @@ public class ThemisMapper
      */
     private boolean processElement(final ThemisInstance pElement) throws OceanusException {
         /* Handle ClassInstance */
-        if (pElement instanceof ThemisClassInstance myInstance) {
-            final ThemisSolverClass myClass = theProject.getProjectClassMap().get(myInstance.getFullName());
-            theFile.processInherited(myClass);
-        }
+        return switch (pElement) {
+            case ThemisClassInstance myInstance -> processClass(myInstance);
+            case ThemisTypeClassInterface myRef -> processClassReference(myRef);
+            case ThemisExprFieldAccess myAccess -> processFieldAccess(myAccess);
+            case ThemisExprMethodCall myCall -> processMethodCall(myCall);
+            case ThemisExprMethodRef myRef -> processMethodReference(myRef);
+            default -> true;
+        };
+    }
 
-        /* Handle ClassInterface Reference */
-        if (pElement instanceof ThemisTypeClassInterface myRef) {
-            processClassReference(myRef);
-            return false;
-        }
-
-        /* Handle FieldAccess */
-        if (pElement instanceof ThemisExprFieldAccess myAccess) {
-            processFieldAccess(myAccess);
-            return false;
-        }
-
-        /* Handle MethodCall */
-        if (pElement instanceof ThemisExprMethodCall myCall) {
-            processMethodCall(myCall);
-            return false;
-        }
-
-        /* Handle MethodReference */
-        if (pElement instanceof ThemisExprMethodRef myRef) {
-            processMethodReference(myRef);
-            return false;
-        }
+    /**
+     * Process class.
+     *
+     * @param pInstance the class instance
+     * @return true
+     */
+    private boolean processClass(final ThemisClassInstance pInstance) {
+        final ThemisSolverClass myClass = theProject.getProjectClassMap().get(pInstance.getFullName());
+        theFile.processInherited(myClass);
         return true;
     }
 
@@ -294,9 +285,10 @@ public class ThemisMapper
      * Process class reference.
      *
      * @param pReference the reference
+     * @return false
      * @throws OceanusException on error
      */
-    private void processClassReference(final ThemisTypeClassInterface pReference) throws OceanusException {
+    private boolean processClassReference(final ThemisTypeClassInterface pReference) throws OceanusException {
         /* Process as a possible reference */
         final ThemisClassInstance myResolved = theFile.processPossibleReference(pReference.getFullName());
 
@@ -312,15 +304,22 @@ public class ThemisMapper
                 throw new ThemisDataException("Unresolved link: " + pReference.getFullName());
             }
         }
+
+        /* Process any type parameters */
+        for (ThemisTypeInstance myParam : pReference.getTypeParams()) {
+            processInstance(myParam);
+        }
+        return false;
     }
 
     /**
      * Process field Access.
      *
      * @param pAccess the fieldAccess
+     * @return false
      * @throws OceanusException on error
      */
-    private void processFieldAccess(final ThemisExprFieldAccess pAccess) throws OceanusException {
+    private boolean processFieldAccess(final ThemisExprFieldAccess pAccess) throws OceanusException {
         final ThemisExpressionInstance myExpr = pAccess.getScope();
         if (myExpr instanceof ThemisExprName myNameExpr) {
             /* Check to see if the field access is to an explicit class */
@@ -344,15 +343,17 @@ public class ThemisMapper
                 }
             }
         }
+        return false;
     }
 
     /**
      * Process method call.
      *
      * @param pCall the methodCall
+     * @return true
      * @throws OceanusException on error
      */
-    private void processMethodCall(final ThemisExprMethodCall pCall) throws OceanusException {
+    private boolean processMethodCall(final ThemisExprMethodCall pCall) throws OceanusException {
         final ThemisExpressionInstance myExpr = pCall.getScope();
         if (myExpr instanceof ThemisExprName myNameExpr) {
             /* Check to see if the field access is to an explicit class */
@@ -374,15 +375,17 @@ public class ThemisMapper
         } else if (myExpr instanceof ThemisExprMethodCall myMethodCall) {
             processMethodCall(myMethodCall);
         }
+        return true;
     }
 
     /**
      * Process method Reference.
      *
      * @param pReference the reference
+     * @return false
      * @throws OceanusException on error
      */
-    private void processMethodReference(final ThemisExprMethodRef pReference) throws OceanusException {
+    private boolean processMethodReference(final ThemisExprMethodRef pReference) throws OceanusException {
         final ThemisExpressionInstance myExpr = pReference.getScope();
         if (myExpr instanceof ThemisExprName myNameExpr) {
             /* Check to see if the method reference is to an explicit class */
@@ -400,6 +403,7 @@ public class ThemisMapper
                 }
             }
         }
+        return false;
     }
 
     /**

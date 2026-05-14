@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.metis.viewer;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+
 /**
  * Standard Viewer Entries.
  */
@@ -60,10 +62,29 @@ public enum MetisViewerStandardEntry {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MetisViewerResource.getKeyForStdEntry(this).getValue();
+            theName = bundleIdForEntry(this).getValue();
         }
 
         /* return the name */
         return theName;
+    }
+
+    /**
+     * Obtain the resource bundleId for the entry.
+     *
+     * @param pEntry the entry
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForEntry(final MetisViewerStandardEntry pEntry) {
+        /* Create the map and return it */
+        return switch (pEntry) {
+            case ERROR -> MetisViewerResource.VIEWER_ENTRY_ERROR;
+            case PROFILE -> MetisViewerResource.VIEWER_ENTRY_PROFILE;
+            case DATA -> MetisViewerResource.VIEWER_ENTRY_DATA;
+            case UPDATES -> MetisViewerResource.VIEWER_ENTRY_UPDATES;
+            case VIEW -> MetisViewerResource.VIEWER_ENTRY_VIEW;
+            case PREFERENCES -> MetisViewerResource.VIEWER_ENTRY_PREF;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }
