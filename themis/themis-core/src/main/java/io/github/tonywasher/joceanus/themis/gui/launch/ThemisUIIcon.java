@@ -27,6 +27,11 @@ import java.io.InputStream;
 public enum ThemisUIIcon
         implements TethysUIIconId {
     /**
+     * The refresh icon.
+     */
+    REFRESH("ThemisRefresh.png"),
+
+    /**
      * The small program icon.
      */
     SMALL("ThemisSmall.png"),

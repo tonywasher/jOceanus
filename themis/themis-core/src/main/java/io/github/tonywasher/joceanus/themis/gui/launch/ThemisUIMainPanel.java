@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.themis.gui.launch;
 
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
@@ -111,6 +112,11 @@ public class ThemisUIMainPanel
     private final TethysUIButton theProjectButton;
 
     /**
+     * The Refresh button.
+     */
+    private final TethysUIButton theRefreshButton;
+
+    /**
      * The ProjectButton.
      */
     private final TethysUIBorderPaneManager thePanel;
@@ -173,13 +179,22 @@ public class ThemisUIMainPanel
         theProjectButton.setTextOnly();
         myProjectSelect.addNode(theProjectButton);
         theProjectButton.getEventRegistrar().addEventListener(e -> selectProject());
-        theProjectButton.setText("None");
+        theProjectButton.setText(ThemisUIResource.PROMPT_NONE.getValue());
+
+        /* Configure refresh button */
+        theRefreshButton = myButtons.newButton();
+        MetisIcon.configureButton(theRefreshButton);
+        theRefreshButton.setIcon(ThemisUIIcon.REFRESH);
+        theRefreshButton.setToolTip(ThemisUIResource.TOOLTIP_REFRESH.getValue());
+        theRefreshButton.getEventRegistrar().addEventListener(TethysUIEvent.PRESSED, e -> handleNewProject(getDefaultLocation()));
 
         /* create the overall project select panel */
         theProjectControl = myPanes.newHBoxPane();
         theProjectControl.addSpacer();
         theProjectControl.addNode(myProjectSelect);
         theProjectControl.addSpacer();
+        theProjectControl.addNode(theRefreshButton);
+        theProjectControl.addStrut();
 
         /* Access the status bar and set to invisible */
         theThreadMgr = pFactory.threadFactory().newThreadManager();

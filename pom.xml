@@ -68,7 +68,7 @@
         <BouncyCastleVersion>1.84</BouncyCastleVersion>
         <JUnitVersion>6.0.3</JUnitVersion>
         <JSONVersion>20251224</JSONVersion>
-        <ApacheMavenVersion>3.9.14</ApacheMavenVersion>
+        <ApacheMavenVersion>3.9.15</ApacheMavenVersion>
         <MySQLVersion>9.7.0</MySQLVersion>
         <MariaDBVersion>3.5.8</MariaDBVersion>
         <PostGreSQLVersion>42.7.11</PostGreSQLVersion>
@@ -80,7 +80,7 @@
         <JavaParserVersion>3.28.1</JavaParserVersion>
         <ZipSDKVersion>9.20</ZipSDKVersion>
         <JavaVersion>21</JavaVersion>
-        <JavaFXVersion>21.0.10</JavaFXVersion>
+        <JavaFXVersion>21.0.11</JavaFXVersion>
         <JavaLanguageVersion>21</JavaLanguageVersion>
         <CheckStyleVersion>13.4.2</CheckStyleVersion>
         <PMDVersion>7.24.0</PMDVersion>

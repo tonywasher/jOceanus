@@ -59,6 +59,11 @@ public enum ThemisUIResource
     PROMPT_PROJECT("prompt.project"),
 
     /**
+     * Project None.
+     */
+    PROMPT_NONE("prompt.none"),
+
+    /**
      * Module Prompt.
      */
     PROMPT_MODULE("prompt.module"),
@@ -72,6 +77,11 @@ public enum ThemisUIResource
      * File Prompt.
      */
     PROMPT_FILE("prompt.file"),
+
+    /**
+     * Tooltip Refresh.
+     */
+    TOOLTIP_REFRESH("tooltip.refresh"),
 
     /**
      * Package References Header.
