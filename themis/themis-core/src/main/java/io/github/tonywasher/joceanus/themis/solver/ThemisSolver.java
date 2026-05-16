@@ -17,59 +17,81 @@
 package io.github.tonywasher.joceanus.themis.solver;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+import io.github.tonywasher.joceanus.themis.parser.ThemisParser;
 import io.github.tonywasher.joceanus.themis.solver.mapper.ThemisMapper;
 import io.github.tonywasher.joceanus.themis.solver.mapper.ThemisMapperReference;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverModule;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverPackage;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverProject;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Solver.
  */
 public class ThemisSolver {
     /**
-     * The error.
+     * The SolverProject.
      */
-    private OceanusException theError;
+    private final ThemisSolverProject theProject;
 
     /**
      * Constructor.
      *
-     * @param pProject the project
+     * @param pParser the parser
+     * @throws OceanusException on error
      */
-    public ThemisSolver(final ThemisSolverProject pProject) {
+    public ThemisSolver(final ThemisParser pParser) throws OceanusException {
+        /* Create SolverProject */
+        theProject = new ThemisSolverProject(pParser);
+        final List<ThemisSolverModule> myModules = theProject.getModules();
+
+        /* Obtain the reporter */
+        final TethysUIThreadStatusReport myReport = pParser.getReporter();
+
         /* Protect against exceptions */
-        try (ThemisMapper myMapper = new ThemisMapper(pProject)) {
+        try (ThemisMapper myMapper = new ThemisMapper(theProject)) {
             /* Loop through all packages */
-            for (ThemisSolverModule myModule : pProject.getModules()) {
-                for (ThemisSolverPackage myPackage : myModule.getPackages().values()) {
+            myReport.initTask("Solver preProcess");
+            myReport.setNumStages(myModules.size());
+            for (ThemisSolverModule myModule : myModules) {
+                myReport.setNewStage(myModule.getUnderlyingModule().getName());
+                final Map<String, ThemisSolverPackage> myPackages = myModule.getPackages();
+                myReport.setNumSteps(myPackages.size());
+                for (ThemisSolverPackage myPackage : myPackages.values()) {
                     /* preProcess each package */
+                    myReport.setNextStep();
                     myMapper.preProcessPackage(myPackage);
                 }
             }
 
             /* Loop through all packages */
-            for (ThemisSolverModule myModule : pProject.getModules()) {
-                for (ThemisSolverPackage myPackage : myModule.getPackages().values()) {
+            myReport.initTask("Solver process");
+            myReport.setNumStages(myModules.size());
+            for (ThemisSolverModule myModule : myModules) {
+                myReport.setNewStage(myModule.getUnderlyingModule().getName());
+                final Map<String, ThemisSolverPackage> myPackages = myModule.getPackages();
+                myReport.setNumSteps(myPackages.size());
+                for (ThemisSolverPackage myPackage : myPackages.values()) {
                     /* Process each package */
+                    myReport.setNextStep();
                     myMapper.processPackage(myPackage);
                 }
             }
 
             /* Process all references */
-            new ThemisMapperReference().processReferences(pProject);
-
-        } catch (OceanusException e) {
-            theError = e;
+            new ThemisMapperReference().processReferences(theProject);
         }
     }
 
     /**
-     * Obtain the error.
+     * Obtain the project.
      *
-     * @return the error
+     * @return the project
      */
-    public OceanusException getError() {
-        return theError;
+    public ThemisSolverProject getProject() {
+        return theProject;
     }
 }

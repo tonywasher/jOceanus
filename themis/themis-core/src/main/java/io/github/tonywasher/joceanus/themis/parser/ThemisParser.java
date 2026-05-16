@@ -31,6 +31,7 @@ import com.github.javaparser.ast.modules.ModuleDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
 import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
@@ -70,9 +71,19 @@ import java.util.List;
 public class ThemisParser
         implements ThemisParserDef {
     /**
+     * The reporter.
+     */
+    private final TethysUIThreadStatusReport theReporter;
+
+    /**
      * The underlying parser.
      */
     private final JavaParser theParser;
+
+    /**
+     * The project.
+     */
+    private final ThemisProject theProject;
 
     /**
      * The stack of the nodes that are being parsed.
@@ -105,43 +116,28 @@ public class ThemisParser
     private int theClassIndex;
 
     /**
-     * The project.
-     */
-    private ThemisProject theProject;
-
-    /**
-     * The Error.
-     */
-    private OceanusException theError;
-
-    /**
      * Constructor.
      *
      * @param pLocation the project location
+     * @throws OceanusException on error
      */
-    public ThemisParser(final File pLocation) {
-        /* Initialise the parser */
+    public ThemisParser(final TethysUIThreadStatusReport pReport,
+                        final File pLocation) throws OceanusException {
+        /* Initialise fields */
+        theReporter = pReport;
         theParser = new JavaParser();
         theNodes = new ArrayDeque<>();
         theClassStack = new ArrayDeque<>();
         theClasses = new ArrayList<>();
 
-        /* Protect against exceptions */
-        try {
-            /* Prepare the project */
-            theProject = new ThemisProject(pLocation);
+        /* Prepare the project */
+        theProject = new ThemisProject(pLocation);
 
-            /* Configure the parser */
-            configureParser();
+        /* Configure the parser */
+        configureParser();
 
-            /* Parse the javaCode */
-            theProject.parseJavaCode(this);
-
-            /* Store any exception */
-        } catch (OceanusException e) {
-            theError = e;
-            theProject = null;
-        }
+        /* Parse the javaCode */
+        theProject.parseJavaCode(this);
     }
 
     /**
@@ -153,13 +149,9 @@ public class ThemisParser
         return theProject;
     }
 
-    /**
-     * Obtain the error.
-     *
-     * @return the error
-     */
-    public OceanusException getError() {
-        return theError;
+    @Override
+    public TethysUIThreadStatusReport getReporter() {
+        return theReporter;
     }
 
     @Override

@@ -17,7 +17,6 @@
 package io.github.tonywasher.joceanus.themis.stats;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
 import io.github.tonywasher.joceanus.themis.parser.ThemisParser;
 import io.github.tonywasher.joceanus.themis.parser.proj.ThemisModule;
 import io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
@@ -46,16 +45,12 @@ public class ThemisStatsProject
     private final List<ThemisStatsModule> theModules;
 
     /**
-     * The error.
-     */
-    private OceanusException theError;
-
-    /**
      * Constructor.
      *
      * @param pParser the project parser
+     * @throws OceanusException on error
      */
-    public ThemisStatsProject(final ThemisParser pParser) {
+    public ThemisStatsProject(final ThemisParser pParser) throws OceanusException {
         /* Store the parameters */
         theProject = pParser.getProject();
 
@@ -65,17 +60,9 @@ public class ThemisStatsProject
         /* Create the Module list */
         theModules = new ArrayList<>();
 
-        /* Protect against exceptions */
-        try {
-            /* Initialise the modules */
-            for (ThemisModule myModule : theProject.getModules()) {
-                theModules.add(new ThemisStatsModule(myModule));
-            }
-
-            /* Handle exceptions */
-        } catch (OceanusException e) {
-            /* Save Exception */
-            theError = new ThemisIOException("Failed to parse Stats project", e);
+        /* Initialise the modules */
+        for (ThemisModule myModule : theProject.getModules()) {
+            theModules.add(new ThemisStatsModule(myModule));
         }
     }
 
@@ -105,15 +92,6 @@ public class ThemisStatsProject
      */
     public List<ThemisStatsModule> getModules() {
         return theModules;
-    }
-
-    /**
-     * Obtain the error.
-     *
-     * @return the error
-     */
-    public OceanusException getError() {
-        return theError;
     }
 
     @Override

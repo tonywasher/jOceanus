@@ -33,14 +33,16 @@ import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUITabPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUITabItem;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadEvent;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusManager;
 import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIResource;
+import io.github.tonywasher.joceanus.themis.gui.launch.ThemisUIThread.ThemisUIThreadData;
 import io.github.tonywasher.joceanus.themis.gui.reference.ThemisUIRefPanel;
 import io.github.tonywasher.joceanus.themis.gui.source.ThemisUISourcePanel;
 import io.github.tonywasher.joceanus.themis.gui.stats.ThemisUIStatsPanel;
-import io.github.tonywasher.joceanus.themis.parser.ThemisParser;
 import io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
-import io.github.tonywasher.joceanus.themis.solver.ThemisSolver;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverProject;
 import io.github.tonywasher.joceanus.themis.stats.ThemisStatsProject;
 
@@ -52,7 +54,7 @@ import java.util.prefs.Preferences;
  * Main panel.
  */
 public class ThemisUIMainPanel
-        implements TethysUIMainPanel {
+        implements TethysUIMainPanel, ThemisUIThreadData {
     /**
      * Default Project Preference.
      */
@@ -114,6 +116,21 @@ public class ThemisUIMainPanel
     private final TethysUIBorderPaneManager thePanel;
 
     /**
+     * The Thread Manager.
+     */
+    private final TethysUIThreadManager theThreadMgr;
+
+    /**
+     * The Status window.
+     */
+    private final TethysUIThreadStatusManager theStatusBar;
+
+    /**
+     * The Project control.
+     */
+    private final TethysUIBoxPaneManager theProjectControl;
+
+    /**
      * Constructor.
      *
      * @param pFactory the GuiFactory
@@ -159,14 +176,25 @@ public class ThemisUIMainPanel
         theProjectButton.setText("None");
 
         /* create the overall project select panel */
-        final TethysUIBoxPaneManager myProjectControl = myPanes.newHBoxPane();
-        myProjectControl.addSpacer();
-        myProjectControl.addNode(myProjectSelect);
-        myProjectControl.addSpacer();
+        theProjectControl = myPanes.newHBoxPane();
+        theProjectControl.addSpacer();
+        theProjectControl.addNode(myProjectSelect);
+        theProjectControl.addSpacer();
+
+        /* Access the status bar and set to invisible */
+        theThreadMgr = pFactory.threadFactory().newThreadManager();
+        theStatusBar = theThreadMgr.getStatusManager();
+        theStatusBar.setVisible(false);
+        theThreadMgr.getEventRegistrar().addEventListener(TethysUIThreadEvent.THREADEND, e -> setVisibility(false));
+
+        /* create the overall project select panel */
+        final TethysUIBoxPaneManager myBanner = myPanes.newVBoxPane();
+        myBanner.addNode(theProjectControl);
+        myBanner.addNode(theStatusBar);
 
         /* create the overall panel */
         thePanel = myPanes.newBorderPane();
-        thePanel.setNorth(myProjectControl);
+        thePanel.setNorth(myBanner);
         thePanel.setCentre(myTabs);
 
         /* Handle the default location */
@@ -208,52 +236,44 @@ public class ThemisUIMainPanel
      * @param pProjectDir the new project directory
      */
     private void handleNewProject(final File pProjectDir) {
-        /* Hide tabs */
-        theSourceTab.setVisible(false);
-        theRefsTab.setVisible(false);
-        theStatsTab.setVisible(false);
+        /* Adjust visibility */
+        setVisibility(true);
+
+        /* Create and start thread */
+        final ThemisUIThread myLoader = new ThemisUIThread(this, pProjectDir);
+        theThreadMgr.startThread(myLoader);
+    }
+
+    /**
+     * Set panel visibility.
+     *
+     * @param pLoading are we loading?
+     */
+    private void setVisibility(final boolean pLoading) {
+        theSourceTab.setVisible(!pLoading);
+        theRefsTab.setVisible(!pLoading);
+        theStatsTab.setVisible(!pLoading);
+        theProjectControl.setVisible(!pLoading);
+        theStatusBar.setVisible(pLoading);
+    }
+
+    @Override
+    public void setNewData(final ThemisUIData pData) {
+        /* Update source */
+        final ThemisProject myProject = pData.getParsedProject();
+        theSource.setCurrentProject(myProject);
+        theProjectButton.setText(myProject.toString());
+
+        /* Update references */
+        final ThemisSolverProject mySolved = pData.getSolvedProject();
+        theRefs.setCurrentProject(mySolved);
+
+        /* Resolve stats */
+        final ThemisStatsProject myStats = pData.getProjectStats();
+        theStats.setCurrentProject(myStats);
 
         /* Save details */
-        OceanusException myError = storeDefaultLocation(pProjectDir);
-        if (myError != null) {
-            writeErrorToLog(myError);
-            return;
-        }
-
-        /* Parse the project */
-        final ThemisParser myParser = new ThemisParser(pProjectDir);
-        myError = myParser.getError();
-        if (myError == null) {
-            final ThemisProject myProject = myParser.getProject();
-            theSource.setCurrentProject(myProject);
-            theProjectButton.setText(myProject.toString());
-            theSourceTab.setVisible(true);
-        }
-
-        /* If we parsed successfully */
-        if (myError == null) {
-            /* Resolve references */
-            final ThemisSolverProject myProject = new ThemisSolverProject(myParser);
-            final ThemisSolver mySolver = new ThemisSolver(myProject);
-            myError = mySolver.getError();
-            if (myError == null) {
-                theRefs.setCurrentProject(myProject);
-                theRefsTab.setVisible(true);
-            }
-        }
-
-        /* If we parsed successfully */
-        if (myError == null) {
-            /* Resolve stats */
-            final ThemisStatsProject myStats = new ThemisStatsProject(myParser);
-            myError = myStats.getError();
-            if (myError == null) {
-                theStats.setCurrentProject(myStats);
-                theStatsTab.setVisible(true);
-            }
-        }
-
-        /* Display any error */
+        OceanusException myError = storeDefaultLocation(pData.getProjectDir());
         if (myError != null) {
             writeErrorToLog(myError);
         }

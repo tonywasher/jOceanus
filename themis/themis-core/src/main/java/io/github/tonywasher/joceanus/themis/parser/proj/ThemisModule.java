@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.themis.parser.proj;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisParserDef;
 import io.github.tonywasher.joceanus.themis.parser.mod.ThemisModModule;
@@ -162,9 +163,14 @@ public class ThemisModule {
      * @throws OceanusException on error
      */
     void parseJavaCode(final ThemisParserDef pParser) throws OceanusException {
+        /* Obtain the reporter */
+        final TethysUIThreadStatusReport myReport = pParser.getReporter();
+        myReport.setNumSteps(thePackages.size());
+
         /* Loop through the packages */
         for (ThemisPackage myPackage : thePackages) {
             /* Process the package */
+            myReport.setNextStep();
             myPackage.parseJavaCode(pParser);
         }
 
