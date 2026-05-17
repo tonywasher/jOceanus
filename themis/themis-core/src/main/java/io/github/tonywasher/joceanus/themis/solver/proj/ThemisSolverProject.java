@@ -17,8 +17,8 @@
 package io.github.tonywasher.joceanus.themis.solver.proj;
 
 import io.github.tonywasher.joceanus.themis.parser.ThemisParser;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisModule;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisModule;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverProjectDef;
 
 import java.util.ArrayList;

@@ -10,18 +10,17 @@
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.1.0/annotations-26.1.0.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.1.0/annotations-26.1.0.jar" />
         </processorPath>
-        <module name="tethys-core" />
-        <module name="metis" />
-        <module name="themis-core" />
-        <module name="tethys-swing" />
-        <module name="moneywise-swing" />
         <module name="prometheus-sheet-api" />
+        <module name="tethys-core" />
         <module name="moneywise-core" />
         <module name="prometheus-core" />
+        <module name="metis" />
         <module name="gordianknot" />
         <module name="prometheus-sheet-odf" />
         <module name="oceanus" />
         <module name="prometheus-sheet-hssf" />
+        <module name="tethys-swing" />
+        <module name="moneywise-swing" />
       </profile>
       <profile name="Annotation profile for astraeus" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -67,6 +66,15 @@
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.1.0/annotations-26.1.0.jar" />
         </processorPath>
         <module name="tethys-test" />
+      </profile>
+      <profile name="Annotation profile for themis-core" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.1.0/annotations-26.1.0.jar" />
+        </processorPath>
+        <module name="themis-core" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

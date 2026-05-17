@@ -17,7 +17,7 @@
 
 package io.github.tonywasher.joceanus.themis.gui.launch;
 
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverProject;
 import io.github.tonywasher.joceanus.themis.stats.ThemisStatsProject;
 

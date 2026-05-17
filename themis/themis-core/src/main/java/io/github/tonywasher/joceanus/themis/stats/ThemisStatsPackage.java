@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.themis.stats;
 
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisFile;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisPackage;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisFile;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisPackage;
 
 import java.util.ArrayList;
 import java.util.List;

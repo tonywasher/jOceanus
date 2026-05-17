@@ -24,9 +24,10 @@ module io.github.tonywasher.joceanus.themis.core {
     requires java.prefs;
     requires java.sql;
     requires jdk.jsobject;
-    
+
     /* External libraries */
     requires com.github.javaparser.core;
+    requires org.jsoup;
 
     /* Oceanus */
     requires io.github.tonywasher.joceanus.metis;

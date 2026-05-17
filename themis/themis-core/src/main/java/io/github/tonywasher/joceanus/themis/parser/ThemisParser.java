@@ -51,7 +51,7 @@ import io.github.tonywasher.joceanus.themis.parser.mod.ThemisModModule;
 import io.github.tonywasher.joceanus.themis.parser.mod.ThemisModParser;
 import io.github.tonywasher.joceanus.themis.parser.node.ThemisNodeCompilationUnit;
 import io.github.tonywasher.joceanus.themis.parser.node.ThemisNodeParser;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 import io.github.tonywasher.joceanus.themis.parser.stmt.ThemisStmtParser;
 import io.github.tonywasher.joceanus.themis.parser.type.ThemisTypeParser;
 

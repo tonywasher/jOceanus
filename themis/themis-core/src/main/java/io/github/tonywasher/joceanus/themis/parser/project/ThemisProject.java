@@ -14,12 +14,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.themis.parser.proj;
+package io.github.tonywasher.joceanus.themis.parser.project;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisParserDef;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMaven;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenId;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenLocation;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -88,8 +91,8 @@ public class ThemisProject {
      * @param pId the maven id
      */
     private void processDependency(final ThemisMavenId pId) throws OceanusException {
-        final File myFile = pId.getMavenPomPath();
         /* Protect against exceptions */
+        final File myFile = new File(ThemisMavenLocation.getLocalPomFileName(pId));
         try (InputStream myInStream = new FileInputStream(myFile)) {
             /* Parse the Project definition file */
             final ThemisMaven myPom = new ThemisMaven(null, myInStream);

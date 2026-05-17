@@ -14,13 +14,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.themis.parser.proj;
+package io.github.tonywasher.joceanus.themis.parser.maven;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusSystem;
 import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
 import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisMavenId.ThemisElementParser;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenId.ThemisElementParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -166,8 +166,8 @@ public class ThemisMaven
      * @param pInputStream the input stream to read
      * @throws OceanusException on error
      */
-    ThemisMaven(final ThemisMaven pParent,
-                final InputStream pInputStream) throws OceanusException {
+    public ThemisMaven(final ThemisMaven pParent,
+                       final InputStream pInputStream) throws OceanusException {
         /* Store the parent */
         theParent = pParent;
 

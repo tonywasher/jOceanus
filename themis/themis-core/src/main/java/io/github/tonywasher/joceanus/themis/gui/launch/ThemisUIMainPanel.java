@@ -43,7 +43,7 @@ import io.github.tonywasher.joceanus.themis.gui.launch.ThemisUIThread.ThemisUITh
 import io.github.tonywasher.joceanus.themis.gui.reference.ThemisUIRefPanel;
 import io.github.tonywasher.joceanus.themis.gui.source.ThemisUISourcePanel;
 import io.github.tonywasher.joceanus.themis.gui.stats.ThemisUIStatsPanel;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverProject;
 import io.github.tonywasher.joceanus.themis.stats.ThemisStatsProject;
 

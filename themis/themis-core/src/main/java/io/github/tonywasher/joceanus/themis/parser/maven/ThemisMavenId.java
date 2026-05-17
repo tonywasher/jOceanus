@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.parser.proj;
+package io.github.tonywasher.joceanus.themis.parser.maven;
 
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
 import org.w3c.dom.Element;
@@ -212,6 +212,15 @@ public final class ThemisMavenId {
                 || "provided".equals(theScope)
                 //|| theVersion == null
                 || isOptional != null;
+    }
+
+    /**
+     * Adjust the version
+     *
+     * @param pVersion the new version.
+     */
+    void adjustVersion(final String pVersion) {
+        theVersion = pVersion;
     }
 
     @Override
