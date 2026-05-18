@@ -75,6 +75,7 @@
         <MSSQLVersion>13.4.0.jre11</MSSQLVersion>
         <H2Version>2.4.240</H2Version>
         <ApachePOIVersion>5.5.1</ApachePOIVersion>
+        <ApacheLog4JVersion>2.24.3</ApacheLog4JVersion>
         <JSoupVersion>1.22.2</JSoupVersion>
         <JFreeChartVersion>1.5.6</JFreeChartVersion>
         <JavaParserVersion>3.28.1</JavaParserVersion>

@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisParserDef;
-import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMaven;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenPom;
 import io.github.tonywasher.joceanus.themis.parser.mod.ThemisModModule;
 
 import java.io.File;
@@ -64,7 +64,7 @@ public class ThemisModule {
      * @param pPom      the module Pom
      */
     ThemisModule(final File pLocation,
-                 final ThemisMaven pPom) {
+                 final ThemisMavenPom pPom) {
         /* Create the list */
         thePackages = new ArrayList<>();
 

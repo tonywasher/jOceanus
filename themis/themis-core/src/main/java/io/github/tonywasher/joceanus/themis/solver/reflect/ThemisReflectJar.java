@@ -24,10 +24,10 @@ import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisTypeInstance;
 import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenId;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenLocation;
 import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 import io.github.tonywasher.joceanus.themis.parser.type.ThemisTypeClassInterface;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -270,8 +270,7 @@ public class ThemisReflectJar
         for (ThemisMavenId myId : pProject.getDependencies()) {
             /* Protect against exceptions */
             try {
-                final File myJar = myId.getMavenJarPath();
-                final String myName = myJar.toString().replace("\\", "/");
+                final String myName = ThemisMavenLocation.getLocalJarFileName(myId);
                 final String myPrefix = myName.startsWith("/") ? URLJAR_PREFIX + ThemisChar.COMMENT : URLJAR_PREFIX;
                 final URL myUrl = (new URI(myPrefix + myName + URLJAR_SUFFIX)).toURL();
                 myList.add(myUrl);

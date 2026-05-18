@@ -17,12 +17,12 @@
 
 package io.github.tonywasher.joceanus.themis.parser.maven;
 
-import java.util.Objects;
+import java.util.Arrays;
 
 /**
- * Comparable version.
+ * Comparable Maven version.
  */
-public final class ThemisMavenVersion
+public class ThemisMavenVersion
         implements Comparable<ThemisMavenVersion> {
     /**
      * Version.
@@ -32,59 +32,18 @@ public final class ThemisMavenVersion
     /**
      * Components.
      */
-    private final int[] theComponents;
-
-    /**
-     * Modifier.
-     */
-    private final String theModifier;
-
-    /**
-     * Validity.
-     */
-    private final boolean isValid;
+    private final Object[] theComponents;
 
     /**
      * Constructor.
      *
-     * @param pVersion the version string
+     * @param pVersion    the version string
+     * @param pComponents the components
      */
-    private ThemisMavenVersion(final String pVersion) {
-        /* Save the version */
+    ThemisMavenVersion(final String pVersion,
+                       final Object[] pComponents) {
         theVersion = pVersion;
-
-        /* Split out the modifier */
-        String myVersion = pVersion;
-        boolean valid = true;
-        final String[] myMod = pVersion.split("-");
-        if (myMod.length == 2) {
-            myVersion = myMod[0];
-            theModifier = myMod[1];
-        } else {
-            theModifier = null;
-            valid = myMod.length == 1;
-        }
-
-        /* If we are valid */
-        if (valid) {
-            /* Split out the components */
-            final String[] myVers = myVersion.split("\\.");
-            theComponents = new int[myVers.length];
-
-            /* Protect against exceptions */
-            try {
-                for (int i = 0; i < myVers.length; i++) {
-                    theComponents[i] = Integer.parseInt(myVers[i]);
-                }
-            } catch (final NumberFormatException e) {
-                valid = false;
-            }
-        } else {
-            theComponents = null;
-        }
-
-        /* Set validity flag */
-        isValid = valid;
+        theComponents = pComponents;
     }
 
     /**
@@ -97,56 +56,150 @@ public final class ThemisMavenVersion
     }
 
     /**
-     * Parse a version string.
+     * Obtain the components.
      *
-     * @param pVersion the version
-     * @return the parsed version
+     * @return the components
      */
-    public static ThemisMavenVersion parseVersion(final String pVersion) {
-        final ThemisMavenVersion myVersion = new ThemisMavenVersion(pVersion);
-        return myVersion.isValid ? myVersion : null;
-    }
-
-    @Override
-    public String toString() {
-        return theVersion;
+    private Object[] getComponents() {
+        return theComponents;
     }
 
     @Override
     public int compareTo(final ThemisMavenVersion pThat) {
-        /* Note the lengths of the two components */
+        /* Note the lengths of the two componentLists */
         final int thisLen = theComponents.length;
-        final int thatLen = pThat.theComponents.length;
+        final Object[] thatComponents = pThat.getComponents();
+        final int thatLen = thatComponents.length;
+        final int maxLen = Math.max(thisLen, thatLen);
 
         /* Loop through the components */
-        for (int i = 0; i <= thisLen; i++) {
-            /* If we have exhausted all our components */
-            if (i == thisLen) {
-                /* If the object has further versions, it is later */
-                if (thatLen > i) {
-                    return -1;
+        for (int i = 0; i <= maxLen; i++) {
+            /* Access the two components */
+            Object myThis = i < thisLen ? theComponents[i] : null;
+            Object myThat = i < thatLen ? thatComponents[i] : null;
+
+            /* Compare the two components */
+            final int myCompare = compareComponents(myThis, myThat);
+            if (myCompare != 0) {
+                return myCompare;
+            }
+        }
+
+        /* Must be equal */
+        return 0;
+    }
+
+    /**
+     * Compare components.
+     *
+     * @param pThis this component.
+     * @param pThat that component.
+     * @return -1, 0, 1 as to order
+     */
+    private int compareComponents(final Object pThis,
+                                  final Object pThat) {
+        /* Switch on component type */
+        return switch (pThis) {
+            case Long myLong -> compareWithLong(myLong, pThat);
+            case String myString -> compareWithString(myString, pThat);
+            case null -> compareWithNull(pThat);
+            default -> throw new IllegalArgumentException();
+        };
+    }
+
+    /**
+     * Compare components.
+     *
+     * @param pThis this long.
+     * @param pThat that component.
+     * @return -1, 0, 1 as to order
+     */
+    private int compareWithLong(final Long pThis,
+                                final Object pThat) {
+        /* Switch on component type */
+        return switch (pThat) {
+            case Long myLong -> pThis.compareTo(myLong);
+            case String ignored -> 1;
+            case null -> ThemisMavenConstants.ZERO.equals(pThis) ? 0 : 1;
+            default -> throw new IllegalArgumentException();
+        };
+    }
+
+    /**
+     * Compare components.
+     *
+     * @param pThis this long.
+     * @param pThat that component.
+     * @return -1, 0, 1 as to order
+     */
+    private int compareWithString(final String pThis,
+                                  final Object pThat) {
+        /* If we are long */
+        return switch (pThat) {
+            case Long ignored -> -1;
+            case String myString -> {
+                final int iThisIndex = markerIndex(pThis);
+                final int iThatIndex = markerIndex(myString);
+                if (markerSpecial(iThisIndex)) {
+                    yield markerSpecial(iThatIndex) ? iThisIndex - iThatIndex : -1;
                 }
-
-                /* else we are equal on components */
-                break;
+                yield markerSpecial(iThatIndex) ? 1 : pThis.compareToIgnoreCase(myString);
             }
-
-            /* If we have exhausted all objects versions, it is earlier */
-            if (thatLen == i) {
-                return 1;
+            case null -> {
+                final int iIndex = markerIndex(pThis);
+                yield markerSpecialNonSP(iIndex) ? -1 : 1;
             }
+            default -> throw new IllegalArgumentException();
+        };
+    }
 
-            /* Handle the case where we have a version beyond the other object */
-            if (theComponents[i] != pThat.theComponents[i]) {
-                return theComponents[i] - pThat.theComponents[i];
+    /**
+     * Compare components.
+     *
+     * @param pThat that component.
+     * @return -1, 0, 1 as to order
+     */
+    private int compareWithNull(final Object pThat) {
+        /* Switch on component type */
+        return switch (pThat) {
+            case Long myLong -> ThemisMavenConstants.ZERO.equals(myLong) ? 0 : -1;
+            case String myString -> {
+                final int iIndex = markerIndex(myString);
+                yield markerSpecialNonSP(iIndex) ? 1 : -1;
             }
-        }
+            case null -> 0;
+            default -> throw new IllegalArgumentException();
+        };
+    }
 
-        /* Versions are equal, so check the modifier */
-        if (theModifier == null) {
-            return pThat.theModifier == null ? 0 : -1;
-        }
-        return pThat.theModifier == null ? 1 : theModifier.compareTo(pThat.theModifier);
+    /**
+     * Check for special markers.
+     *
+     * @param pMarker the marker
+     * @return the marker index
+     */
+    private int markerIndex(final String pMarker) {
+        return ThemisMavenConstants.NAMES.indexOf(pMarker);
+    }
+
+    /**
+     * Is the marker index special?
+     *
+     * @param pIndex the index
+     * @return true/false
+     */
+    private boolean markerSpecial(final int pIndex) {
+        return pIndex != -1;
+    }
+
+    /**
+     * Is the marker index special and nonSP?
+     *
+     * @param pIndex the index
+     * @return true/false
+     */
+    private boolean markerSpecialNonSP(final int pIndex) {
+        return markerSpecial(pIndex) && pIndex != ThemisMavenConstants.SP_INDEX;
     }
 
     @Override
@@ -161,12 +214,12 @@ public final class ThemisMavenVersion
 
         /* Check components */
         return pThat instanceof ThemisMavenVersion myVers
-                && Objects.equals(theVersion, myVers.getVersion());
+                && Arrays.equals(theComponents, myVers.getComponents());
 
     }
 
     @Override
     public int hashCode() {
-        return theVersion.hashCode();
+        return Arrays.hashCode(theComponents);
     }
 }

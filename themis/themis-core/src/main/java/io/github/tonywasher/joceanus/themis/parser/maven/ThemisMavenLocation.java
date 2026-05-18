@@ -120,6 +120,7 @@ public final class ThemisMavenLocation {
             }
 
             /* Loop through the versions */
+            final ThemisMavenParser myParser = new ThemisMavenParser();
             ThemisMavenVersion myLatest = null;
             for (Element myChild : myIds.children()) {
                 /* Only check directories and non parent */
@@ -128,7 +129,7 @@ public final class ThemisMavenLocation {
                     final String myVers = myVersion.substring(0, myVersion.length() - 1);
 
                     /* Check version and record latest */
-                    final ThemisMavenVersion myParsed = ThemisMavenVersion.parseVersion(myVers);
+                    final ThemisMavenVersion myParsed = myParser.parseVersion(myVers);
                     if (myLatest == null
                             || (myParsed != null && myParsed.compareTo(myLatest) > 0)) {
                         myLatest = myParsed;
@@ -243,10 +244,6 @@ public final class ThemisMavenLocation {
     private static String getMavenVersionedPrefix(final ThemisMavenId pId) {
         /* Determine the repository base */
         String myBase = getMavenArtifactPrefix(pId);
-        String myVersion = pId.getVersion();
-        if (myVersion == null) {
-            pId.adjustVersion("2.25.3"); //determineLatestVersion(pId);
-        }
         return myBase + ThemisChar.COMMENT + pId.getVersion();
     }
 

@@ -46,7 +46,7 @@ import java.util.Objects;
 /**
  * Maven pom.xml parser.
  */
-public class ThemisMaven
+public class ThemisMavenPom
         implements ThemisElementParser {
     /**
      * Project filename.
@@ -152,7 +152,7 @@ public class ThemisMaven
     /**
      * The parent.
      */
-    private final ThemisMaven theParent;
+    private final ThemisMavenPom theParent;
 
     /**
      * The properties.
@@ -166,8 +166,8 @@ public class ThemisMaven
      * @param pInputStream the input stream to read
      * @throws OceanusException on error
      */
-    public ThemisMaven(final ThemisMaven pParent,
-                       final InputStream pInputStream) throws OceanusException {
+    public ThemisMavenPom(final ThemisMavenPom pParent,
+                          final InputStream pInputStream) throws OceanusException {
         /* Store the parent */
         theParent = pParent;
 

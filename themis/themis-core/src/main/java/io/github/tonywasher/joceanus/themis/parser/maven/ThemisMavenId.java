@@ -20,7 +20,6 @@ package io.github.tonywasher.joceanus.themis.parser.maven;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
 import org.w3c.dom.Element;
 
-import java.io.File;
 import java.util.Objects;
 
 /**
@@ -210,7 +209,6 @@ public final class ThemisMavenId {
         return "test".equals(theScope)
                 || "runtime".equals(theScope)
                 || "provided".equals(theScope)
-                //|| theVersion == null
                 || isOptional != null;
     }
 
@@ -255,86 +253,6 @@ public final class ThemisMavenId {
     public String toString() {
         final String myName = theGroupId + ThemisChar.COLON + theArtifactId + ThemisChar.COLON + theVersion;
         return theClassifier == null ? myName : myName + ThemisChar.COLON + theClassifier;
-    }
-
-    /**
-     * Obtain the mavenBase.
-     *
-     * @return the mavenBase path
-     */
-    private File getMavenBasePath() {
-        /* Determine the repository base */
-        File myBase = getMavenCorePath();
-        if (theVersion == null) {
-            getLatestVersion();
-        }
-        myBase = new File(myBase, theVersion);
-        return myBase;
-    }
-
-    /**
-     * Obtain the latest version for an artifact.
-     */
-    private void getLatestVersion() {
-        final File myBase = getMavenCorePath();
-        ThemisMavenVersion myLatest = null;
-        for (File myFile : Objects.requireNonNull(myBase.listFiles())) {
-            if (myFile.isDirectory()) {
-                final ThemisMavenVersion myVersion = ThemisMavenVersion.parseVersion(myFile.getName());
-                if (myVersion != null) {
-                    if (myLatest == null
-                            || myLatest.compareTo(myVersion) < 0) {
-                        myLatest = myVersion;
-                    }
-                }
-            }
-        }
-        if (myLatest != null) {
-            theVersion = myLatest.getVersion();
-        }
-    }
-
-    /**
-     * Obtain the mavenBase.
-     *
-     * @return the mavenBase path
-     */
-    private File getMavenCorePath() {
-        /* Determine the repository base */
-        File myBase = new File(System.getProperty("user.home"));
-        myBase = new File(myBase, ".m2");
-        myBase = new File(myBase, "repository");
-        myBase = new File(myBase, theGroupId.replace(ThemisChar.PERIOD, ThemisChar.COMMENT));
-        myBase = new File(myBase, theArtifactId);
-        return myBase;
-    }
-
-    /**
-     * Obtain the mavenJar.
-     *
-     * @return the mavenJar path
-     */
-    public File getMavenJarPath() {
-        /* Determine the repository base */
-        File myBase = getMavenBasePath();
-        String myName = theArtifactId + ThemisChar.HYPHEN + theVersion;
-        if (theClassifier != null) {
-            myName += ThemisChar.HYPHEN + theClassifier;
-        }
-        myBase = new File(myBase, myName + ".jar");
-        return myBase;
-    }
-
-    /**
-     * Obtain the mavenJar.
-     *
-     * @return the mavenJar path
-     */
-    public File getMavenPomPath() {
-        /* Determine the repository base */
-        File myBase = getMavenBasePath();
-        myBase = new File(myBase, theArtifactId + ThemisChar.HYPHEN + theVersion + ".pom");
-        return myBase;
     }
 }
 
