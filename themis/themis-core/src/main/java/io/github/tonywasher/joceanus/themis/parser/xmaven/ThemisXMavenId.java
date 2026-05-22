@@ -15,8 +15,9 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.parser.maven;
+package io.github.tonywasher.joceanus.themis.parser.xmaven;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
 import org.w3c.dom.Element;
 
@@ -25,20 +26,21 @@ import java.util.Objects;
 /**
  * Maven Module Id.
  */
-public final class ThemisMavenId {
+public final class ThemisXMavenId {
     /**
      * ElementParser.
      */
-    interface ThemisElementParser {
+    interface ThemisXElementParser {
         /**
          * Obtain element value.
          *
          * @param pElement the element
          * @param pValue   the value name
          * @return the value
+         * @throws OceanusException on error
          */
         String getElementValue(Element pElement,
-                               String pValue);
+                               String pValue) throws OceanusException;
     }
 
     /**
@@ -77,16 +79,6 @@ public final class ThemisMavenId {
     private final String theArtifactId;
 
     /**
-     * The groupId.
-     */
-    private String theGroupId;
-
-    /**
-     * The version.
-     */
-    private String theVersion;
-
-    /**
      * The scope.
      */
     private final String theScope;
@@ -102,13 +94,24 @@ public final class ThemisMavenId {
     private final String isOptional;
 
     /**
+     * The groupId.
+     */
+    private String theGroupId;
+
+    /**
+     * The version.
+     */
+    private String theVersion;
+
+    /**
      * Constructor.
      *
      * @param pParser  the parser
      * @param pElement the element containing the values
+     * @throws OceanusException on error
      */
-    ThemisMavenId(final ThemisElementParser pParser,
-                  final Element pElement) {
+    ThemisXMavenId(final ThemisXElementParser pParser,
+                   final Element pElement) throws OceanusException {
         /* Access the values */
         theGroupId = pParser.getElementValue(pElement, EL_GROUPID);
         theArtifactId = pParser.getElementValue(pElement, EL_ARTIFACTID);
@@ -124,18 +127,19 @@ public final class ThemisMavenId {
      * @param pParser  the parser
      * @param pElement the element containing the values
      * @param pParent  the parentId
+     * @throws OceanusException on error
      */
-    ThemisMavenId(final ThemisElementParser pParser,
-                  final Element pElement,
-                  final ThemisMavenId pParent) {
+    ThemisXMavenId(final ThemisXElementParser pParser,
+                   final Element pElement,
+                   final ThemisXMavenId pParent) throws OceanusException {
         /* Process as much as we can */
         this(pParser, pElement);
 
         /* Handle missing groupId/version */
-        if (theGroupId == null) {
+        if (theGroupId == null && pParent != null) {
             theGroupId = pParent.getGroupId();
         }
-        if (theVersion == null) {
+        if (theVersion == null && pParent != null) {
             theVersion = pParent.getVersion();
         }
 
@@ -144,6 +148,24 @@ public final class ThemisMavenId {
                 && theVersion.startsWith(String.valueOf(ThemisChar.ARRAY_OPEN))) {
             theVersion = null;
         }
+    }
+
+
+    /**
+     * Constructor.
+     *
+     * @param pSource  the source Id
+     * @param pVersion the new version
+     */
+    ThemisXMavenId(final ThemisXMavenId pSource,
+                   final String pVersion) {
+        /* Access the values */
+        theGroupId = pSource.getGroupId();
+        theArtifactId = pSource.getArtifactId();
+        theVersion = pVersion;
+        theScope = pSource.getScope();
+        theClassifier = pSource.getClassifier();
+        isOptional = pSource.isOptional();
     }
 
     /**
@@ -232,7 +254,7 @@ public final class ThemisMavenId {
         }
 
         /* Make sure that the object is a MavenId */
-        if (!(pThat instanceof ThemisMavenId myThat)) {
+        if (!(pThat instanceof ThemisXMavenId myThat)) {
             return false;
         }
 
@@ -240,13 +262,12 @@ public final class ThemisMavenId {
         return Objects.equals(theGroupId, myThat.getGroupId())
                 && Objects.equals(theArtifactId, myThat.getArtifactId())
                 && Objects.equals(theVersion, myThat.getVersion())
-                && Objects.equals(theScope, myThat.getScope())
                 && Objects.equals(theClassifier, myThat.getClassifier());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(theGroupId, theArtifactId, theVersion, theScope, theClassifier);
+        return Objects.hash(theGroupId, theArtifactId, theVersion, theClassifier);
     }
 
     @Override
@@ -255,4 +276,3 @@ public final class ThemisMavenId {
         return theClassifier == null ? myName : myName + ThemisChar.COLON + theClassifier;
     }
 }
-

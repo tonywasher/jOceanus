@@ -15,15 +15,15 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.parser.maven;
+package io.github.tonywasher.joceanus.themis.parser.xmaven;
 
 import java.util.Arrays;
 
 /**
  * Comparable Maven version.
  */
-public class ThemisMavenVersion
-        implements Comparable<ThemisMavenVersion> {
+public class ThemisXMavenVersion
+        implements Comparable<ThemisXMavenVersion> {
     /**
      * Version.
      */
@@ -40,8 +40,8 @@ public class ThemisMavenVersion
      * @param pVersion    the version string
      * @param pComponents the components
      */
-    ThemisMavenVersion(final String pVersion,
-                       final Object[] pComponents) {
+    ThemisXMavenVersion(final String pVersion,
+                        final Object[] pComponents) {
         theVersion = pVersion;
         theComponents = pComponents;
     }
@@ -65,7 +65,7 @@ public class ThemisMavenVersion
     }
 
     @Override
-    public int compareTo(final ThemisMavenVersion pThat) {
+    public int compareTo(final ThemisXMavenVersion pThat) {
         /* Note the lengths of the two componentLists */
         final int thisLen = theComponents.length;
         final Object[] thatComponents = pThat.getComponents();
@@ -120,7 +120,7 @@ public class ThemisMavenVersion
         return switch (pThat) {
             case Long myLong -> pThis.compareTo(myLong);
             case String ignored -> 1;
-            case null -> ThemisMavenConstants.ZERO.equals(pThis) ? 0 : 1;
+            case null -> ThemisXMavenConstants.ZERO.equals(pThis) ? 0 : 1;
             default -> throw new IllegalArgumentException();
         };
     }
@@ -162,7 +162,7 @@ public class ThemisMavenVersion
     private int compareWithNull(final Object pThat) {
         /* Switch on component type */
         return switch (pThat) {
-            case Long myLong -> ThemisMavenConstants.ZERO.equals(myLong) ? 0 : -1;
+            case Long myLong -> ThemisXMavenConstants.ZERO.equals(myLong) ? 0 : -1;
             case String myString -> {
                 final int iIndex = markerIndex(myString);
                 yield markerSpecialNonSP(iIndex) ? 1 : -1;
@@ -179,7 +179,7 @@ public class ThemisMavenVersion
      * @return the marker index
      */
     private int markerIndex(final String pMarker) {
-        return ThemisMavenConstants.NAMES.indexOf(pMarker);
+        return ThemisXMavenConstants.NAMES.indexOf(pMarker);
     }
 
     /**
@@ -199,7 +199,7 @@ public class ThemisMavenVersion
      * @return true/false
      */
     private boolean markerSpecialNonSP(final int pIndex) {
-        return markerSpecial(pIndex) && pIndex != ThemisMavenConstants.SP_INDEX;
+        return markerSpecial(pIndex) && pIndex != ThemisXMavenConstants.SP_INDEX;
     }
 
     @Override
@@ -213,7 +213,7 @@ public class ThemisMavenVersion
         }
 
         /* Check components */
-        return pThat instanceof ThemisMavenVersion myVers
+        return pThat instanceof ThemisXMavenVersion myVers
                 && Arrays.equals(theComponents, myVers.getComponents());
 
     }

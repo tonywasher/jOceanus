@@ -15,18 +15,18 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.parser.maven;
+package io.github.tonywasher.joceanus.themis.parser.xmaven;
 
 import java.util.List;
 
 /**
  * Maven Constants.
  */
-public final class ThemisMavenConstants {
+public final class ThemisXMavenConstants {
     /**
      * Private constructor.
      */
-    private ThemisMavenConstants() {
+    private ThemisXMavenConstants() {
     }
 
     /**
@@ -79,3 +79,4 @@ public final class ThemisMavenConstants {
      */
     static final int SP_INDEX = 5;
 }
+

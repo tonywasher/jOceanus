@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.parser.maven;
+package io.github.tonywasher.joceanus.themis.parser.xmaven;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
@@ -36,7 +36,10 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public final class ThemisMavenLocation {
+/**
+ * Maven Location Services.
+ */
+public final class ThemisXMavenLocation {
     /**
      * The Maven Central prefix.
      */
@@ -50,7 +53,7 @@ public final class ThemisMavenLocation {
     /**
      * Private constructor.
      */
-    private ThemisMavenLocation() {
+    private ThemisXMavenLocation() {
     }
 
     /**
@@ -59,7 +62,7 @@ public final class ThemisMavenLocation {
      * @param pId the maven Id
      * @return the fileName
      */
-    public static String getCentralJarFileName(final ThemisMavenId pId) {
+    public static String getCentralJarFileName(final ThemisXMavenId pId) {
         return MAVEN_CENTRAL + getMavenVersionedPrefix(pId)
                 + ThemisChar.COMMENT + getMavenJarFileName(pId);
     }
@@ -70,7 +73,7 @@ public final class ThemisMavenLocation {
      * @param pId the maven Id
      * @return the fileName
      */
-    public static String getCentralPomFileName(final ThemisMavenId pId) {
+    public static String getCentralPomFileName(final ThemisXMavenId pId) {
         return MAVEN_CENTRAL + getMavenVersionedPrefix(pId)
                 + ThemisChar.COMMENT + getMavenPomFileName(pId);
     }
@@ -81,7 +84,7 @@ public final class ThemisMavenLocation {
      * @param pId the maven Id
      * @return the fileName
      */
-    public static String getLocalJarFileName(final ThemisMavenId pId) {
+    public static String getLocalJarFileName(final ThemisXMavenId pId) {
         return MAVEN_LOCAL + getMavenVersionedPrefix(pId)
                 + ThemisChar.COMMENT + getMavenJarFileName(pId);
     }
@@ -92,7 +95,7 @@ public final class ThemisMavenLocation {
      * @param pId the maven Id
      * @return the fileName
      */
-    public static String getLocalPomFileName(final ThemisMavenId pId) {
+    public static String getLocalPomFileName(final ThemisXMavenId pId) {
         return MAVEN_LOCAL + getMavenVersionedPrefix(pId)
                 + ThemisChar.COMMENT + getMavenPomFileName(pId);
     }
@@ -104,7 +107,7 @@ public final class ThemisMavenLocation {
      * @return the latest version
      * @throws OceanusException on error
      */
-    public static String determineLatestVersion(final ThemisMavenId pId) throws OceanusException {
+    public static String determineLatestVersion(final ThemisXMavenId pId) throws OceanusException {
         /* Determine directory to check */
         final String myDir = MAVEN_CENTRAL + getMavenArtifactPrefix(pId) + ThemisChar.COMMENT;
 
@@ -120,8 +123,8 @@ public final class ThemisMavenLocation {
             }
 
             /* Loop through the versions */
-            final ThemisMavenParser myParser = new ThemisMavenParser();
-            ThemisMavenVersion myLatest = null;
+            final ThemisXMavenVersionParser myParser = new ThemisXMavenVersionParser();
+            ThemisXMavenVersion myLatest = null;
             for (Element myChild : myIds.children()) {
                 /* Only check directories and non parent */
                 final String myVersion = myChild.text();
@@ -129,7 +132,7 @@ public final class ThemisMavenLocation {
                     final String myVers = myVersion.substring(0, myVersion.length() - 1);
 
                     /* Check version and record latest */
-                    final ThemisMavenVersion myParsed = myParser.parseVersion(myVers);
+                    final ThemisXMavenVersion myParsed = myParser.parseVersion(myVers);
                     if (myLatest == null
                             || (myParsed != null && myParsed.compareTo(myLatest) > 0)) {
                         myLatest = myParsed;
@@ -149,14 +152,24 @@ public final class ThemisMavenLocation {
     }
 
     /**
-     * Ensure local artifact.
+     * Ensure local pom artifact.
      *
      * @param pId the maven id
      * @throws OceanusException on error
      */
-    public static void ensureArtifact(final ThemisMavenId pId) throws OceanusException {
-        /* Ensure pom and jar */
+    public static void ensurePomArtifact(final ThemisXMavenId pId) throws OceanusException {
+        /* Ensure pom */
         ensureArtifact(getCentralPomFileName(pId), getLocalPomFileName(pId));
+    }
+
+    /**
+     * Ensure local jar artifact.
+     *
+     * @param pId the maven id
+     * @throws OceanusException on error
+     */
+    public static void ensureJarArtifact(final ThemisXMavenId pId) throws OceanusException {
+        /* Ensure jar */
         ensureArtifact(getCentralJarFileName(pId), getLocalJarFileName(pId));
     }
 
@@ -216,7 +229,7 @@ public final class ThemisMavenLocation {
      * @param pId the maven Id
      * @return the fileName
      */
-    private static String getMavenJarFileName(final ThemisMavenId pId) {
+    private static String getMavenJarFileName(final ThemisXMavenId pId) {
         String myBase = pId.getArtifactId() + ThemisChar.HYPHEN + pId.getVersion();
         final String myClassifier = pId.getClassifier();
         if (myClassifier != null) {
@@ -231,7 +244,7 @@ public final class ThemisMavenLocation {
      * @param pId the maven Id
      * @return the fileName
      */
-    private static String getMavenPomFileName(final ThemisMavenId pId) {
+    private static String getMavenPomFileName(final ThemisXMavenId pId) {
         return pId.getArtifactId() + ThemisChar.HYPHEN + pId.getVersion() + ".pom";
     }
 
@@ -241,7 +254,7 @@ public final class ThemisMavenLocation {
      * @param pId the maven Id
      * @return the prefix
      */
-    private static String getMavenVersionedPrefix(final ThemisMavenId pId) {
+    private static String getMavenVersionedPrefix(final ThemisXMavenId pId) {
         /* Determine the repository base */
         final String myBase = getMavenArtifactPrefix(pId);
         return myBase + ThemisChar.COMMENT + pId.getVersion();
@@ -253,7 +266,7 @@ public final class ThemisMavenLocation {
      * @param pId the maven Id
      * @return the prefix
      */
-    private static String getMavenArtifactPrefix(final ThemisMavenId pId) {
+    private static String getMavenArtifactPrefix(final ThemisXMavenId pId) {
         /* Determine the repository base */
         final String myBase = pId.getGroupId().replace(ThemisChar.PERIOD, ThemisChar.COMMENT);
         return myBase + ThemisChar.COMMENT + pId.getArtifactId();

@@ -23,6 +23,7 @@ import io.github.tonywasher.joceanus.themis.parser.base.ThemisParserDef;
 import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenId;
 import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenLocation;
 import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenPom;
+import io.github.tonywasher.joceanus.themis.parser.xmaven.ThemisXMavenParser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -83,6 +84,10 @@ public class ThemisProject {
         for (ThemisMavenId myId : myDependencies) {
             processDependency(myId);
         }
+
+        /* Build new Maven Map */
+        final ThemisXMavenParser myParser = new ThemisXMavenParser(theLocation);
+        final int i = 0;
     }
 
     /**

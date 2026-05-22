@@ -288,7 +288,7 @@ public class ThemisUIMainPanel
         theStats.setCurrentProject(myStats);
 
         /* Save details */
-        OceanusException myError = storeDefaultLocation(pData.getProjectDir());
+        final OceanusException myError = storeDefaultLocation(pData.getProjectDir());
         if (myError != null) {
             writeErrorToLog(myError);
         }

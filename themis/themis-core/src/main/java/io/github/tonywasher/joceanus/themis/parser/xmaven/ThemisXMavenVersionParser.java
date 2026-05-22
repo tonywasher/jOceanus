@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.parser.maven;
+package io.github.tonywasher.joceanus.themis.parser.xmaven;
 
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
 
@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Maven version parser.
  */
-public class ThemisMavenParser {
+public class ThemisXMavenVersionParser {
     /**
      * The components.
      */
@@ -49,7 +49,7 @@ public class ThemisMavenParser {
     /**
      * Constructor.
      */
-    public ThemisMavenParser() {
+    public ThemisXMavenVersionParser() {
         theComponents = new ArrayList<>();
     }
 
@@ -59,7 +59,7 @@ public class ThemisMavenParser {
      * @param pVersion the version
      * @return the parsed version
      */
-    public ThemisMavenVersion parseVersion(final String pVersion) {
+    public ThemisXMavenVersion parseVersion(final String pVersion) {
         /* Initialise state */
         theComponents.clear();
         theVersion = pVersion;
@@ -83,7 +83,7 @@ public class ThemisMavenParser {
         pruneComponents();
 
         /* Return the parsed version */
-        return new ThemisMavenVersion(theVersion, theComponents.toArray());
+        return new ThemisXMavenVersion(theVersion, theComponents.toArray());
     }
 
     /**
@@ -94,6 +94,7 @@ public class ThemisMavenParser {
     private Long parseLong() {
         final StringBuilder myBuffer = new StringBuilder();
         while (theIndex < theVersLen) {
+            /* Access character and break loop if non-numeric */
             final char myChar = theVersion.charAt(theIndex);
             if (!Character.isDigit(myChar)) {
                 break;
@@ -112,7 +113,7 @@ public class ThemisMavenParser {
     private String parseString() {
         final StringBuilder myBuffer = new StringBuilder();
         while (theIndex < theVersLen) {
-            /* Access character and break loop if numeric or separator*/
+            /* Access character and break loop if numeric or separator */
             final char myChar = theVersion.charAt(theIndex);
             if (Character.isDigit(myChar)
                     || isSeparator(myChar)) {
@@ -145,11 +146,11 @@ public class ThemisMavenParser {
      */
     private String normalise(final String pValue) {
         return switch (pValue.toLowerCase()) {
-            case "alpha" -> ThemisMavenConstants.ALPHA;
-            case "beta" -> ThemisMavenConstants.BETA;
-            case "milestone" -> ThemisMavenConstants.MILESTONE;
-            case "final" -> ThemisMavenConstants.GA;
-            case "cr" -> ThemisMavenConstants.RC;
+            case "alpha" -> ThemisXMavenConstants.ALPHA;
+            case "beta" -> ThemisXMavenConstants.BETA;
+            case "milestone" -> ThemisXMavenConstants.MILESTONE;
+            case "final" -> ThemisXMavenConstants.GA;
+            case "cr" -> ThemisXMavenConstants.RC;
             default -> pValue;
         };
     }
@@ -162,9 +163,10 @@ public class ThemisMavenParser {
         if (!theComponents.isEmpty()) {
             /* Access last component */
             final Object myLast = theComponents.getLast();
+
             /* If the component is empty */
-            if (myLast.equals(ThemisMavenConstants.ZERO)
-                    || ThemisMavenConstants.GA.equalsIgnoreCase(myLast.toString())) {
+            if (myLast.equals(ThemisXMavenConstants.ZERO)
+                    || ThemisXMavenConstants.GA.equalsIgnoreCase(myLast.toString())) {
                 /* Remove and reprune */
                 theComponents.removeLast();
                 pruneComponents();

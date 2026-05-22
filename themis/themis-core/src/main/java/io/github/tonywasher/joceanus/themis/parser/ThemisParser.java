@@ -118,6 +118,7 @@ public class ThemisParser
     /**
      * Constructor.
      *
+     * @param pReport   the reporter
      * @param pLocation the project location
      * @throws OceanusException on error
      */
