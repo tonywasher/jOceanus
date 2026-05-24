@@ -1,6 +1,6 @@
 /*
- * Prometheus: Application Framework
- * Copyright 2012-2026. Tony Washer
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -14,64 +14,31 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.prometheus.ui;
+
+package io.github.tonywasher.joceanus.themis.gui.launch;
 
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIMenuBarManager.TethysUIMenuId;
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIResource;
 
 /**
- * Prometheus Menu Ids.
+ * Themis Menu Ids.
  */
-public enum PrometheusMenuId
+public enum ThemisUIMenuId
         implements TethysUIMenuId {
-    /**
-     * Data Menu.
-     */
-    DATA(PrometheusUIResource.MENU_DATA),
-
-    /**
-     * Backup Menu.
-     */
-    BACKUP(PrometheusUIResource.MENU_BACKUP),
-
-    /**
-     * Edit Menu.
-     */
-    EDIT(PrometheusUIResource.MENU_EDIT),
-
-    /**
-     * Security Menu.
-     */
-    SECURITY(PrometheusUIResource.MENU_SECURITY),
-
     /**
      * Help Menu.
      */
-    HELP(PrometheusUIResource.MENU_HELP),
-
-    /**
-     * UnDo Task.
-     */
-    UNDO(PrometheusUIResource.MENUITEM_UNDO),
-
-    /**
-     * Reset Task.
-     */
-    RESET(PrometheusUIResource.MENUITEM_RESET),
-
-    /**
-     * Help Task.
-     */
-    SHOWHELP(PrometheusUIResource.MENUITEM_HELP),
+    HELP(ThemisUIResource.MENU_HELP),
 
     /**
      * DataViewer Task.
      */
-    DATAVIEWER(PrometheusUIResource.MENUITEM_DATAVIEWER),
+    DATAVIEWER(ThemisUIResource.MENUITEM_DATAVIEWER),
 
     /**
      * About Task.
      */
-    ABOUT(PrometheusUIResource.MENUITEM_ABOUT);
+    ABOUT(ThemisUIResource.MENUITEM_ABOUT);
 
     /**
      * The name.
@@ -83,7 +50,7 @@ public enum PrometheusMenuId
      *
      * @param pId the id
      */
-    PrometheusMenuId(final PrometheusUIResource pId) {
+    ThemisUIMenuId(final ThemisUIResource pId) {
         theName = pId.getValue();
     }
 

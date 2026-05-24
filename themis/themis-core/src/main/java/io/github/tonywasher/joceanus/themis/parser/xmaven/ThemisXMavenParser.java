@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.themis.parser.xmaven;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
+import io.github.tonywasher.joceanus.themis.exc.ThemisLogicException;
 import io.github.tonywasher.joceanus.themis.parser.xmaven.ThemisXMavenPom.ThemisXMavenControl;
 
 import java.io.File;
@@ -71,6 +72,11 @@ public class ThemisXMavenParser
         final List<ThemisXMavenPom> myModules = new ArrayList<>(thePoms.values());
         for (ThemisXMavenPom myModule : myModules) {
             myModule.getVersions();
+            myModule.getDirectDependencies();
+        }
+
+        /* Loop through the local modules */
+        for (ThemisXMavenPom myModule : myModules) {
             myModule.getDependencies();
         }
 
@@ -83,7 +89,7 @@ public class ThemisXMavenParser
      *
      * @return the local modules
      */
-    List<ThemisXMavenPom> getModules() {
+    public List<ThemisXMavenPom> getModules() {
         return theModules;
     }
 
@@ -95,12 +101,13 @@ public class ThemisXMavenParser
             return myExisting;
         }
 
-        /* Make sure that the pom has been downloaded */
-        ThemisXMavenLocation.ensurePomArtifact(pId);
+        /* Reject if we have not fully processed local poms */
+        if (!processedLocal) {
+            throw new ThemisLogicException("Processed pom via id before finished local processing");
+        }
 
         /* Load the pom file and store into cache */
-        final ThemisXMavenPom myPom = new ThemisXMavenPom(this,
-                new File(ThemisXMavenLocation.getLocalPomFileName(pId)));
+        final ThemisXMavenPom myPom = doLoadPomViaId(pId);
         thePoms.put(pId, myPom);
 
         /* If the pom has an associated jar */
@@ -111,10 +118,32 @@ public class ThemisXMavenParser
 
         /* Process dependencies */
         myPom.getVersions();
+        myPom.getDirectDependencies();
         myPom.getDependencies();
 
         /* Return the pom */
         return myPom;
+    }
+
+    /**
+     * Do load pom via Id.
+     *
+     * @param pId the id of the pom
+     * @return the loaded pom
+     * @throws OceanusException on error
+     */
+    private ThemisXMavenPom doLoadPomViaId(final ThemisXMavenId pId) throws OceanusException {
+        /* If the id has a classifier */
+        if (pId.getClassifier() != null) {
+            /* There is no pom , so just fake it */
+            return new ThemisXMavenPom(pId);
+        }
+
+        /* Make sure that the pom has been downloaded */
+        ThemisXMavenLocation.ensurePomArtifact(pId);
+
+        /* Just do a normal load */
+        return new ThemisXMavenPom(this, new File(ThemisXMavenLocation.getLocalPomFileName(pId)));
     }
 
     @Override

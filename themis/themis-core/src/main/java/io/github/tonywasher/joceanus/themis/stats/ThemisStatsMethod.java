@@ -16,6 +16,9 @@
  */
 package io.github.tonywasher.joceanus.themis.stats;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisMethodInstance;
 
 import java.util.ArrayList;
@@ -26,6 +29,20 @@ import java.util.List;
  */
 public class ThemisStatsMethod
         implements ThemisStatsElement {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisStatsMethod> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisStatsMethod.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_CLASSES, ThemisStatsMethod::getClasses);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisStatsMethod::getUnderlying);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_STATS, ThemisStatsMethod::getStats);
+    }
+
     /**
      * The underlying package.
      */
@@ -55,6 +72,16 @@ public class ThemisStatsMethod
 
         /* Create the class list */
         theClasses = new ArrayList<>();
+    }
+
+    @Override
+    public MetisFieldSet<ThemisStatsMethod> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override

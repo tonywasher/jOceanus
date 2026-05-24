@@ -16,7 +16,10 @@
  */
 package io.github.tonywasher.joceanus.themis.solver.proj;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.project.ThemisFile;
 import io.github.tonywasher.joceanus.themis.parser.project.ThemisPackage;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverModuleDef;
@@ -30,6 +33,28 @@ import java.util.List;
  */
 public class ThemisSolverPackage
         implements ThemisSolverPackageDef, Comparable<ThemisSolverPackage> {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisSolverPackage> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSolverPackage.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_MODULE, ThemisSolverPackage::getOwningModule);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PARENT, ThemisSolverPackage::getParent);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_CHILDREN, ThemisSolverPackage::getChildren);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_FILES, ThemisSolverPackage::getFiles);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisSolverPackage::getUnderlyingPackage);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_REFERENCED, ThemisSolverPackage::getReferenceMap);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_LOCALREFS, ThemisSolverPackage::getLocalReferences);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_IMPLIEDREFS, ThemisSolverPackage::getImpliedReferences);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_STANDARD, ThemisSolverPackage::isStandard);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_CIRCULAR, ThemisSolverPackage::isCircular);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_INCESTUOUS, ThemisSolverPackage::isIncestuous);
+    }
+
     /**
      * The owning module.
      */
@@ -120,6 +145,16 @@ public class ThemisSolverPackage
             final ThemisSolverFile mySolverFile = new ThemisSolverFile(this, myFile);
             theFiles.add(mySolverFile);
         }
+    }
+
+    @Override
+    public MetisFieldSet<ThemisSolverPackage> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override

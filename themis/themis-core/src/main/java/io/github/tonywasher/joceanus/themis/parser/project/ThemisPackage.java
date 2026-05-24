@@ -16,8 +16,12 @@
  */
 package io.github.tonywasher.joceanus.themis.parser.project;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisParserDef;
 
 import java.io.File;
@@ -28,7 +32,21 @@ import java.util.Objects;
 /**
  * Package.
  */
-public class ThemisPackage {
+public class ThemisPackage
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisPackage> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisPackage.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_NAME, ThemisPackage::getShortName);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_FILES, ThemisPackage::getFiles);
+    }
+
     /**
      * The path xtra.
      */
@@ -99,6 +117,16 @@ public class ThemisPackage {
 
         /* Build list of files */
         theFiles = listFiles(myLocation);
+    }
+
+    @Override
+    public MetisFieldSet<ThemisPackage> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return toString();
     }
 
     /**

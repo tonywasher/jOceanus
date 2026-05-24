@@ -221,18 +221,6 @@ public class ThemisXMavenPomParser {
     }
 
     /**
-     * Is this pom packaging?
-     *
-     * @return true/false
-     * @throws OceanusException on error
-     */
-    boolean isPomPackaging() throws OceanusException {
-        /* Obtain packaging definition if any */
-        final Element myPackageEl = (Element) findNode(XPATH_PACKAGING);
-        return myPackageEl != null && "pom".equals(myPackageEl.getTextContent());
-    }
-
-    /**
      * Is this jar packaging?
      *
      * @return true/false

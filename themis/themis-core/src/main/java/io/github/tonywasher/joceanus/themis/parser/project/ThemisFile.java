@@ -16,7 +16,11 @@
  */
 package io.github.tonywasher.joceanus.themis.parser.project;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisNodeInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisParserDef;
@@ -29,7 +33,21 @@ import java.util.List;
 /**
  * Analysis representation of a java file.
  */
-public class ThemisFile {
+public class ThemisFile
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisFile> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisFile.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_NAME, ThemisFile::getName);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_CLASSES, ThemisFile::getClasses);
+    }
+
     /**
      * The java suffix.
      */
@@ -65,6 +83,16 @@ public class ThemisFile {
         theLocation = pFile;
         theName = pFile.getName().replace(SFX_JAVA, "");
         theClasses = new ArrayList<>();
+    }
+
+    @Override
+    public MetisFieldSet<ThemisFile> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return toString();
     }
 
     /**

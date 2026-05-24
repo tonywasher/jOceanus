@@ -17,18 +17,25 @@
 
 package io.github.tonywasher.joceanus.themis.gui.launch;
 
+import io.github.tonywasher.joceanus.metis.toolkit.MetisToolkit;
 import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerWindow;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
 import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButton;
 import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButtonFactory;
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControlFactory;
+import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIAboutBox;
 import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIDialogFactory;
 import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIDirectorySelector;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUILogTextArea;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIMainPanel;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIMenuBarManager;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIMenuBarManager.TethysUIMenuSubMenu;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
@@ -43,6 +50,7 @@ import io.github.tonywasher.joceanus.themis.gui.launch.ThemisUIThread.ThemisUITh
 import io.github.tonywasher.joceanus.themis.gui.reference.ThemisUIRefPanel;
 import io.github.tonywasher.joceanus.themis.gui.source.ThemisUISourcePanel;
 import io.github.tonywasher.joceanus.themis.gui.stats.ThemisUIStatsPanel;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverProject;
 import io.github.tonywasher.joceanus.themis.stats.ThemisStatsProject;
@@ -112,9 +120,9 @@ public class ThemisUIMainPanel
     private final TethysUIButton theProjectButton;
 
     /**
-     * The Refresh button.
+     * The data menu.
      */
-    private final TethysUIButton theRefreshButton;
+    private final TethysUIMenuBarManager theMenuBar;
 
     /**
      * The ProjectButton.
@@ -137,14 +145,40 @@ public class ThemisUIMainPanel
     private final TethysUIBoxPaneManager theProjectControl;
 
     /**
+     * The data window.
+     */
+    private final MetisViewerWindow theDataWdw;
+
+    /**
+     * The source viewer entry.
+     */
+    private final MetisViewerEntry theSourceEntry;
+
+    /**
+     * The solver viewer entry.
+     */
+    private final MetisViewerEntry theSolverEntry;
+
+    /**
+     * The stats viewer entry.
+     */
+    private final MetisViewerEntry theStatsEntry;
+
+    /**
+     * The aboutBox.
+     */
+    private TethysUIAboutBox theAboutBox;
+
+    /**
      * Constructor.
      *
-     * @param pFactory the GuiFactory
+     * @param pFactory the gui factory
      * @throws OceanusException on error
      */
     public ThemisUIMainPanel(final TethysUIFactory<?> pFactory) throws OceanusException {
         /* Store guiFactory */
         theGuiFactory = pFactory;
+        final MetisToolkit myToolkit = new MetisToolkit(pFactory, false);
 
         /* Create the subPanels */
         theSource = new ThemisUISourcePanel(theGuiFactory);
@@ -182,22 +216,23 @@ public class ThemisUIMainPanel
         theProjectButton.setText(ThemisUIResource.PROMPT_NONE.getValue());
 
         /* Configure refresh button */
-        theRefreshButton = myButtons.newButton();
-        MetisIcon.configureButton(theRefreshButton);
-        theRefreshButton.setIcon(ThemisUIIcon.REFRESH);
-        theRefreshButton.setToolTip(ThemisUIResource.TOOLTIP_REFRESH.getValue());
-        theRefreshButton.getEventRegistrar().addEventListener(TethysUIEvent.PRESSED, e -> handleNewProject(getDefaultLocation()));
+        final TethysUIButton myRefreshButton = myButtons.newButton();
+        MetisIcon.configureButton(myRefreshButton);
+        myRefreshButton.setIcon(ThemisUIIcon.REFRESH);
+        myRefreshButton.setToolTip(ThemisUIResource.TOOLTIP_REFRESH.getValue());
+        myRefreshButton.getEventRegistrar().addEventListener(TethysUIEvent.PRESSED,
+                e -> handleNewProject(getDefaultLocation()));
 
         /* create the overall project select panel */
         theProjectControl = myPanes.newHBoxPane();
         theProjectControl.addSpacer();
         theProjectControl.addNode(myProjectSelect);
         theProjectControl.addSpacer();
-        theProjectControl.addNode(theRefreshButton);
+        theProjectControl.addNode(myRefreshButton);
         theProjectControl.addStrut();
 
         /* Access the status bar and set to invisible */
-        theThreadMgr = pFactory.threadFactory().newThreadManager();
+        theThreadMgr = theGuiFactory.threadFactory().newThreadManager();
         theStatusBar = theThreadMgr.getStatusManager();
         theStatusBar.setVisible(false);
         theThreadMgr.getEventRegistrar().addEventListener(TethysUIThreadEvent.THREADEND, e -> setVisibility(false));
@@ -212,6 +247,23 @@ public class ThemisUIMainPanel
         thePanel.setNorth(myBanner);
         thePanel.setCentre(myTabs);
 
+        /* Create the menu bar */
+        theMenuBar = theGuiFactory.menuFactory().newMenuBar();
+        final TethysUIMenuSubMenu myMenu = theMenuBar.newSubMenu(ThemisUIMenuId.HELP);
+        myMenu.newMenuItem(ThemisUIMenuId.DATAVIEWER, e -> displayViewerMgr());
+        myMenu.newMenuItem(ThemisUIMenuId.ABOUT, e -> displayAbout());
+
+        /* Create the data window */
+        theDataWdw = myToolkit.newViewerWindow();
+        theDataWdw.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED,
+                e -> theMenuBar.setEnabled(ThemisUIMenuId.DATAVIEWER, true));
+
+        /* Create viewer locations */
+        final MetisViewerManager myViewer = myToolkit.getViewerManager();
+        theSourceEntry = myViewer.newEntry(ThemisDataResource.DATA_SOURCE.getValue());
+        theSolverEntry = myViewer.newEntry(ThemisDataResource.DATA_SOLVER.getValue());
+        theStatsEntry = myViewer.newEntry(ThemisDataResource.DATA_STATS.getValue());
+
         /* Handle the default location */
         final File myLocation = getDefaultLocation();
         if (myLocation != null) {
@@ -222,6 +274,11 @@ public class ThemisUIMainPanel
     @Override
     public TethysUIComponent getComponent() {
         return thePanel;
+    }
+
+    @Override
+    public TethysUIMenuBarManager getMenuBar() {
+        return theMenuBar;
     }
 
     /**
@@ -270,6 +327,7 @@ public class ThemisUIMainPanel
         theStatsTab.setVisible(!pLoading);
         theProjectControl.setVisible(!pLoading);
         theStatusBar.setVisible(pLoading);
+        theMenuBar.setEnabled(ThemisUIMenuId.HELP, !pLoading);
     }
 
     @Override
@@ -278,14 +336,17 @@ public class ThemisUIMainPanel
         final ThemisProject myProject = pData.getParsedProject();
         theSource.setCurrentProject(myProject);
         theProjectButton.setText(myProject.toString());
+        theSourceEntry.setObject(myProject);
 
         /* Update references */
         final ThemisSolverProject mySolved = pData.getSolvedProject();
         theRefs.setCurrentProject(mySolved);
+        theSolverEntry.setObject(mySolved);
 
         /* Resolve stats */
         final ThemisStatsProject myStats = pData.getProjectStats();
         theStats.setCurrentProject(myStats);
+        theStatsEntry.setObject(myStats);
 
         /* Save details */
         final OceanusException myError = storeDefaultLocation(pData.getProjectDir());
@@ -352,5 +413,27 @@ public class ThemisUIMainPanel
         /* Derive the handle */
         final Preferences myHandle = Preferences.userNodeForPackage(myClass);
         return myHandle.node(myName);
+    }
+
+    /**
+     * Display ViewerMgr.
+     */
+    private void displayViewerMgr() {
+        /* Disable the menu item */
+        theMenuBar.setEnabled(ThemisUIMenuId.DATAVIEWER, false);
+
+        /* Display it */
+        theDataWdw.showDialog();
+    }
+
+    /**
+     * Display the about box.
+     */
+    private void displayAbout() {
+        /* Create about box if it does not exist */
+        if (theAboutBox == null) {
+            theAboutBox = theGuiFactory.dialogFactory().newAboutBox();
+        }
+        theAboutBox.showDialog();
     }
 }

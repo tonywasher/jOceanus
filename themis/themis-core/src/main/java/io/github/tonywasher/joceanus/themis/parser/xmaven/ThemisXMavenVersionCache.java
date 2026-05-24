@@ -17,9 +17,14 @@
 
 package io.github.tonywasher.joceanus.themis.parser.xmaven;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +32,20 @@ import java.util.Map;
 /**
  * Maven dependency cache.
  */
-public class ThemisXMavenVersionCache {
+public class ThemisXMavenVersionCache
+        implements MetisDataMap<String, String>, MetisFieldItem {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisXMavenVersionCache> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisXMavenVersionCache.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PARENT, ThemisXMavenVersionCache::getParent);
+    }
+
     /**
      * The map of prefix to version.
      */
@@ -45,13 +63,28 @@ public class ThemisXMavenVersionCache {
         theMap = new HashMap<>();
     }
 
-    /**
-     * Obtain the Map.
-     *
-     * @return the map
-     */
-    private Map<String, String> getMap() {
+    @Override
+    public MetisFieldSet<ThemisXMavenVersionCache> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return getClass().getSimpleName();
+    }
+
+    @Override
+    public Map<String, String> getUnderlyingMap() {
         return theMap;
+    }
+
+    /**
+     * Obtain the Parent.
+     *
+     * @return the parent
+     */
+    private ThemisXMavenVersionCache getParent() {
+        return theParent;
     }
 
     /**
@@ -79,20 +112,8 @@ public class ThemisXMavenVersionCache {
             throw new ThemisDataException("Proposed version for " + myPrefix + " is null");
         }
 
-        /* Look for existing entry */
-        final String myVersion = lookUpVersionInCache(myPrefix);
-        if (myVersion != null) {
-            /* Check for mismatch */
-            //if (!myVersion.equals(myProposed)) {
-            //    throw new ThemisDataException("Conflicting version for " + myPrefix
-            //            + " Required=" + myVersion
-            //            + " Proposed=" + myProposed);
-            //}
-
-            /* Add new dependency */
-        } else {
-            theMap.put(myPrefix, myProposed);
-        }
+        /* Update the dependency */
+        theMap.put(myPrefix, myProposed);
     }
 
     /**
@@ -122,7 +143,7 @@ public class ThemisXMavenVersionCache {
 
                 /* Reject conflict */
             } else {
-                throw new ThemisDataException("Conflicting version for " + myPrefix
+                throw new ThemisDataException("Conflicting explicit dependency version for " + myPrefix
                         + " Required=" + myVersion
                         + " Proposed=" + myProposed);
             }
@@ -148,7 +169,7 @@ public class ThemisXMavenVersionCache {
      */
     void importDependencies(final ThemisXMavenVersionCache pChild) throws OceanusException {
         /* Loop through the child entries */
-        for (Map.Entry<String, String> myEntry : pChild.getMap().entrySet()) {
+        for (Map.Entry<String, String> myEntry : pChild.getUnderlyingMap().entrySet()) {
             /* Access details */
             final String myPrefix = myEntry.getKey();
             final String myProposed = myEntry.getValue();
@@ -158,7 +179,7 @@ public class ThemisXMavenVersionCache {
 
             /* Check for mismatch */
             if (myVersion != null && !myVersion.equals(myProposed)) {
-                throw new ThemisDataException("Conflicting version for " + myPrefix
+                throw new ThemisDataException("Conflicting imported version for " + myPrefix
                         + " Required=" + myVersion
                         + " Proposed=" + myProposed);
             }

@@ -16,7 +16,10 @@
  */
 package io.github.tonywasher.joceanus.themis.solver.proj;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.project.ThemisModule;
 import io.github.tonywasher.joceanus.themis.parser.project.ThemisPackage;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverModuleDef;
@@ -33,6 +36,20 @@ import java.util.Map;
  */
 public class ThemisSolverModule
         implements ThemisSolverModuleDef {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisSolverModule> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSolverModule.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PROJECT, ThemisSolverModule::getOwningProject);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PACKAGES, ThemisSolverModule::getPackages);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisSolverModule::getUnderlyingModule);
+    }
+
     /**
      * The root package.
      */
@@ -74,6 +91,16 @@ public class ThemisSolverModule
 
         /* Create placeHolders*/
         createPlaceHolders();
+    }
+
+    @Override
+    public MetisFieldSet<ThemisSolverModule> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override

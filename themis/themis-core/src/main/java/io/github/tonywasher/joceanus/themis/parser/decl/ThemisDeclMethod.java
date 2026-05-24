@@ -17,7 +17,10 @@
 package io.github.tonywasher.joceanus.themis.parser.decl;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisDeclarationInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisMethodInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisModifierList;
@@ -32,6 +35,18 @@ import java.util.List;
 public class ThemisDeclMethod
         extends ThemisBaseDeclaration<MethodDeclaration>
         implements ThemisDeclarationInstance, ThemisMethodInstance {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisDeclMethod> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisDeclMethod.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_NAME, ThemisDeclMethod::getName);
+    }
+
     /**
      * The override annotation.
      */
@@ -95,6 +110,16 @@ public class ThemisDeclMethod
         theParameters = pParser.parseNodeList(pDeclaration.getParameters());
         theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());
         theBody = pParser.parseStatement(pDeclaration.getBody().orElse(null));
+    }
+
+    @Override
+    public MetisFieldSet<ThemisDeclMethod> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return getName();
     }
 
     @Override

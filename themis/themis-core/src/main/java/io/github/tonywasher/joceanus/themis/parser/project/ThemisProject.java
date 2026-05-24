@@ -16,14 +16,19 @@
  */
 package io.github.tonywasher.joceanus.themis.parser.project;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisParserDef;
 import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenId;
 import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenLocation;
 import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenPom;
 import io.github.tonywasher.joceanus.themis.parser.xmaven.ThemisXMavenParser;
+import io.github.tonywasher.joceanus.themis.parser.xmaven.ThemisXMavenPom;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,7 +42,22 @@ import java.util.Map;
 /**
  * Project.
  */
-public class ThemisProject {
+public class ThemisProject
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisProject> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisProject.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_NAME, ThemisProject::getName);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_MODULES, ThemisProject::getModules);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PARSEDMODULES, ThemisProject::getParsedModules);
+    }
+
     /**
      * The project name.
      */
@@ -57,6 +77,11 @@ public class ThemisProject {
      * The dependencies.
      */
     private final List<ThemisMavenId> theDependencies;
+
+    /**
+     * The list of local modules.
+     */
+    private final List<ThemisXMavenPom> theParsedModules;
 
     /**
      * Constructor.
@@ -87,7 +112,17 @@ public class ThemisProject {
 
         /* Build new Maven Map */
         final ThemisXMavenParser myParser = new ThemisXMavenParser(theLocation);
-        final int i = 0;
+        theParsedModules = myParser.getModules();
+    }
+
+    @Override
+    public MetisFieldSet<ThemisProject> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return toString();
     }
 
     /**
@@ -142,6 +177,15 @@ public class ThemisProject {
      */
     public List<ThemisModule> getModules() {
         return new ArrayList<>(theModules.values());
+    }
+
+    /**
+     * Obtain the modules.
+     *
+     * @return the modules
+     */
+    private List<ThemisXMavenPom> getParsedModules() {
+        return theParsedModules;
     }
 
     /**

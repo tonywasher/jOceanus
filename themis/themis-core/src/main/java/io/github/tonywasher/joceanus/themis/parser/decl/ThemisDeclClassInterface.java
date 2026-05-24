@@ -17,7 +17,10 @@
 package io.github.tonywasher.joceanus.themis.parser.decl;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisDeclarationInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisModifierList;
@@ -32,6 +35,18 @@ import java.util.List;
 public class ThemisDeclClassInterface
         extends ThemisBaseDeclaration<ClassOrInterfaceDeclaration>
         implements ThemisDeclarationInstance, ThemisClassInstance {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisDeclClassInterface> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisDeclClassInterface.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_NAME, ThemisDeclClassInterface::getName);
+    }
+
     /**
      * The shortName.
      */
@@ -102,6 +117,16 @@ public class ThemisDeclClassInterface
 
         /* Finally parse the underlying declarations */
         theBody = pParser.parseDeclarationList(pDeclaration.getMembers());
+    }
+
+    @Override
+    public MetisFieldSet<ThemisDeclClassInterface> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return getName();
     }
 
     @Override

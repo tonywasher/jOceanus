@@ -17,9 +17,14 @@
 
 package io.github.tonywasher.joceanus.themis.parser.xmaven;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusSystem;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.xmaven.ThemisXMavenId.ThemisXElementParser;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -31,7 +36,19 @@ import java.util.Map;
  * Maven property cache.
  */
 public class ThemisXMavenPropertyCache
-        implements ThemisXElementParser {
+        implements ThemisXElementParser, MetisDataMap<String, String>, MetisFieldItem {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisXMavenPropertyCache> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisXMavenPropertyCache.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PARENT, ThemisXMavenPropertyCache::getParent);
+    }
+
     /**
      * The property prefix.
      */
@@ -58,6 +75,30 @@ public class ThemisXMavenPropertyCache
     ThemisXMavenPropertyCache() {
         theMap = new HashMap<>();
         setProperty("javafx.platform", OceanusSystem.determineSystem().getClassifier());
+    }
+
+    @Override
+    public MetisFieldSet<ThemisXMavenPropertyCache> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return getClass().getSimpleName();
+    }
+
+    @Override
+    public Map<String, String> getUnderlyingMap() {
+        return theMap;
+    }
+
+    /**
+     * Obtain the Parent.
+     *
+     * @return the parent
+     */
+    private ThemisXMavenPropertyCache getParent() {
+        return theParent;
     }
 
     /**

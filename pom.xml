@@ -58,10 +58,9 @@
     </distributionManagement>
     <properties>
         <MyName>Tony Washer</MyName>
-        <currentYear>${maven.build.timestamp}</currentYear>
-        <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+        <buildTimestamp>${maven.build.timestamp}</buildTimestamp>
+        <maven.build.timestamp.format>yyyy-MM-dd hh:mm:ss</maven.build.timestamp.format>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <scmMain>main</scmMain>
         <packageKey>io.github.tonywasher.joceanus</packageKey>
         <packageMain/>
         <packageName/>
@@ -70,7 +69,7 @@
         <appBinDir>bin/</appBinDir>
         <appLibDir>lib/</appLibDir>
         <BouncyCastleVersion>1.84</BouncyCastleVersion>
-        <JUnitVersion>6.0.3</JUnitVersion>
+        <JUnitVersion>6.1.0</JUnitVersion>
         <JSONVersion>20251224</JSONVersion>
         <ApacheMavenVersion>3.9.15</ApacheMavenVersion>
         <MySQLVersion>9.7.0</MySQLVersion>
@@ -94,7 +93,7 @@
         <InstallPluginVersion>3.1.4</InstallPluginVersion>
         <SitePluginVersion>3.21.0</SitePluginVersion>
         <DeployPluginVersion>3.1.4</DeployPluginVersion>
-        <EnforcerPluginVersion>3.6.2</EnforcerPluginVersion>
+        <EnforcerPluginVersion>3.6.3</EnforcerPluginVersion>
         <CompilerPluginVersion>3.15.0</CompilerPluginVersion>
         <ShadePluginVersion>3.6.2</ShadePluginVersion>
         <DependencyPluginVersion>3.10.0</DependencyPluginVersion>
@@ -405,6 +404,25 @@
                     <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
                     <shortRevisionLength>12</shortRevisionLength>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${BuildHelperPluginVersion}</version>
+                <executions>
+                    <execution>
+                        <id>timestamp-property</id>
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <name>currentYear</name>
+                            <pattern>yyyy</pattern>
+                            <timeSource>build</timeSource>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

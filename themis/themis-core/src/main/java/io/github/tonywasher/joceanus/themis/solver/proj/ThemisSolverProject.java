@@ -16,7 +16,10 @@
  */
 package io.github.tonywasher.joceanus.themis.solver.proj;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.themis.parser.ThemisParser;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.project.ThemisModule;
 import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverProjectDef;
@@ -29,6 +32,19 @@ import java.util.List;
  */
 public class ThemisSolverProject
         implements ThemisSolverProjectDef {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisSolverProject> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSolverProject.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_MODULES, ThemisSolverProject::getModules);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisSolverProject::getUnderlyingProject);
+    }
+
     /**
      * The project parser.
      */
@@ -61,6 +77,16 @@ public class ThemisSolverProject
         for (ThemisModule myModule : theProject.getModules()) {
             theModules.add(new ThemisSolverModule(this, myModule));
         }
+    }
+
+    @Override
+    public MetisFieldSet<ThemisSolverProject> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return toString();
     }
 
     /**

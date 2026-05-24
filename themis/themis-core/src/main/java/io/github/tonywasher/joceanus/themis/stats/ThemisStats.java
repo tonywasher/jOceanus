@@ -16,13 +16,32 @@
  */
 package io.github.tonywasher.joceanus.themis.stats;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+
 import java.util.EnumMap;
 import java.util.Map;
 
 /**
  * Statistics Set.
  */
-public class ThemisStats {
+public class ThemisStats
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisStats> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisStats.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_STATS, ThemisStats::getStats);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_TOTALS, ThemisStats::getTotals);
+    }
+
     /**
      * The integer zero.
      */
@@ -49,6 +68,17 @@ public class ThemisStats {
     ThemisStats() {
         theStats = initStats();
         theTotals = initStats();
+    }
+
+    @Override
+    public MetisFieldSet<ThemisStats> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return getClass().getSimpleName();
     }
 
     /**

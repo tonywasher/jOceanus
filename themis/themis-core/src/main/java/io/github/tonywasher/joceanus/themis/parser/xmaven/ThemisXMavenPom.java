@@ -17,7 +17,11 @@
 
 package io.github.tonywasher.joceanus.themis.parser.xmaven;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,7 +30,8 @@ import java.util.List;
 /**
  * Maven Pom.
  */
-public class ThemisXMavenPom {
+public class ThemisXMavenPom
+        implements MetisFieldItem {
     /**
      * The controller.
      */
@@ -47,6 +52,25 @@ public class ThemisXMavenPom {
          * @return the loaded pom
          */
         ThemisXMavenPom loadPomAtLocation(File pLocation) throws OceanusException;
+    }
+
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisXMavenPom> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisXMavenPom.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_ID, ThemisXMavenPom::getId);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PARENT, ThemisXMavenPom::getParent);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PROPERTIES, ThemisXMavenPom::getProperties);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_XTRADIRS, ThemisXMavenPom::getXtraDirs);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_MODULES, ThemisXMavenPom::getModules);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_VERSIONS, ThemisXMavenPom::getTheVersions);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_DIRECTDEPENDENCIES, ThemisXMavenPom::getTheDirectDependencies);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_DEPENDENCIES, ThemisXMavenPom::getTheDependencies);
     }
 
     /**
@@ -90,14 +114,24 @@ public class ThemisXMavenPom {
     private final List<ThemisXMavenPom> theModules;
 
     /**
+     * Is this a jar package.
+     */
+    private final boolean isJarPackage;
+
+    /**
      * The version cache.
      */
     private ThemisXMavenVersionCache theVersions;
 
     /**
-     * The list of dependencies.
+     * The list of direct dependencies.
      */
-    private List<ThemisXMavenPom> theDependencies;
+    private List<ThemisXMavenPom> theDirectDependencies;
+
+    /**
+     * The full list of dependencies.
+     */
+    private List<ThemisXMavenId> theDependencies;
 
     /**
      * Constructor.
@@ -112,7 +146,7 @@ public class ThemisXMavenPom {
         theControl = pController;
         theLocation = new File(pLocation.getParent());
 
-        /* Create the cache */
+        /* Create the caches */
         theProperties = new ThemisXMavenPropertyCache();
 
         /* Create the parser */
@@ -142,25 +176,69 @@ public class ThemisXMavenPom {
 
         /* Load the id */
         theId = theParser.getId(theParent == null ? null : theParent.getId());
+
+        /* Determine jar packaging */
+        isJarPackage = theParser.isJarPackaging();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param pId the id
+     * @throws OceanusException on error
+     */
+    ThemisXMavenPom(final ThemisXMavenId pId) throws OceanusException {
+        /* Store the id */
+        theId = pId;
+
+        /* Store the controller and location */
+        theControl = null;
+        theLocation = null;
+        theParent = null;
+
+        /* Create the cache */
+        theProperties = new ThemisXMavenPropertyCache();
+        theVersions = new ThemisXMavenVersionCache();
+
+        /* Create the parser */
+        theParser = null;
+
+        /* Set Pom packaging */
+        isJarPackage = false;
+
+        /* Create the various lists */
+        theModules = new ArrayList<>();
+        theXtraDirs = new ArrayList<>();
+        theDirectDependencies = new ArrayList<>();
+        theDependencies = new ArrayList<>();
+    }
+
+    @Override
+    public MetisFieldSet<ThemisXMavenPom> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return getId().formatObject(pFormatter);
     }
 
     /**
      * Obtain the id.
      *
-     * @return the properties
+     * @return the id
      */
     ThemisXMavenId getId() {
         return theId;
     }
 
     /**
-     * Is this pom packaging?
+     * Obtain the parent.
      *
-     * @return true/false
-     * @throws OceanusException on error
+     * @return the parent
      */
-    boolean isPomPackaging() throws OceanusException {
-        return theParser.isPomPackaging();
+    private ThemisXMavenPom getParent() {
+        return theParent;
     }
 
     /**
@@ -170,7 +248,7 @@ public class ThemisXMavenPom {
      * @throws OceanusException on error
      */
     boolean isJarPackaging() throws OceanusException {
-        return theParser.isJarPackaging();
+        return isJarPackage;
     }
 
     /**
@@ -188,13 +266,50 @@ public class ThemisXMavenPom {
      * @return the dependencies
      * @throws OceanusException on error
      */
-    List<ThemisXMavenPom> getDependencies() throws OceanusException {
+    List<ThemisXMavenPom> getDirectDependencies() throws OceanusException {
         /* If we have not processed dependencies */
-        if (theDependencies == null) {
+        if (theDirectDependencies == null) {
             /* Process dependencies */
-            theDependencies = processDependencies();
+            theDirectDependencies = processDependencies();
         }
 
+        /* Return the dependencies */
+        return theDirectDependencies;
+    }
+
+    /**
+     * Obtain the direct dependencies.
+     *
+     * @return the dependencies
+     */
+    private List<ThemisXMavenPom> getTheDirectDependencies() {
+        /* Return the dependencies */
+        return theDirectDependencies;
+    }
+
+    /**
+     * Obtain the dependencies.
+     *
+     * @return the dependencies
+     * @throws OceanusException on error
+     */
+    List<ThemisXMavenId> getDependencies() throws OceanusException {
+        /* If we have not combined dependencies */
+        if (theDependencies == null) {
+            /* Combine dependencies */
+            theDependencies = combineDependencies();
+        }
+
+        /* Return the dependencies */
+        return theDependencies;
+    }
+
+    /**
+     * Obtain the dependencies.
+     *
+     * @return the dependencies
+     */
+    public List<ThemisXMavenId> getTheDependencies() {
         /* Return the dependencies */
         return theDependencies;
     }
@@ -221,7 +336,17 @@ public class ThemisXMavenPom {
             theVersions = processDependencyManagement();
         }
 
-        /* Return the dependencies */
+        /* Return the versions */
+        return theVersions;
+    }
+
+    /**
+     * Obtain the versions.
+     *
+     * @return the versions
+     */
+    private ThemisXMavenVersionCache getTheVersions() {
+        /* Return the versions */
         return theVersions;
     }
 
@@ -305,5 +430,37 @@ public class ThemisXMavenPom {
 
         /* Return the poms */
         return myPoms;
+    }
+
+    /**
+     * Combine dependencies.
+     *
+     * @return the dependencies
+     * @throws OceanusException on error
+     */
+    private List<ThemisXMavenId> combineDependencies() throws OceanusException {
+        /* Allocate the dependencies */
+        final List<ThemisXMavenId> myIds = new ArrayList<>();
+
+        /* Loop through direct dependencies */
+        for (ThemisXMavenPom myDependency : getDirectDependencies()) {
+            /* If we have not processed this dependency before */
+            final ThemisXMavenId myId = myDependency.getId();
+            if (!myIds.contains(myId)) {
+                /* Add the id */
+                myIds.add(myId);
+
+                /* Loop through the nested dependencies */
+                for (ThemisXMavenId myNestedId : myDependency.getDependencies()) {
+                    /* Add unknown ids */
+                    if (!myIds.contains(myNestedId)) {
+                        myIds.add(myNestedId);
+                    }
+                }
+            }
+        }
+
+        /* Return the id */
+        return myIds;
     }
 }

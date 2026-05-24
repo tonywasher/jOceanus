@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.themis.solver.proj;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisMethodInstance;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverClassDef;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverMethodDef;
@@ -25,6 +27,18 @@ import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSo
  */
 public class ThemisSolverMethod
         implements ThemisSolverMethodDef {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisSolverMethod> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSolverMethod.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisSolverMethod::getUnderlyingMethod);
+    }
+
     /**
      * The owning class.
      */
@@ -46,6 +60,11 @@ public class ThemisSolverMethod
         /* Store the parameters */
         theClass = pClass;
         theMethod = pMethod;
+    }
+
+    @Override
+    public MetisFieldSet<ThemisSolverMethod> getDataFieldSet() {
+        return FIELD_DEFS;
     }
 
     @Override

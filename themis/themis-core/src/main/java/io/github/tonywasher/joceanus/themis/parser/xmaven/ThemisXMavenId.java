@@ -17,8 +17,12 @@
 
 package io.github.tonywasher.joceanus.themis.parser.xmaven;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import org.w3c.dom.Element;
 
 import java.util.Objects;
@@ -26,7 +30,8 @@ import java.util.Objects;
 /**
  * Maven Module Id.
  */
-public final class ThemisXMavenId {
+public final class ThemisXMavenId
+        implements MetisFieldItem {
     /**
      * ElementParser.
      */
@@ -41,6 +46,23 @@ public final class ThemisXMavenId {
          */
         String getElementValue(Element pElement,
                                String pValue) throws OceanusException;
+    }
+
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisXMavenId> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisXMavenId.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_GROUPID, ThemisXMavenId::getGroupId);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_ARTIFACTID, ThemisXMavenId::getArtifactId);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_VERSION, ThemisXMavenId::getVersion);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_CLASSIFIER, ThemisXMavenId::getClassifier);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_SCOPE, ThemisXMavenId::getScope);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_OPTIONAL, ThemisXMavenId::isOptional);
     }
 
     /**
@@ -150,7 +172,6 @@ public final class ThemisXMavenId {
         }
     }
 
-
     /**
      * Constructor.
      *
@@ -166,6 +187,16 @@ public final class ThemisXMavenId {
         theScope = pSource.getScope();
         theClassifier = pSource.getClassifier();
         isOptional = pSource.isOptional();
+    }
+
+    @Override
+    public MetisFieldSet<ThemisXMavenId> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return toString();
     }
 
     /**

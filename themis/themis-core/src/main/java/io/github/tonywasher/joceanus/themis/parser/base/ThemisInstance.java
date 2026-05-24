@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.themis.parser.base;
 
 import com.github.javaparser.ast.Node;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -162,7 +163,8 @@ public interface ThemisInstance {
     /**
      * The base class interface.
      */
-    interface ThemisClassInstance {
+    interface ThemisClassInstance
+            extends MetisFieldItem {
         /**
          * Obtain the name.
          *
@@ -278,7 +280,8 @@ public interface ThemisInstance {
     /**
      * The base method interface.
      */
-    interface ThemisMethodInstance {
+    interface ThemisMethodInstance
+            extends MetisFieldItem {
         /**
          * Obtain the name.
          *

@@ -16,6 +16,9 @@
  */
 package io.github.tonywasher.joceanus.themis.solver.proj;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisMethodInstance;
@@ -30,6 +33,19 @@ import java.util.List;
  */
 public class ThemisSolverClass
         implements ThemisSolverClassDef {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisSolverClass> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSolverClass.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_METHODS, ThemisSolverClass::getMethods);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisSolverClass::getUnderlyingClass);
+    }
+
     /**
      * The fully qualified name of the class.
      */
@@ -84,6 +100,16 @@ public class ThemisSolverClass
             final ThemisSolverMethod mySolverMethod = new ThemisSolverMethod(this, (ThemisMethodInstance) myMethod);
             theMethods.add(mySolverMethod);
         }
+    }
+
+    @Override
+    public MetisFieldSet<ThemisSolverClass> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return toString();
     }
 
     /**

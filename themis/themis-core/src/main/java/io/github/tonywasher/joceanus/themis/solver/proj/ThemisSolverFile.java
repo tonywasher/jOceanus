@@ -16,6 +16,9 @@
  */
 package io.github.tonywasher.joceanus.themis.solver.proj;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
 import io.github.tonywasher.joceanus.themis.parser.project.ThemisFile;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverFileDef;
@@ -29,6 +32,23 @@ import java.util.List;
  */
 public class ThemisSolverFile
         implements ThemisSolverFileDef, Comparable<ThemisSolverFile> {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisSolverFile> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSolverFile.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_CLASSES, ThemisSolverFile::getClasses);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisSolverFile::getUnderlyingFile);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_REFERENCED, ThemisSolverFile::getReferenced);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_LOCALREFS, ThemisSolverFile::getLocalReferences);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_IMPLIEDREFS, ThemisSolverFile::getImpliedReferences);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_CIRCULAR, ThemisSolverFile::isCircular);
+    }
+
     /**
      * The owning package.
      */
@@ -103,6 +123,16 @@ public class ThemisSolverFile
         theReferenced = new ArrayList<>();
         theLocalReferences = new ArrayList<>();
         theImpliedReferences = new ArrayList<>();
+    }
+
+    @Override
+    public MetisFieldSet<ThemisSolverFile> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override
