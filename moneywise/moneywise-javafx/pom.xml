@@ -8,7 +8,7 @@
     <groupId>io.github.tonywasher.joceanus.moneywise</groupId>
     <artifactId>moneywise-javafx</artifactId>
     <name>MoneyWise Personal Finance - javaFX</name>
-    <description>Personal Finance Application</description>
+    <description>JavaFX Personal Finance Application</description>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

@@ -17,8 +17,10 @@
 package io.github.tonywasher.joceanus.themis.solver;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 import io.github.tonywasher.joceanus.themis.parser.ThemisParser;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.solver.mapper.ThemisMapper;
 import io.github.tonywasher.joceanus.themis.solver.mapper.ThemisMapperReference;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverModule;
@@ -53,13 +55,23 @@ public class ThemisSolver {
 
         /* Protect against exceptions */
         try (ThemisMapper myMapper = new ThemisMapper(theProject)) {
-            /* Loop through all packages */
-            myReport.initTask("Solver preProcess");
+            /* Obtain the active profile */
+            OceanusProfile myTask = myReport.getActiveTask();
+            myTask = myTask.startTask(ThemisDataResource.TASK_SOLVER);
+
+            /* Loop through all modules */
+            myReport.initTask(ThemisDataResource.TASK_SOLVERPREPROCESS);
             myReport.setNumStages(myModules.size());
+            OceanusProfile mySubTask = myTask.startTask(ThemisDataResource.TASK_SOLVERPREPROCESS);
             for (ThemisSolverModule myModule : myModules) {
-                myReport.setNewStage(myModule.getUnderlyingModule().getName());
+                /* Update reporter and profile */
                 final Map<String, ThemisSolverPackage> myPackages = myModule.getPackages();
+                final String myName = myModule.getUnderlyingModule().getName();
+                myReport.setNewStage(myName);
                 myReport.setNumSteps(myPackages.size());
+                mySubTask.startTask(myName);
+
+                /* Loop through all packages */
                 for (ThemisSolverPackage myPackage : myPackages.values()) {
                     /* preProcess each package */
                     myReport.setNextStep();
@@ -67,13 +79,19 @@ public class ThemisSolver {
                 }
             }
 
-            /* Loop through all packages */
-            myReport.initTask("Solver process");
+            /* Loop through all modules */
+            myReport.initTask(ThemisDataResource.TASK_SOLVERPROCESS);
             myReport.setNumStages(myModules.size());
+            mySubTask = myTask.startTask(ThemisDataResource.TASK_SOLVERPROCESS);
             for (ThemisSolverModule myModule : myModules) {
-                myReport.setNewStage(myModule.getUnderlyingModule().getName());
+                /* Update reporter and profile */
+                final String myName = myModule.getUnderlyingModule().getName();
+                myReport.setNewStage(myName);
                 final Map<String, ThemisSolverPackage> myPackages = myModule.getPackages();
                 myReport.setNumSteps(myPackages.size());
+                mySubTask.startTask(myName);
+
+                /* Loop through all packages */
                 for (ThemisSolverPackage myPackage : myPackages.values()) {
                     /* Process each package */
                     myReport.setNextStep();
@@ -81,8 +99,10 @@ public class ThemisSolver {
                 }
             }
 
-            /* Process all references */
+            /* Resolve all references */
+            myTask.startTask(ThemisDataResource.TASK_RESOLVING);
             new ThemisMapperReference().processReferences(theProject);
+            myTask.end();
         }
     }
 

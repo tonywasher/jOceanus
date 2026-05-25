@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
@@ -69,6 +70,11 @@ public class ThemisProject
     private final File theLocation;
 
     /**
+     * The parser.
+     */
+    private final ThemisParserDef theParser;
+
+    /**
      * The module map.
      */
     private final Map<ThemisMavenId, ThemisModule> theModules;
@@ -86,16 +92,23 @@ public class ThemisProject
     /**
      * Constructor.
      *
+     * @param pParser   the parser
      * @param pLocation the project location
      * @throws OceanusException on error
      */
-    public ThemisProject(final File pLocation) throws OceanusException {
-        /* Store the name and location */
+    public ThemisProject(final ThemisParserDef pParser,
+                         final File pLocation) throws OceanusException {
+        /* Store the parser and location */
+        theParser = pParser;
         theLocation = pLocation;
 
         /* Create the list */
         theModules = new LinkedHashMap<>();
         theDependencies = new ArrayList<>();
+
+        /* Build new Maven Map */
+        final ThemisXMavenParser myParser = new ThemisXMavenParser(theParser.getReporter(), theLocation);
+        theParsedModules = myParser.getModules();
 
         /* Initiate search for modules */
         final ThemisMavenPom myPom = parseProjectFile(null, new File(theLocation, ThemisMavenPom.POM));
@@ -109,10 +122,6 @@ public class ThemisProject
         for (ThemisMavenId myId : myDependencies) {
             processDependency(myId);
         }
-
-        /* Build new Maven Map */
-        final ThemisXMavenParser myParser = new ThemisXMavenParser(theLocation);
-        theParsedModules = myParser.getModules();
     }
 
     @Override
@@ -259,20 +268,30 @@ public class ThemisProject
     /**
      * parse the java code.
      *
-     * @param pParser the parser
      * @throws OceanusException on error
      */
-    public void parseJavaCode(final ThemisParserDef pParser) throws OceanusException {
+    public void parseJavaCode() throws OceanusException {
         /* Obtain the reporter */
-        final TethysUIThreadStatusReport myReport = pParser.getReporter();
-        myReport.initTask("Parse Code");
+        final TethysUIThreadStatusReport myReport = theParser.getReporter();
+        myReport.initTask(ThemisDataResource.TASK_PARSECODE);
         myReport.setNumStages(theModules.size());
+
+        /* Obtain the active profile */
+        OceanusProfile myTask = myReport.getActiveTask();
+        myTask = myTask.startTask(ThemisDataResource.TASK_PARSECODE);
 
         /* Loop through the modules */
         for (ThemisModule myModule : theModules.values()) {
             /* Process the module */
-            myReport.setNewStage(myModule.getName());
-            myModule.parseJavaCode(pParser);
+            final String myName = myModule.getName();
+            myTask.startTask(myName);
+            myReport.setNewStage(myName);
+            myReport.setNumSteps(1);
+            myReport.setNextStep();
+            myModule.parseJavaCode(theParser);
         }
+
+        /* End the task */
+        myTask.end();
     }
 }

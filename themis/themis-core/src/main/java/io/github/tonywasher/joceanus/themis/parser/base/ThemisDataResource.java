@@ -208,7 +208,52 @@ public enum ThemisDataResource
     /**
      * Data ParsedModules.
      */
-    DATA_PARSEDMODULES("parsedModules");
+    DATA_PARSEDMODULES("parsedModules"),
+
+    /**
+     * Task DataLoad.
+     */
+    TASK_DATALOAD("task.dataLoad"),
+
+    /**
+     * Task ParseCode.
+     */
+    TASK_PARSECODE("task.parseCode"),
+
+    /**
+     * Task Solver.
+     */
+    TASK_SOLVER("task.solver"),
+
+    /**
+     * Task SolverPreProcess.
+     */
+    TASK_SOLVERPREPROCESS("task.solverPreProcess"),
+
+    /**
+     * Task SolverProcess.
+     */
+    TASK_SOLVERPROCESS("task.solverProcess"),
+
+    /**
+     * Task Resolving.
+     */
+    TASK_RESOLVING("task.resolving"),
+
+    /**
+     * Task Discover.
+     */
+    TASK_DISCOVER("task.discover"),
+
+    /**
+     * Task Discover Local.
+     */
+    TASK_DISCOVERLOCAL("task.discoverLocal"),
+
+    /**
+     * Task Discover Dependency.
+     */
+    TASK_DISCOVERDEPENDENCY("task.discoverDependency");
 
     /**
      * The Resource Loader.

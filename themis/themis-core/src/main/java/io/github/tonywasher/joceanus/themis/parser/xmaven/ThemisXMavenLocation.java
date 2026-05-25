@@ -20,13 +20,9 @@ package io.github.tonywasher.joceanus.themis.parser.xmaven;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
@@ -98,57 +94,6 @@ public final class ThemisXMavenLocation {
     public static String getLocalPomFileName(final ThemisXMavenId pId) {
         return MAVEN_LOCAL + getMavenVersionedPrefix(pId)
                 + ThemisChar.COMMENT + getMavenPomFileName(pId);
-    }
-
-    /**
-     * Determine latest version.
-     *
-     * @param pId the maven id
-     * @return the latest version
-     * @throws OceanusException on error
-     */
-    public static String determineLatestVersion(final ThemisXMavenId pId) throws OceanusException {
-        /* Determine directory to check */
-        final String myDir = MAVEN_CENTRAL + getMavenArtifactPrefix(pId) + ThemisChar.COMMENT;
-
-        /* Protect against exceptions */
-        try {
-            /* Access list of versions */
-            final Document myDoc = Jsoup.connect(myDir).get();
-            final Element myIds = myDoc.getElementById("contents");
-
-            /* Handle failure to find versions */
-            if (myIds == null) {
-                throw new ThemisIOException("Unable to find list of versions");
-            }
-
-            /* Loop through the versions */
-            final ThemisXMavenVersionParser myParser = new ThemisXMavenVersionParser();
-            ThemisXMavenVersion myLatest = null;
-            for (Element myChild : myIds.children()) {
-                /* Only check directories and non parent */
-                final String myVersion = myChild.text();
-                if (myVersion.endsWith("/") && !myVersion.equals("../")) {
-                    final String myVers = myVersion.substring(0, myVersion.length() - 1);
-
-                    /* Check version and record latest */
-                    final ThemisXMavenVersion myParsed = myParser.parseVersion(myVers);
-                    if (myLatest == null
-                            || (myParsed != null && myParsed.compareTo(myLatest) > 0)) {
-                        myLatest = myParsed;
-                    }
-                }
-            }
-
-            /* Return the latest */
-            return myLatest == null ? null : myLatest.getVersion();
-
-            /* Handle exceptions */
-        } catch (OceanusException e) {
-            throw e;
-        } catch (IOException e) {
-            throw new ThemisIOException("Failed to determine latest version", e);
-        }
     }
 
     /**

@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 import io.github.tonywasher.joceanus.themis.parser.ThemisParser;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 import io.github.tonywasher.joceanus.themis.solver.ThemisSolver;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverProject;
@@ -37,6 +38,11 @@ public class ThemisUIThread
      * The new data interface.
      */
     interface ThemisUIThreadData {
+        /**
+         * Set new Data.
+         *
+         * @param pData the data
+         */
         void setNewData(ThemisUIData pData);
     }
 
@@ -64,7 +70,7 @@ public class ThemisUIThread
 
     @Override
     public String getTaskName() {
-        return "DataLoad";
+        return ThemisDataResource.TASK_DATALOAD.getValue();
     }
 
     @Override

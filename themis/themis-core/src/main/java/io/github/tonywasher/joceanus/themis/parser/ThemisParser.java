@@ -132,13 +132,13 @@ public class ThemisParser
         theClasses = new ArrayList<>();
 
         /* Prepare the project */
-        theProject = new ThemisProject(pLocation);
+        theProject = new ThemisProject(this, pLocation);
 
         /* Configure the parser */
         configureParser();
 
         /* Parse the javaCode */
-        theProject.parseJavaCode(this);
+        theProject.parseJavaCode();
     }
 
     /**

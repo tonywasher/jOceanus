@@ -123,7 +123,6 @@ public class TethysUISwingLaunchState {
         theFrame.setVisible(true);
 
         /* Record startUp completion */
-        theFactory.getActiveProfile().end();
         theFactory.activateLogSink();
     }
 

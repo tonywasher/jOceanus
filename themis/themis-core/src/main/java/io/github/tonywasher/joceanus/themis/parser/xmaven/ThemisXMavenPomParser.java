@@ -229,7 +229,9 @@ public class ThemisXMavenPomParser {
     boolean isJarPackaging() throws OceanusException {
         /* Obtain packaging definition if any */
         final Element myPackageEl = (Element) findNode(XPATH_PACKAGING);
-        return myPackageEl == null || "jar".equals(myPackageEl.getTextContent());
+        return myPackageEl == null
+                || "jar".equals(myPackageEl.getTextContent())
+                || "bundle".equals(myPackageEl.getTextContent());
     }
 
     /**

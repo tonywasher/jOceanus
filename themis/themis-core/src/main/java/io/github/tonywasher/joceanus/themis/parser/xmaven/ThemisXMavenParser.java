@@ -18,8 +18,11 @@
 package io.github.tonywasher.joceanus.themis.parser.xmaven;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
 import io.github.tonywasher.joceanus.themis.exc.ThemisLogicException;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.xmaven.ThemisXMavenPom.ThemisXMavenControl;
 
 import java.io.File;
@@ -56,32 +59,55 @@ public class ThemisXMavenParser
     /**
      * Constructor.
      *
+     * @param pReport   the reporter
      * @param pLocation the location of the project
      * @throws OceanusException on error
      */
-    public ThemisXMavenParser(final File pLocation) throws OceanusException {
+    public ThemisXMavenParser(final TethysUIThreadStatusReport pReport,
+                              final File pLocation) throws OceanusException {
+        /* Obtain the active profile */
+        OceanusProfile myTask = pReport.getActiveTask();
+        myTask = myTask.startTask(ThemisDataResource.TASK_DISCOVER);
+        pReport.initTask(ThemisDataResource.TASK_DISCOVER);
+        pReport.setNumStages(2);
+
         /* Create the map */
         thePoms = new LinkedHashMap<>();
         processedLocal = false;
 
         /* Parse the local project */
-        final ThemisXMavenPom myPom = loadPomAtLocation(pLocation);
+        loadPomAtLocation(pLocation);
         processedLocal = true;
 
         /* Loop through the local modules */
+        OceanusProfile mySubTask = myTask.startTask(ThemisDataResource.TASK_DISCOVERLOCAL);
         final List<ThemisXMavenPom> myModules = new ArrayList<>(thePoms.values());
+        pReport.setNewStage(ThemisDataResource.TASK_DISCOVERLOCAL);
+        pReport.setNumSteps(myModules.size());
         for (ThemisXMavenPom myModule : myModules) {
+            /* Process the module */
+            final String myName = myModule.getId().toString();
+            mySubTask.startTask(myName);
+            pReport.setNextStep();
             myModule.getVersions();
             myModule.getDirectDependencies();
         }
 
         /* Loop through the local modules */
+        mySubTask = myTask.startTask(ThemisDataResource.TASK_DISCOVERDEPENDENCY);
+        pReport.setNewStage(ThemisDataResource.TASK_DISCOVERDEPENDENCY);
+        pReport.setNumSteps(myModules.size());
         for (ThemisXMavenPom myModule : myModules) {
+            /* Process the module */
+            final String myName = myModule.getId().toString();
+            mySubTask.startTask(myName);
+            pReport.setNextStep();
             myModule.getDependencies();
         }
 
         /* Create list of local modules */
         theModules = getModuleList(myModules);
+        myTask.end();
     }
 
     /**

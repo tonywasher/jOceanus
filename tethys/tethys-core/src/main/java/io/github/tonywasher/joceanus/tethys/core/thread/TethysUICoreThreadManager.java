@@ -37,11 +37,6 @@ import java.util.concurrent.Executors;
 public abstract class TethysUICoreThreadManager
         implements OceanusEventProvider<TethysUIThreadEvent>, TethysUIThreadManager {
     /**
-     * Default Reporting Steps.
-     */
-    private static final Integer DEFAULT_REPSTEPS = 10;
-
-    /**
      * Thread Executor.
      */
     private final ExecutorService theExecutor;
@@ -85,11 +80,6 @@ public abstract class TethysUICoreThreadManager
      * The Error.
      */
     private Throwable theError;
-
-    /**
-     * The number of reporting steps.
-     */
-    private int theReportingSteps = DEFAULT_REPSTEPS;
 
     /**
      * Constructor.
@@ -148,11 +138,6 @@ public abstract class TethysUICoreThreadManager
     @Override
     public void setThreadData(final Object pThreadData) {
         theThreadData = pThreadData;
-    }
-
-    @Override
-    public void setReportingSteps(final int pSteps) {
-        theReportingSteps = pSteps;
     }
 
     @Override
@@ -304,14 +289,8 @@ public abstract class TethysUICoreThreadManager
         /* Set Next step */
         theStatus.setNextStep();
 
-        /* Determine step */
-        final int myStep = theStatus.getStepsDone() + 1;
-
-        /* If we need to report the step */
-        if ((myStep % theReportingSteps) == 0) {
-            /* Publish status */
-            publishStatus(theStatus);
-        }
+        /* Publish status */
+        publishStatus(theStatus);
     }
 
     @Override

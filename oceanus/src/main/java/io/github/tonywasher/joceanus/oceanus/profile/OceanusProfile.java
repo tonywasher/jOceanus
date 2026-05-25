@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.oceanus.profile;
 
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -126,6 +127,16 @@ public class OceanusProfile {
      */
     public Iterator<OceanusProfile> subTaskIterator() {
         return theSubTasks == null ? Collections.emptyIterator() : theSubTasks.iterator();
+    }
+
+    /**
+     * Start a new subTask.
+     *
+     * @param pId the id of the subTask
+     * @return the new task
+     */
+    public OceanusProfile startTask(final OceanusBundleId pId) {
+        return startTask(pId.getValue());
     }
 
     /**

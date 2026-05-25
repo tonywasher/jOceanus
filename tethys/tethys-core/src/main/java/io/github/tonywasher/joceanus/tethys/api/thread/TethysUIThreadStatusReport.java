@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.tethys.api.thread;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * Report status.
@@ -29,6 +30,16 @@ public interface TethysUIThreadStatusReport {
      * @return the threadData
      */
     Object getThreadData();
+
+    /**
+     * Initialise Task.
+     *
+     * @param pTask the task
+     * @throws OceanusException on cancellation
+     */
+    default void initTask(final OceanusBundleId pTask) throws OceanusException {
+        initTask(pTask.getValue());
+    }
 
     /**
      * Initialise Task.
@@ -53,6 +64,16 @@ public interface TethysUIThreadStatusReport {
      * @throws OceanusException on cancellation
      */
     void setNewStage(String pStage) throws OceanusException;
+
+    /**
+     * Set new stage.
+     *
+     * @param pStage the new stage
+     * @throws OceanusException on cancellation
+     */
+    default void setNewStage(final OceanusBundleId pStage) throws OceanusException {
+        setNewStage(pStage.getValue());
+    }
 
     /**
      * Set number of steps.

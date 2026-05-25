@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.metis.toolkit.MetisToolkit;
 import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerStandardEntry;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerWindow;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
@@ -150,6 +151,11 @@ public class ThemisUIMainPanel
     private final MetisViewerWindow theDataWdw;
 
     /**
+     * The error viewer entry.
+     */
+    private final MetisViewerEntry theErrorEntry;
+
+    /**
      * The source viewer entry.
      */
     private final MetisViewerEntry theSourceEntry;
@@ -232,7 +238,7 @@ public class ThemisUIMainPanel
         theProjectControl.addStrut();
 
         /* Access the status bar and set to invisible */
-        theThreadMgr = theGuiFactory.threadFactory().newThreadManager();
+        theThreadMgr = myToolkit.getThreadManager();
         theStatusBar = theThreadMgr.getStatusManager();
         theStatusBar.setVisible(false);
         theThreadMgr.getEventRegistrar().addEventListener(TethysUIThreadEvent.THREADEND, e -> setVisibility(false));
@@ -260,6 +266,7 @@ public class ThemisUIMainPanel
 
         /* Create viewer locations */
         final MetisViewerManager myViewer = myToolkit.getViewerManager();
+        theErrorEntry = myViewer.getStandardEntry(MetisViewerStandardEntry.ERROR);
         theSourceEntry = myViewer.newEntry(ThemisDataResource.DATA_SOURCE.getValue());
         theSolverEntry = myViewer.newEntry(ThemisDataResource.DATA_SOLVER.getValue());
         theStatsEntry = myViewer.newEntry(ThemisDataResource.DATA_STATS.getValue());
@@ -322,12 +329,18 @@ public class ThemisUIMainPanel
      * @param pLoading are we loading?
      */
     private void setVisibility(final boolean pLoading) {
+        /* Set tabs visibility */
         theSourceTab.setVisible(!pLoading);
         theRefsTab.setVisible(!pLoading);
         theStatsTab.setVisible(!pLoading);
+
+        /* Update selection bar and menuBar */
         theProjectControl.setVisible(!pLoading);
         theStatusBar.setVisible(pLoading);
         theMenuBar.setEnabled(ThemisUIMenuId.HELP, !pLoading);
+
+        /* Set error entry visibility */
+        theErrorEntry.setVisible(theErrorEntry.getObject() != null);
     }
 
     @Override

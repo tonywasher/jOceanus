@@ -171,9 +171,6 @@ public class TethysUIFXLaunchState
         final TethysUIIconId[] myIds = theApp.getIcons();
         final Image[] myIcons = TethysUIFXUtils.getIcons(myIds);
         pStage.getIcons().addAll(Arrays.asList(myIcons));
-
-        /* Record startUp completion */
-        theFactory.getActiveProfile().end();
     }
 
     @Override

@@ -16,10 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.ui.panel;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
-import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.metis.help.MetisHelpModule;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseIOException;
 import io.github.tonywasher.joceanus.moneywise.help.MoneyWiseHelp;
@@ -33,6 +29,10 @@ import io.github.tonywasher.joceanus.moneywise.threads.MoneyWiseThreadWriteQIF;
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseGoToId;
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
 import io.github.tonywasher.joceanus.prometheus.ui.PrometheusGoToEvent;
 import io.github.tonywasher.joceanus.prometheus.ui.panel.PrometheusMainWindow;
@@ -122,6 +122,9 @@ public class MoneyWiseMainTab
 
         /* Initialise visibility */
         setVisibility();
+
+        /* Record startUp completion */
+        myToolkit.getToolkit().getActiveProfile().end();
     }
 
     @Override

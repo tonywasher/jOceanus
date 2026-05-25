@@ -236,11 +236,6 @@ public class TethysUIHelperFactory
         }
 
         @Override
-        public void setReportingSteps(final int pSteps) {
-            /* NoOp */
-        }
-
-        @Override
         public Throwable getError() {
             return null;
         }
