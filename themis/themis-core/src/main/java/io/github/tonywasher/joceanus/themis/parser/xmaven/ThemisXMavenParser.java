@@ -52,6 +52,16 @@ public class ThemisXMavenParser
     private final List<ThemisXMavenPom> theModules;
 
     /**
+     * The dependencies.
+     */
+    private final List<ThemisXMavenId> theDependencies;
+
+    /**
+     * The pom.
+     */
+    private final ThemisXMavenPom thePom;
+
+    /**
      * Have we processed local definitions?
      */
     private boolean processedLocal;
@@ -76,7 +86,7 @@ public class ThemisXMavenParser
         processedLocal = false;
 
         /* Parse the local project */
-        loadPomAtLocation(pLocation);
+        thePom = loadPomAtLocation(pLocation);
         processedLocal = true;
 
         /* Loop through the local modules */
@@ -107,7 +117,17 @@ public class ThemisXMavenParser
 
         /* Create list of local modules */
         theModules = getModuleList(myModules);
+        theDependencies = thePom.getDependencies();
         myTask.end();
+    }
+
+    /**
+     * Obtain the name.
+     *
+     * @return the name
+     */
+    public String getName() {
+        return thePom.getArtifactId();
     }
 
     /**
@@ -115,8 +135,26 @@ public class ThemisXMavenParser
      *
      * @return the local modules
      */
-    public List<ThemisXMavenPom> getModules() {
+    public List<ThemisXMavenId> getModules() {
+        return theModules.stream().map(ThemisXMavenPom::getId).toList();
+    }
+
+    /**
+     * Obtain the parsed modules.
+     *
+     * @return the parsed modules
+     */
+    public List<ThemisXMavenPom> getParsedModules() {
         return theModules;
+    }
+
+    /**
+     * Obtain the dependencies.
+     *
+     * @return the dependencies
+     */
+    public List<ThemisXMavenId> getDependencies() {
+        return theDependencies;
     }
 
     @Override
@@ -211,4 +249,28 @@ public class ThemisXMavenParser
         }
         return myModules;
     }
+
+    /**
+     * Combine module dependencies.
+     *
+     * @return the dependencies
+     * @throws OceanusException on error
+     */
+    public List<ThemisXMavenId> getProjectDependencies() throws OceanusException {
+        /* Allocate the dependencies */
+        final List<ThemisXMavenId> myIds = new ArrayList<>();
+
+        /* Loop through the modules */
+        for (ThemisXMavenPom myModule : theModules) {
+            /* Loop through direct dependencies */
+            for (ThemisXMavenId myDependency : myModule.getDependencies()) {
+                /* Check the dependency and add if required */
+                ThemisXMavenPom.checkDependencyId(myIds, myDependency);
+            }
+        }
+
+        /* Return the id */
+        return myIds;
+    }
+
 }

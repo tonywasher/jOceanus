@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 
 import java.io.File;
@@ -228,8 +229,26 @@ public class ThemisXMavenPom
      *
      * @return the id
      */
-    ThemisXMavenId getId() {
+    public ThemisXMavenId getId() {
         return theId;
+    }
+
+    /**
+     * Obtain the artifactId.
+     *
+     * @return the id
+     */
+    public String getArtifactId() {
+        return theId.getArtifactId();
+    }
+
+    /**
+     * Obtain the location.
+     *
+     * @return the parent
+     */
+    public File getLocation() {
+        return theLocation;
     }
 
     /**
@@ -247,7 +266,7 @@ public class ThemisXMavenPom
      * @return true/false
      * @throws OceanusException on error
      */
-    boolean isJarPackaging() throws OceanusException {
+    public boolean isJarPackaging() throws OceanusException {
         return isJarPackage;
     }
 
@@ -256,7 +275,7 @@ public class ThemisXMavenPom
      *
      * @return the modules
      */
-    List<ThemisXMavenPom> getModules() {
+    public List<ThemisXMavenPom> getModules() {
         return theModules;
     }
 
@@ -266,7 +285,7 @@ public class ThemisXMavenPom
      * @return the dependencies
      * @throws OceanusException on error
      */
-    List<ThemisXMavenPom> getDirectDependencies() throws OceanusException {
+    public List<ThemisXMavenPom> getDirectDependencies() throws OceanusException {
         /* If we have not processed dependencies */
         if (theDirectDependencies == null) {
             /* Process dependencies */
@@ -293,7 +312,7 @@ public class ThemisXMavenPom
      * @return the dependencies
      * @throws OceanusException on error
      */
-    List<ThemisXMavenId> getDependencies() throws OceanusException {
+    public List<ThemisXMavenId> getDependencies() throws OceanusException {
         /* If we have not combined dependencies */
         if (theDependencies == null) {
             /* Combine dependencies */
@@ -319,7 +338,7 @@ public class ThemisXMavenPom
      *
      * @return the extra Directories
      */
-    List<String> getXtraDirs() {
+    public List<String> getXtraDirs() {
         return theXtraDirs;
     }
 
@@ -329,7 +348,7 @@ public class ThemisXMavenPom
      * @return the versions
      * @throws OceanusException on error
      */
-    ThemisXMavenVersionCache getVersions() throws OceanusException {
+    public ThemisXMavenVersionCache getVersions() throws OceanusException {
         /* If we have not processed versions */
         if (theVersions == null) {
             /* Process dependencies */
@@ -433,7 +452,7 @@ public class ThemisXMavenPom
     }
 
     /**
-     * Combine dependencies.
+     * Combine direct dependencies.
      *
      * @return the dependencies
      * @throws OceanusException on error
@@ -442,25 +461,59 @@ public class ThemisXMavenPom
         /* Allocate the dependencies */
         final List<ThemisXMavenId> myIds = new ArrayList<>();
 
-        /* Loop through direct dependencies */
-        for (ThemisXMavenPom myDependency : getDirectDependencies()) {
-            /* If we have not processed this dependency before */
-            final ThemisXMavenId myId = myDependency.getId();
-            if (!myIds.contains(myId)) {
-                /* Add the id */
-                myIds.add(myId);
-
-                /* Loop through the nested dependencies */
-                for (ThemisXMavenId myNestedId : myDependency.getDependencies()) {
-                    /* Add unknown ids */
-                    if (!myIds.contains(myNestedId)) {
-                        myIds.add(myNestedId);
-                    }
-                }
-            }
-        }
+        /* Combine dependencies for this pom */
+        combineDependencies(myIds, this);
 
         /* Return the id */
         return myIds;
+    }
+
+    /**
+     * Combine direct dependencies.
+     *
+     * @param pIds the list to populate
+     * @param pPom the pom to process
+     * @throws OceanusException on error
+     */
+    private static void combineDependencies(final List<ThemisXMavenId> pIds,
+                                            final ThemisXMavenPom pPom) throws OceanusException {
+        /* Loop through direct dependencies */
+        for (ThemisXMavenPom myDependency : pPom.getDirectDependencies()) {
+            /* If we have not processed this dependency before */
+            final ThemisXMavenId myId = myDependency.getId();
+            if (checkDependencyId(pIds, myId)) {
+                /* Combine underlying dependencies */
+                combineDependencies(pIds, myDependency);
+            }
+        }
+    }
+
+    /**
+     * Check id.
+     *
+     * @param pDependencies the list of existing dependencies
+     * @param pId           to id to check
+     * @return was the id added true/false
+     * @throws OceanusException on error
+     */
+    static boolean checkDependencyId(final List<ThemisXMavenId> pDependencies,
+                                     final ThemisXMavenId pId) throws OceanusException {
+        /* Loop through the existing dependencies */
+        for (ThemisXMavenId myDependency : pDependencies) {
+            /* If we have a match */
+            if (myDependency.equalsPrefix(pId)) {
+                /* OK as long as version matches */
+                if (myDependency.getVersion().equals(pId.getVersion())) {
+                    return false;
+                }
+
+                /* Reject mismatch of versions */
+                throw new ThemisDataException("Mismatch of dependency versions " + myDependency + " vs " + pId);
+            }
+        }
+
+        /* No match, so add to list */
+        pDependencies.add(pId);
+        return true;
     }
 }

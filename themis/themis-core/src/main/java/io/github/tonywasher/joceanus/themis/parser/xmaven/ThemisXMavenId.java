@@ -296,6 +296,32 @@ public final class ThemisXMavenId
                 && Objects.equals(theClassifier, myThat.getClassifier());
     }
 
+    /**
+     * Does the id match (excluding version)?
+     *
+     * @param pThat the target id
+     * @return true/false
+     */
+    public boolean equalsPrefix(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the object is a MavenId */
+        if (!(pThat instanceof ThemisXMavenId myThat)) {
+            return false;
+        }
+
+        /* Check components */
+        return Objects.equals(theGroupId, myThat.getGroupId())
+                && Objects.equals(theArtifactId, myThat.getArtifactId())
+                && Objects.equals(theClassifier, myThat.getClassifier());
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(theGroupId, theArtifactId, theVersion, theClassifier);

@@ -26,6 +26,7 @@ import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisParserDef;
 import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenPom;
 import io.github.tonywasher.joceanus.themis.parser.mod.ThemisModModule;
+import io.github.tonywasher.joceanus.themis.parser.xmaven.ThemisXMavenPom;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -96,6 +97,30 @@ public class ThemisModule
         /* Add any extraDirs */
         for (String myXtra : pPom.getXtraDirs()) {
             final File myXtraDir = new File(pLocation, myXtra);
+            checkForPackage(myXtraDir, null);
+        }
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param pPom the module Pom
+     */
+    ThemisModule(final ThemisXMavenPom pPom) {
+        /* Create the list */
+        thePackages = new ArrayList<>();
+
+        /* Store the name and location */
+        final File myLocation = pPom.getLocation();
+        theLocation = new File(myLocation, ThemisPackage.PATH_XTRA);
+        theName = myLocation.getName();
+
+        /* Initiate search for packages */
+        checkForPackage(theLocation, null);
+
+        /* Add any extraDirs */
+        for (String myXtra : pPom.getXtraDirs()) {
+            final File myXtraDir = new File(myLocation, myXtra);
             checkForPackage(myXtraDir, null);
         }
     }

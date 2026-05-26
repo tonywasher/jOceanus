@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.themis.parser.base.ThemisParserDef;
 import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenId;
 import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenLocation;
 import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenPom;
+import io.github.tonywasher.joceanus.themis.parser.xmaven.ThemisXMavenId;
 import io.github.tonywasher.joceanus.themis.parser.xmaven.ThemisXMavenParser;
 import io.github.tonywasher.joceanus.themis.parser.xmaven.ThemisXMavenPom;
 
@@ -80,9 +81,19 @@ public class ThemisProject
     private final Map<ThemisMavenId, ThemisModule> theModules;
 
     /**
+     * The Xmodule map.
+     */
+    private final Map<ThemisXMavenId, ThemisModule> theXModules;
+
+    /**
      * The dependencies.
      */
     private final List<ThemisMavenId> theDependencies;
+
+    /**
+     * The Xdependencies.
+     */
+    private final List<ThemisXMavenId> theXDependencies;
 
     /**
      * The list of local modules.
@@ -104,18 +115,24 @@ public class ThemisProject
 
         /* Create the list */
         theModules = new LinkedHashMap<>();
+        theXModules = new LinkedHashMap<>();
         theDependencies = new ArrayList<>();
 
         /* Build new Maven Map */
         final ThemisXMavenParser myParser = new ThemisXMavenParser(theParser.getReporter(), theLocation);
-        theParsedModules = myParser.getModules();
+        theName = myParser.getName();
+        theParsedModules = myParser.getParsedModules();
+        theXDependencies = myParser.getProjectDependencies();
+        for (ThemisXMavenPom myModule : theParsedModules) {
+            theXModules.put(myModule.getId(), new ThemisModule(myModule));
+        }
 
         /* Initiate search for modules */
-        final ThemisMavenPom myPom = parseProjectFile(null, new File(theLocation, ThemisMavenPom.POM));
-        theName = myPom == null ? null : myPom.getMavenId().getArtifactId();
+        parseProjectFile(null, new File(theLocation, ThemisMavenPom.POM));
 
         /* Remove own mavenIds from dependency list */
         theDependencies.removeIf(theModules::containsKey);
+        theXDependencies.removeIf(theXModules::containsKey);
 
         /* For all dependencies */
         final List<ThemisMavenId> myDependencies = new ArrayList<>(theDependencies);
