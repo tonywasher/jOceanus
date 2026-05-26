@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.parser.xmaven;
+package io.github.tonywasher.joceanus.themis.parser.maven;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
@@ -46,7 +46,7 @@ import java.util.Objects;
 /**
  * Pom Parser.
  */
-public class ThemisXMavenPomParser {
+public class ThemisMavenPomParser {
     /**
      * Document name.
      */
@@ -157,7 +157,7 @@ public class ThemisXMavenPomParser {
     /**
      * The PropertyCache.
      */
-    private ThemisXMavenPropertyCache theProperties;
+    private ThemisMavenPropertyCache theProperties;
 
     /**
      * Constructor.
@@ -166,8 +166,8 @@ public class ThemisXMavenPomParser {
      * @param pProperties the properties cache
      * @throws OceanusException on error
      */
-    public ThemisXMavenPomParser(final File pLocation,
-                                 final ThemisXMavenPropertyCache pProperties) throws OceanusException {
+    public ThemisMavenPomParser(final File pLocation,
+                                final ThemisMavenPropertyCache pProperties) throws OceanusException {
         /* Record the cache */
         theProperties = pProperties;
 
@@ -240,12 +240,12 @@ public class ThemisXMavenPomParser {
      * @return the parentId (or null)
      * @throws OceanusException on error
      */
-    ThemisXMavenId getParent() throws OceanusException {
+    ThemisMavenId getParent() throws OceanusException {
         /* Obtain parent definition if any */
         final Element myParentEl = (Element) findNode(XPATH_PARENT);
-        final ThemisXMavenId myParent = myParentEl == null
+        final ThemisMavenId myParent = myParentEl == null
                 ? null
-                : new ThemisXMavenId(theProperties, myParentEl);
+                : new ThemisMavenId(theProperties, myParentEl);
 
         /* Store parent properties if we have a parent */
         if (myParent != null) {
@@ -261,7 +261,7 @@ public class ThemisXMavenPomParser {
      *
      * @param pParent the parent
      */
-    private void storeParentProperties(final ThemisXMavenId pParent) {
+    private void storeParentProperties(final ThemisMavenId pParent) {
         /* Store parent groupId and version */
         theProperties.setProperty(PARENT_GROUP, pParent.getGroupId());
         theProperties.setProperty(PARENT_VERSION, pParent.getVersion());
@@ -274,9 +274,9 @@ public class ThemisXMavenPomParser {
      * @return the Id (or null)
      * @throws OceanusException on error
      */
-    ThemisXMavenId getId(final ThemisXMavenId pParent) throws OceanusException {
+    ThemisMavenId getId(final ThemisMavenId pParent) throws OceanusException {
         /* Obtain definition */
-        final ThemisXMavenId myProject = new ThemisXMavenId(theProperties, theDoc.getDocumentElement(), pParent);
+        final ThemisMavenId myProject = new ThemisMavenId(theProperties, theDoc.getDocumentElement(), pParent);
 
         /* Store self properties */
         storeSelfProperties(myProject);
@@ -290,7 +290,7 @@ public class ThemisXMavenPomParser {
      *
      * @param pProject the project
      */
-    private void storeSelfProperties(final ThemisXMavenId pProject) {
+    private void storeSelfProperties(final ThemisMavenId pProject) {
         /* Determine project groupId */
         String myGroupId = pProject.getGroupId();
         myGroupId = myGroupId != null ? myGroupId : theProperties.getProperty(PARENT_GROUP);
@@ -337,7 +337,7 @@ public class ThemisXMavenPomParser {
      * @return the list
      * @throws OceanusException on error
      */
-    List<ThemisXMavenId> getDependencyManagement() throws OceanusException {
+    List<ThemisMavenId> getDependencyManagement() throws OceanusException {
         return getDependencies(XPATH_DEPENDENCYMGMT);
     }
 
@@ -347,7 +347,7 @@ public class ThemisXMavenPomParser {
      * @return the list
      * @throws OceanusException on error
      */
-    List<ThemisXMavenId> getDependencies() throws OceanusException {
+    List<ThemisMavenId> getDependencies() throws OceanusException {
         return getDependencies(XPATH_DEPENDENCIES);
     }
 
@@ -358,9 +358,9 @@ public class ThemisXMavenPomParser {
      * @return the list
      * @throws OceanusException on error
      */
-    private List<ThemisXMavenId> getDependencies(final String pPath) throws OceanusException {
+    private List<ThemisMavenId> getDependencies(final String pPath) throws OceanusException {
         /* Process any dependencies */
-        final List<ThemisXMavenId> myList = new ArrayList<>();
+        final List<ThemisMavenId> myList = new ArrayList<>();
         final Node myDependencies = findNode(pPath);
         if (myDependencies != null) {
             /* Loop through the children */
@@ -370,7 +370,7 @@ public class ThemisXMavenPomParser {
                 /* Return result if we have a match */
                 if (myChild instanceof Element myElement
                         && EL_DEPENDENCY.equals(myChild.getNodeName())) {
-                    final ThemisXMavenId myId = new ThemisXMavenId(theProperties, myElement);
+                    final ThemisMavenId myId = new ThemisMavenId(theProperties, myElement);
                     if (!myId.isSkippable()) {
                         myList.add(myId);
                     }

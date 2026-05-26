@@ -79,3 +79,4 @@ public final class ThemisMavenConstants {
      */
     static final int SP_INDEX = 5;
 }
+

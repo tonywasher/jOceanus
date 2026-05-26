@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.parser.xmaven;
+package io.github.tonywasher.joceanus.themis.parser.maven;
 
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
 
@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Maven version parser.
  */
-public class ThemisXMavenVersionParser {
+public class ThemisMavenVersionParser {
     /**
      * The components.
      */
@@ -49,7 +49,7 @@ public class ThemisXMavenVersionParser {
     /**
      * Constructor.
      */
-    public ThemisXMavenVersionParser() {
+    public ThemisMavenVersionParser() {
         theComponents = new ArrayList<>();
     }
 
@@ -59,7 +59,7 @@ public class ThemisXMavenVersionParser {
      * @param pVersion the version
      * @return the parsed version
      */
-    public ThemisXMavenVersion parseVersion(final String pVersion) {
+    public ThemisMavenVersion parseVersion(final String pVersion) {
         /* Initialise state */
         theComponents.clear();
         theVersion = pVersion;
@@ -83,7 +83,7 @@ public class ThemisXMavenVersionParser {
         pruneComponents();
 
         /* Return the parsed version */
-        return new ThemisXMavenVersion(theVersion, theComponents.toArray());
+        return new ThemisMavenVersion(theVersion, theComponents.toArray());
     }
 
     /**
@@ -146,11 +146,11 @@ public class ThemisXMavenVersionParser {
      */
     private String normalise(final String pValue) {
         return switch (pValue.toLowerCase()) {
-            case "alpha" -> ThemisXMavenConstants.ALPHA;
-            case "beta" -> ThemisXMavenConstants.BETA;
-            case "milestone" -> ThemisXMavenConstants.MILESTONE;
-            case "final" -> ThemisXMavenConstants.GA;
-            case "cr" -> ThemisXMavenConstants.RC;
+            case "alpha" -> ThemisMavenConstants.ALPHA;
+            case "beta" -> ThemisMavenConstants.BETA;
+            case "milestone" -> ThemisMavenConstants.MILESTONE;
+            case "final" -> ThemisMavenConstants.GA;
+            case "cr" -> ThemisMavenConstants.RC;
             default -> pValue;
         };
     }
@@ -165,8 +165,8 @@ public class ThemisXMavenVersionParser {
             final Object myLast = theComponents.getLast();
 
             /* If the component is empty */
-            if (myLast.equals(ThemisXMavenConstants.ZERO)
-                    || ThemisXMavenConstants.GA.equalsIgnoreCase(myLast.toString())) {
+            if (myLast.equals(ThemisMavenConstants.ZERO)
+                    || ThemisMavenConstants.GA.equalsIgnoreCase(myLast.toString())) {
                 /* Remove and reprune */
                 theComponents.removeLast();
                 pruneComponents();

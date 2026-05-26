@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.parser.xmaven;
+package io.github.tonywasher.joceanus.themis.parser.maven;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
@@ -32,18 +32,18 @@ import java.util.Map;
 /**
  * Maven dependency cache.
  */
-public class ThemisXMavenVersionCache
+public class ThemisMavenVersionCache
         implements MetisDataMap<String, String>, MetisFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisFieldSet<ThemisXMavenVersionCache> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisXMavenVersionCache.class);
+    private static final MetisFieldSet<ThemisMavenVersionCache> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisMavenVersionCache.class);
 
     /*
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PARENT, ThemisXMavenVersionCache::getParent);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PARENT, ThemisMavenVersionCache::getParent);
     }
 
     /**
@@ -54,17 +54,17 @@ public class ThemisXMavenVersionCache
     /**
      * The parent cache.
      */
-    private ThemisXMavenVersionCache theParent;
+    private ThemisMavenVersionCache theParent;
 
     /**
      * Constructor.
      */
-    ThemisXMavenVersionCache() {
+    ThemisMavenVersionCache() {
         theMap = new HashMap<>();
     }
 
     @Override
-    public MetisFieldSet<ThemisXMavenVersionCache> getDataFieldSet() {
+    public MetisFieldSet<ThemisMavenVersionCache> getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -83,7 +83,7 @@ public class ThemisXMavenVersionCache
      *
      * @return the parent
      */
-    private ThemisXMavenVersionCache getParent() {
+    private ThemisMavenVersionCache getParent() {
         return theParent;
     }
 
@@ -92,7 +92,7 @@ public class ThemisXMavenVersionCache
      *
      * @param pParent the parent cache
      */
-    void setParent(final ThemisXMavenVersionCache pParent) {
+    void setParent(final ThemisMavenVersionCache pParent) {
         theParent = pParent;
     }
 
@@ -102,7 +102,7 @@ public class ThemisXMavenVersionCache
      * @param pId the id to add to the cache
      * @throws OceanusException on error
      */
-    public void addToCache(final ThemisXMavenId pId) throws OceanusException {
+    public void addToCache(final ThemisMavenId pId) throws OceanusException {
         /* Determine the prefix and the proposed version */
         final String myPrefix = buildPrefix(pId);
         final String myProposed = pId.getVersion();
@@ -123,7 +123,7 @@ public class ThemisXMavenVersionCache
      * @return the autoCorrected id.
      * @throws OceanusException on error
      */
-    public ThemisXMavenId lookUpVersion(final ThemisXMavenId pId) throws OceanusException {
+    public ThemisMavenId lookUpVersion(final ThemisMavenId pId) throws OceanusException {
         /* Determine the prefix and the proposed version */
         final String myPrefix = buildPrefix(pId);
         final String myProposed = pId.getVersion();
@@ -135,7 +135,7 @@ public class ThemisXMavenVersionCache
         if (myVersion != null) {
             /* Handle no proposed version */
             if (myProposed == null) {
-                return new ThemisXMavenId(pId, myVersion);
+                return new ThemisMavenId(pId, myVersion);
 
                 /* Check proposed version is valid */
             } else if (myProposed.equals(myVersion)) {
@@ -167,7 +167,7 @@ public class ThemisXMavenVersionCache
      * @param pChild the child dependency cache
      * @throws OceanusException on error
      */
-    void importDependencies(final ThemisXMavenVersionCache pChild) throws OceanusException {
+    void importDependencies(final ThemisMavenVersionCache pChild) throws OceanusException {
         /* Loop through the child entries */
         for (Map.Entry<String, String> myEntry : pChild.getUnderlyingMap().entrySet()) {
             /* Access details */
@@ -207,7 +207,7 @@ public class ThemisXMavenVersionCache
      * @param pId the id
      * @return the prefix
      */
-    private String buildPrefix(final ThemisXMavenId pId) {
+    private String buildPrefix(final ThemisMavenId pId) {
         return pId.getGroupId() + ThemisChar.COLON + pId.getArtifactId();
     }
 }

@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.parser.xmaven;
+package io.github.tonywasher.joceanus.themis.parser.maven;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
@@ -25,7 +25,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusSystem;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
-import io.github.tonywasher.joceanus.themis.parser.xmaven.ThemisXMavenId.ThemisXElementParser;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenId.ThemisXElementParser;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -35,18 +35,18 @@ import java.util.Map;
 /**
  * Maven property cache.
  */
-public class ThemisXMavenPropertyCache
+public class ThemisMavenPropertyCache
         implements ThemisXElementParser, MetisDataMap<String, String>, MetisFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisFieldSet<ThemisXMavenPropertyCache> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisXMavenPropertyCache.class);
+    private static final MetisFieldSet<ThemisMavenPropertyCache> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisMavenPropertyCache.class);
 
     /*
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PARENT, ThemisXMavenPropertyCache::getParent);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PARENT, ThemisMavenPropertyCache::getParent);
     }
 
     /**
@@ -67,18 +67,18 @@ public class ThemisXMavenPropertyCache
     /**
      * The parent cache.
      */
-    private ThemisXMavenPropertyCache theParent;
+    private ThemisMavenPropertyCache theParent;
 
     /**
      * Constructor.
      */
-    ThemisXMavenPropertyCache() {
+    ThemisMavenPropertyCache() {
         theMap = new HashMap<>();
         setProperty("javafx.platform", OceanusSystem.determineSystem().getClassifier());
     }
 
     @Override
-    public MetisFieldSet<ThemisXMavenPropertyCache> getDataFieldSet() {
+    public MetisFieldSet<ThemisMavenPropertyCache> getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -97,7 +97,7 @@ public class ThemisXMavenPropertyCache
      *
      * @return the parent
      */
-    private ThemisXMavenPropertyCache getParent() {
+    private ThemisMavenPropertyCache getParent() {
         return theParent;
     }
 
@@ -106,7 +106,7 @@ public class ThemisXMavenPropertyCache
      *
      * @param pParent the parent cache
      */
-    void setParent(final ThemisXMavenPropertyCache pParent) {
+    void setParent(final ThemisMavenPropertyCache pParent) {
         theParent = pParent;
     }
 

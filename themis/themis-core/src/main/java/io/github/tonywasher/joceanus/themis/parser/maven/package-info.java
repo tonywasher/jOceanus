@@ -15,7 +15,4 @@
  * the License.
  */
 
-/**
- * Maven access.
- */
 package io.github.tonywasher.joceanus.themis.parser.maven;

@@ -17,158 +17,260 @@
 
 package io.github.tonywasher.joceanus.themis.parser.maven;
 
-import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
+import io.github.tonywasher.joceanus.themis.exc.ThemisLogicException;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenPom.ThemisXMavenControl;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Maven version parser.
+ * Maven Parser.
  */
-public class ThemisMavenParser {
+public class ThemisMavenParser
+        implements ThemisXMavenControl {
     /**
-     * The components.
+     * The POM file name.
      */
-    private final List<Object> theComponents;
+    private static final String POM_NAME = "pom.xml";
 
     /**
-     * The version.
+     * The map of maven artifacts.
      */
-    private String theVersion;
+    private final Map<ThemisMavenId, ThemisMavenPom> thePoms;
 
     /**
-     * The version length.
+     * The list of local modules.
      */
-    private int theVersLen;
+    private final List<ThemisMavenPom> theModules;
 
     /**
-     * The current version index.
+     * The dependencies.
      */
-    private int theIndex;
+    private final List<ThemisMavenId> theDependencies;
+
+    /**
+     * The pom.
+     */
+    private final ThemisMavenPom thePom;
+
+    /**
+     * Have we processed local definitions?
+     */
+    private boolean processedLocal;
 
     /**
      * Constructor.
+     *
+     * @param pReport   the reporter
+     * @param pLocation the location of the project
+     * @throws OceanusException on error
      */
-    public ThemisMavenParser() {
-        theComponents = new ArrayList<>();
+    public ThemisMavenParser(final TethysUIThreadStatusReport pReport,
+                             final File pLocation) throws OceanusException {
+        /* Obtain the active profile */
+        OceanusProfile myTask = pReport.getActiveTask();
+        myTask = myTask.startTask(ThemisDataResource.TASK_DISCOVER);
+        pReport.initTask(ThemisDataResource.TASK_DISCOVER);
+        pReport.setNumStages(2);
+
+        /* Create the map */
+        thePoms = new LinkedHashMap<>();
+        processedLocal = false;
+
+        /* Parse the local project */
+        thePom = loadPomAtLocation(pLocation);
+        processedLocal = true;
+
+        /* Loop through the local modules */
+        OceanusProfile mySubTask = myTask.startTask(ThemisDataResource.TASK_DISCOVERLOCAL);
+        final List<ThemisMavenPom> myModules = new ArrayList<>(thePoms.values());
+        pReport.setNewStage(ThemisDataResource.TASK_DISCOVERLOCAL);
+        pReport.setNumSteps(myModules.size());
+        for (ThemisMavenPom myModule : myModules) {
+            /* Process the module */
+            final String myName = myModule.getId().toString();
+            mySubTask.startTask(myName);
+            pReport.setNextStep();
+            myModule.getVersions();
+            myModule.getDirectDependencies();
+        }
+
+        /* Loop through the local modules */
+        mySubTask = myTask.startTask(ThemisDataResource.TASK_DISCOVERDEPENDENCY);
+        pReport.setNewStage(ThemisDataResource.TASK_DISCOVERDEPENDENCY);
+        pReport.setNumSteps(myModules.size());
+        for (ThemisMavenPom myModule : myModules) {
+            /* Process the module */
+            final String myName = myModule.getId().toString();
+            mySubTask.startTask(myName);
+            pReport.setNextStep();
+            myModule.getDependencies();
+        }
+
+        /* Create list of local modules */
+        theModules = getModuleList(myModules);
+        theDependencies = thePom.getDependencies();
+        myTask.end();
     }
 
     /**
-     * Parse the version.
+     * Obtain the name.
      *
-     * @param pVersion the version
-     * @return the parsed version
+     * @return the name
      */
-    public ThemisMavenVersion parseVersion(final String pVersion) {
-        /* Initialise state */
-        theComponents.clear();
-        theVersion = pVersion;
-        theVersLen = pVersion.length();
-        theIndex = 0;
+    public String getName() {
+        return thePom.getArtifactId();
+    }
 
-        /* While we have more data */
-        while (theIndex < theVersLen) {
-            /* Parse the components */
-            final char myChar = theVersion.charAt(theIndex);
-            if (Character.isDigit(myChar)) {
-                theComponents.add(parseLong());
-            } else if (isSeparator(myChar)) {
-                theIndex++;
-            } else {
-                theComponents.add(parseString());
+    /**
+     * Obtain the local modules.
+     *
+     * @return the local modules
+     */
+    public List<ThemisMavenId> getModules() {
+        return theModules.stream().map(ThemisMavenPom::getId).toList();
+    }
+
+    /**
+     * Obtain the parsed modules.
+     *
+     * @return the parsed modules
+     */
+    public List<ThemisMavenPom> getParsedModules() {
+        return theModules;
+    }
+
+    /**
+     * Obtain the dependencies.
+     *
+     * @return the dependencies
+     */
+    public List<ThemisMavenId> getDependencies() {
+        return theDependencies;
+    }
+
+    @Override
+    public ThemisMavenPom loadPomViaId(final ThemisMavenId pId) throws OceanusException {
+        /* Look for already known Pom */
+        final ThemisMavenPom myExisting = thePoms.get(pId);
+        if (myExisting != null) {
+            return myExisting;
+        }
+
+        /* Reject if we have not fully processed local poms */
+        if (!processedLocal) {
+            throw new ThemisLogicException("Processed pom via id before finished local processing");
+        }
+
+        /* Load the pom file and store into cache */
+        final ThemisMavenPom myPom = doLoadPomViaId(pId);
+        thePoms.put(pId, myPom);
+
+        /* If the pom has an associated jar */
+        if (myPom.isJarPackaging()) {
+            /* Make sure that the pom has been downloaded */
+            ThemisMavenLocation.ensureJarArtifact(pId);
+        }
+
+        /* Process dependencies */
+        myPom.getVersions();
+        myPom.getDirectDependencies();
+        myPom.getDependencies();
+
+        /* Return the pom */
+        return myPom;
+    }
+
+    /**
+     * Do load pom via Id.
+     *
+     * @param pId the id of the pom
+     * @return the loaded pom
+     * @throws OceanusException on error
+     */
+    private ThemisMavenPom doLoadPomViaId(final ThemisMavenId pId) throws OceanusException {
+        /* If the id has a classifier */
+        if (pId.getClassifier() != null) {
+            /* There is no pom , so just fake it */
+            return new ThemisMavenPom(pId);
+        }
+
+        /* Make sure that the pom has been downloaded */
+        ThemisMavenLocation.ensurePomArtifact(pId);
+
+        /* Just do a normal load */
+        return new ThemisMavenPom(this, new File(ThemisMavenLocation.getLocalPomFileName(pId)));
+    }
+
+    @Override
+    public ThemisMavenPom loadPomAtLocation(final File pLocation) throws OceanusException {
+        /* Parse the pom and obtain the id */
+        final ThemisMavenPom myPom = new ThemisMavenPom(this, new File(pLocation, POM_NAME));
+        final ThemisMavenId myId = myPom.getId();
+
+        /* Make sure that the pom has not been seen before */
+        final ThemisMavenPom myExisting = thePoms.get(myId);
+        if (myExisting != null) {
+            throw new ThemisDataException("Duplicate POM - " + myId);
+        }
+
+        /* Store into map */
+        thePoms.put(myId, myPom);
+
+        /* Process local details */
+        myPom.processLocalDetails();
+
+        /* Return the Pom */
+        return myPom;
+    }
+
+    /**
+     * Create list of local jar modules.
+     *
+     * @param pLocal the list of local modules
+     * @return the list.
+     * @throws OceanusException on error
+     */
+    private List<ThemisMavenPom> getModuleList(final List<ThemisMavenPom> pLocal) throws OceanusException {
+        /* Loop through the local modules */
+        final List<ThemisMavenPom> myModules = new ArrayList<>();
+        for (ThemisMavenPom myModule : pLocal) {
+            if (myModule.isJarPackaging()) {
+                myModules.add(myModule);
+            }
+        }
+        return myModules;
+    }
+
+    /**
+     * Combine module dependencies.
+     *
+     * @return the dependencies
+     * @throws OceanusException on error
+     */
+    public List<ThemisMavenId> getProjectDependencies() throws OceanusException {
+        /* Allocate the dependencies */
+        final List<ThemisMavenId> myIds = new ArrayList<>();
+
+        /* Loop through the modules */
+        for (ThemisMavenPom myModule : theModules) {
+            /* Loop through direct dependencies */
+            for (ThemisMavenId myDependency : myModule.getDependencies()) {
+                /* Check the dependency and add if required */
+                ThemisMavenPom.checkDependencyId(myIds, myDependency);
             }
         }
 
-        /* Prune the components */
-        pruneComponents();
-
-        /* Return the parsed version */
-        return new ThemisMavenVersion(theVersion, theComponents.toArray());
+        /* Return the id */
+        return myIds;
     }
 
-    /**
-     * Parse a long component.
-     *
-     * @return the component
-     */
-    private Long parseLong() {
-        final StringBuilder myBuffer = new StringBuilder();
-        while (theIndex < theVersLen) {
-            final char myChar = theVersion.charAt(theIndex);
-            if (!Character.isDigit(myChar)) {
-                break;
-            }
-            myBuffer.append(myChar);
-            theIndex++;
-        }
-        return Long.parseLong(myBuffer.toString());
-    }
-
-    /**
-     * Parse a string component.
-     *
-     * @return the component
-     */
-    private String parseString() {
-        final StringBuilder myBuffer = new StringBuilder();
-        while (theIndex < theVersLen) {
-            /* Access character and break loop if numeric or separator*/
-            final char myChar = theVersion.charAt(theIndex);
-            if (Character.isDigit(myChar)
-                    || isSeparator(myChar)) {
-                break;
-            }
-            myBuffer.append(myChar);
-            theIndex++;
-        }
-        return normalise(myBuffer.toString());
-    }
-
-    /**
-     * Is the character a separator.
-     *
-     * @param pChar the character
-     * @return true/false
-     */
-    private boolean isSeparator(final char pChar) {
-        return switch (pChar) {
-            case ThemisChar.PERIOD, ThemisChar.HYPHEN -> true;
-            default -> false;
-        };
-    }
-
-    /**
-     * Normalise the string component.
-     *
-     * @param pValue the component
-     * @return the normalised component
-     */
-    private String normalise(final String pValue) {
-        return switch (pValue.toLowerCase()) {
-            case "alpha" -> ThemisMavenConstants.ALPHA;
-            case "beta" -> ThemisMavenConstants.BETA;
-            case "milestone" -> ThemisMavenConstants.MILESTONE;
-            case "final" -> ThemisMavenConstants.GA;
-            case "cr" -> ThemisMavenConstants.RC;
-            default -> pValue;
-        };
-    }
-
-    /**
-     * Prune components.
-     */
-    private void pruneComponents() {
-        /* If we have components */
-        if (!theComponents.isEmpty()) {
-            /* Access last component */
-            final Object myLast = theComponents.getLast();
-            /* If the component is empty */
-            if (myLast.equals(ThemisMavenConstants.ZERO)
-                    || ThemisMavenConstants.GA.equalsIgnoreCase(myLast.toString())) {
-                /* Remove and reprune */
-                theComponents.removeLast();
-                pruneComponents();
-            }
-        }
-    }
 }

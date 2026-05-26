@@ -22,20 +22,13 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
-import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisParserDef;
 import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenId;
-import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenLocation;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenParser;
 import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenPom;
-import io.github.tonywasher.joceanus.themis.parser.xmaven.ThemisXMavenId;
-import io.github.tonywasher.joceanus.themis.parser.xmaven.ThemisXMavenParser;
-import io.github.tonywasher.joceanus.themis.parser.xmaven.ThemisXMavenPom;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -81,24 +74,14 @@ public class ThemisProject
     private final Map<ThemisMavenId, ThemisModule> theModules;
 
     /**
-     * The Xmodule map.
-     */
-    private final Map<ThemisXMavenId, ThemisModule> theXModules;
-
-    /**
      * The dependencies.
      */
     private final List<ThemisMavenId> theDependencies;
 
     /**
-     * The Xdependencies.
-     */
-    private final List<ThemisXMavenId> theXDependencies;
-
-    /**
      * The list of local modules.
      */
-    private final List<ThemisXMavenPom> theParsedModules;
+    private final List<ThemisMavenPom> theParsedModules;
 
     /**
      * Constructor.
@@ -115,30 +98,18 @@ public class ThemisProject
 
         /* Create the list */
         theModules = new LinkedHashMap<>();
-        theXModules = new LinkedHashMap<>();
-        theDependencies = new ArrayList<>();
 
         /* Build new Maven Map */
-        final ThemisXMavenParser myParser = new ThemisXMavenParser(theParser.getReporter(), theLocation);
+        final ThemisMavenParser myParser = new ThemisMavenParser(theParser.getReporter(), theLocation);
         theName = myParser.getName();
         theParsedModules = myParser.getParsedModules();
-        theXDependencies = myParser.getProjectDependencies();
-        for (ThemisXMavenPom myModule : theParsedModules) {
-            theXModules.put(myModule.getId(), new ThemisModule(myModule));
+        theDependencies = myParser.getProjectDependencies();
+        for (ThemisMavenPom myModule : theParsedModules) {
+            theModules.put(myModule.getId(), new ThemisModule(myModule));
         }
-
-        /* Initiate search for modules */
-        parseProjectFile(null, new File(theLocation, ThemisMavenPom.POM));
 
         /* Remove own mavenIds from dependency list */
         theDependencies.removeIf(theModules::containsKey);
-        theXDependencies.removeIf(theXModules::containsKey);
-
-        /* For all dependencies */
-        final List<ThemisMavenId> myDependencies = new ArrayList<>(theDependencies);
-        for (ThemisMavenId myId : myDependencies) {
-            processDependency(myId);
-        }
     }
 
     @Override
@@ -149,33 +120,6 @@ public class ThemisProject
     @Override
     public String formatObject(final OceanusDataFormatter pFormatter) {
         return toString();
-    }
-
-    /**
-     * Process dependency.
-     *
-     * @param pId the maven id
-     */
-    private void processDependency(final ThemisMavenId pId) throws OceanusException {
-        /* Protect against exceptions */
-        final File myFile = new File(ThemisMavenLocation.getLocalPomFileName(pId));
-        try (InputStream myInStream = new FileInputStream(myFile)) {
-            /* Parse the Project definition file */
-            final ThemisMavenPom myPom = new ThemisMavenPom(null, myInStream);
-
-            /* Add any unique dependencies */
-            for (final ThemisMavenId myDepId : myPom.getDependencies()) {
-                if (!theDependencies.contains(myDepId)
-                        && myDepId.getVersion() != null) {
-                    theDependencies.add(myDepId);
-                    if (myDepId.getClassifier() == null) {
-                        processDependency(myDepId);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new ThemisIOException("Failed to parse pom file", e);
-        }
     }
 
     /**
@@ -210,7 +154,7 @@ public class ThemisProject
      *
      * @return the modules
      */
-    private List<ThemisXMavenPom> getParsedModules() {
+    private List<ThemisMavenPom> getParsedModules() {
         return theParsedModules;
     }
 
@@ -226,60 +170,6 @@ public class ThemisProject
     @Override
     public String toString() {
         return theName;
-    }
-
-    /**
-     * Parse the maven project file.
-     *
-     * @param pParent the parent
-     * @param pPom    the project file
-     * @return the artifact name
-     * @throws OceanusException on error
-     */
-    private ThemisMavenPom parseProjectFile(final ThemisMavenPom pParent,
-                                            final File pPom) throws OceanusException {
-        /* If the pom file does not exist, just return */
-        if (!pPom.exists()) {
-            return null;
-        }
-
-        /* Protect against exceptions */
-        try (InputStream myInStream = new FileInputStream(pPom)) {
-            /* Parse the Project definition file */
-            final ThemisMavenPom myPom = new ThemisMavenPom(pParent, myInStream);
-
-            /* If source directory exists */
-            final File mySrc = new File(pPom.getParent(), ThemisPackage.PATH_XTRA);
-            if (mySrc.exists()
-                    && mySrc.isDirectory()) {
-                /* Add the module to the list */
-                theModules.put(myPom.getMavenId(), new ThemisModule(new File(pPom.getParent()), myPom));
-
-                /* Add any unique dependencies */
-                for (final ThemisMavenId myDepId : myPom.getDependencies()) {
-                    if (!theDependencies.contains(myDepId)) {
-                        theDependencies.add(myDepId);
-                    }
-                }
-            }
-
-            /* Loop through the modules */
-            for (final String myModuleName : myPom.getModules()) {
-                /* Access module directory */
-                final File myModuleDir = new File(pPom.getParentFile(), myModuleName);
-
-                /* Process the project file */
-                parseProjectFile(myPom, new File(myModuleDir, ThemisMavenPom.POM));
-            }
-
-            /* Return the POM */
-            return myPom;
-
-            /* Catch exceptions */
-        } catch (IOException e) {
-            /* Convert Exception */
-            throw new ThemisIOException("Failed to parse Project file", e);
-        }
     }
 
     /**

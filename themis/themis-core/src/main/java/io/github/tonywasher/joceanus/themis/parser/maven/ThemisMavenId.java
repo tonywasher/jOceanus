@@ -17,7 +17,12 @@
 
 package io.github.tonywasher.joceanus.themis.parser.maven;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import org.w3c.dom.Element;
 
 import java.util.Objects;
@@ -25,20 +30,39 @@ import java.util.Objects;
 /**
  * Maven Module Id.
  */
-public final class ThemisMavenId {
+public final class ThemisMavenId
+        implements MetisFieldItem {
     /**
      * ElementParser.
      */
-    interface ThemisElementParser {
+    interface ThemisXElementParser {
         /**
          * Obtain element value.
          *
          * @param pElement the element
          * @param pValue   the value name
          * @return the value
+         * @throws OceanusException on error
          */
         String getElementValue(Element pElement,
-                               String pValue);
+                               String pValue) throws OceanusException;
+    }
+
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisMavenId> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisMavenId.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_GROUPID, ThemisMavenId::getGroupId);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_ARTIFACTID, ThemisMavenId::getArtifactId);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_VERSION, ThemisMavenId::getVersion);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_CLASSIFIER, ThemisMavenId::getClassifier);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_SCOPE, ThemisMavenId::getScope);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_OPTIONAL, ThemisMavenId::isOptional);
     }
 
     /**
@@ -77,16 +101,6 @@ public final class ThemisMavenId {
     private final String theArtifactId;
 
     /**
-     * The groupId.
-     */
-    private String theGroupId;
-
-    /**
-     * The version.
-     */
-    private String theVersion;
-
-    /**
      * The scope.
      */
     private final String theScope;
@@ -102,13 +116,24 @@ public final class ThemisMavenId {
     private final String isOptional;
 
     /**
+     * The groupId.
+     */
+    private String theGroupId;
+
+    /**
+     * The version.
+     */
+    private String theVersion;
+
+    /**
      * Constructor.
      *
      * @param pParser  the parser
      * @param pElement the element containing the values
+     * @throws OceanusException on error
      */
-    ThemisMavenId(final ThemisElementParser pParser,
-                  final Element pElement) {
+    ThemisMavenId(final ThemisXElementParser pParser,
+                  final Element pElement) throws OceanusException {
         /* Access the values */
         theGroupId = pParser.getElementValue(pElement, EL_GROUPID);
         theArtifactId = pParser.getElementValue(pElement, EL_ARTIFACTID);
@@ -124,18 +149,19 @@ public final class ThemisMavenId {
      * @param pParser  the parser
      * @param pElement the element containing the values
      * @param pParent  the parentId
+     * @throws OceanusException on error
      */
-    ThemisMavenId(final ThemisElementParser pParser,
+    ThemisMavenId(final ThemisXElementParser pParser,
                   final Element pElement,
-                  final ThemisMavenId pParent) {
+                  final ThemisMavenId pParent) throws OceanusException {
         /* Process as much as we can */
         this(pParser, pElement);
 
         /* Handle missing groupId/version */
-        if (theGroupId == null) {
+        if (theGroupId == null && pParent != null) {
             theGroupId = pParent.getGroupId();
         }
-        if (theVersion == null) {
+        if (theVersion == null && pParent != null) {
             theVersion = pParent.getVersion();
         }
 
@@ -144,6 +170,33 @@ public final class ThemisMavenId {
                 && theVersion.startsWith(String.valueOf(ThemisChar.ARRAY_OPEN))) {
             theVersion = null;
         }
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param pSource  the source Id
+     * @param pVersion the new version
+     */
+    ThemisMavenId(final ThemisMavenId pSource,
+                  final String pVersion) {
+        /* Access the values */
+        theGroupId = pSource.getGroupId();
+        theArtifactId = pSource.getArtifactId();
+        theVersion = pVersion;
+        theScope = pSource.getScope();
+        theClassifier = pSource.getClassifier();
+        isOptional = pSource.isOptional();
+    }
+
+    @Override
+    public MetisFieldSet<ThemisMavenId> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return toString();
     }
 
     /**
@@ -240,13 +293,38 @@ public final class ThemisMavenId {
         return Objects.equals(theGroupId, myThat.getGroupId())
                 && Objects.equals(theArtifactId, myThat.getArtifactId())
                 && Objects.equals(theVersion, myThat.getVersion())
-                && Objects.equals(theScope, myThat.getScope())
+                && Objects.equals(theClassifier, myThat.getClassifier());
+    }
+
+    /**
+     * Does the id match (excluding version)?
+     *
+     * @param pThat the target id
+     * @return true/false
+     */
+    public boolean equalsPrefix(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the object is a MavenId */
+        if (!(pThat instanceof ThemisMavenId myThat)) {
+            return false;
+        }
+
+        /* Check components */
+        return Objects.equals(theGroupId, myThat.getGroupId())
+                && Objects.equals(theArtifactId, myThat.getArtifactId())
                 && Objects.equals(theClassifier, myThat.getClassifier());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(theGroupId, theArtifactId, theVersion, theScope, theClassifier);
+        return Objects.hash(theGroupId, theArtifactId, theVersion, theClassifier);
     }
 
     @Override
@@ -255,4 +333,3 @@ public final class ThemisMavenId {
         return theClassifier == null ? myName : myName + ThemisChar.COLON + theClassifier;
     }
 }
-

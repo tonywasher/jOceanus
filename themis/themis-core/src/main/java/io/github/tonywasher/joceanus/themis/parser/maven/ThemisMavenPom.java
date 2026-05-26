@@ -1,6 +1,6 @@
 /*
  * Themis: Java Project Framework
- * Copyright 2012-2026. Tony Washer
+ * Copyright 2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -14,140 +14,85 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package io.github.tonywasher.joceanus.themis.parser.maven;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.base.OceanusSystem;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
-import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
-import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenId.ThemisElementParser;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
- * Maven pom.xml parser.
+ * Maven Pom.
  */
 public class ThemisMavenPom
-        implements ThemisElementParser {
+        implements MetisFieldItem {
     /**
-     * Project filename.
+     * The controller.
      */
-    public static final String POM = "pom.xml";
+    interface ThemisXMavenControl {
+        /**
+         * Load a pom via its id.
+         *
+         * @param pId the id of the pom
+         * @return the loaded pom
+         * @throws OceanusException on error
+         */
+        ThemisMavenPom loadPomViaId(ThemisMavenId pId) throws OceanusException;
+
+        /**
+         * Load a pom at the location.
+         *
+         * @param pLocation the location of the pom
+         * @return the loaded pom
+         */
+        ThemisMavenPom loadPomAtLocation(File pLocation) throws OceanusException;
+    }
 
     /**
-     * Document name.
+     * Report fields.
      */
-    private static final String DOC_NAME = "project";
+    private static final MetisFieldSet<ThemisMavenPom> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisMavenPom.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_ID, ThemisMavenPom::getId);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PARENT, ThemisMavenPom::getParent);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PROPERTIES, ThemisMavenPom::getProperties);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_XTRADIRS, ThemisMavenPom::getXtraDirs);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_MODULES, ThemisMavenPom::getModules);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_VERSIONS, ThemisMavenPom::getTheVersions);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_DIRECTDEPENDENCIES, ThemisMavenPom::getTheDirectDependencies);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_DEPENDENCIES, ThemisMavenPom::getTheDependencies);
+    }
 
     /**
-     * Properties XPath.
+     * The controller.
      */
-    private static final String XPATH_PROPERTIES = "/project/properties";
+    private final ThemisXMavenControl theControl;
 
     /**
-     * Parent XPath.
+     * The location.
      */
-    private static final String XPATH_PARENT = "/project/parent";
+    private final File theLocation;
 
     /**
-     * Modules XPath.
+     * The parser.
      */
-    private static final String XPATH_MODULES = "/project/modules";
+    private final ThemisMavenPomParser theParser;
 
     /**
-     * Dependencies XPath.
-     */
-    private static final String XPATH_DEPENDENCIES = "/project/dependencies";
-
-    /**
-     * XtraDirs XPath.
-     */
-    private static final String XPATH_XTRADIRS = "/project/build/plugins/plugin[artifactId='build-helper-maven-plugin']"
-            + "/executions/execution/configuration/sources";
-
-    /**
-     * Module element.
-     */
-    private static final String EL_MODULE = "module";
-
-    /**
-     * Dependency element.
-     */
-    private static final String EL_DEPENDENCY = "dependency";
-
-    /**
-     * Source element.
-     */
-    private static final String EL_SOURCE = "source";
-
-    /**
-     * Parent groupId indication.
-     */
-    private static final String PARENT_GROUP = "${parent.project.groupId}";
-
-    /**
-     * Parent version indication.
-     */
-    private static final String PARENT_VERSION = "${parent.parent.version}";
-
-    /**
-     * Project groupId indication.
-     */
-    private static final String PROJECT_GROUP = "${project.groupId}";
-
-    /**
-     * Project version indication.
-     */
-    private static final String PROJECT_VERSION = "${project.version}";
-
-    /**
-     * The XPath.
-     */
-    private final XPath theXPath;
-
-    /**
-     * The Document.
-     */
-    private final Document theDoc;
-
-    /**
-     * The Id.
+     * The Maven Id.
      */
     private final ThemisMavenId theId;
-
-    /**
-     * The modules.
-     */
-    private final List<String> theModules;
-
-    /**
-     * The dependencies.
-     */
-    private final List<ThemisMavenId> theDependencies;
-
-    /**
-     * The xtraDirs.
-     */
-    private final List<String> theXtraDirs;
 
     /**
      * The parent.
@@ -155,303 +100,420 @@ public class ThemisMavenPom
     private final ThemisMavenPom theParent;
 
     /**
-     * The properties.
+     * The property cache.
      */
-    private final Map<String, String> theProperties;
+    private final ThemisMavenPropertyCache theProperties;
+
+    /**
+     * The list of extra directories.
+     */
+    private final List<String> theXtraDirs;
+
+    /**
+     * The list of modules.
+     */
+    private final List<ThemisMavenPom> theModules;
+
+    /**
+     * Is this a jar package.
+     */
+    private final boolean isJarPackage;
+
+    /**
+     * The version cache.
+     */
+    private ThemisMavenVersionCache theVersions;
+
+    /**
+     * The list of direct dependencies.
+     */
+    private List<ThemisMavenPom> theDirectDependencies;
+
+    /**
+     * The full list of dependencies.
+     */
+    private List<ThemisMavenId> theDependencies;
 
     /**
      * Constructor.
      *
-     * @param pParent      the parent pom
-     * @param pInputStream the input stream to read
+     * @param pController the controller
+     * @param pLocation   the location
      * @throws OceanusException on error
      */
-    public ThemisMavenPom(final ThemisMavenPom pParent,
-                          final InputStream pInputStream) throws OceanusException {
-        /* Store the parent */
-        theParent = pParent;
+    ThemisMavenPom(final ThemisXMavenControl pController,
+                   final File pLocation) throws OceanusException {
+        /* Store the controller and location */
+        theControl = pController;
+        theLocation = new File(pLocation.getParent());
 
-        /* Create the module list */
+        /* Create the caches */
+        theProperties = new ThemisMavenPropertyCache();
+
+        /* Create the parser */
+        theParser = new ThemisMavenPomParser(pLocation, theProperties);
+
+        /* Create the various lists */
         theModules = new ArrayList<>();
-        theDependencies = new ArrayList<>();
         theXtraDirs = new ArrayList<>();
-        theProperties = new LinkedHashMap<>();
-        theProperties.put("${javafx.platform}", OceanusSystem.determineSystem().getClassifier());
 
-        /* Protect against exceptions */
-        try (BufferedInputStream myInBuffer = new BufferedInputStream(pInputStream)) {
-            final DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
-            myFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            myFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            myFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-            final DocumentBuilder myBuilder = myFactory.newDocumentBuilder();
+        /* Access the parent Pom */
+        final ThemisMavenId myParentId = theParser.getParent();
 
-            /* Create the XPath */
-            theXPath = XPathFactory.newInstance().newXPath();
+        /* If we have a parent */
+        if (myParentId != null) {
+            /* Access pom details */
+            theParent = theControl.loadPomViaId(myParentId);
 
-            /* Build the document from the input stream */
-            theDoc = myBuilder.parse(myInBuffer);
-            theId = parseProjectFile();
+            /* Inherit the parent properties and read own properties */
+            theProperties.setParent(theParent.getProperties());
 
-            /* Handle exceptions */
-        } catch (IOException
-                 | ParserConfigurationException
-                 | SAXException e) {
-            throw new ThemisIOException("Exception accessing Pom file", e);
+        } else {
+            theParent = null;
         }
-    }
 
-    @Override
-    public String toString() {
-        return theId.toString();
+        /* Read the properties */
+        theParser.readProperties();
+
+        /* Load the id */
+        theId = theParser.getId(theParent == null ? null : theParent.getId());
+
+        /* Determine jar packaging */
+        isJarPackage = theParser.isJarPackaging();
     }
 
     /**
-     * Obtain the list of modules.
+     * Constructor.
      *
-     * @return the list
+     * @param pId the id
+     * @throws OceanusException on error
      */
-    public ThemisMavenId getMavenId() {
+    ThemisMavenPom(final ThemisMavenId pId) throws OceanusException {
+        /* Store the id */
+        theId = pId;
+
+        /* Store the controller and location */
+        theControl = null;
+        theLocation = null;
+        theParent = null;
+
+        /* Create the cache */
+        theProperties = new ThemisMavenPropertyCache();
+        theVersions = new ThemisMavenVersionCache();
+
+        /* Create the parser */
+        theParser = null;
+
+        /* Set Pom packaging */
+        isJarPackage = false;
+
+        /* Create the various lists */
+        theModules = new ArrayList<>();
+        theXtraDirs = new ArrayList<>();
+        theDirectDependencies = new ArrayList<>();
+        theDependencies = new ArrayList<>();
+    }
+
+    @Override
+    public MetisFieldSet<ThemisMavenPom> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return getId().formatObject(pFormatter);
+    }
+
+    /**
+     * Obtain the id.
+     *
+     * @return the id
+     */
+    public ThemisMavenId getId() {
         return theId;
     }
 
     /**
-     * Obtain the list of modules.
+     * Obtain the artifactId.
+     *
+     * @return the id
+     */
+    public String getArtifactId() {
+        return theId.getArtifactId();
+    }
+
+    /**
+     * Obtain the location.
+     *
+     * @return the parent
+     */
+    public File getLocation() {
+        return theLocation;
+    }
+
+    /**
+     * Obtain the parent.
+     *
+     * @return the parent
+     */
+    private ThemisMavenPom getParent() {
+        return theParent;
+    }
+
+    /**
+     * Is this jar packaging?
+     *
+     * @return true/false
+     * @throws OceanusException on error
+     */
+    public boolean isJarPackaging() throws OceanusException {
+        return isJarPackage;
+    }
+
+    /**
+     * Obtain the modules.
      *
      * @return the modules
      */
-    public List<String> getModules() {
+    public List<ThemisMavenPom> getModules() {
         return theModules;
     }
 
     /**
-     * Obtain the list of dependencies.
+     * Obtain the dependencies.
+     *
+     * @return the dependencies
+     * @throws OceanusException on error
+     */
+    public List<ThemisMavenPom> getDirectDependencies() throws OceanusException {
+        /* If we have not processed dependencies */
+        if (theDirectDependencies == null) {
+            /* Process dependencies */
+            theDirectDependencies = processDependencies();
+        }
+
+        /* Return the dependencies */
+        return theDirectDependencies;
+    }
+
+    /**
+     * Obtain the direct dependencies.
      *
      * @return the dependencies
      */
-    public List<ThemisMavenId> getDependencies() {
+    private List<ThemisMavenPom> getTheDirectDependencies() {
+        /* Return the dependencies */
+        return theDirectDependencies;
+    }
+
+    /**
+     * Obtain the dependencies.
+     *
+     * @return the dependencies
+     * @throws OceanusException on error
+     */
+    public List<ThemisMavenId> getDependencies() throws OceanusException {
+        /* If we have not combined dependencies */
+        if (theDependencies == null) {
+            /* Combine dependencies */
+            theDependencies = combineDependencies();
+        }
+
+        /* Return the dependencies */
         return theDependencies;
     }
 
     /**
-     * Obtain the list of extra directories.
+     * Obtain the dependencies.
      *
-     * @return the modules
+     * @return the dependencies
+     */
+    public List<ThemisMavenId> getTheDependencies() {
+        /* Return the dependencies */
+        return theDependencies;
+    }
+
+    /**
+     * Obtain the extraDirectories.
+     *
+     * @return the extra Directories
      */
     public List<String> getXtraDirs() {
         return theXtraDirs;
     }
 
     /**
-     * Parse the project file.
+     * Obtain the versions.
      *
-     * @return the MavenId
+     * @return the versions
      * @throws OceanusException on error
      */
-    public ThemisMavenId parseProjectFile() throws OceanusException {
-        /* Access the document element */
-        final Element myDoc = theDoc.getDocumentElement();
-
-        /* Check that the document name is correct */
-        if (!Objects.equals(myDoc.getNodeName(), DOC_NAME)) {
-            throw new ThemisDataException("Invalid document type");
+    public ThemisMavenVersionCache getVersions() throws OceanusException {
+        /* If we have not processed versions */
+        if (theVersions == null) {
+            /* Process dependencies */
+            theVersions = processDependencyManagement();
         }
 
-        /* Process any properties */
-        processProperties();
-
-        /* Obtain parent definition if any */
-        final Element myParentEl = (Element) findNode(XPATH_PARENT);
-        final ThemisMavenId myParent = myParentEl == null
-                ? null
-                : new ThemisMavenId(this, myParentEl);
-        storeParentProperties(myParent);
-
-        /* Obtain our mavenId */
-        final ThemisMavenId myId = new ThemisMavenId(this, myDoc, myParent);
-        storeProjectProperties(myId);
-
-        /* Process modules */
-        processModules();
-
-        /* Process dependencies */
-        processDependencies();
-
-        /* Process extra directories */
-        processXtraDirs();
-
-        /* Return the Id */
-        return myId;
-    }
-
-    @Override
-    public String getElementValue(final Element pElement,
-                                  final String pValue) {
-        /* Return null if no element */
-        if (pElement == null) {
-            return null;
-        }
-
-        /* Loop through the children */
-        for (Node myChild = pElement.getFirstChild();
-             myChild != null;
-             myChild = myChild.getNextSibling()) {
-            /* Return result if we have a match */
-            if (myChild instanceof Element
-                    && pValue.equals(myChild.getNodeName())) {
-                return replaceProperty(myChild.getTextContent());
-            }
-        }
-
-        /* Not found */
-        return null;
+        /* Return the versions */
+        return theVersions;
     }
 
     /**
-     * Obtain the XPath node.
+     * Obtain the versions.
      *
-     * @param pPath the Path
-     * @return the Node (or null if not found)
-     * @throws OceanusException on error
+     * @return the versions
      */
-    private Node findNode(final String pPath) throws OceanusException {
-        /* Protect against exceptions */
-        try {
-            return (Node) theXPath.compile(pPath).evaluate(theDoc, XPathConstants.NODE);
-        } catch (XPathExpressionException e) {
-            throw new ThemisDataException("Exception locating XPath: " + pPath, e);
-        }
+    private ThemisMavenVersionCache getTheVersions() {
+        /* Return the versions */
+        return theVersions;
     }
 
     /**
-     * Process properties.
+     * Obtain the properties.
+     *
+     * @return the properties
+     */
+    ThemisMavenPropertyCache getProperties() {
+        return theProperties;
+    }
+
+    /**
+     * Process local details.
      *
      * @throws OceanusException on error
      */
-    private void processProperties() throws OceanusException {
-        /* Process any properties */
-        final Node myProps = findNode(XPATH_PROPERTIES);
-        if (myProps != null) {
-            for (Node myNode = myProps.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {
-                if (myNode instanceof Element myElement) {
-                    theProperties.put("${" + myElement.getNodeName() + "}", myElement.getTextContent());
-                }
-            }
+    void processLocalDetails() throws OceanusException {
+        /* Look up any modules */
+        final List<String> myModules = theParser.getModules();
+        for (String myModule : myModules) {
+            /* Load the file at the location */
+            final ThemisMavenPom myLoaded = theControl.loadPomAtLocation(new File(theLocation, myModule));
+            theModules.add(myLoaded);
         }
-    }
 
-    /**
-     * Store parent properties.
-     *
-     * @param pParent the parent
-     */
-    private void storeParentProperties(final ThemisMavenId pParent) {
-        /* Store parent groupId */
-        theProperties.put(PARENT_GROUP, pParent == null ? null : pParent.getGroupId());
-        theProperties.put(PARENT_VERSION, pParent == null ? null : pParent.getVersion());
-    }
-
-    /**
-     * Store parent properties.
-     *
-     * @param pProject the project
-     */
-    private void storeProjectProperties(final ThemisMavenId pProject) {
-        /* Determine project groupId */
-        String myGroupId = pProject.getGroupId();
-        myGroupId = myGroupId != null ? myGroupId : theProperties.get(PARENT_GROUP);
-
-        /* Determine project version */
-        String myVersion = pProject.getVersion();
-        myVersion = myVersion != null ? myVersion : theProperties.get(PARENT_VERSION);
-
-        /* Store project details */
-        theProperties.put(PROJECT_GROUP, myGroupId);
-        theProperties.put(PROJECT_VERSION, myVersion);
-    }
-
-    /**
-     * Process modules.
-     *
-     * @throws OceanusException on error
-     */
-    private void processModules() throws OceanusException {
-        /* Process any modules */
-        final Node myModules = findNode(XPATH_MODULES);
-        if (myModules != null) {
-            /* Loop through the children */
-            for (Node myChild = myModules.getFirstChild();
-                 myChild != null;
-                 myChild = myChild.getNextSibling()) {
-                /* Return result if we have a match */
-                if (myChild instanceof Element
-                        && EL_MODULE.equals(myChild.getNodeName())) {
-                    theModules.add(myChild.getTextContent());
-                }
-            }
-        }
+        /* Look up any extra directories */
+        final List<String> myXtraDirs = theParser.getXtraDirs();
+        theXtraDirs.addAll(myXtraDirs);
     }
 
     /**
      * Process dependencies.
      *
+     * @return the dependencies
      * @throws OceanusException on error
      */
-    private void processDependencies() throws OceanusException {
-        /* Process any dependencies */
-        final Node myDependencies = findNode(XPATH_DEPENDENCIES);
-        if (myDependencies != null) {
-            /* Loop through the children */
-            for (Node myChild = myDependencies.getFirstChild();
-                 myChild != null;
-                 myChild = myChild.getNextSibling()) {
-                /* Return result if we have a match */
-                if (myChild instanceof Element myElement
-                        && EL_DEPENDENCY.equals(myChild.getNodeName())) {
-                    final ThemisMavenId myId = new ThemisMavenId(this, myElement);
-                    if (!myId.isSkippable()) {
-                        theDependencies.add(myId);
-                    }
-                }
+    private ThemisMavenVersionCache processDependencyManagement() throws OceanusException {
+        /* Allocate the cache */
+        final ThemisMavenVersionCache myCache = new ThemisMavenVersionCache();
+
+        /* Attach to parent if present */
+        if (theParent != null) {
+            myCache.setParent(theParent.getVersions());
+        }
+
+        /* Look up any dependencyManagement */
+        final List<ThemisMavenId> myDependencyMgmt = theParser.getDependencyManagement();
+        for (ThemisMavenId myDependency : myDependencyMgmt) {
+            /* If this is a BOM */
+            if ("import".equals(myDependency.getScope())) {
+                final ThemisMavenPom myLoaded = theControl.loadPomViaId(myDependency);
+                myCache.importDependencies(myLoaded.getVersions());
+            } else {
+                myCache.addToCache(myDependency);
+            }
+        }
+
+        /* Return the cache */
+        return myCache;
+    }
+
+    /**
+     * Process dependencies.
+     *
+     * @return the dependencies
+     * @throws OceanusException on error
+     */
+    private List<ThemisMavenPom> processDependencies() throws OceanusException {
+        /* Allocate the dependencies */
+        final List<ThemisMavenPom> myPoms = new ArrayList<>();
+
+        /* Look up any dependencies */
+        final List<ThemisMavenId> myDependencies = theParser.getDependencies();
+        for (ThemisMavenId myDependency : myDependencies) {
+            /* Load the dependency via its id */
+            final ThemisMavenId myId = theVersions.lookUpVersion(myDependency);
+            final ThemisMavenPom myLoaded = theControl.loadPomViaId(myId);
+            myPoms.add(myLoaded);
+        }
+
+        /* Return the poms */
+        return myPoms;
+    }
+
+    /**
+     * Combine direct dependencies.
+     *
+     * @return the dependencies
+     * @throws OceanusException on error
+     */
+    private List<ThemisMavenId> combineDependencies() throws OceanusException {
+        /* Allocate the dependencies */
+        final List<ThemisMavenId> myIds = new ArrayList<>();
+
+        /* Combine dependencies for this pom */
+        combineDependencies(myIds, this);
+
+        /* Return the id */
+        return myIds;
+    }
+
+    /**
+     * Combine direct dependencies.
+     *
+     * @param pIds the list to populate
+     * @param pPom the pom to process
+     * @throws OceanusException on error
+     */
+    private static void combineDependencies(final List<ThemisMavenId> pIds,
+                                            final ThemisMavenPom pPom) throws OceanusException {
+        /* Loop through direct dependencies */
+        for (ThemisMavenPom myDependency : pPom.getDirectDependencies()) {
+            /* If we have not processed this dependency before */
+            final ThemisMavenId myId = myDependency.getId();
+            if (checkDependencyId(pIds, myId)) {
+                /* Combine underlying dependencies */
+                combineDependencies(pIds, myDependency);
             }
         }
     }
 
     /**
-     * Process extra directories.
+     * Check id.
      *
+     * @param pDependencies the list of existing dependencies
+     * @param pId           to id to check
+     * @return was the id added true/false
      * @throws OceanusException on error
      */
-    private void processXtraDirs() throws OceanusException {
-        /* Process any modules */
-        final Node myXtraDirs = findNode(XPATH_XTRADIRS);
-        if (myXtraDirs != null) {
-            /* Loop through the children */
-            for (Node myChild = myXtraDirs.getFirstChild();
-                 myChild != null;
-                 myChild = myChild.getNextSibling()) {
-                /* Return result if we have a match */
-                if (myChild instanceof Element
-                        && EL_SOURCE.equals(myChild.getNodeName())) {
-                    theXtraDirs.add(myChild.getTextContent());
+    static boolean checkDependencyId(final List<ThemisMavenId> pDependencies,
+                                     final ThemisMavenId pId) throws OceanusException {
+        /* Loop through the existing dependencies */
+        for (ThemisMavenId myDependency : pDependencies) {
+            /* If we have a match */
+            if (myDependency.equalsPrefix(pId)) {
+                /* OK as long as version matches */
+                if (myDependency.getVersion().equals(pId.getVersion())) {
+                    return false;
                 }
-            }
-        }
-    }
 
-    /**
-     * Replace property.
-     *
-     * @param pValue the value
-     * @return the value or the replaced property
-     */
-    private String replaceProperty(final String pValue) {
-        String myResult = pValue;
-        for (Map.Entry<String, String> myEntry : theProperties.entrySet()) {
-            if (myResult.contains(myEntry.getKey())) {
-                myResult = myResult.replace(myEntry.getKey(), myEntry.getValue());
+                /* Reject mismatch of versions */
+                throw new ThemisDataException("Mismatch of dependency versions " + myDependency + " vs " + pId);
             }
         }
-        return theParent != null ? theParent.replaceProperty(myResult) : myResult;
+
+        /* No match, so add to list */
+        pDependencies.add(pId);
+        return true;
     }
 }
