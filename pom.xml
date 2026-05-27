@@ -16,6 +16,10 @@
             <distribution>manual</distribution>
         </license>
     </licenses>
+    <organization>
+        <name>${MyName}</name>
+        <url>https://tonywasher.github.io/</url>
+    </organization>
     <developers>
         <developer>
             <id>tony</id>
@@ -77,6 +81,8 @@
         <PMDVersion>7.24.0</PMDVersion>
         <CleanPluginVersion>3.5.0</CleanPluginVersion>
         <ResourcesPluginVersion>3.5.0</ResourcesPluginVersion>
+        <RemoteResourcesPluginVersion>3.3.0</RemoteResourcesPluginVersion>
+        <ApacheJarBundleVersion>1.8</ApacheJarBundleVersion>
         <InstallPluginVersion>3.1.4</InstallPluginVersion>
         <SitePluginVersion>3.21.0</SitePluginVersion>
         <DeployPluginVersion>3.1.4</DeployPluginVersion>
@@ -139,6 +145,23 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <version>${RemoteResourcesPluginVersion}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <resourceBundles>
+                                <resourceBundle>org.apache.apache.resources:apache-jar-resource-bundle:${ApacheJarBundleVersion}</resourceBundle>
+                            </resourceBundles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
