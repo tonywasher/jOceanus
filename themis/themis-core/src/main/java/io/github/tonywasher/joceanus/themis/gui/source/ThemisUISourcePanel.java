@@ -32,8 +32,8 @@ import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIStyleSheet;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance;
 import io.github.tonywasher.joceanus.themis.parser.node.ThemisNodeCompilationUnit;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisFile;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisFile;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 
 /**
  * Source Panel.

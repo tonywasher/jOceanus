@@ -4,10 +4,11 @@ dependencies {
 }
 
 /* Description */
+group = 'io.github.tonywasher.joceanus.prometheus.sheet'
 description = 'Prometheus Sheet Service API'
 
 /* Register the project */
-registerProject(project) 
+registerProject(project)
 
 /* Specific Manifest details */
 jar {

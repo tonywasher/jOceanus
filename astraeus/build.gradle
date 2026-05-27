@@ -8,8 +8,8 @@ dependencies {
 }
 
 /* Description */
+group = 'io.github.tonywasher.joceanus'
 description = 'Oceanus post-processing'
-//group = 'io.github.tonywasher.joceanus'
 
 /* Register the project */
 registerProject(project)

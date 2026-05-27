@@ -16,6 +16,10 @@
             <distribution>manual</distribution>
         </license>
     </licenses>
+    <organization>
+        <name>${MyName}</name>
+        <url>https://tonywasher.github.io/</url>
+    </organization>
     <developers>
         <developer>
             <id>tony</id>
@@ -28,6 +32,7 @@
         </developer>
     </developers>
     <modules>
+        <module>bom</module>
         <module>astraeus</module>
         <module>moneywise</module>
         <module>themis</module>
@@ -43,9 +48,13 @@
         <url>https://github.com/tonywasher/jOceanus</url>
     </scm>
     <issueManagement>
-        <system>GitHub</system>
+        <system>GitHub Issues</system>
         <url>https://github.com/tonywasher/jOceanus/issues/</url>
     </issueManagement>
+    <ciManagement>
+        <system>GitHub Actions</system>
+        <url>https://github.com/tonywasher/jOceanus/actions/</url>
+    </ciManagement>
     <distributionManagement>
         <site>
             <id>github</id>
@@ -54,10 +63,9 @@
     </distributionManagement>
     <properties>
         <MyName>Tony Washer</MyName>
-        <currentYear>${maven.build.timestamp}</currentYear>
-        <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+        <buildTimestamp>${maven.build.timestamp}</buildTimestamp>
+        <maven.build.timestamp.format>yyyy-MM-dd hh:mm:ss</maven.build.timestamp.format>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <scmMain>main</scmMain>
         <packageKey>io.github.tonywasher.joceanus</packageKey>
         <packageMain/>
         <packageName/>
@@ -65,31 +73,20 @@
         <appDir>${session.executionRootDirectory}/dist</appDir>
         <appBinDir>bin/</appBinDir>
         <appLibDir>lib/</appLibDir>
-        <BouncyCastleVersion>1.84</BouncyCastleVersion>
-        <JUnitVersion>6.0.3</JUnitVersion>
-        <JSONVersion>20251224</JSONVersion>
-        <ApacheMavenVersion>3.9.14</ApacheMavenVersion>
-        <MySQLVersion>9.7.0</MySQLVersion>
-        <MariaDBVersion>3.5.8</MariaDBVersion>
-        <PostGreSQLVersion>42.7.11</PostGreSQLVersion>
-        <MSSQLVersion>13.4.0.jre11</MSSQLVersion>
-        <H2Version>2.4.240</H2Version>
-        <ApachePOIVersion>5.5.1</ApachePOIVersion>
-        <JSoupVersion>1.22.2</JSoupVersion>
-        <JFreeChartVersion>1.5.6</JFreeChartVersion>
-        <JavaParserVersion>3.28.1</JavaParserVersion>
-        <ZipSDKVersion>9.20</ZipSDKVersion>
+        <JUnitVersion>6.1.0</JUnitVersion>
+        <ApacheMavenVersion>3.9.15</ApacheMavenVersion>
         <JavaVersion>21</JavaVersion>
-        <JavaFXVersion>21.0.10</JavaFXVersion>
         <JavaLanguageVersion>21</JavaLanguageVersion>
         <CheckStyleVersion>13.4.2</CheckStyleVersion>
         <PMDVersion>7.24.0</PMDVersion>
         <CleanPluginVersion>3.5.0</CleanPluginVersion>
         <ResourcesPluginVersion>3.5.0</ResourcesPluginVersion>
+        <RemoteResourcesPluginVersion>3.3.0</RemoteResourcesPluginVersion>
+        <ApacheJarBundleVersion>1.8</ApacheJarBundleVersion>
         <InstallPluginVersion>3.1.4</InstallPluginVersion>
         <SitePluginVersion>3.21.0</SitePluginVersion>
         <DeployPluginVersion>3.1.4</DeployPluginVersion>
-        <EnforcerPluginVersion>3.6.2</EnforcerPluginVersion>
+        <EnforcerPluginVersion>3.6.3</EnforcerPluginVersion>
         <CompilerPluginVersion>3.15.0</CompilerPluginVersion>
         <ShadePluginVersion>3.6.2</ShadePluginVersion>
         <DependencyPluginVersion>3.10.0</DependencyPluginVersion>
@@ -114,12 +111,32 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.exclusions>**/embedded/**,**/patch/**,**/test/**</sonar.exclusions>
         <jOceanusGroup>io.github.tonywasher.joceanus</jOceanusGroup>
-        <MoneyWiseGroup>io.github.tonywasher.joceanus.moneywise</MoneyWiseGroup>
-        <PrometheusGroup>io.github.tonywasher.joceanus.prometheus</PrometheusGroup>
-        <PrometheusSheetGroup>io.github.tonywasher.joceanus.prometheus.sheet</PrometheusSheetGroup>
-        <TethysGroup>io.github.tonywasher.joceanus.tethys</TethysGroup>
-        <ThemisGroup>io.github.tonywasher.joceanus.themis</ThemisGroup>
+        <MoneyWiseGroup>${jOceanusGroup}.moneywise</MoneyWiseGroup>
+        <PrometheusGroup>${jOceanusGroup}.prometheus</PrometheusGroup>
+        <PrometheusSheetGroup>${PrometheusGroup}.sheet</PrometheusSheetGroup>
+        <TethysGroup>${jOceanusGroup}.tethys</TethysGroup>
+        <ThemisGroup>${jOceanusGroup}.themis</ThemisGroup>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.github.tonywasher.joceanus</groupId>
+                <artifactId>bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Internal test dependencies -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${JUnitVersion}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <build>
         <resources>
             <resource>
@@ -128,6 +145,23 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <version>${RemoteResourcesPluginVersion}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <resourceBundles>
+                                <resourceBundle>org.apache.apache.resources:apache-jar-resource-bundle:${ApacheJarBundleVersion}</resourceBundle>
+                            </resourceBundles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -231,6 +265,26 @@
                     <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
                     <shortRevisionLength>12</shortRevisionLength>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${BuildHelperPluginVersion}</version>
+                <executions>
+                    <execution>
+                        <id>timestamp-property</id>
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <name>currentYear</name>
+                            <pattern>yyyy</pattern>
+                            <timeSource>build</timeSource>
+                            <locale>en</locale>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

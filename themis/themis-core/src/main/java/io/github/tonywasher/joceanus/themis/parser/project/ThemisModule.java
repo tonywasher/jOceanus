@@ -14,11 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.themis.parser.proj;
+package io.github.tonywasher.joceanus.themis.parser.project;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisParserDef;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenPom;
 import io.github.tonywasher.joceanus.themis.parser.mod.ThemisModModule;
 
 import java.io.File;
@@ -29,7 +35,21 @@ import java.util.Objects;
 /**
  * Module.
  */
-public class ThemisModule {
+public class ThemisModule
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisModule> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisModule.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_NAME, ThemisModule::getName);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PACKAGES, ThemisModule::getPackages);
+    }
+
     /**
      * The module-info file.
      */
@@ -58,26 +78,35 @@ public class ThemisModule {
     /**
      * Constructor.
      *
-     * @param pLocation the location of the module
-     * @param pPom      the module Pom
+     * @param pPom the module Pom
      */
-    ThemisModule(final File pLocation,
-                 final ThemisMaven pPom) {
+    ThemisModule(final ThemisMavenPom pPom) {
         /* Create the list */
         thePackages = new ArrayList<>();
 
         /* Store the name and location */
-        theLocation = new File(pLocation, ThemisPackage.PATH_XTRA);
-        theName = pLocation.getName();
+        final File myLocation = pPom.getLocation();
+        theLocation = new File(myLocation, ThemisPackage.PATH_XTRA);
+        theName = myLocation.getName();
 
         /* Initiate search for packages */
         checkForPackage(theLocation, null);
 
         /* Add any extraDirs */
         for (String myXtra : pPom.getXtraDirs()) {
-            final File myXtraDir = new File(pLocation, myXtra);
+            final File myXtraDir = new File(myLocation, myXtra);
             checkForPackage(myXtraDir, null);
         }
+    }
+
+    @Override
+    public MetisFieldSet<ThemisModule> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return toString();
     }
 
     /**
@@ -162,9 +191,14 @@ public class ThemisModule {
      * @throws OceanusException on error
      */
     void parseJavaCode(final ThemisParserDef pParser) throws OceanusException {
+        /* Obtain the reporter */
+        final TethysUIThreadStatusReport myReport = pParser.getReporter();
+        myReport.setNumSteps(thePackages.size());
+
         /* Loop through the packages */
         for (ThemisPackage myPackage : thePackages) {
             /* Process the package */
+            myReport.setNextStep();
             myPackage.parseJavaCode(pParser);
         }
 

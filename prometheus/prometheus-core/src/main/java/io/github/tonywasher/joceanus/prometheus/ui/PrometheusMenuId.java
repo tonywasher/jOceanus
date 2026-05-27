@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.prometheus.ui;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIMenuBarManager.TethysUIMenuId;
 
 /**
- * Prometheus Thread Ids.
+ * Prometheus Menu Ids.
  */
 public enum PrometheusMenuId
         implements TethysUIMenuId {

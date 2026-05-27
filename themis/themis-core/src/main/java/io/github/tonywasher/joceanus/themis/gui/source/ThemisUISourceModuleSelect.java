@@ -31,8 +31,8 @@ import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIResource;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisModule;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisModule;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 
 import java.util.List;
 

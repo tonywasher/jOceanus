@@ -16,12 +16,13 @@
  */
 package io.github.tonywasher.joceanus.themis.solver.proj;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisMethodInstance;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisFile;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisModule;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisPackage;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisFile;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisModule;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisPackage;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 
 import java.util.List;
 
@@ -32,7 +33,8 @@ public interface ThemisSolverDef {
     /**
      * The solver Project definition.
      */
-    interface ThemisSolverProjectDef {
+    interface ThemisSolverProjectDef
+            extends MetisFieldItem {
         /**
          * Obtain the underlying project.
          *
@@ -44,7 +46,8 @@ public interface ThemisSolverDef {
     /**
      * The solver Module definition.
      */
-    interface ThemisSolverModuleDef {
+    interface ThemisSolverModuleDef
+            extends MetisFieldItem {
         /**
          * Obtain the project to which this module belongs.
          *
@@ -63,7 +66,8 @@ public interface ThemisSolverDef {
     /**
      * The solver Package definition.
      */
-    interface ThemisSolverPackageDef {
+    interface ThemisSolverPackageDef
+            extends MetisFieldItem {
         /**
          * Obtain the module to which this package belongs.
          *
@@ -103,7 +107,8 @@ public interface ThemisSolverDef {
     /**
      * The solver File definition.
      */
-    interface ThemisSolverFileDef {
+    interface ThemisSolverFileDef
+            extends MetisFieldItem {
         /**
          * Obtain the package to which this file belongs.
          *
@@ -122,7 +127,8 @@ public interface ThemisSolverDef {
     /**
      * The solver Class definition.
      */
-    interface ThemisSolverClassDef {
+    interface ThemisSolverClassDef
+            extends MetisFieldItem {
         /**
          * Obtain the file to which this class belongs.
          *
@@ -148,7 +154,8 @@ public interface ThemisSolverDef {
     /**
      * The solver Method definition.
      */
-    interface ThemisSolverMethodDef {
+    interface ThemisSolverMethodDef
+            extends MetisFieldItem {
         /**
          * Obtain the class to which this class belongs.
          *

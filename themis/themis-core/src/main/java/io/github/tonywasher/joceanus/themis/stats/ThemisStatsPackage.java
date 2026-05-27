@@ -16,8 +16,11 @@
  */
 package io.github.tonywasher.joceanus.themis.stats;
 
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisFile;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisPackage;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisFile;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisPackage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +30,20 @@ import java.util.List;
  */
 public class ThemisStatsPackage
         implements ThemisStatsElement {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisStatsPackage> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisStatsPackage.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_FILES, ThemisStatsPackage::getFiles);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisStatsPackage::getUnderlying);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_STATS, ThemisStatsPackage::getStats);
+    }
+
     /**
      * The underlying package.
      */
@@ -61,6 +78,16 @@ public class ThemisStatsPackage
         for (ThemisFile myFile : thePackage.getFiles()) {
             theFiles.add(new ThemisStatsFile(myFile));
         }
+    }
+
+    @Override
+    public MetisFieldSet<ThemisStatsPackage> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override

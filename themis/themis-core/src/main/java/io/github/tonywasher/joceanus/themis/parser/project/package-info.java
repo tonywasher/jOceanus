@@ -18,4 +18,4 @@
 /**
  * Project structure.
  */
-package io.github.tonywasher.joceanus.themis.parser.proj;
+package io.github.tonywasher.joceanus.themis.parser.project;

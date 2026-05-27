@@ -16,6 +16,9 @@
  */
 package io.github.tonywasher.joceanus.themis.solver.reflect;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisModifierList;
 import io.github.tonywasher.joceanus.themis.parser.node.ThemisNodeImport;
@@ -29,6 +32,18 @@ import java.util.List;
  */
 public class ThemisReflectExternal
         implements ThemisClassInstance {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisReflectExternal> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisReflectExternal.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_NAME, ThemisReflectExternal::getName);
+    }
+
     /**
      * The javaLang prefix.
      */
@@ -82,6 +97,16 @@ public class ThemisReflectExternal
         theModifiers = pClazz.getModifiers();
         theAncestors = new ArrayList<>();
         theClassInstance = pClazz;
+    }
+
+    @Override
+    public MetisFieldSet<ThemisReflectExternal> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return getName();
     }
 
     @Override

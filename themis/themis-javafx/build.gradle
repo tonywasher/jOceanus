@@ -16,6 +16,7 @@ dependencies {
 }
 
 /* Details */
+group = 'io.github.tonywasher.joceanus.themis'
 description = 'Themis JavaFX Project Framework'
 mainClass = "io.github.tonywasher.joceanus.themis.ui.javafx.Themis4FX"
 moduleName = "io.github.tonywasher.joceanus.themis.javafx"

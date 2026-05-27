@@ -209,10 +209,16 @@ public class TethysUIHelperFactory
         private final OceanusEventManager<TethysUIThreadEvent> theEventManager;
 
         /**
+         * The active task.
+         */
+        private OceanusProfile theProfile;
+
+        /**
          * Constructor.
          */
         ThreadManagerStub() {
             theEventManager = new OceanusEventManager<>();
+            setNewProfile("Dummy");
         }
 
         @Override
@@ -233,11 +239,6 @@ public class TethysUIHelperFactory
         @Override
         public boolean hasWorker() {
             return false;
-        }
-
-        @Override
-        public void setReportingSteps(final int pSteps) {
-            /* NoOp */
         }
 
         @Override
@@ -277,7 +278,7 @@ public class TethysUIHelperFactory
 
         @Override
         public void setNewProfile(final String pName) {
-            /* NoOp */
+            theProfile = new OceanusProfile(pName);
         }
 
         @Override
@@ -337,7 +338,7 @@ public class TethysUIHelperFactory
 
         @Override
         public OceanusProfile getActiveTask() {
-            return null;
+            return theProfile;
         }
     }
 

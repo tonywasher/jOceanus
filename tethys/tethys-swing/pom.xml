@@ -11,19 +11,16 @@
   <description>Java Swing Utilities</description>
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>${TethysGroup}</groupId>
       <artifactId>tethys-core</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${jOceanusGroup}</groupId>
       <artifactId>oceanus</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jfree</groupId>
       <artifactId>jfreechart</artifactId>
-      <version>${JFreeChartVersion}</version>
     </dependency>
   </dependencies>
   <properties>

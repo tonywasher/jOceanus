@@ -11,19 +11,16 @@
   <description>Metis Data Framework</description>
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}.tethys</groupId>
+      <groupId>${TethysGroup}</groupId>
       <artifactId>tethys-core</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>${jOceanusGroup}</groupId>
       <artifactId>oceanus</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>${JSONVersion}</version>
     </dependency>
   </dependencies>
   <properties>

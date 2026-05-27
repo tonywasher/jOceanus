@@ -31,6 +31,21 @@ public enum ThemisUIResource
     /**
      * Source Tab.
      */
+    MENU_HELP("menu.help"),
+
+    /**
+     * DataViewer Task.
+     */
+    MENUITEM_DATAVIEWER("menuitem.dataViewer"),
+
+    /**
+     * About Task.
+     */
+    MENUITEM_ABOUT("menuitem.about"),
+
+    /**
+     * Source Tab.
+     */
     TAB_SOURCE("tab.source"),
 
     /**
@@ -59,6 +74,11 @@ public enum ThemisUIResource
     PROMPT_PROJECT("prompt.project"),
 
     /**
+     * Project None.
+     */
+    PROMPT_NONE("prompt.none"),
+
+    /**
      * Module Prompt.
      */
     PROMPT_MODULE("prompt.module"),
@@ -72,6 +92,11 @@ public enum ThemisUIResource
      * File Prompt.
      */
     PROMPT_FILE("prompt.file"),
+
+    /**
+     * Tooltip Refresh.
+     */
+    TOOLTIP_REFRESH("tooltip.refresh"),
 
     /**
      * Package References Header.

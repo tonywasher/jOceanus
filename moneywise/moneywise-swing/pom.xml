@@ -8,17 +8,15 @@
   <groupId>io.github.tonywasher.joceanus.moneywise</groupId>
   <artifactId>moneywise-swing</artifactId>
   <name>MoneyWise Personal Finance - Swing</name>
-  <description>Personal Finance Application</description>
+  <description>Swing Personal Finance Application</description>
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>${MoneyWiseGroup}</groupId>
       <artifactId>moneywise-core</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${TethysGroup}</groupId>
       <artifactId>tethys-swing</artifactId>
-      <version>${project.version}</version>
     </dependency>
   </dependencies>
   <properties>

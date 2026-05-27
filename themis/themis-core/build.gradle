@@ -4,14 +4,16 @@ dependencies {
     implementation project(':tethys-core')
     implementation project(':oceanus')
     implementation "com.github.javaparser:javaparser-core:$javaParserVersion"
+    implementation "org.jsoup:jsoup:$jsoupVersion"
     testImplementation "org.junit.jupiter:junit-jupiter:$jUnitVersion"
 }
 
 /* Description */
+group = 'io.github.tonywasher.joceanus.themis'
 description = 'Themis Core Project Framework'
 
 /* Register the project */
-registerProject(project) 
+registerProject(project)
 
 /* Test jar details */
 tasks.register('testsJar', Jar) {

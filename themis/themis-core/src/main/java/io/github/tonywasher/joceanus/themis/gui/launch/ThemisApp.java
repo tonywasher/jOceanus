@@ -52,6 +52,11 @@ public class ThemisApp
     }
 
     @Override
+    public boolean useSliderStatus() {
+        return true;
+    }
+
+    @Override
     public TethysUIIconId getSplash() {
         return ThemisUIIcon.SPLASH;
     }

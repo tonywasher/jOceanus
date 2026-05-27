@@ -17,10 +17,13 @@
 
 package io.github.tonywasher.joceanus.themis.stats;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+
 /**
  * Basis Stats element interface.
  */
-public interface ThemisStatsElement {
+public interface ThemisStatsElement
+        extends MetisFieldItem {
     /**
      * Obtain the name.
      *

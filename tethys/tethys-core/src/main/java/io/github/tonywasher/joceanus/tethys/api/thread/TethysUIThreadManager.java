@@ -46,13 +46,6 @@ public interface TethysUIThreadManager
     boolean hasWorker();
 
     /**
-     * Set the thread Data.
-     *
-     * @param pSteps the reporting steps
-     */
-    void setReportingSteps(int pSteps);
-
-    /**
      * Get error.
      *
      * @return the error

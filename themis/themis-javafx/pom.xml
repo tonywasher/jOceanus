@@ -11,14 +11,12 @@
   <description>Java JavaFX Project Framework</description>
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>${ThemisGroup}</groupId>
       <artifactId>themis-core</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${TethysGroup}</groupId>
       <artifactId>tethys-javafx</artifactId>
-      <version>${project.version}</version>
     </dependency>
   </dependencies>
   <properties>

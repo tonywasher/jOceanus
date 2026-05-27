@@ -17,7 +17,10 @@
 package io.github.tonywasher.joceanus.themis.parser.decl;
 
 import com.github.javaparser.ast.body.ConstructorDeclaration;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisDeclarationInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisMethodInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisModifierList;
@@ -32,6 +35,18 @@ import java.util.List;
 public class ThemisDeclConstructor
         extends ThemisBaseDeclaration<ConstructorDeclaration>
         implements ThemisDeclarationInstance, ThemisMethodInstance {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisDeclConstructor> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisDeclConstructor.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_NAME, ThemisDeclConstructor::getName);
+    }
+
     /**
      * The name.
      */
@@ -84,6 +99,16 @@ public class ThemisDeclConstructor
         theParameters = pParser.parseNodeList(pDeclaration.getParameters());
         theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());
         theBody = pParser.parseStatement(pDeclaration.getBody());
+    }
+
+    @Override
+    public MetisFieldSet<ThemisDeclConstructor> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return getName();
     }
 
     @Override

@@ -17,6 +17,8 @@
 package io.github.tonywasher.joceanus.themis.analysis;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.helper.TethysUIHelperFactory;
 import io.github.tonywasher.joceanus.themis.parser.ThemisParser;
 import io.github.tonywasher.joceanus.themis.solver.ThemisSolver;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverProject;
@@ -46,6 +48,11 @@ class TestAnalysis {
     private ThemisParser theProjectParser;
 
     /**
+     * The threadManager.
+     */
+    private TethysUIThreadManager theThreadMgr;
+
+    /**
      * Create the analysis test suite.
      *
      * @return the test stream
@@ -62,43 +69,49 @@ class TestAnalysis {
 
     /**
      * Test source analysis of the current project.
+     *
+     * @throws OceanusException on error
      */
-    private void testProjectSource() {
+    private void testProjectSource() throws OceanusException {
         /* Analyse source of project */
         File myLocation = new File(PATH_BASE);
+        final TethysUIHelperFactory myFactory = new TethysUIHelperFactory();
+        theThreadMgr = myFactory.threadFactory().newThreadManager();
         try {
             myLocation = new File(myLocation.getCanonicalPath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        theProjectParser = new ThemisParser(myLocation);
-        Assertions.assertNull(theProjectParser.getError(), "Exception analysing project");
+        theProjectParser = new ThemisParser(theThreadMgr, myLocation);
+        Assertions.assertNotNull(theProjectParser, "Exception analysing project");
     }
 
     /**
      * Test dependency analysis of the current project.
+     *
+     * @throws OceanusException on error
      */
-    private void testProjectDependencies() {
+    private void testProjectDependencies() throws OceanusException {
         /* Make sure previous test executed */
         Assumptions.assumeTrue(theProjectParser != null);
-        Assumptions.assumeTrue(theProjectParser.getError() == null);
 
         /* Analyse dependencies of project */
-        final ThemisSolverProject myProject = new ThemisSolverProject(theProjectParser);
-        final ThemisSolver mySolver = new ThemisSolver(myProject);
-        Assertions.assertNull(mySolver.getError(), "Exception analysing project");
+        final ThemisSolver mySolver = new ThemisSolver(theProjectParser);
+        final ThemisSolverProject myProject = mySolver.getProject();
+        Assertions.assertNotNull(myProject, "Exception analysing project");
     }
 
     /**
      * Test dependency analysis of the current project.
+     *
+     * @throws OceanusException on error
      */
-    private void testProjectStats() {
+    private void testProjectStats() throws OceanusException {
         /* Make sure previous test executed */
         Assumptions.assumeTrue(theProjectParser != null);
-        Assumptions.assumeTrue(theProjectParser.getError() == null);
 
         /* Analyse dependencies of project */
         final ThemisStatsProject myProject = new ThemisStatsProject(theProjectParser);
-        Assertions.assertNull(myProject.getError(), "Exception analysing project");
+        Assertions.assertNotNull(myProject, "Exception analysing project");
     }
 }

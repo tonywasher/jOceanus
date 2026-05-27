@@ -13,38 +13,31 @@
     <dependency>
       <groupId>${PrometheusGroup}</groupId>
       <artifactId>prometheus-core</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${jOceanusGroup}</groupId>
       <artifactId>metis</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${jOceanusGroup}</groupId>
       <artifactId>gordianknot</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${TethysGroup}</groupId>
       <artifactId>tethys-core</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${jOceanusGroup}</groupId>
       <artifactId>oceanus</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>${JUnitVersion}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>${JUnitVersion}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

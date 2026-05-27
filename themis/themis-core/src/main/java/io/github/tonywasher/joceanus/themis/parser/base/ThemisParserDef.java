@@ -25,6 +25,7 @@ import com.github.javaparser.ast.modules.ModuleDirective;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisDeclarationInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisExpressionInstance;
@@ -42,6 +43,13 @@ import java.util.List;
  * Parser interface.
  */
 public interface ThemisParserDef {
+    /**
+     * Obtain the reporter.
+     *
+     * @return the reporter
+     */
+    TethysUIThreadStatusReport getReporter();
+
     /**
      * Process the file as javaCode.
      *

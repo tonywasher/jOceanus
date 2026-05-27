@@ -17,7 +17,13 @@
 
 package io.github.tonywasher.joceanus.themis.solver.proj;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverPackageDef;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverReference.ThemisSolverRefPackage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +33,9 @@ import java.util.Map;
 /**
  * Class holding references to other packages.
  */
-public class ThemisSolverReference {
+public class ThemisSolverReference
+        implements MetisDataMap<ThemisSolverPackageDef, ThemisSolverRefPackage> {
+
     /**
      * Map of references to other packages.
      */
@@ -80,10 +88,34 @@ public class ThemisSolverReference {
         return theMap.values().stream().filter(p -> p.getReferenceType() == pRefType).toList();
     }
 
+    @Override
+    public Map<ThemisSolverPackageDef, ThemisSolverRefPackage> getUnderlyingMap() {
+        return theMap;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return getClass().getSimpleName();
+    }
+
     /**
      * Class representing links from a class to classes in a particular package.
      */
-    public static class ThemisSolverRefPackage {
+    public static class ThemisSolverRefPackage
+            implements MetisFieldItem {
+        /**
+         * Report fields.
+         */
+        private static final MetisFieldSet<ThemisSolverRefPackage> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSolverRefPackage.class);
+
+        /*
+         * Declare Fields.
+         */
+        static {
+            FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_REFTYPE, ThemisSolverRefPackage::getReferenceType);
+            FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_REFERENCES, ThemisSolverRefPackage::getReferences);
+        }
+
         /**
          * The package that is referred to.
          */
@@ -110,6 +142,16 @@ public class ThemisSolverReference {
             thePackage = pPackage;
             theRefType = pRefType;
             theReferences = new ArrayList<>();
+        }
+
+        @Override
+        public MetisFieldSet<ThemisSolverRefPackage> getDataFieldSet() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+            return toString();
         }
 
         /**
@@ -157,7 +199,21 @@ public class ThemisSolverReference {
     /**
      * Class representing links from a class to classes in a particular package.
      */
-    public static class ThemisSolverRefClass {
+    public static class ThemisSolverRefClass
+            implements MetisFieldItem {
+        /**
+         * Report fields.
+         */
+        private static final MetisFieldSet<ThemisSolverRefClass> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSolverRefClass.class);
+
+        /*
+         * Declare Fields.
+         */
+        static {
+            FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_CLASS, ThemisSolverRefClass::getSubject);
+            FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_REFERENCES, ThemisSolverRefClass::getReferences);
+        }
+
         /**
          * The class that holds the references.
          */
@@ -178,6 +234,16 @@ public class ThemisSolverReference {
                                     final List<ThemisSolverClass> pReferences) {
             theClass = pClass;
             theReferences = pReferences;
+        }
+
+        @Override
+        public MetisFieldSet<ThemisSolverRefClass> getDataFieldSet() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+            return toString();
         }
 
         /**
@@ -203,7 +269,6 @@ public class ThemisSolverReference {
             return theClass.getFullName();
         }
     }
-
 
     /**
      * Map types.

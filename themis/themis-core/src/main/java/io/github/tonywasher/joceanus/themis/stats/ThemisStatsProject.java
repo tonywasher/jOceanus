@@ -16,11 +16,13 @@
  */
 package io.github.tonywasher.joceanus.themis.stats;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.themis.parser.ThemisParser;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisModule;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisModule;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,20 @@ import java.util.List;
  */
 public class ThemisStatsProject
         implements ThemisStatsElement {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisStatsProject> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisStatsProject.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_MODULES, ThemisStatsProject::getModules);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisStatsProject::getUnderlying);
+        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_STATS, ThemisStatsProject::getStats);
+    }
+
     /**
      * The underlying project.
      */
@@ -46,16 +62,12 @@ public class ThemisStatsProject
     private final List<ThemisStatsModule> theModules;
 
     /**
-     * The error.
-     */
-    private OceanusException theError;
-
-    /**
      * Constructor.
      *
      * @param pParser the project parser
+     * @throws OceanusException on error
      */
-    public ThemisStatsProject(final ThemisParser pParser) {
+    public ThemisStatsProject(final ThemisParser pParser) throws OceanusException {
         /* Store the parameters */
         theProject = pParser.getProject();
 
@@ -65,18 +77,20 @@ public class ThemisStatsProject
         /* Create the Module list */
         theModules = new ArrayList<>();
 
-        /* Protect against exceptions */
-        try {
-            /* Initialise the modules */
-            for (ThemisModule myModule : theProject.getModules()) {
-                theModules.add(new ThemisStatsModule(myModule));
-            }
-
-            /* Handle exceptions */
-        } catch (OceanusException e) {
-            /* Save Exception */
-            theError = new ThemisIOException("Failed to parse Stats project", e);
+        /* Initialise the modules */
+        for (ThemisModule myModule : theProject.getModules()) {
+            theModules.add(new ThemisStatsModule(myModule));
         }
+    }
+
+    @Override
+    public MetisFieldSet<ThemisStatsProject> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override
@@ -105,15 +119,6 @@ public class ThemisStatsProject
      */
     public List<ThemisStatsModule> getModules() {
         return theModules;
-    }
-
-    /**
-     * Obtain the error.
-     *
-     * @return the error
-     */
-    public OceanusException getError() {
-        return theError;
     }
 
     @Override

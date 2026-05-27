@@ -32,8 +32,8 @@ import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisModule;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisPackage;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisModule;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisPackage;
 
 /**
  * Button to select package from module.

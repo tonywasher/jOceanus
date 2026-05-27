@@ -13,7 +13,6 @@
     <dependency>
       <groupId>${jOceanusGroup}</groupId>
       <artifactId>oceanus</artifactId>
-      <version>${project.version}</version>
     </dependency>
   </dependencies>
   <properties>

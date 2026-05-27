@@ -6,7 +6,6 @@
     </menu>
 
     <menu ref="parent"/>
-    <menu ref="modules"/>
     <menu ref="reports"/>
   </body>
 </site>
