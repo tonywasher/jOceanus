@@ -11,19 +11,16 @@
   <description>Java JavaFX Utilities</description>
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>${TethysGroup}</groupId>
       <artifactId>tethys-core</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${jOceanusGroup}</groupId>
       <artifactId>oceanus</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-web</artifactId>
-      <version>${JavaFXVersion}</version>
     </dependency>
   </dependencies>
   <properties>

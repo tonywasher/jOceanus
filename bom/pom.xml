@@ -39,12 +39,10 @@
         <MSSQLVersion>13.4.0.jre11</MSSQLVersion>
         <H2Version>2.4.240</H2Version>
         <ApachePOIVersion>5.5.1</ApachePOIVersion>
-        <ApacheLog4JVersion>2.24.3</ApacheLog4JVersion>
         <JSoupVersion>1.22.2</JSoupVersion>
         <JFreeChartVersion>1.5.6</JFreeChartVersion>
         <JavaParserVersion>3.28.1</JavaParserVersion>
         <ZipSDKVersion>9.20</ZipSDKVersion>
-        <JavaVersion>21</JavaVersion>
         <JavaFXVersion>21.0.11</JavaFXVersion>
         <EnforcerPluginVersion>3.6.3</EnforcerPluginVersion>
         <SitePluginVersion>3.21.0</SitePluginVersion>
@@ -137,13 +135,10 @@
             <!-- External Modules -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk18on</artifactId>
+                <artifactId>bc-jdk18on-bom</artifactId>
                 <version>${BouncyCastleVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcutil-jdk18on</artifactId>
-                <version>${BouncyCastleVersion}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.json</groupId>
@@ -186,11 +181,6 @@
                 <version>${ApachePOIVersion}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-                <version>${ApacheLog4JVersion}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-web</artifactId>
                 <version>${JavaFXVersion}</version>
@@ -224,9 +214,6 @@
                                 <requireMavenVersion>
                                     <version>${ApacheMavenVersion}</version>
                                 </requireMavenVersion>
-                                <requireJavaVersion>
-                                    <version>${JavaVersion}</version>
-                                </requireJavaVersion>
                             </rules>
                         </configuration>
                     </execution>

@@ -6,14 +6,15 @@ dependencies {
 }
 
 /* Description */
+group = 'io.github.tonywasher.joceanus.tethys'
 description = 'Tethys Java Swing Utilities'
 
 /* Register the project */
-registerProject(project) 
+registerProject(project)
 
 /* Specific Manifest details */
 jar {
     manifest {
-        attributes(manifestAttrs)         
+        attributes(manifestAttrs)
     }
 }

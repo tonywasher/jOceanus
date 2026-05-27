@@ -11,38 +11,32 @@
   <description>Post-processing framework for joceanus</description>
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>${jOceanusGroup}</groupId>
       <artifactId>oceanus</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${MoneyWiseGroup}</groupId>
       <artifactId>moneywise-swing</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>${MoneyWiseGroup}</groupId>
       <artifactId>moneywise-javafx</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>${ThemisGroup}</groupId>
       <artifactId>themis-javafx</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>${JUnitVersion}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>${JUnitVersion}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

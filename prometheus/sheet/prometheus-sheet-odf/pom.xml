@@ -14,14 +14,12 @@
     <description>Prometheus Sheet ODF Service</description>
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>${PrometheusSheetGroup}</groupId>
             <artifactId>prometheus-sheet-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${jOceanusGroup}</groupId>
             <artifactId>oceanus</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
     <properties>

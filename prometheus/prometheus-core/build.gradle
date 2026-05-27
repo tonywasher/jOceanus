@@ -16,6 +16,7 @@ dependencies {
 }
 
 /* Description */
+group = 'io.github.tonywasher.joceanus.prometheus'
 description = 'Prometheus Core Application Framework'
 
 /* Register the project */

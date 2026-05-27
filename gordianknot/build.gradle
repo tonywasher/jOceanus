@@ -8,10 +8,11 @@ dependencies {
 }
 
 /* Description */
+group = 'io.github.tonywasher.joceanus'
 description = 'GordianKnot Security Framework'
 
 /* Register the project */
-registerProject(project) 
+registerProject(project)
 
 /* Additional sourceSets */
 sourceSets {
@@ -36,6 +37,6 @@ test {
 /* Test jar details */
 tasks.register('testsJar', Jar) {
     archiveClassifier = 'tests'
-    from(sourceSets.test.output)    
+    from(sourceSets.test.output)
 }
 publishing.publications.maven.artifact(testsJar)

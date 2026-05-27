@@ -17,8 +17,7 @@ allprojects {
     apply plugin: 'signing'
 
     /* general identity */
-    group = 'io.github.tonywasher.joceanus'
-    version = '1.6.4-b1'
+    version = '1.6.4-SNAPSHOT'
 
     /* Maven repositories */
     repositories {
@@ -57,6 +56,12 @@ allprojects {
         appBinDir = "bin/"
         appLibDir = "lib/"
     }
+
+    //processResources {
+    //    filesMatching("**/*.properties") {
+    //        expand project.properties
+    //    }
+    //}
 }
 
 /* Store calculated properties in the root project */
@@ -75,7 +80,7 @@ ext {
             "Created-By"            : "Gradle ${gradle.gradleVersion}",
             "Git-Repo"              : gitRepo,
             "Git-Branch"            : gitBranch,
-            "Git-Rev"               : "sha1-" + gitRev,
+            "Git-Rev"               : "sha-" + gitRev,
             "Built-By"              : System.properties['user.name'],
             "Build-Timestamp"       : new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
             "Build-Jdk"             : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",

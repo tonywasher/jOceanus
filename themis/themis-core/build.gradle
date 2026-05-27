@@ -9,6 +9,7 @@ dependencies {
 }
 
 /* Description */
+group = 'io.github.tonywasher.joceanus.themis'
 description = 'Themis Core Project Framework'
 
 /* Register the project */

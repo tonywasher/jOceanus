@@ -71,10 +71,6 @@ public class MoneyWiseNullThreadMgr
     }
 
     @Override
-    public void setReportingSteps(final int pSteps) {
-    }
-
-    @Override
     public Throwable getError() {
         return null;
     }

@@ -16,6 +16,7 @@ dependencies {
 }
 
 /* Details */
+group = 'io.github.tonywasher.joceanus.moneywise'
 description = 'MoneyWise Personal Finance - javaFX'
 mainClass = "io.github.tonywasher.joceanus.moneywise.ui.javafx.MoneyWise4FX"
 moduleName = "io.github.tonywasher.joceanus.moneywise.javafx"

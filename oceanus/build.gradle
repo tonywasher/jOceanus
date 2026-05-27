@@ -4,10 +4,11 @@ dependencies {
 }
 
 /* Description */
+group = 'io.github.tonywasher.joceanus'
 description = 'Oceanus Core Utilities'
 
 /* Register the project */
-registerProject(project) 
+registerProject(project)
 
 /* Test jar details */
 tasks.register('testsJar', Jar) {

@@ -27,7 +27,6 @@ module io.github.tonywasher.joceanus.themis.core {
 
     /* External libraries */
     requires com.github.javaparser.core;
-    requires org.jsoup;
 
     /* Oceanus */
     requires io.github.tonywasher.joceanus.metis;

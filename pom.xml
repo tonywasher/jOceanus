@@ -69,23 +69,9 @@
         <appDir>${session.executionRootDirectory}/dist</appDir>
         <appBinDir>bin/</appBinDir>
         <appLibDir>lib/</appLibDir>
-        <BouncyCastleVersion>1.84</BouncyCastleVersion>
         <JUnitVersion>6.1.0</JUnitVersion>
-        <JSONVersion>20260522</JSONVersion>
         <ApacheMavenVersion>3.9.15</ApacheMavenVersion>
-        <MySQLVersion>9.7.0</MySQLVersion>
-        <MariaDBVersion>3.5.8</MariaDBVersion>
-        <PostGreSQLVersion>42.7.11</PostGreSQLVersion>
-        <MSSQLVersion>13.4.0.jre11</MSSQLVersion>
-        <H2Version>2.4.240</H2Version>
-        <ApachePOIVersion>5.5.1</ApachePOIVersion>
-        <ApacheLog4JVersion>2.24.3</ApacheLog4JVersion>
-        <JSoupVersion>1.22.2</JSoupVersion>
-        <JFreeChartVersion>1.5.6</JFreeChartVersion>
-        <JavaParserVersion>3.28.1</JavaParserVersion>
-        <ZipSDKVersion>9.20</ZipSDKVersion>
         <JavaVersion>21</JavaVersion>
-        <JavaFXVersion>21.0.11</JavaFXVersion>
         <JavaLanguageVersion>21</JavaLanguageVersion>
         <CheckStyleVersion>13.4.2</CheckStyleVersion>
         <PMDVersion>7.24.0</PMDVersion>
@@ -119,11 +105,11 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.exclusions>**/embedded/**,**/patch/**,**/test/**</sonar.exclusions>
         <jOceanusGroup>io.github.tonywasher.joceanus</jOceanusGroup>
-        <MoneyWiseGroup>io.github.tonywasher.joceanus.moneywise</MoneyWiseGroup>
-        <PrometheusGroup>io.github.tonywasher.joceanus.prometheus</PrometheusGroup>
-        <PrometheusSheetGroup>io.github.tonywasher.joceanus.prometheus.sheet</PrometheusSheetGroup>
-        <TethysGroup>io.github.tonywasher.joceanus.tethys</TethysGroup>
-        <ThemisGroup>io.github.tonywasher.joceanus.themis</ThemisGroup>
+        <MoneyWiseGroup>${jOceanusGroup}.moneywise</MoneyWiseGroup>
+        <PrometheusGroup>${jOceanusGroup}.prometheus</PrometheusGroup>
+        <PrometheusSheetGroup>${PrometheusGroup}.sheet</PrometheusSheetGroup>
+        <TethysGroup>${jOceanusGroup}.tethys</TethysGroup>
+        <ThemisGroup>${jOceanusGroup}.themis</ThemisGroup>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -137,19 +123,11 @@
 
             <!-- Internal test dependencies -->
             <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
                 <version>${JUnitVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-engine</artifactId>
-                <version>${JUnitVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.platform</groupId>
-                <artifactId>junit-platform-suite</artifactId>
-                <version>${JUnitVersion}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

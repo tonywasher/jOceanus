@@ -7,6 +7,7 @@ dependencies {
 }
 
 /* Details */
+group = 'io.github.tonywasher.joceanus.moneywise'
 description = 'MoneyWise Personal Finance - Swing'
 mainClass = "io.github.tonywasher.joceanus.moneywise.ui.swing.MoneyWise4Swing"
 moduleName = "io.github.tonywasher.joceanus.moneywise.swing"

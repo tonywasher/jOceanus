@@ -10,8 +10,8 @@ dependencies {
 }
 
 /* Description */
-description = 'MoneyWise Personal Finance - Core'
 group = 'io.github.tonywasher.joceanus.moneywise'
+description = 'MoneyWise Personal Finance - Core'
 
 /* Register the project */
 registerProject(project)
