@@ -27,13 +27,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaAnonEngine;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaBasicEngine;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaMQVEngine;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaNewHopeEngine;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaPostQuantumEngine;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaSM2Engine;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaUnifiedEngine;
 
 /**
  * Jca Agreement Factory.
