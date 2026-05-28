@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.encrypt;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
@@ -27,8 +27,8 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCompos
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaEncryptor.JcaBlockEncryptor;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaEncryptor.JcaHybridEncryptor;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.encrypt.JcaEncryptor.JcaBlockEncryptor;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.encrypt.JcaEncryptor.JcaHybridEncryptor;
 
 /**
  * Jca Encryptor Factory.
@@ -40,7 +40,7 @@ public class JcaEncryptorFactory
      *
      * @param pFactory the factory
      */
-    JcaEncryptorFactory(final GordianBaseFactory pFactory) {
+    public JcaEncryptorFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
     }

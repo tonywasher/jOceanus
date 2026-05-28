@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
@@ -29,18 +29,18 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianComposite
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaSignature.JcaDSASignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaSignature.JcaEdDSASignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaSignature.JcaFalconSignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaSignature.JcaGOSTSignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaSignature.JcaLMSSignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaSignature.JcaMLDSASignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaSignature.JcaMayoSignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaSignature.JcaPicnicSignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaSignature.JcaRSASignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaSignature.JcaSLHDSASignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaSignature.JcaSnovaSignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaSignature.JcaXMSSSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaDSASignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaEdDSASignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaFalconSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaGOSTSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaLMSSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaMLDSASignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaMayoSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaPicnicSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaRSASignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaSLHDSASignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaSnovaSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaXMSSSignature;
 
 /**
  * Jca Signature Factory.
@@ -52,7 +52,7 @@ public class JcaSignatureFactory
      *
      * @param pFactory the factory
      */
-    JcaSignatureFactory(final GordianBaseFactory pFactory) {
+    public JcaSignatureFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
     }

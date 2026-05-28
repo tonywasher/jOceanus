@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.base;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
@@ -58,7 +58,7 @@ public final class JcaKey<T extends GordianKeySpec>
      *
      * @return the key
      */
-    SecretKey getKey() {
+    public SecretKey getKey() {
         return theKey;
     }
 
@@ -75,7 +75,7 @@ public final class JcaKey<T extends GordianKeySpec>
      * @return the converted key
      * @throws GordianException on error
      */
-    static <X extends GordianKeySpec> JcaKey<X> accessKey(final GordianKey<X> pKey) throws GordianException {
+    public static <X extends GordianKeySpec> JcaKey<X> accessKey(final GordianKey<X> pKey) throws GordianException {
         /* Check that it is a JcaKey */
         if (pKey instanceof JcaKey) {
             return (JcaKey<X>) pKey;

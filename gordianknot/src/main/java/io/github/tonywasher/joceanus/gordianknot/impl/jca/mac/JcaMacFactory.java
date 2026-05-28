@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.mac;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
@@ -32,6 +32,10 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataExcept
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.base.JcaKeyGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.base.JcaProvider;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.cipher.JcaCipherFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.digest.JcaDigest;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
@@ -69,7 +73,7 @@ public class JcaMacFactory
      *
      * @param pFactory the factory
      */
-    JcaMacFactory(final GordianBaseFactory pFactory) {
+    public JcaMacFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 

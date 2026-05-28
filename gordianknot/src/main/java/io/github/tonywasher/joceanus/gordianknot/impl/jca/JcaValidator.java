@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKe
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianValidator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.digest.JcaDigest;
 
 /**
  * Jca Validator.

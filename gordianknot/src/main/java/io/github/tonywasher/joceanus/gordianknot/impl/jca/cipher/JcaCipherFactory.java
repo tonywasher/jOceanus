@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
@@ -43,10 +43,13 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataExcept
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAEADCipher.JcaStreamAEADCipher;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAEADCipher.JcaSymAEADCipher;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaCipher.JcaStreamCipher;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaCipher.JcaSymCipher;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.base.JcaKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.base.JcaKeyGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.base.JcaProvider;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.cipher.JcaAEADCipher.JcaStreamAEADCipher;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.cipher.JcaAEADCipher.JcaSymAEADCipher;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.cipher.JcaCipher.JcaStreamCipher;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.cipher.JcaCipher.JcaSymCipher;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -80,7 +83,7 @@ public class JcaCipherFactory
      *
      * @param pFactory the factory
      */
-    JcaCipherFactory(final GordianBaseFactory pFactory) {
+    public JcaCipherFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -258,7 +261,7 @@ public class JcaCipherFactory
      * @return the Algorithm
      * @throws GordianException on error
      */
-    static String getSymKeyAlgorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
+    public static String getSymKeyAlgorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
         return switch (pKeySpec.getSymKeyType()) {
             case TWOFISH -> "TwoFish";
             case SERPENT -> "Serpent";

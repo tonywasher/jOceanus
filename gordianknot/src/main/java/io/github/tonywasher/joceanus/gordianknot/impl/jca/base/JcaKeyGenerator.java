@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.base;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
@@ -46,9 +46,9 @@ public final class JcaKeyGenerator<T extends GordianKeySpec>
      * @param pKeyType   the keyType
      * @param pGenerator the key generator
      */
-    JcaKeyGenerator(final GordianBaseFactory pFactory,
-                    final T pKeyType,
-                    final KeyGenerator pGenerator) {
+    public JcaKeyGenerator(final GordianBaseFactory pFactory,
+                           final T pKeyType,
+                           final KeyGenerator pGenerator) {
         /* Initialise underlying class */
         super(pFactory, pKeyType);
 

@@ -14,23 +14,26 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianAEADCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamAEADCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymAEADCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import org.bouncycastle.jcajce.spec.AEADParameterSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.base.JcaKey;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -38,19 +41,19 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.RC2ParameterSpec;
+import javax.crypto.spec.RC5ParameterSpec;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.spec.AlgorithmParameterSpec;
-import java.util.Arrays;
 
 /**
- * Cipher for JCA BouncyCastle AEAD Ciphers.
+ * Cipher for JCA BouncyCastle Ciphers.
  *
  * @param <T> the key Type
  */
-public class JcaAEADCipher<T extends GordianKeySpec>
-        extends GordianCoreCipher<T>
-        implements GordianAEADCipher {
+public abstract class JcaCipher<T extends GordianKeySpec>
+        extends GordianCoreCipher<T> {
     /**
      * Cipher.
      */
@@ -68,9 +71,9 @@ public class JcaAEADCipher<T extends GordianKeySpec>
      * @param pCipherSpec the cipherSpec
      * @param pCipher     the cipher
      */
-    JcaAEADCipher(final GordianBaseFactory pFactory,
-                  final GordianCipherSpec<T> pCipherSpec,
-                  final Cipher pCipher) {
+    JcaCipher(final GordianBaseFactory pFactory,
+              final GordianCipherSpec<T> pCipherSpec,
+              final Cipher pCipher) {
         super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }
@@ -79,7 +82,6 @@ public class JcaAEADCipher<T extends GordianKeySpec>
     public JcaKey<T> getKey() {
         return (JcaKey<T>) super.getKey();
     }
-
 
     @Override
     public void init(final boolean pEncrypt,
@@ -93,20 +95,52 @@ public class JcaAEADCipher<T extends GordianKeySpec>
                 ? Cipher.ENCRYPT_MODE
                 : Cipher.DECRYPT_MODE;
         final SecretKey myKey = myJcaKey.getKey();
-        final byte[] myAEAD = getInitialAEAD();
+        final byte[] myIV = getInitVector();
 
         /* Protect against exceptions */
         try {
+            /* Careful of RC5 */
+            final T myKeyType = myJcaKey.getKeyType();
+            final boolean isRC5 = myKeyType instanceof GordianSymKeySpec mySymKeySpec
+                    && GordianSymKeyType.RC5.equals(mySymKeySpec.getSymKeyType());
+
             /* Initialise as required */
-            final AlgorithmParameterSpec myParms = myAEAD == null
-                    ? new IvParameterSpec(getInitVector())
-                    : new AEADParameterSpec(getInitVector(), getAEADMacSize(), myAEAD);
-            theCipher.init(myMode, myKey, myParms);
+            if (myIV != null || isRC5) {
+                final AlgorithmParameterSpec myParms = generateParameters(myJcaKey, myIV);
+                theCipher.init(myMode, myKey, myParms);
+            } else {
+                theCipher.init(myMode, myKey);
+            }
             isEncrypting = pEncrypt;
         } catch (InvalidKeyException
                  | InvalidAlgorithmParameterException e) {
             throw new GordianCryptoException("Failed to initialise cipher", e);
         }
+    }
+
+    /**
+     * Generate AlgorithmParameters.
+     *
+     * @param pKey the key
+     * @param pIV  the Initialisation vector
+     * @return the parameters
+     */
+    static AlgorithmParameterSpec generateParameters(final JcaKey<?> pKey,
+                                                     final byte[] pIV) {
+        final Object myKeyType = pKey.getKeyType();
+        if (myKeyType instanceof GordianSymKeySpec mySpec) {
+            final GordianSymKeyType myType = mySpec.getSymKeyType();
+            final GordianLength myLen = mySpec.getBlockLength();
+            if (GordianSymKeyType.RC2.equals(myType)) {
+                return new RC2ParameterSpec(pKey.getKeyBytes().length * Byte.SIZE, pIV);
+            }
+            if (GordianSymKeyType.RC5.equals(myType)) {
+                return pIV == null
+                        ? new RC5ParameterSpec(1, GordianBaseData.RC5_ROUNDS, myLen.getLength() >> 1)
+                        : new RC5ParameterSpec(1, GordianBaseData.RC5_ROUNDS, myLen.getLength() >> 1, pIV);
+            }
+        }
+        return new IvParameterSpec(pIV);
     }
 
     @Override
@@ -132,21 +166,6 @@ public class JcaAEADCipher<T extends GordianKeySpec>
     }
 
     @Override
-    public void updateAAD(final byte[] pBytes,
-                          final int pOffset,
-                          final int pLength) throws GordianException {
-        /* Protect against exceptions */
-        try {
-            /* Process the bytes */
-            theCipher.updateAAD(pBytes, pOffset, pLength);
-
-            /* Handle exceptions */
-        } catch (IllegalStateException e) {
-            throw new GordianCryptoException("Failed to process AAD bytes", e);
-        }
-    }
-
-    @Override
     public int doFinish(final byte[] pOutput,
                         final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
@@ -164,15 +183,18 @@ public class JcaAEADCipher<T extends GordianKeySpec>
 
     @Override
     public int getBlockSize() {
-        return 0;
+        final GordianCipherSpec<T> mySpec = getCipherSpec();
+        return (mySpec instanceof GordianCoreSymCipherSpec mySymCipherSpec
+                && mySymCipherSpec.getCoreCipherMode().hasPadding())
+                ? theCipher.getBlockSize() : 0;
     }
 
     /**
-     * JcaSymAADCipher.
+     * JcaSymCipher.
      */
-    public static class JcaSymAEADCipher
-            extends JcaAEADCipher<GordianSymKeySpec>
-            implements GordianSymAEADCipher {
+    public static class JcaSymCipher
+            extends JcaCipher<GordianSymKeySpec>
+            implements GordianSymCipher {
         /**
          * Constructor.
          *
@@ -180,19 +202,19 @@ public class JcaAEADCipher<T extends GordianKeySpec>
          * @param pCipherSpec the cipherSpec
          * @param pCipher     the cipher
          */
-        JcaSymAEADCipher(final GordianBaseFactory pFactory,
-                         final GordianSymCipherSpec pCipherSpec,
-                         final Cipher pCipher) {
+        JcaSymCipher(final GordianBaseFactory pFactory,
+                     final GordianSymCipherSpec pCipherSpec,
+                     final Cipher pCipher) {
             super(pFactory, pCipherSpec, pCipher);
         }
     }
 
     /**
-     * JcaStreamAEADCipher.
+     * JcaStreamCipher.
      */
-    public static class JcaStreamAEADCipher
-            extends JcaAEADCipher<GordianStreamKeySpec>
-            implements GordianStreamAEADCipher {
+    public static class JcaStreamCipher
+            extends JcaCipher<GordianStreamKeySpec>
+            implements GordianStreamCipher {
         /**
          * Constructor.
          *
@@ -200,9 +222,9 @@ public class JcaAEADCipher<T extends GordianKeySpec>
          * @param pCipherSpec the cipherSpec
          * @param pCipher     the cipher
          */
-        JcaStreamAEADCipher(final GordianBaseFactory pFactory,
-                            final GordianStreamCipherSpec pCipherSpec,
-                            final Cipher pCipher) {
+        JcaStreamCipher(final GordianBaseFactory pFactory,
+                        final GordianStreamCipherSpec pCipherSpec,
+                        final Cipher pCipher) {
             super(pFactory, pCipherSpec, pCipher);
         }
     }
@@ -218,20 +240,18 @@ public class JcaAEADCipher<T extends GordianKeySpec>
         }
 
         /* Make sure that the classes are the same */
-        if (!(pThat instanceof JcaAEADCipher<?> myThat)) {
+        if (!(pThat instanceof JcaCipher<?> myThat)) {
             return false;
         }
 
         /* Check that the fields are equal */
         return isEncrypting == myThat.isEncrypting
-                && Arrays.equals(getInitialAEAD(), myThat.getInitialAEAD())
                 && super.equals(myThat);
     }
 
     @Override
     public int hashCode() {
         return super.hashCode()
-                + Arrays.hashCode(getInitialAEAD())
                 + (isEncrypting ? 1 : 0);
     }
 }

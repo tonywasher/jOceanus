@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.base;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
@@ -37,12 +37,12 @@ public final class JcaProvider {
     /**
      * Note the standard provider.
      */
-    static final Provider BCPROV = new BouncyCastleProvider();
+    public static final Provider BCPROV = new BouncyCastleProvider();
 
     /**
      * Note the post quantum provider.
      */
-    static final Provider BCPQPROV = new BouncyCastlePQCProvider();
+    public static final Provider BCPQPROV = new BouncyCastlePQCProvider();
 
     /**
      * Private constructor.

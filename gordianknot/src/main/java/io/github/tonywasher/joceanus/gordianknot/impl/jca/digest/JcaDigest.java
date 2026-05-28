@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.digest;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
@@ -100,7 +100,7 @@ public final class JcaDigest
      * @return the algorithm
      * @throws GordianException on error
      */
-    static String getSignAlgorithm(final GordianCoreDigestSpec pDigestSpec) throws GordianException {
+    public static String getSignAlgorithm(final GordianCoreDigestSpec pDigestSpec) throws GordianException {
         /* If this is a sha2 extended algorithm */
         if (GordianDigestType.SHA2.equals(pDigestSpec.getDigestType())
                 && pDigestSpec.isSha2Hybrid()) {
@@ -120,7 +120,7 @@ public final class JcaDigest
      * @return the algorithm
      * @throws GordianException on error
      */
-    static String getHMacAlgorithm(final GordianCoreDigestSpec pDigestSpec) throws GordianException {
+    public static String getHMacAlgorithm(final GordianCoreDigestSpec pDigestSpec) throws GordianException {
         /* If this is a sha2 extended algorithm */
         if (GordianDigestType.SHA2.equals(pDigestSpec.getDigestType())
                 && pDigestSpec.isSha2Hybrid()) {
@@ -157,7 +157,7 @@ public final class JcaDigest
      * @return the name
      * @throws GordianException on error
      */
-    static String getAlgorithm(final GordianCoreDigestSpec pDigestSpec) throws GordianException {
+    public static String getAlgorithm(final GordianCoreDigestSpec pDigestSpec) throws GordianException {
         /* Access digest details */
         final GordianDigestType myType = pDigestSpec.getDigestType();
         final GordianLength myLen = pDigestSpec.getDigestLength();
@@ -298,7 +298,7 @@ public final class JcaDigest
      * @param pDigestType the digest type
      * @return true/false
      */
-    static boolean isHMacSupported(final GordianDigestType pDigestType) {
+    public static boolean isHMacSupported(final GordianDigestType pDigestType) {
         return switch (pDigestType) {
             case BLAKE2, BLAKE3, KUPYNA, SHAKE -> false;
             default -> true;

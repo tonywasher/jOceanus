@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
@@ -26,31 +26,31 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaBIKEKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaCMCEKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaDHKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaDSAKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaECKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaEdKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaElGamalKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaFalconKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaFrodoKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaHQCKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaLMSKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMLDSAKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMLKEMKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMayoKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRUKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRULPrimeKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRUPlusKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNewHopeKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaPicnicKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaRSAKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSABERKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSLHDSAKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSNTRUPrimeKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSnovaKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaXMSSKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaBIKEKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaCMCEKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaDHKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaDSAKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaECKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaEdKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaElGamalKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaFalconKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaFrodoKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaHQCKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaLMSKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaMLDSAKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaMLKEMKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaMayoKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaNTRUKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaNTRULPrimeKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaNTRUPlusKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaNewHopeKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaPicnicKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaRSAKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaSABERKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaSLHDSAKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaSNTRUPrimeKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaSnovaKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaXMSSKeyPairGenerator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -75,7 +75,7 @@ public class JcaKeyPairFactory
      *
      * @param pFactory the factory
      */
-    JcaKeyPairFactory(final GordianBaseFactory pFactory) {
+    public JcaKeyPairFactory(final GordianBaseFactory pFactory) {
         /* Initialize underlying class */
         super(pFactory);
         theFactory = pFactory;

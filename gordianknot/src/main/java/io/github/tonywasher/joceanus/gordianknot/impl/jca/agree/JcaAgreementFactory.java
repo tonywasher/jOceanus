@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
@@ -27,13 +27,13 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaAnonEngine;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaBasicEngine;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaMQVEngine;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaNewHopeEngine;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaPostQuantumEngine;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaSM2Engine;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaUnifiedEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaAnonEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaBasicEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaMQVEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaNewHopeEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaPostQuantumEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaSM2Engine;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaUnifiedEngine;
 
 /**
  * Jca Agreement Factory.
@@ -55,7 +55,7 @@ public class JcaAgreementFactory
      *
      * @param pFactory the factory
      */
-    JcaAgreementFactory(final GordianBaseFactory pFactory) {
+    public JcaAgreementFactory(final GordianBaseFactory pFactory) {
         super(pFactory);
     }
 

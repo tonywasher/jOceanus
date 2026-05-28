@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -47,7 +47,7 @@ public class JcaKeyPair
      *
      * @param pPublic the public key
      */
-    protected JcaKeyPair(final JcaPublicKey pPublic) {
+    public JcaKeyPair(final JcaPublicKey pPublic) {
         this(pPublic, null);
     }
 
@@ -57,8 +57,8 @@ public class JcaKeyPair
      * @param pPublic  the public key
      * @param pPrivate the private key
      */
-    protected JcaKeyPair(final JcaPublicKey pPublic,
-                         final JcaPrivateKey pPrivate) {
+    public JcaKeyPair(final JcaPublicKey pPublic,
+                      final JcaPrivateKey pPrivate) {
         super(pPublic, pPrivate);
     }
 
@@ -126,8 +126,8 @@ public class JcaKeyPair
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        protected JcaPublicKey(final GordianKeyPairSpec pKeySpec,
-                               final PublicKey pPublicKey) {
+        public JcaPublicKey(final GordianKeyPairSpec pKeySpec,
+                            final PublicKey pPublicKey) {
             super(pKeySpec);
             theKey = pPublicKey;
         }
@@ -137,7 +137,7 @@ public class JcaKeyPair
          *
          * @return the key
          */
-        protected PublicKey getPublicKey() {
+        public PublicKey getPublicKey() {
             return theKey;
         }
 
@@ -183,8 +183,8 @@ public class JcaKeyPair
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        protected JcaPrivateKey(final GordianKeyPairSpec pKeySpec,
-                                final PrivateKey pPrivateKey) {
+        JcaPrivateKey(final GordianKeyPairSpec pKeySpec,
+                      final PrivateKey pPrivateKey) {
             super(pKeySpec);
             theKey = pPrivateKey;
         }
@@ -194,7 +194,7 @@ public class JcaKeyPair
          *
          * @return the key
          */
-        protected PrivateKey getPrivateKey() {
+        public PrivateKey getPrivateKey() {
             return theKey;
         }
 
@@ -327,7 +327,7 @@ public class JcaKeyPair
         }
 
         @Override
-        protected BCDHPublicKey getPublicKey() {
+        public BCDHPublicKey getPublicKey() {
             return theKey;
         }
 

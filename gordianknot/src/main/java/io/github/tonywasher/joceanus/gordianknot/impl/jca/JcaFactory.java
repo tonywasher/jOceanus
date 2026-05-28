@@ -26,6 +26,9 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianFactoryGe
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameters;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianValidator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.factory.GordianCoreFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.cipher.JcaCipherFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.digest.JcaDigestFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.mac.JcaMacFactory;
 
 /**
  * Jca Factory.
