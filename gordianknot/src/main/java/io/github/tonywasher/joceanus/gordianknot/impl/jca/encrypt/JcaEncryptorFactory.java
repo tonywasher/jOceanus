@@ -27,8 +27,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCompos
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.encrypt.JcaEncryptor.JcaBlockEncryptor;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.encrypt.JcaEncryptor.JcaHybridEncryptor;
 
 /**
  * Jca Encryptor Factory.
