@@ -16,31 +16,17 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.KeyGenerationParameters;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.pqc.crypto.newhope.NHKeyPairGenerator;
 import org.bouncycastle.pqc.crypto.newhope.NHPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.newhope.NHPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
-import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
-import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
 
-import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
 /**
@@ -113,11 +99,6 @@ public final class BouncyNewHopeKeyPair {
     public static class BouncyNewHopeKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
-         * Generator.
-         */
-        private final NHKeyPairGenerator theGenerator;
-
-        /**
          * Constructor.
          *
          * @param pFactory the Security Factory
@@ -129,109 +110,20 @@ public final class BouncyNewHopeKeyPair {
             super(pFactory, pKeySpec);
 
             /* Create and initialise the generator */
-            theGenerator = new NHKeyPairGenerator();
             final KeyGenerationParameters myParams = new KeyGenerationParameters(getRandom(), GordianLength.LEN_1024.getLength());
-            theGenerator.init(myParams);
+            setGenerator(new NHKeyPairGenerator(), myParams);
+            setFactorySet(BouncyPqKeyFactorySet.INSTANCE);
+        }
+
+
+        @Override
+        BouncyNewHopePrivateKey newPrivateKey(final AsymmetricKeyParameter pThat) {
+            return new BouncyNewHopePrivateKey(getKeySpec(), (NHPrivateKeyParameters) pThat);
         }
 
         @Override
-        public BouncyKeyPair generateKeyPair() {
-            /* Generate and return the keyPair */
-            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyNewHopePublicKey myPublic = new BouncyNewHopePublicKey(getKeySpec(), (NHPublicKeyParameters) myPair.getPublic());
-            final BouncyNewHopePrivateKey myPrivate = new BouncyNewHopePrivateKey(getKeySpec(), (NHPrivateKeyParameters) myPair.getPrivate());
-            return new BouncyKeyPair(myPublic, myPrivate);
-        }
-
-        @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keyPair type and keySpecs */
-                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
-
-                /* build and return the encoding */
-                final BouncyNewHopePrivateKey myPrivateKey = (BouncyNewHopePrivateKey) getPrivateKey(pKeyPair);
-                final NHPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
-                return new PKCS8EncodedKeySpec(myInfo.getEncoded());
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keySpecs */
-                checkKeySpec(pPrivateKey);
-
-                /* derive keyPair */
-                final BouncyNewHopePublicKey myPublic = derivePublicKey(pPublicKey);
-                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final NHPrivateKeyParameters myParms = (NHPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                final BouncyNewHopePrivateKey myPrivate = new BouncyNewHopePrivateKey(getKeySpec(), myParms);
-                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
-
-                /* Check that we have a matching pair */
-                GordianKeyPairValidity.checkValidity(getFactory(), myPair);
-
-                /* Return the keyPair */
-                return myPair;
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keyPair type and keySpecs */
-                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
-
-                /* build and return the encoding */
-                final BouncyNewHopePublicKey myPublicKey = (BouncyNewHopePublicKey) getPublicKey(pKeyPair);
-                final NHPublicKeyParameters myParms = myPublicKey.getPublicKey();
-                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
-                return new X509EncodedKeySpec(myInfo.getEncoded());
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            final BouncyNewHopePublicKey myPublic = derivePublicKey(pEncodedKey);
-            return new BouncyKeyPair(myPublic);
-        }
-
-        /**
-         * Derive public key from encoded.
-         *
-         * @param pEncodedKey the encoded key
-         * @return the public key
-         * @throws GordianException on error
-         */
-        private BouncyNewHopePublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keySpecs */
-                checkKeySpec(pEncodedKey);
-
-                /* derive publicKey */
-                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final NHPublicKeyParameters myParms = (NHPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
-                return new BouncyNewHopePublicKey(getKeySpec(), myParms);
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
+        BouncyNewHopePublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
+            return new BouncyNewHopePublicKey(getKeySpec(), (NHPublicKeyParameters) pThat);
         }
     }
 }

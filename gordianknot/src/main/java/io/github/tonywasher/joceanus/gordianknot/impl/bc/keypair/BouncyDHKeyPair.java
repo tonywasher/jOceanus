@@ -17,14 +17,13 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPairGenerator.BouncyKeyFactorySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairAlgId.GordianDHEncodedParser;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreDHSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -35,7 +34,6 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x9.DomainParameters;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
-import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.generators.DHKeyPairGenerator;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.DHKeyGenerationParameters;
@@ -49,6 +47,7 @@ import org.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
 import java.io.IOException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Objects;
 
 /**
  * DiffieHellman KeyPair classes.
@@ -83,31 +82,7 @@ public final class BouncyDHKeyPair {
             final DHPublicKeyParameters myThat = (DHPublicKeyParameters) pThat;
 
             /* Compare keys */
-            return compareKeys(myThis, myThat);
-        }
-
-        /**
-         * Is the private key valid for this public key?
-         *
-         * @param pPrivate the private key
-         * @return true/false
-         */
-        public boolean validPrivate(final BouncyDHPrivateKey pPrivate) {
-            final DHPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
-            return getPublicKey().getParameters().equals(myPrivate.getParameters());
-        }
-
-        /**
-         * CompareKeys.
-         *
-         * @param pFirst  the first key
-         * @param pSecond the second key
-         * @return true/false
-         */
-        private static boolean compareKeys(final DHPublicKeyParameters pFirst,
-                                           final DHPublicKeyParameters pSecond) {
-            return pFirst.getY().equals(pSecond.getY())
-                    && pFirst.getParameters().equals(pSecond.getParameters());
+            return Objects.equals(myThis, myThat);
         }
     }
 
@@ -134,20 +109,7 @@ public final class BouncyDHKeyPair {
             final DHPrivateKeyParameters myThat = (DHPrivateKeyParameters) pThat;
 
             /* Compare keys */
-            return compareKeys(myThis, myThat);
-        }
-
-        /**
-         * CompareKeys.
-         *
-         * @param pFirst  the first key
-         * @param pSecond the second key
-         * @return true/false
-         */
-        private static boolean compareKeys(final DHPrivateKeyParameters pFirst,
-                                           final DHPrivateKeyParameters pSecond) {
-            return pFirst.getX().equals(pSecond.getX())
-                    && pFirst.getParameters().equals(pSecond.getParameters());
+            return Objects.equals(myThis, myThat);
         }
     }
 
@@ -156,11 +118,6 @@ public final class BouncyDHKeyPair {
      */
     public static class BouncyDHKeyPairGenerator
             extends BouncyKeyPairGenerator {
-        /**
-         * Generator.
-         */
-        private final DHKeyPairGenerator theGenerator;
-
         /**
          * Constructor.
          *
@@ -178,102 +135,79 @@ public final class BouncyDHKeyPair {
             final DHParameters myParms = myGroup.getParameters();
             final DHKeyGenerationParameters myParams = new DHKeyGenerationParameters(getRandom(), myParms);
 
-            /* Create and initialize the generator */
-            theGenerator = new DHKeyPairGenerator();
-            theGenerator.init(myParams);
+            /* Create and initialise the generator */
+            setGenerator(new DHKeyPairGenerator(), myParams);
+            setFactorySet(BouncyDHKeyFactorySet.INSTANCE);
         }
 
         @Override
-        public BouncyKeyPair generateKeyPair() {
-            /* Generate and return the keyPair */
-            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyDHPublicKey myPublic = new BouncyDHPublicKey(getKeySpec(), (DHPublicKeyParameters) myPair.getPublic());
-            final BouncyDHPrivateKey myPrivate = new BouncyDHPrivateKey(getKeySpec(), (DHPrivateKeyParameters) myPair.getPrivate());
-            return new BouncyKeyPair(myPublic, myPrivate);
+        BouncyDHPrivateKey newPrivateKey(final AsymmetricKeyParameter pThat) {
+            return new BouncyDHPrivateKey(getKeySpec(), (DHPrivateKeyParameters) pThat);
         }
 
         @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+        BouncyDHPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
+            return new BouncyDHPublicKey(getKeySpec(), (DHPublicKeyParameters) pThat);
+        }
+    }
+
+    /**
+     * DH KeyFactorySet.
+     */
+    private enum BouncyDHKeyFactorySet
+            implements BouncyKeyFactorySet {
+        /**
+         * Instance.
+         */
+        INSTANCE;
+
+        @Override
+        public AsymmetricKeyParameter parsePKCS8EncodedKeySpec(final PKCS8EncodedKeySpec pEncodedKey) throws GordianException {
             /* Protect against exceptions */
             try {
-                /* Check the keyPair type and keySpecs */
-                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
+                /* Parse the encoded keySpec */
+                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pEncodedKey.getEncoded());
+                final BCDHPrivateKey myKey = new BCDHPrivateKey(myInfo);
+                final DHParameters myParms = GordianDHEncodedParser.determineParameters(myInfo.getPrivateKeyAlgorithm());
+                return new DHPrivateKeyParameters(myKey.getX(), myParms);
 
+            } catch (IOException e) {
+                throw new GordianCryptoException(BouncyKeyPairGenerator.ERROR_PARSE, e);
+            }
+        }
+
+        @Override
+        public PKCS8EncodedKeySpec createPKCS8EncodedKeySpec(final AsymmetricKeyParameter pParams) throws GordianException {
+            /* Protect against exceptions */
+            try {
                 /* build and return the encoding */
-                final BouncyDHPrivateKey myPrivateKey = (BouncyDHPrivateKey) getPrivateKey(pKeyPair);
-                final DHPrivateKeyParameters myKey = myPrivateKey.getPrivateKey();
+                final DHPrivateKeyParameters myKey = (DHPrivateKeyParameters) pParams;
                 final DHParameters myParms = myKey.getParameters();
                 final AlgorithmIdentifier myId = getAlgorithmIdentifier(myParms);
                 final PrivateKeyInfo myInfo = new PrivateKeyInfo(myId, new ASN1Integer(myKey.getX()));
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
 
             } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
+                throw new GordianCryptoException(BouncyKeyPairGenerator.ERROR_PARSE, e);
             }
         }
 
         @Override
-        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keySpecs */
-                checkKeySpec(pPrivateKey);
-
-                /* derive keyPair */
-                final BouncyDHPublicKey myPublic = derivePublicKey(pPublicKey);
-                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final BCDHPrivateKey myKey = new BCDHPrivateKey(myInfo);
-                final DHParameters myParms = GordianDHEncodedParser.determineParameters(myInfo.getPrivateKeyAlgorithm());
-                final BouncyDHPrivateKey myPrivate = new BouncyDHPrivateKey(getKeySpec(), new DHPrivateKeyParameters(myKey.getX(), myParms));
-                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
-
-                /* Check that we have a matching pair */
-                GordianKeyPairValidity.checkValidity(getFactory(), myPair);
-
-                /* Return the keyPair */
-                return myPair;
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
+        public AsymmetricKeyParameter parseX509EncodedKeySpec(final X509EncodedKeySpec pEncodedKey) {
+            /* Parse the encoded keySpec */
+            final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
+            final BCDHPublicKey myKey = new BCDHPublicKey(myInfo);
+            return myKey.engineGetKeyParameters();
         }
 
         @Override
-        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
-            /* Check the keyPair type and keySpecs */
-            BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
-
+        public X509EncodedKeySpec createX509EncodedKeySpec(final AsymmetricKeyParameter pParams) {
             /* build and return the encoding */
-            final BouncyDHPublicKey myPublicKey = (BouncyDHPublicKey) getPublicKey(pKeyPair);
-            final DHPublicKeyParameters myKey = myPublicKey.getPublicKey();
+            final DHPublicKeyParameters myKey = (DHPublicKeyParameters) pParams;
             final DHParameters myParms = myKey.getParameters();
             final AlgorithmIdentifier myId = getAlgorithmIdentifier(myParms);
             final byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(myId, new ASN1Integer(myKey.getY()));
             return new X509EncodedKeySpec(myBytes);
-        }
-
-        @Override
-        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            final BouncyDHPublicKey myPublic = derivePublicKey(pEncodedKey);
-            return new BouncyKeyPair(myPublic);
-        }
-
-        /**
-         * Derive public key from encoded.
-         *
-         * @param pEncodedKey the encoded key
-         * @return the public key
-         * @throws GordianException on error
-         */
-        private BouncyDHPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            /* Check the keySpecs */
-            checkKeySpec(pEncodedKey);
-
-            /* derive publicKey */
-            final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-            final BCDHPublicKey myKey = new BCDHPublicKey(myInfo);
-            return new BouncyDHPublicKey(getKeySpec(), myKey.engineGetKeyParameters());
         }
 
         /**

@@ -16,33 +16,18 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
-import org.bouncycastle.asn1.ASN1Encoding;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.pqc.crypto.ntruprime.SNTRUPrimeKeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.ntruprime.SNTRUPrimeKeyPairGenerator;
 import org.bouncycastle.pqc.crypto.ntruprime.SNTRUPrimeParameters;
 import org.bouncycastle.pqc.crypto.ntruprime.SNTRUPrimePrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.ntruprime.SNTRUPrimePublicKeyParameters;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
-import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
-import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
 
-import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
 /**
@@ -116,11 +101,6 @@ public final class BouncySNTRUPrimeKeyPair {
     public static class BouncySNTRUPrimeKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
-         * Generator.
-         */
-        private final SNTRUPrimeKeyPairGenerator theGenerator;
-
-        /**
          * Constructor.
          *
          * @param pFactory the Security Factory
@@ -131,117 +111,24 @@ public final class BouncySNTRUPrimeKeyPair {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
-            /* Create the generator */
-            theGenerator = new SNTRUPrimeKeyPairGenerator();
-
             /* Determine the parameters */
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
             final SNTRUPrimeParameters myParms = myKeySpec.getNTRUPrimeSpec().getCoreParams().getSNTRUParameters();
-
-            /* Initialise the generator */
             final SNTRUPrimeKeyGenerationParameters myParams = new SNTRUPrimeKeyGenerationParameters(getRandom(), myParms);
-            theGenerator.init(myParams);
+
+            /* Create and initialise the generator */
+            setGenerator(new SNTRUPrimeKeyPairGenerator(), myParams);
+            setFactorySet(BouncyPqKeyFactorySet.INSTANCE);
         }
 
         @Override
-        public BouncyKeyPair generateKeyPair() {
-            /* Generate and return the keyPair */
-            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncySNTRUPrimePublicKey myPublic = new BouncySNTRUPrimePublicKey(getKeySpec(), (SNTRUPrimePublicKeyParameters) myPair.getPublic());
-            final BouncySNTRUPrimePrivateKey myPrivate = new BouncySNTRUPrimePrivateKey(getKeySpec(), (SNTRUPrimePrivateKeyParameters) myPair.getPrivate());
-            return new BouncyKeyPair(myPublic, myPrivate);
+        BouncySNTRUPrimePrivateKey newPrivateKey(final AsymmetricKeyParameter pThat) {
+            return new BouncySNTRUPrimePrivateKey(getKeySpec(), (SNTRUPrimePrivateKeyParameters) pThat);
         }
 
         @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keyPair type and keySpecs */
-                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
-
-                /* build and return the encoding */
-                final BouncySNTRUPrimePrivateKey myPrivateKey = (BouncySNTRUPrimePrivateKey) getPrivateKey(pKeyPair);
-                final SNTRUPrimePrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms);
-                return new PKCS8EncodedKeySpec(myInfo.getEncoded());
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keySpecs */
-                checkKeySpec(pPrivateKey);
-
-                /* derive keyPair */
-                final BouncySNTRUPrimePublicKey myPublic = derivePublicKey(pPublicKey);
-                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final SNTRUPrimePrivateKeyParameters myParms = (SNTRUPrimePrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                final BouncySNTRUPrimePrivateKey myPrivate = new BouncySNTRUPrimePrivateKey(getKeySpec(), myParms);
-                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
-
-                /* Check that we have a matching pair */
-                GordianKeyPairValidity.checkValidity(getFactory(), myPair);
-
-                /* Return the derived keyPair */
-                return myPair;
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keyPair type and keySpecs */
-                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
-
-                /* build and return the encoding */
-                final BouncySNTRUPrimePublicKey myPublicKey = (BouncySNTRUPrimePublicKey) getPublicKey(pKeyPair);
-                final SNTRUPrimePublicKeyParameters myParms = myPublicKey.getPublicKey();
-                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
-                final byte[] myBytes = myInfo.getEncoded(ASN1Encoding.DER);
-                return new X509EncodedKeySpec(myBytes);
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            final BouncySNTRUPrimePublicKey myPublic = derivePublicKey(pEncodedKey);
-            return new BouncyKeyPair(myPublic);
-        }
-
-        /**
-         * Derive public key from encoded.
-         *
-         * @param pEncodedKey the encoded key
-         * @return the public key
-         * @throws GordianException on error
-         */
-        private BouncySNTRUPrimePublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keySpecs */
-                checkKeySpec(pEncodedKey);
-
-                /* derive publicKey */
-                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final SNTRUPrimePublicKeyParameters myParms = (SNTRUPrimePublicKeyParameters) PublicKeyFactory.createKey(myInfo);
-                return new BouncySNTRUPrimePublicKey(getKeySpec(), myParms);
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
+        BouncySNTRUPrimePublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
+            return new BouncySNTRUPrimePublicKey(getKeySpec(), (SNTRUPrimePublicKeyParameters) pThat);
         }
     }
 }

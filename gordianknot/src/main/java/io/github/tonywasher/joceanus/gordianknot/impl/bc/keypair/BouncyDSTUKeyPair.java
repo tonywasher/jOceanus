@@ -37,9 +37,8 @@ import org.bouncycastle.asn1.sec.ECPrivateKey;
 import org.bouncycastle.asn1.ua.DSTU4145NamedCurves;
 import org.bouncycastle.asn1.ua.DSTU4145PointEncoder;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.generators.DSTU4145KeyPairGenerator;
-import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.crypto.params.ECKeyGenerationParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
@@ -77,11 +76,6 @@ public final class BouncyDSTUKeyPair {
     public static class BouncyDSTUKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
-         * Generator.
-         */
-        private final ECKeyPairGenerator theGenerator;
-
-        /**
          * Domain.
          */
         private final ECDomainParameters theDomain;
@@ -102,9 +96,6 @@ public final class BouncyDSTUKeyPair {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
-            /* Create the generator */
-            theGenerator = new DSTU4145KeyPairGenerator();
-
             /* Determine domain */
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
             final String myCurveName = myKeySpec.getElliptic().getCurveName();
@@ -123,16 +114,10 @@ public final class BouncyDSTUKeyPair {
             /* Initialise the generator */
             final ECKeyGenerationParameters myParams = new ECKeyGenerationParameters(
                     new ECDomainParameters(myCurve, myG, theSpec.getOrder(), BigInteger.valueOf(theSpec.getCofactor())), getRandom());
-            theGenerator.init(myParams);
-        }
 
-        @Override
-        public BouncyKeyPair generateKeyPair() {
-            /* Generate and return the keyPair */
-            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyECPublicKey myPublic = new BouncyECPublicKey(getKeySpec(), (ECPublicKeyParameters) myPair.getPublic());
-            final BouncyECPrivateKey myPrivate = new BouncyECPrivateKey(getKeySpec(), (ECPrivateKeyParameters) myPair.getPrivate());
-            return new BouncyKeyPair(myPublic, myPrivate);
+            /* Create and initialise the generator */
+            setGenerator(new DSTU4145KeyPairGenerator(), myParams);
+            setFactorySet(BouncyStdKeyFactorySet.INSTANCE);
         }
 
         @Override
@@ -157,7 +142,7 @@ public final class BouncyDSTUKeyPair {
             checkKeySpec(pPrivateKey);
 
             /* derive keyPair */
-            final BouncyECPublicKey myPublic = derivePublicKey(pPublicKey);
+            final BouncyECPublicKey myPublic = deriveThePublicKey(pPublicKey);
             final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
             final ECPrivateKeyParameters myParms = deriveFromPrivKeyInfo(myInfo);
             final BouncyECPrivateKey myPrivate = new BouncyECPrivateKey(getKeySpec(), myParms);
@@ -184,7 +169,7 @@ public final class BouncyDSTUKeyPair {
 
         @Override
         public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            final BouncyECPublicKey myPublic = derivePublicKey(pEncodedKey);
+            final BouncyECPublicKey myPublic = deriveThePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
 
@@ -195,7 +180,7 @@ public final class BouncyDSTUKeyPair {
          * @return the public key
          * @throws GordianException on error
          */
-        private BouncyECPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+        private BouncyECPublicKey deriveThePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             /* Check the keySpecs */
             checkKeySpec(pEncodedKey);
 
@@ -213,18 +198,15 @@ public final class BouncyDSTUKeyPair {
          * @throws GordianException on error
          */
         private ECPublicKeyParameters deriveFromPubKeyInfo(final SubjectPublicKeyInfo pKeyInfo) throws GordianException {
-            final ASN1BitString bits = pKeyInfo.getPublicKeyData();
-            final ASN1OctetString key;
-
             try {
-                key = (ASN1OctetString) ASN1Primitive.fromByteArray(bits.getBytes());
+                final ASN1BitString bits = pKeyInfo.getPublicKeyData();
+                final ASN1OctetString key = (ASN1OctetString) ASN1Primitive.fromByteArray(bits.getBytes());
+                final byte[] keyEnc = key.getOctets();
+                final ECCurve curve = theDomain.getCurve();
+                return new ECPublicKeyParameters(DSTU4145PointEncoder.decodePoint(curve, keyEnc), theDomain);
             } catch (IOException ex) {
                 throw new GordianIOException("error recovering public key", ex);
             }
-
-            final byte[] keyEnc = key.getOctets();
-            final ECCurve curve = theDomain.getCurve();
-            return new ECPublicKeyParameters(DSTU4145PointEncoder.decodePoint(curve, keyEnc), theDomain);
         }
 
         /**
@@ -237,19 +219,23 @@ public final class BouncyDSTUKeyPair {
         private ECPrivateKeyParameters deriveFromPrivKeyInfo(final PrivateKeyInfo pKeyInfo) throws GordianException {
             try {
                 final ASN1Encodable privKey = pKeyInfo.parsePrivateKey();
-                final BigInteger myD;
-                if (privKey instanceof ASN1Integer) {
-                    myD = ASN1Integer.getInstance(privKey).getPositiveValue();
-                } else {
-                    final ECPrivateKey ec = ECPrivateKey.getInstance(privKey);
-
-                    myD = ec.getKey();
-                }
+                final BigInteger myD = privKey instanceof ASN1Integer myInt
+                        ? myInt.getPositiveValue()
+                        : ECPrivateKey.getInstance(privKey).getKey();
                 return new ECPrivateKeyParameters(myD, theDomain);
-
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
             }
+        }
+
+        @Override
+        BouncyECPrivateKey newPrivateKey(final AsymmetricKeyParameter pThat) {
+            return new BouncyECPrivateKey(getKeySpec(), (ECPrivateKeyParameters) pThat);
+        }
+
+        @Override
+        BouncyECPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
+            return new BouncyECPublicKey(getKeySpec(), (ECPublicKeyParameters) pThat);
         }
     }
 }

@@ -16,32 +16,20 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyStateAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyStateAwarePrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreXMSSSpec;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.KeyGenerationParameters;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.crypto.digests.SHAKEDigest;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
-import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
-import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
 import org.bouncycastle.pqc.crypto.xmss.XMSSKeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.xmss.XMSSKeyPairGenerator;
 import org.bouncycastle.pqc.crypto.xmss.XMSSMTKeyGenerationParameters;
@@ -54,8 +42,6 @@ import org.bouncycastle.pqc.crypto.xmss.XMSSPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.xmss.XMSSPublicKeyParameters;
 
 import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
 /**
@@ -92,17 +78,6 @@ public final class BouncyXMSSKeyPair {
 
             /* Check equality */
             return compareKeys(myThis, myThat);
-        }
-
-        /**
-         * Is the private key valid for this public key?
-         *
-         * @param pPrivate the private key
-         * @return true/false
-         */
-        public boolean validPrivate(final BouncyXMSSPrivateKey pPrivate) {
-            final XMSSPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
-            return getPublicKey().getParameters().equals(myPrivate.getParameters());
         }
 
         /**
@@ -181,11 +156,6 @@ public final class BouncyXMSSKeyPair {
     public static class BouncyXMSSKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
-         * Generator.
-         */
-        private final XMSSKeyPairGenerator theGenerator;
-
-        /**
          * Constructor.
          *
          * @param pFactory the Security Factory
@@ -197,12 +167,14 @@ public final class BouncyXMSSKeyPair {
             super(pFactory, pKeySpec);
 
             /* Create and initialise the generator */
-            theGenerator = new XMSSKeyPairGenerator();
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
             final GordianCoreXMSSSpec mySpec = myKeySpec.getXMSSSpec();
             final KeyGenerationParameters myParams = new XMSSKeyGenerationParameters(
                     new XMSSParameters(mySpec.getHeight().getHeight(), createDigest(getKeyType())), getRandom());
-            theGenerator.init(myParams);
+
+            /* Create and initialise the generator */
+            setGenerator(new XMSSKeyPairGenerator(), myParams);
+            setFactorySet(BouncyPqKeyFactorySet.INSTANCE);
         }
 
         /**
@@ -216,105 +188,13 @@ public final class BouncyXMSSKeyPair {
         }
 
         @Override
-        public BouncyKeyPair generateKeyPair() {
-            /* Generate and return the keyPair */
-            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyXMSSPublicKey myPublic = new BouncyXMSSPublicKey(getKeySpec(), (XMSSPublicKeyParameters) myPair.getPublic());
-            final BouncyXMSSPrivateKey myPrivate = new BouncyXMSSPrivateKey(getKeySpec(), (XMSSPrivateKeyParameters) myPair.getPrivate());
-            return new BouncyStateAwareKeyPair(myPublic, myPrivate);
+        BouncyXMSSPrivateKey newPrivateKey(final AsymmetricKeyParameter pThat) {
+            return new BouncyXMSSPrivateKey(getKeySpec(), (XMSSPrivateKeyParameters) pThat);
         }
 
         @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keyPair type and keySpecs */
-                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
-
-                /* build and return the encoding */
-                final BouncyXMSSPrivateKey myPrivateKey = (BouncyXMSSPrivateKey) getPrivateKey(pKeyPair);
-                final XMSSPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
-                return new PKCS8EncodedKeySpec(myInfo.getEncoded());
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keySpecs */
-                checkKeySpec(pPrivateKey);
-
-                /* derive keyPair */
-                final BouncyXMSSPublicKey myPublic = derivePublicKey(pPublicKey);
-                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                XMSSPrivateKeyParameters myParms = (XMSSPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                BouncyXMSSPrivateKey myPrivate = new BouncyXMSSPrivateKey(getKeySpec(), myParms);
-                final BouncyKeyPair myPair = new BouncyStateAwareKeyPair(myPublic, myPrivate);
-
-                /* Check that we have a matching pair */
-                GordianKeyPairValidity.checkValidity(getFactory(), myPair);
-
-                /* Rebuild and return the keyPair to avoid incrementing usage count */
-                myParms = (XMSSPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                myPrivate = new BouncyXMSSPrivateKey(getKeySpec(), myParms);
-                return new BouncyStateAwareKeyPair(myPublic, myPrivate);
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keyPair type and keySpecs */
-                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
-
-                /* build and return the encoding */
-                final BouncyXMSSPublicKey myPublicKey = (BouncyXMSSPublicKey) getPublicKey(pKeyPair);
-                final XMSSPublicKeyParameters myParms = myPublicKey.getPublicKey();
-                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
-                return new X509EncodedKeySpec(myInfo.getEncoded());
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            final BouncyXMSSPublicKey myPublic = derivePublicKey(pEncodedKey);
-            return new BouncyKeyPair(myPublic);
-        }
-
-        /**
-         * Derive public key from encoded.
-         *
-         * @param pEncodedKey the encoded key
-         * @return the public key
-         * @throws GordianException on error
-         */
-        private BouncyXMSSPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keySpecs */
-                checkKeySpec(pEncodedKey);
-
-                /* derive publicKey */
-                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final XMSSPublicKeyParameters myParms = (XMSSPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
-                return new BouncyXMSSPublicKey(getKeySpec(), myParms);
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
+        BouncyXMSSPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
+            return new BouncyXMSSPublicKey(getKeySpec(), (XMSSPublicKeyParameters) pThat);
         }
     }
 
@@ -358,17 +238,6 @@ public final class BouncyXMSSKeyPair {
 
             /* Check equality */
             return compareKeys(myThis, myThat);
-        }
-
-        /**
-         * Is the private key valid for this public key?
-         *
-         * @param pPrivate the private key
-         * @return true/false
-         */
-        public boolean validPrivate(final BouncyXMSSMTPrivateKey pPrivate) {
-            final XMSSMTPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
-            return getPublicKey().getParameters().equals(myPrivate.getParameters());
         }
 
         /**
@@ -447,11 +316,6 @@ public final class BouncyXMSSKeyPair {
     public static class BouncyXMSSMTKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
-         * Generator.
-         */
-        private final XMSSMTKeyPairGenerator theGenerator;
-
-        /**
          * Constructor.
          *
          * @param pFactory the Security Factory
@@ -463,13 +327,15 @@ public final class BouncyXMSSKeyPair {
             super(pFactory, pKeySpec);
 
             /* Create and initialise the generator */
-            theGenerator = new XMSSMTKeyPairGenerator();
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
             final GordianCoreXMSSSpec mySpec = myKeySpec.getXMSSSpec();
             final KeyGenerationParameters myParams = new XMSSMTKeyGenerationParameters(
                     new XMSSMTParameters(mySpec.getHeight().getHeight(), mySpec.getLayers().getLayers(),
                             createDigest(getKeyType())), getRandom());
-            theGenerator.init(myParams);
+
+            /* Create and initialise the generator */
+            setGenerator(new XMSSMTKeyPairGenerator(), myParams);
+            setFactorySet(BouncyPqKeyFactorySet.INSTANCE);
         }
 
         /**
@@ -483,105 +349,13 @@ public final class BouncyXMSSKeyPair {
         }
 
         @Override
-        public BouncyKeyPair generateKeyPair() {
-            /* Generate and return the keyPair */
-            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyXMSSMTPublicKey myPublic = new BouncyXMSSMTPublicKey(getKeySpec(), (XMSSMTPublicKeyParameters) myPair.getPublic());
-            final BouncyXMSSMTPrivateKey myPrivate = new BouncyXMSSMTPrivateKey(getKeySpec(), (XMSSMTPrivateKeyParameters) myPair.getPrivate());
-            return new BouncyStateAwareKeyPair(myPublic, myPrivate);
+        BouncyXMSSMTPrivateKey newPrivateKey(final AsymmetricKeyParameter pThat) {
+            return new BouncyXMSSMTPrivateKey(getKeySpec(), (XMSSMTPrivateKeyParameters) pThat);
         }
 
         @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keyPair type and keySpecs */
-                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
-
-                /* build and return the encoding */
-                final BouncyXMSSMTPrivateKey myPrivateKey = (BouncyXMSSMTPrivateKey) getPrivateKey(pKeyPair);
-                final XMSSMTPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
-                return new PKCS8EncodedKeySpec(myInfo.getEncoded());
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keySpecs */
-                checkKeySpec(pPrivateKey);
-
-                /* derive keyPair */
-                final BouncyXMSSMTPublicKey myPublic = derivePublicKey(pPublicKey);
-                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                XMSSMTPrivateKeyParameters myParms = (XMSSMTPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                BouncyXMSSMTPrivateKey myPrivate = new BouncyXMSSMTPrivateKey(getKeySpec(), myParms);
-                final BouncyKeyPair myPair = new BouncyStateAwareKeyPair(myPublic, myPrivate);
-
-                /* Check that we have a matching pair */
-                GordianKeyPairValidity.checkValidity(getFactory(), myPair);
-
-                /* Rebuild and return the keyPair to avoid incrementing usage count */
-                myParms = (XMSSMTPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                myPrivate = new BouncyXMSSMTPrivateKey(getKeySpec(), myParms);
-                return new BouncyStateAwareKeyPair(myPublic, myPrivate);
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keyPair type and keySpecs */
-                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
-
-                /* build and return the encoding */
-                final BouncyXMSSMTPublicKey myPublicKey = (BouncyXMSSMTPublicKey) getPublicKey(pKeyPair);
-                final XMSSMTPublicKeyParameters myParms = myPublicKey.getPublicKey();
-                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
-                return new X509EncodedKeySpec(myInfo.getEncoded());
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            final BouncyXMSSMTPublicKey myPublic = derivePublicKey(pEncodedKey);
-            return new BouncyKeyPair(myPublic);
-        }
-
-        /**
-         * Derive public key from encoded.
-         *
-         * @param pEncodedKey the encoded key
-         * @return the public key
-         * @throws GordianException on error
-         */
-        private BouncyXMSSMTPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keySpecs */
-                checkKeySpec(pEncodedKey);
-
-                /* derive publicKey */
-                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final XMSSMTPublicKeyParameters myParms = (XMSSMTPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
-                return new BouncyXMSSMTPublicKey(getKeySpec(), myParms);
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
+        BouncyXMSSMTPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
+            return new BouncyXMSSMTPublicKey(getKeySpec(), (XMSSMTPublicKeyParameters) pThat);
         }
     }
 }

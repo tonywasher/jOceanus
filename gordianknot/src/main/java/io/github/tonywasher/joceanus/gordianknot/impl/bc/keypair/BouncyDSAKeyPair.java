@@ -16,19 +16,12 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreDSASpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.DSAKeyPairGenerator;
 import org.bouncycastle.crypto.generators.DSAParametersGenerator;
@@ -37,14 +30,6 @@ import org.bouncycastle.crypto.params.DSAKeyGenerationParameters;
 import org.bouncycastle.crypto.params.DSAParameterGenerationParameters;
 import org.bouncycastle.crypto.params.DSAPrivateKeyParameters;
 import org.bouncycastle.crypto.params.DSAPublicKeyParameters;
-import org.bouncycastle.crypto.util.PrivateKeyFactory;
-import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
-import org.bouncycastle.crypto.util.PublicKeyFactory;
-import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
-
-import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 
 /**
  * DSA KeyPair classes.
@@ -80,17 +65,6 @@ public final class BouncyDSAKeyPair {
 
             /* Compare keys */
             return compareKeys(myThis, myThat);
-        }
-
-        /**
-         * Is the private key valid for this public key?
-         *
-         * @param pPrivate the private key
-         * @return true/false
-         */
-        public boolean validPrivate(final BouncyDSAPrivateKey pPrivate) {
-            final DSAPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
-            return getPublicKey().getParameters().equals(myPrivate.getParameters());
         }
 
         /**
@@ -153,11 +127,6 @@ public final class BouncyDSAKeyPair {
     public static class BouncyDSAKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
-         * Generator.
-         */
-        private final DSAKeyPairGenerator theGenerator;
-
-        /**
          * Constructor.
          *
          * @param pFactory the Security Factory
@@ -175,112 +144,21 @@ public final class BouncyDSAKeyPair {
                     myKeyType.getHashSize(), PRIME_CERTAINTY, getRandom());
             final DSAParametersGenerator myParmGenerator = new DSAParametersGenerator(new SHA256Digest());
             myParmGenerator.init(myGenParms);
+            final DSAKeyGenerationParameters myParams = new DSAKeyGenerationParameters(getRandom(), myParmGenerator.generateParameters());
 
             /* Create and initialise the generator */
-            theGenerator = new DSAKeyPairGenerator();
-            final DSAKeyGenerationParameters myParams = new DSAKeyGenerationParameters(getRandom(), myParmGenerator.generateParameters());
-            theGenerator.init(myParams);
+            setGenerator(new DSAKeyPairGenerator(), myParams);
+            setFactorySet(BouncyStdKeyFactorySet.INSTANCE);
         }
 
         @Override
-        public BouncyKeyPair generateKeyPair() {
-            /* Generate and return the keyPair */
-            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyDSAPublicKey myPublic = new BouncyDSAPublicKey(getKeySpec(), (DSAPublicKeyParameters) myPair.getPublic());
-            final BouncyDSAPrivateKey myPrivate = new BouncyDSAPrivateKey(getKeySpec(), (DSAPrivateKeyParameters) myPair.getPrivate());
-            return new BouncyKeyPair(myPublic, myPrivate);
+        BouncyDSAPrivateKey newPrivateKey(final AsymmetricKeyParameter pThat) {
+            return new BouncyDSAPrivateKey(getKeySpec(), (DSAPrivateKeyParameters) pThat);
         }
 
         @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keyPair type and keySpecs */
-                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
-
-                /* build and return the encoding */
-                final BouncyDSAPrivateKey myPrivateKey = (BouncyDSAPrivateKey) getPrivateKey(pKeyPair);
-                final DSAPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms);
-                return new PKCS8EncodedKeySpec(myInfo.getEncoded());
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keySpecs */
-                checkKeySpec(pPrivateKey);
-
-                /* derive keyPair */
-                final BouncyDSAPublicKey myPublic = derivePublicKey(pPublicKey);
-                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final DSAPrivateKeyParameters myParms = (DSAPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                final BouncyDSAPrivateKey myPrivate = new BouncyDSAPrivateKey(getKeySpec(), myParms);
-                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
-
-                /* Check that we have a matching pair */
-                GordianKeyPairValidity.checkValidity(getFactory(), myPair);
-
-                /* Return the keyPair */
-                return myPair;
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keyPair type and keySpecs */
-                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
-
-                /* build and return the encoding */
-                final BouncyDSAPublicKey myPublicKey = (BouncyDSAPublicKey) getPublicKey(pKeyPair);
-                final DSAPublicKeyParameters myParms = myPublicKey.getPublicKey();
-                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
-                return new X509EncodedKeySpec(myInfo.getEncoded());
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            final BouncyDSAPublicKey myPublic = derivePublicKey(pEncodedKey);
-            return new BouncyKeyPair(myPublic);
-        }
-
-        /**
-         * Derive public key from encoded.
-         *
-         * @param pEncodedKey the encoded key
-         * @return the public key
-         * @throws GordianException on error
-         */
-        private BouncyDSAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keySpecs */
-                checkKeySpec(pEncodedKey);
-
-                /* derive publicKey */
-                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final DSAPublicKeyParameters myParms = (DSAPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
-                return new BouncyDSAPublicKey(getKeySpec(), myParms);
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
+        BouncyDSAPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
+            return new BouncyDSAPublicKey(getKeySpec(), (DSAPublicKeyParameters) pThat);
         }
     }
-
 }

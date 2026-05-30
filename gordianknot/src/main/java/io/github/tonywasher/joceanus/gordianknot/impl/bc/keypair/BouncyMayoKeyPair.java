@@ -16,32 +16,18 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.pqc.crypto.mayo.MayoKeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.mayo.MayoKeyPairGenerator;
 import org.bouncycastle.pqc.crypto.mayo.MayoParameters;
 import org.bouncycastle.pqc.crypto.mayo.MayoPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.mayo.MayoPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
-import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
-import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
 
-import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
 /**
@@ -77,19 +63,7 @@ public final class BouncyMayoKeyPair {
             final MayoPublicKeyParameters myThat = (MayoPublicKeyParameters) pThat;
 
             /* Compare keys */
-            return compareKeys(myThis, myThat);
-        }
-
-        /**
-         * CompareKeys.
-         *
-         * @param pFirst  the first key
-         * @param pSecond the second key
-         * @return true/false
-         */
-        private static boolean compareKeys(final MayoPublicKeyParameters pFirst,
-                                           final MayoPublicKeyParameters pSecond) {
-            return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
+            return Arrays.equals(myThis.getEncoded(), myThat.getEncoded());
         }
     }
 
@@ -117,19 +91,7 @@ public final class BouncyMayoKeyPair {
             final MayoPrivateKeyParameters myThat = (MayoPrivateKeyParameters) pThat;
 
             /* Compare keys */
-            return compareKeys(myThis, myThat);
-        }
-
-        /**
-         * CompareKeys.
-         *
-         * @param pFirst  the first key
-         * @param pSecond the second key
-         * @return true/false
-         */
-        private static boolean compareKeys(final MayoPrivateKeyParameters pFirst,
-                                           final MayoPrivateKeyParameters pSecond) {
-            return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
+            return Arrays.equals(myThis.getEncoded(), myThat.getEncoded());
         }
     }
 
@@ -138,11 +100,6 @@ public final class BouncyMayoKeyPair {
      */
     public static class BouncyMayoKeyPairGenerator
             extends BouncyKeyPairGenerator {
-        /**
-         * Generator.
-         */
-        private final MayoKeyPairGenerator theGenerator;
-
         /**
          * Constructor.
          *
@@ -157,112 +114,21 @@ public final class BouncyMayoKeyPair {
             /* Determine the parameters */
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
             final MayoParameters myParms = myKeySpec.getMayoSpec().getParameters();
+            final MayoKeyGenerationParameters myParams = new MayoKeyGenerationParameters(getRandom(), myParms);
 
             /* Create and initialise the generator */
-            theGenerator = new MayoKeyPairGenerator();
-            final MayoKeyGenerationParameters myParams = new MayoKeyGenerationParameters(getRandom(), myParms);
-            theGenerator.init(myParams);
+            setGenerator(new MayoKeyPairGenerator(), myParams);
+            setFactorySet(BouncyPqKeyFactorySet.INSTANCE);
         }
 
         @Override
-        public BouncyKeyPair generateKeyPair() {
-            /* Generate and return the keyPair */
-            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyMayoPublicKey myPublic = new BouncyMayoPublicKey(getKeySpec(), (MayoPublicKeyParameters) myPair.getPublic());
-            final BouncyMayoPrivateKey myPrivate = new BouncyMayoPrivateKey(getKeySpec(), (MayoPrivateKeyParameters) myPair.getPrivate());
-            return new BouncyKeyPair(myPublic, myPrivate);
+        BouncyMayoPrivateKey newPrivateKey(final AsymmetricKeyParameter pThat) {
+            return new BouncyMayoPrivateKey(getKeySpec(), (MayoPrivateKeyParameters) pThat);
         }
 
         @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keyPair type and keySpecs */
-                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
-
-                /* build and return the encoding */
-                final BouncyMayoPrivateKey myPrivateKey = (BouncyMayoPrivateKey) getPrivateKey(pKeyPair);
-                final MayoPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
-                return new PKCS8EncodedKeySpec(myInfo.getEncoded());
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keySpecs */
-                checkKeySpec(pPrivateKey);
-
-                /* derive keyPair */
-                final BouncyMayoPublicKey myPublic = derivePublicKey(pPublicKey);
-                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final MayoPrivateKeyParameters myParms = (MayoPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                final BouncyMayoPrivateKey myPrivate = new BouncyMayoPrivateKey(getKeySpec(), myParms);
-                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
-
-                /* Check that we have a matching pair */
-                GordianKeyPairValidity.checkValidity(getFactory(), myPair);
-
-                /* Return the keyPair */
-                return myPair;
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keyPair type and keySpecs */
-                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
-
-                /* build and return the encoding */
-                final BouncyMayoPublicKey myPublicKey = (BouncyMayoPublicKey) getPublicKey(pKeyPair);
-                final MayoPublicKeyParameters myParms = myPublicKey.getPublicKey();
-                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
-                return new X509EncodedKeySpec(myInfo.getEncoded());
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            final BouncyMayoPublicKey myPublic = derivePublicKey(pEncodedKey);
-            return new BouncyKeyPair(myPublic);
-        }
-
-        /**
-         * Derive public key from encoded.
-         *
-         * @param pEncodedKey the encoded key
-         * @return the public key
-         * @throws GordianException on error
-         */
-        private BouncyMayoPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check the keySpecs */
-                checkKeySpec(pEncodedKey);
-
-                /* derive publicKey */
-                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final MayoPublicKeyParameters myParms = (MayoPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
-                return new BouncyMayoPublicKey(getKeySpec(), myParms);
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(ERROR_PARSE, e);
-            }
+        BouncyMayoPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
+            return new BouncyMayoPublicKey(getKeySpec(), (MayoPublicKeyParameters) pThat);
         }
     }
-
 }

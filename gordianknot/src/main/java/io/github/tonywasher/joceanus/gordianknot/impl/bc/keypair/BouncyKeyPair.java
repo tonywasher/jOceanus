@@ -165,7 +165,7 @@ public class BouncyKeyPair
 
         @Override
         public int hashCode() {
-            return Objects.hash(getKeySpec().hashCode(), theKey);
+            return Objects.hash(getKeySpec(), theKey);
         }
     }
 
