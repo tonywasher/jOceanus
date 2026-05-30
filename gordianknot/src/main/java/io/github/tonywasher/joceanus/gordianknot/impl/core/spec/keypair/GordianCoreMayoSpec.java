@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMayoSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
@@ -29,7 +30,8 @@ import java.util.Map;
 /**
  * Mayo KeySpec.
  */
-public final class GordianCoreMayoSpec {
+public final class GordianCoreMayoSpec
+        implements GordianCoreKeyPairIdSigner {
     /**
      * The specMap.
      */
@@ -54,11 +56,12 @@ public final class GordianCoreMayoSpec {
         theSpec = pSpec;
     }
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+        return GordianKeyPairType.MAYO;
+    }
+
+    @Override
     public GordianMayoSpec getSpec() {
         return theSpec;
     }
@@ -93,11 +96,7 @@ public final class GordianCoreMayoSpec {
         };
     }
 
-    /**
-     * Obtain MAYO algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
         return switch (theSpec) {
             case MAYO1 -> BCObjectIdentifiers.mayo1;

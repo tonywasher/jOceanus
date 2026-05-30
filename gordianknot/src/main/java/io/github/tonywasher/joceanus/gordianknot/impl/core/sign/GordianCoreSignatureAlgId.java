@@ -34,7 +34,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreFalconSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairIdSigner;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMLDSASpec;
@@ -435,78 +435,27 @@ public class GordianCoreSignatureAlgId {
         addToMaps(mySigBuilder.lms(),
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.id_alg_hss_lms_hashsig, DERNull.INSTANCE));
 
-        /* Add signatures that use keyPair id */
-        addMLDSASignatures();
-        addSLHDSASignatures();
-        addFalconSignatures();
-        addMayoSignatures();
-        addSnovaSignatures();
-
         /* Add XMSS signatures */
         addXMSSSignatures();
+
+        /* Add signatures that use keyPair id */
+        addKeyPairIdSignatures(GordianCoreMLDSASpec.values());
+        addKeyPairIdSignatures(GordianCoreSLHDSASpec.values());
+        addKeyPairIdSignatures(GordianCoreFalconSpec.values());
+        addKeyPairIdSignatures(GordianCoreMayoSpec.values());
+        addKeyPairIdSignatures(GordianCoreSnovaSpec.values());
     }
 
     /**
-     * Add SLHDSA signatures.
+     * Add keyPairId signatures.
+     *
+     * @param pSubSpecs the array of subSpecs.
      */
-    private void addMLDSASignatures() {
-        final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
-        final GordianSignatureSpecBuilder mySigBuilder = GordianCoreSignatureSpecBuilder.newInstance();
-        for (GordianCoreMLDSASpec mySpec : GordianCoreMLDSASpec.values()) {
-            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) myBuilder.mldsa(mySpec.getSpec());
-            addToMaps(mySigBuilder.mldsa(), myKeySpec.getSubSpec(),
-                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
-        }
-    }
-
-    /**
-     * Add SLHDSA signatures.
-     */
-    private void addSLHDSASignatures() {
-        final GordianSignatureSpecBuilder mySigBuilder = GordianCoreSignatureSpecBuilder.newInstance();
-        final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
-        for (GordianCoreSLHDSASpec mySpec : GordianCoreSLHDSASpec.values()) {
-            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) myBuilder.slhdsa(mySpec.getSpec());
-            addToMaps(mySigBuilder.slhdsa(), myKeySpec.getSubSpec(),
-                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
-        }
-    }
-
-    /**
-     * Add Falcon signatures.
-     */
-    private void addFalconSignatures() {
-        final GordianSignatureSpecBuilder mySigBuilder = GordianCoreSignatureSpecBuilder.newInstance();
-        final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
-        for (GordianCoreFalconSpec mySpec : GordianCoreFalconSpec.values()) {
-            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) myBuilder.falcon(mySpec.getSpec());
-            addToMaps(mySigBuilder.falcon(), myKeySpec.getSubSpec(),
-                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
-        }
-    }
-
-    /**
-     * Add Mayo signatures.
-     */
-    private void addMayoSignatures() {
-        final GordianSignatureSpecBuilder mySigBuilder = GordianCoreSignatureSpecBuilder.newInstance();
-        final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
-        for (GordianCoreMayoSpec mySpec : GordianCoreMayoSpec.values()) {
-            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) myBuilder.mayo(mySpec.getSpec());
-            addToMaps(mySigBuilder.mayo(), myKeySpec.getSubSpec(),
-                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
-        }
-    }
-
-    /**
-     * Add Snova signatures.
-     */
-    private void addSnovaSignatures() {
-        final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
-        final GordianSignatureSpecBuilder mySigBuilder = GordianCoreSignatureSpecBuilder.newInstance();
-        for (GordianCoreSnovaSpec mySpec : GordianCoreSnovaSpec.values()) {
-            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) myBuilder.snova(mySpec.getSpec());
-            addToMaps(mySigBuilder.snova(), myKeySpec.getSubSpec(),
+    private void addKeyPairIdSignatures(final GordianCoreKeyPairIdSigner[] pSubSpecs) {
+        final GordianSignatureSpecBuilder myBuilder = GordianCoreSignatureSpecBuilder.newInstance();
+        for (GordianCoreKeyPairIdSigner mySpec : pSubSpecs) {
+            final GordianSignatureSpec mySigSpec = myBuilder.withKeyPairType(mySpec.getKeyPairType()).build();
+            addToMaps(mySigSpec, mySpec.getSpec(),
                     new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
         }
     }
@@ -515,73 +464,61 @@ public class GordianCoreSignatureAlgId {
      * Add XMSS signatures.
      */
     private void addXMSSSignatures() {
-        /* List XMSS Sha256 signatures */
+        /* Process XMSS Sha256 signatures */
+        addXMSSSignatures(GordianXMSSDigestType.SHA256,
+                BCObjectIdentifiers.xmss_SHA256,
+                BCObjectIdentifiers.xmss_SHA256ph,
+                BCObjectIdentifiers.xmss_mt_SHA256,
+                BCObjectIdentifiers.xmss_mt_SHA256ph);
+
+        /* Process XMSS Sha512 signatures */
+        addXMSSSignatures(GordianXMSSDigestType.SHA512,
+                BCObjectIdentifiers.xmss_SHA512,
+                BCObjectIdentifiers.xmss_SHA512ph,
+                BCObjectIdentifiers.xmss_mt_SHA512,
+                BCObjectIdentifiers.xmss_mt_SHA512ph);
+
+        /* Process XMSS Shake128 signatures */
+        addXMSSSignatures(GordianXMSSDigestType.SHAKE128,
+                BCObjectIdentifiers.xmss_SHAKE128,
+                BCObjectIdentifiers.xmss_SHAKE128ph,
+                BCObjectIdentifiers.xmss_mt_SHAKE128,
+                BCObjectIdentifiers.xmss_mt_SHAKE128ph);
+
+        /* Process XMSS Shake256 signatures */
+        addXMSSSignatures(GordianXMSSDigestType.SHAKE256,
+                BCObjectIdentifiers.xmss_SHAKE256,
+                BCObjectIdentifiers.xmss_SHAKE256ph,
+                BCObjectIdentifiers.xmss_mt_SHAKE256,
+                BCObjectIdentifiers.xmss_mt_SHAKE256ph);
+    }
+
+    /**
+     * Add XMSS Signatures.
+     *
+     * @param pDigestType the digestType
+     * @param pStd        the XMSS standardId
+     * @param pPreHash    the XMSS preHashId
+     * @param pStdMT      the XMSSMT standardId
+     * @param pPreHashMT  the XMSSMT preHashId
+     */
+    private void addXMSSSignatures(final GordianXMSSDigestType pDigestType,
+                                   final ASN1ObjectIdentifier pStd,
+                                   final ASN1ObjectIdentifier pPreHash,
+                                   final ASN1ObjectIdentifier pStdMT,
+                                   final ASN1ObjectIdentifier pPreHashMT) {
+        /* Create the main signature Specs */
         final GordianSignatureSpecBuilder mySigBuilder = GordianCoreSignatureSpecBuilder.newInstance();
-        for (GordianXMSSSpec mySpec : GordianCoreXMSSSpec.listPossibleSpecs(GordianXMSSDigestType.SHA256)) {
-            /* If this is an XMSSMT spec */
-            if (mySpec.isMT()) {
-                addToMaps(mySigBuilder.xmss(), mySpec,
-                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHA256, DERNull.INSTANCE));
-                addToMaps(mySigBuilder.xmssph(), mySpec,
-                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHA256ph, DERNull.INSTANCE));
+        final GordianSignatureSpec myStd = mySigBuilder.xmss();
+        final GordianSignatureSpec myPreHash = mySigBuilder.xmssph();
 
-            } else {
-                addToMaps(mySigBuilder.xmss(), mySpec,
-                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHA256, DERNull.INSTANCE));
-                addToMaps(mySigBuilder.xmssph(), mySpec,
-                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHA256ph, DERNull.INSTANCE));
-            }
-        }
-
-        /* List XMSS Sha512 signatures */
-        for (GordianXMSSSpec mySpec : GordianCoreXMSSSpec.listPossibleSpecs(GordianXMSSDigestType.SHA512)) {
-            /* If this is an XMSSMT spec */
-            if (mySpec.isMT()) {
-                addToMaps(mySigBuilder.xmss(), mySpec,
-                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHA512, DERNull.INSTANCE));
-                addToMaps(mySigBuilder.xmssph(), mySpec,
-                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHA512ph, DERNull.INSTANCE));
-
-            } else {
-                addToMaps(mySigBuilder.xmss(), mySpec,
-                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHA512, DERNull.INSTANCE));
-                addToMaps(mySigBuilder.xmssph(), mySpec,
-                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHA512ph, DERNull.INSTANCE));
-            }
-        }
-
-        /* List XMSS Shake128 signatures */
-        for (GordianXMSSSpec mySpec : GordianCoreXMSSSpec.listPossibleSpecs(GordianXMSSDigestType.SHAKE128)) {
-            /* If this is an XMSSMT spec */
-            if (mySpec.isMT()) {
-                addToMaps(mySigBuilder.xmss(), mySpec,
-                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHAKE128, DERNull.INSTANCE));
-                addToMaps(mySigBuilder.xmssph(), mySpec,
-                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHAKE128ph, DERNull.INSTANCE));
-
-            } else {
-                addToMaps(mySigBuilder.xmss(), mySpec,
-                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHAKE128, DERNull.INSTANCE));
-                addToMaps(mySigBuilder.xmssph(), mySpec,
-                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHAKE128ph, DERNull.INSTANCE));
-            }
-        }
-
-        /* List XMSS Shake128 signatures */
-        for (GordianXMSSSpec mySpec : GordianCoreXMSSSpec.listPossibleSpecs(GordianXMSSDigestType.SHAKE256)) {
-            /* If this is an XMSSMT spec */
-            if (mySpec.isMT()) {
-                addToMaps(mySigBuilder.xmss(), mySpec,
-                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHAKE256, DERNull.INSTANCE));
-                addToMaps(mySigBuilder.xmssph(), mySpec,
-                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHAKE256ph, DERNull.INSTANCE));
-
-            } else {
-                addToMaps(mySigBuilder.xmss(), mySpec,
-                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHAKE256, DERNull.INSTANCE));
-                addToMaps(mySigBuilder.xmssph(), mySpec,
-                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHAKE256ph, DERNull.INSTANCE));
-            }
+        /* Process XMSS Sha256 signatures */
+        for (GordianXMSSSpec mySpec : GordianCoreXMSSSpec.listPossibleSpecs(pDigestType)) {
+            final boolean isMT = mySpec.isMT();
+            final ASN1ObjectIdentifier myStdId = isMT ? pStdMT : pStd;
+            final ASN1ObjectIdentifier myPreHashId = isMT ? pPreHashMT : pPreHash;
+            addToMaps(myStd, mySpec, new AlgorithmIdentifier(myStdId, DERNull.INSTANCE));
+            addToMaps(myPreHash, mySpec, new AlgorithmIdentifier(myPreHashId, DERNull.INSTANCE));
         }
     }
 

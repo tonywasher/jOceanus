@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSnovaSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
@@ -29,7 +30,8 @@ import java.util.Map;
 /**
  * Snova KeySpec.
  */
-public final class GordianCoreSnovaSpec {
+public final class GordianCoreSnovaSpec
+        implements GordianCoreKeyPairIdSigner {
     /**
      * The specMap.
      */
@@ -54,11 +56,12 @@ public final class GordianCoreSnovaSpec {
         theSpec = pSpec;
     }
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+        return GordianKeyPairType.SNOVA;
+    }
+
+    @Override
     public GordianSnovaSpec getSpec() {
         return theSpec;
     }
@@ -173,11 +176,7 @@ public final class GordianCoreSnovaSpec {
         };
     }
 
-    /**
-     * Obtain Snova algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
         return switch (theSpec) {
             case SNOVA24A_SSK -> BCObjectIdentifiers.snova_24_5_4_ssk;

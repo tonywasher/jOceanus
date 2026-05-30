@@ -18,6 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianFalconSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.falcon.FalconParameters;
@@ -29,7 +30,8 @@ import java.util.Map;
 /**
  * FALCON KeySpec.
  */
-public final class GordianCoreFalconSpec {
+public final class GordianCoreFalconSpec
+        implements GordianCoreKeyPairIdSigner {
     /**
      * The specMap.
      */
@@ -52,6 +54,11 @@ public final class GordianCoreFalconSpec {
      */
     private GordianCoreFalconSpec(final GordianFalconSpec pSpec) {
         theSpec = pSpec;
+    }
+
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+        return GordianKeyPairType.FALCON;
     }
 
     /**
@@ -89,20 +96,13 @@ public final class GordianCoreFalconSpec {
         };
     }
 
-    /**
-     * Obtain Falcon algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
-        switch (theSpec) {
-            case FALCON512:
-                return BCObjectIdentifiers.falcon_512;
-            case FALCON1024:
-                return BCObjectIdentifiers.falcon_1024;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case FALCON512 -> BCObjectIdentifiers.falcon_512;
+            case FALCON1024 -> BCObjectIdentifiers.falcon_1024;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override
