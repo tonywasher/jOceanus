@@ -29,18 +29,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianComposite
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaDSASignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaEdDSASignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaFalconSignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaGOSTSignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaLMSSignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaMLDSASignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaMayoSignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaPicnicSignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaRSASignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaSLHDSASignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaSnovaSignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignature.JcaXMSSSignature;
 
 /**
  * Jca Signature Factory.
