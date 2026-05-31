@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMLKEMSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
@@ -29,7 +30,8 @@ import java.util.Map;
 /**
  * Kyber KeySpec.
  */
-public final class GordianCoreMLKEMSpec {
+public final class GordianCoreMLKEMSpec
+        implements GordianCoreKeyPairIdSpec<GordianMLKEMSpec> {
     /**
      * The specMap.
      */
@@ -54,11 +56,12 @@ public final class GordianCoreMLKEMSpec {
         theSpec = pSpec;
     }
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+        return GordianKeyPairType.MLKEM;
+    }
+
+    @Override
     public GordianMLKEMSpec getSpec() {
         return theSpec;
     }
@@ -91,11 +94,7 @@ public final class GordianCoreMLKEMSpec {
         };
     }
 
-    /**
-     * Obtain MLKEM algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
         return switch (theSpec) {
             case MLKEM512 -> NISTObjectIdentifiers.id_alg_ml_kem_512;

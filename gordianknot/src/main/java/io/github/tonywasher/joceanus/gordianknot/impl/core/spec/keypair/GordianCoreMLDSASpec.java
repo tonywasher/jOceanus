@@ -31,7 +31,7 @@ import java.util.Map;
  * MLDSA KeySpec.
  */
 public final class GordianCoreMLDSASpec
-        implements GordianCoreKeyPairIdSigner {
+        implements GordianCoreKeyPairIdSpec<GordianMLDSASpec> {
     /**
      * The specMap.
      */

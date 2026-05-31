@@ -31,7 +31,7 @@ import java.util.Map;
  * Snova KeySpec.
  */
 public final class GordianCoreSnovaSpec
-        implements GordianCoreKeyPairIdSigner {
+        implements GordianCoreKeyPairIdSpec<GordianSnovaSpec> {
     /**
      * The specMap.
      */

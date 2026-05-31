@@ -34,7 +34,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreFalconSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairIdSigner;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairIdSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMLDSASpec;
@@ -451,9 +451,9 @@ public class GordianCoreSignatureAlgId {
      *
      * @param pSubSpecs the array of subSpecs.
      */
-    private void addKeyPairIdSignatures(final GordianCoreKeyPairIdSigner[] pSubSpecs) {
+    private void addKeyPairIdSignatures(final GordianCoreKeyPairIdSpec[] pSubSpecs) {
         final GordianSignatureSpecBuilder myBuilder = GordianCoreSignatureSpecBuilder.newInstance();
-        for (GordianCoreKeyPairIdSigner mySpec : pSubSpecs) {
+        for (GordianCoreKeyPairIdSpec mySpec : pSubSpecs) {
             final GordianSignatureSpec mySigSpec = myBuilder.withKeyPairType(mySpec.getKeyPairType()).build();
             addToMaps(mySigSpec, mySpec.getSpec(),
                     new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));

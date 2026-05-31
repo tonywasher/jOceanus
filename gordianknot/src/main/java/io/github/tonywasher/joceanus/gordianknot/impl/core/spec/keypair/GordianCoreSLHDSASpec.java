@@ -31,7 +31,7 @@ import java.util.Map;
  * SphincsPlus KeySpecs.
  */
 public final class GordianCoreSLHDSASpec
-        implements GordianCoreKeyPairIdSigner {
+        implements GordianCoreKeyPairIdSpec<GordianSLHDSASpec> {
     /**
      * The specMap.
      */

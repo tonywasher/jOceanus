@@ -18,6 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianFRODOSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.frodo.FrodoParameters;
@@ -29,7 +30,8 @@ import java.util.Map;
 /**
  * FRODO KeySpecs.
  */
-public final class GordianCoreFRODOSpec {
+public final class GordianCoreFRODOSpec
+        implements GordianCoreKeyPairIdSpec<GordianFRODOSpec> {
     /**
      * The specMap.
      */
@@ -54,15 +56,15 @@ public final class GordianCoreFRODOSpec {
         theSpec = pSpec;
     }
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+        return GordianKeyPairType.FRODO;
+    }
+
+    @Override
     public GordianFRODOSpec getSpec() {
         return theSpec;
     }
-
 
     /**
      * Obtain Frodo Parameters.
@@ -98,11 +100,7 @@ public final class GordianCoreFRODOSpec {
         };
     }
 
-    /**
-     * Obtain Frodo algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
         return switch (theSpec) {
             case AES640 -> BCObjectIdentifiers.frodokem640aes;

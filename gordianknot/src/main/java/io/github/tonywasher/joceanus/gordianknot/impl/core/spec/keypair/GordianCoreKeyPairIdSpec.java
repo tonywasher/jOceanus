@@ -22,8 +22,10 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 /**
  * Interface for KeyPairSpecs that identify signatures with keyPair Id and subspec.
+ *
+ * @param <E> the subSpec Enum type
  */
-public interface GordianCoreKeyPairIdSigner {
+public interface GordianCoreKeyPairIdSpec<E extends Enum<E>> {
     /**
      * Obtain the keyPairType.
      *
@@ -36,7 +38,7 @@ public interface GordianCoreKeyPairIdSigner {
      *
      * @return the spec
      */
-    Object getSpec();
+    E getSpec();
 
     /**
      * Obtain the identifier.

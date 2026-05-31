@@ -31,7 +31,7 @@ import java.util.Map;
  * FALCON KeySpec.
  */
 public final class GordianCoreFalconSpec
-        implements GordianCoreKeyPairIdSigner {
+        implements GordianCoreKeyPairIdSpec<GordianFalconSpec> {
     /**
      * The specMap.
      */
@@ -61,11 +61,7 @@ public final class GordianCoreFalconSpec
         return GordianKeyPairType.FALCON;
     }
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
     public GordianFalconSpec getSpec() {
         return theSpec;
     }

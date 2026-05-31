@@ -18,6 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianBIKESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
@@ -26,7 +27,8 @@ import org.bouncycastle.pqc.legacy.bike.BIKEParameters;
 import java.util.EnumMap;
 import java.util.Map;
 
-public final class GordianCoreBIKESpec {
+public final class GordianCoreBIKESpec
+        implements GordianCoreKeyPairIdSpec<GordianBIKESpec> {
     /**
      * The specMap.
      */
@@ -51,11 +53,12 @@ public final class GordianCoreBIKESpec {
         theSpec = pSpec;
     }
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+        return GordianKeyPairType.BIKE;
+    }
+
+    @Override
     public GordianBIKESpec getSpec() {
         return theSpec;
     }
@@ -88,11 +91,7 @@ public final class GordianCoreBIKESpec {
         };
     }
 
-    /**
-     * Obtain BIKE algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
         return switch (theSpec) {
             case BIKE128 -> BCObjectIdentifiers.bike128;

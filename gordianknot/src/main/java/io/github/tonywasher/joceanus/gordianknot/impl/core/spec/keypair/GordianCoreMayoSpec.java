@@ -31,7 +31,7 @@ import java.util.Map;
  * Mayo KeySpec.
  */
 public final class GordianCoreMayoSpec
-        implements GordianCoreKeyPairIdSigner {
+        implements GordianCoreKeyPairIdSpec<GordianMayoSpec> {
     /**
      * The specMap.
      */
