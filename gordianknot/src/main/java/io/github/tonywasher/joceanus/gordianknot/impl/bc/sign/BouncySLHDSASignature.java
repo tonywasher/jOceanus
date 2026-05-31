@@ -23,7 +23,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureS
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySLHDSAKeyPair.BouncySLHDSAPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySLHDSAKeyPair.BouncySLHDSAPublicKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.sign.BouncySignature.BouncyDigestSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;

@@ -17,14 +17,11 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.digest.BouncyDigest;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Encoding;
@@ -33,8 +30,6 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.crypto.DSA;
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.digests.NullDigest;
 import org.bouncycastle.crypto.signers.DSASigner;
 import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.crypto.signers.ECNRSigner;
@@ -61,89 +56,6 @@ public final class BouncySignature {
      * Private constructor.
      */
     private BouncySignature() {
-    }
-
-    /**
-     * Digest signature base.
-     */
-    public abstract static class BouncyDigestSignature
-            extends GordianCoreSignature {
-        /**
-         * The Digest.
-         */
-        private BouncyDigest theDigest;
-
-        /**
-         * Constructor.
-         *
-         * @param pFactory the factory
-         * @param pSpec    the signatureSpec.
-         * @throws GordianException on error
-         */
-        BouncyDigestSignature(final GordianBaseFactory pFactory,
-                              final GordianSignatureSpec pSpec) throws GordianException {
-            super(pFactory, pSpec);
-            theDigest = pSpec.getSignatureSpec() == null
-                    ? new BouncyDigest(null, new NullDigest())
-                    : (BouncyDigest) getDigestFactory().createDigest(((GordianCoreSignatureSpec) pSpec).getDigestSpec());
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param pFactory the factory
-         * @param pSpec    the signatureSpec.
-         * @param pDigest  the digest
-         */
-        BouncyDigestSignature(final GordianBaseFactory pFactory,
-                              final GordianSignatureSpec pSpec,
-                              final Digest pDigest) {
-            super(pFactory, pSpec);
-            theDigest = new BouncyDigest(((GordianCoreSignatureSpec) pSpec).getDigestSpec(), pDigest);
-        }
-
-        /**
-         * Set the digest.
-         *
-         * @param pSpec the digestSpec.
-         * @throws GordianException on error
-         */
-        protected void setDigest(final GordianDigestSpec pSpec) throws GordianException {
-            theDigest = pSpec == null
-                    ? new BouncyDigest(null, new NullDigest())
-                    : (BouncyDigest) getDigestFactory().createDigest(pSpec);
-        }
-
-        @Override
-        public void update(final byte[] pBytes,
-                           final int pOffset,
-                           final int pLength) {
-            theDigest.update(pBytes, pOffset, pLength);
-        }
-
-        @Override
-        public void update(final byte pByte) {
-            theDigest.update(pByte);
-        }
-
-        @Override
-        public void reset() {
-            theDigest.reset();
-        }
-
-        /**
-         * Obtain the calculated digest.
-         *
-         * @return the digest.
-         */
-        protected byte[] getDigest() {
-            return theDigest.finish();
-        }
-
-        @Override
-        protected BouncyKeyPair getKeyPair() {
-            return (BouncyKeyPair) super.getKeyPair();
-        }
     }
 
     /**
@@ -205,7 +117,6 @@ public final class BouncySignature {
             }
         }
     }
-
 
     /**
      * Obtain DSASigner.

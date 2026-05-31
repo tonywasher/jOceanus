@@ -23,7 +23,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureS
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyLMSKeyPair.BouncyHSSPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyLMSKeyPair.BouncyHSSPublicKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.sign.BouncySignature.BouncyDigestSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import org.bouncycastle.pqc.crypto.lms.HSSSigner;
 

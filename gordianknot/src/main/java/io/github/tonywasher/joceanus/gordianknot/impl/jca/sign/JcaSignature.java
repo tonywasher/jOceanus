@@ -112,11 +112,6 @@ public abstract class JcaSignature
     private static final String EC_SM2_ALGOBASE = "WITHSM2";
 
     /**
-     * The DSTU Signature.
-     */
-    private static final String DSTU_SIGN = "DSTU4145";
-
-    /**
      * The PQC Hash prefix.
      */
     static final String PQC_HASH_PFX = "HASH-";

@@ -36,7 +36,7 @@ public class PrometheusOdfFactory
     public PrometheusOdfFactory() {
         /* NoOp */
     }
-    
+
     @Override
     public PrometheusSheetWorkBook loadFromStream(final InputStream pInput) throws OceanusException {
         return new PrometheusOdfWorkBook(pInput);

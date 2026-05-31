@@ -30,6 +30,11 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCore
 public class JcaGOSTSignature
         extends JcaSignature {
     /**
+     * The DSTU Signature.
+     */
+    private static final String DSTU_SIGN = "DSTU4145";
+
+    /**
      * Constructor.
      *
      * @param pFactory       the factory

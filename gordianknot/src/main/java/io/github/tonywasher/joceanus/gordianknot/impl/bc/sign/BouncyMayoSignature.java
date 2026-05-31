@@ -18,27 +18,15 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyMayoKeyPair.BouncyMayoPrivateKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyMayoKeyPair.BouncyMayoPublicKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.sign.BouncySignature.BouncyDigestSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import org.bouncycastle.crypto.CipherParameters;
-import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.pqc.crypto.mayo.MayoSigner;
 
 /**
  * Mayo signer.
  */
 public class BouncyMayoSignature
-        extends BouncyDigestSignature {
-    /**
-     * The Mayo Signer.
-     */
-    private final MayoSigner theSigner;
-
+        extends BouncyPostQuantumSignature {
     /**
      * Constructor.
      *
@@ -50,47 +38,6 @@ public class BouncyMayoSignature
                         final GordianSignatureSpec pSpec) throws GordianException {
         /* Initialise underlying class */
         super(pFactory, pSpec);
-        theSigner = new MayoSigner();
-    }
-
-    @Override
-    public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
-        /* Initialise detail */
-        super.initForSigning(pParams);
-        BouncyKeyPair.checkKeyPair(getKeyPair());
-
-        /* Initialise and set the signer */
-        final BouncyMayoPrivateKey myPrivate = (BouncyMayoPrivateKey) getKeyPair().getPrivateKey();
-        final CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
-        theSigner.init(true, myParms);
-    }
-
-    @Override
-    public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
-        /* Initialise detail */
-        super.initForVerify(pParams);
-        BouncyKeyPair.checkKeyPair(getKeyPair());
-
-        /* Initialise and set the signer */
-        final BouncyMayoPublicKey myPublic = (BouncyMayoPublicKey) getKeyPair().getPublicKey();
-        theSigner.init(false, myPublic.getPublicKey());
-    }
-
-    @Override
-    public byte[] sign() throws GordianException {
-        /* Check that we are in signing mode */
-        checkMode(GordianSignatureMode.SIGN);
-
-        /* Sign the message */
-        return theSigner.generateSignature(getDigest());
-    }
-
-    @Override
-    public boolean verify(final byte[] pSignature) throws GordianException {
-        /* Check that we are in verify mode */
-        checkMode(GordianSignatureMode.VERIFY);
-
-        /* Verify the message */
-        return theSigner.verifySignature(getDigest(), pSignature);
+        setSigner(new MayoSigner());
     }
 }

@@ -27,7 +27,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXMSSKeyPa
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXMSSKeyPair.BouncyXMSSMTPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXMSSKeyPair.BouncyXMSSPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXMSSKeyPair.BouncyXMSSPublicKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.sign.BouncySignature.BouncyDigestSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreXMSSSpec;

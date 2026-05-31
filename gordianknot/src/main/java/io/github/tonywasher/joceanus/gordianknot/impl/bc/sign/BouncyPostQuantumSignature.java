@@ -20,30 +20,24 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyEllipticKeyPair.BouncyECPrivateKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyEllipticKeyPair.BouncyECPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.sign.BouncySignature.BouncyDERCoder;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import org.bouncycastle.crypto.DSA;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairType;
+import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
-
-import java.math.BigInteger;
+import org.bouncycastle.pqc.crypto.MessageSigner;
 
 /**
- * EC signer.
+ * PostQuantum signer.
  */
-public class BouncyECSignature
+public abstract class BouncyPostQuantumSignature
         extends BouncyDigestSignature {
     /**
-     * The Signer.
+     * The Mayo Signer.
      */
-    private final DSA theSigner;
-
-    /**
-     * The Coder.
-     */
-    private final BouncyDERCoder theCoder;
+    private MessageSigner theSigner;
 
     /**
      * Constructor.
@@ -52,26 +46,36 @@ public class BouncyECSignature
      * @param pSpec    the signatureSpec.
      * @throws GordianException on error
      */
-    BouncyECSignature(final GordianBaseFactory pFactory,
-                      final GordianSignatureSpec pSpec) throws GordianException {
+    BouncyPostQuantumSignature(final GordianBaseFactory pFactory,
+                               final GordianSignatureSpec pSpec) throws GordianException {
         /* Initialise underlying class */
         super(pFactory, pSpec);
+    }
 
-        /* Create the signer and Coder */
-        theSigner = BouncySignature.getDSASigner(pFactory, pSpec);
-        theCoder = new BouncyDERCoder();
+    /**
+     * Set the signer.
+     *
+     * @param pSigner the signer
+     */
+    void setSigner(final MessageSigner pSigner) {
+        theSigner = pSigner;
     }
 
     @Override
     public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        BouncyKeyPair.checkKeyPair(getKeyPair());
+
+        /* Determine whether we should use random for signatures */
+        final GordianCoreKeyPairType myType = GordianCoreKeyPairType.mapCoreType(getSignatureSpec().getKeyPairType());
+        final boolean useRandom = myType.useRandomForSignatures();
 
         /* Initialise and set the signer */
-        final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) myPair.getPrivateKey();
-        final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
+        final BouncyPrivateKey<?> myPrivate = getKeyPair().getPrivateKey();
+        final CipherParameters myParms = useRandom
+                ? new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom())
+                : myPrivate.getPrivateKey();
         theSigner.init(true, myParms);
     }
 
@@ -79,11 +83,10 @@ public class BouncyECSignature
     public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        BouncyKeyPair.checkKeyPair(getKeyPair());
 
         /* Initialise and set the signer */
-        final BouncyECPublicKey myPublic = (BouncyECPublicKey) myPair.getPublicKey();
+        final BouncyPublicKey<?> myPublic = getKeyPair().getPublicKey();
         theSigner.init(false, myPublic.getPublicKey());
     }
 
@@ -93,8 +96,7 @@ public class BouncyECSignature
         checkMode(GordianSignatureMode.SIGN);
 
         /* Sign the message */
-        final BigInteger[] myValues = theSigner.generateSignature(getDigest());
-        return theCoder.dsaEncode(myValues[0], myValues[1]);
+        return theSigner.generateSignature(getDigest());
     }
 
     @Override
@@ -103,7 +105,6 @@ public class BouncyECSignature
         checkMode(GordianSignatureMode.VERIFY);
 
         /* Verify the message */
-        final BigInteger[] myValues = theCoder.dsaDecode(pSignature);
-        return theSigner.verifySignature(getDigest(), myValues[0], myValues[1]);
+        return theSigner.verifySignature(getDigest(), pSignature);
     }
 }

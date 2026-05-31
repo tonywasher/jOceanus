@@ -24,7 +24,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyDSAKeyPai
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyDSAKeyPair.BouncyDSAPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.sign.BouncySignature.BouncyDERCoder;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.sign.BouncySignature.BouncyDigestSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import org.bouncycastle.crypto.DSA;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
