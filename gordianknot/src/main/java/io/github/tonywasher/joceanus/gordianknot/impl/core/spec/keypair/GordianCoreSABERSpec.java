@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSABERSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
@@ -29,7 +30,8 @@ import java.util.Map;
 /**
  * SABER KeySpec.
  */
-public final class GordianCoreSABERSpec {
+public final class GordianCoreSABERSpec
+        implements GordianCoreKeyPairIdSpec<GordianSABERSpec> {
     /**
      * The specMap.
      */
@@ -54,11 +56,12 @@ public final class GordianCoreSABERSpec {
         theSpec = pSpec;
     }
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+        return GordianKeyPairType.SABER;
+    }
+
+    @Override
     public GordianSABERSpec getSpec() {
         return theSpec;
     }
@@ -103,11 +106,7 @@ public final class GordianCoreSABERSpec {
         };
     }
 
-    /**
-     * Obtain Saber algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
         return switch (theSpec) {
             case LIGHT128 -> BCObjectIdentifiers.lightsaberkem128r3;

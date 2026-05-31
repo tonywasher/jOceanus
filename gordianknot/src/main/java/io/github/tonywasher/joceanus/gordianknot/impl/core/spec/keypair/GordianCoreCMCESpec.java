@@ -18,6 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianCMCESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.cmce.CMCEParameters;
@@ -30,7 +31,8 @@ import java.util.Map;
  * CMCE KeySpecs.
  */
 
-public final class GordianCoreCMCESpec {
+public final class GordianCoreCMCESpec
+        implements GordianCoreKeyPairIdSpec<GordianCMCESpec> {
     /**
      * The specMap.
      */
@@ -55,11 +57,12 @@ public final class GordianCoreCMCESpec {
         theSpec = pSpec;
     }
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+        return GordianKeyPairType.CMCE;
+    }
+
+    @Override
     public GordianCMCESpec getSpec() {
         return theSpec;
     }
@@ -106,11 +109,7 @@ public final class GordianCoreCMCESpec {
         };
     }
 
-    /**
-     * Obtain CMCE algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
         return switch (theSpec) {
             case BASE3488 -> BCObjectIdentifiers.mceliece348864_r3;

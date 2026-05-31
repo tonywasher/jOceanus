@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
@@ -29,7 +30,8 @@ import java.util.Map;
 /**
  * NTRU KeySpec.
  */
-public final class GordianCoreNTRUSpec {
+public final class GordianCoreNTRUSpec
+        implements GordianCoreKeyPairIdSpec<GordianNTRUSpec> {
     /**
      * The specMap.
      */
@@ -54,11 +56,12 @@ public final class GordianCoreNTRUSpec {
         theSpec = pSpec;
     }
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+        return GordianKeyPairType.NTRU;
+    }
+
+    @Override
     public GordianNTRUSpec getSpec() {
         return theSpec;
     }
@@ -97,11 +100,7 @@ public final class GordianCoreNTRUSpec {
         };
     }
 
-    /**
-     * Obtain NTRU algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
         return switch (theSpec) {
             case HPS509 -> BCObjectIdentifiers.ntruhps2048509;

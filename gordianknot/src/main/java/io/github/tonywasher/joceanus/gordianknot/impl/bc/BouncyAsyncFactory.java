@@ -20,6 +20,10 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFacto
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.agree.BouncyAgreementFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.encrypt.BouncyEncryptorFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPairFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.sign.BouncySignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.factory.GordianCoreAsyncFactory;
 

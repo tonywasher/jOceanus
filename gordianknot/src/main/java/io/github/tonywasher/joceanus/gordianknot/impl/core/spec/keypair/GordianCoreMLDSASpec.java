@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMLDSASpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
@@ -29,7 +30,8 @@ import java.util.Map;
 /**
  * MLDSA KeySpec.
  */
-public final class GordianCoreMLDSASpec {
+public final class GordianCoreMLDSASpec
+        implements GordianCoreKeyPairIdSpec<GordianMLDSASpec> {
     /**
      * The specMap.
      */
@@ -54,11 +56,12 @@ public final class GordianCoreMLDSASpec {
         theSpec = pSpec;
     }
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+        return GordianKeyPairType.MLDSA;
+    }
+
+    @Override
     public GordianMLDSASpec getSpec() {
         return theSpec;
     }
@@ -109,11 +112,7 @@ public final class GordianCoreMLDSASpec {
         };
     }
 
-    /**
-     * Obtain MLDSA algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
         return switch (theSpec) {
             case MLDSA44 -> NISTObjectIdentifiers.id_ml_dsa_44;

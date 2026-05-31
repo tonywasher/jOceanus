@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSLHDSASpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
@@ -29,7 +30,8 @@ import java.util.Map;
 /**
  * SphincsPlus KeySpecs.
  */
-public final class GordianCoreSLHDSASpec {
+public final class GordianCoreSLHDSASpec
+        implements GordianCoreKeyPairIdSpec<GordianSLHDSASpec> {
     /**
      * The specMap.
      */
@@ -54,11 +56,12 @@ public final class GordianCoreSLHDSASpec {
         theSpec = pSpec;
     }
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+        return GordianKeyPairType.SLHDSA;
+    }
+
+    @Override
     public GordianSLHDSASpec getSpec() {
         return theSpec;
     }
@@ -146,11 +149,7 @@ public final class GordianCoreSLHDSASpec {
         };
     }
 
-    /**
-     * Obtain SLHDSA algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
         return switch (theSpec) {
             case SHA128F -> NISTObjectIdentifiers.id_slh_dsa_sha2_128f;
