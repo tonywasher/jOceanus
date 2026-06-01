@@ -100,7 +100,7 @@ public final class BouncyHAETAEKeyPair {
      * BouncyCastle HAETAE KeyPair generator.
      */
     public static class BouncyHAETAEKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<HAETAEPrivateKeyParameters, HAETAEPublicKeyParameters> {
         /**
          * Constructor.
          *

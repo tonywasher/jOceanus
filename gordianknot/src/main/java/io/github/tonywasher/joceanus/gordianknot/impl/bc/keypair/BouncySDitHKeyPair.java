@@ -100,7 +100,7 @@ public final class BouncySDitHKeyPair {
      * BouncyCastle SDitH KeyPair generator.
      */
     public static class BouncySDitHKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<SDitHPrivateKeyParameters, SDitHPublicKeyParameters> {
         /**
          * Constructor.
          *

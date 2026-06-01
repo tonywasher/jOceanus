@@ -100,7 +100,7 @@ public final class BouncyQRUOVKeyPair {
      * BouncyCastle QRUOV KeyPair generator.
      */
     public static class BouncyQRUOVKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<QRUOVPrivateKeyParameters, QRUOVPublicKeyParameters> {
         /**
          * Constructor.
          *

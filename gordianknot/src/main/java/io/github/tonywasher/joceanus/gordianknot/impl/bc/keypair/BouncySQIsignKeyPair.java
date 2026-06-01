@@ -100,7 +100,7 @@ public final class BouncySQIsignKeyPair {
      * BouncyCastle SQIsign KeyPair generator.
      */
     public static class BouncySQIsignKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<SQIsignPrivateKeyParameters, SQIsignPublicKeyParameters> {
         /**
          * Constructor.
          *

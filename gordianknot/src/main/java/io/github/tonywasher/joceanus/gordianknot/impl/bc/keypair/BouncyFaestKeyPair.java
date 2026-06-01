@@ -100,7 +100,7 @@ public final class BouncyFaestKeyPair {
      * BouncyCastle Faest KeyPair generator.
      */
     public static class BouncyFaestKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<FaestPrivateKeyParameters, FaestPublicKeyParameters> {
         /**
          * Constructor.
          *

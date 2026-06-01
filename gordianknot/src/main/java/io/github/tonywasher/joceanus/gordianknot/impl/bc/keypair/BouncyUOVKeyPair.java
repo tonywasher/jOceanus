@@ -100,7 +100,7 @@ public final class BouncyUOVKeyPair {
      * BouncyCastle UOV KeyPair generator.
      */
     public static class BouncyUOVKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<UOVPrivateKeyParameters, UOVPublicKeyParameters> {
         /**
          * Constructor.
          *

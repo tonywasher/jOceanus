@@ -100,7 +100,7 @@ public final class BouncyMQOMKeyPair {
      * BouncyCastle MQOM KeyPair generator.
      */
     public static class BouncyMQOMKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<MQOMPrivateKeyParameters, MQOMPublicKeyParameters> {
         /**
          * Constructor.
          *

@@ -100,7 +100,7 @@ public final class BouncyHawkKeyPair {
      * BouncyCastle Hawk KeyPair generator.
      */
     public static class BouncyHawkKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<HawkPrivateKeyParameters, HawkPublicKeyParameters> {
         /**
          * Constructor.
          *
