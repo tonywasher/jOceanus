@@ -24,7 +24,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianGOSTSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpecBuilder;
@@ -76,7 +76,7 @@ public abstract class GordianCoreSignatureFactory
     }
 
     @Override
-    public GordianNewSignParamsBuilder newSignParamsBuilder() {
+    public GordianSignParamsBuilder newSignParamsBuilder() {
         return GordianCoreSignParamsBuilder.newInstance();
     }
 
@@ -356,39 +356,32 @@ public abstract class GordianCoreSignatureFactory
     public GordianSignatureSpec defaultForKeyPair(final GordianKeyPairSpec pKeySpec) {
         final GordianCoreSignatureSpecBuilder myBuilder = GordianCoreSignatureSpecBuilder.newInstance();
         final GordianCoreDigestSpecBuilder myDigestBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        switch (pKeySpec.getKeyPairType()) {
-            case RSA:
-                return myBuilder.rsa(GordianSignatureType.PSSMGF1, myDigestBuilder.sha3(GordianLength.LEN_256));
-            case DSA:
-                return myBuilder.dsa(GordianSignatureType.DSA, myDigestBuilder.sha2(GordianLength.LEN_512));
-            case EC:
-                return myBuilder.ec(GordianSignatureType.DSA, myDigestBuilder.sha3(GordianLength.LEN_512));
-            case SM2:
-                return myBuilder.sm2(myDigestBuilder.sm3());
-            case DSTU:
-                return myBuilder.dstu4145();
-            case GOST:
-                return myBuilder.gost2012(GordianGOSTSpec.GOST256A.equals(pKeySpec.getSubSpec())
-                        ? GordianLength.LEN_256 : GordianLength.LEN_512);
-            case EDDSA:
-                return myBuilder.edDSA();
-            case SLHDSA:
-                return myBuilder.slhdsa();
-            case MLDSA:
-                return myBuilder.mldsa();
-            case FALCON:
-                return myBuilder.falcon();
-            case MAYO:
-                return myBuilder.mayo();
-            case SNOVA:
-                return myBuilder.snova();
-            case PICNIC:
-                return myBuilder.picnic();
-            case XMSS:
-                return myBuilder.xmss();
-            case LMS:
-                return myBuilder.lms();
-            case COMPOSITE:
+        return switch (pKeySpec.getKeyPairType()) {
+            case RSA -> myBuilder.rsa(GordianSignatureType.PSSMGF1, myDigestBuilder.sha3(GordianLength.LEN_256));
+            case DSA -> myBuilder.dsa(GordianSignatureType.DSA, myDigestBuilder.sha2(GordianLength.LEN_512));
+            case EC -> myBuilder.ec(GordianSignatureType.DSA, myDigestBuilder.sha3(GordianLength.LEN_512));
+            case SM2 -> myBuilder.sm2(myDigestBuilder.sm3());
+            case DSTU -> myBuilder.dstu4145();
+            case GOST -> myBuilder.gost2012(GordianGOSTSpec.GOST256A.equals(pKeySpec.getSubSpec())
+                    ? GordianLength.LEN_256 : GordianLength.LEN_512);
+            case EDDSA -> myBuilder.edDSA();
+            case SLHDSA -> myBuilder.slhdsa();
+            case MLDSA -> myBuilder.mldsa();
+            case FALCON -> myBuilder.falcon();
+            case FAEST -> myBuilder.faest();
+            case HAETAE -> myBuilder.haetae();
+            case HAWK -> myBuilder.hawk();
+            case MAYO -> myBuilder.mayo();
+            case MQOM -> myBuilder.mqom();
+            case QRUOV -> myBuilder.qruov();
+            case SDITH -> myBuilder.sdith();
+            case SNOVA -> myBuilder.snova();
+            case SQISIGN -> myBuilder.sqisign();
+            case UOV -> myBuilder.uov();
+            case PICNIC -> myBuilder.picnic();
+            case XMSS -> myBuilder.xmss();
+            case LMS -> myBuilder.lms();
+            case COMPOSITE -> {
                 final List<GordianSignatureSpec> mySpecs = new ArrayList<>();
                 final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
                 final Iterator<GordianKeyPairSpec> myIterator = myKeySpec.keySpecIterator();
@@ -397,9 +390,9 @@ public abstract class GordianCoreSignatureFactory
                     mySpecs.add(defaultForKeyPair(mySpec));
                 }
                 final GordianSignatureSpec mySpec = myBuilder.composite(mySpecs);
-                return mySpec.isValid() ? mySpec : null;
-            default:
-                return null;
-        }
+                yield mySpec.isValid() ? mySpec : null;
+            }
+            default -> null;
+        };
     }
 }

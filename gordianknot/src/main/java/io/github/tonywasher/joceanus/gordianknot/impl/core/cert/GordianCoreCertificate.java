@@ -27,7 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFacto
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -658,7 +658,7 @@ public class GordianCoreCertificate
         try {
             /* Build the signature */
             final GordianSignature mySigner = createSigner();
-            final GordianNewSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
+            final GordianSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
             mySigner.initForSigning(myBuilder.keyPair(pSigner));
             final GordianStreamConsumer myConsumer = new GordianStreamConsumer(mySigner);
             final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);
@@ -701,7 +701,7 @@ public class GordianCoreCertificate
         try {
             /* Build the signature */
             final GordianSignature myValidator = createSigner();
-            final GordianNewSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
+            final GordianSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
             myValidator.initForVerify(myBuilder.keyPair(pSigner));
             final GordianStreamConsumer myConsumer = new GordianStreamConsumer(myValidator);
             final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);

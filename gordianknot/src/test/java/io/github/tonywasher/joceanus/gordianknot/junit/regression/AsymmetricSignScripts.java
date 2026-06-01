@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
@@ -87,7 +87,7 @@ public final class AsymmetricSignScripts {
         final GordianSignatureFactory mySigns = pSignature.getOwner().getFactory().getSignatureFactory();
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
         GordianSignature mySigner = mySigns.createSigner(mySpec);
-        final GordianNewSignParamsBuilder myBuilder = mySigns.newSignParamsBuilder();
+        final GordianSignParamsBuilder myBuilder = mySigns.newSignParamsBuilder();
         mySigner.initForSigning(myBuilder.keyPair(myMirror));
         mySigner.update(myMessage);
         byte[] mySignature = mySigner.sign();
@@ -114,7 +114,7 @@ public final class AsymmetricSignScripts {
         final GordianSignatureFactory myTgtSigns = pSignature.getOwner().getPartner().getSignatureFactory();
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
         GordianSignature mySigner = mySrcSigns.createSigner(mySpec);
-        final GordianNewSignParamsBuilder myBuilder = mySrcSigns.newSignParamsBuilder();
+        final GordianSignParamsBuilder myBuilder = mySrcSigns.newSignParamsBuilder();
         mySigner.initForSigning(myBuilder.keyPair(myPair));
         mySigner.update(myMessage);
         byte[] mySignature = mySigner.sign();

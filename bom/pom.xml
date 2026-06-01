@@ -30,7 +30,7 @@
     <properties>
         <MyName>Tony Washer</MyName>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <BouncyCastleVersion>1.84</BouncyCastleVersion>
+        <BouncyCastleVersion>1.85-SNAPSHOT</BouncyCastleVersion>
         <JSONVersion>20260522</JSONVersion>
         <ApacheMavenVersion>3.9.15</ApacheMavenVersion>
         <MySQLVersion>9.7.0</MySQLVersion>
@@ -133,12 +133,27 @@
             </dependency>
 
             <!-- External Modules -->
-            <dependency>
+            <!--<dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bc-jdk18on-bom</artifactId>
                 <version>${BouncyCastleVersion}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>-->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpg-jdk18on</artifactId>
+                <version>${BouncyCastleVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>${BouncyCastleVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcutil-jdk18on</artifactId>
+                <version>${BouncyCastleVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.json</groupId>

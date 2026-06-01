@@ -19,8 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
@@ -88,14 +88,14 @@ public class GordianCompositeSigner
     }
 
     @Override
-    public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
+    public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Check the keyPairSet */
         final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pParams.getKeyPair();
         checkKeySpec(myCompositePair);
 
         /* Initialise the signers */
         final Iterator<GordianKeyPair> myIterator = myCompositePair.iterator();
-        final GordianNewSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
+        final GordianSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
         for (GordianSignature mySigner : theSigners) {
             final GordianKeyPair myPair = myIterator.next();
             mySigner.initForSigning(myBuilder.keyPair(myPair));
@@ -103,14 +103,14 @@ public class GordianCompositeSigner
     }
 
     @Override
-    public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
+    public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Check the keyPairSet */
         final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pParams.getKeyPair();
         checkKeySpec(myCompositePair);
 
         /* Initialise the signers */
         final Iterator<GordianKeyPair> myIterator = myCompositePair.iterator();
-        final GordianNewSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
+        final GordianSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
         for (GordianSignature mySigner : theSigners) {
             final GordianKeyPair myPair = myIterator.next();
             mySigner.initForVerify(myBuilder.keyPair(myPair));

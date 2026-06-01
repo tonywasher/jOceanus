@@ -431,6 +431,36 @@ public interface GordianKeyPairSpecBuilder {
     }
 
     /**
+     * Create FaestKey.
+     *
+     * @param pSpec the Faest Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec faest(final GordianFaestSpec pSpec) {
+        return withKeyPairType(GordianKeyPairType.FAEST).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
+     * Create HAETAEKey.
+     *
+     * @param pSpec the HAETAE Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec haetae(final GordianHAETAESpec pSpec) {
+        return withKeyPairType(GordianKeyPairType.HAETAE).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
+     * Create HawkKey.
+     *
+     * @param pSpec the Hawk Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec hawk(final GordianHawkSpec pSpec) {
+        return withKeyPairType(GordianKeyPairType.HAWK).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
      * Create MayoKey.
      *
      * @param pSpec the Mayo Spec
@@ -441,6 +471,36 @@ public interface GordianKeyPairSpecBuilder {
     }
 
     /**
+     * Create MQOMKey.
+     *
+     * @param pSpec the MQOM Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec mqom(final GordianMQOMSpec pSpec) {
+        return withKeyPairType(GordianKeyPairType.MQOM).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
+     * Create QRUOVKey.
+     *
+     * @param pSpec the QRUOV Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec qruov(final GordianQRUOVSpec pSpec) {
+        return withKeyPairType(GordianKeyPairType.QRUOV).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
+     * Create SDitHKey.
+     *
+     * @param pSpec the SDitH Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec sdith(final GordianSDitHSpec pSpec) {
+        return withKeyPairType(GordianKeyPairType.SDITH).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
      * Create SnovaKey.
      *
      * @param pSpec the Snova Spec
@@ -448,6 +508,26 @@ public interface GordianKeyPairSpecBuilder {
      */
     default GordianKeyPairSpec snova(final GordianSnovaSpec pSpec) {
         return withKeyPairType(GordianKeyPairType.SNOVA).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
+     * Create SQIsignKey.
+     *
+     * @param pSpec the SQIsign Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec sqisign(final GordianSQIsignSpec pSpec) {
+        return withKeyPairType(GordianKeyPairType.SQISIGN).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
+     * Create UOVKey.
+     *
+     * @param pSpec the UOV Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec uov(final GordianUOVSpec pSpec) {
+        return withKeyPairType(GordianKeyPairType.UOV).withEnumSubSpec(pSpec).build();
     }
 
     /**

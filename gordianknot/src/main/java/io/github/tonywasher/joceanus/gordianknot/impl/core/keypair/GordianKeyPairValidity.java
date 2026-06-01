@@ -33,8 +33,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFac
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
@@ -109,8 +109,8 @@ public final class GordianKeyPairValidity {
         final GordianSignature mySigner = mySigns.createSigner(pSignSpec);
 
         /* Create signature */
-        final GordianNewSignParamsBuilder myBuilder = mySigns.newSignParamsBuilder();
-        final GordianNewSignParams myParams = myBuilder.keyPair(pKeyPair);
+        final GordianSignParamsBuilder myBuilder = mySigns.newSignParamsBuilder();
+        final GordianSignParams myParams = myBuilder.keyPair(pKeyPair);
         mySigner.initForSigning(myParams);
         mySigner.update(myData);
         final byte[] mySignature = mySigner.sign();
@@ -203,7 +203,8 @@ public final class GordianKeyPairValidity {
         final GordianAgreementSpecBuilder myAgreeBuilder = GordianCoreAgreementSpecBuilder.newInstance();
         final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
         return switch (mySpec.getKeyPairType()) {
-            case RSA, DSA, EDDSA, EC, GOST, DSTU, SM2, SLHDSA, MLDSA, FALCON, MAYO, SNOVA, PICNIC, XMSS, LMS ->
+            case RSA, DSA, EDDSA, EC, GOST, DSTU, SM2, SLHDSA, MLDSA, FALCON, FAEST, HAETAE, HAWK,
+                 MAYO, MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, PICNIC, XMSS, LMS ->
                     pFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);
             case ELGAMAL -> myEncBuilder.elGamal(myBuilder.sha2(GordianLength.LEN_256));
             case DH -> myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);

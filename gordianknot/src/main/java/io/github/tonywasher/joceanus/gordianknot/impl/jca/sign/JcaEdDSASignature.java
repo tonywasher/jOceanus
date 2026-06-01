@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreEdwardsSpec;
@@ -44,7 +44,7 @@ public class JcaEdDSASignature
     }
 
     @Override
-    public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
+    public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Determine the required signer */
         final GordianKeyPair myPair = pParams.getKeyPair();
         JcaKeyPair.checkKeyPair(myPair);
@@ -56,7 +56,7 @@ public class JcaEdDSASignature
     }
 
     @Override
-    public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
+    public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Determine the required signer */
         final GordianKeyPair myPair = pParams.getKeyPair();
         JcaKeyPair.checkKeyPair(myPair);

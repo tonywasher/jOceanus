@@ -15,25 +15,24 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.gordianknot.api.sign;
-
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+package io.github.tonywasher.joceanus.gordianknot.api.keypair.spec;
 
 /**
- * Signature parameters.
+ * Hawk KeySpec.
  */
-public interface GordianNewSignParams {
+public enum GordianHawkSpec {
     /**
-     * Obtain the keyPair.
-     *
-     * @return the keyPair
+     * HAWK256.
      */
-    GordianKeyPair getKeyPair();
+    HAWK256,
 
     /**
-     * Obtain the context.
-     *
-     * @return the context
+     * HAWK512.
      */
-    byte[] getContext();
+    HAWK512,
+
+    /**
+     * HAWK1024.
+     */
+    HAWK1024;
 }

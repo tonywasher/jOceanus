@@ -18,14 +18,14 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
 
 /**
  * Core Signature parameters builder.
  */
 public final class GordianCoreSignParamsBuilder
-        implements GordianNewSignParamsBuilder {
+        implements GordianSignParamsBuilder {
     /**
      * Constructor.
      */
@@ -37,18 +37,18 @@ public final class GordianCoreSignParamsBuilder
      *
      * @return the Builder
      */
-    public static GordianNewSignParamsBuilder newInstance() {
+    public static GordianSignParamsBuilder newInstance() {
         return new GordianCoreSignParamsBuilder();
     }
 
     @Override
-    public GordianNewSignParams keyPair(final GordianKeyPair pKeyPair) {
+    public GordianSignParams keyPair(final GordianKeyPair pKeyPair) {
         return new GordianCoreSignParams(pKeyPair, null);
     }
 
     @Override
-    public GordianNewSignParams keyPair(final GordianKeyPair pKeyPair,
-                                        final byte[] pContext) {
+    public GordianSignParams keyPair(final GordianKeyPair pKeyPair,
+                                     final byte[] pContext) {
         return new GordianCoreSignParams(pKeyPair, pContext);
     }
 }

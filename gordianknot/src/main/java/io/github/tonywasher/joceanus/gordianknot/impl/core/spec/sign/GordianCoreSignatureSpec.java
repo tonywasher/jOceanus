@@ -164,7 +164,8 @@ public class GordianCoreSignatureSpec
             case RSA, DSA, EC, DSTU, GOST -> theSignatureSpec instanceof GordianCoreDigestSpec mySpec
                     && mySpec.isValid()
                     && mySpec.getCoreDigestType().supportsLargeData();
-            case EDDSA, SLHDSA, MLDSA, FALCON, MAYO, SNOVA, XMSS, LMS -> theSignatureSpec == null;
+            case EDDSA, SLHDSA, MLDSA, FALCON, FAEST, HAETAE, HAWK, MAYO,
+                 MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, XMSS, LMS -> theSignatureSpec == null;
             case PICNIC -> theSignatureSpec == null || checkPICNICDigest();
             case SM2 -> checkSM2Digest();
             case COMPOSITE -> theSignatureSpec instanceof List && checkComposite();

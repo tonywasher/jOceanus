@@ -112,8 +112,16 @@ public class JcaKeyPairFactory
                     ? new JcaNTRULPrimeKeyPairGenerator(theFactory, pKeySpec)
                     : new JcaSNTRUPrimeKeyPairGenerator(theFactory, pKeySpec);
             case FALCON -> new JcaFalconKeyPairGenerator(theFactory, pKeySpec);
+            case FAEST -> new JcaFaestKeyPairGenerator(theFactory, pKeySpec);
+            case HAETAE -> new JcaHAETAEKeyPairGenerator(theFactory, pKeySpec);
+            case HAWK -> new JcaHawkKeyPairGenerator(theFactory, pKeySpec);
             case MAYO -> new JcaMayoKeyPairGenerator(theFactory, pKeySpec);
+            case MQOM -> new JcaMQOMKeyPairGenerator(theFactory, pKeySpec);
+            case QRUOV -> new JcaQRUOVKeyPairGenerator(theFactory, pKeySpec);
+            case SDITH -> new JcaSDitHKeyPairGenerator(theFactory, pKeySpec);
             case SNOVA -> new JcaSnovaKeyPairGenerator(theFactory, pKeySpec);
+            case SQISIGN -> new JcaSQIsignKeyPairGenerator(theFactory, pKeySpec);
+            case UOV -> new JcaUOVKeyPairGenerator(theFactory, pKeySpec);
             case PICNIC -> new JcaPicnicKeyPairGenerator(theFactory, pKeySpec);
             case XMSS -> new JcaXMSSKeyPairGenerator(theFactory, pKeySpec);
             case LMS -> new JcaLMSKeyPairGenerator(theFactory, pKeySpec);

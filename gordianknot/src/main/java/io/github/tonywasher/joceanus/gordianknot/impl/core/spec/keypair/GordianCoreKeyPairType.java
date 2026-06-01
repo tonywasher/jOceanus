@@ -79,7 +79,8 @@ public final class GordianCoreKeyPairType {
      */
     public GordianRequired useDigestForSignatures() {
         return switch (theType) {
-            case SLHDSA, MLDSA, FALCON, MAYO, SNOVA, XMSS, EDDSA, LMS -> GordianRequired.NEVER;
+            case SLHDSA, MLDSA, FALCON, FAEST, HAETAE, HAWK, MAYO, MQOM, QRUOV,
+                 SDITH, SNOVA, SQISIGN, UOV, XMSS, EDDSA, LMS -> GordianRequired.NEVER;
             case PICNIC -> GordianRequired.POSSIBLE;
             default -> GordianRequired.ALWAYS;
         };
@@ -92,7 +93,8 @@ public final class GordianCoreKeyPairType {
      */
     public boolean subTypeForSignatures() {
         return switch (theType) {
-            case MLDSA, SLHDSA, FALCON, MAYO, SNOVA, XMSS -> true;
+            case MLDSA, SLHDSA, FALCON, FAEST, HAETAE, HAWK, MAYO, MQOM,
+                 QRUOV, SDITH, SNOVA, SQISIGN, UOV, XMSS -> true;
             default -> false;
         };
     }

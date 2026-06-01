@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca.sign;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
@@ -151,7 +151,7 @@ public abstract class JcaSignature
     }
 
     @Override
-    public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
+    public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
         final JcaKeyPair myPair = getKeyPair();
@@ -186,7 +186,7 @@ public abstract class JcaSignature
     }
 
     @Override
-    public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
+    public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
         final JcaKeyPair myPair = getKeyPair();

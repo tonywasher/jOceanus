@@ -36,7 +36,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPair
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -324,7 +324,7 @@ public class GordianCRMParser {
 
             /* Verify the signature */
             final byte[] mySignature = mySigning.getSignature().getBytes();
-            final GordianNewSignParamsBuilder myBuilder = mySignFactory.newSignParamsBuilder();
+            final GordianSignParamsBuilder myBuilder = mySignFactory.newSignParamsBuilder();
             myVerifier.initForVerify(myBuilder.keyPair(myKeyPair));
             myVerifier.update(pCertReq.getEncoded());
             if (!myVerifier.verify(mySignature)) {
