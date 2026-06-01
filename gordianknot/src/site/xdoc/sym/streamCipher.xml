@@ -38,7 +38,7 @@ final GordianKey&lt;GordianStreamKeySpec&gt; myKey = myGenerator.generateKey();
                         <tr><th class="defHdr">128</th><td class="defHdr">192</td><th class="defHdr">256</th><th class="defHdr">512</th><th class="defHdr">1024</th></tr>
                         <tr><td rowspan="3">ChaCha20</td><td>Standard</td><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/></tr>
                         <tr><td>ChaCha7359</td><td>Y</td><td/><td/><td>Y</td><td/><td/></tr>
-                        <tr><td>XChaCha20</td><td/><td/><td/><td>Y</td><td/><td/></tr>
+                        <tr><td>XChaCha20</td><td>Y</td><td/><td/><td>Y</td><td/><td/></tr>
                         <tr><td rowspan="2">Salsa20</td><td>Standard</td><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/></tr>
                         <tr><td>XSalsa20</td><td>Y</td><td/><td/><td>Y</td><td/><td/></tr>
                         <tr><td rowspan="2">HC</td><td>HC128</td><td>Y</td><td>Y</td><td/><td/><td/><td/></tr>

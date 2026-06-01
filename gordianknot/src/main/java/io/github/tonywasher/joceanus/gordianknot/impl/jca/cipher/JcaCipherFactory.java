@@ -228,7 +228,7 @@ public class JcaCipherFactory
         String myAlgo = getStreamKeyAlgorithm(myKeySpec);
         if (pCipherSpec.isAEAD()
                 && GordianStreamKeyType.CHACHA20 == myKeySpec.getStreamKeyType()) {
-            myAlgo = "CHACHA20-POLY1305";
+            myAlgo += "-POLY1305";
         }
         return getJavaCipher(myAlgo);
     }
@@ -274,7 +274,7 @@ public class JcaCipherFactory
                     ? "RC5-64"
                     : "RC5";
             case AES, CAMELLIA, CAST6, RC6, ARIA, NOEKEON, SM4, SEED, SKIPJACK, TEA, XTEA, IDEA, RC2, CAST5, BLOWFISH,
-                 DESEDE -> pKeySpec.getSymKeyType().name();
+                 DESEDE, LEA -> pKeySpec.getSymKeyType().name();
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
         };
     }
@@ -332,9 +332,11 @@ public class JcaCipherFactory
             case ZUC -> GordianLength.LEN_128 == pKeySpec.getKeyLength()
                     ? "ZUC-128"
                     : "ZUC-256";
-            case CHACHA20 -> pKeySpec.getSubKeyType() == GordianChaCha20Key.STD
-                    ? "CHACHA"
-                    : "CHACHA7539";
+            case CHACHA20 -> switch ((GordianChaCha20Key) pKeySpec.getSubKeyType()) {
+                case ISO7539 -> "CHACHA7539";
+                case XCHACHA -> "XCHACHA20";
+                default -> "CHACHA";
+            };
             case SALSA20 -> pKeySpec.getSubKeyType() == GordianSalsa20Key.STD
                     ? pKeySpec.getStreamKeyType().name()
                     : "XSALSA20";
@@ -348,15 +350,17 @@ public class JcaCipherFactory
     }
 
     @Override
-    protected boolean validStreamKeySpec(final GordianStreamKeySpec pKeySpec) {
+    protected boolean validStreamCipherSpec(final GordianStreamCipherSpec pCipherSpec) {
         /* Check basic validity */
-        if (!super.validStreamKeySpec(pKeySpec)) {
+        if (!super.validStreamCipherSpec(pCipherSpec)) {
             return false;
         }
 
-        /* Reject XChaCha20 */
-        return pKeySpec.getStreamKeyType() != GordianStreamKeyType.CHACHA20
-                || pKeySpec.getSubKeyType() != GordianChaCha20Key.XCHACHA;
+        /* Reject ChaCha7539-Poly1305 */
+        final GordianStreamKeySpec myKeySpec = pCipherSpec.getKeySpec();
+        return !pCipherSpec.isAEAD()
+                || myKeySpec.getStreamKeyType() != GordianStreamKeyType.CHACHA20
+                || myKeySpec.getSubKeyType() != GordianChaCha20Key.ISO7539;
     }
 
     @Override

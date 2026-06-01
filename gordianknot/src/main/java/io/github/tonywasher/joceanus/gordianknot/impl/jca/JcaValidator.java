@@ -76,7 +76,7 @@ public class JcaValidator
             return false;
         }
         return switch (pKeyType) {
-            case SPECK, ANUBIS, SIMON, MARS, LEA -> false;
+            case SPECK, ANUBIS, SIMON, MARS -> false;
             default -> true;
         };
     }
