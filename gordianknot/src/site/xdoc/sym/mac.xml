@@ -31,7 +31,8 @@ final GordianKey&lt;GordianMacSpec&gt; myKey = myGenerator.generateKey();
 
 /* Calculate mac */
 final byte[] myMessage = ...
-final GordianMacParameters myParams = GordianMacParameters.keyWithRandomNonce(myKey);
+final GordianMacParamsBuilder myParamsBuilder = myMacFactory.newMacParamsBuilder();
+final GordianMacParams myParams = myParamsBuilder.keyWithRandomNonce(myKey);
 myMac.init(myParams);
 myMac.update(myMessage);
 final byte[] myResult = myMac.finish();
@@ -60,7 +61,8 @@ final GordianKey&lt;GordianMacSpec&gt; myKey = myGenerator.generateKey();
 
 /* Calculate mac */
 final byte[] myMessage = ...
-final GordianMacParameters myParams = GordianMacParameters.key(myKey);
+final GordianMacParamsBuilder myParamsBuilder = myMacFactory.newMacParamsBuilder();
+final GordianMacParams myParams = myParamsBuilder.key(myKey);
 myMac.init(myParams);
 myDigest.update(myMessage);
 final byte[] myOutput = new byte[200];

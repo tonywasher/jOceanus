@@ -45,7 +45,8 @@ final GordianSignature mySigner = mySignatureFactory.createSigner(mySignSpec);
 
 /* Sign message */
 final byte[] message = ....;
-final GordianSignParameters myParams = GordianSignParams.keyPair(mySigningPair);
+final GordianSignParamsBuilder myBuilder = mySignatureFactory.newSignParamsBuilder();
+final GordianSignParams myParams = myBuilder.keyPair(mySigningPair);
 mySigner.initForSigning(myParams);
 mySigner.update(message);
 final byte[] mySignature = mySigner.sign();
@@ -86,7 +87,8 @@ final GordianSignature mySigner = mySignatureFactory.createSigner(mySignSpec);
 
 /* Sign message */
 final byte[] message = ....;
-final GordianSignParameters myParams = GordianSignParams.keyPair(mySigningPair);
+final GordianSignParamsBuilder myBuilder = mySignatureFactory.newSignParamsBuilder();
+final GordianSignParams myParams = myBuilder.keyPair(mySigningPair);
 mySigner.initForSigning(myParams);
 mySigner.update(message);
 final byte[] mySignature = mySigner.sign();
@@ -113,8 +115,16 @@ final boolean verified = mySigner.verify(mySignature);
                     <tr><td>MLDSA</td><td>Native</td></tr>
                     <tr><td>FALCON</td><td>Native</td></tr>
                     <tr><td>PICNIC</td><td>Native</td></tr>
+                    <tr><td>FAEST</td><td>Native</td></tr>
+                    <tr><td>HAETAE</td><td>Native</td></tr>
+                    <tr><td>HAWK</td><td>Native</td></tr>
                     <tr><td>MAYO</td><td>Native</td></tr>
+                    <tr><td>MQOM</td><td>Native</td></tr>
+                    <tr><td>QRUOV</td><td>Native</td></tr>
+                    <tr><td>SDITH</td><td>Native</td></tr>
                     <tr><td>SNOVA</td><td>Native</td></tr>
+                    <tr><td>SQISIGN</td><td>Native</td></tr>
+                    <tr><td>UOV</td><td>Native</td></tr>
                     <tr><td>XMSS</td><td>Native, PreHash</td></tr>
                     <tr><td>LMS</td><td>Native</td></tr>
                 </table>

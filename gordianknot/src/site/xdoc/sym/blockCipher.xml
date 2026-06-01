@@ -91,7 +91,8 @@ final GordianSymCipherSpec myCipherSpec = myCipherBuilder.cbc(myKeySpec, Gordian
 final GordianSymCipher myCipher = myCipherFactory.createSymKeyCipher(myCipherSpec);
 
 /* Encrypt message with random nonce */
-GordianCipherParameters myParams = GordianCipherParameters.keyWithRandomNonce(myKey);
+final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+GordianCipherParams myParams = myParamsBuilder.keyWithRandomNonce(myKey);
 myCipher.initForEncrypt(myParams);
 final byte[] myMessage = ...
 int myOutLen = myCipher.getOutputLength(myMessage.length);
@@ -100,7 +101,7 @@ int myProcessed = myCipher.update(myMessage, 0, myMessage.length, myEncrypted);
 myCipher.finish(myEncrypted, myProcessed);
 
 /* Decrypt message */
-myParams = GordianCipherParameters.keyWithNonce(myKey, myCipher.getNonce());
+myParams = myParamsBuilder.keyWithNonce(myKey, myCipher.getNonce());
 myCipher.initForDecrypt(myParams);
 myOutLen = myCipher.getOutputLength(myEncrypted.length);
 final byte[] myResult = new byte[myOutLen];
