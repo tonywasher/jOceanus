@@ -99,7 +99,7 @@ public final class BouncyBIKEKeyPair {
      * BouncyCastle BIKE KeyPair generator.
      */
     public static class BouncyBIKEKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<BIKEPrivateKeyParameters, BIKEPublicKeyParameters> {
         /**
          * Constructor.
          *

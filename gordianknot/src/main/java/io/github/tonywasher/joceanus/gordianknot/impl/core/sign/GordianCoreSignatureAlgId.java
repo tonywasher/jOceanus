@@ -451,9 +451,9 @@ public class GordianCoreSignatureAlgId {
      *
      * @param pSubSpecs the array of subSpecs.
      */
-    private void addKeyPairIdSignatures(final GordianCoreKeyPairIdSpec[] pSubSpecs) {
+    private void addKeyPairIdSignatures(final GordianCoreKeyPairIdSpec<?>[] pSubSpecs) {
         final GordianSignatureSpecBuilder myBuilder = GordianCoreSignatureSpecBuilder.newInstance();
-        for (GordianCoreKeyPairIdSpec mySpec : pSubSpecs) {
+        for (GordianCoreKeyPairIdSpec<?> mySpec : pSubSpecs) {
             final GordianSignatureSpec mySigSpec = myBuilder.withKeyPairType(mySpec.getKeyPairType()).build();
             addToMaps(mySigSpec, mySpec.getSpec(),
                     new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));

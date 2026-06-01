@@ -99,7 +99,7 @@ public final class BouncyMLKEMKeyPair {
      * BouncyCastle MLKEM KeyPair generator.
      */
     public static class BouncyMLKEMKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<MLKEMPrivateKeyParameters, MLKEMPublicKeyParameters> {
         /**
          * Constructor.
          *

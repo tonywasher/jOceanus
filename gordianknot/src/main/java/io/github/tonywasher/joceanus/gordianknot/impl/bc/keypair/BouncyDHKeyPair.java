@@ -117,7 +117,7 @@ public final class BouncyDHKeyPair {
      * BouncyCastle DH KeyPair generator.
      */
     public static class BouncyDHKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<DHPrivateKeyParameters, DHPublicKeyParameters> {
         /**
          * Constructor.
          *

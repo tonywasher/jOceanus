@@ -99,7 +99,7 @@ public final class BouncyCMCEKeyPair {
      * BouncyCastle CMCE KeyPair generator.
      */
     public static class BouncyCMCEKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<CMCEPrivateKeyParameters, CMCEPublicKeyParameters> {
         /**
          * Constructor.
          *

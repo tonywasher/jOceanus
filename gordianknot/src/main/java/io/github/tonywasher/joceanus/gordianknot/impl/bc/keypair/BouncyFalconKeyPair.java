@@ -99,7 +99,7 @@ public final class BouncyFalconKeyPair {
      * BouncyCastle Falcon KeyPair generator.
      */
     public static class BouncyFalconKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<FalconPrivateKeyParameters, FalconPublicKeyParameters> {
         /**
          * Constructor.
          *

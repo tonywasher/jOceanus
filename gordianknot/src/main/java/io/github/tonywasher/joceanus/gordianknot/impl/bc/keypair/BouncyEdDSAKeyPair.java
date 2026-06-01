@@ -156,7 +156,7 @@ public final class BouncyEdDSAKeyPair {
      * BouncyCastle EdwardsDSA25519 KeyPair generator.
      */
     public static class BouncyEd25519KeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<Ed25519PrivateKeyParameters, Ed25519PublicKeyParameters> {
         /**
          * Constructor.
          *
@@ -189,7 +189,7 @@ public final class BouncyEdDSAKeyPair {
      * BouncyCastle EdwardsDSA448 KeyPair generator.
      */
     public static class BouncyEd448KeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<Ed448PrivateKeyParameters, Ed448PublicKeyParameters> {
         /**
          * Constructor.
          *

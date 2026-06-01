@@ -156,7 +156,7 @@ public final class BouncyXDHKeyPair {
      * BouncyCastle EdwardsX25519 KeyPair generator.
      */
     public static class BouncyX25519KeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<X25519PrivateKeyParameters, X25519PublicKeyParameters> {
         /**
          * Constructor.
          *
@@ -189,7 +189,7 @@ public final class BouncyXDHKeyPair {
      * BouncyCastle EdwardsX448 KeyPair generator.
      */
     public static class BouncyX448KeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<X448PrivateKeyParameters, X448PublicKeyParameters> {
         /**
          * Constructor.
          *

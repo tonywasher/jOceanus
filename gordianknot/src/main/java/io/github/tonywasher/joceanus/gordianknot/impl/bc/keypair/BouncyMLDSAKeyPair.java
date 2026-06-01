@@ -99,7 +99,7 @@ public final class BouncyMLDSAKeyPair {
      * BouncyCastle MLDSA KeyPair generator.
      */
     public static class BouncyMLDSAKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<MLDSAPrivateKeyParameters, MLDSAPublicKeyParameters> {
         /**
          * Constructor.
          *

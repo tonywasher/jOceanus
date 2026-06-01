@@ -99,7 +99,7 @@ public final class BouncyHQCKeyPair {
      * BouncyCastle HQC KeyPair generator.
      */
     public static class BouncyHQCKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<HQCPrivateKeyParameters, HQCPublicKeyParameters> {
         /**
          * Constructor.
          *

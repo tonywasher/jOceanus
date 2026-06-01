@@ -99,7 +99,7 @@ public final class BouncySNTRUPrimeKeyPair {
      * BouncyCastle SNTRUPrime KeyPair generator.
      */
     public static class BouncySNTRUPrimeKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<SNTRUPrimePrivateKeyParameters, SNTRUPrimePublicKeyParameters> {
         /**
          * Constructor.
          *

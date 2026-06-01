@@ -72,17 +72,6 @@ public final class BouncyEllipticKeyPair {
         }
 
         /**
-         * Is the private key valid for this public key?
-         *
-         * @param pPrivate the private key
-         * @return true/false
-         */
-        public boolean validPrivate(final BouncyECPrivateKey pPrivate) {
-            final ECPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
-            return getPublicKey().getParameters().equals(myPrivate.getParameters());
-        }
-
-        /**
          * CompareKeys.
          *
          * @param pFirst  the first key
@@ -140,7 +129,7 @@ public final class BouncyEllipticKeyPair {
      * BouncyCastle Elliptic KeyPair generator.
      */
     public static class BouncyECKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<ECPrivateKeyParameters, ECPublicKeyParameters> {
         /**
          * Constructor.
          *

@@ -74,7 +74,7 @@ public final class BouncyDSTUKeyPair {
      * BouncyCastle DSTU KeyPair generator.
      */
     public static class BouncyDSTUKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<ECPrivateKeyParameters, ECPublicKeyParameters> {
         /**
          * Domain.
          */
