@@ -17,10 +17,10 @@
 package io.github.tonywasher.joceanus.moneywise.atlas.reports;
 
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportDelayedTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
-import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
-import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventType;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
@@ -88,12 +88,12 @@ public class MoneyWiseXReportCapitalGains
     /**
      * The table.
      */
-    private MetisHTMLTable theTable;
+    private MetisReportHTMLTable theTable;
 
     /**
      * The attribute table.
      */
-    private MetisHTMLTable theAttrTable;
+    private MetisReportHTMLTable theAttrTable;
 
     /**
      * Constructor.
@@ -895,7 +895,7 @@ public class MoneyWiseXReportCapitalGains
     }
 
     @Override
-    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+    public MetisReportHTMLTable createDelayedTable(final MetisReportDelayedTable pTable) {
         return null;
     }
 }

@@ -125,7 +125,7 @@ public final class BouncyDSAKeyPair {
      * BouncyCastle DSA KeyPair generator.
      */
     public static class BouncyDSAKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<DSAPrivateKeyParameters, DSAPublicKeyParameters> {
         /**
          * Constructor.
          *

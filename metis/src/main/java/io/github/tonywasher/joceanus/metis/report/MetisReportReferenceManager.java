@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.metis.report;
 
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
 
 /**
  * Reference Manager for report builders.
@@ -30,12 +30,12 @@ public class MetisReportReferenceManager<F> {
     /**
      * The report.
      */
-    private final MetisReportBase<?, F> theReport;
+    private final MetisReportControl<F> theReport;
 
     /**
      * The delayed map.
      */
-    private final Map<String, DelayedTable> theDelayedMap;
+    private final Map<String, MetisReportDelayedTable> theDelayedMap;
 
     /**
      * The filter element map.
@@ -47,7 +47,7 @@ public class MetisReportReferenceManager<F> {
      *
      * @param pReport the report
      */
-    protected MetisReportReferenceManager(final MetisReportBase<?, F> pReport) {
+    protected MetisReportReferenceManager(final MetisReportControl<F> pReport) {
         /* Store parameters */
         theReport = pReport;
 
@@ -80,7 +80,7 @@ public class MetisReportReferenceManager<F> {
     protected boolean processDelayedReference(final MetisReportHTMLBuilder pBuilder,
                                               final String pReference) {
         /* Lookup the delayed table and ignore if not found */
-        final DelayedTable myDelay = theDelayedMap.get(pReference);
+        final MetisReportDelayedTable myDelay = theDelayedMap.get(pReference);
         if (myDelay == null) {
             return false;
         }
@@ -89,7 +89,7 @@ public class MetisReportReferenceManager<F> {
         theDelayedMap.remove(pReference);
 
         /* Create the delayed table */
-        final MetisHTMLTable myTable = theReport.createDelayedTable(myDelay);
+        final MetisReportHTMLTable myTable = theReport.createDelayedTable(myDelay);
 
         /* Embed the table correctly */
         pBuilder.embedTable(myTable, myDelay.getId());
@@ -128,76 +128,13 @@ public class MetisReportReferenceManager<F> {
      * @param pSource the selection object
      */
     protected void setDelayedTable(final String pId,
-                                   final MetisHTMLTable pParent,
+                                   final MetisReportHTMLTable pParent,
                                    final Object pSource) {
         /* Create the delayed table reference */
-        final DelayedTable myTable = new DelayedTable(pId, pParent, pSource);
+        final MetisReportDelayedTable myTable = new MetisReportDelayedTable(pId, pParent, pSource);
 
         /* Record into selection map */
         theDelayedMap.put(MetisReportHTMLBuilder.REF_DELAY
                 + pId, myTable);
-    }
-
-    /**
-     * Simple element class for delayed tables.
-     */
-    public static final class DelayedTable {
-        /**
-         * The table id.
-         */
-        private final String theId;
-
-        /**
-         * The parent control.
-         */
-        private final MetisHTMLTable theParent;
-
-        /**
-         * The table source.
-         */
-        private final Object theSource;
-
-        /**
-         * Constructor.
-         *
-         * @param pId     the table id
-         * @param pParent the parent table.
-         * @param pSource the source
-         */
-        private DelayedTable(final String pId,
-                             final MetisHTMLTable pParent,
-                             final Object pSource) {
-            /* Store details */
-            theId = pId;
-            theParent = pParent;
-            theSource = pSource;
-        }
-
-        /**
-         * Obtain the id.
-         *
-         * @return the id
-         */
-        public String getId() {
-            return theId;
-        }
-
-        /**
-         * Obtain the parent.
-         *
-         * @return the parent
-         */
-        public MetisHTMLTable getParent() {
-            return theParent;
-        }
-
-        /**
-         * Obtain the source.
-         *
-         * @return the source
-         */
-        public Object getSource() {
-            return theSource;
-        }
     }
 }

@@ -99,7 +99,7 @@ public final class BouncyPicnicKeyPair {
      * BouncyCastle Picnic KeyPair generator.
      */
     public static class BouncyPicnicKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<PicnicPrivateKeyParameters, PicnicPublicKeyParameters> {
         /**
          * Constructor.
          *

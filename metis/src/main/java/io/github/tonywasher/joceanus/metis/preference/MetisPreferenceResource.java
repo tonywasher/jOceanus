@@ -16,12 +16,10 @@
  */
 package io.github.tonywasher.joceanus.metis.preference;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
-import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -179,11 +177,6 @@ public enum MetisPreferenceResource implements OceanusBundleId {
     SECPREF_KEYSETS("secpref.keysets");
 
     /**
-     * The PreferenceType Map.
-     */
-    private static final Map<MetisPreferenceType, OceanusBundleId> PREF_MAP = buildPreferenceMap();
-
-    /**
      * The Resource Loader.
      */
     private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MetisDataResource.class.getCanonicalName(),
@@ -228,34 +221,5 @@ public enum MetisPreferenceResource implements OceanusBundleId {
 
         /* return the value */
         return theValue;
-    }
-
-    /**
-     * Build preference map.
-     *
-     * @return the map
-     */
-    private static Map<MetisPreferenceType, OceanusBundleId> buildPreferenceMap() {
-        /* Create the map and return it */
-        final Map<MetisPreferenceType, OceanusBundleId> myMap = new EnumMap<>(MetisPreferenceType.class);
-        myMap.put(MetisPreferenceType.STRING, TYPE_STRING);
-        myMap.put(MetisPreferenceType.INTEGER, TYPE_INTEGER);
-        myMap.put(MetisPreferenceType.BOOLEAN, TYPE_BOOLEAN);
-        myMap.put(MetisPreferenceType.DATE, TYPE_DATE);
-        myMap.put(MetisPreferenceType.FILE, TYPE_FILE);
-        myMap.put(MetisPreferenceType.DIRECTORY, TYPE_DIRECTORY);
-        myMap.put(MetisPreferenceType.ENUM, TYPE_ENUM);
-        myMap.put(MetisPreferenceType.COLOR, TYPE_COLOR);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for prefType.
-     *
-     * @param pType the type
-     * @return the resource key
-     */
-    public static OceanusBundleId getKeyForPrefType(final MetisPreferenceType pType) {
-        return OceanusBundleLoader.getKeyForEnum(PREF_MAP, pType);
     }
 }

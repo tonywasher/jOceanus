@@ -99,7 +99,7 @@ public final class BouncyFrodoKeyPair {
      * BouncyCastle Frodo KeyPair generator.
      */
     public static class BouncyFrodoKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<FrodoPrivateKeyParameters, FrodoPublicKeyParameters> {
         /**
          * Constructor.
          *

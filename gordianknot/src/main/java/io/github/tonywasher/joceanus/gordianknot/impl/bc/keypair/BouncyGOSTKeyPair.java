@@ -38,26 +38,6 @@ import org.bouncycastle.jcajce.spec.GOST3410ParameterSpec;
  */
 public final class BouncyGOSTKeyPair {
     /**
-     * GOST algorithm.
-     */
-    private static final String ALGO = "ECGOST3410-2012";
-
-    /**
-     * Length 32.
-     */
-    private static final int LEN32 = 32;
-
-    /**
-     * Length 32.
-     */
-    private static final int LEN64 = 64;
-
-    /**
-     * Encoding id.
-     */
-    private static final byte ENCODING_ID = 0x04;
-
-    /**
      * Private constructor.
      */
     private BouncyGOSTKeyPair() {
@@ -67,7 +47,7 @@ public final class BouncyGOSTKeyPair {
      * BouncyCastle GOST KeyPair generator.
      */
     public static class BouncyGOSTKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<ECPrivateKeyParameters, ECPublicKeyParameters> {
         /**
          * Constructor.
          *

@@ -37,8 +37,11 @@ import java.security.spec.X509EncodedKeySpec;
 
 /**
  * BouncyCastle KeyPair generator.
+ *
+ * @param <S> the private parameters
+ * @param <P> the public parameters
  */
-public abstract class BouncyKeyPairGenerator
+public abstract class BouncyKeyPairGenerator<S extends AsymmetricKeyParameter, P extends AsymmetricKeyParameter>
         extends GordianCoreKeyPairGenerator {
     /**
      * Parsing error.
@@ -96,8 +99,8 @@ public abstract class BouncyKeyPairGenerator
     public BouncyKeyPair generateKeyPair() {
         /* Generate and return the keyPair */
         final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-        final BouncyPublicKey<?> myPublic = newPublicKey(myPair.getPublic());
-        final BouncyPrivateKey<?> myPrivate = newPrivateKey(myPair.getPrivate());
+        final BouncyPublicKey<P> myPublic = newPublicKey(myPair.getPublic());
+        final BouncyPrivateKey<S> myPrivate = newPrivateKey(myPair.getPrivate());
         return createKeyPair(myPublic, myPrivate);
     }
 
@@ -108,8 +111,8 @@ public abstract class BouncyKeyPairGenerator
      * @param pPrivateKey the private key
      * @return the keyPair
      */
-    private BouncyKeyPair createKeyPair(final BouncyPublicKey<?> pPublicKey,
-                                        final BouncyPrivateKey<?> pPrivateKey) {
+    private BouncyKeyPair createKeyPair(final BouncyPublicKey<P> pPublicKey,
+                                        final BouncyPrivateKey<S> pPrivateKey) {
         return pPrivateKey instanceof BouncyStateAwarePrivateKey<?> myPrivate
                 ? new BouncyStateAwareKeyPair(pPublicKey, myPrivate)
                 : new BouncyKeyPair(pPublicKey, pPrivateKey);
@@ -122,9 +125,9 @@ public abstract class BouncyKeyPairGenerator
         checkKeySpec(pPrivateKey);
 
         /* derive keyPair */
-        final BouncyPublicKey<?> myPublic = derivePublicKey(pPublicKey);
+        final BouncyPublicKey<P> myPublic = derivePublicKey(pPublicKey);
         final AsymmetricKeyParameter myParms = theFactorySet.parsePKCS8EncodedKeySpec(pPrivateKey);
-        final BouncyPrivateKey<?> myPrivate = newPrivateKey(myParms);
+        final BouncyPrivateKey<S> myPrivate = newPrivateKey(myParms);
         final BouncyKeyPair myPair = createKeyPair(myPublic, myPrivate);
 
         /* Check that we have a matching pair */
@@ -177,7 +180,7 @@ public abstract class BouncyKeyPairGenerator
      * @return the public key
      * @throws GordianException on error
      */
-    private BouncyPublicKey<?> derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+    private BouncyPublicKey<P> derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
         /* Check the keySpecs */
         checkKeySpec(pEncodedKey);
 
@@ -192,7 +195,7 @@ public abstract class BouncyKeyPairGenerator
      * @param pParms the parameters
      * @return the new public key
      */
-    abstract BouncyPrivateKey<?> newPrivateKey(AsymmetricKeyParameter pParms);
+    abstract BouncyPrivateKey<S> newPrivateKey(AsymmetricKeyParameter pParms);
 
     /**
      * Create new public key from parameters.
@@ -200,7 +203,7 @@ public abstract class BouncyKeyPairGenerator
      * @param pParms the parameters
      * @return the new public key
      */
-    abstract BouncyPublicKey<?> newPublicKey(AsymmetricKeyParameter pParms);
+    abstract BouncyPublicKey<P> newPublicKey(AsymmetricKeyParameter pParms);
 
     /**
      * KeyFactorySet.

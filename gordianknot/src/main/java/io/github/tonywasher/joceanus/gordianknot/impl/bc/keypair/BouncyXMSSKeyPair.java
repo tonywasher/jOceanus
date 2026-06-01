@@ -154,7 +154,7 @@ public final class BouncyXMSSKeyPair {
      * BouncyCastle XMSS KeyPair generator.
      */
     public static class BouncyXMSSKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<XMSSPrivateKeyParameters, XMSSPublicKeyParameters> {
         /**
          * Constructor.
          *
@@ -314,7 +314,7 @@ public final class BouncyXMSSKeyPair {
      * BouncyCastle XMSSMT KeyPair generator.
      */
     public static class BouncyXMSSMTKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<XMSSMTPrivateKeyParameters, XMSSMTPublicKeyParameters> {
         /**
          * Constructor.
          *

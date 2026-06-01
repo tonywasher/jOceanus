@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.metis.help;
 
+import io.github.tonywasher.joceanus.metis.help.MetisHelpEntry.MetisHelpId;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.resource.OceanusResourceId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusResourceLoader;
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
@@ -28,17 +28,6 @@ import java.util.List;
  * The help module that is implemented by each Help System.
  */
 public abstract class MetisHelpModule {
-    /**
-     * HelpId.
-     */
-    public interface MetisHelpId extends OceanusResourceId {
-    }
-
-    /**
-     * The Hash prime.
-     */
-    protected static final int HASH_PRIME = 19;
-
     /**
      * Document name for Help Contents.
      */

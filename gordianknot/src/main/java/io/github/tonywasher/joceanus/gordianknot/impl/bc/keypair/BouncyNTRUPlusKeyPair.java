@@ -101,7 +101,7 @@ public final class BouncyNTRUPlusKeyPair {
      * BouncyCastle NTRUPlus KeyPair generator.
      */
     public static class BouncyNTRUPlusKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<NTRUPlusPrivateKeyParameters, NTRUPlusPublicKeyParameters> {
         /**
          * Constructor.
          *

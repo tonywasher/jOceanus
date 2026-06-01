@@ -16,16 +16,11 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.reports;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportDelayedTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
-import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
-import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
@@ -36,6 +31,11 @@ import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisValuesResource;
 import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisSecurityFilter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -116,7 +116,7 @@ public class MoneyWiseXReportPortfolioView
         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myDate));
 
         /* Initialise the table */
-        final MetisHTMLTable myTable = theBuilder.startTable(myBody);
+        final MetisReportHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
@@ -173,7 +173,7 @@ public class MoneyWiseXReportPortfolioView
     }
 
     @Override
-    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+    public MetisReportHTMLTable createDelayedTable(final MetisReportDelayedTable pTable) {
         /* Access the source */
         final Object mySource = pTable.getSource();
         if (mySource instanceof MoneyWiseXAnalysisPortfolioBucket mySourceBucket) {
@@ -191,13 +191,13 @@ public class MoneyWiseXReportPortfolioView
      * @param pSource the source bucket
      * @return the new document fragment
      */
-    private MetisHTMLTable createDelayedPortfolio(final MetisHTMLTable pParent,
-                                                  final MoneyWiseXAnalysisPortfolioBucket pSource) {
+    private MetisReportHTMLTable createDelayedPortfolio(final MetisReportHTMLTable pParent,
+                                                        final MoneyWiseXAnalysisPortfolioBucket pSource) {
         /* Access the securities and portfolio */
         final MoneyWiseXAnalysisSecurityBucketList mySecurities = pSource.getSecurities();
 
         /* Create a new table */
-        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Security Buckets */
         final Iterator<MoneyWiseXAnalysisSecurityBucket> myIterator = mySecurities.iterator();

@@ -99,7 +99,7 @@ public final class BouncySnovaKeyPair {
      * BouncyCastle Snova KeyPair generator.
      */
     public static class BouncySnovaKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<SnovaPrivateKeyParameters, SnovaPublicKeyParameters> {
         /**
          * Constructor.
          *

@@ -99,7 +99,7 @@ public final class BouncySLHDSAKeyPair {
      * BouncyCastle SLHDSA KeyPair generator.
      */
     public static class BouncySLHDSAKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<SLHDSAPrivateKeyParameters, SLHDSAPublicKeyParameters> {
         /**
          * Constructor.
          *

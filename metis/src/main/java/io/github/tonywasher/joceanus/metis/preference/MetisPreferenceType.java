@@ -16,7 +16,8 @@
  */
 package io.github.tonywasher.joceanus.metis.preference;
 
-import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet.MetisPreferenceId;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey.MetisPreferenceId;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * Enum class for preference types.
@@ -73,10 +74,31 @@ public enum MetisPreferenceType
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MetisPreferenceResource.getKeyForPrefType(this).getValue();
+            theName = bundleIdForPreferenceType(this).getValue();
         }
 
         /* return the name */
         return theName;
+    }
+
+    /**
+     * Obtain the resource bundleId for the preferenceType.
+     *
+     * @param pType the type
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForPreferenceType(final MetisPreferenceType pType) {
+        /* Create the map and return it */
+        return switch (pType) {
+            case STRING -> MetisPreferenceResource.TYPE_STRING;
+            case INTEGER -> MetisPreferenceResource.TYPE_INTEGER;
+            case BOOLEAN -> MetisPreferenceResource.TYPE_BOOLEAN;
+            case DATE -> MetisPreferenceResource.TYPE_DATE;
+            case FILE -> MetisPreferenceResource.TYPE_FILE;
+            case DIRECTORY -> MetisPreferenceResource.TYPE_DIRECTORY;
+            case ENUM -> MetisPreferenceResource.TYPE_ENUM;
+            case COLOR -> MetisPreferenceResource.TYPE_COLOR;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

@@ -97,7 +97,7 @@ public final class BouncyNewHopeKeyPair {
      * BouncyCastle NewHope KeyPair generator.
      */
     public static class BouncyNewHopeKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<NHPrivateKeyParameters, NHPublicKeyParameters> {
         /**
          * Constructor.
          *

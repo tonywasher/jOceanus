@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.metis.data;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+
 /**
  * Special values for return by getFieldValue.
  */
@@ -40,10 +42,25 @@ public enum MetisDataFieldValue {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MetisDataResource.getKeyForFieldValue(this).getValue();
+            theName = bundleIdForFieldValue(this).getValue();
         }
 
         /* return the name */
         return theName;
+    }
+
+    /**
+     * Obtain the resource bundleId for the fieldValue.
+     *
+     * @param pValue the value
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForFieldValue(final MetisDataFieldValue pValue) {
+        /* Create the map and return it */
+        return switch (pValue) {
+            case UNKNOWN -> MetisDataResource.FIELDVALUE_UNKNOWN;
+            case SKIP -> MetisDataResource.FIELDVALUE_SKIP;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

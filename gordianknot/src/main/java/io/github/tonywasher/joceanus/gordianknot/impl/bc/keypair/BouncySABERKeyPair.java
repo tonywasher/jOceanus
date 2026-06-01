@@ -99,7 +99,7 @@ public final class BouncySABERKeyPair {
      * BouncyCastle SABER KeyPair generator.
      */
     public static class BouncySABERKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<SABERPrivateKeyParameters, SABERPublicKeyParameters> {
         /**
          * Constructor.
          *

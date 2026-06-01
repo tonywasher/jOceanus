@@ -138,7 +138,7 @@ public final class BouncyRSAKeyPair {
      * BouncyCastle RSA KeyPair generator.
      */
     public static class BouncyRSAKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<RSAPrivateCrtKeyParameters, RSAKeyParameters> {
         /**
          * RSA exponent.
          */

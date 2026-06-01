@@ -112,7 +112,7 @@ public final class BouncyElGamalKeyPair {
      * BouncyCastle ElGamal KeyPair generator.
      */
     public static class BouncyElGamalKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<ElGamalPrivateKeyParameters, ElGamalPublicKeyParameters> {
         /**
          * Constructor.
          *

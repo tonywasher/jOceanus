@@ -16,10 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
@@ -33,6 +29,10 @@ import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxDueBucket;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxSource;
 import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKChargeableGainsScheme.MoneyWiseUKSlicedTaxDueBucket;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.time.Month;
 import java.util.ArrayList;

@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.metis.data;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+
 import java.util.Arrays;
 
 /**
@@ -61,7 +63,7 @@ public enum MetisDataDifference {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MetisDataResource.getKeyForDifference(this).getValue();
+            theName = bundleIdFoDifference(this).getValue();
         }
 
         /* return the name */
@@ -111,16 +113,13 @@ public enum MetisDataDifference {
      * @return the combined difference
      */
     public MetisDataDifference combine(final MetisDataDifference pThat) {
-        switch (this) {
-            case IDENTICAL:
-                return pThat;
-            case SECURITY:
-                return (pThat == DIFFERENT)
-                        ? pThat
-                        : this;
-            default:
-                return this;
-        }
+        return switch (this) {
+            case IDENTICAL -> pThat;
+            case SECURITY -> (pThat == DIFFERENT)
+                    ? pThat
+                    : this;
+            default -> this;
+        };
     }
 
     /**
@@ -253,5 +252,21 @@ public enum MetisDataDifference {
 
         /* Both non-Null, so pass the call on */
         return pCurr.compareTo(pNew);
+    }
+
+    /**
+     * Obtain the resource bundleId for the difference.
+     *
+     * @param pDiffer the difference
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdFoDifference(final MetisDataDifference pDiffer) {
+        /* Create the map and return it */
+        return switch (pDiffer) {
+            case IDENTICAL -> MetisDataResource.DIFFERENCE_IDENTICAL;
+            case DIFFERENT -> MetisDataResource.DIFFERENCE_DIFFERENT;
+            case SECURITY -> MetisDataResource.DIFFERENCE_SECURITY;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

@@ -16,18 +16,17 @@
  */
 package io.github.tonywasher.joceanus.metis.report;
 
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
 import org.w3c.dom.Document;
-
-import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
-import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
 
 /**
  * Interface provided by report builders.
  *
- * @param <D> the data type type
+ * @param <D> the data type
  * @param <F> the filter type
  */
-public abstract class MetisReportBase<D, F> {
+public abstract class MetisReportBase<D, F>
+        implements MetisReportControl<F> {
     /**
      * Reference Manager.
      */
@@ -68,26 +67,10 @@ public abstract class MetisReportBase<D, F> {
      * @param pSource the selection object
      */
     protected void setDelayedTable(final String pId,
-                                   final MetisHTMLTable pParent,
+                                   final MetisReportHTMLTable pParent,
                                    final Object pSource) {
         theReferenceMgr.setDelayedTable(pId, pParent, pSource);
     }
-
-    /**
-     * Process a filter.
-     *
-     * @param pSource the filter source
-     * @return the Filter or null
-     */
-    public abstract F processFilter(Object pSource);
-
-    /**
-     * Create the delayed table.
-     *
-     * @param pTable the delayed table definition
-     * @return the newly created table
-     */
-    public abstract MetisHTMLTable createDelayedTable(DelayedTable pTable);
 
     /**
      * Create the web document.

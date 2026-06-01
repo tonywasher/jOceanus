@@ -16,6 +16,10 @@
  */
 package io.github.tonywasher.joceanus.metis.ui;
 
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceEvent;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceResource;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
@@ -23,10 +27,6 @@ import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
-import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceEvent;
-import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
-import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceResource;
-import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIGenericWrapper;

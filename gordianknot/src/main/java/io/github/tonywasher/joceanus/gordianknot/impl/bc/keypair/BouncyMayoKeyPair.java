@@ -99,7 +99,7 @@ public final class BouncyMayoKeyPair {
      * BouncyCastle Mayo KeyPair generator.
      */
     public static class BouncyMayoKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<MayoPrivateKeyParameters, MayoPublicKeyParameters> {
         /**
          * Constructor.
          *

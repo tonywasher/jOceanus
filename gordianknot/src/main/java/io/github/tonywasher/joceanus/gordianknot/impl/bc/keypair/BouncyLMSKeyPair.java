@@ -110,7 +110,7 @@ public final class BouncyLMSKeyPair {
      * BouncyCastle HSS KeyPair generator.
      */
     public static class BouncyHSSKeyPairGenerator
-            extends BouncyKeyPairGenerator {
+            extends BouncyKeyPairGenerator<HSSPrivateKeyParameters, HSSPublicKeyParameters> {
         /**
          * Constructor.
          *
