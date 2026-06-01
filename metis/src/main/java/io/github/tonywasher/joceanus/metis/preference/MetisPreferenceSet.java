@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.exc.MetisDataException;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey.MetisPreferenceId;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerStandardEntry;
@@ -46,12 +47,6 @@ import java.util.prefs.Preferences;
  */
 public abstract class MetisPreferenceSet
         implements MetisFieldItem, OceanusEventProvider<MetisPreferenceEvent> {
-    /**
-     * Id interface.
-     */
-    public interface MetisPreferenceId {
-    }
-
     /**
      * Unknown preference string.
      */

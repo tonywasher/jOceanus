@@ -16,12 +16,10 @@
  */
 package io.github.tonywasher.joceanus.metis.data;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -140,16 +138,6 @@ public enum MetisDataResource
     DATA_CHILD("item.Child");
 
     /**
-     * The Difference Map.
-     */
-    private static final Map<MetisDataDifference, OceanusBundleId> DIFF_MAP = buildDifferenceMap();
-
-    /**
-     * The FieldValue Map.
-     */
-    private static final Map<MetisDataFieldValue, OceanusBundleId> VALUE_MAP = buildValueMap();
-
-    /**
      * The Resource Loader.
      */
     private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MetisDataResource.class.getCanonicalName(),
@@ -204,52 +192,5 @@ public enum MetisDataResource
     @Override
     public String getId() {
         return getValue();
-    }
-
-    /**
-     * Build difference map.
-     *
-     * @return the map
-     */
-    private static Map<MetisDataDifference, OceanusBundleId> buildDifferenceMap() {
-        /* Create the map and return it */
-        final Map<MetisDataDifference, OceanusBundleId> myMap = new EnumMap<>(MetisDataDifference.class);
-        myMap.put(MetisDataDifference.IDENTICAL, DIFFERENCE_IDENTICAL);
-        myMap.put(MetisDataDifference.SECURITY, DIFFERENCE_SECURITY);
-        myMap.put(MetisDataDifference.DIFFERENT, DIFFERENCE_DIFFERENT);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for difference.
-     *
-     * @param pValue the Value
-     * @return the resource key
-     */
-    static OceanusBundleId getKeyForDifference(final MetisDataDifference pValue) {
-        return OceanusBundleLoader.getKeyForEnum(DIFF_MAP, pValue);
-    }
-
-    /**
-     * Build value map.
-     *
-     * @return the map
-     */
-    private static Map<MetisDataFieldValue, OceanusBundleId> buildValueMap() {
-        /* Create the map and return it */
-        final Map<MetisDataFieldValue, OceanusBundleId> myMap = new EnumMap<>(MetisDataFieldValue.class);
-        myMap.put(MetisDataFieldValue.UNKNOWN, FIELDVALUE_UNKNOWN);
-        myMap.put(MetisDataFieldValue.SKIP, FIELDVALUE_SKIP);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for fieldValue.
-     *
-     * @param pValue the Value
-     * @return the resource key
-     */
-    static OceanusBundleId getKeyForFieldValue(final MetisDataFieldValue pValue) {
-        return OceanusBundleLoader.getKeyForEnum(VALUE_MAP, pValue);
     }
 }

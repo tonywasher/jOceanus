@@ -16,18 +16,11 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.reports;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportDelayedTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
-import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
-import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
@@ -40,6 +33,13 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseCashType;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -88,12 +88,12 @@ public class MoneyWiseReportCapitalGains
     /**
      * The table.
      */
-    private MetisHTMLTable theTable;
+    private MetisReportHTMLTable theTable;
 
     /**
      * The attribute table.
      */
-    private MetisHTMLTable theAttrTable;
+    private MetisReportHTMLTable theAttrTable;
 
     /**
      * Constructor.
@@ -891,7 +891,7 @@ public class MoneyWiseReportCapitalGains
     }
 
     @Override
-    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+    public MetisReportHTMLTable createDelayedTable(final MetisReportDelayedTable pTable) {
         return null;
     }
 }

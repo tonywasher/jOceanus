@@ -16,13 +16,11 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.reports;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportDelayedTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
-import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
-import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPayeeBucket;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPayeeBucket.MoneyWiseAnalysisPayeeBucketList;
@@ -30,6 +28,8 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisPayeeValues;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisPayeeFilter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -80,7 +80,7 @@ public class MoneyWiseReportCashFlow
         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));
 
         /* Initialise the table */
-        final MetisHTMLTable myTable = theBuilder.startTable(myBody);
+        final MetisReportHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTotalCell(myTable);
         theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_INCOME);
@@ -134,7 +134,7 @@ public class MoneyWiseReportCashFlow
     }
 
     @Override
-    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+    public MetisReportHTMLTable createDelayedTable(final MetisReportDelayedTable pTable) {
         return null;
     }
 }

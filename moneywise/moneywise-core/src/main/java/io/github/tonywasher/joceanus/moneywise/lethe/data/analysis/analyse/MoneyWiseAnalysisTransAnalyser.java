@@ -341,37 +341,34 @@ public class MoneyWiseAnalysisTransAnalyser
         }
 
         /* If the event relates to a security item, split out the workings */
-        if (myDebitAsset instanceof MoneyWiseSecurityHolding) {
+        if (myDebitAsset instanceof MoneyWiseSecurityHolding myHolding) {
             /* Process as a Security transaction */
-            processDebitSecurityTransaction((MoneyWiseSecurityHolding) myDebitAsset, myCreditAsset);
+            processDebitSecurityTransaction(myHolding, myCreditAsset);
 
             /* If the event relates to a security item, split out the workings */
-        } else if (myCreditAsset instanceof MoneyWiseSecurityHolding) {
+        } else if (myCreditAsset instanceof MoneyWiseSecurityHolding myHolding) {
             /* Process as a Security transaction */
-            processCreditSecurityTransaction(myDebitAsset, (MoneyWiseSecurityHolding) myCreditAsset);
+            processCreditSecurityTransaction(myDebitAsset, myHolding);
 
             /* Else handle the portfolio transfer */
-        } else if (myDebitAsset instanceof MoneyWisePortfolio
-                && myCreditAsset instanceof MoneyWisePortfolio
+        } else if (myDebitAsset instanceof MoneyWisePortfolio myDebitPortfolio
+                && myCreditAsset instanceof MoneyWisePortfolio myCreditPortfolio
                 && pTrans.getCategoryClass() == MoneyWiseTransCategoryClass.PORTFOLIOXFER
                 && !myDebitAsset.equals(myCreditAsset)) {
             /* Process portfolio transfer */
-            processPortfolioXfer((MoneyWisePortfolio) myDebitAsset, (MoneyWisePortfolio) myCreditAsset);
+            processPortfolioXfer(myDebitPortfolio, myCreditPortfolio);
 
             /* Else handle the event normally */
-        } else if (myDebitAsset instanceof MoneyWiseAssetBase
-                && myCreditAsset instanceof MoneyWiseAssetBase) {
+        } else if (myDebitAsset instanceof MoneyWiseAssetBase myDebit
+                && myCreditAsset instanceof MoneyWiseAssetBase myCredit) {
             /* Access correctly */
-            MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) myDebitAsset;
-            MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) myCreditAsset;
             MoneyWiseAssetBase myChild = null;
             final OceanusMoney myAmount = pTrans.getAmount();
             MoneyWiseTransCategory myCat = pTrans.getCategory();
 
             /* Switch on category class */
-            switch (myCat.getCategoryTypeClass()) {
-                case INTEREST:
-                case LOYALTYBONUS:
+            switch (Objects.requireNonNull(myCat.getCategoryTypeClass())) {
+                case INTEREST, LOYALTYBONUS:
                     /* Obtain detailed category */
                     myCat = myDebit.getDetailedCategory(myCat, myYear);
 
@@ -381,21 +378,18 @@ public class MoneyWiseAnalysisTransAnalyser
                             : myDebit;
                     myDebit = myDebit.getParent();
                     break;
-                case LOANINTERESTEARNED:
-                case CASHBACK:
+                case LOANINTERESTEARNED, CASHBACK:
                     /* True debit account is the parent of the asset */
                     myDebit = myDebit.getParent();
                     break;
-                case RENTALINCOME:
-                case ROOMRENTALINCOME:
+                case RENTALINCOME, ROOMRENTALINCOME:
                     /* True debit account is the parent of the security */
                     myChild = myDebit.equals(myCredit)
                             ? null
                             : myDebit;
                     myDebit = myCredit.getParent();
                     break;
-                case WRITEOFF:
-                case LOANINTERESTCHARGED:
+                case WRITEOFF, LOANINTERESTCHARGED:
                     /* True credit account is the parent of the loan */
                     myCredit = myCredit.getParent();
                     break;
@@ -404,10 +398,9 @@ public class MoneyWiseAnalysisTransAnalyser
             }
 
             /* If the debit account is auto-Expense */
-            if (myDebit instanceof MoneyWiseCash
+            if (myDebit instanceof MoneyWiseCash myCash
                     && myDebit.getAssetType() == MoneyWiseAssetType.AUTOEXPENSE) {
                 /* Access debit as cash */
-                final MoneyWiseCash myCash = (MoneyWiseCash) myDebit;
                 final MoneyWiseTransCategory myAuto = myCash.getAutoExpense();
                 myDebit = myCash.getAutoPayee();
                 myDebit.touchItem(pTrans);
@@ -433,10 +426,9 @@ public class MoneyWiseAnalysisTransAnalyser
             }
 
             /* If the credit account is auto-Expense */
-            if (myCredit instanceof MoneyWiseCash
+            if (myCredit instanceof MoneyWiseCash myCash
                     && myCredit.getAssetType() == MoneyWiseAssetType.AUTOEXPENSE) {
                 /* Access credit as cash */
-                final MoneyWiseCash myCash = (MoneyWiseCash) myCredit;
                 final MoneyWiseTransCategory myAuto = myCash.getAutoExpense();
                 myCredit = myCash.getAutoPayee();
                 myCredit.touchItem(pTrans);
@@ -499,15 +491,15 @@ public class MoneyWiseAnalysisTransAnalyser
     private void processDebitSecurityTransaction(final MoneyWiseSecurityHolding pDebit,
                                                  final MoneyWiseTransAsset pCredit) throws OceanusException {
         /* If credit account is also SecurityHolding */
-        if (pCredit instanceof MoneyWiseSecurityHolding) {
+        if (pCredit instanceof MoneyWiseSecurityHolding myHolding) {
             /* Split out working */
-            processDebitCreditSecurityTransaction(pDebit, (MoneyWiseSecurityHolding) pCredit);
+            processDebitCreditSecurityTransaction(pDebit, myHolding);
             return;
         }
 
         /* Switch on the category */
         final MoneyWiseTransCategory myCat = theHelper.getCategory();
-        switch (myCat.getCategoryTypeClass()) {
+        switch (Objects.requireNonNull(myCat.getCategoryTypeClass())) {
             /* Process a stock right waived */
             case STOCKRIGHTSISSUE:
                 processTransferOut(pDebit, (MoneyWiseAssetBase) pCredit);
@@ -520,11 +512,7 @@ public class MoneyWiseAnalysisTransAnalyser
                 processPortfolioXfer(pDebit, (MoneyWisePortfolio) pCredit);
                 break;
             /* Process standard transfer in/out */
-            case TRANSFER:
-            case SECURITYCLOSURE:
-            case EXPENSE:
-            case INHERITED:
-            case OTHERINCOME:
+            case TRANSFER, SECURITYCLOSURE, EXPENSE, INHERITED, OTHERINCOME:
                 if (pDebit.getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)) {
                     processChargeableGain(pDebit, (MoneyWiseAssetBase) pCredit);
                 } else {
@@ -549,10 +537,9 @@ public class MoneyWiseAnalysisTransAnalyser
                                                        final MoneyWiseSecurityHolding pCredit) throws OceanusException {
         /* Switch on the category */
         final MoneyWiseTransCategory myCat = theHelper.getCategory();
-        switch (myCat.getCategoryTypeClass()) {
+        switch (Objects.requireNonNull(myCat.getCategoryTypeClass())) {
             /* Process a stock split */
-            case STOCKSPLIT:
-            case UNITSADJUST:
+            case STOCKSPLIT, UNITSADJUST:
                 processUnitsAdjust(pDebit);
                 break;
             /* Process a stock DeMerger */
@@ -560,8 +547,7 @@ public class MoneyWiseAnalysisTransAnalyser
                 processStockDeMerger(pDebit, pCredit);
                 break;
             /* Process a Stock TakeOver */
-            case SECURITYREPLACE:
-            case STOCKTAKEOVER:
+            case SECURITYREPLACE, STOCKTAKEOVER:
                 processStockTakeover(pDebit, pCredit);
                 break;
             /* Process a dividend */
@@ -569,10 +555,7 @@ public class MoneyWiseAnalysisTransAnalyser
                 processDividend(pDebit, pCredit);
                 break;
             /* Process standard transfer in/out */
-            case TRANSFER:
-            case EXPENSE:
-            case INHERITED:
-            case OTHERINCOME:
+            case TRANSFER, EXPENSE, INHERITED, OTHERINCOME:
                 processStockXchange(pDebit, pCredit);
                 break;
             /* Throw an Exception */
@@ -592,22 +575,16 @@ public class MoneyWiseAnalysisTransAnalyser
     private void processCreditSecurityTransaction(final MoneyWiseTransAsset pDebit,
                                                   final MoneyWiseSecurityHolding pCredit) throws OceanusException {
         /* Input asset must be AssetBase */
-        if (!(pDebit instanceof MoneyWiseAssetBase)) {
+        if (!(pDebit instanceof MoneyWiseAssetBase myDebit)) {
             throw new MoneyWiseLogicException("Invalid Debit Asset: "
                     + pDebit.getAssetType());
         }
-        final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) pDebit;
 
         /* Switch on the category */
         final MoneyWiseTransCategory myCat = theHelper.getCategory();
-        switch (myCat.getCategoryTypeClass()) {
+        switch (Objects.requireNonNull(myCat.getCategoryTypeClass())) {
             /* Process standard transfer in/out */
-            case STOCKRIGHTSISSUE:
-            case TRANSFER:
-            case EXPENSE:
-            case INHERITED:
-            case OTHERINCOME:
-            case PENSIONCONTRIB:
+            case STOCKRIGHTSISSUE, TRANSFER, EXPENSE, INHERITED, OTHERINCOME, PENSIONCONTRIB:
                 processTransferIn(myDebit, pCredit);
                 break;
             /* Throw an Exception */
@@ -1727,17 +1704,12 @@ public class MoneyWiseAnalysisTransAnalyser
      * @return the bucket
      */
     private MoneyWiseAnalysisAccountBucket<?> getAccountBucket(final MoneyWiseAssetBase pAsset) {
-        switch (pAsset.getAssetType()) {
-            case DEPOSIT:
-                return theDepositBuckets.getBucket((MoneyWiseDeposit) pAsset);
-            case CASH:
-                return theCashBuckets.getBucket((MoneyWiseCash) pAsset);
-            case LOAN:
-                return theLoanBuckets.getBucket((MoneyWiseLoan) pAsset);
-            case PORTFOLIO:
-                return thePortfolioBuckets.getCashBucket((MoneyWisePortfolio) pAsset);
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (pAsset.getAssetType()) {
+            case DEPOSIT -> theDepositBuckets.getBucket((MoneyWiseDeposit) pAsset);
+            case CASH -> theCashBuckets.getBucket((MoneyWiseCash) pAsset);
+            case LOAN -> theLoanBuckets.getBucket((MoneyWiseLoan) pAsset);
+            case PORTFOLIO -> thePortfolioBuckets.getCashBucket((MoneyWisePortfolio) pAsset);
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

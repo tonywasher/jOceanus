@@ -16,12 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
@@ -52,6 +46,12 @@ import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxAnalysis;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxYear;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxYearCache;
 import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 /**

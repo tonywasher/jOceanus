@@ -16,14 +16,11 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.reports;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportDelayedTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
-import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
-import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisAccountBucket;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket;
@@ -33,6 +30,9 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisValuesResource;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTaxBasisFilter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -93,7 +93,7 @@ public class MoneyWiseReportTaxationBasis
         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));
 
         /* Initialise the table */
-        final MetisHTMLTable myTable = theBuilder.startTable(myBody);
+        final MetisReportHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, TEXT_NETT);
@@ -150,7 +150,7 @@ public class MoneyWiseReportTaxationBasis
     }
 
     @Override
-    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+    public MetisReportHTMLTable createDelayedTable(final MetisReportDelayedTable pTable) {
         /* Access the source */
         final Object mySource = pTable.getSource();
         if (mySource instanceof MoneyWiseAnalysisTaxBasisBucket mySourceBucket) {
@@ -168,10 +168,10 @@ public class MoneyWiseReportTaxationBasis
      * @param pSource the source bucket
      * @return the new document fragment
      */
-    protected MetisHTMLTable createDelayedAccounts(final MetisHTMLTable pParent,
-                                                   final MoneyWiseAnalysisTaxBasisBucket pSource) {
+    protected MetisReportHTMLTable createDelayedAccounts(final MetisReportHTMLTable pParent,
+                                                         final MoneyWiseAnalysisTaxBasisBucket pSource) {
         /* Create an embedded table */
-        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Account Buckets */
         final Iterator<MoneyWiseAnalysisTaxBasisAccountBucket> myIterator = pSource.accountIterator();

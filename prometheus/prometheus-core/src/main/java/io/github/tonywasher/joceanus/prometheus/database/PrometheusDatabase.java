@@ -16,9 +16,9 @@
  */
 package io.github.tonywasher.joceanus.prometheus.database;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceSet;
 

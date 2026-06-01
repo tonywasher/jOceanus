@@ -16,9 +16,9 @@
  */
 package io.github.tonywasher.joceanus.moneywise.help;
 
-import java.io.InputStream;
+import io.github.tonywasher.joceanus.metis.help.MetisHelpEntry.MetisHelpId;
 
-import io.github.tonywasher.joceanus.metis.help.MetisHelpModule.MetisHelpId;
+import java.io.InputStream;
 
 /**
  * Help Page definitions.

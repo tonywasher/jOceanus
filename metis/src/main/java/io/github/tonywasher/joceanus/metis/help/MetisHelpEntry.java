@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.metis.help;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusResourceId;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import io.github.tonywasher.joceanus.metis.help.MetisHelpModule.MetisHelpId;
 
 /**
  * Help Entry class. This class provides structure to the help system, providing parent child
@@ -27,6 +27,12 @@ import io.github.tonywasher.joceanus.metis.help.MetisHelpModule.MetisHelpId;
  * the file that holds the HTML for the page
  */
 public class MetisHelpEntry {
+    /**
+     * HelpId.
+     */
+    public interface MetisHelpId extends OceanusResourceId {
+    }
+
     /**
      * Title of the entry.
      */

@@ -16,12 +16,11 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.reports;
 
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportDelayedTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
-import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
-import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
@@ -32,6 +31,7 @@ import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxDueBucket;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxDueBucket.MoneyWiseTaxBandBucket;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxYear;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -105,7 +105,7 @@ public class MoneyWiseXReportTaxCalculation
         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myYear.getYearEnd()));
 
         /* Format the header */
-        final MetisHTMLTable myTable = theBuilder.startTable(myBody);
+        final MetisReportHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable, MoneyWiseStaticResource.TAXBASIS_NAME.getValue());
         theBuilder.makeTitleCell(myTable, TEXT_INCOME);
@@ -148,10 +148,10 @@ public class MoneyWiseXReportTaxCalculation
      * @param pParent  the parent table
      * @param pSummary the tax summary
      */
-    public void makeTaxReport(final MetisHTMLTable pParent,
+    public void makeTaxReport(final MetisReportHTMLTable pParent,
                               final MoneyWiseTaxDueBucket pSummary) {
         /* Format the detail */
-        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
         theBuilder.startRow(myTable);
         theBuilder.makeTitleCell(myTable, TEXT_INCOME);
         theBuilder.makeTitleCell(myTable, TEXT_RATE);
@@ -179,7 +179,7 @@ public class MoneyWiseXReportTaxCalculation
     }
 
     @Override
-    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+    public MetisReportHTMLTable createDelayedTable(final MetisReportDelayedTable pTable) {
         return null;
     }
 }

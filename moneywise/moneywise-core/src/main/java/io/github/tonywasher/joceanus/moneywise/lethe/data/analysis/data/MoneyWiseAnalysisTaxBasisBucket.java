@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -44,11 +39,17 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisValues;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseChargeableGainSlice.MoneyWiseChargeableGainSliceList;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxSource;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The TaxBasis Bucket class.
@@ -1064,28 +1065,23 @@ public class MoneyWiseAnalysisTaxBasisBucket
         protected void adjustBasis(final MoneyWiseAnalysisTransactionHelper pTrans,
                                    final MoneyWiseTransCategory pCategory) {
             /* Switch on the category type */
-            switch (pCategory.getCategoryTypeClass()) {
-                case TAXEDINCOME:
-                case GROSSINCOME:
+            switch (Objects.requireNonNull(pCategory.getCategoryTypeClass())) {
+                case TAXEDINCOME, GROSSINCOME:
                     addIncome(pTrans, MoneyWiseTaxClass.SALARY);
                     break;
                 case OTHERINCOME:
                     addIncome(pTrans, MoneyWiseTaxClass.OTHERINCOME);
                     break;
-                case INTEREST:
-                case TAXEDINTEREST:
-                case TAXEDLOYALTYBONUS:
+                case INTEREST, TAXEDINTEREST, TAXEDLOYALTYBONUS:
                     addIncome(pTrans, MoneyWiseTaxClass.TAXEDINTEREST);
                     break;
-                case GROSSINTEREST:
-                case GROSSLOYALTYBONUS:
+                case GROSSINTEREST, GROSSLOYALTYBONUS:
                     addIncome(pTrans, MoneyWiseTaxClass.UNTAXEDINTEREST);
                     break;
                 case PEER2PEERINTEREST:
                     addIncome(pTrans, MoneyWiseTaxClass.PEER2PEERINTEREST);
                     break;
-                case DIVIDEND:
-                case SHAREDIVIDEND:
+                case DIVIDEND, SHAREDIVIDEND:
                     addIncome(pTrans, MoneyWiseTaxClass.DIVIDEND);
                     break;
                 case UNITTRUSTDIVIDEND:
@@ -1103,14 +1099,8 @@ public class MoneyWiseAnalysisTaxBasisBucket
                 case INCOMETAX:
                     addExpense(pTrans, MoneyWiseTaxClass.TAXPAID);
                     break;
-                case TAXFREEINTEREST:
-                case TAXFREEDIVIDEND:
-                case LOANINTERESTEARNED:
-                case INHERITED:
-                case CASHBACK:
-                case LOYALTYBONUS:
-                case TAXFREELOYALTYBONUS:
-                case GIFTEDINCOME:
+                case TAXFREEINTEREST, TAXFREEDIVIDEND, LOANINTERESTEARNED, INHERITED,
+                     CASHBACK, LOYALTYBONUS, TAXFREELOYALTYBONUS, GIFTEDINCOME:
                     addIncome(pTrans, MoneyWiseTaxClass.TAXFREE);
                     break;
                 case PENSIONCONTRIB:
@@ -1122,25 +1112,12 @@ public class MoneyWiseAnalysisTaxBasisBucket
                 case BADDEBTINTEREST:
                     addExpense(pTrans, MoneyWiseTaxClass.PEER2PEERINTEREST);
                     break;
-                case EXPENSE:
-                case LOCALTAXES:
-                case WRITEOFF:
-                case LOANINTERESTCHARGED:
-                case TAXRELIEF:
-                case RECOVEREDEXPENSES:
+                case EXPENSE, LOCALTAXES, WRITEOFF, LOANINTERESTCHARGED, TAXRELIEF, RECOVEREDEXPENSES:
                     addExpense(pTrans, MoneyWiseTaxClass.EXPENSE);
                     break;
                 case RENTALEXPENSE:
                     addExpense(pTrans, MoneyWiseTaxClass.RENTALINCOME);
                     break;
-                case UNITSADJUST:
-                case SECURITYREPLACE:
-                case STOCKTAKEOVER:
-                case STOCKSPLIT:
-                case STOCKDEMERGER:
-                case STOCKRIGHTSISSUE:
-                case PORTFOLIOXFER:
-                case TRANSFER:
                 default:
                     break;
             }

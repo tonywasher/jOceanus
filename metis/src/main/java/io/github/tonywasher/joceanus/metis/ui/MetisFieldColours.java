@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.metis.ui;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIValueKey;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIValueSet;
 

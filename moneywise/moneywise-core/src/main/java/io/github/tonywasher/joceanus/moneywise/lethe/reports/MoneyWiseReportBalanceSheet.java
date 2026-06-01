@@ -16,15 +16,12 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.reports;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportDelayedTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
-import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
-import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
@@ -61,6 +58,9 @@ import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilt
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisLoanFilter;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisPortfolioCashFilter;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -127,7 +127,7 @@ public class MoneyWiseReportBalanceSheet
         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myDateRange));
 
         /* Initialise the table */
-        final MetisHTMLTable myTable = theBuilder.startTable(myBody);
+        final MetisReportHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, theFormatter.formatObject(myDateRange.getEnd()));
@@ -293,14 +293,14 @@ public class MoneyWiseReportBalanceSheet
      * @param pParent   the table parent
      * @param pCategory the category bucket
      */
-    private void makeDepositCategoryReport(final MetisHTMLTable pParent,
+    private void makeDepositCategoryReport(final MetisReportHTMLTable pParent,
                                            final MoneyWiseAnalysisDepositCategoryBucket pCategory) {
         /* Access the category */
         final MoneyWiseAnalysisDepositCategoryBucketList myCategories = theAnalysis.getDepositCategories();
         final MoneyWiseDepositCategory myCategory = pCategory.getAccountCategory();
 
         /* Create an embedded table */
-        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Category Buckets */
         final Iterator<MoneyWiseAnalysisDepositCategoryBucket> myIterator = myCategories.iterator();
@@ -341,14 +341,14 @@ public class MoneyWiseReportBalanceSheet
      * @param pParent   the table parent
      * @param pCategory the category bucket
      */
-    private void makeCashCategoryReport(final MetisHTMLTable pParent,
+    private void makeCashCategoryReport(final MetisReportHTMLTable pParent,
                                         final MoneyWiseAnalysisCashCategoryBucket pCategory) {
         /* Access the category */
         final MoneyWiseAnalysisCashCategoryBucketList myCategories = theAnalysis.getCashCategories();
         final MoneyWiseCashCategory myCategory = pCategory.getAccountCategory();
 
         /* Create an embedded table */
-        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Category Buckets */
         final Iterator<MoneyWiseAnalysisCashCategoryBucket> myIterator = myCategories.iterator();
@@ -389,14 +389,14 @@ public class MoneyWiseReportBalanceSheet
      * @param pParent   the table parent
      * @param pCategory the category bucket
      */
-    private void makeLoanCategoryReport(final MetisHTMLTable pParent,
+    private void makeLoanCategoryReport(final MetisReportHTMLTable pParent,
                                         final MoneyWiseAnalysisLoanCategoryBucket pCategory) {
         /* Access the category */
         final MoneyWiseAnalysisLoanCategoryBucketList myCategories = theAnalysis.getLoanCategories();
         final MoneyWiseLoanCategory myCategory = pCategory.getAccountCategory();
 
         /* Create an embedded table */
-        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Category Buckets */
         final Iterator<MoneyWiseAnalysisLoanCategoryBucket> myIterator = myCategories.iterator();
@@ -436,12 +436,12 @@ public class MoneyWiseReportBalanceSheet
      *
      * @param pParent the table parent
      */
-    private void makePortfolioReport(final MetisHTMLTable pParent) {
+    private void makePortfolioReport(final MetisReportHTMLTable pParent) {
         /* Access the portfolios */
         final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
 
         /* Create an embedded table */
-        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Portfolio Buckets */
         final Iterator<MoneyWiseAnalysisPortfolioBucket> myIterator = myPortfolios.iterator();
@@ -471,7 +471,7 @@ public class MoneyWiseReportBalanceSheet
     }
 
     @Override
-    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+    public MetisReportHTMLTable createDelayedTable(final MetisReportDelayedTable pTable) {
         /* Access the source */
         final Object mySource = pTable.getSource();
         if (mySource instanceof MoneyWiseAnalysisDepositCategoryBucket mySourceBucket) {
@@ -495,15 +495,15 @@ public class MoneyWiseReportBalanceSheet
      * @param pSource the source bucket
      * @return the new document fragment
      */
-    private MetisHTMLTable createDelayedDeposit(final MetisHTMLTable pParent,
-                                                final MoneyWiseAnalysisDepositCategoryBucket pSource) {
+    private MetisReportHTMLTable createDelayedDeposit(final MetisReportHTMLTable pParent,
+                                                      final MoneyWiseAnalysisDepositCategoryBucket pSource) {
         /* Access the category */
         final MoneyWiseAnalysisDepositBucketList myDeposits = theAnalysis.getDeposits();
         final MoneyWiseDepositCategory myCategory = pSource.getAccountCategory();
         final boolean isForeign = pSource.hasForeignCurrency();
 
         /* Create an embedded table */
-        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Deposit Buckets */
         final Iterator<MoneyWiseAnalysisDepositBucket> myIterator = myDeposits.iterator();
@@ -558,15 +558,15 @@ public class MoneyWiseReportBalanceSheet
      * @param pSource the source bucket
      * @return the new document fragment
      */
-    private MetisHTMLTable createDelayedCash(final MetisHTMLTable pParent,
-                                             final MoneyWiseAnalysisCashCategoryBucket pSource) {
+    private MetisReportHTMLTable createDelayedCash(final MetisReportHTMLTable pParent,
+                                                   final MoneyWiseAnalysisCashCategoryBucket pSource) {
         /* Access the category */
         final MoneyWiseAnalysisCashBucketList myCash = theAnalysis.getCash();
         final MoneyWiseCashCategory myCategory = pSource.getAccountCategory();
         final boolean isForeign = pSource.hasForeignCurrency();
 
         /* Create an embedded table */
-        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Cash Buckets */
         final Iterator<MoneyWiseAnalysisCashBucket> myIterator = myCash.iterator();
@@ -621,15 +621,15 @@ public class MoneyWiseReportBalanceSheet
      * @param pSource the source bucket
      * @return the new document fragment
      */
-    private MetisHTMLTable createDelayedLoan(final MetisHTMLTable pParent,
-                                             final MoneyWiseAnalysisLoanCategoryBucket pSource) {
+    private MetisReportHTMLTable createDelayedLoan(final MetisReportHTMLTable pParent,
+                                                   final MoneyWiseAnalysisLoanCategoryBucket pSource) {
         /* Access the category */
         final MoneyWiseAnalysisLoanBucketList myLoans = theAnalysis.getLoans();
         final MoneyWiseLoanCategory myCategory = pSource.getAccountCategory();
         final boolean isForeign = pSource.hasForeignCurrency();
 
         /* Create an embedded table */
-        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Loan Buckets */
         final Iterator<MoneyWiseAnalysisLoanBucket> myIterator = myLoans.iterator();
@@ -684,15 +684,15 @@ public class MoneyWiseReportBalanceSheet
      * @param pSource the source bucket
      * @return the new document fragment
      */
-    private MetisHTMLTable createDelayedPortfolio(final MetisHTMLTable pParent,
-                                                  final MoneyWiseAnalysisPortfolioBucket pSource) {
+    private MetisReportHTMLTable createDelayedPortfolio(final MetisReportHTMLTable pParent,
+                                                        final MoneyWiseAnalysisPortfolioBucket pSource) {
         /* Access the securities */
         final MoneyWiseAnalysisPortfolioCashBucket myCash = pSource.getPortfolioCash();
         final MoneyWiseAnalysisSecurityBucketList mySecurities = pSource.getSecurities();
         final boolean isForeign = pSource.hasForeignCurrency();
 
         /* Create an embedded table */
-        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* If the portfolio cash is not idle */
         if (!myCash.isIdle()) {

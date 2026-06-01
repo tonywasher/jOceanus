@@ -16,14 +16,12 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.reports;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportDelayedTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
-import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
-import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
@@ -33,6 +31,8 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTransCategoryFilter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -89,7 +89,7 @@ public class MoneyWiseReportIncomeExpense
         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));
 
         /* Initialise the table */
-        final MetisHTMLTable myTable = theBuilder.startTable(myBody);
+        final MetisReportHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_INCOME);
@@ -139,7 +139,7 @@ public class MoneyWiseReportIncomeExpense
     }
 
     @Override
-    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+    public MetisReportHTMLTable createDelayedTable(final MetisReportDelayedTable pTable) {
         /* Access the source */
         final Object mySource = pTable.getSource();
         if (mySource instanceof MoneyWiseAnalysisTransCategoryBucket mySourceBucket) {
@@ -157,14 +157,14 @@ public class MoneyWiseReportIncomeExpense
      * @param pSource the source bucket
      * @return the new document fragment
      */
-    protected MetisHTMLTable createDelayedCategory(final MetisHTMLTable pParent,
-                                                   final MoneyWiseAnalysisTransCategoryBucket pSource) {
+    protected MetisReportHTMLTable createDelayedCategory(final MetisReportHTMLTable pParent,
+                                                         final MoneyWiseAnalysisTransCategoryBucket pSource) {
         /* Access the category */
         final MoneyWiseAnalysisTransCategoryBucketList myCategories = theAnalysis.getTransCategories();
         final MoneyWiseTransCategory myCategory = pSource.getTransactionCategory();
 
         /* Create an embedded table */
-        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Category Buckets */
         final Iterator<MoneyWiseAnalysisTransCategoryBucket> myIterator = myCategories.iterator();
