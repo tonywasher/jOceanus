@@ -27,6 +27,12 @@ allprojects {
 
     /* Standard properties */
     project.ext {
+        /* MyName and inception year */
+        MyName = 'Tony Washer'
+        inceptionYear = '2012'
+        buildTimestamp = new java.text.SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss").format(new Date())
+        currentYear = new java.text.SimpleDateFormat("yyyy").format(new Date())
+
         /* Dependency versions */
         bouncyCastleVersion = "1.84"
         jUnitVersion = "6.1.0"
@@ -57,11 +63,11 @@ allprojects {
         appLibDir = "lib/"
     }
 
-    //processResources {
-    //    filesMatching("**/*.properties") {
-    //        expand project.properties
-    //    }
-    //}
+    processResources {
+        filesMatching("**/*.properties") {
+            expand project.properties
+        }
+    }
 }
 
 /* Store calculated properties in the root project */
@@ -71,18 +77,22 @@ ext {
     gitBranch = getGitBranch()
     gitRev = getGitRev()
 
+    /* Set standard variables */
+    buildNumber = gitRev
+    projectVersion = project.version
+
     /* Distribution mappings */
     distributionMap = [:];
 
     /* Base manifest details */
     baseManifest = [
-            "Implementation-Version": project.version,
+            "Implementation-Version": projectVersion,
             "Created-By"            : "Gradle ${gradle.gradleVersion}",
             "Git-Repo"              : gitRepo,
             "Git-Branch"            : gitBranch,
             "Git-Rev"               : "sha-" + gitRev,
             "Built-By"              : System.properties['user.name'],
-            "Build-Timestamp"       : new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
+            "Build-Timestamp"       : buildTimestamp,
             "Build-Jdk"             : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
             "Build-OS"              : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}"
     ]

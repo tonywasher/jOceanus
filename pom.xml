@@ -63,6 +63,7 @@
     </distributionManagement>
     <properties>
         <MyName>Tony Washer</MyName>
+        <projectVersion>${project.version}</projectVersion>
         <buildTimestamp>${maven.build.timestamp}</buildTimestamp>
         <maven.build.timestamp.format>yyyy-MM-dd hh:mm:ss</maven.build.timestamp.format>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
