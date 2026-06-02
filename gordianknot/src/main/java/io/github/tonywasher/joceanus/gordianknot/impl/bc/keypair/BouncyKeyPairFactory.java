@@ -74,7 +74,7 @@ public class BouncyKeyPairFactory
     /**
      * KeyPairGenerator Cache.
      */
-    private final Map<GordianKeyPairSpec, BouncyKeyPairGenerator> theCache;
+    private final Map<GordianKeyPairSpec, GordianKeyPairGenerator> theCache;
 
     /**
      * Constructor.
@@ -98,7 +98,7 @@ public class BouncyKeyPairFactory
         }
 
         /* Look up in the cache */
-        BouncyKeyPairGenerator myGenerator = theCache.get(pKeySpec);
+        GordianKeyPairGenerator myGenerator = theCache.get(pKeySpec);
         if (myGenerator == null) {
             /* Check the keySpec */
             checkAsymKeySpec(pKeySpec);
@@ -119,7 +119,7 @@ public class BouncyKeyPairFactory
      * @return the KeyGenerator
      * @throws GordianException on error
      */
-    private BouncyKeyPairGenerator getBCKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
+    private GordianKeyPairGenerator getBCKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
         final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
         return switch (pKeySpec.getKeyPairType()) {
             case RSA -> new BouncyRSAKeyPairGenerator(theFactory, pKeySpec);

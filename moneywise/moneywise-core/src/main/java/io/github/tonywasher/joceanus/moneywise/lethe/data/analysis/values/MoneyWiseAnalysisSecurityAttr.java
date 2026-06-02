@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisAttribute;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * SecurityAttribute enumeration.
@@ -173,7 +174,7 @@ public enum MoneyWiseAnalysisSecurityAttr implements MoneyWiseAnalysisAttribute 
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseAnalysisValuesResource.getKeyForSecurityAttr(this).getValue();
+            theName = bundleIdForSecurityAttr(this).getValue();
         }
 
         /* return the name */
@@ -182,78 +183,61 @@ public enum MoneyWiseAnalysisSecurityAttr implements MoneyWiseAnalysisAttribute 
 
     @Override
     public boolean isCounter() {
-        switch (this) {
-            case UNITS:
-            case RESIDUALCOST:
-            case REALISEDGAINS:
-            case GROWTHADJUST:
-            case DIVIDEND:
-            case INVESTED:
-            case FOREIGNINVESTED:
-                return true;
-            case MARKETGROWTH:
-            case FOREIGNMARKETGROWTH:
-            case LOCALMARKETGROWTH:
-            case CURRENCYFLUCT:
-            case PROFIT:
-            case MARKETPROFIT:
-            case VALUATION:
-            case FOREIGNVALUE:
-            case EXCHANGERATE:
-            case PRICE:
-            case VALUEDELTA:
-            case FOREIGNVALUEDELTA:
-            case XFERREDCOST:
-            case COSTDILUTION:
-            case CONSIDERATION:
-            case RETURNEDCASH:
-            case XFERREDVALUE:
-            case CASHINVESTED:
-            case CAPITALGAIN:
-            case ALLOWEDCOST:
-            case CASHTYPE:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case UNITS, RESIDUALCOST, REALISEDGAINS, GROWTHADJUST, DIVIDEND, INVESTED, FOREIGNINVESTED -> true;
+            default -> false;
+        };
     }
 
     @Override
     public MetisDataType getDataType() {
-        switch (this) {
-            case UNITS:
-                return MetisDataType.UNITS;
-            case PRICE:
-                return MetisDataType.PRICE;
-            case EXCHANGERATE:
-            case COSTDILUTION:
-                return MetisDataType.RATIO;
-            case CASHTYPE:
-                return MetisDataType.ENUM;
-            case VALUATION:
-            case FOREIGNVALUE:
-            case VALUEDELTA:
-            case FOREIGNVALUEDELTA:
-            case RESIDUALCOST:
-            case REALISEDGAINS:
-            case GROWTHADJUST:
-            case INVESTED:
-            case FOREIGNINVESTED:
-            case DIVIDEND:
-            case MARKETGROWTH:
-            case FOREIGNMARKETGROWTH:
-            case LOCALMARKETGROWTH:
-            case CURRENCYFLUCT:
-            case MARKETPROFIT:
-            case PROFIT:
-            case CONSIDERATION:
-            case RETURNEDCASH:
-            case XFERREDVALUE:
-            case XFERREDCOST:
-            case ALLOWEDCOST:
-            case CASHINVESTED:
-            case CAPITALGAIN:
-            default:
-                return MetisDataType.MONEY;
-        }
+        return switch (this) {
+            case UNITS -> MetisDataType.UNITS;
+            case PRICE -> MetisDataType.PRICE;
+            case EXCHANGERATE, COSTDILUTION -> MetisDataType.RATIO;
+            case CASHTYPE -> MetisDataType.ENUM;
+            default -> MetisDataType.MONEY;
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the attribute.
+     *
+     * @param pAttr the attribute
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForSecurityAttr(final MoneyWiseAnalysisSecurityAttr pAttr) {
+        /* Create the map and return it */
+        return switch (pAttr) {
+            case VALUATION -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_VALUATION;
+            case FOREIGNVALUE -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_FOREIGNVALUE;
+            case VALUEDELTA -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_VALUEDELTA;
+            case FOREIGNVALUEDELTA -> MoneyWiseAnalysisValuesResource.SECURITYATTR_FOREIGNVALUEDELTA;
+            case EXCHANGERATE -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_EXCHANGERATE;
+            case UNITS -> MoneyWiseAnalysisValuesResource.SECURITYATTR_UNITS;
+            case RESIDUALCOST -> MoneyWiseAnalysisValuesResource.SECURITYATTR_RESIDUALCOST;
+            case REALISEDGAINS -> MoneyWiseAnalysisValuesResource.SECURITYATTR_REALISEDGAINS;
+            case GROWTHADJUST -> MoneyWiseAnalysisValuesResource.SECURITYATTR_GROWTHADJUST;
+            case INVESTED -> MoneyWiseAnalysisValuesResource.SECURITYATTR_INVESTED;
+            case FOREIGNINVESTED -> MoneyWiseAnalysisValuesResource.SECURITYATTR_FOREIGNINVESTED;
+            case DIVIDEND -> MoneyWiseAnalysisValuesResource.SECURITYATTR_DIVIDEND;
+            case MARKETGROWTH -> MoneyWiseAnalysisValuesResource.SECURITYATTR_MARKETGROWTH;
+            case FOREIGNMARKETGROWTH -> MoneyWiseAnalysisValuesResource.SECURITYATTR_FOREIGNMARKETGROWTH;
+            case LOCALMARKETGROWTH -> MoneyWiseAnalysisValuesResource.SECURITYATTR_LOCALMARKETGROWTH;
+            case CURRENCYFLUCT -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_CURRENCYFLUCT;
+            case MARKETPROFIT -> MoneyWiseAnalysisValuesResource.SECURITYATTR_MARKETPROFIT;
+            case PROFIT -> MoneyWiseAnalysisValuesResource.SECURITYATTR_PROFIT;
+            case CONSIDERATION -> MoneyWiseAnalysisValuesResource.SECURITYATTR_CONSIDER;
+            case RETURNEDCASH -> MoneyWiseAnalysisValuesResource.SECURITYATTR_RETURNEDCASH;
+            case XFERREDVALUE -> MoneyWiseAnalysisValuesResource.SECURITYATTR_XFERREDVALUE;
+            case XFERREDCOST -> MoneyWiseAnalysisValuesResource.SECURITYATTR_XFERREDCOST;
+            case COSTDILUTION -> MoneyWiseAnalysisValuesResource.SECURITYATTR_COSTDILUTION;
+            case CASHINVESTED -> MoneyWiseAnalysisValuesResource.SECURITYATTR_CASHINVESTED;
+            case CAPITALGAIN -> MoneyWiseAnalysisValuesResource.SECURITYATTR_CAPITALGAIN;
+            case ALLOWEDCOST -> MoneyWiseAnalysisValuesResource.SECURITYATTR_ALLOWEDCOST;
+            case PRICE -> MoneyWiseAnalysisValuesResource.SECURITYATTR_PRICE;
+            case CASHTYPE -> MoneyWiseAnalysisValuesResource.SECURITYATTR_CASHTYPE;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

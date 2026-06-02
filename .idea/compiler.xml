@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
+    <option name="BUILD_PROCESS_HEAP_SIZE" value="2048" />
     <annotationProcessing>
       <profile name="Annotation profile for Java Oceanus package" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -28,9 +29,6 @@
         <module name="prometheus-sheet-hssf" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="themis-swing" target="21" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-Xmaxerrs 1000" />
@@ -59,7 +57,6 @@
       <module name="themis" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="themis-core" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="themis-javafx" options="-Xlint:unchecked -Xlint:deprecation" />
-      <module name="themis-swing" options="-Xlint:unchecked -Xlint:deprecation" />
     </option>
   </component>
 </project>
