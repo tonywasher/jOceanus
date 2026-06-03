@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisAttribute;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * AccountAttribute enumeration.
@@ -88,7 +89,7 @@ public enum MoneyWiseAnalysisAccountAttr implements MoneyWiseAnalysisAttribute {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseAnalysisValuesResource.getKeyForAccountAttr(this).getValue();
+            theName = bundleIdForAccountAttr(this).getValue();
         }
 
         /* return the name */
@@ -97,43 +98,43 @@ public enum MoneyWiseAnalysisAccountAttr implements MoneyWiseAnalysisAttribute {
 
     @Override
     public boolean isCounter() {
-        switch (this) {
-            case VALUATION:
-            case FOREIGNVALUE:
-            case LOCALVALUE:
-            case CURRENCYFLUCT:
-            case SPEND:
-            case BADDEBTCAPITAL:
-            case BADDEBTINTEREST:
-                return true;
-            case DEPOSITRATE:
-            case EXCHANGERATE:
-            case MATURITY:
-            case VALUEDELTA:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case VALUATION, FOREIGNVALUE, LOCALVALUE, CURRENCYFLUCT, SPEND, BADDEBTCAPITAL, BADDEBTINTEREST -> true;
+            default -> false;
+        };
     }
 
     @Override
     public MetisDataType getDataType() {
-        switch (this) {
-            case DEPOSITRATE:
-                return MetisDataType.RATE;
-            case EXCHANGERATE:
-                return MetisDataType.RATIO;
-            case MATURITY:
-                return MetisDataType.DATE;
-            case VALUATION:
-            case FOREIGNVALUE:
-            case LOCALVALUE:
-            case VALUEDELTA:
-            case CURRENCYFLUCT:
-            case SPEND:
-            case BADDEBTCAPITAL:
-            case BADDEBTINTEREST:
-            default:
-                return MetisDataType.MONEY;
-        }
+        return switch (this) {
+            case DEPOSITRATE -> MetisDataType.RATE;
+            case EXCHANGERATE -> MetisDataType.RATIO;
+            case MATURITY -> MetisDataType.DATE;
+            default -> MetisDataType.MONEY;
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the attribute.
+     *
+     * @param pAttr the attribute
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForAccountAttr(final MoneyWiseAnalysisAccountAttr pAttr) {
+        /* Create the map and return it */
+        return switch (pAttr) {
+            case VALUATION -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_VALUATION;
+            case FOREIGNVALUE -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_FOREIGNVALUE;
+            case LOCALVALUE -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_LOCALVALUE;
+            case CURRENCYFLUCT -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_CURRENCYFLUCT;
+            case DEPOSITRATE -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_DEPOSITRATE;
+            case EXCHANGERATE -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_EXCHANGERATE;
+            case VALUEDELTA -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_VALUEDELTA;
+            case MATURITY -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_MATURITY;
+            case SPEND -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_SPEND;
+            case BADDEBTCAPITAL -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_BADDEBTCAPITAL;
+            case BADDEBTINTEREST -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_BADDEBTINTEREST;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

@@ -1,8 +1,14 @@
+/* Standard conventions */
+plugins {
+    id 'jOceanus-java'
+}
+
 /* Dependencies */
 dependencies {
+    implementation platform(project(':bom'))
     implementation project(':oceanus')
     implementation project(':tethys-core')
-    implementation "org.json:json:$jsonVersion"
+    implementation "org.json:json"
 }
 
 /* Description */
@@ -11,10 +17,3 @@ description = 'Metis Data Framework'
 
 /* Register the project */
 registerProject(project)
-
-/* Specific Manifest details */
-jar {
-    manifest {
-        attributes(manifestAttrs)
-    }
-}

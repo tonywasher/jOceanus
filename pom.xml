@@ -63,6 +63,7 @@
     </distributionManagement>
     <properties>
         <MyName>Tony Washer</MyName>
+        <projectVersion>${project.version}</projectVersion>
         <buildTimestamp>${maven.build.timestamp}</buildTimestamp>
         <maven.build.timestamp.format>yyyy-MM-dd hh:mm:ss</maven.build.timestamp.format>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -81,8 +82,6 @@
         <PMDVersion>7.25.0</PMDVersion>
         <CleanPluginVersion>3.5.0</CleanPluginVersion>
         <ResourcesPluginVersion>3.5.0</ResourcesPluginVersion>
-        <RemoteResourcesPluginVersion>3.3.0</RemoteResourcesPluginVersion>
-        <ApacheJarBundleVersion>1.8</ApacheJarBundleVersion>
         <InstallPluginVersion>3.1.4</InstallPluginVersion>
         <SitePluginVersion>3.21.0</SitePluginVersion>
         <DeployPluginVersion>3.1.4</DeployPluginVersion>
@@ -145,23 +144,6 @@
             </resource>
         </resources>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-remote-resources-plugin</artifactId>
-                <version>${RemoteResourcesPluginVersion}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <configuration>
-                            <resourceBundles>
-                                <resourceBundle>org.apache.apache.resources:apache-jar-resource-bundle:${ApacheJarBundleVersion}</resourceBundle>
-                            </resourceBundles>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>

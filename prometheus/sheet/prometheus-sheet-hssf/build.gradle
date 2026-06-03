@@ -1,8 +1,14 @@
+/* Standard conventions */
+plugins {
+    id 'jOceanus-java'
+}
+
 /* Dependencies */
 dependencies {
+    implementation platform(project(':bom'))
     implementation project(':prometheus-sheet-api')
     implementation project(':oceanus')
-    implementation "org.apache.poi:poi:$apachePOIVersion"
+    implementation "org.apache.poi:poi"
 }
 
 /* Description */
@@ -11,10 +17,3 @@ description = 'Prometheus Sheet HSSF Service'
 
 /* Register the project */
 registerProject(project)
-
-/* Specific Manifest details */
-jar {
-    manifest {
-        attributes(manifestAttrs)
-    }
-}

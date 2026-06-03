@@ -1,0 +1,11 @@
+
+/* javaFX Specifics */
+plugins {
+    id('org.openjfx.javafxplugin')
+}
+
+/* javaFX versions */
+javafx {
+    version = "${javaFXVersion}"
+    modules = [ 'javafx.graphics' ]
+}

@@ -1,14 +1,18 @@
 /* javaFX Specifics */
 plugins {
     id 'org.openjfx.javafxplugin' version "$javaFXPluginVersion"
+    id 'jOceanus-java'
+    id 'jOceanus-javafx'
 }
+
+/* javaFX versions */
 javafx {
-    version = "$javaFXVersion"
     modules = [ 'javafx.web', 'javafx.controls', 'javafx.graphics' ]
 }
 
 /* Dependencies */
 dependencies {
+    implementation platform(project(':bom'))
     implementation project(':tethys-core')
     implementation project(':oceanus')
 }
@@ -19,10 +23,3 @@ description = 'Tethys JavaFX Utilities'
 
 /* Register the project */
 registerProject(project)
-
-/* Specific Manifest details */
-jar {
-    manifest {
-        attributes(manifestAttrs)
-    }
-}

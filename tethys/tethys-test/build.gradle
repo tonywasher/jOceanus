@@ -1,19 +1,18 @@
 /* javaFX Specifics */
 plugins {
     id 'org.openjfx.javafxplugin' version "$javaFXPluginVersion"
-}
-javafx {
-    version = "$javaFXVersion"
-    modules = [ 'javafx.controls', 'javafx.graphics' ]
+    id 'jOceanus-java'
+    id 'jOceanus-javafx'
 }
 
 /* Dependencies */
 dependencies {
+    implementation platform(project(':bom'))
     implementation project(':tethys-core')
     implementation project(':tethys-javafx')
     implementation project(':tethys-swing')
     implementation project(':oceanus')
-    implementation "org.jfree:jfreechart:$jFreeChartVersion"
+    implementation "org.jfree:jfreechart"
 }
 
 /* Description */
@@ -22,10 +21,3 @@ description = 'Tethys UI Test'
 
 /* Register the project */
 registerProject(project)
-
-/* Specific Manifest details */
-jar {
-    manifest {
-        attributes(manifestAttrs)
-    }
-}

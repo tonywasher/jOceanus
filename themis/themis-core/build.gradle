@@ -1,11 +1,17 @@
+/* Standard conventions */
+plugins {
+    id 'jOceanus-java'
+}
+
 /* Dependencies */
 dependencies {
+    implementation platform(project(':bom'))
     implementation project(':metis')
     implementation project(':tethys-core')
     implementation project(':oceanus')
-    implementation "com.github.javaparser:javaparser-core:$javaParserVersion"
-    implementation "org.jsoup:jsoup:$jsoupVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter:$jUnitVersion"
+    implementation "com.github.javaparser:javaparser-core"
+    implementation "org.jsoup:jsoup"
+    testImplementation "org.junit.jupiter:junit-jupiter"
 }
 
 /* Description */
@@ -21,10 +27,3 @@ tasks.register('testsJar', Jar) {
     from(sourceSets.test.output)
 }
 publishing.publications.maven.artifact(testsJar)
-
-/* Specific Manifest details */
-jar {
-    manifest {
-        attributes(manifestAttrs)
-    }
-}

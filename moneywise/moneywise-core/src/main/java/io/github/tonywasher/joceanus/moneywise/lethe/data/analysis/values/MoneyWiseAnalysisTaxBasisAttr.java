@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisAttribute;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * TaxBasisAttribute enumeration.
@@ -48,7 +49,7 @@ public enum MoneyWiseAnalysisTaxBasisAttr implements MoneyWiseAnalysisAttribute 
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseAnalysisValuesResource.getKeyForTaxAttr(this).getValue();
+            theName = bundleIdForTaxBasisAttr(this).getValue();
         }
 
         /* return the name */
@@ -63,5 +64,21 @@ public enum MoneyWiseAnalysisTaxBasisAttr implements MoneyWiseAnalysisAttribute 
     @Override
     public MetisDataType getDataType() {
         return MetisDataType.MONEY;
+    }
+
+    /**
+     * Obtain the resource bundleId for the attribute.
+     *
+     * @param pAttr the attribute
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForTaxBasisAttr(final MoneyWiseAnalysisTaxBasisAttr pAttr) {
+        /* Create the map and return it */
+        return switch (pAttr) {
+            case GROSS -> MoneyWiseAnalysisValuesResource.TAXATTR_GROSS;
+            case NETT -> MoneyWiseAnalysisValuesResource.TAXATTR_NETT;
+            case TAXCREDIT -> MoneyWiseAnalysisValuesResource.TAXATTR_TAX;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

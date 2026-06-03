@@ -1,5 +1,11 @@
+/* Standard conventions */
+plugins {
+    id 'jOceanus-java'
+}
+
 /* Dependencies */
 dependencies {
+    implementation platform(project(':bom'))
     implementation project(':oceanus')
 }
 
@@ -9,10 +15,3 @@ description = 'Prometheus Sheet Service API'
 
 /* Register the project */
 registerProject(project)
-
-/* Specific Manifest details */
-jar {
-    manifest {
-        attributes(manifestAttrs)
-    }
-}

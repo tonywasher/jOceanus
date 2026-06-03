@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisAttribute;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * TransactionAttribute enumeration.
@@ -48,7 +49,7 @@ public enum MoneyWiseAnalysisTransAttr implements MoneyWiseAnalysisAttribute {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseAnalysisValuesResource.getKeyForTransactionAttr(this).getValue();
+            theName = bundleIdForTransAttr(this).getValue();
         }
 
         /* return the name */
@@ -63,5 +64,21 @@ public enum MoneyWiseAnalysisTransAttr implements MoneyWiseAnalysisAttribute {
     @Override
     public MetisDataType getDataType() {
         return MetisDataType.MONEY;
+    }
+
+    /**
+     * Obtain the resource bundleId for the attribute.
+     *
+     * @param pAttr the attribute
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForTransAttr(final MoneyWiseAnalysisTransAttr pAttr) {
+        /* Create the map and return it */
+        return switch (pAttr) {
+            case INCOME -> MoneyWiseAnalysisValuesResource.PAYEEATTR_INCOME;
+            case EXPENSE -> MoneyWiseAnalysisValuesResource.PAYEEATTR_EXPENSE;
+            case PROFIT -> MoneyWiseAnalysisValuesResource.ACCOUNTATTR_PROFIT;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }
