@@ -5,13 +5,14 @@ plugins {
 
 /* Dependencies */
 dependencies {
+    implementation platform(project(':bom'))
     implementation project(':prometheus-core')
     implementation project(':prometheus-sheet-api')
     implementation project(':metis')
     implementation project(':gordianknot')
     implementation project(':tethys-core')
     implementation project(':oceanus')
-    testImplementation "org.junit.jupiter:junit-jupiter:$jUnitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter"
 }
 
 /* Description */

@@ -5,9 +5,10 @@ plugins {
 
 /* Dependencies */
 dependencies {
+    implementation platform(project(':bom'))
     implementation project(':prometheus-sheet-api')
     implementation project(':oceanus')
-    implementation "org.apache.poi:poi:$apachePOIVersion"
+    implementation "org.apache.poi:poi"
 }
 
 /* Description */

@@ -5,6 +5,7 @@ plugins {
 
 /* Dependencies */
 dependencies {
+    implementation platform(project(':bom'))
     implementation project(':oceanus')
 }
 

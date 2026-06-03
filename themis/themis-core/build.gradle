@@ -5,12 +5,13 @@ plugins {
 
 /* Dependencies */
 dependencies {
+    implementation platform(project(':bom'))
     implementation project(':metis')
     implementation project(':tethys-core')
     implementation project(':oceanus')
-    implementation "com.github.javaparser:javaparser-core:$javaParserVersion"
-    implementation "org.jsoup:jsoup:$jsoupVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter:$jUnitVersion"
+    implementation "com.github.javaparser:javaparser-core"
+    implementation "org.jsoup:jsoup"
+    testImplementation "org.junit.jupiter:junit-jupiter"
 }
 
 /* Description */

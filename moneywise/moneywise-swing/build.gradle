@@ -5,6 +5,7 @@ plugins {
 
 /* Dependencies */
 dependencies {
+    implementation platform(project(':bom'))
     implementation project(':moneywise-core')
     implementation project(':tethys-swing')
     implementation project(':tethys-core')

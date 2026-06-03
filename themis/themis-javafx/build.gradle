@@ -8,6 +8,7 @@ plugins {
 
 /* Dependencies */
 dependencies {
+    implementation platform(project(':bom'))
     implementation project(':themis-core')
     implementation project(':tethys-javafx')
     implementation project(':tethys-core')

@@ -5,7 +5,8 @@ plugins {
 
 /* Dependencies */
 dependencies {
-    testImplementation "org.junit.jupiter:junit-jupiter:$jUnitVersion"
+    implementation platform(project(':bom'))
+    testImplementation "org.junit.jupiter:junit-jupiter"
 }
 
 /* Description */

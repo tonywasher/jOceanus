@@ -5,11 +5,12 @@ plugins {
 
 /* Dependencies */
 dependencies {
-    implementation "org.bouncycastle:bcprov-jdk18on:$bouncyCastleVersion"
-    implementation "org.bouncycastle:bcutil-jdk18on:$bouncyCastleVersion"
-    testImplementation "org.bouncycastle:bcpg-jdk18on:$bouncyCastleVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter:$jUnitVersion"
-    testImplementation "org.junit.platform:junit-platform-suite:$jUnitVersion"
+    implementation platform(project(':bom'))
+    implementation "org.bouncycastle:bcprov-jdk18on"
+    implementation "org.bouncycastle:bcutil-jdk18on"
+    testImplementation "org.bouncycastle:bcpg-jdk18on"
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testImplementation "org.junit.platform:junit-platform-suite"
 }
 
 /* Description */

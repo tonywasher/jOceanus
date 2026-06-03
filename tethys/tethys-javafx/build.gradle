@@ -12,6 +12,7 @@ javafx {
 
 /* Dependencies */
 dependencies {
+    implementation platform(project(':bom'))
     implementation project(':tethys-core')
     implementation project(':oceanus')
 }

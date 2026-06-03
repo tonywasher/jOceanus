@@ -5,9 +5,10 @@ plugins {
 
 /* Dependencies */
 dependencies {
+    implementation platform(project(':bom'))
     implementation project(':tethys-core')
     implementation project(':oceanus')
-    implementation "org.jfree:jfreechart:$jFreeChartVersion"
+    implementation "org.jfree:jfreechart"
 }
 
 /* Description */

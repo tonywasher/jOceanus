@@ -1,0 +1,29 @@
+plugins {
+    id("java-platform")
+}
+
+description = "jOceanus bom"
+
+javaPlatform {
+    allowDependencies()
+}
+
+dependencies {
+    api(platform('org.bouncycastle:bc-jdk18on-bom:1.84'))
+    api(platform('org.junit:junit-bom:6.1.0'))
+
+    constraints {
+        api('org.apache.poi:poi:5.5.1')
+        api('org.openjfx:javafx-web:21.0.11')
+        api('org.jfree:jfreechart:1.5.6')
+        api('org.jsoup:jsoup:1.22.2')
+        api('org.json:json:20260522')
+        api('com.github.javaparser:javaparser-core:3.28.2')
+
+        runtime('com.mysql:mysql-connector-j:9.7.0')
+        runtime('org.mariadb.jdbc:mariadb-java-client:3.5.8')
+        runtime('org.postgresql:postgresql:42.7.11')
+        runtime('com.microsoft.sqlserver:mssql-jdbc:13.4.0.jre11')
+        runtime('com.h2database:h2:2.4.240')
+    }
+}

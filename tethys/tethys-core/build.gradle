@@ -5,10 +5,11 @@ plugins {
 
 /* Dependencies */
 dependencies {
+    implementation platform(project(':bom'))
     implementation project(':oceanus')
-    implementation "org.jsoup:jsoup:$jsoupVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$jUnitVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:$jUnitVersion"
+    implementation "org.jsoup:jsoup"
+    //testImplementation "org.junit.jupiter:junit-jupiter-api"
+    //testImplementation "org.junit.jupiter:junit-jupiter-engine"
 }
 
 /* Dependencies */
