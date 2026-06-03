@@ -1,3 +1,8 @@
+/* Standard conventions */
+plugins {
+    id 'jOceanus-java'
+}
+
 /* Dependencies */
 dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:$jUnitVersion"
@@ -16,10 +21,3 @@ tasks.register('testsJar', Jar) {
     from(sourceSets.test.output)
 }
 publishing.publications.maven.artifact(testsJar)
-
-/* Specific Manifest details */
-jar {
-    manifest {
-        attributes(manifestAttrs)
-    }
-}

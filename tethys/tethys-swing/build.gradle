@@ -1,3 +1,8 @@
+/* Standard conventions */
+plugins {
+    id 'jOceanus-java'
+}
+
 /* Dependencies */
 dependencies {
     implementation project(':tethys-core')
@@ -11,10 +16,3 @@ description = 'Tethys Java Swing Utilities'
 
 /* Register the project */
 registerProject(project)
-
-/* Specific Manifest details */
-jar {
-    manifest {
-        attributes(manifestAttrs)
-    }
-}

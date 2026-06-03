@@ -23,7 +23,6 @@ module io.github.tonywasher.joceanus.tethys.test.core {
     requires java.desktop;
 
     /* javaFX runTime */
-    requires javafx.controls;
     requires javafx.graphics;
 
     /* External libraries */

@@ -8,197 +8,91 @@ buildscript {
     }
 }
 
-/* project-wise setup */
-allprojects {
-    /* Standard plugins */
-    apply plugin: 'java'
-    apply plugin: 'maven-publish'
-    apply plugin: 'jacoco'
-    apply plugin: 'signing'
+/* Standard properties for the whole build */
+project.ext {
+    /* MyName and inception year */
+    MyName = 'Tony Washer'
+    inceptionYear = '2012'
 
-    /* general identity */
-    version = '1.6.4-SNAPSHOT'
+    /* Single source of date timeStamp */
+    myDate = new Date()
+    buildTimestamp = new java.text.SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss.SSS").format(myDate)
+    currentYear = new java.text.SimpleDateFormat("yyyy").format(myDate)
 
-    /* Maven repositories */
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-
-    /* Standard properties */
-    project.ext {
-        /* MyName and inception year */
-        MyName = 'Tony Washer'
-        inceptionYear = '2012'
-        buildTimestamp = new java.text.SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss").format(new Date())
-        currentYear = new java.text.SimpleDateFormat("yyyy").format(new Date())
-
-        /* Dependency versions */
-        bouncyCastleVersion = "1.84"
-        jUnitVersion = "6.1.0"
-        jsonVersion = "20260522"
-        mySQLVersion = "9.7.0"
-        MariaDBVersion = "3.5.8"
-        postGreSQLVersion = "42.7.11"
-        mssqlVersion = "13.4.0.jre11"
-        h2Version = "2.4.240"
-        apachePOIVersion = "5.5.1"
-        jsoupVersion = "1.22.2"
-        jFreeChartVersion = "1.5.6"
-        javaParserVersion = "3.28.2"
-
-        /* javaFX versions */
-        javaFXVersion = "21.0.11"
-        javaFXPluginVersion = "0.1.0"
-
-        /* Annotation versions */
-        jetBrainsAnnotationsVersion = "26.1.0"
-
-        /* jacoco config */
-        jacocoVersion = "0.8.14"
-
-        /* Distribution details */
-        appDir = "$rootDir/dist"
-        appBinDir = "bin/"
-        appLibDir = "lib/"
-    }
-
-    processResources {
-        filesMatching("**/*.properties") {
-            expand project.properties
-        }
-    }
-}
-
-/* Store calculated properties in the root project */
-ext {
-    /* git details */
+    /* git details once only */
     gitRepo = getGitRepo()
     gitBranch = getGitBranch()
     gitRev = getGitRev()
 
+    /* Environment details once only */
+    builtBy = System.properties['user.name']
+    buildJDK = "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})"
+    buildOS = "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}"
+}
+
+/* project-wise setup */
+allprojects {
+    /* general identity */
+    version = '1.6.4-SNAPSHOT'
+}
+
+/* Store calculated properties in the root project */
+ext {
+    /* Dependency versions */
+    bouncyCastleVersion = "1.84"
+    jUnitVersion = "6.1.0"
+    jsonVersion = "20260522"
+    mySQLVersion = "9.7.0"
+    MariaDBVersion = "3.5.8"
+    postGreSQLVersion = "42.7.11"
+    mssqlVersion = "13.4.0.jre11"
+    h2Version = "2.4.240"
+    apachePOIVersion = "5.5.1"
+    jsoupVersion = "1.22.2"
+    jFreeChartVersion = "1.5.6"
+    javaParserVersion = "3.28.2"
+
+    /* javaFX versions */
+    javaFXVersion = "21.0.11"
+    javaFXPluginVersion = "0.1.0"
+
+    /* Annotation versions */
+    jetBrainsAnnotationsVersion = "26.1.0"
+
+    /* jacoco config */
+    jacocoVersion = "0.8.14"
+
+    /* Distribution details */
+    appDir = "$rootDir/dist"
+    appBinDir = "bin/"
+    appLibDir = "lib/"
+
     /* Set standard variables */
-    buildNumber = gitRev
+    MyName = "${rootProject.ext.MyName}"
+    inceptionYear = "${rootProject.ext.inceptionYear}"
+    currentYear = "${rootProject.ext.currentYear}"
+    buildTimestamp = "${rootProject.ext.buildTimestamp}"
+    buildNumber = "${rootProject.ext.gitRev}"
     projectVersion = project.version
 
-    /* Distribution mappings */
-    distributionMap = [:];
+    /* mappings */
+    distributionMap = [:]
+    myProperties = [:]
+    groupMap = [:]
 
     /* Base manifest details */
     baseManifest = [
             "Implementation-Version": projectVersion,
             "Created-By"            : "Gradle ${gradle.gradleVersion}",
-            "Git-Repo"              : gitRepo,
-            "Git-Branch"            : gitBranch,
-            "Git-Rev"               : "sha-" + gitRev,
-            "Built-By"              : System.properties['user.name'],
+            "Git-Repo"              : "${rootProject.ext.gitRepo}",
+            "Git-Branch"            : "${rootProject.ext.gitBranch}",
+            "Git-Rev"               : "sha-" + buildNumber,
+            "Built-By"              : "${rootProject.ext.builtBy}",
             "Build-Timestamp"       : buildTimestamp,
-            "Build-Jdk"             : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
-            "Build-OS"              : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}"
+            "Build-Jdk"             : "${rootProject.ext.buildJDK}",
+            "Build-OS"              : "${rootProject.ext.buildOS}"
     ]
 }
-
-/* sub-project setup */
-subprojects {
-    tasks.withType(JavaCompile) {
-        options.deprecation = true
-        options.encoding = 'UTF-8'
-        options.release = 21
-    }
-    tasks.withType(Javadoc).all {
-        enabled = false
-    }
-
-    /* Build source and javaDoc jars */
-    java {
-        //withJavadocJar()
-        withSourcesJar()
-    }
-
-    /* Support jUnit 5 */
-    testing {
-        suites {
-            test {
-                useJUnitJupiter()
-
-                targets {
-                    all {
-                        testTask.configure {
-                            maxHeapSize = '4g'
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /* Add annotations */
-    dependencies {
-        compileOnly "org.jetbrains:annotations:$jetBrainsAnnotationsVersion"
-    }
-
-    /* Java options */
-    compileJava {
-        options.compilerArgs += ["-Xlint:unchecked"]
-    }
-
-    /* Maven publishing */
-    publishing {
-        publications {
-            maven(MavenPublication) {
-                from(components.java)
-            }
-        }
-    }
-
-    /* Jacoco */
-    test {
-        finalizedBy jacocoTestReport
-    }
-    jacocoTestReport {
-        dependsOn test
-    }
-    jacoco {
-        toolVersion = "$jacocoVersion"
-    }
-
-    /* Project properties */
-    project.ext {
-        /* Manifest Attributes */
-        manifestAttrs = rootProject.ext.baseManifest.clone()
-
-        /* manifest control */
-        mainClass = null
-        moduleName = null
-        preLoaderClass = null
-        splashScreen = null
-    }
-}
-
-/* Distribution task */
-task distribute {
-    doLast {
-        rootProject.ext.distributionMap.each { k, v ->
-            if (shouldCopy(k, "$appDir/$v")) {
-                copy {
-                    into("$appDir/" + stripFileName("$v"))
-                    from k
-                }
-            }
-        }
-        buildJRE()
-    }
-}
-distribute.dependsOn ":moneywise-swing:jar", ":moneywise-javafx:jar", ":themis-javafx:jar", ":prometheus-sheet-odf:jar", ":prometheus-sheet-hssf:jar"
-assemble.dependsOn distribute
-
-/* Make sure distribution directory is cleared on clean */
-clean.doFirst {
-    delete = "${appDir}/"
-}
-
-/* Disable jar building for root project */
-jar.enabled = false
 
 /* Obtain gitBranch details */
 
@@ -251,9 +145,6 @@ String standardizePath(String pPath) {
 
     /* If the artifact has been built within the project */
     if (pPath.startsWith(projDir)) {
-        /* Obtain directory version of group */
-        String myGroup = group.replaceAll("\\.", "/")
-
         /* Strip off the full prefix to the artifact */
         myPath = myPath.substring(projDir.length())
         String bldDir = "/build/libs/"
@@ -264,12 +155,9 @@ String standardizePath(String pPath) {
         myIndex = myJar.indexOf("-" + version)
         String myArtifact = myJar.substring(0, myIndex)
 
-        /* Handle nested artifacts */
-        String myPrefix = myArtifact
-        myIndex = myPrefix.lastIndexOf("-")
-        if (myIndex != -1) {
-            myGroup = myGroup + "/" + myPrefix.substring(0, myIndex).replaceAll("-", "/")
-        }
+        /* Obtain directory version of group */
+        String myGroup = groupMap[myArtifact]
+        myGroup = myGroup.replaceAll("\\.", "/")
 
         /* return required path */
         return myGroup + "/" + myArtifact + "/" + version + "/" + myJar
@@ -306,16 +194,12 @@ String standardizePath(String pPath) {
     return myPath.substring(myIndex + mavenDir.length())
 }
 
-/* Strip the fileName from the path */
-
-String stripFileName(String pPath) {
-    int myIndex = pPath.lastIndexOf("/")
-    return pPath.substring(0, myIndex)
-}
-
 /* Register project */
 
 void registerProject(Project pProject) {
+    /* Register the groupId for the project */
+    groupMap[pProject.name] = pProject.group
+
     /* Add implementation title and classPath */
     pProject.ext.manifestAttrs["Implementation-Title"] = pProject.description
     pProject.ext.manifestAttrs["Class-Path"] = pProject.configurations.runtimeClasspath.collect {
@@ -338,6 +222,8 @@ void registerProject(Project pProject) {
     if (pProject.ext.splashScreen != null) {
         pProject.ext.manifestAttrs["SplashScreen-Image"] = pProject.ext.splashScreen
     }
+
+    myProperties = pProject.properties
 }
 
 /* Build list of distributable modules */
@@ -351,33 +237,4 @@ void buildDistribution(Project pProject) {
         def newName = "${appLibDir}" + standardizePath(d.getAbsolutePath())
         rootProject.ext.distributionMap[oldName] = newName
     }
-}
-
-/* Check to see whether we should copy a file */
-
-boolean shouldCopy(String pSource, String pTarget) {
-    /* Can't copy if source file does not exist */
-    File mySrc = new File(pSource)
-    if (!mySrc.exists()) {
-        return false;
-    }
-
-    /* Always copy if target file does not exist */
-    File myTgt = new File(pTarget)
-    if (!myTgt.exists()) {
-        return true;
-    }
-
-    /* Only copy if source file is newer than target */
-    return mySrc.lastModified() > myTgt.lastModified();
-}
-
-/* Build the JRE */
-
-void buildJRE() {
-    def projectDirFile = new File("$projectDir")
-    def MODS = 'java.base,java.xml,java.net.http,java.prefs,java.sql,java.desktop,java.logging,java.security.jgss,jdk.net,jdk.unsupported,java.datatransfer,java.naming,java.management,jdk.net,jdk.crypto.ec,jdk.jsobject,jdk.xml.dom'
-    def bldCmd = 'jlink --no-header-files --no-man-pages --vendor-version jOceanus --output ' + "$appDir" + '/java --add-modules ' + MODS
-    def bldProc = bldCmd.execute(null, projectDirFile)
-    bldProc.waitForOrKill(10 * 1000)
 }

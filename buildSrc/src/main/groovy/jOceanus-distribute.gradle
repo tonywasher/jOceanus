@@ -1,0 +1,56 @@
+/* Distribution task */
+task distribute {
+    doLast {
+        rootProject.ext.distributionMap.each { k, v ->
+            if (shouldCopy(k, "$appDir/$v")) {
+                copy {
+                    into("$appDir/" + stripFileName("$v"))
+                    from k
+                }
+            }
+        }
+        buildJRE()
+    }
+}
+assemble.dependsOn distribute
+
+/* Make sure distribution directory is cleared on clean */
+clean.doFirst {
+    delete = "${appDir}/"
+}
+
+/* Strip the fileName from the path */
+
+static String stripFileName(String pPath) {
+    int myIndex = pPath.lastIndexOf("/")
+    return pPath.substring(0, myIndex)
+}
+
+/* Check to see whether we should copy a file */
+
+static boolean shouldCopy(String pSource, String pTarget) {
+    /* Can't copy if source file does not exist */
+    File mySrc = new File(pSource)
+    if (!mySrc.exists()) {
+        return false;
+    }
+
+    /* Always copy if target file does not exist */
+    File myTgt = new File(pTarget)
+    if (!myTgt.exists()) {
+        return true;
+    }
+
+    /* Only copy if source file is newer than target */
+    return mySrc.lastModified() > myTgt.lastModified();
+}
+
+/* Build the JRE */
+
+void buildJRE() {
+    def projectDirFile = new File("$projectDir")
+    def MODS = 'java.base,java.xml,java.net.http,java.prefs,java.sql,java.desktop,java.logging,java.security.jgss,jdk.net,jdk.unsupported,java.datatransfer,java.naming,java.management,jdk.net,jdk.crypto.ec,jdk.jsobject,jdk.xml.dom'
+    def bldCmd = 'jlink --no-header-files --no-man-pages --vendor-version jOceanus --output ' + "$appDir" + '/java --add-modules ' + MODS
+    def bldProc = bldCmd.execute(null, projectDirFile)
+    bldProc.waitForOrKill(10 * 1000)
+}

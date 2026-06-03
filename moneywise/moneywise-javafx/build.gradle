@@ -1,10 +1,8 @@
 /* JavaFX specific */
 plugins {
     id 'org.openjfx.javafxplugin' version "$javaFXPluginVersion"
-}
-javafx {
-    version = "$javaFXVersion"
-    modules = [ 'javafx.graphics' ]
+    id 'jOceanus-java'
+    id 'jOceanus-javafx'
 }
 
 /* Dependencies */

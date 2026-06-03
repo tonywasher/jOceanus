@@ -1,10 +1,8 @@
 /* javaFX Specifics */
 plugins {
     id 'org.openjfx.javafxplugin' version "$javaFXPluginVersion"
-}
-javafx {
-    version = "$javaFXVersion"
-    modules = [ 'javafx.controls', 'javafx.graphics' ]
+    id 'jOceanus-java'
+    id 'jOceanus-javafx'
 }
 
 /* Dependencies */
@@ -22,10 +20,3 @@ description = 'Tethys UI Test'
 
 /* Register the project */
 registerProject(project)
-
-/* Specific Manifest details */
-jar {
-    manifest {
-        attributes(manifestAttrs)
-    }
-}

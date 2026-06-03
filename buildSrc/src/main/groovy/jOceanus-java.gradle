@@ -1,0 +1,99 @@
+/* Standard plugins */
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'jacoco'
+}
+
+/* Maven repositories */
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+tasks.withType(JavaCompile) {
+    options.deprecation = true
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
+tasks.withType(Javadoc).all {
+    enabled = false
+}
+
+/* Build source and javaDoc jars */
+java {
+    //withJavadocJar()
+    withSourcesJar()
+}
+
+/* Support jUnit 5 */
+testing {
+    suites {
+        test {
+            useJUnitJupiter()
+
+            targets {
+                all {
+                    testTask.configure {
+                        maxHeapSize = '4g'
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* Add annotations */
+dependencies {
+    compileOnly "org.jetbrains:annotations:$jetBrainsAnnotationsVersion"
+}
+
+/* Java options */
+compileJava {
+    options.compilerArgs += ["-Xlint:unchecked"]
+}
+
+/* Maven publishing */
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
+
+/* Jacoco */
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+jacoco {
+    toolVersion = "$jacocoVersion"
+}
+
+/* Project properties */
+project.ext {
+    /* Manifest Attributes */
+    manifestAttrs = rootProject.ext.baseManifest.clone()
+
+    /* manifest control */
+    mainClass = null
+    moduleName = null
+    preLoaderClass = null
+    splashScreen = null
+}
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}
+
+processResources {
+    filesMatching("**/*.properties") {
+        expand myProperties
+    }
+}

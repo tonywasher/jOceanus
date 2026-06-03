@@ -1,3 +1,8 @@
+/* Standard conventions */
+plugins {
+    id 'jOceanus-java'
+}
+
 /* Dependencies */
 dependencies {
     implementation "org.bouncycastle:bcprov-jdk18on:$bouncyCastleVersion"
