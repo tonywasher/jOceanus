@@ -16,12 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.sheets;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseRegion;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
 
 /**
  * SheetDataItem extension for Region.
@@ -48,7 +50,7 @@ public final class MoneyWiseSheetRegion
      *
      * @param pReader the spreadsheet reader
      */
-    MoneyWiseSheetRegion(final MoneyWiseReader pReader) {
+    MoneyWiseSheetRegion(final PrometheusSheetReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_REGIONS);
 
@@ -62,7 +64,7 @@ public final class MoneyWiseSheetRegion
      *
      * @param pWriter the spreadsheet writer
      */
-    MoneyWiseSheetRegion(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetRegion(final PrometheusSheetWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_REGIONS);
 

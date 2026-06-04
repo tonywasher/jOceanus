@@ -16,14 +16,16 @@
  */
 package io.github.tonywasher.joceanus.moneywise.sheets;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
 
 /**
  * SheetDataItem extension for Portfolio.
@@ -77,7 +79,7 @@ public final class MoneyWiseSheetPortfolio
      *
      * @param pReader the spreadsheet reader
      */
-    MoneyWiseSheetPortfolio(final MoneyWiseReader pReader) {
+    MoneyWiseSheetPortfolio(final PrometheusSheetReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_PORTFOLIOS);
 
@@ -91,7 +93,7 @@ public final class MoneyWiseSheetPortfolio
      *
      * @param pWriter the spreadsheet writer
      */
-    MoneyWiseSheetPortfolio(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetPortfolio(final PrometheusSheetWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_PORTFOLIOS);
 

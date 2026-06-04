@@ -16,13 +16,15 @@
  */
 package io.github.tonywasher.joceanus.moneywise.sheets;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
 
 /**
  * SheetDataItem extension for SecurityPrice.
@@ -56,7 +58,7 @@ public final class MoneyWiseSheetSecurityPrice
      *
      * @param pReader the spreadsheet reader
      */
-    MoneyWiseSheetSecurityPrice(final MoneyWiseReader pReader) {
+    MoneyWiseSheetSecurityPrice(final PrometheusSheetReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_PRICES);
 
@@ -70,7 +72,7 @@ public final class MoneyWiseSheetSecurityPrice
      *
      * @param pWriter the spreadsheet writer
      */
-    MoneyWiseSheetSecurityPrice(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetSecurityPrice(final PrometheusSheetWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_PRICES);
 

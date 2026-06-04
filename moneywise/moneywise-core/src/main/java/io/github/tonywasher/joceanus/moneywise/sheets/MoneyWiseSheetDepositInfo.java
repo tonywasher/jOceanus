@@ -16,11 +16,13 @@
  */
 package io.github.tonywasher.joceanus.moneywise.sheets;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositInfo;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetDataInfo;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
 
 /**
  * SheetDataInfo extension for DepositInfo.
@@ -39,7 +41,7 @@ public final class MoneyWiseSheetDepositInfo
      *
      * @param pReader the spreadsheet reader
      */
-    MoneyWiseSheetDepositInfo(final MoneyWiseReader pReader) {
+    MoneyWiseSheetDepositInfo(final PrometheusSheetReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_DEPOSITINFO);
 
@@ -53,7 +55,7 @@ public final class MoneyWiseSheetDepositInfo
      *
      * @param pWriter the spreadsheet writer
      */
-    MoneyWiseSheetDepositInfo(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetDepositInfo(final PrometheusSheetWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_DEPOSITINFO);
 

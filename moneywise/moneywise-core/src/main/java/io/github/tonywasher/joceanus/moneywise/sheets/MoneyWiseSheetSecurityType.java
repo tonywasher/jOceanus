@@ -16,11 +16,13 @@
  */
 package io.github.tonywasher.joceanus.moneywise.sheets;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetStaticData;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
 
 /**
  * SheetStaticData extension for SecurityType.
@@ -39,7 +41,7 @@ public final class MoneyWiseSheetSecurityType
      *
      * @param pReader the spreadsheet reader
      */
-    MoneyWiseSheetSecurityType(final MoneyWiseReader pReader) {
+    MoneyWiseSheetSecurityType(final PrometheusSheetReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_SECURITYTYPES);
 
@@ -53,7 +55,7 @@ public final class MoneyWiseSheetSecurityType
      *
      * @param pWriter the spreadsheet writer
      */
-    MoneyWiseSheetSecurityType(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetSecurityType(final PrometheusSheetWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_SECURITYTYPES);
 

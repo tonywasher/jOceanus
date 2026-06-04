@@ -16,11 +16,13 @@
  */
 package io.github.tonywasher.joceanus.moneywise.sheets;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetStaticData;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
 
 /**
  * SheetStaticData extension for TransactionInfoType.
@@ -39,7 +41,7 @@ public final class MoneyWiseSheetTransInfoType
      *
      * @param pReader the spreadsheet reader
      */
-    MoneyWiseSheetTransInfoType(final MoneyWiseReader pReader) {
+    MoneyWiseSheetTransInfoType(final PrometheusSheetReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_TRANSINFOTYPES);
 
@@ -53,7 +55,7 @@ public final class MoneyWiseSheetTransInfoType
      *
      * @param pWriter the spreadsheet writer
      */
-    MoneyWiseSheetTransInfoType(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetTransInfoType(final PrometheusSheetWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_TRANSINFOTYPES);
 
