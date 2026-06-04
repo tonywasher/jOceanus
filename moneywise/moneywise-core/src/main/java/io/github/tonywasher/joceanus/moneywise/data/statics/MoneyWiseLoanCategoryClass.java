@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.data.statics;
 
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * Enumeration of LoanCategory Type Classes.
@@ -98,7 +99,7 @@ public enum MoneyWiseLoanCategoryClass
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseStaticResource.getKeyForLoanType(this).getValue();
+            theName = bundleIdForCategoryClass(this).getValue();
         }
 
         /* return the name */
@@ -157,5 +158,22 @@ public enum MoneyWiseLoanCategoryClass
     @Override
     public boolean isTotals() {
         return false;
+    }
+
+    /**
+     * Obtain the resource bundleId for the category class.
+     *
+     * @param pClass the category class
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForCategoryClass(final MoneyWiseLoanCategoryClass pClass) {
+        /* Create the map and return it */
+        return switch (pClass) {
+            case CREDITCARD -> MoneyWiseStaticResource.LOANTYPE_CREDIT;
+            case PRIVATELOAN -> MoneyWiseStaticResource.LOANTYPE_PRIVATE;
+            case LOAN -> MoneyWiseStaticResource.LOANTYPE_LOAN;
+            case PARENT -> MoneyWiseStaticResource.CATEGORYTYPE_PARENT;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

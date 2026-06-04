@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 
 /**
@@ -118,6 +119,16 @@ public enum MoneyWiseTransInfoClass
     TRANSTAG(18, 17, MetisDataType.LINKSET);
 
     /**
+     * Data length.
+     */
+    private static final int DATA_LEN = 20;
+
+    /**
+     * Comment length.
+     */
+    private static final int COMMENT_LEN = 50;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -185,7 +196,7 @@ public enum MoneyWiseTransInfoClass
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseStaticResource.getKeyForTransInfo(this).getValue();
+            theName = bundleIdForInfoClass(this).getValue();
         }
 
         /* return the name */
@@ -215,8 +226,8 @@ public enum MoneyWiseTransInfoClass
      */
     public int getMaximumLength() {
         return switch (this) {
-            case REFERENCE -> MoneyWiseTransInfoType.DATA_LEN;
-            case COMMENTS -> MoneyWiseTransInfoType.COMMENT_LEN;
+            case REFERENCE -> DATA_LEN;
+            case COMMENTS -> COMMENT_LEN;
             default -> 0;
         };
     }
@@ -224,5 +235,36 @@ public enum MoneyWiseTransInfoClass
     @Override
     public String getId() {
         return toString();
+    }
+
+    /**
+     * Obtain the resource bundleId for the info class.
+     *
+     * @param pClass the info class
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForInfoClass(final MoneyWiseTransInfoClass pClass) {
+        /* Create the map and return it */
+        return switch (pClass) {
+            case TAXCREDIT -> MoneyWiseStaticResource.TRANSINFO_TAXCREDIT;
+            case EMPLOYERNATINS -> MoneyWiseStaticResource.TRANSTYPE_EMPLOYERNATINS;
+            case EMPLOYEENATINS -> MoneyWiseStaticResource.TRANSTYPE_EMPLOYEENATINS;
+            case DEEMEDBENEFIT -> MoneyWiseStaticResource.TRANSINFO_BENEFIT;
+            case WITHHELD -> MoneyWiseStaticResource.TRANSTYPE_WITHHELD;
+            case ACCOUNTDELTAUNITS -> MoneyWiseStaticResource.TRANSINFO_ACCOUNTDELTAUNITS;
+            case PARTNERDELTAUNITS -> MoneyWiseStaticResource.TRANSINFO_PARTNERDELTAUNITS;
+            case PARTNERAMOUNT -> MoneyWiseStaticResource.TRANSINFO_PARTNERAMOUNT;
+            case RETURNEDCASH -> MoneyWiseStaticResource.TRANSINFO_RETURNEDCASH;
+            case DILUTION -> MoneyWiseStaticResource.TRANSINFO_DILUTION;
+            case QUALIFYYEARS -> MoneyWiseStaticResource.TRANSINFO_QUALYEARS;
+            case REFERENCE -> MoneyWiseStaticResource.TRANSINFO_REFERENCE;
+            case COMMENTS -> MoneyWiseStaticResource.TRANSINFO_COMMENTS;
+            case RETURNEDCASHACCOUNT -> MoneyWiseStaticResource.TRANSINFO_RETURNEDCASHACCOUNT;
+            case PRICE -> MoneyWiseStaticResource.TRANSINFO_PRICE;
+            case XCHANGERATE -> MoneyWiseStaticResource.TRANSINFO_XCHANGERATE;
+            case COMMISSION -> MoneyWiseStaticResource.TRANSINFO_COMMISSION;
+            case TRANSTAG -> MoneyWiseStaticResource.TRANSINFO_TRANSTAG;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

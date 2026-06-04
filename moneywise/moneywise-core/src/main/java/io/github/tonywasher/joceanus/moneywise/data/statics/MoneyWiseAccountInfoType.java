@@ -16,11 +16,11 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
@@ -48,21 +48,6 @@ public class MoneyWiseAccountInfoType
      * Report fields.
      */
     private static final MetisFieldSet<MoneyWiseAccountInfoType> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAccountInfoType.class);
-
-    /**
-     * WebSite length.
-     */
-    public static final int WEBSITE_LEN = 50;
-
-    /**
-     * Data length.
-     */
-    public static final int DATA_LEN = 20;
-
-    /**
-     * Notes length.
-     */
-    public static final int NOTES_LEN = 500;
 
     /**
      * Copy Constructor.

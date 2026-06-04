@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.data.statics;
 
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * Enumeration of TransactionCategory Classes.
@@ -412,7 +413,7 @@ public enum MoneyWiseTransCategoryClass
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseStaticResource.getKeyForTransType(this).getValue();
+            theName = bundleIdForCategoryClass(this).getValue();
         }
 
         /* return the name */
@@ -647,5 +648,83 @@ public enum MoneyWiseTransCategoryClass
     @Override
     public boolean isTotals() {
         return this == TOTALS;
+    }
+
+    /**
+     * Obtain the resource bundleId for the category class.
+     *
+     * @param pClass the category class
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForCategoryClass(final MoneyWiseTransCategoryClass pClass) {
+        /* Create the map and return it */
+        return switch (pClass) {
+            case TAXEDINCOME -> MoneyWiseStaticResource.TRANSTYPE_TAXEDINCOME;
+            case RENTALINCOME -> MoneyWiseStaticResource.TRANSTYPE_RENTALINCOME;
+            case ROOMRENTALINCOME -> MoneyWiseStaticResource.TRANSTYPE_ROOMRENTINCOME;
+            case INTEREST -> MoneyWiseStaticResource.TRANSTYPE_INTEREST;
+            case DIVIDEND -> MoneyWiseStaticResource.TRANSTYPE_DIVIDEND;
+            case VIRTUALINCOME -> MoneyWiseStaticResource.TRANSTYPE_VIRTUALINCOME;
+            case GROSSINCOME -> MoneyWiseStaticResource.TRANSTYPE_GROSSINCOME;
+            case PENSIONCONTRIB -> MoneyWiseStaticResource.TRANSTYPE_PENSIONCONTRIB;
+            case GIFTEDINCOME -> MoneyWiseStaticResource.TRANSTYPE_GIFTEDINCOME;
+            case INHERITED -> MoneyWiseStaticResource.TRANSTYPE_INHERITED;
+            case LOANINTERESTEARNED -> MoneyWiseStaticResource.TRANSTYPE_LOANINTEARNED;
+            case CASHBACK -> MoneyWiseStaticResource.TRANSTYPE_CASHBACK;
+            case LOYALTYBONUS -> MoneyWiseStaticResource.TRANSTYPE_LOYALTYBONUS;
+            case RECOVEREDEXPENSES -> MoneyWiseStaticResource.TRANSTYPE_RECOVEREDEXPENSES;
+            case OTHERINCOME -> MoneyWiseStaticResource.TRANSTYPE_OTHERINCOME;
+            case TRANSFER -> MoneyWiseStaticResource.TRANSTYPE_TRANSFER;
+            case UNITSADJUST -> MoneyWiseStaticResource.TRANSTYPE_UNITSADJUST;
+            case STOCKSPLIT -> MoneyWiseStaticResource.TRANSTYPE_STOCKSPLIT;
+            case STOCKDEMERGER -> MoneyWiseStaticResource.TRANSTYPE_STOCKDEMERGER;
+            case STOCKTAKEOVER -> MoneyWiseStaticResource.TRANSTYPE_STOCKTAKEOVER;
+            case SECURITYREPLACE -> MoneyWiseStaticResource.TRANSTYPE_SECURITYREPLACE;
+            case SECURITYCLOSURE -> MoneyWiseStaticResource.TRANSTYPE_SECURITYCLOSURE;
+            case STOCKRIGHTSISSUE -> MoneyWiseStaticResource.TRANSTYPE_STOCKRIGHTSISSUE;
+            case PORTFOLIOXFER -> MoneyWiseStaticResource.TRANSTYPE_PORTFOLIOXFER;
+            case OPTIONSGRANT -> MoneyWiseStaticResource.TRANSTYPE_OPTIONSGRANT;
+            case OPTIONSVEST -> MoneyWiseStaticResource.TRANSTYPE_OPTIONSVEST;
+            case OPTIONSEXPIRE -> MoneyWiseStaticResource.TRANSTYPE_OPTIONSEXPIRE;
+            case OPTIONSEXERCISE -> MoneyWiseStaticResource.TRANSTYPE_OPTIONSEXERCISE;
+            case PENSIONDRAWDOWN -> MoneyWiseStaticResource.TRANSTYPE_PENSIONDRAWDOWN;
+            case PENSIONTAXFREE -> MoneyWiseStaticResource.TRANSTYPE_PENSIONTAXFREE;
+            case EXPENSE -> MoneyWiseStaticResource.TRANSTYPE_EXPENSE;
+            case BADDEBTCAPITAL -> MoneyWiseStaticResource.TRANSTYPE_BADDEBTCAPITAL;
+            case BADDEBTINTEREST -> MoneyWiseStaticResource.TRANSTYPE_BADDEBTINTEREST;
+            case LOCALTAXES -> MoneyWiseStaticResource.TRANSTYPE_LOCALTAXES;
+            case WRITEOFF -> MoneyWiseStaticResource.TRANSTYPE_WRITEOFF;
+            case RENTALEXPENSE -> MoneyWiseStaticResource.TRANSTYPE_RENTALEXPENSE;
+            case ANNUITYPURCHASE -> MoneyWiseStaticResource.TRANSTYPE_ANNUITYPURCHASE;
+            case LOANINTERESTCHARGED -> MoneyWiseStaticResource.TRANSTYPE_LOANINTCHARGE;
+            case TAXRELIEF -> MoneyWiseStaticResource.TRANSTYPE_TAXRELIEF;
+            case INCOMETAX -> MoneyWiseStaticResource.TRANSTYPE_INCOMETAX;
+            case TAXEDINTEREST -> MoneyWiseStaticResource.TRANSTYPE_TAXEDINTEREST;
+            case TAXFREEINTEREST -> MoneyWiseStaticResource.TRANSTYPE_TAXFREEINTEREST;
+            case PEER2PEERINTEREST -> MoneyWiseStaticResource.TRANSTYPE_PEER2PEERINTEREST;
+            case GROSSINTEREST -> MoneyWiseStaticResource.TRANSTYPE_GROSSINTEREST;
+            case SHAREDIVIDEND -> MoneyWiseStaticResource.TRANSTYPE_SHAREDIVIDEND;
+            case UNITTRUSTDIVIDEND -> MoneyWiseStaticResource.TRANSTYPE_UTDIVIDEND;
+            case FOREIGNDIVIDEND -> MoneyWiseStaticResource.TRANSTYPE_FOREIGNDIVIDEND;
+            case TAXFREEDIVIDEND -> MoneyWiseStaticResource.TRANSTYPE_TAXFREEDIVIDEND;
+            case TAXEDLOYALTYBONUS -> MoneyWiseStaticResource.TRANSTYPE_TAXEDLOYALTYBONUS;
+            case GROSSLOYALTYBONUS -> MoneyWiseStaticResource.TRANSTYPE_GROSSLOYALTYBONUS;
+            case TAXFREELOYALTYBONUS -> MoneyWiseStaticResource.TRANSTYPE_TAXFREELOYALTYBONUS;
+            case CHARGEABLEGAIN -> MoneyWiseStaticResource.TRANSTYPE_CHARGEABLEGAIN;
+            case TAXFREEGAIN -> MoneyWiseStaticResource.TRANSTYPE_TAXFREEGAIN;
+            case RESIDENTIALGAIN -> MoneyWiseStaticResource.TRANSTYPE_RESIDENTIALGAIN;
+            case CAPITALGAIN -> MoneyWiseStaticResource.TRANSTYPE_CAPITALGAIN;
+            case MARKETGROWTH -> MoneyWiseStaticResource.TRANSTYPE_MARKETGROWTH;
+            case CURRENCYFLUCTUATION -> MoneyWiseStaticResource.TRANSTYPE_CURRFLUCT;
+            case WITHHELD -> MoneyWiseStaticResource.TRANSTYPE_WITHHELD;
+            case EMPLOYERNATINS -> MoneyWiseStaticResource.TRANSTYPE_EMPLOYERNATINS;
+            case EMPLOYEENATINS -> MoneyWiseStaticResource.TRANSTYPE_EMPLOYEENATINS;
+            case OPENINGBALANCE -> MoneyWiseStaticResource.TRANSTYPE_OPENINGBALANCE;
+            case INCOMETOTALS -> MoneyWiseStaticResource.TRANSTYPE_INCOMETOTALS;
+            case EXPENSETOTALS -> MoneyWiseStaticResource.TRANSTYPE_EXPENSETOTALS;
+            case SECURITYPARENT -> MoneyWiseStaticResource.TRANSTYPE_SECURITYPARENT;
+            case TOTALS -> MoneyWiseStaticResource.TRANSTYPE_TOTALS;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

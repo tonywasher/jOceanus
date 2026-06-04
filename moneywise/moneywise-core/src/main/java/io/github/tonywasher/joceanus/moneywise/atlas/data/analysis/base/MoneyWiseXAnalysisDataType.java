@@ -18,7 +18,6 @@ package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSimpleId;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedItem;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 
@@ -116,11 +115,6 @@ public enum MoneyWiseXAnalysisDataType
      */
     public String getFieldName() {
         return getListId().getId();
-    }
-
-    @Override
-    public Class<? extends MetisFieldVersionedItem> getClazz() {
-        return MoneyWiseXAnalysisEvent.class;
     }
 
     @Override

@@ -16,10 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
@@ -30,6 +26,10 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAssetCatego
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
@@ -382,22 +382,15 @@ public abstract class MoneyWiseAssetBase
 
     @Override
     public MoneyWiseAssetType getAssetType() {
-        switch ((MoneyWiseBasicDataType) getItemType()) {
-            case DEPOSIT:
-                return MoneyWiseAssetType.DEPOSIT;
-            case CASH:
-                return MoneyWiseAssetType.CASH;
-            case LOAN:
-                return MoneyWiseAssetType.LOAN;
-            case PORTFOLIO:
-                return MoneyWiseAssetType.PORTFOLIO;
-            case SECURITY:
-                return MoneyWiseAssetType.SECURITY;
-            case PAYEE:
-                return MoneyWiseAssetType.PAYEE;
-            default:
-                throw new IllegalStateException();
-        }
+        return switch ((MoneyWiseBasicDataType) getItemType()) {
+            case DEPOSIT -> MoneyWiseAssetType.DEPOSIT;
+            case CASH -> MoneyWiseAssetType.CASH;
+            case LOAN -> MoneyWiseAssetType.LOAN;
+            case PORTFOLIO -> MoneyWiseAssetType.PORTFOLIO;
+            case SECURITY -> MoneyWiseAssetType.SECURITY;
+            case PAYEE -> MoneyWiseAssetType.PAYEE;
+            default -> throw new IllegalStateException();
+        };
     }
 
     @Override

@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.data.statics;
 
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 
 /**
@@ -170,7 +171,7 @@ public enum MoneyWiseSecurityClass
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseStaticResource.getKeyForSecurityType(this).getValue();
+            theName = bundleIdForSecurityClass(this).getValue();
         }
 
         /* return the name */
@@ -383,6 +384,31 @@ public enum MoneyWiseSecurityClass
             case STATEPENSION -> PENSION_YEARS * PENSION_WEEKS;
             case DEFINEDBENEFIT -> PENSION_YEARS;
             default -> 0;
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the security class.
+     *
+     * @param pClass the security class
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForSecurityClass(final MoneyWiseSecurityClass pClass) {
+        /* Create the map and return it */
+        return switch (pClass) {
+            case SHARES -> MoneyWiseStaticResource.SECURITYTYPE_SHARES;
+            case INCOMEUNITTRUST -> MoneyWiseStaticResource.SECURITYTYPE_INCOMEUNIT;
+            case GROWTHUNITTRUST -> MoneyWiseStaticResource.SECURITYTYPE_GROWTHUNIT;
+            case LIFEBOND -> MoneyWiseStaticResource.SECURITYTYPE_LIFEBOND;
+            case ENDOWMENT -> MoneyWiseStaticResource.SECURITYTYPE_ENDOWMENT;
+            case PROPERTY -> MoneyWiseStaticResource.SECURITYTYPE_PROPERTY;
+            case VEHICLE -> MoneyWiseStaticResource.SECURITYTYPE_VEHICLE;
+            case STATEPENSION -> MoneyWiseStaticResource.SECURITYTYPE_STATEPENSION;
+            case DEFINEDBENEFIT -> MoneyWiseStaticResource.SECURITYTYPE_BENEFIT;
+            case DEFINEDCONTRIBUTION -> MoneyWiseStaticResource.SECURITYTYPE_CONTRIBUTION;
+            case STOCKOPTION -> MoneyWiseStaticResource.SECURITYTYPE_STOCKOPTION;
+            case ASSET -> MoneyWiseStaticResource.SECURITYTYPE_ASSET;
+            default -> throw new IllegalArgumentException();
         };
     }
 }

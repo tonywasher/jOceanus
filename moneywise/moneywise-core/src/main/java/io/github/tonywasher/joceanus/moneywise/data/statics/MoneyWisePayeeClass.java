@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.data.statics;
 
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 
 /**
@@ -130,7 +131,7 @@ public enum MoneyWisePayeeClass
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseStaticResource.getKeyForPayeeType(this).getValue();
+            theName = bundleIdForPayeeClass(this).getValue();
         }
 
         /* return the name */
@@ -264,6 +265,27 @@ public enum MoneyWisePayeeClass
         return switch (this) {
             case GOVERNMENT, EMPLOYER, INDIVIDUAL, ANNUITY -> true;
             default -> false;
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the payee class.
+     *
+     * @param pClass the payee class
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForPayeeClass(final MoneyWisePayeeClass pClass) {
+        /* Create the map and return it */
+        return switch (pClass) {
+            case TAXMAN -> MoneyWiseStaticResource.PAYEETYPE_TAXMAN;
+            case GOVERNMENT -> MoneyWiseStaticResource.PAYEETYPE_GOVERNMENT;
+            case MARKET -> MoneyWiseStaticResource.PAYEETYPE_MARKET;
+            case EMPLOYER -> MoneyWiseStaticResource.PAYEETYPE_EMPLOYER;
+            case INSTITUTION -> MoneyWiseStaticResource.PAYEETYPE_INSTITUTION;
+            case INDIVIDUAL -> MoneyWiseStaticResource.PAYEETYPE_INDIVIDUAL;
+            case ANNUITY -> MoneyWiseStaticResource.PAYEETYPE_ANNUITY;
+            case PAYEE -> MoneyWiseStaticResource.PAYEETYPE_PAYEE;
+            default -> throw new IllegalArgumentException();
         };
     }
 }

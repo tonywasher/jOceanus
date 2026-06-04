@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 
 /**
@@ -108,6 +109,21 @@ public enum MoneyWiseAccountInfoClass
     OPTIONPRICE(16, 15, MetisDataType.PRICE);
 
     /**
+     * WebSite length.
+     */
+    private static final int WEBSITE_LEN = 50;
+
+    /**
+     * Data length.
+     */
+    private static final int DATA_LEN = 20;
+
+    /**
+     * Notes length.
+     */
+    private static final int NOTES_LEN = 500;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -172,7 +188,7 @@ public enum MoneyWiseAccountInfoClass
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseStaticResource.getKeyForAccountInfo(this).getValue();
+            theName = bundleIdForInfoClass(this).getValue();
         }
 
         /* return the name */
@@ -202,9 +218,9 @@ public enum MoneyWiseAccountInfoClass
      */
     public int getMaximumLength() {
         return switch (this) {
-            case WEBSITE -> MoneyWiseAccountInfoType.WEBSITE_LEN;
-            case CUSTOMERNO, USERID, PASSWORD, SORTCODE, ACCOUNT, REFERENCE -> MoneyWiseAccountInfoType.DATA_LEN;
-            case NOTES -> MoneyWiseAccountInfoType.NOTES_LEN;
+            case WEBSITE -> WEBSITE_LEN;
+            case CUSTOMERNO, USERID, PASSWORD, SORTCODE, ACCOUNT, REFERENCE -> DATA_LEN;
+            case NOTES -> NOTES_LEN;
             case SYMBOL -> MoneyWiseSecurityType.SYMBOL_LEN;
             default -> 0;
         };
@@ -213,5 +229,34 @@ public enum MoneyWiseAccountInfoClass
     @Override
     public String getId() {
         return toString();
+    }
+
+    /**
+     * Obtain the resource bundleId for the info class.
+     *
+     * @param pClass the info class
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForInfoClass(final MoneyWiseAccountInfoClass pClass) {
+        /* Create the map and return it */
+        return switch (pClass) {
+            case MATURITY -> MoneyWiseStaticResource.ACCOUNTINFO_MATURITY;
+            case OPENINGBALANCE -> MoneyWiseStaticResource.ACCOUNTINFO_OPENING;
+            case AUTOEXPENSE -> MoneyWiseStaticResource.ACCOUNTINFO_AUTOEXPENSE;
+            case AUTOPAYEE -> MoneyWiseStaticResource.ACCOUNTINFO_AUTOPAYEE;
+            case WEBSITE -> MoneyWiseStaticResource.ACCOUNTINFO_WEBSITE;
+            case CUSTOMERNO -> MoneyWiseStaticResource.ACCOUNTINFO_CUSTNO;
+            case USERID -> MoneyWiseStaticResource.ACCOUNTINFO_USERID;
+            case PASSWORD -> MoneyWiseStaticResource.ACCOUNTINFO_PASSWORD;
+            case SORTCODE -> MoneyWiseStaticResource.ACCOUNTINFO_SORTCODE;
+            case ACCOUNT -> MoneyWiseStaticResource.ACCOUNTINFO_ACCOUNT;
+            case REFERENCE -> MoneyWiseStaticResource.ACCOUNTINFO_REFERENCE;
+            case NOTES -> MoneyWiseStaticResource.ACCOUNTINFO_NOTES;
+            case REGION -> MoneyWiseStaticResource.ACCOUNTINFO_REGION;
+            case SYMBOL -> MoneyWiseStaticResource.ACCOUNTINFO_SYMBOL;
+            case UNDERLYINGSTOCK -> MoneyWiseStaticResource.ACCOUNTINFO_UNDERLYINGSTOCK;
+            case OPTIONPRICE -> MoneyWiseStaticResource.ACCOUNTINFO_OPTIONPRICE;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

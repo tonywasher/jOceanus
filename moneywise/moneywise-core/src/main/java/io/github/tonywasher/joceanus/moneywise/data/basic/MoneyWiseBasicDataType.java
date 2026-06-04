@@ -18,7 +18,6 @@ package io.github.tonywasher.joceanus.moneywise.data.basic;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSimpleId;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedItem;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 
@@ -232,27 +231,7 @@ public enum MoneyWiseBasicDataType
     public String getFieldName() {
         return getListId().getId();
     }
-
-    @Override
-    public Class<? extends MetisFieldVersionedItem> getClazz() {
-        switch (this) {
-            case TRANSTAG:
-                return MoneyWiseTransTag.class;
-            case REGION:
-                return MoneyWiseRegion.class;
-            case DEPOSITCATEGORY:
-                return MoneyWiseDepositCategory.class;
-            case CASHCATEGORY:
-                return MoneyWiseCashCategory.class;
-            case LOANCATEGORY:
-                return MoneyWiseLoanCategory.class;
-            case TRANSCATEGORY:
-                return MoneyWiseTransCategory.class;
-            default:
-                return null;
-        }
-    }
-
+    
     @Override
     public String getId() {
         return getItemName();

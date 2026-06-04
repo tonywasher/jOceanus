@@ -16,11 +16,11 @@
  */
 package io.github.tonywasher.joceanus.metis.field;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataIndexedItem;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 import java.util.Iterator;
 
@@ -209,17 +209,10 @@ public interface MetisFieldItem
          * @return the item name
          */
         String getItemName();
-
-        /**
-         * Obtain the class of the item.
-         *
-         * @return the clazz
-         */
-        Class<? extends MetisFieldVersionedItem> getClazz();
     }
 
     /**
-     * Updateable Item interface.
+     * Updatable Item interface.
      */
     interface MetisFieldUpdatableItem {
         /**

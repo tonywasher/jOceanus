@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.data.statics;
 
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 
 /**
@@ -158,7 +159,7 @@ public enum MoneyWiseTaxClass
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseStaticResource.getKeyForTaxBasis(this).getValue();
+            theName = bundleIdForTaxClass(this).getValue();
         }
 
         /* return the name */
@@ -204,6 +205,37 @@ public enum MoneyWiseTaxClass
         return switch (this) {
             case EXPENSE, TAXPAID, VIRTUAL -> true;
             default -> false;
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the tax class.
+     *
+     * @param pClass the tax class
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForTaxClass(final MoneyWiseTaxClass pClass) {
+        /* Create the map and return it */
+        return switch (pClass) {
+            case SALARY -> MoneyWiseStaticResource.TAXBASIS_SALARY;
+            case ROOMRENTAL -> MoneyWiseStaticResource.TAXBASIS_ROOMRENTAL;
+            case RENTALINCOME -> MoneyWiseStaticResource.TAXBASIS_RENTALINCOME;
+            case OTHERINCOME -> MoneyWiseStaticResource.TAXBASIS_OTHERINCOME;
+            case TAXEDINTEREST -> MoneyWiseStaticResource.TAXBASIS_TAXEDINTEREST;
+            case UNTAXEDINTEREST -> MoneyWiseStaticResource.TAXBASIS_UNTAXEDINTEREST;
+            case DIVIDEND -> MoneyWiseStaticResource.TAXBASIS_DIVIDEND;
+            case UNITTRUSTDIVIDEND -> MoneyWiseStaticResource.TAXBASIS_UTDIVIDEND;
+            case FOREIGNDIVIDEND -> MoneyWiseStaticResource.TAXBASIS_FOREIGNDIVIDEND;
+            case CHARGEABLEGAINS -> MoneyWiseStaticResource.TAXBASIS_CHARGEABLEGAINS;
+            case RESIDENTIALGAINS -> MoneyWiseStaticResource.TAXBASIS_RESIDENTIALGAINS;
+            case CAPITALGAINS -> MoneyWiseStaticResource.TAXBASIS_CAPITALGAINS;
+            case PEER2PEERINTEREST -> MoneyWiseStaticResource.TRANSTYPE_PEER2PEERINTEREST;
+            case TAXPAID -> MoneyWiseStaticResource.TAXBASIS_TAXPAID;
+            case MARKET -> MoneyWiseStaticResource.TAXBASIS_MARKET;
+            case TAXFREE -> MoneyWiseStaticResource.TAXBASIS_TAXFREE;
+            case EXPENSE -> MoneyWiseStaticResource.TAXBASIS_EXPENSE;
+            case VIRTUAL -> MoneyWiseStaticResource.TAXBASIS_VIRTUAL;
+            default -> throw new IllegalArgumentException();
         };
     }
 }
