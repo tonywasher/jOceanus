@@ -34,6 +34,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
@@ -669,7 +670,7 @@ public abstract class MoneyWiseAssetBase
             theLatest = myTrans;
 
             /* if this transaction is not reconciled */
-            if (!myTrans.isReconciled()) {
+            if (Boolean.FALSE.equals(myTrans.isReconciled())) {
                 /* Mark account as relevant */
                 setRelevant();
             }
@@ -682,12 +683,11 @@ public abstract class MoneyWiseAssetBase
         }
 
         /* If we are being touched by an asset */
-        if (pSource instanceof MoneyWiseAssetBase myAsset) {
-            /* Mark as relevant if child is open */
-            if (!myAsset.isClosed()) {
-                setRelevant();
-            }
+        if (pSource instanceof MoneyWiseAssetBase myAsset
+                && Boolean.FALSE.equals(myAsset.isClosed())) {
+            setRelevant();
         }
+
 
         /* Pass call onwards */
         super.touchItem(pSource);
@@ -717,10 +717,8 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Resolve late edit Set links.
-     *
-     * @throws OceanusException on error
      */
-    public void resolveLateEditSetLinks() throws OceanusException {
+    public void resolveLateEditSetLinks() {
         /* Access the editSet */
         final PrometheusEditSet myEditSet = getList().getEditSet();
 
@@ -853,7 +851,7 @@ public abstract class MoneyWiseAssetBase
          * @param pClass    the class of the item
          * @param pItemType the item type
          */
-        protected MoneyWiseAssetBaseList(final MoneyWiseDataSet pData,
+        protected MoneyWiseAssetBaseList(final PrometheusDataSet pData,
                                          final Class<T> pClass,
                                          final MoneyWiseBasicDataType pItemType) {
             super(pClass, pData, pItemType, PrometheusListStyle.CORE);

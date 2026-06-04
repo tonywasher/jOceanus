@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
@@ -364,7 +365,7 @@ public class MoneyWiseRegion
          *
          * @param pData the DataSet for the list
          */
-        protected MoneyWiseRegionList(final MoneyWiseDataSet pData) {
+        protected MoneyWiseRegionList(final PrometheusDataSet pData) {
             super(MoneyWiseRegion.class, pData, MoneyWiseBasicDataType.REGION, PrometheusListStyle.CORE);
         }
 

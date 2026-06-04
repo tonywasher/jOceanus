@@ -39,6 +39,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataMapItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
@@ -686,7 +687,7 @@ public class MoneyWisePayee
          *
          * @param pData the DataSet for the list
          */
-        public MoneyWisePayeeList(final MoneyWiseDataSet pData) {
+        public MoneyWisePayeeList(final PrometheusDataSet pData) {
             super(pData, MoneyWisePayee.class, MoneyWiseBasicDataType.PAYEE);
         }
 

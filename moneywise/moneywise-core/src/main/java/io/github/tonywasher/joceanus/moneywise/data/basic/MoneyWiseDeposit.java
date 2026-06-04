@@ -45,6 +45,7 @@ import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataMapItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
@@ -719,7 +720,7 @@ public class MoneyWiseDeposit
          *
          * @param pData the DataSet for the list
          */
-        public MoneyWiseDepositList(final MoneyWiseDataSet pData) {
+        public MoneyWiseDepositList(final PrometheusDataSet pData) {
             super(pData, MoneyWiseDeposit.class, MoneyWiseBasicDataType.DEPOSIT);
         }
 

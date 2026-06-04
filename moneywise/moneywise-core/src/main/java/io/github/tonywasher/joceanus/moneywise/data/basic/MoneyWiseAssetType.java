@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.data.basic;
 
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * Enumeration of Asset Types.
@@ -155,10 +156,9 @@ public enum MoneyWiseAssetType {
     public static long createExternalId(final MoneyWiseAssetType pType,
                                         final int pMajorId,
                                         final int pBaseId) {
-        final long myBase = pBaseId;
         final long myMajor = ((long) pMajorId) << Integer.SIZE;
         final long myAsset = ((long) pType.getId()) << ASSETSHIFT;
-        return myAsset + myMajor + myBase;
+        return myAsset + myMajor + pBaseId;
     }
 
     /**
@@ -215,7 +215,7 @@ public enum MoneyWiseAssetType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseBasicResource.getKeyForAssetType(this).getValue();
+            theName = bundleIdForAssetType(this).getValue();
         }
 
         /* return the name */
@@ -344,5 +344,26 @@ public enum MoneyWiseAssetType {
      */
     public boolean isAutoExpense() {
         return this == AUTOEXPENSE;
+    }
+
+    /**
+     * Obtain the resource bundleId for the assetType.
+     *
+     * @param pType the dataType
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForAssetType(final MoneyWiseAssetType pType) {
+        /* Create the map and return it */
+        return switch (pType) {
+            case PAYEE -> MoneyWiseBasicResource.ASSETTYPE_PAYEE;
+            case SECURITY -> MoneyWiseBasicResource.ASSETTYPE_SECURITY;
+            case DEPOSIT -> MoneyWiseBasicResource.ASSETTYPE_DEPOSIT;
+            case CASH -> MoneyWiseBasicResource.ASSETTYPE_CASH;
+            case AUTOEXPENSE -> MoneyWiseBasicResource.ASSETTYPE_AUTOEXPENSE;
+            case LOAN -> MoneyWiseBasicResource.ASSETTYPE_LOAN;
+            case PORTFOLIO -> MoneyWiseBasicResource.ASSETTYPE_PORTFOLIO;
+            case SECURITYHOLDING -> MoneyWiseBasicResource.ASSETTYPE_SECURITYHOLDING;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

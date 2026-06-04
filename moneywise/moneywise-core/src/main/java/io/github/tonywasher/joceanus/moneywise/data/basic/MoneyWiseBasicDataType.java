@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSimpleId;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * MoneyWise Item Types.
@@ -185,7 +186,7 @@ public enum MoneyWiseBasicDataType
         /* If we have not yet loaded the id */
         if (theNameId == null) {
             /* Load the id */
-            theNameId = MetisFieldSimpleId.convertResource(MoneyWiseBasicResource.getKeyForDataType(this));
+            theNameId = MetisFieldSimpleId.convertResource(bundleIdForDataType(this));
         }
 
         /* Return the name id */
@@ -211,7 +212,7 @@ public enum MoneyWiseBasicDataType
         /* If we have not yet loaded the id */
         if (theListId == null) {
             /* Load the id */
-            theListId = MetisFieldSimpleId.convertResource(MoneyWiseBasicResource.getKeyForDataList(this));
+            theListId = MetisFieldSimpleId.convertResource(bundleIdForDataList(this));
         }
 
         /* return the list id */
@@ -231,7 +232,7 @@ public enum MoneyWiseBasicDataType
     public String getFieldName() {
         return getListId().getId();
     }
-    
+
     @Override
     public String getId() {
         return getItemName();
@@ -240,5 +241,77 @@ public enum MoneyWiseBasicDataType
     @Override
     public Integer getItemKey() {
         return theKey;
+    }
+
+    /**
+     * Obtain the resource bundleId for the dataType.
+     *
+     * @param pType the dataType
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForDataType(final MoneyWiseBasicDataType pType) {
+        /* Create the map and return it */
+        return switch (pType) {
+            case DEPOSITCATEGORY -> MoneyWiseBasicResource.DEPOSITCAT_NAME;
+            case CASHCATEGORY -> MoneyWiseBasicResource.CASHCAT_NAME;
+            case LOANCATEGORY -> MoneyWiseBasicResource.LOANCAT_NAME;
+            case TRANSCATEGORY -> MoneyWiseBasicResource.TRANSCAT_NAME;
+            case EXCHANGERATE -> MoneyWiseBasicResource.XCHGRATE_NAME;
+            case TRANSTAG -> MoneyWiseBasicResource.TRANSTAG_NAME;
+            case REGION -> MoneyWiseBasicResource.REGION_NAME;
+            case PAYEE -> MoneyWiseBasicResource.PAYEE_NAME;
+            case PAYEEINFO -> MoneyWiseBasicResource.PAYEEINFO_NAME;
+            case SECURITY -> MoneyWiseBasicResource.SECURITY_NAME;
+            case SECURITYPRICE -> MoneyWiseBasicResource.SECURITYPRICE_NAME;
+            case SECURITYINFO -> MoneyWiseBasicResource.SECURITYINFO_NAME;
+            case DEPOSIT -> MoneyWiseBasicResource.DEPOSIT_NAME;
+            case DEPOSITRATE -> MoneyWiseBasicResource.DEPOSITRATE_NAME;
+            case DEPOSITINFO -> MoneyWiseBasicResource.DEPOSITINFO_NAME;
+            case CASH -> MoneyWiseBasicResource.CASH_NAME;
+            case CASHINFO -> MoneyWiseBasicResource.CASHINFO_NAME;
+            case LOAN -> MoneyWiseBasicResource.LOAN_NAME;
+            case LOANINFO -> MoneyWiseBasicResource.LOANINFO_NAME;
+            case PORTFOLIO -> MoneyWiseBasicResource.PORTFOLIO_NAME;
+            case PORTFOLIOINFO -> MoneyWiseBasicResource.PORTFOLIOINFO_NAME;
+            case TRANSACTION -> MoneyWiseBasicResource.TRANSACTION_NAME;
+            case TRANSACTIONINFO -> MoneyWiseBasicResource.TRANSINFO_NAME;
+            default -> throw new IllegalArgumentException();
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the dataType List.
+     *
+     * @param pType the dataType
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForDataList(final MoneyWiseBasicDataType pType) {
+        /* Create the map and return it */
+        return switch (pType) {
+            case DEPOSITCATEGORY -> MoneyWiseBasicResource.DEPOSITCAT_LIST;
+            case CASHCATEGORY -> MoneyWiseBasicResource.CASHCAT_LIST;
+            case LOANCATEGORY -> MoneyWiseBasicResource.LOANCAT_LIST;
+            case TRANSCATEGORY -> MoneyWiseBasicResource.TRANSCAT_LIST;
+            case EXCHANGERATE -> MoneyWiseBasicResource.XCHGRATE_LIST;
+            case TRANSTAG -> MoneyWiseBasicResource.TRANSTAG_LIST;
+            case REGION -> MoneyWiseBasicResource.REGION_LIST;
+            case PAYEE -> MoneyWiseBasicResource.PAYEE_LIST;
+            case PAYEEINFO -> MoneyWiseBasicResource.PAYEEINFO_LIST;
+            case SECURITY -> MoneyWiseBasicResource.SECURITY_LIST;
+            case SECURITYPRICE -> MoneyWiseBasicResource.SECURITYPRICE_LIST;
+            case SECURITYINFO -> MoneyWiseBasicResource.SECURITYINFO_LIST;
+            case DEPOSIT -> MoneyWiseBasicResource.DEPOSIT_LIST;
+            case DEPOSITRATE -> MoneyWiseBasicResource.DEPOSITRATE_LIST;
+            case DEPOSITINFO -> MoneyWiseBasicResource.DEPOSITINFO_LIST;
+            case CASH -> MoneyWiseBasicResource.CASH_LIST;
+            case CASHINFO -> MoneyWiseBasicResource.CASHINFO_LIST;
+            case LOAN -> MoneyWiseBasicResource.LOAN_LIST;
+            case LOANINFO -> MoneyWiseBasicResource.LOANINFO_LIST;
+            case PORTFOLIO -> MoneyWiseBasicResource.PORTFOLIO_LIST;
+            case PORTFOLIOINFO -> MoneyWiseBasicResource.PORTFOLIOINFO_LIST;
+            case TRANSACTION -> MoneyWiseBasicResource.TRANSACTION_LIST;
+            case TRANSACTIONINFO -> MoneyWiseBasicResource.TRANSINFO_LIST;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }
