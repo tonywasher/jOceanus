@@ -23,3 +23,10 @@ description = 'Tethys JavaFX Utilities'
 
 /* Register the project */
 registerProject(project)
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}

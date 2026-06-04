@@ -17,3 +17,10 @@ description = 'Metis Data Framework'
 
 /* Register the project */
 registerProject(project)
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}

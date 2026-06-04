@@ -21,3 +21,10 @@ splashScreen = "io/github/tonywasher/joceanus/moneywise/ui/icons/swing/MoneyWise
 
 /* Register the project */
 registerProject(project)
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}

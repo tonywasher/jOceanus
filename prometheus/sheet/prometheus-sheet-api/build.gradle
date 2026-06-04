@@ -15,3 +15,10 @@ description = 'Prometheus Sheet Service API'
 
 /* Register the project */
 registerProject(project)
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}
