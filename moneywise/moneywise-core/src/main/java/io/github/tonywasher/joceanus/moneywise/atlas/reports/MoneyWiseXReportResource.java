@@ -16,12 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.reports;
 
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
-import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -139,11 +137,6 @@ public enum MoneyWiseXReportResource implements OceanusBundleId {
     TAXCALC_TITLE("TaxCalc.Title");
 
     /**
-     * The Report Map.
-     */
-    private static final Map<MoneyWiseXReportType, OceanusBundleId> REPORT_MAP = buildReportMap();
-
-    /**
      * The Resource Loader.
      */
     private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseXAnalysisBucketResource.class.getCanonicalName(),
@@ -188,36 +181,5 @@ public enum MoneyWiseXReportResource implements OceanusBundleId {
 
         /* return the value */
         return theValue;
-    }
-
-    /**
-     * Build report map.
-     *
-     * @return the map
-     */
-    private static Map<MoneyWiseXReportType, OceanusBundleId> buildReportMap() {
-        /* Create the map and return it */
-        final Map<MoneyWiseXReportType, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseXReportType.class);
-        myMap.put(MoneyWiseXReportType.NETWORTH, TYPE_NETWORTH);
-        myMap.put(MoneyWiseXReportType.BALANCESHEET, TYPE_BALANCESHEET);
-        myMap.put(MoneyWiseXReportType.CASHFLOW, TYPE_CASHFLOW);
-        myMap.put(MoneyWiseXReportType.INCOMEEXPENSE, TYPE_INCEXP);
-        myMap.put(MoneyWiseXReportType.PORTFOLIO, TYPE_PORTFOLIO);
-        myMap.put(MoneyWiseXReportType.MARKETGROWTH, TYPE_MARKET);
-        myMap.put(MoneyWiseXReportType.TAXBASIS, TYPE_TAXBASIS);
-        myMap.put(MoneyWiseXReportType.TAXCALC, TYPE_TAXCALC);
-        myMap.put(MoneyWiseXReportType.ASSETGAINS, TYPE_ASSETGAINS);
-        myMap.put(MoneyWiseXReportType.CAPITALGAINS, TYPE_CAPITALGAINS);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for report type.
-     *
-     * @param pValue the Value
-     * @return the resource key
-     */
-    static OceanusBundleId getKeyForReportType(final MoneyWiseXReportType pValue) {
-        return OceanusBundleLoader.getKeyForEnum(REPORT_MAP, pValue);
     }
 }

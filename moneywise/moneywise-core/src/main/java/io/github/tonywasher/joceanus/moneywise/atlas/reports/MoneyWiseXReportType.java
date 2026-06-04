@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.reports;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+
 /**
  * Report Types.
  */
@@ -80,7 +82,7 @@ public enum MoneyWiseXReportType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseXReportResource.getKeyForReportType(this).getValue();
+            theName = bundleIdForReportType(this).getValue();
         }
 
         /* return the name */
@@ -118,5 +120,28 @@ public enum MoneyWiseXReportType {
      */
     public static MoneyWiseXReportType getDefault() {
         return NETWORTH;
+    }
+
+    /**
+     * Obtain the resource bundleId for the reportType.
+     *
+     * @param pType the reportType
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForReportType(final MoneyWiseXReportType pType) {
+        /* Create the map and return it */
+        return switch (pType) {
+            case NETWORTH -> MoneyWiseXReportResource.TYPE_NETWORTH;
+            case BALANCESHEET -> MoneyWiseXReportResource.TYPE_BALANCESHEET;
+            case CASHFLOW -> MoneyWiseXReportResource.TYPE_CASHFLOW;
+            case INCOMEEXPENSE -> MoneyWiseXReportResource.TYPE_INCEXP;
+            case PORTFOLIO -> MoneyWiseXReportResource.TYPE_PORTFOLIO;
+            case MARKETGROWTH -> MoneyWiseXReportResource.TYPE_MARKET;
+            case TAXBASIS -> MoneyWiseXReportResource.TYPE_TAXBASIS;
+            case TAXCALC -> MoneyWiseXReportResource.TYPE_TAXCALC;
+            case ASSETGAINS -> MoneyWiseXReportResource.TYPE_ASSETGAINS;
+            case CAPITALGAINS -> MoneyWiseXReportResource.TYPE_CAPITALGAINS;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.reports;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+
 /**
  * Report Types.
  */
@@ -80,7 +82,7 @@ public enum MoneyWiseReportType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseReportResource.getKeyForReportType(this).getValue();
+            theName = bundleIdForReportType(this).getValue();
         }
 
         /* return the name */
@@ -93,15 +95,10 @@ public enum MoneyWiseReportType {
      * @return true/false
      */
     public boolean isPointInTime() {
-        switch (this) {
-            case NETWORTH:
-            case PORTFOLIO:
-            case ASSETGAINS:
-            case CAPITALGAINS:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case NETWORTH, PORTFOLIO, ASSETGAINS, CAPITALGAINS -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -110,15 +107,10 @@ public enum MoneyWiseReportType {
      * @return true/false
      */
     public boolean needSecurities() {
-        switch (this) {
-            case MARKETGROWTH:
-            case PORTFOLIO:
-            case ASSETGAINS:
-            case CAPITALGAINS:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case MARKETGROWTH, PORTFOLIO, ASSETGAINS, CAPITALGAINS -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -128,5 +120,28 @@ public enum MoneyWiseReportType {
      */
     public static MoneyWiseReportType getDefault() {
         return NETWORTH;
+    }
+
+    /**
+     * Obtain the resource bundleId for the reportType.
+     *
+     * @param pType the reportType
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForReportType(final MoneyWiseReportType pType) {
+        /* Create the map and return it */
+        return switch (pType) {
+            case NETWORTH -> MoneyWiseReportResource.TYPE_NETWORTH;
+            case BALANCESHEET -> MoneyWiseReportResource.TYPE_BALANCESHEET;
+            case CASHFLOW -> MoneyWiseReportResource.TYPE_CASHFLOW;
+            case INCOMEEXPENSE -> MoneyWiseReportResource.TYPE_INCEXP;
+            case PORTFOLIO -> MoneyWiseReportResource.TYPE_PORTFOLIO;
+            case MARKETGROWTH -> MoneyWiseReportResource.TYPE_MARKET;
+            case TAXBASIS -> MoneyWiseReportResource.TYPE_TAXBASIS;
+            case TAXCALC -> MoneyWiseReportResource.TYPE_TAXCALC;
+            case ASSETGAINS -> MoneyWiseReportResource.TYPE_ASSETGAINS;
+            case CAPITALGAINS -> MoneyWiseReportResource.TYPE_CAPITALGAINS;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

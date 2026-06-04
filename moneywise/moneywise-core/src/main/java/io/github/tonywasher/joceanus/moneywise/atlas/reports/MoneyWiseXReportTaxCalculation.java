@@ -128,7 +128,7 @@ public class MoneyWiseXReportTaxCalculation
 
         /* Access the Totals */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTotalCell(myTable, MoneyWiseXReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTotalCell(myTable, MoneyWiseXReportConstants.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myTaxAnalysis.getTaxableIncome());
         theBuilder.makeTotalCell(myTable, myTaxAnalysis.getTaxDue());
         theBuilder.startTotalRow(myTable);
