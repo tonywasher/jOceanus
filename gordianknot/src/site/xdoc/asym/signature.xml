@@ -11,6 +11,7 @@
                     and then signatures are generated or verified  by the signer.</p>
                 <p>The <b>LMS</b> and <b>XMSS</b> signature schemes are stateful signature schemes and as such their keyPairs support the
                     <b>GordianStateAwareKeyPair</b> interface which allows sharding of the privateKey</p>
+                <p>The <b>MLDSA</b>, <b>SLHDSA</b> and <b>EDDSA</b> algorithms allow a context to be specified in the parameters</p>
             </subsection>
             <subsection name="Sample">
                 <source>
@@ -110,7 +111,7 @@ final boolean verified = mySigner.verify(mySignature);
                     <tr><td>DSTU4145</td><td>Native</td></tr>
                     <tr><td>GOST2012</td><td>Native</td></tr>
                     <tr><td>SM2</td><td>Native</td></tr>
-                    <tr><td>EdDSA</td><td>Native</td></tr>
+                    <tr><td>EdDSA</td><td>Native, PreHash</td></tr>
                     <tr><td>SLHDSA</td><td>Native</td></tr>
                     <tr><td>MLDSA</td><td>Native</td></tr>
                     <tr><td>FALCON</td><td>Native</td></tr>

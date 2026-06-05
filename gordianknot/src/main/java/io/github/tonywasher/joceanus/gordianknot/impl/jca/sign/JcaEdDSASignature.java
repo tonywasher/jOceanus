@@ -21,16 +21,26 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreEdwardsSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair;
+import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
+
+import java.security.InvalidAlgorithmParameterException;
 
 /**
  * EdDSA signature.
  */
 public class JcaEdDSASignature
         extends JcaSignature {
+    /**
+     * Is this a preHash signature?
+     */
+    private final boolean preHash;
+
     /**
      * Constructor.
      *
@@ -41,6 +51,9 @@ public class JcaEdDSASignature
                       final GordianSignatureSpec pSignatureSpec) {
         /* Initialise class */
         super(pFactory, pSignatureSpec);
+
+        /* Determine preHash */
+        preHash = GordianSignatureType.PREHASH.equals(pSignatureSpec.getSignatureType());
     }
 
     @Override
@@ -50,6 +63,7 @@ public class JcaEdDSASignature
         JcaKeyPair.checkKeyPair(myPair);
         final String mySignName = getAlgorithmForKeyPair(myPair);
         setSigner(getJavaSignature(mySignName, false));
+        setParameters(mySignName, pParams.getContext());
 
         /* pass on call */
         super.initForSigning(pParams);
@@ -62,9 +76,35 @@ public class JcaEdDSASignature
         JcaKeyPair.checkKeyPair(myPair);
         final String mySignName = getAlgorithmForKeyPair(myPair);
         setSigner(getJavaSignature(mySignName, false));
+        setParameters(mySignName, pParams.getContext());
 
         /* pass on call */
         super.initForVerify(pParams);
+    }
+
+    /**
+     * Set parameters.
+     *
+     * @param pSignName the signature algorithm
+     * @throws GordianException on error
+     */
+    private void setParameters(final String pSignName,
+                               final byte[] pContext) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Set the EdDSA parameters */
+            final EdDSAParameterSpec myParams = new EdDSAParameterSpec(pSignName, preHash, pContext);
+            getSigner().setParameter(myParams);
+
+            /* Handle exceptions */
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new GordianCryptoException("Failed to set parameter", e);
+        }
+    }
+
+    @Override
+    boolean setContextParameter() {
+        return false;
     }
 
     /**

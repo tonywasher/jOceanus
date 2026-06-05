@@ -172,8 +172,9 @@ public abstract class GordianCoreSignature
         theKeyPair = pParams.getKeyPair();
         theContext = pParams.getContext();
 
-        /* Check that the keyPair matches */
+        /* Check that the keyPair matches and that any context is supported */
         checkKeyPair(theKeyPair);
+        checkContext(theContext);
     }
 
     /**

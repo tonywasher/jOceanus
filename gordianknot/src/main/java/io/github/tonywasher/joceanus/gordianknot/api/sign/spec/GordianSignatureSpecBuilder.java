@@ -150,6 +150,15 @@ public interface GordianSignatureSpecBuilder {
     }
 
     /**
+     * Create eddsaPHSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec eddsaph() {
+        return withKeyPairType(GordianKeyPairType.EDDSA).withSignatureType(GordianSignatureType.PREHASH).build();
+    }
+
+    /**
      * Create SLHDSASpec.
      *
      * @return the SignatureSpec

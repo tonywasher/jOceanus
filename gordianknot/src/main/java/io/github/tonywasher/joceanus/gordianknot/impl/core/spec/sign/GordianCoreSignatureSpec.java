@@ -146,7 +146,7 @@ public class GordianCoreSignatureSpec
      */
     public boolean supportsContext() {
         return switch (theKeyPairType.getType()) {
-            case MLDSA, SLHDSA -> true;
+            case MLDSA, SLHDSA, EDDSA -> true;
             default -> false;
         };
     }

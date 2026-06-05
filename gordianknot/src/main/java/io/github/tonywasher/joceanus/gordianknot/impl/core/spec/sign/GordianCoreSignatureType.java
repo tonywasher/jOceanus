@@ -82,7 +82,7 @@ public final class GordianCoreSignatureType {
      */
     public static boolean hasPreHash(final GordianKeyPairType pKeyType) {
         return switch (pKeyType) {
-            case XMSS, RSA -> true;
+            case XMSS, RSA, EDDSA -> true;
             default -> false;
         };
     }

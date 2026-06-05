@@ -24,20 +24,47 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
  */
 public interface GordianSignParamsBuilder {
     /**
+     * use keyPair.
+     *
+     * @param pKeyPair the keyPair
+     * @return the builder
+     */
+    GordianSignParamsBuilder withKeyPair(GordianKeyPair pKeyPair);
+
+    /**
+     * use context.
+     *
+     * @param pContext the context
+     * @return the Builder
+     */
+    GordianSignParamsBuilder withContext(byte[] pContext);
+
+    /**
+     * Build signatureParams.
+     *
+     * @return the signParams
+     */
+    GordianSignParams build();
+
+    /**
      * Create keyPair parameters.
      *
      * @param pKeyPair the keyPair
      * @return the new params
      */
-    GordianSignParams keyPair(GordianKeyPair pKeyPair);
+    default GordianSignParams keyPair(final GordianKeyPair pKeyPair) {
+        return withKeyPair(pKeyPair).build();
+    }
 
     /**
-     * Create keyPair and context parameters.
+     * Create keyPair and Context parameters.
      *
      * @param pKeyPair the keyPair
      * @param pContext the context
      * @return the new params
      */
-    GordianSignParams keyPair(GordianKeyPair pKeyPair,
-                              byte[] pContext);
+    default GordianSignParams keyPairAndContext(final GordianKeyPair pKeyPair,
+                                                final byte[] pContext) {
+        return withKeyPair(pKeyPair).withContext(pContext).build();
+    }
 }
