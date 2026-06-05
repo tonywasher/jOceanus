@@ -129,7 +129,6 @@ public enum MoneyWiseXReportType {
      * @return the resource bundleId
      */
     private static OceanusBundleId bundleIdForReportType(final MoneyWiseXReportType pType) {
-        /* Create the map and return it */
         return switch (pType) {
             case NETWORTH -> MoneyWiseXReportResource.TYPE_NETWORTH;
             case BALANCESHEET -> MoneyWiseXReportResource.TYPE_BALANCESHEET;

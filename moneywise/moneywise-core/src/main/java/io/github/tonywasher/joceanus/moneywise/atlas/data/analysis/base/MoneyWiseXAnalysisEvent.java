@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
@@ -32,7 +27,13 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -109,7 +110,7 @@ public class MoneyWiseXAnalysisEvent
      * @param pList  the owning list
      * @param pTrans the transaction.
      */
-    public MoneyWiseXAnalysisEvent(final MoneyWiseXAnalysisEventList pList,
+    public MoneyWiseXAnalysisEvent(final PrometheusDataList<MoneyWiseXAnalysisEvent> pList,
                                    final MoneyWiseTransaction pTrans) {
         super(pList, pTrans.getIndexedId());
         theEventType = MoneyWiseXAnalysisEventType.TRANSACTION;
@@ -128,7 +129,7 @@ public class MoneyWiseXAnalysisEvent
      * @param pEventType the eventType.
      * @param pDate      the date
      */
-    public MoneyWiseXAnalysisEvent(final MoneyWiseXAnalysisEventList pList,
+    public MoneyWiseXAnalysisEvent(final PrometheusDataList<MoneyWiseXAnalysisEvent> pList,
                                    final MoneyWiseXAnalysisEventType pEventType,
                                    final OceanusDate pDate) {
         super(pList, determineId(pEventType, pDate));
@@ -156,17 +157,12 @@ public class MoneyWiseXAnalysisEvent
     private static Integer determineId(final MoneyWiseXAnalysisEventType pEventType,
                                        final OceanusDate pDate) {
         final int myId = NONTRANS + (pDate.getId() << 2);
-        switch (pEventType) {
-            case SECURITYPRICE:
-                return myId - 1;
-            case XCHANGERATE:
-                return myId;
-            case DEPOSITRATE:
-                return myId + 1;
-            case OPENINGBALANCE:
-            default:
-                return myId + 2;
-        }
+        return switch (pEventType) {
+            case SECURITYPRICE -> myId - 1;
+            case XCHANGERATE -> myId;
+            case DEPOSITRATE -> myId + 1;
+            default -> myId + 2;
+        };
     }
 
     /**

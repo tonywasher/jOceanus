@@ -16,12 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -130,16 +128,6 @@ public enum MoneyWiseXAnalysisBaseResource
     HISTORY_VALUES("History.Values");
 
     /**
-     * The Name Map.
-     */
-    private static final Map<MoneyWiseXAnalysisDataType, OceanusBundleId> NAME_MAP = buildNameMap();
-
-    /**
-     * The List Map.
-     */
-    private static final Map<MoneyWiseXAnalysisDataType, OceanusBundleId> LIST_MAP = buildListMap();
-
-    /**
      * The Resource Loader.
      */
     private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseXAnalysisBaseResource.class.getCanonicalName(),
@@ -189,49 +177,5 @@ public enum MoneyWiseXAnalysisBaseResource
     @Override
     public String getId() {
         return getValue();
-    }
-
-    /**
-     * Build name map.
-     *
-     * @return the map
-     */
-    private static Map<MoneyWiseXAnalysisDataType, OceanusBundleId> buildNameMap() {
-        /* Create the map and return it */
-        final Map<MoneyWiseXAnalysisDataType, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseXAnalysisDataType.class);
-        myMap.put(MoneyWiseXAnalysisDataType.EVENT, EVENT);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for data item.
-     *
-     * @param pValue the Value
-     * @return the resource key
-     */
-    static OceanusBundleId getKeyForDataType(final MoneyWiseXAnalysisDataType pValue) {
-        return OceanusBundleLoader.getKeyForEnum(NAME_MAP, pValue);
-    }
-
-    /**
-     * Build list map.
-     *
-     * @return the map
-     */
-    private static Map<MoneyWiseXAnalysisDataType, OceanusBundleId> buildListMap() {
-        /* Create the map and return it */
-        final Map<MoneyWiseXAnalysisDataType, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseXAnalysisDataType.class);
-        myMap.put(MoneyWiseXAnalysisDataType.EVENT, EVENTLIST);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for data list.
-     *
-     * @param pValue the Value
-     * @return the resource key
-     */
-    static OceanusBundleId getKeyForDataList(final MoneyWiseXAnalysisDataType pValue) {
-        return OceanusBundleLoader.getKeyForEnum(LIST_MAP, pValue);
     }
 }

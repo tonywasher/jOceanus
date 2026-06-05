@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSimpleId;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * MoneyWise Analysis Item Types.
@@ -70,7 +71,7 @@ public enum MoneyWiseXAnalysisDataType
         /* If we have not yet loaded the id */
         if (theNameId == null) {
             /* Load the id */
-            theNameId = MetisFieldSimpleId.convertResource(MoneyWiseXAnalysisBaseResource.getKeyForDataType(this));
+            theNameId = MetisFieldSimpleId.convertResource(bundleIdForDataType(this));
         }
 
         /* Return the name id */
@@ -96,7 +97,7 @@ public enum MoneyWiseXAnalysisDataType
         /* If we have not yet loaded the id */
         if (theListId == null) {
             /* Load the id */
-            theListId = MetisFieldSimpleId.convertResource(MoneyWiseXAnalysisBaseResource.getKeyForDataList(this));
+            theListId = MetisFieldSimpleId.convertResource(bundleIdForDataList(this));
         }
 
         /* return the list id */
@@ -125,5 +126,31 @@ public enum MoneyWiseXAnalysisDataType
     @Override
     public Integer getItemKey() {
         return theKey;
+    }
+
+    /**
+     * Obtain the resource bundleId for the dataTypeList.
+     *
+     * @param pType the dataType
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForDataType(final MoneyWiseXAnalysisDataType pType) {
+        if (pType == EVENT) {
+            return MoneyWiseXAnalysisBaseResource.EVENT;
+        }
+        throw new IllegalArgumentException();
+    }
+
+    /**
+     * Obtain the resource bundleId for the dataTypeList.
+     *
+     * @param pType the dataType
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForDataList(final MoneyWiseXAnalysisDataType pType) {
+        if (pType == EVENT) {
+            return MoneyWiseXAnalysisBaseResource.EVENTLIST;
+        }
+        throw new IllegalArgumentException();
     }
 }

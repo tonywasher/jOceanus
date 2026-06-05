@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisAttribute;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * SecurityAttribute enumeration.
@@ -164,7 +165,7 @@ public enum MoneyWiseXAnalysisSecurityAttr
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseXAnalysisValuesResource.getKeyForSecurityAttr(this).getValue();
+            theName = bundleIdForAttribute(this).getValue();
         }
 
         /* return the name */
@@ -189,6 +190,44 @@ public enum MoneyWiseXAnalysisSecurityAttr
             case CASHTYPE -> MetisDataType.ENUM;
             case STARTDATE -> MetisDataType.DATE;
             default -> MetisDataType.MONEY;
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the attribute.
+     *
+     * @param pAttr the attribute
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForAttribute(final MoneyWiseXAnalysisSecurityAttr pAttr) {
+        return switch (pAttr) {
+            case VALUE -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_VALUE;
+            case VALUATION -> MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_VALUATION;
+            case VALUEDELTA -> MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_VALUEDELTA;
+            case EXCHANGERATE -> MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_EXCHANGERATE;
+            case UNITS -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_UNITS;
+            case RESIDUALCOST -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_RESIDUALCOST;
+            case DIVIDEND -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_DIVIDEND;
+            case REALISEDGAINS -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_REALISEDGAINS;
+            case UNREALISEDGAINS -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_UNREALISEDGAINS;
+            case GAINSADJUST -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_GAINSADJUST;
+            case MARKETPROFIT -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_MARKETPROFIT;
+            case PROFIT -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_PROFIT;
+            case RETURNEDCASH -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_RETURNEDCASH;
+            case XFERREDVALUE -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_XFERREDVALUE;
+            case XFERREDCOST -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_XFERREDCOST;
+            case CASHINVESTED -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_CASHINVESTED;
+            case CAPITALGAIN -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_CAPITALGAIN;
+            case ALLOWEDCOST -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_ALLOWEDCOST;
+            case PRICE -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_PRICE;
+            case STARTDATE -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_STARTDATE;
+            case FUNDED -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_FUNDED;
+            case SLICEGAIN -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_SLICEGAIN;
+            case SLICEYEARS -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_SLICEYEARS;
+            case CONSIDERATION -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_CONSIDERATION;
+            case COSTDILUTION -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_COSTDILUTION;
+            case CASHTYPE -> MoneyWiseXAnalysisValuesResource.SECURITYATTR_CASHTYPE;
+            default -> throw new IllegalArgumentException();
         };
     }
 }
