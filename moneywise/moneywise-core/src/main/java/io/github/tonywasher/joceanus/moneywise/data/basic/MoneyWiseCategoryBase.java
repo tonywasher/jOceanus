@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
@@ -25,9 +23,12 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorParentDefaults;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCategoryInterface;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
@@ -614,7 +615,7 @@ public abstract class MoneyWiseCategoryBase
          * @param pClass    the class of the item
          * @param pItemType the item type
          */
-        protected MoneyWiseCategoryBaseList(final MoneyWiseDataSet pData,
+        protected MoneyWiseCategoryBaseList(final PrometheusDataSet pData,
                                             final Class<T> pClass,
                                             final MoneyWiseBasicDataType pItemType) {
             super(pClass, pData, pItemType, PrometheusListStyle.CORE);

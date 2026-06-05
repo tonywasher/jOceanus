@@ -46,6 +46,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataMapItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
@@ -760,7 +761,7 @@ public class MoneyWisePortfolio
          *
          * @param pData the DataSet for the list
          */
-        public MoneyWisePortfolioList(final MoneyWiseDataSet pData) {
+        public MoneyWisePortfolioList(final PrometheusDataSet pData) {
             super(pData, MoneyWisePortfolio.class, MoneyWiseBasicDataType.PORTFOLIO);
         }
 

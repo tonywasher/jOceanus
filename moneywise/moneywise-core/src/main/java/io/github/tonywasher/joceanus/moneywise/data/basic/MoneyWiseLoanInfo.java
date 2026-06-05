@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
@@ -26,10 +25,13 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfo
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -110,7 +112,7 @@ public class MoneyWiseLoanInfo
             setValue(pValues.getValue(PrometheusDataResource.DATAINFO_VALUE));
 
             /* Access the LoanInfoSet and register this data */
-            final MoneyWiseLoanInfoSet mySet = getOwner().getInfoSet();
+            final PrometheusDataInfoSet<MoneyWiseLoanInfo> mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
 
         } catch (OceanusException e) {
@@ -157,7 +159,7 @@ public class MoneyWiseLoanInfo
     @Override
     public void deRegister() {
         /* Access the LoanInfoSet and register this value */
-        final MoneyWiseLoanInfoSet mySet = getOwner().getInfoSet();
+        final PrometheusDataInfoSet<MoneyWiseLoanInfo> mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
@@ -172,7 +174,7 @@ public class MoneyWiseLoanInfo
         resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getLoans());
 
         /* Access the LoanInfoSet and register this data */
-        final MoneyWiseLoanInfoSet mySet = getOwner().getInfoSet();
+        final PrometheusDataInfoSet<MoneyWiseLoanInfo> mySet = getOwner().getInfoSet();
         mySet.registerInfo(this);
     }
 
@@ -197,12 +199,9 @@ public class MoneyWiseLoanInfo
     @Override
     public boolean applyChanges(final PrometheusDataItem pInfo) {
         /* Can only update from LoanInfo */
-        if (!(pInfo instanceof MoneyWiseLoanInfo)) {
+        if (!(pInfo instanceof MoneyWiseLoanInfo myLoanInfo)) {
             return false;
         }
-
-        /* Access as LoanInfo */
-        final MoneyWiseLoanInfo myLoanInfo = (MoneyWiseLoanInfo) pInfo;
 
         /* Store the current detail into history */
         pushHistory();
@@ -231,7 +230,7 @@ public class MoneyWiseLoanInfo
          *
          * @param pData the DataSet for the list
          */
-        protected MoneyWiseLoanInfoList(final MoneyWiseDataSet pData) {
+        protected MoneyWiseLoanInfoList(final PrometheusDataSet pData) {
             super(MoneyWiseLoanInfo.class, pData, MoneyWiseBasicDataType.LOANINFO, PrometheusListStyle.CORE);
         }
 

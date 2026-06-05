@@ -16,11 +16,13 @@
  */
 package io.github.tonywasher.joceanus.moneywise.sheets;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCashCategoryType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetStaticData;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
 
 /**
  * SheetStaticData extension for CashCategoryType.
@@ -39,7 +41,7 @@ public final class MoneyWiseSheetCashCategoryType
      *
      * @param pReader the spreadsheet reader
      */
-    MoneyWiseSheetCashCategoryType(final MoneyWiseReader pReader) {
+    MoneyWiseSheetCashCategoryType(final PrometheusSheetReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_CASHCATTYPES);
 
@@ -53,7 +55,7 @@ public final class MoneyWiseSheetCashCategoryType
      *
      * @param pWriter the spreadsheet writer
      */
-    MoneyWiseSheetCashCategoryType(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetCashCategoryType(final PrometheusSheetWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_CASHCATTYPES);
 

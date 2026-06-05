@@ -30,6 +30,7 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -268,7 +269,7 @@ public final class MoneyWiseCashCategory
          *
          * @param pData the DataSet for the list
          */
-        protected MoneyWiseCashCategoryList(final MoneyWiseDataSet pData) {
+        protected MoneyWiseCashCategoryList(final PrometheusDataSet pData) {
             super(pData, MoneyWiseCashCategory.class, MoneyWiseBasicDataType.CASHCATEGORY);
         }
 

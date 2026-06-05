@@ -17,3 +17,10 @@ description = 'Prometheus Sheet HSSF Service'
 
 /* Register the project */
 registerProject(project)
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}

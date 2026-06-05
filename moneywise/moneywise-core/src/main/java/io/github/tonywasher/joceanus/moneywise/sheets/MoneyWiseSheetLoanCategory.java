@@ -16,13 +16,15 @@
  */
 package io.github.tonywasher.joceanus.moneywise.sheets;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
 
 /**
  * SheetDataItem extension for LoanCategory.
@@ -61,7 +63,7 @@ public final class MoneyWiseSheetLoanCategory
      *
      * @param pReader the spreadsheet reader
      */
-    MoneyWiseSheetLoanCategory(final MoneyWiseReader pReader) {
+    MoneyWiseSheetLoanCategory(final PrometheusSheetReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_LOANCATEGORIES);
 
@@ -75,7 +77,7 @@ public final class MoneyWiseSheetLoanCategory
      *
      * @param pWriter the spreadsheet writer
      */
-    MoneyWiseSheetLoanCategory(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetLoanCategory(final PrometheusSheetWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_LOANCATEGORIES);
 

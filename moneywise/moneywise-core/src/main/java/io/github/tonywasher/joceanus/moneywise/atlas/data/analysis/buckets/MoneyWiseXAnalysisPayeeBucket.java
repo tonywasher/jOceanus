@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -39,6 +34,11 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Currency;
@@ -679,7 +679,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
             /* Return the first payee in the list if it exists */
             return isEmpty()
                     ? null
-                    : theList.getUnderlyingList().get(0);
+                    : theList.getUnderlyingList().getFirst();
         }
 
         /**

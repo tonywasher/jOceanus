@@ -16,13 +16,11 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
-import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -816,26 +814,6 @@ public enum MoneyWiseBasicResource
     SCHEDULE_LIST("Schedule.List");
 
     /**
-     * The Name Map.
-     */
-    private static final Map<MoneyWiseBasicDataType, OceanusBundleId> NAME_MAP = buildNameMap();
-
-    /**
-     * The List Map.
-     */
-    private static final Map<MoneyWiseBasicDataType, OceanusBundleId> LIST_MAP = buildListMap();
-
-    /**
-     * The Asset Type Map.
-     */
-    private static final Map<MoneyWiseAssetType, OceanusBundleId> TYPE_MAP = buildTypeMap();
-
-    /**
-     * The Asset Direction Map.
-     */
-    private static final Map<MoneyWiseAssetDirection, OceanusBundleId> DIRECTION_MAP = buildDirectionMap();
-
-    /**
      * The Resource Loader.
      */
     private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseBasicResource.class.getCanonicalName(),
@@ -900,145 +878,5 @@ public enum MoneyWiseBasicResource
     @Override
     public String toString() {
         return getValue();
-    }
-
-    /**
-     * Build asset type map.
-     *
-     * @return the map
-     */
-    private static Map<MoneyWiseAssetType, OceanusBundleId> buildTypeMap() {
-        /* Create the map and return it */
-        final Map<MoneyWiseAssetType, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseAssetType.class);
-        myMap.put(MoneyWiseAssetType.PAYEE, ASSETTYPE_PAYEE);
-        myMap.put(MoneyWiseAssetType.SECURITY, ASSETTYPE_SECURITY);
-        myMap.put(MoneyWiseAssetType.DEPOSIT, ASSETTYPE_DEPOSIT);
-        myMap.put(MoneyWiseAssetType.CASH, ASSETTYPE_CASH);
-        myMap.put(MoneyWiseAssetType.AUTOEXPENSE, ASSETTYPE_AUTOEXPENSE);
-        myMap.put(MoneyWiseAssetType.LOAN, ASSETTYPE_LOAN);
-        myMap.put(MoneyWiseAssetType.PORTFOLIO, ASSETTYPE_PORTFOLIO);
-        myMap.put(MoneyWiseAssetType.SECURITYHOLDING, ASSETTYPE_SECURITYHOLDING);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for asset type.
-     *
-     * @param pValue the Value
-     * @return the resource key
-     */
-    static OceanusBundleId getKeyForAssetType(final MoneyWiseAssetType pValue) {
-        return OceanusBundleLoader.getKeyForEnum(TYPE_MAP, pValue);
-    }
-
-    /**
-     * Build asset direction map.
-     *
-     * @return the map
-     */
-    private static Map<MoneyWiseAssetDirection, OceanusBundleId> buildDirectionMap() {
-        /* Create the map and return it */
-        final Map<MoneyWiseAssetDirection, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseAssetDirection.class);
-        myMap.put(MoneyWiseAssetDirection.TO, ASSETDIRECTION_TO);
-        myMap.put(MoneyWiseAssetDirection.FROM, ASSETDIRECTION_FROM);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for asset direction.
-     *
-     * @param pValue the Value
-     * @return the resource key
-     */
-    static OceanusBundleId getKeyForAssetDirection(final MoneyWiseAssetDirection pValue) {
-        return OceanusBundleLoader.getKeyForEnum(DIRECTION_MAP, pValue);
-    }
-
-    /**
-     * Build name map.
-     *
-     * @return the map
-     */
-    private static Map<MoneyWiseBasicDataType, OceanusBundleId> buildNameMap() {
-        /* Create the map and return it */
-        final Map<MoneyWiseBasicDataType, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseBasicDataType.class);
-        myMap.put(MoneyWiseBasicDataType.DEPOSITCATEGORY, DEPOSITCAT_NAME);
-        myMap.put(MoneyWiseBasicDataType.CASHCATEGORY, CASHCAT_NAME);
-        myMap.put(MoneyWiseBasicDataType.LOANCATEGORY, LOANCAT_NAME);
-        myMap.put(MoneyWiseBasicDataType.TRANSCATEGORY, TRANSCAT_NAME);
-        myMap.put(MoneyWiseBasicDataType.EXCHANGERATE, XCHGRATE_NAME);
-        myMap.put(MoneyWiseBasicDataType.TRANSTAG, TRANSTAG_NAME);
-        myMap.put(MoneyWiseBasicDataType.REGION, REGION_NAME);
-        myMap.put(MoneyWiseBasicDataType.PAYEE, PAYEE_NAME);
-        myMap.put(MoneyWiseBasicDataType.PAYEEINFO, PAYEEINFO_NAME);
-        myMap.put(MoneyWiseBasicDataType.SECURITY, SECURITY_NAME);
-        myMap.put(MoneyWiseBasicDataType.SECURITYPRICE, SECURITYPRICE_NAME);
-        myMap.put(MoneyWiseBasicDataType.SECURITYINFO, SECURITYINFO_NAME);
-        myMap.put(MoneyWiseBasicDataType.DEPOSIT, DEPOSIT_NAME);
-        myMap.put(MoneyWiseBasicDataType.DEPOSITRATE, DEPOSITRATE_NAME);
-        myMap.put(MoneyWiseBasicDataType.DEPOSITINFO, DEPOSITINFO_NAME);
-        myMap.put(MoneyWiseBasicDataType.CASH, CASH_NAME);
-        myMap.put(MoneyWiseBasicDataType.CASHINFO, CASHINFO_NAME);
-        myMap.put(MoneyWiseBasicDataType.LOAN, LOAN_NAME);
-        myMap.put(MoneyWiseBasicDataType.LOANINFO, LOANINFO_NAME);
-        myMap.put(MoneyWiseBasicDataType.PORTFOLIO, PORTFOLIO_NAME);
-        myMap.put(MoneyWiseBasicDataType.PORTFOLIOINFO, PORTFOLIOINFO_NAME);
-        myMap.put(MoneyWiseBasicDataType.TRANSACTION, TRANSACTION_NAME);
-        myMap.put(MoneyWiseBasicDataType.TRANSACTIONINFO, TRANSINFO_NAME);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for data item.
-     *
-     * @param pValue the Value
-     * @return the resource key
-     */
-    static OceanusBundleId getKeyForDataType(final MoneyWiseBasicDataType pValue) {
-        return OceanusBundleLoader.getKeyForEnum(NAME_MAP, pValue);
-    }
-
-    /**
-     * Build list map.
-     *
-     * @return the map
-     */
-    private static Map<MoneyWiseBasicDataType, OceanusBundleId> buildListMap() {
-        /* Create the map and return it */
-        final Map<MoneyWiseBasicDataType, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseBasicDataType.class);
-        myMap.put(MoneyWiseBasicDataType.DEPOSITCATEGORY, DEPOSITCAT_LIST);
-        myMap.put(MoneyWiseBasicDataType.CASHCATEGORY, CASHCAT_LIST);
-        myMap.put(MoneyWiseBasicDataType.LOANCATEGORY, LOANCAT_LIST);
-        myMap.put(MoneyWiseBasicDataType.TRANSCATEGORY, TRANSCAT_LIST);
-        myMap.put(MoneyWiseBasicDataType.EXCHANGERATE, XCHGRATE_LIST);
-        myMap.put(MoneyWiseBasicDataType.TRANSTAG, TRANSTAG_LIST);
-        myMap.put(MoneyWiseBasicDataType.REGION, REGION_LIST);
-        myMap.put(MoneyWiseBasicDataType.PAYEE, PAYEE_LIST);
-        myMap.put(MoneyWiseBasicDataType.PAYEEINFO, PAYEEINFO_LIST);
-        myMap.put(MoneyWiseBasicDataType.SECURITY, SECURITY_LIST);
-        myMap.put(MoneyWiseBasicDataType.SECURITYPRICE, SECURITYPRICE_LIST);
-        myMap.put(MoneyWiseBasicDataType.SECURITYINFO, SECURITYINFO_LIST);
-        myMap.put(MoneyWiseBasicDataType.DEPOSIT, DEPOSIT_LIST);
-        myMap.put(MoneyWiseBasicDataType.DEPOSITRATE, DEPOSITRATE_LIST);
-        myMap.put(MoneyWiseBasicDataType.DEPOSITINFO, DEPOSITINFO_LIST);
-        myMap.put(MoneyWiseBasicDataType.CASH, CASH_LIST);
-        myMap.put(MoneyWiseBasicDataType.CASHINFO, CASHINFO_LIST);
-        myMap.put(MoneyWiseBasicDataType.LOAN, LOAN_LIST);
-        myMap.put(MoneyWiseBasicDataType.LOANINFO, LOANINFO_LIST);
-        myMap.put(MoneyWiseBasicDataType.PORTFOLIO, PORTFOLIO_LIST);
-        myMap.put(MoneyWiseBasicDataType.PORTFOLIOINFO, PORTFOLIOINFO_LIST);
-        myMap.put(MoneyWiseBasicDataType.TRANSACTION, TRANSACTION_LIST);
-        myMap.put(MoneyWiseBasicDataType.TRANSACTIONINFO, TRANSINFO_LIST);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for data list.
-     *
-     * @param pValue the Value
-     * @return the resource key
-     */
-    static OceanusBundleId getKeyForDataList(final MoneyWiseBasicDataType pValue) {
-        return OceanusBundleLoader.getKeyForEnum(LIST_MAP, pValue);
     }
 }

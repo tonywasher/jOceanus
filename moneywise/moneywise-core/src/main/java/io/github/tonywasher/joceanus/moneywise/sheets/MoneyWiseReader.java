@@ -71,32 +71,20 @@ public class MoneyWiseReader
      */
     private PrometheusSheetDataItem<?> newSheet(final MoneyWiseStaticDataType pDataType) {
         /* Switch on data Type */
-        switch (pDataType) {
-            case DEPOSITTYPE:
-                return new MoneyWiseSheetDepositCategoryType(this);
-            case CASHTYPE:
-                return new MoneyWiseSheetCashCategoryType(this);
-            case LOANTYPE:
-                return new MoneyWiseSheetLoanCategoryType(this);
-            case PORTFOLIOTYPE:
-                return new MoneyWiseSheetPortfolioType(this);
-            case PAYEETYPE:
-                return new MoneyWiseSheetPayeeType(this);
-            case SECURITYTYPE:
-                return new MoneyWiseSheetSecurityType(this);
-            case TRANSTYPE:
-                return new MoneyWiseSheetTransCategoryType(this);
-            case ACCOUNTINFOTYPE:
-                return new MoneyWiseSheetAccountInfoType(this);
-            case TRANSINFOTYPE:
-                return new MoneyWiseSheetTransInfoType(this);
-            case CURRENCY:
-                return new MoneyWiseSheetCurrency(this);
-            case TAXBASIS:
-                return new MoneyWiseSheetTaxBasis(this);
-            default:
-                throw new IllegalArgumentException(pDataType.toString());
-        }
+        return switch (pDataType) {
+            case DEPOSITTYPE -> new MoneyWiseSheetDepositCategoryType(this);
+            case CASHTYPE -> new MoneyWiseSheetCashCategoryType(this);
+            case LOANTYPE -> new MoneyWiseSheetLoanCategoryType(this);
+            case PORTFOLIOTYPE -> new MoneyWiseSheetPortfolioType(this);
+            case PAYEETYPE -> new MoneyWiseSheetPayeeType(this);
+            case SECURITYTYPE -> new MoneyWiseSheetSecurityType(this);
+            case TRANSTYPE -> new MoneyWiseSheetTransCategoryType(this);
+            case ACCOUNTINFOTYPE -> new MoneyWiseSheetAccountInfoType(this);
+            case TRANSINFOTYPE -> new MoneyWiseSheetTransInfoType(this);
+            case CURRENCY -> new MoneyWiseSheetCurrency(this);
+            case TAXBASIS -> new MoneyWiseSheetTaxBasis(this);
+            default -> throw new IllegalArgumentException(pDataType.toString());
+        };
     }
 
     /**
@@ -107,55 +95,31 @@ public class MoneyWiseReader
      */
     private PrometheusSheetDataItem<?> newSheet(final MoneyWiseBasicDataType pDataType) {
         /* Switch on data Type */
-        switch (pDataType) {
-            case TRANSTAG:
-                return new MoneyWiseSheetTransTag(this);
-            case REGION:
-                return new MoneyWiseSheetRegion(this);
-            case DEPOSITCATEGORY:
-                return new MoneyWiseSheetDepositCategory(this);
-            case CASHCATEGORY:
-                return new MoneyWiseSheetCashCategory(this);
-            case LOANCATEGORY:
-                return new MoneyWiseSheetLoanCategory(this);
-            case TRANSCATEGORY:
-                return new MoneyWiseSheetTransCategory(this);
-            case EXCHANGERATE:
-                return new MoneyWiseSheetExchangeRate(this);
-            case PAYEE:
-                return new MoneyWiseSheetPayee(this);
-            case PAYEEINFO:
-                return new MoneyWiseSheetPayeeInfo(this);
-            case SECURITY:
-                return new MoneyWiseSheetSecurity(this);
-            case SECURITYPRICE:
-                return new MoneyWiseSheetSecurityPrice(this);
-            case SECURITYINFO:
-                return new MoneyWiseSheetSecurityInfo(this);
-            case DEPOSIT:
-                return new MoneyWiseSheetDeposit(this);
-            case DEPOSITRATE:
-                return new MoneyWiseSheetDepositRate(this);
-            case DEPOSITINFO:
-                return new MoneyWiseSheetDepositInfo(this);
-            case CASH:
-                return new MoneyWiseSheetCash(this);
-            case CASHINFO:
-                return new MoneyWiseSheetCashInfo(this);
-            case LOAN:
-                return new MoneyWiseSheetLoan(this);
-            case LOANINFO:
-                return new MoneyWiseSheetLoanInfo(this);
-            case PORTFOLIO:
-                return new MoneyWiseSheetPortfolio(this);
-            case PORTFOLIOINFO:
-                return new MoneyWiseSheetPortfolioInfo(this);
-            case TRANSACTION:
-                return new MoneyWiseSheetTransaction(this);
-            case TRANSACTIONINFO:
-                return new MoneyWiseSheetTransInfo(this);
-            default:
-                throw new IllegalArgumentException(pDataType.toString());
-        }
+        return switch (pDataType) {
+            case TRANSTAG -> new MoneyWiseSheetTransTag(this);
+            case REGION -> new MoneyWiseSheetRegion(this);
+            case DEPOSITCATEGORY -> new MoneyWiseSheetDepositCategory(this);
+            case CASHCATEGORY -> new MoneyWiseSheetCashCategory(this);
+            case LOANCATEGORY -> new MoneyWiseSheetLoanCategory(this);
+            case TRANSCATEGORY -> new MoneyWiseSheetTransCategory(this);
+            case EXCHANGERATE -> new MoneyWiseSheetExchangeRate(this);
+            case PAYEE -> new MoneyWiseSheetPayee(this);
+            case PAYEEINFO -> new MoneyWiseSheetPayeeInfo(this);
+            case SECURITY -> new MoneyWiseSheetSecurity(this);
+            case SECURITYPRICE -> new MoneyWiseSheetSecurityPrice(this);
+            case SECURITYINFO -> new MoneyWiseSheetSecurityInfo(this);
+            case DEPOSIT -> new MoneyWiseSheetDeposit(this);
+            case DEPOSITRATE -> new MoneyWiseSheetDepositRate(this);
+            case DEPOSITINFO -> new MoneyWiseSheetDepositInfo(this);
+            case CASH -> new MoneyWiseSheetCash(this);
+            case CASHINFO -> new MoneyWiseSheetCashInfo(this);
+            case LOAN -> new MoneyWiseSheetLoan(this);
+            case LOANINFO -> new MoneyWiseSheetLoanInfo(this);
+            case PORTFOLIO -> new MoneyWiseSheetPortfolio(this);
+            case PORTFOLIOINFO -> new MoneyWiseSheetPortfolioInfo(this);
+            case TRANSACTION -> new MoneyWiseSheetTransaction(this);
+            case TRANSACTIONINFO -> new MoneyWiseSheetTransInfo(this);
+            default -> throw new IllegalArgumentException(pDataType.toString());
+        };
     }
 }

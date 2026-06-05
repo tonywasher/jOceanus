@@ -16,10 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
@@ -30,10 +26,15 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAssetCatego
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
@@ -382,22 +383,15 @@ public abstract class MoneyWiseAssetBase
 
     @Override
     public MoneyWiseAssetType getAssetType() {
-        switch ((MoneyWiseBasicDataType) getItemType()) {
-            case DEPOSIT:
-                return MoneyWiseAssetType.DEPOSIT;
-            case CASH:
-                return MoneyWiseAssetType.CASH;
-            case LOAN:
-                return MoneyWiseAssetType.LOAN;
-            case PORTFOLIO:
-                return MoneyWiseAssetType.PORTFOLIO;
-            case SECURITY:
-                return MoneyWiseAssetType.SECURITY;
-            case PAYEE:
-                return MoneyWiseAssetType.PAYEE;
-            default:
-                throw new IllegalStateException();
-        }
+        return switch ((MoneyWiseBasicDataType) getItemType()) {
+            case DEPOSIT -> MoneyWiseAssetType.DEPOSIT;
+            case CASH -> MoneyWiseAssetType.CASH;
+            case LOAN -> MoneyWiseAssetType.LOAN;
+            case PORTFOLIO -> MoneyWiseAssetType.PORTFOLIO;
+            case SECURITY -> MoneyWiseAssetType.SECURITY;
+            case PAYEE -> MoneyWiseAssetType.PAYEE;
+            default -> throw new IllegalStateException();
+        };
     }
 
     @Override
@@ -676,7 +670,7 @@ public abstract class MoneyWiseAssetBase
             theLatest = myTrans;
 
             /* if this transaction is not reconciled */
-            if (!myTrans.isReconciled()) {
+            if (Boolean.FALSE.equals(myTrans.isReconciled())) {
                 /* Mark account as relevant */
                 setRelevant();
             }
@@ -689,12 +683,11 @@ public abstract class MoneyWiseAssetBase
         }
 
         /* If we are being touched by an asset */
-        if (pSource instanceof MoneyWiseAssetBase myAsset) {
-            /* Mark as relevant if child is open */
-            if (!myAsset.isClosed()) {
-                setRelevant();
-            }
+        if (pSource instanceof MoneyWiseAssetBase myAsset
+                && Boolean.FALSE.equals(myAsset.isClosed())) {
+            setRelevant();
         }
+
 
         /* Pass call onwards */
         super.touchItem(pSource);
@@ -724,10 +717,8 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Resolve late edit Set links.
-     *
-     * @throws OceanusException on error
      */
-    public void resolveLateEditSetLinks() throws OceanusException {
+    public void resolveLateEditSetLinks() {
         /* Access the editSet */
         final PrometheusEditSet myEditSet = getList().getEditSet();
 
@@ -860,7 +851,7 @@ public abstract class MoneyWiseAssetBase
          * @param pClass    the class of the item
          * @param pItemType the item type
          */
-        protected MoneyWiseAssetBaseList(final MoneyWiseDataSet pData,
+        protected MoneyWiseAssetBaseList(final PrometheusDataSet pData,
                                          final Class<T> pClass,
                                          final MoneyWiseBasicDataType pItemType) {
             super(pClass, pData, pItemType, PrometheusListStyle.CORE);

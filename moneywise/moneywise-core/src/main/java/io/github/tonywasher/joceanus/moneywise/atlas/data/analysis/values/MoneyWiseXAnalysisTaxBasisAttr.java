@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisAttribute;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * TaxBasisAttribute enumeration.
@@ -49,7 +50,7 @@ public enum MoneyWiseXAnalysisTaxBasisAttr
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseXAnalysisValuesResource.getKeyForTaxAttr(this).getValue();
+            theName = bundleIdForAttribute(this).getValue();
         }
 
         /* return the name */
@@ -64,5 +65,20 @@ public enum MoneyWiseXAnalysisTaxBasisAttr
     @Override
     public MetisDataType getDataType() {
         return MetisDataType.MONEY;
+    }
+
+    /**
+     * Obtain the resource bundleId for the attribute.
+     *
+     * @param pAttr the attribute
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForAttribute(final MoneyWiseXAnalysisTaxBasisAttr pAttr) {
+        return switch (pAttr) {
+            case GROSS -> MoneyWiseXAnalysisValuesResource.TAXATTR_GROSS;
+            case NETT -> MoneyWiseXAnalysisValuesResource.TAXATTR_NETT;
+            case TAXCREDIT -> MoneyWiseXAnalysisValuesResource.TAXATTR_TAX;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

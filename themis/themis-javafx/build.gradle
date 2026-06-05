@@ -24,3 +24,10 @@ preLoaderClass = "io.github.tonywasher.joceanus.themis.ui.javafx.ThemisFXpreLoad
 
 /* Register the project */
 registerProject(project)
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}

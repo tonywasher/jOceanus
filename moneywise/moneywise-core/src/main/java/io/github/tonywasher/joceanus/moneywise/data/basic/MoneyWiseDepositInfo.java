@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
@@ -26,10 +25,13 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfo
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -110,7 +112,7 @@ public class MoneyWiseDepositInfo
             setValue(pValues.getValue(PrometheusDataResource.DATAINFO_VALUE));
 
             /* Access the DepositInfoSet and register this data */
-            final MoneyWiseDepositInfoSet mySet = getOwner().getInfoSet();
+            final PrometheusDataInfoSet<MoneyWiseDepositInfo> mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
 
         } catch (OceanusException e) {
@@ -157,7 +159,7 @@ public class MoneyWiseDepositInfo
     @Override
     public void deRegister() {
         /* Access the DepositInfoSet and register this value */
-        final MoneyWiseDepositInfoSet mySet = getOwner().getInfoSet();
+        final PrometheusDataInfoSet<MoneyWiseDepositInfo> mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
@@ -172,7 +174,7 @@ public class MoneyWiseDepositInfo
         resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getDeposits());
 
         /* Access the DepositInfoSet and register this data */
-        final MoneyWiseDepositInfoSet mySet = getOwner().getInfoSet();
+        final PrometheusDataInfoSet<MoneyWiseDepositInfo> mySet = getOwner().getInfoSet();
         mySet.registerInfo(this);
     }
 
@@ -197,12 +199,9 @@ public class MoneyWiseDepositInfo
     @Override
     public boolean applyChanges(final PrometheusDataItem pInfo) {
         /* Can only update from DepositInfo */
-        if (!(pInfo instanceof MoneyWiseDepositInfo)) {
+        if (!(pInfo instanceof MoneyWiseDepositInfo myDepInfo)) {
             return false;
         }
-
-        /* Access as DepositInfo */
-        final MoneyWiseDepositInfo myDepInfo = (MoneyWiseDepositInfo) pInfo;
 
         /* Store the current detail into history */
         pushHistory();
@@ -231,7 +230,7 @@ public class MoneyWiseDepositInfo
          *
          * @param pData the DataSet for the list
          */
-        protected MoneyWiseDepositInfoList(final MoneyWiseDataSet pData) {
+        protected MoneyWiseDepositInfoList(final PrometheusDataSet pData) {
             super(MoneyWiseDepositInfo.class, pData, MoneyWiseBasicDataType.DEPOSITINFO, PrometheusListStyle.CORE);
         }
 

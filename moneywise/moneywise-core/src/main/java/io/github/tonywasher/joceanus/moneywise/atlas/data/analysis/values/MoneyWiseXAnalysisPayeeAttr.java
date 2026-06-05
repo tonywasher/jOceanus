@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisAttribute;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * PayeeAttribute enumeration.
@@ -49,7 +50,7 @@ public enum MoneyWiseXAnalysisPayeeAttr
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseXAnalysisValuesResource.getKeyForPayeeAttr(this).getValue();
+            theName = bundleIdForAttribute(this).getValue();
         }
 
         /* return the name */
@@ -64,5 +65,20 @@ public enum MoneyWiseXAnalysisPayeeAttr
     @Override
     public MetisDataType getDataType() {
         return MetisDataType.MONEY;
+    }
+
+    /**
+     * Obtain the resource bundleId for the attribute.
+     *
+     * @param pAttr the attribute
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForAttribute(final MoneyWiseXAnalysisPayeeAttr pAttr) {
+        return switch (pAttr) {
+            case INCOME -> MoneyWiseXAnalysisValuesResource.PAYEEATTR_INCOME;
+            case EXPENSE -> MoneyWiseXAnalysisValuesResource.PAYEEATTR_EXPENSE;
+            case PROFIT -> MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_PROFIT;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

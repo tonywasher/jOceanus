@@ -16,13 +16,13 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 
 import java.util.Iterator;
 
@@ -213,7 +213,7 @@ public final class MoneyWiseXAnalysisCashBucket
             /* Return the first cash in the list if it exists */
             return isEmpty()
                     ? null
-                    : getUnderlyingList().get(0);
+                    : getUnderlyingList().getFirst();
         }
 
         /**

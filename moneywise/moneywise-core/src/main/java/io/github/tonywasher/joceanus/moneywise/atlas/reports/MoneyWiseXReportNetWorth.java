@@ -23,6 +23,7 @@ import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisCashBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisCashBucket.MoneyWiseXAnalysisCashBucketList;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisCashCategoryBucket;
@@ -59,7 +60,6 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCashCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
-import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDataResource;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
@@ -106,7 +106,7 @@ public class MoneyWiseXReportNetWorth
     /**
      * The Account text.
      */
-    private static final String TEXT_ACCOUNT = MoneyWiseAnalysisDataResource.BUCKET_ACCOUNT.getValue();
+    private static final String TEXT_ACCOUNT = MoneyWiseXAnalysisBucketResource.BUCKET_ACCOUNT.getValue();
 
     /**
      * The Rate text.
@@ -284,7 +284,7 @@ public class MoneyWiseXReportNetWorth
 
         /* Build the total row */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTitleCell(myTable, MoneyWiseXReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, MoneyWiseXReportConstants.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myTotal);
 
         /* Return the document */

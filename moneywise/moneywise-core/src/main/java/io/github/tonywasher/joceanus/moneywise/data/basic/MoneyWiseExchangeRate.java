@@ -38,6 +38,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataMapItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 
 import java.util.ArrayList;
@@ -561,7 +562,7 @@ public class MoneyWiseExchangeRate
          * @param pClass    the class of the item
          * @param pItemType the item type
          */
-        protected MoneyWiseExchangeRateBaseList(final MoneyWiseDataSet pData,
+        protected MoneyWiseExchangeRateBaseList(final PrometheusDataSet pData,
                                                 final Class<T> pClass,
                                                 final MoneyWiseBasicDataType pItemType) {
             /* Call super-constructor */
@@ -616,7 +617,7 @@ public class MoneyWiseExchangeRate
          *
          * @param pData the DataSet for the list
          */
-        protected MoneyWiseExchangeRateList(final MoneyWiseDataSet pData) {
+        protected MoneyWiseExchangeRateList(final PrometheusDataSet pData) {
             super(pData, MoneyWiseExchangeRate.class, MoneyWiseBasicDataType.EXCHANGERATE);
         }
 

@@ -124,7 +124,7 @@ public class MoneyWiseReportPortfolioView
         theBuilder.makeTitleCell(myTable, TEXT_GAINS);
         theBuilder.makeTitleCell(myTable, TEXT_DIVIDEND);
         theBuilder.makeTitleCell(myTable, TEXT_ADJUST);
-        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_PROFIT);
 
         /* Loop through the Portfolio Buckets */
         final Iterator<MoneyWiseAnalysisPortfolioBucket> myIterator = myPortfolios.iterator();
@@ -159,7 +159,7 @@ public class MoneyWiseReportPortfolioView
 
         /* Create the total row */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(false));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS));

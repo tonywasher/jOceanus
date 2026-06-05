@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
@@ -27,10 +26,13 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoCl
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoType;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -116,7 +118,7 @@ public class MoneyWiseTransInfo
             resolveLink(null);
 
             /* Access the TransactionInfoSet and register this data */
-            final MoneyWiseTransInfoSet mySet = getOwner().getInfoSet();
+            final PrometheusDataInfoSet<MoneyWiseTransInfo> mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
 
         } catch (OceanusException e) {
@@ -196,14 +198,14 @@ public class MoneyWiseTransInfo
     @Override
     public void deRegister() {
         /* Access the TransactionInfoSet and register this value */
-        final MoneyWiseTransInfoSet mySet = getOwner().getInfoSet();
+        final PrometheusDataInfoSet<MoneyWiseTransInfo> mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
     @Override
     public void rewindInfoLinkSet() {
         /* Access the TransactionInfoSet and reWind this value */
-        final MoneyWiseTransInfoSet mySet = getOwner().getInfoSet();
+        final PrometheusDataInfoSet<MoneyWiseTransInfo> mySet = getOwner().getInfoSet();
         mySet.rewindInfoLinkSet(this);
     }
 
@@ -211,7 +213,7 @@ public class MoneyWiseTransInfo
      * Compare this data to another to establish sort order.
      *
      * @param pThat The EventInfo to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed
+     * @return (-1,0,1) depending on whether this object is before, equal, or after the passed
      * object in the sort order
      */
     @Override
@@ -315,12 +317,9 @@ public class MoneyWiseTransInfo
     @Override
     public boolean applyChanges(final PrometheusDataItem pTransInfo) {
         /* Can only update from TransactionInfo */
-        if (!(pTransInfo instanceof MoneyWiseTransInfo)) {
+        if (!(pTransInfo instanceof MoneyWiseTransInfo myTransInfo)) {
             return false;
         }
-
-        /* Access as TransactionInfo */
-        final MoneyWiseTransInfo myTransInfo = (MoneyWiseTransInfo) pTransInfo;
 
         /* Store the current detail into history */
         pushHistory();
@@ -370,7 +369,7 @@ public class MoneyWiseTransInfo
          *
          * @param pData the DataSet for the list
          */
-        protected MoneyWiseTransInfoList(final MoneyWiseDataSet pData) {
+        protected MoneyWiseTransInfoList(final PrometheusDataSet pData) {
             super(MoneyWiseTransInfo.class, pData, MoneyWiseBasicDataType.TRANSACTIONINFO, PrometheusListStyle.CORE);
         }
 

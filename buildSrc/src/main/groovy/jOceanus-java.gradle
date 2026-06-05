@@ -85,13 +85,6 @@ project.ext {
     splashScreen = null
 }
 
-/* Specific Manifest details */
-jar {
-    manifest {
-        attributes(manifestAttrs)
-    }
-}
-
 processResources {
     filesMatching("**/*.properties") {
         expand myProperties

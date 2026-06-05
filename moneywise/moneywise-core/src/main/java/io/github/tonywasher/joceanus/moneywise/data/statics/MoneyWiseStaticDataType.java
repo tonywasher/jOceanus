@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.moneywise.data.statics;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSimpleId;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedItem;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 
 /**
@@ -126,7 +126,7 @@ public enum MoneyWiseStaticDataType
         /* If we have not yet loaded the id */
         if (theNameId == null) {
             /* Load the id */
-            theNameId = MetisFieldSimpleId.convertResource(MoneyWiseStaticResource.getKeyForDataType(this));
+            theNameId = MetisFieldSimpleId.convertResource(bundleIdForDataType(this));
         }
 
         /* Return the name id */
@@ -152,7 +152,7 @@ public enum MoneyWiseStaticDataType
         /* If we have not yet loaded the id */
         if (theListId == null) {
             /* Load the id */
-            theListId = MetisFieldSimpleId.convertResource(MoneyWiseStaticResource.getKeyForDataList(this));
+            theListId = MetisFieldSimpleId.convertResource(bundleIdForDataList(this));
         }
 
         /* return the list id */
@@ -172,37 +172,7 @@ public enum MoneyWiseStaticDataType
     public String getFieldName() {
         return getListId().getId();
     }
-
-    @Override
-    public Class<? extends MetisFieldVersionedItem> getClazz() {
-        switch (this) {
-            case DEPOSITTYPE:
-                return MoneyWiseDepositCategoryType.class;
-            case CASHTYPE:
-                return MoneyWiseCashCategoryType.class;
-            case LOANTYPE:
-                return MoneyWiseLoanCategoryType.class;
-            case PAYEETYPE:
-                return MoneyWisePayeeType.class;
-            case PORTFOLIOTYPE:
-                return MoneyWisePortfolioType.class;
-            case SECURITYTYPE:
-                return MoneyWiseSecurityType.class;
-            case TRANSTYPE:
-                return MoneyWiseTransCategoryType.class;
-            case CURRENCY:
-                return MoneyWiseCurrency.class;
-            case TAXBASIS:
-                return MoneyWiseTaxBasis.class;
-            case ACCOUNTINFOTYPE:
-                return MoneyWiseAccountInfoType.class;
-            case TRANSINFOTYPE:
-                return MoneyWiseTransInfoType.class;
-            default:
-                return null;
-        }
-    }
-
+    
     @Override
     public String getId() {
         return getItemName();
@@ -211,5 +181,53 @@ public enum MoneyWiseStaticDataType
     @Override
     public Integer getItemKey() {
         return theKey;
+    }
+
+    /**
+     * Obtain the resource bundleId for the dataType.
+     *
+     * @param pType the dataType
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForDataType(final MoneyWiseStaticDataType pType) {
+        /* Create the map and return it */
+        return switch (pType) {
+            case DEPOSITTYPE -> MoneyWiseStaticResource.DEPOSITTYPE_NAME;
+            case CASHTYPE -> MoneyWiseStaticResource.CASHTYPE_NAME;
+            case LOANTYPE -> MoneyWiseStaticResource.LOANTYPE_NAME;
+            case PORTFOLIOTYPE -> MoneyWiseStaticResource.PORTFOLIOTYPE_NAME;
+            case SECURITYTYPE -> MoneyWiseStaticResource.SECURITYTYPE_NAME;
+            case PAYEETYPE -> MoneyWiseStaticResource.PAYEETYPE_NAME;
+            case TRANSTYPE -> MoneyWiseStaticResource.TRANSTYPE_NAME;
+            case TAXBASIS -> MoneyWiseStaticResource.TAXBASIS_NAME;
+            case CURRENCY -> MoneyWiseStaticResource.CURRENCY_NAME;
+            case ACCOUNTINFOTYPE -> MoneyWiseStaticResource.ACCOUNTINFOTYPE_NAME;
+            case TRANSINFOTYPE -> MoneyWiseStaticResource.TRANSINFOTYPE_NAME;
+            default -> throw new IllegalArgumentException();
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the dataType List.
+     *
+     * @param pType the dataType
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForDataList(final MoneyWiseStaticDataType pType) {
+        /* Create the map and return it */
+        return switch (pType) {
+            case DEPOSITTYPE -> MoneyWiseStaticResource.DEPOSITTYPE_LIST;
+            case CASHTYPE -> MoneyWiseStaticResource.CASHTYPE_LIST;
+            case LOANTYPE -> MoneyWiseStaticResource.LOANTYPE_LIST;
+            case PORTFOLIOTYPE -> MoneyWiseStaticResource.PORTFOLIOTYPE_LIST;
+            case SECURITYTYPE -> MoneyWiseStaticResource.SECURITYTYPE_LIST;
+            case PAYEETYPE -> MoneyWiseStaticResource.PAYEETYPE_LIST;
+            case TRANSTYPE -> MoneyWiseStaticResource.TRANSTYPE_LIST;
+            case TAXBASIS -> MoneyWiseStaticResource.TAXBASIS_LIST;
+            case CURRENCY -> MoneyWiseStaticResource.CURRENCY_LIST;
+            case ACCOUNTINFOTYPE -> MoneyWiseStaticResource.ACCOUNTINFOTYPE_LIST;
+            case TRANSINFOTYPE -> MoneyWiseStaticResource.TRANSINFOTYPE_LIST;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

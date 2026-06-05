@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisAttribute;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * AccountAttribute enumeration.
@@ -64,7 +65,7 @@ public enum MoneyWiseXAnalysisAccountAttr
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseXAnalysisValuesResource.getKeyForAccountAttr(this).getValue();
+            theName = bundleIdForAttribute(this).getValue();
         }
 
         /* return the name */
@@ -86,6 +87,24 @@ public enum MoneyWiseXAnalysisAccountAttr
             case EXCHANGERATE -> MetisDataType.RATIO;
             case MATURITY -> MetisDataType.DATE;
             default -> MetisDataType.MONEY;
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the attribute.
+     *
+     * @param pAttr the attribute
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForAttribute(final MoneyWiseXAnalysisAccountAttr pAttr) {
+        return switch (pAttr) {
+            case BALANCE -> MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_BALANCE;
+            case VALUATION -> MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_VALUATION;
+            case VALUEDELTA -> MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_VALUEDELTA;
+            case DEPOSITRATE -> MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_DEPOSITRATE;
+            case EXCHANGERATE -> MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_EXCHANGERATE;
+            case MATURITY -> MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_MATURITY;
+            default -> throw new IllegalArgumentException();
         };
     }
 }

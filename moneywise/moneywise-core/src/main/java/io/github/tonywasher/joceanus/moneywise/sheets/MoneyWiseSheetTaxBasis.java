@@ -16,11 +16,13 @@
  */
 package io.github.tonywasher.joceanus.moneywise.sheets;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxBasis;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetStaticData;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
 
 /**
  * SheetStaticData extension for TaxBasis.
@@ -39,7 +41,7 @@ public final class MoneyWiseSheetTaxBasis
      *
      * @param pReader the spreadsheet reader
      */
-    MoneyWiseSheetTaxBasis(final MoneyWiseReader pReader) {
+    MoneyWiseSheetTaxBasis(final PrometheusSheetReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_TAXBASES);
 
@@ -53,7 +55,7 @@ public final class MoneyWiseSheetTaxBasis
      *
      * @param pWriter the spreadsheet writer
      */
-    MoneyWiseSheetTaxBasis(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetTaxBasis(final PrometheusSheetWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_TAXBASES);
 

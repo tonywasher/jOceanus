@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.data.statics;
 
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 
 /**
@@ -95,7 +96,7 @@ public enum MoneyWisePortfolioClass
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseStaticResource.getKeyForPortfolioType(this).getValue();
+            theName = bundleIdForPortfolioClass(this).getValue();
         }
 
         /* return the name */
@@ -167,5 +168,22 @@ public enum MoneyWisePortfolioClass
      */
     public boolean isSingular() {
         return holdsPensions();
+    }
+
+    /**
+     * Obtain the resource bundleId for the portfolio class.
+     *
+     * @param pClass the category class
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForPortfolioClass(final MoneyWisePortfolioClass pClass) {
+        /* Create the map and return it */
+        return switch (pClass) {
+            case STANDARD -> MoneyWiseStaticResource.PORTFOLIOTYPE_STANDARD;
+            case TAXFREE -> MoneyWiseStaticResource.PORTFOLIOTYPE_TAXFREE;
+            case PENSION -> MoneyWiseStaticResource.PORTFOLIOTYPE_PENSION;
+            case SIPP -> MoneyWiseStaticResource.PORTFOLIOTYPE_SIPP;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

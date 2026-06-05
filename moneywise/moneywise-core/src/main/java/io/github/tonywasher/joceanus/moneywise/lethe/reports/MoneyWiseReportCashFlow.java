@@ -83,9 +83,9 @@ public class MoneyWiseReportCashFlow
         final MetisReportHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTotalCell(myTable);
-        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_INCOME);
-        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_EXPENSE);
-        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_INCOME);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_EXPENSE);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_PROFIT);
 
         /* Loop through the Payee Buckets */
         final Iterator<MoneyWiseAnalysisPayeeBucket> myIterator = myPayees.iterator();
@@ -114,7 +114,7 @@ public class MoneyWiseReportCashFlow
 
         /* Format the total */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisPayeeAttr.EXPENSE));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisPayeeAttr.PROFIT));

@@ -16,12 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.sheets;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
 
 /**
  * SheetDataItem extension for TransactionTag.
@@ -50,7 +52,7 @@ public final class MoneyWiseSheetTransTag
      *
      * @param pReader the spreadsheet reader
      */
-    MoneyWiseSheetTransTag(final MoneyWiseReader pReader) {
+    MoneyWiseSheetTransTag(final PrometheusSheetReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_TRANSTAGS);
 
@@ -64,7 +66,7 @@ public final class MoneyWiseSheetTransTag
      *
      * @param pWriter the spreadsheet writer
      */
-    MoneyWiseSheetTransTag(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetTransTag(final PrometheusSheetWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_TRANSTAGS);
 

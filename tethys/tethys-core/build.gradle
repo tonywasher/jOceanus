@@ -8,8 +8,6 @@ dependencies {
     implementation platform(project(':bom'))
     implementation project(':oceanus')
     implementation "org.jsoup:jsoup"
-    //testImplementation "org.junit.jupiter:junit-jupiter-api"
-    //testImplementation "org.junit.jupiter:junit-jupiter-engine"
 }
 
 /* Dependencies */
@@ -19,9 +17,9 @@ description = 'Tethys Java Core Utilities'
 /* Register the project */
 registerProject(project)
 
-/* Test jar details */
-tasks.register('testsJar', Jar) {
-    archiveClassifier = 'tests'
-    from(sourceSets.test.output)
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
 }
-publishing.publications.maven.artifact(testsJar)

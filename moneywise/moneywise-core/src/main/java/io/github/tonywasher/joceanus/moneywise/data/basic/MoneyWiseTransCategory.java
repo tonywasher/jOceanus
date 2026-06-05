@@ -31,6 +31,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -299,7 +300,7 @@ public final class MoneyWiseTransCategory
          *
          * @param pData the DataSet for the list
          */
-        public MoneyWiseTransCategoryList(final MoneyWiseDataSet pData) {
+        public MoneyWiseTransCategoryList(final PrometheusDataSet pData) {
             super(pData, MoneyWiseTransCategory.class, MoneyWiseBasicDataType.TRANSCATEGORY);
         }
 

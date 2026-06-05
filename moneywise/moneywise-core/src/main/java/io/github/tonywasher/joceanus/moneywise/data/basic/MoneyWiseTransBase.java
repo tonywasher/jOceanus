@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
@@ -31,9 +28,13 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.Mon
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
@@ -965,7 +966,7 @@ public abstract class MoneyWiseTransBase
          * @param pClass    the class of the item
          * @param pItemType the item type
          */
-        protected MoneyWiseTransBaseList(final MoneyWiseDataSet pData,
+        protected MoneyWiseTransBaseList(final PrometheusDataSet pData,
                                          final Class<T> pClass,
                                          final MoneyWiseBasicDataType pItemType) {
             /* Call super-constructor */

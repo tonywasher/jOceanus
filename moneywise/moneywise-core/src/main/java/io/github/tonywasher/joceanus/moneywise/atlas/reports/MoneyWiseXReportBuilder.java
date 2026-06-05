@@ -19,9 +19,7 @@ package io.github.tonywasher.joceanus.moneywise.atlas.reports;
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
-import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
-import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisValuesResource;
 import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import org.w3c.dom.Document;
 
@@ -34,26 +32,6 @@ import java.util.Map;
  * @author Tony Washer
  */
 public class MoneyWiseXReportBuilder {
-    /**
-     * The Total text.
-     */
-    protected static final String TEXT_TOTAL = MoneyWiseXAnalysisBucketResource.ANALYSIS_TOTALS.getValue();
-
-    /**
-     * The Profit text.
-     */
-    protected static final String TEXT_PROFIT = MoneyWiseXAnalysisValuesResource.SECURITYATTR_PROFIT.getValue();
-
-    /**
-     * The Income text.
-     */
-    protected static final String TEXT_INCOME = MoneyWiseXAnalysisValuesResource.PAYEEATTR_INCOME.getValue();
-
-    /**
-     * The Expense text.
-     */
-    protected static final String TEXT_EXPENSE = MoneyWiseXAnalysisValuesResource.PAYEEATTR_EXPENSE.getValue();
-
     /**
      * The Report Manager.
      */
@@ -94,39 +72,23 @@ public class MoneyWiseXReportBuilder {
         /* If we have not previously allocated this report */
         if (myReport == null) {
             /* Switch on the report type */
-            switch (pType) {
-                case NETWORTH:
-                    myReport = new MoneyWiseXReportNetWorth(theManager);
-                    break;
-                case BALANCESHEET:
-                    myReport = new MoneyWiseXReportBalanceSheet(theManager);
-                    break;
-                case CASHFLOW:
-                    myReport = new MoneyWiseXReportCashFlow(theManager);
-                    break;
-                case INCOMEEXPENSE:
-                    myReport = new MoneyWiseXReportIncomeExpense(theManager);
-                    break;
-                case PORTFOLIO:
-                    myReport = new MoneyWiseXReportPortfolioView(theManager);
-                    break;
-                case MARKETGROWTH:
-                    myReport = new MoneyWiseXReportMarketGrowth(theManager);
-                    break;
-                case TAXBASIS:
-                    myReport = new MoneyWiseXReportTaxationBasis(theManager);
-                    break;
-                case TAXCALC:
-                    myReport = new MoneyWiseXReportTaxCalculation(theManager);
-                    break;
-                case ASSETGAINS:
-                    myReport = new MoneyWiseXReportAssetGains(theManager);
-                    break;
-                case CAPITALGAINS:
-                    myReport = new MoneyWiseXReportCapitalGains(theManager);
-                    break;
-                default:
-                    return null;
+            myReport = switch (pType) {
+                case NETWORTH -> new MoneyWiseXReportNetWorth(theManager);
+                case BALANCESHEET -> new MoneyWiseXReportBalanceSheet(theManager);
+                case CASHFLOW -> new MoneyWiseXReportCashFlow(theManager);
+                case INCOMEEXPENSE -> new MoneyWiseXReportIncomeExpense(theManager);
+                case PORTFOLIO -> new MoneyWiseXReportPortfolioView(theManager);
+                case MARKETGROWTH -> new MoneyWiseXReportMarketGrowth(theManager);
+                case TAXBASIS -> new MoneyWiseXReportTaxationBasis(theManager);
+                case TAXCALC -> new MoneyWiseXReportTaxCalculation(theManager);
+                case ASSETGAINS -> new MoneyWiseXReportAssetGains(theManager);
+                case CAPITALGAINS -> new MoneyWiseXReportCapitalGains(theManager);
+                default -> null;
+            };
+
+            /* Return null if no report found */
+            if (myReport == null) {
+                return null;
             }
 
             /* Store allocated report */

@@ -189,7 +189,7 @@ public class MoneyWiseReportMarketGrowth
 
         /* Create the total row */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(false));
         theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(true));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED));

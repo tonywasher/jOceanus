@@ -16,12 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.sheets;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetStaticData;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
 
 /**
  * SheetStaticData extension for AccountCurrency.
@@ -45,7 +47,7 @@ public final class MoneyWiseSheetCurrency
      *
      * @param pReader the spreadsheet reader
      */
-    MoneyWiseSheetCurrency(final MoneyWiseReader pReader) {
+    MoneyWiseSheetCurrency(final PrometheusSheetReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_ACCOUNTCURRENCIES);
 
@@ -59,7 +61,7 @@ public final class MoneyWiseSheetCurrency
      *
      * @param pWriter the spreadsheet writer
      */
-    MoneyWiseSheetCurrency(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetCurrency(final PrometheusSheetWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_ACCOUNTCURRENCIES);
 

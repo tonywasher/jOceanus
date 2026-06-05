@@ -16,18 +16,15 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.reports;
 
-import java.util.EnumMap;
-import java.util.Map;
-
-import org.w3c.dom.Document;
-
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
-import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDataResource;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
-import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisValuesResource;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
+import org.w3c.dom.Document;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * Report Classes.
@@ -35,26 +32,6 @@ import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilt
  * @author Tony Washer
  */
 public class MoneyWiseReportBuilder {
-    /**
-     * The Total text.
-     */
-    protected static final String TEXT_TOTAL = MoneyWiseAnalysisDataResource.ANALYSIS_TOTALS.getValue();
-
-    /**
-     * The Profit text.
-     */
-    protected static final String TEXT_PROFIT = MoneyWiseAnalysisValuesResource.SECURITYATTR_PROFIT.getValue();
-
-    /**
-     * The Income text.
-     */
-    protected static final String TEXT_INCOME = MoneyWiseAnalysisValuesResource.PAYEEATTR_INCOME.getValue();
-
-    /**
-     * The Expense text.
-     */
-    protected static final String TEXT_EXPENSE = MoneyWiseAnalysisValuesResource.PAYEEATTR_EXPENSE.getValue();
-
     /**
      * The Report Manager.
      */
@@ -95,39 +72,23 @@ public class MoneyWiseReportBuilder {
         /* If we have not previously allocated this report */
         if (myReport == null) {
             /* Switch on the report type */
-            switch (pType) {
-                case NETWORTH:
-                    myReport = new MoneyWiseReportNetWorth(theManager);
-                    break;
-                case BALANCESHEET:
-                    myReport = new MoneyWiseReportBalanceSheet(theManager);
-                    break;
-                case CASHFLOW:
-                    myReport = new MoneyWiseReportCashFlow(theManager);
-                    break;
-                case INCOMEEXPENSE:
-                    myReport = new MoneyWiseReportIncomeExpense(theManager);
-                    break;
-                case PORTFOLIO:
-                    myReport = new MoneyWiseReportPortfolioView(theManager);
-                    break;
-                case MARKETGROWTH:
-                    myReport = new MoneyWiseReportMarketGrowth(theManager);
-                    break;
-                case TAXBASIS:
-                    myReport = new MoneyWiseReportTaxationBasis(theManager);
-                    break;
-                case TAXCALC:
-                    myReport = new MoneyWiseReportTaxCalculation(theManager);
-                    break;
-                case ASSETGAINS:
-                    myReport = new MoneyWiseReportAssetGains(theManager);
-                    break;
-                case CAPITALGAINS:
-                    myReport = new MoneyWiseReportCapitalGains(theManager);
-                    break;
-                default:
-                    return null;
+            myReport = switch (pType) {
+                case NETWORTH -> new MoneyWiseReportNetWorth(theManager);
+                case BALANCESHEET -> new MoneyWiseReportBalanceSheet(theManager);
+                case CASHFLOW -> new MoneyWiseReportCashFlow(theManager);
+                case INCOMEEXPENSE -> new MoneyWiseReportIncomeExpense(theManager);
+                case PORTFOLIO -> new MoneyWiseReportPortfolioView(theManager);
+                case MARKETGROWTH -> new MoneyWiseReportMarketGrowth(theManager);
+                case TAXBASIS -> new MoneyWiseReportTaxationBasis(theManager);
+                case TAXCALC -> new MoneyWiseReportTaxCalculation(theManager);
+                case ASSETGAINS -> new MoneyWiseReportAssetGains(theManager);
+                case CAPITALGAINS -> new MoneyWiseReportCapitalGains(theManager);
+                default -> null;
+            };
+
+            /* Return null if no report found */
+            if (myReport == null) {
+                return null;
             }
 
             /* Store allocated report */
@@ -135,8 +96,8 @@ public class MoneyWiseReportBuilder {
         }
 
         /* If the report requires the security */
-        if (myReport instanceof MoneyWiseReportCapitalGains) {
-            ((MoneyWiseReportCapitalGains) myReport).setSecurity(pSecurity);
+        if (myReport instanceof MoneyWiseReportCapitalGains myCapGains) {
+            myCapGains.setSecurity(pSecurity);
         }
 
         /* Set up the report */

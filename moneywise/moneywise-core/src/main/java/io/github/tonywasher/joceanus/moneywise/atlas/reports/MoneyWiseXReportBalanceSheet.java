@@ -132,7 +132,7 @@ public class MoneyWiseXReportBalanceSheet
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, theFormatter.formatObject(myDateRange.getEnd()));
         theBuilder.makeTitleCell(myTable, theFormatter.formatObject(myDateRange.getStart()));
-        theBuilder.makeTitleCell(myTable, MoneyWiseXReportBuilder.TEXT_PROFIT);
+        theBuilder.makeTitleCell(myTable, MoneyWiseXReportConstants.TEXT_PROFIT);
 
         /* If we have deposits */
         if (!myDeposits.isEmpty()) {
@@ -278,7 +278,7 @@ public class MoneyWiseXReportBalanceSheet
 
         /* Format the total */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTitleCell(myTable, MoneyWiseXReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, MoneyWiseXReportConstants.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myTotal);
         theBuilder.makeTotalCell(myTable, myBase);
         theBuilder.makeTotalCell(myTable, myDelta);

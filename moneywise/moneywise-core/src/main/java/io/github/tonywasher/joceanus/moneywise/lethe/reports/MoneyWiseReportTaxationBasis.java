@@ -141,7 +141,7 @@ public class MoneyWiseReportTaxationBasis
 
         /* Format the total */
         theBuilder.startTotalRow(myTable);
-        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_TOTAL);
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.NETT));
         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS));
 

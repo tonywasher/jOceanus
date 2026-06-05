@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+
 /**
  * Asset Direction.
  */
@@ -63,7 +65,7 @@ public enum MoneyWiseAssetDirection {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseBasicResource.getKeyForAssetDirection(this).getValue();
+            theName = bundleIdForAssetDirection(this).getValue();
         }
 
         /* return the name */
@@ -112,5 +114,20 @@ public enum MoneyWiseAssetDirection {
             }
         }
         return null;
+    }
+
+    /**
+     * Obtain the resource bundleId for the assetDirection.
+     *
+     * @param pDirection the direction
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForAssetDirection(final MoneyWiseAssetDirection pDirection) {
+        /* Create the map and return it */
+        return switch (pDirection) {
+            case TO -> MoneyWiseBasicResource.ASSETDIRECTION_TO;
+            case FROM -> MoneyWiseBasicResource.ASSETDIRECTION_FROM;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

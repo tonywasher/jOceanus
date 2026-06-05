@@ -22,7 +22,6 @@ import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedItem;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import io.github.tonywasher.joceanus.metis.toolkit.MetisToolkit;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
@@ -1026,22 +1025,6 @@ public abstract class PrometheusDataSet
         @Override
         public String getItemName() {
             return toString();
-        }
-
-        @Override
-        public Class<? extends MetisFieldVersionedItem> getClazz() {
-            switch (this) {
-                case CONTROLDATA:
-                    return PrometheusControlData.class;
-                case CONTROLKEY:
-                    return PrometheusControlKey.class;
-                case CONTROLKEYSET:
-                    return PrometheusControlKeySet.class;
-                case DATAKEYSET:
-                    return PrometheusDataKeySet.class;
-                default:
-                    return null;
-            }
         }
 
         @Override
