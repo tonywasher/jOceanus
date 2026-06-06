@@ -16,12 +16,12 @@
  */
 package io.github.tonywasher.joceanus.prometheus.maps;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 
@@ -33,7 +33,7 @@ import java.util.function.Function;
  * InstanceMaps for List.
  */
 public class PrometheusMapsListInstance
-        implements MetisFieldItem {
+        implements MetisFieldItem, PrometheusMapsFieldHolder {
     /**
      * Report fields.
      */
@@ -77,10 +77,10 @@ public class PrometheusMapsListInstance
     /**
      * Constructor.
      *
-     * @param pDataSet the new dataSet maps
-     * @param pSource  the source list map
+     * @param pListHolder the listHolder
+     * @param pSource     the source list map
      */
-    PrometheusMapsListInstance(final PrometheusMapsDataSetInstance pDataSet,
+    PrometheusMapsListInstance(final PrometheusMapsListHolder pListHolder,
                                final PrometheusMapsListInstance pSource) {
         /* Initialise class */
         this(pSource.getListKey());
@@ -99,7 +99,7 @@ public class PrometheusMapsListInstance
                 /* else this is a shared map */
             } else {
                 /* Obtain the relevant list map and field map */
-                final PrometheusMapsListInstance mySharedList = pDataSet.getList(myListKey);
+                final PrometheusMapsFieldHolder mySharedList = pListHolder.getList(myListKey);
                 final PrometheusMapsFieldInstance mySharedField = mySharedList.getFieldMap().get(myFieldId);
                 theFieldMap.put(myFieldId, mySharedField);
             }
@@ -130,12 +130,8 @@ public class PrometheusMapsListInstance
         return theListKey;
     }
 
-    /**
-     * Obtain the field map.
-     *
-     * @return the map
-     */
-    private Map<MetisDataFieldId, PrometheusMapsFieldInstance> getFieldMap() {
+    @Override
+    public Map<MetisDataFieldId, PrometheusMapsFieldInstance> getFieldMap() {
         return theFieldMap;
     }
 

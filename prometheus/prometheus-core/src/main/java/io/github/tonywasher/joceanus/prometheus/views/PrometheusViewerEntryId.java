@@ -16,6 +16,9 @@
  */
 package io.github.tonywasher.joceanus.prometheus.views;
 
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerResource;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+
 /**
  * Standard Viewer Entries.
  */
@@ -75,10 +78,31 @@ public enum PrometheusViewerEntryId {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = PrometheusViewResource.getKeyForViewerEntry(this).getValue();
+            theName = bundleIdForEntryId(this).getValue();
         }
 
         /* return the name */
         return theName;
+    }
+
+    /**
+     * Obtain the resource bundleId for the entryId.
+     *
+     * @param pId the id
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForEntryId(final PrometheusViewerEntryId pId) {
+        return switch (pId) {
+            case ERROR -> MetisViewerResource.VIEWER_ENTRY_ERROR;
+            case PROFILE -> MetisViewerResource.VIEWER_ENTRY_PROFILE;
+            case DATA -> MetisViewerResource.VIEWER_ENTRY_DATA;
+            case VIEW -> MetisViewerResource.VIEWER_ENTRY_VIEW;
+            case DATASET -> PrometheusViewResource.VIEWERENTRY_DATASET;
+            case UPDATES -> PrometheusViewResource.VIEWERENTRY_UPDATES;
+            case ANALYSIS -> PrometheusViewResource.VIEWERENTRY_ANALYSIS;
+            case MAINTENANCE -> PrometheusViewResource.VIEWERENTRY_MAINT;
+            case STATIC -> PrometheusViewResource.VIEWERENTRY_STATIC;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

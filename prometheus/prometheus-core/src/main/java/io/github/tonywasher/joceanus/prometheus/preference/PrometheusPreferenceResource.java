@@ -19,8 +19,6 @@ package io.github.tonywasher.joceanus.prometheus.preference;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -83,11 +81,6 @@ public enum PrometheusPreferenceResource implements OceanusBundleId {
     DLPREF_GRANULARITY("dlpref.granularity");
 
     /**
-     * The PreferenceType Map.
-     */
-    private static final Map<PrometheusPreferenceType, OceanusBundleId> PREF_MAP = buildPreferenceMap();
-
-    /**
      * The Resource Loader.
      */
     private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusPreferenceResource.class.getCanonicalName(),
@@ -132,28 +125,5 @@ public enum PrometheusPreferenceResource implements OceanusBundleId {
 
         /* return the value */
         return theValue;
-    }
-
-    /**
-     * Build preference map.
-     *
-     * @return the map
-     */
-    private static Map<PrometheusPreferenceType, OceanusBundleId> buildPreferenceMap() {
-        /* Create the map and return it */
-        final Map<PrometheusPreferenceType, OceanusBundleId> myMap = new EnumMap<>(PrometheusPreferenceType.class);
-        myMap.put(PrometheusPreferenceType.BYTEARRAY, TYPE_BYTEARRAY);
-        myMap.put(PrometheusPreferenceType.CHARARRAY, TYPE_CHARARRAY);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for prefType.
-     *
-     * @param pType the type
-     * @return the resource key
-     */
-    public static OceanusBundleId getKeyForPrefType(final PrometheusPreferenceType pType) {
-        return OceanusBundleLoader.getKeyForEnum(PREF_MAP, pType);
     }
 }

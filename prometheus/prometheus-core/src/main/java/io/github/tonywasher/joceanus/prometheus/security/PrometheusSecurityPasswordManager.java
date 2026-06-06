@@ -104,7 +104,7 @@ public class PrometheusSecurityPasswordManager {
         theLockSpec = pLockSpec;
 
         /* Allocate a new cache */
-        theCache = new PrometheusSecurityPasswordCache(this, theLockSpec);
+        theCache = new PrometheusSecurityPasswordCache(pFactory, theLockSpec);
     }
 
     /**

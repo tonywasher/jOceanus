@@ -18,11 +18,8 @@ package io.github.tonywasher.joceanus.prometheus.views;
 
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
-import io.github.tonywasher.joceanus.metis.viewer.MetisViewerResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -58,11 +55,6 @@ public enum PrometheusViewResource implements OceanusBundleId {
      * UpdateSet Name.
      */
     UPDATESET_NAME("UpdateSet.Name");
-
-    /**
-     * The Entry Map.
-     */
-    private static final Map<PrometheusViewerEntryId, OceanusBundleId> ENTRY_MAP = buildEntryMap();
 
     /**
      * The Resource Loader.
@@ -109,35 +101,5 @@ public enum PrometheusViewResource implements OceanusBundleId {
 
         /* return the value */
         return theValue;
-    }
-
-    /**
-     * Build entry map.
-     *
-     * @return the map
-     */
-    private static Map<PrometheusViewerEntryId, OceanusBundleId> buildEntryMap() {
-        /* Create the map and return it */
-        final Map<PrometheusViewerEntryId, OceanusBundleId> myMap = new EnumMap<>(PrometheusViewerEntryId.class);
-        myMap.put(PrometheusViewerEntryId.ERROR, MetisViewerResource.VIEWER_ENTRY_ERROR);
-        myMap.put(PrometheusViewerEntryId.PROFILE, MetisViewerResource.VIEWER_ENTRY_PROFILE);
-        myMap.put(PrometheusViewerEntryId.DATA, MetisViewerResource.VIEWER_ENTRY_DATA);
-        myMap.put(PrometheusViewerEntryId.VIEW, MetisViewerResource.VIEWER_ENTRY_VIEW);
-        myMap.put(PrometheusViewerEntryId.DATASET, VIEWERENTRY_DATASET);
-        myMap.put(PrometheusViewerEntryId.UPDATES, VIEWERENTRY_UPDATES);
-        myMap.put(PrometheusViewerEntryId.ANALYSIS, VIEWERENTRY_ANALYSIS);
-        myMap.put(PrometheusViewerEntryId.MAINTENANCE, VIEWERENTRY_MAINT);
-        myMap.put(PrometheusViewerEntryId.STATIC, VIEWERENTRY_STATIC);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for stdEntry.
-     *
-     * @param pEntry the entry
-     * @return the resource key
-     */
-    protected static OceanusBundleId getKeyForViewerEntry(final PrometheusViewerEntryId pEntry) {
-        return OceanusBundleLoader.getKeyForEnum(ENTRY_MAP, pEntry);
     }
 }

@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.prometheus.preference;
 
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey.MetisPreferenceId;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * Enum class for preference types.
@@ -43,10 +44,24 @@ public enum PrometheusPreferenceType
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = PrometheusPreferenceResource.getKeyForPrefType(this).getValue();
+            theName = bundleIdForPreferenceType(this).getValue();
         }
 
         /* return the name */
         return theName;
+    }
+
+    /**
+     * Obtain the resource bundleId for the preferenceType.
+     *
+     * @param pType the type
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForPreferenceType(final PrometheusPreferenceType pType) {
+        return switch (pType) {
+            case BYTEARRAY -> PrometheusPreferenceResource.TYPE_BYTEARRAY;
+            case CHARARRAY -> PrometheusPreferenceResource.TYPE_CHARARRAY;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }
