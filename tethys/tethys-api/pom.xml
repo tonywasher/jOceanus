@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.github.tonywasher.joceanus</groupId>
+    <artifactId>tethys</artifactId>
+    <version>1.6.4-SNAPSHOT</version>
+  </parent>
+  <groupId>io.github.tonywasher.joceanus.tethys</groupId>
+  <artifactId>tethys-api</artifactId>
+  <name>Tethys UI API</name>
+  <description>UI API</description>
+  <dependencies>
+    <dependency>
+      <groupId>${jOceanusGroup}</groupId>
+      <artifactId>oceanus</artifactId>
+    </dependency>
+    <!--<dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+    </dependency>-->
+  </dependencies>
+  <properties>
+    <moduleName>${packageName}.core</moduleName>
+  </properties>
+</project>

@@ -23,7 +23,7 @@ module io.github.tonywasher.joceanus.themis.javafx {
     requires javafx.graphics;
 
     /* jOceanus */
-    requires io.github.tonywasher.joceanus.tethys.core;
+    requires io.github.tonywasher.joceanus.tethys.api;
     requires io.github.tonywasher.joceanus.tethys.javafx;
     requires io.github.tonywasher.joceanus.themis.core;
 

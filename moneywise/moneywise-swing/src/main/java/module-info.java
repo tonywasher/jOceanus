@@ -23,6 +23,6 @@ module io.github.tonywasher.joceanus.moneywise.swing {
 
     /* Exports */
     requires io.github.tonywasher.joceanus.moneywise.core;
-    requires io.github.tonywasher.joceanus.tethys.core;
+    requires io.github.tonywasher.joceanus.tethys.api;
     requires io.github.tonywasher.joceanus.tethys.swing;
 }

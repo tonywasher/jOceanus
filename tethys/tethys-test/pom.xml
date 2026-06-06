@@ -16,6 +16,10 @@
     </dependency>
     <dependency>
       <groupId>${TethysGroup}</groupId>
+      <artifactId>tethys-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${TethysGroup}</groupId>
       <artifactId>tethys-javafx</artifactId>
     </dependency>
     <dependency>

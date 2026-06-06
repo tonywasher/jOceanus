@@ -9,7 +9,7 @@ dependencies {
     implementation project(':prometheus-sheet-api')
     implementation project(':metis')
     implementation project(':gordianknot')
-    implementation project(':tethys-core')
+    implementation project(':tethys-api')
     implementation project(':oceanus')
     testImplementation "org.junit.jupiter:junit-jupiter"
     runtimeOnly "com.mysql:mysql-connector-j"

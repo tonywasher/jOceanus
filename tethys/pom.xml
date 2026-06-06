@@ -13,7 +13,9 @@
   <modules>
     <module>tethys-swing</module>
     <module>tethys-javafx</module>
+    <module>tethys-helper</module>
     <module>tethys-core</module>
+    <module>tethys-api</module>
     <module>tethys-test</module>
   </modules>
   <properties>

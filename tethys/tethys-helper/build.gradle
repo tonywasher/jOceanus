@@ -1,0 +1,26 @@
+/* Standard conventions */
+plugins {
+    id 'jOceanus-java'
+}
+
+/* Dependencies */
+dependencies {
+    implementation platform(project(':bom'))
+    implementation project(':tethys-core')
+    implementation project(':tethys-api')
+    implementation project(':oceanus')
+}
+
+/* Dependencies */
+group = 'io.github.tonywasher.joceanus.tethys.helper'
+description = 'Tethys UI Helper'
+
+/* Register the project */
+registerProject(project)
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}

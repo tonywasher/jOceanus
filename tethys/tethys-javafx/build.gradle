@@ -14,6 +14,7 @@ javafx {
 dependencies {
     implementation platform(project(':bom'))
     implementation project(':tethys-core')
+    implementation project(':tethys-api')
     implementation project(':oceanus')
 }
 

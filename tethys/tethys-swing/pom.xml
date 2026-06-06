@@ -15,6 +15,10 @@
       <artifactId>tethys-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>${TethysGroup}</groupId>
+      <artifactId>tethys-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>${jOceanusGroup}</groupId>
       <artifactId>oceanus</artifactId>
     </dependency>
