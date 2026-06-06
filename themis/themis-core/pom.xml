@@ -16,11 +16,16 @@
     </dependency>
     <dependency>
       <groupId>${TethysGroup}</groupId>
-      <artifactId>tethys-core</artifactId>
+      <artifactId>tethys-api</artifactId>
     </dependency>
     <dependency>
       <groupId>${jOceanusGroup}</groupId>
       <artifactId>oceanus</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${TethysGroup}</groupId>
+      <artifactId>tethys-helper</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.github.javaparser</groupId>

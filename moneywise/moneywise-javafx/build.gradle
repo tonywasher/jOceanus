@@ -10,7 +10,7 @@ dependencies {
     implementation platform(project(':bom'))
     implementation project(':moneywise-core')
     implementation project(':tethys-javafx')
-    implementation project(':tethys-core')
+    implementation project(':tethys-api')
     implementation project(':oceanus')
 }
 

@@ -30,7 +30,7 @@ module io.github.tonywasher.joceanus.themis.core {
 
     /* Oceanus */
     requires io.github.tonywasher.joceanus.metis;
-    requires io.github.tonywasher.joceanus.tethys.core;
+    requires io.github.tonywasher.joceanus.tethys.api;
     requires io.github.tonywasher.joceanus.oceanus;
 
     /* Exports */

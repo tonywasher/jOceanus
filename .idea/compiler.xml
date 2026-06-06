@@ -12,10 +12,12 @@
         </processorPath>
         <module name="moneywise-javafx" />
         <module name="tethys-core" />
+        <module name="tethys-helper" />
         <module name="metis" />
         <module name="themis-core" />
         <module name="tethys-swing" />
         <module name="moneywise-swing" />
+        <module name="tethys-api" />
         <module name="tethys-javafx" />
         <module name="themis-javafx" />
         <module name="prometheus-sheet-api" />
@@ -50,7 +52,9 @@
       <module name="prometheus-sheet-odf" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="sheet" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="tethys" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="tethys-api" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="tethys-core" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="tethys-helper" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="tethys-javafx" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="tethys-swing" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="tethys-test" options="-Xlint:unchecked -Xlint:deprecation" />

@@ -12,7 +12,7 @@
   <dependencies>
     <dependency>
       <groupId>${TethysGroup}</groupId>
-      <artifactId>tethys-core</artifactId>
+      <artifactId>tethys-api</artifactId>
     </dependency>
     <dependency>
       <groupId>${jOceanusGroup}</groupId>

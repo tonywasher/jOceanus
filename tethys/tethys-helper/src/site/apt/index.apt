@@ -1,0 +1,6 @@
+Tethys Helper
+
+  Tethys Helper provides a non-GUI scaffold version of Tethys to enable test code to use Tethys
+facilities with no GUI engine. In particular it enables code that is designed to run on a worker
+thread to be easily tested.
+

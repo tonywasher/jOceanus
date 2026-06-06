@@ -10,7 +10,8 @@ dependencies {
     implementation project(':prometheus-sheet-api')
     implementation project(':metis')
     implementation project(':gordianknot')
-    implementation project(':tethys-core')
+    implementation project(':tethys-api')
+    testImplementation project(':tethys-helper')
     implementation project(':oceanus')
     testImplementation "org.junit.jupiter:junit-jupiter"
 }

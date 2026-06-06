@@ -24,7 +24,12 @@
     </dependency>
     <dependency>
       <groupId>${TethysGroup}</groupId>
-      <artifactId>tethys-core</artifactId>
+      <artifactId>tethys-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${TethysGroup}</groupId>
+      <artifactId>tethys-helper</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>${jOceanusGroup}</groupId>

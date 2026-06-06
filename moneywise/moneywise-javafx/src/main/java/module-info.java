@@ -23,7 +23,7 @@ module io.github.tonywasher.moneywise.javafx {
 
     /* Exports */
     requires io.github.tonywasher.joceanus.moneywise.core;
-    requires io.github.tonywasher.joceanus.tethys.core;
+    requires io.github.tonywasher.joceanus.tethys.api;
     requires io.github.tonywasher.joceanus.tethys.javafx;
 
     /* Exports */

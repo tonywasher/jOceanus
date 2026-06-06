@@ -30,6 +30,7 @@ module io.github.tonywasher.joceanus.tethys.javafx {
     /* Oceanus */
     requires io.github.tonywasher.joceanus.oceanus;
     requires io.github.tonywasher.joceanus.tethys.core;
+    requires io.github.tonywasher.joceanus.tethys.api;
 
     /* Exports */
     exports io.github.tonywasher.joceanus.tethys.javafx.launch;
