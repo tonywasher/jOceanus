@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.moneywise.tax;
 
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 import java.util.Currency;
 
@@ -66,7 +67,7 @@ public enum MoneyWiseMarginalReduction {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseTaxResource.getKeyForMarginalReduction(this).getValue();
+            theName = bundleIdForReduction(this).getValue();
         }
 
         /* return the name */
@@ -97,5 +98,19 @@ public enum MoneyWiseMarginalReduction {
 
         /* return the reduction */
         return myExcess;
+    }
+
+    /**
+     * Obtain the resource bundleId for the reduction.
+     *
+     * @param pReduction the reduction
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForReduction(final MoneyWiseMarginalReduction pReduction) {
+        return switch (pReduction) {
+            case ONEINTWO -> MoneyWiseTaxResource.MARGINAL_ONEINTWO;
+            case TWOINTHREE -> MoneyWiseTaxResource.MARGINAL_TWOINTHREE;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

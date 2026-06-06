@@ -75,7 +75,7 @@
         <appBinDir>bin/</appBinDir>
         <appLibDir>lib/</appLibDir>
         <JUnitVersion>6.1.0</JUnitVersion>
-        <ApacheMavenVersion>3.9.15</ApacheMavenVersion>
+        <ApacheMavenVersion>3.9.16</ApacheMavenVersion>
         <JavaVersion>21</JavaVersion>
         <JavaLanguageVersion>21</JavaLanguageVersion>
         <CheckStyleVersion>13.5.0</CheckStyleVersion>

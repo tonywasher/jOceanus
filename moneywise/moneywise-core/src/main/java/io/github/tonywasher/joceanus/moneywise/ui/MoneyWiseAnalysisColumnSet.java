@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.ui;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+
 /**
  * Analysis Column Sets.
  */
@@ -65,7 +67,7 @@ public enum MoneyWiseAnalysisColumnSet {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseUIResource.getKeyForColumnSet(this).getValue();
+            theName = bundleIdForColumnSet(this).getValue();
         }
 
         /* return the name */
@@ -79,5 +81,24 @@ public enum MoneyWiseAnalysisColumnSet {
      */
     public boolean isBalance() {
         return BALANCE.equals(this);
+    }
+
+    /**
+     * Obtain the resource bundleId for the set.
+     *
+     * @param pSet the set
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForColumnSet(final MoneyWiseAnalysisColumnSet pSet) {
+        return switch (pSet) {
+            case BALANCE -> MoneyWiseUIResource.COLUMNSET_BALANCE;
+            case STANDARD -> MoneyWiseUIResource.COLUMNSET_STANDARD;
+            case SALARY -> MoneyWiseUIResource.COLUMNSET_SALARY;
+            case INTEREST -> MoneyWiseUIResource.COLUMNSET_INTEREST;
+            case DIVIDEND -> MoneyWiseUIResource.COLUMNSET_DIVIDEND;
+            case SECURITY -> MoneyWiseUIResource.COLUMNSET_SECURITY;
+            case ALL -> MoneyWiseUIResource.COLUMNSET_ALL;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }
