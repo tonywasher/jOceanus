@@ -36,8 +36,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -254,12 +252,6 @@ public class OceanusDataFormatter {
         }
 
         /* Handle date classes */
-        if (pValue instanceof Calendar myCal) {
-            return theDateFormatter.formatCalendarDay(myCal);
-        }
-        if (pValue instanceof Date myDate) {
-            return theDateFormatter.formatJavaDate(myDate);
-        }
         if (pValue instanceof LocalDate myDate) {
             return theDateFormatter.formatLocalDate(myDate);
         }
@@ -330,17 +322,9 @@ public class OceanusDataFormatter {
         if (BigDecimal.class.equals(pClazz)) {
             return pClazz.cast(new BigDecimal(pSource));
         }
-        if (Date.class.equals(pClazz)) {
-            /* Parse the date */
-            return pClazz.cast(theDateFormatter.parseJavaDate(pSource));
-        }
         if (OceanusDate.class.equals(pClazz)) {
             /* Parse the date */
             return pClazz.cast(theDateFormatter.parseDate(pSource));
-        }
-        if (Calendar.class.equals(pClazz)) {
-            /* Parse the date */
-            return pClazz.cast(theDateFormatter.parseCalendarDay(pSource));
         }
         if (LocalDate.class.equals(pClazz)) {
             /* Parse the date */

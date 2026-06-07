@@ -32,6 +32,10 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 
+import java.sql.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+
 /**
  * Class representing a cell within a sheet or a view.
  */
@@ -87,75 +91,69 @@ public class PrometheusExcelHSSFCell
 
     @Override
     public Boolean getBoolean() {
-        switch (theExcelCell.getCellType()) {
-            case BOOLEAN:
-                return theExcelCell.getBooleanCellValue();
-            case NUMERIC:
-                return theExcelCell.getNumericCellValue() != 0;
-            case FORMULA:
+        return switch (theExcelCell.getCellType()) {
+            case BOOLEAN -> theExcelCell.getBooleanCellValue();
+            case NUMERIC -> theExcelCell.getNumericCellValue() != 0;
+            case FORMULA -> {
                 final CellValue myValue = theExcelRow.evaluateFormula(theExcelCell);
-                return CellType.BOOLEAN == myValue.getCellType()
+                yield CellType.BOOLEAN == myValue.getCellType()
                         ? myValue.getBooleanValue()
                         : null;
-            default:
-                return null;
-        }
+            }
+            default -> null;
+        };
     }
 
     @Override
     public OceanusDate getDate() {
-        return CellType.NUMERIC == theExcelCell.getCellType()
-                ? new OceanusDate(theExcelCell.getDateCellValue())
-                : null;
+        if (CellType.NUMERIC == theExcelCell.getCellType()) {
+            final Instant myDate = theExcelCell.getDateCellValue().toInstant();
+            return new OceanusDate(myDate.atZone(ZoneId.systemDefault()).toLocalDate());
+        }
+        return null;
     }
 
     @Override
     public Integer getInteger() {
-        switch (theExcelCell.getCellType()) {
-            case NUMERIC:
+        return switch (theExcelCell.getCellType()) {
+            case NUMERIC -> {
                 final Double myValue = theExcelCell.getNumericCellValue();
-                return myValue.intValue();
-            case FORMULA:
+                yield myValue.intValue();
+            }
+            case FORMULA -> {
                 final CellValue myCellValue = theExcelRow.evaluateFormula(theExcelCell);
-                return CellType.NUMERIC == myCellValue.getCellType()
+                yield CellType.NUMERIC == myCellValue.getCellType()
                         ? ((Double) myCellValue.getNumberValue()).intValue()
                         : null;
-            default:
-                return null;
-        }
+            }
+            default -> null;
+        };
     }
 
     @Override
     public Long getLong() {
-        switch (theExcelCell.getCellType()) {
-            case NUMERIC:
+        return switch (theExcelCell.getCellType()) {
+            case NUMERIC -> {
                 final Double myValue = theExcelCell.getNumericCellValue();
-                return myValue.longValue();
-            case FORMULA:
+                yield myValue.longValue();
+            }
+            case FORMULA -> {
                 final CellValue myCellValue = theExcelRow.evaluateFormula(theExcelCell);
-                return CellType.NUMERIC == myCellValue.getCellType()
+                yield CellType.NUMERIC == myCellValue.getCellType()
                         ? ((Double) myCellValue.getNumberValue()).longValue()
                         : null;
-            default:
-                return null;
-        }
+            }
+            default -> null;
+        };
     }
 
     @Override
     public String getString() {
-        switch (theExcelCell.getCellType()) {
-            case NUMERIC:
-            case BOOLEAN:
-                /* Pick up the formatted value */
-                return theExcelRow.formatCellValue(theExcelCell);
-
-            case FORMULA:
-                return getStringFormulaValue();
-
-            case STRING:
-            default:
-                return theExcelCell.getStringCellValue();
-        }
+        return switch (theExcelCell.getCellType()) {
+            case NUMERIC, BOOLEAN -> theExcelRow.formatCellValue(theExcelCell);
+            case FORMULA -> getStringFormulaValue();
+            default -> theExcelCell.getStringCellValue();
+        };
     }
 
     /**
@@ -165,14 +163,10 @@ public class PrometheusExcelHSSFCell
      */
     private String getStringFormulaValue() {
         final CellValue myValue = theExcelRow.evaluateFormula(theExcelCell);
-        switch (myValue.getCellType()) {
-            case STRING:
-            case NUMERIC:
-            case BOOLEAN:
-                return myValue.formatAsString();
-            default:
-                return null;
-        }
+        return switch (myValue.getCellType()) {
+            case STRING, NUMERIC, BOOLEAN -> myValue.formatAsString();
+            default -> null;
+        };
     }
 
     @Override
@@ -208,7 +202,7 @@ public class PrometheusExcelHSSFCell
     @Override
     protected void setBooleanValue(final Boolean pValue) {
         /* Set the value */
-        theExcelCell.setCellValue(pValue.booleanValue());
+        theExcelCell.setCellValue(pValue);
 
         /* Set the style for the cell */
         theExcelRow.setCellStyle(this, pValue);
@@ -217,7 +211,7 @@ public class PrometheusExcelHSSFCell
     @Override
     protected void setDateValue(final OceanusDate pValue) {
         /* Set the value */
-        theExcelCell.setCellValue(pValue.toDate());
+        theExcelCell.setCellValue(Date.valueOf(pValue.getDate()));
 
         /* Set the style for the cell */
         theExcelRow.setCellStyle(this, pValue);

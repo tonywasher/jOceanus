@@ -19,6 +19,9 @@
  * Prometheus Sheet HSSF.
  */
 module o.github.tonywasher.joceanus.prometheus.sheet.hssf {
+    /* Java */
+    requires java.sql;
+    
     /* External libraries */
     requires org.apache.poi.poi;
 

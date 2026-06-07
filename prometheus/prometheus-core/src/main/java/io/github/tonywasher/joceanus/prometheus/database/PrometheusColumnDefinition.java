@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.prometheus.database;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
@@ -24,8 +26,6 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
@@ -36,6 +36,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -728,9 +729,9 @@ public abstract class PrometheusColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             final Date myValue = pResults.getDate(pIndex);
-            setValue((myValue == null)
+            setValue(myValue == null
                     ? null
-                    : new OceanusDate(myValue));
+                    : new OceanusDate(myValue.toLocalDate()));
         }
 
         @Override
@@ -742,9 +743,8 @@ public abstract class PrometheusColumnDefinition {
             if (myValue == null) {
                 pStatement.setNull(pIndex, Types.DATE);
             } else {
-                final long myDateValue = myValue.toDate().getTime();
-                final Date myDate = new Date(myDateValue);
-                pStatement.setDate(pIndex, myDate);
+                final LocalDate myDateValue = myValue.getDate();
+                pStatement.setDate(pIndex, Date.valueOf(myDateValue));
             }
         }
     }

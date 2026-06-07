@@ -56,7 +56,7 @@ import java.awt.event.WindowEvent;
 import java.io.Serial;
 import java.time.DayOfWeek;
 import java.time.format.TextStyle;
-import java.util.Calendar;
+import java.time.temporal.WeekFields;
 import java.util.Locale;
 
 /**
@@ -803,16 +803,12 @@ public final class TethysUISwingDateDialog
          * build Day names.
          */
         void buildDayNames() {
-            /* Get todays date */
+            /* Get today's date */
             final Locale myLocale = theConfig.getLocale();
-            final Calendar myDate = Calendar.getInstance(myLocale);
-            int myStart = myDate.getFirstDayOfWeek();
-            if (myStart == Calendar.SUNDAY) {
-                myStart += DAYS_IN_WEEK;
-            }
+            final WeekFields myWeekFields = WeekFields.of(myLocale);
 
             /* Build the array of the days of the week */
-            DayOfWeek myDoW = DayOfWeek.of(myStart - 1);
+            DayOfWeek myDoW = myWeekFields.getFirstDayOfWeek();
             for (int iDay = 0; iDay < DAYS_IN_WEEK; iDay++, myDoW = myDoW.plus(1)) {
                 /* Store the day into the array */
                 theDaysOfWk[iDay] = myDoW;

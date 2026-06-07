@@ -28,7 +28,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPair
 import org.bouncycastle.asn1.x500.X500Name;
 
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Mini Certificate implementation.
@@ -147,7 +147,7 @@ public class GordianMiniCertificate
     }
 
     @Override
-    public boolean isValidOnDate(final Date pDate) {
+    public boolean isValidOnDate(final LocalDate pDate) {
         return true;
     }
 

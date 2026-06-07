@@ -19,17 +19,12 @@ package io.github.tonywasher.joceanus.oceanus.date;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusLocale;
 
 import java.time.DayOfWeek;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -153,34 +148,6 @@ public class OceanusDate
     public OceanusDate(final LocalDate pDate,
                        final Locale pLocale) {
         buildDateDay(pDate, pLocale);
-    }
-
-    /**
-     * Construct a new Date and initialise from a java date.
-     *
-     * @param pDate the java calendar to initialise from
-     */
-    public OceanusDate(final Date pDate) {
-        this(pDate, OceanusLocale.getDefaultLocale());
-    }
-
-    /**
-     * Construct a new Date and initialise from a java date.
-     *
-     * @param pDate   the java date to initialise from
-     * @param pLocale the locale for this date
-     */
-    public OceanusDate(final Date pDate,
-                       final Locale pLocale) {
-        /* Null dates not allowed */
-        if (pDate == null) {
-            throw new IllegalArgumentException(ERROR_NULLDATE);
-        }
-
-        /* Create the Date */
-        final Instant myInstant = Instant.ofEpochMilli(pDate.getTime());
-        final LocalDateTime myDateTime = LocalDateTime.ofInstant(myInstant, ZoneId.systemDefault());
-        buildDateDay(myDateTime.toLocalDate(), pLocale);
     }
 
     /**
@@ -629,27 +596,6 @@ public class OceanusDate
         iHash *= HASH_PRIME;
         iHash += theDay;
         return iHash;
-    }
-
-    /**
-     * Convert the LocalDate to a Date.
-     *
-     * @return the associated date
-     */
-    public Date toDate() {
-        final Instant myInstant = theDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
-        return Date.from(myInstant);
-    }
-
-    /**
-     * Convert the LocalDate to a Calendar.
-     *
-     * @return the Calendar
-     */
-    public Calendar toCalendar() {
-        final Calendar myCalendar = Calendar.getInstance(theLocale);
-        myCalendar.setTime(toDate());
-        return myCalendar;
     }
 
     /**

@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.cert;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Certificate API.
@@ -59,7 +59,7 @@ public interface GordianCertificate {
      * @return true/false
      */
     default boolean isValidNow() {
-        return isValidOnDate(new Date(System.currentTimeMillis()));
+        return isValidOnDate(LocalDate.now());
     }
 
     /**
@@ -68,7 +68,7 @@ public interface GordianCertificate {
      * @param pDate the date to test
      * @return true/false
      */
-    boolean isValidOnDate(Date pDate);
+    boolean isValidOnDate(LocalDate pDate);
 
     /**
      * Is this certificate self-signed?

@@ -22,13 +22,10 @@ import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -159,22 +156,6 @@ public class OceanusDateFormatter
     }
 
     /**
-     * Format a calendar Date.
-     *
-     * @param pDate the date to format
-     * @return the formatted date
-     */
-    public String formatCalendarDay(final Calendar pDate) {
-        /* Handle null */
-        if (pDate == null) {
-            return null;
-        }
-
-        /* Format the date */
-        return formatJavaDate(pDate.getTime());
-    }
-
-    /**
      * Format a local Date.
      *
      * @param pDate the date to format
@@ -188,22 +169,6 @@ public class OceanusDateFormatter
 
         /* Format the date */
         return pDate.format(theLocalDateFormat);
-    }
-
-    /**
-     * Format a java Date.
-     *
-     * @param pDate the date to format
-     * @return the formatted date
-     */
-    public String formatJavaDate(final Date pDate) {
-        /* Handle null */
-        if (pDate == null) {
-            return null;
-        }
-
-        /* Format the date */
-        return theDateFormat.format(pDate);
     }
 
     /**
@@ -248,23 +213,6 @@ public class OceanusDateFormatter
                 + ((myEnd == null)
                 ? OceanusDateRange.DESC_UNBOUNDED
                 : formatDate(myEnd));
-    }
-
-    /**
-     * Parse Java Date.
-     *
-     * @param pValue Formatted Date
-     * @return the Date
-     * @throws IllegalArgumentException on error
-     */
-    public Date parseJavaDate(final String pValue) {
-        /* Parse the date */
-        try {
-            return theDateFormat.parse(pValue);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("Invalid date: "
-                    + pValue, e);
-        }
     }
 
     /**
@@ -315,20 +263,7 @@ public class OceanusDateFormatter
     }
 
     /**
-     * Parse CalendarDay.
-     *
-     * @param pValue Formatted CalendarDay
-     * @return the CalendarDay
-     * @throws IllegalArgumentException on error
-     */
-    public Calendar parseCalendarDay(final String pValue) {
-        final Date myDate = parseJavaDate(pValue);
-        final Calendar myCalendar = Calendar.getInstance(theLocale);
-        myCalendar.setTime(myDate);
-        return myCalendar;
-    }
-
-    /**
+     * /**
      * Parse Date.
      *
      * @param pValue Formatted Date

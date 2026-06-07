@@ -21,6 +21,10 @@ import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.core.base.TethysUIResource;
+import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXArrowIcon;
+import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXUtils;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
@@ -39,14 +43,10 @@ import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
-import io.github.tonywasher.joceanus.tethys.core.base.TethysUIResource;
-import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXArrowIcon;
-import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXUtils;
 
 import java.time.DayOfWeek;
 import java.time.format.TextStyle;
-import java.util.Calendar;
+import java.time.temporal.WeekFields;
 import java.util.Locale;
 
 /**
@@ -735,14 +735,10 @@ public final class TethysUIFXDateDialog
         void buildDayNames() {
             /* Get todays date */
             final Locale myLocale = theConfig.getLocale();
-            final Calendar myDate = Calendar.getInstance(myLocale);
-            int myStart = myDate.getFirstDayOfWeek();
-            if (myStart == Calendar.SUNDAY) {
-                myStart += DAYS_IN_WEEK;
-            }
+            final WeekFields myWeekFields = WeekFields.of(myLocale);
 
             /* Build the array of the days of the week */
-            DayOfWeek myDoW = DayOfWeek.of(myStart - 1);
+            DayOfWeek myDoW = myWeekFields.getFirstDayOfWeek();
             for (int iDay = 0; iDay < DAYS_IN_WEEK; iDay++, myDoW = myDoW.plus(1)) {
                 /* Store the day into the array */
                 theDaysOfWk[iDay] = myDoW;

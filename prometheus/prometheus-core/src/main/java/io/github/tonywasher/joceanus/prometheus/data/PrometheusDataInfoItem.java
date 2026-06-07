@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.prometheus.data;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
@@ -26,12 +28,8 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
-import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusLogicException;
-
-import java.util.Date;
 
 /**
  * Representation of an information extension of a DataItem.
@@ -566,10 +564,7 @@ public abstract class PrometheusDataInfoItem
                                  final Object pValue) throws OceanusException {
         try {
             /* Handle various forms */
-            if (pValue instanceof Date d) {
-                setValueValue(new OceanusDate(d));
-                return true;
-            } else if (pValue instanceof OceanusDate) {
+            if (pValue instanceof OceanusDate) {
                 setValueValue(pValue);
                 return true;
             } else if (pValue instanceof byte[] ba) {

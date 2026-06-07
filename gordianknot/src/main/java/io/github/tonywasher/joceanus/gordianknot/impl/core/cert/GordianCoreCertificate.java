@@ -56,9 +56,11 @@ import org.bouncycastle.asn1.x509.V3TBSCertificateGenerator;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.spec.X509EncodedKeySpec;
+import java.sql.Date;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Certificate implementation.
@@ -317,10 +319,12 @@ public class GordianCoreCertificate
     }
 
     @Override
-    public boolean isValidOnDate(final Date pDate) {
+    public boolean isValidOnDate(final LocalDate pDate) {
         /* Access the date */
-        return pDate.compareTo(theTbsCertificate.getStartDate().getDate()) >= 0
-                && pDate.compareTo(theTbsCertificate.getEndDate().getDate()) <= 0;
+        final Instant myStart = theTbsCertificate.getStartDate().getDate().toInstant();
+        final Instant myEnd = theTbsCertificate.getEndDate().getDate().toInstant();
+        return !pDate.isBefore(myStart.atZone(ZoneId.systemDefault()).toLocalDate())
+                && !pDate.isAfter(myEnd.atZone(ZoneId.systemDefault()).toLocalDate());
     }
 
     /**
@@ -617,11 +621,8 @@ public class GordianCoreCertificate
         final BigInteger mySerialNo = GordianCertUtils.newSerialNo();
 
         /* Create the startDate and endDate for the certificate */
-        final Date myStart = new Date(System.currentTimeMillis());
-        final Calendar myCalendar = Calendar.getInstance();
-        myCalendar.setTime(myStart);
-        myCalendar.add(Calendar.YEAR, 1);
-        final Date myEnd = myCalendar.getTime();
+        final LocalDate myStart = LocalDate.now();
+        final LocalDate myEnd = myStart.plusYears(1);
 
         /* Obtain the publicKey Info */
         final byte[] myPublicKeyEncoded = getPublicKeyEncoded();
@@ -631,8 +632,8 @@ public class GordianCoreCertificate
         final V3TBSCertificateGenerator myCertBuilder = new V3TBSCertificateGenerator();
         myCertBuilder.setSubject(pSubject);
         myCertBuilder.setIssuer(myIssuer);
-        myCertBuilder.setStartDate(new Time(myStart));
-        myCertBuilder.setEndDate(new Time(myEnd));
+        myCertBuilder.setStartDate(new Time(Date.valueOf(myStart)));
+        myCertBuilder.setEndDate(new Time(Date.valueOf(myEnd)));
         myCertBuilder.setSerialNumber(new ASN1Integer(mySerialNo));
         myCertBuilder.setSubjectPublicKeyInfo(myPublicKeyInfo);
         myCertBuilder.setSignature(theSigAlgId);
