@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 
 /**
  * Class representing a QIF Event record.
@@ -30,13 +30,11 @@ public abstract class MoneyWiseQIFEventRecord<T extends Enum<T> & MoneyWiseQLine
     /**
      * Constructor.
      *
-     * @param pFile  the QIF File
      * @param pClass the line type class
      */
-    protected MoneyWiseQIFEventRecord(final MoneyWiseQIFFile pFile,
-                                      final Class<T> pClass) {
+    protected MoneyWiseQIFEventRecord(final Class<T> pClass) {
         /* Call super-constructor */
-        super(pFile, pClass);
+        super(pClass);
     }
 
     /**

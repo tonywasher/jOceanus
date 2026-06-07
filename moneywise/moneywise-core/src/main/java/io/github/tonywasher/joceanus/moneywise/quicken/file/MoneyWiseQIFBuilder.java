@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
@@ -35,6 +33,8 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCatego
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -44,7 +44,8 @@ import java.util.Objects;
 /**
  * Builder class for QIF File.
  */
-public class MoneyWiseQIFBuilder {
+public class MoneyWiseQIFBuilder
+        implements MoneyWiseQIFHelper {
     /**
      * Quicken Transfer.
      */
@@ -61,9 +62,9 @@ public class MoneyWiseQIFBuilder {
     private static final String QIF_XFERTO = " to ";
 
     /**
-     * The QIF File.
+     * The QIF Register.
      */
-    private final MoneyWiseQIFFile theFile;
+    private final MoneyWiseQIFRegister theRegister;
 
     /**
      * The QIF File Type.
@@ -108,16 +109,16 @@ public class MoneyWiseQIFBuilder {
     /**
      * Constructor.
      *
-     * @param pFile     the QIF File
+     * @param pRegister the QIF Register
      * @param pData     the data
      * @param pAnalysis the analysis
      */
-    protected MoneyWiseQIFBuilder(final MoneyWiseQIFFile pFile,
+    protected MoneyWiseQIFBuilder(final MoneyWiseQIFRegister pRegister,
                                   final MoneyWiseDataSet pData,
                                   final MoneyWiseAnalysis pAnalysis) {
         /* Store parameters */
-        theFile = pFile;
-        theFileType = pFile.getFileType();
+        theRegister = pRegister;
+        theFileType = pRegister.getFileType();
 
         /* Create portfolio builder */
         thePortBuilder = new MoneyWiseQIFPortfolioBuilder(this, pData, pAnalysis);
@@ -135,31 +136,19 @@ public class MoneyWiseQIFBuilder {
         theOpeningCategory = myCategories.getSingularClass(MoneyWiseTransCategoryClass.OPENINGBALANCE);
     }
 
-    /**
-     * Obtain the file.
-     *
-     * @return the file
-     */
-    protected MoneyWiseQIFFile getFile() {
-        return theFile;
+    @Override
+    public MoneyWiseQIFRegister getRegister() {
+        return theRegister;
     }
 
-    /**
-     * Obtain the tax category.
-     *
-     * @return the category
-     */
-    protected MoneyWiseQIFEventCategory getTaxCategory() {
-        return theFile.registerCategory(theTaxCategory);
+    @Override
+    public MoneyWiseQIFEventCategory getTaxCategory() {
+        return theRegister.registerCategory(theTaxCategory);
     }
 
-    /**
-     * Obtain the tax payee.
-     *
-     * @return the payee
-     */
-    protected MoneyWiseQIFPayee getTaxMan() {
-        return theFile.registerPayee(theTaxMan);
+    @Override
+    public MoneyWiseQIFPayee getTaxMan() {
+        return theRegister.registerPayee(theTaxMan);
     }
 
     /**
@@ -204,10 +193,10 @@ public class MoneyWiseQIFBuilder {
                                   final OceanusDate pStartDate,
                                   final OceanusMoney pBalance) {
         /* Access the Account details */
-        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pDeposit);
+        final MoneyWiseQIFAccountEvents myAccount = theRegister.registerAccount(pDeposit);
 
         /* Create the event */
-        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pStartDate);
+        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pStartDate);
         myEvent.recordAmount(pBalance);
 
         /* If we are using self-Opening balance */
@@ -218,7 +207,7 @@ public class MoneyWiseQIFBuilder {
             /* else use an event */
         } else {
             /* Register category */
-            final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(theOpeningCategory);
+            final MoneyWiseQIFEventCategory myCategory = theRegister.registerCategory(theOpeningCategory);
             myEvent.recordCategory(myCategory);
         }
 
@@ -416,19 +405,19 @@ public class MoneyWiseQIFBuilder {
                                          final MoneyWiseTransAsset pCredit,
                                          final MoneyWiseTransaction pTrans) {
         /* Access the Payee details */
-        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pPayee);
+        final MoneyWiseQIFPayee myPayee = theRegister.registerPayee(pPayee);
 
         /* Access the Category details */
-        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final MoneyWiseQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
 
         /* Access the Account details */
-        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCredit);
+        final MoneyWiseQIFAccountEvents myAccount = theRegister.registerAccount(pCredit);
 
         /* Obtain classes */
         final List<MoneyWiseQIFClass> myList = getTransactionClasses(pTrans);
 
         /* Create a new event */
-        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
         myEvent.recordAmount(pTrans.getAmount());
         myEvent.recordPayee(myPayee);
         myEvent.recordCategory(myCategory, myList);
@@ -448,14 +437,14 @@ public class MoneyWiseQIFBuilder {
                                          final MoneyWiseTransAsset pCredit,
                                          final MoneyWiseTransaction pTrans) {
         /* Access the Payee details */
-        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pPayee);
-        final MoneyWiseQIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);
+        final MoneyWiseQIFPayee myPayee = theRegister.registerPayee(pPayee);
+        final MoneyWiseQIFPayee myTaxPayee = theRegister.registerPayee(theTaxMan);
 
         /* Access the Category details */
-        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final MoneyWiseQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
 
         /* Access the Account details */
-        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCredit);
+        final MoneyWiseQIFAccountEvents myAccount = theRegister.registerAccount(pCredit);
 
         /* Obtain classes */
         final List<MoneyWiseQIFClass> myList = getTransactionClasses(pTrans);
@@ -464,7 +453,7 @@ public class MoneyWiseQIFBuilder {
         OceanusMoney myAmount = pTrans.getAmount();
 
         /* Create a new event */
-        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
         myEvent.recordPayee(myPayee);
         myEvent.recordAmount(myAmount);
 
@@ -481,7 +470,7 @@ public class MoneyWiseQIFBuilder {
             myTaxCredit.negate();
 
             /* Access the Category details */
-            final MoneyWiseQIFEventCategory myTaxCategory = theFile.registerCategory(theTaxCategory);
+            final MoneyWiseQIFEventCategory myTaxCategory = theRegister.registerCategory(theTaxCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myTaxCategory, myTaxCredit, myTaxPayee.getName());
@@ -496,7 +485,7 @@ public class MoneyWiseQIFBuilder {
             myNatIns.negate();
 
             /* Access the Category details */
-            final MoneyWiseQIFEventCategory myInsCategory = theFile.registerCategory(theNatInsCategory);
+            final MoneyWiseQIFEventCategory myInsCategory = theRegister.registerCategory(theNatInsCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myInsCategory, myNatIns, myTaxPayee.getName());
@@ -506,7 +495,7 @@ public class MoneyWiseQIFBuilder {
         OceanusMoney myBenefit = pTrans.getDeemedBenefit();
         if (myBenefit != null) {
             /* Access the Category details */
-            final MoneyWiseQIFEventCategory myBenCategory = theFile.registerCategory(theBenefitCategory);
+            final MoneyWiseQIFEventCategory myBenCategory = theRegister.registerCategory(theBenefitCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myBenCategory, myBenefit, myPayee.getName());
@@ -516,7 +505,7 @@ public class MoneyWiseQIFBuilder {
             myBenefit.negate();
 
             /* Access the Category details */
-            final MoneyWiseQIFEventCategory myWithCategory = theFile.registerCategory(theBenefitCategory);
+            final MoneyWiseQIFEventCategory myWithCategory = theRegister.registerCategory(theBenefitCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myWithCategory, myBenefit, myPayee.getName());
@@ -531,7 +520,7 @@ public class MoneyWiseQIFBuilder {
             myWithheld.negate();
 
             /* Access the Category details */
-            final MoneyWiseQIFEventCategory myWithCategory = theFile.registerCategory(theWithheldCategory);
+            final MoneyWiseQIFEventCategory myWithCategory = theRegister.registerCategory(theWithheldCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myWithCategory, myWithheld, myPayee.getName());
@@ -552,13 +541,13 @@ public class MoneyWiseQIFBuilder {
                                           final MoneyWiseTransAsset pDebit,
                                           final MoneyWiseTransaction pTrans) {
         /* Access the Payee details */
-        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pPayee);
+        final MoneyWiseQIFPayee myPayee = theRegister.registerPayee(pPayee);
 
         /* Access the Category details */
-        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final MoneyWiseQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
 
         /* Access the Account details */
-        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pDebit);
+        final MoneyWiseQIFAccountEvents myAccount = theRegister.registerAccount(pDebit);
 
         /* Obtain classes */
         final List<MoneyWiseQIFClass> myList = getTransactionClasses(pTrans);
@@ -568,7 +557,7 @@ public class MoneyWiseQIFBuilder {
         myAmount.negate();
 
         /* Create a new event */
-        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
         myEvent.recordAmount(myAmount);
         myEvent.recordPayee(myPayee);
         myEvent.recordCategory(myCategory, myList);
@@ -588,14 +577,14 @@ public class MoneyWiseQIFBuilder {
                                           final MoneyWiseTransAsset pDebit,
                                           final MoneyWiseTransaction pTrans) {
         /* Access the Payee details */
-        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pPayee);
-        final MoneyWiseQIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);
+        final MoneyWiseQIFPayee myPayee = theRegister.registerPayee(pPayee);
+        final MoneyWiseQIFPayee myTaxPayee = theRegister.registerPayee(theTaxMan);
 
         /* Access the Category details */
-        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final MoneyWiseQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
 
         /* Access the Account details */
-        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pDebit);
+        final MoneyWiseQIFAccountEvents myAccount = theRegister.registerAccount(pDebit);
 
         /* Obtain classes */
         final List<MoneyWiseQIFClass> myList = getTransactionClasses(pTrans);
@@ -605,7 +594,7 @@ public class MoneyWiseQIFBuilder {
         myAmount.negate();
 
         /* Create a new event */
-        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
         myEvent.recordPayee(myPayee);
         myEvent.recordAmount(myAmount);
 
@@ -620,7 +609,7 @@ public class MoneyWiseQIFBuilder {
             myAmount.subtractAmount(myTaxCredit);
 
             /* Access the Category details */
-            final MoneyWiseQIFEventCategory myTaxCategory = theFile.registerCategory(theTaxCategory);
+            final MoneyWiseQIFEventCategory myTaxCategory = theRegister.registerCategory(theTaxCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myTaxCategory, myTaxCredit, myTaxPayee.getName());
@@ -633,7 +622,7 @@ public class MoneyWiseQIFBuilder {
             myAmount.subtractAmount(myNatIns);
 
             /* Access the Category details */
-            final MoneyWiseQIFEventCategory myInsCategory = theFile.registerCategory(theNatInsCategory);
+            final MoneyWiseQIFEventCategory myInsCategory = theRegister.registerCategory(theNatInsCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myInsCategory, myNatIns, myTaxPayee.getName());
@@ -646,7 +635,7 @@ public class MoneyWiseQIFBuilder {
             myAmount.subtractAmount(myBenefit);
 
             /* Access the Category details */
-            final MoneyWiseQIFEventCategory myBenCategory = theFile.registerCategory(theBenefitCategory);
+            final MoneyWiseQIFEventCategory myBenCategory = theRegister.registerCategory(theBenefitCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myBenCategory, myBenefit, myPayee.getName());
@@ -670,14 +659,14 @@ public class MoneyWiseQIFBuilder {
         final OceanusMoney myAmount = pTrans.getAmount();
 
         /* Access the Account details */
-        final MoneyWiseQIFAccountEvents myDebitAccount = theFile.registerAccount(pDebit);
-        final MoneyWiseQIFAccountEvents myCreditAccount = theFile.registerAccount(pCredit);
+        final MoneyWiseQIFAccountEvents myDebitAccount = theRegister.registerAccount(pDebit);
+        final MoneyWiseQIFAccountEvents myCreditAccount = theRegister.registerAccount(pCredit);
 
         /* Obtain classes */
         final List<MoneyWiseQIFClass> myList = getTransactionClasses(pTrans);
 
         /* Create a new event */
-        MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+        MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
         myEvent.recordAmount(myAmount);
         myEvent.recordAccount(myDebitAccount.getAccount(), myList);
 
@@ -692,7 +681,7 @@ public class MoneyWiseQIFBuilder {
         myOutAmount.negate();
 
         /* Create a new event */
-        myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+        myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
         myEvent.recordAmount(myOutAmount);
         myEvent.recordAccount(myCreditAccount.getAccount(), myList);
 
@@ -703,13 +692,8 @@ public class MoneyWiseQIFBuilder {
         myDebitAccount.addEvent(myEvent);
     }
 
-    /**
-     * Build xferFrom payee line.
-     *
-     * @param pPartner the Transfer Partner
-     * @return the line
-     */
-    protected String buildXferFromPayee(final MoneyWiseTransAsset pPartner) {
+    @Override
+    public String buildXferFromPayee(final MoneyWiseTransAsset pPartner) {
         /* Determine mode */
         final boolean useSimpleTransfer = theFileType.useSimpleTransfer();
 
@@ -725,13 +709,8 @@ public class MoneyWiseQIFBuilder {
         return myBuilder.toString();
     }
 
-    /**
-     * Build xferFrom payee line.
-     *
-     * @param pPartner the Transfer Partner
-     * @return the line
-     */
-    protected String buildXferToPayee(final MoneyWiseTransAsset pPartner) {
+    @Override
+    public String buildXferToPayee(final MoneyWiseTransAsset pPartner) {
         /* Determine mode */
         final boolean useSimpleTransfer = theFileType.useSimpleTransfer();
 
@@ -766,13 +745,13 @@ public class MoneyWiseQIFBuilder {
         final boolean hasXtraDetail = hasXtraDetail(pTrans);
 
         /* Access the Account details */
-        final MoneyWiseQIFAccountEvents myIntAccount = theFile.registerAccount(pDebit);
+        final MoneyWiseQIFAccountEvents myIntAccount = theRegister.registerAccount(pDebit);
 
         /* Access the payee */
-        final MoneyWiseQIFPayee myPayee = theFile.registerPayee((MoneyWisePayee) pDebit.getParent());
+        final MoneyWiseQIFPayee myPayee = theRegister.registerPayee((MoneyWisePayee) pDebit.getParent());
 
         /* Access the category */
-        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final MoneyWiseQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
 
         /* Obtain classes */
         final List<MoneyWiseQIFClass> myList = getTransactionClasses(pTrans);
@@ -780,7 +759,7 @@ public class MoneyWiseQIFBuilder {
         /* If this is a simple interest */
         if (isRecursive && !hasXtraDetail) {
             /* Create a new event */
-            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
 
             /* Build simple event and add it */
             myEvent.recordAmount(myAmount);
@@ -793,7 +772,7 @@ public class MoneyWiseQIFBuilder {
             /* Else we need splits */
         } else {
             /* Create a new event */
-            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
 
             /* Record basic details */
             myEvent.recordAmount(isRecursive
@@ -809,7 +788,7 @@ public class MoneyWiseQIFBuilder {
             OceanusMoney myTaxCredit = pTrans.getTaxCredit();
             if (myTaxCredit != null) {
                 /* Access tax payee */
-                final MoneyWiseQIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);
+                final MoneyWiseQIFPayee myTaxPayee = theRegister.registerPayee(theTaxMan);
 
                 /* Add to amount */
                 myAmount.addAmount(myTaxCredit);
@@ -817,7 +796,7 @@ public class MoneyWiseQIFBuilder {
                 myTaxCredit.negate();
 
                 /* Access the Category details */
-                final MoneyWiseQIFEventCategory myTaxCategory = theFile.registerCategory(theTaxCategory);
+                final MoneyWiseQIFEventCategory myTaxCategory = theRegister.registerCategory(theTaxCategory);
 
                 /* Add Split event */
                 myEvent.recordSplitRecord(myTaxCategory, myTaxCredit, myTaxPayee.getName());
@@ -832,7 +811,7 @@ public class MoneyWiseQIFBuilder {
                 myWithheld.negate();
 
                 /* Access the Category details */
-                final MoneyWiseQIFEventCategory myWithCategory = theFile.registerCategory(theWithheldCategory);
+                final MoneyWiseQIFEventCategory myWithCategory = theRegister.registerCategory(theWithheldCategory);
 
                 /* Add Split event */
                 myEvent.recordSplitRecord(myWithCategory, myWithheld, myPayee.getName());
@@ -845,7 +824,7 @@ public class MoneyWiseQIFBuilder {
                 myOutAmount.negate();
 
                 /* Access the Account details */
-                final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCredit);
+                final MoneyWiseQIFAccountEvents myAccount = theRegister.registerAccount(pCredit);
 
                 /* Add Split event */
                 myEvent.recordSplitRecord(myAccount.getAccount(), myOutAmount, null);
@@ -858,10 +837,10 @@ public class MoneyWiseQIFBuilder {
         /* If we need a balancing transfer */
         if (!isRecursive && !hideBalancingTransfer) {
             /* Access the Account details */
-            final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCredit);
+            final MoneyWiseQIFAccountEvents myAccount = theRegister.registerAccount(pCredit);
 
             /* Create a new event */
-            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
 
             /* Build simple event and add it */
             myEvent.recordAmount(pTrans.getAmount());
@@ -893,13 +872,13 @@ public class MoneyWiseQIFBuilder {
         final boolean hideBalancingTransfer = theFileType.hideBalancingSplitTransfer();
 
         /* Access the Account details */
-        final MoneyWiseQIFAccountEvents myBaseAccount = theFile.registerAccount(pDebit);
+        final MoneyWiseQIFAccountEvents myBaseAccount = theRegister.registerAccount(pDebit);
 
         /* Access the payee */
-        final MoneyWiseQIFPayee myPayee = theFile.registerPayee((MoneyWisePayee) pDebit.getParent());
+        final MoneyWiseQIFPayee myPayee = theRegister.registerPayee((MoneyWisePayee) pDebit.getParent());
 
         /* Access the category */
-        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final MoneyWiseQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
 
         /* Obtain classes */
         final List<MoneyWiseQIFClass> myList = getTransactionClasses(pTrans);
@@ -907,7 +886,7 @@ public class MoneyWiseQIFBuilder {
         /* If this is a simple cashBack */
         if (isRecursive) {
             /* Create a new event */
-            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
 
             /* Build simple event and add it */
             myEvent.recordAmount(myAmount);
@@ -920,7 +899,7 @@ public class MoneyWiseQIFBuilder {
             /* Else we need splits */
         } else {
             /* Create a new event */
-            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
 
             /* Record basic details */
             myEvent.recordAmount(new OceanusMoney());
@@ -935,7 +914,7 @@ public class MoneyWiseQIFBuilder {
             myOutAmount.negate();
 
             /* Access the Account details */
-            final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCredit);
+            final MoneyWiseQIFAccountEvents myAccount = theRegister.registerAccount(pCredit);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myAccount.getAccount(), myOutAmount, null);
@@ -947,10 +926,10 @@ public class MoneyWiseQIFBuilder {
         /* If we need a balancing transfer */
         if (!isRecursive && !hideBalancingTransfer) {
             /* Access the Account details */
-            final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCredit);
+            final MoneyWiseQIFAccountEvents myAccount = theRegister.registerAccount(pCredit);
 
             /* Create a new event */
-            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
 
             /* Build simple event and add it */
             myEvent.recordAmount(pTrans.getAmount());
@@ -975,14 +954,14 @@ public class MoneyWiseQIFBuilder {
                                        final MoneyWiseCash pCash,
                                        final MoneyWiseTransaction pTrans) {
         /* Access the Payee details */
-        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pPayee);
+        final MoneyWiseQIFPayee myPayee = theRegister.registerPayee(pPayee);
 
         /* Access the Category details */
-        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
-        final MoneyWiseQIFEventCategory myAutoCategory = theFile.registerCategory(pCash.getAutoExpense());
+        final MoneyWiseQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
+        final MoneyWiseQIFEventCategory myAutoCategory = theRegister.registerCategory(pCash.getAutoExpense());
 
         /* Access the Account details */
-        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCash);
+        final MoneyWiseQIFAccountEvents myAccount = theRegister.registerAccount(pCash);
 
         /* Obtain classes */
         final List<MoneyWiseQIFClass> myList = getTransactionClasses(pTrans);
@@ -993,7 +972,7 @@ public class MoneyWiseQIFBuilder {
         myOutAmount.negate();
 
         /* Create a new event */
-        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
         myEvent.recordAmount(new OceanusMoney());
         myEvent.recordPayee(myPayee);
         myEvent.recordSplitRecord(myCategory, myList, myInAmount, myPayee.getName());
@@ -1014,14 +993,14 @@ public class MoneyWiseQIFBuilder {
                                       final MoneyWiseCash pCash,
                                       final MoneyWiseTransaction pTrans) {
         /* Access the Payee details */
-        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pPayee);
+        final MoneyWiseQIFPayee myPayee = theRegister.registerPayee(pPayee);
 
         /* Access the Category details */
-        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
-        final MoneyWiseQIFEventCategory myAutoCategory = theFile.registerCategory(pCash.getAutoExpense());
+        final MoneyWiseQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
+        final MoneyWiseQIFEventCategory myAutoCategory = theRegister.registerCategory(pCash.getAutoExpense());
 
         /* Access the Account details */
-        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCash);
+        final MoneyWiseQIFAccountEvents myAccount = theRegister.registerAccount(pCash);
 
         /* Obtain classes */
         final List<MoneyWiseQIFClass> myList = getTransactionClasses(pTrans);
@@ -1032,7 +1011,7 @@ public class MoneyWiseQIFBuilder {
         myOutAmount.negate();
 
         /* Create a new event */
-        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
         myEvent.recordAmount(new OceanusMoney());
         myEvent.recordPayee(myPayee);
         myEvent.recordSplitRecord(myAutoCategory, myList, myInAmount, pCash.getAutoPayee().getName());
@@ -1053,23 +1032,23 @@ public class MoneyWiseQIFBuilder {
                                       final MoneyWiseTransAsset pDebit,
                                       final MoneyWiseTransaction pTrans) {
         /* Access the Payee details */
-        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pCash.getAutoPayee());
+        final MoneyWiseQIFPayee myPayee = theRegister.registerPayee(pCash.getAutoPayee());
 
         /* Access the Category details */
-        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pCash.getAutoExpense());
+        final MoneyWiseQIFEventCategory myCategory = theRegister.registerCategory(pCash.getAutoExpense());
 
         /* Obtain classes */
         final List<MoneyWiseQIFClass> myList = getTransactionClasses(pTrans);
 
         /* Access the Account details */
-        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pDebit);
+        final MoneyWiseQIFAccountEvents myAccount = theRegister.registerAccount(pDebit);
 
         /* Access the amount */
         final OceanusMoney myAmount = new OceanusMoney(pTrans.getAmount());
         myAmount.negate();
 
         /* Create a new event */
-        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
         myEvent.recordAmount(myAmount);
         myEvent.recordPayee(myPayee);
         myEvent.recordCategory(myCategory, myList);
@@ -1089,19 +1068,19 @@ public class MoneyWiseQIFBuilder {
                                       final MoneyWiseTransAsset pCredit,
                                       final MoneyWiseTransaction pTrans) {
         /* Access the Payee details */
-        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pCash.getAutoPayee());
+        final MoneyWiseQIFPayee myPayee = theRegister.registerPayee(pCash.getAutoPayee());
 
         /* Access the Category details */
-        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pCash.getAutoExpense());
+        final MoneyWiseQIFEventCategory myCategory = theRegister.registerCategory(pCash.getAutoExpense());
 
         /* Access the Account details */
-        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCredit);
+        final MoneyWiseQIFAccountEvents myAccount = theRegister.registerAccount(pCredit);
 
         /* Obtain classes */
         final List<MoneyWiseQIFClass> myList = getTransactionClasses(pTrans);
 
         /* Create a new event */
-        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
         myEvent.recordAmount(pTrans.getAmount());
         myEvent.recordPayee(myPayee);
         myEvent.recordCategory(myCategory, myList);
@@ -1110,13 +1089,8 @@ public class MoneyWiseQIFBuilder {
         myAccount.addEvent(myEvent);
     }
 
-    /**
-     * Obtain classes for transaction.
-     *
-     * @param pTrans the transaction
-     * @return the class list (or null)
-     */
-    protected List<MoneyWiseQIFClass> getTransactionClasses(final MoneyWiseTransaction pTrans) {
+    @Override
+    public List<MoneyWiseQIFClass> getTransactionClasses(final MoneyWiseTransaction pTrans) {
         /* Create return value */
         List<MoneyWiseQIFClass> myList = null;
 
@@ -1134,7 +1108,7 @@ public class MoneyWiseQIFBuilder {
                 final MoneyWiseTransTag myTag = myIterator.next();
 
                 /* Access the transaction tag */
-                final MoneyWiseQIFClass myClass = theFile.registerClass(myTag);
+                final MoneyWiseQIFClass myClass = theRegister.registerClass(myTag);
 
                 /* Add to the list */
                 myList.add(myClass);

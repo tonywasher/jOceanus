@@ -16,13 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Parent category registration.
@@ -44,12 +45,10 @@ public class MoneyWiseQIFParentCategory
     /**
      * Constructor.
      *
-     * @param pFile   the file definition
      * @param pParent the parent category
      */
-    protected MoneyWiseQIFParentCategory(final MoneyWiseQIFFile pFile,
-                                         final MoneyWiseTransCategory pParent) {
-        this(new MoneyWiseQIFEventCategory(pFile, pParent));
+    protected MoneyWiseQIFParentCategory(final MoneyWiseTransCategory pParent) {
+        this(new MoneyWiseQIFEventCategory(pParent));
     }
 
     /**
@@ -164,8 +163,7 @@ public class MoneyWiseQIFParentCategory
 
     @Override
     public int hashCode() {
-        final int myResult = MoneyWiseQIFFile.HASH_BASE * theSelf.hashCode();
-        return myResult + theChildren.hashCode();
+        return Objects.hash(theSelf, theChildren);
     }
 
     @Override

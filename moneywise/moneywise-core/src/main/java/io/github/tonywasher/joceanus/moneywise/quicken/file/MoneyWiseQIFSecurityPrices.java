@@ -16,13 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Security Price List.
@@ -32,9 +33,9 @@ import java.util.List;
 public class MoneyWiseQIFSecurityPrices
         implements Comparable<MoneyWiseQIFSecurityPrices> {
     /**
-     * The QIF File.
+     * The QIF Register.
      */
-    private final MoneyWiseQIFFile theFile;
+    private final MoneyWiseQIFRegister theRegister;
 
     /**
      * The Security.
@@ -49,24 +50,24 @@ public class MoneyWiseQIFSecurityPrices
     /**
      * Constructor.
      *
-     * @param pFile     the QIF File
+     * @param pRegister the QIF Register
      * @param pSecurity the security.
      */
-    protected MoneyWiseQIFSecurityPrices(final MoneyWiseQIFFile pFile,
+    protected MoneyWiseQIFSecurityPrices(final MoneyWiseQIFRegister pRegister,
                                          final MoneyWiseSecurity pSecurity) {
-        this(pFile, new MoneyWiseQIFSecurity(pFile, pSecurity));
+        this(pRegister, new MoneyWiseQIFSecurity(pSecurity));
     }
 
     /**
      * Constructor.
      *
-     * @param pFile     the QIF File
+     * @param pRegister the QIF Register
      * @param pSecurity the security.
      */
-    protected MoneyWiseQIFSecurityPrices(final MoneyWiseQIFFile pFile,
+    protected MoneyWiseQIFSecurityPrices(final MoneyWiseQIFRegister pRegister,
                                          final MoneyWiseQIFSecurity pSecurity) {
         /* Store parameters */
-        theFile = pFile;
+        theRegister = pRegister;
         theSecurity = pSecurity;
 
         /* Create the list */
@@ -98,7 +99,7 @@ public class MoneyWiseQIFSecurityPrices
      */
     protected void addPrice(final MoneyWiseSecurityPrice pPrice) {
         /* Allocate price */
-        final MoneyWiseQIFPrice myPrice = new MoneyWiseQIFPrice(theFile, theSecurity, pPrice);
+        final MoneyWiseQIFPrice myPrice = new MoneyWiseQIFPrice(theRegister, theSecurity, pPrice);
 
         /* Add to the list */
         thePrices.add(myPrice);
@@ -168,8 +169,7 @@ public class MoneyWiseQIFSecurityPrices
 
     @Override
     public int hashCode() {
-        final int myResult = MoneyWiseQIFFile.HASH_BASE * theSecurity.hashCode();
-        return myResult + thePrices.hashCode();
+        return Objects.hash(theSecurity, thePrices);
     }
 
     @Override

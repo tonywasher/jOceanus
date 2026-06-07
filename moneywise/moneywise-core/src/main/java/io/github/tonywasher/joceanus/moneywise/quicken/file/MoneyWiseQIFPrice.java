@@ -16,15 +16,16 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
-import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class representing a QIF Price record.
@@ -74,15 +75,15 @@ public class MoneyWiseQIFPrice
     /**
      * Constructor.
      *
-     * @param pFile     the QIF File
+     * @param pRegister the QIF Register
      * @param pSecurity the security
      * @param pPrice    the price
      */
-    protected MoneyWiseQIFPrice(final MoneyWiseQIFFile pFile,
+    protected MoneyWiseQIFPrice(final MoneyWiseQIFRegister pRegister,
                                 final MoneyWiseQIFSecurity pSecurity,
                                 final MoneyWiseSecurityPrice pPrice) {
         /* Store data */
-        theFileType = pFile.getFileType();
+        theFileType = pRegister.getFileType();
         theSecurity = pSecurity;
         theDate = pPrice.getDate();
         thePrice = pPrice.getPrice();
@@ -92,11 +93,11 @@ public class MoneyWiseQIFPrice
     /**
      * Constructor.
      *
-     * @param pFile      the QIF File
+     * @param pRegister  the QIF Register
      * @param pFormatter the Data Formatter
      * @param pLine      the line
      */
-    private MoneyWiseQIFPrice(final MoneyWiseQIFFile pFile,
+    private MoneyWiseQIFPrice(final MoneyWiseQIFRegister pRegister,
                               final OceanusDataFormatter pFormatter,
                               final String pLine) {
         /* Split out the parts */
@@ -112,9 +113,9 @@ public class MoneyWiseQIFPrice
         }
 
         /* Store the data */
-        theFileType = pFile.getFileType();
-        theSecurity = pFile.getSecurityBySymbol(myParts[0]);
-        theDate = pFormatter.getDateFormatter().parseDateBase(myParts[2], MoneyWiseQIFWriter.QIF_BASEYEAR);
+        theFileType = pRegister.getFileType();
+        theSecurity = pRegister.getSecurityBySymbol(myParts[0]);
+        theDate = pFormatter.getDateFormatter().parseDateBase(myParts[2], MoneyWiseQIFConstants.QIF_BASEYEAR);
         thePrice = pFormatter.getDecimalParser().parsePriceValue(myParts[1]);
         thePrices = null;
     }
@@ -122,11 +123,11 @@ public class MoneyWiseQIFPrice
     /**
      * Constructor.
      *
-     * @param pFile      the QIF File
+     * @param pRegister  the QIF Register
      * @param pFormatter the Data Formatter
      * @param pLines     the lines
      */
-    protected MoneyWiseQIFPrice(final MoneyWiseQIFFile pFile,
+    protected MoneyWiseQIFPrice(final MoneyWiseQIFRegister pRegister,
                                 final OceanusDataFormatter pFormatter,
                                 final List<String> pLines) {
         /* Build the price list */
@@ -136,13 +137,13 @@ public class MoneyWiseQIFPrice
         MoneyWiseQIFSecurity mySecurity = null;
         for (String myLine : pLines) {
             /* Create the price and add to the list */
-            final MoneyWiseQIFPrice myPrice = new MoneyWiseQIFPrice(pFile, pFormatter, myLine);
+            final MoneyWiseQIFPrice myPrice = new MoneyWiseQIFPrice(pRegister, pFormatter, myLine);
             mySecurity = myPrice.getSecurity();
             thePrices.add(myPrice);
         }
 
         /* Store the data */
-        theFileType = pFile.getFileType();
+        theFileType = pRegister.getFileType();
         theSecurity = mySecurity;
         theDate = null;
         thePrice = null;
@@ -253,10 +254,7 @@ public class MoneyWiseQIFPrice
 
     @Override
     public int hashCode() {
-        int myResult = MoneyWiseQIFFile.HASH_BASE * theSecurity.hashCode();
-        myResult += thePrice.hashCode();
-        myResult *= MoneyWiseQIFFile.HASH_BASE;
-        return myResult + theDate.hashCode();
+        return Objects.hash(theSecurity, thePrice, theDate);
     }
 
     @Override

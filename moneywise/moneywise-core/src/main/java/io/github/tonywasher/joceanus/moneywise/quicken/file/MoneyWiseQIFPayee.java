@@ -17,6 +17,10 @@
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.Objects;
 
 /**
  * Class representing a Payee.
@@ -94,5 +98,82 @@ public class MoneyWiseQIFPayee
     @Override
     public int compareTo(final MoneyWiseQIFPayee pThat) {
         return theName.compareTo(pThat.getName());
+    }
+
+
+    /**
+     * The Payee line.
+     *
+     * @param <X> the line type
+     */
+    public abstract static class MoneyWiseQIFPayeeLine<X extends MoneyWiseQLineType>
+            extends MoneyWiseQIFLine<X> {
+        /**
+         * The payee.
+         */
+        private final MoneyWiseQIFPayee thePayee;
+
+        /**
+         * Constructor.
+         *
+         * @param pPayee the Payee
+         */
+        protected MoneyWiseQIFPayeeLine(final MoneyWiseQIFPayee pPayee) {
+            /* Store data */
+            thePayee = pPayee;
+        }
+
+        @Override
+        public String toString() {
+            return thePayee.toString();
+        }
+
+        /**
+         * Obtain payee.
+         *
+         * @return the payee
+         */
+        public MoneyWiseQIFPayee getPayee() {
+            return thePayee;
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the string data */
+            pBuilder.append(thePayee.getName());
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!getClass().equals(pThat.getClass())) {
+                return false;
+            }
+
+            /* Cast correctly */
+            final MoneyWiseQIFPayeeLine<?> myLine = (MoneyWiseQIFPayeeLine<?>) pThat;
+
+            /* Check line type */
+            if (!getLineType().equals(myLine.getLineType())) {
+                return false;
+            }
+
+            /* Check value */
+            return thePayee.equals(myLine.getPayee());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getLineType(), thePayee);
+        }
     }
 }

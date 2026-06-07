@@ -16,12 +16,12 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
-import java.util.Iterator;
-import java.util.List;
-
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQClassLineType;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Class representing a QIF Class record.
@@ -47,13 +47,11 @@ public class MoneyWiseQIFClass
     /**
      * Constructor.
      *
-     * @param pFile the QIF File
-     * @param pTag  the Event Tag
+     * @param pTag the Event Tag
      */
-    public MoneyWiseQIFClass(final MoneyWiseQIFFile pFile,
-                             final MoneyWiseTransTag pTag) {
+    public MoneyWiseQIFClass(final MoneyWiseTransTag pTag) {
         /* Call super-constructor */
-        super(pFile, MoneyWiseQClassLineType.class);
+        super(MoneyWiseQClassLineType.class);
 
         /* Store data */
         theName = pTag.getName();
@@ -69,13 +67,11 @@ public class MoneyWiseQIFClass
     /**
      * Constructor.
      *
-     * @param pFile  the QIF File
      * @param pLines the data lines
      */
-    protected MoneyWiseQIFClass(final MoneyWiseQIFFile pFile,
-                                final List<String> pLines) {
+    protected MoneyWiseQIFClass(final List<String> pLines) {
         /* Call super-constructor */
-        super(pFile, MoneyWiseQClassLineType.class);
+        super(MoneyWiseQClassLineType.class);
 
         /* Determine details */
         String myName = null;

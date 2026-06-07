@@ -16,14 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
@@ -44,6 +36,14 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQActionType;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 
 import java.util.Iterator;
 import java.util.List;
@@ -58,9 +58,9 @@ public class MoneyWiseQIFPortfolioBuilder {
     private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseQIFPortfolioBuilder.class);
 
     /**
-     * The QIF File.
+     * The QIF register.
      */
-    private final MoneyWiseQIFFile theFile;
+    private final MoneyWiseQIFRegister theRegister;
 
     /**
      * The QIF File Type.
@@ -70,7 +70,7 @@ public class MoneyWiseQIFPortfolioBuilder {
     /**
      * The Builder.
      */
-    private final MoneyWiseQIFBuilder theBuilder;
+    private final MoneyWiseQIFHelper theHelper;
 
     /**
      * The Data.
@@ -85,17 +85,17 @@ public class MoneyWiseQIFPortfolioBuilder {
     /**
      * Constructor.
      *
-     * @param pBuilder  the builder
+     * @param pHelper   the builder helper
      * @param pData     the data
      * @param pAnalysis the analysis
      */
-    protected MoneyWiseQIFPortfolioBuilder(final MoneyWiseQIFBuilder pBuilder,
+    protected MoneyWiseQIFPortfolioBuilder(final MoneyWiseQIFHelper pHelper,
                                            final MoneyWiseDataSet pData,
                                            final MoneyWiseAnalysis pAnalysis) {
         /* Store parameters */
-        theBuilder = pBuilder;
-        theFile = theBuilder.getFile();
-        theFileType = theFile.getFileType();
+        theHelper = pHelper;
+        theRegister = theHelper.getRegister();
+        theFileType = theRegister.getFileType();
         theData = pData;
         theAnalysis = pAnalysis;
     }
@@ -214,18 +214,18 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* Access Portfolio Account */
         final MoneyWisePortfolio myPort = pHolding.getPortfolio();
         final MoneyWiseSecurity mySecurity = pHolding.getSecurity();
-        final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(myPort);
+        final MoneyWiseQIFAccountEvents myPortfolio = theRegister.registerAccount(myPort);
 
         /* Determine style */
         final boolean useHoldingAccount = theFileType.useInvestmentHolding4Category();
 
         /* Access Transaction details */
-        final MoneyWiseQIFPayee myQPayee = theFile.registerPayee(pPayee);
-        final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
-        final MoneyWiseQIFEventCategory myQCategory = theFile.registerCategory(pTrans.getCategory());
+        final MoneyWiseQIFPayee myQPayee = theRegister.registerPayee(pPayee);
+        final MoneyWiseQIFSecurity myQSecurity = theRegister.registerSecurity(mySecurity);
+        final MoneyWiseQIFEventCategory myQCategory = theRegister.registerCategory(pTrans.getCategory());
 
         /* Obtain classes */
-        final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+        final List<MoneyWiseQIFClass> myList = theHelper.getTransactionClasses(pTrans);
 
         /* Access details */
         final OceanusMoney myAmount = pTrans.getAmount();
@@ -235,14 +235,14 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* If we are using a holding account */
         if (useHoldingAccount) {
             /* Access Holding Account */
-            final MoneyWiseQIFAccountEvents myHolding = theFile.registerHoldingAccount(myPort);
+            final MoneyWiseQIFAccountEvents myHolding = theRegister.registerHoldingAccount(myPort);
 
             /* Create output amount */
             final OceanusMoney myOutAmount = new OceanusMoney(myAmount);
             myOutAmount.negate();
 
             /* Create an event */
-            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
             myEvent.recordAmount(new OceanusMoney());
             myEvent.recordPayee(myQPayee);
 
@@ -250,13 +250,13 @@ public class MoneyWiseQIFPortfolioBuilder {
             myEvent.recordSplitRecord(myQCategory, myList, myAmount, myQPayee.getName());
             myEvent.recordSplitRecord(myPortfolio.getAccount(), myOutAmount, myPort.getName());
 
-            /* Add to event list */
+            /* Add to the event list */
             myHolding.addEvent(myEvent);
 
             /* else we can do this properly */
         } else {
             /* Create a miscellaneous cash event */
-            final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.CASH);
+            final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.CASH);
             myEvent.recordAmount(myAmount);
             myEvent.recordPayee(myQPayee);
             myEvent.recordCategory(myQCategory, myList);
@@ -266,7 +266,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         }
 
         /* Create a buy shares event */
-        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.BUY);
+        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.BUY);
         myEvent.recordAmount(myAmount);
         myEvent.recordSecurity(myQSecurity);
         myEvent.recordQuantity(myUnits);
@@ -289,18 +289,18 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* Access Portfolio Account */
         final MoneyWisePortfolio myPort = pHolding.getPortfolio();
         final MoneyWiseSecurity mySecurity = pHolding.getSecurity();
-        final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(myPort);
+        final MoneyWiseQIFAccountEvents myPortfolio = theRegister.registerAccount(myPort);
 
         /* Determine style */
         final boolean useHoldingAccount = theFileType.useInvestmentHolding4Category();
 
         /* Access Transaction details */
-        final MoneyWiseQIFPayee myQPayee = theFile.registerPayee(pPayee);
-        final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
-        final MoneyWiseQIFEventCategory myQCategory = theFile.registerCategory(pTrans.getCategory());
+        final MoneyWiseQIFPayee myQPayee = theRegister.registerPayee(pPayee);
+        final MoneyWiseQIFSecurity myQSecurity = theRegister.registerSecurity(mySecurity);
+        final MoneyWiseQIFEventCategory myQCategory = theRegister.registerCategory(pTrans.getCategory());
 
         /* Obtain classes */
-        final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+        final List<MoneyWiseQIFClass> myList = theHelper.getTransactionClasses(pTrans);
 
         /* Access details */
         final OceanusMoney myAmount = pTrans.getAmount();
@@ -310,7 +310,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         final OceanusPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
 
         /* Create a sell shares event */
-        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SELL);
+        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.SELL);
         myEvent.recordAmount(myAmount);
         myEvent.recordSecurity(myQSecurity);
         myEvent.recordQuantity(myUnits);
@@ -326,10 +326,10 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* If we are using a holding account */
         if (useHoldingAccount) {
             /* Access Holding Account */
-            final MoneyWiseQIFAccountEvents myHolding = theFile.registerHoldingAccount(myPort);
+            final MoneyWiseQIFAccountEvents myHolding = theRegister.registerHoldingAccount(myPort);
 
             /* Create an event */
-            final MoneyWiseQIFEvent myHoldEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+            final MoneyWiseQIFEvent myHoldEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
             myHoldEvent.recordAmount(new OceanusMoney());
             myHoldEvent.recordPayee(myQPayee);
 
@@ -343,7 +343,7 @@ public class MoneyWiseQIFPortfolioBuilder {
             /* else we can do this properly */
         } else {
             /* Create a miscellaneous cash event */
-            myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.CASH);
+            myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.CASH);
             myEvent.recordAmount(myOutAmount);
             myEvent.recordPayee(myQPayee);
             myEvent.recordCategory(myQCategory, myList);
@@ -375,11 +375,11 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* Access Portfolio Account */
         final MoneyWisePortfolio myPort = pHolding.getPortfolio();
         final MoneyWiseSecurity mySecurity = pHolding.getSecurity();
-        final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(myPort);
+        final MoneyWiseQIFAccountEvents myPortfolio = theRegister.registerAccount(myPort);
 
         /* Access Transaction details */
-        final MoneyWiseQIFAccountEvents mySource = theFile.registerAccount(pDebit);
-        final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
+        final MoneyWiseQIFAccountEvents mySource = theRegister.registerAccount(pDebit);
+        final MoneyWiseQIFSecurity myQSecurity = theRegister.registerSecurity(mySecurity);
 
         /* Determine various flags */
         final boolean canTradeZeroShares = theFileType.canTradeZeroShares();
@@ -395,7 +395,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         }
 
         /* Obtain classes */
-        final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+        final List<MoneyWiseQIFClass> myList = theHelper.getTransactionClasses(pTrans);
 
         /* Access details */
         final OceanusMoney myAmount = pTrans.getAmount();
@@ -417,7 +417,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         }
 
         /* Create a buy shares event for the new shares */
-        MoneyWiseQIFPortfolioEvent myPortEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, canXferLinked
+        MoneyWiseQIFPortfolioEvent myPortEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, canXferLinked
                 ? MoneyWiseQActionType.BUYX
                 : MoneyWiseQActionType.BUY);
         myPortEvent.recordAmount(myAmount);
@@ -434,7 +434,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* If we need to autoCorrect */
         if (autoCorrectZeroUnits) {
             /* Create a ShrsOut event to balance */
-            myPortEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SHRSOUT);
+            myPortEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.SHRSOUT);
             myPortEvent.recordSecurity(myQSecurity);
             myPortEvent.recordQuantity(myUnits);
 
@@ -449,12 +449,12 @@ public class MoneyWiseQIFPortfolioBuilder {
             myOutAmount.negate();
 
             /* Build the source transfer */
-            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
             myEvent.recordAccount(myPortfolio.getAccount(), myList);
             myEvent.recordAmount(myOutAmount);
 
             /* Build payee description */
-            myEvent.recordPayee(theBuilder.buildXferToPayee(myPort));
+            myEvent.recordPayee(theHelper.buildXferToPayee(myPort));
 
             /* Add event to event list */
             mySource.addEvent(myEvent);
@@ -489,8 +489,7 @@ public class MoneyWiseQIFPortfolioBuilder {
             case STOCKDEMERGER:
                 processStockDeMerger(pSource, pTarget, pTrans);
                 break;
-            case STOCKTAKEOVER:
-            case SECURITYREPLACE:
+            case STOCKTAKEOVER, SECURITYREPLACE:
                 processStockTakeOver(pSource, pTarget, pTrans);
                 break;
             case TRANSFER:
@@ -514,17 +513,9 @@ public class MoneyWiseQIFPortfolioBuilder {
                                                final MoneyWiseTransaction pTrans) {
         /* Switch on transaction type */
         switch (pTrans.getCategoryClass()) {
-            case DIVIDEND:
-                processStockDividend(pHolding, pCredit, pTrans);
-                break;
-            case PORTFOLIOXFER:
-                processPortfolioXferForHolding(pHolding, (MoneyWisePortfolio) pCredit, pTrans);
-                break;
-            case TRANSFER:
-            case STOCKRIGHTSISSUE:
-            default:
-                processTransferOut(pHolding, pCredit, pTrans);
-                break;
+            case DIVIDEND -> processStockDividend(pHolding, pCredit, pTrans);
+            case PORTFOLIOXFER -> processPortfolioXferForHolding(pHolding, (MoneyWisePortfolio) pCredit, pTrans);
+            default -> processTransferOut(pHolding, pCredit, pTrans);
         }
     }
 
@@ -539,10 +530,10 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* Access Portfolio Account */
         final MoneyWisePortfolio myPortfolio = pHolding.getPortfolio();
         final MoneyWiseSecurity mySecurity = pHolding.getSecurity();
-        final MoneyWiseQIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
+        final MoneyWiseQIFAccountEvents myQPortfolio = theRegister.registerAccount(myPortfolio);
 
         /* Access Transaction details */
-        final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
+        final MoneyWiseQIFSecurity myQSecurity = theRegister.registerSecurity(mySecurity);
 
         /* Obtain number of units after this event */
         final OceanusUnits myTotalUnits = getUnitsForHoldingEvent(pHolding, pTrans);
@@ -559,11 +550,11 @@ public class MoneyWiseQIFPortfolioBuilder {
         mySplit.multiply(OceanusDecimal.RADIX_TEN);
 
         /* Create a stock split event */
-        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.STKSPLIT);
+        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.STKSPLIT);
         myEvent.recordSecurity(myQSecurity);
         myEvent.recordQuantity(mySplit);
 
-        /* Add to event list */
+        /* Add to the event list */
         myQPortfolio.addEvent(myEvent);
     }
 
@@ -578,10 +569,10 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* Access Portfolio Account */
         final MoneyWisePortfolio myPortfolio = pHolding.getPortfolio();
         final MoneyWiseSecurity mySecurity = pHolding.getSecurity();
-        final MoneyWiseQIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
+        final MoneyWiseQIFAccountEvents myQPortfolio = theRegister.registerAccount(myPortfolio);
 
         /* Access Transaction details */
-        final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
+        final MoneyWiseQIFSecurity myQSecurity = theRegister.registerSecurity(mySecurity);
 
         /* Access the delta units */
         OceanusUnits myUnits = pTrans.getAccountDeltaUnits();
@@ -592,7 +583,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         }
 
         /* Create a share movement event */
-        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, isCredit
+        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, isCredit
                 ? MoneyWiseQActionType.SHRSIN
                 : MoneyWiseQActionType.SHRSOUT);
         myEvent.recordSecurity(myQSecurity);
@@ -615,15 +606,15 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* Access Portfolio Account */
         final MoneyWisePortfolio myPortfolio = pHolding.getPortfolio();
         final MoneyWiseSecurity mySecurity = pHolding.getSecurity();
-        final MoneyWiseQIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
+        final MoneyWiseQIFAccountEvents myQPortfolio = theRegister.registerAccount(myPortfolio);
 
         /* Obtain flags */
         boolean canXferLinked = theFileType.canXferPortfolio();
         final boolean isPortfolio = pCredit.equals(myPortfolio);
 
         /* Access Transaction details */
-        final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
-        final MoneyWiseQIFAccountEvents myTarget = theFile.registerAccount(pCredit);
+        final MoneyWiseQIFSecurity myQSecurity = theRegister.registerSecurity(mySecurity);
+        final MoneyWiseQIFAccountEvents myTarget = theRegister.registerAccount(pCredit);
         OceanusMoney myAmount = pTrans.getAmount();
         final OceanusMoney myTaxCredit = pTrans.getTaxCredit();
         final OceanusMoney myFullAmount = new OceanusMoney(myAmount);
@@ -632,7 +623,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         }
 
         /* Obtain classes */
-        final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+        final List<MoneyWiseQIFClass> myList = theHelper.getTransactionClasses(pTrans);
 
         /* Determine whether we should XferLinked */
         boolean doXferLinked = canXferLinked && myTaxCredit == null;
@@ -645,13 +636,13 @@ public class MoneyWiseQIFPortfolioBuilder {
         }
 
         /* Create a dividend event */
-        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, doXferLinked
+        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, doXferLinked
                 ? MoneyWiseQActionType.DIVX
                 : MoneyWiseQActionType.DIV);
         myEvent.recordSecurity(myQSecurity);
         myEvent.recordAmount(myFullAmount);
         if (doXferLinked) {
-            myEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));
+            myEvent.recordPayee(theHelper.buildXferFromPayee(myPortfolio));
             myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);
         }
 
@@ -662,9 +653,9 @@ public class MoneyWiseQIFPortfolioBuilder {
         if (!doXferLinked && canXferLinked) {
             /* Create a transfer out event */
             myAmount = pTrans.getAmount();
-            myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XOUT);
+            myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.XOUT);
             myEvent.recordAmount(myAmount);
-            myEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));
+            myEvent.recordPayee(theHelper.buildXferFromPayee(myPortfolio));
             myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);
 
             /* Add to event list */
@@ -676,9 +667,9 @@ public class MoneyWiseQIFPortfolioBuilder {
             /* If the receiving account is a portfolio */
             if (pCredit instanceof MoneyWisePortfolio) {
                 /* Create the receiving transfer event */
-                final MoneyWiseQIFPortfolioEvent myXferEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XIN);
+                final MoneyWiseQIFPortfolioEvent myXferEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.XIN);
                 myXferEvent.recordAmount(myAmount);
-                myXferEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));
+                myXferEvent.recordPayee(theHelper.buildXferFromPayee(myPortfolio));
                 myXferEvent.recordXfer(myQPortfolio.getAccount(), myList, myAmount);
 
                 /* Add to event list */
@@ -687,9 +678,9 @@ public class MoneyWiseQIFPortfolioBuilder {
                 /* else standard account */
             } else {
                 /* Create the receiving transfer event */
-                final MoneyWiseQIFEvent myXferEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+                final MoneyWiseQIFEvent myXferEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
                 myXferEvent.recordAmount(myAmount);
-                myXferEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));
+                myXferEvent.recordPayee(theHelper.buildXferFromPayee(myPortfolio));
                 myXferEvent.recordAccount(myQPortfolio.getAccount(), myList);
 
                 /* Add to event list */
@@ -703,8 +694,8 @@ public class MoneyWiseQIFPortfolioBuilder {
             final boolean useHoldingAccount = theFileType.useInvestmentHolding4Category();
 
             /* Access category */
-            final MoneyWiseQIFEventCategory myTaxCategory = theBuilder.getTaxCategory();
-            final MoneyWiseQIFPayee myTaxPayee = theBuilder.getTaxMan();
+            final MoneyWiseQIFEventCategory myTaxCategory = theHelper.getTaxCategory();
+            final MoneyWiseQIFPayee myTaxPayee = theHelper.getTaxMan();
 
             /* Create output amount */
             final OceanusMoney myOutAmount = new OceanusMoney(myTaxCredit);
@@ -713,10 +704,10 @@ public class MoneyWiseQIFPortfolioBuilder {
             /* If we are using a holding account */
             if (useHoldingAccount) {
                 /* Access Holding Account */
-                final MoneyWiseQIFAccountEvents myHolding = theFile.registerHoldingAccount(myPortfolio);
+                final MoneyWiseQIFAccountEvents myHolding = theRegister.registerHoldingAccount(myPortfolio);
 
                 /* Create an event */
-                final MoneyWiseQIFEvent myHoldEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+                final MoneyWiseQIFEvent myHoldEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
                 myHoldEvent.recordAmount(new OceanusMoney());
                 myHoldEvent.recordPayee(myTaxPayee);
 
@@ -730,7 +721,7 @@ public class MoneyWiseQIFPortfolioBuilder {
                 /* else we can do this properly */
             } else {
                 /* Create a tax credit event */
-                myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.CASH);
+                myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.CASH);
                 myEvent.recordAmount(myOutAmount);
                 myEvent.recordPayee(myTaxPayee);
                 myEvent.recordCategory(myTaxCategory);
@@ -752,13 +743,13 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* Access Portfolio Account */
         final MoneyWisePortfolio myPortfolio = pHolding.getPortfolio();
         final MoneyWiseSecurity mySecurity = pHolding.getSecurity();
-        final MoneyWiseQIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
+        final MoneyWiseQIFAccountEvents myQPortfolio = theRegister.registerAccount(myPortfolio);
 
         /* Determine various flags */
         final boolean canTradeZeroShares = theFileType.canTradeZeroShares();
 
         /* Access Transaction details */
-        final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
+        final MoneyWiseQIFSecurity myQSecurity = theRegister.registerSecurity(mySecurity);
         OceanusMoney myAmount = pTrans.getAmount();
         OceanusUnits myUnits = pTrans.getAccountDeltaUnits();
         final OceanusMoney myTaxCredit = pTrans.getTaxCredit();
@@ -779,7 +770,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         }
 
         /* Create a re-invest dividend event */
-        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.REINVDIV);
+        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.REINVDIV);
         myEvent.recordSecurity(myQSecurity);
         myEvent.recordAmount(myAmount);
         myEvent.recordQuantity(myUnits);
@@ -790,7 +781,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* If we need to autoCorrect */
         if (autoCorrectZeroUnits) {
             /* Create a ShrsOut event to balance */
-            myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SHRSOUT);
+            myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.SHRSOUT);
             myEvent.recordSecurity(myQSecurity);
             myEvent.recordQuantity(myUnits);
 
@@ -805,11 +796,11 @@ public class MoneyWiseQIFPortfolioBuilder {
             final boolean useMiscIncX = theFileType.useMiscIncX4TaxCredit();
 
             /* Access category */
-            final MoneyWiseQIFEventCategory myTaxCategory = theBuilder.getTaxCategory();
-            final MoneyWiseQIFPayee myTaxPayee = theBuilder.getTaxMan();
+            final MoneyWiseQIFEventCategory myTaxCategory = theHelper.getTaxCategory();
+            final MoneyWiseQIFPayee myTaxPayee = theHelper.getTaxMan();
 
             /* Create a tax credit event */
-            myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, useMiscIncX
+            myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, useMiscIncX
                     ? MoneyWiseQActionType.MISCINCX
                     : MoneyWiseQActionType.MISCINC);
             myEvent.recordSecurity(myQSecurity);
@@ -831,10 +822,10 @@ public class MoneyWiseQIFPortfolioBuilder {
                 /* If we are using a holding account */
                 if (useHoldingAccount) {
                     /* Access Holding Account */
-                    final MoneyWiseQIFAccountEvents myHolding = theFile.registerHoldingAccount(myPortfolio);
+                    final MoneyWiseQIFAccountEvents myHolding = theRegister.registerHoldingAccount(myPortfolio);
 
                     /* Create an event */
-                    final MoneyWiseQIFEvent myHoldEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+                    final MoneyWiseQIFEvent myHoldEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
                     myHoldEvent.recordAmount(new OceanusMoney());
                     myHoldEvent.recordPayee(myTaxPayee);
 
@@ -848,7 +839,7 @@ public class MoneyWiseQIFPortfolioBuilder {
                     /* else we can do this properly */
                 } else {
                     /* Create a tax credit event */
-                    myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.CASH);
+                    myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.CASH);
                     myEvent.recordAmount(myOutAmount);
                     myEvent.recordPayee(myTaxPayee);
                     myEvent.recordCategory(myTaxCategory);
@@ -874,15 +865,15 @@ public class MoneyWiseQIFPortfolioBuilder {
         final MoneyWisePortfolio myPortfolio = pHolding.getPortfolio();
         final MoneyWiseSecurity mySecurity = pHolding.getSecurity();
         final MoneyWiseSecurity myCredit = pCredit.getSecurity();
-        final MoneyWiseQIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
+        final MoneyWiseQIFAccountEvents myQPortfolio = theRegister.registerAccount(myPortfolio);
 
         /* Determine whether we can return capital */
         final boolean canReturnCapital = theFileType.canReturnCapital();
         final boolean canTradeZeroShares = theFileType.canTradeZeroShares();
 
         /* Access Transaction details */
-        final MoneyWiseQIFSecurity myDebitSecurity = theFile.registerSecurity(mySecurity);
-        final MoneyWiseQIFSecurity myCreditSecurity = theFile.registerSecurity(myCredit);
+        final MoneyWiseQIFSecurity myDebitSecurity = theRegister.registerSecurity(mySecurity);
+        final MoneyWiseQIFSecurity myCreditSecurity = theRegister.registerSecurity(myCredit);
 
         /* Access details */
         final OceanusDate myDate = pTrans.getDate();
@@ -914,7 +905,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         }
 
         /* Create a sellShares/returnCapital event for the share reduction */
-        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, doReturnCapital
+        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, doReturnCapital
                 ? MoneyWiseQActionType.RTRNCAP
                 : MoneyWiseQActionType.SELL);
         myEvent.recordAmount(myValue);
@@ -930,7 +921,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* If we need to autoCorrect */
         if (autoCorrectZeroUnits) {
             /* Create a ShrsIn event to balance */
-            myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SHRSIN);
+            myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.SHRSIN);
             myEvent.recordSecurity(myDebitSecurity);
             myEvent.recordQuantity(myUnits);
 
@@ -939,7 +930,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         }
 
         /* Create a buy shares event for the new shares */
-        myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.BUY);
+        myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.BUY);
         myEvent.recordAmount(myValue);
         myEvent.recordSecurity(myCreditSecurity);
         myEvent.recordQuantity(pTrans.getPartnerDeltaUnits());
@@ -963,11 +954,11 @@ public class MoneyWiseQIFPortfolioBuilder {
         final MoneyWisePortfolio myPortfolio = pSource.getPortfolio();
         final MoneyWiseSecurity mySource = pSource.getSecurity();
         final MoneyWiseSecurity myTarget = pTarget.getSecurity();
-        final MoneyWiseQIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
+        final MoneyWiseQIFAccountEvents myQPortfolio = theRegister.registerAccount(myPortfolio);
 
         /* Access Transaction details */
-        final MoneyWiseQIFSecurity myDebitSecurity = theFile.registerSecurity(mySource);
-        final MoneyWiseQIFSecurity myCreditSecurity = theFile.registerSecurity(myTarget);
+        final MoneyWiseQIFSecurity myDebitSecurity = theRegister.registerSecurity(mySource);
+        final MoneyWiseQIFSecurity myCreditSecurity = theRegister.registerSecurity(myTarget);
 
         /* Access details */
         final OceanusDate myDate = pTrans.getDate();
@@ -988,7 +979,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         mySaleValue.addAmount(myAmount);
 
         /* Create a sellShares event for the share reduction */
-        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SELL);
+        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.SELL);
         myEvent.recordAmount(mySaleValue);
         myEvent.recordSecurity(myDebitSecurity);
         myEvent.recordPrice(myDebitPrice);
@@ -998,7 +989,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         myQPortfolio.addEvent(myEvent);
 
         /* Create a buy shares event for the new shares */
-        myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.BUY);
+        myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.BUY);
         myEvent.recordAmount(myStockCost);
         myEvent.recordSecurity(myCreditSecurity);
         myEvent.recordQuantity(myUnits);
@@ -1013,12 +1004,12 @@ public class MoneyWiseQIFPortfolioBuilder {
             final boolean canXferDirect = theFileType.canXferPortfolio();
 
             /* Access Target account */
-            final MoneyWiseQIFAccountEvents myQTarget = theFile.registerAccount(myThirdParty);
+            final MoneyWiseQIFAccountEvents myQTarget = theRegister.registerAccount(myThirdParty);
 
             /* If we can transfer direct */
             if (canXferDirect) {
                 /* Create a transfer out event for the cash payment */
-                myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XOUT);
+                myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.XOUT);
                 myEvent.recordAmount(myAmount);
                 myEvent.recordXfer(myQTarget.getAccount(), myAmount);
 
@@ -1026,12 +1017,12 @@ public class MoneyWiseQIFPortfolioBuilder {
                 myQPortfolio.addEvent(myEvent);
             } else {
                 /* Build the target transfer */
-                final MoneyWiseQIFEvent myXferEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+                final MoneyWiseQIFEvent myXferEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
                 myXferEvent.recordAccount(myQPortfolio.getAccount());
                 myXferEvent.recordAmount(myAmount);
 
                 /* Build payee description */
-                myEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));
+                myEvent.recordPayee(theHelper.buildXferFromPayee(myPortfolio));
 
                 /* Add event to event list */
                 myQTarget.addEvent(myEvent);
@@ -1052,11 +1043,11 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* Access Portfolio Account */
         final MoneyWisePortfolio myPortfolio = pHolding.getPortfolio();
         final MoneyWiseSecurity mySecurity = pHolding.getSecurity();
-        final MoneyWiseQIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
+        final MoneyWiseQIFAccountEvents myQPortfolio = theRegister.registerAccount(myPortfolio);
 
         /* Access Transaction details */
-        final MoneyWiseQIFAccountEvents myTarget = theFile.registerAccount(pCredit);
-        final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
+        final MoneyWiseQIFAccountEvents myTarget = theRegister.registerAccount(pCredit);
+        final MoneyWiseQIFSecurity myQSecurity = theRegister.registerSecurity(mySecurity);
 
         /* Determine various flags */
         final boolean canReturnCapital = theFileType.canReturnCapital();
@@ -1073,7 +1064,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         }
 
         /* Obtain classes */
-        final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+        final List<MoneyWiseQIFClass> myList = theHelper.getTransactionClasses(pTrans);
 
         /* Access details */
         final OceanusMoney myAmount = pTrans.getAmount();
@@ -1102,13 +1093,13 @@ public class MoneyWiseQIFPortfolioBuilder {
         }
 
         /* Create a sellShares/returnCapital event */
-        MoneyWiseQIFPortfolioEvent myPortEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, doReturnCapital
+        MoneyWiseQIFPortfolioEvent myPortEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, doReturnCapital
                 ? canXferLinked
-                ? MoneyWiseQActionType.RTRNCAPX
-                : MoneyWiseQActionType.RTRNCAP
+                  ? MoneyWiseQActionType.RTRNCAPX
+                  : MoneyWiseQActionType.RTRNCAP
                 : canXferLinked
-                ? MoneyWiseQActionType.SELLX
-                : MoneyWiseQActionType.SELL);
+                  ? MoneyWiseQActionType.SELLX
+                  : MoneyWiseQActionType.SELL);
         myPortEvent.recordAmount(myAmount);
         myPortEvent.recordSecurity(myQSecurity);
         if (!doReturnCapital) {
@@ -1125,7 +1116,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* If we need to autoCorrect */
         if (autoCorrectZeroUnits) {
             /* Create a ShrsIn event to balance */
-            myPortEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SHRSIN);
+            myPortEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.SHRSIN);
             myPortEvent.recordSecurity(myQSecurity);
             myPortEvent.recordQuantity(myUnits);
 
@@ -1136,12 +1127,12 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* If we are not hiding the balancing transfer */
         if (!hideBalancingSplitXfer) {
             /* Build the source transfer */
-            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
             myEvent.recordAccount(myQPortfolio.getAccount(), myList);
             myEvent.recordAmount(myAmount);
 
             /* Build payee description */
-            myEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));
+            myEvent.recordPayee(theHelper.buildXferFromPayee(myPortfolio));
 
             /* Add event to event list */
             myTarget.addEvent(myEvent);
@@ -1162,11 +1153,11 @@ public class MoneyWiseQIFPortfolioBuilder {
         final MoneyWisePortfolio myPortfolio = pSource.getPortfolio();
         final MoneyWiseSecurity mySource = pSource.getSecurity();
         final MoneyWiseSecurity myTarget = pTarget.getSecurity();
-        final MoneyWiseQIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
+        final MoneyWiseQIFAccountEvents myQPortfolio = theRegister.registerAccount(myPortfolio);
 
         /* Access Transaction details */
-        final MoneyWiseQIFSecurity myQSource = theFile.registerSecurity(mySource);
-        final MoneyWiseQIFSecurity myQTarget = theFile.registerSecurity(myTarget);
+        final MoneyWiseQIFSecurity myQSource = theRegister.registerSecurity(mySource);
+        final MoneyWiseQIFSecurity myQTarget = theRegister.registerSecurity(myTarget);
 
         /* Access details */
         final OceanusDate myDate = pTrans.getDate();
@@ -1179,7 +1170,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         final OceanusPrice myTargetPrice = getPriceForDate(myTarget, myDate);
 
         /* Create a sellShares/returnCapital event */
-        MoneyWiseQIFPortfolioEvent myPortEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SELL);
+        MoneyWiseQIFPortfolioEvent myPortEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.SELL);
         myPortEvent.recordAmount(myAmount);
         myPortEvent.recordSecurity(myQSource);
         myPortEvent.recordQuantity(mySourceUnits);
@@ -1189,7 +1180,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         myQPortfolio.addEvent(myPortEvent);
 
         /* Create a buyShares event */
-        myPortEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.BUY);
+        myPortEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.BUY);
         myPortEvent.recordAmount(myAmount);
         myPortEvent.recordSecurity(myQTarget);
         myPortEvent.recordQuantity(myTargetUnits);
@@ -1241,25 +1232,25 @@ public class MoneyWiseQIFPortfolioBuilder {
         final OceanusMoney myAmount = getPortfolioCashValue(pSource, pTrans);
         if (myAmount != null) {
             /* Access details */
-            final MoneyWiseQIFAccountEvents mySource = theFile.registerAccount(pSource);
-            final MoneyWiseQIFAccountEvents myTarget = theFile.registerAccount(pTarget);
+            final MoneyWiseQIFAccountEvents mySource = theRegister.registerAccount(pSource);
+            final MoneyWiseQIFAccountEvents myTarget = theRegister.registerAccount(pTarget);
 
             /* Obtain classes */
-            final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+            final List<MoneyWiseQIFClass> myList = theHelper.getTransactionClasses(pTrans);
 
             /* Create an XOut event */
-            MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XOUT);
+            MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.XOUT);
             myEvent.recordAmount(myAmount);
-            myEvent.recordPayee(theBuilder.buildXferToPayee(pTarget));
+            myEvent.recordPayee(theHelper.buildXferToPayee(pTarget));
             myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);
 
             /* Add to event list */
             mySource.addEvent(myEvent);
 
             /* Create an XIn event */
-            myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XIN);
+            myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.XIN);
             myEvent.recordAmount(myAmount);
-            myEvent.recordPayee(theBuilder.buildXferFromPayee(pSource));
+            myEvent.recordPayee(theHelper.buildXferFromPayee(pSource));
             myEvent.recordXfer(mySource.getAccount(), myList, myAmount);
 
             /* Add to event list */
@@ -1296,9 +1287,9 @@ public class MoneyWiseQIFPortfolioBuilder {
             /* Access details */
             final MoneyWisePortfolio mySourcePortfolio = pSource.getPortfolio();
             final MoneyWiseSecurity mySecurity = pSource.getSecurity();
-            final MoneyWiseQIFAccountEvents mySource = theFile.registerAccount(mySourcePortfolio);
-            final MoneyWiseQIFAccountEvents myTarget = theFile.registerAccount(pTarget);
-            final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
+            final MoneyWiseQIFAccountEvents mySource = theRegister.registerAccount(mySourcePortfolio);
+            final MoneyWiseQIFAccountEvents myTarget = theRegister.registerAccount(pTarget);
+            final MoneyWiseQIFSecurity myQSecurity = theRegister.registerSecurity(mySecurity);
             OceanusMoney myCost = getDeltaCostForHolding(pSource, pTrans);
 
             /* If there is an associated cost */
@@ -1311,10 +1302,10 @@ public class MoneyWiseQIFPortfolioBuilder {
                 final OceanusPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
 
                 /* Obtain classes */
-                final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+                final List<MoneyWiseQIFClass> myList = theHelper.getTransactionClasses(pTrans);
 
                 /* Create a sell shares event */
-                MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SELL);
+                MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.SELL);
                 myEvent.recordAmount(myCost);
                 myEvent.recordSecurity(myQSecurity);
                 myEvent.recordQuantity(myUnits);
@@ -1324,25 +1315,25 @@ public class MoneyWiseQIFPortfolioBuilder {
                 mySource.addEvent(myEvent);
 
                 /* Create an XOut event */
-                myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XOUT);
+                myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.XOUT);
                 myEvent.recordAmount(myCost);
-                myEvent.recordPayee(theBuilder.buildXferToPayee(pTarget));
+                myEvent.recordPayee(theHelper.buildXferToPayee(pTarget));
                 myEvent.recordXfer(myTarget.getAccount(), myList, myCost);
 
                 /* Add to event list */
                 mySource.addEvent(myEvent);
 
                 /* Create an XIn event */
-                myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XIN);
+                myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.XIN);
                 myEvent.recordAmount(myCost);
-                myEvent.recordPayee(theBuilder.buildXferFromPayee(pSource));
+                myEvent.recordPayee(theHelper.buildXferFromPayee(pSource));
                 myEvent.recordXfer(mySource.getAccount(), myList, myCost);
 
                 /* Add to event list */
                 myTarget.addEvent(myEvent);
 
                 /* Create a buy shares event */
-                myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.BUY);
+                myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.BUY);
                 myEvent.recordAmount(myCost);
                 myEvent.recordSecurity(myQSecurity);
                 myEvent.recordQuantity(myUnits);
@@ -1354,7 +1345,7 @@ public class MoneyWiseQIFPortfolioBuilder {
                 /* else just simple transfer of shares */
             } else {
                 /* Create an SharesOut event */
-                MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SHRSOUT);
+                MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.SHRSOUT);
                 myEvent.recordSecurity(myQSecurity);
                 myEvent.recordQuantity(myUnits);
 
@@ -1362,7 +1353,7 @@ public class MoneyWiseQIFPortfolioBuilder {
                 mySource.addEvent(myEvent);
 
                 /* Create an SharesIn event */
-                myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SHRSIN);
+                myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.SHRSIN);
                 myEvent.recordSecurity(myQSecurity);
                 myEvent.recordQuantity(myUnits);
 
@@ -1383,26 +1374,26 @@ public class MoneyWiseQIFPortfolioBuilder {
                                                         final MoneyWisePortfolio pTarget,
                                                         final MoneyWiseTransaction pTrans) {
         /* Access details */
-        final MoneyWiseQIFAccountEvents mySource = theFile.registerAccount(pSource);
-        final MoneyWiseQIFAccountEvents myTarget = theFile.registerAccount(pTarget);
+        final MoneyWiseQIFAccountEvents mySource = theRegister.registerAccount(pSource);
+        final MoneyWiseQIFAccountEvents myTarget = theRegister.registerAccount(pTarget);
         final OceanusMoney myAmount = pTrans.getAmount();
 
         /* Obtain classes */
-        final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+        final List<MoneyWiseQIFClass> myList = theHelper.getTransactionClasses(pTrans);
 
         /* Create an XOut event */
-        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XOUT);
+        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.XOUT);
         myEvent.recordAmount(myAmount);
-        myEvent.recordPayee(theBuilder.buildXferToPayee(pTarget));
+        myEvent.recordPayee(theHelper.buildXferToPayee(pTarget));
         myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);
 
         /* Add to event list */
         mySource.addEvent(myEvent);
 
         /* Create an XIn event */
-        myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XIN);
+        myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.XIN);
         myEvent.recordAmount(myAmount);
-        myEvent.recordPayee(theBuilder.buildXferFromPayee(pSource));
+        myEvent.recordPayee(theHelper.buildXferFromPayee(pSource));
         myEvent.recordXfer(mySource.getAccount(), myList, myAmount);
 
         /* Add to event list */
@@ -1441,28 +1432,28 @@ public class MoneyWiseQIFPortfolioBuilder {
                                                   final MoneyWiseTransAsset pSource,
                                                   final MoneyWiseTransaction pTrans) {
         /* Access details */
-        final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
-        final MoneyWiseQIFAccountEvents mySource = theFile.registerAccount(pSource);
+        final MoneyWiseQIFAccountEvents myPortfolio = theRegister.registerAccount(pPortfolio);
+        final MoneyWiseQIFAccountEvents mySource = theRegister.registerAccount(pSource);
         OceanusMoney myAmount = pTrans.getAmount();
 
         /* Obtain classes */
-        final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+        final List<MoneyWiseQIFClass> myList = theHelper.getTransactionClasses(pTrans);
 
         /* Create an XIn event */
-        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XIN);
+        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.XIN);
         myEvent.recordAmount(myAmount);
-        myEvent.recordPayee(theBuilder.buildXferToPayee(pSource));
+        myEvent.recordPayee(theHelper.buildXferToPayee(pSource));
         myEvent.recordXfer(mySource.getAccount(), myList, myAmount);
 
         /* Add to event list */
         myPortfolio.addEvent(myEvent);
 
         /* Create the sending transfer event */
-        final MoneyWiseQIFEvent myXferEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+        final MoneyWiseQIFEvent myXferEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
         myAmount = new OceanusMoney(myAmount);
         myAmount.negate();
         myXferEvent.recordAmount(myAmount);
-        myXferEvent.recordPayee(theBuilder.buildXferFromPayee(pPortfolio));
+        myXferEvent.recordPayee(theHelper.buildXferFromPayee(pPortfolio));
         myXferEvent.recordAccount(myPortfolio.getAccount(), myList);
 
         /* Add to event list */
@@ -1501,26 +1492,26 @@ public class MoneyWiseQIFPortfolioBuilder {
                                                     final MoneyWiseTransAsset pTarget,
                                                     final MoneyWiseTransaction pTrans) {
         /* Access details */
-        final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
-        final MoneyWiseQIFAccountEvents myTarget = theFile.registerAccount(pTarget);
+        final MoneyWiseQIFAccountEvents myPortfolio = theRegister.registerAccount(pPortfolio);
+        final MoneyWiseQIFAccountEvents myTarget = theRegister.registerAccount(pTarget);
         final OceanusMoney myAmount = pTrans.getAmount();
 
         /* Obtain classes */
-        final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+        final List<MoneyWiseQIFClass> myList = theHelper.getTransactionClasses(pTrans);
 
         /* Create an XOut event */
-        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XOUT);
+        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.XOUT);
         myEvent.recordAmount(myAmount);
-        myEvent.recordPayee(theBuilder.buildXferToPayee(pTarget));
+        myEvent.recordPayee(theHelper.buildXferToPayee(pTarget));
         myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);
 
         /* Add to event list */
         myPortfolio.addEvent(myEvent);
 
         /* Create the receiving transfer event */
-        final MoneyWiseQIFEvent myXferEvent = new MoneyWiseQIFEvent(theFile, pTrans);
+        final MoneyWiseQIFEvent myXferEvent = new MoneyWiseQIFEvent(theRegister, pTrans);
         myXferEvent.recordAmount(myAmount);
-        myXferEvent.recordPayee(theBuilder.buildXferFromPayee(pPortfolio));
+        myXferEvent.recordPayee(theHelper.buildXferFromPayee(pPortfolio));
         myXferEvent.recordAccount(myPortfolio.getAccount(), myList);
 
         /* Add to event list */
@@ -1538,14 +1529,14 @@ public class MoneyWiseQIFPortfolioBuilder {
                                                final MoneyWisePortfolio pPortfolio,
                                                final MoneyWiseTransaction pTrans) {
         /* Access Details */
-        final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
-        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pCredit);
-        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final MoneyWiseQIFAccountEvents myPortfolio = theRegister.registerAccount(pPortfolio);
+        final MoneyWiseQIFPayee myPayee = theRegister.registerPayee(pCredit);
+        final MoneyWiseQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
         final OceanusMoney myAmount = new OceanusMoney(pTrans.getAmount());
         myAmount.negate();
 
         /* Create an expense event */
-        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.CASH);
+        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.CASH);
         myEvent.recordAmount(myAmount);
         myEvent.recordPayee(myPayee);
         myEvent.recordCategory(myCategory);
@@ -1565,13 +1556,13 @@ public class MoneyWiseQIFPortfolioBuilder {
                                             final MoneyWisePortfolio pPortfolio,
                                             final MoneyWiseTransaction pTrans) {
         /* Access Details */
-        final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
-        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pDebit);
-        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final MoneyWiseQIFAccountEvents myPortfolio = theRegister.registerAccount(pPortfolio);
+        final MoneyWiseQIFPayee myPayee = theRegister.registerPayee(pDebit);
+        final MoneyWiseQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
         final OceanusMoney myAmount = pTrans.getAmount();
 
         /* Create an income event */
-        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.CASH);
+        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theRegister, pTrans, MoneyWiseQActionType.CASH);
         myEvent.recordAmount(myAmount);
         myEvent.recordPayee(myPayee);
         myEvent.recordCategory(myCategory);
