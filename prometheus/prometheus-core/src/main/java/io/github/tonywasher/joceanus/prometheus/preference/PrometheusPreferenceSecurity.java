@@ -31,6 +31,7 @@ import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceResource;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.convert.OceanusDataConverter;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
@@ -45,7 +46,8 @@ import java.util.Set;
 /**
  * Security for Preferences.
  */
-public class PrometheusPreferenceSecurity {
+public class PrometheusPreferenceSecurity
+        implements PrometheusPreferenceEncryptor {
     /**
      * Logger.
      */
@@ -67,7 +69,7 @@ public class PrometheusPreferenceSecurity {
      * @param pManager the preference manager
      * @throws OceanusException on error
      */
-    PrometheusPreferenceSecurity(final PrometheusPreferenceManager pManager) throws OceanusException {
+    PrometheusPreferenceSecurity(final MetisPreferenceManager pManager) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Create a Security Factory */
@@ -104,14 +106,8 @@ public class PrometheusPreferenceSecurity {
         }
     }
 
-    /**
-     * Encrypt the value.
-     *
-     * @param pValue the value to encrypt
-     * @return the encrypted value
-     * @throws OceanusException on error
-     */
-    protected byte[] encryptValue(final char[] pValue) throws OceanusException {
+    @Override
+    public byte[] encryptValue(final char[] pValue) throws OceanusException {
         /* Protect against exceptions */
         try {
             final byte[] myBytes = OceanusDataConverter.charsToByteArray(pValue);
@@ -121,14 +117,8 @@ public class PrometheusPreferenceSecurity {
         }
     }
 
-    /**
-     * Decrypt the value.
-     *
-     * @param pValue the value to decrypt
-     * @return the decrypted value
-     * @throws OceanusException on error
-     */
-    protected char[] decryptValue(final byte[] pValue) throws OceanusException {
+    @Override
+    public char[] decryptValue(final byte[] pValue) throws OceanusException {
         /* Protect against exceptions */
         try {
             final byte[] myBytes = theKeySet.decryptBytes(pValue);
@@ -232,11 +222,11 @@ public class PrometheusPreferenceSecurity {
         /**
          * Constructor.
          *
-         * @param pManager the preference manager
+         * @param pViewer the viewer manager
          * @throws OceanusException on error
          */
-        public PrometheusBaseSecurityPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super((PrometheusPreferenceManager) pManager, MetisPreferenceResource.SECPREF_BASEPREFNAME);
+        public PrometheusBaseSecurityPreferences(final MetisViewerManager pViewer) throws OceanusException {
+            super(pViewer, MetisPreferenceResource.SECPREF_BASEPREFNAME);
             setHidden();
         }
 
@@ -288,11 +278,11 @@ public class PrometheusPreferenceSecurity {
         /**
          * Constructor.
          *
-         * @param pManager the preference manager
+         * @param pViewer the viewer manager
          * @throws OceanusException on error
          */
-        public PrometheusSecurityPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super((PrometheusPreferenceManager) pManager, MetisPreferenceResource.SECPREF_PREFNAME);
+        public PrometheusSecurityPreferences(final MetisViewerManager pViewer) throws OceanusException {
+            super(pViewer, MetisPreferenceResource.SECPREF_PREFNAME);
         }
 
         /**

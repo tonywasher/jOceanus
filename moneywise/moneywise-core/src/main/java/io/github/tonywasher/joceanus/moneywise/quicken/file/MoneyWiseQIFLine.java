@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
@@ -24,11 +25,8 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Objects;
 
 /**
  * A standard event line in the QIF file.
@@ -40,31 +38,6 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
      * Reconciled flag.
      */
     protected static final String QIF_RECONCILED = "X";
-
-    /**
-     * Transfer begin char.
-     */
-    private static final String QIF_XFERSTART = "[";
-
-    /**
-     * Transfer end char.
-     */
-    private static final String QIF_XFEREND = "]";
-
-    /**
-     * Class indicator.
-     */
-    private static final String QIF_CLASS = "/";
-
-    /**
-     * Class separator.
-     */
-    private static final String QIF_CLASSSEP = "-";
-
-    /**
-     * Category separator.
-     */
-    private static final String QIF_CATSEP = "!";
 
     /**
      * Obtain line type.
@@ -197,8 +170,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         @Override
         public int hashCode() {
-            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();
-            return myResult + theValue.hashCode();
+            return Objects.hash(getLineType(), theValue);
         }
     }
 
@@ -277,8 +249,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         @Override
         public int hashCode() {
-            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();
-            return myResult + theMoney.hashCode();
+            return Objects.hash(getLineType(), theMoney);
         }
     }
 
@@ -354,8 +325,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         @Override
         public int hashCode() {
-            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();
-            return myResult + theDate.hashCode();
+            return Objects.hash(getLineType(), theDate);
         }
     }
 
@@ -369,7 +339,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         /**
          * The flag status.
          */
-        private final Boolean isSet;
+        private final boolean isSet;
 
         /**
          * Constructor.
@@ -383,7 +353,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         @Override
         public String toString() {
-            return isSet().toString();
+            return Boolean.toString(isSet);
         }
 
         /**
@@ -391,7 +361,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
          *
          * @return true/false
          */
-        protected Boolean isSet() {
+        protected boolean isSet() {
             return isSet;
         }
 
@@ -419,13 +389,12 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
             }
 
             /* Check value */
-            return isSet.equals(myLine.isSet());
+            return isSet == myLine.isSet();
         }
 
         @Override
         public int hashCode() {
-            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();
-            return myResult + isSet.hashCode();
+            return Objects.hash(getLineType(), isSet);
         }
     }
 
@@ -451,7 +420,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
          *
          * @return true/false
          */
-        public Boolean isCleared() {
+        public boolean isCleared() {
             return isSet();
         }
 
@@ -541,8 +510,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         @Override
         public int hashCode() {
-            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();
-            return myResult + thePrice.hashCode();
+            return Objects.hash(getLineType(), thePrice);
         }
     }
 
@@ -618,8 +586,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         @Override
         public int hashCode() {
-            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();
-            return myResult + theUnits.hashCode();
+            return Objects.hash(getLineType(), theUnits);
         }
     }
 
@@ -695,8 +662,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         @Override
         public int hashCode() {
-            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();
-            return myResult + theRate.hashCode();
+            return Objects.hash(getLineType(), theRate);
         }
     }
 
@@ -772,755 +738,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         @Override
         public int hashCode() {
-            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();
-            return myResult + theRatio.hashCode();
-        }
-    }
-
-    /**
-     * The Security line.
-     *
-     * @param <X> the line type
-     */
-    public abstract static class MoneyWiseQIFSecurityLine<X extends MoneyWiseQLineType>
-            extends MoneyWiseQIFLine<X> {
-        /**
-         * The security.
-         */
-        private final MoneyWiseQIFSecurity theSecurity;
-
-        /**
-         * Constructor.
-         *
-         * @param pSecurity the Security
-         */
-        protected MoneyWiseQIFSecurityLine(final MoneyWiseQIFSecurity pSecurity) {
-            /* Store data */
-            theSecurity = pSecurity;
-        }
-
-        @Override
-        public String toString() {
-            return theSecurity.toString();
-        }
-
-        /**
-         * Obtain account.
-         *
-         * @return the account
-         */
-        public MoneyWiseQIFSecurity getSecurity() {
-            return theSecurity;
-        }
-
-        @Override
-        protected void formatData(final OceanusDataFormatter pFormatter,
-                                  final StringBuilder pBuilder) {
-            /* Append the security name */
-            pBuilder.append(theSecurity.getName());
-        }
-
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle trivial cases */
-            if (this == pThat) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Check class */
-            if (!getClass().equals(pThat.getClass())) {
-                return false;
-            }
-
-            /* Cast correctly */
-            final MoneyWiseQIFSecurityLine<?> myLine = (MoneyWiseQIFSecurityLine<?>) pThat;
-
-            /* Check line type */
-            if (!getLineType().equals(myLine.getLineType())) {
-                return false;
-            }
-
-            /* Check value */
-            return theSecurity.equals(myLine.getSecurity());
-        }
-
-        @Override
-        public int hashCode() {
-            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();
-            return myResult + theSecurity.hashCode();
-        }
-    }
-
-    /**
-     * The Account line.
-     *
-     * @param <X> the line type
-     */
-    public abstract static class MoneyWiseQIFXferAccountLine<X extends MoneyWiseQLineType>
-            extends MoneyWiseQIFLine<X> {
-        /**
-         * The account.
-         */
-        private final MoneyWiseQIFAccount theAccount;
-
-        /**
-         * The class list.
-         */
-        private final List<MoneyWiseQIFClass> theClasses;
-
-        /**
-         * Constructor.
-         *
-         * @param pAccount the Account
-         */
-        protected MoneyWiseQIFXferAccountLine(final MoneyWiseQIFAccount pAccount) {
-            this(pAccount, null);
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param pAccount the Account
-         * @param pClasses the classes
-         */
-        protected MoneyWiseQIFXferAccountLine(final MoneyWiseQIFAccount pAccount,
-                                              final List<MoneyWiseQIFClass> pClasses) {
-            /* Store data */
-            theAccount = pAccount;
-            theClasses = pClasses;
-        }
-
-        @Override
-        public String toString() {
-            return theAccount.toString();
-        }
-
-        /**
-         * Obtain account.
-         *
-         * @return the account
-         */
-        public MoneyWiseQIFAccount getAccount() {
-            return theAccount;
-        }
-
-        /**
-         * Obtain class list.
-         *
-         * @return the class list
-         */
-        public List<MoneyWiseQIFClass> getClassList() {
-            return theClasses;
-        }
-
-        @Override
-        protected void formatData(final OceanusDataFormatter pFormatter,
-                                  final StringBuilder pBuilder) {
-            /* Append the string data */
-            pBuilder.append(QIF_XFERSTART);
-            pBuilder.append(theAccount.getName());
-            pBuilder.append(QIF_XFEREND);
-
-            /* If we have classes */
-            if (theClasses != null) {
-                /* Add class indicator */
-                pBuilder.append(QIF_CLASS);
-
-                /* Iterate through the list */
-                final Iterator<MoneyWiseQIFClass> myIterator = theClasses.iterator();
-                while (myIterator.hasNext()) {
-                    final MoneyWiseQIFClass myClass = myIterator.next();
-
-                    /* Add to the list */
-                    pBuilder.append(myClass.getName());
-                    if (myIterator.hasNext()) {
-                        pBuilder.append(QIF_CLASSSEP);
-                    }
-                }
-            }
-        }
-
-        /**
-         * Parse account line.
-         *
-         * @param pFile the QIF File definitions
-         * @param pLine the line.
-         * @return the account name (or null)
-         */
-        protected static MoneyWiseQIFAccount parseAccount(final MoneyWiseQIFFile pFile,
-                                                          final String pLine) {
-            /* Determine line to use */
-            String myLine = pLine;
-
-            /* If the line contains a category separator */
-            if (pLine.contains(QIF_CATSEP)) {
-                /* Move to data following separator */
-                final int i = pLine.indexOf(QIF_CATSEP);
-                myLine = pLine.substring(i + 1);
-            }
-
-            /* If the line contains classes */
-            if (myLine.contains(QIF_CLASS)) {
-                /* drop class data */
-                final int i = myLine.indexOf(QIF_CLASS);
-                myLine = myLine.substring(0, i);
-            }
-
-            /* If we have the account delimiters */
-            if ((myLine.startsWith(QIF_XFERSTART))
-                    && (myLine.endsWith(QIF_XFEREND))) {
-                /* Remove account delimiters */
-                final int i = QIF_XFERSTART.length();
-                final int j = QIF_XFEREND.length();
-                final String myAccount = myLine.substring(i, myLine.length()
-                        - j);
-                return pFile.getAccount(myAccount);
-            }
-
-            /* Return no account */
-            return null;
-        }
-
-        /**
-         * Parse account classes.
-         *
-         * @param pFile the QIF File
-         * @param pLine the line.
-         * @return the account name (or null)
-         */
-        protected static List<MoneyWiseQIFClass> parseAccountClasses(final MoneyWiseQIFFile pFile,
-                                                                     final String pLine) {
-            /* Determine line to use */
-            String myLine = pLine;
-
-            /* If the line contains a category separator */
-            if (pLine.contains(QIF_CATSEP)) {
-                /* Move to data following separator */
-                final int i = pLine.indexOf(QIF_CATSEP);
-                myLine = pLine.substring(i + 1);
-            }
-
-            /* If the line contains classes */
-            if (myLine.contains(QIF_CLASS)) {
-                /* drop preceding data */
-                final int i = myLine.indexOf(QIF_CLASS);
-                myLine = myLine.substring(i + 1);
-
-                /* Build list of classes */
-                final String[] myClasses = myLine.split(QIF_CLASSSEP);
-                final List<MoneyWiseQIFClass> myList = new ArrayList<>();
-                for (String myClass : myClasses) {
-                    myList.add(pFile.getClass(myClass));
-                }
-
-                /* Return the classes */
-                return myList;
-            }
-
-            /* Return no classes */
-            return null;
-        }
-
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle trivial cases */
-            if (this == pThat) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Check class */
-            if (!getClass().equals(pThat.getClass())) {
-                return false;
-            }
-
-            /* Cast correctly */
-            final MoneyWiseQIFXferAccountLine<?> myLine = (MoneyWiseQIFXferAccountLine<?>) pThat;
-
-            /* Check line type */
-            if (!getLineType().equals(myLine.getLineType())) {
-                return false;
-            }
-
-            /* Check account */
-            if (!theAccount.equals(myLine.getAccount())) {
-                return false;
-            }
-
-            /* Check classes */
-            final List<MoneyWiseQIFClass> myClasses = myLine.getClassList();
-            if (theClasses == null) {
-                return myClasses == null;
-            } else if (myClasses == null) {
-                return true;
-            }
-            return theClasses.equals(myClasses);
-        }
-
-        @Override
-        public int hashCode() {
-            int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();
-            if (theClasses != null) {
-                myResult += theClasses.hashCode();
-                myResult *= MoneyWiseQIFFile.HASH_BASE;
-            }
-            return myResult + theAccount.hashCode();
-        }
-    }
-
-    /**
-     * The Payee line.
-     *
-     * @param <X> the line type
-     */
-    public abstract static class MoneyWiseQIFPayeeLine<X extends MoneyWiseQLineType>
-            extends MoneyWiseQIFLine<X> {
-        /**
-         * The payee.
-         */
-        private final MoneyWiseQIFPayee thePayee;
-
-        /**
-         * Constructor.
-         *
-         * @param pPayee the Payee
-         */
-        protected MoneyWiseQIFPayeeLine(final MoneyWiseQIFPayee pPayee) {
-            /* Store data */
-            thePayee = pPayee;
-        }
-
-        @Override
-        public String toString() {
-            return thePayee.toString();
-        }
-
-        /**
-         * Obtain payee.
-         *
-         * @return the payee
-         */
-        public MoneyWiseQIFPayee getPayee() {
-            return thePayee;
-        }
-
-        @Override
-        protected void formatData(final OceanusDataFormatter pFormatter,
-                                  final StringBuilder pBuilder) {
-            /* Append the string data */
-            pBuilder.append(thePayee.getName());
-        }
-
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle trivial cases */
-            if (this == pThat) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Check class */
-            if (!getClass().equals(pThat.getClass())) {
-                return false;
-            }
-
-            /* Cast correctly */
-            final MoneyWiseQIFPayeeLine<?> myLine = (MoneyWiseQIFPayeeLine<?>) pThat;
-
-            /* Check line type */
-            if (!getLineType().equals(myLine.getLineType())) {
-                return false;
-            }
-
-            /* Check value */
-            return thePayee.equals(myLine.getPayee());
-        }
-
-        @Override
-        public int hashCode() {
-            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();
-            return myResult + thePayee.hashCode();
-        }
-    }
-
-    /**
-     * The Event Category line.
-     *
-     * @param <X> the line type
-     */
-    public abstract static class MoneyWiseQIFCategoryLine<X extends MoneyWiseQLineType>
-            extends MoneyWiseQIFLine<X> {
-        /**
-         * The event category.
-         */
-        private final MoneyWiseQIFEventCategory theCategory;
-
-        /**
-         * The class list.
-         */
-        private final List<MoneyWiseQIFClass> theClasses;
-
-        /**
-         * Constructor.
-         *
-         * @param pCategory the Event Category
-         */
-        protected MoneyWiseQIFCategoryLine(final MoneyWiseQIFEventCategory pCategory) {
-            this(pCategory, null);
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param pCategory the Event Category
-         * @param pClasses  the classes
-         */
-        protected MoneyWiseQIFCategoryLine(final MoneyWiseQIFEventCategory pCategory,
-                                           final List<MoneyWiseQIFClass> pClasses) {
-            /* Store data */
-            theCategory = pCategory;
-            theClasses = pClasses;
-        }
-
-        @Override
-        public String toString() {
-            return theCategory.toString();
-        }
-
-        /**
-         * Obtain event category.
-         *
-         * @return the event category
-         */
-        public MoneyWiseQIFEventCategory getEventCategory() {
-            return theCategory;
-        }
-
-        /**
-         * Obtain class list.
-         *
-         * @return the class list
-         */
-        public List<MoneyWiseQIFClass> getClassList() {
-            return theClasses;
-        }
-
-        @Override
-        protected void formatData(final OceanusDataFormatter pFormatter,
-                                  final StringBuilder pBuilder) {
-            /* Append the string data */
-            pBuilder.append(theCategory.getName());
-
-            /* If we have classes */
-            if (theClasses != null) {
-                /* Add class indicator */
-                pBuilder.append(QIF_CLASS);
-
-                /* Iterate through the list */
-                final Iterator<MoneyWiseQIFClass> myIterator = theClasses.iterator();
-                while (myIterator.hasNext()) {
-                    final MoneyWiseQIFClass myClass = myIterator.next();
-
-                    /* Add to the list */
-                    pBuilder.append(myClass.getName());
-                    if (myIterator.hasNext()) {
-                        pBuilder.append(QIF_CLASSSEP);
-                    }
-                }
-            }
-        }
-
-        /**
-         * Parse category line.
-         *
-         * @param pFile the QIF File
-         * @param pLine the line.
-         * @return the account name (or null)
-         */
-        protected static MoneyWiseQIFEventCategory parseCategory(final MoneyWiseQIFFile pFile,
-                                                                 final String pLine) {
-            /* Determine line to use */
-            String myLine = pLine;
-
-            /* If the line contains a category separator */
-            if (pLine.contains(QIF_CATSEP)) {
-                /* Drop data after separator */
-                final int i = pLine.indexOf(QIF_CATSEP);
-                myLine = pLine.substring(0, i);
-            }
-
-            /* If the line contains classes */
-            if (myLine.contains(QIF_CLASS)) {
-                /* drop class data */
-                final int i = myLine.indexOf(QIF_CLASS);
-                myLine = myLine.substring(0, i);
-            }
-
-            /* If we have the account delimiters */
-            if ((myLine.startsWith(QIF_XFERSTART))
-                    && (myLine.endsWith(QIF_XFEREND))) {
-                /* This is an account */
-                return null;
-            }
-
-            /* Return category */
-            return pFile.getCategory(myLine);
-        }
-
-        /**
-         * Parse category classes.
-         *
-         * @param pFile the QIF File
-         * @param pLine the line.
-         * @return the account name (or null)
-         */
-        protected static List<MoneyWiseQIFClass> parseCategoryClasses(final MoneyWiseQIFFile pFile,
-                                                                      final String pLine) {
-            /* Determine line to use */
-            String myLine = pLine;
-
-            /* If the line contains a category separator */
-            if (pLine.contains(QIF_CATSEP)) {
-                /* Drop data after separator */
-                final int i = pLine.indexOf(QIF_CATSEP);
-                myLine = pLine.substring(0, i);
-            }
-
-            /* If the line contains classes */
-            if (myLine.contains(QIF_CLASS)) {
-                /* drop preceding data */
-                final int i = myLine.indexOf(QIF_CLASS);
-                myLine = myLine.substring(i + 1);
-
-                /* Build list of classes */
-                final String[] myClasses = myLine.split(QIF_CLASSSEP);
-                final List<MoneyWiseQIFClass> myList = new ArrayList<>();
-                for (String myClass : myClasses) {
-                    myList.add(pFile.getClass(myClass));
-                }
-
-                /* Return the classes */
-                return myList;
-            }
-
-            /* Return no classes */
-            return null;
-        }
-
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle trivial cases */
-            if (this == pThat) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Check class */
-            if (!getClass().equals(pThat.getClass())) {
-                return false;
-            }
-
-            /* Cast correctly */
-            final MoneyWiseQIFCategoryLine<?> myLine = (MoneyWiseQIFCategoryLine<?>) pThat;
-
-            /* Check line type */
-            if (!getLineType().equals(myLine.getLineType())) {
-                return false;
-            }
-
-            /* Check category */
-            if (!theCategory.equals(myLine.getEventCategory())) {
-                return false;
-            }
-
-            /* Check classes */
-            final List<MoneyWiseQIFClass> myClasses = myLine.getClassList();
-            if (theClasses == null) {
-                return myClasses == null;
-            } else if (myClasses == null) {
-                return true;
-            }
-            return theClasses.equals(myClasses);
-        }
-
-        @Override
-        public int hashCode() {
-            int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();
-            if (theClasses != null) {
-                myResult += theClasses.hashCode();
-                myResult *= MoneyWiseQIFFile.HASH_BASE;
-            }
-            return myResult + theCategory.hashCode();
-        }
-    }
-
-    /**
-     * The Event Category line.
-     *
-     * @param <X> the line type
-     */
-    public abstract static class MoneyWiseQIFCategoryAccountLine<X extends MoneyWiseQLineType>
-            extends MoneyWiseQIFLine<X> {
-        /**
-         * The event category.
-         */
-        private final MoneyWiseQIFEventCategory theCategory;
-
-        /**
-         * The account.
-         */
-        private final MoneyWiseQIFAccount theAccount;
-
-        /**
-         * The class list.
-         */
-        private final List<MoneyWiseQIFClass> theClasses;
-
-        /**
-         * Constructor.
-         *
-         * @param pCategory the Event Category
-         * @param pAccount  the Account
-         */
-        protected MoneyWiseQIFCategoryAccountLine(final MoneyWiseQIFEventCategory pCategory,
-                                                  final MoneyWiseQIFAccount pAccount) {
-            this(pCategory, pAccount, null);
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param pCategory the Event Category
-         * @param pAccount  the Account
-         * @param pClasses  the classes
-         */
-        protected MoneyWiseQIFCategoryAccountLine(final MoneyWiseQIFEventCategory pCategory,
-                                                  final MoneyWiseQIFAccount pAccount,
-                                                  final List<MoneyWiseQIFClass> pClasses) {
-            /* Store data */
-            theCategory = pCategory;
-            theAccount = pAccount;
-            theClasses = pClasses;
-        }
-
-        /**
-         * Obtain event category.
-         *
-         * @return the event category
-         */
-        public MoneyWiseQIFEventCategory getEventCategory() {
-            return theCategory;
-        }
-
-        /**
-         * Obtain account.
-         *
-         * @return the account
-         */
-        public MoneyWiseQIFAccount getAccount() {
-            return theAccount;
-        }
-
-        /**
-         * Obtain class list.
-         *
-         * @return the class list
-         */
-        public List<MoneyWiseQIFClass> getClassList() {
-            return theClasses;
-        }
-
-        @Override
-        protected void formatData(final OceanusDataFormatter pFormatter,
-                                  final StringBuilder pBuilder) {
-            /* Append the string data */
-            pBuilder.append(theCategory.getName());
-            pBuilder.append(QIF_CATSEP);
-            pBuilder.append(QIF_XFERSTART);
-            pBuilder.append(theAccount.getName());
-            pBuilder.append(QIF_XFEREND);
-
-            /* If we have classes */
-            if (theClasses != null) {
-                /* Add class indicator */
-                pBuilder.append(QIF_CLASS);
-
-                /* Iterate through the list */
-                final Iterator<MoneyWiseQIFClass> myIterator = theClasses.iterator();
-                while (myIterator.hasNext()) {
-                    final MoneyWiseQIFClass myClass = myIterator.next();
-
-                    /* Add to the list */
-                    pBuilder.append(myClass.getName());
-                    if (myIterator.hasNext()) {
-                        pBuilder.append(QIF_CLASSSEP);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle trivial cases */
-            if (this == pThat) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Check class */
-            if (!getClass().equals(pThat.getClass())) {
-                return false;
-            }
-
-            /* Cast correctly */
-            final MoneyWiseQIFCategoryAccountLine<?> myLine = (MoneyWiseQIFCategoryAccountLine<?>) pThat;
-
-            /* Check line type */
-            if (!getLineType().equals(myLine.getLineType())) {
-                return false;
-            }
-
-            /* Check category */
-            if (!theCategory.equals(myLine.getEventCategory())) {
-                return false;
-            }
-
-            /* Check account */
-            if (!theAccount.equals(myLine.getAccount())) {
-                return false;
-            }
-
-            /* Check classes */
-            final List<MoneyWiseQIFClass> myClasses = myLine.getClassList();
-            if (theClasses == null) {
-                return myClasses == null;
-            } else if (myClasses == null) {
-                return true;
-            }
-            return theClasses.equals(myClasses);
-        }
-
-        @Override
-        public int hashCode() {
-            int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();
-            if (theClasses != null) {
-                myResult += theClasses.hashCode();
-                myResult *= MoneyWiseQIFFile.HASH_BASE;
-            }
-            myResult += theAccount.hashCode();
-            myResult *= MoneyWiseQIFFile.HASH_BASE;
-            return myResult + theCategory.hashCode();
+            return Objects.hash(getLineType(), theRatio);
         }
     }
 }

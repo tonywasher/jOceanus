@@ -17,8 +17,8 @@
 package io.github.tonywasher.joceanus.prometheus.preference;
 
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
-import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
@@ -109,11 +109,11 @@ public interface PrometheusBackup {
         /**
          * Constructor.
          *
-         * @param pManager the preference manager
+         * @param pViewer the viewer manager
          * @throws OceanusException on error
          */
-        public PrometheusBackupPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, PrometheusPreferenceResource.BUPREF_PREFNAME);
+        public PrometheusBackupPreferences(final MetisViewerManager pViewer) throws OceanusException {
+            super(pViewer, PrometheusPreferenceResource.BUPREF_PREFNAME);
         }
 
         @Override

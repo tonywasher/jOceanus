@@ -16,13 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * QIF File record representation.
@@ -61,11 +62,6 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
     protected static final char QIF_EOL = '\n';
 
     /**
-     * The QIF File.
-     */
-    private final MoneyWiseQIFFile theFile;
-
-    /**
      * Class of lines.
      */
     private final Class<T> theClass;
@@ -83,26 +79,14 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
     /**
      * Constructor.
      *
-     * @param pFile  the QIF File
      * @param pClass the class of the lines
      */
-    protected MoneyWiseQIFRecord(final MoneyWiseQIFFile pFile,
-                                 final Class<T> pClass) {
+    protected MoneyWiseQIFRecord(final Class<T> pClass) {
         /* Record the class and file */
         theClass = pClass;
-        theFile = pFile;
 
         /* Create the map */
         theMap = new EnumMap<>(pClass);
-    }
-
-    /**
-     * Obtain file.
-     *
-     * @return the file
-     */
-    protected MoneyWiseQIFFile getFile() {
-        return theFile;
     }
 
     /**
@@ -308,12 +292,6 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
 
     @Override
     public int hashCode() {
-        int myResult = MoneyWiseQIFFile.HASH_BASE * theClass.hashCode();
-        myResult += theMap.hashCode();
-        if (theSubList != null) {
-            myResult *= MoneyWiseQIFFile.HASH_BASE;
-            myResult += theSubList.hashCode();
-        }
-        return myResult;
+        return Objects.hash(theClass, theMap, theSubList);
     }
 }

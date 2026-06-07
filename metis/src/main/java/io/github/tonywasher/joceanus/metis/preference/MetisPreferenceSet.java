@@ -58,11 +58,6 @@ public abstract class MetisPreferenceSet
     protected static final String ERROR_INVALID = "Invalid Preference: ";
 
     /**
-     * The Preference Manager.
-     */
-    private final MetisPreferenceManager thePreferenceManager;
-
-    /**
      * The Event Manager.
      */
     private final OceanusEventManager<MetisPreferenceEvent> theEventManager;
@@ -110,26 +105,25 @@ public abstract class MetisPreferenceSet
     /**
      * Constructor.
      *
-     * @param pManager the preference manager
-     * @param pId      the resource id for the set name
+     * @param pViewer the viewer manager
+     * @param pId     the resource id for the set name
      * @throws OceanusException on error
      */
-    protected MetisPreferenceSet(final MetisPreferenceManager pManager,
+    protected MetisPreferenceSet(final MetisViewerManager pViewer,
                                  final OceanusBundleId pId) throws OceanusException {
-        this(pManager, pId.getValue());
+        this(pViewer, pId.getValue());
     }
 
     /**
      * Constructor.
      *
-     * @param pManager the preference manager
-     * @param pName    the set name
+     * @param pViewer the viewer manager
+     * @param pName   the set name
      * @throws OceanusException on error
      */
-    protected MetisPreferenceSet(final MetisPreferenceManager pManager,
+    protected MetisPreferenceSet(final MetisViewerManager pViewer,
                                  final String pName) throws OceanusException {
         /* Store name */
-        thePreferenceManager = pManager;
         theName = pName;
 
         /* Allocate the fields */
@@ -160,9 +154,8 @@ public abstract class MetisPreferenceSet
         storeChanges();
 
         /* Create the viewer record */
-        final MetisViewerManager myViewer = pManager.getViewer();
-        final MetisViewerEntry myParent = myViewer.getStandardEntry(MetisViewerStandardEntry.PREFERENCES);
-        theViewerEntry = myViewer.newEntry(myParent, theName);
+        final MetisViewerEntry myParent = pViewer.getStandardEntry(MetisViewerStandardEntry.PREFERENCES);
+        theViewerEntry = pViewer.newEntry(myParent, theName);
         theViewerEntry.setObject(this);
     }
 
@@ -171,10 +164,9 @@ public abstract class MetisPreferenceSet
      *
      * @return the manager
      */
-    public MetisPreferenceManager getPreferenceManager() {
-        return thePreferenceManager;
-    }
-
+    //public MetisPreferenceManager getPreferenceManager() {
+    //    return thePreferenceManager;
+    //}
     @Override
     public MetisFieldSetDef getDataFieldSet() {
         return theFields;

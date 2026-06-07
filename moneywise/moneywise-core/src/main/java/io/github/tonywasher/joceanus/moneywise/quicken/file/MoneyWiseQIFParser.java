@@ -222,7 +222,7 @@ public class MoneyWiseQIFParser {
      */
     private void processClassRecord(final List<String> pLines) {
         /* register the class */
-        final MoneyWiseQIFClass myClass = new MoneyWiseQIFClass(theFile, pLines);
+        final MoneyWiseQIFClass myClass = new MoneyWiseQIFClass(pLines);
         theFile.registerClass(myClass);
     }
 
@@ -233,7 +233,7 @@ public class MoneyWiseQIFParser {
      */
     private void processCategoryRecord(final List<String> pLines) {
         /* Register the category */
-        final MoneyWiseQIFEventCategory myCategory = new MoneyWiseQIFEventCategory(theFile, pLines);
+        final MoneyWiseQIFEventCategory myCategory = new MoneyWiseQIFEventCategory(pLines);
         theFile.registerCategory(myCategory);
     }
 
@@ -244,7 +244,7 @@ public class MoneyWiseQIFParser {
      */
     private void processAccountRecord(final List<String> pLines) {
         /* Register the account */
-        final MoneyWiseQIFAccount myAccount = new MoneyWiseQIFAccount(theFile, theFormatter, pLines);
+        final MoneyWiseQIFAccount myAccount = new MoneyWiseQIFAccount(theFormatter, pLines);
         theActive = theFile.registerAccount(myAccount);
     }
 
@@ -255,7 +255,7 @@ public class MoneyWiseQIFParser {
      */
     private void processSecurityRecord(final List<String> pLines) {
         /* Register the security */
-        final MoneyWiseQIFSecurity mySecurity = new MoneyWiseQIFSecurity(theFile, pLines);
+        final MoneyWiseQIFSecurity mySecurity = new MoneyWiseQIFSecurity(pLines);
         theFile.registerSecurity(mySecurity);
     }
 

@@ -26,15 +26,18 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCashCategor
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQAccountLineType;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFMoneyLine;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 /**
  * Class representing a QIF Account record.
@@ -100,13 +103,11 @@ public class MoneyWiseQIFAccount
     /**
      * Constructor.
      *
-     * @param pFile    the QIF File
      * @param pAccount the Account
      */
-    public MoneyWiseQIFAccount(final MoneyWiseQIFFile pFile,
-                               final MoneyWiseTransAsset pAccount) {
+    public MoneyWiseQIFAccount(final MoneyWiseTransAsset pAccount) {
         /* Call super-constructor */
-        super(pFile, MoneyWiseQAccountLineType.class);
+        super(MoneyWiseQAccountLineType.class);
 
         /* Store data */
         theName = pAccount.getName();
@@ -143,13 +144,11 @@ public class MoneyWiseQIFAccount
     /**
      * Constructor for holding account.
      *
-     * @param pFile the QIF File
      * @param pName the Portfolio Name
      */
-    protected MoneyWiseQIFAccount(final MoneyWiseQIFFile pFile,
-                                  final String pName) {
+    protected MoneyWiseQIFAccount(final String pName) {
         /* Call super-constructor */
-        super(pFile, MoneyWiseQAccountLineType.class);
+        super(MoneyWiseQAccountLineType.class);
 
         /* Store data */
         theName = pName;
@@ -164,15 +163,13 @@ public class MoneyWiseQIFAccount
     /**
      * Constructor.
      *
-     * @param pFile      the QIF File
      * @param pFormatter the formatter
      * @param pLines     the data lines
      */
-    protected MoneyWiseQIFAccount(final MoneyWiseQIFFile pFile,
-                                  final OceanusDataFormatter pFormatter,
+    protected MoneyWiseQIFAccount(final OceanusDataFormatter pFormatter,
                                   final List<String> pLines) {
         /* Call super-constructor */
-        super(pFile, MoneyWiseQAccountLineType.class);
+        super(MoneyWiseQAccountLineType.class);
 
         /* Determine details */
         String myName = null;
@@ -433,6 +430,139 @@ public class MoneyWiseQIFAccount
          */
         public OceanusMoney getCreditLimit() {
             return getMoney();
+        }
+    }
+
+    /**
+     * The Account line.
+     *
+     * @param <X> the line type
+     */
+    public abstract static class MoneyWiseQIFXferAccountLine<X extends MoneyWiseQLineType>
+            extends MoneyWiseQIFLine<X> {
+        /**
+         * The account.
+         */
+        private final MoneyWiseQIFAccount theAccount;
+
+        /**
+         * The class list.
+         */
+        private final List<MoneyWiseQIFClass> theClasses;
+
+        /**
+         * Constructor.
+         *
+         * @param pAccount the Account
+         */
+        protected MoneyWiseQIFXferAccountLine(final MoneyWiseQIFAccount pAccount) {
+            this(pAccount, null);
+        }
+
+        /**
+         * Constructor.
+         *
+         * @param pAccount the Account
+         * @param pClasses the classes
+         */
+        protected MoneyWiseQIFXferAccountLine(final MoneyWiseQIFAccount pAccount,
+                                              final List<MoneyWiseQIFClass> pClasses) {
+            /* Store data */
+            theAccount = pAccount;
+            theClasses = pClasses;
+        }
+
+        @Override
+        public String toString() {
+            return theAccount.toString();
+        }
+
+        /**
+         * Obtain account.
+         *
+         * @return the account
+         */
+        public MoneyWiseQIFAccount getAccount() {
+            return theAccount;
+        }
+
+        /**
+         * Obtain class list.
+         *
+         * @return the class list
+         */
+        public List<MoneyWiseQIFClass> getClassList() {
+            return theClasses;
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the string data */
+            pBuilder.append(MoneyWiseQIFConstants.QIF_XFERSTART);
+            pBuilder.append(theAccount.getName());
+            pBuilder.append(MoneyWiseQIFConstants.QIF_XFEREND);
+
+            /* If we have classes */
+            if (theClasses != null) {
+                /* Add class indicator */
+                pBuilder.append(MoneyWiseQIFConstants.QIF_CLASS);
+
+                /* Iterate through the list */
+                final Iterator<MoneyWiseQIFClass> myIterator = theClasses.iterator();
+                while (myIterator.hasNext()) {
+                    final MoneyWiseQIFClass myClass = myIterator.next();
+
+                    /* Add to the list */
+                    pBuilder.append(myClass.getName());
+                    if (myIterator.hasNext()) {
+                        pBuilder.append(MoneyWiseQIFConstants.QIF_CLASSSEP);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!getClass().equals(pThat.getClass())) {
+                return false;
+            }
+
+            /* Cast correctly */
+            final MoneyWiseQIFXferAccountLine<?> myLine = (MoneyWiseQIFXferAccountLine<?>) pThat;
+
+            /* Check line type */
+            if (!getLineType().equals(myLine.getLineType())) {
+                return false;
+            }
+
+            /* Check account */
+            if (!theAccount.equals(myLine.getAccount())) {
+                return false;
+            }
+
+            /* Check classes */
+            final List<MoneyWiseQIFClass> myClasses = myLine.getClassList();
+            if (theClasses == null) {
+                return myClasses == null;
+            } else if (myClasses == null) {
+                return true;
+            }
+            return theClasses.equals(myClasses);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getLineType(), theClasses, theAccount);
         }
     }
 }

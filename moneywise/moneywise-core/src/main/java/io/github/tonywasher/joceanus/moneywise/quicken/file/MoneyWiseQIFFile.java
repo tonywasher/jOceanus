@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
@@ -36,22 +34,21 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWis
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferenceKey;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferences;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * QIF File representation.
  */
-public class MoneyWiseQIFFile {
-    /**
-     * Hash multiplier.
-     */
-    protected static final int HASH_BASE = 37;
-
+public class MoneyWiseQIFFile
+        implements MoneyWiseQIFRegister {
     /**
      * Holding suffix.
      */
@@ -158,11 +155,7 @@ public class MoneyWiseQIFFile {
         theClasses = new ArrayList<>();
     }
 
-    /**
-     * Obtain the file type.
-     *
-     * @return the file type
-     */
+    @Override
     public MoneyWiseQIFType getFileType() {
         return theFileType;
     }
@@ -324,27 +317,18 @@ public class MoneyWiseQIFFile {
         return myFile;
     }
 
-    /**
-     * Register class.
-     *
-     * @param pClass the class
-     * @return the QIFClass representation
-     */
+    @Override
     public MoneyWiseQIFClass registerClass(final MoneyWiseTransTag pClass) {
         /* Locate an existing class */
         final String myName = pClass.getName();
         return theClassMap.computeIfAbsent(myName, n -> {
-            final MoneyWiseQIFClass myClass = new MoneyWiseQIFClass(this, pClass);
+            final MoneyWiseQIFClass myClass = new MoneyWiseQIFClass(pClass);
             theClasses.add(myClass);
             return myClass;
         });
     }
 
-    /**
-     * Register class.
-     *
-     * @param pClass the class
-     */
+    @Override
     public void registerClass(final MoneyWiseQIFClass pClass) {
         /* Locate an existing class */
         final String myName = pClass.getName();
@@ -354,17 +338,12 @@ public class MoneyWiseQIFFile {
         });
     }
 
-    /**
-     * Register category.
-     *
-     * @param pCategory the category
-     * @return the QIFEventCategory representation
-     */
+    @Override
     public MoneyWiseQIFEventCategory registerCategory(final MoneyWiseTransCategory pCategory) {
         /* Locate an existing category */
         final String myName = pCategory.getName();
         return theCategories.computeIfAbsent(myName, n -> {
-            final MoneyWiseQIFEventCategory myCat = new MoneyWiseQIFEventCategory(this, pCategory);
+            final MoneyWiseQIFEventCategory myCat = new MoneyWiseQIFEventCategory(pCategory);
             registerCategoryToParent(pCategory.getParentCategory(), myCat);
             return myCat;
         });
@@ -381,7 +360,7 @@ public class MoneyWiseQIFFile {
         /* Locate an existing parent category */
         final String myName = pParent.getName();
         final MoneyWiseQIFParentCategory myParent = theParentMap.computeIfAbsent(myName, n -> {
-            final MoneyWiseQIFParentCategory myParCat = new MoneyWiseQIFParentCategory(this, pParent);
+            final MoneyWiseQIFParentCategory myParCat = new MoneyWiseQIFParentCategory(pParent);
             theParentCategories.add(myParCat);
             return myParCat;
         });
@@ -427,17 +406,12 @@ public class MoneyWiseQIFFile {
         }
     }
 
-    /**
-     * Register account.
-     *
-     * @param pAccount the account
-     * @return the QIFAccount representation
-     */
+    @Override
     public MoneyWiseQIFAccountEvents registerAccount(final MoneyWiseTransAsset pAccount) {
         /* Locate an existing account */
         final String myName = pAccount.getName();
         return theAccountMap.computeIfAbsent(myName, n -> {
-            final MoneyWiseQIFAccountEvents myAccount = new MoneyWiseQIFAccountEvents(this, pAccount);
+            final MoneyWiseQIFAccountEvents myAccount = new MoneyWiseQIFAccountEvents(pAccount);
             theAccounts.add(myAccount);
             return myAccount;
         });
@@ -453,7 +427,7 @@ public class MoneyWiseQIFFile {
         /* Locate an existing account */
         final String myName = pPortfolio.getName() + HOLDING_SUFFIX;
         return theAccountMap.computeIfAbsent(myName, n -> {
-            final MoneyWiseQIFAccountEvents myAccount = new MoneyWiseQIFAccountEvents(this, myName);
+            final MoneyWiseQIFAccountEvents myAccount = new MoneyWiseQIFAccountEvents(myName);
             theAccounts.add(myAccount);
             return myAccount;
         });
@@ -475,12 +449,7 @@ public class MoneyWiseQIFFile {
         });
     }
 
-    /**
-     * Register payee.
-     *
-     * @param pPayee the payee
-     * @return the QIFPayee representation
-     */
+    @Override
     public MoneyWiseQIFPayee registerPayee(final MoneyWisePayee pPayee) {
         /* Locate an existing payee */
         final String myName = pPayee.getName();
@@ -491,12 +460,7 @@ public class MoneyWiseQIFFile {
         });
     }
 
-    /**
-     * Register payee.
-     *
-     * @param pPayee the payee
-     * @return the QIFPayee representation
-     */
+    @Override
     public MoneyWiseQIFPayee registerPayee(final String pPayee) {
         /* Locate an existing payee */
         return thePayeeMap.computeIfAbsent(pPayee, n -> {
@@ -506,12 +470,7 @@ public class MoneyWiseQIFFile {
         });
     }
 
-    /**
-     * Register security.
-     *
-     * @param pSecurity the security
-     * @return the QIFSecurity representation
-     */
+    @Override
     public MoneyWiseQIFSecurity registerSecurity(final MoneyWiseSecurity pSecurity) {
         /* Locate an existing security */
         final String myName = pSecurity.getName();
@@ -578,24 +537,14 @@ public class MoneyWiseQIFFile {
         }
     }
 
-    /**
-     * Obtain category.
-     *
-     * @param pName the name of the category
-     * @return the category
-     */
-    protected MoneyWiseQIFEventCategory getCategory(final String pName) {
+    @Override
+    public MoneyWiseQIFEventCategory getCategory(final String pName) {
         /* Lookup the category */
         return theCategories.get(pName);
     }
 
-    /**
-     * Obtain account.
-     *
-     * @param pName the name of the account
-     * @return the account
-     */
-    protected MoneyWiseQIFAccount getAccount(final String pName) {
+    @Override
+    public MoneyWiseQIFAccount getAccount(final String pName) {
         /* Lookup the security */
         final MoneyWiseQIFAccountEvents myAccount = getAccountEvents(pName);
         return (myAccount == null)
@@ -614,13 +563,8 @@ public class MoneyWiseQIFFile {
         return theAccountMap.get(pName);
     }
 
-    /**
-     * Obtain security.
-     *
-     * @param pName the name of the security
-     * @return the security
-     */
-    protected MoneyWiseQIFSecurity getSecurity(final String pName) {
+    @Override
+    public MoneyWiseQIFSecurity getSecurity(final String pName) {
         /* Lookup the security */
         final MoneyWiseQIFSecurityPrices myList = getSecurityPrices(pName);
         return myList == null
@@ -628,13 +572,8 @@ public class MoneyWiseQIFFile {
                 : myList.getSecurity();
     }
 
-    /**
-     * Obtain security by Symbol.
-     *
-     * @param pSymbol the symbol of the security
-     * @return the security
-     */
-    protected MoneyWiseQIFSecurity getSecurityBySymbol(final String pSymbol) {
+    @Override
+    public MoneyWiseQIFSecurity getSecurityBySymbol(final String pSymbol) {
         /* Lookup the security */
         return theSymbolMap.get(pSymbol);
     }
@@ -650,13 +589,8 @@ public class MoneyWiseQIFFile {
         return theSecurityMap.get(pName);
     }
 
-    /**
-     * Obtain class.
-     *
-     * @param pName the name of the class
-     * @return the class
-     */
-    protected MoneyWiseQIFClass getClass(final String pName) {
+    @Override
+    public MoneyWiseQIFClass getClass(final String pName) {
         /* Lookup the class */
         return theClassMap.get(pName);
     }
@@ -758,12 +692,9 @@ public class MoneyWiseQIFFile {
         }
 
         /* Check class */
-        if (!(pThat instanceof MoneyWiseQIFFile)) {
+        if (!(pThat instanceof MoneyWiseQIFFile myThat)) {
             return false;
         }
-
-        /* Cast correctly */
-        final MoneyWiseQIFFile myThat = (MoneyWiseQIFFile) pThat;
 
         /* Check file type */
         if (!theFileType.equals(myThat.theFileType)) {
@@ -796,16 +727,6 @@ public class MoneyWiseQIFFile {
 
     @Override
     public int hashCode() {
-        int myResult = MoneyWiseQIFFile.HASH_BASE * theFileType.hashCode();
-        myResult += theClasses.hashCode();
-        myResult *= MoneyWiseQIFFile.HASH_BASE;
-        myResult += theParentCategories.hashCode();
-        myResult *= MoneyWiseQIFFile.HASH_BASE;
-        myResult += theSecurities.hashCode();
-        myResult *= MoneyWiseQIFFile.HASH_BASE;
-        myResult += thePayees.hashCode();
-        myResult *= MoneyWiseQIFFile.HASH_BASE;
-        myResult += theAccounts.hashCode();
-        return myResult;
+        return Objects.hash(theFileType, theClasses, theParentCategories, theSecurities, thePayees, theAccounts);
     }
 }

@@ -16,14 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQEventLineType;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFCategoryLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFAccount.MoneyWiseQIFXferAccountLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFEventCategory.MoneyWiseQIFCategoryLine;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFMoneyLine;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFRateLine;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFXferAccountLine;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 
 import java.util.List;
 
@@ -60,26 +60,22 @@ public class MoneyWiseQIFSplitEvent
     /**
      * Constructor.
      *
-     * @param pFile     the QIF File
      * @param pCategory the category
      */
-    protected MoneyWiseQIFSplitEvent(final MoneyWiseQIFFile pFile,
-                                     final MoneyWiseQIFEventCategory pCategory) {
-        this(pFile, pCategory, null);
+    protected MoneyWiseQIFSplitEvent(final MoneyWiseQIFEventCategory pCategory) {
+        this(pCategory, null);
     }
 
     /**
      * Constructor.
      *
-     * @param pFile     the QIF File
      * @param pCategory the category
      * @param pClasses  the classes
      */
-    protected MoneyWiseQIFSplitEvent(final MoneyWiseQIFFile pFile,
-                                     final MoneyWiseQIFEventCategory pCategory,
+    protected MoneyWiseQIFSplitEvent(final MoneyWiseQIFEventCategory pCategory,
                                      final List<MoneyWiseQIFClass> pClasses) {
         /* Call Super-constructor */
-        super(pFile, MoneyWiseQEventLineType.class);
+        super(MoneyWiseQEventLineType.class);
 
         /* Set values */
         theCategory = pCategory;
@@ -95,27 +91,23 @@ public class MoneyWiseQIFSplitEvent
     /**
      * Constructor.
      *
-     * @param pFile    the QIF File
      * @param pAccount the transfer account
      */
-    protected MoneyWiseQIFSplitEvent(final MoneyWiseQIFFile pFile,
-                                     final MoneyWiseQIFAccount pAccount) {
+    protected MoneyWiseQIFSplitEvent(final MoneyWiseQIFAccount pAccount) {
         /* Call Super-constructor */
-        this(pFile, pAccount, null);
+        this(pAccount, null);
     }
 
     /**
      * Constructor.
      *
-     * @param pFile    the QIF File
      * @param pAccount the transfer account
      * @param pClasses the classes
      */
-    protected MoneyWiseQIFSplitEvent(final MoneyWiseQIFFile pFile,
-                                     final MoneyWiseQIFAccount pAccount,
+    protected MoneyWiseQIFSplitEvent(final MoneyWiseQIFAccount pAccount,
                                      final List<MoneyWiseQIFClass> pClasses) {
         /* Call Super-constructor */
-        super(pFile, MoneyWiseQEventLineType.class);
+        super(MoneyWiseQEventLineType.class);
 
         /* Set values */
         theCategory = null;
@@ -209,7 +201,7 @@ public class MoneyWiseQIFSplitEvent
     /**
      * The Event Split Account line.
      */
-    public class MoneyWiseQIFEventSplitAccountLine
+    public static class MoneyWiseQIFEventSplitAccountLine
             extends MoneyWiseQIFXferAccountLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
@@ -242,7 +234,7 @@ public class MoneyWiseQIFSplitEvent
     /**
      * The Event Split Category line.
      */
-    public class MoneyWiseQIFEventSplitCategoryLine
+    public static class MoneyWiseQIFEventSplitCategoryLine
             extends MoneyWiseQIFCategoryLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
@@ -275,7 +267,7 @@ public class MoneyWiseQIFSplitEvent
     /**
      * The Event Split Amount line.
      */
-    public class MoneyWiseQIFEventSplitAmountLine
+    public static class MoneyWiseQIFEventSplitAmountLine
             extends MoneyWiseQIFMoneyLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
@@ -305,7 +297,7 @@ public class MoneyWiseQIFSplitEvent
     /**
      * The Event Split Percent line.
      */
-    public class MoneyWiseQIFEventSplitPercentLine
+    public static class MoneyWiseQIFEventSplitPercentLine
             extends MoneyWiseQIFRateLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
@@ -335,7 +327,7 @@ public class MoneyWiseQIFSplitEvent
     /**
      * The Event Split Comment line.
      */
-    public class MoneyWiseQIFEventSplitCommentLine
+    public static class MoneyWiseQIFEventSplitCommentLine
             extends MoneyWiseQIFStringLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.

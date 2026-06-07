@@ -16,12 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -290,16 +288,6 @@ public enum MoneyWiseTaxResource
     CHARGEABLEGAIN_TAXRELIEF("ChargeableGain.TaxRelief");
 
     /**
-     * The Marginal Map.
-     */
-    private static final Map<MoneyWiseMarginalReduction, OceanusBundleId> MARGINAL_MAP = buildMarginalMap();
-
-    /**
-     * The CashType Map.
-     */
-    private static final Map<MoneyWiseCashType, OceanusBundleId> CASHTYPE_MAP = buildCashTypeMap();
-
-    /**
      * The Resource Loader.
      */
     private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseTaxResource.class.getCanonicalName(),
@@ -349,51 +337,5 @@ public enum MoneyWiseTaxResource
     @Override
     public String getId() {
         return getValue();
-    }
-
-    /**
-     * Build marginal map.
-     *
-     * @return the map
-     */
-    private static Map<MoneyWiseMarginalReduction, OceanusBundleId> buildMarginalMap() {
-        /* Create the map and return it */
-        final Map<MoneyWiseMarginalReduction, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseMarginalReduction.class);
-        myMap.put(MoneyWiseMarginalReduction.ONEINTWO, MARGINAL_ONEINTWO);
-        myMap.put(MoneyWiseMarginalReduction.TWOINTHREE, MARGINAL_TWOINTHREE);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for marginal reduction type.
-     *
-     * @param pValue the Value
-     * @return the resource key
-     */
-    protected static OceanusBundleId getKeyForMarginalReduction(final MoneyWiseMarginalReduction pValue) {
-        return OceanusBundleLoader.getKeyForEnum(MARGINAL_MAP, pValue);
-    }
-
-    /**
-     * Build cashType map.
-     *
-     * @return the map
-     */
-    private static Map<MoneyWiseCashType, OceanusBundleId> buildCashTypeMap() {
-        /* Create the map and return it */
-        final Map<MoneyWiseCashType, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseCashType.class);
-        myMap.put(MoneyWiseCashType.LARGECASH, CASHTYPE_LARGE);
-        myMap.put(MoneyWiseCashType.SMALLCASH, CASHTYPE_SMALL);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for cash type.
-     *
-     * @param pValue the Value
-     * @return the resource key
-     */
-    protected static OceanusBundleId getKeyForCashType(final MoneyWiseCashType pValue) {
-        return OceanusBundleLoader.getKeyForEnum(CASHTYPE_MAP, pValue);
     }
 }

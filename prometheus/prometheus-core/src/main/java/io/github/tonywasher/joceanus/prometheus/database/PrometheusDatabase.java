@@ -17,9 +17,8 @@
 package io.github.tonywasher.joceanus.prometheus.database;
 
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
-import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceSet;
 
 import java.util.EnumSet;
@@ -125,11 +124,11 @@ public interface PrometheusDatabase {
         /**
          * Constructor.
          *
-         * @param pManager the preference manager
+         * @param pViewer the viewer manager
          * @throws OceanusException on error
          */
-        public PrometheusDatabasePreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super((PrometheusPreferenceManager) pManager, PrometheusDBResource.DBPREF_PREFNAME);
+        public PrometheusDatabasePreferences(final MetisViewerManager pViewer) throws OceanusException {
+            super(pViewer, PrometheusDBResource.DBPREF_PREFNAME);
         }
 
         @Override

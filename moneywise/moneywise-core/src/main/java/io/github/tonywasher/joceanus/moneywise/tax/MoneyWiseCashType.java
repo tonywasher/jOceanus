@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+
 /**
  * CashType for Capital Gains transactions.
  */
@@ -40,10 +42,24 @@ public enum MoneyWiseCashType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseTaxResource.getKeyForCashType(this).getValue();
+            theName = bundleIdForCashType(this).getValue();
         }
 
         /* return the name */
         return theName;
+    }
+
+    /**
+     * Obtain the resource bundleId for the cashType.
+     *
+     * @param pType the type
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForCashType(final MoneyWiseCashType pType) {
+        return switch (pType) {
+            case LARGECASH -> MoneyWiseTaxResource.CASHTYPE_LARGE;
+            case SMALLCASH -> MoneyWiseTaxResource.CASHTYPE_SMALL;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

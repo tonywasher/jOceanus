@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.prometheus.preference;
 
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
@@ -28,7 +29,7 @@ public class PrometheusPreferenceManager
     /**
      * The Security Manager.
      */
-    private PrometheusPreferenceSecurity theSecurity;
+    private final PrometheusPreferenceSecurity theSecurity;
 
     /**
      * Constructor.
@@ -38,19 +39,16 @@ public class PrometheusPreferenceManager
      */
     public PrometheusPreferenceManager(final MetisViewerManager pViewer) throws OceanusException {
         super(pViewer);
+        theSecurity = new PrometheusPreferenceSecurity(this);
     }
 
-    /**
-     * Obtain the security manager.
-     *
-     * @return the security manager
-     * @throws OceanusException on error
-     */
-    protected PrometheusPreferenceSecurity getSecurity() throws OceanusException {
-        /* If we have not created security and are not in the middle of creating security */
-        if (theSecurity == null) {
-            theSecurity = new PrometheusPreferenceSecurity(this);
+    @Override
+    protected <X extends MetisPreferenceSet> X newPreferenceSet(final String pName,
+                                                                final Class<X> pClazz) {
+        final X mySet = super.newPreferenceSet(pName, pClazz);
+        if (mySet instanceof PrometheusPreferenceSet mySecureSet) {
+            mySecureSet.setSecurity(theSecurity);
         }
-        return theSecurity;
+        return mySet;
     }
 }

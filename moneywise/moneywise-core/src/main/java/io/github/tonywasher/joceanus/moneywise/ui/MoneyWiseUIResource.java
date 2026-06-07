@@ -16,12 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.ui;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -460,11 +458,6 @@ public enum MoneyWiseUIResource
     STATICDATA_ACTIVE("StaticData.Active");
 
     /**
-     * The ColumnSet Map.
-     */
-    private static final Map<MoneyWiseAnalysisColumnSet, OceanusBundleId> COLUMN_MAP = buildColumnMap();
-
-    /**
      * The Resource Loader.
      */
     private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseUIResource.class.getCanonicalName(),
@@ -514,33 +507,5 @@ public enum MoneyWiseUIResource
     @Override
     public String getId() {
         return getValue();
-    }
-
-    /**
-     * Build column map.
-     *
-     * @return the map
-     */
-    private static Map<MoneyWiseAnalysisColumnSet, OceanusBundleId> buildColumnMap() {
-        /* Create the map and return it */
-        final Map<MoneyWiseAnalysisColumnSet, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseAnalysisColumnSet.class);
-        myMap.put(MoneyWiseAnalysisColumnSet.BALANCE, COLUMNSET_BALANCE);
-        myMap.put(MoneyWiseAnalysisColumnSet.STANDARD, COLUMNSET_STANDARD);
-        myMap.put(MoneyWiseAnalysisColumnSet.SALARY, COLUMNSET_SALARY);
-        myMap.put(MoneyWiseAnalysisColumnSet.INTEREST, COLUMNSET_INTEREST);
-        myMap.put(MoneyWiseAnalysisColumnSet.DIVIDEND, COLUMNSET_DIVIDEND);
-        myMap.put(MoneyWiseAnalysisColumnSet.SECURITY, COLUMNSET_SECURITY);
-        myMap.put(MoneyWiseAnalysisColumnSet.ALL, COLUMNSET_ALL);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for columnSet.
-     *
-     * @param pValue the Value
-     * @return the resource key
-     */
-    static OceanusBundleId getKeyForColumnSet(final MoneyWiseAnalysisColumnSet pValue) {
-        return OceanusBundleLoader.getKeyForEnum(COLUMN_MAP, pValue);
     }
 }

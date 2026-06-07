@@ -16,11 +16,11 @@
  */
 package io.github.tonywasher.joceanus.prometheus.maps;
 
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 
 import java.util.LinkedHashMap;
@@ -31,7 +31,7 @@ import java.util.function.Function;
  * InstanceMaps for DataSet.
  */
 public class PrometheusMapsDataSetInstance
-        implements MetisFieldItem {
+        implements MetisFieldItem, PrometheusMapsListHolder {
     /**
      * Report fields.
      */
@@ -91,13 +91,8 @@ public class PrometheusMapsDataSetInstance
         return theMap;
     }
 
-    /**
-     * Obtain the list map for listKey.
-     *
-     * @param pKey the listKey
-     * @return the map
-     */
-    PrometheusMapsListInstance getList(final MetisListKey pKey) {
+    @Override
+    public PrometheusMapsListInstance getList(final MetisListKey pKey) {
         return theMap.get(pKey);
     }
 

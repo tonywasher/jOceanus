@@ -32,6 +32,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.maps.PrometheusMapsCtl;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusViewerEntryId;
 
@@ -52,7 +53,7 @@ public class MoneyWiseMaps {
      *
      * @param pView the view
      */
-    MoneyWiseMaps(final MoneyWiseView pView) {
+    MoneyWiseMaps(final PrometheusDataControl pView) {
         /* Create the control */
         theMaps = new PrometheusMapsCtl(MoneyWiseMaps::deconstructPair);
 

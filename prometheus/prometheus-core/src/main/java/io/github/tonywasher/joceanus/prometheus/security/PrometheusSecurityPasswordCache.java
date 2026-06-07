@@ -93,16 +93,16 @@ public class PrometheusSecurityPasswordCache {
     /**
      * Constructor.
      *
-     * @param pManager  the password manager
+     * @param pFactory  the security factory
      * @param pLockSpec the passwordLockSpec
      * @throws OceanusException on error
      */
-    PrometheusSecurityPasswordCache(final PrometheusSecurityPasswordManager pManager,
+    PrometheusSecurityPasswordCache(final GordianFactory pFactory,
                                     final GordianPasswordLockSpec pLockSpec) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Store factory and lockSpec*/
-            theFactory = pManager.getSecurityFactory();
+            theFactory = pFactory;
             theKeySetFactory = theFactory.getKeySetFactory();
             theLockFactory = theFactory.getLockFactory();
             theLockSpec = pLockSpec;

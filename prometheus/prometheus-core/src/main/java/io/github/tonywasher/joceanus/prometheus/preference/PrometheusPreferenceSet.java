@@ -16,10 +16,11 @@
  */
 package io.github.tonywasher.joceanus.prometheus.preference;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * Prometheus PreferenceSet.
@@ -29,48 +30,48 @@ public abstract class PrometheusPreferenceSet
     /**
      * The Security Manager.
      */
-    private PrometheusPreferenceSecurity theSecurity;
+    private PrometheusPreferenceEncryptor theSecurity;
 
     /**
      * Constructor.
      *
-     * @param pManager the preference manager
-     * @param pId      the Id
+     * @param pViewer the viewer manager
+     * @param pId     the Id
      * @throws OceanusException on error
      */
-    protected PrometheusPreferenceSet(final PrometheusPreferenceManager pManager,
+    protected PrometheusPreferenceSet(final MetisViewerManager pViewer,
                                       final OceanusBundleId pId) throws OceanusException {
-        this(pManager, pId.getValue());
+        this(pViewer, pId.getValue());
     }
 
     /**
      * Constructor.
      *
-     * @param pManager the preference manager
-     * @param pName    the name
+     * @param pViewer the viewer manager
+     * @param pName   the name
      * @throws OceanusException on error
      */
-    protected PrometheusPreferenceSet(final PrometheusPreferenceManager pManager,
+    protected PrometheusPreferenceSet(final MetisViewerManager pViewer,
                                       final String pName) throws OceanusException {
         /* Initialize super-class */
-        super(pManager, pName);
+        super(pViewer, pName);
     }
 
-    @Override
-    public PrometheusPreferenceManager getPreferenceManager() {
-        return (PrometheusPreferenceManager) super.getPreferenceManager();
+    /**
+     * Set the security.
+     *
+     * @param pSecurity the security
+     */
+    void setSecurity(final PrometheusPreferenceEncryptor pSecurity) {
+        theSecurity = pSecurity;
     }
 
     /**
      * Obtain the security.
      *
      * @return the security
-     * @throws OceanusException on error
      */
-    public PrometheusPreferenceSecurity getSecurity() throws OceanusException {
-        if (theSecurity == null) {
-            theSecurity = getPreferenceManager().getSecurity();
-        }
+    public PrometheusPreferenceEncryptor getSecurity() {
         return theSecurity;
     }
 
@@ -256,7 +257,7 @@ public abstract class PrometheusPreferenceSet
             if (pSet.checkExists(pKey)) {
                 /* Access the value */
                 final byte[] myBytes = getHandle().getByteArray(getPreferenceName(), null);
-                final PrometheusPreferenceSecurity mySecurity = getSet().getSecurity();
+                final PrometheusPreferenceEncryptor mySecurity = getSet().getSecurity();
 
                 /* Decrypt the value */
                 final char[] myValue = myBytes == null
@@ -290,7 +291,7 @@ public abstract class PrometheusPreferenceSet
         @Override
         protected void storeThePreference(final Object pNewValue) throws OceanusException {
             /* Store the value */
-            final PrometheusPreferenceSecurity mySecurity = getSet().getSecurity();
+            final PrometheusPreferenceEncryptor mySecurity = getSet().getSecurity();
             getHandle().putByteArray(getPreferenceName(), mySecurity.encryptValue((char[]) pNewValue));
         }
     }

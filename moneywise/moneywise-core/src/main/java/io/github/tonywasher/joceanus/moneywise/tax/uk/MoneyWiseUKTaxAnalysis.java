@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxAnalysis;
@@ -157,11 +158,11 @@ public class MoneyWiseUKTaxAnalysis
         /**
          * Constructor.
          *
-         * @param pManager the preference manager
+         * @param pViewer the viewer manager
          * @throws OceanusException on error
          */
-        public MoneyWiseUKTaxPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-            super(pManager, MoneyWiseTaxResource.TAXPREF_NAME);
+        public MoneyWiseUKTaxPreferences(final MetisViewerManager pViewer) throws OceanusException {
+            super(pViewer, MoneyWiseTaxResource.TAXPREF_NAME);
         }
 
         @Override

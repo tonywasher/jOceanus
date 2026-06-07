@@ -16,22 +16,23 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQEventLineType;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFAccount.MoneyWiseQIFXferAccountLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFEventCategory.MoneyWiseQIFCategoryLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFClearedLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFDateLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFMoneyLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFPayee.MoneyWiseQIFPayeeLine;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
-import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQEventLineType;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFCategoryLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFClearedLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFDateLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFMoneyLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFPayeeLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFXferAccountLine;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,6 +41,11 @@ import java.util.Objects;
  */
 public class MoneyWiseQIFEvent
         extends MoneyWiseQIFEventRecord<MoneyWiseQEventLineType> {
+    /**
+     * The register.
+     */
+    private final MoneyWiseQIFRegister theRegister;
+
     /**
      * The Date.
      */
@@ -53,15 +59,16 @@ public class MoneyWiseQIFEvent
     /**
      * Constructor.
      *
-     * @param pFile  the QIF File
-     * @param pTrans the transaction
+     * @param pRegister the QIF register
+     * @param pTrans    the transaction
      */
-    protected MoneyWiseQIFEvent(final MoneyWiseQIFFile pFile,
+    protected MoneyWiseQIFEvent(final MoneyWiseQIFRegister pRegister,
                                 final MoneyWiseTransaction pTrans) {
         /* Call super-constructor */
-        super(pFile, MoneyWiseQEventLineType.class);
+        super(MoneyWiseQEventLineType.class);
 
         /* Store values */
+        theRegister = pRegister;
         theDate = pTrans.getDate();
         isCleared = pTrans.isReconciled();
 
@@ -85,15 +92,16 @@ public class MoneyWiseQIFEvent
     /**
      * Constructor for opening balance.
      *
-     * @param pFile      the QIF File
+     * @param pRegister  the QIF Register
      * @param pStartDate the start date
      */
-    protected MoneyWiseQIFEvent(final MoneyWiseQIFFile pFile,
+    protected MoneyWiseQIFEvent(final MoneyWiseQIFRegister pRegister,
                                 final OceanusDate pStartDate) {
         /* Call super-constructor */
-        super(pFile, MoneyWiseQEventLineType.class);
+        super(MoneyWiseQEventLineType.class);
 
         /* Store values */
+        theRegister = pRegister;
         theDate = pStartDate;
         isCleared = true;
 
@@ -106,17 +114,18 @@ public class MoneyWiseQIFEvent
     /**
      * Constructor.
      *
-     * @param pFile      the QIF File
+     * @param pRegister  the QIF Register
      * @param pFormatter the Data Formatter
      * @param pLines     the data lines
      */
-    protected MoneyWiseQIFEvent(final MoneyWiseQIFFile pFile,
+    protected MoneyWiseQIFEvent(final MoneyWiseQIFRegister pRegister,
                                 final OceanusDataFormatter pFormatter,
                                 final List<String> pLines) {
         /* Call super-constructor */
-        super(pFile, MoneyWiseQEventLineType.class);
+        super(MoneyWiseQEventLineType.class);
 
         /* Determine details */
+        theRegister = pRegister;
         OceanusDate myDate = null;
         Boolean myCleared = null;
 
@@ -138,7 +147,7 @@ public class MoneyWiseQIFEvent
                 /* Switch on line type */
                 switch (myType) {
                     case DATE:
-                        final OceanusDate myDateDay = myDateParser.parseDateBase(myData, MoneyWiseQIFWriter.QIF_BASEYEAR);
+                        final OceanusDate myDateDay = myDateParser.parseDateBase(myData, MoneyWiseQIFConstants.QIF_BASEYEAR);
                         addLine(new MoneyWiseQIFEventDateLine(myDateDay));
                         myDate = myDateDay;
                         break;
@@ -162,31 +171,31 @@ public class MoneyWiseQIFEvent
                         break;
                     case CATEGORY:
                         /* Check for account and category */
-                        MoneyWiseQIFAccount myAccount = MoneyWiseQIFXferAccountLine.parseAccount(pFile, myData);
-                        MoneyWiseQIFEventCategory myCategory = MoneyWiseQIFCategoryLine.parseCategory(pFile, myData);
+                        MoneyWiseQIFAccount myAccount = parseAccount(pRegister, myData);
+                        MoneyWiseQIFEventCategory myCategory = parseCategory(pRegister, myData);
                         if (myAccount != null) {
                             /* Look for account classes */
-                            final List<MoneyWiseQIFClass> myClasses = MoneyWiseQIFXferAccountLine.parseAccountClasses(pFile, myData);
+                            final List<MoneyWiseQIFClass> myClasses = parseAccountClasses(pRegister, myData);
                             addLine(new MoneyWiseQIFEventAccountLine(myAccount, myClasses));
                         } else {
                             /* Look for category classes */
-                            final List<MoneyWiseQIFClass> myClasses = MoneyWiseQIFCategoryLine.parseCategoryClasses(pFile, myData);
+                            final List<MoneyWiseQIFClass> myClasses = parseCategoryClasses(pRegister, myData);
                             addLine(new MoneyWiseQIFEventCategoryLine(myCategory, myClasses));
                             convertPayee();
                         }
                         break;
                     case SPLITCATEGORY:
                         /* Check for account */
-                        myAccount = MoneyWiseQIFXferAccountLine.parseAccount(pFile, myData);
-                        myCategory = MoneyWiseQIFCategoryLine.parseCategory(pFile, myData);
+                        myAccount = parseAccount(pRegister, myData);
+                        myCategory = parseCategory(pRegister, myData);
                         if (myAccount != null) {
                             /* Look for account classes */
-                            final List<MoneyWiseQIFClass> myClasses = MoneyWiseQIFXferAccountLine.parseAccountClasses(pFile, myData);
-                            mySplit = new MoneyWiseQIFSplitEvent(pFile, myAccount, myClasses);
+                            final List<MoneyWiseQIFClass> myClasses = parseAccountClasses(pRegister, myData);
+                            mySplit = new MoneyWiseQIFSplitEvent(myAccount, myClasses);
                         } else {
                             /* Look for category classes */
-                            final List<MoneyWiseQIFClass> myClasses = MoneyWiseQIFCategoryLine.parseCategoryClasses(pFile, myData);
-                            mySplit = new MoneyWiseQIFSplitEvent(pFile, myCategory, myClasses);
+                            final List<MoneyWiseQIFClass> myClasses = parseCategoryClasses(pRegister, myData);
+                            mySplit = new MoneyWiseQIFSplitEvent(myCategory, myClasses);
                             convertPayee();
                         }
 
@@ -223,6 +232,165 @@ public class MoneyWiseQIFEvent
     @Override
     public Boolean isCleared() {
         return isCleared;
+    }
+
+    /**
+     * Parse account line.
+     *
+     * @param pRegister the QIF Register
+     * @param pLine     the line.
+     * @return the account name (or null)
+     */
+    static MoneyWiseQIFAccount parseAccount(final MoneyWiseQIFRegister pRegister,
+                                            final String pLine) {
+        /* Determine line to use */
+        String myLine = pLine;
+
+        /* If the line contains a category separator */
+        if (pLine.contains(MoneyWiseQIFConstants.QIF_CATSEP)) {
+            /* Move to data following separator */
+            final int i = pLine.indexOf(MoneyWiseQIFConstants.QIF_CATSEP);
+            myLine = pLine.substring(i + 1);
+        }
+
+        /* If the line contains classes */
+        if (myLine.contains(MoneyWiseQIFConstants.QIF_CLASS)) {
+            /* drop class data */
+            final int i = myLine.indexOf(MoneyWiseQIFConstants.QIF_CLASS);
+            myLine = myLine.substring(0, i);
+        }
+
+        /* If we have the account delimiters */
+        if (myLine.startsWith(MoneyWiseQIFConstants.QIF_XFERSTART)
+                && myLine.endsWith(MoneyWiseQIFConstants.QIF_XFEREND)) {
+            /* Remove account delimiters */
+            final int i = MoneyWiseQIFConstants.QIF_XFERSTART.length();
+            final int j = MoneyWiseQIFConstants.QIF_XFEREND.length();
+            final String myAccount = myLine.substring(i, myLine.length()
+                    - j);
+            return pRegister.getAccount(myAccount);
+        }
+
+        /* Return no account */
+        return null;
+    }
+
+    /**
+     * Parse account classes.
+     *
+     * @param pRegister the QIF Register
+     * @param pLine     the line.
+     * @return the account name (or null)
+     */
+    static List<MoneyWiseQIFClass> parseAccountClasses(final MoneyWiseQIFRegister pRegister,
+                                                       final String pLine) {
+        /* Determine line to use */
+        String myLine = pLine;
+
+        /* If the line contains a category separator */
+        if (pLine.contains(MoneyWiseQIFConstants.QIF_CATSEP)) {
+            /* Move to data following separator */
+            final int i = pLine.indexOf(MoneyWiseQIFConstants.QIF_CATSEP);
+            myLine = pLine.substring(i + 1);
+        }
+
+        /* If the line contains classes */
+        if (myLine.contains(MoneyWiseQIFConstants.QIF_CLASS)) {
+            /* drop preceding data */
+            final int i = myLine.indexOf(MoneyWiseQIFConstants.QIF_CLASS);
+            myLine = myLine.substring(i + 1);
+
+            /* Build list of classes */
+            final String[] myClasses = myLine.split(MoneyWiseQIFConstants.QIF_CLASSSEP);
+            final List<MoneyWiseQIFClass> myList = new ArrayList<>();
+            for (String myClass : myClasses) {
+                myList.add(pRegister.getClass(myClass));
+            }
+
+            /* Return the classes */
+            return myList;
+        }
+
+        /* Return no classes */
+        return null;
+    }
+
+
+    /**
+     * Parse category line.
+     *
+     * @param pRegister the QIF Register
+     * @param pLine     the line.
+     * @return the account name (or null)
+     */
+    static MoneyWiseQIFEventCategory parseCategory(final MoneyWiseQIFRegister pRegister,
+                                                   final String pLine) {
+        /* Determine line to use */
+        String myLine = pLine;
+
+        /* If the line contains a category separator */
+        if (pLine.contains(MoneyWiseQIFConstants.QIF_CATSEP)) {
+            /* Drop data after separator */
+            final int i = pLine.indexOf(MoneyWiseQIFConstants.QIF_CATSEP);
+            myLine = pLine.substring(0, i);
+        }
+
+        /* If the line contains classes */
+        if (myLine.contains(MoneyWiseQIFConstants.QIF_CLASS)) {
+            /* drop class data */
+            final int i = myLine.indexOf(MoneyWiseQIFConstants.QIF_CLASS);
+            myLine = myLine.substring(0, i);
+        }
+
+        /* If we have the account delimiters */
+        if ((myLine.startsWith(MoneyWiseQIFConstants.QIF_XFERSTART))
+                && (myLine.endsWith(MoneyWiseQIFConstants.QIF_XFEREND))) {
+            /* This is an account */
+            return null;
+        }
+
+        /* Return category */
+        return pRegister.getCategory(myLine);
+    }
+
+    /**
+     * Parse category classes.
+     *
+     * @param pRegister the QIF Register
+     * @param pLine     the line.
+     * @return the account name (or null)
+     */
+    static List<MoneyWiseQIFClass> parseCategoryClasses(final MoneyWiseQIFRegister pRegister,
+                                                        final String pLine) {
+        /* Determine line to use */
+        String myLine = pLine;
+
+        /* If the line contains a category separator */
+        if (pLine.contains(MoneyWiseQIFConstants.QIF_CATSEP)) {
+            /* Drop data after separator */
+            final int i = pLine.indexOf(MoneyWiseQIFConstants.QIF_CATSEP);
+            myLine = pLine.substring(0, i);
+        }
+
+        /* If the line contains classes */
+        if (myLine.contains(MoneyWiseQIFConstants.QIF_CLASS)) {
+            /* drop preceding data */
+            final int i = myLine.indexOf(MoneyWiseQIFConstants.QIF_CLASS);
+            myLine = myLine.substring(i + 1);
+
+            /* Build list of classes */
+            final String[] myClasses = myLine.split(MoneyWiseQIFConstants.QIF_CLASSSEP);
+            final List<MoneyWiseQIFClass> myList = new ArrayList<>();
+            for (String myClass : myClasses) {
+                myList.add(pRegister.getClass(myClass));
+            }
+
+            /* Return the classes */
+            return myList;
+        }
+
+        /* Return no classes */
+        return null;
     }
 
     /**
@@ -330,7 +498,7 @@ public class MoneyWiseQIFEvent
                                      final OceanusMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */
-        final MoneyWiseQIFSplitEvent mySplit = new MoneyWiseQIFSplitEvent(getFile(), pAccount);
+        final MoneyWiseQIFSplitEvent mySplit = new MoneyWiseQIFSplitEvent(pAccount);
         mySplit.setSplitAmount(pAmount);
         if (pComment != null) {
             mySplit.setSplitComment(pComment);
@@ -351,7 +519,7 @@ public class MoneyWiseQIFEvent
                                      final OceanusMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */
-        final MoneyWiseQIFSplitEvent mySplit = new MoneyWiseQIFSplitEvent(getFile(), pAccount, pClasses);
+        final MoneyWiseQIFSplitEvent mySplit = new MoneyWiseQIFSplitEvent(pAccount, pClasses);
         mySplit.setSplitAmount(pAmount);
         if (pComment != null) {
             mySplit.setSplitComment(pComment);
@@ -370,7 +538,7 @@ public class MoneyWiseQIFEvent
                                      final OceanusMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */
-        final MoneyWiseQIFSplitEvent mySplit = new MoneyWiseQIFSplitEvent(getFile(), pCategory);
+        final MoneyWiseQIFSplitEvent mySplit = new MoneyWiseQIFSplitEvent(pCategory);
         mySplit.setSplitAmount(pAmount);
         if (pComment != null) {
             mySplit.setSplitComment(pComment);
@@ -391,7 +559,7 @@ public class MoneyWiseQIFEvent
                                      final OceanusMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */
-        final MoneyWiseQIFSplitEvent mySplit = new MoneyWiseQIFSplitEvent(getFile(), pCategory, pClasses);
+        final MoneyWiseQIFSplitEvent mySplit = new MoneyWiseQIFSplitEvent(pCategory, pClasses);
         mySplit.setSplitAmount(pAmount);
         if (pComment != null) {
             mySplit.setSplitComment(pComment);
@@ -410,7 +578,7 @@ public class MoneyWiseQIFEvent
             final String myName = myDesc.getValue();
 
             /* Register the payee */
-            final MoneyWiseQIFPayee myPayee = getFile().registerPayee(myName);
+            final MoneyWiseQIFPayee myPayee = theRegister.registerPayee(myName);
             addLine(new MoneyWiseQIFEventPayeeLine(myPayee));
         }
     }

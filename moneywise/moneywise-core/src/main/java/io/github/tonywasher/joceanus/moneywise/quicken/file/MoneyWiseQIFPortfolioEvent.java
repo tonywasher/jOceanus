@@ -19,18 +19,18 @@ package io.github.tonywasher.joceanus.moneywise.quicken.file;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQActionType;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQPortfolioLineType;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFCategoryAccountLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFCategoryLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFAccount.MoneyWiseQIFXferAccountLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFEventCategory.MoneyWiseQIFCategoryAccountLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFEventCategory.MoneyWiseQIFCategoryLine;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFClearedLine;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFDateLine;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFMoneyLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFPayeeLine;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFPriceLine;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFRatioLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFSecurityLine;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFUnitsLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFXferAccountLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFPayee.MoneyWiseQIFPayeeLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFSecurity.MoneyWiseQIFSecurityLine;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
@@ -47,6 +47,11 @@ import java.util.List;
  */
 public class MoneyWiseQIFPortfolioEvent
         extends MoneyWiseQIFEventRecord<MoneyWiseQPortfolioLineType> {
+    /**
+     * The register.
+     */
+    private final MoneyWiseQIFRegister theRegister;
+
     /**
      * The Date.
      */
@@ -65,17 +70,18 @@ public class MoneyWiseQIFPortfolioEvent
     /**
      * Constructor.
      *
-     * @param pFile   the QIF File
-     * @param pTrans  the transaction
-     * @param pAction the action
+     * @param pRegister the QIF Register
+     * @param pTrans    the transaction
+     * @param pAction   the action
      */
-    protected MoneyWiseQIFPortfolioEvent(final MoneyWiseQIFFile pFile,
+    protected MoneyWiseQIFPortfolioEvent(final MoneyWiseQIFRegister pRegister,
                                          final MoneyWiseTransaction pTrans,
                                          final MoneyWiseQActionType pAction) {
         /* Call super-constructor */
-        super(pFile, MoneyWiseQPortfolioLineType.class);
+        super(MoneyWiseQPortfolioLineType.class);
 
         /* Store values */
+        theRegister = pRegister;
         theDate = pTrans.getDate();
         isCleared = pTrans.isReconciled();
         theAction = pAction;
@@ -95,17 +101,18 @@ public class MoneyWiseQIFPortfolioEvent
     /**
      * Constructor.
      *
-     * @param pFile      the QIF File
+     * @param pRegister  the QIF register
      * @param pFormatter the Data Formatter
      * @param pLines     the data lines
      */
-    protected MoneyWiseQIFPortfolioEvent(final MoneyWiseQIFFile pFile,
+    protected MoneyWiseQIFPortfolioEvent(final MoneyWiseQIFRegister pRegister,
                                          final OceanusDataFormatter pFormatter,
                                          final List<String> pLines) {
         /* Call super-constructor */
-        super(pFile, MoneyWiseQPortfolioLineType.class);
+        super(MoneyWiseQPortfolioLineType.class);
 
         /* Determine details */
+        theRegister = pRegister;
         OceanusDate myDate = null;
         MoneyWiseQActionType myAction = null;
         Boolean myCleared = null;
@@ -125,7 +132,7 @@ public class MoneyWiseQIFPortfolioEvent
                 /* Switch on line type */
                 switch (myType) {
                     case DATE:
-                        final OceanusDate myDateDay = myDateParser.parseDateBase(myData, MoneyWiseQIFWriter.QIF_BASEYEAR);
+                        final OceanusDate myDateDay = myDateParser.parseDateBase(myData, MoneyWiseQIFConstants.QIF_BASEYEAR);
                         addLine(new MoneyWiseQIFPortfolioDateLine(myDateDay));
                         myDate = myDateDay;
                         break;
@@ -161,15 +168,15 @@ public class MoneyWiseQIFPortfolioEvent
                         addLine(new MoneyWiseQIFPortfolioQuantityLine(myUnits));
                         break;
                     case SECURITY:
-                        addLine(new MoneyWiseQIFPortfolioSecurityLine(pFile.getSecurity(myData)));
+                        addLine(new MoneyWiseQIFPortfolioSecurityLine(pRegister.getSecurity(myData)));
                         break;
                     case XFERACCOUNT:
                         /* Look for account, category and classes */
-                        final MoneyWiseQIFAccount myAccount = MoneyWiseQIFXferAccountLine.parseAccount(pFile, myData);
-                        final MoneyWiseQIFEventCategory myCategory = MoneyWiseQIFCategoryLine.parseCategory(pFile, myData);
-                        List<MoneyWiseQIFClass> myClasses = MoneyWiseQIFXferAccountLine.parseAccountClasses(pFile, myData);
+                        final MoneyWiseQIFAccount myAccount = MoneyWiseQIFEvent.parseAccount(pRegister, myData);
+                        final MoneyWiseQIFEventCategory myCategory = MoneyWiseQIFEvent.parseCategory(pRegister, myData);
+                        List<MoneyWiseQIFClass> myClasses = MoneyWiseQIFEvent.parseAccountClasses(pRegister, myData);
                         if (myAccount == null) {
-                            myClasses = MoneyWiseQIFCategoryLine.parseCategoryClasses(pFile, myData);
+                            myClasses = MoneyWiseQIFEvent.parseCategoryClasses(pRegister, myData);
                             addLine(new MoneyWiseQIFPortfolioCategoryLine(myCategory, myClasses));
                             convertPayee();
                         } else if (myCategory == null) {
@@ -373,7 +380,7 @@ public class MoneyWiseQIFPortfolioEvent
             final String myName = myDesc.getValue();
 
             /* Register the payee */
-            final MoneyWiseQIFPayee myPayee = getFile().registerPayee(myName);
+            final MoneyWiseQIFPayee myPayee = theRegister.registerPayee(myName);
             addLine(new MoneyWiseQIFPortfolioPayeeLine(myPayee));
         }
     }

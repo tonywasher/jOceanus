@@ -16,16 +16,19 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQSecurityLineType;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
-import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
-import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQSecurityLineType;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
+import java.util.Objects;
 
 /**
  * Class representing a QIF Security record.
@@ -61,13 +64,11 @@ public class MoneyWiseQIFSecurity
     /**
      * Constructor.
      *
-     * @param pFile     the QIF File
      * @param pSecurity the Security
      */
-    public MoneyWiseQIFSecurity(final MoneyWiseQIFFile pFile,
-                                final MoneyWiseSecurity pSecurity) {
+    public MoneyWiseQIFSecurity(final MoneyWiseSecurity pSecurity) {
         /* Call super-constructor */
-        super(pFile, MoneyWiseQSecurityLineType.class);
+        super(MoneyWiseQSecurityLineType.class);
 
         /* Store data */
         theName = pSecurity.getName();
@@ -83,13 +84,11 @@ public class MoneyWiseQIFSecurity
     /**
      * Constructor.
      *
-     * @param pFile  the QIF File
      * @param pLines the data lines
      */
-    protected MoneyWiseQIFSecurity(final MoneyWiseQIFFile pFile,
-                                   final List<String> pLines) {
+    protected MoneyWiseQIFSecurity(final List<String> pLines) {
         /* Call super-constructor */
-        super(pFile, MoneyWiseQSecurityLineType.class);
+        super(MoneyWiseQSecurityLineType.class);
 
         /* Determine details */
         String myName = null;
@@ -186,9 +185,85 @@ public class MoneyWiseQIFSecurity
     }
 
     /**
+     * The Security line.
+     *
+     * @param <X> the line type
+     */
+    public abstract static class MoneyWiseQIFSecurityLine<X extends MoneyWiseQLineType>
+            extends MoneyWiseQIFLine<X> {
+        /**
+         * The security.
+         */
+        private final MoneyWiseQIFSecurity theSecurity;
+
+        /**
+         * Constructor.
+         *
+         * @param pSecurity the Security
+         */
+        protected MoneyWiseQIFSecurityLine(final MoneyWiseQIFSecurity pSecurity) {
+            /* Store data */
+            theSecurity = pSecurity;
+        }
+
+        @Override
+        public String toString() {
+            return theSecurity.toString();
+        }
+
+        /**
+         * Obtain account.
+         *
+         * @return the account
+         */
+        public MoneyWiseQIFSecurity getSecurity() {
+            return theSecurity;
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the security name */
+            pBuilder.append(theSecurity.getName());
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!getClass().equals(pThat.getClass())) {
+                return false;
+            }
+
+            /* Cast correctly */
+            final MoneyWiseQIFSecurityLine<?> myLine = (MoneyWiseQIFSecurityLine<?>) pThat;
+
+            /* Check line type */
+            if (!getLineType().equals(myLine.getLineType())) {
+                return false;
+            }
+
+            /* Check value */
+            return theSecurity.equals(myLine.getSecurity());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getLineType(), theSecurity);
+        }
+    }
+    
+    /**
      * The Security Name line.
      */
-    public class MoneyWiseQIFSecurityNameLine
+    public static class MoneyWiseQIFSecurityNameLine
             extends MoneyWiseQIFStringLine<MoneyWiseQSecurityLineType> {
         /**
          * Constructor.
@@ -218,7 +293,7 @@ public class MoneyWiseQIFSecurity
     /**
      * The Security Symbol line.
      */
-    public class MoneyWiseQIFSecuritySymbolLine
+    public static class MoneyWiseQIFSecuritySymbolLine
             extends MoneyWiseQIFStringLine<MoneyWiseQSecurityLineType> {
         /**
          * Constructor.
@@ -248,7 +323,7 @@ public class MoneyWiseQIFSecurity
     /**
      * The Security Type line.
      */
-    public class MoneyWiseQIFSecurityTypeLine
+    public static class MoneyWiseQIFSecurityTypeLine
             extends MoneyWiseQIFStringLine<MoneyWiseQSecurityLineType> {
         /**
          * The Security Type Class.

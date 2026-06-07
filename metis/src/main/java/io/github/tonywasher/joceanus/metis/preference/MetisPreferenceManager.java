@@ -98,15 +98,6 @@ public class MetisPreferenceManager
     }
 
     /**
-     * Obtain the viewer manager.
-     *
-     * @return the viewer manager
-     */
-    protected MetisViewerManager getViewer() {
-        return theViewerManager;
-    }
-
-    /**
      * Obtain the collection of preference sets.
      *
      * @return the preference sets
@@ -148,15 +139,15 @@ public class MetisPreferenceManager
      * @param pClazz the class of the preference set
      * @return the new preferenceSet
      */
-    private <X extends MetisPreferenceSet> X newPreferenceSet(final String pName,
-                                                              final Class<X> pClazz) {
+    protected <X extends MetisPreferenceSet> X newPreferenceSet(final String pName,
+                                                                final Class<X> pClazz) {
         /* Protect against exceptions */
         try {
             /* Obtain the relevant constructor */
-            final Constructor<X> myConstructor = pClazz.getConstructor(MetisPreferenceManager.class);
+            final Constructor<X> myConstructor = pClazz.getConstructor(MetisViewerManager.class);
 
             /* Access the new set */
-            final X mySet = myConstructor.newInstance(this);
+            final X mySet = myConstructor.newInstance(theViewerManager);
 
             /* Cache the set */
             theMap.put(pName, mySet);

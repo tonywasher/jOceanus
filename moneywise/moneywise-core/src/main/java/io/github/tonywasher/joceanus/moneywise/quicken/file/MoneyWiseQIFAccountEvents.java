@@ -16,12 +16,13 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import java.util.Objects;
 
 /**
  * Class representing an account and its events.
@@ -41,13 +42,11 @@ public class MoneyWiseQIFAccountEvents
     /**
      * Constructor.
      *
-     * @param pFile    the QIF file.
      * @param pAccount the account.
      */
-    protected MoneyWiseQIFAccountEvents(final MoneyWiseQIFFile pFile,
-                                        final MoneyWiseTransAsset pAccount) {
+    protected MoneyWiseQIFAccountEvents(final MoneyWiseTransAsset pAccount) {
         /* Store parameters */
-        theAccount = new MoneyWiseQIFAccount(pFile, pAccount);
+        theAccount = new MoneyWiseQIFAccount(pAccount);
 
         /* Create the list */
         theEvents = new ArrayList<>();
@@ -56,13 +55,11 @@ public class MoneyWiseQIFAccountEvents
     /**
      * Constructor.
      *
-     * @param pFile    the QIF file.
      * @param pAccount the account name.
      */
-    protected MoneyWiseQIFAccountEvents(final MoneyWiseQIFFile pFile,
-                                        final String pAccount) {
+    protected MoneyWiseQIFAccountEvents(final String pAccount) {
         /* Store parameters */
-        theAccount = new MoneyWiseQIFAccount(pFile, pAccount);
+        theAccount = new MoneyWiseQIFAccount(pAccount);
 
         /* Create the list */
         theEvents = new ArrayList<>();
@@ -154,8 +151,7 @@ public class MoneyWiseQIFAccountEvents
 
     @Override
     public int hashCode() {
-        final int myResult = MoneyWiseQIFFile.HASH_BASE * theAccount.hashCode();
-        return myResult + theEvents.hashCode();
+        return Objects.hash(theAccount, theEvents);
     }
 
     @Override

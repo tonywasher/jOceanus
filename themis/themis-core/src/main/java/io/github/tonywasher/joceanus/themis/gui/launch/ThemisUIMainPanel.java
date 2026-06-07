@@ -156,11 +156,6 @@ public class ThemisUIMainPanel
     private final MetisViewerEntry theErrorEntry;
 
     /**
-     * The source viewer entry.
-     */
-    private final MetisViewerEntry theSourceEntry;
-
-    /**
      * The solver viewer entry.
      */
     private final MetisViewerEntry theSolverEntry;
@@ -169,6 +164,11 @@ public class ThemisUIMainPanel
      * The stats viewer entry.
      */
     private final MetisViewerEntry theStatsEntry;
+
+    /**
+     * The source viewer entry.
+     */
+    private final MetisViewerEntry theSourceEntry;
 
     /**
      * The aboutBox.
@@ -187,21 +187,21 @@ public class ThemisUIMainPanel
         final MetisToolkit myToolkit = new MetisToolkit(pFactory, false);
 
         /* Create the subPanels */
-        theSource = new ThemisUISourcePanel(theGuiFactory);
-        theStats = new ThemisUIStatsPanel(theGuiFactory);
         theRefs = new ThemisUIRefPanel(theGuiFactory);
+        theStats = new ThemisUIStatsPanel(theGuiFactory);
+        theSource = new ThemisUISourcePanel(theGuiFactory);
 
         /* Create the tabs */
         final TethysUIPaneFactory myPanes = theGuiFactory.paneFactory();
         final TethysUITabPaneManager myTabs = myPanes.newTabPane();
-        theSourceTab = myTabs.addTabItem(ThemisUIResource.TAB_SOURCE.getValue(), theSource);
         theRefsTab = myTabs.addTabItem(ThemisUIResource.TAB_REFERENCES.getValue(), theRefs);
         theStatsTab = myTabs.addTabItem(ThemisUIResource.TAB_STATS.getValue(), theStats);
+        theSourceTab = myTabs.addTabItem(ThemisUIResource.TAB_SOURCE.getValue(), theSource);
 
         /* Hide tabs */
-        theSourceTab.setVisible(false);
-        theStatsTab.setVisible(false);
         theRefsTab.setVisible(false);
+        theStatsTab.setVisible(false);
+        theSourceTab.setVisible(false);
 
         /* Create the log tab */
         theLogSink = theGuiFactory.getLogSink();
@@ -267,9 +267,9 @@ public class ThemisUIMainPanel
         /* Create viewer locations */
         final MetisViewerManager myViewer = myToolkit.getViewerManager();
         theErrorEntry = myViewer.getStandardEntry(MetisViewerStandardEntry.ERROR);
-        theSourceEntry = myViewer.newEntry(ThemisDataResource.DATA_SOURCE.getValue());
         theSolverEntry = myViewer.newEntry(ThemisDataResource.DATA_SOLVER.getValue());
         theStatsEntry = myViewer.newEntry(ThemisDataResource.DATA_STATS.getValue());
+        theSourceEntry = myViewer.newEntry(ThemisDataResource.DATA_SOURCE.getValue());
 
         /* Handle the default location */
         final File myLocation = getDefaultLocation();
@@ -330,9 +330,9 @@ public class ThemisUIMainPanel
      */
     private void setVisibility(final boolean pLoading) {
         /* Set tabs visibility */
-        theSourceTab.setVisible(!pLoading);
         theRefsTab.setVisible(!pLoading);
         theStatsTab.setVisible(!pLoading);
+        theSourceTab.setVisible(!pLoading);
 
         /* Update selection bar and menuBar */
         theProjectControl.setVisible(!pLoading);

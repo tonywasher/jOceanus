@@ -30,27 +30,17 @@ public class MoneyWiseQIFWriter {
     /**
      * Quicken Date Format.
      */
-    protected static final String QIF_DATEFORMAT = "dd/MM/yy";
-
-    /**
-     * Quicken BaseYear.
-     */
-    protected static final int QIF_BASEYEAR = 1970;
+    static final String QIF_DATEFORMAT = "dd/MM/yy";
 
     /**
      * AutoSwitch option.
      */
-    protected static final String QIF_AUTOSWITCH = "AutoSwitch";
-
-    /**
-     * Item type.
-     */
-    protected static final String QIF_ITEM = "!Account";
+    private static final String QIF_AUTOSWITCH = "AutoSwitch";
 
     /**
      * Number of stages.
      */
-    protected static final int NUM_STAGES = 6;
+    private static final int NUM_STAGES = 6;
 
     /**
      * Thread Status.
