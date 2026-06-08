@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
@@ -27,6 +24,9 @@ import io.github.tonywasher.joceanus.metis.list.MetisListIndexed;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -55,7 +55,7 @@ public final class MoneyWiseAnalysisTransTagBucket
     /**
      * The analysis.
      */
-    private final MoneyWiseAnalysis theAnalysis;
+    private final MoneyWiseAnalysisControl theAnalysis;
 
     /**
      * TransactionTag.
@@ -73,7 +73,7 @@ public final class MoneyWiseAnalysisTransTagBucket
      * @param pAnalysis the analysis
      * @param pTransTag the tag
      */
-    private MoneyWiseAnalysisTransTagBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisTransTagBucket(final MoneyWiseAnalysisControl pAnalysis,
                                             final MoneyWiseTransTag pTransTag) {
         /* Store the parameters */
         theTransTag = pTransTag;
@@ -90,7 +90,7 @@ public final class MoneyWiseAnalysisTransTagBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    private MoneyWiseAnalysisTransTagBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisTransTagBucket(final MoneyWiseAnalysisControl pAnalysis,
                                             final MoneyWiseAnalysisTransTagBucket pBase,
                                             final OceanusDate pDate) {
         /* Copy details from base */
@@ -118,7 +118,7 @@ public final class MoneyWiseAnalysisTransTagBucket
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    private MoneyWiseAnalysisTransTagBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisTransTagBucket(final MoneyWiseAnalysisControl pAnalysis,
                                             final MoneyWiseAnalysisTransTagBucket pBase,
                                             final OceanusDateRange pRange) {
         /* Copy details from base */
@@ -183,7 +183,7 @@ public final class MoneyWiseAnalysisTransTagBucket
      *
      * @return the analysis
      */
-    MoneyWiseAnalysis getAnalysis() {
+    MoneyWiseAnalysisControl getAnalysis() {
         return theAnalysis;
     }
 
@@ -264,7 +264,7 @@ public final class MoneyWiseAnalysisTransTagBucket
         /**
          * The analysis.
          */
-        private final MoneyWiseAnalysis theAnalysis;
+        private final MoneyWiseAnalysisControl theAnalysis;
 
         /**
          * The list.
@@ -276,7 +276,7 @@ public final class MoneyWiseAnalysisTransTagBucket
          *
          * @param pAnalysis the analysis
          */
-        MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysisControl pAnalysis) {
             theAnalysis = pAnalysis;
             theList = new MetisListIndexed<>();
             theList.setComparator((l, r) -> l.getTransTag().compareTo(r.getTransTag()));
@@ -289,7 +289,7 @@ public final class MoneyWiseAnalysisTransTagBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                             final MoneyWiseAnalysisTransTagBucketList pBase,
                                             final OceanusDate pDate) {
             /* Initialise class */
@@ -318,7 +318,7 @@ public final class MoneyWiseAnalysisTransTagBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                             final MoneyWiseAnalysisTransTagBucketList pBase,
                                             final OceanusDateRange pRange) {
             /* Initialise class */
@@ -360,7 +360,7 @@ public final class MoneyWiseAnalysisTransTagBucket
          *
          * @return the analysis
          */
-        MoneyWiseAnalysis getAnalysis() {
+        MoneyWiseAnalysisControl getAnalysis() {
             return theAnalysis;
         }
 
@@ -421,7 +421,7 @@ public final class MoneyWiseAnalysisTransTagBucket
             /* Return the first payee in the list if it exists */
             return isEmpty()
                     ? null
-                    : theList.getUnderlyingList().get(0);
+                    : theList.getUnderlyingList().getFirst();
         }
 
         /**

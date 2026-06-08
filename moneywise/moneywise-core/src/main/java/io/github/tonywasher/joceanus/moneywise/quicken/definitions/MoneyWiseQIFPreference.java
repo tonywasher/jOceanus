@@ -17,8 +17,8 @@
 package io.github.tonywasher.joceanus.moneywise.quicken.definitions;
 
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceParams;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
-import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 
@@ -92,11 +92,11 @@ public final class MoneyWiseQIFPreference {
         /**
          * Constructor.
          *
-         * @param pViewer the viewer manager
+         * @param pParams the parameters
          * @throws OceanusException on error
          */
-        public MoneyWiseQIFPreferences(final MetisViewerManager pViewer) throws OceanusException {
-            super(pViewer, "QIF Preferences");
+        public MoneyWiseQIFPreferences(final MetisPreferenceParams pParams) throws OceanusException {
+            super(pParams, "QIF Preferences");
         }
 
         @Override

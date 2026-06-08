@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
@@ -27,6 +25,8 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashBucket.MoneyWiseAnalysisCashBucketList;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Iterator;
 import java.util.List;
@@ -140,7 +140,7 @@ public final class MoneyWiseAnalysisCashCategoryBucket
         /**
          * The analysis.
          */
-        private final MoneyWiseAnalysis theAnalysis;
+        private final MoneyWiseAnalysisControl theAnalysis;
 
         /**
          * The list.
@@ -160,14 +160,14 @@ public final class MoneyWiseAnalysisCashCategoryBucket
         /**
          * Do we have a foreign cash account?
          */
-        private Boolean haveForeignCurrency = Boolean.FALSE;
+        private boolean haveForeignCurrency = false;
 
         /**
          * Construct a top-level List.
          *
          * @param pAnalysis the analysis
          */
-        MoneyWiseAnalysisCashCategoryBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisCashCategoryBucketList(final MoneyWiseAnalysisControl pAnalysis) {
             /* Initialise class */
             theAnalysis = pAnalysis;
             theCurrency = theAnalysis.getCurrency();
@@ -207,7 +207,7 @@ public final class MoneyWiseAnalysisCashCategoryBucket
          *
          * @return true/false
          */
-        public Boolean haveForeignCurrency() {
+        public boolean haveForeignCurrency() {
             return haveForeignCurrency;
         }
 
@@ -216,7 +216,7 @@ public final class MoneyWiseAnalysisCashCategoryBucket
          *
          * @return the analysis
          */
-        public MoneyWiseAnalysis getAnalysis() {
+        public MoneyWiseAnalysisControl getAnalysis() {
             return theAnalysis;
         }
 

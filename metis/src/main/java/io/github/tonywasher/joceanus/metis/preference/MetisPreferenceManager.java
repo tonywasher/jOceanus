@@ -61,9 +61,9 @@ public class MetisPreferenceManager
     private final OceanusEventManager<MetisPreferenceEvent> theEventManager;
 
     /**
-     * Viewer Manager.
+     * Preference Parameters.
      */
-    private final MetisViewerManager theViewerManager;
+    private MetisPreferenceParams theParams;
 
     /**
      * Map of preferenceSets.
@@ -77,7 +77,7 @@ public class MetisPreferenceManager
      * @throws OceanusException on error
      */
     public MetisPreferenceManager(final MetisViewerManager pViewer) throws OceanusException {
-        theViewerManager = pViewer;
+        theParams = new MetisPreferenceParams(pViewer);
         theEventManager = new OceanusEventManager<>();
         theFields = MetisFieldSet.newFieldSet(this);
     }
@@ -95,6 +95,24 @@ public class MetisPreferenceManager
     @Override
     public OceanusEventRegistrar<MetisPreferenceEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Obtain the parameters.
+     *
+     * @return the parameters
+     */
+    protected MetisPreferenceParams getParameters() {
+        return theParams;
+    }
+
+    /**
+     * Set the parameters.
+     *
+     * @param pParams the parameters
+     */
+    protected void setParameters(final MetisPreferenceParams pParams) {
+        theParams = pParams;
     }
 
     /**
@@ -144,10 +162,10 @@ public class MetisPreferenceManager
         /* Protect against exceptions */
         try {
             /* Obtain the relevant constructor */
-            final Constructor<X> myConstructor = pClazz.getConstructor(MetisViewerManager.class);
+            final Constructor<X> myConstructor = pClazz.getConstructor(MetisPreferenceParams.class);
 
             /* Access the new set */
-            final X mySet = myConstructor.newInstance(theViewerManager);
+            final X mySet = myConstructor.newInstance(theParams);
 
             /* Cache the set */
             theMap.put(pName, mySet);

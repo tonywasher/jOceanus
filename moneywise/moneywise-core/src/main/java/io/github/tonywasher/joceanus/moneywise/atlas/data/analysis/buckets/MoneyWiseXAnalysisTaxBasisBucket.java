@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -44,6 +39,11 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxBasis.Mo
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseChargeableGainSlice.MoneyWiseChargeableGainSliceList;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxSource;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Comparator;
@@ -81,7 +81,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
     /**
      * The analysis.
      */
-    private final MoneyWiseXAnalysis theAnalysis;
+    private final MoneyWiseXAnalysisHolder theAnalysis;
 
     /**
      * Tax Basis.
@@ -124,7 +124,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
      * @param pAnalysis the analysis
      * @param pTaxBasis the basis
      */
-    protected MoneyWiseXAnalysisTaxBasisBucket(final MoneyWiseXAnalysis pAnalysis,
+    protected MoneyWiseXAnalysisTaxBasisBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                                final MoneyWiseTaxBasis pTaxBasis) {
         /* Store the parameters */
         theTaxBasis = pTaxBasis;
@@ -160,7 +160,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    protected MoneyWiseXAnalysisTaxBasisBucket(final MoneyWiseXAnalysis pAnalysis,
+    protected MoneyWiseXAnalysisTaxBasisBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                                final MoneyWiseXAnalysisTaxBasisBucket pBase,
                                                final OceanusDate pDate) {
         /* Copy details from base */
@@ -189,7 +189,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    protected MoneyWiseXAnalysisTaxBasisBucket(final MoneyWiseXAnalysis pAnalysis,
+    protected MoneyWiseXAnalysisTaxBasisBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                                final MoneyWiseXAnalysisTaxBasisBucket pBase,
                                                final OceanusDateRange pRange) {
         /* Copy details from base */
@@ -391,7 +391,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
      *
      * @return the analysis
      */
-    protected MoneyWiseXAnalysis getAnalysis() {
+    protected MoneyWiseXAnalysisHolder getAnalysis() {
         return theAnalysis;
     }
 
@@ -659,7 +659,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
         /**
          * The analysis.
          */
-        private final MoneyWiseXAnalysis theAnalysis;
+        private final MoneyWiseXAnalysisHolder theAnalysis;
 
         /**
          * The list.
@@ -687,7 +687,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
          * @param pAnalysis the analysis
          * @param pGains    the new Gains list
          */
-        private MoneyWiseXAnalysisTaxBasisBucketList(final MoneyWiseXAnalysis pAnalysis,
+        private MoneyWiseXAnalysisTaxBasisBucketList(final MoneyWiseXAnalysisHolder pAnalysis,
                                                      final MoneyWiseChargeableGainSliceList pGains) {
             theAnalysis = pAnalysis;
             theEditSet = theAnalysis.getEditSet();
@@ -702,7 +702,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
          *
          * @param pAnalysis the analysis
          */
-        protected MoneyWiseXAnalysisTaxBasisBucketList(final MoneyWiseXAnalysis pAnalysis) {
+        protected MoneyWiseXAnalysisTaxBasisBucketList(final MoneyWiseXAnalysisHolder pAnalysis) {
             this(pAnalysis, new MoneyWiseChargeableGainSliceList());
         }
 
@@ -713,7 +713,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        protected MoneyWiseXAnalysisTaxBasisBucketList(final MoneyWiseXAnalysis pAnalysis,
+        protected MoneyWiseXAnalysisTaxBasisBucketList(final MoneyWiseXAnalysisHolder pAnalysis,
                                                        final MoneyWiseXAnalysisTaxBasisBucketList pBase,
                                                        final OceanusDate pDate) {
             /* Initialise class */
@@ -742,7 +742,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        protected MoneyWiseXAnalysisTaxBasisBucketList(final MoneyWiseXAnalysis pAnalysis,
+        protected MoneyWiseXAnalysisTaxBasisBucketList(final MoneyWiseXAnalysisHolder pAnalysis,
                                                        final MoneyWiseXAnalysisTaxBasisBucketList pBase,
                                                        final OceanusDateRange pRange) {
             /* Initialise class */
@@ -785,7 +785,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
          *
          * @return the analysis
          */
-        protected MoneyWiseXAnalysis getAnalysis() {
+        protected MoneyWiseXAnalysisHolder getAnalysis() {
             return theAnalysis;
         }
 

@@ -16,14 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
-import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -277,11 +273,6 @@ public enum MoneyWiseAnalysisDataResource
     TAX_YEARS("Tax.Years");
 
     /**
-     * The AnalysisType Map.
-     */
-    private static final Map<MoneyWiseAnalysisType, OceanusBundleId> ANALYSIS_MAP = buildAnalysisMap();
-
-    /**
      * The Resource Loader.
      */
     private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseAnalysisDataResource.class.getCanonicalName(),
@@ -331,36 +322,5 @@ public enum MoneyWiseAnalysisDataResource
     @Override
     public String getId() {
         return getValue();
-    }
-
-    /**
-     * Build analysis map.
-     *
-     * @return the map
-     */
-    private static Map<MoneyWiseAnalysisType, OceanusBundleId> buildAnalysisMap() {
-        /* Create the map and return it */
-        final Map<MoneyWiseAnalysisType, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseAnalysisType.class);
-        myMap.put(MoneyWiseAnalysisType.DEPOSIT, MoneyWiseBasicResource.DEPOSIT_NAME);
-        myMap.put(MoneyWiseAnalysisType.CASH, MoneyWiseBasicResource.CASH_NAME);
-        myMap.put(MoneyWiseAnalysisType.LOAN, MoneyWiseBasicResource.LOAN_NAME);
-        myMap.put(MoneyWiseAnalysisType.PAYEE, MoneyWiseBasicResource.PAYEE_NAME);
-        myMap.put(MoneyWiseAnalysisType.SECURITY, MoneyWiseBasicResource.SECURITY_NAME);
-        myMap.put(MoneyWiseAnalysisType.PORTFOLIO, MoneyWiseBasicResource.PORTFOLIO_NAME);
-        myMap.put(MoneyWiseAnalysisType.CATEGORY, MoneyWiseBasicResource.TRANSCAT_NAME);
-        myMap.put(MoneyWiseAnalysisType.TAXBASIS, MoneyWiseStaticResource.TAXBASIS_NAME);
-        myMap.put(MoneyWiseAnalysisType.TRANSTAG, MoneyWiseBasicResource.TRANSTAG_NAME);
-        myMap.put(MoneyWiseAnalysisType.ALL, FILTER_ALL);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for analysisType.
-     *
-     * @param pValue the Value
-     * @return the resource key
-     */
-    static OceanusBundleId getKeyForAnalysisType(final MoneyWiseAnalysisType pValue) {
-        return OceanusBundleLoader.getKeyForEnum(ANALYSIS_MAP, pValue);
     }
 }

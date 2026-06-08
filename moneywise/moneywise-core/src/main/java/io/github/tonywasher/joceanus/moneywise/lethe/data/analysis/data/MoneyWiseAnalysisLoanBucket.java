@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
@@ -28,6 +25,9 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategor
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisCreditCardValues;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.Currency;
 import java.util.Iterator;
@@ -58,7 +58,7 @@ public final class MoneyWiseAnalysisLoanBucket
     /**
      * Is this a creditCard?
      */
-    private final Boolean isCreditCard;
+    private final boolean isCreditCard;
 
     /**
      * Constructor.
@@ -66,7 +66,7 @@ public final class MoneyWiseAnalysisLoanBucket
      * @param pAnalysis the analysis
      * @param pLoan     the loan
      */
-    private MoneyWiseAnalysisLoanBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisLoanBucket(final MoneyWiseAnalysisControl pAnalysis,
                                         final MoneyWiseLoan pLoan) {
         /* Call super-constructor */
         super(pAnalysis, pLoan);
@@ -84,7 +84,7 @@ public final class MoneyWiseAnalysisLoanBucket
      * @param pAnalysis the analysis
      * @param pBase     the underlying bucket
      */
-    private MoneyWiseAnalysisLoanBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisLoanBucket(final MoneyWiseAnalysisControl pAnalysis,
                                         final MoneyWiseAnalysisLoanBucket pBase) {
         /* Call super-constructor */
         super(pAnalysis, pBase);
@@ -101,7 +101,7 @@ public final class MoneyWiseAnalysisLoanBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    private MoneyWiseAnalysisLoanBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisLoanBucket(final MoneyWiseAnalysisControl pAnalysis,
                                         final MoneyWiseAnalysisLoanBucket pBase,
                                         final OceanusDate pDate) {
         /* Call super-constructor */
@@ -119,7 +119,7 @@ public final class MoneyWiseAnalysisLoanBucket
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    private MoneyWiseAnalysisLoanBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisLoanBucket(final MoneyWiseAnalysisControl pAnalysis,
                                         final MoneyWiseAnalysisLoanBucket pBase,
                                         final OceanusDateRange pRange) {
         /* Call super-constructor */
@@ -149,7 +149,7 @@ public final class MoneyWiseAnalysisLoanBucket
      *
      * @return true/false
      */
-    public Boolean isCreditCard() {
+    public boolean isCreditCard() {
         return isCreditCard;
     }
 
@@ -171,7 +171,7 @@ public final class MoneyWiseAnalysisLoanBucket
     @Override
     public void adjustForDebit(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* If this is a credit card */
-        if (Boolean.TRUE.equals(isCreditCard)) {
+        if (isCreditCard) {
             /* Access the amount */
             final OceanusMoney myAmount = pHelper.getDebitAmount();
 
@@ -201,7 +201,7 @@ public final class MoneyWiseAnalysisLoanBucket
          *
          * @param pAnalysis the analysis
          */
-        MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysisControl pAnalysis) {
             /* Initialise class */
             super(pAnalysis);
         }
@@ -212,7 +212,7 @@ public final class MoneyWiseAnalysisLoanBucket
          * @param pAnalysis the analysis
          * @param pBase     the base list
          */
-        MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                         final MoneyWiseAnalysisLoanBucketList pBase) {
             /* Initialise class */
             this(pAnalysis);
@@ -228,7 +228,7 @@ public final class MoneyWiseAnalysisLoanBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                         final MoneyWiseAnalysisLoanBucketList pBase,
                                         final OceanusDate pDate) {
             /* Initialise class */
@@ -245,7 +245,7 @@ public final class MoneyWiseAnalysisLoanBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                         final MoneyWiseAnalysisLoanBucketList pBase,
                                         final OceanusDateRange pRange) {
             /* Initialise class */
@@ -283,7 +283,7 @@ public final class MoneyWiseAnalysisLoanBucket
             /* Return the first loan in the list if it exists */
             return isEmpty()
                     ? null
-                    : getUnderlyingList().get(0);
+                    : getUnderlyingList().getFirst();
         }
 
         /**

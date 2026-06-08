@@ -60,7 +60,7 @@ import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
  * @author Tony Washer
  */
 public class MoneyWiseXAnalysis
-        implements MetisFieldItem {
+        implements MetisFieldItem, MoneyWiseXAnalysisHolder {
     /**
      * Logger.
      */
@@ -351,11 +351,7 @@ public class MoneyWiseXAnalysis
         return haveActiveSecurities;
     }
 
-    /**
-     * Obtain the editSet.
-     *
-     * @return the editSet
-     */
+    @Override
     public PrometheusEditSet getEditSet() {
         return theEditSet;
     }
@@ -387,11 +383,7 @@ public class MoneyWiseXAnalysis
         return theCursor;
     }
 
-    /**
-     * Obtain the data.
-     *
-     * @return the data
-     */
+    @Override
     public MoneyWiseDataSet getData() {
         return (MoneyWiseDataSet) theEditSet.getDataSet();
     }
@@ -405,11 +397,7 @@ public class MoneyWiseXAnalysis
         return theTaxYearCache;
     }
 
-    /**
-     * Obtain the currency.
-     *
-     * @return the currency
-     */
+    @Override
     public MoneyWiseCurrency getCurrency() {
         return theCurrency;
     }
@@ -423,11 +411,7 @@ public class MoneyWiseXAnalysis
         return thePreferences;
     }
 
-    /**
-     * Obtain the date range.
-     *
-     * @return the date range
-     */
+    @Override
     public OceanusDateRange getDateRange() {
         return theDateRange;
     }

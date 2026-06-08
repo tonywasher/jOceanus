@@ -17,8 +17,8 @@
 package io.github.tonywasher.joceanus.metis.ui;
 
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceParams;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
-import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIValueKey;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIValueSet;
@@ -134,11 +134,11 @@ public interface MetisFieldColours {
         /**
          * Constructor.
          *
-         * @param pViewer the viewer manager
+         * @param pParams the parameters
          * @throws OceanusException on error
          */
-        public MetisColorPreferences(final MetisViewerManager pViewer) throws OceanusException {
-            super(pViewer, MetisColorResource.FIELDCOLOR_PREFS);
+        public MetisColorPreferences(final MetisPreferenceParams pParams) throws OceanusException {
+            super(pParams, MetisColorResource.FIELDCOLOR_PREFS);
         }
 
         /**

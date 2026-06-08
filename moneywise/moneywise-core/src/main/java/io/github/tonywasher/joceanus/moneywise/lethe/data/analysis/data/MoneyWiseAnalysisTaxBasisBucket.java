@@ -81,7 +81,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
     /**
      * The analysis.
      */
-    private final MoneyWiseAnalysis theAnalysis;
+    private final MoneyWiseAnalysisControl theAnalysis;
 
     /**
      * Tax Basis.
@@ -124,7 +124,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
      * @param pAnalysis the analysis
      * @param pTaxBasis the basis
      */
-    protected MoneyWiseAnalysisTaxBasisBucket(final MoneyWiseAnalysis pAnalysis,
+    protected MoneyWiseAnalysisTaxBasisBucket(final MoneyWiseAnalysisControl pAnalysis,
                                               final MoneyWiseTaxBasis pTaxBasis) {
         /* Store the parameters */
         theTaxBasis = pTaxBasis;
@@ -160,7 +160,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    protected MoneyWiseAnalysisTaxBasisBucket(final MoneyWiseAnalysis pAnalysis,
+    protected MoneyWiseAnalysisTaxBasisBucket(final MoneyWiseAnalysisControl pAnalysis,
                                               final MoneyWiseAnalysisTaxBasisBucket pBase,
                                               final OceanusDate pDate) {
         /* Copy details from base */
@@ -189,7 +189,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    protected MoneyWiseAnalysisTaxBasisBucket(final MoneyWiseAnalysis pAnalysis,
+    protected MoneyWiseAnalysisTaxBasisBucket(final MoneyWiseAnalysisControl pAnalysis,
                                               final MoneyWiseAnalysisTaxBasisBucket pBase,
                                               final OceanusDateRange pRange) {
         /* Copy details from base */
@@ -306,7 +306,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
      *
      * @return true/false
      */
-    public Boolean isIdle() {
+    public boolean isIdle() {
         return theHistory.isIdle();
     }
 
@@ -386,7 +386,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
      *
      * @return the analysis
      */
-    protected MoneyWiseAnalysis getAnalysis() {
+    protected MoneyWiseAnalysisControl getAnalysis() {
         return theAnalysis;
     }
 
@@ -822,7 +822,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
         /**
          * The analysis.
          */
-        private final MoneyWiseAnalysis theAnalysis;
+        private final MoneyWiseAnalysisControl theAnalysis;
 
         /**
          * The list.
@@ -850,7 +850,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
          * @param pAnalysis the analysis
          * @param pGains    the new Gains list
          */
-        private MoneyWiseAnalysisTaxBasisBucketList(final MoneyWiseAnalysis pAnalysis,
+        private MoneyWiseAnalysisTaxBasisBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                                     final MoneyWiseChargeableGainSliceList pGains) {
             theAnalysis = pAnalysis;
             theEditSet = theAnalysis.getEditSet();
@@ -865,7 +865,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
          *
          * @param pAnalysis the analysis
          */
-        protected MoneyWiseAnalysisTaxBasisBucketList(final MoneyWiseAnalysis pAnalysis) {
+        protected MoneyWiseAnalysisTaxBasisBucketList(final MoneyWiseAnalysisControl pAnalysis) {
             this(pAnalysis, new MoneyWiseChargeableGainSliceList());
         }
 
@@ -876,7 +876,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        protected MoneyWiseAnalysisTaxBasisBucketList(final MoneyWiseAnalysis pAnalysis,
+        protected MoneyWiseAnalysisTaxBasisBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                                       final MoneyWiseAnalysisTaxBasisBucketList pBase,
                                                       final OceanusDate pDate) {
             /* Initialise class */
@@ -891,7 +891,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
                 final MoneyWiseAnalysisTaxBasisBucket myBucket = new MoneyWiseAnalysisTaxBasisBucket(pAnalysis, myCurr, pDate);
 
                 /* If the bucket is non-idle */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
+                if (!myBucket.isIdle()) {
                     /* Calculate the delta and add to the list */
                     theList.add(myBucket);
                 }
@@ -905,7 +905,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        protected MoneyWiseAnalysisTaxBasisBucketList(final MoneyWiseAnalysis pAnalysis,
+        protected MoneyWiseAnalysisTaxBasisBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                                       final MoneyWiseAnalysisTaxBasisBucketList pBase,
                                                       final OceanusDateRange pRange) {
             /* Initialise class */
@@ -920,7 +920,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
                 final MoneyWiseAnalysisTaxBasisBucket myBucket = new MoneyWiseAnalysisTaxBasisBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
+                if (!myBucket.isIdle()) {
                     /* Adjust to the base */
                     myBucket.adjustToBase();
                     theList.add(myBucket);
@@ -948,7 +948,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
          *
          * @return the analysis
          */
-        protected MoneyWiseAnalysis getAnalysis() {
+        protected MoneyWiseAnalysisControl getAnalysis() {
             return theAnalysis;
         }
 
@@ -1025,9 +1025,9 @@ public class MoneyWiseAnalysisTaxBasisBucket
             }
 
             /* If we are matching a TaxBasisAccount Bucket */
-            if (pTaxBasis instanceof MoneyWiseAnalysisTaxBasisAccountBucket) {
+            if (pTaxBasis instanceof MoneyWiseAnalysisTaxBasisAccountBucket myBucket) {
                 /* Look up the asset bucket */
-                final MoneyWiseTransAsset myAsset = ((MoneyWiseAnalysisTaxBasisAccountBucket) pTaxBasis).getAccount();
+                final MoneyWiseTransAsset myAsset = myBucket.getAccount();
                 MoneyWiseAnalysisTaxBasisAccountBucket myAccountBucket = myBasis.findAccountBucket(myAsset);
 
                 /* If there is no such bucket in the analysis */
@@ -1053,7 +1053,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
             /* Return the first basis in the list if it exists */
             return isEmpty()
                     ? null
-                    : theList.getUnderlyingList().get(0);
+                    : theList.getUnderlyingList().getFirst();
         }
 
         /**

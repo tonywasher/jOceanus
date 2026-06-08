@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -39,6 +34,11 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCatego
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisHistory;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisPayeeAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisPayeeValues;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Currency;
@@ -74,7 +74,7 @@ public final class MoneyWiseAnalysisPayeeBucket
     /**
      * The analysis.
      */
-    private final MoneyWiseAnalysis theAnalysis;
+    private final MoneyWiseAnalysisControl theAnalysis;
 
     /**
      * The payee.
@@ -102,7 +102,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * @param pAnalysis the analysis
      * @param pPayee    the payee
      */
-    private MoneyWiseAnalysisPayeeBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisPayeeBucket(final MoneyWiseAnalysisControl pAnalysis,
                                          final MoneyWisePayee pPayee) {
         /* Store the details */
         thePayee = pPayee;
@@ -128,7 +128,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    private MoneyWiseAnalysisPayeeBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisPayeeBucket(final MoneyWiseAnalysisControl pAnalysis,
                                          final MoneyWiseAnalysisPayeeBucket pBase,
                                          final OceanusDate pDate) {
         /* Copy details from base */
@@ -150,7 +150,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    private MoneyWiseAnalysisPayeeBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisPayeeBucket(final MoneyWiseAnalysisControl pAnalysis,
                                          final MoneyWiseAnalysisPayeeBucket pBase,
                                          final OceanusDateRange pRange) {
         /* Copy details from base */
@@ -210,7 +210,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      *
      * @return true/false
      */
-    public Boolean isIdle() {
+    public boolean isIdle() {
         return theHistory.isIdle();
     }
 
@@ -219,7 +219,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      *
      * @return the analysis
      */
-    MoneyWiseAnalysis getAnalysis() {
+    MoneyWiseAnalysisControl getAnalysis() {
         return theAnalysis;
     }
 
@@ -739,7 +739,7 @@ public final class MoneyWiseAnalysisPayeeBucket
         /**
          * The analysis.
          */
-        private final MoneyWiseAnalysis theAnalysis;
+        private final MoneyWiseAnalysisControl theAnalysis;
 
         /**
          * The list.
@@ -761,7 +761,7 @@ public final class MoneyWiseAnalysisPayeeBucket
          *
          * @param pAnalysis the analysis
          */
-        MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysisControl pAnalysis) {
             /* Initialise class */
             theAnalysis = pAnalysis;
             theEditSet = theAnalysis.getEditSet();
@@ -777,7 +777,7 @@ public final class MoneyWiseAnalysisPayeeBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                          final MoneyWiseAnalysisPayeeBucketList pBase,
                                          final OceanusDate pDate) {
             /* Initialise class */
@@ -792,7 +792,7 @@ public final class MoneyWiseAnalysisPayeeBucket
                 final MoneyWiseAnalysisPayeeBucket myBucket = new MoneyWiseAnalysisPayeeBucket(pAnalysis, myCurr, pDate);
 
                 /* If the bucket is non-idle */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
+                if (!myBucket.isIdle()) {
                     /* Add to the list */
                     theList.add(myBucket);
                 }
@@ -806,7 +806,7 @@ public final class MoneyWiseAnalysisPayeeBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                          final MoneyWiseAnalysisPayeeBucketList pBase,
                                          final OceanusDateRange pRange) {
             /* Initialise class */
@@ -821,7 +821,7 @@ public final class MoneyWiseAnalysisPayeeBucket
                 final MoneyWiseAnalysisPayeeBucket myBucket = new MoneyWiseAnalysisPayeeBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
+                if (!myBucket.isIdle()) {
                     /* Adjust to the base and add to the list */
                     myBucket.adjustToBase();
                     theList.add(myBucket);
@@ -860,7 +860,7 @@ public final class MoneyWiseAnalysisPayeeBucket
          *
          * @return the analysis
          */
-        MoneyWiseAnalysis getAnalysis() {
+        MoneyWiseAnalysisControl getAnalysis() {
             return theAnalysis;
         }
 
@@ -951,7 +951,7 @@ public final class MoneyWiseAnalysisPayeeBucket
             /* Return the first payee in the list if it exists */
             return isEmpty()
                     ? null
-                    : theList.getUnderlyingList().get(0);
+                    : theList.getUnderlyingList().getFirst();
         }
 
         /**

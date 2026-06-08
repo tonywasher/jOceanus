@@ -16,14 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -42,6 +34,14 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Currency;
 import java.util.Iterator;
@@ -84,7 +84,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
     /**
      * The analysis.
      */
-    private final MoneyWiseXAnalysis theAnalysis;
+    private final MoneyWiseXAnalysisHolder theAnalysis;
 
     /**
      * The account.
@@ -117,7 +117,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
      * @param pAnalysis the analysis
      * @param pAccount  the account
      */
-    protected MoneyWiseXAnalysisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
+    protected MoneyWiseXAnalysisAccountBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                               final T pAccount) {
         /* Store the details */
         theAccount = pAccount;
@@ -163,7 +163,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
      * @param pAnalysis the analysis
      * @param pBase     the underlying bucket
      */
-    protected MoneyWiseXAnalysisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
+    protected MoneyWiseXAnalysisAccountBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                               final MoneyWiseXAnalysisAccountBucket<T> pBase) {
         /* Copy details from base */
         theAccount = pBase.getAccount();
@@ -185,7 +185,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    protected MoneyWiseXAnalysisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
+    protected MoneyWiseXAnalysisAccountBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                               final MoneyWiseXAnalysisAccountBucket<T> pBase,
                                               final OceanusDate pDate) {
         /* Copy details from base */
@@ -208,7 +208,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    protected MoneyWiseXAnalysisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
+    protected MoneyWiseXAnalysisAccountBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                               final MoneyWiseXAnalysisAccountBucket<T> pBase,
                                               final OceanusDateRange pRange) {
         /* Copy details from base */
@@ -311,7 +311,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
      *
      * @return the analysis
      */
-    protected MoneyWiseXAnalysis getAnalysis() {
+    protected MoneyWiseXAnalysisHolder getAnalysis() {
         return theAnalysis;
     }
 
@@ -592,7 +592,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
         /**
          * The analysis.
          */
-        private final MoneyWiseXAnalysis theAnalysis;
+        private final MoneyWiseXAnalysisHolder theAnalysis;
 
         /**
          * The list.
@@ -604,7 +604,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
          *
          * @param pAnalysis the analysis
          */
-        protected MoneyWiseXAnalysisAccountBucketList(final MoneyWiseXAnalysis pAnalysis) {
+        protected MoneyWiseXAnalysisAccountBucketList(final MoneyWiseXAnalysisHolder pAnalysis) {
             /* Initialise class */
             theAnalysis = pAnalysis;
             theList = new MetisListIndexed<>();
@@ -626,7 +626,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
          *
          * @return the analysis
          */
-        protected MoneyWiseXAnalysis getAnalysis() {
+        protected MoneyWiseXAnalysisHolder getAnalysis() {
             return theAnalysis;
         }
 

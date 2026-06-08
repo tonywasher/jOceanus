@@ -78,7 +78,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
     /**
      * The analysis.
      */
-    private final MoneyWiseXAnalysis theAnalysis;
+    private final MoneyWiseXAnalysisHolder theAnalysis;
 
     /**
      * The security holding.
@@ -136,7 +136,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
      * @param pAnalysis the analysis
      * @param pHolding  the security holding
      */
-    MoneyWiseXAnalysisSecurityBucket(final MoneyWiseXAnalysis pAnalysis,
+    MoneyWiseXAnalysisSecurityBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                      final MoneyWiseSecurityHolding pHolding) {
         /* Store the details */
         theHolding = pHolding;
@@ -198,7 +198,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    private MoneyWiseXAnalysisSecurityBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisSecurityBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                              final MoneyWiseXAnalysisSecurityBucket pBase,
                                              final OceanusDate pDate) {
         /* Copy details from base */
@@ -226,7 +226,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    private MoneyWiseXAnalysisSecurityBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisSecurityBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                              final MoneyWiseXAnalysisSecurityBucket pBase,
                                              final OceanusDateRange pRange) {
         /* Copy details from base */
@@ -355,7 +355,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
      *
      * @return the analysis
      */
-    MoneyWiseXAnalysis getAnalysis() {
+    MoneyWiseXAnalysisHolder getAnalysis() {
         return theAnalysis;
     }
 
@@ -731,7 +731,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
         /**
          * The analysis.
          */
-        private final MoneyWiseXAnalysis theAnalysis;
+        private final MoneyWiseXAnalysisHolder theAnalysis;
 
         /**
          * The list.
@@ -743,7 +743,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
          *
          * @param pAnalysis the analysis
          */
-        MoneyWiseXAnalysisSecurityBucketList(final MoneyWiseXAnalysis pAnalysis) {
+        MoneyWiseXAnalysisSecurityBucketList(final MoneyWiseXAnalysisHolder pAnalysis) {
             theAnalysis = pAnalysis;
             theList = new MetisListIndexed<>();
             theList.setComparator((l, r) -> l.getSecurity().compareTo(r.getSecurity()));
@@ -756,7 +756,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        MoneyWiseXAnalysisSecurityBucketList(final MoneyWiseXAnalysis pAnalysis,
+        MoneyWiseXAnalysisSecurityBucketList(final MoneyWiseXAnalysisHolder pAnalysis,
                                              final MoneyWiseXAnalysisSecurityBucketList pBase,
                                              final OceanusDate pDate) {
             /* Initialise class */
@@ -788,7 +788,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        MoneyWiseXAnalysisSecurityBucketList(final MoneyWiseXAnalysis pAnalysis,
+        MoneyWiseXAnalysisSecurityBucketList(final MoneyWiseXAnalysisHolder pAnalysis,
                                              final MoneyWiseXAnalysisSecurityBucketList pBase,
                                              final OceanusDateRange pRange) {
             /* Initialise class */
@@ -831,7 +831,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
          *
          * @return the analysis
          */
-        MoneyWiseXAnalysis getAnalysis() {
+        MoneyWiseXAnalysisHolder getAnalysis() {
             return theAnalysis;
         }
 

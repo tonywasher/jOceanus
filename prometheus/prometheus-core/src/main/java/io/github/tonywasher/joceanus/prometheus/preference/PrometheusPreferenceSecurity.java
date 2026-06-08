@@ -30,8 +30,8 @@ import io.github.tonywasher.joceanus.gordianknot.util.GordianGenerator;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceParams;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceResource;
-import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.convert.OceanusDataConverter;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
@@ -222,11 +222,11 @@ public class PrometheusPreferenceSecurity
         /**
          * Constructor.
          *
-         * @param pViewer the viewer manager
+         * @param pParams the parameters
          * @throws OceanusException on error
          */
-        public PrometheusBaseSecurityPreferences(final MetisViewerManager pViewer) throws OceanusException {
-            super(pViewer, MetisPreferenceResource.SECPREF_BASEPREFNAME);
+        public PrometheusBaseSecurityPreferences(final MetisPreferenceParams pParams) throws OceanusException {
+            super(pParams, MetisPreferenceResource.SECPREF_BASEPREFNAME);
             setHidden();
         }
 
@@ -278,11 +278,11 @@ public class PrometheusPreferenceSecurity
         /**
          * Constructor.
          *
-         * @param pViewer the viewer manager
+         * @param pParams the viewer manager
          * @throws OceanusException on error
          */
-        public PrometheusSecurityPreferences(final MetisViewerManager pViewer) throws OceanusException {
-            super(pViewer, MetisPreferenceResource.SECPREF_PREFNAME);
+        public PrometheusSecurityPreferences(final MetisPreferenceParams pParams) throws OceanusException {
+            super(pParams, MetisPreferenceResource.SECPREF_PREFNAME);
         }
 
         /**

@@ -105,23 +105,23 @@ public abstract class MetisPreferenceSet
     /**
      * Constructor.
      *
-     * @param pViewer the viewer manager
+     * @param pParams the parameters
      * @param pId     the resource id for the set name
      * @throws OceanusException on error
      */
-    protected MetisPreferenceSet(final MetisViewerManager pViewer,
+    protected MetisPreferenceSet(final MetisPreferenceParams pParams,
                                  final OceanusBundleId pId) throws OceanusException {
-        this(pViewer, pId.getValue());
+        this(pParams, pId.getValue());
     }
 
     /**
      * Constructor.
      *
-     * @param pViewer the viewer manager
+     * @param pParams the parameters
      * @param pName   the set name
      * @throws OceanusException on error
      */
-    protected MetisPreferenceSet(final MetisViewerManager pViewer,
+    protected MetisPreferenceSet(final MetisPreferenceParams pParams,
                                  final String pName) throws OceanusException {
         /* Store name */
         theName = pName;
@@ -145,6 +145,9 @@ public abstract class MetisPreferenceSet
         } catch (BackingStoreException e) {
             throw new MetisDataException("Failed to access preferences", e);
         }
+        
+        /* Create the viewer record */
+        theViewerEntry = defineViewerEntry(pParams);
 
         /* Define the preferences */
         definePreferences();
@@ -152,21 +155,22 @@ public abstract class MetisPreferenceSet
 
         /* Store any changes */
         storeChanges();
-
-        /* Create the viewer record */
-        final MetisViewerEntry myParent = pViewer.getStandardEntry(MetisViewerStandardEntry.PREFERENCES);
-        theViewerEntry = pViewer.newEntry(myParent, theName);
-        theViewerEntry.setObject(this);
     }
 
     /**
-     * Obtain the preference manager.
+     * Process parameters
      *
-     * @return the manager
+     * @return the viewer entry
      */
-    //public MetisPreferenceManager getPreferenceManager() {
-    //    return thePreferenceManager;
-    //}
+    protected MetisViewerEntry defineViewerEntry(final MetisPreferenceParams pParams) {
+        /* Create the viewer record */
+        final MetisViewerManager myViewer = pParams.getViewerManager();
+        final MetisViewerEntry myParent = myViewer.getStandardEntry(MetisViewerStandardEntry.PREFERENCES);
+        final MetisViewerEntry myEntry = myViewer.newEntry(myParent, theName);
+        myEntry.setObject(this);
+        return myEntry;
+    }
+
     @Override
     public MetisFieldSetDef getDataFieldSet() {
         return theFields;

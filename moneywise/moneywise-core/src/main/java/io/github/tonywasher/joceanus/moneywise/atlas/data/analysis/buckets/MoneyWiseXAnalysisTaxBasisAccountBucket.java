@@ -16,16 +16,16 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +72,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
      * @param pParent   the parent bucket
      * @param pAccount  the account
      */
-    MoneyWiseXAnalysisTaxBasisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
+    MoneyWiseXAnalysisTaxBasisAccountBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                             final MoneyWiseXAnalysisTaxBasisBucket pParent,
                                             final MoneyWiseTransAsset pAccount) {
         /* Store the parameters */
@@ -90,7 +90,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    private MoneyWiseXAnalysisTaxBasisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisTaxBasisAccountBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                                     final MoneyWiseXAnalysisTaxBasisBucket pParent,
                                                     final MoneyWiseXAnalysisTaxBasisAccountBucket pBase,
                                                     final OceanusDate pDate) {
@@ -109,7 +109,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    private MoneyWiseXAnalysisTaxBasisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisTaxBasisAccountBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                                     final MoneyWiseXAnalysisTaxBasisBucket pParent,
                                                     final MoneyWiseXAnalysisTaxBasisAccountBucket pBase,
                                                     final OceanusDateRange pRange) {
@@ -200,7 +200,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
         /**
          * The analysis.
          */
-        private final MoneyWiseXAnalysis theAnalysis;
+        private final MoneyWiseXAnalysisHolder theAnalysis;
 
         /**
          * The list.
@@ -223,7 +223,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
          * @param pAnalysis the analysis
          * @param pParent   the parent bucket
          */
-        protected MoneyWiseXAnalysisTaxBasisAccountBucketList(final MoneyWiseXAnalysis pAnalysis,
+        protected MoneyWiseXAnalysisTaxBasisAccountBucketList(final MoneyWiseXAnalysisHolder pAnalysis,
                                                               final MoneyWiseXAnalysisTaxBasisBucket pParent) {
             theAnalysis = pAnalysis;
             theParent = pParent;
@@ -239,7 +239,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        protected MoneyWiseXAnalysisTaxBasisAccountBucketList(final MoneyWiseXAnalysis pAnalysis,
+        protected MoneyWiseXAnalysisTaxBasisAccountBucketList(final MoneyWiseXAnalysisHolder pAnalysis,
                                                               final MoneyWiseXAnalysisTaxBasisBucket pParent,
                                                               final MoneyWiseXAnalysisTaxBasisAccountBucketList pBase,
                                                               final OceanusDate pDate) {
@@ -271,7 +271,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        protected MoneyWiseXAnalysisTaxBasisAccountBucketList(final MoneyWiseXAnalysis pAnalysis,
+        protected MoneyWiseXAnalysisTaxBasisAccountBucketList(final MoneyWiseXAnalysisHolder pAnalysis,
                                                               final MoneyWiseXAnalysisTaxBasisBucket pParent,
                                                               final MoneyWiseXAnalysisTaxBasisAccountBucketList pBase,
                                                               final OceanusDateRange pRange) {
@@ -318,7 +318,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
          *
          * @return the analysis
          */
-        protected MoneyWiseXAnalysis getAnalysis() {
+        protected MoneyWiseXAnalysisHolder getAnalysis() {
             return theAnalysis;
         }
 

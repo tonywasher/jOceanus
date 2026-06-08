@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -46,6 +41,11 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWis
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisCategoryValues;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Comparator;
@@ -83,7 +83,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
     /**
      * The analysis.
      */
-    private final MoneyWiseAnalysis theAnalysis;
+    private final MoneyWiseAnalysisControl theAnalysis;
 
     /**
      * The transaction category.
@@ -116,7 +116,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * @param pAnalysis the analysis
      * @param pCategory the transaction category
      */
-    private MoneyWiseAnalysisTransCategoryBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisTransCategoryBucket(final MoneyWiseAnalysisControl pAnalysis,
                                                  final MoneyWiseTransCategory pCategory) {
         /* Store the parameters */
         theAnalysis = pAnalysis;
@@ -145,7 +145,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    private MoneyWiseAnalysisTransCategoryBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisTransCategoryBucket(final MoneyWiseAnalysisControl pAnalysis,
                                                  final MoneyWiseAnalysisTransCategoryBucket pBase,
                                                  final OceanusDate pDate) {
         /* Copy details from base */
@@ -168,7 +168,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    private MoneyWiseAnalysisTransCategoryBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisTransCategoryBucket(final MoneyWiseAnalysisControl pAnalysis,
                                                  final MoneyWiseAnalysisTransCategoryBucket pBase,
                                                  final OceanusDateRange pRange) {
         /* Copy details from base */
@@ -238,7 +238,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      *
      * @return true/false
      */
-    public Boolean isIdle() {
+    public boolean isIdle() {
         return theHistory.isIdle();
     }
 
@@ -308,7 +308,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      *
      * @return the analysis
      */
-    MoneyWiseAnalysis getAnalysis() {
+    MoneyWiseAnalysisControl getAnalysis() {
         return theAnalysis;
     }
 
@@ -617,7 +617,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
         /**
          * The analysis.
          */
-        private final MoneyWiseAnalysis theAnalysis;
+        private final MoneyWiseAnalysisControl theAnalysis;
 
         /**
          * The list.
@@ -688,8 +688,10 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * Construct a top-level List.
          *
          * @param pAnalysis the analysis
+         * @param pTaxBasis the tax basis bucket list
          */
-        MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysisControl pAnalysis,
+                                                 final MoneyWiseAnalysisTaxBasisBucketList pTaxBasis) {
             /* Initialise class */
             theAnalysis = pAnalysis;
             theEditSet = theAnalysis.getEditSet();
@@ -697,7 +699,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
             theList = new MetisListIndexed<>();
 
             /* Access taxBasis list */
-            theTaxBasis = theAnalysis.getTaxBasis();
+            theTaxBasis = pTaxBasis;
 
             /* Obtain the implied buckets */
             theTaxCredit = getEventInfoBucket(MoneyWiseTransInfoClass.TAXCREDIT);
@@ -718,7 +720,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                                  final MoneyWiseAnalysisTransCategoryBucketList pBase,
                                                  final OceanusDate pDate) {
             /* Initialise class */
@@ -748,7 +750,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
                 final MoneyWiseAnalysisTransCategoryBucket myBucket = new MoneyWiseAnalysisTransCategoryBucket(pAnalysis, myCurr, pDate);
 
                 /* If the bucket is non-idle */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
+                if (!myBucket.isIdle()) {
                     /* Calculate the delta and add to the list */
                     theList.add(myBucket);
                 }
@@ -762,7 +764,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                                  final MoneyWiseAnalysisTransCategoryBucketList pBase,
                                                  final OceanusDateRange pRange) {
             /* Initialise class */
@@ -792,7 +794,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
                 final MoneyWiseAnalysisTransCategoryBucket myBucket = new MoneyWiseAnalysisTransCategoryBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle */
-                if (Boolean.FALSE.equals(myBucket.isIdle())) {
+                if (!myBucket.isIdle()) {
                     /* Adjust to the base */
                     myBucket.adjustToBase();
                     theList.add(myBucket);
@@ -820,7 +822,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          *
          * @return the analysis
          */
-        MoneyWiseAnalysis getAnalysis() {
+        MoneyWiseAnalysisControl getAnalysis() {
             return theAnalysis;
         }
 
@@ -954,7 +956,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
             /* Return the first category in the list if it exists */
             return isEmpty()
                     ? null
-                    : theList.getUnderlyingList().get(0);
+                    : theList.getUnderlyingList().getFirst();
         }
 
         /**
