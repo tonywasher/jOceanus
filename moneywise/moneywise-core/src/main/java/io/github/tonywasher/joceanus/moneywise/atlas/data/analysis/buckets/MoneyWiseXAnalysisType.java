@@ -22,6 +22,9 @@ import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisAttr;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransAttr;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * Analysis Types.
@@ -87,7 +90,7 @@ public enum MoneyWiseXAnalysisType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = MoneyWiseXAnalysisBucketResource.getKeyForAnalysisType(this).getValue();
+            theName = bundleIdForType(this).getValue();
         }
 
         /* return the name */
@@ -131,6 +134,28 @@ public enum MoneyWiseXAnalysisType {
             case CATEGORY -> MoneyWiseXAnalysisTransAttr.values();
             case TAXBASIS -> MoneyWiseXAnalysisTaxBasisAttr.values();
             default -> throw new IllegalArgumentException("Invalid Attribute type " + toString());
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the type.
+     *
+     * @param pType the type
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForType(final MoneyWiseXAnalysisType pType) {
+        return switch (pType) {
+            case DEPOSIT -> MoneyWiseBasicResource.DEPOSIT_NAME;
+            case CASH -> MoneyWiseBasicResource.CASH_NAME;
+            case LOAN -> MoneyWiseBasicResource.LOAN_NAME;
+            case PAYEE -> MoneyWiseBasicResource.PAYEE_NAME;
+            case SECURITY -> MoneyWiseBasicResource.SECURITY_NAME;
+            case PORTFOLIO -> MoneyWiseBasicResource.PORTFOLIO_NAME;
+            case CATEGORY -> MoneyWiseBasicResource.TRANSCAT_NAME;
+            case TAXBASIS -> MoneyWiseStaticResource.TAXBASIS_NAME;
+            case TRANSTAG -> MoneyWiseBasicResource.TRANSTAG_NAME;
+            case ALL -> MoneyWiseXAnalysisBucketResource.FILTER_ALL;
+            default -> throw new IllegalArgumentException();
         };
     }
 }

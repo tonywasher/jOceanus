@@ -14,10 +14,6 @@
       <groupId>${jOceanusGroup}</groupId>
       <artifactId>oceanus</artifactId>
     </dependency>
-    <!--<dependency>
-      <groupId>org.jsoup</groupId>
-      <artifactId>jsoup</artifactId>
-    </dependency>-->
   </dependencies>
   <properties>
     <moduleName>${packageName}.core</moduleName>

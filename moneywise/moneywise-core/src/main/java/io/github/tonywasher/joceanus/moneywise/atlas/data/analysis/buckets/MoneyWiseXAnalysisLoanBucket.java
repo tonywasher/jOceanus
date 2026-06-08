@@ -61,7 +61,7 @@ public final class MoneyWiseXAnalysisLoanBucket
      * @param pAnalysis the analysis
      * @param pLoan     the loan
      */
-    private MoneyWiseXAnalysisLoanBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisLoanBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                          final MoneyWiseLoan pLoan) {
         /* Call super-constructor */
         super(pAnalysis, pLoan);
@@ -79,7 +79,7 @@ public final class MoneyWiseXAnalysisLoanBucket
      * @param pAnalysis the analysis
      * @param pBase     the underlying bucket
      */
-    private MoneyWiseXAnalysisLoanBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisLoanBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                          final MoneyWiseXAnalysisLoanBucket pBase) {
         /* Call super-constructor */
         super(pAnalysis, pBase);
@@ -96,7 +96,7 @@ public final class MoneyWiseXAnalysisLoanBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    private MoneyWiseXAnalysisLoanBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisLoanBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                          final MoneyWiseXAnalysisLoanBucket pBase,
                                          final OceanusDate pDate) {
         /* Call super-constructor */
@@ -114,7 +114,7 @@ public final class MoneyWiseXAnalysisLoanBucket
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    private MoneyWiseXAnalysisLoanBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisLoanBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                          final MoneyWiseXAnalysisLoanBucket pBase,
                                          final OceanusDateRange pRange) {
         /* Call super-constructor */
@@ -168,7 +168,7 @@ public final class MoneyWiseXAnalysisLoanBucket
          *
          * @param pAnalysis the analysis
          */
-        MoneyWiseXAnalysisLoanBucketList(final MoneyWiseXAnalysis pAnalysis) {
+        MoneyWiseXAnalysisLoanBucketList(final MoneyWiseXAnalysisHolder pAnalysis) {
             /* Initialise class */
             super(pAnalysis);
         }
@@ -180,7 +180,7 @@ public final class MoneyWiseXAnalysisLoanBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        MoneyWiseXAnalysisLoanBucketList(final MoneyWiseXAnalysis pAnalysis,
+        MoneyWiseXAnalysisLoanBucketList(final MoneyWiseXAnalysisHolder pAnalysis,
                                          final MoneyWiseXAnalysisLoanBucketList pBase,
                                          final OceanusDate pDate) {
             /* Initialise class */
@@ -197,7 +197,7 @@ public final class MoneyWiseXAnalysisLoanBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        MoneyWiseXAnalysisLoanBucketList(final MoneyWiseXAnalysis pAnalysis,
+        MoneyWiseXAnalysisLoanBucketList(final MoneyWiseXAnalysisHolder pAnalysis,
                                          final MoneyWiseXAnalysisLoanBucketList pBase,
                                          final OceanusDateRange pRange) {
             /* Initialise class */

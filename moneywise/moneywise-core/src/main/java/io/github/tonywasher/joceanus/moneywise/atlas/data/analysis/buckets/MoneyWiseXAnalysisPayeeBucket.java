@@ -74,7 +74,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
     /**
      * The analysis.
      */
-    private final MoneyWiseXAnalysis theAnalysis;
+    private final MoneyWiseXAnalysisHolder theAnalysis;
 
     /**
      * The payee.
@@ -102,7 +102,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
      * @param pAnalysis the analysis
      * @param pPayee    the payee
      */
-    private MoneyWiseXAnalysisPayeeBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisPayeeBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                           final MoneyWisePayee pPayee) {
         /* Store the details */
         thePayee = pPayee;
@@ -128,7 +128,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    private MoneyWiseXAnalysisPayeeBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisPayeeBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                           final MoneyWiseXAnalysisPayeeBucket pBase,
                                           final OceanusDate pDate) {
         /* Copy details from base */
@@ -150,7 +150,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    private MoneyWiseXAnalysisPayeeBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisPayeeBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                           final MoneyWiseXAnalysisPayeeBucket pBase,
                                           final OceanusDateRange pRange) {
         /* Copy details from base */
@@ -224,7 +224,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
      *
      * @return the analysis
      */
-    MoneyWiseXAnalysis getAnalysis() {
+    MoneyWiseXAnalysisHolder getAnalysis() {
         return theAnalysis;
     }
 
@@ -467,7 +467,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
         /**
          * The analysis.
          */
-        private final MoneyWiseXAnalysis theAnalysis;
+        private final MoneyWiseXAnalysisHolder theAnalysis;
 
         /**
          * The list.
@@ -489,7 +489,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
          *
          * @param pAnalysis the analysis
          */
-        MoneyWiseXAnalysisPayeeBucketList(final MoneyWiseXAnalysis pAnalysis) {
+        MoneyWiseXAnalysisPayeeBucketList(final MoneyWiseXAnalysisHolder pAnalysis) {
             /* Initialise class */
             theAnalysis = pAnalysis;
             theEditSet = theAnalysis.getEditSet();
@@ -505,7 +505,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        MoneyWiseXAnalysisPayeeBucketList(final MoneyWiseXAnalysis pAnalysis,
+        MoneyWiseXAnalysisPayeeBucketList(final MoneyWiseXAnalysisHolder pAnalysis,
                                           final MoneyWiseXAnalysisPayeeBucketList pBase,
                                           final OceanusDate pDate) {
             /* Initialise class */
@@ -534,7 +534,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        MoneyWiseXAnalysisPayeeBucketList(final MoneyWiseXAnalysis pAnalysis,
+        MoneyWiseXAnalysisPayeeBucketList(final MoneyWiseXAnalysisHolder pAnalysis,
                                           final MoneyWiseXAnalysisPayeeBucketList pBase,
                                           final OceanusDateRange pRange) {
             /* Initialise class */
@@ -588,7 +588,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
          *
          * @return the analysis
          */
-        MoneyWiseXAnalysis getAnalysis() {
+        MoneyWiseXAnalysisHolder getAnalysis() {
             return theAnalysis;
         }
 

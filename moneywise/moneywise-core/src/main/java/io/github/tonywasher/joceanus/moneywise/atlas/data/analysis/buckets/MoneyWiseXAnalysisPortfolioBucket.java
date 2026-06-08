@@ -116,7 +116,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
      * @param pAnalysis  the analysis
      * @param pPortfolio the portfolio account
      */
-    private MoneyWiseXAnalysisPortfolioBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisPortfolioBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                               final MoneyWisePortfolio pPortfolio) {
         /* Store the portfolio */
         thePortfolio = pPortfolio;
@@ -153,7 +153,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    private MoneyWiseXAnalysisPortfolioBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisPortfolioBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                               final MoneyWiseXAnalysisPortfolioBucket pBase,
                                               final OceanusDate pDate) {
         /* Copy details from base */
@@ -182,7 +182,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
      * @param pBase     the underlying bucket
      * @param pRange    the date range for the bucket
      */
-    private MoneyWiseXAnalysisPortfolioBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisPortfolioBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                               final MoneyWiseXAnalysisPortfolioBucket pBase,
                                               final OceanusDateRange pRange) {
         /* Copy details from base */
@@ -594,7 +594,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
         /**
          * The analysis.
          */
-        private final MoneyWiseXAnalysis theAnalysis;
+        private final MoneyWiseXAnalysisHolder theAnalysis;
 
         /**
          * The list.
@@ -621,7 +621,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
          *
          * @param pAnalysis the analysis
          */
-        MoneyWiseXAnalysisPortfolioBucketList(final MoneyWiseXAnalysis pAnalysis) {
+        MoneyWiseXAnalysisPortfolioBucketList(final MoneyWiseXAnalysisHolder pAnalysis) {
             /* Initialise class */
             theAnalysis = pAnalysis;
             theTotals = allocateTotalsBucket();
@@ -636,7 +636,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        MoneyWiseXAnalysisPortfolioBucketList(final MoneyWiseXAnalysis pAnalysis,
+        MoneyWiseXAnalysisPortfolioBucketList(final MoneyWiseXAnalysisHolder pAnalysis,
                                               final MoneyWiseXAnalysisPortfolioBucketList pBase,
                                               final OceanusDate pDate) {
             /* Initialise class */
@@ -665,7 +665,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        MoneyWiseXAnalysisPortfolioBucketList(final MoneyWiseXAnalysis pAnalysis,
+        MoneyWiseXAnalysisPortfolioBucketList(final MoneyWiseXAnalysisHolder pAnalysis,
                                               final MoneyWiseXAnalysisPortfolioBucketList pBase,
                                               final OceanusDateRange pRange) {
             /* Initialise class */
@@ -707,7 +707,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
          *
          * @return the analysis
          */
-        MoneyWiseXAnalysis getAnalysis() {
+        MoneyWiseXAnalysisHolder getAnalysis() {
             return theAnalysis;
         }
 

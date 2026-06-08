@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets;
 
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
@@ -26,6 +25,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Iterator;
 import java.util.List;
@@ -139,7 +139,7 @@ public final class MoneyWiseXAnalysisLoanCategoryBucket
         /**
          * The analysis.
          */
-        private final MoneyWiseXAnalysis theAnalysis;
+        private final MoneyWiseXAnalysisHolder theAnalysis;
 
         /**
          * The list.
@@ -166,7 +166,7 @@ public final class MoneyWiseXAnalysisLoanCategoryBucket
          *
          * @param pAnalysis the analysis
          */
-        MoneyWiseXAnalysisLoanCategoryBucketList(final MoneyWiseXAnalysis pAnalysis) {
+        MoneyWiseXAnalysisLoanCategoryBucketList(final MoneyWiseXAnalysisHolder pAnalysis) {
             /* Initialise class */
             theAnalysis = pAnalysis;
             theCurrency = theAnalysis.getCurrency();
@@ -206,7 +206,7 @@ public final class MoneyWiseXAnalysisLoanCategoryBucket
          *
          * @return the analysis
          */
-        public MoneyWiseXAnalysis getAnalysis() {
+        public MoneyWiseXAnalysisHolder getAnalysis() {
             return theAnalysis;
         }
 
