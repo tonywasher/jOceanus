@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
@@ -27,6 +26,7 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.Currency;
 
@@ -37,7 +37,7 @@ public class MoneyWiseAnalysisMarket {
     /**
      * Analysis.
      */
-    private final MoneyWiseAnalysis theAnalysis;
+    private final MoneyWiseAnalysisHolder theAnalysis;
 
     /**
      * Market Payee Income.
@@ -74,7 +74,7 @@ public class MoneyWiseAnalysisMarket {
      *
      * @param pAnalysis the analysis.
      */
-    protected MoneyWiseAnalysisMarket(final MoneyWiseAnalysis pAnalysis) {
+    protected MoneyWiseAnalysisMarket(final MoneyWiseAnalysisHolder pAnalysis) {
         /* Store parameters */
         theAnalysis = pAnalysis;
 

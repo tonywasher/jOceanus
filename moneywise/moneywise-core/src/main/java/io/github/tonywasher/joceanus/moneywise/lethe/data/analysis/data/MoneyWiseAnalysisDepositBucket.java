@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
@@ -31,6 +28,9 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseDepositCate
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.Currency;
 import java.util.Iterator;
@@ -55,7 +55,7 @@ public final class MoneyWiseAnalysisDepositBucket
     /**
      * The analysis.
      */
-    private final MoneyWiseAnalysis theAnalysis;
+    private final MoneyWiseAnalysisControl theAnalysis;
 
     /**
      * The deposit category.
@@ -73,7 +73,7 @@ public final class MoneyWiseAnalysisDepositBucket
      * @param pAnalysis the analysis
      * @param pDeposit  the deposit
      */
-    private MoneyWiseAnalysisDepositBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisDepositBucket(final MoneyWiseAnalysisControl pAnalysis,
                                            final MoneyWiseDeposit pDeposit) {
         /* Call super-constructor */
         super(pAnalysis, pDeposit);
@@ -92,7 +92,7 @@ public final class MoneyWiseAnalysisDepositBucket
      * @param pAnalysis the analysis
      * @param pBase     the underlying bucket
      */
-    private MoneyWiseAnalysisDepositBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisDepositBucket(final MoneyWiseAnalysisControl pAnalysis,
                                            final MoneyWiseAnalysisDepositBucket pBase) {
         /* Call super-constructor */
         super(pAnalysis, pBase);
@@ -110,7 +110,7 @@ public final class MoneyWiseAnalysisDepositBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    private MoneyWiseAnalysisDepositBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisDepositBucket(final MoneyWiseAnalysisControl pAnalysis,
                                            final MoneyWiseAnalysisDepositBucket pBase,
                                            final OceanusDate pDate) {
         /* Call super-constructor */
@@ -129,7 +129,7 @@ public final class MoneyWiseAnalysisDepositBucket
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    private MoneyWiseAnalysisDepositBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisDepositBucket(final MoneyWiseAnalysisControl pAnalysis,
                                            final MoneyWiseAnalysisDepositBucket pBase,
                                            final OceanusDateRange pRange) {
         /* Call super-constructor */
@@ -343,7 +343,7 @@ public final class MoneyWiseAnalysisDepositBucket
          *
          * @param pAnalysis the analysis
          */
-        MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysisControl pAnalysis) {
             /* Initialise class */
             super(pAnalysis);
         }
@@ -354,7 +354,7 @@ public final class MoneyWiseAnalysisDepositBucket
          * @param pAnalysis the analysis
          * @param pBase     the base list
          */
-        MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                            final MoneyWiseAnalysisDepositBucketList pBase) {
             /* Initialise class */
             this(pAnalysis);
@@ -370,7 +370,7 @@ public final class MoneyWiseAnalysisDepositBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                            final MoneyWiseAnalysisDepositBucketList pBase,
                                            final OceanusDate pDate) {
             /* Initialise class */
@@ -387,7 +387,7 @@ public final class MoneyWiseAnalysisDepositBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                            final MoneyWiseAnalysisDepositBucketList pBase,
                                            final OceanusDateRange pRange) {
             /* Initialise class */
@@ -425,7 +425,7 @@ public final class MoneyWiseAnalysisDepositBucket
             /* Return the first deposit in the list if it exists */
             return isEmpty()
                     ? null
-                    : getUnderlyingList().get(0);
+                    : getUnderlyingList().getFirst();
         }
 
         /**

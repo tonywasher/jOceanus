@@ -16,12 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
@@ -41,6 +35,12 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -165,7 +165,7 @@ public class MoneyWiseAnalysisManager
         MoneyWiseAnalysis myAnalysis = theAnalysisMap.get(myRange);
         if (myAnalysis == null) {
             /* Create the new event analysis */
-            myAnalysis = new MoneyWiseAnalysis(this, pDate);
+            myAnalysis = new MoneyWiseAnalysis(theAnalysis, pDate);
             produceTotals(myAnalysis);
 
             /* Check the totals */
@@ -190,7 +190,7 @@ public class MoneyWiseAnalysisManager
         MoneyWiseAnalysis myAnalysis = theAnalysisMap.get(pRange);
         if (myAnalysis == null) {
             /* Create the new event analysis */
-            myAnalysis = new MoneyWiseAnalysis(this, pRange);
+            myAnalysis = new MoneyWiseAnalysis(theAnalysis, pRange);
             produceTotals(myAnalysis);
 
             /* Check the totals */

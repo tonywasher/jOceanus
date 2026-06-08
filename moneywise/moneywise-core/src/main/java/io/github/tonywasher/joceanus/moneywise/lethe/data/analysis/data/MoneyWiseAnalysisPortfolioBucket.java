@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -40,6 +35,11 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Currency;
 import java.util.Iterator;
@@ -117,7 +117,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @param pAnalysis  the analysis
      * @param pPortfolio the portfolio account
      */
-    private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysisControl pAnalysis,
                                              final MoneyWisePortfolio pPortfolio) {
         /* Store the portfolio */
         thePortfolio = pPortfolio;
@@ -150,7 +150,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @param pAnalysis the analysis
      * @param pBase     the underlying bucket
      */
-    private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysisControl pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucket pBase) {
         /* Copy details from base */
         thePortfolio = pBase.getPortfolio();
@@ -180,7 +180,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysisControl pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucket pBase,
                                              final OceanusDate pDate) {
         /* Copy details from base */
@@ -210,7 +210,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @param pBase     the underlying bucket
      * @param pRange    the date range for the bucket
      */
-    private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysisControl pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucket pBase,
                                              final OceanusDateRange pRange) {
         /* Copy details from base */
@@ -438,12 +438,11 @@ public final class MoneyWiseAnalysisPortfolioBucket
         if (pThat == null) {
             return false;
         }
-        if (!(pThat instanceof MoneyWiseAnalysisPortfolioBucket)) {
+        if (!(pThat instanceof MoneyWiseAnalysisPortfolioBucket myThat)) {
             return false;
         }
 
         /* Compare the Portfolios */
-        final MoneyWiseAnalysisPortfolioBucket myThat = (MoneyWiseAnalysisPortfolioBucket) pThat;
         return getPortfolio().equals(myThat.getPortfolio());
     }
 
@@ -611,7 +610,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      */
     public boolean isIdle() {
         /* Look for non-idle cash */
-        if (Boolean.FALSE.equals(theCash.isIdle())) {
+        if (!theCash.isIdle()) {
             return false;
         }
 
@@ -621,7 +620,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
             final MoneyWiseAnalysisSecurityBucket mySecurity = myIterator.next();
 
             /* Look for active security */
-            if (Boolean.FALSE.equals(mySecurity.isIdle())) {
+            if (!mySecurity.isIdle()) {
                 return false;
             }
         }
@@ -681,7 +680,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
         /**
          * The analysis.
          */
-        private final MoneyWiseAnalysis theAnalysis;
+        private final MoneyWiseAnalysisControl theAnalysis;
 
         /**
          * The list.
@@ -708,7 +707,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
          *
          * @param pAnalysis the analysis
          */
-        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysisControl pAnalysis) {
             /* Initialise class */
             theAnalysis = pAnalysis;
             theTotals = allocateTotalsBucket();
@@ -722,7 +721,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
          * @param pAnalysis the analysis
          * @param pBase     the base list
          */
-        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucketList pBase) {
             /* Initialise class */
             this(pAnalysis);
@@ -750,7 +749,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucketList pBase,
                                              final OceanusDate pDate) {
             /* Initialise class */
@@ -779,7 +778,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucketList pBase,
                                              final OceanusDateRange pRange) {
             /* Initialise class */
@@ -821,7 +820,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
          *
          * @return the analysis
          */
-        MoneyWiseAnalysis getAnalysis() {
+        MoneyWiseAnalysisControl getAnalysis() {
             return theAnalysis;
         }
 
@@ -955,7 +954,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
             /* Return the first portfolio in the list if it exists */
             return isEmpty()
                     ? null
-                    : theList.getUnderlyingList().get(0);
+                    : theList.getUnderlyingList().getFirst();
         }
 
         /**

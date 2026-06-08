@@ -686,13 +686,10 @@ public final class TethysUISwingDateDialog
          * @return true/false
          */
         private static boolean isWeekend(final DayOfWeek pDoW) {
-            switch (pDoW) {
-                case SATURDAY:
-                case SUNDAY:
-                    return true;
-                default:
-                    return false;
-            }
+            return switch (pDoW) {
+                case SATURDAY, SUNDAY -> true;
+                default -> false;
+            };
         }
 
         /**
@@ -703,7 +700,7 @@ public final class TethysUISwingDateDialog
          */
         private int getDayColumn(final DayOfWeek pDoW) {
             for (int i = 0; i < DAYS_IN_WEEK; i++) {
-                if (theDaysOfWk[i] == pDoW) {
+                if (theDaysOfWk[i].equals(pDoW)) {
                     return i;
                 }
             }

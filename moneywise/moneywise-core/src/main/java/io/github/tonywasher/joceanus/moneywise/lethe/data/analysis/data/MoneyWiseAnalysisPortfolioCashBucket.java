@@ -16,13 +16,13 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * The Portfolio Cash Bucket class.
@@ -40,7 +40,7 @@ public final class MoneyWiseAnalysisPortfolioCashBucket
      * @param pAnalysis  the analysis
      * @param pPortfolio the portfolio
      */
-    MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysis pAnalysis,
+    MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysisControl pAnalysis,
                                          final MoneyWisePortfolio pPortfolio) {
         /* Call super-constructor */
         super(pAnalysis, pPortfolio);
@@ -52,7 +52,7 @@ public final class MoneyWiseAnalysisPortfolioCashBucket
      * @param pAnalysis the analysis
      * @param pBase     the underlying bucket
      */
-    MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysis pAnalysis,
+    MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysisControl pAnalysis,
                                          final MoneyWiseAnalysisPortfolioCashBucket pBase) {
         /* Call super-constructor */
         super(pAnalysis, pBase);
@@ -65,7 +65,7 @@ public final class MoneyWiseAnalysisPortfolioCashBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysis pAnalysis,
+    MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysisControl pAnalysis,
                                          final MoneyWiseAnalysisPortfolioCashBucket pBase,
                                          final OceanusDate pDate) {
         /* Call super-constructor */
@@ -79,7 +79,7 @@ public final class MoneyWiseAnalysisPortfolioCashBucket
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysis pAnalysis,
+    MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysisControl pAnalysis,
                                          final MoneyWiseAnalysisPortfolioCashBucket pBase,
                                          final OceanusDateRange pRange) {
         /* Call super-constructor */

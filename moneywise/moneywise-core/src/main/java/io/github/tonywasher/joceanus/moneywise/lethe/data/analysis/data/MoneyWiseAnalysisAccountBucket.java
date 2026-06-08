@@ -16,13 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -40,6 +33,13 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWis
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisHistory;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Currency;
 import java.util.Iterator;
@@ -82,7 +82,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
     /**
      * The analysis.
      */
-    private final MoneyWiseAnalysis theAnalysis;
+    private final MoneyWiseAnalysisControl theAnalysis;
 
     /**
      * The account.
@@ -92,7 +92,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
     /**
      * Is this a foreign currency?
      */
-    private final Boolean isForeignCurrency;
+    private final boolean isForeignCurrency;
 
     /**
      * Values.
@@ -115,7 +115,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * @param pAnalysis the analysis
      * @param pAccount  the account
      */
-    protected MoneyWiseAnalysisAccountBucket(final MoneyWiseAnalysis pAnalysis,
+    protected MoneyWiseAnalysisAccountBucket(final MoneyWiseAnalysisControl pAnalysis,
                                              final T pAccount) {
         /* Store the details */
         theAccount = pAccount;
@@ -133,7 +133,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
         final Currency myRepCurrency = deriveCurrency(myReportingCurrency);
 
         /* Create the history map */
-        final MoneyWiseAnalysisAccountValues myValues = Boolean.TRUE.equals(isForeignCurrency)
+        final MoneyWiseAnalysisAccountValues myValues = isForeignCurrency
                 ? allocateForeignValues(myCurrency, myRepCurrency)
                 : allocateStandardValues(myCurrency);
         theHistory = new MoneyWiseAnalysisHistory<>(myValues);
@@ -149,7 +149,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * @param pAnalysis the analysis
      * @param pBase     the underlying bucket
      */
-    protected MoneyWiseAnalysisAccountBucket(final MoneyWiseAnalysis pAnalysis,
+    protected MoneyWiseAnalysisAccountBucket(final MoneyWiseAnalysisControl pAnalysis,
                                              final MoneyWiseAnalysisAccountBucket<T> pBase) {
         /* Copy details from base */
         theAccount = pBase.getAccount();
@@ -171,7 +171,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    protected MoneyWiseAnalysisAccountBucket(final MoneyWiseAnalysis pAnalysis,
+    protected MoneyWiseAnalysisAccountBucket(final MoneyWiseAnalysisControl pAnalysis,
                                              final MoneyWiseAnalysisAccountBucket<T> pBase,
                                              final OceanusDate pDate) {
         /* Copy details from base */
@@ -194,7 +194,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    protected MoneyWiseAnalysisAccountBucket(final MoneyWiseAnalysis pAnalysis,
+    protected MoneyWiseAnalysisAccountBucket(final MoneyWiseAnalysisControl pAnalysis,
                                              final MoneyWiseAnalysisAccountBucket<T> pBase,
                                              final OceanusDateRange pRange) {
         /* Copy details from base */
@@ -293,7 +293,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      *
      * @return true/false
      */
-    public Boolean isIdle() {
+    public boolean isIdle() {
         return theHistory.isIdle();
     }
 
@@ -302,7 +302,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      *
      * @return the analysis
      */
-    protected MoneyWiseAnalysis getAnalysis() {
+    protected MoneyWiseAnalysisControl getAnalysis() {
         return theAnalysis;
     }
 
@@ -457,8 +457,8 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
             myAmount.negate();
 
             /* If we are a foreign account */
-            if (Boolean.TRUE.equals(isForeignCurrency)) {
-                /* Access local amount amount */
+            if (isForeignCurrency) {
+                /* Access local amount */
                 final OceanusMoney myLocalAmount = pHelper.getLocalAmount();
 
                 /* Adjust counters */
@@ -501,7 +501,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
             /* If we are a foreign account */
-            if (Boolean.TRUE.equals(isForeignCurrency)) {
+            if (isForeignCurrency) {
                 /* Access local amount */
                 final OceanusMoney myLocalAmount = pHelper.getLocalAmount();
 
@@ -545,7 +545,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
             /* If we are a foreign account */
-            if (Boolean.TRUE.equals(isForeignCurrency)) {
+            if (isForeignCurrency) {
                 /* Access local amount */
                 final OceanusMoney myLocalAmount = pHelper.getLocalReturnedCash();
 
@@ -590,7 +590,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
         final OceanusMoney myBaseValue = myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
 
         /* If we are a foreign account */
-        if (Boolean.TRUE.equals(isForeignCurrency)) {
+        if (isForeignCurrency) {
             /* Obtain the foreign valuation */
             final OceanusMoney myForeignValue = myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE);
             final OceanusMoney myLocalValue = myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.LOCALVALUE);
@@ -736,7 +736,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
         /**
          * The analysis.
          */
-        private final MoneyWiseAnalysis theAnalysis;
+        private final MoneyWiseAnalysisControl theAnalysis;
 
         /**
          * The list.
@@ -748,7 +748,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
          *
          * @param pAnalysis the analysis
          */
-        protected MoneyWiseAnalysisAccountBucketList(final MoneyWiseAnalysis pAnalysis) {
+        protected MoneyWiseAnalysisAccountBucketList(final MoneyWiseAnalysisControl pAnalysis) {
             /* Initialise class */
             theAnalysis = pAnalysis;
             theList = new MetisListIndexed<>();
@@ -770,7 +770,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
          *
          * @return the analysis
          */
-        protected MoneyWiseAnalysis getAnalysis() {
+        protected MoneyWiseAnalysisControl getAnalysis() {
             return theAnalysis;
         }
 
@@ -789,7 +789,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
                 final B myBucket = newBucket(myCurr);
 
                 /* If the bucket is non-idle or active */
-                if (myBucket.isActive() || Boolean.TRUE.equals(!myBucket.isIdle())) {
+                if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* add to list */
                     theList.add(myBucket);
                 }
@@ -821,7 +821,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
                 final B myBucket = newBucket(myCurr, pDate);
 
                 /* If the bucket is non-idle or active */
-                if (myBucket.isActive() || Boolean.TRUE.equals(!myBucket.isIdle())) {
+                if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Record the rate (if required) and add to list */
                     myBucket.recordRate(pDate);
                     theList.add(myBucket);
@@ -857,7 +857,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
 
                 /* If the bucket is non-idle or active */
                 if (myBucket.isActive()
-                        || Boolean.TRUE.equals(!myBucket.isIdle())) {
+                        || !myBucket.isIdle()) {
                     /* Add to the list */
                     theList.add(myBucket);
                 }

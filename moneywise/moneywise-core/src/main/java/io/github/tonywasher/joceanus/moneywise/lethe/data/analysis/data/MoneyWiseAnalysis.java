@@ -59,7 +59,7 @@ import java.util.Iterator;
  * @author Tony Washer
  */
 public class MoneyWiseAnalysis
-        implements MetisFieldItem {
+        implements MetisFieldItem, MoneyWiseAnalysisHolder {
     /**
      * Local Report fields.
      */
@@ -196,7 +196,7 @@ public class MoneyWiseAnalysis
         thePortfolios = new MoneyWiseAnalysisPortfolioBucketList(this);
         thePayees = new MoneyWiseAnalysisPayeeBucketList(this);
         theTaxBasis = new MoneyWiseAnalysisTaxBasisBucketList(this);
-        theTransCategories = new MoneyWiseAnalysisTransCategoryBucketList(this);
+        theTransCategories = new MoneyWiseAnalysisTransCategoryBucketList(this, theTaxBasis);
         theTransTags = new MoneyWiseAnalysisTransTagBucketList(this);
 
         /* Create totalling buckets */
@@ -228,7 +228,7 @@ public class MoneyWiseAnalysis
         thePortfolios = new MoneyWiseAnalysisPortfolioBucketList(this, pSource.getPortfolios());
         thePayees = new MoneyWiseAnalysisPayeeBucketList(this);
         theTaxBasis = new MoneyWiseAnalysisTaxBasisBucketList(this);
-        theTransCategories = new MoneyWiseAnalysisTransCategoryBucketList(this);
+        theTransCategories = new MoneyWiseAnalysisTransCategoryBucketList(this, theTaxBasis);
         theTransTags = new MoneyWiseAnalysisTransTagBucketList(this);
 
         /* Create totalling buckets */
@@ -241,31 +241,30 @@ public class MoneyWiseAnalysis
     /**
      * Constructor for a dated analysis.
      *
-     * @param pManager the analysis manager
-     * @param pDate    the date for the analysis
+     * @param pBase the base analysis
+     * @param pDate the date for the analysis
      */
-    public MoneyWiseAnalysis(final MoneyWiseAnalysisManager pManager,
+    public MoneyWiseAnalysis(final MoneyWiseAnalysis pBase,
                              final OceanusDate pDate) {
         /* Store the data */
-        final MoneyWiseAnalysis myBase = pManager.getAnalysis();
-        theEditSet = myBase.getEditSet();
+        theEditSet = pBase.getEditSet();
         final MoneyWiseDataSet myDataSet = getData();
-        theCurrency = myBase.getCurrency();
-        thePreferences = myBase.getPreferenceMgr();
+        theCurrency = pBase.getCurrency();
+        thePreferences = pBase.getPreferenceMgr();
         theDateRange = new OceanusDateRange(myDataSet.getDateRange().getStart(), pDate);
 
         /* Access the TaxYearCache */
         theTaxYearCache = (MoneyWiseUKTaxYearCache) myDataSet.getTaxFactory();
 
         /* Create a new set of buckets */
-        theDeposits = new MoneyWiseAnalysisDepositBucketList(this, myBase.getDeposits(), pDate);
-        theCash = new MoneyWiseAnalysisCashBucketList(this, myBase.getCash(), pDate);
-        theLoans = new MoneyWiseAnalysisLoanBucketList(this, myBase.getLoans(), pDate);
-        thePortfolios = new MoneyWiseAnalysisPortfolioBucketList(this, myBase.getPortfolios(), pDate);
-        thePayees = new MoneyWiseAnalysisPayeeBucketList(this, myBase.getPayees(), pDate);
-        theTaxBasis = new MoneyWiseAnalysisTaxBasisBucketList(this, myBase.getTaxBasis(), pDate);
-        theTransCategories = new MoneyWiseAnalysisTransCategoryBucketList(this, myBase.getTransCategories(), pDate);
-        theTransTags = new MoneyWiseAnalysisTransTagBucketList(this, myBase.getTransactionTags(), pDate);
+        theDeposits = new MoneyWiseAnalysisDepositBucketList(this, pBase.getDeposits(), pDate);
+        theCash = new MoneyWiseAnalysisCashBucketList(this, pBase.getCash(), pDate);
+        theLoans = new MoneyWiseAnalysisLoanBucketList(this, pBase.getLoans(), pDate);
+        thePortfolios = new MoneyWiseAnalysisPortfolioBucketList(this, pBase.getPortfolios(), pDate);
+        thePayees = new MoneyWiseAnalysisPayeeBucketList(this, pBase.getPayees(), pDate);
+        theTaxBasis = new MoneyWiseAnalysisTaxBasisBucketList(this, pBase.getTaxBasis(), pDate);
+        theTransCategories = new MoneyWiseAnalysisTransCategoryBucketList(this, pBase.getTransCategories(), pDate);
+        theTransTags = new MoneyWiseAnalysisTransTagBucketList(this, pBase.getTransactionTags(), pDate);
 
         /* Create totalling buckets */
         theDepositCategories = new MoneyWiseAnalysisDepositCategoryBucketList(this);
@@ -277,31 +276,30 @@ public class MoneyWiseAnalysis
     /**
      * Constructor for a ranged analysis.
      *
-     * @param pManager the analysis manager
-     * @param pRange   the range for the analysis
+     * @param pBase  the base analysis
+     * @param pRange the range for the analysis
      */
-    public MoneyWiseAnalysis(final MoneyWiseAnalysisManager pManager,
+    public MoneyWiseAnalysis(final MoneyWiseAnalysis pBase,
                              final OceanusDateRange pRange) {
         /* Store the data */
-        final MoneyWiseAnalysis myBase = pManager.getAnalysis();
-        theEditSet = myBase.getEditSet();
+        theEditSet = pBase.getEditSet();
         final MoneyWiseDataSet myDataSet = getData();
-        theCurrency = myBase.getCurrency();
-        thePreferences = myBase.getPreferenceMgr();
+        theCurrency = pBase.getCurrency();
+        thePreferences = pBase.getPreferenceMgr();
         theDateRange = pRange;
 
         /* Access the TaxYearCache */
         theTaxYearCache = (MoneyWiseUKTaxYearCache) myDataSet.getTaxFactory();
 
         /* Create a new set of buckets */
-        theDeposits = new MoneyWiseAnalysisDepositBucketList(this, myBase.getDeposits(), pRange);
-        theCash = new MoneyWiseAnalysisCashBucketList(this, myBase.getCash(), pRange);
-        theLoans = new MoneyWiseAnalysisLoanBucketList(this, myBase.getLoans(), pRange);
-        thePortfolios = new MoneyWiseAnalysisPortfolioBucketList(this, myBase.getPortfolios(), pRange);
-        thePayees = new MoneyWiseAnalysisPayeeBucketList(this, myBase.getPayees(), pRange);
-        theTaxBasis = new MoneyWiseAnalysisTaxBasisBucketList(this, myBase.getTaxBasis(), pRange);
-        theTransCategories = new MoneyWiseAnalysisTransCategoryBucketList(this, myBase.getTransCategories(), pRange);
-        theTransTags = new MoneyWiseAnalysisTransTagBucketList(this, myBase.getTransactionTags(), pRange);
+        theDeposits = new MoneyWiseAnalysisDepositBucketList(this, pBase.getDeposits(), pRange);
+        theCash = new MoneyWiseAnalysisCashBucketList(this, pBase.getCash(), pRange);
+        theLoans = new MoneyWiseAnalysisLoanBucketList(this, pBase.getLoans(), pRange);
+        thePortfolios = new MoneyWiseAnalysisPortfolioBucketList(this, pBase.getPortfolios(), pRange);
+        thePayees = new MoneyWiseAnalysisPayeeBucketList(this, pBase.getPayees(), pRange);
+        theTaxBasis = new MoneyWiseAnalysisTaxBasisBucketList(this, pBase.getTaxBasis(), pRange);
+        theTransCategories = new MoneyWiseAnalysisTransCategoryBucketList(this, pBase.getTransCategories(), pRange);
+        theTransTags = new MoneyWiseAnalysisTransTagBucketList(this, pBase.getTransactionTags(), pRange);
 
         /* Create totalling buckets */
         theDepositCategories = new MoneyWiseAnalysisDepositCategoryBucketList(this);
@@ -334,20 +332,12 @@ public class MoneyWiseAnalysis
         return FIELD_DEFS.getName();
     }
 
-    /**
-     * Obtain the editSet.
-     *
-     * @return the editSet
-     */
+    @Override
     public PrometheusEditSet getEditSet() {
         return theEditSet;
     }
 
-    /**
-     * Obtain the data.
-     *
-     * @return the data
-     */
+    @Override
     public MoneyWiseDataSet getData() {
         return (MoneyWiseDataSet) theEditSet.getDataSet();
     }
@@ -361,11 +351,7 @@ public class MoneyWiseAnalysis
         return theTaxYearCache;
     }
 
-    /**
-     * Obtain the currency.
-     *
-     * @return the currency
-     */
+    @Override
     public MoneyWiseCurrency getCurrency() {
         return theCurrency;
     }
@@ -379,11 +365,7 @@ public class MoneyWiseAnalysis
         return thePreferences;
     }
 
-    /**
-     * Obtain the date range.
-     *
-     * @return the date range
-     */
+    @Override
     public OceanusDateRange getDateRange() {
         return theDateRange;
     }
@@ -433,11 +415,7 @@ public class MoneyWiseAnalysis
         return thePortfolios;
     }
 
-    /**
-     * Obtain the payee buckets list.
-     *
-     * @return the list
-     */
+    @Override
     public MoneyWiseAnalysisPayeeBucketList getPayees() {
         return thePayees;
     }
@@ -469,11 +447,7 @@ public class MoneyWiseAnalysis
         return theLoanCategories;
     }
 
-    /**
-     * Obtain the transaction categories list.
-     *
-     * @return the list
-     */
+    @Override
     public MoneyWiseAnalysisTransCategoryBucketList getTransCategories() {
         return theTransCategories;
     }
