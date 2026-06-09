@@ -25,6 +25,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import org.bouncycastle.asn1.x500.X500Name;
 
 import java.security.spec.X509EncodedKeySpec;
@@ -144,6 +145,11 @@ public class GordianMiniCertificate
     @Override
     public byte[] getEncoded() {
         return theEncoded.clone();
+    }
+
+    @Override
+    public boolean isValidNow() {
+        return isValidOnDate(LocalDate.now(GordianBaseData.CLOCK));
     }
 
     @Override

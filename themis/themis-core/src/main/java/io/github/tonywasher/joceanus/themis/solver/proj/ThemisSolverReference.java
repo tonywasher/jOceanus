@@ -79,6 +79,16 @@ public class ThemisSolverReference
     }
 
     /**
+     * Does the map have no references of type?
+     *
+     * @param pRefType the refType
+     * @return true/false
+     */
+    public boolean lackingReferences(final ThemisRefType pRefType) {
+        return getReferences(pRefType).isEmpty();
+    }
+
+    /**
      * Obtain references of type.
      *
      * @param pRefType the refType

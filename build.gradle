@@ -46,7 +46,7 @@ ext {
     jetBrainsAnnotationsVersion = "26.1.0"
 
     /* jacoco config */
-    jacocoVersion = "0.8.14"
+    jacocoVersion = "0.8.15"
 
     /* Distribution details */
     appDir = "$rootDir/dist"

@@ -22,6 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 
 import java.time.LocalDate;
@@ -46,7 +47,7 @@ public class GordianCoreKeyStoreEntry
      * Constructor.
      */
     GordianCoreKeyStoreEntry() {
-        this(LocalDate.now());
+        this(LocalDate.now(GordianBaseData.CLOCK));
     }
 
     /**

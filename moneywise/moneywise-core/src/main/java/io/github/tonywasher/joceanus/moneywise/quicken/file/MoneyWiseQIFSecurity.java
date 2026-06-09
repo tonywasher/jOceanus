@@ -259,7 +259,7 @@ public class MoneyWiseQIFSecurity
             return Objects.hash(getLineType(), theSecurity);
         }
     }
-    
+
     /**
      * The Security Name line.
      */

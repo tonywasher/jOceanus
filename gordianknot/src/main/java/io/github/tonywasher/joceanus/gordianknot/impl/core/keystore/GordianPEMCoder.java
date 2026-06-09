@@ -29,6 +29,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEnt
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway.GordianLockResolver;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
@@ -220,7 +221,7 @@ public class GordianPEMCoder {
         /* Prepare for loop */
         final List<GordianKeyStoreEntry> myChain = new ArrayList<>();
         final GordianPEMObjectType myType = pObjects.getFirst().getObjectType();
-        final LocalDate myDate = LocalDate.now();
+        final LocalDate myDate = LocalDate.now(GordianBaseData.CLOCK);
 
         /* Loop through the objects */
         for (GordianPEMObject myObject : pObjects) {
@@ -397,7 +398,7 @@ public class GordianPEMCoder {
         checkSingletonList(pObjects);
 
         /* parse the certificate */
-        return new GordianCoreKeyStoreCertificate(decodeCertificate(pObjects.getFirst()), LocalDate.now());
+        return new GordianCoreKeyStoreCertificate(decodeCertificate(pObjects.getFirst()), LocalDate.now(GordianBaseData.CLOCK));
     }
 
     /**
@@ -507,7 +508,7 @@ public class GordianPEMCoder {
         final GordianKeyPair myPair = mySecuringKeySet.deriveKeyPair(myCert.getX509KeySpec(), myPrivateInfo.getEncryptedData());
 
         /* Return the new keyPair */
-        return new GordianCoreKeyStorePair(myPair, myChain, LocalDate.now());
+        return new GordianCoreKeyStorePair(myPair, myChain, LocalDate.now(GordianBaseData.CLOCK));
     }
 
     /**
@@ -539,7 +540,7 @@ public class GordianPEMCoder {
 
         /* Derive the keySet */
         final GordianKeySet myKeySet = mySecuringKeySet.deriveKeySet(myInfo.getEncryptedData());
-        return new GordianCoreKeyStoreSet(myKeySet, LocalDate.now());
+        return new GordianCoreKeyStoreSet(myKeySet, LocalDate.now(GordianBaseData.CLOCK));
     }
 
     /**
@@ -583,7 +584,7 @@ public class GordianPEMCoder {
 
         /* Derive the key */
         final GordianKey<?> myKey = mySecuringKeySet.deriveKey(myKeyDef, myKeyType);
-        return new GordianCoreKeyStoreKey<>(myKey, LocalDate.now());
+        return new GordianCoreKeyStoreKey<>(myKey, LocalDate.now(GordianBaseData.CLOCK));
     }
 
     /**

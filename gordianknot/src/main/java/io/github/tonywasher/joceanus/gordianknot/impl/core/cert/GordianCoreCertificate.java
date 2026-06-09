@@ -30,6 +30,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEnt
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
@@ -316,6 +317,11 @@ public class GordianCoreCertificate
      */
     private GordianCoreCertificateId buildIssuerId() {
         return new GordianCoreCertificateId(theTbsCertificate.getIssuer(), GordianCertUtils.determineIssuerId(theTbsCertificate));
+    }
+
+    @Override
+    public boolean isValidNow() {
+        return isValidOnDate(LocalDate.now(GordianBaseData.CLOCK));
     }
 
     @Override
@@ -621,7 +627,7 @@ public class GordianCoreCertificate
         final BigInteger mySerialNo = GordianCertUtils.newSerialNo();
 
         /* Create the startDate and endDate for the certificate */
-        final LocalDate myStart = LocalDate.now();
+        final LocalDate myStart = LocalDate.now(GordianBaseData.CLOCK);
         final LocalDate myEnd = myStart.plusYears(1);
 
         /* Obtain the publicKey Info */

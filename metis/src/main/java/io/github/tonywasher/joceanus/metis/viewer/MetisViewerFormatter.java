@@ -132,10 +132,10 @@ public class MetisViewerFormatter {
 
         /* Switch on object */
         switch (myObject) {
-            case MetisFieldItem myField -> formatHTMLEosFieldItem(myField);
+            case MetisFieldItem myField -> formatHTMLFieldItem(myField);
             case StackTraceElement[] myStack -> formatHTMLStackTrace(myStack);
-            case OceanusProfile myProfile -> formatHTMLEosFieldItem(new MetisViewerProfileWrapper(myProfile));
-            case Throwable myThrow -> formatHTMLEosFieldItem(new MetisViewerExceptionWrapper(myThrow));
+            case OceanusProfile myProfile -> formatHTMLFieldItem(new MetisViewerProfileWrapper(myProfile));
+            case Throwable myThrow -> formatHTMLFieldItem(new MetisViewerExceptionWrapper(myThrow));
             default -> formatHTMLUnknown(myObject);
         }
     }
@@ -195,11 +195,11 @@ public class MetisViewerFormatter {
     }
 
     /**
-     * Build HTML table describing DataEosFieldItem.
+     * Build HTML table describing DataFieldItem.
      *
      * @param pItem the item
      */
-    private void formatHTMLEosFieldItem(final MetisFieldItem pItem) {
+    private void formatHTMLFieldItem(final MetisFieldItem pItem) {
         /* Access details */
         final MetisFieldSetDef myFields = pItem.getDataFieldSet();
         final boolean isVersioned = pItem instanceof MetisFieldVersionedItem;

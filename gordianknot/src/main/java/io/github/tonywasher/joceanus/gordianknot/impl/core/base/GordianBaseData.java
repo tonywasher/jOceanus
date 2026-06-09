@@ -18,6 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.base;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
+import java.time.Clock;
+
 /**
  * Base factory.
  */
@@ -36,6 +38,11 @@ public abstract class GordianBaseData {
      * RC5 rounds.
      */
     public static final int RC5_ROUNDS = 12;
+
+    /**
+     * Standard clock.
+     */
+    public static final Clock CLOCK = Clock.systemUTC();
 
     /**
      * Private constructor.

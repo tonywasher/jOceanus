@@ -24,6 +24,7 @@ import io.github.tonywasher.joceanus.themis.parser.project.ThemisFile;
 import io.github.tonywasher.joceanus.themis.parser.project.ThemisPackage;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverModuleDef;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverPackageDef;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverReference.ThemisRefType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -290,6 +291,70 @@ public class ThemisSolverPackage
     }
 
     /**
+     * Do we have circular references in our files?
+     *
+     * @return true/false
+     */
+    public boolean areFilesCircular() {
+        /* Loop through files */
+        for (ThemisSolverFile myFile : theFiles) {
+            /* Report circularity */
+            if (myFile.isCircular()) {
+                return true;
+            }
+        }
+
+        /* We are OK */
+        return false;
+    }
+
+    /**
+     * Are any of our children in error?
+     *
+     * @return true/false
+     */
+    private boolean areChildrenInError() {
+        /* Loop through children */
+        for (ThemisSolverPackage myChild : theChildren) {
+            /* Report error */
+            if (myChild.isInError()) {
+                return true;
+            }
+        }
+
+        /* We are OK */
+        return false;
+    }
+
+    /**
+     * Is this package in error?
+     *
+     * @return true/false
+     */
+    public boolean isInError() {
+        return isCircular() || isIncestuous()
+                || areChildrenInError() || areFilesCircular();
+    }
+
+    /**
+     * Is this local package in error?
+     *
+     * @return true/false
+     */
+    public boolean isLocalInError() {
+        return isIncestuous() || areFilesCircular();
+    }
+
+    /**
+     * Does the package lack child references?
+     *
+     * @return true/false
+     */
+    public boolean lackingChildReferences() {
+        return theReferenceMap.lackingReferences(ThemisRefType.CHILD);
+    }
+
+    /**
      * Set the referenced classes.
      *
      * @param pReferenced the referenced classes
@@ -334,7 +399,6 @@ public class ThemisSolverPackage
             }
         }
     }
-
 
     @Override
     public boolean equals(final Object pThat) {

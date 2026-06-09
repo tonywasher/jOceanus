@@ -93,13 +93,19 @@ public class ThemisUIRefFamily {
         pTable.appendChild(myTblBody);
         theBuilder.addClassToElement(myTblBody, ThemisUIBaseDocument.CLASSTBLZEBRA);
 
-        /* Create the Local Column header */
+        /* If we have local classes */
         Element myLocalRow = null;
+        final boolean noLocalChildRefs = pPackage.lackingChildReferences();
         if (hasFiles) {
+            /* Create the local row */
             myLocalRow = theBuilder.createElement(ThemisUIHTMLTag.TR);
-            myTblBody.appendChild(myLocalRow);
             createRowLocalHeader(myLocalRow, pPackage);
-            createSelfLocalCell(myLocalRow, pPackage);
+
+            /* Add first if we have local child references */
+            if (!noLocalChildRefs) {
+                myTblBody.appendChild(myLocalRow);
+                createSelfLocalCell(myLocalRow, pPackage);
+            }
         }
 
         /* Loop through the children */
@@ -112,9 +118,9 @@ public class ThemisUIRefFamily {
             createRowHeader(myRow, myChild);
 
             /* Create the link row for local to child and vice versa */
-            if (myLocalRow != null) {
-                createLinkCell(myLocalRow, myChild, pPackage);
-                createLinkCell(myRow, pPackage, myChild);
+            if (myLocalRow != null && !noLocalChildRefs) {
+                createLinkCell(myLocalRow, pPackage, myChild, pPackage);
+                createLinkCell(myRow, pPackage, pPackage, myChild);
             }
 
             /* Loop through the siblings */
@@ -127,9 +133,21 @@ public class ThemisUIRefFamily {
                     /* else create the standard cell */
                 } else {
                     /* Create the link row */
-                    createLinkCell(myRow, mySibling, myChild);
+                    createLinkCell(myRow, pPackage, mySibling, myChild);
                 }
             }
+
+            /* Create the link row for local to child and vice versa */
+            if (myLocalRow != null && noLocalChildRefs) {
+                createLinkCell(myLocalRow, pPackage, myChild, pPackage);
+                createLinkCell(myRow, pPackage, pPackage, myChild);
+            }
+        }
+
+        /* Add local last if we have no local child references */
+        if (myLocalRow != null && noLocalChildRefs) {
+            myTblBody.appendChild(myLocalRow);
+            createSelfLocalCell(myLocalRow, pPackage);
         }
     }
 
@@ -141,8 +159,16 @@ public class ThemisUIRefFamily {
      */
     private void createRowHeader(final Element pRow,
                                  final ThemisSolverPackage pTarget) {
+        /* Create the error cell */
+        Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);
+        final String myClass = pTarget.isInError()
+                ? ThemisUIRefConstants.CLASSSELFERROR
+                : ThemisUIRefConstants.CLASSSELFOK;
+        theBuilder.addClassToElement(myCell, myClass);
+        pRow.appendChild(myCell);
+
         /* Create the cell */
-        final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);
+        myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);
         theBuilder.addClassToElement(myCell, ThemisUIRefConstants.CLASSLINK);
         pRow.appendChild(myCell);
 
@@ -166,8 +192,16 @@ public class ThemisUIRefFamily {
      */
     private void createRowLocalHeader(final Element pRow,
                                       final ThemisSolverPackage pTarget) {
+        /* Create the error cell */
+        Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);
+        final String myClass = pTarget.isLocalInError()
+                ? ThemisUIRefConstants.CLASSSELFERROR
+                : ThemisUIRefConstants.CLASSSELFOK;
+        theBuilder.addClassToElement(myCell, myClass);
+        pRow.appendChild(myCell);
+
         /* Create the cell */
-        final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);
+        myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);
         theBuilder.addClassToElement(myCell, ThemisUIRefConstants.CLASSLINK);
         pRow.appendChild(myCell);
 
@@ -229,10 +263,12 @@ public class ThemisUIRefFamily {
      * Create linking cell.
      *
      * @param pRow    the row
+     * @param pParent the parent package
      * @param pSource the source package
      * @param pTarget the target package
      */
     private void createLinkCell(final Element pRow,
+                                final ThemisSolverPackage pParent,
                                 final ThemisSolverPackage pSource,
                                 final ThemisSolverPackage pTarget) {
         /* Access links between from the sibling to the child */
@@ -249,7 +285,8 @@ public class ThemisUIRefFamily {
             myCell.appendChild(myLink);
 
             /* Determine the linkReference */
-            final String myLinkRef = ThemisUIRefConstants.LINKLIST + pSource.getPackageName()
+            final String myLinkRef = ThemisUIRefConstants.LINKLIST + pParent.getPackageName()
+                    + ThemisUIRefConstants.SEPCHAR + pSource.getPackageName()
                     + ThemisUIRefConstants.SEPCHAR + pTarget.getPackageName();
             theBuilder.setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);
 

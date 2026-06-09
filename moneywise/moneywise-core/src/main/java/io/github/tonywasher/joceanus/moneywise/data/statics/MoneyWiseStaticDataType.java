@@ -172,7 +172,7 @@ public enum MoneyWiseStaticDataType
     public String getFieldName() {
         return getListId().getId();
     }
-    
+
     @Override
     public String getId() {
         return getItemName();

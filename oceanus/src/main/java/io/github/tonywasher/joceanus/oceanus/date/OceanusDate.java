@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.oceanus.date;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusLocale;
 
+import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
@@ -34,6 +35,11 @@ import java.util.Locale;
  */
 public class OceanusDate
         implements Comparable<OceanusDate> {
+    /**
+     * Standard clock.
+     */
+    public static final Clock CLOCK = Clock.systemDefaultZone();
+
     /**
      * The Hash prime.
      */
@@ -122,12 +128,12 @@ public class OceanusDate
     }
 
     /**
-     * Construct a new Date and initialise with todays date.
+     * Construct a new Date and initialise with today's date.
      *
      * @param pLocale the locale
      */
     public OceanusDate(final Locale pLocale) {
-        this(LocalDate.now(), pLocale);
+        this(LocalDate.now(CLOCK), pLocale);
     }
 
     /**

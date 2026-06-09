@@ -145,7 +145,7 @@ public abstract class MetisPreferenceSet
         } catch (BackingStoreException e) {
             throw new MetisDataException("Failed to access preferences", e);
         }
-        
+
         /* Create the viewer record */
         theViewerEntry = defineViewerEntry(pParams);
 
@@ -158,8 +158,9 @@ public abstract class MetisPreferenceSet
     }
 
     /**
-     * Process parameters
+     * Process parameters.
      *
+     * @param pParams the parameters
      * @return the viewer entry
      */
     protected MetisViewerEntry defineViewerEntry(final MetisPreferenceParams pParams) {
