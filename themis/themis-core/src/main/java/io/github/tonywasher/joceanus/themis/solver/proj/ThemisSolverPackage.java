@@ -24,6 +24,7 @@ import io.github.tonywasher.joceanus.themis.parser.project.ThemisFile;
 import io.github.tonywasher.joceanus.themis.parser.project.ThemisPackage;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverModuleDef;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverPackageDef;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverReference.ThemisRefType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -331,9 +332,26 @@ public class ThemisSolverPackage
      * @return true/false
      */
     public boolean isInError() {
-        /* In error if any package is in error, or we have circular files */
         return isCircular() || isIncestuous()
                 || areChildrenInError() || areFilesCircular();
+    }
+
+    /**
+     * Is this local package in error?
+     *
+     * @return true/false
+     */
+    public boolean isLocalInError() {
+        return isIncestuous() || areFilesCircular();
+    }
+
+    /**
+     * Does the package lack child references?
+     *
+     * @return true/false
+     */
+    public boolean lackingChildReferences() {
+        return theReferenceMap.lackingReferences(ThemisRefType.CHILD);
     }
 
     /**

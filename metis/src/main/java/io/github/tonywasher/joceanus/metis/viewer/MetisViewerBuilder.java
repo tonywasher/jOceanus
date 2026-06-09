@@ -16,13 +16,13 @@
  */
 package io.github.tonywasher.joceanus.metis.viewer;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataDelta;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.exc.MetisIOException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
-import io.github.tonywasher.joceanus.metis.data.MetisDataDelta;
-import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
-import io.github.tonywasher.joceanus.metis.exc.MetisIOException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -134,6 +134,11 @@ public class MetisViewerBuilder {
      * Name of security changed cell class.
      */
     private static final String CLASS_SECCHANGED = "-metis-security";
+
+    /**
+     * Blank link indication.
+     */
+    private static final String BLANK_LINK = "<Blank>";
 
     /**
      * The data formatter.
@@ -347,7 +352,7 @@ public class MetisViewerBuilder {
         theTblRow.appendChild(myCell);
 
         /* Determine the text */
-        final String myText = formatValue(pData);
+        String myText = formatValue(pData);
 
         /* If the Object is a data delta */
         if (pData instanceof MetisDataDelta myDelta) {
@@ -370,6 +375,7 @@ public class MetisViewerBuilder {
             final Element myLink = theDocument.createElement(ELEMENT_LINK);
             myCell.appendChild(myLink);
             myLink.setAttribute(ATTR_HREF, thePage.newLink(pData));
+            myText = myText.isEmpty() ? BLANK_LINK : myText;
             myLink.setTextContent(myText);
 
             /* else just record the formatted text */

@@ -93,13 +93,19 @@ public class ThemisUIRefFamily {
         pTable.appendChild(myTblBody);
         theBuilder.addClassToElement(myTblBody, ThemisUIBaseDocument.CLASSTBLZEBRA);
 
-        /* Create the Local Column header */
+        /* If we have local classes */
         Element myLocalRow = null;
+        boolean noLocalChildRefs = pPackage.lackingChildReferences();
         if (hasFiles) {
+            /* Create the local row */
             myLocalRow = theBuilder.createElement(ThemisUIHTMLTag.TR);
-            myTblBody.appendChild(myLocalRow);
             createRowLocalHeader(myLocalRow, pPackage);
-            createSelfLocalCell(myLocalRow, pPackage);
+
+            /* Add first if we have local child references */
+            if (!noLocalChildRefs) {
+                myTblBody.appendChild(myLocalRow);
+                createSelfLocalCell(myLocalRow, pPackage);
+            }
         }
 
         /* Loop through the children */
@@ -112,7 +118,7 @@ public class ThemisUIRefFamily {
             createRowHeader(myRow, myChild);
 
             /* Create the link row for local to child and vice versa */
-            if (myLocalRow != null) {
+            if (myLocalRow != null && !noLocalChildRefs) {
                 createLinkCell(myLocalRow, pPackage, myChild, pPackage);
                 createLinkCell(myRow, pPackage, pPackage, myChild);
             }
@@ -130,6 +136,18 @@ public class ThemisUIRefFamily {
                     createLinkCell(myRow, pPackage, mySibling, myChild);
                 }
             }
+
+            /* Create the link row for local to child and vice versa */
+            if (myLocalRow != null && noLocalChildRefs) {
+                createLinkCell(myLocalRow, pPackage, myChild, pPackage);
+                createLinkCell(myRow, pPackage, pPackage, myChild);
+            }
+        }
+
+        /* Add local last if we have no local child references */
+        if (myLocalRow != null && noLocalChildRefs) {
+            myTblBody.appendChild(myLocalRow);
+            createSelfLocalCell(myLocalRow, pPackage);
         }
     }
 
@@ -176,7 +194,7 @@ public class ThemisUIRefFamily {
                                       final ThemisSolverPackage pTarget) {
         /* Create the error cell */
         Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);
-        final String myClass = pTarget.isInError()
+        final String myClass = pTarget.isLocalInError()
                 ? ThemisUIRefConstants.CLASSSELFERROR
                 : ThemisUIRefConstants.CLASSSELFOK;
         theBuilder.addClassToElement(myCell, myClass);

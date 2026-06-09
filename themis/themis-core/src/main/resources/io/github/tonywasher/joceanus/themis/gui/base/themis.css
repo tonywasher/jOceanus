@@ -49,6 +49,7 @@ td.refSelfOK {
 
 td.refSelfError {
 	background-color: red;
+	min-width: 10px;
 }
 
 td.refLinkPresent {
