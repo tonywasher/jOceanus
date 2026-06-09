@@ -101,7 +101,7 @@
         <SonarQubePluginVersion>5.7.0.6970</SonarQubePluginVersion>
         <CheckStylePluginVersion>3.6.0</CheckStylePluginVersion>
         <PMDPluginVersion>3.28.0</PMDPluginVersion>
-        <JacocoPluginVersion>0.8.14</JacocoPluginVersion>
+        <JacocoPluginVersion>0.8.15</JacocoPluginVersion>
         <JetBrainsAnnotationsVersion>26.1.0</JetBrainsAnnotationsVersion>
         <VersionsPluginVersion>2.21.0</VersionsPluginVersion>
         <ExecPluginVersion>3.6.3</ExecPluginVersion>

@@ -21,7 +21,7 @@ public final class MoneyWiseQIFConstants {
     /**
      * Private constructor.
      */
-    MoneyWiseQIFConstants() {
+    private MoneyWiseQIFConstants() {
     }
 
     /**

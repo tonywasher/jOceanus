@@ -58,9 +58,7 @@ public interface GordianCertificate {
      *
      * @return true/false
      */
-    default boolean isValidNow() {
-        return isValidOnDate(LocalDate.now());
-    }
+    boolean isValidNow();
 
     /**
      * Is the certificate valid on the specified date?

@@ -54,7 +54,7 @@ public interface MoneyWiseQIFHelper {
      * @return the payee
      */
     MoneyWiseQIFPayee getTaxMan();
-    
+
     /**
      * Build xferFrom payee line.
      *

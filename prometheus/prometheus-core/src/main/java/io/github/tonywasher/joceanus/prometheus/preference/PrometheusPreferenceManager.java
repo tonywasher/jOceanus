@@ -33,7 +33,7 @@ public class PrometheusPreferenceManager
      */
     public PrometheusPreferenceManager(final MetisViewerManager pViewer) throws OceanusException {
         super(pViewer);
-        PrometheusPreferenceSecurity mySecurity = new PrometheusPreferenceSecurity(this);
+        final PrometheusPreferenceSecurity mySecurity = new PrometheusPreferenceSecurity(this);
         setParameters(new PrometheusPreferenceParams(getParameters(), mySecurity));
     }
 }

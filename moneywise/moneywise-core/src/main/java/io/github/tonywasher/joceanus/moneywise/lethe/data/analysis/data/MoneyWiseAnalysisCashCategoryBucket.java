@@ -160,7 +160,7 @@ public final class MoneyWiseAnalysisCashCategoryBucket
         /**
          * Do we have a foreign cash account?
          */
-        private boolean haveForeignCurrency = false;
+        private boolean haveForeignCurrency;
 
         /**
          * Construct a top-level List.

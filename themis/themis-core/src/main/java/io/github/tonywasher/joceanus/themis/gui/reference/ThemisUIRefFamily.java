@@ -95,7 +95,7 @@ public class ThemisUIRefFamily {
 
         /* If we have local classes */
         Element myLocalRow = null;
-        boolean noLocalChildRefs = pPackage.lackingChildReferences();
+        final boolean noLocalChildRefs = pPackage.lackingChildReferences();
         if (hasFiles) {
             /* Create the local row */
             myLocalRow = theBuilder.createElement(ThemisUIHTMLTag.TR);
