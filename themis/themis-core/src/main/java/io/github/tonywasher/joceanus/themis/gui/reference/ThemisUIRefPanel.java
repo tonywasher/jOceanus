@@ -46,24 +46,9 @@ public class ThemisUIRefPanel
     private final ThemisUIRefModuleSelect theSelect;
 
     /**
-     * The DSM Html.
+     * The Html.
      */
-    private final TethysUIHTMLManager theDSMHtml;
-
-    /**
-     * The Link Html.
-     */
-    private final TethysUIHTMLManager theLinkHtml;
-
-    /**
-     * The DSM Scroll.
-     */
-    private final TethysUIScrollPaneManager theDSMScroll;
-
-    /**
-     * The Link Scroll.
-     */
-    private final TethysUIScrollPaneManager theLinkScroll;
+    private final TethysUIHTMLManager theHtml;
 
     /**
      * The panel.
@@ -79,17 +64,13 @@ public class ThemisUIRefPanel
     public ThemisUIRefPanel(final TethysUIFactory<?> pFactory) throws OceanusException {
         /* Create the HTML panels */
         final TethysUIControlFactory myControls = pFactory.controlFactory();
-        theDSMHtml = myControls.newHTMLManager();
-        theDSMHtml.setCSSContent(ThemisUIStyleSheet.CSS);
-        theLinkHtml = myControls.newHTMLManager();
-        theLinkHtml.setCSSContent(ThemisUIStyleSheet.CSS);
+        theHtml = myControls.newHTMLManager();
+        theHtml.setCSSContent(ThemisUIStyleSheet.CSS);
 
         /* Create scroll-panes */
         final TethysUIPaneFactory myPanes = pFactory.paneFactory();
-        theDSMScroll = myPanes.newScrollPane();
-        theDSMScroll.setContent(theDSMHtml);
-        theLinkScroll = myPanes.newScrollPane();
-        theLinkScroll.setContent(theLinkHtml);
+        final TethysUIScrollPaneManager myScroll = myPanes.newScrollPane();
+        myScroll.setContent(theHtml);
 
         /* Create the document builder */
         theDoc = new ThemisUIRefDocument();
@@ -101,22 +82,17 @@ public class ThemisUIRefPanel
         mySelect.addNode(theSelect);
         mySelect.addSpacer();
 
-        /* Create the display panel */
-        final TethysUIBoxPaneManager myPane = myPanes.newVBoxPane();
-        myPane.addNode(theDSMScroll);
-        myPane.addNode(theLinkScroll);
-
         /* Create the panel */
         thePane = myPanes.newBorderPane();
         thePane.setNorth(mySelect);
-        thePane.setCentre(myPane);
+        thePane.setCentre(myScroll);
 
         /* Handle module select */
         theSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
                 s -> selectModule());
 
         /* Handle Reference Select */
-        theDSMHtml.getEventRegistrar().addEventListener(TethysUIEvent.BUILDPAGE, e -> {
+        theHtml.getEventRegistrar().addEventListener(TethysUIEvent.BUILDPAGE, e -> {
             processReference(e.getDetails(String.class));
             e.consume();
         });
@@ -143,11 +119,10 @@ public class ThemisUIRefPanel
     private void selectModule() {
         /* Select module and hide link list */
         theDoc.setModule(theSelect.getCurrentModule());
-        theLinkScroll.setVisible(false);
 
         /* Format the default package */
         final String myHTML = theDoc.formatDefaultPackage();
-        theDSMHtml.setHTMLContent(myHTML, "");
+        theHtml.setHTMLContent(myHTML, "");
     }
 
     /**
@@ -160,15 +135,13 @@ public class ThemisUIRefPanel
         if (theDoc.isNewPackageLink(pReference)) {
             /* Format the package and hide link list */
             final String myHTML = theDoc.formatNewPackageLink(pReference);
-            theDSMHtml.setHTMLContent(myHTML, "");
-            theLinkScroll.setVisible(false);
+            theHtml.setHTMLContent(myHTML, "");
 
             /* If this is a listLink */
         } else if (theDoc.isListLink(pReference)) {
             /* Format the list and show link list */
             final String myHTML = theDoc.formatListLink(pReference);
-            theLinkHtml.setHTMLContent(myHTML, "");
-            theLinkScroll.setVisible(true);
+            theHtml.setHTMLContent(myHTML, "");
         }
     }
 }

@@ -160,20 +160,24 @@ public class ThemisUIRefDocument
         /* If this is a list link */
         if (pLink.startsWith(ThemisUIRefConstants.LINKLIST)) {
             /* Strip off the header and locate the packages */
-            final String myNames = pLink.substring(ThemisUIRefConstants.LINKLIST.length());
-            final int myIndex = myNames.indexOf(ThemisUIRefConstants.SEPCHAR);
+            String myNames = pLink.substring(ThemisUIRefConstants.LINKLIST.length());
+            int myIndex = myNames.indexOf(ThemisUIRefConstants.SEPCHAR);
+            final String myParentName = myNames.substring(0, myIndex);
+            myNames = myNames.substring(myIndex + 1);
+            myIndex = myNames.indexOf(ThemisUIRefConstants.SEPCHAR);
             final String mySourceName = myNames.substring(0, myIndex);
             final String myTargetName = myNames.substring(myIndex + 1);
+            final ThemisSolverPackage myParent = thePackageMap.get(myParentName);
             final ThemisSolverPackage mySource = thePackageMap.get(mySourceName);
             final ThemisSolverPackage myTarget = thePackageMap.get(myTargetName);
 
             /* Handle unknown packages */
-            if (mySource == null || myTarget == null) {
+            if (myParent == null || mySource == null || myTarget == null) {
                 throw new IllegalArgumentException("Unknown package");
             }
 
             /* Format the listHTML */
-            return formatLinkList(mySource, myTarget);
+            return formatLinkList(myParent, mySource, myTarget);
         }
 
         /* Unrecognised link */
@@ -228,11 +232,13 @@ public class ThemisUIRefDocument
     /**
      * Create document for linkList.
      *
+     * @param pParent the parent package
      * @param pSource the source package
      * @param pTarget the target package
      * @return the formatted document
      */
-    private String formatLinkList(final ThemisSolverPackage pSource,
+    private String formatLinkList(final ThemisSolverPackage pParent,
+                                  final ThemisSolverPackage pSource,
                                   final ThemisSolverPackage pTarget) {
         /* Create new document and obtain the body */
         final Element myBody = newDocument();
@@ -241,6 +247,19 @@ public class ThemisUIRefDocument
         final Element myHeader = createElement(ThemisUIHTMLTag.H1);
         myBody.appendChild(myHeader);
         myHeader.setTextContent(ThemisUIResource.REF_LINKS.getValue());
+
+        /* Create the link */
+        final Element myLinkHeader = createElement(ThemisUIHTMLTag.H3);
+        myBody.appendChild(myLinkHeader);
+        final Element myLink = createElement(ThemisUIHTMLTag.A);
+        myLinkHeader.appendChild(myLink);
+
+        /* Set link details */
+        final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + pParent.getPackageName();
+        setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);
+
+        /* Set name of package */
+        myLink.setTextContent(ThemisUIResource.REF_PARENT.getValue());
 
         /* Create new table */
         final Element myTable = createElement(ThemisUIHTMLTag.TABLE);

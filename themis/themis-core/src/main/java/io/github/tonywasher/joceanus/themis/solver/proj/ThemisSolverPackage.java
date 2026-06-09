@@ -290,6 +290,53 @@ public class ThemisSolverPackage
     }
 
     /**
+     * Do we have circular references in our files?
+     *
+     * @return true/false
+     */
+    public boolean areFilesCircular() {
+        /* Loop through files */
+        for (ThemisSolverFile myFile : theFiles) {
+            /* Report circularity */
+            if (myFile.isCircular()) {
+                return true;
+            }
+        }
+
+        /* We are OK */
+        return false;
+    }
+
+    /**
+     * Are any of our children in error?
+     *
+     * @return true/false
+     */
+    private boolean areChildrenInError() {
+        /* Loop through children */
+        for (ThemisSolverPackage myChild : theChildren) {
+            /* Report error */
+            if (myChild.isInError()) {
+                return true;
+            }
+        }
+
+        /* We are OK */
+        return false;
+    }
+
+    /**
+     * Is this package in error?
+     *
+     * @return true/false
+     */
+    public boolean isInError() {
+        /* In error if any package is in error, or we have circular files */
+        return isCircular() || isIncestuous()
+                || areChildrenInError() || areFilesCircular();
+    }
+
+    /**
      * Set the referenced classes.
      *
      * @param pReferenced the referenced classes
@@ -334,7 +381,6 @@ public class ThemisSolverPackage
             }
         }
     }
-
 
     @Override
     public boolean equals(final Object pThat) {
