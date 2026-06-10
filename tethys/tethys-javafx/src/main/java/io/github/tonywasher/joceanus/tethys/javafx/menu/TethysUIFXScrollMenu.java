@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIConstant;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIcon;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollIcon;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
@@ -523,10 +524,9 @@ public class TethysUIFXScrollMenu<T>
      *
      * @param pState the focus state
      */
-    private void handleFocusChange(final Boolean pState) {
+    private void handleFocusChange(final boolean pState) {
         /* If we've lost focus to other than the active subMenu */
-        if (Boolean.TRUE.equals(!pState)
-                && theActiveMenu == null) {
+        if (!pState && theActiveMenu == null) {
             /* fire cancellation event */
             if (theParentMenu == null) {
                 theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
@@ -691,6 +691,13 @@ public class TethysUIFXScrollMenu<T>
                                          final String pName) {
         /* Use standard name */
         return addItem(pValue, pName, null);
+    }
+
+    @Override
+    public TethysUIScrollItem<T> addItem(final T pValue,
+                                         final TethysUIIconId pId) {
+        /* Use standard name */
+        return addItem(pValue, pValue.toString(), TethysUIFXUtils.getIconAtSize(pId, TethysUICoreScrollMenu.ICON_SIZE));
     }
 
     @Override

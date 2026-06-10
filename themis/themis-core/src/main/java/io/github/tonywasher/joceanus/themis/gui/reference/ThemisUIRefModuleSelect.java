@@ -149,7 +149,9 @@ public class ThemisUIRefModuleSelect
         /* Loop through the available modules */
         for (ThemisSolverModule myModule : theProject.getModules()) {
             /* Create a new MenuItem and add it to the popUp */
-            final TethysUIScrollItem<ThemisSolverModule> myItem = theModuleMenu.addItem(myModule);
+            final TethysUIScrollItem<ThemisSolverModule> myItem = myModule.isInError()
+                    ? theModuleMenu.addItem(myModule, ThemisUIRefIcon.ERROR)
+                    : theModuleMenu.addItem(myModule);
 
             /* If this is the active module */
             if (myModule.equals(myCurr)) {

@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.tethys.api.menu;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIcon;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
 
 /**
  * ScrollMenu.
@@ -88,6 +89,16 @@ public interface TethysUIScrollMenu<T>
      */
     TethysUIScrollItem<T> addItem(T pValue,
                                   TethysUIIcon pGraphic);
+
+    /**
+     * Add Element.
+     *
+     * @param pValue   the value
+     * @param pGraphic the iconId for the item
+     * @return the item added
+     */
+    TethysUIScrollItem<T> addItem(T pValue,
+                                  TethysUIIconId pGraphic);
 
     /**
      * Add Null Element.

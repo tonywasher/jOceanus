@@ -128,6 +128,16 @@ public class ThemisSolverModule
     }
 
     /**
+     * Is this package in error?
+     *
+     * @return true/false
+     */
+    public boolean isInError() {
+        final ThemisSolverPackage myRoot = getRoot();
+        return myRoot != null && myRoot.isInError();
+    }
+
+    /**
      * Create placeHolder packages.
      */
     private void createPlaceHolders() {

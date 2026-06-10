@@ -27,6 +27,11 @@ public final class TethysUICoreScrollMenu {
     }
 
     /**
+     * IconSize.
+     */
+    public static final int ICON_SIZE = 15;
+
+    /**
      * Default number of items for scroll window.
      */
     public static final int DEFAULT_ITEMCOUNT = 15;
