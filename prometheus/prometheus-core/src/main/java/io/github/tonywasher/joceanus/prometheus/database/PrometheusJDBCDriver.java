@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.prometheus.database;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
 
 /**
@@ -82,7 +83,7 @@ public enum PrometheusJDBCDriver {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = PrometheusDBResource.getKeyForDriver(this).getValue();
+            theName = bundleIdForDriver(this).getValue();
         }
 
         /* return the name */
@@ -95,16 +96,7 @@ public enum PrometheusJDBCDriver {
      * @return true/false
      */
     public boolean useInstance() {
-        switch (this) {
-            case SQLSERVER:
-                return true;
-            case MYSQL:
-            case MARIADB:
-            case H2:
-            case POSTGRESQL:
-            default:
-                return false;
-        }
+        return this == SQLSERVER;
     }
 
     /**
@@ -113,16 +105,10 @@ public enum PrometheusJDBCDriver {
      * @return true/false
      */
     public boolean useQuotes() {
-        switch (this) {
-            case MYSQL:
-            case MARIADB:
-                return false;
-            case SQLSERVER:
-            case H2:
-            case POSTGRESQL:
-            default:
-                return true;
-        }
+        return switch (this) {
+            case MYSQL, MARIADB -> false;
+            default -> true;
+        };
     }
 
     /**
@@ -131,16 +117,10 @@ public enum PrometheusJDBCDriver {
      * @return true/false
      */
     public boolean usePort() {
-        switch (this) {
-            case MYSQL:
-            case MARIADB:
-            case POSTGRESQL:
-            case SQLSERVER:
-                return true;
-            case H2:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case MYSQL, MARIADB, POSTGRESQL, SQLSERVER -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -149,18 +129,12 @@ public enum PrometheusJDBCDriver {
      * @return the default port
      */
     public Integer getDefaultPort() {
-        switch (this) {
-            case MYSQL:
-            case MARIADB:
-                return PORT_MARIADB;
-            case POSTGRESQL:
-                return PORT_POSTGRESQL;
-            case SQLSERVER:
-                return PORT_SQLEXPRESS;
-            case H2:
-            default:
-                return null;
-        }
+        return switch (this) {
+            case MYSQL, MARIADB -> PORT_MARIADB;
+            case POSTGRESQL -> PORT_POSTGRESQL;
+            case SQLSERVER -> PORT_SQLEXPRESS;
+            default -> null;
+        };
     }
 
     /**
@@ -169,19 +143,13 @@ public enum PrometheusJDBCDriver {
      * @return the connection prefix
      */
     public String getPrefix() {
-        switch (this) {
-            case SQLSERVER:
-                return "jdbc:sqlserver://";
-            case MYSQL:
-                return "jdbc:mysql://";
-            case MARIADB:
-                return "jdbc:mariadb://";
-            case H2:
-                return "jdbc:h2:mem:";
-            case POSTGRESQL:
-            default:
-                return "jdbc:postgresql://";
-        }
+        return switch (this) {
+            case SQLSERVER -> "jdbc:sqlserver://";
+            case MYSQL -> "jdbc:mysql://";
+            case MARIADB -> "jdbc:mariadb://";
+            case H2 -> "jdbc:h2:mem:";
+            default -> "jdbc:postgresql://";
+        };
     }
 
     /**
@@ -256,43 +224,32 @@ public enum PrometheusJDBCDriver {
     public String getDatabaseType(final PrometheusColumnType pType) {
         final boolean isSQLServer = this.equals(SQLSERVER);
         final boolean isPostgreSQL = this.equals(POSTGRESQL);
-        switch (pType) {
-            case BOOLEAN:
-                return isPostgreSQL
-                        ? "boolean"
-                        : "bit";
-            case SHORT:
-                return "smallint";
-            case INTEGER:
-                return "int";
-            case LONG:
-                return "bigint";
-            case FLOAT:
-                return "real";
-            case DOUBLE:
-                return isSQLServer
-                        ? "float"
-                        : isPostgreSQL
-                        ? "double precision"
-                        : "double";
-            case DATE:
-                return "date";
-            case MONEY:
-                return isSQLServer
-                        ? "money"
-                        : "numeric(18,2)";
-            case DECIMAL:
-                return isSQLServer
-                        ? "decimal"
-                        : "numeric";
-            case BINARY:
-                return isPostgreSQL
-                        ? "bytea"
-                        : "varbinary";
-            case STRING:
-            default:
-                return "varchar";
-        }
+        return switch (pType) {
+            case BOOLEAN -> isPostgreSQL
+                    ? "boolean"
+                    : "bit";
+            case SHORT -> "smallint";
+            case INTEGER -> "int";
+            case LONG -> "bigint";
+            case FLOAT -> "real";
+            case DOUBLE -> {
+                if (isSQLServer) {
+                    yield "float";
+                }
+                yield isPostgreSQL ? "double precision" : "double";
+            }
+            case DATE -> "date";
+            case MONEY -> isSQLServer
+                    ? "money"
+                    : "numeric(18,2)";
+            case DECIMAL -> isSQLServer
+                    ? "decimal"
+                    : "numeric";
+            case BINARY -> isPostgreSQL
+                    ? "bytea"
+                    : "varbinary";
+            default -> "varchar";
+        };
     }
 
     /**
@@ -301,16 +258,10 @@ public enum PrometheusJDBCDriver {
      * @return true/false
      */
     public boolean defineBinaryLength() {
-        switch (this) {
-            case MYSQL:
-            case MARIADB:
-            case SQLSERVER:
-            case H2:
-                return true;
-            case POSTGRESQL:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case MYSQL, MARIADB, SQLSERVER, H2 -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -319,15 +270,26 @@ public enum PrometheusJDBCDriver {
      * @return true/false
      */
     public boolean explicitDropIndex() {
-        switch (this) {
-            case POSTGRESQL:
-            case SQLSERVER:
-            case H2:
-                return true;
-            case MYSQL:
-            case MARIADB:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case POSTGRESQL, SQLSERVER, H2 -> true;
+            default -> false;
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the driver.
+     *
+     * @param pDriver the driver
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForDriver(final PrometheusJDBCDriver pDriver) {
+        return switch (pDriver) {
+            case SQLSERVER -> PrometheusDBResource.DRIVER_SQLSERVER;
+            case POSTGRESQL -> PrometheusDBResource.DRIVER_POSTGRESQL;
+            case MYSQL -> PrometheusDBResource.DRIVER_MYSQL;
+            case MARIADB -> PrometheusDBResource.DRIVER_MARIADB;
+            case H2 -> PrometheusDBResource.DRIVER_H2;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

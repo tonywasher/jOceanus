@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.prometheus.database;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
@@ -38,7 +38,7 @@ public abstract class PrometheusTableDataInfo<T extends PrometheusDataInfoItem>
      * @param pInfoTable  the InfoTypes table name
      * @param pOwnerTable the Owner table name
      */
-    protected PrometheusTableDataInfo(final PrometheusDataStore pDatabase,
+    protected PrometheusTableDataInfo(final PrometheusDatabaseControl pDatabase,
                                       final String pTabName,
                                       final String pInfoTable,
                                       final String pOwnerTable) {
@@ -56,14 +56,11 @@ public abstract class PrometheusTableDataInfo<T extends PrometheusDataInfoItem>
                                  final MetisDataFieldId iField) throws OceanusException {
         /* Switch on field id */
         final PrometheusTableDefinition myTableDef = getTableDef();
-        if (PrometheusDataResource.DATAINFO_TYPE.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getInfoTypeId());
-        } else if (PrometheusDataResource.DATAINFO_OWNER.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getOwnerId());
-        } else if (PrometheusDataResource.DATAINFO_VALUE.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getValueBytes());
-        } else {
-            super.setFieldValue(pItem, iField);
+        switch (iField) {
+            case PrometheusDataResource.DATAINFO_TYPE -> myTableDef.setIntegerValue(iField, pItem.getInfoTypeId());
+            case PrometheusDataResource.DATAINFO_OWNER -> myTableDef.setIntegerValue(iField, pItem.getOwnerId());
+            case PrometheusDataResource.DATAINFO_VALUE -> myTableDef.setBinaryValue(iField, pItem.getValueBytes());
+            case null, default -> super.setFieldValue(pItem, iField);
         }
     }
 

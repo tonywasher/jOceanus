@@ -16,19 +16,19 @@
  */
 package io.github.tonywasher.joceanus.moneywise.database;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusColumnDefinition;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusSortOrder;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableDataItem;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableDefinition;
-import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
 
 /**
  * TableEncrypted extension for ExchangeRate.

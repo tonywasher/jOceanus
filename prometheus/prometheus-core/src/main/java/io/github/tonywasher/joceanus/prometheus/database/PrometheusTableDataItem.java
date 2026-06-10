@@ -16,11 +16,11 @@
  */
 package io.github.tonywasher.joceanus.prometheus.database;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.data.MetisDataState;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionValues;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
@@ -34,6 +34,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 
 /**
@@ -41,11 +42,12 @@ import java.util.ListIterator;
  *
  * @param <T> the DataType
  */
-public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
+public abstract class PrometheusTableDataItem<T extends PrometheusDataItem>
+        implements PrometheusTableInstance<T> {
     /**
      * The Database control.
      */
-    private final PrometheusDataStore theDatabase;
+    private final PrometheusDatabaseControl theDatabase;
 
     /**
      * The Database connection.
@@ -83,7 +85,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
      * @param pDatabase the database control
      * @param pTable    the table name
      */
-    protected PrometheusTableDataItem(final PrometheusDataStore pDatabase,
+    protected PrometheusTableDataItem(final PrometheusDatabaseControl pDatabase,
                                       final String pTable) {
         /* Set the table */
         theDatabase = pDatabase;
@@ -96,7 +98,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
      *
      * @return the database
      */
-    protected PrometheusDataStore getDatabase() {
+    protected PrometheusDatabaseControl getDatabase() {
         return theDatabase;
     }
 
@@ -109,22 +111,22 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
         return theTable;
     }
 
-    /**
-     * Access the table name.
-     *
-     * @return the table name
-     */
-    protected String getTableName() {
+    @Override
+    public String getTableName() {
         return theTable.getTableName();
     }
 
-    /**
-     * Access the table definition.
-     *
-     * @return the table definition
-     */
-    protected PrometheusTableDefinition getDefinition() {
+    @Override
+    public PrometheusTableDefinition getDefinition() {
         return theTable;
+    }
+
+    @Override
+    public void resolveReferences(final List<PrometheusTableInstance<?>> pTables) {
+        /* Loop through the columns */
+        for (PrometheusColumnDefinition myDef : theTable.getColumns()) {
+            myDef.locateReference(pTables);
+        }
     }
 
     /**
@@ -132,7 +134,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
      *
      * @throws SQLException on error
      */
-    protected void closeStmt() throws SQLException {
+    public void closeStmt() throws SQLException {
         executeBatch();
         theTable.clearValues();
         if (theResults != null) {
@@ -274,12 +276,8 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
         theList = pList;
     }
 
-    /**
-     * Obtain the list of items.
-     *
-     * @return the list of items
-     */
-    protected PrometheusDataList<T> getList() {
+    @Override
+    public PrometheusDataList<T> getList() {
         return theList;
     }
 
@@ -323,8 +321,8 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
      * @param pData   the data
      * @throws OceanusException on error
      */
-    protected void loadItems(final TethysUIThreadStatusReport pReport,
-                             final PrometheusDataSet pData) throws OceanusException {
+    public void loadItems(final TethysUIThreadStatusReport pReport,
+                          final PrometheusDataSet pData) throws OceanusException {
         /* Declare the new stage */
         pReport.setNewStage(getTableName());
 
@@ -400,9 +398,9 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
      * @param pBatch  the batch control
      * @throws OceanusException on error
      */
-    protected void insertItems(final TethysUIThreadStatusReport pReport,
-                               final PrometheusDataSet pData,
-                               final PrometheusBatchControl pBatch) throws OceanusException {
+    public void insertItems(final TethysUIThreadStatusReport pReport,
+                            final PrometheusDataSet pData,
+                            final PrometheusBatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
         pReport.setNewStage("Inserting " + getTableName());
 
@@ -481,8 +479,8 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
      * @param pBatch  the batch control
      * @throws OceanusException on error
      */
-    protected void updateItems(final TethysUIThreadStatusReport pReport,
-                               final PrometheusBatchControl pBatch) throws OceanusException {
+    public void updateItems(final TethysUIThreadStatusReport pReport,
+                            final PrometheusBatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
         pReport.setNewStage("Updating " + getTableName());
 
@@ -585,8 +583,8 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
      * @param pBatch  the batch control
      * @throws OceanusException on error
      */
-    protected void deleteItems(final TethysUIThreadStatusReport pReport,
-                               final PrometheusBatchControl pBatch) throws OceanusException {
+    public void deleteItems(final TethysUIThreadStatusReport pReport,
+                            final PrometheusBatchControl pBatch) throws OceanusException {
         /* Declare the new stage */
         pReport.setNewStage("Deleting " + getTableName());
 
@@ -661,7 +659,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
      *
      * @throws OceanusException on error
      */
-    protected void createTable() throws OceanusException {
+    public void createTable() throws OceanusException {
         /* Protect the create */
         try {
             /* Execute the create index statement */
@@ -711,7 +709,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
      *
      * @throws OceanusException on error
      */
-    protected void dropTable() throws OceanusException {
+    public void dropTable() throws OceanusException {
         /* Protect the drop */
         try {
             /* If we should drop the index */
@@ -735,7 +733,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
      *
      * @throws OceanusException on error
      */
-    protected void purgeTable() throws OceanusException {
+    public void purgeTable() throws OceanusException {
         /* Protect the truncate */
         try {
             /* Execute the purge statement */

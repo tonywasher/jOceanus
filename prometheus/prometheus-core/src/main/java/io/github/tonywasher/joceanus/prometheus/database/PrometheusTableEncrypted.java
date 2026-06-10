@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.prometheus.database;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
@@ -36,7 +36,7 @@ public abstract class PrometheusTableEncrypted<T extends PrometheusEncryptedData
      * @param pDatabase the database control
      * @param pTabName  the table name
      */
-    protected PrometheusTableEncrypted(final PrometheusDataStore pDatabase,
+    protected PrometheusTableEncrypted(final PrometheusDatabaseControl pDatabase,
                                        final String pTabName) {
         super(pDatabase, pTabName);
         final PrometheusTableDefinition myTableDef = getTableDef();

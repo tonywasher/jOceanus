@@ -37,6 +37,7 @@ import io.github.tonywasher.joceanus.prometheus.database.PrometheusColumnDefinit
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusRateColumn;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusRatioColumn;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusReferenceColumn;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusSortOrder;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusStringColumn;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusUnitsColumn;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusLogicException;
@@ -53,7 +54,8 @@ import java.util.Map;
 /**
  * Database field definition class. Maps each dataType to a database field.
  */
-public class PrometheusTableDefinition {
+public class PrometheusTableDefinition
+        implements PrometheusTableControl {
     /**
      * The index prefix.
      */
@@ -92,7 +94,7 @@ public class PrometheusTableDefinition {
     /**
      * The Sort List.
      */
-    private final List<PrometheusColumnDefinition> theSortList;
+    private final List<PrometheusColumnControl> theSortList;
 
     /**
      * Are we sorting on a reference column.
@@ -102,7 +104,7 @@ public class PrometheusTableDefinition {
     /**
      * The array list for the columns.
      */
-    private final Map<MetisDataFieldId, PrometheusColumnDefinition> theMap;
+    private final Map<MetisDataFieldId, PrometheusColumnControl> theMap;
 
     /**
      * The prepared statement for the insert/update.
@@ -143,12 +145,8 @@ public class PrometheusTableDefinition {
         return theTableName;
     }
 
-    /**
-     * Obtain the column map.
-     *
-     * @return the map
-     */
-    protected Map<MetisDataFieldId, PrometheusColumnDefinition> getMap() {
+    @Override
+    public Map<MetisDataFieldId, PrometheusColumnControl> getMap() {
         return theMap;
     }
 
@@ -170,28 +168,18 @@ public class PrometheusTableDefinition {
         return theList;
     }
 
-    /**
-     * Sort List.
-     *
-     * @return the sort list
-     */
-    protected List<PrometheusColumnDefinition> getSortList() {
+    @Override
+    public List<PrometheusColumnControl> getSortList() {
         return theSortList;
     }
 
-    /**
-     * Obtain the driver.
-     *
-     * @return the driver
-     */
-    protected PrometheusJDBCDriver getDriver() {
+    @Override
+    public PrometheusJDBCDriver getDriver() {
         return theDriver;
     }
 
-    /**
-     * Note that we have a sort on reference.
-     */
-    protected void setSortOnReference() {
+    @Override
+    public void setSortOnReference() {
         sortOnReference = true;
     }
 
@@ -509,22 +497,6 @@ public class PrometheusTableDefinition {
     }
 
     /**
-     * Locate reference.
-     *
-     * @param pTables the list of defined tables
-     */
-    protected void resolveReferences(final List<PrometheusTableDataItem<?>> pTables) {
-        /* Create the iterator */
-        final Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
-
-        /* Loop through the columns */
-        while (myIterator.hasNext()) {
-            final PrometheusColumnDefinition myDef = myIterator.next();
-            myDef.locateReference(pTables);
-        }
-    }
-
-    /**
      * Load results.
      *
      * @param pResults the result set
@@ -643,12 +615,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not an integer column */
-        if (!(myCol instanceof PrometheusIntegerColumn)) {
+        if (!(myCol instanceof PrometheusIntegerColumn myIntCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not Integer type");
         }
 
         /* Return the value */
-        final PrometheusIntegerColumn myIntCol = (PrometheusIntegerColumn) myCol;
         return myIntCol.getValue();
     }
 
@@ -664,12 +635,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a long column */
-        if (!(myCol instanceof PrometheusLongColumn)) {
+        if (!(myCol instanceof PrometheusLongColumn myLongCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not Long type");
         }
 
         /* Return the value */
-        final PrometheusLongColumn myLongCol = (PrometheusLongColumn) myCol;
         return myLongCol.getValue();
     }
 
@@ -685,12 +655,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a date column */
-        if (!(myCol instanceof PrometheusDateColumn)) {
+        if (!(myCol instanceof PrometheusDateColumn myDateCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not Date type");
         }
 
         /* Return the value */
-        final PrometheusDateColumn myDateCol = (PrometheusDateColumn) myCol;
         return myDateCol.getValue();
     }
 
@@ -706,12 +675,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a boolean column */
-        if (!(myCol instanceof PrometheusBooleanColumn)) {
+        if (!(myCol instanceof PrometheusBooleanColumn myBoolCol)) {
             throw new PrometheusLogicException("Column " + getColumnError(myCol) + " is not Boolean type");
         }
 
         /* Return the value */
-        final PrometheusBooleanColumn myBoolCol = (PrometheusBooleanColumn) myCol;
         return myBoolCol.getValue();
     }
 
@@ -727,12 +695,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a string column */
-        if (!(myCol instanceof PrometheusStringColumn)) {
+        if (!(myCol instanceof PrometheusStringColumn myStringCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not String type");
         }
 
         /* Return the value */
-        final PrometheusStringColumn myStringCol = (PrometheusStringColumn) myCol;
         return myStringCol.getValue();
     }
 
@@ -750,12 +717,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a money column */
-        if (!(myCol instanceof PrometheusMoneyColumn)) {
+        if (!(myCol instanceof PrometheusMoneyColumn myMoneyCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not money type");
         }
 
         /* Access the value */
-        final PrometheusMoneyColumn myMoneyCol = (PrometheusMoneyColumn) myCol;
         return myMoneyCol.getValue(pFormatter);
     }
 
@@ -773,12 +739,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a price column */
-        if (!(myCol instanceof PrometheusPriceColumn)) {
+        if (!(myCol instanceof PrometheusPriceColumn myPriceCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not Price type");
         }
 
         /* Access the value */
-        final PrometheusPriceColumn myPriceCol = (PrometheusPriceColumn) myCol;
         return myPriceCol.getValue(pFormatter);
     }
 
@@ -796,12 +761,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a rate column */
-        if (!(myCol instanceof PrometheusRateColumn)) {
+        if (!(myCol instanceof PrometheusRateColumn myRateCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not Rate type");
         }
 
         /* Access the value */
-        final PrometheusRateColumn myRateCol = (PrometheusRateColumn) myCol;
         return myRateCol.getValue(pFormatter);
     }
 
@@ -819,12 +783,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a units column */
-        if (!(myCol instanceof PrometheusUnitsColumn)) {
+        if (!(myCol instanceof PrometheusUnitsColumn myUnitsCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not Units type");
         }
 
         /* Access the value */
-        final PrometheusUnitsColumn myUnitsCol = (PrometheusUnitsColumn) myCol;
         return myUnitsCol.getValue(pFormatter);
     }
 
@@ -842,12 +805,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a ratio column */
-        if (!(myCol instanceof PrometheusRatioColumn)) {
+        if (!(myCol instanceof PrometheusRatioColumn myRatioCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not Ratio type");
         }
 
         /* Access the value */
-        final PrometheusRatioColumn myRatioCol = (PrometheusRatioColumn) myCol;
         return myRatioCol.getValue(pFormatter);
     }
 
@@ -863,12 +825,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a string column */
-        if (!(myCol instanceof PrometheusBinaryColumn)) {
+        if (!(myCol instanceof PrometheusBinaryColumn myBinaryCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not Binary type");
         }
 
         /* Return the value */
-        final PrometheusBinaryColumn myBinaryCol = (PrometheusBinaryColumn) myCol;
         return myBinaryCol.getValue();
     }
 
@@ -885,12 +846,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not an integer column */
-        if (!(myCol instanceof PrometheusIntegerColumn)) {
+        if (!(myCol instanceof PrometheusIntegerColumn myIntCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not Integer type");
         }
 
         /* Set the value */
-        final PrometheusIntegerColumn myIntCol = (PrometheusIntegerColumn) myCol;
         myIntCol.setValue(pValue);
     }
 
@@ -907,12 +867,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a long column */
-        if (!(myCol instanceof PrometheusLongColumn)) {
+        if (!(myCol instanceof PrometheusLongColumn myLongCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not Long type");
         }
 
         /* Set the value */
-        final PrometheusLongColumn myLongCol = (PrometheusLongColumn) myCol;
         myLongCol.setValue(pValue);
     }
 
@@ -929,12 +888,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a boolean column */
-        if (!(myCol instanceof PrometheusBooleanColumn)) {
+        if (!(myCol instanceof PrometheusBooleanColumn myBoolCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not Boolean type");
         }
 
         /* Set the value */
-        final PrometheusBooleanColumn myBoolCol = (PrometheusBooleanColumn) myCol;
         myBoolCol.setValue(pValue);
     }
 
@@ -951,12 +909,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a Date column */
-        if (!(myCol instanceof PrometheusDateColumn)) {
+        if (!(myCol instanceof PrometheusDateColumn myDateCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not Date type");
         }
 
         /* Set the value */
-        final PrometheusDateColumn myDateCol = (PrometheusDateColumn) myCol;
         myDateCol.setValue(pValue);
     }
 
@@ -973,12 +930,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a string column */
-        if (!(myCol instanceof PrometheusStringColumn)) {
+        if (!(myCol instanceof PrometheusStringColumn myStringCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not String type");
         }
 
         /* Set the value */
-        final PrometheusStringColumn myStringCol = (PrometheusStringColumn) myCol;
         myStringCol.setValue(pValue);
     }
 
@@ -995,12 +951,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a binary column */
-        if (!(myCol instanceof PrometheusBinaryColumn)) {
+        if (!(myCol instanceof PrometheusBinaryColumn myBinaryCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not Binary type");
         }
 
         /* Set the value */
-        final PrometheusBinaryColumn myBinaryCol = (PrometheusBinaryColumn) myCol;
         myBinaryCol.setValue(pValue);
     }
 
@@ -1017,12 +972,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a money column */
-        if (!(myCol instanceof PrometheusMoneyColumn)) {
+        if (!(myCol instanceof PrometheusMoneyColumn myMoneyCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not Money type");
         }
 
         /* Set the value */
-        final PrometheusMoneyColumn myMoneyCol = (PrometheusMoneyColumn) myCol;
         myMoneyCol.setValue(pValue);
     }
 
@@ -1039,12 +993,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a rate column */
-        if (!(myCol instanceof PrometheusRateColumn)) {
+        if (!(myCol instanceof PrometheusRateColumn myRateCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not Rate type");
         }
 
         /* Set the value */
-        final PrometheusRateColumn myRateCol = (PrometheusRateColumn) myCol;
         myRateCol.setValue(pValue);
     }
 
@@ -1061,12 +1014,11 @@ public class PrometheusTableDefinition {
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a ratio column */
-        if (!(myCol instanceof PrometheusRatioColumn)) {
+        if (!(myCol instanceof PrometheusRatioColumn myRatioCol)) {
             throw new PrometheusLogicException(getColumnError(myCol) + " is not Ratio type");
         }
 
         /* Set the value */
-        final PrometheusRatioColumn myRatioCol = (PrometheusRatioColumn) myCol;
         myRatioCol.setValue(pValue);
     }
 
@@ -1079,7 +1031,7 @@ public class PrometheusTableDefinition {
      */
     private PrometheusColumnDefinition getColumnForId(final MetisDataFieldId pId) throws OceanusException {
         /* Access the definition */
-        final PrometheusColumnDefinition myDef = theMap.get(pId);
+        final PrometheusColumnDefinition myDef = (PrometheusColumnDefinition) theMap.get(pId);
 
         /* Check that the id is in range and present */
         if (myDef == null) {
@@ -1150,12 +1102,12 @@ public class PrometheusTableDefinition {
         myBuilder.append(" (");
 
         /* Create the iterator */
-        final Iterator<PrometheusColumnDefinition> myIterator = theSortList.iterator();
+        final Iterator<PrometheusColumnControl> myIterator = theSortList.iterator();
         boolean myFirst = true;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            final PrometheusColumnDefinition myDef = myIterator.next();
+            final PrometheusColumnDefinition myDef = (PrometheusColumnDefinition) myIterator.next();
             if (!myFirst) {
                 myBuilder.append(", ");
             }
@@ -1274,49 +1226,36 @@ public class PrometheusTableDefinition {
         return myBuilder.toString();
     }
 
-    /**
-     * Build the Join string for the list of columns.
-     *
-     * @param pChar   the character for this table
-     * @param pOffset the join offset
-     * @return the SQL string
-     */
-    protected String getJoinString(final char pChar,
-                                   final Integer pOffset) {
+    @Override
+    public String getJoinString(final char pChar,
+                                final Integer pOffset) {
         /* Loop through the columns */
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-        for (PrometheusColumnDefinition myDef : theSortList) {
+        for (PrometheusColumnControl myDef : theSortList) {
             /* Access next column and skip if not reference column */
-            if (!(myDef instanceof PrometheusReferenceColumn)) {
+            if (!(myDef instanceof PrometheusReferenceColumn myCol)) {
                 continue;
             }
 
             /* Add the join */
-            final PrometheusReferenceColumn myCol = (PrometheusReferenceColumn) myDef;
             myCol.buildJoinString(myBuilder, pChar, pOffset);
         }
 
         return myBuilder.toString();
     }
 
-    /**
-     * Build the Order string for the list of columns.
-     *
-     * @param pChar   the character for this table
-     * @param pOffset the join offset
-     * @return the SQL string
-     */
-    protected String getOrderString(final char pChar,
-                                    final Integer pOffset) {
+    @Override
+    public String getOrderString(final char pChar,
+                                 final Integer pOffset) {
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Create the iterator */
-        final Iterator<PrometheusColumnDefinition> myIterator = theSortList.iterator();
+        final Iterator<PrometheusColumnControl> myIterator = theSortList.iterator();
         boolean myFirst = true;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            final PrometheusColumnDefinition myDef = myIterator.next();
+            final PrometheusColumnDefinition myDef = (PrometheusColumnDefinition) myIterator.next();
             /* Handle secondary columns */
             if (!myFirst) {
                 myBuilder.append(", ");
@@ -1476,7 +1415,7 @@ public class PrometheusTableDefinition {
         myBuilder.append(" where ");
 
         /* Access the id definition */
-        final PrometheusColumnDefinition myId = theList.get(0);
+        final PrometheusColumnDefinition myId = theList.getFirst();
 
         /* Build the rest of the command */
         addQuoteIfAllowed(myBuilder);
@@ -1518,29 +1457,10 @@ public class PrometheusTableDefinition {
         return myBuilder.toString();
     }
 
-    /**
-     * Add quote if necessary.
-     *
-     * @param pBuilder the builder
-     */
-    void addQuoteIfAllowed(final StringBuilder pBuilder) {
+    @Override
+    public void addQuoteIfAllowed(final StringBuilder pBuilder) {
         if (theDriver.useQuotes()) {
             pBuilder.append(QUOTE_STRING);
         }
-    }
-
-    /**
-     * SortOrder.
-     */
-    public enum PrometheusSortOrder {
-        /**
-         * Ascending.
-         */
-        ASCENDING,
-
-        /**
-         * Descending.
-         */
-        DESCENDING;
     }
 }
