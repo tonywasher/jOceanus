@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.prometheus.ui;
 
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusUIEvent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
 import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButton;
@@ -32,46 +32,6 @@ import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
  */
 public class PrometheusItemEditActions
         implements OceanusEventProvider<PrometheusUIEvent>, TethysUIComponent {
-    /**
-     * ItemEditParent interface.
-     */
-    public interface PrometheusItemEditParent {
-        /**
-         * Is the item editable?
-         *
-         * @return true/false
-         */
-        boolean isEditable();
-
-        /**
-         * Is the item deletable?
-         *
-         * @return true/false
-         */
-        boolean isDeletable();
-
-        /**
-         * Does the parent have updates.
-         *
-         * @return true/false
-         */
-        boolean hasUpdates();
-
-        /**
-         * Does the parent have errors.
-         *
-         * @return true/false
-         */
-        boolean hasErrors();
-
-        /**
-         * Is the parent new.
-         *
-         * @return true/false
-         */
-        boolean isNew();
-    }
-
     /**
      * The panel.
      */
