@@ -52,25 +52,13 @@ public abstract class PrometheusSheetStaticData<T extends PrometheusStaticDataIt
     /**
      * Constructor for loading a spreadsheet.
      *
-     * @param pReader the spreadsheet reader
-     * @param pRange  the range to load
+     * @param pControl the spreadsheet control
+     * @param pRange   the range to load
      */
-    protected PrometheusSheetStaticData(final PrometheusSheetReader pReader,
+    protected PrometheusSheetStaticData(final PrometheusSheetControl pControl,
                                         final String pRange) {
         /* Call super constructor */
-        super(pReader, pRange);
-    }
-
-    /**
-     * Constructor for creating a spreadsheet.
-     *
-     * @param pWriter the spreadsheet writer
-     * @param pRange  the range to create
-     */
-    protected PrometheusSheetStaticData(final PrometheusSheetWriter pWriter,
-                                        final String pRange) {
-        /* Call super constructor */
-        super(pWriter, pRange);
+        super(pControl, pRange);
     }
 
     @Override

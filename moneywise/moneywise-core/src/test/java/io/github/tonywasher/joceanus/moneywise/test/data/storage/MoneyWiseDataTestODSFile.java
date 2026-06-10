@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.test.data.storage;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.sheets.MoneyWiseSheet;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
@@ -60,7 +60,7 @@ public class MoneyWiseDataTestODSFile {
         myManager.setDialogController(new MoneyWiseNullPasswordDialog());
 
         /* Create a new sheet */
-        final MoneyWiseSheet mySheet = new MoneyWiseSheet(pView.getGuiFactory());
+        final MoneyWiseSheet mySheet = new MoneyWiseSheet();
 
         /* Create the output xmlZipFile */
         final ByteArrayOutputStream myZipStream = new ByteArrayOutputStream();
