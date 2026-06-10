@@ -18,7 +18,6 @@ package io.github.tonywasher.joceanus.prometheus.service.sheet.hssf;
 
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCell;
-import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -32,11 +31,11 @@ import java.util.ListIterator;
  * Class representing a row within a sheet or a view.
  */
 public class PrometheusExcelHSSFRow
-        extends PrometheusSheetRow {
+        extends PrometheusExcelRow {
     /**
      * The Excel Sheet.
      */
-    private final PrometheusExcelHSSFSheet theExcelSheet;
+    private final PrometheusExcelSheet theExcelSheet;
 
     /**
      * The Excel Row.
@@ -51,7 +50,7 @@ public class PrometheusExcelHSSFRow
      * @param pRowIndex the RowIndex
      * @param pReadOnly is the row readOnly?
      */
-    PrometheusExcelHSSFRow(final PrometheusExcelHSSFSheet pSheet,
+    PrometheusExcelHSSFRow(final PrometheusExcelSheet pSheet,
                            final HSSFRow pRow,
                            final int pRowIndex,
                            final boolean pReadOnly) {
@@ -61,22 +60,12 @@ public class PrometheusExcelHSSFRow
         theExcelRow = pRow;
     }
 
-    /**
-     * evaluate the formula for a cell.
-     *
-     * @param pCell the cell to evaluate
-     * @return the calculated value
-     */
+    @Override
     CellValue evaluateFormula(final HSSFCell pCell) {
         return theExcelSheet.evaluateFormula(pCell);
     }
 
-    /**
-     * Format the cell value.
-     *
-     * @param pCell the cell to evaluate
-     * @return the formatted value
-     */
+    @Override
     String formatCellValue(final HSSFCell pCell) {
         return theExcelSheet.formatCellValue(pCell);
     }
@@ -87,7 +76,7 @@ public class PrometheusExcelHSSFRow
         final int myIndex = getRowIndex() + 1;
 
         /* Return the next row */
-        return theExcelSheet.getReadOnlyRowByIndex(myIndex);
+        return (PrometheusExcelHSSFRow) theExcelSheet.getReadOnlyRowByIndex(myIndex);
     }
 
     @Override
@@ -99,7 +88,7 @@ public class PrometheusExcelHSSFRow
         }
 
         /* Return the previous row */
-        return theExcelSheet.getReadOnlyRowByIndex(myIndex);
+        return (PrometheusExcelHSSFRow) theExcelSheet.getReadOnlyRowByIndex(myIndex);
     }
 
     @Override
@@ -165,40 +154,23 @@ public class PrometheusExcelHSSFRow
         return theExcelRow.getZeroHeight();
     }
 
-    /**
-     * Set cell style.
-     *
-     * @param pCell  the cell to style
-     * @param pValue the cell value
-     */
-    void setCellStyle(final PrometheusExcelHSSFCell pCell,
+    @Override
+    void setCellStyle(final PrometheusExcelCell pCell,
                       final Object pValue) {
         /* Pass through to the sheet */
         theExcelSheet.setCellStyle(pCell, pValue);
     }
 
-    /**
-     * Set alternate cell style.
-     *
-     * @param pCell  the cell to style
-     * @param pValue the cell value
-     */
-    void setAlternateCellStyle(final PrometheusExcelHSSFCell pCell,
+    @Override
+    void setAlternateCellStyle(final PrometheusExcelCell pCell,
                                final Object pValue) {
         /* Pass through to the sheet */
         theExcelSheet.setAlternateCellStyle(pCell, pValue);
     }
 
-    /**
-     * Parse object value.
-     *
-     * @param <T>     the value type
-     * @param pSource the source value
-     * @param pClass  the value type class
-     * @return the formatted value
-     */
-    protected <T> T parseValue(final String pSource,
-                               final Class<T> pClass) {
+    @Override
+    <T> T parseValue(final String pSource,
+                     final Class<T> pClass) {
         final OceanusDataFormatter myFormatter = theExcelSheet.getDataFormatter();
         return myFormatter.parseValue(pSource, pClass);
     }

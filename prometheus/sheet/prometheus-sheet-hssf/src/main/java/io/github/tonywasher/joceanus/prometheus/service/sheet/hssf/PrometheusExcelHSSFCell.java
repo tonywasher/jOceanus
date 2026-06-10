@@ -24,7 +24,6 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellAddress;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -40,11 +39,11 @@ import java.time.ZoneId;
  * Class representing a cell within a sheet or a view.
  */
 public class PrometheusExcelHSSFCell
-        extends PrometheusSheetCell {
+        extends PrometheusExcelCell {
     /**
      * The underlying row.
      */
-    private final PrometheusExcelHSSFRow theExcelRow;
+    private final PrometheusExcelRow theExcelRow;
 
     /**
      * The Excel Cell.
@@ -59,7 +58,7 @@ public class PrometheusExcelHSSFCell
      * @param pColIndex  the column index
      * @param pReadOnly  is the cell readOnly?
      */
-    PrometheusExcelHSSFCell(final PrometheusExcelHSSFRow pRow,
+    PrometheusExcelHSSFCell(final PrometheusExcelRow pRow,
                             final HSSFCell pExcelCell,
                             final int pColIndex,
                             final boolean pReadOnly) {
@@ -268,11 +267,7 @@ public class PrometheusExcelHSSFCell
         setDecimalValue(pValue);
     }
 
-    /**
-     * Set cell style.
-     *
-     * @param pStyle the style type to use
-     */
+    @Override
     void setCellStyle(final HSSFCellStyle pStyle) {
         theExcelCell.setCellStyle(pStyle);
     }

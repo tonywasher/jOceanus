@@ -29,7 +29,7 @@ public class PrometheusExcelHSSFColumn
     /**
      * The Excel Sheet.
      */
-    private final PrometheusExcelHSSFSheet theExcelSheet;
+    private final PrometheusExcelSheet theExcelSheet;
 
     /**
      * Constructor.
@@ -38,7 +38,7 @@ public class PrometheusExcelHSSFColumn
      * @param pIndex    the index
      * @param pReadOnly is the column readOnly?
      */
-    PrometheusExcelHSSFColumn(final PrometheusExcelHSSFSheet pSheet,
+    PrometheusExcelHSSFColumn(final PrometheusExcelSheet pSheet,
                               final int pIndex,
                               final boolean pReadOnly) {
         /* Store parameters */
@@ -52,7 +52,7 @@ public class PrometheusExcelHSSFColumn
         final int myIndex = getColumnIndex() + 1;
 
         /* Return the next column */
-        return theExcelSheet.getReadOnlyColumnByIndex(myIndex);
+        return (PrometheusExcelHSSFColumn) theExcelSheet.getReadOnlyColumnByIndex(myIndex);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class PrometheusExcelHSSFColumn
         }
 
         /* Return the previous column */
-        return theExcelSheet.getReadOnlyColumnByIndex(myIndex);
+        return (PrometheusExcelHSSFColumn) theExcelSheet.getReadOnlyColumnByIndex(myIndex);
     }
 
     @Override
