@@ -89,7 +89,7 @@ public class PrometheusThreadLoadBackup
         final TethysUIFileSelector myDialog = myToolkit.getGuiFactory().dialogFactory().newFileSelector();
         myDialog.setTitle(TASK_SELECTFILE);
         myDialog.setInitialDirectory(myBackupDir);
-        myDialog.setExtension(GordianUtilities.SECUREZIPFILE_EXT);
+        myDialog.addExtension(GordianUtilities.SECUREZIPFILE_EXT);
         final File myFile = myDialog.selectFile();
 
         /* If we did not select a file */

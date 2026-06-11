@@ -247,9 +247,6 @@ public abstract class PrometheusSheetReader
         /* register additional sheets */
         registerSheets();
 
-        /* Declare the number of stages */
-        theReport.setNumStages(theSheets.size() + 2);
-
         /* Note the stage */
         theReport.setNewStage("Loading");
 
@@ -284,11 +281,10 @@ public abstract class PrometheusSheetReader
         final OceanusProfile myTask = theReport.getActiveTask();
 
         /* Declare the number of stages */
-        theReport.setNumStages(theSheets.size() + 1);
+        theReport.setNumStages(theSheets.size());
 
         /* Loop through the sheets */
         for (PrometheusSheetDataItem<?> mySheet : theSheets) {
-            /* Access the next sheet */
             /* Load data for the sheet */
             myTask.startTask(mySheet.toString());
             mySheet.loadSpreadSheet();

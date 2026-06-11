@@ -29,11 +29,6 @@ public enum PrometheusSheetWorkBookType {
     EXCELXLS("xls"),
 
     /**
-     * Excel xlsx.
-     */
-    EXCELXLSX("xlsx"),
-
-    /**
      * Oasis.
      */
     OASIS("ods");
@@ -110,7 +105,6 @@ public enum PrometheusSheetWorkBookType {
     private static OceanusBundleId bundleIdForWorkBookType(final PrometheusSheetWorkBookType pType) {
         return switch (pType) {
             case EXCELXLS -> PrometheusSheetResource.WORKBOOK_EXCELXLS;
-            case EXCELXLSX -> PrometheusSheetResource.WORKBOOK_EXCELXLSX;
             case OASIS -> PrometheusSheetResource.WORKBOOK_OASIS;
             default -> throw new IllegalArgumentException();
         };

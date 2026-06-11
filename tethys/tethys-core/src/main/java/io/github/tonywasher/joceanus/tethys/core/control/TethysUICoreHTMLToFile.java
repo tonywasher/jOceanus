@@ -100,7 +100,7 @@ public class TethysUICoreHTMLToFile {
     private TethysUIFileSelector initFileSelector() {
         final TethysUIFileSelector myFileSelector = theFactory.dialogFactory().newFileSelector();
         myFileSelector.setUseSave(true);
-        myFileSelector.setExtension(".html");
+        myFileSelector.addExtension("html");
         return myFileSelector;
     }
 

@@ -32,6 +32,7 @@ import io.github.tonywasher.joceanus.prometheus.exc.PrometheusIOException;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetColumn;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetView;
@@ -156,13 +157,13 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
             /* Access the workbook */
             theWorkBook = theControl.getWorkBook();
 
+            /* Declare the new stage */
+            theReport.setNewStage(theRangeName);
+
             /* Access the view of the range */
             theActiveView = theWorkBook.getRangeView(theRangeName);
             if (theActiveView != null) {
                 final Iterator<PrometheusSheetRow> myIterator = theActiveView.rowIterator();
-
-                /* Declare the new stage */
-                theReport.setNewStage(theRangeName);
 
                 /* Determine count of rows */
                 final int myTotal = theActiveView.getRowCount();
@@ -293,7 +294,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void newRow() {
         /* Create the new row */
-        theActiveRow = theWorkSheet.getMutableRowByIndex(theCurrRow);
+        theActiveRow = (PrometheusSheetRow) theWorkSheet.getMutableRowByIndex(theCurrRow);
     }
 
     /**
@@ -363,13 +364,24 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
     }
 
     /**
+     * Obtain the column.
+     *
+     * @param pOffset the offset of the column
+     * @return the column
+     */
+    private PrometheusSheetColumn getMutableColumnByIndex(final int pOffset) {
+        /* Apply to the sheet */
+        return (PrometheusSheetColumn) theWorkSheet.getMutableColumnByIndex(pOffset);
+    }
+
+    /**
      * Set Hidden column.
      *
      * @param pOffset the offset of the column
      */
     protected void setHiddenColumn(final int pOffset) {
         /* Apply to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setHidden(true);
+        getMutableColumnByIndex(pOffset).setHidden(true);
     }
 
     /**
@@ -379,7 +391,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setDateColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.DATE);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.DATE);
     }
 
     /**
@@ -389,7 +401,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setStringColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.STRING);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.STRING);
     }
 
     /**
@@ -399,7 +411,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setMoneyColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.MONEY);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.MONEY);
     }
 
     /**
@@ -409,7 +421,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setPriceColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.PRICE);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.PRICE);
     }
 
     /**
@@ -419,7 +431,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setUnitsColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.UNITS);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.UNITS);
     }
 
     /**
@@ -429,7 +441,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setRateColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.RATE);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.RATE);
     }
 
     /**
@@ -439,7 +451,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setRatioColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.RATIO);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.RATIO);
     }
 
     /**
@@ -449,7 +461,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setBooleanColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.BOOLEAN);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.BOOLEAN);
     }
 
     /**
@@ -459,7 +471,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setIntegerColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.INTEGER);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.INTEGER);
     }
 
     /**

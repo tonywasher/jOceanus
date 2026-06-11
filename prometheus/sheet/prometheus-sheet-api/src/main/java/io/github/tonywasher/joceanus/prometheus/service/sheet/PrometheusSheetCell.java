@@ -31,9 +31,9 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
  */
 public abstract class PrometheusSheetCell {
     /**
-     * The underlying row.
+     * The underlying sheet.
      */
-    private final PrometheusSheetRow theRow;
+    private final PrometheusSheetSheetCtl theSheet;
 
     /**
      * The position of the cell.
@@ -48,16 +48,18 @@ public abstract class PrometheusSheetCell {
     /**
      * Constructor.
      *
-     * @param pRow      the row for the cell
+     * @param pSheet    the sheet for the cell
+     * @param pRowIndex the row index
      * @param pColIndex the column index
      * @param pReadOnly is the cell readOnly?
      */
-    protected PrometheusSheetCell(final PrometheusSheetRow pRow,
+    protected PrometheusSheetCell(final PrometheusSheetSheetCtl pSheet,
+                                  final int pRowIndex,
                                   final int pColIndex,
                                   final boolean pReadOnly) {
         /* Store parameters */
-        theRow = pRow;
-        thePosition = new PrometheusSheetCellPosition(pColIndex, pRow.getRowIndex());
+        theSheet = pSheet;
+        thePosition = new PrometheusSheetCellPosition(pColIndex, pRowIndex);
         isReadOnly = pReadOnly;
     }
 
@@ -67,7 +69,7 @@ public abstract class PrometheusSheetCell {
      * @return the underlying sheet
      */
     public PrometheusSheetSheetCtl getSheet() {
-        return theRow.getSheet();
+        return theSheet;
     }
 
     /**

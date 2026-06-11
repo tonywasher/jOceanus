@@ -129,7 +129,7 @@ public class PrometheusThreadCreateXMLFile
             }
 
             /* Set the standard backup name */
-            myFile = new File(myName.toString() + (isSecure
+            myFile = new File(myName.toString() + '.' + (isSecure
                     ? GordianUtilities.SECUREZIPFILE_EXT
                     : GordianUtilities.ZIPFILE_EXT));
 

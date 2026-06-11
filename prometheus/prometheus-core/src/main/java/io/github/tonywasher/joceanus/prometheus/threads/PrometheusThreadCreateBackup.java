@@ -116,7 +116,7 @@ public class PrometheusThreadCreateBackup
             }
 
             /* Set the standard backup name */
-            myFile = new File(myName + GordianUtilities.SECUREZIPFILE_EXT);
+            myFile = new File(myName.toString() + '.' + GordianUtilities.SECUREZIPFILE_EXT);
 
             /* Create backup */
             final PrometheusSpreadSheet mySheet = theControl.getSpreadSheet();

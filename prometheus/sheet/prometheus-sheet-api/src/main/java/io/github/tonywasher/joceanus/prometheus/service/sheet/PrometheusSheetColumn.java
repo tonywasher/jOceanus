@@ -21,7 +21,8 @@ package io.github.tonywasher.joceanus.prometheus.service.sheet;
  *
  * @author Tony Washer
  */
-public abstract class PrometheusSheetColumn {
+public abstract class PrometheusSheetColumn
+        implements PrometheusSheetColumnCtl {
     /**
      * The underlying sheet.
      */

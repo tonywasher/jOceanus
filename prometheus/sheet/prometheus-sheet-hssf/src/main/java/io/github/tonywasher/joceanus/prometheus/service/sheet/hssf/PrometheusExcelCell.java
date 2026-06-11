@@ -34,7 +34,7 @@ public abstract class PrometheusExcelCell
                         final int pColIndex,
                         final boolean pReadOnly) {
         /* Store parameters */
-        super(pRow, pColIndex, pReadOnly);
+        super(pRow.getSheet(), pRow.getRowIndex(), pColIndex, pReadOnly);
     }
 
     /**

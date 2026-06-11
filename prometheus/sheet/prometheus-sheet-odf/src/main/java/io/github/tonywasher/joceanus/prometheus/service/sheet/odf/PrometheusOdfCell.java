@@ -49,7 +49,7 @@ public class PrometheusOdfCell
                       final int pIndex,
                       final boolean pReadOnly) {
         /* Store parameters */
-        super(pRow, pIndex, pReadOnly);
+        super(pRow.getSheet(), pRow.getRowIndex(), pIndex, pReadOnly);
         theStore = pStore;
     }
 

@@ -21,7 +21,8 @@ import java.util.ListIterator;
 /**
  * Class representing a row within a sheet or a view.
  */
-public abstract class PrometheusSheetRow {
+public abstract class PrometheusSheetRow
+        implements PrometheusSheetRowCtl {
     /**
      * The underlying sheet.
      */

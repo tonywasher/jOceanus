@@ -80,8 +80,8 @@ public interface PrometheusExcelWorkBook
      * @param pRange the range to declare
      * @throws OceanusException on error
      */
-    public void declareRange(String pName,
-                             AreaReference pRange) throws OceanusException;
+    void declareRange(String pName,
+                      AreaReference pRange) throws OceanusException;
 
     /**
      * Apply Data Validation.
@@ -90,9 +90,9 @@ public interface PrometheusExcelWorkBook
      * @param pCells      the Cells to apply validation to
      * @param pValidRange the name of the validation range
      */
-    public void applyDataValidation(HSSFSheet pSheet,
-                                    CellRangeAddressList pCells,
-                                    String pValidRange);
+    void applyDataValidation(HSSFSheet pSheet,
+                             CellRangeAddressList pCells,
+                             String pValidRange);
 
     /**
      * Apply Data Filter.

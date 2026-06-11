@@ -57,7 +57,7 @@ public interface PrometheusSheetSheetCtl {
      * @param pRowIndex the requested row index
      * @return the requested row.
      */
-    PrometheusSheetRow getReadOnlyRowByIndex(int pRowIndex);
+    PrometheusSheetRowCtl getReadOnlyRowByIndex(int pRowIndex);
 
     /**
      * Obtain the row at required index within the sheet, create it if it does not exist.
@@ -65,7 +65,7 @@ public interface PrometheusSheetSheetCtl {
      * @param pRowIndex the requested row index
      * @return the requested row.
      */
-    PrometheusSheetRow getMutableRowByIndex(int pRowIndex);
+    PrometheusSheetRowCtl getMutableRowByIndex(int pRowIndex);
 
     /**
      * Obtain the column by index.
@@ -73,7 +73,7 @@ public interface PrometheusSheetSheetCtl {
      * @param pColIndex the column index
      * @return the column
      */
-    PrometheusSheetColumn getReadOnlyColumnByIndex(int pColIndex);
+    PrometheusSheetColumnCtl getReadOnlyColumnByIndex(int pColIndex);
 
     /**
      * Obtain the column by index, creating column if it does not exist.
@@ -81,7 +81,7 @@ public interface PrometheusSheetSheetCtl {
      * @param pColIndex the column index
      * @return the column
      */
-    PrometheusSheetColumn getMutableColumnByIndex(int pColIndex);
+    PrometheusSheetColumnCtl getMutableColumnByIndex(int pColIndex);
 
     /**
      * Name a range.

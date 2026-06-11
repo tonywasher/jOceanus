@@ -22,6 +22,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * JavaFX File Selector.
@@ -70,9 +71,10 @@ public class TethysUIFXFileSelector
 
         /* Set the extension filter list */
         theChooser.getExtensionFilters().clear();
-        final String myExt = getExtension();
-        if (myExt != null) {
-            theChooser.getExtensionFilters().add(new ExtensionFilter("Filter", myExt));
+        final List<String> myExt = getExtensions();
+        if (!myExt.isEmpty()) {
+            final String[] myExtArray = myExt.stream().map(x -> "*." + x).toArray(String[]::new);
+            theChooser.getExtensionFilters().add(new ExtensionFilter(getFilterName(), myExtArray));
         }
 
         /* Show the dialog */
