@@ -25,12 +25,7 @@ public abstract class PrometheusSheetRow {
     /**
      * The underlying sheet.
      */
-    private final PrometheusSheetSheet theSheet;
-
-    /**
-     * The underlying view.
-     */
-    private final PrometheusSheetView theView;
+    private final PrometheusSheetSheetCtl theSheet;
 
     /**
      * The index of this row.
@@ -49,12 +44,11 @@ public abstract class PrometheusSheetRow {
      * @param pRowIndex the Row index
      * @param pReadOnly is the row readOnly?
      */
-    protected PrometheusSheetRow(final PrometheusSheetSheet pSheet,
+    protected PrometheusSheetRow(final PrometheusSheetSheetCtl pSheet,
                                  final int pRowIndex,
                                  final boolean pReadOnly) {
         /* Store parameters */
         theSheet = pSheet;
-        theView = null;
         theRowIndex = pRowIndex;
         isReadOnly = pReadOnly;
     }
@@ -65,37 +59,27 @@ public abstract class PrometheusSheetRow {
      * @param pView     the view for the row
      * @param pRowIndex the Row index
      */
-    protected PrometheusSheetRow(final PrometheusSheetView pView,
+    protected PrometheusSheetRow(final PrometheusSheetViewCtl pView,
                                  final int pRowIndex) {
         /* Store parameters */
         theSheet = pView.getSheet();
-        theView = pView;
         theRowIndex = pRowIndex;
         isReadOnly = true;
     }
 
     /**
-     * Obtain the underlying sheet.
+     * Obtain the sheet.
      *
-     * @return the underlying sheet
+     * @return the sheet
      */
-    public PrometheusSheetSheet getSheet() {
+    public PrometheusSheetSheetCtl getSheet() {
         return theSheet;
-    }
-
-    /**
-     * Obtain the underlying view.
-     *
-     * @return the underlying view
-     */
-    public PrometheusSheetView getView() {
-        return theView;
     }
 
     /**
      * Obtain the row index.
      *
-     * @return row index
+     * @return the row index
      */
     public int getRowIndex() {
         return theRowIndex;

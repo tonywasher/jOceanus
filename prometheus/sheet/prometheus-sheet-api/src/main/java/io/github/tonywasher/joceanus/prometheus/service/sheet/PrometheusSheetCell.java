@@ -36,11 +36,6 @@ public abstract class PrometheusSheetCell {
     private final PrometheusSheetRow theRow;
 
     /**
-     * The underlying view.
-     */
-    private final PrometheusSheetView theView;
-
-    /**
      * The position of the cell.
      */
     private final PrometheusSheetCellPosition thePosition;
@@ -62,7 +57,6 @@ public abstract class PrometheusSheetCell {
                                   final boolean pReadOnly) {
         /* Store parameters */
         theRow = pRow;
-        theView = pRow.getView();
         thePosition = new PrometheusSheetCellPosition(pColIndex, pRow.getRowIndex());
         isReadOnly = pReadOnly;
     }
@@ -72,26 +66,8 @@ public abstract class PrometheusSheetCell {
      *
      * @return the underlying sheet
      */
-    public PrometheusSheetSheet getSheet() {
+    public PrometheusSheetSheetCtl getSheet() {
         return theRow.getSheet();
-    }
-
-    /**
-     * Obtain the underlying row.
-     *
-     * @return the underlying row
-     */
-    public PrometheusSheetRow getRow() {
-        return theRow;
-    }
-
-    /**
-     * Obtain the underlying view.
-     *
-     * @return the underlying view
-     */
-    public PrometheusSheetView getView() {
-        return theView;
     }
 
     /**

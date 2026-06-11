@@ -19,8 +19,6 @@ package io.github.tonywasher.joceanus.prometheus.service.sheet;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -42,11 +40,6 @@ public enum PrometheusSheetResource
      * WorkBook Oasis.
      */
     WORKBOOK_OASIS("workBook.OASIS");
-
-    /**
-     * The WorkBook Map.
-     */
-    private static final Map<PrometheusSheetWorkBookType, OceanusBundleId> WORKBOOK_MAP = buildWorkBookMap();
 
     /**
      * The Resource Loader.
@@ -93,29 +86,5 @@ public enum PrometheusSheetResource
 
         /* return the value */
         return theValue;
-    }
-
-    /**
-     * Build workBook map.
-     *
-     * @return the map
-     */
-    private static Map<PrometheusSheetWorkBookType, OceanusBundleId> buildWorkBookMap() {
-        /* Create the map and return it */
-        final Map<PrometheusSheetWorkBookType, OceanusBundleId> myMap = new EnumMap<>(PrometheusSheetWorkBookType.class);
-        myMap.put(PrometheusSheetWorkBookType.EXCELXLS, WORKBOOK_EXCELXLS);
-        myMap.put(PrometheusSheetWorkBookType.EXCELXLSX, WORKBOOK_EXCELXLSX);
-        myMap.put(PrometheusSheetWorkBookType.OASIS, WORKBOOK_OASIS);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for workBookType.
-     *
-     * @param pType the Type
-     * @return the resource key
-     */
-    protected static OceanusBundleId getKeyForWorkBook(final PrometheusSheetWorkBookType pType) {
-        return OceanusBundleLoader.getKeyForEnum(WORKBOOK_MAP, pType);
     }
 }

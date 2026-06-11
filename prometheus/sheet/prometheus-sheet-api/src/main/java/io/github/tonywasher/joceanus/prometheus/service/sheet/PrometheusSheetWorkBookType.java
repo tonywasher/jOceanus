@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.prometheus.service.sheet;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * WorkBook types.
@@ -93,10 +94,25 @@ public enum PrometheusSheetWorkBookType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = PrometheusSheetResource.getKeyForWorkBook(this).getValue();
+            theName = bundleIdForWorkBookType(this).getValue();
         }
 
         /* return the name */
         return theName;
+    }
+
+    /**
+     * Obtain the resource bundleId for the workBookType.
+     *
+     * @param pType the type
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForWorkBookType(final PrometheusSheetWorkBookType pType) {
+        return switch (pType) {
+            case EXCELXLS -> PrometheusSheetResource.WORKBOOK_EXCELXLS;
+            case EXCELXLSX -> PrometheusSheetResource.WORKBOOK_EXCELXLSX;
+            case OASIS -> PrometheusSheetResource.WORKBOOK_OASIS;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

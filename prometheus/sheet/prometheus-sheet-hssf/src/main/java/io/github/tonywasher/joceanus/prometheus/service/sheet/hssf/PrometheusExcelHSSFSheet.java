@@ -122,8 +122,8 @@ public class PrometheusExcelHSSFSheet
     }
 
     @Override
-    protected ListIterator<PrometheusSheetRow> iteratorForRange(final int pFirstIndex,
-                                                                final int pLastIndex) {
+    public ListIterator<PrometheusSheetRow> iteratorForRange(final int pFirstIndex,
+                                                             final int pLastIndex) {
         /* Determine bounds for search */
         final int myLower = Math.max(pFirstIndex, theExcelSheet.getFirstRowNum());
         final int myUpper = Math.min(pLastIndex, theExcelSheet.getLastRowNum());

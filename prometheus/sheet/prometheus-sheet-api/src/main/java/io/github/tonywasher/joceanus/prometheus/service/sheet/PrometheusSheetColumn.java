@@ -25,7 +25,7 @@ public abstract class PrometheusSheetColumn {
     /**
      * The underlying sheet.
      */
-    private final PrometheusSheetSheet theSheet;
+    private final PrometheusSheetSheetCtl theSheet;
 
     /**
      * The index of this column.
@@ -44,7 +44,7 @@ public abstract class PrometheusSheetColumn {
      * @param pIndex    the index
      * @param pReadOnly is the column readOnly?
      */
-    protected PrometheusSheetColumn(final PrometheusSheetSheet pSheet,
+    protected PrometheusSheetColumn(final PrometheusSheetSheetCtl pSheet,
                                     final int pIndex,
                                     final boolean pReadOnly) {
         /* Store parameters */
@@ -58,7 +58,7 @@ public abstract class PrometheusSheetColumn {
      *
      * @return the underlying sheet
      */
-    public PrometheusSheetSheet getSheet() {
+    public PrometheusSheetSheetCtl getSheet() {
         return theSheet;
     }
 
