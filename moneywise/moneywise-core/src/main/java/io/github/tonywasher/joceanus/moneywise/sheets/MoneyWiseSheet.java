@@ -20,7 +20,6 @@ import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPassw
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSpreadSheet;
-import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
@@ -31,29 +30,22 @@ import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusRepor
 public class MoneyWiseSheet
         extends PrometheusSpreadSheet {
     /**
-     * The Data file name.
-     */
-    private final TethysUIFactory<?> theGuiFactory;
-
-    /**
      * Constructor.
-     *
-     * @param pFactory the factory
      */
-    public MoneyWiseSheet(final TethysUIFactory<?> pFactory) {
-        theGuiFactory = pFactory;
+    public MoneyWiseSheet() {
+        /* NoOp */
     }
 
     @Override
     protected PrometheusSheetReader getSheetReader(final TethysUIThreadStatusReport pReport,
                                                    final PrometheusSecurityPasswordManager pPasswordMgr) {
         /* Create a MoneyWise Reader object and return it */
-        return new MoneyWiseReader(theGuiFactory, pReport, pPasswordMgr);
+        return new MoneyWiseReader(pReport, pPasswordMgr);
     }
 
     @Override
     protected PrometheusSheetWriter getSheetWriter(final TethysUIThreadStatusReport pReport) {
         /* Create a MoneyWise Writer object and return it */
-        return new MoneyWiseWriter(theGuiFactory, pReport);
+        return new MoneyWiseWriter(pReport);
     }
 }

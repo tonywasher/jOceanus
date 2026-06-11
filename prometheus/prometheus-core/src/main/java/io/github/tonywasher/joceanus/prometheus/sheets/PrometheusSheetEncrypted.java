@@ -35,27 +35,15 @@ public abstract class PrometheusSheetEncrypted<T extends PrometheusEncryptedData
     protected static final int COL_KEYSETID = COL_ID + 1;
 
     /**
-     * Constructor for a load operation.
+     * Constructor.
      *
-     * @param pReader the spreadsheet reader
-     * @param pRange  the range to load
+     * @param pControl the spreadsheet control
+     * @param pRange   the range to load/create
      */
-    protected PrometheusSheetEncrypted(final PrometheusSheetReader pReader,
+    protected PrometheusSheetEncrypted(final PrometheusSheetControl pControl,
                                        final String pRange) {
         /* Pass call on */
-        super(pReader, pRange);
-    }
-
-    /**
-     * Constructor for a write operation.
-     *
-     * @param pWriter the spreadsheet writer
-     * @param pRange  the range to create
-     */
-    protected PrometheusSheetEncrypted(final PrometheusSheetWriter pWriter,
-                                       final String pRange) {
-        /* Pass call on */
-        super(pWriter, pRange);
+        super(pControl, pRange);
     }
 
     @Override

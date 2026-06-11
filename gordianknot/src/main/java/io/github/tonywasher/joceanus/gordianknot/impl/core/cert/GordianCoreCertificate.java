@@ -57,11 +57,11 @@ import org.bouncycastle.asn1.x509.V3TBSCertificateGenerator;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.spec.X509EncodedKeySpec;
-import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Certificate implementation.
@@ -327,10 +327,11 @@ public class GordianCoreCertificate
     @Override
     public boolean isValidOnDate(final LocalDate pDate) {
         /* Access the date */
+        final ZoneId myZone = GordianBaseData.CLOCK.getZone();
         final Instant myStart = theTbsCertificate.getStartDate().getDate().toInstant();
         final Instant myEnd = theTbsCertificate.getEndDate().getDate().toInstant();
-        return !pDate.isBefore(myStart.atZone(ZoneId.systemDefault()).toLocalDate())
-                && !pDate.isAfter(myEnd.atZone(ZoneId.systemDefault()).toLocalDate());
+        return !pDate.isBefore(myStart.atZone(myZone).toLocalDate())
+                && !pDate.isAfter(myEnd.atZone(myZone).toLocalDate());
     }
 
     /**
@@ -629,6 +630,7 @@ public class GordianCoreCertificate
         /* Create the startDate and endDate for the certificate */
         final LocalDate myStart = LocalDate.now(GordianBaseData.CLOCK);
         final LocalDate myEnd = myStart.plusYears(1);
+        final ZoneId myZone = GordianBaseData.CLOCK.getZone();
 
         /* Obtain the publicKey Info */
         final byte[] myPublicKeyEncoded = getPublicKeyEncoded();
@@ -638,8 +640,8 @@ public class GordianCoreCertificate
         final V3TBSCertificateGenerator myCertBuilder = new V3TBSCertificateGenerator();
         myCertBuilder.setSubject(pSubject);
         myCertBuilder.setIssuer(myIssuer);
-        myCertBuilder.setStartDate(new Time(Date.valueOf(myStart)));
-        myCertBuilder.setEndDate(new Time(Date.valueOf(myEnd)));
+        myCertBuilder.setStartDate(new Time(Date.from(myStart.atStartOfDay().atZone(myZone).toInstant())));
+        myCertBuilder.setEndDate(new Time(Date.from(myEnd.atStartOfDay().atZone(myZone).toInstant())));
         myCertBuilder.setSerialNumber(new ASN1Integer(mySerialNo));
         myCertBuilder.setSubjectPublicKeyInfo(myPublicKeyInfo);
         myCertBuilder.setSignature(theSigAlgId);

@@ -20,8 +20,6 @@ import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceResource;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -99,11 +97,6 @@ public enum PrometheusDBResource implements OceanusBundleId {
     DBPREF_PASS("dbpref.password");
 
     /**
-     * The Driver Map.
-     */
-    private static final Map<PrometheusJDBCDriver, OceanusBundleId> DRIVER_MAP = buildDriverMap();
-
-    /**
      * The Resource Loader.
      */
     private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusPreferenceResource.class.getCanonicalName(),
@@ -148,31 +141,5 @@ public enum PrometheusDBResource implements OceanusBundleId {
 
         /* return the value */
         return theValue;
-    }
-
-    /**
-     * Build driver map.
-     *
-     * @return the map
-     */
-    private static Map<PrometheusJDBCDriver, OceanusBundleId> buildDriverMap() {
-        /* Create the map and return it */
-        final Map<PrometheusJDBCDriver, OceanusBundleId> myMap = new EnumMap<>(PrometheusJDBCDriver.class);
-        myMap.put(PrometheusJDBCDriver.SQLSERVER, DRIVER_SQLSERVER);
-        myMap.put(PrometheusJDBCDriver.POSTGRESQL, DRIVER_POSTGRESQL);
-        myMap.put(PrometheusJDBCDriver.MYSQL, DRIVER_MYSQL);
-        myMap.put(PrometheusJDBCDriver.MARIADB, DRIVER_MARIADB);
-        myMap.put(PrometheusJDBCDriver.H2, DRIVER_H2);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for DBDriver.
-     *
-     * @param pValue the Value
-     * @return the resource key
-     */
-    static OceanusBundleId getKeyForDriver(final PrometheusJDBCDriver pValue) {
-        return OceanusBundleLoader.getKeyForEnum(DRIVER_MAP, pValue);
     }
 }

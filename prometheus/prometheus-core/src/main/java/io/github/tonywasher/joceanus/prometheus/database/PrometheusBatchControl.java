@@ -16,14 +16,15 @@
  */
 package io.github.tonywasher.joceanus.prometheus.database;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataState;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-
-import io.github.tonywasher.joceanus.metis.data.MetisDataState;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
+import java.util.Objects;
 
 /**
  * Batch control class. This controls updating data lists after the commit of the batch.
@@ -42,12 +43,12 @@ public class PrometheusBatchControl {
     /**
      * The List of tables associated with this batch.
      */
-    private List<PrometheusBatchTable> theList;
+    private final List<PrometheusBatchTable> theList;
 
     /**
      * The Currently active Database table.
      */
-    private PrometheusTableDataItem<?> theCurrTable;
+    private PrometheusTableInstance<?> theCurrTable;
 
     /**
      * The Currently active Mode.
@@ -97,7 +98,7 @@ public class PrometheusBatchControl {
      * @param pTable the Table being operated on
      * @param pMode  the Mode that is in operation
      */
-    protected void setCurrentTable(final PrometheusTableDataItem<?> pTable,
+    protected void setCurrentTable(final PrometheusTableInstance<?> pTable,
                                    final MetisDataState pMode) {
         /* Store details */
         theCurrTable = pTable;
@@ -128,21 +129,15 @@ public class PrometheusBatchControl {
      */
     protected void commitItems() {
         /* Access iterator for the list */
-        final Iterator<PrometheusBatchTable> myIterator = theList.iterator();
 
         /* Loop through the items */
-        while (myIterator.hasNext()) {
+        for (PrometheusBatchTable myTable : theList) {
             /* Access the next entry */
-            final PrometheusBatchTable myTable = myIterator.next();
-
             /* Commit batch items in the table */
-            switch (myTable.theState) {
-                case DELETED:
-                    myTable.commitDeleteBatch();
-                    break;
-                default:
-                    myTable.commitBatch();
-                    break;
+            if (Objects.requireNonNull(myTable.theState) == MetisDataState.DELETED) {
+                myTable.commitDeleteBatch();
+            } else {
+                myTable.commitBatch();
             }
         }
 
@@ -159,7 +154,7 @@ public class PrometheusBatchControl {
         /**
          * The table that is being controlled.
          */
-        private final PrometheusTableDataItem<?> theTable;
+        private final PrometheusTableInstance<?> theTable;
 
         /**
          * The State of the table.
@@ -186,13 +181,9 @@ public class PrometheusBatchControl {
             while (myIterator.hasNext()) {
                 final PrometheusDataItem myCurr = (PrometheusDataItem) myIterator.next();
 
-                /* Ignore items that are not this type */
-                if (myCurr.getState() != theState) {
-                    continue;
-                }
-
-                /* Commit the item and break loop if required */
-                if (commitItem(myCurr)) {
+                /* Ignore items that are not this type, otherwise commit and break if required */
+                if (myCurr.getState() == theState
+                        && commitItem(myCurr)) {
                     break;
                 }
             }
@@ -210,15 +201,11 @@ public class PrometheusBatchControl {
             while (myIterator.hasPrevious()) {
                 final PrometheusDataItem myCurr = (PrometheusDataItem) myIterator.previous();
 
-                /* Ignore items that are not this type */
+                /* Ignore items that are not this type, otherwise commit and break if necessary */
                 final MetisDataState myState = myCurr.getState();
-                if ((myState != MetisDataState.DELETED)
-                        && (myState != MetisDataState.DELNEW)) {
-                    continue;
-                }
-
-                /* Commit the item and break loop if required */
-                if (commitItem(myCurr)) {
+                if ((myState == MetisDataState.DELETED
+                        || myState == MetisDataState.DELNEW)
+                        && commitItem(myCurr)) {
                     break;
                 }
             }

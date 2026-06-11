@@ -17,81 +17,23 @@
 package io.github.tonywasher.joceanus.prometheus.service.sheet;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-
-import java.io.OutputStream;
 
 /**
  * Sheet Service interface.
  */
-public interface PrometheusSheetWorkBook {
-    /**
-     * Is the WorkBook readOnly?
-     *
-     * @return true/false
-     */
-    boolean isReadOnly();
-
-    /**
-     * Save the workBook to output stream.
-     *
-     * @param pOutput the output stream
-     * @throws OceanusException on error
-     */
-    void saveToStream(OutputStream pOutput) throws OceanusException;
-
-    /**
-     * Create a new Sheet with the given name.
-     *
-     * @param pName the name of the new sheet
-     * @return the new sheet
-     * @throws OceanusException on error
-     */
+public interface PrometheusSheetWorkBook
+        extends PrometheusSheetWorkBookCtl {
+    @Override
     PrometheusSheetSheet newSheet(String pName) throws OceanusException;
 
-    /**
-     * Create a new Sheet with the given name.
-     *
-     * @param pName    the name of the new sheet
-     * @param pNumRows the number of rows to allocate
-     * @param pNumCols the number of columns to allocate
-     * @return the new sheet
-     * @throws OceanusException on error
-     */
+    @Override
     PrometheusSheetSheet newSheet(String pName,
                                   int pNumRows,
                                   int pNumCols) throws OceanusException;
 
-    /**
-     * Access an existing Sheet with the given name.
-     *
-     * @param pName the name of the sheet
-     * @return the sheet (or null if no such sheet)
-     * @throws OceanusException on error
-     */
+    @Override
     PrometheusSheetSheet getSheet(String pName) throws OceanusException;
 
-    /**
-     * Obtain a view of the named range.
-     *
-     * @param pName the name of the range
-     * @return the view of the range
-     * @throws OceanusException on error
-     */
+    @Override
     PrometheusSheetView getRangeView(String pName) throws OceanusException;
-
-    /**
-     * Create data formatter.
-     *
-     * @return the new formatter
-     */
-    default OceanusDataFormatter createFormatter() {
-        /* Allocate the formatter and set date format */
-        final OceanusDataFormatter myFormatter = new OceanusDataFormatter();
-        myFormatter.setFormat(PrometheusSheetFormats.OASIS_DATE);
-        myFormatter.setAccountingWidth(PrometheusSheetFormats.ACCOUNTING_WIDTH);
-
-        /* return the formatter */
-        return myFormatter;
-    }
 }

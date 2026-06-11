@@ -19,6 +19,8 @@ package io.github.tonywasher.joceanus.tethys.core.dialog;
 import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIFileSelector;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * File Selector.
@@ -41,9 +43,14 @@ public abstract class TethysUICoreFileSelector
     private String theInitialFileName;
 
     /**
+     * The filter name.
+     */
+    private String theFilterName = "Filter";
+
+    /**
      * The extension.
      */
-    private String theExtension;
+    private final List<String> theExtensions;
 
     /**
      * The useSave.
@@ -54,6 +61,7 @@ public abstract class TethysUICoreFileSelector
      * Constructor.
      */
     protected TethysUICoreFileSelector() {
+        theExtensions = new ArrayList<>();
     }
 
     /**
@@ -84,12 +92,21 @@ public abstract class TethysUICoreFileSelector
     }
 
     /**
-     * Obtain the extension.
+     * Obtain the filter name.
      *
-     * @return the extension
+     * @return the extensions
      */
-    protected String getExtension() {
-        return theExtension;
+    protected String getFilterName() {
+        return theFilterName;
+    }
+
+    /**
+     * Obtain the extensions.
+     *
+     * @return the extensions
+     */
+    protected List<String> getExtensions() {
+        return theExtensions;
     }
 
     /**
@@ -117,6 +134,11 @@ public abstract class TethysUICoreFileSelector
     }
 
     @Override
+    public void setFilterName(final String pName) {
+        theFilterName = pName;
+    }
+
+    @Override
     public void setInitialFile(final File pFile) {
         theInitialDir = pFile == null
                 ? null
@@ -127,8 +149,8 @@ public abstract class TethysUICoreFileSelector
     }
 
     @Override
-    public void setExtension(final String pExt) {
-        theExtension = pExt;
+    public void addExtension(final String pExt) {
+        theExtensions.add(pExt);
     }
 
     @Override

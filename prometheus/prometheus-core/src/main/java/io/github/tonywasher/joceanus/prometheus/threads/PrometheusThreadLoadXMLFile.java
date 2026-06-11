@@ -82,7 +82,8 @@ public class PrometheusThreadLoadXMLFile
         final TethysUIFileSelector myDialog = myPromToolkit.getToolkit().getGuiFactory().dialogFactory().newFileSelector();
         myDialog.setTitle(TASK_SELECTFILE);
         myDialog.setInitialDirectory(myBackupDir);
-        myDialog.setExtension(GordianUtilities.SECUREZIPFILE_EXT);
+        myDialog.addExtension(GordianUtilities.SECUREZIPFILE_EXT);
+        myDialog.addExtension(GordianUtilities.ZIPFILE_EXT);
         final File myFile = myDialog.selectFile();
 
         /* If we did not select a file */

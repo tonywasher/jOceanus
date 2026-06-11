@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.prometheus.database;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataKeySet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
@@ -39,7 +39,7 @@ public class PrometheusTableDataKeySet
      *
      * @param pDatabase the database control
      */
-    protected PrometheusTableDataKeySet(final PrometheusDataStore pDatabase) {
+    protected PrometheusTableDataKeySet(final PrometheusDatabaseControl pDatabase) {
         super(pDatabase, TABLE_NAME);
         final PrometheusTableDefinition myTableDef = getTableDef();
 

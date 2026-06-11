@@ -174,7 +174,7 @@ public class MoneyWiseView
      */
     @Override
     public PrometheusSpreadSheet getSpreadSheet() {
-        return new MoneyWiseSheet(getGuiFactory());
+        return new MoneyWiseSheet();
     }
 
     /**

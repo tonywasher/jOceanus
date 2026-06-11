@@ -46,30 +46,16 @@ public class PrometheusSheetControlData
     private static final int COL_CONTROLID = COL_VERSION + 1;
 
     /**
-     * Constructor for loading a spreadsheet.
+     * Constructor.
      *
-     * @param pReader the spreadsheet reader
+     * @param pControl the spreadsheet control
      */
-    protected PrometheusSheetControlData(final PrometheusSheetReader pReader) {
+    protected PrometheusSheetControlData(final PrometheusSheetControl pControl) {
         /* Call super constructor */
-        super(pReader, SHEET_NAME);
+        super(pControl, SHEET_NAME);
 
         /* Access the Lists */
-        final PrometheusDataSet myData = pReader.getData();
-        setDataList(myData.getControlData());
-    }
-
-    /**
-     * Constructor for creating a spreadsheet.
-     *
-     * @param pWriter the spreadsheet writer
-     */
-    protected PrometheusSheetControlData(final PrometheusSheetWriter pWriter) {
-        /* Call super constructor */
-        super(pWriter, SHEET_NAME);
-
-        /* Access the Control list */
-        final PrometheusDataSet myData = pWriter.getData();
+        final PrometheusDataSet myData = pControl.getData();
         setDataList(myData.getControlData());
     }
 

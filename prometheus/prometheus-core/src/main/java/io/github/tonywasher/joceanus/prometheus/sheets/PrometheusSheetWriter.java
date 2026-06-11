@@ -32,7 +32,6 @@ import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPassw
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetProvider;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
-import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.io.File;
@@ -47,12 +46,8 @@ import java.util.List;
  *
  * @author Tony Washer
  */
-public abstract class PrometheusSheetWriter {
-    /**
-     * Gui Factory.
-     */
-    private final TethysUIFactory<?> theGuiFactory;
-
+public abstract class PrometheusSheetWriter
+        implements PrometheusSheetControl {
     /**
      * Report.
      */
@@ -69,6 +64,11 @@ public abstract class PrometheusSheetWriter {
     private PrometheusDataSet theData;
 
     /**
+     * The Sheet Type.
+     */
+    private PrometheusSheetWorkBookType theType;
+
+    /**
      * The WorkSheets.
      */
     private List<PrometheusSheetDataItem<?>> theSheets;
@@ -76,38 +76,23 @@ public abstract class PrometheusSheetWriter {
     /**
      * Constructor.
      *
-     * @param pFactory the gui factory
-     * @param pReport  the report
+     * @param pReport the report
      */
-    protected PrometheusSheetWriter(final TethysUIFactory<?> pFactory,
-                                    final TethysUIThreadStatusReport pReport) {
-        theGuiFactory = pFactory;
+    protected PrometheusSheetWriter(final TethysUIThreadStatusReport pReport) {
         theReport = pReport;
     }
 
-    /**
-     * get report.
-     *
-     * @return the report
-     */
-    protected TethysUIThreadStatusReport getReport() {
+    @Override
+    public TethysUIThreadStatusReport getReport() {
         return theReport;
     }
 
-    /**
-     * get workbook.
-     *
-     * @return the workbook
-     */
-    protected PrometheusSheetWorkBook getWorkBook() {
+    @Override
+    public PrometheusSheetWorkBook getWorkBook() {
         return theWorkBook;
     }
 
-    /**
-     * get dataSet.
-     *
-     * @return the dataSet
-     */
+    @Override
     public PrometheusDataSet getData() {
         return theData;
     }
@@ -132,13 +117,19 @@ public abstract class PrometheusSheetWriter {
     public void createBackup(final PrometheusDataSet pData,
                              final File pFile,
                              final PrometheusSheetWorkBookType pType) throws OceanusException {
+        /* Protect against exceptions */
         boolean writeFailed = false;
-        try {
-            createBackup(pData, new FileOutputStream(pFile), pType);
+        try (FileOutputStream myOutputStream = new FileOutputStream(pFile)) {
+            /* Create the backup */
+            createBackup(pData, myOutputStream, pType);
+
+            /* Handle exceptions */
         } catch (IOException
                  | OceanusException e) {
             writeFailed = true;
             throw new PrometheusIOException("Failed to create backup Workbook", e);
+
+            /* Handle cleanup */
         } finally {
             /* Try to delete the file if required */
             if (writeFailed) {
@@ -151,13 +142,28 @@ public abstract class PrometheusSheetWriter {
      * Create a Backup Workbook.
      *
      * @param pData      Data to write out
-     * @param pZipStream the backup file to write to
+     * @param pZipStream the output stream
      * @param pType      the workBookType
      * @throws OceanusException on error
      */
     public void createBackup(final PrometheusDataSet pData,
                              final OutputStream pZipStream,
                              final PrometheusSheetWorkBookType pType) throws OceanusException {
+        /* Record details */
+        theData = pData;
+        theType = pType;
+
+        /* Create the backup */
+        createBackup(pZipStream);
+    }
+
+    /**
+     * Create a Backup Workbook.
+     *
+     * @param pZipStream the backup file to write to
+     * @throws OceanusException on error
+     */
+    public void createBackup(final OutputStream pZipStream) throws OceanusException {
         /* Obtain the active profile */
         OceanusProfile myTask = theReport.getActiveTask();
         myTask = myTask.startTask("Writing");
@@ -165,38 +171,56 @@ public abstract class PrometheusSheetWriter {
         /* Protect against exceptions */
         try {
             /* Create a similar security control */
-            final PrometheusSecurityPasswordManager myPasswordMgr = pData.getPasswordMgr();
-            final GordianFactoryLock myBase = pData.getFactoryLock();
+            final PrometheusSecurityPasswordManager myPasswordMgr = theData.getPasswordMgr();
+            final GordianFactoryLock myBase = theData.getFactoryLock();
             final GordianFactoryLock myLock = myPasswordMgr.similarFactoryLock(myBase);
             final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();
             final GordianZipLock myZipLock = myZips.zipLock(myLock);
 
-            /* Assume failure */
-            final String myName = PrometheusSpreadSheet.FILE_NAME + pType.getExtension();
+            /* Create the backup */
+            createBackup(myZipLock, pZipStream);
 
-            /* Protect the workbook access */
-            try (GordianZipWriteFile myZipFile = myZips.createZipFile(myZipLock, pZipStream);
-                 OutputStream myStream = myZipFile.createOutputStream(new File(myName), false)) {
-                /* Record the DataSet */
-                theData = pData;
-
-                /* Initialise the WorkBook */
-                initialiseWorkBook(pType);
-
-                /* Write the data to the work book */
-                writeWorkBook(myStream);
-
-            } catch (IOException
-                     | OceanusException e) {
-                /* Report the error */
-                throw new PrometheusIOException("Failed to create Backup Workbook", e);
-            }
+            /* Handle exceptions */
         } catch (GordianException e) {
             throw new PrometheusSecurityException(e);
         }
 
         /* Complete task */
         myTask.end();
+    }
+
+    /**
+     * Create a Backup Workbook.
+     *
+     * @param pZipLock   the zipLock
+     * @param pZipStream the backup file to write to
+     * @throws OceanusException on error
+     */
+    public void createBackup(final GordianZipLock pZipLock,
+                             final OutputStream pZipStream) throws OceanusException {
+        /* Access Zip factory */
+        final PrometheusSecurityPasswordManager myPasswordMgr = theData.getPasswordMgr();
+        final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();
+
+        /* Assume failure */
+        final String myName = PrometheusSheetConstants.FILE_NAME + theType.getExtension();
+
+        /* Protect the workbook access */
+        try (GordianZipWriteFile myZipFile = myZips.createZipFile(pZipLock, pZipStream);
+             OutputStream myStream = myZipFile.createOutputStream(new File(myName), false)) {
+            /* Initialise the WorkBook */
+            initialiseWorkBook(theType);
+
+            /* Write the data to the work book */
+            writeWorkBook(myStream);
+
+        } catch (IOException
+                 | OceanusException e) {
+            /* Report the error */
+            throw new PrometheusIOException("Failed to create Backup Workbook", e);
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
 
     /**
@@ -235,18 +259,13 @@ public abstract class PrometheusSheetWriter {
      */
     private PrometheusSheetDataItem<?> newSheet(final PrometheusCryptographyDataType pListType) {
         /* Switch on list Type */
-        switch (pListType) {
-            case CONTROLDATA:
-                return new PrometheusSheetControlData(this);
-            case CONTROLKEY:
-                return new PrometheusSheetControlKey(this);
-            case CONTROLKEYSET:
-                return new PrometheusSheetControlKeySet(this);
-            case DATAKEYSET:
-                return new PrometheusSheetDataKeySet(this);
-            default:
-                throw new IllegalArgumentException(pListType.toString());
-        }
+        return switch (pListType) {
+            case CONTROLDATA -> new PrometheusSheetControlData(this);
+            case CONTROLKEY -> new PrometheusSheetControlKey(this);
+            case CONTROLKEYSET -> new PrometheusSheetControlKeySet(this);
+            case DATAKEYSET -> new PrometheusSheetDataKeySet(this);
+            default -> throw new IllegalArgumentException(pListType.toString());
+        };
     }
 
     /**

@@ -16,11 +16,10 @@
  */
 package io.github.tonywasher.joceanus.prometheus.ui;
 
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
-import io.github.tonywasher.joceanus.prometheus.ui.PrometheusItemEditActions.PrometheusItemEditParent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusUIEvent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;

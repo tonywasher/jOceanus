@@ -20,7 +20,6 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetDataItem;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
-import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
@@ -33,13 +32,11 @@ public class MoneyWiseWriter
     /**
      * Constructor.
      *
-     * @param pFactory the gui factory
-     * @param pReport  the report
+     * @param pReport the report
      */
-    public MoneyWiseWriter(final TethysUIFactory<?> pFactory,
-                           final TethysUIThreadStatusReport pReport) {
+    public MoneyWiseWriter(final TethysUIThreadStatusReport pReport) {
         /* Call super-constructor */
-        super(pFactory, pReport);
+        super(pReport);
     }
 
     /**

@@ -41,12 +41,12 @@
     </dependency>
     <dependency>
       <groupId>${PrometheusSheetGroup}</groupId>
-      <artifactId>prometheus-sheet-hssf</artifactId>
+      <artifactId>prometheus-sheet-odf</artifactId>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>${PrometheusSheetGroup}</groupId>
-      <artifactId>prometheus-sheet-odf</artifactId>
+      <artifactId>prometheus-sheet-hssf</artifactId>
       <scope>runtime</scope>
     </dependency>
     <dependency>

@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.prometheus.ui.fieldset;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
@@ -27,6 +24,9 @@ import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.Teth
 import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldAttribute;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIScrollPaneManager;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * FieldSet TextArea.
@@ -43,7 +43,7 @@ public class PrometheusFieldSetTextArea<T>
     /**
      * The fieldSet.
      */
-    private final PrometheusFieldSet<T> theFieldSet;
+    private final PrometheusFieldSetControl<T> theFieldSet;
 
     /**
      * The panel.
@@ -82,7 +82,7 @@ public class PrometheusFieldSetTextArea<T>
      * @param pFieldSet the fieldSet
      */
     PrometheusFieldSetTextArea(final TethysUIFactory<?> pFactory,
-                               final PrometheusFieldSet<T> pFieldSet) {
+                               final PrometheusFieldSetControl<T> pFieldSet) {
         /* Store the factory */
         theFactory = pFactory;
         theFieldSet = pFieldSet;
@@ -178,4 +178,3 @@ public class PrometheusFieldSetTextArea<T>
         theTextArea.setReporter(pReporter);
     }
 }
-

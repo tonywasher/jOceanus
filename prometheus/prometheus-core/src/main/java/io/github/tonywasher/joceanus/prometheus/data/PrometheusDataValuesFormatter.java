@@ -170,7 +170,7 @@ public class PrometheusDataValuesFormatter {
         final OceanusProfile myTask = theReport.getActiveTask();
         final OceanusProfile myStage = myTask.startTask("Writing");
 
-        /* Protect agains exceptions */
+        /* Protect against exceptions */
         try {
             /* Create a similar security control */
             final PrometheusSecurityPasswordManager myPasswordMgr = pData.getPasswordMgr();

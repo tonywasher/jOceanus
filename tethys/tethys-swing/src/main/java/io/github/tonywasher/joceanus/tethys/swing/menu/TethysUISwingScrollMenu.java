@@ -22,6 +22,7 @@ import io.github.tonywasher.joceanus.tethys.api.base.TethysUIArrowIconId;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIConstant;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIcon;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollIcon;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
@@ -716,6 +717,13 @@ public class TethysUISwingScrollMenu<T>
                                          final String pName) {
         /* Use standard name */
         return addItem(pValue, pName, null);
+    }
+
+    @Override
+    public TethysUIScrollItem<T> addItem(final T pValue,
+                                         final TethysUIIconId pId) {
+        /* Use standard name */
+        return addItem(pValue, pValue.toString(), TethysUISwingUtils.getIconAtSize(pId, TethysUICoreScrollMenu.ICON_SIZE));
     }
 
     @Override

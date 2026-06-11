@@ -51,11 +51,18 @@ public interface TethysUIFileSelector {
     void setInitialFile(File pFile);
 
     /**
-     * Set the extension.
+     * Add an extension.
      *
      * @param pExt the extension
      */
-    void setExtension(String pExt);
+    void addExtension(String pExt);
+
+    /**
+     * Set filter name.
+     *
+     * @param pName the name of the filter
+     */
+    void setFilterName(String pName);
 
     /**
      * Use save rather than open.

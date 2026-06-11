@@ -26,7 +26,6 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
 
@@ -46,7 +45,8 @@ import java.util.ListIterator;
  *
  * @author Tony Washer
  */
-public abstract class PrometheusColumnDefinition {
+public abstract class PrometheusColumnDefinition
+        implements PrometheusColumnControl {
     /**
      * Open bracket.
      */
@@ -80,7 +80,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * Table Definition.
      */
-    private final PrometheusTableDefinition theTable;
+    private final PrometheusTableControl theTable;
 
     /**
      * Column Identity.
@@ -113,7 +113,7 @@ public abstract class PrometheusColumnDefinition {
      * @param pTable the table to which the column belongs
      * @param pId    the column id
      */
-    protected PrometheusColumnDefinition(final PrometheusTableDefinition pTable,
+    protected PrometheusColumnDefinition(final PrometheusTableControl pTable,
                                          final MetisDataFieldId pId) {
         /* Record the identity and table */
         theIdentity = pId;
@@ -164,7 +164,7 @@ public abstract class PrometheusColumnDefinition {
      *
      * @return the table
      */
-    protected PrometheusTableDefinition getTable() {
+    protected PrometheusTableControl getTable() {
         return theTable;
     }
 
@@ -293,13 +293,13 @@ public abstract class PrometheusColumnDefinition {
      *
      * @param pTables the list of defined tables
      */
-    protected void locateReference(final List<PrometheusTableDataItem<?>> pTables) {
+    protected void locateReference(final List<PrometheusTableInstance<?>> pTables) {
     }
 
     /**
      * The integerColumn Class.
      */
-    protected static class PrometheusIntegerColumn
+    public static class PrometheusIntegerColumn
             extends PrometheusColumnDefinition {
         /**
          * Constructor.
@@ -307,7 +307,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        protected PrometheusIntegerColumn(final PrometheusTableDefinition pTable,
+        protected PrometheusIntegerColumn(final PrometheusTableControl pTable,
                                           final MetisDataFieldId pId) {
             /* Record the column type and name */
             super(pTable, pId);
@@ -363,14 +363,14 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The idColumn Class.
      */
-    protected static final class PrometheusIdColumn
+    public static final class PrometheusIdColumn
             extends PrometheusIntegerColumn {
         /**
          * Constructor.
          *
          * @param pTable the table to which the column belongs
          */
-        PrometheusIdColumn(final PrometheusTableDefinition pTable) {
+        PrometheusIdColumn(final PrometheusTableControl pTable) {
             /* Record the column type */
             super(pTable, MetisDataResource.DATA_ID);
         }
@@ -385,7 +385,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The referenceColumn Class.
      */
-    protected static final class PrometheusReferenceColumn
+    public static final class PrometheusReferenceColumn
             extends PrometheusIntegerColumn {
         /**
          * The name of the referenced table.
@@ -395,7 +395,7 @@ public abstract class PrometheusColumnDefinition {
         /**
          * The definition of the referenced table.
          */
-        private PrometheusTableDefinition theDefinition;
+        private PrometheusTableControl theDefinition;
 
         /**
          * Constructor.
@@ -404,7 +404,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pId       the column id
          * @param pRefTable the name of the referenced table
          */
-        PrometheusReferenceColumn(final PrometheusTableDefinition pTable,
+        PrometheusReferenceColumn(final PrometheusTableControl pTable,
                                   final MetisDataFieldId pId,
                                   final String pRefTable) {
             /* Record the column type */
@@ -433,15 +433,15 @@ public abstract class PrometheusColumnDefinition {
         }
 
         @Override
-        protected void locateReference(final List<PrometheusTableDataItem<?>> pTables) {
+        protected void locateReference(final List<PrometheusTableInstance<?>> pTables) {
             /* Access the Iterator */
-            final ListIterator<PrometheusTableDataItem<?>> myIterator;
+            final ListIterator<PrometheusTableInstance<?>> myIterator;
             myIterator = pTables.listIterator();
 
             /* Loop through the Tables */
             while (myIterator.hasNext()) {
                 /* Access Table */
-                final PrometheusTableDataItem<?> myTable = myIterator.next();
+                final PrometheusTableInstance<?> myTable = myIterator.next();
 
                 /* If this is the referenced table */
                 if (theReference.compareTo(myTable.getTableName()) == 0) {
@@ -504,7 +504,7 @@ public abstract class PrometheusColumnDefinition {
          */
         void buildOrderString(final StringBuilder pBuilder,
                               final Integer pOffset) {
-            final Iterator<PrometheusColumnDefinition> myIterator;
+            final Iterator<PrometheusColumnControl> myIterator;
             PrometheusColumnDefinition myDef;
             boolean myFirst = true;
             Integer myOffset = pOffset;
@@ -518,7 +518,7 @@ public abstract class PrometheusColumnDefinition {
             /* Loop through the columns */
             while (myIterator.hasNext()) {
                 /* Access next column */
-                myDef = myIterator.next();
+                myDef = (PrometheusColumnDefinition) myIterator.next();
 
                 /* Handle subsequent columns */
                 if (!myFirst) {
@@ -559,7 +559,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The shortColumn Class.
      */
-    protected static final class PrometheusShortColumn
+    public static final class PrometheusShortColumn
             extends PrometheusColumnDefinition {
         /**
          * Constructor.
@@ -567,7 +567,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusShortColumn(final PrometheusTableDefinition pTable,
+        PrometheusShortColumn(final PrometheusTableControl pTable,
                               final MetisDataFieldId pId) {
             /* Record the column type */
             super(pTable, pId);
@@ -623,7 +623,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The longColumn Class.
      */
-    protected static final class PrometheusLongColumn
+    public static final class PrometheusLongColumn
             extends PrometheusColumnDefinition {
         /**
          * Constructor.
@@ -631,7 +631,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusLongColumn(final PrometheusTableDefinition pTable,
+        PrometheusLongColumn(final PrometheusTableControl pTable,
                              final MetisDataFieldId pId) {
             /* Record the column type */
             super(pTable, pId);
@@ -687,7 +687,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The dateColumn Class.
      */
-    protected static final class PrometheusDateColumn
+    public static final class PrometheusDateColumn
             extends PrometheusColumnDefinition {
         /**
          * Constructor.
@@ -695,7 +695,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusDateColumn(final PrometheusTableDefinition pTable,
+        PrometheusDateColumn(final PrometheusTableControl pTable,
                              final MetisDataFieldId pId) {
             /* Record the column type */
             super(pTable, pId);
@@ -752,7 +752,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The booleanColumn Class.
      */
-    protected static final class PrometheusBooleanColumn
+    public static final class PrometheusBooleanColumn
             extends PrometheusColumnDefinition {
         /**
          * Constructor.
@@ -760,7 +760,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusBooleanColumn(final PrometheusTableDefinition pTable,
+        PrometheusBooleanColumn(final PrometheusTableControl pTable,
                                 final MetisDataFieldId pId) {
             /* Record the column type */
             super(pTable, pId);
@@ -816,7 +816,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The stringColumn Class.
      */
-    protected static class PrometheusStringColumn
+    public static class PrometheusStringColumn
             extends PrometheusColumnDefinition {
         /**
          * The length of the column.
@@ -830,7 +830,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pId     the column id
          * @param pLength the length
          */
-        protected PrometheusStringColumn(final PrometheusTableDefinition pTable,
+        protected PrometheusStringColumn(final PrometheusTableControl pTable,
                                          final MetisDataFieldId pId,
                                          final int pLength) {
             /* Record the column type */
@@ -887,7 +887,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The moneyColumn Class.
      */
-    protected static final class PrometheusMoneyColumn
+    public static final class PrometheusMoneyColumn
             extends PrometheusStringColumn {
         /**
          * Constructor.
@@ -895,7 +895,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusMoneyColumn(final PrometheusTableDefinition pTable,
+        PrometheusMoneyColumn(final PrometheusTableControl pTable,
                               final MetisDataFieldId pId) {
             /* Record the column type */
             super(pTable, pId, 0);
@@ -951,7 +951,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The rateColumn Class.
      */
-    protected static final class PrometheusRateColumn
+    public static final class PrometheusRateColumn
             extends PrometheusStringColumn {
         /**
          * Constructor.
@@ -959,7 +959,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusRateColumn(final PrometheusTableDefinition pTable,
+        PrometheusRateColumn(final PrometheusTableControl pTable,
                              final MetisDataFieldId pId) {
             /* Record the column type */
             super(pTable, pId, 0);
@@ -1020,7 +1020,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The priceColumn Class.
      */
-    protected static final class PrometheusPriceColumn
+    public static final class PrometheusPriceColumn
             extends PrometheusStringColumn {
         /**
          * Constructor.
@@ -1028,7 +1028,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusPriceColumn(final PrometheusTableDefinition pTable,
+        PrometheusPriceColumn(final PrometheusTableControl pTable,
                               final MetisDataFieldId pId) {
             /* Record the column type */
             super(pTable, pId, 0);
@@ -1089,7 +1089,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The unitsColumn Class.
      */
-    protected static final class PrometheusUnitsColumn
+    public static final class PrometheusUnitsColumn
             extends PrometheusStringColumn {
         /**
          * Constructor.
@@ -1097,7 +1097,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusUnitsColumn(final PrometheusTableDefinition pTable,
+        PrometheusUnitsColumn(final PrometheusTableControl pTable,
                               final MetisDataFieldId pId) {
             /* Record the column type */
             super(pTable, pId, 0);
@@ -1158,7 +1158,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The ratioColumn Class.
      */
-    protected static final class PrometheusRatioColumn
+    public static final class PrometheusRatioColumn
             extends PrometheusStringColumn {
         /**
          * Constructor.
@@ -1166,7 +1166,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusRatioColumn(final PrometheusTableDefinition pTable,
+        PrometheusRatioColumn(final PrometheusTableControl pTable,
                               final MetisDataFieldId pId) {
             /* Record the column type */
             super(pTable, pId, 0);
@@ -1227,7 +1227,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The binaryColumn Class.
      */
-    protected static final class PrometheusBinaryColumn
+    public static final class PrometheusBinaryColumn
             extends PrometheusColumnDefinition {
         /**
          * The length of the column.
@@ -1241,7 +1241,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pId     the column id
          * @param pLength the length of the column
          */
-        PrometheusBinaryColumn(final PrometheusTableDefinition pTable,
+        PrometheusBinaryColumn(final PrometheusTableControl pTable,
                                final MetisDataFieldId pId,
                                final int pLength) {
             /* Record the column type */
@@ -1291,5 +1291,20 @@ public abstract class PrometheusColumnDefinition {
                                   final int pIndex) throws SQLException {
             pStatement.setBytes(pIndex, getValue());
         }
+    }
+
+    /**
+     * SortOrder.
+     */
+    public enum PrometheusSortOrder {
+        /**
+         * Ascending.
+         */
+        ASCENDING,
+
+        /**
+         * Descending.
+         */
+        DESCENDING;
     }
 }

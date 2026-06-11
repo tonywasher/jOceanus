@@ -67,8 +67,8 @@ public class PrometheusOdfSheet
     }
 
     @Override
-    protected ListIterator<PrometheusSheetRow> iteratorForRange(final int pFirstIndex,
-                                                                final int pLastIndex) {
+    public ListIterator<PrometheusSheetRow> iteratorForRange(final int pFirstIndex,
+                                                             final int pLastIndex) {
         return theSheet.iteratorForRange(this, pFirstIndex, pLastIndex);
     }
 

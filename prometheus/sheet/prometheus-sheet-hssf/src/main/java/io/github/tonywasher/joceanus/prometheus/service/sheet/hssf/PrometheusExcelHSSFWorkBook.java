@@ -24,7 +24,6 @@ import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetExc
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetFormats;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetView;
-import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataValidationHelper;
@@ -56,7 +55,7 @@ import java.util.Map;
  * The Excel WorkBook.
  */
 public class PrometheusExcelHSSFWorkBook
-        implements PrometheusSheetWorkBook {
+        implements PrometheusExcelWorkBook {
     /**
      * Excel WorkBook.
      */
@@ -191,32 +190,18 @@ public class PrometheusExcelHSSFWorkBook
         return isReadOnly;
     }
 
-    /**
-     * evaluate the formula for a cell.
-     *
-     * @param pCell the cell to evaluate
-     * @return the calculated value
-     */
-    CellValue evaluateFormula(final HSSFCell pCell) {
+    @Override
+    public CellValue evaluateFormula(final HSSFCell pCell) {
         return theEvaluator.evaluate(pCell);
     }
 
-    /**
-     * Format the cell value.
-     *
-     * @param pCell the cell to evaluate
-     * @return the formatted value
-     */
-    String formatCellValue(final HSSFCell pCell) {
+    @Override
+    public String formatCellValue(final HSSFCell pCell) {
         return theExcelFormatter.formatCellValue(pCell);
     }
 
-    /**
-     * Obtain the data formatter.
-     *
-     * @return the formatter
-     */
-    protected OceanusDataFormatter getDataFormatter() {
+    @Override
+    public OceanusDataFormatter getDataFormatter() {
         return theDataFormatter;
     }
 
@@ -250,24 +235,14 @@ public class PrometheusExcelHSSFWorkBook
         return new PrometheusExcelHSSFSheet(this, mySheet, theBook.getSheetIndex(mySheet), true);
     }
 
-    /**
-     * Is the sheet hidden?
-     *
-     * @param pSheetIndex the sheet index
-     * @return true/false
-     */
-    boolean isSheetHidden(final int pSheetIndex) {
+    @Override
+    public boolean isSheetHidden(final int pSheetIndex) {
         return theBook.isSheetHidden(pSheetIndex);
     }
 
-    /**
-     * Set the sheet's hidden status.
-     *
-     * @param pSheetIndex the sheet index
-     * @param isHidden    true/false
-     */
-    void setSheetHidden(final int pSheetIndex,
-                        final boolean isHidden) {
+    @Override
+    public void setSheetHidden(final int pSheetIndex,
+                               final boolean isHidden) {
         theBook.setSheetHidden(pSheetIndex, isHidden);
     }
 
@@ -295,15 +270,9 @@ public class PrometheusExcelHSSFWorkBook
         return new PrometheusSheetView(mySheet, myFirstCell, myLastCell);
     }
 
-    /**
-     * Declare the named range.
-     *
-     * @param pName  the name of the range
-     * @param pRange the range to declare
-     * @throws OceanusException on error
-     */
-    void declareRange(final String pName,
-                      final AreaReference pRange) throws OceanusException {
+    @Override
+    public void declareRange(final String pName,
+                             final AreaReference pRange) throws OceanusException {
         /* Check for existing range */
         Name myName = theBook.getName(pName);
         if (myName != null) {
@@ -321,16 +290,10 @@ public class PrometheusExcelHSSFWorkBook
         myName.setRefersToFormula(myRef);
     }
 
-    /**
-     * Apply Data Validation.
-     *
-     * @param pSheet      the workSheet containing the cells
-     * @param pCells      the Cells to apply validation to
-     * @param pValidRange the name of the validation range
-     */
-    void applyDataValidation(final HSSFSheet pSheet,
-                             final CellRangeAddressList pCells,
-                             final String pValidRange) {
+    @Override
+    public void applyDataValidation(final HSSFSheet pSheet,
+                                    final CellRangeAddressList pCells,
+                                    final String pValidRange) {
         /* Access the constraint */
         final HSSFDataValidationHelper myHelper = new HSSFDataValidationHelper(pSheet);
         final DataValidationConstraint myConstraint = theRangeConstraintMap.computeIfAbsent(pValidRange,
@@ -367,14 +330,9 @@ public class PrometheusExcelHSSFWorkBook
         pSheet.addValidationData(myValidation);
     }
 
-    /**
-     * Apply Data Filter.
-     *
-     * @param pSheet the sheet to filter
-     * @param pRange the range to apply the filter to
-     */
-    void applyDataFilter(final Sheet pSheet,
-                         final CellRangeAddressList pRange) {
+    @Override
+    public void applyDataFilter(final Sheet pSheet,
+                                final CellRangeAddressList pRange) {
         /* Create the new filter */
         pSheet.setAutoFilter(pRange.getCellRangeAddress(0));
     }
@@ -386,16 +344,11 @@ public class PrometheusExcelHSSFWorkBook
      * @return the alignment
      */
     private static HorizontalAlignment getStyleAlignment(final PrometheusSheetCellStyleType pType) {
-        switch (pType) {
-            case HEADER:
-            case BOOLEAN:
-                return HorizontalAlignment.CENTER;
-            case DATE:
-            case STRING:
-                return HorizontalAlignment.LEFT;
-            default:
-                return HorizontalAlignment.RIGHT;
-        }
+        return switch (pType) {
+            case HEADER, BOOLEAN -> HorizontalAlignment.CENTER;
+            case DATE, STRING -> HorizontalAlignment.LEFT;
+            default -> HorizontalAlignment.RIGHT;
+        };
     }
 
     /**
@@ -405,15 +358,11 @@ public class PrometheusExcelHSSFWorkBook
      * @return the font
      */
     private Font getStyleFont(final PrometheusSheetCellStyleType pType) {
-        switch (pType) {
-            case HEADER:
-                return theHeaderFont;
-            case BOOLEAN:
-            case STRING:
-                return theValueFont;
-            default:
-                return theNumberFont;
-        }
+        return switch (pType) {
+            case HEADER -> theHeaderFont;
+            case BOOLEAN, STRING -> theValueFont;
+            default -> theNumberFont;
+        };
     }
 
     /**
@@ -449,13 +398,8 @@ public class PrometheusExcelHSSFWorkBook
         return myStyle;
     }
 
-    /**
-     * Obtain the required CellStyle.
-     *
-     * @param pValue the Cell Value
-     * @return the required CellStyle
-     */
-    HSSFCellStyle getCellStyle(final Object pValue) {
+    @Override
+    public HSSFCellStyle getCellStyle(final Object pValue) {
         /* Determine the correct format */
         final String myStyleName = PrometheusSheetFormats.getFormatName(pValue);
 
@@ -486,13 +430,8 @@ public class PrometheusExcelHSSFWorkBook
         return myStyle;
     }
 
-    /**
-     * Obtain the required alternate CellStyle.
-     *
-     * @param pValue the Cell Value
-     * @return the required CellStyle
-     */
-    HSSFCellStyle getAlternateCellStyle(final Object pValue) {
+    @Override
+    public HSSFCellStyle getAlternateCellStyle(final Object pValue) {
         /* Determine the correct format */
         final String myStyleName = PrometheusSheetFormats.getAlternateFormatName(pValue);
 

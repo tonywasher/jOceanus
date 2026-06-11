@@ -45,27 +45,15 @@ public abstract class PrometheusSheetDataInfo<T extends PrometheusDataInfoItem>
     private static final int COL_VALUE = COL_OWNER + 1;
 
     /**
-     * Constructor for loading a spreadsheet.
+     * Constructor.
      *
-     * @param pReader the spreadsheet reader
-     * @param pRange  the range to load
+     * @param pControl the spreadsheet control
+     * @param pRange   the range to load/create
      */
-    protected PrometheusSheetDataInfo(final PrometheusSheetReader pReader,
+    protected PrometheusSheetDataInfo(final PrometheusSheetControl pControl,
                                       final String pRange) {
         /* Call super constructor */
-        super(pReader, pRange);
-    }
-
-    /**
-     * Constructor for creating a spreadsheet.
-     *
-     * @param pWriter the spreadsheet writer
-     * @param pRange  the range to create
-     */
-    protected PrometheusSheetDataInfo(final PrometheusSheetWriter pWriter,
-                                      final String pRange) {
-        /* Call super constructor */
-        super(pWriter, pRange);
+        super(pControl, pRange);
     }
 
     @Override

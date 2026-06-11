@@ -23,11 +23,12 @@ import java.util.ListIterator;
 /**
  * Class representing a sheet within a workBook.
  */
-public abstract class PrometheusSheetSheet {
+public abstract class PrometheusSheetSheet
+        implements PrometheusSheetSheetCtl {
     /**
      * The WorkBook.
      */
-    private final PrometheusSheetWorkBook theWorkBook;
+    private final PrometheusSheetWorkBookCtl theWorkBook;
 
     /**
      * Name of sheet.
@@ -46,7 +47,7 @@ public abstract class PrometheusSheetSheet {
      * @param pName     the sheet name
      * @param pReadOnly is the sheet readOnly?
      */
-    protected PrometheusSheetSheet(final PrometheusSheetWorkBook pWorkBook,
+    protected PrometheusSheetSheet(final PrometheusSheetWorkBookCtl pWorkBook,
                                    final String pName,
                                    final boolean pReadOnly) {
         /* Store parameters */
@@ -60,7 +61,7 @@ public abstract class PrometheusSheetSheet {
      *
      * @return the workBook
      */
-    public PrometheusSheetWorkBook getWorkBook() {
+    public PrometheusSheetWorkBookCtl getWorkBook() {
         return theWorkBook;
     }
 
@@ -74,13 +75,6 @@ public abstract class PrometheusSheetSheet {
     }
 
     /**
-     * Get sheet index.
-     *
-     * @return the index of the sheet
-     */
-    public abstract int getSheetIndex();
-
-    /**
      * Is the sheet readOnly?
      *
      * @return true/false
@@ -90,20 +84,6 @@ public abstract class PrometheusSheetSheet {
     }
 
     /**
-     * Is the sheet hidden?
-     *
-     * @return true/false
-     */
-    public abstract boolean isHidden();
-
-    /**
-     * Set sheet hidden status.
-     *
-     * @param isHidden true/false
-     */
-    public abstract void setHidden(boolean isHidden);
-
-    /**
      * Get row count.
      *
      * @return the count of rows
@@ -111,48 +91,14 @@ public abstract class PrometheusSheetSheet {
     public abstract int getRowCount();
 
     /**
-     * Obtain the row at required index within the sheet, if it exists.
+     * Obtain an iterator of non-null rows for the view.
      *
-     * @param pRowIndex the requested row index
-     * @return the requested row.
+     * @param pFirstIndex the first row in the view
+     * @param pLastIndex  the last row in the view
+     * @return the iterator
      */
-    public abstract PrometheusSheetRow getReadOnlyRowByIndex(int pRowIndex);
-
-    /**
-     * Obtain the row at required index within the sheet, create it if it does not exist.
-     *
-     * @param pRowIndex the requested row index
-     * @return the requested row.
-     */
-    public abstract PrometheusSheetRow getMutableRowByIndex(int pRowIndex);
-
-    /**
-     * Obtain the column by index.
-     *
-     * @param pColIndex the column index
-     * @return the column
-     */
-    public abstract PrometheusSheetColumn getReadOnlyColumnByIndex(int pColIndex);
-
-    /**
-     * Obtain the column by index, creating column if it does not exist.
-     *
-     * @param pColIndex the column index
-     * @return the column
-     */
-    public abstract PrometheusSheetColumn getMutableColumnByIndex(int pColIndex);
-
-    /**
-     * Name a range.
-     *
-     * @param pName      the name of the range
-     * @param pFirstCell the first cell in the range
-     * @param pLastCell  the last cell in the range
-     * @throws OceanusException on error
-     */
-    public abstract void declareRange(String pName,
-                                      PrometheusSheetCellPosition pFirstCell,
-                                      PrometheusSheetCellPosition pLastCell) throws OceanusException;
+    public abstract ListIterator<PrometheusSheetRow> iteratorForRange(int pFirstIndex,
+                                                                      int pLastIndex);
 
     /**
      * Name a single cell as a range.
@@ -166,43 +112,4 @@ public abstract class PrometheusSheetSheet {
         /* declare the range */
         declareRange(pName, pSingleCell, pSingleCell);
     }
-
-    /**
-     * Apply data validation to a range of cells.
-     *
-     * @param pFirstCell the first cell in the range
-     * @param pLastCell  the last cell in the range
-     * @param pName      the name of the validation range list
-     * @throws OceanusException on error
-     */
-    public abstract void applyDataValidation(PrometheusSheetCellPosition pFirstCell,
-                                             PrometheusSheetCellPosition pLastCell,
-                                             String pName) throws OceanusException;
-
-    /**
-     * Apply data validation to a range of cells.
-     *
-     * @param pBaseCell the first cell in the range
-     * @param pNumRows  the number of rows in the filter
-     * @throws OceanusException on error
-     */
-    public abstract void applyDataFilter(PrometheusSheetCellPosition pBaseCell,
-                                         int pNumRows) throws OceanusException;
-
-    /**
-     * Create freeze panes.
-     *
-     * @param pFreezeCell the cell to freeze at
-     */
-    public abstract void createFreezePane(PrometheusSheetCellPosition pFreezeCell);
-
-    /**
-     * Obtain an iterator of non-null rows for the view.
-     *
-     * @param pFirstIndex the first row in the view
-     * @param pLastIndex  the last row in the view
-     * @return the iterator
-     */
-    protected abstract ListIterator<PrometheusSheetRow> iteratorForRange(int pFirstIndex,
-                                                                         int pLastIndex);
 }

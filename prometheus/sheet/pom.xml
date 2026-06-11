@@ -12,8 +12,8 @@
   <packaging>pom</packaging>
   <modules>
     <module>prometheus-sheet-api</module>
-    <module>prometheus-sheet-hssf</module>
     <module>prometheus-sheet-odf</module>
+    <module>prometheus-sheet-hssf</module>
   </modules>
   <properties>
     <svnComponent>jprometheus</svnComponent>

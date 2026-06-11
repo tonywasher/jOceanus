@@ -22,7 +22,6 @@ import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCel
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetFormats;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetRow;
-import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -40,7 +39,7 @@ import java.util.ListIterator;
  * Class representing an Excel sheet within a workBook.
  */
 public class PrometheusExcelHSSFSheet
-        extends PrometheusSheetSheet {
+        extends PrometheusExcelSheet {
     /**
      * Character width.
      */
@@ -54,7 +53,7 @@ public class PrometheusExcelHSSFSheet
     /**
      * The Excel WorkBook.
      */
-    private final PrometheusExcelHSSFWorkBook theExcelBook;
+    private final PrometheusExcelWorkBook theExcelBook;
 
     /**
      * The Excel Sheet.
@@ -69,12 +68,12 @@ public class PrometheusExcelHSSFSheet
      * @param pIndex    the index of the sheet
      * @param pReadOnly is the sheet readOnly?
      */
-    PrometheusExcelHSSFSheet(final PrometheusExcelHSSFWorkBook pBook,
+    PrometheusExcelHSSFSheet(final PrometheusExcelWorkBook pBook,
                              final HSSFSheet pSheet,
                              final int pIndex,
                              final boolean pReadOnly) {
         /* Construct super-class */
-        super(pBook, pSheet.getSheetName(), pReadOnly);
+        super(pBook, pSheet, pReadOnly);
 
         /* Store parameters */
         theExcelBook = pBook;
@@ -82,22 +81,12 @@ public class PrometheusExcelHSSFSheet
         theIndex = pIndex;
     }
 
-    /**
-     * evaluate the formula for a cell.
-     *
-     * @param pCell the cell to evaluate
-     * @return the calculated value
-     */
+    @Override
     CellValue evaluateFormula(final HSSFCell pCell) {
         return theExcelBook.evaluateFormula(pCell);
     }
 
-    /**
-     * Format the cell value.
-     *
-     * @param pCell the cell to evaluate
-     * @return the formatted value
-     */
+    @Override
     String formatCellValue(final HSSFCell pCell) {
         return theExcelBook.formatCellValue(pCell);
     }
@@ -133,8 +122,8 @@ public class PrometheusExcelHSSFSheet
     }
 
     @Override
-    protected ListIterator<PrometheusSheetRow> iteratorForRange(final int pFirstIndex,
-                                                                final int pLastIndex) {
+    public ListIterator<PrometheusSheetRow> iteratorForRange(final int pFirstIndex,
+                                                             final int pLastIndex) {
         /* Determine bounds for search */
         final int myLower = Math.max(pFirstIndex, theExcelSheet.getFirstRowNum());
         final int myUpper = Math.min(pLastIndex, theExcelSheet.getLastRowNum());
@@ -243,57 +232,32 @@ public class PrometheusExcelHSSFSheet
         }
     }
 
-    /**
-     * Set the column's hidden status.
-     *
-     * @param pColIndex the column index
-     * @param isHidden  true/false
-     */
+    @Override
     void setColumnHidden(final int pColIndex,
                          final boolean isHidden) {
         theExcelSheet.setColumnHidden(pColIndex, isHidden);
     }
 
-    /**
-     * Is the column hidden?
-     *
-     * @param pColIndex the column
-     * @return true/false
-     */
+    @Override
     boolean isColumnHidden(final int pColIndex) {
         return theExcelSheet.isColumnHidden(pColIndex);
     }
 
-    /**
-     * Set the default style for the column.
-     *
-     * @param pColIndex the column index
-     * @param pStyle    the style
-     */
+    @Override
     void setDefaultCellStyle(final int pColIndex,
                              final PrometheusSheetCellStyleType pStyle) {
         theExcelSheet.setDefaultColumnStyle(pColIndex, theExcelBook.getCellStyle(pStyle));
         theExcelSheet.setColumnWidth(pColIndex, getColumnWidth(pStyle));
     }
 
-    /**
-     * Set cell style.
-     *
-     * @param pCell  the cell to style
-     * @param pValue the cell value
-     */
-    void setCellStyle(final PrometheusExcelHSSFCell pCell,
+    @Override
+    void setCellStyle(final PrometheusExcelCell pCell,
                       final Object pValue) {
         pCell.setCellStyle(theExcelBook.getCellStyle(pValue));
     }
 
-    /**
-     * Set alternate cell style.
-     *
-     * @param pCell  the cell to style
-     * @param pValue the cell value
-     */
-    void setAlternateCellStyle(final PrometheusExcelHSSFCell pCell,
+    @Override
+    void setAlternateCellStyle(final PrometheusExcelCell pCell,
                                final Object pValue) {
         pCell.setCellStyle(theExcelBook.getAlternateCellStyle(pValue));
     }
@@ -305,35 +269,25 @@ public class PrometheusExcelHSSFSheet
      * @return the name of the style
      */
     private static int getColumnWidth(final PrometheusSheetCellStyleType pStyle) {
-        switch (pStyle) {
-            case INTEGER:
-                return PrometheusSheetFormats.WIDTH_INT
-                        * WIDTH_CHAR;
-            case BOOLEAN:
-                return PrometheusSheetFormats.WIDTH_BOOL
-                        * WIDTH_CHAR;
-            case DATE:
-                return PrometheusSheetFormats.WIDTH_DATE
-                        * WIDTH_CHAR;
-            case MONEY:
-                return PrometheusSheetFormats.WIDTH_MONEY
-                        * WIDTH_CHAR;
-            case PRICE:
-                return PrometheusSheetFormats.WIDTH_PRICE
-                        * WIDTH_CHAR;
-            case UNITS:
-                return PrometheusSheetFormats.WIDTH_UNITS
-                        * WIDTH_CHAR;
-            case RATE:
-                return PrometheusSheetFormats.WIDTH_RATE
-                        * WIDTH_CHAR;
-            case RATIO:
-                return PrometheusSheetFormats.WIDTH_RATIO
-                        * WIDTH_CHAR;
-            case STRING:
-            default:
-                return PrometheusSheetFormats.WIDTH_STRING
-                        * WIDTH_CHAR;
-        }
+        return switch (pStyle) {
+            case INTEGER -> PrometheusSheetFormats.WIDTH_INT
+                    * WIDTH_CHAR;
+            case BOOLEAN -> PrometheusSheetFormats.WIDTH_BOOL
+                    * WIDTH_CHAR;
+            case DATE -> PrometheusSheetFormats.WIDTH_DATE
+                    * WIDTH_CHAR;
+            case MONEY -> PrometheusSheetFormats.WIDTH_MONEY
+                    * WIDTH_CHAR;
+            case PRICE -> PrometheusSheetFormats.WIDTH_PRICE
+                    * WIDTH_CHAR;
+            case UNITS -> PrometheusSheetFormats.WIDTH_UNITS
+                    * WIDTH_CHAR;
+            case RATE -> PrometheusSheetFormats.WIDTH_RATE
+                    * WIDTH_CHAR;
+            case RATIO -> PrometheusSheetFormats.WIDTH_RATIO
+                    * WIDTH_CHAR;
+            default -> PrometheusSheetFormats.WIDTH_STRING
+                    * WIDTH_CHAR;
+        };
     }
 }

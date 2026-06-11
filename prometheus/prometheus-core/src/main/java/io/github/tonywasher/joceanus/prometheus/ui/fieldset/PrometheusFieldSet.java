@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.prometheus.ui.fieldset;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
@@ -42,7 +42,7 @@ import java.util.function.Function;
  * @param <T> the item type
  */
 public class PrometheusFieldSet<T>
-        implements OceanusEventProvider<TethysUIEvent> {
+        implements PrometheusFieldSetControl<T>, OceanusEventProvider<TethysUIEvent> {
     /**
      * The gui factory.
      */
@@ -231,15 +231,9 @@ public class PrometheusFieldSet<T>
         theChanged = pChanged;
     }
 
-    /**
-     * Is the cell changed?
-     *
-     * @param pItem  the item
-     * @param pField the field id
-     * @return true/false
-     */
-    boolean isChanged(final T pItem,
-                      final MetisDataFieldId pField) {
+    @Override
+    public boolean isChanged(final T pItem,
+                             final MetisDataFieldId pField) {
         return theChanged != null
                 && theChanged.test(pItem, pField);
     }
@@ -289,14 +283,9 @@ public class PrometheusFieldSet<T>
         areLabelsAdjusted = true;
     }
 
-    /**
-     * Register a field.
-     *
-     * @param pFieldId the field.
-     * @param pPanel   the panel.
-     */
-    void registerField(final MetisDataFieldId pFieldId,
-                       final PrometheusFieldSetPanel<T> pPanel) {
+    @Override
+    public void registerField(final MetisDataFieldId pFieldId,
+                              final PrometheusFieldSetPanel<T> pPanel) {
         theFieldMap.put(pFieldId, pPanel);
     }
 
@@ -337,14 +326,9 @@ public class PrometheusFieldSet<T>
         myPanel.setEditable(pFieldId, pEditable);
     }
 
-    /**
-     * Notify listeners of new data.
-     *
-     * @param pFieldId  the fieldId.
-     * @param pNewValue the new value
-     */
-    void newData(final MetisDataFieldId pFieldId,
-                 final Object pNewValue) {
+    @Override
+    public void newData(final MetisDataFieldId pFieldId,
+                        final Object pNewValue) {
         /* If we are not refreshing data */
         if (!isRefreshing) {
             /* Create the notification */

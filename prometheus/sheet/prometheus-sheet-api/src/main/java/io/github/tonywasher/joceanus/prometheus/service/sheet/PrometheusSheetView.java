@@ -22,7 +22,8 @@ import java.util.ListIterator;
 /**
  * Represents a view of a range of cells.
  */
-public class PrometheusSheetView {
+public class PrometheusSheetView
+        implements PrometheusSheetViewCtl {
     /**
      * Underlying Sheet.
      */
@@ -73,15 +74,11 @@ public class PrometheusSheetView {
     protected PrometheusSheetView(final PrometheusSheetCell pFirstCell,
                                   final PrometheusSheetCell pLastCell) {
         /* Store parameters */
-        this(pFirstCell.getSheet(), pFirstCell.getPosition(), pLastCell.getPosition());
+        this((PrometheusSheetSheet) pFirstCell.getSheet(), pFirstCell.getPosition(), pLastCell.getPosition());
     }
 
-    /**
-     * Obtain the underlying sheet.
-     *
-     * @return the underlying sheet
-     */
-    public PrometheusSheetSheet getSheet() {
+    @Override
+    public PrometheusSheetSheetCtl getSheet() {
         return theSheet;
     }
 
@@ -159,7 +156,7 @@ public class PrometheusSheetView {
         final int myIndex = convertRowIndex(pRowIndex);
         return myIndex < 0
                 ? null
-                : theSheet.getReadOnlyRowByIndex(myIndex);
+                : (PrometheusSheetRow) theSheet.getReadOnlyRowByIndex(myIndex);
     }
 
     /**

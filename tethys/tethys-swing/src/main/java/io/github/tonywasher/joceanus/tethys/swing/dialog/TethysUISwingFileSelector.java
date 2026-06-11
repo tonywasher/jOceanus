@@ -16,25 +16,19 @@
  */
 package io.github.tonywasher.joceanus.tethys.swing.dialog;
 
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.tethys.core.dialog.TethysUICoreFileSelector;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Component;
 import java.io.File;
+import java.util.List;
 
 /**
  * Swing File Selector.
  */
 public class TethysUISwingFileSelector
         extends TethysUICoreFileSelector {
-    /**
-     * Logger.
-     */
-    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysUISwingFileSelector.class);
-
     /**
      * Parent frame.
      */
@@ -82,9 +76,10 @@ public class TethysUISwingFileSelector
 
         /* Set the extension filter list */
         theChooser.resetChoosableFileFilters();
-        final String myExt = getExtension();
-        if (myExt != null) {
-            theChooser.setFileFilter(new FileNameExtensionFilter("Filter", myExt));
+        final List<String> myExt = getExtensions();
+        if (!myExt.isEmpty()) {
+            final String[] myExtArray = myExt.toArray(new String[0]);
+            theChooser.setFileFilter(new FileNameExtensionFilter(getFilterName(), myExtArray));
         }
 
         /* Show the dialog */

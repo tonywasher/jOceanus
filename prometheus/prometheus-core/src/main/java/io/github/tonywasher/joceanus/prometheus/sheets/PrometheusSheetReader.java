@@ -26,13 +26,13 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusIOException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusSecurityException;
 import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetProvider;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
-import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.io.File;
@@ -48,12 +48,8 @@ import java.util.List;
  *
  * @author Tony Washer
  */
-public abstract class PrometheusSheetReader {
-    /**
-     * Gui Factory.
-     */
-    private final TethysUIFactory<?> theGuiFactory;
-
+public abstract class PrometheusSheetReader
+        implements PrometheusSheetControl {
     /**
      * Report.
      */
@@ -82,42 +78,27 @@ public abstract class PrometheusSheetReader {
     /**
      * Constructor.
      *
-     * @param pFactory     the gui factory
      * @param pReport      the report
      * @param pPasswordMgr the password manager
      */
-    protected PrometheusSheetReader(final TethysUIFactory<?> pFactory,
-                                    final TethysUIThreadStatusReport pReport,
+    protected PrometheusSheetReader(final TethysUIThreadStatusReport pReport,
                                     final PrometheusSecurityPasswordManager pPasswordMgr) {
-        theGuiFactory = pFactory;
         theReport = pReport;
         thePasswordMgr = pPasswordMgr;
     }
 
-    /**
-     * get report.
-     *
-     * @return the report
-     */
-    protected TethysUIThreadStatusReport getReport() {
+    @Override
+    public TethysUIThreadStatusReport getReport() {
         return theReport;
     }
 
-    /**
-     * get data.
-     *
-     * @return the data
-     */
+    @Override
     public PrometheusDataSet getData() {
         return theData;
     }
 
-    /**
-     * get workbook.
-     *
-     * @return the workbook
-     */
-    protected PrometheusSheetWorkBook getWorkBook() {
+    @Override
+    public PrometheusSheetWorkBook getWorkBook() {
         return theWorkBook;
     }
 
@@ -185,9 +166,14 @@ public abstract class PrometheusSheetReader {
                 myEntry = myIterator.next();
 
                 /* Break loop if we have the right entry */
-                if (myEntry.getFileName().startsWith(PrometheusSpreadSheet.FILE_NAME)) {
+                if (myEntry.getFileName().startsWith(PrometheusSheetConstants.FILE_NAME)) {
                     break;
                 }
+            }
+
+            /* If we did not find the entry */
+            if (myEntry == null) {
+                throw new PrometheusDataException("Invalid input file");
             }
 
             /* Load the workBook */
@@ -261,9 +247,6 @@ public abstract class PrometheusSheetReader {
         /* register additional sheets */
         registerSheets();
 
-        /* Declare the number of stages */
-        theReport.setNumStages(theSheets.size() + 2);
-
         /* Note the stage */
         theReport.setNewStage("Loading");
 
@@ -279,18 +262,13 @@ public abstract class PrometheusSheetReader {
      */
     private PrometheusSheetDataItem<?> newSheet(final PrometheusCryptographyDataType pListType) {
         /* Switch on list Type */
-        switch (pListType) {
-            case CONTROLDATA:
-                return new PrometheusSheetControlData(this);
-            case CONTROLKEY:
-                return new PrometheusSheetControlKey(this);
-            case CONTROLKEYSET:
-                return new PrometheusSheetControlKeySet(this);
-            case DATAKEYSET:
-                return new PrometheusSheetDataKeySet(this);
-            default:
-                throw new IllegalArgumentException(pListType.toString());
-        }
+        return switch (pListType) {
+            case CONTROLDATA -> new PrometheusSheetControlData(this);
+            case CONTROLKEY -> new PrometheusSheetControlKey(this);
+            case CONTROLKEYSET -> new PrometheusSheetControlKeySet(this);
+            case DATAKEYSET -> new PrometheusSheetDataKeySet(this);
+            default -> throw new IllegalArgumentException(pListType.toString());
+        };
     }
 
     /**
@@ -303,11 +281,10 @@ public abstract class PrometheusSheetReader {
         final OceanusProfile myTask = theReport.getActiveTask();
 
         /* Declare the number of stages */
-        theReport.setNumStages(theSheets.size() + 1);
+        theReport.setNumStages(theSheets.size());
 
         /* Loop through the sheets */
         for (PrometheusSheetDataItem<?> mySheet : theSheets) {
-            /* Access the next sheet */
             /* Load data for the sheet */
             myTask.startTask(mySheet.toString());
             mySheet.loadSpreadSheet();

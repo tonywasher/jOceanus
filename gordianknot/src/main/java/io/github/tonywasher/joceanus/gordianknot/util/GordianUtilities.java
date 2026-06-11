@@ -56,12 +56,12 @@ public final class GordianUtilities {
     /**
      * The ZipFile extension.
      */
-    public static final String ZIPFILE_EXT = ".zip";
+    public static final String ZIPFILE_EXT = "zip";
 
     /**
      * The Encrypted ZipFile extension.
      */
-    public static final String SECUREZIPFILE_EXT = ".gkzip";
+    public static final String SECUREZIPFILE_EXT = "gkzip";
 
     /**
      * Private constructor.

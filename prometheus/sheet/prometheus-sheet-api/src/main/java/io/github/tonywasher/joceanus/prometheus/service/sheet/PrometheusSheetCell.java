@@ -31,14 +31,9 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
  */
 public abstract class PrometheusSheetCell {
     /**
-     * The underlying row.
+     * The underlying sheet.
      */
-    private final PrometheusSheetRow theRow;
-
-    /**
-     * The underlying view.
-     */
-    private final PrometheusSheetView theView;
+    private final PrometheusSheetSheetCtl theSheet;
 
     /**
      * The position of the cell.
@@ -53,17 +48,18 @@ public abstract class PrometheusSheetCell {
     /**
      * Constructor.
      *
-     * @param pRow      the row for the cell
+     * @param pSheet    the sheet for the cell
+     * @param pRowIndex the row index
      * @param pColIndex the column index
      * @param pReadOnly is the cell readOnly?
      */
-    protected PrometheusSheetCell(final PrometheusSheetRow pRow,
+    protected PrometheusSheetCell(final PrometheusSheetSheetCtl pSheet,
+                                  final int pRowIndex,
                                   final int pColIndex,
                                   final boolean pReadOnly) {
         /* Store parameters */
-        theRow = pRow;
-        theView = pRow.getView();
-        thePosition = new PrometheusSheetCellPosition(pColIndex, pRow.getRowIndex());
+        theSheet = pSheet;
+        thePosition = new PrometheusSheetCellPosition(pColIndex, pRowIndex);
         isReadOnly = pReadOnly;
     }
 
@@ -72,26 +68,8 @@ public abstract class PrometheusSheetCell {
      *
      * @return the underlying sheet
      */
-    public PrometheusSheetSheet getSheet() {
-        return theRow.getSheet();
-    }
-
-    /**
-     * Obtain the underlying row.
-     *
-     * @return the underlying row
-     */
-    public PrometheusSheetRow getRow() {
-        return theRow;
-    }
-
-    /**
-     * Obtain the underlying view.
-     *
-     * @return the underlying view
-     */
-    public PrometheusSheetView getView() {
-        return theView;
+    public PrometheusSheetSheetCtl getSheet() {
+        return theSheet;
     }
 
     /**

@@ -46,30 +46,16 @@ public class PrometheusSheetDataKeySet
     private static final int COL_KEYSETDEF = COL_CONTROL + 1;
 
     /**
-     * Constructor for loading a spreadsheet.
+     * Constructor.
      *
-     * @param pReader the spreadsheet reader
+     * @param pControl the spreadsheet control
      */
-    protected PrometheusSheetDataKeySet(final PrometheusSheetReader pReader) {
+    protected PrometheusSheetDataKeySet(final PrometheusSheetControl pControl) {
         /* Call super constructor */
-        super(pReader, SHEET_NAME);
+        super(pControl, SHEET_NAME);
 
         /* Access the Lists */
-        final PrometheusDataSet myData = pReader.getData();
-        setDataList(myData.getDataKeySets());
-    }
-
-    /**
-     * Constructor for creating a spreadsheet.
-     *
-     * @param pWriter the Spreadsheet writer
-     */
-    protected PrometheusSheetDataKeySet(final PrometheusSheetWriter pWriter) {
-        /* Call super constructor */
-        super(pWriter, SHEET_NAME);
-
-        /* Access the Control list */
-        final PrometheusDataSet myData = pWriter.getData();
+        final PrometheusDataSet myData = pControl.getData();
         setDataList(myData.getDataKeySets());
     }
 

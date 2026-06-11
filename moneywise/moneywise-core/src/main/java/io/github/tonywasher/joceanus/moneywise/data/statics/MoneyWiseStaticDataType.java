@@ -190,7 +190,6 @@ public enum MoneyWiseStaticDataType
      * @return the resource bundleId
      */
     private static OceanusBundleId bundleIdForDataType(final MoneyWiseStaticDataType pType) {
-        /* Create the map and return it */
         return switch (pType) {
             case DEPOSITTYPE -> MoneyWiseStaticResource.DEPOSITTYPE_NAME;
             case CASHTYPE -> MoneyWiseStaticResource.CASHTYPE_NAME;
@@ -214,7 +213,6 @@ public enum MoneyWiseStaticDataType
      * @return the resource bundleId
      */
     private static OceanusBundleId bundleIdForDataList(final MoneyWiseStaticDataType pType) {
-        /* Create the map and return it */
         return switch (pType) {
             case DEPOSITTYPE -> MoneyWiseStaticResource.DEPOSITTYPE_LIST;
             case CASHTYPE -> MoneyWiseStaticResource.CASHTYPE_LIST;

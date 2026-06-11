@@ -21,7 +21,6 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataT
 import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetDataItem;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
-import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
@@ -34,15 +33,13 @@ public class MoneyWiseReader
     /**
      * Constructor.
      *
-     * @param pFactory     the gui factory
      * @param pReport      the report
      * @param pPasswordMgr the password manager
      */
-    public MoneyWiseReader(final TethysUIFactory<?> pFactory,
-                           final TethysUIThreadStatusReport pReport,
+    public MoneyWiseReader(final TethysUIThreadStatusReport pReport,
                            final PrometheusSecurityPasswordManager pPasswordMgr) {
         /* Call super-constructor */
-        super(pFactory, pReport, pPasswordMgr);
+        super(pReport, pPasswordMgr);
     }
 
     /**

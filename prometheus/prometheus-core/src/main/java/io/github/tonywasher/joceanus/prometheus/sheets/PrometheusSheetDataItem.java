@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.prometheus.sheets;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
@@ -24,7 +25,6 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
@@ -32,6 +32,7 @@ import io.github.tonywasher.joceanus.prometheus.exc.PrometheusIOException;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetColumn;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetView;
@@ -58,9 +59,9 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
     private final TethysUIThreadStatusReport theReport;
 
     /**
-     * The input sheet.
+     * The control.
      */
-    private PrometheusSheetReader theReader;
+    private PrometheusSheetControl theControl;
 
     /**
      * The workbook.
@@ -108,30 +109,16 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
     private int theBaseRow;
 
     /**
-     * Constructor for a load operation.
+     * Constructor.
      *
-     * @param pReader the spreadsheet reader
-     * @param pRange  the range to load
+     * @param pControl the spreadsheet control
+     * @param pRange   the range to load/create
      */
-    protected PrometheusSheetDataItem(final PrometheusSheetReader pReader,
+    protected PrometheusSheetDataItem(final PrometheusSheetControl pControl,
                                       final String pRange) {
         /* Store parameters */
-        theReport = pReader.getReport();
-        theReader = pReader;
-        theRangeName = pRange;
-    }
-
-    /**
-     * Constructor for a write operation.
-     *
-     * @param pWriter the spreadsheet writer
-     * @param pRange  the range to create
-     */
-    protected PrometheusSheetDataItem(final PrometheusSheetWriter pWriter,
-                                      final String pRange) {
-        /* Store parameters */
-        theReport = pWriter.getReport();
-        theWorkBook = pWriter.getWorkBook();
+        theReport = pControl.getReport();
+        theControl = pControl;
         theRangeName = pRange;
     }
 
@@ -168,15 +155,15 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
         /* Protect against exceptions */
         try {
             /* Access the workbook */
-            theWorkBook = theReader.getWorkBook();
+            theWorkBook = theControl.getWorkBook();
+
+            /* Declare the new stage */
+            theReport.setNewStage(theRangeName);
 
             /* Access the view of the range */
             theActiveView = theWorkBook.getRangeView(theRangeName);
             if (theActiveView != null) {
                 final Iterator<PrometheusSheetRow> myIterator = theActiveView.rowIterator();
-
-                /* Declare the new stage */
-                theReport.setNewStage(theRangeName);
 
                 /* Determine count of rows */
                 final int myTotal = theActiveView.getRowCount();
@@ -217,17 +204,19 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
     protected void writeSpreadSheet() throws OceanusException {
         /* Protect against exceptions */
         try {
+            /* Access the workbook */
+            theWorkBook = theControl.getWorkBook();
+
             /* Declare the new stage */
             theReport.setNewStage(theRangeName);
 
             /* Count the number of items */
-            final int myTotal = theList.size();
+            final int myNumRows = theList.size();
 
             /* Declare the number of steps */
-            theReport.setNumSteps(myTotal);
+            theReport.setNumSteps(myNumRows);
 
             /* Determine size of sheet */
-            final int myNumRows = myTotal;
             final int myNumCols = getLastColumn() + 1;
 
             /* Create the sheet */
@@ -305,7 +294,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void newRow() {
         /* Create the new row */
-        theActiveRow = theWorkSheet.getMutableRowByIndex(theCurrRow);
+        theActiveRow = (PrometheusSheetRow) theWorkSheet.getMutableRowByIndex(theCurrRow);
     }
 
     /**
@@ -375,13 +364,24 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
     }
 
     /**
+     * Obtain the column.
+     *
+     * @param pOffset the offset of the column
+     * @return the column
+     */
+    private PrometheusSheetColumn getMutableColumnByIndex(final int pOffset) {
+        /* Apply to the sheet */
+        return (PrometheusSheetColumn) theWorkSheet.getMutableColumnByIndex(pOffset);
+    }
+
+    /**
      * Set Hidden column.
      *
      * @param pOffset the offset of the column
      */
     protected void setHiddenColumn(final int pOffset) {
         /* Apply to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setHidden(true);
+        getMutableColumnByIndex(pOffset).setHidden(true);
     }
 
     /**
@@ -391,7 +391,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setDateColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.DATE);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.DATE);
     }
 
     /**
@@ -401,7 +401,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setStringColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.STRING);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.STRING);
     }
 
     /**
@@ -411,7 +411,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setMoneyColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.MONEY);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.MONEY);
     }
 
     /**
@@ -421,7 +421,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setPriceColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.PRICE);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.PRICE);
     }
 
     /**
@@ -431,7 +431,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setUnitsColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.UNITS);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.UNITS);
     }
 
     /**
@@ -441,7 +441,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setRateColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.RATE);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.RATE);
     }
 
     /**
@@ -451,7 +451,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setRatioColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.RATIO);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.RATIO);
     }
 
     /**
@@ -461,7 +461,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setBooleanColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.BOOLEAN);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.BOOLEAN);
     }
 
     /**
@@ -471,7 +471,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      */
     protected void setIntegerColumn(final int pOffset) {
         /* Apply the style to the sheet */
-        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.INTEGER);
+        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.INTEGER);
     }
 
     /**

@@ -16,13 +16,13 @@
  */
 package io.github.tonywasher.joceanus.prometheus.database;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
-import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusSortOrder;
 
 /**
  * Database table class for Static Data Items. Each data type that represents Static Data should
@@ -38,7 +38,7 @@ public abstract class PrometheusTableStaticData<T extends PrometheusStaticDataIt
      * @param pDatabase the database control
      * @param pTabName  the table name
      */
-    protected PrometheusTableStaticData(final PrometheusDataStore pDatabase,
+    protected PrometheusTableStaticData(final PrometheusDatabaseControl pDatabase,
                                         final String pTabName) {
         super(pDatabase, pTabName);
 
@@ -58,16 +58,12 @@ public abstract class PrometheusTableStaticData<T extends PrometheusStaticDataIt
                                  final MetisDataFieldId iField) throws OceanusException {
         /* Switch on field id */
         final PrometheusTableDefinition myTableDef = getTableDef();
-        if (PrometheusDataResource.STATICDATA_ENABLED.equals(iField)) {
-            myTableDef.setBooleanValue(iField, pItem.getEnabled());
-        } else if (PrometheusDataResource.STATICDATA_SORT.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getOrder());
-        } else if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getNameBytes());
-        } else if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getDescBytes());
-        } else {
-            super.setFieldValue(pItem, iField);
+        switch (iField) {
+            case PrometheusDataResource.STATICDATA_ENABLED -> myTableDef.setBooleanValue(iField, pItem.getEnabled());
+            case PrometheusDataResource.STATICDATA_SORT -> myTableDef.setIntegerValue(iField, pItem.getOrder());
+            case PrometheusDataResource.DATAITEM_FIELD_NAME -> myTableDef.setBinaryValue(iField, pItem.getNameBytes());
+            case PrometheusDataResource.DATAITEM_FIELD_DESC -> myTableDef.setBinaryValue(iField, pItem.getDescBytes());
+            case null, default -> super.setFieldValue(pItem, iField);
         }
     }
 

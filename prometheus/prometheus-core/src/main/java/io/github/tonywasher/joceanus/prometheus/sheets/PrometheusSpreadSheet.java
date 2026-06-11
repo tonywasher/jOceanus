@@ -33,11 +33,6 @@ import java.io.OutputStream;
  */
 public abstract class PrometheusSpreadSheet {
     /**
-     * The Data file name.
-     */
-    public static final String FILE_NAME = "zipData";
-
-    /**
      * Constructor.
      */
     protected PrometheusSpreadSheet() {
