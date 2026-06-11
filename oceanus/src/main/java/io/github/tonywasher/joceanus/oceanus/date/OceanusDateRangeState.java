@@ -392,10 +392,7 @@ public class OceanusDateRangeState {
             case DATESUPTO:
                 buildUpToRange();
                 break;
-            case CALENDARMONTH:
-            case CALENDARQUARTER:
-            case CALENDARYEAR:
-            case FISCALYEAR:
+            case CALENDARMONTH, CALENDARQUARTER, CALENDARYEAR, FISCALYEAR:
                 buildContainingRange();
                 break;
             default:

@@ -167,8 +167,8 @@ public final class OceanusDateUtils {
         }
 
         /* Move to the first of the current year */
-        myDate = myDate.withDayOfMonth(myDay);
-        myDate = myDate.withMonth(myMonth);
+        myDate = myDate.withDayOfMonth(myFiscalDay);
+        myDate = myDate.withMonth(myFiscalMonth);
         return new OceanusDate(myDate);
     }
 
