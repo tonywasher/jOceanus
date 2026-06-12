@@ -279,7 +279,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
                 final MoneyWiseDepositCategory myCategory = myCurr.getCategory();
 
                 /* Handle foreign asset */
-                if (Boolean.TRUE.equals(myCurr.isForeignCurrency())) {
+                if (myCurr.isForeignCurrency()) {
                     haveForeignCurrency = Boolean.TRUE;
                 }
 

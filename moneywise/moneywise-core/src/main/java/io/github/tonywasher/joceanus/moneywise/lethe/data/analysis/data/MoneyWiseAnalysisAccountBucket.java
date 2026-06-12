@@ -41,6 +41,7 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
+import java.util.Comparator;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
@@ -752,7 +753,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
             /* Initialise class */
             theAnalysis = pAnalysis;
             theList = new MetisListIndexed<>();
-            theList.setComparator((l, r) -> l.getAccount().compareTo(r.getAccount()));
+            theList.setComparator(Comparator.comparing(MoneyWiseAnalysisAccountBucket::getAccount));
         }
 
         @Override

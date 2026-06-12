@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -363,7 +364,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
          * SortBuckets.
          */
         protected void sortBuckets() {
-            theList.sort((l, r) -> l.getBucketId().compareTo(r.getBucketId()));
+            theList.sort(Comparator.comparing(MoneyWiseXAnalysisTaxBasisAccountBucket::getBucketId));
         }
 
         /**

@@ -753,7 +753,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
             /* Return the first category in the list if it exists */
             return isEmpty()
                     ? null
-                    : theList.getUnderlyingList().get(0);
+                    : theList.getUnderlyingList().getFirst();
         }
 
         /**

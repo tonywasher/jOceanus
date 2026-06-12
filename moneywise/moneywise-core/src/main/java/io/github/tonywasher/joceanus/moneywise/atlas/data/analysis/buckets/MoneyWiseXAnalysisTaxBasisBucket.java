@@ -890,7 +890,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
             /* Return the first basis in the list if it exists */
             return isEmpty()
                     ? null
-                    : theList.getUnderlyingList().get(0);
+                    : theList.getUnderlyingList().getFirst();
         }
 
         /**

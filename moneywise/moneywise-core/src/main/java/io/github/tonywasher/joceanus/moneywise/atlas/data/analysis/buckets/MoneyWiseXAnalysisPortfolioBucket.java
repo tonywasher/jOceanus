@@ -40,6 +40,7 @@ import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
+import java.util.Comparator;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
@@ -370,12 +371,11 @@ public final class MoneyWiseXAnalysisPortfolioBucket
         if (pThat == null) {
             return false;
         }
-        if (!(pThat instanceof MoneyWiseXAnalysisPortfolioBucket)) {
+        if (!(pThat instanceof MoneyWiseXAnalysisPortfolioBucket myThat)) {
             return false;
         }
 
         /* Compare the Portfolios */
-        final MoneyWiseXAnalysisPortfolioBucket myThat = (MoneyWiseXAnalysisPortfolioBucket) pThat;
         return getPortfolio().equals(myThat.getPortfolio());
     }
 
@@ -626,7 +626,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
             theAnalysis = pAnalysis;
             theTotals = allocateTotalsBucket();
             theList = new MetisListIndexed<>();
-            theList.setComparator((l, r) -> l.getPortfolio().compareTo(r.getPortfolio()));
+            theList.setComparator(Comparator.comparing(MoneyWiseXAnalysisPortfolioBucket::getPortfolio));
         }
 
         /**

@@ -16,12 +16,12 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 
 import java.util.Currency;
@@ -77,18 +77,7 @@ public class MoneyWiseAnalysisSecurityPriceCursor {
      * @return the cursor
      */
     private MoneyWiseSecurityCursor getCursor(final MoneyWiseSecurity pSecurity) {
-        /* Look for existing cursor */
-        MoneyWiseSecurityCursor myCursor = theCursorMap.get(pSecurity);
-
-        /* If we do not have a cursor */
-        if (myCursor == null) {
-            /* Allocate new cursor */
-            myCursor = new MoneyWiseSecurityCursor(pSecurity);
-            theCursorMap.put(pSecurity, myCursor);
-        }
-
-        /* return the cursor */
-        return myCursor;
+        return theCursorMap.computeIfAbsent(pSecurity, s -> new MoneyWiseSecurityCursor(pSecurity));
     }
 
     /**

@@ -422,7 +422,7 @@ public final class MoneyWiseXAnalysisTransTagBucket
             /* Return the first payee in the list if it exists */
             return isEmpty()
                     ? null
-                    : theList.getUnderlyingList().get(0);
+                    : theList.getUnderlyingList().getFirst();
         }
 
         /**

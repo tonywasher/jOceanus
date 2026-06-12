@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -279,7 +280,7 @@ public final class MoneyWiseAnalysisTransTagBucket
         MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysisControl pAnalysis) {
             theAnalysis = pAnalysis;
             theList = new MetisListIndexed<>();
-            theList.setComparator((l, r) -> l.getTransTag().compareTo(r.getTransTag()));
+            theList.setComparator(Comparator.comparing(MoneyWiseAnalysisTransTagBucket::getTransTag));
         }
 
         /**

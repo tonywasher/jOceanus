@@ -41,6 +41,7 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
+import java.util.Comparator;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
@@ -495,7 +496,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
             theEditSet = theAnalysis.getEditSet();
             theTotals = allocateTotalsBucket();
             theList = new MetisListIndexed<>();
-            theList.setComparator((l, r) -> l.getPayee().compareTo(r.getPayee()));
+            theList.setComparator(Comparator.comparing(MoneyWiseXAnalysisPayeeBucket::getPayee));
         }
 
         /**

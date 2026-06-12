@@ -27,6 +27,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -172,7 +173,7 @@ public final class MoneyWiseXAnalysisCashCategoryBucket
             theCurrency = theAnalysis.getCurrency();
             theTotals = allocateTotalsBucket();
             theList = new MetisListIndexed<>();
-            theList.setComparator((l, r) -> l.getAccountCategory().compareTo(r.getAccountCategory()));
+            theList.setComparator(Comparator.comparing(MoneyWiseXAnalysisCashCategoryBucket::getAccountCategory));
         }
 
         @Override
@@ -278,7 +279,7 @@ public final class MoneyWiseXAnalysisCashCategoryBucket
                 final MoneyWiseCashCategory myCategory = myCurr.getCategory();
 
                 /* Handle foreign asset */
-                if (Boolean.TRUE.equals(myCurr.isForeignCurrency())) {
+                if (myCurr.isForeignCurrency()) {
                     haveForeignCurrency = Boolean.TRUE;
                 }
 

@@ -46,6 +46,7 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
+import java.util.Comparator;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
@@ -857,7 +858,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
             theCharges = pGains;
             theTotals = allocateTotalsBucket();
             theList = new MetisListIndexed<>();
-            theList.setComparator((l, r) -> l.getTaxBasis().compareTo(r.getTaxBasis()));
+            theList.setComparator(Comparator.comparing(MoneyWiseAnalysisTaxBasisBucket::getTaxBasis));
         }
 
         /**
@@ -1100,10 +1101,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
                     addExpense(pTrans, MoneyWiseTaxClass.TAXPAID);
                     break;
                 case TAXFREEINTEREST, TAXFREEDIVIDEND, LOANINTERESTEARNED, INHERITED,
-                     CASHBACK, LOYALTYBONUS, TAXFREELOYALTYBONUS, GIFTEDINCOME:
-                    addIncome(pTrans, MoneyWiseTaxClass.TAXFREE);
-                    break;
-                case PENSIONCONTRIB:
+                     CASHBACK, LOYALTYBONUS, TAXFREELOYALTYBONUS, GIFTEDINCOME, PENSIONCONTRIB:
                     addIncome(pTrans, MoneyWiseTaxClass.TAXFREE);
                     break;
                 case BADDEBTCAPITAL:
