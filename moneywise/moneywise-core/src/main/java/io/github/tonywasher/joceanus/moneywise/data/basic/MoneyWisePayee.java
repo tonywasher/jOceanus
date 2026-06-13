@@ -491,8 +491,7 @@ public class MoneyWisePayee
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        final MoneyWiseDataSet myData = getDataSet();
-        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myData.getPayeeTypes());
+        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, MoneyWiseStaticDataType.PAYEETYPE);
     }
 
     @Override
@@ -727,7 +726,7 @@ public class MoneyWisePayee
          */
         public MoneyWisePayeeInfoList getPayeeInfo() {
             if (theInfoList == null) {
-                theInfoList = getDataSet().getPayeeInfo();
+                theInfoList = getDataSet().getDataList(MoneyWiseBasicDataType.PAYEEINFO, MoneyWisePayeeInfoList.class);
             }
             return theInfoList;
         }
@@ -740,7 +739,7 @@ public class MoneyWisePayee
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
             if (theInfoTypeList == null) {
                 theInfoTypeList = getEditSet() == null
-                        ? getDataSet().getActInfoTypes()
+                        ? getDataSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class)
                         : getEditSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
             }
             return theInfoTypeList;

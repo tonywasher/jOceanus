@@ -24,6 +24,7 @@ import io.github.tonywasher.joceanus.metis.data.MetisDataState;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseDataSetCtl;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
@@ -218,11 +219,7 @@ public class MoneyWiseTransaction
         return super.includeXmlField(pField);
     }
 
-    /**
-     * Obtain Date.
-     *
-     * @return the date
-     */
+    @Override
     public OceanusDate getDate() {
         return getValues().getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, OceanusDate.class);
     }
@@ -234,8 +231,10 @@ public class MoneyWiseTransaction
      */
     private void setValueDate(final OceanusDate pValue) {
         getValues().setUncheckedValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, pValue);
-        final MoneyWiseTaxFactory myFactory = getDataSet().getTaxFactory();
-        setValueTaxYear(myFactory.findTaxYearForDate(pValue));
+        if (getDataSet() instanceof MoneyWiseDataSetCtl myControl) {
+            final MoneyWiseTaxFactory myFactory = myControl.getTaxFactory();
+            setValueTaxYear(myFactory.findTaxYearForDate(pValue));
+        }
     }
 
     /**
@@ -1034,7 +1033,7 @@ public class MoneyWiseTransaction
          */
         public MoneyWiseTransInfoList getTransactionInfo() {
             if (theInfoList == null) {
-                theInfoList = getDataSet().getTransactionInfo();
+                theInfoList = getDataSet().getDataList(MoneyWiseBasicDataType.TRANSACTIONINFO, MoneyWiseTransInfoList.class);
             }
             return theInfoList;
         }
@@ -1055,7 +1054,7 @@ public class MoneyWiseTransaction
          */
         public MoneyWiseTransInfoTypeList getTransInfoTypes() {
             if (theInfoTypeList == null) {
-                theInfoTypeList = getDataSet().getTransInfoTypes();
+                theInfoTypeList = getDataSet().getDataList(MoneyWiseStaticDataType.TRANSINFOTYPE, MoneyWiseTransInfoTypeList.class);
             }
             return theInfoTypeList;
         }
@@ -1186,9 +1185,11 @@ public class MoneyWiseTransaction
 
             /* Set the Date as the start of the range */
             OceanusDate myDate = new OceanusDate();
-            final OceanusDateRange myRange = getDataSet().getDateRange();
-            if (myRange.compareToDate(myDate) != 0) {
-                myDate = myRange.getStart();
+            if (getDataSet() instanceof MoneyWiseDataSetCtl myControl) {
+                final OceanusDateRange myRange = myControl.getDateRange();
+                if (myRange.compareToDate(myDate) != 0) {
+                    myDate = myRange.getStart();
+                }
             }
             myTrans.setDate(myDate);
 

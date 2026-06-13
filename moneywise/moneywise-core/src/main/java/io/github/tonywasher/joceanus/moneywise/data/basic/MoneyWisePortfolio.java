@@ -55,6 +55,7 @@ import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Portfolio class.
@@ -348,7 +349,7 @@ public class MoneyWisePortfolio
 
     @Override
     public boolean isForeign() {
-        final MoneyWiseCurrency myDefault = getDataSet().getReportingCurrency();
+        final MoneyWiseCurrency myDefault = getDefaultCurrency();
         return !myDefault.equals(getAssetCurrency());
     }
 
@@ -524,10 +525,9 @@ public class MoneyWisePortfolio
         super.resolveDataSetLinks();
 
         /* Resolve holding account */
-        final MoneyWiseDataSet myData = getDataSet();
-        resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myData.getPayees());
-        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myData.getPortfolioTypes());
-        resolveDataLink(MoneyWiseStaticDataType.CURRENCY, myData.getAccountCurrencies());
+        resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, MoneyWiseBasicDataType.PAYEE);
+        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, MoneyWiseStaticDataType.PORTFOLIOTYPE);
+        resolveDataLink(MoneyWiseStaticDataType.CURRENCY, MoneyWiseStaticDataType.CURRENCY);
     }
 
     @Override
@@ -650,30 +650,30 @@ public class MoneyWisePortfolio
     public MoneyWiseTransCategory getDetailedCategory(final MoneyWiseTransCategory pCategory,
                                                       final MoneyWiseTaxCredit pYear) {
         /* Switch on category type */
-        final MoneyWiseTransCategoryList myCategories = getDataSet().getTransCategories();
-        switch (pCategory.getCategoryTypeClass()) {
-            case INTEREST:
+        final MoneyWiseTransCategoryList myCategories = getDataSet().getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
+        return switch (Objects.requireNonNull(pCategory.getCategoryTypeClass())) {
+            case INTEREST -> {
                 if (isTaxFree()) {
-                    return myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEINTEREST);
+                    yield myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEINTEREST);
                 }
-                return myCategories.getSingularClass(isGross()
+                yield myCategories.getSingularClass(isGross()
                         || !pYear.isTaxCreditRequired()
                         ? MoneyWiseTransCategoryClass.GROSSINTEREST
                         : MoneyWiseTransCategoryClass.TAXEDINTEREST);
-            case LOYALTYBONUS:
+            }
+            case LOYALTYBONUS -> {
                 if (isTaxFree()) {
-                    return myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREELOYALTYBONUS);
+                    yield myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREELOYALTYBONUS);
                 }
-                return myCategories.getSingularClass(isGross()
+                yield myCategories.getSingularClass(isGross()
                         ? MoneyWiseTransCategoryClass.GROSSLOYALTYBONUS
                         : MoneyWiseTransCategoryClass.TAXEDLOYALTYBONUS);
-            case DIVIDEND:
-                return isTaxFree()
-                        ? myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEDIVIDEND)
-                        : pCategory;
-            default:
-                return pCategory;
-        }
+            }
+            case DIVIDEND -> isTaxFree()
+                    ? myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEDIVIDEND)
+                    : pCategory;
+            default -> pCategory;
+        };
     }
 
     @Override
@@ -806,7 +806,7 @@ public class MoneyWisePortfolio
          */
         public MoneyWisePortfolioInfoList getPortfolioInfo() {
             if (theInfoList == null) {
-                theInfoList = getDataSet().getPortfolioInfo();
+                theInfoList = getDataSet().getDataList(MoneyWiseBasicDataType.PORTFOLIOINFO, MoneyWisePortfolioInfoList.class);
             }
             return theInfoList;
         }
@@ -819,7 +819,7 @@ public class MoneyWisePortfolio
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
             if (theInfoTypeList == null) {
                 theInfoTypeList = getEditSet() == null
-                        ? getDataSet().getActInfoTypes()
+                        ? getDataSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class)
                         : getEditSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
             }
             return theInfoTypeList;
@@ -1004,7 +1004,7 @@ public class MoneyWisePortfolio
 
         @Override
         protected MoneyWisePortfolioDataMap allocateDataMap() {
-            return new MoneyWisePortfolioDataMap(getDataSet().getPayees());
+            return new MoneyWisePortfolioDataMap(getDataSet().getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class));
         }
 
         @Override

@@ -22,11 +22,11 @@ import io.github.tonywasher.joceanus.metis.ui.MetisAction;
 import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
 import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetTouch;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
@@ -253,7 +253,7 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
      * @return the date or null
      */
     protected OceanusDate getLatestTranDate(final T pAsset) {
-        final MoneyWiseTransaction myTran = pAsset.getLatest();
+        final MoneyWiseAssetTouch myTran = pAsset.getLatest();
         return myTran == null ? null : myTran.getDate();
     }
 

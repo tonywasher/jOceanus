@@ -279,7 +279,7 @@ public class MoneyWiseCash
 
     @Override
     public boolean isForeign() {
-        final MoneyWiseCurrency myDefault = getDataSet().getReportingCurrency();
+        final MoneyWiseCurrency myDefault = getDefaultCurrency();
         return !myDefault.equals(getAssetCurrency());
     }
 
@@ -450,9 +450,8 @@ public class MoneyWiseCash
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        final MoneyWiseDataSet myData = getDataSet();
-        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myData.getCashCategories());
-        resolveDataLink(MoneyWiseStaticDataType.CURRENCY, myData.getAccountCurrencies());
+        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, MoneyWiseBasicDataType.CASHCATEGORY);
+        resolveDataLink(MoneyWiseStaticDataType.CURRENCY, MoneyWiseStaticDataType.CURRENCY);
     }
 
     @Override
@@ -647,7 +646,7 @@ public class MoneyWiseCash
          */
         public MoneyWiseCashInfoList getCashInfo() {
             if (theInfoList == null) {
-                theInfoList = getDataSet().getCashInfo();
+                theInfoList = getDataSet().getDataList(MoneyWiseBasicDataType.CASHINFO, MoneyWiseCashInfoList.class);
             }
             return theInfoList;
         }
@@ -660,7 +659,7 @@ public class MoneyWiseCash
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
             if (theInfoTypeList == null) {
                 theInfoTypeList = getEditSet() == null
-                        ? getDataSet().getActInfoTypes()
+                        ? getDataSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class)
                         : getEditSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
             }
             return theInfoTypeList;
@@ -801,7 +800,7 @@ public class MoneyWiseCash
 
         @Override
         protected MoneyWiseCashDataMap allocateDataMap() {
-            return new MoneyWiseCashDataMap(getDataSet().getPayees());
+            return new MoneyWiseCashDataMap(getDataSet().getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class));
         }
 
         @Override

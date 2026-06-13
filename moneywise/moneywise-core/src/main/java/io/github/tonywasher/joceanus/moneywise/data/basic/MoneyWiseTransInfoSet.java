@@ -62,7 +62,7 @@ public class MoneyWiseTransInfoSet
      * @param pTypeList the infoTypeList for the set
      * @param pInfoList source InfoSet
      */
-    protected MoneyWiseTransInfoSet(final MoneyWiseTransaction pOwner,
+    protected MoneyWiseTransInfoSet(final MoneyWiseTransBase pOwner,
                                     final MoneyWiseTransInfoTypeList pTypeList,
                                     final MoneyWiseTransInfoList pInfoList) {
         /* Store the Owner and Info List */
@@ -75,8 +75,8 @@ public class MoneyWiseTransInfoSet
     }
 
     @Override
-    public MoneyWiseTransaction getOwner() {
-        return (MoneyWiseTransaction) super.getOwner();
+    public MoneyWiseTransBase getOwner() {
+        return (MoneyWiseTransBase) super.getOwner();
     }
 
     /**

@@ -27,6 +27,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityCla
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.ArrayList;
@@ -75,12 +76,12 @@ public final class MoneyWiseSecurityHolding
     /**
      * The portfolio of the holding.
      */
-    private MoneyWisePortfolio thePortfolio;
+    private final MoneyWisePortfolio thePortfolio;
 
     /**
      * The security of the holding.
      */
-    private MoneyWiseSecurity theSecurity;
+    private final MoneyWiseSecurity theSecurity;
 
     /**
      * Constructor.
@@ -219,7 +220,7 @@ public final class MoneyWiseSecurityHolding
 
     @Override
     public boolean isForeign() {
-        final MoneyWiseCurrency myDefault = thePortfolio.getDataSet().getReportingCurrency();
+        final MoneyWiseCurrency myDefault = thePortfolio.getDefaultCurrency();
         return !myDefault.equals(getAssetCurrency());
     }
 
@@ -230,11 +231,9 @@ public final class MoneyWiseSecurityHolding
      */
     private String generateName() {
         /* Build and return the name */
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(thePortfolio.getName());
-        myBuilder.append(SECURITYHOLDING_SEP);
-        myBuilder.append(theSecurity.getName());
-        return myBuilder.toString();
+        return thePortfolio.getName() +
+                SECURITYHOLDING_SEP +
+                theSecurity.getName();
     }
 
     /**
@@ -274,12 +273,11 @@ public final class MoneyWiseSecurityHolding
         if (pThat == null) {
             return false;
         }
-        if (!(pThat instanceof MoneyWiseSecurityHolding)) {
+        if (!(pThat instanceof MoneyWiseSecurityHolding myThat)) {
             return false;
         }
 
         /* Compare the Portfolios */
-        final MoneyWiseSecurityHolding myThat = (MoneyWiseSecurityHolding) pThat;
         if (!getPortfolio().equals(myThat.getPortfolio())) {
             return false;
         }
@@ -305,12 +303,9 @@ public final class MoneyWiseSecurityHolding
         }
 
         /* If the Asset is not a SecurityHolding we are last */
-        if (!(pThat instanceof MoneyWiseSecurityHolding)) {
+        if (!(pThat instanceof MoneyWiseSecurityHolding myThat)) {
             return 1;
         }
-
-        /* Access as AssetBase */
-        final MoneyWiseSecurityHolding myThat = (MoneyWiseSecurityHolding) pThat;
 
         /* Compare portfolios */
         int iDiff = getPortfolio().compareTo(myThat.getPortfolio());
@@ -328,7 +323,7 @@ public final class MoneyWiseSecurityHolding
      *
      * @return true/false
      */
-    protected boolean validCurrencies() {
+    boolean validCurrencies() {
         return thePortfolio.getCurrency().equals(theSecurity.getCurrency());
     }
 
@@ -357,10 +352,10 @@ public final class MoneyWiseSecurityHolding
          *
          * @param pData the dataSet
          */
-        public MoneyWiseSecurityHoldingMap(final MoneyWiseDataSet pData) {
+        public MoneyWiseSecurityHoldingMap(final PrometheusDataSet pData) {
             /* Access lists */
-            thePortfolios = pData.getPortfolios();
-            theSecurities = pData.getSecurities();
+            thePortfolios = pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
+            theSecurities = pData.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class);
             theMap = new HashMap<>();
         }
 
@@ -630,7 +625,7 @@ public final class MoneyWiseSecurityHolding
         private Iterator<MoneyWiseSecurityHolding> fullIterator(final MoneyWisePortfolio pPortfolio,
                                                                 final MoneyWiseSecurityClass pClass) {
             /* If the portfolio is closed/deleted */
-            if (pPortfolio.isClosed() || pPortfolio.isDeleted()) {
+            if (Boolean.TRUE.equals(pPortfolio.isClosed()) || pPortfolio.isDeleted()) {
                 /* No iterator */
                 return null;
             }
@@ -773,7 +768,7 @@ public final class MoneyWiseSecurityHolding
          */
         private Iterator<MoneyWiseSecurityHolding> existingIterator() {
             /* If the portfolio is closed/deleted */
-            if (thePortfolio.isClosed() || thePortfolio.isDeleted()) {
+            if (Boolean.TRUE.equals(thePortfolio.isClosed()) || thePortfolio.isDeleted()) {
                 /* No iterator */
                 return null;
             }
@@ -788,7 +783,7 @@ public final class MoneyWiseSecurityHolding
                 final MoneyWiseSecurity mySecurity = myHolding.getSecurity();
 
                 /* Ignore closed/deleted */
-                if (!mySecurity.isClosed() && !mySecurity.isDeleted()) {
+                if (Boolean.FALSE.equals(mySecurity.isClosed()) && !mySecurity.isDeleted()) {
                     /* Add to the list */
                     myList.add(myHolding);
                 }
@@ -815,7 +810,7 @@ public final class MoneyWiseSecurityHolding
          */
         private Iterator<MoneyWiseSecurityHolding> newIterator(final MoneyWiseSecurityClass pClass) {
             /* If the portfolio is closed/deleted */
-            if (thePortfolio.isClosed() || thePortfolio.isDeleted()) {
+            if (Boolean.TRUE.equals(thePortfolio.isClosed()) || thePortfolio.isDeleted()) {
                 /* No iterator */
                 return null;
             }

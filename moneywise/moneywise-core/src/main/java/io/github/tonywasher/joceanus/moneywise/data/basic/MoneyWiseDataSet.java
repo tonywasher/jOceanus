@@ -16,11 +16,9 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseDataSetCtl;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashCategory.MoneyWiseCashCategoryList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashInfo.MoneyWiseCashInfoList;
@@ -62,6 +60,9 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResou
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxBasis.MoneyWiseTaxBasisList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType.MoneyWiseTransCategoryTypeList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
@@ -74,7 +75,8 @@ import java.util.Map.Entry;
  * MoneyWise dataSet.
  */
 public class MoneyWiseDataSet
-        extends PrometheusDataSet {
+        extends PrometheusDataSet
+        implements MoneyWiseDataSetCtl {
     /**
      * Local Report fields.
      */
@@ -462,29 +464,17 @@ public class MoneyWiseDataSet
         return getDataList(MoneyWiseBasicDataType.TRANSACTIONINFO, MoneyWiseTransInfoList.class);
     }
 
-    /**
-     * Obtain Tax Factory.
-     *
-     * @return the taxFactory
-     */
+    @Override
     public MoneyWiseTaxFactory getTaxFactory() {
         return theTaxFactory;
     }
 
-    /**
-     * Obtain Date range.
-     *
-     * @return the Date Range
-     */
+    @Override
     public OceanusDateRange getDateRange() {
         return theTaxFactory.getDateRange();
     }
 
-    /**
-     * Obtain default currency.
-     *
-     * @return the default currency
-     */
+    @Override
     public MoneyWiseCurrency getReportingCurrency() {
         /* If we have note yet determined the reporting currency */
         if (theReportingCurrency == null) {

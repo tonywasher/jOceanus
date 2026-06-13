@@ -22,7 +22,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirectio
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidatorTrans;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
@@ -31,6 +31,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransBase;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransBase.MoneyWiseDataValidatorTrans;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransInfoSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
@@ -143,7 +144,8 @@ public class MoneyWiseValidateTransaction
         }
 
         /* Determine date range to check for */
-        final OceanusDateRange myRange = myTrans.getDataSet().getDateRange();
+        final MoneyWiseDataSet myDataSet = (MoneyWiseDataSet) myTrans.getDataSet();
+        final OceanusDateRange myRange = myDataSet.getDateRange();
 
         /* The date must be non-null */
         if (myDate == null) {

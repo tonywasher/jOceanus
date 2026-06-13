@@ -31,7 +31,6 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidatorTrans;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
@@ -41,6 +40,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransBase.MoneyWiseDataValidatorTrans;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransInfoSet;
@@ -656,7 +656,7 @@ public class MoneyWiseXTransactionDialog
             /* declare holding via map */
             final MoneyWisePortfolio myPortfolio = myHolding.getPortfolio();
             final MoneyWiseSecurity mySecurity = myHolding.getSecurity();
-            final MoneyWiseDataSet myData = myPortfolio.getDataSet();
+            final MoneyWiseDataSet myData = (MoneyWiseDataSet) myPortfolio.getDataSet();
             final MoneyWiseSecurityHoldingMap myMap = myData.getPortfolios().getSecurityHoldingsMap();
             return myMap.declareHolding(myPortfolio, mySecurity);
         }
@@ -788,7 +788,7 @@ public class MoneyWiseXTransactionDialog
         TethysUIScrollSubMenu<MoneyWiseTransAsset> myMenu = null;
 
         /* Access Portfolios and Holdings Map */
-        final MoneyWiseDataSet myData = pTrans.getDataSet();
+        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pTrans.getDataSet();
         final MoneyWisePortfolioList myPortfolios = myData.getPortfolios();
         final MoneyWiseSecurityHoldingMap myMap = myPortfolios.getSecurityHoldingsMap();
 

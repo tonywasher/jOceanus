@@ -298,7 +298,7 @@ public class MoneyWiseLoan
 
     @Override
     public boolean isForeign() {
-        final MoneyWiseCurrency myDefault = getDataSet().getReportingCurrency();
+        final MoneyWiseCurrency myDefault = getDefaultCurrency();
         return !myDefault.equals(getAssetCurrency());
     }
 
@@ -468,10 +468,9 @@ public class MoneyWiseLoan
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        final MoneyWiseDataSet myData = getDataSet();
-        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myData.getLoanCategories());
-        resolveDataLink(MoneyWiseStaticDataType.CURRENCY, myData.getAccountCurrencies());
-        resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myData.getPayees());
+        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, MoneyWiseBasicDataType.LOANCATEGORY);
+        resolveDataLink(MoneyWiseStaticDataType.CURRENCY, MoneyWiseStaticDataType.CURRENCY);
+        resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, MoneyWiseBasicDataType.PAYEE);
     }
 
     @Override
@@ -680,7 +679,7 @@ public class MoneyWiseLoan
          */
         public MoneyWiseLoanInfoList getLoanInfo() {
             if (theInfoList == null) {
-                theInfoList = getDataSet().getLoanInfo();
+                theInfoList = getDataSet().getDataList(MoneyWiseBasicDataType.LOANINFO, MoneyWiseLoanInfoList.class);
             }
             return theInfoList;
         }
@@ -693,7 +692,7 @@ public class MoneyWiseLoan
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
             if (theInfoTypeList == null) {
                 theInfoTypeList = getEditSet() == null
-                        ? getDataSet().getActInfoTypes()
+                        ? getDataSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class)
                         : getEditSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
             }
             return theInfoTypeList;
@@ -834,7 +833,7 @@ public class MoneyWiseLoan
 
         @Override
         protected MoneyWiseLoanDataMap allocateDataMap() {
-            return new MoneyWiseLoanDataMap(getDataSet().getPayees());
+            return new MoneyWiseLoanDataMap(getDataSet().getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class));
         }
 
         @Override
