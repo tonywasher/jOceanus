@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.prometheus.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.convert.OceanusDataConverter;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -29,6 +26,9 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldState;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionValues;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedItem;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.convert.OceanusDataConverter;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 
@@ -586,6 +586,19 @@ public abstract class PrometheusDataItem
      * @throws OceanusException on error
      */
     public void resolveDataSetLinks() throws OceanusException {
+    }
+
+    /**
+     * Resolve a data link into a list.
+     *
+     * @param pFieldId  the fieldId to resolve
+     * @param pDataType the dataType to resolve against
+     * @throws OceanusException on error
+     */
+    protected void resolveDataLink(final MetisDataFieldId pFieldId,
+                                   final MetisListKey pDataType) throws OceanusException {
+        final PrometheusDataList<?> myList = getDataSet().getDataList(pDataType, PrometheusDataList.class);
+        resolveDataLink(pFieldId, myList);
     }
 
     /**

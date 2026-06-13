@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
@@ -26,6 +24,8 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceBaseList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator;
 
@@ -42,7 +42,7 @@ public class MoneyWiseValidateSecurityPrice
         final OceanusDate myDate = myPrice.getDate();
         final OceanusPrice mySecPrice = myPrice.getPrice();
         final MoneyWiseSecurityPriceBaseList<? extends MoneyWiseSecurityPrice> myList = myPrice.getList();
-        final MoneyWiseDataSet mySet = myPrice.getDataSet();
+        final MoneyWiseDataSet mySet = (MoneyWiseDataSet) myPrice.getDataSet();
 
         /* The security must be non-null */
         if (mySecurity == null) {

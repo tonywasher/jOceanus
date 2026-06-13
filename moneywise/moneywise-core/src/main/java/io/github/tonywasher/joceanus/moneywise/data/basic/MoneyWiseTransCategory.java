@@ -220,8 +220,7 @@ public final class MoneyWiseTransCategory
         super.resolveDataSetLinks();
 
         /* Resolve category type and parent */
-        final MoneyWiseDataSet myData = getDataSet();
-        resolveDataLink(MoneyWiseStaticDataType.TRANSTYPE, myData.getTransCategoryTypes());
+        resolveDataLink(MoneyWiseStaticDataType.TRANSTYPE, MoneyWiseStaticDataType.TRANSTYPE);
     }
 
     @Override

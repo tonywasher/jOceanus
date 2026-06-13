@@ -32,6 +32,7 @@ import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataMapItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
@@ -441,11 +442,6 @@ public class MoneyWiseDepositRate
     }
 
     @Override
-    public MoneyWiseDataSet getDataSet() {
-        return (MoneyWiseDataSet) super.getDataSet();
-    }
-
-    @Override
     public MoneyWiseDepositRate getBase() {
         return (MoneyWiseDepositRate) super.getBase();
     }
@@ -491,8 +487,7 @@ public class MoneyWiseDepositRate
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        final MoneyWiseDataSet myData = getDataSet();
-        resolveDataLink(MoneyWiseBasicDataType.DEPOSIT, myData.getDeposits());
+        resolveDataLink(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseBasicDataType.DEPOSIT);
     }
 
     /**
@@ -616,7 +611,7 @@ public class MoneyWiseDepositRate
          *
          * @param pData the DataSet for the list
          */
-        protected MoneyWiseDepositRateList(final MoneyWiseDataSet pData) {
+        protected MoneyWiseDepositRateList(final PrometheusDataSet pData) {
             super(MoneyWiseDepositRate.class, pData, MoneyWiseBasicDataType.DEPOSITRATE);
         }
 
@@ -649,11 +644,6 @@ public class MoneyWiseDepositRate
         @Override
         public String listName() {
             return LIST_NAME;
-        }
-
-        @Override
-        public MoneyWiseDataSet getDataSet() {
-            return (MoneyWiseDataSet) super.getDataSet();
         }
 
         @Override

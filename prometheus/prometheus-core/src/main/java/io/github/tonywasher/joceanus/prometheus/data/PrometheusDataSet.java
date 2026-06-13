@@ -334,18 +334,13 @@ public abstract class PrometheusDataSet
      */
     private PrometheusDataList<?> newList(final PrometheusCryptographyDataType pListType) {
         /* Switch on list Type */
-        switch (pListType) {
-            case CONTROLDATA:
-                return new PrometheusControlDataList(this);
-            case CONTROLKEY:
-                return new PrometheusControlKeyList(this);
-            case CONTROLKEYSET:
-                return new PrometheusControlKeySetList(this);
-            case DATAKEYSET:
-                return new PrometheusDataKeySetList(this);
-            default:
-                throw new IllegalArgumentException(pListType.toString());
-        }
+        return switch (pListType) {
+            case CONTROLDATA -> new PrometheusControlDataList(this);
+            case CONTROLKEY -> new PrometheusControlKeyList(this);
+            case CONTROLKEYSET -> new PrometheusControlKeySetList(this);
+            case DATAKEYSET -> new PrometheusDataKeySetList(this);
+            default -> throw new IllegalArgumentException(pListType.toString());
+        };
     }
 
     /**

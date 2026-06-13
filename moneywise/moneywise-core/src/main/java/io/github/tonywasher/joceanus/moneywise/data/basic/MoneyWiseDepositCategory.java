@@ -200,8 +200,7 @@ public final class MoneyWiseDepositCategory
         super.resolveDataSetLinks();
 
         /* Resolve category type and parent */
-        final MoneyWiseDataSet myData = getDataSet();
-        resolveDataLink(MoneyWiseStaticDataType.DEPOSITTYPE, myData.getDepositCategoryTypes());
+        resolveDataLink(MoneyWiseStaticDataType.DEPOSITTYPE, MoneyWiseStaticDataType.DEPOSITTYPE);
     }
 
     @Override

@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.ui.dialog;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.ui.MetisAction;
@@ -36,7 +31,13 @@ import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
 import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseDialogTable;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
@@ -244,8 +245,8 @@ public class MoneyWiseSecurityPriceTable
         pConfig.setAllowed(d -> myCurrent.equals(d) || !myDates.contains(d));
 
         /* Set range constraint */
-        final MoneyWiseDataSet myDataSet = pRow.getDataSet();
-        final OceanusDateRange myRange = myDataSet.getDateRange();
+        final PrometheusDataSet myDataSet = pRow.getDataSet();
+        final OceanusDateRange myRange = ((MoneyWiseDataSet) myDataSet).getDateRange();
         pConfig.setEarliestDate(myRange.getStart());
         pConfig.setLatestDate(myRange.getEnd());
     }

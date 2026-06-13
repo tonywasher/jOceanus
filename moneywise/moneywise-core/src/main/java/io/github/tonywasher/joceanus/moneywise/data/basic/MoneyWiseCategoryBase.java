@@ -44,6 +44,15 @@ public abstract class MoneyWiseCategoryBase
         extends PrometheusEncryptedDataItem
         implements MetisDataNamedItem {
     /**
+     * Validator for categories.
+     *
+     * @param <T> the item type
+     */
+    public interface MoneyWiseDataValidatorCategory<T extends MoneyWiseCategoryBase>
+            extends MoneyWiseDataValidatorParentDefaults<T> {
+    }
+
+    /**
      * Separator.
      */
     public static final String STR_SEP = ":";
@@ -383,11 +392,6 @@ public abstract class MoneyWiseCategoryBase
     }
 
     @Override
-    public MoneyWiseDataSet getDataSet() {
-        return (MoneyWiseDataSet) super.getDataSet();
-    }
-
-    @Override
     public MoneyWiseCategoryBaseList<?> getList() {
         return (MoneyWiseCategoryBaseList<?>) super.getList();
     }
@@ -628,11 +632,6 @@ public abstract class MoneyWiseCategoryBase
          */
         protected MoneyWiseCategoryBaseList(final MoneyWiseCategoryBaseList<T> pSource) {
             super(pSource);
-        }
-
-        @Override
-        public MoneyWiseDataSet getDataSet() {
-            return (MoneyWiseDataSet) super.getDataSet();
         }
 
         @Override

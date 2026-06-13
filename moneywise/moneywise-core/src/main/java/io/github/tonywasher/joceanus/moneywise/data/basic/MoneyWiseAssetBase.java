@@ -19,7 +19,8 @@ package io.github.tonywasher.joceanus.moneywise.data.basic;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAccount;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorDefaults;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
@@ -51,6 +52,15 @@ import java.util.Iterator;
 public abstract class MoneyWiseAssetBase
         extends PrometheusEncryptedDataItem
         implements MoneyWiseTransAsset {
+    /**
+     * Validator for accounts.
+     *
+     * @param <T> the item type
+     */
+    public interface MoneyWiseDataValidatorAccount<T extends MoneyWiseAssetBase>
+            extends MoneyWiseDataValidatorDefaults<T>, MoneyWiseDataValidatorAutoCorrect<T> {
+    }
+
     /**
      * Report fields.
      */
