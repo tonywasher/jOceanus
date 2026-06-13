@@ -147,7 +147,7 @@ public abstract class PrometheusDataItem
     /**
      * The list to which this item belongs.
      */
-    private PrometheusDataList<?> theList;
+    private final PrometheusDataList<?> theList;
 
     /**
      * The item that this DataItem is based upon.
@@ -220,8 +220,7 @@ public abstract class PrometheusDataItem
             case UPDATE:
                 switch (myState) {
                     /* NEW/DELNEW need to be at version 1 */
-                    case DELNEW:
-                    case NEW:
+                    case DELNEW, NEW:
                         getValues().setVersion(1);
                         break;
 
@@ -286,8 +285,6 @@ public abstract class PrometheusDataItem
                 throw new IllegalArgumentException("Illegal creation of COPY element");
 
                 /* Nothing special for other styles */
-            case CLONE:
-            case DIFFER:
             default:
                 break;
         }
@@ -717,12 +714,11 @@ public abstract class PrometheusDataItem
         }
 
         /* Non-DataItems are last */
-        if (!(pThat instanceof PrometheusDataItem)) {
+        if (!(pThat instanceof PrometheusDataItem myThat)) {
             return -1;
         }
 
         /* Check data type */
-        final PrometheusDataItem myThat = (PrometheusDataItem) pThat;
         int iDiff = getItemType().getItemKey() - myThat.getItemType().getItemKey();
         if (iDiff != 0) {
             return iDiff;
@@ -856,14 +852,11 @@ public abstract class PrometheusDataItem
 
             /* Determine standard states */
         } else {
-            switch (getState()) {
-                case NEW:
-                    return MetisFieldState.NEW;
-                case RECOVERED:
-                    return MetisFieldState.RESTORED;
-                default:
-                    return MetisFieldState.NORMAL;
-            }
+            return switch (getState()) {
+                case NEW -> MetisFieldState.NEW;
+                case RECOVERED -> MetisFieldState.RESTORED;
+                default -> MetisFieldState.NORMAL;
+            };
         }
     }
 
@@ -887,14 +880,11 @@ public abstract class PrometheusDataItem
 
             /* Determine standard states */
         } else {
-            switch (getState()) {
-                case NEW:
-                    return MetisFieldState.NEW;
-                case RECOVERED:
-                    return MetisFieldState.RESTORED;
-                default:
-                    return MetisFieldState.NORMAL;
-            }
+            return switch (getState()) {
+                case NEW -> MetisFieldState.NEW;
+                case RECOVERED -> MetisFieldState.RESTORED;
+                default -> MetisFieldState.NORMAL;
+            };
         }
     }
 }

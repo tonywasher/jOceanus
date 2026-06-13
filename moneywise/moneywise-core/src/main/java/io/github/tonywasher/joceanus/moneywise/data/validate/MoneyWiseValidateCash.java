@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash;
@@ -28,6 +27,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCashCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -65,7 +65,7 @@ public class MoneyWiseValidateCash
     @Override
     public void validate(final PrometheusDataItem pCash) {
         final MoneyWiseCash myCash = (MoneyWiseCash) pCash;
-        final MoneyWisePayee myParent = myCash.getParent();
+        final MoneyWisePayee myParent = (MoneyWisePayee) myCash.getParent();
         final MoneyWiseCashCategory myCategory = myCash.getCategory();
         final MoneyWiseCurrency myCurrency = myCash.getAssetCurrency();
 

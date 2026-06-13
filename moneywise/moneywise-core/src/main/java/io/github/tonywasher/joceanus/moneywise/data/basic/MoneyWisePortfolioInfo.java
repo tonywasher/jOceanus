@@ -19,7 +19,6 @@ package io.github.tonywasher.joceanus.moneywise.data.basic;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
@@ -30,9 +29,11 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -78,7 +79,7 @@ public class MoneyWisePortfolioInfo
      * @param pType      the type
      */
     private MoneyWisePortfolioInfo(final MoneyWisePortfolioInfoList pList,
-                                   final MoneyWisePortfolio pPortfolio,
+                                   final PrometheusDataItem pPortfolio,
                                    final MoneyWiseAccountInfoType pType) {
         /* Initialise the item */
         super(pList);
@@ -104,16 +105,14 @@ public class MoneyWisePortfolioInfo
         /* Protect against exceptions */
         try {
             /* Resolve links */
-            final MoneyWiseDataSet myData = getDataSet();
-            resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, myData.getActInfoTypes());
-            resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getPortfolios());
+            resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, MoneyWiseStaticDataType.ACCOUNTINFOTYPE);
+            resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, MoneyWiseBasicDataType.PORTFOLIO);
 
             /* Set the value */
             setValue(pValues.getValue(PrometheusDataResource.DATAINFO_VALUE));
 
             /* Access the PortfolioInfoSet and register this data */
-            final PrometheusDataInfoSet<MoneyWisePortfolioInfo> mySet = getOwner().getInfoSet();
-            mySet.registerInfo(this);
+            getInfoSet().registerInfo(this);
 
         } catch (OceanusException e) {
             /* Pass on exception */
@@ -137,13 +136,8 @@ public class MoneyWisePortfolioInfo
     }
 
     @Override
-    public MoneyWisePortfolio getOwner() {
-        return getValues().getValue(PrometheusDataResource.DATAINFO_OWNER, MoneyWisePortfolio.class);
-    }
-
-    @Override
-    public MoneyWiseDataSet getDataSet() {
-        return (MoneyWiseDataSet) super.getDataSet();
+    public PrometheusDataItem getOwner() {
+        return getValues().getValue(PrometheusDataResource.DATAINFO_OWNER, PrometheusDataItem.class);
     }
 
     @Override
@@ -156,11 +150,20 @@ public class MoneyWisePortfolioInfo
         return (MoneyWisePortfolioInfoList) super.getList();
     }
 
+    /**
+     * Obtain the InfoSet.
+     *
+     * @return the infoSet
+     */
+    @SuppressWarnings("unchecked")
+    private PrometheusDataInfoSet<MoneyWisePortfolioInfo> getInfoSet() {
+        return (PrometheusDataInfoSet<MoneyWisePortfolioInfo>) ((PrometheusInfoSetItem) getOwner()).getInfoSet();
+    }
+
     @Override
     public void deRegister() {
         /* Access the PortfolioInfoSet and register this value */
-        final PrometheusDataInfoSet<MoneyWisePortfolioInfo> mySet = getOwner().getInfoSet();
-        mySet.deRegisterInfo(this);
+        getInfoSet().deRegisterInfo(this);
     }
 
     @Override
@@ -169,13 +172,11 @@ public class MoneyWisePortfolioInfo
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        final MoneyWiseDataSet myData = getDataSet();
-        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, myData.getActInfoTypes());
-        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getPortfolios());
+        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, MoneyWiseStaticDataType.ACCOUNTINFOTYPE);
+        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, MoneyWiseBasicDataType.PORTFOLIO);
 
         /* Access the PortfolioInfoSet and register this data */
-        final PrometheusDataInfoSet<MoneyWisePortfolioInfo> mySet = getOwner().getInfoSet();
-        mySet.registerInfo(this);
+        getInfoSet().registerInfo(this);
     }
 
     /**
@@ -187,7 +188,7 @@ public class MoneyWisePortfolioInfo
     public void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Resolve data links */
         resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class));
-        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class));
+        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, PrometheusDataList.class));
     }
 
     /**
@@ -258,11 +259,6 @@ public class MoneyWisePortfolioInfo
             return MoneyWisePortfolioInfo.FIELD_DEFS;
         }
 
-        @Override
-        public MoneyWiseDataSet getDataSet() {
-            return (MoneyWiseDataSet) super.getDataSet();
-        }
-
         /**
          * Set base list for Edit InfoList.
          *
@@ -302,7 +298,7 @@ public class MoneyWisePortfolioInfo
         protected MoneyWisePortfolioInfo addNewItem(final PrometheusDataItem pOwner,
                                                     final PrometheusStaticDataItem pInfoType) {
             /* Allocate the new entry and add to list */
-            final MoneyWisePortfolioInfo myInfo = new MoneyWisePortfolioInfo(this, (MoneyWisePortfolio) pOwner, (MoneyWiseAccountInfoType) pInfoType);
+            final MoneyWisePortfolioInfo myInfo = new MoneyWisePortfolioInfo(this, pOwner, (MoneyWiseAccountInfoType) pInfoType);
             add(myInfo);
 
             /* return it */
@@ -319,11 +315,12 @@ public class MoneyWisePortfolioInfo
                 return;
             }
 
-            /* Access the data set */
-            final MoneyWiseDataSet myData = getDataSet();
+            /* Access the accountInfoTypes */
+            final MoneyWiseAccountInfoTypeList myActInfos
+                    = getDataSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
 
             /* Look up the Info Type */
-            final MoneyWiseAccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
+            final MoneyWiseAccountInfoType myInfoType = myActInfos.findItemByClass(pInfoClass);
             if (myInfoType == null) {
                 throw new MoneyWiseDataException(pPortfolio, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
@@ -372,7 +369,8 @@ public class MoneyWisePortfolioInfo
             validateOnLoad();
 
             /* Map and Validate the Portfolios */
-            final MoneyWisePortfolioList myPortfolios = getDataSet().getPortfolios();
+            final PrometheusDataList<?> myPortfolios
+                    = getDataSet().getDataList(MoneyWiseBasicDataType.PORTFOLIO, PrometheusDataList.class);
             myPortfolios.mapData();
             myPortfolios.validateOnLoad();
         }

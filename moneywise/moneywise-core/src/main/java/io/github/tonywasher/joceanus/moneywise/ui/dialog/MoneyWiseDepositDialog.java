@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.moneywise.ui.dialog;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
@@ -328,7 +329,7 @@ public class MoneyWiseDepositDialog
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
         final MoneyWiseDeposit myItem = getItem();
-        final MoneyWisePayee myParent = myItem.getParent();
+        final MoneyWiseAssetBase myParent = myItem.getParent();
         if (!pUpdates) {
             final MoneyWiseDepositCategory myCategory = myItem.getCategory();
             final MoneyWiseCurrency myCurrency = myItem.getAssetCurrency();
@@ -421,7 +422,7 @@ public class MoneyWiseDepositDialog
 
         /* Record active item */
         final MoneyWiseDepositCategoryClass myType = pDeposit.getCategoryClass();
-        final MoneyWisePayee myCurr = pDeposit.getParent();
+        final MoneyWisePayee myCurr = (MoneyWisePayee) pDeposit.getParent();
         TethysUIScrollItem<MoneyWisePayee> myActive = null;
 
         /* Access Payees */

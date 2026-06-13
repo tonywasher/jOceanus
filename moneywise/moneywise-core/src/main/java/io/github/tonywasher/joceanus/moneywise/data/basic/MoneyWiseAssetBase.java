@@ -249,8 +249,8 @@ public abstract class MoneyWiseAssetBase
     public abstract MoneyWiseAssetCategory getCategory();
 
     @Override
-    public MoneyWisePayee getParent() {
-        return getValues().getValue(MoneyWiseBasicResource.ASSET_PARENT, MoneyWisePayee.class);
+    public MoneyWiseAssetBase getParent() {
+        return getValues().getValue(MoneyWiseBasicResource.ASSET_PARENT, MoneyWiseAssetBase.class);
     }
 
     /**
@@ -259,7 +259,7 @@ public abstract class MoneyWiseAssetBase
      * @return the parentId
      */
     public Integer getParentId() {
-        final MoneyWisePayee myParent = getParent();
+        final MoneyWiseAssetBase myParent = getParent();
         return myParent == null
                 ? null
                 : myParent.getIndexedId();
@@ -271,7 +271,7 @@ public abstract class MoneyWiseAssetBase
      * @return the parentName
      */
     public String getParentName() {
-        final MoneyWisePayee myParent = getParent();
+        final MoneyWiseAssetBase myParent = getParent();
         return myParent == null
                 ? null
                 : myParent.getName();
@@ -554,7 +554,7 @@ public abstract class MoneyWiseAssetBase
      *
      * @param pValue the value
      */
-    private void setValueParent(final MoneyWisePayee pValue) {
+    private void setValueParent(final MoneyWiseAssetBase pValue) {
         getValues().setUncheckedValue(MoneyWiseBasicResource.ASSET_PARENT, pValue);
     }
 
@@ -785,7 +785,7 @@ public abstract class MoneyWiseAssetBase
      *
      * @param pParent the parent
      */
-    public void setParent(final MoneyWisePayee pParent) {
+    public void setParent(final MoneyWiseAssetBase pParent) {
         setValueParent(pParent);
     }
 

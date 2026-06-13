@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
@@ -36,6 +35,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityCla
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityType.MoneyWiseSecurityTypeList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -75,7 +75,7 @@ public class MoneyWiseValidateSecurity
     public void validate(final PrometheusDataItem pSecurity) {
         final MoneyWiseSecurity mySecurity = (MoneyWiseSecurity) pSecurity;
         final MoneyWiseSecurityList myList = mySecurity.getList();
-        final MoneyWisePayee myParent = mySecurity.getParent();
+        final MoneyWisePayee myParent = (MoneyWisePayee) mySecurity.getParent();
         final MoneyWiseSecurityType mySecType = mySecurity.getCategory();
         final MoneyWiseCurrency myCurrency = mySecurity.getAssetCurrency();
         final String mySymbol = mySecurity.getSymbol();
@@ -199,7 +199,7 @@ public class MoneyWiseValidateSecurity
     public void autoCorrect(final MoneyWiseSecurity pSecurity) throws OceanusException {
         /* Access category class and parent */
         final MoneyWiseSecurityClass myClass = pSecurity.getCategoryClass();
-        final MoneyWisePayee myParent = pSecurity.getParent();
+        final MoneyWisePayee myParent = (MoneyWisePayee) pSecurity.getParent();
 
         /* Ensure that we have a valid parent */
         if (myParent == null

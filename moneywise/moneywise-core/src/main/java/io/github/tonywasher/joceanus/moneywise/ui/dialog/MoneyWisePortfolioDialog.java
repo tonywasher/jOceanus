@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.ui.dialog;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
@@ -33,6 +33,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePortfolioTy
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseIcon;
 import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
@@ -321,7 +322,7 @@ public class MoneyWisePortfolioDialog
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
         final MoneyWisePortfolio myItem = getItem();
-        final MoneyWisePayee myParent = myItem.getParent();
+        final MoneyWiseAssetBase myParent = myItem.getParent();
         if (!pUpdates) {
             final MoneyWisePortfolioType myType = myItem.getCategory();
             declareGoToItem(myType);
@@ -382,7 +383,7 @@ public class MoneyWisePortfolioDialog
         pMenu.removeAllItems();
 
         /* Record active item */
-        final MoneyWisePayee myCurr = pPortfolio.getParent();
+        final MoneyWisePayee myCurr = (MoneyWisePayee) pPortfolio.getParent();
         TethysUIScrollItem<MoneyWisePayee> myActive = null;
 
         /* Access Payees */

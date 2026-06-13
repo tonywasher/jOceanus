@@ -189,6 +189,11 @@ public class MoneyWiseLoan
         return theInfoSet;
     }
 
+    @Override
+    public MoneyWisePayee getParent() {
+        return (MoneyWisePayee) super.getParent();
+    }
+
     /**
      * Obtain fieldValue for infoSet.
      *

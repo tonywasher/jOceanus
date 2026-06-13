@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
@@ -33,6 +32,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePortfolioCl
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePortfolioType;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePortfolioType.MoneyWisePortfolioTypeList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -77,7 +77,7 @@ public class MoneyWiseValidatePortfolio
     public void validate(final PrometheusDataItem pPortfolio) {
         final MoneyWisePortfolio myPortfolio = (MoneyWisePortfolio) pPortfolio;
         final MoneyWisePortfolioList myList = myPortfolio.getList();
-        final MoneyWisePayee myParent = myPortfolio.getParent();
+        final MoneyWisePayee myParent = (MoneyWisePayee) myPortfolio.getParent();
         final MoneyWisePortfolioType myPortType = myPortfolio.getCategory();
         final MoneyWiseCurrency myCurrency = myPortfolio.getAssetCurrency();
 
@@ -167,7 +167,7 @@ public class MoneyWiseValidatePortfolio
     @Override
     public void autoCorrect(final MoneyWisePortfolio pPortfolio) throws OceanusException {
         /* Ensure that we have a valid parent */
-        final MoneyWisePayee myParent = pPortfolio.getParent();
+        final MoneyWisePayee myParent = (MoneyWisePayee) pPortfolio.getParent();
         if (myParent == null
                 || !myParent.getCategoryClass().canParentPortfolio()) {
             pPortfolio.setParent(getDefaultParent());

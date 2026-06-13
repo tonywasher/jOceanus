@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
@@ -29,6 +28,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWi
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -66,7 +66,7 @@ public class MoneyWiseValidateLoan
     @Override
     public void validate(final PrometheusDataItem pLoan) {
         final MoneyWiseLoan myLoan = (MoneyWiseLoan) pLoan;
-        final MoneyWisePayee myParent = myLoan.getParent();
+        final MoneyWisePayee myParent = (MoneyWisePayee) myLoan.getParent();
         final MoneyWiseLoanCategory myCategory = myLoan.getCategory();
         final MoneyWiseCurrency myCurrency = myLoan.getAssetCurrency();
         final MoneyWiseLoanCategoryClass myClass = myLoan.getCategoryClass();
@@ -134,7 +134,7 @@ public class MoneyWiseValidateLoan
     public void autoCorrect(final MoneyWiseLoan pLoan) throws OceanusException {
         /* Access category class and parent */
         final MoneyWiseLoanCategoryClass myClass = pLoan.getCategoryClass();
-        final MoneyWisePayee myParent = pLoan.getParent();
+        final MoneyWisePayee myParent = (MoneyWisePayee) pLoan.getParent();
 
         /* Ensure that we have valid parent */
         if (myParent == null

@@ -788,15 +788,12 @@ public class MoneyWiseAnalysisTransAnalyser
         theTaxMan.adjustForTaxPayments(theHelper);
 
         /* Determine the type of the debit account */
-        switch (pDebit.getAssetType()) {
-            case PAYEE:
-                final MoneyWiseAnalysisPayeeBucket myPayee = thePayeeBuckets.getBucket(pDebit);
-                myPayee.adjustForDebit(theHelper);
-                break;
-            default:
-                final MoneyWiseAnalysisAccountBucket<?> myAccount = getAccountBucket(pDebit);
-                myAccount.adjustForDebit(theHelper);
-                break;
+        if (Objects.requireNonNull(pDebit.getAssetType()) == MoneyWiseAssetType.PAYEE) {
+            final MoneyWiseAnalysisPayeeBucket myPayee = thePayeeBuckets.getBucket(pDebit);
+            myPayee.adjustForDebit(theHelper);
+        } else {
+            final MoneyWiseAnalysisAccountBucket<?> myAccount = getAccountBucket(pDebit);
+            myAccount.adjustForDebit(theHelper);
         }
 
         /* If the event category is not a transfer */

@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.views;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
@@ -54,6 +51,9 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisValues;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseViewResource;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 /**
  * Analysis Filter Classes.
@@ -399,17 +399,12 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
                 return false;
             }
 
-            switch ((MoneyWiseAnalysisAccountAttr) pCounter) {
-                case BADDEBTCAPITAL:
-                case BADDEBTINTEREST:
-                    return getBucket().isPeer2Peer();
-                case FOREIGNVALUE:
-                    return getBucket().isForeignCurrency();
-                case SPEND:
-                    return false;
-                default:
-                    return true;
-            }
+            return switch ((MoneyWiseAnalysisAccountAttr) pCounter) {
+                case BADDEBTCAPITAL, BADDEBTINTEREST -> getBucket().isPeer2Peer();
+                case FOREIGNVALUE -> getBucket().isForeignCurrency();
+                case SPEND -> false;
+                default -> true;
+            };
         }
     }
 
@@ -439,16 +434,11 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
                 return false;
             }
 
-            switch ((MoneyWiseAnalysisAccountAttr) pCounter) {
-                case BADDEBTCAPITAL:
-                case BADDEBTINTEREST:
-                case SPEND:
-                    return false;
-                case FOREIGNVALUE:
-                    return getBucket().isForeignCurrency();
-                default:
-                    return true;
-            }
+            return switch ((MoneyWiseAnalysisAccountAttr) pCounter) {
+                case BADDEBTCAPITAL, BADDEBTINTEREST, SPEND -> false;
+                case FOREIGNVALUE -> getBucket().isForeignCurrency();
+                default -> true;
+            };
         }
     }
 
@@ -478,17 +468,12 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
                 return false;
             }
 
-            switch ((MoneyWiseAnalysisAccountAttr) pCounter) {
-                case SPEND:
-                    return getBucket().isCreditCard();
-                case BADDEBTCAPITAL:
-                case BADDEBTINTEREST:
-                    return false;
-                case FOREIGNVALUE:
-                    return getBucket().isForeignCurrency();
-                default:
-                    return true;
-            }
+            return switch ((MoneyWiseAnalysisAccountAttr) pCounter) {
+                case SPEND -> getBucket().isCreditCard();
+                case BADDEBTCAPITAL, BADDEBTINTEREST -> false;
+                case FOREIGNVALUE -> getBucket().isForeignCurrency();
+                default -> true;
+            };
         }
     }
 
@@ -544,19 +529,11 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
                 return false;
             }
 
-            switch ((MoneyWiseAnalysisSecurityAttr) pCounter) {
-                case FOREIGNINVESTED:
-                    return getBucket().isForeignCurrency();
-                case INVESTED:
-                case DIVIDEND:
-                case RESIDUALCOST:
-                case REALISEDGAINS:
-                case UNITS:
-                case GROWTHADJUST:
-                    return true;
-                default:
-                    return false;
-            }
+            return switch ((MoneyWiseAnalysisSecurityAttr) pCounter) {
+                case FOREIGNINVESTED -> getBucket().isForeignCurrency();
+                case INVESTED, DIVIDEND, RESIDUALCOST, REALISEDGAINS, UNITS, GROWTHADJUST -> true;
+                default -> false;
+            };
         }
     }
 
@@ -627,18 +604,12 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
                 return false;
             }
 
-            switch ((MoneyWiseAnalysisAccountAttr) pCounter) {
-                case FOREIGNVALUE:
-                    return getBucket().isForeignCurrency();
-                case VALUATION:
-                    return true;
-                case BADDEBTCAPITAL:
-                case BADDEBTINTEREST:
-                case SPEND:
-                    return false;
-                default:
-                    return true;
-            }
+            return switch ((MoneyWiseAnalysisAccountAttr) pCounter) {
+                case FOREIGNVALUE -> getBucket().isForeignCurrency();
+                case VALUATION -> true;
+                case BADDEBTCAPITAL, BADDEBTINTEREST, SPEND -> false;
+                default -> true;
+            };
         }
     }
 

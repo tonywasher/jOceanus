@@ -16,10 +16,9 @@
  */
 package io.github.tonywasher.joceanus.moneywise.ui.dialog;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
@@ -41,6 +40,8 @@ import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseIcon;
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
 import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
@@ -347,7 +348,7 @@ public class MoneyWiseSecurityDialog
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
         final MoneyWiseSecurity myItem = getItem();
-        final MoneyWisePayee myParent = myItem.getParent();
+        final MoneyWiseAssetBase myParent = myItem.getParent();
         if (!pUpdates) {
             final MoneyWiseSecurityType myType = myItem.getCategory();
             final MoneyWiseCurrency myCurrency = myItem.getAssetCurrency();
@@ -446,7 +447,7 @@ public class MoneyWiseSecurityDialog
 
         /* Record active item */
         final MoneyWiseSecurityClass myType = pSecurity.getCategoryClass();
-        final MoneyWisePayee myCurr = pSecurity.getParent();
+        final MoneyWisePayee myCurr = (MoneyWisePayee) pSecurity.getParent();
         TethysUIScrollItem<MoneyWisePayee> myActive = null;
 
         /* Access Payees */

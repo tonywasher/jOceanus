@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
@@ -31,6 +26,11 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 
 import java.util.Currency;
 
@@ -543,11 +543,11 @@ public class MoneyWiseAnalysisTransactionHelper {
             final OceanusMoney myReturnedCash = theCurrent.getReturnedCash();
 
             /* Determine account prices */
-            theAccountPrice = theAccount instanceof MoneyWiseSecurityHolding
-                    ? thePriceCursor.getSecurityPrice(((MoneyWiseSecurityHolding) theAccount).getSecurity(), theDate)
+            theAccountPrice = theAccount instanceof MoneyWiseSecurityHolding myHolding
+                    ? thePriceCursor.getSecurityPrice(myHolding.getSecurity(), theDate)
                     : null;
-            thePartnerPrice = thePartner instanceof MoneyWiseSecurityHolding
-                    ? thePriceCursor.getSecurityPrice(((MoneyWiseSecurityHolding) thePartner).getSecurity(), theDate)
+            thePartnerPrice = thePartner instanceof MoneyWiseSecurityHolding myHolding
+                    ? thePriceCursor.getSecurityPrice(myHolding.getSecurity(), theDate)
                     : null;
 
             /* Determine foreign account detail */
@@ -578,8 +578,8 @@ public class MoneyWiseAnalysisTransactionHelper {
             theAmount = theForeignAccount == null
                     ? myAmount
                     : theForeignPartner == null
-                    ? myPartnerAmount
-                    : theForeignAccount.theAmount;
+                      ? myPartnerAmount
+                      : theForeignAccount.theAmount;
             theReturnedCash = theForeignReturnedCash == null
                     ? myReturnedCash
                     : theForeignReturnedCash.theAmount;
@@ -679,11 +679,11 @@ public class MoneyWiseAnalysisTransactionHelper {
         private OceanusMoney getDebitAmount() {
             return theDirection.isFrom()
                     ? theForeignPartner == null
-                    ? theAmount
-                    : theForeignPartner.theBase
+                      ? theAmount
+                      : theForeignPartner.theBase
                     : theForeignAccount == null
-                    ? theAmount
-                    : theForeignAccount.theBase;
+                      ? theAmount
+                      : theForeignAccount.theBase;
         }
 
         /**
@@ -703,11 +703,11 @@ public class MoneyWiseAnalysisTransactionHelper {
         private OceanusMoney getCreditAmount() {
             return theDirection.isTo()
                     ? theForeignPartner == null
-                    ? theAmount
-                    : theForeignPartner.theBase
+                      ? theAmount
+                      : theForeignPartner.theBase
                     : theForeignAccount == null
-                    ? theAmount
-                    : theForeignAccount.theBase;
+                      ? theAmount
+                      : theForeignAccount.theBase;
         }
 
         /**
@@ -760,11 +760,11 @@ public class MoneyWiseAnalysisTransactionHelper {
         private OceanusRatio getDebitExchangeRate() {
             return theDirection.isTo()
                     ? theForeignAccount == null
-                    ? null
-                    : theForeignAccount.theExchangeRate
+                      ? null
+                      : theForeignAccount.theExchangeRate
                     : theForeignPartner == null
-                    ? null
-                    : theForeignPartner.theExchangeRate;
+                      ? null
+                      : theForeignPartner.theExchangeRate;
         }
 
         /**
@@ -775,11 +775,11 @@ public class MoneyWiseAnalysisTransactionHelper {
         private OceanusRatio getCreditExchangeRate() {
             return theDirection.isTo()
                     ? theForeignPartner == null
-                    ? null
-                    : theForeignPartner.theExchangeRate
+                      ? null
+                      : theForeignPartner.theExchangeRate
                     : theForeignAccount == null
-                    ? null
-                    : theForeignAccount.theExchangeRate;
+                      ? null
+                      : theForeignAccount.theExchangeRate;
         }
 
         /**
