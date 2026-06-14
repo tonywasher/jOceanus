@@ -16,14 +16,15 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate.MoneyWiseExchangeRateBaseList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate.MoneyWiseExchangeRateDataMap;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator;
 
@@ -41,7 +42,7 @@ public class MoneyWiseValidateXchangeRate
         final MoneyWiseCurrency myTo = myRate.getToCurrency();
         final OceanusDate myDate = myRate.getDate();
         final OceanusRatio myXchgRate = myRate.getExchangeRate();
-        final OceanusDateRange myRange = myRate.getDataSet().getDateRange();
+        final OceanusDateRange myRange = ((MoneyWiseDataSet) myRate.getDataSet()).getDateRange();
 
         /* Date must be non-null */
         if (myDate == null) {
@@ -83,7 +84,7 @@ public class MoneyWiseValidateXchangeRate
             }
 
             /* From currency must be the reporting currency */
-            final MoneyWiseCurrency myDefault = myRate.getDataSet().getReportingCurrency();
+            final MoneyWiseCurrency myDefault = ((MoneyWiseDataSet) myRate.getDataSet()).getReportingCurrency();
             if (!myFrom.equals(myDefault)) {
                 pRate.addError(MoneyWiseExchangeRate.ERROR_DEF, MoneyWiseBasicResource.XCHGRATE_FROM);
             }

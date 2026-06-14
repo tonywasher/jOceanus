@@ -289,7 +289,7 @@ public class MoneyWiseLoanDialog
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
         final MoneyWiseLoan myItem = getItem();
-        final MoneyWisePayee myParent = myItem.getParent();
+        final MoneyWisePayee myParent = (MoneyWisePayee) myItem.getParent();
         if (!pUpdates) {
             final MoneyWiseLoanCategory myCategory = myItem.getCategory();
             final MoneyWiseCurrency myCurrency = myItem.getAssetCurrency();
@@ -364,7 +364,7 @@ public class MoneyWiseLoanDialog
 
         /* Record active item */
         final MoneyWiseLoanCategoryClass myType = pLoan.getCategoryClass();
-        final MoneyWisePayee myCurr = pLoan.getParent();
+        final MoneyWisePayee myCurr = (MoneyWisePayee) pLoan.getParent();
         TethysUIScrollItem<MoneyWisePayee> myActive = null;
 
         /* Access Payees */

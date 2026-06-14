@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorTrans;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
@@ -29,6 +29,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldi
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
@@ -47,7 +48,8 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedValues;
  * @author Tony Washer
  */
 public abstract class MoneyWiseTransBase
-        extends PrometheusEncryptedDataItem {
+        extends PrometheusEncryptedDataItem
+        implements MoneyWiseAssetTouch {
     /**
      * Object name.
      */
@@ -391,11 +393,7 @@ public abstract class MoneyWiseTransBase
         return getValues().getValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION, MoneyWiseAssetDirection.class);
     }
 
-    /**
-     * Obtain Reconciled State.
-     *
-     * @return the reconciled state
-     */
+    @Override
     public Boolean isReconciled() {
         return getValues().getValue(MoneyWiseBasicResource.TRANSACTION_RECONCILED, Boolean.class);
     }
@@ -560,11 +558,6 @@ public abstract class MoneyWiseTransBase
     }
 
     @Override
-    public final MoneyWiseDataSet getDataSet() {
-        return (MoneyWiseDataSet) super.getDataSet();
-    }
-
-    @Override
     public MoneyWiseTransBaseList<?> getList() {
         return (MoneyWiseTransBaseList<?>) super.getList();
     }
@@ -611,7 +604,7 @@ public abstract class MoneyWiseTransBase
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        final MoneyWiseDataSet myData = getDataSet();
+        final PrometheusDataSet myData = getDataSet();
         final PrometheusEncryptedValues myValues = getValues();
 
         /* Adjust Reconciled */
@@ -629,7 +622,7 @@ public abstract class MoneyWiseTransBase
         /* Resolve data links */
         resolveTransactionAsset(myData, this, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);
         resolveTransactionAsset(myData, this, MoneyWiseBasicResource.TRANSACTION_PARTNER);
-        resolveDataLink(MoneyWiseBasicDataType.TRANSCATEGORY, myData.getTransCategories());
+        resolveDataLink(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseBasicDataType.TRANSCATEGORY);
     }
 
     @Override
@@ -984,14 +977,81 @@ public abstract class MoneyWiseTransBase
         }
 
         @Override
-        public MoneyWiseDataSet getDataSet() {
-            return (MoneyWiseDataSet) super.getDataSet();
-        }
-
-        @Override
         @SuppressWarnings("unchecked")
         public MoneyWiseDataValidatorTrans<T> getValidator() {
             return (MoneyWiseDataValidatorTrans<T>) super.getValidator();
         }
+    }
+
+    /**
+     * Transaction validator.
+     *
+     * @param <T> the itemType
+     */
+    public interface MoneyWiseDataValidatorTrans<T extends MoneyWiseTransBase>
+            extends MoneyWiseDataValidatorAutoCorrect<T> {
+        /**
+         * Is the account valid as the base account in a transaction?
+         *
+         * @param pAccount the account
+         * @return true/false
+         */
+        boolean isValidAccount(MoneyWiseTransAsset pAccount);
+
+        /**
+         * Is the transaction valid for the base account in the transaction?.
+         *
+         * @param pAccount  the account
+         * @param pCategory The category of the event
+         * @return true/false
+         */
+        boolean isValidCategory(MoneyWiseTransAsset pAccount,
+                                MoneyWiseTransCategory pCategory);
+
+        /**
+         * Is the direction valid for the base account and category in the transaction?.
+         *
+         * @param pAccount   the account
+         * @param pCategory  The category of the event
+         * @param pDirection the direction
+         * @return true/false
+         */
+        boolean isValidDirection(MoneyWiseTransAsset pAccount,
+                                 MoneyWiseTransCategory pCategory,
+                                 MoneyWiseAssetDirection pDirection);
+
+        /**
+         * Is the partner valid for the base account and category in the transaction?.
+         *
+         * @param pAccount  the account
+         * @param pCategory The category of the event
+         * @param pPartner  the partner
+         * @return true/false
+         */
+        boolean isValidPartner(MoneyWiseTransAsset pAccount,
+                               MoneyWiseTransCategory pCategory,
+                               MoneyWiseTransAsset pPartner);
+
+        /**
+         * Build default transaction.
+         *
+         * @param pKey the key to base the new transaction around (or null)
+         * @return the new transaction (or null if no possible transaction)
+         */
+        MoneyWiseTransBase buildTransaction(Object pKey);
+
+        /**
+         * Set range.
+         *
+         * @param pRange the date range
+         */
+        void setRange(OceanusDateRange pRange);
+
+        /**
+         * Get range.
+         *
+         * @return the date range
+         */
+        OceanusDateRange getRange();
     }
 }

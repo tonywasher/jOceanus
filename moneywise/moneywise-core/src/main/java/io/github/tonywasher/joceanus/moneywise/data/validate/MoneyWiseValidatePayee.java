@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeDataMap;
@@ -26,6 +25,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeType;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeType.MoneyWisePayeeTypeList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 
 import java.util.Iterator;
@@ -57,7 +57,7 @@ public class MoneyWiseValidatePayee
         final MoneyWisePayee myPayee = (MoneyWisePayee) pPayee;
         final MoneyWisePayeeList myList = myPayee.getList();
         final MoneyWisePayeeType myPayeeType = myPayee.getCategory();
-        final MoneyWisePayee myParent = myPayee.getParent();
+        final MoneyWisePayee myParent = (MoneyWisePayee) myPayee.getParent();
         final MoneyWiseCurrency myCurrency = myPayee.getAssetCurrency();
 
         /* Validate base components */

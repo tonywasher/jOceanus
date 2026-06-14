@@ -16,12 +16,12 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate.MoneyWiseExchangeRateDataMap;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 
 import java.util.HashMap;
 import java.util.ListIterator;
@@ -75,18 +75,7 @@ public class MoneyWiseAnalysisExchangeRateCursor {
      * @return the cursor
      */
     private CurrencyCursor getCursor(final MoneyWiseCurrency pCurrency) {
-        /* Look for existing cursor */
-        CurrencyCursor myCursor = theCursorMap.get(pCurrency);
-
-        /* If we do not have a cursor */
-        if (myCursor == null) {
-            /* Allocate new cursor */
-            myCursor = new CurrencyCursor(pCurrency);
-            theCursorMap.put(pCurrency, myCursor);
-        }
-
-        /* return the cursor */
-        return myCursor;
+        return theCursorMap.computeIfAbsent(pCurrency, c -> new CurrencyCursor(pCurrency));
     }
 
     /**

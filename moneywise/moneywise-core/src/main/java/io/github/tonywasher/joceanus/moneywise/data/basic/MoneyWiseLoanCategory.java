@@ -201,8 +201,7 @@ public final class MoneyWiseLoanCategory
         super.resolveDataSetLinks();
 
         /* Resolve category type and parent */
-        final MoneyWiseDataSet myData = getDataSet();
-        resolveDataLink(MoneyWiseStaticDataType.LOANTYPE, myData.getLoanCategoryTypes());
+        resolveDataLink(MoneyWiseStaticDataType.LOANTYPE, MoneyWiseStaticDataType.LOANTYPE);
     }
 
     @Override

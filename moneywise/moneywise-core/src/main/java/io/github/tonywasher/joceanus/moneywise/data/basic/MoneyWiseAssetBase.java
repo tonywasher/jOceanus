@@ -19,19 +19,22 @@ package io.github.tonywasher.joceanus.moneywise.data.basic;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAccount;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorDefaults;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
@@ -51,6 +54,41 @@ import java.util.Iterator;
 public abstract class MoneyWiseAssetBase
         extends PrometheusEncryptedDataItem
         implements MoneyWiseTransAsset {
+    /**
+     * Validator for accounts.
+     *
+     * @param <T> the item type
+     */
+    public interface MoneyWiseDataValidatorAccount<T extends MoneyWiseAssetBase>
+            extends MoneyWiseDataValidatorDefaults<T>, MoneyWiseDataValidatorAutoCorrect<T> {
+    }
+
+    /**
+     * dataSet Control interface.
+     */
+    public interface MoneyWiseDataSetCtl {
+        /**
+         * Obtain default currency.
+         *
+         * @return the default currency
+         */
+        MoneyWiseCurrency getReportingCurrency();
+
+        /**
+         * Obtain Date range.
+         *
+         * @return the Date Range
+         */
+        OceanusDateRange getDateRange();
+
+        /**
+         * Obtain Tax Factory.
+         *
+         * @return the taxFactory
+         */
+        MoneyWiseTaxFactory getTaxFactory();
+    }
+
     /**
      * Report fields.
      */
@@ -85,12 +123,12 @@ public abstract class MoneyWiseAssetBase
     /**
      * Earliest Transaction.
      */
-    private MoneyWiseTransaction theEarliest;
+    private MoneyWiseAssetTouch theEarliest;
 
     /**
      * Latest Transaction.
      */
-    private MoneyWiseTransaction theLatest;
+    private MoneyWiseAssetTouch theLatest;
 
     /**
      * Is this relevant?
@@ -239,8 +277,8 @@ public abstract class MoneyWiseAssetBase
     public abstract MoneyWiseAssetCategory getCategory();
 
     @Override
-    public MoneyWisePayee getParent() {
-        return getValues().getValue(MoneyWiseBasicResource.ASSET_PARENT, MoneyWisePayee.class);
+    public MoneyWiseAssetBase getParent() {
+        return getValues().getValue(MoneyWiseBasicResource.ASSET_PARENT, MoneyWiseAssetBase.class);
     }
 
     /**
@@ -249,7 +287,7 @@ public abstract class MoneyWiseAssetBase
      * @return the parentId
      */
     public Integer getParentId() {
-        final MoneyWisePayee myParent = getParent();
+        final MoneyWiseAssetBase myParent = getParent();
         return myParent == null
                 ? null
                 : myParent.getIndexedId();
@@ -261,7 +299,7 @@ public abstract class MoneyWiseAssetBase
      * @return the parentName
      */
     public String getParentName() {
-        final MoneyWisePayee myParent = getParent();
+        final MoneyWiseAssetBase myParent = getParent();
         return myParent == null
                 ? null
                 : myParent.getName();
@@ -292,12 +330,22 @@ public abstract class MoneyWiseAssetBase
         return myCurrency == null ? null : myCurrency.getName();
     }
 
+    /**
+     * Get default Currency.
+     *
+     * @return the default currency.
+     */
+    public MoneyWiseCurrency getDefaultCurrency() {
+        return getDataSet() instanceof MoneyWiseDataSetCtl myReport
+                ? myReport.getReportingCurrency() : null;
+    }
+
     @Override
     public Currency getCurrency() {
         MoneyWiseCurrency myCurrency = getAssetCurrency();
-        myCurrency = myCurrency == null
-                ? getDataSet().getReportingCurrency()
-                : myCurrency;
+        if (myCurrency == null) {
+            myCurrency = getDefaultCurrency();
+        }
         return myCurrency == null ? null : myCurrency.getCurrency();
     }
 
@@ -339,7 +387,7 @@ public abstract class MoneyWiseAssetBase
      *
      * @return the event
      */
-    public MoneyWiseTransaction getEarliest() {
+    public MoneyWiseAssetTouch getEarliest() {
         return theEarliest;
     }
 
@@ -348,7 +396,7 @@ public abstract class MoneyWiseAssetBase
      *
      * @return the event
      */
-    public MoneyWiseTransaction getLatest() {
+    public MoneyWiseAssetTouch getLatest() {
         return theLatest;
     }
 
@@ -544,7 +592,7 @@ public abstract class MoneyWiseAssetBase
      *
      * @param pValue the value
      */
-    private void setValueParent(final MoneyWisePayee pValue) {
+    private void setValueParent(final MoneyWiseAssetBase pValue) {
         getValues().setUncheckedValue(MoneyWiseBasicResource.ASSET_PARENT, pValue);
     }
 
@@ -603,11 +651,6 @@ public abstract class MoneyWiseAssetBase
     }
 
     @Override
-    public MoneyWiseDataSet getDataSet() {
-        return (MoneyWiseDataSet) super.getDataSet();
-    }
-
-    @Override
     public MoneyWiseAssetBaseList<?> getList() {
         return (MoneyWiseAssetBaseList<?>) super.getList();
     }
@@ -662,7 +705,7 @@ public abstract class MoneyWiseAssetBase
     @Override
     public void touchItem(final PrometheusDataItem pSource) {
         /* If we are being touched by a transaction */
-        if (pSource instanceof MoneyWiseTransaction myTrans) {
+        if (pSource instanceof MoneyWiseAssetTouch myTrans) {
             /* Record the transaction */
             if (theEarliest == null) {
                 theEarliest = myTrans;
@@ -723,12 +766,12 @@ public abstract class MoneyWiseAssetBase
         final PrometheusEditSet myEditSet = getList().getEditSet();
 
         /* Resolve First/LastEvent if required */
-        final MoneyWiseTransactionList myTransList = myEditSet.getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class);
+        final PrometheusDataList<?> myTransList = myEditSet.getDataList(MoneyWiseBasicDataType.TRANSACTION, PrometheusDataList.class);
         if (theEarliest != null) {
-            theEarliest = myTransList.findItemById(theEarliest.getIndexedId());
+            theEarliest = (MoneyWiseAssetTouch) myTransList.findItemById(theEarliest.getIndexedId());
         }
         if (theLatest != null) {
-            theLatest = myTransList.findItemById(theLatest.getIndexedId());
+            theLatest = (MoneyWiseAssetTouch) myTransList.findItemById(theLatest.getIndexedId());
         }
     }
 
@@ -775,7 +818,7 @@ public abstract class MoneyWiseAssetBase
      *
      * @param pParent the parent
      */
-    public void setParent(final MoneyWisePayee pParent) {
+    public void setParent(final MoneyWiseAssetBase pParent) {
         setValueParent(pParent);
     }
 
@@ -864,11 +907,6 @@ public abstract class MoneyWiseAssetBase
          */
         protected MoneyWiseAssetBaseList(final MoneyWiseAssetBaseList<T> pSource) {
             super(pSource);
-        }
-
-        @Override
-        public MoneyWiseDataSet getDataSet() {
-            return (MoneyWiseDataSet) super.getDataSet();
         }
 
         @Override

@@ -200,8 +200,7 @@ public final class MoneyWiseCashCategory
         super.resolveDataSetLinks();
 
         /* Resolve category type and parent */
-        final MoneyWiseDataSet myData = getDataSet();
-        resolveDataLink(MoneyWiseStaticDataType.CASHTYPE, myData.getCashCategoryTypes());
+        resolveDataLink(MoneyWiseStaticDataType.CASHTYPE, MoneyWiseStaticDataType.CASHTYPE);
     }
 
     @Override

@@ -315,9 +315,9 @@ public class MoneyWiseXAnalysisTransaction {
                         ? null
                         : theTrans.getAccount();
                 if (isTo) {
-                    theDebit = theDebit.getParent();
+                    theDebit = (MoneyWiseTransAsset) theDebit.getParent();
                 } else {
-                    theCredit = theCredit.getParent();
+                    theCredit = (MoneyWiseTransAsset) theCredit.getParent();
                 }
                 isTo = !isTo;
                 break;
@@ -331,9 +331,9 @@ public class MoneyWiseXAnalysisTransaction {
                         ? null
                         : theTrans.getAccount();
                 if (isTo) {
-                    theDebit = theDebit.getParent();
+                    theDebit = (MoneyWiseTransAsset) theDebit.getParent();
                 } else {
-                    theCredit = theCredit.getParent();
+                    theCredit = (MoneyWiseTransAsset) theCredit.getParent();
                 }
                 isTo = !isTo;
                 break;
@@ -341,9 +341,9 @@ public class MoneyWiseXAnalysisTransaction {
                 /* True debit account is the parent of the asset */
                 /* Note that debit and credit must be identical */
                 if (isTo) {
-                    theDebit = theDebit.getParent();
+                    theDebit = (MoneyWiseTransAsset) theDebit.getParent();
                 } else {
-                    theCredit = theCredit.getParent();
+                    theCredit = (MoneyWiseTransAsset) theCredit.getParent();
                 }
                 isTo = !isTo;
                 break;
@@ -352,7 +352,7 @@ public class MoneyWiseXAnalysisTransaction {
                 theChild = theDebit.equals(theCredit)
                         ? null
                         : theDebit;
-                theDebit = theCredit.getParent();
+                theDebit = (MoneyWiseTransAsset) theCredit.getParent();
                 break;
             default:
                 break;

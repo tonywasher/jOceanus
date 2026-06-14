@@ -33,6 +33,7 @@ import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataMapItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
@@ -353,11 +354,6 @@ public class MoneyWiseSecurityPrice
     }
 
     @Override
-    public MoneyWiseDataSet getDataSet() {
-        return (MoneyWiseDataSet) super.getDataSet();
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public MoneyWiseSecurityPriceBaseList<? extends MoneyWiseSecurityPrice> getList() {
         return (MoneyWiseSecurityPriceBaseList<? extends MoneyWiseSecurityPrice>) super.getList();
@@ -397,8 +393,7 @@ public class MoneyWiseSecurityPrice
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        final MoneyWiseDataSet myData = getDataSet();
-        resolveDataLink(MoneyWiseBasicDataType.SECURITY, myData.getSecurities());
+        resolveDataLink(MoneyWiseBasicDataType.SECURITY, MoneyWiseBasicDataType.SECURITY);
     }
 
     /**
@@ -505,7 +500,7 @@ public class MoneyWiseSecurityPrice
          * @param pClass    the class of the item
          * @param pItemType the item type
          */
-        protected MoneyWiseSecurityPriceBaseList(final MoneyWiseDataSet pData,
+        protected MoneyWiseSecurityPriceBaseList(final PrometheusDataSet pData,
                                                  final Class<T> pClass,
                                                  final MoneyWiseBasicDataType pItemType) {
             /* Call super-constructor */
@@ -548,7 +543,7 @@ public class MoneyWiseSecurityPrice
          *
          * @param pData the DataSet for the list
          */
-        protected MoneyWiseSecurityPriceList(final MoneyWiseDataSet pData) {
+        protected MoneyWiseSecurityPriceList(final PrometheusDataSet pData) {
             super(pData, MoneyWiseSecurityPrice.class, MoneyWiseBasicDataType.SECURITYPRICE);
         }
 
@@ -574,11 +569,6 @@ public class MoneyWiseSecurityPrice
         @Override
         public MetisFieldSetDef getItemFields() {
             return MoneyWiseSecurityPrice.FIELD_DEFS;
-        }
-
-        @Override
-        public MoneyWiseDataSet getDataSet() {
-            return (MoneyWiseDataSet) super.getDataSet();
         }
 
         @Override

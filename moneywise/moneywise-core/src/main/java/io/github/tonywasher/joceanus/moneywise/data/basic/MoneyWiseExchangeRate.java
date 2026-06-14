@@ -25,6 +25,7 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
@@ -402,11 +403,6 @@ public class MoneyWiseExchangeRate
     }
 
     @Override
-    public MoneyWiseDataSet getDataSet() {
-        return (MoneyWiseDataSet) super.getDataSet();
-    }
-
-    @Override
     public MoneyWiseExchangeRate getBase() {
         return (MoneyWiseExchangeRate) super.getBase();
     }
@@ -445,10 +441,8 @@ public class MoneyWiseExchangeRate
         super.resolveDataSetLinks();
 
         /* Resolve currencies */
-        final MoneyWiseDataSet myData = getDataSet();
-        final MoneyWiseCurrencyList myCurrencies = myData.getAccountCurrencies();
-        resolveDataLink(MoneyWiseBasicResource.XCHGRATE_FROM, myCurrencies);
-        resolveDataLink(MoneyWiseBasicResource.XCHGRATE_TO, myCurrencies);
+        resolveDataLink(MoneyWiseBasicResource.XCHGRATE_FROM, MoneyWiseStaticDataType.CURRENCY);
+        resolveDataLink(MoneyWiseBasicResource.XCHGRATE_TO, MoneyWiseStaticDataType.CURRENCY);
     }
 
     /**
@@ -655,11 +649,6 @@ public class MoneyWiseExchangeRate
         }
 
         @Override
-        public MoneyWiseDataSet getDataSet() {
-            return (MoneyWiseDataSet) super.getDataSet();
-        }
-
-        @Override
         protected MoneyWiseExchangeRateList getEmptyList(final PrometheusListStyle pStyle) {
             final MoneyWiseExchangeRateList myList = new MoneyWiseExchangeRateList(this);
             myList.setStyle(pStyle);
@@ -728,7 +717,8 @@ public class MoneyWiseExchangeRate
                                             final OceanusDate pDate) {
             /* Obtain the existing currency */
             OceanusMoney myValue = pValue;
-            final MoneyWiseCurrencyList myCurrencies = getDataSet().getAccountCurrencies();
+            final MoneyWiseCurrencyList myCurrencies = getDataSet()
+                    .getDataList(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrencyList.class);
             final Currency myCurrent = pValue.getCurrency();
             final Currency myReporting = theReporting.getCurrency();
             final Currency myTarget = pCurrency.getCurrency();

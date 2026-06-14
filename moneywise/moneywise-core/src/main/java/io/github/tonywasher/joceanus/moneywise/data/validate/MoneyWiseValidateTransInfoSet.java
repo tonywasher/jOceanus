@@ -359,7 +359,7 @@ public class MoneyWiseValidateTransInfoSet
      */
     private MetisFieldRequired isXchangeRateClassRequired(final MoneyWiseTransCategoryClass pCategory) {
         final MoneyWiseTransaction myTrans = getOwner();
-        final MoneyWiseDataSet myData = myTrans.getDataSet();
+        final MoneyWiseDataSet myData = (MoneyWiseDataSet) myTrans.getDataSet();
         final MoneyWiseTransAsset myAccount = myTrans.getAccount();
 
         if (newValidation) {

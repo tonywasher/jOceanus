@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -161,11 +162,9 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
 
     @Override
     public String getName() {
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(getTaxBasis().getName());
-        myBuilder.append(':');
-        myBuilder.append(getSimpleName());
-        return myBuilder.toString();
+        return getTaxBasis().getName() +
+                ':' +
+                getSimpleName();
     }
 
     /**
@@ -396,27 +395,21 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
         private MoneyWiseAnalysisTaxBasisAccountBucket getBucket(final MoneyWiseTransAsset pAccount) {
             /* Locate the bucket in the list */
             final Long myKey = deriveAssetId(pAccount);
-            MoneyWiseAnalysisTaxBasisAccountBucket myItem = theMap.get(myKey);
-
-            /* If the item does not yet exist */
-            if (myItem == null) {
+            return theMap.computeIfAbsent(myKey, k -> {
                 /* Create the new bucket */
-                myItem = new MoneyWiseAnalysisTaxBasisAccountBucket(theAnalysis, theParent, pAccount);
+                final MoneyWiseAnalysisTaxBasisAccountBucket myNew = new MoneyWiseAnalysisTaxBasisAccountBucket(theAnalysis, theParent, pAccount);
 
                 /* Add to the list */
-                theList.add(myItem);
-                theMap.put(myKey, myItem);
-            }
-
-            /* Return the bucket */
-            return myItem;
+                theList.add(myNew);
+                return myNew;
+            });
         }
 
         /**
          * SortBuckets.
          */
         protected void sortBuckets() {
-            theList.sort((l, r) -> l.getAssetId().compareTo(r.getAssetId()));
+            theList.sort(Comparator.comparing(MoneyWiseAnalysisTaxBasisAccountBucket::getAssetId));
         }
 
         /**

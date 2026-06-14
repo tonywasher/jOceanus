@@ -48,6 +48,7 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
+import java.util.Comparator;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
@@ -746,7 +747,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
         MoneyWiseXAnalysisSecurityBucketList(final MoneyWiseXAnalysisHolder pAnalysis) {
             theAnalysis = pAnalysis;
             theList = new MetisListIndexed<>();
-            theList.setComparator((l, r) -> l.getSecurity().compareTo(r.getSecurity()));
+            theList.setComparator(Comparator.comparing(MoneyWiseXAnalysisSecurityBucket::getSecurity));
         }
 
         /**

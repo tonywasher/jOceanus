@@ -16,18 +16,17 @@
  */
 package io.github.tonywasher.joceanus.moneywise.ui.base;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import io.github.tonywasher.joceanus.metis.ui.MetisAction;
 import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
 import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetTouch;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
@@ -36,6 +35,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataT
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseIcon;
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -167,7 +167,7 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
         if (pParent) {
             myTable.declareScrollColumn(MoneyWiseBasicResource.ASSET_PARENT, MoneyWisePayee.class)
                     .setMenuConfigurator(this::buildParentMenu)
-                    .setCellValueFactory(MoneyWiseAssetBase::getParent)
+                    .setCellValueFactory(p -> (MoneyWisePayee) p.getParent())
                     .setEditable(true)
                     .setCellEditable(r -> !r.isActive())
                     .setColumnWidth(WIDTH_NAME)
@@ -253,7 +253,7 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
      * @return the date or null
      */
     protected OceanusDate getLatestTranDate(final T pAsset) {
-        final MoneyWiseTransaction myTran = pAsset.getLatest();
+        final MoneyWiseAssetTouch myTran = pAsset.getLatest();
         return myTran == null ? null : myTran.getDate();
     }
 
@@ -394,14 +394,13 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
             final PrometheusDataItem myValue = myIterator.next();
 
             /* Ignore self and deleted */
-            if (!(myValue instanceof MoneyWiseSecurity)
+            if (!(myValue instanceof MoneyWiseSecurity mySecurity)
                     || myValue.isDeleted()
                     || myValue.equals(pRow)) {
                 continue;
             }
 
             /* Check for duplicate */
-            final MoneyWiseSecurity mySecurity = (MoneyWiseSecurity) myValue;
             if (pNewSymbol.equals(mySecurity.getSymbol())) {
                 return "Duplicate symbol";
             }

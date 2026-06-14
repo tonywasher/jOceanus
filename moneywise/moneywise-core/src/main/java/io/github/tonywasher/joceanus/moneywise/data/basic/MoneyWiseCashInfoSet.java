@@ -16,15 +16,16 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashInfo.MoneyWiseCashInfoList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Arrays;
@@ -65,7 +66,7 @@ public class MoneyWiseCashInfoSet
      * @param pTypeList the infoTypeList for the set
      * @param pInfoList the InfoList for the set
      */
-    protected MoneyWiseCashInfoSet(final MoneyWiseCash pOwner,
+    protected MoneyWiseCashInfoSet(final PrometheusDataItem pOwner,
                                    final MoneyWiseAccountInfoTypeList pTypeList,
                                    final MoneyWiseCashInfoList pInfoList) {
         /* Store the Owner and Info List */
@@ -75,11 +76,6 @@ public class MoneyWiseCashInfoSet
     @Override
     public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public MoneyWiseCash getOwner() {
-        return (MoneyWiseCash) super.getOwner();
     }
 
     /**

@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.test.data.xdoc;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisDepositBucket;
@@ -29,6 +28,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.HashMap;
 import java.util.Iterator;

@@ -263,11 +263,6 @@ public class MoneyWiseRegion
     }
 
     @Override
-    public MoneyWiseDataSet getDataSet() {
-        return (MoneyWiseDataSet) super.getDataSet();
-    }
-
-    @Override
     public MoneyWiseRegion getBase() {
         return (MoneyWiseRegion) super.getBase();
     }
@@ -391,11 +386,6 @@ public class MoneyWiseRegion
         @Override
         public MetisFieldSetDef getItemFields() {
             return MoneyWiseRegion.FIELD_DEFS;
-        }
-
-        @Override
-        public MoneyWiseDataSet getDataSet() {
-            return (MoneyWiseDataSet) super.getDataSet();
         }
 
         @Override

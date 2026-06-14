@@ -196,6 +196,11 @@ public class MoneyWiseSecurity
         return theInfoSet;
     }
 
+    @Override
+    public MoneyWisePayee getParent() {
+        return (MoneyWisePayee) super.getParent();
+    }
+
     /**
      * Obtain fieldValue for infoSet.
      *
@@ -304,7 +309,7 @@ public class MoneyWiseSecurity
 
     @Override
     public boolean isForeign() {
-        final MoneyWiseCurrency myDefault = getDataSet().getReportingCurrency();
+        final MoneyWiseCurrency myDefault = getDefaultCurrency();
         return !myDefault.equals(getAssetCurrency());
     }
 
@@ -456,7 +461,7 @@ public class MoneyWiseSecurity
     public void deRegister() {
         final PrometheusEditSet myEditSet = getList().getEditSet();
         final MoneyWisePortfolioList myPortfolios = myEditSet == null
-                ? getDataSet().getPortfolios()
+                ? getDataSet().getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class)
                 : myEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
         final MoneyWiseSecurityHoldingMap myMap = myPortfolios.getSecurityHoldingsMap();
         myMap.deRegister(this);
@@ -497,10 +502,9 @@ public class MoneyWiseSecurity
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        final MoneyWiseDataSet myData = getDataSet();
-        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myData.getSecurityTypes());
-        resolveDataLink(MoneyWiseStaticDataType.CURRENCY, myData.getAccountCurrencies());
-        resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myData.getPayees());
+        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, MoneyWiseStaticDataType.SECURITYTYPE);
+        resolveDataLink(MoneyWiseStaticDataType.CURRENCY, MoneyWiseStaticDataType.CURRENCY);
+        resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, MoneyWiseBasicDataType.PAYEE);
     }
 
     @Override
@@ -594,7 +598,8 @@ public class MoneyWiseSecurity
                                                       final MoneyWiseTaxCredit pYear) {
         /* Switch on category type */
         if (MoneyWiseTransCategoryClass.DIVIDEND.equals(pCategory.getCategoryTypeClass())) {
-            final MoneyWiseTransCategoryList myCategories = getDataSet().getTransCategories();
+            final MoneyWiseTransCategoryList myCategories
+                    = getDataSet().getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
             if (isForeign()) {
                 return myCategories.getSingularClass(MoneyWiseTransCategoryClass.FOREIGNDIVIDEND);
             }
@@ -726,7 +731,7 @@ public class MoneyWiseSecurity
          */
         public MoneyWiseSecurityInfoList getSecurityInfo() {
             if (theInfoList == null) {
-                theInfoList = getDataSet().getSecurityInfo();
+                theInfoList = getDataSet().getDataList(MoneyWiseBasicDataType.SECURITYINFO, MoneyWiseSecurityInfoList.class);
             }
             return theInfoList;
         }
@@ -739,7 +744,7 @@ public class MoneyWiseSecurity
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
             if (theInfoTypeList == null) {
                 theInfoTypeList = getEditSet() == null
-                        ? getDataSet().getActInfoTypes()
+                        ? getDataSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class)
                         : getEditSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
             }
             return theInfoTypeList;

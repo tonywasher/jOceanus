@@ -263,11 +263,6 @@ public class MoneyWiseTransTag
     }
 
     @Override
-    public MoneyWiseDataSet getDataSet() {
-        return (MoneyWiseDataSet) super.getDataSet();
-    }
-
-    @Override
     public MoneyWiseTransTag getBase() {
         return (MoneyWiseTransTag) super.getBase();
     }
@@ -391,11 +386,6 @@ public class MoneyWiseTransTag
         @Override
         public MetisFieldSetDef getItemFields() {
             return MoneyWiseTransTag.FIELD_DEFS;
-        }
-
-        @Override
-        public MoneyWiseDataSet getDataSet() {
-            return (MoneyWiseDataSet) super.getDataSet();
         }
 
         @Override

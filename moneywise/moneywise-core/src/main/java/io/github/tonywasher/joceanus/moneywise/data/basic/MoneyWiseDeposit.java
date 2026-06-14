@@ -52,6 +52,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.Promet
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * Deposit class.
@@ -193,6 +194,11 @@ public class MoneyWiseDeposit
         return theInfoSet;
     }
 
+    @Override
+    public MoneyWisePayee getParent() {
+        return (MoneyWisePayee) super.getParent();
+    }
+
     /**
      * Obtain fieldValue for infoSet.
      *
@@ -322,7 +328,7 @@ public class MoneyWiseDeposit
 
     @Override
     public boolean isForeign() {
-        final MoneyWiseCurrency myDefault = getDataSet().getReportingCurrency();
+        final MoneyWiseCurrency myDefault = getDefaultCurrency();
         return !myDefault.equals(getAssetCurrency());
     }
 
@@ -492,10 +498,9 @@ public class MoneyWiseDeposit
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        final MoneyWiseDataSet myData = getDataSet();
-        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myData.getDepositCategories());
-        resolveDataLink(MoneyWiseStaticDataType.CURRENCY, myData.getAccountCurrencies());
-        resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myData.getPayees());
+        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, MoneyWiseBasicDataType.DEPOSITCATEGORY);
+        resolveDataLink(MoneyWiseStaticDataType.CURRENCY, MoneyWiseStaticDataType.CURRENCY);
+        resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, MoneyWiseBasicDataType.PAYEE);
     }
 
     @Override
@@ -610,8 +615,8 @@ public class MoneyWiseDeposit
     public MoneyWiseTransCategory getDetailedCategory(final MoneyWiseTransCategory pCategory,
                                                       final MoneyWiseTaxCredit pYear) {
         /* Switch on category type */
-        final MoneyWiseTransCategoryList myCategories = getDataSet().getTransCategories();
-        switch (pCategory.getCategoryTypeClass()) {
+        final MoneyWiseTransCategoryList myCategories = getDataSet().getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
+        switch (Objects.requireNonNull(pCategory.getCategoryTypeClass())) {
             case INTEREST:
                 if (isTaxFree()) {
                     return myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEINTEREST);
@@ -760,7 +765,7 @@ public class MoneyWiseDeposit
          */
         public MoneyWiseDepositInfoList getDepositInfo() {
             if (theInfoList == null) {
-                theInfoList = getDataSet().getDepositInfo();
+                theInfoList = getDataSet().getDataList(MoneyWiseBasicDataType.DEPOSITINFO, MoneyWiseDepositInfoList.class);
             }
             return theInfoList;
         }
@@ -773,7 +778,7 @@ public class MoneyWiseDeposit
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
             if (theInfoTypeList == null) {
                 theInfoTypeList = getEditSet() == null
-                        ? getDataSet().getActInfoTypes()
+                        ? getDataSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class)
                         : getEditSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
             }
             return theInfoTypeList;
@@ -941,7 +946,7 @@ public class MoneyWiseDeposit
 
         @Override
         protected MoneyWiseDepositDataMap allocateDataMap() {
-            return new MoneyWiseDepositDataMap(getDataSet().getPayees());
+            return new MoneyWiseDepositDataMap(getDataSet().getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class));
         }
 
         @Override

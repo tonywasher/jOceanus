@@ -19,8 +19,6 @@ package io.github.tonywasher.joceanus.moneywise.data.basic;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType;
@@ -32,9 +30,11 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -82,7 +82,7 @@ public class MoneyWiseCashInfo
      * @param pType the type
      */
     private MoneyWiseCashInfo(final MoneyWiseCashInfoList pList,
-                              final MoneyWiseCash pCash,
+                              final PrometheusDataItem pCash,
                               final MoneyWiseAccountInfoType pType) {
         /* Initialise the item */
         super(pList);
@@ -108,9 +108,8 @@ public class MoneyWiseCashInfo
         /* Protect against exceptions */
         try {
             /* Resolve links */
-            final MoneyWiseDataSet myData = getDataSet();
-            resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, myData.getActInfoTypes());
-            resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getCash());
+            resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, MoneyWiseStaticDataType.ACCOUNTINFOTYPE);
+            resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, MoneyWiseBasicDataType.CASH);
 
             /* Set the value */
             setValue(pValues.getValue(PrometheusDataResource.DATAINFO_VALUE));
@@ -119,8 +118,7 @@ public class MoneyWiseCashInfo
             resolveLink(null);
 
             /* Access the CashInfoSet and register this data */
-            final PrometheusDataInfoSet<MoneyWiseCashInfo> mySet = getOwner().getInfoSet();
-            mySet.registerInfo(this);
+            getInfoSet().registerInfo(this);
 
         } catch (OceanusException e) {
             /* Pass on exception */
@@ -144,8 +142,8 @@ public class MoneyWiseCashInfo
     }
 
     @Override
-    public MoneyWiseCash getOwner() {
-        return getValues().getValue(PrometheusDataResource.DATAINFO_OWNER, MoneyWiseCash.class);
+    public PrometheusDataItem getOwner() {
+        return getValues().getValue(PrometheusDataResource.DATAINFO_OWNER, PrometheusDataItem.class);
     }
 
     /**
@@ -179,11 +177,6 @@ public class MoneyWiseCashInfo
     }
 
     @Override
-    public MoneyWiseDataSet getDataSet() {
-        return (MoneyWiseDataSet) super.getDataSet();
-    }
-
-    @Override
     public MoneyWiseCashInfo getBase() {
         return (MoneyWiseCashInfo) super.getBase();
     }
@@ -193,11 +186,20 @@ public class MoneyWiseCashInfo
         return (MoneyWiseCashInfoList) super.getList();
     }
 
+    /**
+     * Obtain the InfoSet.
+     *
+     * @return the infoSet
+     */
+    @SuppressWarnings("unchecked")
+    private PrometheusDataInfoSet<MoneyWiseCashInfo> getInfoSet() {
+        return (PrometheusDataInfoSet<MoneyWiseCashInfo>) ((PrometheusInfoSetItem) getOwner()).getInfoSet();
+    }
+
     @Override
     public void deRegister() {
         /* Access the CashInfoSet and register this value */
-        final PrometheusDataInfoSet<MoneyWiseCashInfo> mySet = getOwner().getInfoSet();
-        mySet.deRegisterInfo(this);
+        getInfoSet().deRegisterInfo(this);
     }
 
     @Override
@@ -206,16 +208,14 @@ public class MoneyWiseCashInfo
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        final MoneyWiseDataSet myData = getDataSet();
-        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, myData.getActInfoTypes());
-        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getCash());
+        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, MoneyWiseStaticDataType.ACCOUNTINFOTYPE);
+        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, MoneyWiseBasicDataType.CASH);
 
         /* Resolve any link value */
         resolveLink(null);
 
         /* Access the CashInfoSet and register this data */
-        final PrometheusDataInfoSet<MoneyWiseCashInfo> mySet = getOwner().getInfoSet();
-        mySet.registerInfo(this);
+        getInfoSet().registerInfo(this);
     }
 
     /**
@@ -227,7 +227,7 @@ public class MoneyWiseCashInfo
     public void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Resolve data links */
         resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class));
-        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, pEditSet.getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class));
+        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, pEditSet.getDataList(MoneyWiseBasicDataType.CASH, PrometheusDataList.class));
 
         /* Resolve any link value */
         resolveLink(pEditSet);
@@ -244,22 +244,22 @@ public class MoneyWiseCashInfo
         final MoneyWiseAccountInfoType myType = getInfoType();
         if (myType.isLink()) {
             /* Access data */
-            final MoneyWiseDataSet myData = getDataSet();
+            final PrometheusDataSet myData = getDataSet();
             final Object myLinkId = getValues().getValue(PrometheusDataResource.DATAINFO_VALUE);
 
             /* Switch on link type */
             switch (myType.getInfoClass()) {
                 case AUTOPAYEE:
                     resolveDataLink(PrometheusDataResource.DATAINFO_LINK, pEditSet == null
-                            ? myData.getPayees()
-                            : pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class));
+                            ? myData.getDataList(MoneyWiseBasicDataType.PAYEE, PrometheusDataList.class)
+                            : pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, PrometheusDataList.class));
                     if (myLinkId == null) {
                         setValueValue(getPayee().getIndexedId());
                     }
                     break;
                 case AUTOEXPENSE:
                     resolveDataLink(PrometheusDataResource.DATAINFO_LINK, pEditSet == null
-                            ? myData.getTransCategories()
+                            ? myData.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class)
                             : pEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class));
                     if (myLinkId == null) {
                         setValueValue(getEventCategory().getIndexedId());
@@ -372,11 +372,6 @@ public class MoneyWiseCashInfo
             return MoneyWiseCashInfo.FIELD_DEFS;
         }
 
-        @Override
-        public MoneyWiseDataSet getDataSet() {
-            return (MoneyWiseDataSet) super.getDataSet();
-        }
-
         /**
          * Set base list for Edit InfoList.
          *
@@ -416,7 +411,7 @@ public class MoneyWiseCashInfo
         protected MoneyWiseCashInfo addNewItem(final PrometheusDataItem pOwner,
                                                final PrometheusStaticDataItem pInfoType) {
             /* Allocate the new entry and add to list */
-            final MoneyWiseCashInfo myInfo = new MoneyWiseCashInfo(this, (MoneyWiseCash) pOwner, (MoneyWiseAccountInfoType) pInfoType);
+            final MoneyWiseCashInfo myInfo = new MoneyWiseCashInfo(this, pOwner, (MoneyWiseAccountInfoType) pInfoType);
             add(myInfo);
 
             /* return it */
@@ -433,11 +428,12 @@ public class MoneyWiseCashInfo
                 return;
             }
 
-            /* Access the data set */
-            final MoneyWiseDataSet myData = getDataSet();
+            /* Access the accountInfoTypes */
+            final MoneyWiseAccountInfoTypeList myActInfos
+                    = getDataSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
 
             /* Look up the Info Type */
-            final MoneyWiseAccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
+            final MoneyWiseAccountInfoType myInfoType = myActInfos.findItemByClass(pInfoClass);
             if (myInfoType == null) {
                 throw new MoneyWiseDataException(pCash, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
@@ -505,7 +501,8 @@ public class MoneyWiseCashInfo
             validateOnLoad();
 
             /* Map and Validate the Cash */
-            final MoneyWiseCashList myCash = getDataSet().getCash();
+            final PrometheusDataList<?> myCash
+                    = getDataSet().getDataList(MoneyWiseBasicDataType.CASH, PrometheusDataList.class);
             myCash.mapData();
             myCash.validateOnLoad();
         }

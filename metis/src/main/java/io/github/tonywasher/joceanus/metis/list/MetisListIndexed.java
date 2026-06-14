@@ -16,11 +16,11 @@
  */
 package io.github.tonywasher.joceanus.metis.list;
 
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataIndexedItem;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -409,5 +409,104 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
     @Override
     public int hashCode() {
         return theList.hashCode();
+    }
+
+    /**
+     * Indexed List Iterator.
+     *
+     * @param <T> the item type
+     */
+    public static class MetisListIterator<T extends MetisDataIndexedItem>
+            implements ListIterator<T> {
+        /**
+         * The underlying list.
+         */
+        private final MetisListIndexed<T> theList;
+
+        /**
+         * The underlying iterator.
+         */
+        private final ListIterator<T> theIterator;
+
+        /**
+         * The last item referenced.
+         */
+        private T theLastItem;
+
+        /**
+         * Constructor.
+         *
+         * @param pList the list
+         */
+        MetisListIterator(final MetisListIndexed<T> pList) {
+            /* Store parameters */
+            theList = pList;
+
+            /* Create the iterator */
+            theIterator = theList.getUnderlyingList().listIterator();
+        }
+
+        /**
+         * Constructor.
+         *
+         * @param pList  the list
+         * @param pIndex the starting index
+         */
+        protected MetisListIterator(final MetisListIndexed<T> pList,
+                                    final int pIndex) {
+            /* Store parameters */
+            theList = pList;
+
+            /* Create the iterator */
+            theIterator = theList.getUnderlyingList().listIterator(pIndex);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return theIterator.hasNext();
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return theIterator.hasPrevious();
+        }
+
+        @Override
+        public T next() {
+            theLastItem = theIterator.next();
+            return theLastItem;
+        }
+
+        @Override
+        public int nextIndex() {
+            return theIterator.nextIndex();
+        }
+
+        @Override
+        public T previous() {
+            theLastItem = theIterator.previous();
+            return theLastItem;
+        }
+
+        @Override
+        public int previousIndex() {
+            return theIterator.previousIndex();
+        }
+
+        @Override
+        public void remove() {
+            theIterator.remove();
+            theList.getIdMap().remove(theLastItem.getIndexedId());
+        }
+
+        @Override
+        public void add(final T pItem) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void set(final T pItem) {
+            throw new UnsupportedOperationException();
+        }
     }
 }

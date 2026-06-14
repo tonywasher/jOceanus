@@ -19,8 +19,8 @@ package io.github.tonywasher.joceanus.moneywise.data.basic;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransBase.MoneyWiseTransBaseList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoType;
@@ -31,9 +31,11 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -81,7 +83,7 @@ public class MoneyWiseTransInfo
      * @param pType        the type
      */
     private MoneyWiseTransInfo(final MoneyWiseTransInfoList pList,
-                               final MoneyWiseTransaction pTransaction,
+                               final PrometheusDataItem pTransaction,
                                final MoneyWiseTransInfoType pType) {
         /* Initialise the item */
         super(pList);
@@ -107,9 +109,8 @@ public class MoneyWiseTransInfo
         /* Protect against exceptions */
         try {
             /* Resolve links */
-            final MoneyWiseDataSet myData = getDataSet();
-            resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, myData.getTransInfoTypes());
-            resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getTransactions());
+            resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, MoneyWiseStaticDataType.TRANSINFOTYPE);
+            resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, MoneyWiseBasicDataType.TRANSACTION);
 
             /* Set the value */
             setValue(pValues.getValue(PrometheusDataResource.DATAINFO_VALUE));
@@ -118,8 +119,7 @@ public class MoneyWiseTransInfo
             resolveLink(null);
 
             /* Access the TransactionInfoSet and register this data */
-            final PrometheusDataInfoSet<MoneyWiseTransInfo> mySet = getOwner().getInfoSet();
-            mySet.registerInfo(this);
+            getInfoSet().registerInfo(this);
 
         } catch (OceanusException e) {
             /* Pass on exception */
@@ -143,8 +143,8 @@ public class MoneyWiseTransInfo
     }
 
     @Override
-    public MoneyWiseTransaction getOwner() {
-        return getValues().getValue(PrometheusDataResource.DATAINFO_OWNER, MoneyWiseTransaction.class);
+    public MoneyWiseTransBase getOwner() {
+        return getValues().getValue(PrometheusDataResource.DATAINFO_OWNER, MoneyWiseTransBase.class);
     }
 
     /**
@@ -181,11 +181,6 @@ public class MoneyWiseTransInfo
     }
 
     @Override
-    public MoneyWiseDataSet getDataSet() {
-        return (MoneyWiseDataSet) super.getDataSet();
-    }
-
-    @Override
     public MoneyWiseTransInfo getBase() {
         return (MoneyWiseTransInfo) super.getBase();
     }
@@ -195,18 +190,26 @@ public class MoneyWiseTransInfo
         return (MoneyWiseTransInfoList) super.getList();
     }
 
+    /**
+     * Obtain the InfoSet.
+     *
+     * @return the infoSet
+     */
+    @SuppressWarnings("unchecked")
+    private PrometheusDataInfoSet<MoneyWiseTransInfo> getInfoSet() {
+        return (PrometheusDataInfoSet<MoneyWiseTransInfo>) ((PrometheusInfoSetItem) getOwner()).getInfoSet();
+    }
+
     @Override
     public void deRegister() {
         /* Access the TransactionInfoSet and register this value */
-        final PrometheusDataInfoSet<MoneyWiseTransInfo> mySet = getOwner().getInfoSet();
-        mySet.deRegisterInfo(this);
+        getInfoSet().deRegisterInfo(this);
     }
 
     @Override
     public void rewindInfoLinkSet() {
         /* Access the TransactionInfoSet and reWind this value */
-        final PrometheusDataInfoSet<MoneyWiseTransInfo> mySet = getOwner().getInfoSet();
-        mySet.rewindInfoLinkSet(this);
+        getInfoSet().rewindInfoLinkSet(this);
     }
 
     /**
@@ -242,16 +245,14 @@ public class MoneyWiseTransInfo
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        final MoneyWiseDataSet myData = getDataSet();
-        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, myData.getTransInfoTypes());
-        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getTransactions());
+        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, MoneyWiseStaticDataType.TRANSINFOTYPE);
+        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, MoneyWiseBasicDataType.TRANSACTION);
 
         /* Resolve any link value */
         resolveLink(null);
 
         /* Access the TransactionInfoSet and register this data */
-        final MoneyWiseTransInfoSet mySet = getOwner().getInfoSet();
-        mySet.registerInfo(this);
+        getInfoSet().registerInfo(this);
     }
 
     /**
@@ -266,7 +267,7 @@ public class MoneyWiseTransInfo
 
         /* Resolve data links */
         resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, pEditSet.getDataList(MoneyWiseStaticDataType.TRANSINFOTYPE, MoneyWiseTransInfoTypeList.class));
-        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, pEditSet.getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class));
+        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, pEditSet.getDataList(MoneyWiseBasicDataType.TRANSACTION, PrometheusDataList.class));
 
         /* Resolve any link value */
         resolveLink(pEditSet);
@@ -283,7 +284,7 @@ public class MoneyWiseTransInfo
         final MoneyWiseTransInfoType myType = getInfoType();
         if (myType.isLink()) {
             /* Access data */
-            final MoneyWiseDataSet myData = getDataSet();
+            final PrometheusDataSet myData = getDataSet();
             final Object myLinkId = getValues().getValue(PrometheusDataResource.DATAINFO_VALUE);
 
             /* Switch on link type */
@@ -296,7 +297,7 @@ public class MoneyWiseTransInfo
                     break;
                 case TRANSTAG:
                     resolveDataLink(PrometheusDataResource.DATAINFO_LINK, pEditSet == null
-                            ? myData.getTransactionTags()
+                            ? myData.getDataList(MoneyWiseBasicDataType.TRANSTAG, MoneyWiseTransTagList.class)
                             : pEditSet.getDataList(MoneyWiseBasicDataType.TRANSTAG, MoneyWiseTransTagList.class));
                     if (myLinkId == null) {
                         setValueValue(getTransactionTag().getIndexedId());
@@ -397,11 +398,6 @@ public class MoneyWiseTransInfo
             return MoneyWiseTransInfo.FIELD_DEFS;
         }
 
-        @Override
-        public MoneyWiseDataSet getDataSet() {
-            return (MoneyWiseDataSet) super.getDataSet();
-        }
-
         /**
          * Set base list for Edit InfoList.
          *
@@ -441,7 +437,7 @@ public class MoneyWiseTransInfo
         protected MoneyWiseTransInfo addNewItem(final PrometheusDataItem pOwner,
                                                 final PrometheusStaticDataItem pInfoType) {
             /* Allocate the new entry and add to list */
-            final MoneyWiseTransInfo myInfo = new MoneyWiseTransInfo(this, (MoneyWiseTransaction) pOwner, (MoneyWiseTransInfoType) pInfoType);
+            final MoneyWiseTransInfo myInfo = new MoneyWiseTransInfo(this, pOwner, (MoneyWiseTransInfoType) pInfoType);
             add(myInfo);
 
             /* return it */
@@ -458,11 +454,12 @@ public class MoneyWiseTransInfo
                 return;
             }
 
-            /* Access the data set */
-            final MoneyWiseDataSet myData = getDataSet();
+            /* Access the transInfoTypes */
+            final MoneyWiseTransInfoTypeList myTransInfos
+                    = getDataSet().getDataList(MoneyWiseStaticDataType.TRANSINFOTYPE, MoneyWiseTransInfoTypeList.class);
 
             /* Look up the Info Type */
-            final MoneyWiseTransInfoType myInfoType = myData.getTransInfoTypes().findItemByClass(pInfoClass);
+            final MoneyWiseTransInfoType myInfoType = myTransInfos.findItemByClass(pInfoClass);
             if (myInfoType == null) {
                 throw new MoneyWiseDataException(pTransaction, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
@@ -530,7 +527,7 @@ public class MoneyWiseTransInfo
             validateOnLoad();
 
             /* Validate the Transactions */
-            final MoneyWiseTransactionList myTrans = getDataSet().getTransactions();
+            final MoneyWiseTransBaseList<?> myTrans = getDataSet().getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransBaseList.class);
             myTrans.validateOnLoad();
         }
     }

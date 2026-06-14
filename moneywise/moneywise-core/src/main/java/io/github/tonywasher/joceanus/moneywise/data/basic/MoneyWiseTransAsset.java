@@ -16,11 +16,11 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import java.util.Currency;
-
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+
+import java.util.Currency;
 
 /**
  * Interface for objects (Deposits, SecurityHoldings etc.) used in a transaction.
@@ -56,7 +56,7 @@ public interface MoneyWiseTransAsset
      *
      * @return the parent
      */
-    MoneyWiseAssetBase getParent();
+    PrometheusDataItem getParent();
 
     /**
      * Is the Asset taxFree?

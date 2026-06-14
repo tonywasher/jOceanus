@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWis
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -173,7 +174,7 @@ public final class MoneyWiseAnalysisLoanCategoryBucket
             theCurrency = theAnalysis.getCurrency();
             theTotals = allocateTotalsBucket();
             theList = new MetisListIndexed<>();
-            theList.setComparator((l, r) -> l.getAccountCategory().compareTo(r.getAccountCategory()));
+            theList.setComparator(Comparator.comparing(MoneyWiseAnalysisLoanCategoryBucket::getAccountCategory));
         }
 
         @Override

@@ -179,12 +179,9 @@ public abstract class PrometheusDataInfoItem
         /* Access Info Type Value */
         final PrometheusEncryptedValues myValues = getValues();
         final Object myType = myValues.getValue(PrometheusDataResource.DATAINFO_TYPE, Object.class);
-        if (!(myType instanceof PrometheusStaticDataItem)) {
+        if (!(myType instanceof PrometheusStaticDataItem myInfoType)) {
             return super.toString();
         }
-
-        /* Access InfoType */
-        final PrometheusStaticDataItem myInfoType = (PrometheusStaticDataItem) myType;
 
         /* Access class */
         return myInfoType.getName() + "=" + super.toString();
@@ -207,14 +204,10 @@ public abstract class PrometheusDataInfoItem
         final PrometheusDataInfoClass myInfoClass = (PrometheusDataInfoClass) myInfoType.getStaticClass();
 
         /* Switch on type of Data */
-        switch (myInfoClass.getDataType()) {
-            case LINK:
-            case LINKPAIR:
-            case LINKSET:
-                return myFormatter.formatObject(getLink());
-            default:
-                return myFormatter.formatObject(getValue(Object.class));
-        }
+        return switch (myInfoClass.getDataType()) {
+            case LINK, LINKPAIR, LINKSET -> myFormatter.formatObject(getLink());
+            default -> myFormatter.formatObject(getValue(Object.class));
+        };
     }
 
     /**
@@ -506,45 +499,20 @@ public abstract class PrometheusDataInfoItem
         final OceanusDecimalParser myParser = myFormatter.getDecimalParser();
 
         /* Switch on Info Class */
-        boolean bValueOK = false;
-        switch (myClass.getDataType()) {
-            case DATE:
-                bValueOK = setDateValue(myFormatter.getDateFormatter(), pValue);
-                break;
-            case INTEGER:
-                bValueOK = setIntegerValue(myFormatter, pValue);
-                break;
-            case LINK:
-            case LINKSET:
-                bValueOK = setLinkValue(pValue);
-                break;
-            case LINKPAIR:
-                bValueOK = setLinkPairValue(pValue);
-                break;
-            case STRING:
-                bValueOK = setStringValue(pValue);
-                break;
-            case CHARARRAY:
-                bValueOK = setCharArrayValue(pValue);
-                break;
-            case MONEY:
-                bValueOK = setMoneyValue(myParser, pValue);
-                break;
-            case RATE:
-                bValueOK = setRateValue(myParser, pValue);
-                break;
-            case UNITS:
-                bValueOK = setUnitsValue(myParser, pValue);
-                break;
-            case PRICE:
-                bValueOK = setPriceValue(myParser, pValue);
-                break;
-            case RATIO:
-                bValueOK = setRatioValue(myParser, pValue);
-                break;
-            default:
-                break;
-        }
+        final boolean bValueOK = switch (myClass.getDataType()) {
+            case DATE -> setDateValue(myFormatter.getDateFormatter(), pValue);
+            case INTEGER -> setIntegerValue(myFormatter, pValue);
+            case LINK, LINKSET -> setLinkValue(pValue);
+            case LINKPAIR -> setLinkPairValue(pValue);
+            case STRING -> setStringValue(pValue);
+            case CHARARRAY -> setCharArrayValue(pValue);
+            case MONEY -> setMoneyValue(myParser, pValue);
+            case RATE -> setRateValue(myParser, pValue);
+            case UNITS -> setUnitsValue(myParser, pValue);
+            case PRICE -> setPriceValue(myParser, pValue);
+            case RATIO -> setRatioValue(myParser, pValue);
+            default -> false;
+        };
 
         /* Reject invalid value */
         if (!bValueOK) {

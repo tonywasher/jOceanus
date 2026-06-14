@@ -658,11 +658,7 @@ public class MoneyWiseAccountPanel
         /* Access event and obtain details */
         switch (myEvent.getId()) {
             /* Pass through the event */
-            case STATEMENT:
-            case CATEGORY:
-            case REGION:
-            case TAG:
-            case STATIC:
+            case STATEMENT, CATEGORY, REGION, TAG, STATIC:
                 theEventManager.cascadeEvent(pEvent);
                 break;
 
@@ -730,4 +726,3 @@ public class MoneyWiseAccountPanel
         }
     }
 }
-

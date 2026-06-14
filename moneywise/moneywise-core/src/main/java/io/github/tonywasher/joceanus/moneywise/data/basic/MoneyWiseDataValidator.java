@@ -17,7 +17,6 @@
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -82,95 +81,5 @@ public interface MoneyWiseDataValidator
          * @throws OceanusException on error
          */
         void autoCorrect(T pItem) throws OceanusException;
-    }
-
-    /**
-     * Validator for accounts.
-     *
-     * @param <T> the item type
-     */
-    interface MoneyWiseDataValidatorAccount<T extends MoneyWiseAssetBase>
-            extends MoneyWiseDataValidatorDefaults<T>, MoneyWiseDataValidatorAutoCorrect<T> {
-    }
-
-    /**
-     * Validator for accounts.
-     *
-     * @param <T> the item type
-     */
-    interface MoneyWiseDataValidatorCategory<T extends MoneyWiseCategoryBase>
-            extends MoneyWiseDataValidatorParentDefaults<T> {
-    }
-
-    /**
-     * Transaction validator.
-     *
-     * @param <T> the itemType
-     */
-    interface MoneyWiseDataValidatorTrans<T extends MoneyWiseTransBase>
-            extends MoneyWiseDataValidatorAutoCorrect<T> {
-        /**
-         * Is the account valid as the base account in a transaction?
-         *
-         * @param pAccount the account
-         * @return true/false
-         */
-        boolean isValidAccount(MoneyWiseTransAsset pAccount);
-
-        /**
-         * Is the transaction valid for the base account in the transaction?.
-         *
-         * @param pAccount  the account
-         * @param pCategory The category of the event
-         * @return true/false
-         */
-        boolean isValidCategory(MoneyWiseTransAsset pAccount,
-                                MoneyWiseTransCategory pCategory);
-
-        /**
-         * Is the direction valid for the base account and category in the transaction?.
-         *
-         * @param pAccount   the account
-         * @param pCategory  The category of the event
-         * @param pDirection the direction
-         * @return true/false
-         */
-        boolean isValidDirection(MoneyWiseTransAsset pAccount,
-                                 MoneyWiseTransCategory pCategory,
-                                 MoneyWiseAssetDirection pDirection);
-
-        /**
-         * Is the partner valid for the base account and category in the transaction?.
-         *
-         * @param pAccount  the account
-         * @param pCategory The category of the event
-         * @param pPartner  the partner
-         * @return true/false
-         */
-        boolean isValidPartner(MoneyWiseTransAsset pAccount,
-                               MoneyWiseTransCategory pCategory,
-                               MoneyWiseTransAsset pPartner);
-
-        /**
-         * Build default transaction.
-         *
-         * @param pKey the key to base the new transaction around (or null)
-         * @return the new transaction (or null if no possible transaction)
-         */
-        MoneyWiseTransaction buildTransaction(Object pKey);
-
-        /**
-         * Set range.
-         *
-         * @param pRange the date range
-         */
-        void setRange(OceanusDateRange pRange);
-
-        /**
-         * Get range.
-         *
-         * @return the date range
-         */
-        OceanusDateRange getRange();
     }
 }

@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -29,6 +27,8 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Dividend Analysis.
@@ -87,7 +87,7 @@ public class MoneyWiseXAnalysisDividend {
         final OceanusUnits myDeltaUnits = pTrans.getCreditUnitsDelta();
 
         /* True debit account is the parent */
-        final MoneyWisePayee myDebit = mySecurity.getParent();
+        final MoneyWisePayee myDebit = (MoneyWisePayee) mySecurity.getParent();
 
         /* Access the Asset Account Bucket */
         final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(myHolding);

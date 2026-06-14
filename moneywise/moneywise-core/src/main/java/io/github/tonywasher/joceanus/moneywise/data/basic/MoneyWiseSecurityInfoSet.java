@@ -25,6 +25,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfo
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Arrays;
@@ -60,7 +61,7 @@ public class MoneyWiseSecurityInfoSet
      * @param pTypeList the infoTypeList for the set
      * @param pInfoList the InfoList for the set
      */
-    protected MoneyWiseSecurityInfoSet(final MoneyWiseSecurity pOwner,
+    protected MoneyWiseSecurityInfoSet(final PrometheusDataItem pOwner,
                                        final MoneyWiseAccountInfoTypeList pTypeList,
                                        final MoneyWiseSecurityInfoList pInfoList) {
         /* Store the Owner and Info List */
@@ -70,11 +71,6 @@ public class MoneyWiseSecurityInfoSet
     @Override
     public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public MoneyWiseSecurity getOwner() {
-        return (MoneyWiseSecurity) super.getOwner();
     }
 
     /**

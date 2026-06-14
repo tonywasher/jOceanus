@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
@@ -29,6 +28,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWi
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -66,7 +66,7 @@ public class MoneyWiseValidateDeposit
     @Override
     public void validate(final PrometheusDataItem pDeposit) {
         final MoneyWiseDeposit myDeposit = (MoneyWiseDeposit) pDeposit;
-        final MoneyWisePayee myParent = myDeposit.getParent();
+        final MoneyWisePayee myParent = (MoneyWisePayee) myDeposit.getParent();
         final MoneyWiseDepositCategory myCategory = myDeposit.getCategory();
         final MoneyWiseCurrency myCurrency = myDeposit.getAssetCurrency();
         final MoneyWiseDepositCategoryClass myClass = myDeposit.getCategoryClass();
@@ -134,7 +134,7 @@ public class MoneyWiseValidateDeposit
     public void autoCorrect(final MoneyWiseDeposit pDeposit) throws OceanusException {
         /* Ensure that we have a valid parent */
         final MoneyWiseDepositCategoryClass myClass = pDeposit.getCategoryClass();
-        final MoneyWisePayee myParent = pDeposit.getParent();
+        final MoneyWisePayee myParent = (MoneyWisePayee) pDeposit.getParent();
         if (myParent == null
                 || !myParent.getCategoryClass().canParentDeposit(myClass)) {
             pDeposit.setParent(getDefaultParent(pDeposit));

@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCategoryBase.MoneyWiseCategoryBaseList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCategoryBase.MoneyWiseCategoryDataMap;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCategoryBase.MoneyWiseDataValidatorCategory;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
