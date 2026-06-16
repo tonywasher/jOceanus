@@ -31,7 +31,6 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransBase;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransBase.MoneyWiseDataValidatorTrans;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransInfoSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
@@ -56,7 +55,7 @@ import java.util.Objects;
  * Validator for transaction.
  */
 public class MoneyWiseValidateTransaction
-        implements MoneyWiseDataValidatorTrans<MoneyWiseTransaction> {
+        implements MoneyWiseValidateTransCtl {
     /**
      * Are we using new validation?
      */
@@ -94,23 +93,15 @@ public class MoneyWiseValidateTransaction
         theInfoSet.storeEditSet(pEditSet);
     }
 
-    /**
-     * Obtain the editSet.
-     *
-     * @return the editSet
-     */
-    PrometheusEditSet getEditSet() {
+    @Override
+    public PrometheusEditSet getEditSet() {
         if (theEditSet == null) {
             throw new IllegalStateException("editSet not set up");
         }
         return theEditSet;
     }
 
-    /**
-     * Obtain the transInfoSet validator.
-     *
-     * @return the validator
-     */
+    @Override
     public MoneyWiseValidateTransInfoSet getInfoSetValidator() {
         return theInfoSet;
     }

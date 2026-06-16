@@ -16,12 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
@@ -41,10 +35,17 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Currency;
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * Transaction builder.
@@ -60,7 +61,7 @@ public class MoneyWiseValidateTransDefaults {
     /**
      * The transaction validator.
      */
-    private final MoneyWiseValidateTransaction theValidator;
+    private final MoneyWiseValidateTransCtl theValidator;
 
     /**
      * The EditSet.
@@ -77,7 +78,7 @@ public class MoneyWiseValidateTransDefaults {
      *
      * @param pValidator the validator
      */
-    public MoneyWiseValidateTransDefaults(final MoneyWiseValidateTransaction pValidator) {
+    public MoneyWiseValidateTransDefaults(final MoneyWiseValidateTransCtl pValidator) {
         theValidator = pValidator;
     }
 
@@ -136,7 +137,7 @@ public class MoneyWiseValidateTransDefaults {
         }
 
         /* If we need to null money */
-        if (myCategory.getCategoryTypeClass().needsNullAmount()) {
+        if (Objects.requireNonNull(myCategory.getCategoryTypeClass()).needsNullAmount()) {
             if (myAmount != null) {
                 /* Create a zero amount */
                 pTrans.setAmount(null);

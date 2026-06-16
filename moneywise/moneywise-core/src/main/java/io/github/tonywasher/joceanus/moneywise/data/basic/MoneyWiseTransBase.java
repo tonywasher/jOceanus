@@ -41,6 +41,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedPair;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedValues;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
  * Transaction data type.
@@ -1053,5 +1054,12 @@ public abstract class MoneyWiseTransBase
          * @return the date range
          */
         OceanusDateRange getRange();
+
+        /**
+         * Obtain the editSet.
+         *
+         * @return the editSet
+         */
+        PrometheusEditSet getEditSet();
     }
 }
