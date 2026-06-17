@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.prometheus.views;
 
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 
 import java.util.ResourceBundle;
 
@@ -59,7 +59,7 @@ public enum PrometheusViewResource implements OceanusBundleId {
     /**
      * The Resource Loader.
      */
-    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusDataSet.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusDataResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

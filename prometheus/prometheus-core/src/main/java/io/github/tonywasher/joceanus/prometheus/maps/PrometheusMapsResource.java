@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.prometheus.maps;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 
 import java.util.ResourceBundle;
 
@@ -71,7 +71,7 @@ public enum PrometheusMapsResource
     /**
      * The Resource Loader.
      */
-    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusDataSet.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusDataResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

@@ -41,7 +41,8 @@ import java.util.Map;
 /**
  * Encryptor/Decryptor.
  */
-public class PrometheusEncryptor {
+public class PrometheusEncryptor
+        implements PrometheusEncryptorCtl {
     /**
      * Encrypted data conversion failure message.
      */
@@ -84,22 +85,12 @@ public class PrometheusEncryptor {
         theKeySet = pKeySet;
     }
 
-    /**
-     * Obtain the keySet.
-     *
-     * @return the keySet
-     */
+    @Override
     public GordianKeySet getKeySet() {
         return theKeySet;
     }
 
-    /**
-     * Encrypt a value.
-     *
-     * @param pValue the value to encrypt.
-     * @return the encryptedBytes
-     * @throws OceanusException on error
-     */
+    @Override
     public byte[] encryptValue(final Object pValue) throws OceanusException {
         /* Protect against exceptions */
         try {
