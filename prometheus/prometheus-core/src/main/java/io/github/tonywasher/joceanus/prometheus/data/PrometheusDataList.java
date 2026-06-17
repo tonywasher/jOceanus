@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.prometheus.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
@@ -26,6 +24,8 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.list.MetisListIndexed;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem.PrometheusDataInfoList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusTableItem.PrometheusTableList;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
@@ -991,41 +991,5 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
         /* Adjust list value */
         setVersion(pNewVersion);
-    }
-
-    /**
-     * ListStyles.
-     */
-    public enum PrometheusListStyle {
-        /**
-         * Core list holding the true version of the data.
-         */
-        CORE,
-
-        /**
-         * Deep Copy clone for security updates.
-         */
-        CLONE,
-
-        /**
-         * Shallow Copy list for comparison purposes. Only references to other items can be added to
-         * the list
-         */
-        COPY,
-
-        /**
-         * Partial extract of the data for the purposes of editing.
-         */
-        EDIT,
-
-        /**
-         * List of changes to be applied to database.
-         */
-        UPDATE,
-
-        /**
-         * List of differences.
-         */
-        DIFFER;
     }
 }

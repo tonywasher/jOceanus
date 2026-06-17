@@ -33,7 +33,6 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlKey.Promet
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlKeySet.PrometheusControlKeySetList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorFactory;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem.PrometheusEncryptedList;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceManager;
