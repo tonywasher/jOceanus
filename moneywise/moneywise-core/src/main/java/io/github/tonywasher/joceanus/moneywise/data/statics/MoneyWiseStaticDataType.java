@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSimpleId;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyDataType;
 
 /**
  * MoneyWise Item Types.

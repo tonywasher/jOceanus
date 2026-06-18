@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.moneywise.data.validate;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyDataType;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorFactory;
 import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateBasic;

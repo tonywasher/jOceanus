@@ -19,9 +19,9 @@ package io.github.tonywasher.joceanus.prometheus.database;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlData;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyDataType;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 
 /**

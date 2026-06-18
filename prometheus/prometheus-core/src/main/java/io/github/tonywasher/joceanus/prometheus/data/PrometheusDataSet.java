@@ -19,7 +19,6 @@ package io.github.tonywasher.joceanus.prometheus.data;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
@@ -27,7 +26,6 @@ import io.github.tonywasher.joceanus.metis.toolkit.MetisToolkit;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
-import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlData.PrometheusControlDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlKey.PrometheusControlKeyList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlKeySet.PrometheusControlKeySetList;
@@ -949,133 +947,5 @@ public abstract class PrometheusDataSet
      */
     public Iterator<MetisListKey> keyIterator() {
         return theListMap.keySet().iterator();
-    }
-
-    /**
-     * Cryptography Data Enum Types.
-     */
-    public enum PrometheusCryptographyDataType
-            implements MetisListKey, MetisDataFieldId {
-        /**
-         * ControlKey.
-         */
-        CONTROLKEY(1),
-
-        /**
-         * ControlKeySet.
-         */
-        CONTROLKEYSET(2),
-
-        /**
-         * DataKeySet.
-         */
-        DATAKEYSET(3),
-
-        /**
-         * ControlData.
-         */
-        CONTROLDATA(4);
-
-        /**
-         * Maximum keyId.
-         */
-        public static final Integer MAXKEYID = CONTROLDATA.getItemKey();
-
-        /**
-         * The list key.
-         */
-        private final Integer theKey;
-
-        /**
-         * The String name.
-         */
-        private String theName;
-
-        /**
-         * The list name.
-         */
-        private String theListName;
-
-        /**
-         * Constructor.
-         *
-         * @param pKey the key
-         */
-        PrometheusCryptographyDataType(final Integer pKey) {
-            theKey = pKey;
-        }
-
-        @Override
-        public String toString() {
-            /* If we have not yet loaded the name */
-            if (theName == null) {
-                /* Load the name */
-                theName = bundleIdForCryptoItem(this).getValue();
-            }
-
-            /* return the name */
-            return theName;
-        }
-
-        @Override
-        public String getItemName() {
-            return toString();
-        }
-
-        @Override
-        public String getListName() {
-            /* If we have not yet loaded the name */
-            if (theListName == null) {
-                /* Load the name */
-                theListName = bundleIdForCryptoList(this).getValue();
-            }
-
-            /* return the list name */
-            return theListName;
-        }
-
-        @Override
-        public Integer getItemKey() {
-            return theKey;
-        }
-
-        @Override
-        public String getId() {
-            return toString();
-        }
-
-        /**
-         * Obtain the resource bundleId for the dataType List.
-         *
-         * @param pType the dataType
-         * @return the resource bundleId
-         */
-        private static OceanusBundleId bundleIdForCryptoItem(final PrometheusCryptographyDataType pType) {
-            /* Create the map and return it */
-            return switch (pType) {
-                case CONTROLKEY -> PrometheusDataResource.CONTROLKEY_NAME;
-                case CONTROLKEYSET -> PrometheusDataResource.CONTROLKEYSET_NAME;
-                case DATAKEYSET -> PrometheusDataResource.DATAKEYSET_NAME;
-                case CONTROLDATA -> PrometheusDataResource.CONTROLDATA_NAME;
-                default -> throw new IllegalArgumentException();
-            };
-        }
-
-        /**
-         * Obtain the resource bundleId for the dataType List.
-         *
-         * @param pType the dataType
-         * @return the resource bundleId
-         */
-        private static OceanusBundleId bundleIdForCryptoList(final PrometheusCryptographyDataType pType) {
-            /* Create the map and return it */
-            return switch (pType) {
-                case CONTROLKEY -> PrometheusDataResource.CONTROLKEY_LIST;
-                case CONTROLKEYSET -> PrometheusDataResource.CONTROLKEYSET_LIST;
-                case DATAKEYSET -> PrometheusDataResource.DATAKEYSET_LIST;
-                case CONTROLDATA -> PrometheusDataResource.CONTROLDATA_LIST;
-                default -> throw new IllegalArgumentException();
-            };
-        }
     }
 }
