@@ -28,6 +28,8 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlKeySet.PrometheusControlKeySetList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlKeyCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlKeySetCtl;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 
@@ -42,7 +44,8 @@ import java.util.List;
  * @author Tony Washer
  */
 public final class PrometheusControlKey
-        extends PrometheusDataItem {
+        extends PrometheusDataItem
+        implements PrometheusControlKeyCtl {
     /**
      * Object name.
      */
@@ -254,11 +257,7 @@ public final class PrometheusControlKey
         return getValues().getValue(PrometheusDataResource.CONTROLKEY_LOCK, GordianFactoryLock.class);
     }
 
-    /**
-     * Get the securityFactory.
-     *
-     * @return the securityFactory
-     */
+    @Override
     public GordianFactory getSecurityFactory() {
         final GordianFactoryLock myLock = getFactoryLock();
         return myLock == null ? null : myLock.getFactory();
@@ -389,14 +388,10 @@ public final class PrometheusControlKey
         checkForHistory();
     }
 
-    /**
-     * Register ControlKeySet.
-     *
-     * @param pKeySet the ControlKeySet to register
-     */
-    void registerControlKeySet(final PrometheusControlKeySet pKeySet) {
+    @Override
+    public void registerControlKeySet(final PrometheusControlKeySetCtl pKeySet) {
         /* Store the DataKey into the map */
-        theKeySetCache.registerControlKeySet(pKeySet);
+        theKeySetCache.registerControlKeySet((PrometheusControlKeySet) pKeySet);
     }
 
     /**

@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlDataCtl;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 
 /**
@@ -28,15 +29,16 @@ import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
  * pointer to the active ControlKey.
  * <p>
  * When code is loaded from a database, it is possible that more than one control key will be
- * active. This will occur if a failure occurs when we are writing the results of a renew security
- * request to the database and we have changed some records, but not all to the required controlKey.
+ * active. This will occur if a failure occurs when we are writing the results of a renewSecurity
+ * request to the database, and we have changed some records, but not all, to the required controlKey.
  * This record points to the active controlKey. All records that are not encrypted by the correct
  * controlKey should be re-encrypted and written to the database.
  *
  * @author Tony Washer
  */
 public class PrometheusControlData
-        extends PrometheusDataItem {
+        extends PrometheusDataItem
+        implements PrometheusControlDataCtl {
     /**
      * Object name.
      */

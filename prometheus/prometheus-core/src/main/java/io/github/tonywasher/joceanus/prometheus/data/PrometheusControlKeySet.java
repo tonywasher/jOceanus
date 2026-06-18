@@ -28,6 +28,9 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlKeyCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlKeySetCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusDataKeySetCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusSecurityException;
@@ -43,7 +46,8 @@ import java.util.Objects;
  * @author Tony Washer
  */
 public class PrometheusControlKeySet
-        extends PrometheusDataItem {
+        extends PrometheusDataItem
+        implements PrometheusControlKeySetCtl {
     /**
      * Object name.
      */
@@ -120,13 +124,13 @@ public class PrometheusControlKeySet
 
             /* Resolve the ControlKey */
             resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());
-        } else if (myValue instanceof PrometheusControlKey k) {
+        } else if (myValue instanceof PrometheusControlKeyCtl k) {
             /* Store the controlKey */
             setValueControlKey(k);
         }
 
         /* Access the controlKey */
-        final PrometheusControlKey myControl = getControlKey();
+        final PrometheusControlKeyCtl myControl = getControlKey();
 
         /* Store the WrappedKeySetDef */
         myValue = pValues.getValue(PrometheusDataResource.KEYSET_KEYSETDEF);
@@ -160,7 +164,7 @@ public class PrometheusControlKeySet
      * @throws OceanusException on error
      */
     protected PrometheusControlKeySet(final PrometheusControlKeySetList pList,
-                                      final PrometheusControlKey pControlKey) throws OceanusException {
+                                      final PrometheusControlKeyCtl pControlKey) throws OceanusException {
         /* Initialise the item */
         super(pList, 0);
 
@@ -197,13 +201,9 @@ public class PrometheusControlKeySet
         return FIELD_DEFS;
     }
 
-    /**
-     * Obtain the security factory.
-     *
-     * @return the security factory
-     */
-    GordianFactory getSecurityFactory() {
-        final PrometheusControlKey myControl = getControlKey();
+    @Override
+    public GordianFactory getSecurityFactory() {
+        final PrometheusControlKeyCtl myControl = getControlKey();
         return myControl == null ? null : myControl.getSecurityFactory();
     }
 
@@ -230,8 +230,8 @@ public class PrometheusControlKeySet
      *
      * @return the controlKey
      */
-    public final PrometheusControlKey getControlKey() {
-        return getValues().getValue(PrometheusCryptographyDataType.CONTROLKEY, PrometheusControlKey.class);
+    public final PrometheusControlKeyCtl getControlKey() {
+        return getValues().getValue(PrometheusCryptographyDataType.CONTROLKEY, PrometheusControlKeyCtl.class);
     }
 
     /**
@@ -240,7 +240,7 @@ public class PrometheusControlKeySet
      * @return the ControlKeyId
      */
     public Integer getControlKeyId() {
-        final PrometheusControlKey myKey = getControlKey();
+        final PrometheusControlKeyCtl myKey = getControlKey();
         return myKey == null
                 ? null
                 : myKey.getIndexedId();
@@ -255,11 +255,7 @@ public class PrometheusControlKeySet
         return getValues().getValue(PrometheusDataResource.KEYSET_KEYSETDEF, byte[].class);
     }
 
-    /**
-     * Get the KeySet.
-     *
-     * @return the keySet
-     */
+    @Override
     public GordianKeySet getKeySet() {
         return getValues().getValue(PrometheusDataResource.KEYSET_KEYSET, GordianKeySet.class);
     }
@@ -280,7 +276,7 @@ public class PrometheusControlKeySet
      * @param pKey the controlKey
      * @throws OceanusException on error
      */
-    private void setValueControlKey(final PrometheusControlKey pKey) throws OceanusException {
+    private void setValueControlKey(final PrometheusControlKeyCtl pKey) throws OceanusException {
         getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pKey);
     }
 
@@ -323,7 +319,7 @@ public class PrometheusControlKeySet
         /* Resolve the ControlKey */
         final PrometheusDataSet myData = getDataSet();
         resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());
-        final PrometheusControlKey myControlKey = getControlKey();
+        final PrometheusControlKeyCtl myControlKey = getControlKey();
 
         /* Register the KeySet */
         myControlKey.registerControlKeySet(this);
@@ -364,14 +360,10 @@ public class PrometheusControlKeySet
         theKeySetCache.deleteDataKeySets();
     }
 
-    /**
-     * Register DataKeySet.
-     *
-     * @param pKeySet the DataKeySet to register
-     */
-    void registerDataKeySet(final PrometheusDataKeySet pKeySet) {
+    @Override
+    public void registerDataKeySet(final PrometheusDataKeySetCtl pKeySet) {
         /* Store the DataKey into the map */
-        theKeySetCache.registerDataKeySet(pKeySet);
+        theKeySetCache.registerDataKeySet((PrometheusDataKeySet) pKeySet);
     }
 
     /**
@@ -495,7 +487,7 @@ public class PrometheusControlKeySet
          * @return the new DataKeySet
          * @throws OceanusException on error
          */
-        protected PrometheusControlKeySet cloneControlKeySet(final PrometheusControlKey pControlKey,
+        protected PrometheusControlKeySet cloneControlKeySet(final PrometheusControlKeyCtl pControlKey,
                                                              final PrometheusControlKeySet pKeySet) throws OceanusException {
             /* Build data values */
             final PrometheusDataValues myValues = new PrometheusDataValues(OBJECT_NAME);
