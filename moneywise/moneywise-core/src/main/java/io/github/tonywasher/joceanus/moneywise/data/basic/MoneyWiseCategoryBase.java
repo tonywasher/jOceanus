@@ -33,6 +33,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedPair;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 
 import java.util.Iterator;

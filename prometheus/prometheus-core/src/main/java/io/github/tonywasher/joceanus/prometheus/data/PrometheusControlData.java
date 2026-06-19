@@ -16,11 +16,13 @@
  */
 package io.github.tonywasher.joceanus.prometheus.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlDataCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlKeyCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 
 /**
@@ -29,15 +31,16 @@ import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
  * pointer to the active ControlKey.
  * <p>
  * When code is loaded from a database, it is possible that more than one control key will be
- * active. This will occur if a failure occurs when we are writing the results of a renew security
- * request to the database and we have changed some records, but not all to the required controlKey.
+ * active. This will occur if a failure occurs when we are writing the results of a renewSecurity
+ * request to the database, and we have changed some records, but not all, to the required controlKey.
  * This record points to the active controlKey. All records that are not encrypted by the correct
  * controlKey should be re-encrypted and written to the database.
  *
  * @author Tony Washer
  */
 public class PrometheusControlData
-        extends PrometheusDataItem {
+        extends PrometheusDataItem
+        implements PrometheusControlDataCtl {
     /**
      * Object name.
      */
@@ -105,8 +108,8 @@ public class PrometheusControlData
             setValueControlKey(myInt);
 
             /* Resolve the ControlKey */
-            final PrometheusDataSet myData = getDataSet();
-            resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());
+            final PrometheusDataSetCtl myData = getDataSet();
+            resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, PrometheusCryptographyDataType.CONTROLKEY);
         }
     }
 
@@ -124,11 +127,7 @@ public class PrometheusControlData
         return getValues().getValue(PrometheusDataResource.CONTROLDATA_VERSION, Integer.class);
     }
 
-    /**
-     * Get the control key.
-     *
-     * @return the control key
-     */
+    @Override
     public PrometheusControlKey getControlKey() {
         return getValues().getValue(PrometheusCryptographyDataType.CONTROLKEY, PrometheusControlKey.class);
     }
@@ -161,7 +160,7 @@ public class PrometheusControlData
      * @param pValue the value
      * @throws OceanusException on error
      */
-    private void setValueControlKey(final PrometheusControlKey pValue) throws OceanusException {
+    private void setValueControlKey(final PrometheusControlKeyCtl pValue) throws OceanusException {
         getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pValue);
     }
 
@@ -195,17 +194,11 @@ public class PrometheusControlData
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
-        final PrometheusDataSet myData = getDataSet();
-        resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());
+        resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, PrometheusCryptographyDataType.CONTROLKEY);
     }
 
-    /**
-     * Set a new ControlKey.
-     *
-     * @param pControl the new control key
-     * @throws OceanusException on error
-     */
-    protected void setControlKey(final PrometheusControlKey pControl) throws OceanusException {
+    @Override
+    public void setControlKey(final PrometheusControlKeyCtl pControl) throws OceanusException {
         /* If we do not have a control Key */
         if (getControlKey() == null) {
             /* Store the control details and return */
@@ -238,7 +231,7 @@ public class PrometheusControlData
          *
          * @param pData the DataSet for the list
          */
-        protected PrometheusControlDataList(final PrometheusDataSet pData) {
+        protected PrometheusControlDataList(final PrometheusDataSetCtl pData) {
             this(pData, PrometheusListStyle.CORE);
         }
 
@@ -248,7 +241,7 @@ public class PrometheusControlData
          * @param pData  the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected PrometheusControlDataList(final PrometheusDataSet pData,
+        protected PrometheusControlDataList(final PrometheusDataSetCtl pData,
                                             final PrometheusListStyle pStyle) {
             super(PrometheusControlData.class, pData, PrometheusCryptographyDataType.CONTROLDATA, pStyle);
         }
@@ -306,7 +299,7 @@ public class PrometheusControlData
         }
 
         @Override
-        public PrometheusControlDataList deriveDifferences(final PrometheusDataSet pDataSet,
+        public PrometheusControlDataList deriveDifferences(final PrometheusDataSetCtl pDataSet,
                                                            final PrometheusDataList<?> pOld) {
             return (PrometheusControlDataList) super.deriveDifferences(pDataSet, pOld);
         }

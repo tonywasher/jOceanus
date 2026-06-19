@@ -36,8 +36,8 @@ import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
@@ -245,7 +245,7 @@ public class MoneyWiseSecurityPriceTable
         pConfig.setAllowed(d -> myCurrent.equals(d) || !myDates.contains(d));
 
         /* Set range constraint */
-        final PrometheusDataSet myDataSet = pRow.getDataSet();
+        final PrometheusDataSetCtl myDataSet = pRow.getDataSet();
         final OceanusDateRange myRange = ((MoneyWiseDataSet) myDataSet).getDateRange();
         pConfig.setEarliestDate(myRange.getStart());
         pConfig.setLatestDate(myRange.getEnd());

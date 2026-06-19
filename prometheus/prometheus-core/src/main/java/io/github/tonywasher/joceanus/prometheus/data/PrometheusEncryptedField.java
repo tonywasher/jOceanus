@@ -50,10 +50,7 @@ public class PrometheusEncryptedField<T extends PrometheusEncryptedDataItem>
 
         /* Object/ByteArray/Links are not valid for Encryption */
         switch (getDataType()) {
-            case OBJECT:
-            case BYTEARRAY:
-            case LINK:
-            case LINKSET:
+            case OBJECT, BYTEARRAY, LINK, LINKSET:
                 throw new IllegalArgumentException("Invalid encrypted object");
             default:
                 break;

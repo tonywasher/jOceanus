@@ -16,15 +16,18 @@
  */
 package io.github.tonywasher.joceanus.prometheus.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlDataCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusCryptographicDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusEncryptedDataItemCtl;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.util.Iterator;
@@ -35,7 +38,8 @@ import java.util.Iterator;
  * @author Tony Washer
  */
 public abstract class PrometheusEncryptedDataItem
-        extends PrometheusDataItem {
+        extends PrometheusDataItem
+        implements PrometheusEncryptedDataItemCtl {
     /**
      * Null Encryptor.
      */
@@ -149,11 +153,7 @@ public abstract class PrometheusEncryptedDataItem
         getValues().setUncheckedValue(PrometheusCryptographyDataType.DATAKEYSET, pId);
     }
 
-    /**
-     * Get the Encryptor.
-     *
-     * @return the encryptor
-     */
+    @Override
     public PrometheusEncryptor getEncryptor() {
         final PrometheusDataKeySet myKeySet = getDataKeySet();
         return myKeySet == null ? NULL_ENCRYPTOR : myKeySet.getEncryptor();
@@ -191,8 +191,8 @@ public abstract class PrometheusEncryptedDataItem
         setValueDataKeySet(pKeySetId);
 
         /* Resolve the ControlKey */
-        final PrometheusDataSet myData = getDataSet();
-        resolveDataLink(PrometheusCryptographyDataType.DATAKEYSET, myData.getDataKeySets());
+        final PrometheusDataSetCtl myData = getDataSet();
+        resolveDataLink(PrometheusCryptographyDataType.DATAKEYSET, PrometheusCryptographyDataType.DATAKEYSET);
     }
 
     /**
@@ -286,8 +286,8 @@ public abstract class PrometheusEncryptedDataItem
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
-        final PrometheusDataSet myData = getDataSet();
-        resolveDataLink(PrometheusCryptographyDataType.DATAKEYSET, myData.getDataKeySets());
+        final PrometheusDataSetCtl myData = getDataSet();
+        resolveDataLink(PrometheusCryptographyDataType.DATAKEYSET, PrometheusCryptographyDataType.DATAKEYSET);
     }
 
     /**
@@ -367,7 +367,7 @@ public abstract class PrometheusEncryptedDataItem
          * @param pItemType  the item type
          */
         protected PrometheusEncryptedList(final Class<T> pBaseClass,
-                                          final PrometheusDataSet pData,
+                                          final PrometheusCryptographicDataSet pData,
                                           final MetisListKey pItemType) {
             this(pBaseClass, pData, pItemType, PrometheusListStyle.CORE);
         }
@@ -381,7 +381,7 @@ public abstract class PrometheusEncryptedDataItem
          * @param pStyle     the style of the list
          */
         protected PrometheusEncryptedList(final Class<T> pBaseClass,
-                                          final PrometheusDataSet pData,
+                                          final PrometheusCryptographicDataSet pData,
                                           final MetisListKey pItemType,
                                           final PrometheusListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);
@@ -396,16 +396,21 @@ public abstract class PrometheusEncryptedDataItem
             super(pSource);
         }
 
+        @Override
+        public PrometheusCryptographicDataSet getDataSet() {
+            return (PrometheusCryptographicDataSet) super.getDataSet();
+        }
+
         /**
          * Get the active controlKey.
          *
          * @return the active controlKey
          */
         private PrometheusControlKey getControlKey() {
-            final PrometheusControlData myControl = getDataSet().getControl();
-            return (myControl == null)
+            final PrometheusControlDataCtl myControl = getDataSet().getControl();
+            return myControl == null
                     ? null
-                    : myControl.getControlKey();
+                    : (PrometheusControlKey) myControl.getControlKey();
         }
 
         /**
@@ -468,8 +473,9 @@ public abstract class PrometheusEncryptedDataItem
             pReport.setNumSteps(size());
 
             /* Obtain DataKeySet list */
-            final PrometheusDataSet myData = getDataSet();
-            final PrometheusDataKeySetList mySets = myData.getDataKeySets();
+            final PrometheusDataSetCtl myData = getDataSet();
+            final PrometheusDataKeySetList mySets
+                    = myData.getDataList(PrometheusCryptographyDataType.DATAKEYSET, PrometheusDataKeySetList.class);
 
             /* Create an iterator for our new list */
             final Iterator<T> myIterator = iterator();

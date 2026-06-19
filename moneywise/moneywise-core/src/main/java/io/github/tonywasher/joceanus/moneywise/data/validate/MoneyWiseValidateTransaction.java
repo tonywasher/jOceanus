@@ -31,7 +31,6 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransBase;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransBase.MoneyWiseDataValidatorTrans;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransInfoSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
@@ -46,6 +45,7 @@ import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -56,7 +56,7 @@ import java.util.Objects;
  * Validator for transaction.
  */
 public class MoneyWiseValidateTransaction
-        implements MoneyWiseDataValidatorTrans<MoneyWiseTransaction> {
+        implements MoneyWiseValidateTransCtl {
     /**
      * Are we using new validation?
      */
@@ -94,23 +94,15 @@ public class MoneyWiseValidateTransaction
         theInfoSet.storeEditSet(pEditSet);
     }
 
-    /**
-     * Obtain the editSet.
-     *
-     * @return the editSet
-     */
-    PrometheusEditSet getEditSet() {
+    @Override
+    public PrometheusEditSet getEditSet() {
         if (theEditSet == null) {
             throw new IllegalStateException("editSet not set up");
         }
         return theEditSet;
     }
 
-    /**
-     * Obtain the transInfoSet validator.
-     *
-     * @return the validator
-     */
+    @Override
     public MoneyWiseValidateTransInfoSet getInfoSetValidator() {
         return theInfoSet;
     }
@@ -125,7 +117,7 @@ public class MoneyWiseValidateTransaction
     }
 
     @Override
-    public void validate(final PrometheusDataItem pTrans) {
+    public void validate(final PrometheusDataItemCtl pTrans) {
         final MoneyWiseTransaction myTrans = (MoneyWiseTransaction) pTrans;
         final OceanusDate myDate = myTrans.getDate();
         final MoneyWiseTransAsset myAccount = myTrans.getAccount();
@@ -139,7 +131,7 @@ public class MoneyWiseValidateTransaction
 
         /* Header is always valid */
         if (pTrans.isHeader()) {
-            pTrans.setValidEdit();
+            myTrans.setValidEdit();
             return;
         }
 
@@ -149,58 +141,58 @@ public class MoneyWiseValidateTransaction
 
         /* The date must be non-null */
         if (myDate == null) {
-            pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
+            myTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
             /* The date must be in-range */
         } else if (myRange.compareToDate(myDate) != 0) {
-            pTrans.addError(PrometheusDataItem.ERROR_RANGE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
+            myTrans.addError(PrometheusDataItem.ERROR_RANGE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
         }
 
         /* Account must be non-null */
         if (myAccount == null) {
-            pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);
+            myTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);
             doCheckCombo = false;
 
         } else {
             /* Account must be valid */
             if (!isValidAccount(myAccount)) {
-                pTrans.addError(MoneyWiseTransBase.ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);
+                myTrans.addError(MoneyWiseTransBase.ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);
                 doCheckCombo = false;
             }
         }
 
         /* Category must be non-null */
         if (myCategory == null) {
-            pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicDataType.TRANSCATEGORY);
+            myTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicDataType.TRANSCATEGORY);
             doCheckCombo = false;
 
             /* Category must be valid for Account */
         } else if (doCheckCombo
                 && !isValidCategory(myAccount, myCategory)) {
-            pTrans.addError(MoneyWiseTransBase.ERROR_COMBO, MoneyWiseBasicDataType.TRANSCATEGORY);
+            myTrans.addError(MoneyWiseTransBase.ERROR_COMBO, MoneyWiseBasicDataType.TRANSCATEGORY);
             doCheckCombo = false;
         }
 
         /* Direction must be non-null */
         if (myDir == null) {
-            pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_DIRECTION);
+            myTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_DIRECTION);
             doCheckCombo = false;
 
             /* Direction must be valid for Account */
         } else if (doCheckCombo
                 && !isValidDirection(myAccount, myCategory, myDir)) {
-            pTrans.addError(MoneyWiseTransBase.ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_DIRECTION);
+            myTrans.addError(MoneyWiseTransBase.ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_DIRECTION);
             doCheckCombo = false;
         }
 
         /* Partner must be non-null */
         if (myPartner == null) {
-            pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_PARTNER);
+            myTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_PARTNER);
 
         } else {
             /* Partner must be valid for Account */
             if (doCheckCombo
                     && !isValidPartner(myAccount, myCategory, myPartner)) {
-                pTrans.addError(MoneyWiseTransBase.ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_PARTNER);
+                myTrans.addError(MoneyWiseTransBase.ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_PARTNER);
             }
         }
 
@@ -208,26 +200,26 @@ public class MoneyWiseValidateTransaction
         if (myAmount == null) {
             /* Check that it must be null */
             if (!needsNullAmount(myTrans)) {
-                pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
+                myTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
             }
 
             /* else non-null money */
         } else {
             /* Check that it must be null */
             if (needsNullAmount(myTrans)) {
-                pTrans.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
+                myTrans.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
             }
 
             /* Money must not be negative */
             if (!myAmount.isPositive()) {
-                pTrans.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
+                myTrans.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
             }
 
             /* Check that amount is correct currency */
             if (myAccount != null) {
                 final Currency myCurrency = myAccount.getCurrency();
                 if (!myAmount.getCurrency().equals(myCurrency)) {
-                    pTrans.addError(MoneyWiseTransBase.ERROR_CURRENCY, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
+                    myTrans.addError(MoneyWiseTransBase.ERROR_CURRENCY, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
                 }
             }
         }
@@ -236,7 +228,7 @@ public class MoneyWiseValidateTransaction
         if (myAccountUnits != null
                 && myPartnerUnits != null
                 && MetisDataDifference.isEqual(myAccount, myPartner)) {
-            pTrans.addError(MoneyWiseTransaction.ERROR_CIRCULAR, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.PARTNERDELTAUNITS));
+            myTrans.addError(MoneyWiseTransaction.ERROR_CIRCULAR, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.PARTNERDELTAUNITS));
         }
 
         /* If we have a category and an infoSet */
@@ -247,8 +239,8 @@ public class MoneyWiseValidateTransaction
         }
 
         /* Set validation flag */
-        if (!pTrans.hasErrors()) {
-            pTrans.setValidEdit();
+        if (!myTrans.hasErrors()) {
+            myTrans.setValidEdit();
         }
     }
 

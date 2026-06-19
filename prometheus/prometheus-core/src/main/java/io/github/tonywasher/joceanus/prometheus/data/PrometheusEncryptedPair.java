@@ -95,7 +95,7 @@ public class PrometheusEncryptedPair
      * @param pSource    field to adopt encryption from
      * @throws OceanusException on error
      */
-    protected void adoptEncryption(final PrometheusEncryptor pEncryptor,
+    protected void adoptEncryption(final PrometheusEncryptorCtl pEncryptor,
                                    final PrometheusEncryptedPair pSource) throws OceanusException {
         /* Store the keySet */
         theKeySet = pEncryptor.getKeySet();

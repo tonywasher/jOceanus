@@ -19,7 +19,6 @@ package io.github.tonywasher.joceanus.prometheus.data;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
@@ -30,10 +29,11 @@ import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlData.PrometheusControlDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlKey.PrometheusControlKeyList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlKeySet.PrometheusControlKeySetList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusCryptographicDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataListCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValidator;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValidatorFactory;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorFactory;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem.PrometheusEncryptedList;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferenceKey;
@@ -51,7 +51,7 @@ import java.util.Map.Entry;
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.
  */
 public abstract class PrometheusDataSet
-        implements MetisFieldItem, PrometheusDataListSet {
+        implements MetisFieldItem, PrometheusCryptographicDataSet {
     /**
      * The Hash prime.
      */
@@ -201,11 +201,7 @@ public abstract class PrometheusDataSet
         return PrometheusDataSet.class.getSimpleName();
     }
 
-    /**
-     * Obtain the data formatter.
-     *
-     * @return the formatter
-     */
+    @Override
     public OceanusDataFormatter getDataFormatter() {
         return theFormatter;
     }
@@ -219,24 +215,15 @@ public abstract class PrometheusDataSet
         theValidatorFactory = pFactory;
     }
 
-    /**
-     * Obtain a validator fot=r the itemType.
-     *
-     * @param pItemType the itemType
-     * @return the validator.
-     */
-    PrometheusDataValidator getValidator(final MetisListKey pItemType) {
+    @Override
+    public PrometheusDataValidator getValidator(final MetisListKey pItemType) {
         if (theValidatorFactory == null) {
             throw new IllegalStateException("Validator factory not set");
         }
         return theValidatorFactory.newValidator(pItemType);
     }
 
-    /**
-     * Get Password Manager.
-     *
-     * @return the password manager
-     */
+    @Override
     public PrometheusSecurityPasswordManager getPasswordMgr() {
         return thePasswordMgr;
     }
@@ -277,11 +264,7 @@ public abstract class PrometheusDataSet
         return getDataList(PrometheusCryptographyDataType.CONTROLDATA, PrometheusControlDataList.class);
     }
 
-    /**
-     * Get Version.
-     *
-     * @return the version
-     */
+    @Override
     public int getVersion() {
         return theVersion;
     }
@@ -295,11 +278,7 @@ public abstract class PrometheusDataSet
         return theNumActiveKeySets;
     }
 
-    /**
-     * Get KeySetSpec.
-     *
-     * @return the keySetSpec
-     */
+    @Override
     public GordianKeySetSpec getKeySetSpec() {
         return theKeySetSpec;
     }
@@ -537,8 +516,8 @@ public abstract class PrometheusDataSet
     }
 
     @Override
-    public <L extends PrometheusDataList<?>> L getDataList(final MetisListKey pListType,
-                                                           final Class<L> pListClass) {
+    public <L extends PrometheusDataListCtl<?>> L getDataList(final MetisListKey pListType,
+                                                              final Class<L> pListClass) {
         /* Access the list */
         final PrometheusDataList<?> myList = theListMap.get(pListType);
 
@@ -949,99 +928,5 @@ public abstract class PrometheusDataSet
      */
     public Iterator<MetisListKey> keyIterator() {
         return theListMap.keySet().iterator();
-    }
-
-    /**
-     * Cryptography Data Enum Types.
-     */
-    public enum PrometheusCryptographyDataType
-            implements MetisListKey, MetisDataFieldId {
-        /**
-         * ControlKey.
-         */
-        CONTROLKEY(1),
-
-        /**
-         * ControlKeySet.
-         */
-        CONTROLKEYSET(2),
-
-        /**
-         * DataKeySet.
-         */
-        DATAKEYSET(3),
-
-        /**
-         * ControlData.
-         */
-        CONTROLDATA(4);
-
-        /**
-         * Maximum keyId.
-         */
-        public static final Integer MAXKEYID = CONTROLDATA.getItemKey();
-
-        /**
-         * The list key.
-         */
-        private final Integer theKey;
-
-        /**
-         * The String name.
-         */
-        private String theName;
-
-        /**
-         * The list name.
-         */
-        private String theListName;
-
-        /**
-         * Constructor.
-         *
-         * @param pKey the key
-         */
-        PrometheusCryptographyDataType(final Integer pKey) {
-            theKey = pKey;
-        }
-
-        @Override
-        public String toString() {
-            /* If we have not yet loaded the name */
-            if (theName == null) {
-                /* Load the name */
-                theName = PrometheusDataResource.getKeyForCryptoItem(this).getValue();
-            }
-
-            /* return the name */
-            return theName;
-        }
-
-        @Override
-        public String getItemName() {
-            return toString();
-        }
-
-        @Override
-        public String getListName() {
-            /* If we have not yet loaded the name */
-            if (theListName == null) {
-                /* Load the name */
-                theListName = PrometheusDataResource.getKeyForCryptoList(this).getValue();
-            }
-
-            /* return the list name */
-            return theListName;
-        }
-
-        @Override
-        public Integer getItemKey() {
-            return theKey;
-        }
-
-        @Override
-        public String getId() {
-            return toString();
-        }
     }
 }

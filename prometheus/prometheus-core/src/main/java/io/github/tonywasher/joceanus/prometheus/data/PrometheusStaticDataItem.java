@@ -23,6 +23,7 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusCryptographicDataSet;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 
 import java.util.ArrayList;
@@ -615,7 +616,7 @@ public abstract class PrometheusStaticDataItem
          * @param pStyle     the style of the list
          */
         protected PrometheusStaticList(final Class<T> pBaseClass,
-                                       final PrometheusDataSet pData,
+                                       final PrometheusCryptographicDataSet pData,
                                        final MetisListKey pItemType,
                                        final PrometheusListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);

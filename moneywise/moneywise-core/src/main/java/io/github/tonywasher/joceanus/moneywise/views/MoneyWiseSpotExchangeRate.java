@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.views;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
 import io.github.tonywasher.joceanus.metis.data.MetisDataState;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
@@ -29,8 +27,11 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
 
 import java.util.Iterator;
 import java.util.ListIterator;

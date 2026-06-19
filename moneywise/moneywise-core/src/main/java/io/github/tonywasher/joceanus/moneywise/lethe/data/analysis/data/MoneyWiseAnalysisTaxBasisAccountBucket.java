@@ -162,9 +162,9 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
 
     @Override
     public String getName() {
-        return getTaxBasis().getName() +
-                ':' +
-                getSimpleName();
+        return getTaxBasis().getName()
+                + ':'
+                + getSimpleName();
     }
 
     /**

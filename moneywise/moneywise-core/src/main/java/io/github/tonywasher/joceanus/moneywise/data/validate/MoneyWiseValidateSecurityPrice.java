@@ -26,8 +26,9 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValidator;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator;
 
 /**
  * Validator for SecurityPrice.
@@ -36,7 +37,7 @@ public class MoneyWiseValidateSecurityPrice
         implements PrometheusDataValidator {
 
     @Override
-    public void validate(final PrometheusDataItem pPrice) {
+    public void validate(final PrometheusDataItemCtl pPrice) {
         final MoneyWiseSecurityPrice myPrice = (MoneyWiseSecurityPrice) pPrice;
         final MoneyWiseSecurity mySecurity = myPrice.getSecurity();
         final OceanusDate myDate = myPrice.getDate();
@@ -46,38 +47,38 @@ public class MoneyWiseValidateSecurityPrice
 
         /* The security must be non-null */
         if (mySecurity == null) {
-            pPrice.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicDataType.SECURITY);
+            myPrice.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicDataType.SECURITY);
 
             /* The security must not be an option */
         } else if (mySecurity.getCategoryClass().isOption()) {
-            pPrice.addError("Options are priced by the underlying stock", MoneyWiseBasicDataType.SECURITY);
+            myPrice.addError("Options are priced by the underlying stock", MoneyWiseBasicDataType.SECURITY);
         }
 
         /* The date must be non-null */
         if (myDate == null) {
-            pPrice.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
+            myPrice.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
 
             /* else date is non-null */
         } else {
             /* Date must be unique for this security */
             final MoneyWiseSecurityPriceDataMap myMap = myList.getDataMap();
             if (!myMap.validPriceCount(myPrice)) {
-                pPrice.addError(PrometheusDataItem.ERROR_DUPLICATE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
+                myPrice.addError(PrometheusDataItem.ERROR_DUPLICATE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
             }
 
             /* The date must be in-range */
             if (mySet.getDateRange().compareToDate(myDate) != 0) {
-                pPrice.addError(PrometheusDataItem.ERROR_RANGE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
+                myPrice.addError(PrometheusDataItem.ERROR_RANGE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
             }
         }
 
         /* The Price must be non-zero and greater than zero */
         if (mySecPrice == null) {
-            pPrice.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);
+            myPrice.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);
         } else if (mySecPrice.isZero()) {
-            pPrice.addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);
+            myPrice.addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);
         } else if (!mySecPrice.isPositive()) {
-            pPrice.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);
+            myPrice.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);
         } else {
             /* Ensure that currency is correct */
             final MoneyWiseCurrency myCurrency = mySecurity == null
@@ -85,13 +86,13 @@ public class MoneyWiseValidateSecurityPrice
                     : mySecurity.getAssetCurrency();
             if (myCurrency != null
                     && !mySecPrice.getCurrency().equals(myCurrency.getCurrency())) {
-                pPrice.addError(MoneyWiseSecurityPrice.ERROR_CURRENCY, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);
+                myPrice.addError(MoneyWiseSecurityPrice.ERROR_CURRENCY, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);
             }
         }
 
         /* Set validation flag */
-        if (!pPrice.hasErrors()) {
-            pPrice.setValidEdit();
+        if (!myPrice.hasErrors()) {
+            myPrice.setValidEdit();
         }
     }
 }

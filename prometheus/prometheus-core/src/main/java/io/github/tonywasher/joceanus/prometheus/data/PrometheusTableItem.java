@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.prometheus.data;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataDeletableItem;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldUpdatableItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersion.MetisFieldUpdatableItem;
 
 /**
  * Table Item interface.

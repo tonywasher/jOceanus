@@ -1,6 +1,6 @@
 /*
  * Prometheus: Application Framework
- * Copyright 2012-2026. Tony Washer
+ * Copyright 2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -14,31 +14,29 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package io.github.tonywasher.joceanus.prometheus.data;
 
-import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
- * Item Validator interface.
+ * Interface for PrometheusEncryptor.
  */
-public interface PrometheusDataValidator {
+public interface PrometheusEncryptorCtl {
     /**
-     * Validate the item.
+     * Obtain the keySet.
      *
-     * @param pItem the item
+     * @return the keySet
      */
-    void validate(PrometheusDataItem pItem);
+    GordianKeySet getKeySet();
 
     /**
-     * Validator factory.
+     * Encrypt a value.
+     *
+     * @param pValue the value to encrypt.
+     * @return the encryptedBytes
+     * @throws OceanusException on error
      */
-    interface PrometheusDataValidatorFactory {
-        /**
-         * Obtain validator for listItem type.
-         *
-         * @param pItemType the itemType
-         * @return the validator
-         */
-        PrometheusDataValidator newValidator(MetisListKey pItemType);
-    }
+    byte[] encryptValue(Object pValue) throws OceanusException;
 }

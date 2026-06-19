@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoanCategory.MoneyWiseLoanCategoryList;
@@ -24,6 +23,8 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategor
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType.MoneyWiseLoanCategoryTypeList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 
@@ -34,7 +35,7 @@ public class MoneyWiseValidateLoanCategory
         extends MoneyWiseValidateCategory<MoneyWiseLoanCategory> {
 
     @Override
-    public void validate(final PrometheusDataItem pCategory) {
+    public void validate(final PrometheusDataItemCtl pCategory) {
         /* Validate the base */
         super.validate(pCategory);
 
@@ -45,47 +46,47 @@ public class MoneyWiseValidateLoanCategory
 
         /* LoanCategoryType must be non-null */
         if (myCatType == null) {
-            pCategory.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.DEPOSITTYPE);
+            myCategory.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.DEPOSITTYPE);
         } else {
             /* Access the class */
             final MoneyWiseLoanCategoryClass myClass = myCatType.getLoanClass();
 
             /* LoanCategoryType must be enabled */
             if (!myCatType.getEnabled()) {
-                pCategory.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.DEPOSITTYPE);
+                myCategory.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.DEPOSITTYPE);
             }
 
             /* Switch on the account class */
             if (MoneyWiseLoanCategoryClass.PARENT.equals(myClass)) {
                 /* If parent exists */
                 if (myParent != null) {
-                    pCategory.addError(PrometheusDataItem.ERROR_EXIST, PrometheusDataResource.DATAGROUP_PARENT);
+                    myCategory.addError(PrometheusDataItem.ERROR_EXIST, PrometheusDataResource.DATAGROUP_PARENT);
                 }
             } else {
                 /* Check parent */
                 if (myParent == null) {
-                    pCategory.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAGROUP_PARENT);
+                    myCategory.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAGROUP_PARENT);
                 } else if (!myParent.isCategoryClass(MoneyWiseLoanCategoryClass.PARENT)) {
-                    pCategory.addError(ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
+                    myCategory.addError(ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
                 } else {
                     final String myName = myCategory.getName();
 
                     /* Check validity of parent */
                     final MoneyWiseLoanCategoryClass myParentClass = myParent.getCategoryTypeClass();
                     if (!MoneyWiseLoanCategoryClass.PARENT.equals(myParentClass)) {
-                        pCategory.addError(ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
+                        myCategory.addError(ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
                     }
                     /* Check that name reflects parent */
                     if ((myName != null) && !myName.startsWith(myParent.getName() + MoneyWiseCategoryBase.STR_SEP)) {
-                        pCategory.addError(ERROR_MATCHPARENT, PrometheusDataResource.DATAGROUP_PARENT);
+                        myCategory.addError(ERROR_MATCHPARENT, PrometheusDataResource.DATAGROUP_PARENT);
                     }
                 }
             }
         }
 
         /* Set validation flag */
-        if (!pCategory.hasErrors()) {
-            pCategory.setValidEdit();
+        if (!myCategory.hasErrors()) {
+            myCategory.setValidEdit();
         }
     }
 

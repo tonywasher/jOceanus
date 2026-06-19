@@ -50,6 +50,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.HashMap;
@@ -833,7 +834,7 @@ public class MoneyWisePortfolio
         public MoneyWiseSecurityHoldingMap getSecurityHoldingsMap() {
             if (theSecurityHoldings == null) {
                 theSecurityHoldings = getEditSet() == null
-                        ? new MoneyWiseSecurityHoldingMap(getDataSet())
+                        ? new MoneyWiseSecurityHoldingMap((PrometheusDataSet) getDataSet())
                         : new MoneyWiseSecurityHoldingMap(getEditSet());
             }
             return theSecurityHoldings;

@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.prometheus.data;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
+import io.github.tonywasher.joceanus.metis.field.MetisField;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
@@ -96,7 +97,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedDataItem>
      * @return the field
      */
     public PrometheusEncryptedField<T> declareEncryptedShortField(final MetisDataFieldId pId) {
-        return declareEncryptedField(pId, MetisDataType.SHORT, FIELD_NO_MAXLENGTH);
+        return declareEncryptedField(pId, MetisDataType.SHORT, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -106,7 +107,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedDataItem>
      * @return the field
      */
     public PrometheusEncryptedField<T> declareEncryptedIntegerField(final MetisDataFieldId pId) {
-        return declareEncryptedField(pId, MetisDataType.INTEGER, FIELD_NO_MAXLENGTH);
+        return declareEncryptedField(pId, MetisDataType.INTEGER, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -116,7 +117,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedDataItem>
      * @return the field
      */
     public PrometheusEncryptedField<T> declareEncryptedLongField(final MetisDataFieldId pId) {
-        return declareEncryptedField(pId, MetisDataType.LONG, FIELD_NO_MAXLENGTH);
+        return declareEncryptedField(pId, MetisDataType.LONG, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -126,7 +127,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedDataItem>
      * @return the field
      */
     public PrometheusEncryptedField<T> declareEncryptedBooleanField(final MetisDataFieldId pId) {
-        return declareEncryptedField(pId, MetisDataType.BOOLEAN, FIELD_NO_MAXLENGTH);
+        return declareEncryptedField(pId, MetisDataType.BOOLEAN, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -136,7 +137,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedDataItem>
      * @return the field
      */
     public PrometheusEncryptedField<T> declareEncryptedDateField(final MetisDataFieldId pId) {
-        return declareEncryptedField(pId, MetisDataType.DATE, FIELD_NO_MAXLENGTH);
+        return declareEncryptedField(pId, MetisDataType.DATE, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -146,7 +147,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedDataItem>
      * @return the field
      */
     public PrometheusEncryptedField<T> declareEncryptedMoneyField(final MetisDataFieldId pId) {
-        return declareEncryptedField(pId, MetisDataType.MONEY, FIELD_NO_MAXLENGTH);
+        return declareEncryptedField(pId, MetisDataType.MONEY, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -156,7 +157,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedDataItem>
      * @return the field
      */
     public PrometheusEncryptedField<T> declareEncryptedPriceField(final MetisDataFieldId pId) {
-        return declareEncryptedField(pId, MetisDataType.PRICE, FIELD_NO_MAXLENGTH);
+        return declareEncryptedField(pId, MetisDataType.PRICE, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -166,7 +167,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedDataItem>
      * @return the field
      */
     public PrometheusEncryptedField<T> declareEncryptedUnitsField(final MetisDataFieldId pId) {
-        return declareEncryptedField(pId, MetisDataType.UNITS, FIELD_NO_MAXLENGTH);
+        return declareEncryptedField(pId, MetisDataType.UNITS, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -176,7 +177,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedDataItem>
      * @return the field
      */
     public PrometheusEncryptedField<T> declareEncryptedRateField(final MetisDataFieldId pId) {
-        return declareEncryptedField(pId, MetisDataType.RATE, FIELD_NO_MAXLENGTH);
+        return declareEncryptedField(pId, MetisDataType.RATE, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -186,7 +187,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedDataItem>
      * @return the field
      */
     public PrometheusEncryptedField<T> declareEncryptedRatioField(final MetisDataFieldId pId) {
-        return declareEncryptedField(pId, MetisDataType.RATIO, FIELD_NO_MAXLENGTH);
+        return declareEncryptedField(pId, MetisDataType.RATIO, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -196,7 +197,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedDataItem>
      * @return the field
      */
     public PrometheusEncryptedField<T> declareEncryptedContextField(final MetisDataFieldId pId) {
-        return declareEncryptedField(pId, MetisDataType.CONTEXT, FIELD_NO_MAXLENGTH);
+        return declareEncryptedField(pId, MetisDataType.CONTEXT, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**

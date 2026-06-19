@@ -16,6 +16,12 @@
  */
 package io.github.tonywasher.joceanus.prometheus.views;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerErrorList;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
@@ -24,15 +30,10 @@ import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
-import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
-import io.github.tonywasher.joceanus.metis.list.MetisListKey;
-import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
-import io.github.tonywasher.joceanus.metis.viewer.MetisViewerErrorList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataListCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetListCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 
@@ -44,7 +45,7 @@ import java.util.Map;
  * Provides control of a set of update-able DataLists.
  */
 public class PrometheusEditSet
-        implements MetisFieldItem, OceanusEventProvider<PrometheusDataEvent>, PrometheusDataListSet {
+        implements MetisFieldItem, OceanusEventProvider<PrometheusDataEvent>, PrometheusDataSetListCtl {
     /**
      * Report fields.
      */
@@ -223,8 +224,8 @@ public class PrometheusEditSet
      * @return the list
      */
     @Override
-    public <L extends PrometheusDataList<?>> L getDataList(final MetisListKey pDataType,
-                                                           final Class<L> pClass) {
+    public <L extends PrometheusDataListCtl<?>> L getDataList(final MetisListKey pDataType,
+                                                              final Class<L> pClass) {
         /* Locate an existing entry */
         final PrometheusEditEntry<?> myEntry = theMap.get(pDataType);
 

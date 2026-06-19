@@ -16,9 +16,10 @@
  */
 package io.github.tonywasher.joceanus.metis.field;
 
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersion.MetisFieldVersionHistoryCtl;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -28,7 +29,7 @@ import java.util.Iterator;
  * Data Version History.
  */
 public class MetisFieldVersionHistory
-        implements MetisFieldItem {
+        implements MetisFieldVersionHistoryCtl {
     /*
      * FieldSet definitions.
      */

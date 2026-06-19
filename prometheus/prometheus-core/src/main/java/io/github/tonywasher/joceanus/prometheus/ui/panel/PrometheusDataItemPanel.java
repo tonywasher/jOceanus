@@ -328,7 +328,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
             if (isEditable) {
                 if (!isEditing()) {
                     theEditVersion = theEditSet.getVersion();
-                    theBaseValues = theItem.getValues();
+                    theBaseValues = (MetisFieldVersionValues) theItem.getValues();
                 }
             } else {
                 theEditVersion = VERSION_READONLY;

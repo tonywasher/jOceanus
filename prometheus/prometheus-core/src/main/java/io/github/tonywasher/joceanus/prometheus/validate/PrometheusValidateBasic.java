@@ -17,8 +17,9 @@
 package io.github.tonywasher.joceanus.prometheus.validate;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValidator;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator;
 
 /**
  * Basic Validator.
@@ -33,9 +34,10 @@ public class PrometheusValidateBasic
     }
 
     @Override
-    public void validate(final PrometheusDataItem pItem) {
-        if (pItem.getEditState() == MetisDataEditState.DIRTY) {
-            pItem.setValidEdit();
+    public void validate(final PrometheusDataItemCtl pItem) {
+        final PrometheusDataItem myItem = (PrometheusDataItem) pItem;
+        if (myItem.getEditState() == MetisDataEditState.DIRTY) {
+            myItem.setValidEdit();
         }
     }
 }

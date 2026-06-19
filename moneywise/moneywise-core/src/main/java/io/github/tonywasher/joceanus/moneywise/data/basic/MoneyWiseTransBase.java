@@ -32,8 +32,9 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetListCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
@@ -41,6 +42,8 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedPair;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
  * Transaction data type.
@@ -604,7 +607,7 @@ public abstract class MoneyWiseTransBase
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        final PrometheusDataSet myData = getDataSet();
+        final PrometheusDataSetCtl myData = getDataSet();
         final PrometheusEncryptedValues myValues = getValues();
 
         /* Adjust Reconciled */
@@ -800,7 +803,7 @@ public abstract class MoneyWiseTransBase
      * @param pField the fieldId
      * @throws OceanusException on error
      */
-    public void resolveTransactionAsset(final PrometheusDataListSet pData,
+    public void resolveTransactionAsset(final PrometheusDataSetListCtl pData,
                                         final PrometheusDataItem pOwner,
                                         final MetisDataFieldId pField) throws OceanusException {
         /* Obtain baseValue, and then resolve */
@@ -821,7 +824,7 @@ public abstract class MoneyWiseTransBase
      * @return the asset
      * @throws OceanusException on error
      */
-    private MoneyWiseTransAsset resolveTransactionAsset(final PrometheusDataListSet pData,
+    private MoneyWiseTransAsset resolveTransactionAsset(final PrometheusDataSetListCtl pData,
                                                         final Object pValue) throws OceanusException {
         /* If we are being passed a TransactionAsset, convert to Id */
         Object myValue = pValue;
@@ -846,7 +849,7 @@ public abstract class MoneyWiseTransBase
      * @return the asset
      * @throws OceanusException on error
      */
-    private static MoneyWiseTransAsset resolveTransAsset(final PrometheusDataListSet pData,
+    private static MoneyWiseTransAsset resolveTransAsset(final PrometheusDataSetListCtl pData,
                                                          final Long pId) throws OceanusException {
         /* Access the assetType */
         final MoneyWiseAssetType myAssetType = MoneyWiseAssetType.getAssetType(pId);
@@ -877,7 +880,7 @@ public abstract class MoneyWiseTransBase
      * @param pName the item name
      * @return the asset
      */
-    private static MoneyWiseTransAsset resolveTransAsset(final PrometheusDataListSet pData,
+    private static MoneyWiseTransAsset resolveTransAsset(final PrometheusDataSetListCtl pData,
                                                          final String pName) {
         /* If the name is a security holding */
         if (pName.contains(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP)) {
@@ -1053,5 +1056,12 @@ public abstract class MoneyWiseTransBase
          * @return the date range
          */
         OceanusDateRange getRange();
+
+        /**
+         * Obtain the editSet.
+         *
+         * @return the editSet
+         */
+        PrometheusEditSet getEditSet();
     }
 }

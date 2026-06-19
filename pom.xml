@@ -78,7 +78,7 @@
         <ApacheMavenVersion>3.9.16</ApacheMavenVersion>
         <JavaVersion>21</JavaVersion>
         <JavaLanguageVersion>21</JavaLanguageVersion>
-        <CheckStyleVersion>13.5.0</CheckStyleVersion>
+        <CheckStyleVersion>13.6.0</CheckStyleVersion>
         <PMDVersion>7.25.0</PMDVersion>
         <CleanPluginVersion>3.5.0</CleanPluginVersion>
         <ResourcesPluginVersion>3.5.0</ResourcesPluginVersion>

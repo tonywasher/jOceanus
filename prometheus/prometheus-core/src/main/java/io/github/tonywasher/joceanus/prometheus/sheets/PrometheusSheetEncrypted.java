@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.prometheus.sheets;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyDataType;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 

@@ -19,14 +19,17 @@ package io.github.tonywasher.joceanus.metis.field;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersion.MetisFieldVersionedItemCtl;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersion.MetisFieldVersionedSetCtl;
 
 /**
  * Metis Data FieldSet.
  *
  * @param <T> the data type
  */
-public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
-        extends MetisFieldSet<T> {
+public class MetisFieldVersionedSet<T extends MetisFieldVersionedItemCtl>
+        extends MetisFieldSet<T>
+        implements MetisFieldVersionedSetCtl<T> {
     /**
      * Does the fieldSet have link fields?
      */
@@ -65,7 +68,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pClazz the class of the fieldSet
      * @return the fieldSet.
      */
-    public static <T extends MetisFieldVersionedItem> MetisFieldVersionedSet<T> newVersionedFieldSet(final Class<T> pClazz) {
+    public static <T extends MetisFieldVersionedItemCtl> MetisFieldVersionedSet<T> newVersionedFieldSet(final Class<T> pClazz) {
         /* Synchronise on class */
         synchronized (MetisFieldSet.class) {
             /* Locate the parent fieldSet if it exists */
@@ -133,7 +136,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @return the field
      */
     public MetisFieldVersioned<T> declareShortField(final MetisDataFieldId pId) {
-        return declareEqualityVersionedField(pId, MetisDataType.SHORT, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, MetisDataType.SHORT, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -143,7 +146,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @return the field
      */
     public MetisFieldVersioned<T> declareIntegerField(final MetisDataFieldId pId) {
-        return declareEqualityVersionedField(pId, MetisDataType.INTEGER, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, MetisDataType.INTEGER, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -153,7 +156,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @return the field
      */
     public MetisFieldVersioned<T> declareLongField(final MetisDataFieldId pId) {
-        return declareEqualityVersionedField(pId, MetisDataType.LONG, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, MetisDataType.LONG, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -163,7 +166,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @return the field
      */
     public MetisFieldVersioned<T> declareBooleanField(final MetisDataFieldId pId) {
-        return declareEqualityVersionedField(pId, MetisDataType.BOOLEAN, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, MetisDataType.BOOLEAN, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -173,7 +176,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @return the field
      */
     public MetisFieldVersioned<T> declareDateField(final MetisDataFieldId pId) {
-        return declareEqualityVersionedField(pId, MetisDataType.DATE, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, MetisDataType.DATE, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -183,7 +186,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @return the field
      */
     public MetisFieldVersioned<T> declareMoneyField(final MetisDataFieldId pId) {
-        return declareEqualityVersionedField(pId, MetisDataType.MONEY, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, MetisDataType.MONEY, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -193,7 +196,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @return the field
      */
     public MetisFieldVersioned<T> declarePriceField(final MetisDataFieldId pId) {
-        return declareEqualityVersionedField(pId, MetisDataType.PRICE, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, MetisDataType.PRICE, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -203,7 +206,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @return the field
      */
     public MetisFieldVersioned<T> declareUnitsField(final MetisDataFieldId pId) {
-        return declareEqualityVersionedField(pId, MetisDataType.UNITS, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, MetisDataType.UNITS, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -213,7 +216,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @return the field
      */
     public MetisFieldVersioned<T> declareRateField(final MetisDataFieldId pId) {
-        return declareEqualityVersionedField(pId, MetisDataType.RATE, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, MetisDataType.RATE, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -223,7 +226,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @return the field
      */
     public MetisFieldVersioned<T> declareRatioField(final MetisDataFieldId pId) {
-        return declareEqualityVersionedField(pId, MetisDataType.RATIO, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, MetisDataType.RATIO, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -233,7 +236,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @return the field
      */
     public MetisFieldVersioned<T> declareEnumField(final MetisDataFieldId pId) {
-        return declareEqualityVersionedField(pId, MetisDataType.ENUM, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, MetisDataType.ENUM, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -244,7 +247,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      */
     public MetisFieldVersioned<T> declareLinkField(final MetisDataFieldId pId) {
         hasLinks = true;
-        return declareEqualityVersionedField(pId, MetisDataType.LINK, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, MetisDataType.LINK, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -255,7 +258,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      */
     public MetisFieldVersioned<T> declarePairedLinkField(final MetisDataFieldId pId) {
         hasPairedLinks = true;
-        return declareEqualityVersionedField(pId, MetisDataType.LINKPAIR, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, MetisDataType.LINKPAIR, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -265,7 +268,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @return the field
      */
     public MetisFieldVersioned<T> declareLinkSetField(final MetisDataFieldId pId) {
-        return declareEqualityVersionedField(pId, MetisDataType.LINKSET, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, MetisDataType.LINKSET, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**
@@ -275,7 +278,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @return the field
      */
     public MetisFieldVersioned<T> declareDerivedVersionedField(final MetisDataFieldId pId) {
-        return declareVersionedField(pId, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, false);
+        return declareVersionedField(pId, MetisDataType.OBJECT, MetisField.FIELD_NO_MAXLENGTH, false);
     }
 
     /**
@@ -287,7 +290,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      */
     public MetisFieldVersioned<T> declareEqualityVersionedField(final MetisDataFieldId pId,
                                                                 final MetisDataType pDataType) {
-        return declareEqualityVersionedField(pId, pDataType, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, pDataType, MetisField.FIELD_NO_MAXLENGTH);
     }
 
     /**

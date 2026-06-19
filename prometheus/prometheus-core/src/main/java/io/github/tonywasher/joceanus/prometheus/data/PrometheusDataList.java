@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.prometheus.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
@@ -26,8 +24,13 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.list.MetisListIndexed;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataListCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValidator;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem.PrometheusDataInfoList;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusTableItem.PrometheusTableList;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 
 import java.util.Iterator;
@@ -41,31 +44,7 @@ import java.util.Map;
  * @author Tony Washer
  */
 public abstract class PrometheusDataList<T extends PrometheusDataItem>
-        implements MetisFieldItem, MetisDataList<T>, PrometheusTableList<T> {
-    /**
-     * DataList interface.
-     */
-    public interface PrometheusDataListSet {
-        /**
-         * Obtain the list for a class.
-         *
-         * @param <L>       the list type
-         * @param pDataType the data type
-         * @param pClass    the list class
-         * @return the list
-         */
-        <L extends PrometheusDataList<?>> L getDataList(MetisListKey pDataType,
-                                                        Class<L> pClass);
-
-        /**
-         * Does this list have the dataType?
-         *
-         * @param pDataType the dataType
-         * @return true/false
-         */
-        boolean hasDataType(MetisListKey pDataType);
-    }
-
+        implements MetisFieldItem, MetisDataList<T>, PrometheusDataListCtl<T> {
     /**
      * Report fields.
      */
@@ -109,7 +88,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
     /**
      * The DataSet.
      */
-    private PrometheusDataSet theDataSet;
+    private PrometheusDataSetCtl theDataSet;
 
     /**
      * The item type.
@@ -145,7 +124,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
      * @param pStyle     the new {@link PrometheusListStyle}
      */
     protected PrometheusDataList(final Class<T> pBaseClass,
-                                 final PrometheusDataSet pDataSet,
+                                 final PrometheusDataSetCtl pDataSet,
                                  final MetisListKey pItemType,
                                  final PrometheusListStyle pStyle) {
         theBaseClazz = pBaseClass;
@@ -262,12 +241,8 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
         return theItemType;
     }
 
-    /**
-     * Get the dataSet.
-     *
-     * @return the dataSet
-     */
-    public PrometheusDataSet getDataSet() {
+    @Override
+    public PrometheusDataSetCtl getDataSet() {
         return theDataSet;
     }
 
@@ -377,11 +352,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
         return theList.copyIdMap();
     }
 
-    /**
-     * Obtain the validator.
-     *
-     * @return the validator
-     */
+    @Override
     public PrometheusDataValidator getValidator() {
         if (theValidator == null) {
             theValidator = getDataSet().getValidator(theItemType);
@@ -404,7 +375,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
      * @param pSource the source list
      * @throws OceanusException on error
      */
-    protected void cloneList(final PrometheusDataSet pData,
+    protected void cloneList(final PrometheusDataSetCtl pData,
                              final PrometheusDataList<?> pSource) throws OceanusException {
         /* Correct the dataSet reference */
         theDataSet = pData;
@@ -499,7 +470,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
      * @param pOld     The old list to compare to
      * @return the difference list
      */
-    public PrometheusDataList<T> deriveDifferences(final PrometheusDataSet pDataSet,
+    public PrometheusDataList<T> deriveDifferences(final PrometheusDataSetCtl pDataSet,
                                                    final PrometheusDataList<?> pOld) {
         /* Obtain an empty list of the correct style */
         final PrometheusDataList<T> myList = getEmptyList(PrometheusListStyle.DIFFER);
@@ -635,12 +606,8 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
         return !theList.containsId(uId);
     }
 
-    /**
-     * Generate/Record new id for the item.
-     *
-     * @param pItem the new item
-     */
-    protected void setNewId(final PrometheusDataItem pItem) {
+    @Override
+    public void setNewId(final PrometheusDataItemCtl pItem) {
         /* Access the Id */
         final Integer myId = pItem.getIndexedId();
 
@@ -991,41 +958,5 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
         /* Adjust list value */
         setVersion(pNewVersion);
-    }
-
-    /**
-     * ListStyles.
-     */
-    public enum PrometheusListStyle {
-        /**
-         * Core list holding the true version of the data.
-         */
-        CORE,
-
-        /**
-         * Deep Copy clone for security updates.
-         */
-        CLONE,
-
-        /**
-         * Shallow Copy list for comparison purposes. Only references to other items can be added to
-         * the list
-         */
-        COPY,
-
-        /**
-         * Partial extract of the data for the purposes of editing.
-         */
-        EDIT,
-
-        /**
-         * List of changes to be applied to database.
-         */
-        UPDATE,
-
-        /**
-         * List of differences.
-         */
-        DIFFER;
     }
 }

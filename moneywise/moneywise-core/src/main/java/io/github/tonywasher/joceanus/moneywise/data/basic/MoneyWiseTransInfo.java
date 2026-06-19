@@ -27,6 +27,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoTy
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
@@ -36,6 +37,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -284,7 +286,7 @@ public class MoneyWiseTransInfo
         final MoneyWiseTransInfoType myType = getInfoType();
         if (myType.isLink()) {
             /* Access data */
-            final PrometheusDataSet myData = getDataSet();
+            final PrometheusDataSetCtl myData = getDataSet();
             final Object myLinkId = getValues().getValue(PrometheusDataResource.DATAINFO_VALUE);
 
             /* Switch on link type */

@@ -29,7 +29,10 @@ import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.convert.OceanusDataConverter;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataListCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValuesCtl;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 
 import java.util.Iterator;
@@ -43,7 +46,7 @@ import java.util.Iterator;
  */
 public abstract class PrometheusDataItem
         extends MetisFieldVersionedItem
-        implements PrometheusTableItem, Comparable<Object> {
+        implements PrometheusDataItemCtl, Comparable<Object> {
     /**
      * Report fields.
      */
@@ -147,7 +150,7 @@ public abstract class PrometheusDataItem
     /**
      * The list to which this item belongs.
      */
-    private final PrometheusDataList<?> theList;
+    private final PrometheusDataListCtl<?> theList;
 
     /**
      * The item that this DataItem is based upon.
@@ -170,7 +173,7 @@ public abstract class PrometheusDataItem
      * @param pList the list that this item is associated with
      * @param uId   the Id of the new item (or 0 if not yet known)
      */
-    protected PrometheusDataItem(final PrometheusDataList<?> pList,
+    protected PrometheusDataItem(final PrometheusDataListCtl<?> pList,
                                  final Integer uId) {
         /* Record list and item references */
         setIndexedId(uId);
@@ -189,8 +192,8 @@ public abstract class PrometheusDataItem
      * @param pList   the list that this item is associated with
      * @param pValues the data values
      */
-    protected PrometheusDataItem(final PrometheusDataList<?> pList,
-                                 final PrometheusDataValues pValues) {
+    protected PrometheusDataItem(final PrometheusDataListCtl<?> pList,
+                                 final PrometheusDataValuesCtl pValues) {
         /* Record list and item references */
         this(pList, pValues.getValue(MetisDataResource.DATA_ID, Integer.class));
     }
@@ -201,7 +204,7 @@ public abstract class PrometheusDataItem
      * @param pList the list that this item is associated with
      * @param pBase the old item
      */
-    protected PrometheusDataItem(final PrometheusDataList<?> pList,
+    protected PrometheusDataItem(final PrometheusDataListCtl<?> pList,
                                  final PrometheusDataItem pBase) {
         /* Initialise using standard constructor */
         this(pList, pBase.getIndexedId());
@@ -309,16 +312,12 @@ public abstract class PrometheusDataItem
      *
      * @return the list
      */
-    public PrometheusDataList<?> getList() {
+    public PrometheusDataListCtl<?> getList() {
         return theList;
     }
 
-    /**
-     * Obtain the dataSet.
-     *
-     * @return the dataSet
-     */
-    public PrometheusDataSet getDataSet() {
+    @Override
+    public PrometheusDataSetCtl getDataSet() {
         return getTheDataSet();
     }
 
@@ -327,7 +326,7 @@ public abstract class PrometheusDataItem
      *
      * @return the dataSet
      */
-    private PrometheusDataSet getTheDataSet() {
+    private PrometheusDataSetCtl getTheDataSet() {
         return theList.getDataSet();
     }
 
@@ -594,7 +593,7 @@ public abstract class PrometheusDataItem
      */
     protected void resolveDataLink(final MetisDataFieldId pFieldId,
                                    final MetisListKey pDataType) throws OceanusException {
-        final PrometheusDataList<?> myList = getDataSet().getDataList(pDataType, PrometheusDataList.class);
+        final PrometheusDataListCtl<?> myList = getDataSet().getDataList(pDataType, PrometheusDataListCtl.class);
         resolveDataLink(pFieldId, myList);
     }
 
@@ -606,7 +605,7 @@ public abstract class PrometheusDataItem
      * @throws OceanusException on error
      */
     protected void resolveDataLink(final MetisDataFieldId pFieldId,
-                                   final PrometheusDataList<?> pList) throws OceanusException {
+                                   final PrometheusDataListCtl<?> pList) throws OceanusException {
         /* Access the values */
         final MetisFieldVersionValues myValues = getValues();
 
@@ -620,7 +619,7 @@ public abstract class PrometheusDataItem
 
         /* Lookup Id reference */
         if (myValue instanceof Integer i) {
-            final PrometheusDataItem myItem = pList.findItemById(i);
+            final PrometheusDataItem myItem = (PrometheusDataItem) pList.findItemById(i);
             if (myItem == null) {
                 addError(ERROR_UNKNOWN, pFieldId);
                 throw new PrometheusDataException(this, ERROR_RESOLUTION);
@@ -629,7 +628,7 @@ public abstract class PrometheusDataItem
 
             /* Lookup Name reference */
         } else if (myValue instanceof String s) {
-            final PrometheusDataItem myItem = pList.findItemByName(s);
+            final PrometheusDataItem myItem = (PrometheusDataItem) pList.findItemByName(s);
             if (myItem == null) {
                 addError(ERROR_UNKNOWN, pFieldId);
                 throw new PrometheusDataException(this, ERROR_RESOLUTION);

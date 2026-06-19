@@ -29,6 +29,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -64,9 +65,9 @@ public class MoneyWiseValidateDeposit
     }
 
     @Override
-    public void validate(final PrometheusDataItem pDeposit) {
+    public void validate(final PrometheusDataItemCtl pDeposit) {
         final MoneyWiseDeposit myDeposit = (MoneyWiseDeposit) pDeposit;
-        final MoneyWisePayee myParent = (MoneyWisePayee) myDeposit.getParent();
+        final MoneyWisePayee myParent = myDeposit.getParent();
         final MoneyWiseDepositCategory myCategory = myDeposit.getCategory();
         final MoneyWiseCurrency myCurrency = myDeposit.getAssetCurrency();
         final MoneyWiseDepositCategoryClass myClass = myDeposit.getCategoryClass();
@@ -76,34 +77,34 @@ public class MoneyWiseValidateDeposit
 
         /* Category must be non-null */
         if (myCategory == null) {
-            pDeposit.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
+            myDeposit.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
         } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
-            pDeposit.addError(ERROR_BADCATEGORY, MoneyWiseBasicResource.CATEGORY_NAME);
+            myDeposit.addError(ERROR_BADCATEGORY, MoneyWiseBasicResource.CATEGORY_NAME);
         }
 
         /* Currency must be non-null and enabled */
         if (myCurrency == null) {
-            pDeposit.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);
+            myDeposit.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);
         } else if (!myCurrency.getEnabled()) {
-            pDeposit.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
+            myDeposit.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
         }
 
         /* Deposit must be a child */
         if (!myClass.isChild()) {
-            pDeposit.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseBasicResource.ASSET_PARENT);
+            myDeposit.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseBasicResource.ASSET_PARENT);
 
             /* Must have parent */
         } else if (myParent == null) {
-            pDeposit.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
+            myDeposit.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
         } else {
             /* Parent must be suitable */
             if (!myParent.getCategoryClass().canParentDeposit(myClass)) {
-                pDeposit.addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
+                myDeposit.addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
             }
 
             /* If we are open then parent must be open */
             if (!myDeposit.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
-                pDeposit.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
+                myDeposit.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
         }
 
@@ -114,8 +115,8 @@ public class MoneyWiseValidateDeposit
         }
 
         /* Set validation flag */
-        if (!pDeposit.hasErrors()) {
-            pDeposit.setValidEdit();
+        if (!myDeposit.hasErrors()) {
+            myDeposit.setValidEdit();
         }
     }
 

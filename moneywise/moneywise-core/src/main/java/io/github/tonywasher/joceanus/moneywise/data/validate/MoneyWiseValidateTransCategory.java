@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
@@ -26,6 +25,8 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataT
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType.MoneyWiseTransCategoryTypeList;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 
@@ -40,7 +41,7 @@ public class MoneyWiseValidateTransCategory
     private static final String ERROR_DIFFPARENT = MoneyWiseBasicResource.TRANSCATEGORY_ERROR_DIFFPARENT.getValue();
 
     @Override
-    public void validate(final PrometheusDataItem pCategory) {
+    public void validate(final PrometheusDataItemCtl pCategory) {
         /* Validate the base */
         super.validate(pCategory);
 
@@ -53,14 +54,14 @@ public class MoneyWiseValidateTransCategory
 
         /* EventCategoryType must be non-null */
         if (myCatType == null) {
-            pCategory.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.TRANSTYPE);
+            myCategory.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.TRANSTYPE);
         } else {
             /* Access the class */
             final MoneyWiseTransCategoryClass myClass = myCatType.getCategoryClass();
 
             /* EventCategoryType must be enabled */
             if (!myCatType.getEnabled()) {
-                pCategory.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.TRANSTYPE);
+                myCategory.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.TRANSTYPE);
             }
 
             /* If the CategoryType is singular */
@@ -68,7 +69,7 @@ public class MoneyWiseValidateTransCategory
                 /* Count the elements of this class */
                 final MoneyWiseTransCategoryDataMap myMap = myList.getDataMap();
                 if (!myMap.validSingularCount(myClass)) {
-                    pCategory.addError(PrometheusDataItem.ERROR_MULT, MoneyWiseStaticDataType.TRANSTYPE);
+                    myCategory.addError(PrometheusDataItem.ERROR_MULT, MoneyWiseStaticDataType.TRANSTYPE);
                 }
             }
 
@@ -77,7 +78,7 @@ public class MoneyWiseValidateTransCategory
                 case TOTALS:
                     /* If parent exists */
                     if (myParent != null) {
-                        pCategory.addError(PrometheusDataItem.ERROR_EXIST, PrometheusDataResource.DATAGROUP_PARENT);
+                        myCategory.addError(PrometheusDataItem.ERROR_EXIST, PrometheusDataResource.DATAGROUP_PARENT);
                     }
                     break;
                 case INCOMETOTALS:
@@ -85,9 +86,9 @@ public class MoneyWiseValidateTransCategory
                 case SECURITYPARENT:
                     /* Check parent */
                     if (myParent == null) {
-                        pCategory.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAGROUP_PARENT);
+                        myCategory.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAGROUP_PARENT);
                     } else if (!myParent.isCategoryClass(MoneyWiseTransCategoryClass.TOTALS)) {
-                        pCategory.addError(ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
+                        myCategory.addError(ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
                     }
                     break;
                 default:
@@ -96,24 +97,24 @@ public class MoneyWiseValidateTransCategory
                     final boolean hasParent = myParent != null;
                     if (hasParent == isTransfer) {
                         if (isTransfer) {
-                            pCategory.addError(PrometheusDataItem.ERROR_EXIST, PrometheusDataResource.DATAGROUP_PARENT);
+                            myCategory.addError(PrometheusDataItem.ERROR_EXIST, PrometheusDataResource.DATAGROUP_PARENT);
                         } else {
-                            pCategory.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAGROUP_PARENT);
+                            myCategory.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAGROUP_PARENT);
                         }
                     } else if (hasParent) {
                         /* Check validity of parent */
                         final MoneyWiseTransCategoryClass myParentClass = myParent.getCategoryTypeClass();
                         if (!myParentClass.canParentCategory()) {
-                            pCategory.addError(ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
+                            myCategory.addError(ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
                         }
                         if (myParentClass.isIncome() != myClass.isIncome()
                                 || myParentClass.isSecurityTransfer() != myClass.isSecurityTransfer()) {
-                            pCategory.addError(ERROR_DIFFPARENT, PrometheusDataResource.DATAGROUP_PARENT);
+                            myCategory.addError(ERROR_DIFFPARENT, PrometheusDataResource.DATAGROUP_PARENT);
                         }
 
                         /* Check that name reflects parent */
                         if (myName != null && !myName.startsWith(myParent.getName() + MoneyWiseCategoryBase.STR_SEP)) {
-                            pCategory.addError(ERROR_MATCHPARENT, PrometheusDataResource.DATAGROUP_PARENT);
+                            myCategory.addError(ERROR_MATCHPARENT, PrometheusDataResource.DATAGROUP_PARENT);
                         }
                     }
                     break;
@@ -121,8 +122,8 @@ public class MoneyWiseValidateTransCategory
         }
 
         /* Set validation flag */
-        if (!pCategory.hasErrors()) {
-            pCategory.setValidEdit();
+        if (!myCategory.hasErrors()) {
+            myCategory.setValidEdit();
         }
     }
 

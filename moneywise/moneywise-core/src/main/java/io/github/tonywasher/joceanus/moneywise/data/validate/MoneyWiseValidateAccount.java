@@ -23,6 +23,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -77,14 +78,14 @@ public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
     }
 
     @Override
-    public void validate(final PrometheusDataItem pAsset) {
+    public void validate(final PrometheusDataItemCtl pAsset) {
         final MoneyWiseAssetBase myAsset = (MoneyWiseAssetBase) pAsset;
         final String myName = myAsset.getName();
         final String myDesc = myAsset.getDesc();
 
         /* Name must be non-null */
         if (myName == null) {
-            pAsset.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
+            myAsset.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
 
             /* Check that the name is unique */
         } else {
@@ -95,7 +96,7 @@ public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
         /* Check description length */
         if (myDesc != null
                 && myDesc.length() > PrometheusDataItem.DESCLEN) {
-            pAsset.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
+            myAsset.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
         }
     }
 

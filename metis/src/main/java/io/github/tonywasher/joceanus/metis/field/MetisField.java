@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.metis.field;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldSetCtl;
 
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -32,9 +33,14 @@ import java.util.function.Function;
 public class MetisField<T extends MetisFieldItem>
         implements MetisFieldDef {
     /**
+     * No Maximum Length.
+     */
+    public static final Integer FIELD_NO_MAXLENGTH = -1;
+
+    /**
      * Anchor.
      */
-    private final MetisFieldSet<T> theAnchor;
+    private final MetisFieldSetCtl<T> theAnchor;
 
     /**
      * Id of field.
@@ -69,7 +75,7 @@ public class MetisField<T extends MetisFieldItem>
      * @param pDataType  the dataType of the field
      * @param pMaxLength the maximum length of the field
      */
-    MetisField(final MetisFieldSet<T> pAnchor,
+    MetisField(final MetisFieldSetCtl<T> pAnchor,
                final MetisDataFieldId pId,
                final MetisDataType pDataType,
                final Integer pMaxLength) {
@@ -91,7 +97,7 @@ public class MetisField<T extends MetisFieldItem>
      * @param pAnchor the anchor
      * @param pId     the id of the field
      */
-    MetisField(final MetisFieldSet<T> pAnchor,
+    MetisField(final MetisFieldSetCtl<T> pAnchor,
                final MetisDataFieldId pId) {
         this(pAnchor, pId, (Function<T, Object>) null);
     }
@@ -103,14 +109,14 @@ public class MetisField<T extends MetisFieldItem>
      * @param pId     the id of the field
      * @param pValue  the value supplier
      */
-    MetisField(final MetisFieldSet<T> pAnchor,
+    MetisField(final MetisFieldSetCtl<T> pAnchor,
                final MetisDataFieldId pId,
                final Function<T, Object> pValue) {
         /* Store parameters */
         theAnchor = pAnchor;
         theId = pId;
         theDataType = MetisDataType.OBJECT;
-        theMaxLength = MetisFieldSet.FIELD_NO_MAXLENGTH;
+        theMaxLength = FIELD_NO_MAXLENGTH;
         theValue = pValue;
         theMultiValue = null;
 
@@ -125,14 +131,14 @@ public class MetisField<T extends MetisFieldItem>
      * @param pId     the id of the field
      * @param pValue  the value supplier
      */
-    MetisField(final MetisFieldSet<T> pAnchor,
+    MetisField(final MetisFieldSetCtl<T> pAnchor,
                final MetisDataFieldId pId,
                final BiFunction<T, MetisDataFieldId, Object> pValue) {
         /* Store parameters */
         theAnchor = pAnchor;
         theId = pId;
         theDataType = MetisDataType.OBJECT;
-        theMaxLength = MetisFieldSet.FIELD_NO_MAXLENGTH;
+        theMaxLength = FIELD_NO_MAXLENGTH;
         theValue = null;
         theMultiValue = pValue;
 
@@ -160,7 +166,7 @@ public class MetisField<T extends MetisFieldItem>
      *
      * @return the anchor
      */
-    public MetisFieldSet<T> getAnchor() {
+    public MetisFieldSetCtl<T> getAnchor() {
         return theAnchor;
     }
 
@@ -181,7 +187,7 @@ public class MetisField<T extends MetisFieldItem>
                 }
                 break;
             default:
-                if (!theMaxLength.equals(MetisFieldSet.FIELD_NO_MAXLENGTH)) {
+                if (!theMaxLength.equals(FIELD_NO_MAXLENGTH)) {
                     throw new IllegalArgumentException("Length allowed only for String/Array");
                 }
                 break;

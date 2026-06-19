@@ -16,10 +16,11 @@
  */
 package io.github.tonywasher.joceanus.prometheus.validate;
 
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValidator;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 
 /**
@@ -35,7 +36,7 @@ public class PrometheusValidateInfo
     }
 
     @Override
-    public void validate(final PrometheusDataItem pInfo) {
+    public void validate(final PrometheusDataItemCtl pInfo) {
         final PrometheusDataInfoItem myInfo = (PrometheusDataInfoItem) pInfo;
         final PrometheusStaticDataItem myType = myInfo.getInfoType();
         final PrometheusDataItem myOwner = myInfo.getOwner();
@@ -43,22 +44,22 @@ public class PrometheusValidateInfo
 
         /* InfoType must be non-null */
         if (myType == null) {
-            pInfo.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAINFO_TYPE);
+            myInfo.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAINFO_TYPE);
         }
 
         /* Owner must be non-null */
         if (myOwner == null) {
-            pInfo.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAINFO_OWNER);
+            myInfo.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAINFO_OWNER);
         }
 
         /* Value must be non-null */
         if (myValue == null) {
-            pInfo.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAINFO_VALUE);
+            myInfo.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAINFO_VALUE);
         }
 
         /* Set validation flag */
-        if (!pInfo.hasErrors()) {
-            pInfo.setValidEdit();
+        if (!myInfo.hasErrors()) {
+            myInfo.setValidEdit();
         }
     }
 }
