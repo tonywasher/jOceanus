@@ -16,11 +16,11 @@
  */
 package io.github.tonywasher.joceanus.moneywise.archive;
 
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseIOException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseIOException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlData.PrometheusControlDataList;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
@@ -136,10 +136,10 @@ public final class MoneyWiseArchiveLoader {
         }
 
         /* Access the static */
-        final PrometheusControlDataList myStatic = theData.getControlData();
+        final PrometheusControlDataList myControl = theData.getControlData();
 
         /* Add the value into the finance tables (with no security as yet) */
-        myStatic.addNewControl(0);
+        myControl.addNewControl(0);
 
         /* Calculate the number of stages */
         final int myStages = NUM_ARCHIVE_AREAS + theCache.getNumYears();

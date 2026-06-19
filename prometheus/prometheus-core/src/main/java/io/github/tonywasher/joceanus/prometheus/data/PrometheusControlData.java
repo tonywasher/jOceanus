@@ -108,7 +108,6 @@ public class PrometheusControlData
             setValueControlKey(myInt);
 
             /* Resolve the ControlKey */
-            final PrometheusDataSetCtl myData = getDataSet();
             resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, PrometheusCryptographyDataType.CONTROLKEY);
         }
     }
