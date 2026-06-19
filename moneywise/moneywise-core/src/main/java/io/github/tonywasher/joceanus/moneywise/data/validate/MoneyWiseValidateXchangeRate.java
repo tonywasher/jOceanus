@@ -25,8 +25,9 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValidator;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator;
 
 /**
  * Validator for region.
@@ -35,7 +36,7 @@ public class MoneyWiseValidateXchangeRate
         implements PrometheusDataValidator {
 
     @Override
-    public void validate(final PrometheusDataItem pRate) {
+    public void validate(final PrometheusDataItemCtl pRate) {
         final MoneyWiseExchangeRate myRate = (MoneyWiseExchangeRate) pRate;
         final MoneyWiseExchangeRateBaseList<? extends MoneyWiseExchangeRate> myList = myRate.getList();
         final MoneyWiseCurrency myFrom = myRate.getFromCurrency();
@@ -46,62 +47,62 @@ public class MoneyWiseValidateXchangeRate
 
         /* Date must be non-null */
         if (myDate == null) {
-            pRate.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
+            myRate.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
 
             /* else date is non-null */
         } else {
             /* Date must be unique for this currency */
             final MoneyWiseExchangeRateDataMap myMap = myList.getDataMap();
             if (!myMap.validRateCount(myRate)) {
-                pRate.addError(PrometheusDataItem.ERROR_DUPLICATE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
+                myRate.addError(PrometheusDataItem.ERROR_DUPLICATE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
             }
 
             /* The date must be in-range */
             if (myRange.compareToDate(myDate) != 0) {
-                pRate.addError(PrometheusDataItem.ERROR_RANGE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
+                myRate.addError(PrometheusDataItem.ERROR_RANGE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
             }
         }
 
         /* FromCurrency must be non-null and enabled */
         if (myFrom == null) {
-            pRate.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.XCHGRATE_FROM);
+            myRate.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.XCHGRATE_FROM);
         } else if (!myFrom.getEnabled()) {
-            pRate.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseBasicResource.XCHGRATE_FROM);
+            myRate.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseBasicResource.XCHGRATE_FROM);
         }
 
         /* ToCurrency must be non-null and enabled */
         if (myTo == null) {
-            pRate.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.XCHGRATE_TO);
+            myRate.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.XCHGRATE_TO);
         } else if (!myTo.getEnabled()) {
-            pRate.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseBasicResource.XCHGRATE_TO);
+            myRate.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseBasicResource.XCHGRATE_TO);
         }
 
         /* Check currency combination */
         if (myFrom != null && myTo != null) {
             /* Must be different */
             if (myFrom.equals(myTo)) {
-                pRate.addError(MoneyWiseExchangeRate.ERROR_CIRCLE, MoneyWiseBasicResource.XCHGRATE_TO);
+                myRate.addError(MoneyWiseExchangeRate.ERROR_CIRCLE, MoneyWiseBasicResource.XCHGRATE_TO);
             }
 
             /* From currency must be the reporting currency */
             final MoneyWiseCurrency myDefault = ((MoneyWiseDataSet) myRate.getDataSet()).getReportingCurrency();
             if (!myFrom.equals(myDefault)) {
-                pRate.addError(MoneyWiseExchangeRate.ERROR_DEF, MoneyWiseBasicResource.XCHGRATE_FROM);
+                myRate.addError(MoneyWiseExchangeRate.ERROR_DEF, MoneyWiseBasicResource.XCHGRATE_FROM);
             }
         }
 
         /* Rate must be non-null and positive non-zero */
         if (myXchgRate == null) {
-            pRate.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.XCHGRATE_RATE);
+            myRate.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.XCHGRATE_RATE);
         } else if (!myXchgRate.isNonZero()) {
-            pRate.addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseBasicResource.XCHGRATE_RATE);
+            myRate.addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseBasicResource.XCHGRATE_RATE);
         } else if (!myXchgRate.isPositive()) {
-            pRate.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.XCHGRATE_RATE);
+            myRate.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.XCHGRATE_RATE);
         }
 
         /* Set validation flag */
-        if (!pRate.hasErrors()) {
-            pRate.setValidEdit();
+        if (!myRate.hasErrors()) {
+            myRate.setValidEdit();
         }
     }
 }

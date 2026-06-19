@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCategoryBase.MoneyWiseCategoryBaseList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCategoryBase.MoneyWiseCategoryDataMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCategoryBase.MoneyWiseDataValidatorCategory;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -72,7 +73,7 @@ public abstract class MoneyWiseValidateCategory<T extends MoneyWiseCategoryBase>
     }
 
     @Override
-    public void validate(final PrometheusDataItem pCategory) {
+    public void validate(final PrometheusDataItemCtl pCategory) {
         final MoneyWiseCategoryBase myCategory = (MoneyWiseCategoryBase) pCategory;
         final MoneyWiseCategoryBaseList<?> myList = myCategory.getList();
         final String myName = myCategory.getName();
@@ -81,19 +82,19 @@ public abstract class MoneyWiseValidateCategory<T extends MoneyWiseCategoryBase>
 
         /* Name must be non-null */
         if (myName == null) {
-            pCategory.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
+            myCategory.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
 
             /* Check that the name is valid */
         } else {
             /* The name must not be too long */
             if (myName.length() > PrometheusDataItem.NAMELEN) {
-                pCategory.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);
+                myCategory.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);
             }
 
             /* The name must be unique */
             if (!myMap.validNameCount(myName)) {
                 final String mySubName = myCategory.getSubCategory();
-                pCategory.addError(PrometheusDataItem.ERROR_DUPLICATE, (mySubName == null)
+                myCategory.addError(PrometheusDataItem.ERROR_DUPLICATE, (mySubName == null)
                         ? PrometheusDataResource.DATAITEM_FIELD_NAME
                         : MoneyWiseBasicResource.CATEGORY_SUBCAT);
             }
@@ -102,7 +103,7 @@ public abstract class MoneyWiseValidateCategory<T extends MoneyWiseCategoryBase>
         /* Check description length */
         if (myDesc != null
                 && myDesc.length() > PrometheusDataItem.DESCLEN) {
-            pCategory.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
+            myCategory.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
         }
     }
 

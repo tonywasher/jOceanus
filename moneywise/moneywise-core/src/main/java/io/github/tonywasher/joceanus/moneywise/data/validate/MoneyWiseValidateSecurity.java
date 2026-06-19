@@ -36,6 +36,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityTyp
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityType.MoneyWiseSecurityTypeList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -72,10 +73,10 @@ public class MoneyWiseValidateSecurity
     }
 
     @Override
-    public void validate(final PrometheusDataItem pSecurity) {
+    public void validate(final PrometheusDataItemCtl pSecurity) {
         final MoneyWiseSecurity mySecurity = (MoneyWiseSecurity) pSecurity;
         final MoneyWiseSecurityList myList = mySecurity.getList();
-        final MoneyWisePayee myParent = (MoneyWisePayee) mySecurity.getParent();
+        final MoneyWisePayee myParent = mySecurity.getParent();
         final MoneyWiseSecurityType mySecType = mySecurity.getCategory();
         final MoneyWiseCurrency myCurrency = mySecurity.getAssetCurrency();
         final String mySymbol = mySecurity.getSymbol();
@@ -85,14 +86,14 @@ public class MoneyWiseValidateSecurity
 
         /* SecurityType must be non-null */
         if (mySecType == null) {
-            pSecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
+            mySecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
         } else {
             /* Access the class */
             final MoneyWiseSecurityClass myClass = mySecType.getSecurityClass();
 
             /* SecurityType must be enabled */
             if (!mySecType.getEnabled()) {
-                pSecurity.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseBasicResource.CATEGORY_NAME);
+                mySecurity.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseBasicResource.CATEGORY_NAME);
             }
 
             /* If the SecurityType is singular */
@@ -100,25 +101,25 @@ public class MoneyWiseValidateSecurity
                 /* Count the elements of this class */
                 final MoneyWiseSecurityDataMap myMap = myList.getDataMap();
                 if (!myMap.validSingularCount(myClass)) {
-                    pSecurity.addError(PrometheusDataItem.ERROR_MULT, MoneyWiseBasicResource.CATEGORY_NAME);
+                    mySecurity.addError(PrometheusDataItem.ERROR_MULT, MoneyWiseBasicResource.CATEGORY_NAME);
                 }
             }
         }
 
         /* Currency must be non-null and enabled */
         if (myCurrency == null) {
-            pSecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);
+            mySecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);
         } else if (!myCurrency.getEnabled()) {
-            pSecurity.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
+            mySecurity.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
         }
 
         /* Parent must be non-null */
         if (myParent == null) {
-            pSecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
+            mySecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
         } else {
             /* If we are open then parent must be open */
             if (!mySecurity.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
-                pSecurity.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
+                mySecurity.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
 
             /* Check class */
@@ -129,7 +130,7 @@ public class MoneyWiseValidateSecurity
 
                 /* Parent must be suitable */
                 if (!myParClass.canParentSecurity(myClass)) {
-                    pSecurity.addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
+                    mySecurity.addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
                 }
             }
         }
@@ -139,12 +140,12 @@ public class MoneyWiseValidateSecurity
             /* Check symbol rules */
             if (mySecType.getSecurityClass().needsSymbol()) {
                 if (mySymbol == null) {
-                    pSecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));
+                    mySecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));
                 } else if (!myList.validSymbolCount(mySymbol)) {
-                    pSecurity.addError(PrometheusDataItem.ERROR_DUPLICATE, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));
+                    mySecurity.addError(PrometheusDataItem.ERROR_DUPLICATE, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));
                 }
             } else if (mySymbol != null) {
-                pSecurity.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));
+                mySecurity.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));
             }
         }
 
@@ -155,8 +156,8 @@ public class MoneyWiseValidateSecurity
         }
 
         /* Set validation flag */
-        if (!pSecurity.hasErrors()) {
-            pSecurity.setValidEdit();
+        if (!mySecurity.hasErrors()) {
+            mySecurity.setValidEdit();
         }
     }
 

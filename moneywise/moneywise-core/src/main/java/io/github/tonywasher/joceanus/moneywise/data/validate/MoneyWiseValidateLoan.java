@@ -29,6 +29,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -64,9 +65,9 @@ public class MoneyWiseValidateLoan
     }
 
     @Override
-    public void validate(final PrometheusDataItem pLoan) {
+    public void validate(final PrometheusDataItemCtl pLoan) {
         final MoneyWiseLoan myLoan = (MoneyWiseLoan) pLoan;
-        final MoneyWisePayee myParent = (MoneyWisePayee) myLoan.getParent();
+        final MoneyWisePayee myParent = myLoan.getParent();
         final MoneyWiseLoanCategory myCategory = myLoan.getCategory();
         final MoneyWiseCurrency myCurrency = myLoan.getAssetCurrency();
         final MoneyWiseLoanCategoryClass myClass = myLoan.getCategoryClass();
@@ -76,34 +77,34 @@ public class MoneyWiseValidateLoan
 
         /* Category must be non-null */
         if (myCategory == null) {
-            pLoan.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
+            myLoan.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
         } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
-            pLoan.addError(ERROR_BADCATEGORY, MoneyWiseBasicResource.CATEGORY_NAME);
+            myLoan.addError(ERROR_BADCATEGORY, MoneyWiseBasicResource.CATEGORY_NAME);
         }
 
         /* Currency must be non-null and enabled */
         if (myCurrency == null) {
-            pLoan.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);
+            myLoan.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);
         } else if (!myCurrency.getEnabled()) {
-            pLoan.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
+            myLoan.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
         }
 
         /* Loan must be a child */
         if (!myClass.isChild()) {
-            pLoan.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseBasicResource.ASSET_PARENT);
+            myLoan.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseBasicResource.ASSET_PARENT);
 
             /* Must have parent */
         } else if (myParent == null) {
-            pLoan.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
+            myLoan.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
         } else {
             /* Parent must be suitable */
             if (!myParent.getCategoryClass().canParentLoan(myClass)) {
-                pLoan.addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
+                myLoan.addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
             }
 
             /* If we are open then parent must be open */
             if (!myLoan.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
-                pLoan.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
+                myLoan.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
         }
 
@@ -114,8 +115,8 @@ public class MoneyWiseValidateLoan
         }
 
         /* Set validation flag */
-        if (!pLoan.hasErrors()) {
-            pLoan.setValidEdit();
+        if (!myLoan.hasErrors()) {
+            myLoan.setValidEdit();
         }
     }
 

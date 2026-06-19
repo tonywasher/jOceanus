@@ -16,13 +16,14 @@
  */
 package io.github.tonywasher.joceanus.prometheus.data;
 
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionValues;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValuesCtl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -39,7 +40,8 @@ import java.util.Map.Entry;
  *
  * @author Tony Washer
  */
-public class PrometheusDataValues {
+public class PrometheusDataValues
+        implements PrometheusDataValuesCtl {
     /**
      * Interface for an infoSet item.
      */

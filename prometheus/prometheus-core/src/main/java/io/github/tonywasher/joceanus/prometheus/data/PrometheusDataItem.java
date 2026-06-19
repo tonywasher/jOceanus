@@ -32,6 +32,7 @@ import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataListCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValuesCtl;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 
 import java.util.Iterator;
@@ -192,7 +193,7 @@ public abstract class PrometheusDataItem
      * @param pValues the data values
      */
     protected PrometheusDataItem(final PrometheusDataListCtl<?> pList,
-                                 final PrometheusDataValues pValues) {
+                                 final PrometheusDataValuesCtl pValues) {
         /* Record list and item references */
         this(pList, pValues.getValue(MetisDataResource.DATA_ID, Integer.class));
     }

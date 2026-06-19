@@ -1,6 +1,6 @@
 /*
  * Prometheus: Application Framework
- * Copyright 2012-2026. Tony Washer
+ * Copyright 2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -14,31 +14,25 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package io.github.tonywasher.joceanus.prometheus.data;
 
-import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 
 /**
- * Item Validator interface.
+ * Encrypted Data Interfaces.
  */
-public interface PrometheusDataValidator {
+public interface PrometheusEncrypted {
     /**
-     * Validate the item.
-     *
-     * @param pItem the item
+     * Encrypted Data Item.
      */
-    void validate(PrometheusDataItem pItem);
-
-    /**
-     * Validator factory.
-     */
-    interface PrometheusDataValidatorFactory {
+    interface PrometheusEncryptedDataItemCtl
+            extends PrometheusDataItemCtl {
         /**
-         * Obtain validator for listItem type.
+         * Get the Encryptor.
          *
-         * @param pItemType the itemType
-         * @return the validator
+         * @return the encryptor
          */
-        PrometheusDataValidator newValidator(MetisListKey pItemType);
+        PrometheusEncryptor getEncryptor();
     }
 }

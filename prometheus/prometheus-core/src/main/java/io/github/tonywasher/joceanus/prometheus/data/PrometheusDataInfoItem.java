@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusCryptographicDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusLogicException;
@@ -854,7 +855,7 @@ public abstract class PrometheusDataInfoItem
          * @param pStyle     the style of the list
          */
         protected PrometheusDataInfoList(final Class<T> pBaseClass,
-                                         final PrometheusDataSet pData,
+                                         final PrometheusCryptographicDataSet pData,
                                          final MetisListKey pItemType,
                                          final PrometheusListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);

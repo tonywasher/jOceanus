@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCashCategor
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -63,7 +64,7 @@ public class MoneyWiseValidateCash
     }
 
     @Override
-    public void validate(final PrometheusDataItem pCash) {
+    public void validate(final PrometheusDataItemCtl pCash) {
         final MoneyWiseCash myCash = (MoneyWiseCash) pCash;
         final MoneyWisePayee myParent = (MoneyWisePayee) myCash.getParent();
         final MoneyWiseCashCategory myCategory = myCash.getCategory();
@@ -74,21 +75,21 @@ public class MoneyWiseValidateCash
 
         /* Category must be non-null */
         if (myCategory == null) {
-            pCash.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
+            myCash.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
         } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
-            pCash.addError(ERROR_BADCATEGORY, MoneyWiseBasicResource.CATEGORY_NAME);
+            myCash.addError(ERROR_BADCATEGORY, MoneyWiseBasicResource.CATEGORY_NAME);
         }
 
         /* Parent must be null */
         if (myParent != null) {
-            pCash.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseBasicResource.ASSET_PARENT);
+            myCash.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseBasicResource.ASSET_PARENT);
         }
 
         /* Currency must be non-null and enabled */
         if (myCurrency == null) {
-            pCash.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);
+            myCash.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);
         } else if (!myCurrency.getEnabled()) {
-            pCash.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
+            myCash.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
         }
 
         /* If we have an infoSet */
@@ -98,8 +99,8 @@ public class MoneyWiseValidateCash
         }
 
         /* Set validation flag */
-        if (!pCash.hasErrors()) {
-            pCash.setValidEdit();
+        if (!myCash.hasErrors()) {
+            myCash.setValidEdit();
         }
     }
 

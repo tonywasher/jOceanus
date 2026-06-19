@@ -26,6 +26,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeType;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeType.MoneyWisePayeeTypeList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 
 import java.util.Iterator;
@@ -53,7 +54,7 @@ public class MoneyWiseValidatePayee
     }
 
     @Override
-    public void validate(final PrometheusDataItem pPayee) {
+    public void validate(final PrometheusDataItemCtl pPayee) {
         final MoneyWisePayee myPayee = (MoneyWisePayee) pPayee;
         final MoneyWisePayeeList myList = myPayee.getList();
         final MoneyWisePayeeType myPayeeType = myPayee.getCategory();
@@ -65,14 +66,14 @@ public class MoneyWiseValidatePayee
 
         /* PayeeType must be non-null */
         if (myPayeeType == null) {
-            pPayee.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
+            myPayee.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
         } else {
             /* Access the class */
             final MoneyWisePayeeClass myClass = myPayeeType.getPayeeClass();
 
             /* PayeeType must be enabled */
             if (!myPayeeType.getEnabled()) {
-                pPayee.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseBasicResource.CATEGORY_NAME);
+                myPayee.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseBasicResource.CATEGORY_NAME);
             }
 
             /* If the PayeeType is singular */
@@ -80,19 +81,19 @@ public class MoneyWiseValidatePayee
                 /* Count the elements of this class */
                 final MoneyWisePayeeDataMap myMap = myList.getDataMap();
                 if (!myMap.validSingularCount(myClass)) {
-                    pPayee.addError(PrometheusDataItem.ERROR_MULT, MoneyWiseBasicResource.CATEGORY_NAME);
+                    myPayee.addError(PrometheusDataItem.ERROR_MULT, MoneyWiseBasicResource.CATEGORY_NAME);
                 }
             }
         }
 
         /* Parent must be null */
         if (myParent != null) {
-            pPayee.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseBasicResource.ASSET_PARENT);
+            myPayee.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseBasicResource.ASSET_PARENT);
         }
 
         /* Currency must be null */
         if (myCurrency != null) {
-            pPayee.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseStaticDataType.CURRENCY);
+            myPayee.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseStaticDataType.CURRENCY);
         }
 
         /* If we have an infoSet */
@@ -102,8 +103,8 @@ public class MoneyWiseValidatePayee
         }
 
         /* Set validation flag */
-        if (!pPayee.hasErrors()) {
-            pPayee.setValidEdit();
+        if (!myPayee.hasErrors()) {
+            myPayee.setValidEdit();
         }
     }
 

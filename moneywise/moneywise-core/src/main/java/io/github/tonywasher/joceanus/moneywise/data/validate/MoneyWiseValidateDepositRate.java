@@ -16,14 +16,15 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositRate;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositRate.MoneyWiseDepositRateDataMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositRate.MoneyWiseDepositRateList;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValidator;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator;
 
 /**
  * Validator for DepositRate.
@@ -32,7 +33,7 @@ public class MoneyWiseValidateDepositRate
         implements PrometheusDataValidator {
 
     @Override
-    public void validate(final PrometheusDataItem pRate) {
+    public void validate(final PrometheusDataItemCtl pRate) {
         final MoneyWiseDepositRate myRate = (MoneyWiseDepositRate) pRate;
         final MoneyWiseDepositRateList myList = myRate.getList();
         final OceanusDate myDate = myRate.getEndDate();
@@ -43,30 +44,30 @@ public class MoneyWiseValidateDepositRate
         final MoneyWiseDepositRateDataMap myMap = myList.getDataMap();
         if (!myMap.validRateCount(myRate)) {
             /* Each date must be unique for deposit (even null) */
-            pRate.addError(myDate == null
+            myRate.addError(myDate == null
                     ? MoneyWiseDepositRate.ERROR_NULLDATE
                     : PrometheusDataItem.ERROR_DUPLICATE, MoneyWiseBasicResource.DEPOSITRATE_ENDDATE);
         }
 
         /* The Rate must be non-zero and greater than zero */
         if (myDepRate == null) {
-            pRate.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE);
+            myRate.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE);
         } else if (!myDepRate.isPositive()) {
-            pRate.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE);
+            myRate.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE);
         }
 
         /* The bonus rate must be non-zero if it exists */
         if (myBonus != null) {
             if (myBonus.isZero()) {
-                pRate.addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseBasicResource.DEPOSITRATE_BONUS);
+                myRate.addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseBasicResource.DEPOSITRATE_BONUS);
             } else if (!myBonus.isPositive()) {
-                pRate.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.DEPOSITRATE_BONUS);
+                myRate.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.DEPOSITRATE_BONUS);
             }
         }
 
         /* Set validation flag */
-        if (!pRate.hasErrors()) {
-            pRate.setValidEdit();
+        if (!myRate.hasErrors()) {
+            myRate.setValidEdit();
         }
     }
 }

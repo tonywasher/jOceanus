@@ -231,9 +231,9 @@ public final class MoneyWiseSecurityHolding
      */
     private String generateName() {
         /* Build and return the name */
-        return thePortfolio.getName() +
-                SECURITYHOLDING_SEP +
-                theSecurity.getName();
+        return thePortfolio.getName()
+                + SECURITYHOLDING_SEP
+                + theSecurity.getName();
     }
 
     /**

@@ -22,6 +22,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseRegion;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionDataMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoLinkSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
@@ -43,7 +44,7 @@ public class MoneyWiseValidateRegion
     }
 
     @Override
-    public void validate(final PrometheusDataItem pRegion) {
+    public void validate(final PrometheusDataItemCtl pRegion) {
         final MoneyWiseRegion myRegion = (MoneyWiseRegion) pRegion;
         final MoneyWiseRegionList myList = myRegion.getList();
         final String myName = myRegion.getName();
@@ -52,35 +53,35 @@ public class MoneyWiseValidateRegion
 
         /* Name must be non-null */
         if (myName == null) {
-            pRegion.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
+            myRegion.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
 
             /* Else check the name */
         } else {
             /* The description must not be too long */
             if (myName.length() > PrometheusDataItem.NAMELEN) {
-                pRegion.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);
+                myRegion.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);
             }
 
             /* Check that the name is unique */
             if (!myMap.validNameCount(myName)) {
-                pRegion.addError(PrometheusDataItem.ERROR_DUPLICATE, PrometheusDataResource.DATAITEM_FIELD_NAME);
+                myRegion.addError(PrometheusDataItem.ERROR_DUPLICATE, PrometheusDataResource.DATAITEM_FIELD_NAME);
             }
 
             /* Check that the name does not contain invalid characters */
             if (myName.contains(PrometheusDataInfoLinkSet.ITEM_SEP)) {
-                pRegion.addError(PrometheusDataItem.ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);
+                myRegion.addError(PrometheusDataItem.ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);
             }
         }
 
         /* Check description length */
         if (myDesc != null
                 && myDesc.length() > PrometheusDataItem.DESCLEN) {
-            pRegion.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
+            myRegion.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
         }
 
         /* Set validation flag */
-        if (!pRegion.hasErrors()) {
-            pRegion.setValidEdit();
+        if (!myRegion.hasErrors()) {
+            myRegion.setValidEdit();
         }
     }
 

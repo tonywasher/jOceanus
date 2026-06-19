@@ -34,7 +34,7 @@
         <JSONVersion>20260522</JSONVersion>
         <ApacheMavenVersion>3.9.15</ApacheMavenVersion>
         <MySQLVersion>9.7.0</MySQLVersion>
-        <MariaDBVersion>3.5.8</MariaDBVersion>
+        <MariaDBVersion>3.5.9</MariaDBVersion>
         <PostGreSQLVersion>42.7.11</PostGreSQLVersion>
         <MSSQLVersion>13.4.0.jre11</MSSQLVersion>
         <H2Version>2.4.240</H2Version>

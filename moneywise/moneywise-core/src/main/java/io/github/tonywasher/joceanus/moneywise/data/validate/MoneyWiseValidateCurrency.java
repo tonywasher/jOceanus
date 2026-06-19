@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyDataMap;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateStatic;
 
@@ -30,25 +31,25 @@ public class MoneyWiseValidateCurrency
         extends PrometheusValidateStatic {
 
     @Override
-    public void validate(final PrometheusDataItem pCurrency) {
+    public void validate(final PrometheusDataItemCtl pCurrency) {
         final MoneyWiseCurrency myCurrency = (MoneyWiseCurrency) pCurrency;
         final MoneyWiseCurrencyList myList = myCurrency.getList();
         final MoneyWiseCurrencyDataMap myMap = myList.getDataMap();
 
         /* Check that reporting is non-null */
         if (myCurrency.isReporting() == null) {
-            pCurrency.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticResource.CURRENCY_REPORTING);
+            myCurrency.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticResource.CURRENCY_REPORTING);
 
             /* else check various things for a reporting currency */
         } else if (Boolean.TRUE.equals(myCurrency.isReporting())) {
             /* Check that default is enabled */
             if (!myCurrency.getEnabled()) {
-                pCurrency.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticResource.CURRENCY_REPORTING);
+                myCurrency.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticResource.CURRENCY_REPORTING);
             }
 
             /* Check for multiple reports */
             if (!myMap.validReportCount()) {
-                pCurrency.addError("Multiple reporting currencies", MoneyWiseStaticResource.CURRENCY_REPORTING);
+                myCurrency.addError("Multiple reporting currencies", MoneyWiseStaticResource.CURRENCY_REPORTING);
             }
         }
 

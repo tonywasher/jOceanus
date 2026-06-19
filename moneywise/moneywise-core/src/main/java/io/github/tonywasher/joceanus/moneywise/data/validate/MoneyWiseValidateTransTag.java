@@ -22,6 +22,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag.MoneyWiseTagDataMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoLinkSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
@@ -43,7 +44,7 @@ public class MoneyWiseValidateTransTag
     }
 
     @Override
-    public void validate(final PrometheusDataItem pTag) {
+    public void validate(final PrometheusDataItemCtl pTag) {
         final MoneyWiseTransTag myTag = (MoneyWiseTransTag) pTag;
         final MoneyWiseTransTagList myList = myTag.getList();
         final String myName = myTag.getName();
@@ -52,35 +53,35 @@ public class MoneyWiseValidateTransTag
 
         /* Name must be non-null */
         if (myName == null) {
-            pTag.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
+            myTag.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
 
             /* Else check the name */
         } else {
             /* The description must not be too long */
             if (myName.length() > PrometheusDataItem.NAMELEN) {
-                pTag.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);
+                myTag.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);
             }
 
             /* Check that the name is unique */
             if (!myMap.validNameCount(myName)) {
-                pTag.addError(PrometheusDataItem.ERROR_DUPLICATE, PrometheusDataResource.DATAITEM_FIELD_NAME);
+                myTag.addError(PrometheusDataItem.ERROR_DUPLICATE, PrometheusDataResource.DATAITEM_FIELD_NAME);
             }
 
             /* Check that the name does not contain invalid characters */
             if (myName.contains(PrometheusDataInfoLinkSet.ITEM_SEP)) {
-                pTag.addError(PrometheusDataItem.ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);
+                myTag.addError(PrometheusDataItem.ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);
             }
         }
 
         /* Check description length */
         if (myDesc != null
                 && myDesc.length() > PrometheusDataItem.DESCLEN) {
-            pTag.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
+            myTag.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
         }
 
         /* Set validation flag */
-        if (!pTag.hasErrors()) {
-            pTag.setValidEdit();
+        if (!myTag.hasErrors()) {
+            myTag.setValidEdit();
         }
     }
 

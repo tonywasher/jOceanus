@@ -33,6 +33,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePortfolioTy
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePortfolioType.MoneyWisePortfolioTypeList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -74,10 +75,10 @@ public class MoneyWiseValidatePortfolio
     }
 
     @Override
-    public void validate(final PrometheusDataItem pPortfolio) {
+    public void validate(final PrometheusDataItemCtl pPortfolio) {
         final MoneyWisePortfolio myPortfolio = (MoneyWisePortfolio) pPortfolio;
         final MoneyWisePortfolioList myList = myPortfolio.getList();
-        final MoneyWisePayee myParent = (MoneyWisePayee) myPortfolio.getParent();
+        final MoneyWisePayee myParent = myPortfolio.getParent();
         final MoneyWisePortfolioType myPortType = myPortfolio.getCategory();
         final MoneyWiseCurrency myCurrency = myPortfolio.getAssetCurrency();
 
@@ -86,14 +87,14 @@ public class MoneyWiseValidatePortfolio
 
         /* PortfolioType must be non-null */
         if (myPortType == null) {
-            pPortfolio.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
+            myPortfolio.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
         } else {
             /* Access the class */
             final MoneyWisePortfolioClass myClass = myPortType.getPortfolioClass();
 
             /* PortfolioType must be enabled */
             if (!myPortType.getEnabled()) {
-                pPortfolio.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseBasicResource.CATEGORY_NAME);
+                myPortfolio.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseBasicResource.CATEGORY_NAME);
             }
 
             /* If the PortfolioType is singular */
@@ -101,32 +102,32 @@ public class MoneyWiseValidatePortfolio
                 /* Count the elements of this class */
                 final MoneyWisePortfolioDataMap myMap = myList.getDataMap();
                 if (!myMap.validSingularCount(myClass)) {
-                    pPortfolio.addError(PrometheusDataItem.ERROR_MULT, MoneyWiseBasicResource.CATEGORY_NAME);
+                    myPortfolio.addError(PrometheusDataItem.ERROR_MULT, MoneyWiseBasicResource.CATEGORY_NAME);
                 }
             }
         }
 
         /* Parent account must exist */
         if (myParent == null) {
-            pPortfolio.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
+            myPortfolio.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
         } else {
             /* Parent must be suitable */
             final MoneyWisePayeeClass myParClass = myParent.getCategoryClass();
             if (!myParClass.canParentPortfolio()) {
-                pPortfolio.addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
+                myPortfolio.addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
             }
 
             /* If we are open then parent must be open */
             if (!myPortfolio.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
-                pPortfolio.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
+                myPortfolio.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
         }
 
         /* Currency must be non-null and enabled */
         if (myCurrency == null) {
-            pPortfolio.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);
+            myPortfolio.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);
         } else if (!myCurrency.getEnabled()) {
-            pPortfolio.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
+            myPortfolio.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
         }
 
         /* If we have an infoSet */
@@ -136,8 +137,8 @@ public class MoneyWiseValidatePortfolio
         }
 
         /* Set validation flag */
-        if (!pPortfolio.hasErrors()) {
-            pPortfolio.setValidEdit();
+        if (!myPortfolio.hasErrors()) {
+            myPortfolio.setValidEdit();
         }
     }
 

@@ -27,6 +27,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusCryptographicDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusEncryptedDataItemCtl;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.util.Iterator;
@@ -37,7 +38,8 @@ import java.util.Iterator;
  * @author Tony Washer
  */
 public abstract class PrometheusEncryptedDataItem
-        extends PrometheusDataItem {
+        extends PrometheusDataItem
+        implements PrometheusEncryptedDataItemCtl {
     /**
      * Null Encryptor.
      */
@@ -151,11 +153,7 @@ public abstract class PrometheusEncryptedDataItem
         getValues().setUncheckedValue(PrometheusCryptographyDataType.DATAKEYSET, pId);
     }
 
-    /**
-     * Get the Encryptor.
-     *
-     * @return the encryptor
-     */
+    @Override
     public PrometheusEncryptor getEncryptor() {
         final PrometheusDataKeySet myKeySet = getDataKeySet();
         return myKeySet == null ? NULL_ENCRYPTOR : myKeySet.getEncryptor();
@@ -369,7 +367,7 @@ public abstract class PrometheusEncryptedDataItem
          * @param pItemType  the item type
          */
         protected PrometheusEncryptedList(final Class<T> pBaseClass,
-                                          final PrometheusDataSet pData,
+                                          final PrometheusCryptographicDataSet pData,
                                           final MetisListKey pItemType) {
             this(pBaseClass, pData, pItemType, PrometheusListStyle.CORE);
         }
@@ -383,7 +381,7 @@ public abstract class PrometheusEncryptedDataItem
          * @param pStyle     the style of the list
          */
         protected PrometheusEncryptedList(final Class<T> pBaseClass,
-                                          final PrometheusDataSet pData,
+                                          final PrometheusCryptographicDataSet pData,
                                           final MetisListKey pItemType,
                                           final PrometheusListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);

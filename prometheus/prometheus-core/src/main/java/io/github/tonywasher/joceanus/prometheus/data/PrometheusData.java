@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.prometheus.data;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusTableItem.PrometheusTableList;
@@ -171,7 +172,7 @@ public interface PrometheusData {
          * @param pName the name of the item
          * @return the matching item
          */
-        T findItemByName(final String pName);
+        T findItemByName(String pName);
 
         /**
          * Obtain item by id.
@@ -183,7 +184,7 @@ public interface PrometheusData {
     }
 
     /**
-     * DataSet interface.
+     * DataItem interface.
      */
     interface PrometheusDataItemCtl
             extends PrometheusTableItem {
@@ -200,5 +201,46 @@ public interface PrometheusData {
          * @param pId the Id
          */
         void setIndexedId(Integer pId);
+    }
+
+    /**
+     * DataItem interface.
+     */
+    interface PrometheusDataValuesCtl {
+        /**
+         * Obtain value of specified class.
+         *
+         * @param pField the Field definition
+         * @param pClass the class
+         * @param <T>    the item type
+         * @return the field value
+         */
+        <T> T getValue(MetisDataFieldId pField,
+                       Class<T> pClass);
+    }
+
+    /**
+     * Item Validator interface.
+     */
+    interface PrometheusDataValidator {
+        /**
+         * Validate the item.
+         *
+         * @param pItem the item
+         */
+        void validate(PrometheusDataItemCtl pItem);
+    }
+
+    /**
+     * Validator factory.
+     */
+    interface PrometheusDataValidatorFactory {
+        /**
+         * Obtain validator for listItem type.
+         *
+         * @param pItemType the itemType
+         * @return the validator
+         */
+        PrometheusDataValidator newValidator(MetisListKey pItemType);
     }
 }
