@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.metis.field;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldItemType;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldSetCtl;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
 
@@ -40,16 +41,11 @@ import java.util.function.Function;
  * @param <T> the data type
  */
 public class MetisFieldSet<T extends MetisFieldItem>
-        implements MetisFieldSetDef {
+        implements MetisFieldSetDef, MetisFieldSetCtl<T> {
     /**
      * Hash Prime.
      */
     public static final int HASH_PRIME = 19;
-
-    /**
-     * No Maximum Length.
-     */
-    protected static final Integer FIELD_NO_MAXLENGTH = -1;
 
     /**
      * Map of ClassName to FieldSet.
@@ -263,21 +259,13 @@ public class MetisFieldSet<T extends MetisFieldItem>
                 : theClazz.getSimpleName();
     }
 
-    /**
-     * Obtain the field class.
-     *
-     * @return the field class
-     */
-    protected Class<T> getFieldClass() {
+    @Override
+    public Class<T> getFieldClass() {
         return theClazz;
     }
 
-    /**
-     * Obtain next value index.
-     *
-     * @return the next index
-     */
-    protected Integer getNextIndex() {
+    @Override
+    public Integer getNextIndex() {
         /* return the new index id */
         final Integer myIndex = theNextIndex;
         theNextIndex = theNextIndex + 1;

@@ -16,22 +16,20 @@
  */
 package io.github.tonywasher.joceanus.metis.field;
 
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataDeletableItem;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.data.MetisDataState;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldUpdatableItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldValidation.MetisFieldError;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersion.MetisFieldVersionedItemCtl;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 /**
  * Data Version Control.
  */
 public abstract class MetisFieldVersionedItem
-        implements MetisFieldTableItem, MetisDataDeletableItem, MetisFieldUpdatableItem {
+        implements MetisFieldVersionedItemCtl {
     /**
      * Report fields.
      */

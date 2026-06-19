@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.metis.field;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
@@ -24,13 +23,17 @@ import io.github.tonywasher.joceanus.metis.exc.MetisDataException;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersion.MetisFieldVersionValuesCtl;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersion.MetisFieldVersionedItemCtl;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 import java.util.Iterator;
 
 /**
  * Set of dataValues.
  */
-public class MetisFieldVersionValues {
+public class MetisFieldVersionValues
+        implements MetisFieldVersionValuesCtl {
     /**
      * The hash value for deletion flag.
      */
@@ -49,7 +52,7 @@ public class MetisFieldVersionValues {
     /**
      * The item to which the valueSet belongs.
      */
-    private final MetisFieldVersionedItem theItem;
+    private final MetisFieldVersionedItemCtl theItem;
 
     /**
      * The fields for this valueSet.
@@ -81,7 +84,7 @@ public class MetisFieldVersionValues {
      *
      * @param pItem the associated item
      */
-    protected MetisFieldVersionValues(final MetisFieldVersionedItem pItem) {
+    protected MetisFieldVersionValues(final MetisFieldVersionedItemCtl pItem) {
         /* Create the values array and initialise to null */
         theItem = pItem;
         theFields = pItem.getDataFieldSet();
@@ -103,7 +106,7 @@ public class MetisFieldVersionValues {
      *
      * @return the item
      */
-    protected MetisFieldVersionedItem getItem() {
+    protected MetisFieldVersionedItemCtl getItem() {
         return theItem;
     }
 

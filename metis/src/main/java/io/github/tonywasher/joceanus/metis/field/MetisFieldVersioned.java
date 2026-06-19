@@ -16,10 +16,12 @@
  */
 package io.github.tonywasher.joceanus.metis.field;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersion.MetisFieldVersionedItemCtl;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersion.MetisFieldVersionedSetCtl;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 import java.util.Objects;
 
@@ -28,7 +30,7 @@ import java.util.Objects;
  *
  * @param <T> the data type
  */
-public class MetisFieldVersioned<T extends MetisFieldVersionedItem>
+public class MetisFieldVersioned<T extends MetisFieldVersionedItemCtl>
         extends MetisField<T>
         implements MetisFieldVersionedDef {
     /**
@@ -50,7 +52,7 @@ public class MetisFieldVersioned<T extends MetisFieldVersionedItem>
      * @param pMaxLength the maximum length of the field
      * @param pEquality  the field equality type
      */
-    protected MetisFieldVersioned(final MetisFieldVersionedSet<T> pAnchor,
+    protected MetisFieldVersioned(final MetisFieldVersionedSetCtl<T> pAnchor,
                                   final MetisDataFieldId pId,
                                   final MetisDataType pDataType,
                                   final Integer pMaxLength,
@@ -66,8 +68,8 @@ public class MetisFieldVersioned<T extends MetisFieldVersionedItem>
     }
 
     @Override
-    public MetisFieldVersionedSet<T> getAnchor() {
-        return (MetisFieldVersionedSet<T>) super.getAnchor();
+    public MetisFieldVersionedSetCtl<T> getAnchor() {
+        return (MetisFieldVersionedSetCtl<T>) super.getAnchor();
     }
 
     @Override
@@ -88,7 +90,7 @@ public class MetisFieldVersioned<T extends MetisFieldVersionedItem>
     @Override
     public Object getFieldValue(final Object pObject) {
         final T myObject = getAnchor().getFieldClass().cast(pObject);
-        final MetisFieldVersionValues myValues = myObject.getValues();
+        final MetisFieldVersionValues myValues = (MetisFieldVersionValues) myObject.getValues();
         return myValues.getValue(this);
     }
 
@@ -96,7 +98,7 @@ public class MetisFieldVersioned<T extends MetisFieldVersionedItem>
     public void setFieldValue(final Object pObject,
                               final Object pValue) throws OceanusException {
         final T myObject = getAnchor().getFieldClass().cast(pObject);
-        final MetisFieldVersionValues myValues = myObject.getValues();
+        final MetisFieldVersionValues myValues = (MetisFieldVersionValues) myObject.getValues();
         myValues.setValue(this, pValue);
     }
 
@@ -104,7 +106,7 @@ public class MetisFieldVersioned<T extends MetisFieldVersionedItem>
     public void setFieldUncheckedValue(final Object pObject,
                                        final Object pValue) {
         final T myObject = getAnchor().getFieldClass().cast(pObject);
-        final MetisFieldVersionValues myValues = myObject.getValues();
+        final MetisFieldVersionValues myValues = (MetisFieldVersionValues) myObject.getValues();
         myValues.setUncheckedValue(this, pValue);
     }
 
