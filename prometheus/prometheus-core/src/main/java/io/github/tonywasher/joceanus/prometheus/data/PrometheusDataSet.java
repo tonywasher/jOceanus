@@ -29,8 +29,9 @@ import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlData.PrometheusControlDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlKey.PrometheusControlKeyList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlKeySet.PrometheusControlKeySetList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusCryptographicDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataListCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorFactory;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem.PrometheusEncryptedList;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceManager;
@@ -49,7 +50,7 @@ import java.util.Map.Entry;
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.
  */
 public abstract class PrometheusDataSet
-        implements MetisFieldItem, PrometheusDataListSet {
+        implements MetisFieldItem, PrometheusCryptographicDataSet {
     /**
      * The Hash prime.
      */
@@ -199,11 +200,7 @@ public abstract class PrometheusDataSet
         return PrometheusDataSet.class.getSimpleName();
     }
 
-    /**
-     * Obtain the data formatter.
-     *
-     * @return the formatter
-     */
+    @Override
     public OceanusDataFormatter getDataFormatter() {
         return theFormatter;
     }
@@ -217,24 +214,15 @@ public abstract class PrometheusDataSet
         theValidatorFactory = pFactory;
     }
 
-    /**
-     * Obtain a validator fot=r the itemType.
-     *
-     * @param pItemType the itemType
-     * @return the validator.
-     */
-    PrometheusDataValidator getValidator(final MetisListKey pItemType) {
+    @Override
+    public PrometheusDataValidator getValidator(final MetisListKey pItemType) {
         if (theValidatorFactory == null) {
             throw new IllegalStateException("Validator factory not set");
         }
         return theValidatorFactory.newValidator(pItemType);
     }
 
-    /**
-     * Get Password Manager.
-     *
-     * @return the password manager
-     */
+    @Override
     public PrometheusSecurityPasswordManager getPasswordMgr() {
         return thePasswordMgr;
     }
@@ -275,11 +263,7 @@ public abstract class PrometheusDataSet
         return getDataList(PrometheusCryptographyDataType.CONTROLDATA, PrometheusControlDataList.class);
     }
 
-    /**
-     * Get Version.
-     *
-     * @return the version
-     */
+    @Override
     public int getVersion() {
         return theVersion;
     }
@@ -293,11 +277,7 @@ public abstract class PrometheusDataSet
         return theNumActiveKeySets;
     }
 
-    /**
-     * Get KeySetSpec.
-     *
-     * @return the keySetSpec
-     */
+    @Override
     public GordianKeySetSpec getKeySetSpec() {
         return theKeySetSpec;
     }
@@ -535,8 +515,8 @@ public abstract class PrometheusDataSet
     }
 
     @Override
-    public <L extends PrometheusDataList<?>> L getDataList(final MetisListKey pListType,
-                                                           final Class<L> pListClass) {
+    public <L extends PrometheusDataListCtl<?>> L getDataList(final MetisListKey pListType,
+                                                              final Class<L> pListClass) {
         /* Access the list */
         final PrometheusDataList<?> myList = theListMap.get(pListType);
 

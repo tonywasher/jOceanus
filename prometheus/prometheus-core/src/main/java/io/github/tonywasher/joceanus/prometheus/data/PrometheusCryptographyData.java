@@ -19,6 +19,8 @@ package io.github.tonywasher.joceanus.prometheus.data;
 
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
 
 /**
  * Cryptography Data interfaces.
@@ -27,8 +29,35 @@ public interface PrometheusCryptographyData {
     /**
      * PrometheusControlData interface.
      */
+    interface PrometheusCryptographicDataSet
+            extends PrometheusDataSetCtl {
+        /**
+         * Get the control key.
+         *
+         * @return the control key
+         */
+        PrometheusControlDataCtl getControl();
+    }
+
+    /**
+     * PrometheusControlData interface.
+     */
     interface PrometheusControlDataCtl
             extends PrometheusTableItem {
+        /**
+         * Get the control key.
+         *
+         * @return the control key
+         */
+        PrometheusControlKeyCtl getControlKey();
+
+        /**
+         * Set a new ControlKey.
+         *
+         * @param pControl the new control key
+         * @throws OceanusException on error
+         */
+        void setControlKey(PrometheusControlKeyCtl pControl) throws OceanusException;
     }
 
     /**

@@ -834,7 +834,7 @@ public class MoneyWisePortfolio
         public MoneyWiseSecurityHoldingMap getSecurityHoldingsMap() {
             if (theSecurityHoldings == null) {
                 theSecurityHoldings = getEditSet() == null
-                        ? new MoneyWiseSecurityHoldingMap(getDataSet())
+                        ? new MoneyWiseSecurityHoldingMap((PrometheusDataSet) getDataSet())
                         : new MoneyWiseSecurityHoldingMap(getEditSet());
             }
             return theSecurityHoldings;

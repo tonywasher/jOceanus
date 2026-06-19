@@ -31,6 +31,7 @@ import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlKeyCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlKeySetCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusDataKeySetCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusSecurityException;
@@ -114,7 +115,7 @@ public class PrometheusControlKeySet
         super(pList, pValues);
 
         /* Access the DataSet */
-        final PrometheusDataSet myData = getDataSet();
+        final PrometheusDataSetCtl myData = getDataSet();
 
         /* Store the ControlKey */
         Object myValue = pValues.getValue(PrometheusCryptographyDataType.CONTROLKEY);
@@ -123,7 +124,7 @@ public class PrometheusControlKeySet
             setValueControlKey(i);
 
             /* Resolve the ControlKey */
-            resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());
+            resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, PrometheusCryptographyDataType.CONTROLKEY);
         } else if (myValue instanceof PrometheusControlKeyCtl k) {
             /* Store the controlKey */
             setValueControlKey(k);
@@ -174,7 +175,7 @@ public class PrometheusControlKeySet
             setValueControlKey(pControlKey);
 
             /* Access the Security manager */
-            final PrometheusDataSet myData = getDataSet();
+            final PrometheusDataSetCtl myData = getDataSet();
 
             /* Create the KeySet */
             final GordianFactory myFactory = getSecurityFactory();
@@ -317,8 +318,8 @@ public class PrometheusControlKeySet
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
-        final PrometheusDataSet myData = getDataSet();
-        resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());
+        final PrometheusDataSetCtl myData = getDataSet();
+        resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, PrometheusCryptographyDataType.CONTROLKEY);
         final PrometheusControlKeyCtl myControlKey = getControlKey();
 
         /* Register the KeySet */
@@ -331,9 +332,10 @@ public class PrometheusControlKeySet
      * @param pData the DataSet
      * @throws OceanusException on error
      */
-    private void allocateDataKeySets(final PrometheusDataSet pData) throws OceanusException {
+    private void allocateDataKeySets(final PrometheusDataSetCtl pData) throws OceanusException {
         /* Access the DataKeySet List */
-        final PrometheusDataKeySetList mySets = pData.getDataKeySets();
+        final PrometheusDataKeySetList mySets
+                = pData.getDataList(PrometheusCryptographyDataType.DATAKEYSET, PrometheusDataKeySetList.class);
         setNewVersion();
 
         /* Loop to create sufficient DataKeySets */
@@ -381,7 +383,7 @@ public class PrometheusControlKeySet
          *
          * @param pData the DataSet for the list
          */
-        protected PrometheusControlKeySetList(final PrometheusDataSet pData) {
+        protected PrometheusControlKeySetList(final PrometheusDataSetCtl pData) {
             this(pData, PrometheusListStyle.CORE);
         }
 
@@ -391,7 +393,7 @@ public class PrometheusControlKeySet
          * @param pData  the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected PrometheusControlKeySetList(final PrometheusDataSet pData,
+        protected PrometheusControlKeySetList(final PrometheusDataSetCtl pData,
                                               final PrometheusListStyle pStyle) {
             super(PrometheusControlKeySet.class, pData, PrometheusCryptographyDataType.CONTROLKEYSET, pStyle);
         }
@@ -438,7 +440,7 @@ public class PrometheusControlKeySet
         }
 
         @Override
-        public PrometheusControlKeySetList deriveDifferences(final PrometheusDataSet pDataSet,
+        public PrometheusControlKeySetList deriveDifferences(final PrometheusDataSetCtl pDataSet,
                                                              final PrometheusDataList<?> pOld) {
             return (PrometheusControlKeySetList) super.deriveDifferences(pDataSet, pOld);
         }
@@ -500,8 +502,9 @@ public class PrometheusControlKeySet
             final PrometheusControlKeySet mySet = addValuesItem(myValues);
 
             /* Access the ControlKeySet List */
-            final PrometheusDataSet myData = getDataSet();
-            final PrometheusDataKeySetList myKeySets = myData.getDataKeySets();
+            final PrometheusDataSetCtl myData = getDataSet();
+            final PrometheusDataKeySetList myKeySets
+                    = myData.getDataList(PrometheusCryptographyDataType.DATAKEYSET, PrometheusDataKeySetList.class);
 
             /* Create a new DataKeySetCache for this ControlKeySet */
             final DataKeySetCache mySource = pKeySet.getDataKeySets();

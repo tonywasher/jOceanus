@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusLogicException;
 
@@ -494,7 +495,7 @@ public abstract class PrometheusDataInfoItem
         final PrometheusDataInfoClass myClass = (PrometheusDataInfoClass) myType.getStaticClass();
 
         /* Access the DataSet and parser */
-        final PrometheusDataSet myDataSet = getDataSet();
+        final PrometheusDataSetCtl myDataSet = getDataSet();
         final OceanusDataFormatter myFormatter = myDataSet.getDataFormatter();
         final OceanusDecimalParser myParser = myFormatter.getDecimalParser();
 

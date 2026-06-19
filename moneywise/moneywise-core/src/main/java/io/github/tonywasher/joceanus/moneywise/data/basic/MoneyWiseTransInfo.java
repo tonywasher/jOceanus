@@ -27,6 +27,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoTy
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
@@ -285,7 +286,7 @@ public class MoneyWiseTransInfo
         final MoneyWiseTransInfoType myType = getInfoType();
         if (myType.isLink()) {
             /* Access data */
-            final PrometheusDataSet myData = getDataSet();
+            final PrometheusDataSetCtl myData = getDataSet();
             final Object myLinkId = getValues().getValue(PrometheusDataResource.DATAINFO_VALUE);
 
             /* Switch on link type */

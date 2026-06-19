@@ -30,6 +30,8 @@ import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlKeySet.PrometheusControlKeySetList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlKeyCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlKeySetCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusCryptographicDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 
@@ -124,7 +126,7 @@ public final class PrometheusControlKey
                 setValueFactoryLock(l);
             } else if (getLockBytes() != null) {
                 /* Access the Security manager */
-                final PrometheusDataSet myData = getDataSet();
+                final PrometheusDataSetCtl myData = getDataSet();
                 final PrometheusSecurityPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
                 /* Resolve the factoryLock */
@@ -163,7 +165,7 @@ public final class PrometheusControlKey
         /* Protect against exceptions */
         try {
             /* Access the Security manager */
-            final PrometheusDataSet myData = getDataSet();
+            final PrometheusDataSetCtl myData = getDataSet();
             final PrometheusSecurityPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
             /* Create a new factoryLock with new password */
@@ -201,7 +203,7 @@ public final class PrometheusControlKey
         /* Protect against exceptions */
         try {
             /* Access the Security manager */
-            final PrometheusDataSet myData = getDataSet();
+            final PrometheusDataSetCtl myData = getDataSet();
             final PrometheusSecurityPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
             /* ReSeed the security generator */
@@ -333,9 +335,9 @@ public final class PrometheusControlKey
      * @param pData the DataSet
      * @throws OceanusException on error
      */
-    private void allocateControlKeySets(final PrometheusDataSet pData) throws OceanusException {
+    private void allocateControlKeySets(final PrometheusDataSetCtl pData) throws OceanusException {
         /* Access the ControlKeySet List */
-        final PrometheusControlKeySetList mySets = pData.getControlKeySets();
+        final PrometheusControlKeySetList mySets = pData.getDataList(PrometheusCryptographyDataType.CONTROLKEYSET, PrometheusControlKeySetList.class);
         setNewVersion();
 
         /* Loop to create sufficient ControlKeySets */
@@ -370,7 +372,7 @@ public final class PrometheusControlKey
      */
     void updateFactoryLock(final String pSource) throws OceanusException {
         /* Access the Security manager */
-        final PrometheusDataSet myData = getDataSet();
+        final PrometheusDataSetCtl myData = getDataSet();
         final PrometheusSecurityPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
         /* Obtain a new factoryLock */
@@ -409,7 +411,7 @@ public final class PrometheusControlKey
          *
          * @param pData the DataSet for the list
          */
-        protected PrometheusControlKeyList(final PrometheusDataSet pData) {
+        protected PrometheusControlKeyList(final PrometheusDataSetCtl pData) {
             this(pData, PrometheusListStyle.CORE);
         }
 
@@ -419,7 +421,7 @@ public final class PrometheusControlKey
          * @param pData  the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected PrometheusControlKeyList(final PrometheusDataSet pData,
+        protected PrometheusControlKeyList(final PrometheusDataSetCtl pData,
                                            final PrometheusListStyle pStyle) {
             super(PrometheusControlKey.class, pData, PrometheusCryptographyDataType.CONTROLKEY, pStyle);
         }
@@ -454,6 +456,11 @@ public final class PrometheusControlKey
         }
 
         @Override
+        public PrometheusCryptographicDataSet getDataSet() {
+            return (PrometheusCryptographicDataSet) super.getDataSet();
+        }
+
+        @Override
         protected PrometheusControlKeyList getEmptyList(final PrometheusListStyle pStyle) {
             final PrometheusControlKeyList myList = new PrometheusControlKeyList(this);
             myList.setStyle(pStyle);
@@ -466,7 +473,7 @@ public final class PrometheusControlKey
         }
 
         @Override
-        public PrometheusControlKeyList deriveDifferences(final PrometheusDataSet pDataSet,
+        public PrometheusControlKeyList deriveDifferences(final PrometheusDataSetCtl pDataSet,
                                                           final PrometheusDataList<?> pOld) {
             return (PrometheusControlKeyList) super.deriveDifferences(pDataSet, pOld);
         }
@@ -544,10 +551,10 @@ public final class PrometheusControlKey
          * @param pDatabase the DataSet for the Database
          * @throws OceanusException on error
          */
-        protected void initialiseSecurity(final PrometheusDataSet pDatabase) throws OceanusException {
+        protected void initialiseSecurity(final PrometheusCryptographicDataSet pDatabase) throws OceanusException {
             /* Access the active control key from the database */
-            final PrometheusDataSet myData = getDataSet();
-            final PrometheusControlKey myDatabaseKey = pDatabase.getControlKey();
+            final PrometheusCryptographicDataSet myData = getDataSet();
+            final PrometheusControlKey myDatabaseKey = (PrometheusControlKey) pDatabase.getControl().getControlKey();
             final PrometheusControlKey myKey;
 
             /* If we have an existing security key */
@@ -570,8 +577,8 @@ public final class PrometheusControlKey
          */
         protected void purgeOldControlKeys() {
             /* Access the current control Key */
-            final PrometheusDataSet myData = getDataSet();
-            final PrometheusControlKey myKey = myData.getControlKey();
+            final PrometheusCryptographicDataSet myData = getDataSet();
+            final PrometheusControlKeyCtl myKey = myData.getControl().getControlKey();
 
             /* Loop through the controlKeys */
             final Iterator<PrometheusControlKey> myIterator = iterator();
@@ -604,8 +611,9 @@ public final class PrometheusControlKey
             final PrometheusControlKey myControl = addValuesItem(myValues);
 
             /* Access the ControlKeySet List */
-            final PrometheusDataSet myData = getDataSet();
-            final PrometheusControlKeySetList myKeySets = myData.getControlKeySets();
+            final PrometheusDataSetCtl myData = getDataSet();
+            final PrometheusControlKeySetList myKeySets
+                    = myData.getDataList(PrometheusCryptographyDataType.CONTROLKEYSET, PrometheusControlKeySetList.class);
 
             /* Create a new ControlKeySetCache for this ControlKey */
             final ControlKeySetCache mySource = pControlKey.getControlKeySets();
