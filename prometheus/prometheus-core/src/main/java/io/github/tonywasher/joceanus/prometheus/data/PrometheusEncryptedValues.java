@@ -16,12 +16,13 @@
  */
 package io.github.tonywasher.joceanus.prometheus.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionValues;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusEncryptedDataItemCtl;
 
 import java.util.Iterator;
 
@@ -35,7 +36,7 @@ public class PrometheusEncryptedValues
      *
      * @param pItem the associated item
      */
-    public PrometheusEncryptedValues(final PrometheusEncryptedDataItem pItem) {
+    public PrometheusEncryptedValues(final PrometheusEncryptedDataItemCtl pItem) {
         super(pItem);
     }
 
@@ -48,8 +49,8 @@ public class PrometheusEncryptedValues
     }
 
     @Override
-    protected PrometheusEncryptedDataItem getItem() {
-        return (PrometheusEncryptedDataItem) super.getItem();
+    protected PrometheusEncryptedDataItemCtl getItem() {
+        return (PrometheusEncryptedDataItemCtl) super.getItem();
     }
 
     @Override
@@ -136,7 +137,7 @@ public class PrometheusEncryptedValues
                 //&& theEncryptor != null
                 && myValue != null) {
             /* Encrypt the value */
-            final PrometheusEncryptedDataItem myItem = getItem();
+            final PrometheusEncryptedDataItemCtl myItem = getItem();
             final PrometheusEncryptor myEncryptor = myItem.getEncryptor();
             myValue = myEncryptor.encryptValue(pValue, pField);
         }
@@ -152,7 +153,7 @@ public class PrometheusEncryptedValues
      */
     public void updateSecurity() throws OceanusException {
         /* Loop through the fields */
-        final PrometheusEncryptedDataItem myItem = getItem();
+        final PrometheusEncryptedDataItemCtl myItem = getItem();
         final PrometheusEncryptor myEncryptor = myItem.getEncryptor();
         final MetisFieldSetDef myFieldSet = getFields();
         final Iterator<MetisFieldDef> myIterator = myFieldSet.fieldIterator();
@@ -180,7 +181,7 @@ public class PrometheusEncryptedValues
      */
     public void adoptSecurity(final PrometheusEncryptedValues pBaseValues) throws OceanusException {
         /* Loop through the fields */
-        final PrometheusEncryptedDataItem myItem = getItem();
+        final PrometheusEncryptedDataItemCtl myItem = getItem();
         final PrometheusEncryptor myEncryptor = myItem.getEncryptor();
         final MetisFieldSetDef myFieldSet = getFields();
         final Iterator<MetisFieldDef> myIterator = myFieldSet.fieldIterator();

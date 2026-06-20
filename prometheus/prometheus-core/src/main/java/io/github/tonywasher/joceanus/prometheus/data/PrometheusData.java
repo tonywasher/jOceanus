@@ -25,6 +25,8 @@ import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusTableItem.PrometheusTableList;
 import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 
+import java.util.Iterator;
+
 /**
  * Data Interfaces.
  */
@@ -242,5 +244,24 @@ public interface PrometheusData {
          * @return the validator
          */
         PrometheusDataValidator newValidator(MetisListKey pItemType);
+    }
+
+    /**
+     * Interface for a grouped item.
+     */
+    interface PrometheusGroupedItemCtl {
+        /**
+         * Is the item a child.
+         *
+         * @return true/false
+         */
+        boolean isChild();
+
+        /**
+         * Obtain the child iterator.
+         *
+         * @return the iterator
+         */
+        Iterator<PrometheusDataItemCtl> childIterator();
     }
 }

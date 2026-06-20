@@ -25,6 +25,7 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem.PrometheusDataInfoList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusDataInfoSetCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem.PrometheusStaticList;
 
 import java.util.HashMap;
@@ -42,7 +43,7 @@ import java.util.function.Consumer;
  * @author Tony Washer
  */
 public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
-        implements MetisFieldItem, Iterable<T> {
+        implements MetisFieldItem, PrometheusDataInfoSetCtl<T> {
     /**
      * Report fields.
      */
@@ -388,12 +389,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
         return (PrometheusDataInfoLinkSet<T>) myInfo;
     }
 
-    /**
-     * Determine whether a particular field has changed in this edit view.
-     *
-     * @param pInfoClass the class to test
-     * @return <code>true/false</code>
-     */
+    @Override
     public MetisDataDifference fieldChanged(final PrometheusDataInfoClass pInfoClass) {
         /* If this is called for LinkSet */
         if (pInfoClass.isLinkSet()) {

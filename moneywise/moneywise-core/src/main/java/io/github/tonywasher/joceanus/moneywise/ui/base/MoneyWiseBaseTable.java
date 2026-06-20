@@ -31,7 +31,7 @@ import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusDataInfoSetItemCtl;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditEntry;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -501,7 +501,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
         /* If the field is a dataInfoClass as part of an infoSetItem */
         if (pField instanceof PrometheusDataInfoClass myClass
-                && pItem instanceof PrometheusInfoSetItem myItem) {
+                && pItem instanceof PrometheusDataInfoSetItemCtl myItem) {
             /* Check with the infoSet whether the field has changed */
             return myItem.getInfoSet().fieldChanged(myClass).isDifferent();
         }
