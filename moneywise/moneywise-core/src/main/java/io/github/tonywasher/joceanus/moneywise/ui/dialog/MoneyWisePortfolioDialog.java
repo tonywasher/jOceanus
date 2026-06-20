@@ -383,7 +383,7 @@ public class MoneyWisePortfolioDialog
         pMenu.removeAllItems();
 
         /* Record active item */
-        final MoneyWisePayee myCurr = (MoneyWisePayee) pPortfolio.getParent();
+        final MoneyWisePayee myCurr = pPortfolio.getParent();
         TethysUIScrollItem<MoneyWisePayee> myActive = null;
 
         /* Access Payees */

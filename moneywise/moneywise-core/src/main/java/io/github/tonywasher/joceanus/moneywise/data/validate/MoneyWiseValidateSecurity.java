@@ -118,7 +118,8 @@ public class MoneyWiseValidateSecurity
             mySecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
         } else {
             /* If we are open then parent must be open */
-            if (!mySecurity.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
+            if (!Boolean.TRUE.equals(mySecurity.isClosed())
+                    && Boolean.TRUE.equals(myParent.isClosed())) {
                 mySecurity.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
 
@@ -200,7 +201,7 @@ public class MoneyWiseValidateSecurity
     public void autoCorrect(final MoneyWiseSecurity pSecurity) throws OceanusException {
         /* Access category class and parent */
         final MoneyWiseSecurityClass myClass = pSecurity.getCategoryClass();
-        final MoneyWisePayee myParent = (MoneyWisePayee) pSecurity.getParent();
+        final MoneyWisePayee myParent = pSecurity.getParent();
 
         /* Ensure that we have a valid parent */
         if (myParent == null

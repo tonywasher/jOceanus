@@ -422,7 +422,7 @@ public class MoneyWiseDepositDialog
 
         /* Record active item */
         final MoneyWiseDepositCategoryClass myType = pDeposit.getCategoryClass();
-        final MoneyWisePayee myCurr = (MoneyWisePayee) pDeposit.getParent();
+        final MoneyWisePayee myCurr = pDeposit.getParent();
         TethysUIScrollItem<MoneyWisePayee> myActive = null;
 
         /* Access Payees */

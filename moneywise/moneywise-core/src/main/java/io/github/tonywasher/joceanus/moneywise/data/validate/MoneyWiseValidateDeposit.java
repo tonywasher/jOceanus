@@ -34,6 +34,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * Validator for Deposit.
@@ -78,7 +79,7 @@ public class MoneyWiseValidateDeposit
         /* Category must be non-null */
         if (myCategory == null) {
             myDeposit.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
-        } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
+        } else if (Objects.requireNonNull(myCategory.getCategoryTypeClass()).isParentCategory()) {
             myDeposit.addError(ERROR_BADCATEGORY, MoneyWiseBasicResource.CATEGORY_NAME);
         }
 
@@ -103,7 +104,8 @@ public class MoneyWiseValidateDeposit
             }
 
             /* If we are open then parent must be open */
-            if (!myDeposit.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
+            if (!Boolean.TRUE.equals(myDeposit.isClosed())
+                    && Boolean.TRUE.equals(myParent.isClosed())) {
                 myDeposit.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
         }
@@ -135,7 +137,7 @@ public class MoneyWiseValidateDeposit
     public void autoCorrect(final MoneyWiseDeposit pDeposit) throws OceanusException {
         /* Ensure that we have a valid parent */
         final MoneyWiseDepositCategoryClass myClass = pDeposit.getCategoryClass();
-        final MoneyWisePayee myParent = (MoneyWisePayee) pDeposit.getParent();
+        final MoneyWisePayee myParent = pDeposit.getParent();
         if (myParent == null
                 || !myParent.getCategoryClass().canParentDeposit(myClass)) {
             pDeposit.setParent(getDefaultParent(pDeposit));

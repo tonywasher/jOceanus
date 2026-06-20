@@ -447,7 +447,7 @@ public class MoneyWiseSecurityDialog
 
         /* Record active item */
         final MoneyWiseSecurityClass myType = pSecurity.getCategoryClass();
-        final MoneyWisePayee myCurr = (MoneyWisePayee) pSecurity.getParent();
+        final MoneyWisePayee myCurr = pSecurity.getParent();
         TethysUIScrollItem<MoneyWisePayee> myActive = null;
 
         /* Access Payees */

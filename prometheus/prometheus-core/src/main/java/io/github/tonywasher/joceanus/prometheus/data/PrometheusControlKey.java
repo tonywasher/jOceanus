@@ -554,8 +554,7 @@ public final class PrometheusControlKey
         protected void initialiseSecurity(final PrometheusCryptographicDataSet pDatabase) throws OceanusException {
             /* Access the active control key from the database */
             final PrometheusCryptographicDataSet myData = getDataSet();
-            final PrometheusControlData myDatabaseData = (PrometheusControlData) pDatabase.getControl();
-            final PrometheusControlKey myDatabaseKey = myDatabaseData == null ? null : myDatabaseData.getControlKey();
+            final PrometheusControlKey myDatabaseKey = (PrometheusControlKey) pDatabase.getControlKey();
             final PrometheusControlKey myKey;
 
             /* If we have an existing security key */
