@@ -16,8 +16,8 @@
         <module name="themis-core" />
         <module name="tethys-swing" />
         <module name="moneywise-swing" />
-        <module name="themis-javafx" />
         <module name="tethys-javafx" />
+        <module name="themis-javafx" />
         <module name="prometheus-sheet-api" />
         <module name="astraeus" />
         <module name="moneywise-core" />
@@ -29,6 +29,10 @@
         <module name="prometheus-sheet-hssf" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="tethys-api" target="21" />
+      <module name="tethys-helper" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-Xmaxerrs 1000" />

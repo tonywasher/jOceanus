@@ -21,12 +21,12 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.B
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import org.bouncycastle.crypto.generators.FrodoKEMKeyPairGenerator;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.pqc.crypto.frodo.FrodoKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.frodo.FrodoKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.frodo.FrodoParameters;
-import org.bouncycastle.pqc.crypto.frodo.FrodoPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.frodo.FrodoPublicKeyParameters;
+import org.bouncycastle.crypto.params.FrodoKEMKeyGenerationParameters;
+import org.bouncycastle.crypto.params.FrodoKEMParameters;
+import org.bouncycastle.crypto.params.FrodoKEMPrivateKeyParameters;
+import org.bouncycastle.crypto.params.FrodoKEMPublicKeyParameters;
 
 import java.util.Arrays;
 
@@ -44,7 +44,7 @@ public final class BouncyFrodoKeyPair {
      * Bouncy Frodo PublicKey.
      */
     public static class BouncyFrodoPublicKey
-            extends BouncyPublicKey<FrodoPublicKeyParameters> {
+            extends BouncyPublicKey<FrodoKEMPublicKeyParameters> {
         /**
          * Constructor.
          *
@@ -52,15 +52,15 @@ public final class BouncyFrodoKeyPair {
          * @param pPublicKey the public key
          */
         BouncyFrodoPublicKey(final GordianKeyPairSpec pKeySpec,
-                             final FrodoPublicKeyParameters pPublicKey) {
+                             final FrodoKEMPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final FrodoPublicKeyParameters myThis = getPublicKey();
-            final FrodoPublicKeyParameters myThat = (FrodoPublicKeyParameters) pThat;
+            final FrodoKEMPublicKeyParameters myThis = getPublicKey();
+            final FrodoKEMPublicKeyParameters myThat = (FrodoKEMPublicKeyParameters) pThat;
 
             /* Compare keys */
             return Arrays.equals(myThis.getEncoded(), myThat.getEncoded());
@@ -71,7 +71,7 @@ public final class BouncyFrodoKeyPair {
      * Bouncy Frodo PrivateKey.
      */
     public static class BouncyFrodoPrivateKey
-            extends BouncyPrivateKey<FrodoPrivateKeyParameters> {
+            extends BouncyPrivateKey<FrodoKEMPrivateKeyParameters> {
         /**
          * Constructor.
          *
@@ -79,7 +79,7 @@ public final class BouncyFrodoKeyPair {
          * @param pPrivateKey the private key
          */
         BouncyFrodoPrivateKey(final GordianKeyPairSpec pKeySpec,
-                              final FrodoPrivateKeyParameters pPrivateKey) {
+                              final FrodoKEMPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
 
@@ -87,8 +87,8 @@ public final class BouncyFrodoKeyPair {
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final FrodoPrivateKeyParameters myThis = getPrivateKey();
-            final FrodoPrivateKeyParameters myThat = (FrodoPrivateKeyParameters) pThat;
+            final FrodoKEMPrivateKeyParameters myThis = getPrivateKey();
+            final FrodoKEMPrivateKeyParameters myThat = (FrodoKEMPrivateKeyParameters) pThat;
 
             /* Compare keys */
             return Arrays.equals(myThis.getEncoded(), myThat.getEncoded());
@@ -99,7 +99,7 @@ public final class BouncyFrodoKeyPair {
      * BouncyCastle Frodo KeyPair generator.
      */
     public static class BouncyFrodoKeyPairGenerator
-            extends BouncyKeyPairGenerator<FrodoPrivateKeyParameters, FrodoPublicKeyParameters> {
+            extends BouncyKeyPairGenerator<FrodoKEMPrivateKeyParameters, FrodoKEMPublicKeyParameters> {
         /**
          * Constructor.
          *
@@ -113,22 +113,22 @@ public final class BouncyFrodoKeyPair {
 
             /* Determine the parameters */
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
-            final FrodoParameters myParms = myKeySpec.getFRODOSpec().getParameters();
-            final FrodoKeyGenerationParameters myParams = new FrodoKeyGenerationParameters(getRandom(), myParms);
+            final FrodoKEMParameters myParms = myKeySpec.getFRODOSpec().getParameters();
+            final FrodoKEMKeyGenerationParameters myParams = new FrodoKEMKeyGenerationParameters(getRandom(), myParms);
 
             /* Create and initialise the generator */
-            setGenerator(new FrodoKeyPairGenerator(), myParams);
-            setFactorySet(BouncyPqKeyFactorySet.INSTANCE);
+            setGenerator(new FrodoKEMKeyPairGenerator(), myParams);
+            setFactorySet(BouncyStdKeyFactorySet.INSTANCE);
         }
 
         @Override
         BouncyFrodoPrivateKey newPrivateKey(final AsymmetricKeyParameter pThat) {
-            return new BouncyFrodoPrivateKey(getKeySpec(), (FrodoPrivateKeyParameters) pThat);
+            return new BouncyFrodoPrivateKey(getKeySpec(), (FrodoKEMPrivateKeyParameters) pThat);
         }
 
         @Override
         BouncyFrodoPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
-            return new BouncyFrodoPublicKey(getKeySpec(), (FrodoPublicKeyParameters) pThat);
+            return new BouncyFrodoPublicKey(getKeySpec(), (FrodoKEMPublicKeyParameters) pThat);
         }
     }
 }

@@ -148,7 +148,7 @@ public final class KeyStoreRequest {
                 agreedKeyPairRequestTest(myBuilder.newHope()),
                 agreedKeyPairRequestTest(myBuilder.bike(GordianBIKESpec.BIKE128)),
                 agreedKeyPairRequestTest(myBuilder.cmce(GordianCMCESpec.BASE3488)),
-                agreedKeyPairRequestTest(myBuilder.frodo(GordianFRODOSpec.AES640)),
+                agreedKeyPairRequestTest(myBuilder.frodo(GordianFRODOSpec.AES976)),
                 agreedKeyPairRequestTest(myBuilder.hqc(GordianHQCSpec.HQC128)),
                 agreedKeyPairRequestTest(myBuilder.mlkem(GordianMLKEMSpec.MLKEM512)),
                 agreedKeyPairRequestTest(myBuilder.ntru(GordianNTRUSpec.HPS821)),
@@ -156,7 +156,7 @@ public final class KeyStoreRequest {
                 agreedKeyPairRequestTest(myBuilder.ntruprime(GordianNTRUPrimeType.NTRUL, GordianNTRUPrimeParams.PR653)),
                 agreedKeyPairRequestTest(myBuilder.saber(GordianSABERSpec.BASE128)),
                 agreedKeyPairRequestTest(myBuilder.composite(myBuilder.cmce(GordianCMCESpec.BASE3488),
-                        myBuilder.frodo(GordianFRODOSpec.AES640),
+                        myBuilder.frodo(GordianFRODOSpec.AES976),
                         myBuilder.saber(GordianSABERSpec.BASE128))),
                 DynamicTest.dynamicTest("Cleanup", theState::cleanUp)
         ));

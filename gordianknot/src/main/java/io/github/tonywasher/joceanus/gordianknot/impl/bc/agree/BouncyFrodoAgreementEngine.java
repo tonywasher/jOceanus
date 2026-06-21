@@ -24,8 +24,8 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgre
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import org.bouncycastle.crypto.SecretWithEncapsulation;
-import org.bouncycastle.pqc.crypto.frodo.FrodoKEMExtractor;
-import org.bouncycastle.pqc.crypto.frodo.FrodoKEMGenerator;
+import org.bouncycastle.crypto.kems.FrodoKEMExtractor;
+import org.bouncycastle.crypto.kems.FrodoKEMGenerator;
 
 import javax.security.auth.DestroyFailedException;
 

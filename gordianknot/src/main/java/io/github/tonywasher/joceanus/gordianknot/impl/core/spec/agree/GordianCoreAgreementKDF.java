@@ -76,9 +76,8 @@ public final class GordianCoreAgreementKDF {
             case EC, SM2, DSTU, GOST -> isSupported4EC(pAgreeType);
             case DH -> isSupported4DH(pAgreeType);
             case XDH -> isSupported4XDH(pAgreeType);
-            case CMCE, FRODO, SABER, NEWHOPE, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME ->
-                    pAgreeType == GordianAgreementType.KEM
-                            && theKDF == GordianAgreementKDF.NONE;
+            case CMCE, SABER, NEWHOPE, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME -> theKDF == GordianAgreementKDF.NONE;
+            case FRODO -> theKDF != GordianAgreementKDF.NONE;
             default -> true;
         };
     }

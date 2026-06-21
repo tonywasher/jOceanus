@@ -20,9 +20,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianFRODOSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
-import org.bouncycastle.pqc.crypto.frodo.FrodoParameters;
-import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
+import org.bouncycastle.asn1.iso.ISOIECObjectIdentifiers;
+import org.bouncycastle.crypto.params.FrodoKEMParameters;
+import org.bouncycastle.jcajce.spec.FrodoKEMParameterSpec;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -71,14 +71,16 @@ public final class GordianCoreFRODOSpec
      *
      * @return the parameters.
      */
-    public FrodoParameters getParameters() {
+    public FrodoKEMParameters getParameters() {
         return switch (theSpec) {
-            case AES640 -> FrodoParameters.frodokem640aes;
-            case SHAKE640 -> FrodoParameters.frodokem640shake;
-            case AES976 -> FrodoParameters.frodokem976aes;
-            case SHAKE976 -> FrodoParameters.frodokem976shake;
-            case AES1344 -> FrodoParameters.frodokem1344aes;
-            case SHAKE1344 -> FrodoParameters.frodokem1344shake;
+            case AES976 -> FrodoKEMParameters.frodokem976aes;
+            case SHAKE976 -> FrodoKEMParameters.frodokem976shake;
+            case AES976E -> FrodoKEMParameters.efrodokem976aes;
+            case SHAKE976E -> FrodoKEMParameters.efrodokem976shake;
+            case AES1344 -> FrodoKEMParameters.frodokem1344aes;
+            case SHAKE1344 -> FrodoKEMParameters.frodokem1344shake;
+            case AES1344E -> FrodoKEMParameters.efrodokem1344aes;
+            case SHAKE1344E -> FrodoKEMParameters.efrodokem1344shake;
             default -> throw new IllegalArgumentException();
         };
     }
@@ -88,14 +90,16 @@ public final class GordianCoreFRODOSpec
      *
      * @return the parameters.
      */
-    public FrodoParameterSpec getParameterSpec() {
+    public FrodoKEMParameterSpec getParameterSpec() {
         return switch (theSpec) {
-            case AES640 -> FrodoParameterSpec.frodokem640aes;
-            case SHAKE640 -> FrodoParameterSpec.frodokem640shake;
-            case AES976 -> FrodoParameterSpec.frodokem976aes;
-            case SHAKE976 -> FrodoParameterSpec.frodokem976shake;
-            case AES1344 -> FrodoParameterSpec.frodokem1344aes;
-            case SHAKE1344 -> FrodoParameterSpec.frodokem1344shake;
+            case AES976 -> FrodoKEMParameterSpec.frodokem976aes;
+            case SHAKE976 -> FrodoKEMParameterSpec.frodokem976shake;
+            case AES976E -> FrodoKEMParameterSpec.efrodokem976aes;
+            case SHAKE976E -> FrodoKEMParameterSpec.efrodokem976shake;
+            case AES1344 -> FrodoKEMParameterSpec.frodokem1344aes;
+            case SHAKE1344 -> FrodoKEMParameterSpec.frodokem1344shake;
+            case AES1344E -> FrodoKEMParameterSpec.efrodokem1344aes;
+            case SHAKE1344E -> FrodoKEMParameterSpec.efrodokem1344shake;
             default -> throw new IllegalArgumentException();
         };
     }
@@ -103,12 +107,14 @@ public final class GordianCoreFRODOSpec
     @Override
     public ASN1ObjectIdentifier getIdentifier() {
         return switch (theSpec) {
-            case AES640 -> BCObjectIdentifiers.frodokem640aes;
-            case SHAKE640 -> BCObjectIdentifiers.frodokem640shake;
-            case AES976 -> BCObjectIdentifiers.frodokem976aes;
-            case SHAKE976 -> BCObjectIdentifiers.frodokem976shake;
-            case AES1344 -> BCObjectIdentifiers.frodokem1344aes;
-            case SHAKE1344 -> BCObjectIdentifiers.frodokem1344shake;
+            case AES976 -> ISOIECObjectIdentifiers.frodokem976_aes;
+            case SHAKE976 -> ISOIECObjectIdentifiers.frodokem976_shake;
+            case AES976E -> ISOIECObjectIdentifiers.efrodokem976_aes;
+            case SHAKE976E -> ISOIECObjectIdentifiers.efrodokem976_shake;
+            case AES1344 -> ISOIECObjectIdentifiers.frodokem1344_aes;
+            case SHAKE1344 -> ISOIECObjectIdentifiers.frodokem1344_shake;
+            case AES1344E -> ISOIECObjectIdentifiers.efrodokem1344_aes;
+            case SHAKE1344E -> ISOIECObjectIdentifiers.efrodokem1344_shake;
             default -> throw new IllegalArgumentException();
         };
     }
