@@ -16,19 +16,21 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseMarginalReduction;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTax.MoneyWiseUKBasicAllowanceCtl;
+import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTax.MoneyWiseUKTaxConfigCtl;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * Basic UK Tax Allowance.
  */
 public abstract class MoneyWiseUKBasicAllowance
-        implements MetisFieldItem {
+        implements MetisFieldItem, MoneyWiseUKBasicAllowanceCtl {
     /**
      * Local Report fields.
      */
@@ -95,30 +97,18 @@ public abstract class MoneyWiseUKBasicAllowance
         this(pAllowance, pRentalAllowance, pCapitalAllowance, MoneyWiseMarginalReduction.TWOINTHREE);
     }
 
-    /**
-     * Obtain the allowance.
-     *
-     * @return the Allowance
-     */
-    protected OceanusMoney getAllowance() {
+    @Override
+    public OceanusMoney getAllowance() {
         return theAllowance;
     }
 
-    /**
-     * Obtain the rental allowance.
-     *
-     * @return the Allowance
-     */
-    protected OceanusMoney getRentalAllowance() {
+    @Override
+    public OceanusMoney getRentalAllowance() {
         return theRentalAllowance;
     }
 
-    /**
-     * Obtain the capital allowance.
-     *
-     * @return the Allowance
-     */
-    protected OceanusMoney getCapitalAllowance() {
+    @Override
+    public OceanusMoney getCapitalAllowance() {
         return theCapitalAllowance;
     }
 
@@ -131,44 +121,24 @@ public abstract class MoneyWiseUKBasicAllowance
         return theMarginalReduction;
     }
 
-    /**
-     * Calculate the allowance.
-     *
-     * @param pConfig the tax configuration
-     * @return the calculated allowance
-     */
-    protected OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
+    @Override
+    public OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfigCtl pConfig) {
         return getAllowance();
     }
 
-    /**
-     * Calculate the savings allowance.
-     *
-     * @param pConfig the tax configuration
-     * @return the savings allowance
-     */
-    protected OceanusMoney calculateSavingsAllowance(final MoneyWiseUKTaxConfig pConfig) {
+    @Override
+    public OceanusMoney calculateSavingsAllowance(final MoneyWiseUKTaxConfigCtl pConfig) {
         return getZeroAmount();
     }
 
-    /**
-     * Calculate the dividend allowance.
-     *
-     * @return the dividend allowance
-     */
-    protected OceanusMoney calculateDividendAllowance() {
+    @Override
+    public OceanusMoney calculateDividendAllowance() {
         return getZeroAmount();
     }
 
-    /**
-     * Calculate the loSavings band.
-     *
-     * @param pConfig    the tax configuration
-     * @param pLoSavings the low savings band
-     * @return the loSavings band
-     */
-    protected MoneyWiseTaxBand calculateLoSavingsBand(final MoneyWiseUKTaxConfig pConfig,
-                                                      final MoneyWiseTaxBand pLoSavings) {
+    @Override
+    public MoneyWiseTaxBand calculateLoSavingsBand(final MoneyWiseUKTaxConfigCtl pConfig,
+                                                   final MoneyWiseTaxBand pLoSavings) {
         /* Obtain the loSavings band */
         if (pLoSavings == null) {
             return new MoneyWiseTaxBand(getZeroAmount(), OceanusRate.getWholePercentage(0));

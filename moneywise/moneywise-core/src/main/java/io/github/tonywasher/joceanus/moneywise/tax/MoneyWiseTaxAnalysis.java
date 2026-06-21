@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax;
 
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.Iterator;
@@ -69,6 +70,7 @@ public interface MoneyWiseTaxAnalysis {
     /**
      * TaxYear.
      */
-    interface MoneyWiseTaxYearCtl {
+    interface MoneyWiseTaxYearCtl
+            extends MoneyWiseTaxCredit {
     }
 }

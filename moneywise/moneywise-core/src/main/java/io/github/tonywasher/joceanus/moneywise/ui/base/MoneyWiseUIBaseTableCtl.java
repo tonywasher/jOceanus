@@ -44,8 +44,8 @@ public interface MoneyWiseUIBaseTableCtl<T extends PrometheusDataItem>
      * @param pRow     the row
      * @return error message or null
      */
-    public String isValidName(String pNewName,
-                              T pRow);
+    String isValidName(String pNewName,
+                       T pRow);
 
     /**
      * is Valid description?

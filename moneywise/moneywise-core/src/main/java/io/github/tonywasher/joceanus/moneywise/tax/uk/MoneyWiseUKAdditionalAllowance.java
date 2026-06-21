@@ -16,10 +16,11 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTax.MoneyWiseUKTaxConfigCtl;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 /**
  * Additional Band UK Tax Allowance.
@@ -75,7 +76,7 @@ public class MoneyWiseUKAdditionalAllowance
     }
 
     @Override
-    protected OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
+    public OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfigCtl pConfig) {
         /* Determine AgeRelated allowance */
         OceanusMoney myAllowance = super.calculateBasicAllowance(pConfig);
 

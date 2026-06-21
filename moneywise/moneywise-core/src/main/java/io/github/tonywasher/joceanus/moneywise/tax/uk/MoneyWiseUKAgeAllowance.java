@@ -16,13 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseMarginalReduction;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTax.MoneyWiseUKTaxConfigCtl;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusFiscalYear;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
-import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseMarginalReduction;
-import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
 
 import java.time.Month;
 
@@ -182,7 +183,7 @@ public class MoneyWiseUKAgeAllowance
     }
 
     @Override
-    protected OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
+    public OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfigCtl pConfig) {
         /* Access the client age */
         final OceanusDate myBirthday = pConfig.getBirthday();
         final Integer myAge = pConfig.getClientAge();

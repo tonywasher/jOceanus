@@ -16,13 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTax.MoneyWiseUKTaxBandsCtl;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Iterator;
 
@@ -30,7 +31,7 @@ import java.util.Iterator;
  * UK TaxBands.
  */
 public class MoneyWiseUKTaxBands
-        implements MetisFieldItem {
+        implements MetisFieldItem, MoneyWiseUKTaxBandsCtl {
     /**
      * Local Report fields.
      */
@@ -53,7 +54,7 @@ public class MoneyWiseUKTaxBands
     /**
      * Low TaxBand present.
      */
-    private final Boolean hasLoTaxBand;
+    private final boolean hasLoTaxBand;
 
     /**
      * Low Savings TaxBands.
@@ -147,12 +148,8 @@ public class MoneyWiseUKTaxBands
         return theLoSavings;
     }
 
-    /**
-     * Obtain the basic rate of income tax.
-     *
-     * @return the rate
-     */
-    protected OceanusRate getBasicTaxRate() {
+    @Override
+    public OceanusRate getBasicTaxRate() {
         final Iterator<MoneyWiseTaxBand> myIterator = theStandard.iterator();
         if (hasLoTaxBand && myIterator.hasNext()) {
             myIterator.next();

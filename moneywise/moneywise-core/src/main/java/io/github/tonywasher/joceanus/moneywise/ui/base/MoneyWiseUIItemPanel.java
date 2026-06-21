@@ -239,8 +239,8 @@ public abstract class MoneyWiseUIItemPanel<T extends PrometheusDataItem>
             final TethysUIScrollSubMenu<TethysUIGenericWrapper> myMenu = myMap.computeIfAbsent(myType, t -> pMenu.addSubMenu(myType.getItemName()));
 
             /* Handle differing items */
-            MoneyWiseUIGoToId myId;
-            String myName;
+            final MoneyWiseUIGoToId myId;
+            final String myName;
             switch (myItem) {
                 case PrometheusStaticDataItem myStatic -> {
                     myId = MoneyWiseUIGoToId.STATIC;
