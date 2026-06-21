@@ -29,7 +29,7 @@ public interface MoneyWiseTaxAnalysis {
      *
      * @return the taxYear
      */
-    MoneyWiseTaxYear getTaxYear();
+    MoneyWiseTaxYearCtl getTaxYear();
 
     /**
      * Obtain the taxableIncome.
@@ -65,4 +65,10 @@ public interface MoneyWiseTaxAnalysis {
      * @return the iterator
      */
     Iterator<MoneyWiseTaxDueBucket> taxDueIterator();
+
+    /**
+     * TaxYear.
+     */
+    interface MoneyWiseTaxYearCtl {
+    }
 }
