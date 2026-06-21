@@ -22,6 +22,7 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxBasis;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
@@ -57,11 +58,6 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
     private final Long theAssetId;
 
     /**
-     * Parent.
-     */
-    private final MoneyWiseAnalysisTaxBasisBucket theParent;
-
-    /**
      * Account.
      */
     private final MoneyWiseTransAsset theAccount;
@@ -70,55 +66,48 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
      * Constructor.
      *
      * @param pAnalysis the analysis
-     * @param pParent   the parent bucket
+     * @param pTaxBasis the taxBasis
      * @param pAccount  the account
      */
     MoneyWiseAnalysisTaxBasisAccountBucket(final MoneyWiseAnalysisControl pAnalysis,
-                                           final MoneyWiseAnalysisTaxBasisBucket pParent,
+                                           final MoneyWiseTaxBasis pTaxBasis,
                                            final MoneyWiseTransAsset pAccount) {
         /* Store the parameters */
-        super(pAnalysis, pParent.getTaxBasis());
+        super(pAnalysis, pTaxBasis);
         theAssetId = deriveAssetId(pAccount);
         theAccount = pAccount;
-        theParent = pParent;
     }
 
     /**
      * Constructor.
      *
      * @param pAnalysis the analysis
-     * @param pParent   the parent bucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
     private MoneyWiseAnalysisTaxBasisAccountBucket(final MoneyWiseAnalysisControl pAnalysis,
-                                                   final MoneyWiseAnalysisTaxBasisBucket pParent,
                                                    final MoneyWiseAnalysisTaxBasisAccountBucket pBase,
                                                    final OceanusDate pDate) {
         /* Copy details from base */
         super(pAnalysis, pBase, pDate);
         theAssetId = pBase.getAssetId();
         theAccount = pBase.getAccount();
-        theParent = pParent;
     }
 
     /**
      * Constructor.
      *
      * @param pAnalysis the analysis
-     * @param pParent   the parent bucket
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
     private MoneyWiseAnalysisTaxBasisAccountBucket(final MoneyWiseAnalysisControl pAnalysis,
-                                                   final MoneyWiseAnalysisTaxBasisBucket pParent,
                                                    final MoneyWiseAnalysisTaxBasisAccountBucket pBase,
                                                    final OceanusDateRange pRange) {
         /* Copy details from base */
         super(pAnalysis, pBase, pRange);
         theAssetId = pBase.getAssetId();
         theAccount = pBase.getAccount();
-        theParent = pParent;
     }
 
     /**
@@ -177,15 +166,6 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
     }
 
     /**
-     * Obtain parent.
-     *
-     * @return the parent
-     */
-    public MoneyWiseAnalysisTaxBasisBucket getParent() {
-        return theParent;
-    }
-
-    /**
      * TaxBasisAccountBucketList class.
      */
     public static class MoneyWiseAnalysisTaxBasisAccountBucketList
@@ -213,9 +193,9 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
         private final List<MoneyWiseAnalysisTaxBasisAccountBucket> theList;
 
         /**
-         * Parent.
+         * TaxBasis.
          */
-        private final MoneyWiseAnalysisTaxBasisBucket theParent;
+        private final MoneyWiseTaxBasis theTaxBasis;
 
         /**
          * Bucket map.
@@ -226,12 +206,12 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
          * Construct a top-level List.
          *
          * @param pAnalysis the analysis
-         * @param pParent   the parent bucket
+         * @param pTaxBasis the taxBasis
          */
         protected MoneyWiseAnalysisTaxBasisAccountBucketList(final MoneyWiseAnalysisControl pAnalysis,
-                                                             final MoneyWiseAnalysisTaxBasisBucket pParent) {
+                                                             final MoneyWiseTaxBasis pTaxBasis) {
             theAnalysis = pAnalysis;
-            theParent = pParent;
+            theTaxBasis = pTaxBasis;
             theMap = new HashMap<>();
             theList = new ArrayList<>();
         }
@@ -240,16 +220,16 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
          * Construct a dated List.
          *
          * @param pAnalysis the analysis
-         * @param pParent   the parent bucket
+         * @param pTaxBasis the taxBasis
          * @param pBase     the base list
          * @param pDate     the Date
          */
         protected MoneyWiseAnalysisTaxBasisAccountBucketList(final MoneyWiseAnalysisControl pAnalysis,
-                                                             final MoneyWiseAnalysisTaxBasisBucket pParent,
+                                                             final MoneyWiseTaxBasis pTaxBasis,
                                                              final MoneyWiseAnalysisTaxBasisAccountBucketList pBase,
                                                              final OceanusDate pDate) {
             /* Initialise class */
-            this(pAnalysis, pParent);
+            this(pAnalysis, pTaxBasis);
 
             /* Loop through the buckets */
             final Iterator<MoneyWiseAnalysisTaxBasisAccountBucket> myIterator = pBase.iterator();
@@ -257,7 +237,7 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
                 final MoneyWiseAnalysisTaxBasisAccountBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this date */
-                final MoneyWiseAnalysisTaxBasisAccountBucket myBucket = new MoneyWiseAnalysisTaxBasisAccountBucket(pAnalysis, theParent, myCurr, pDate);
+                final MoneyWiseAnalysisTaxBasisAccountBucket myBucket = new MoneyWiseAnalysisTaxBasisAccountBucket(pAnalysis, myCurr, pDate);
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
@@ -272,16 +252,16 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
          * Construct a ranged List.
          *
          * @param pAnalysis the analysis
-         * @param pParent   the parent bucket
+         * @param pTaxBasis the taxBasis
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
         protected MoneyWiseAnalysisTaxBasisAccountBucketList(final MoneyWiseAnalysisControl pAnalysis,
-                                                             final MoneyWiseAnalysisTaxBasisBucket pParent,
+                                                             final MoneyWiseTaxBasis pTaxBasis,
                                                              final MoneyWiseAnalysisTaxBasisAccountBucketList pBase,
                                                              final OceanusDateRange pRange) {
             /* Initialise class */
-            this(pAnalysis, pParent);
+            this(pAnalysis, pTaxBasis);
 
             /* Loop through the buckets */
             final Iterator<MoneyWiseAnalysisTaxBasisAccountBucket> myIterator = pBase.iterator();
@@ -289,7 +269,7 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
                 final MoneyWiseAnalysisTaxBasisAccountBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this range */
-                final MoneyWiseAnalysisTaxBasisAccountBucket myBucket = new MoneyWiseAnalysisTaxBasisAccountBucket(pAnalysis, theParent, myCurr, pRange);
+                final MoneyWiseAnalysisTaxBasisAccountBucket myBucket = new MoneyWiseAnalysisTaxBasisAccountBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
@@ -397,7 +377,7 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
             final Long myKey = deriveAssetId(pAccount);
             return theMap.computeIfAbsent(myKey, k -> {
                 /* Create the new bucket */
-                final MoneyWiseAnalysisTaxBasisAccountBucket myNew = new MoneyWiseAnalysisTaxBasisAccountBucket(theAnalysis, theParent, pAccount);
+                final MoneyWiseAnalysisTaxBasisAccountBucket myNew = new MoneyWiseAnalysisTaxBasisAccountBucket(theAnalysis, theTaxBasis, pAccount);
 
                 /* Add to the list */
                 theList.add(myNew);

@@ -16,12 +16,9 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.ui.controls;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxBasis;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDataResource;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisAccountBucket;
@@ -29,6 +26,10 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWis
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTaxBasisFilter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIConstant;
@@ -438,9 +439,10 @@ public class MoneyWiseTaxBasisAnalysisSelect
          */
         private void setTheTaxBasis(final MoneyWiseAnalysisTaxBasisBucket pTaxBasis) {
             /* Adjust the selected taxBasis */
-            if (pTaxBasis instanceof MoneyWiseAnalysisTaxBasisAccountBucket) {
-                theAccount = (MoneyWiseAnalysisTaxBasisAccountBucket) pTaxBasis;
-                theBasis = theAccount.getParent();
+            if (pTaxBasis instanceof MoneyWiseAnalysisTaxBasisAccountBucket myAccount) {
+                theAccount = myAccount;
+                final MoneyWiseTaxBasis myTaxBasis = theAccount.getTaxBasis();
+                theBasis = theTaxBases.findItemById(myTaxBasis.getIndexedId());
                 theFilter = new MoneyWiseAnalysisTaxBasisFilter(theAccount);
                 theFilter.setDateRange(theDateRange);
             } else {

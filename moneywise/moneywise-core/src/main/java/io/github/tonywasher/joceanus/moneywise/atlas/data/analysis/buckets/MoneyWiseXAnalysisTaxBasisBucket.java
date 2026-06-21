@@ -145,7 +145,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
                 && !(this instanceof MoneyWiseXAnalysisTaxBasisAccountBucket)
                 && theTaxBasis.getTaxClass().analyseAccounts();
         theAccounts = hasAccounts
-                ? new MoneyWiseXAnalysisTaxBasisAccountBucketList(theAnalysis, this)
+                ? new MoneyWiseXAnalysisTaxBasisAccountBucketList(theAnalysis, theTaxBasis)
                 : null;
 
         /* Access the key value maps */
@@ -174,7 +174,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
         /* Create the account list */
         hasAccounts = pBase.hasAccounts();
         theAccounts = hasAccounts
-                ? new MoneyWiseXAnalysisTaxBasisAccountBucketList(theAnalysis, this, pBase.getAccounts(), pDate)
+                ? new MoneyWiseXAnalysisTaxBasisAccountBucketList(theAnalysis, theTaxBasis, pBase.getAccounts(), pDate)
                 : null;
 
         /* Access the key value maps */
@@ -203,7 +203,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
         /* Create the account list */
         hasAccounts = pBase.hasAccounts();
         theAccounts = hasAccounts
-                ? new MoneyWiseXAnalysisTaxBasisAccountBucketList(theAnalysis, this, pBase.getAccounts(), pRange)
+                ? new MoneyWiseXAnalysisTaxBasisAccountBucketList(theAnalysis, theTaxBasis, pBase.getAccounts(), pRange)
                 : null;
 
         /* Access the key value maps */
@@ -870,7 +870,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
                 /* If there is no such bucket in the analysis */
                 if (myAccountBucket == null) {
                     /* Allocate an orphan bucket */
-                    myAccountBucket = new MoneyWiseXAnalysisTaxBasisAccountBucket(theAnalysis, myBasis, myAsset);
+                    myAccountBucket = new MoneyWiseXAnalysisTaxBasisAccountBucket(theAnalysis, myBasis.getTaxBasis(), myAsset);
                 }
 
                 /* Set bucket as the account bucket */
