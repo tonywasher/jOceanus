@@ -16,6 +16,9 @@
  */
 package io.github.tonywasher.joceanus.prometheus.service.sheet;
 
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheet.PrometheusSheetSheetCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheet.PrometheusSheetViewCtl;
+
 import java.util.Collections;
 import java.util.ListIterator;
 

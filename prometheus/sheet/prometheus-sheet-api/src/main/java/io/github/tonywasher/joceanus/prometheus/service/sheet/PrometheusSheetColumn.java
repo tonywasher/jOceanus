@@ -16,6 +16,9 @@
  */
 package io.github.tonywasher.joceanus.prometheus.service.sheet;
 
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheet.PrometheusSheetColumnCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheet.PrometheusSheetSheetCtl;
+
 /**
  * Class representing a column in Oasis.
  *
