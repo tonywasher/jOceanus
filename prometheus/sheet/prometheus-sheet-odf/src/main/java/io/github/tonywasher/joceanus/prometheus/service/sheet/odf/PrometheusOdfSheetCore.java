@@ -22,6 +22,10 @@ import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCel
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellRange;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetRow;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfSheetCoreCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfSheetCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfTableStoreCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfWorkBookCtl;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -30,7 +34,8 @@ import java.util.ListIterator;
 /**
  * Sheet definition.
  */
-class PrometheusOdfSheetCore {
+public class PrometheusOdfSheetCore
+        implements PrometheusOdfSheetCoreCtl {
     /**
      * The name of the sheet.
      */
@@ -39,12 +44,12 @@ class PrometheusOdfSheetCore {
     /**
      * The WorkBook.
      */
-    private final PrometheusOdfWorkBook theBook;
+    private final PrometheusOdfWorkBookCtl theBook;
 
     /**
      * The Table Store.
      */
-    private final PrometheusOdfTableStore theStore;
+    private final PrometheusOdfTableStoreCtl theStore;
 
     /**
      * The Parser.
@@ -94,7 +99,7 @@ class PrometheusOdfSheetCore {
      * @param pElement the Sheet element.
      * @throws OceanusException on error
      */
-    PrometheusOdfSheetCore(final PrometheusOdfTableStore pStore,
+    PrometheusOdfSheetCore(final PrometheusOdfTableStoreCtl pStore,
                            final int pIndex,
                            final Element pElement) throws OceanusException {
         /* Store parameters */
@@ -128,7 +133,7 @@ class PrometheusOdfSheetCore {
      * @param pNumCols the initial number of columns
      * @param pElement the Sheet element.
      */
-    PrometheusOdfSheetCore(final PrometheusOdfTableStore pStore,
+    PrometheusOdfSheetCore(final PrometheusOdfTableStoreCtl pStore,
                            final int pIndex,
                            final int pNumRows,
                            final int pNumCols,
@@ -152,39 +157,23 @@ class PrometheusOdfSheetCore {
         theRows = new PrometheusOdfRowStore(this, pNumRows, pNumCols);
     }
 
-    /**
-     * Obtain the name.
-     *
-     * @return the name
-     */
-    String getName() {
+    @Override
+    public String getName() {
         return theName;
     }
 
-    /**
-     * Obtain the parser.
-     *
-     * @return the parser
-     */
-    PrometheusOdfParser getParser() {
+    @Override
+    public PrometheusOdfParser getParser() {
         return theParser;
     }
 
-    /**
-     * Obtain the formatter.
-     *
-     * @return the formatter
-     */
-    OceanusDataFormatter getFormatter() {
+    @Override
+    public OceanusDataFormatter getFormatter() {
         return theFormatter;
     }
 
-    /**
-     * Obtain the formatter.
-     *
-     * @return the formatter
-     */
-    int getRowCount() {
+    @Override
+    public int getRowCount() {
         return theRows.getRowCount();
     }
 
@@ -217,30 +206,18 @@ class PrometheusOdfSheetCore {
         }
     }
 
-    /**
-     * Is the sheet hidden?
-     *
-     * @return true/false
-     */
-    boolean isHidden() {
+    @Override
+    public boolean isHidden() {
         return isHidden;
     }
 
-    /**
-     * Set the sheet hidden status.
-     *
-     * @param pHidden true/false
-     */
-    void setHidden(final boolean pHidden) {
+    @Override
+    public void setHidden(final boolean pHidden) {
         isHidden = pHidden;
     }
 
-    /**
-     * Add additional columns to rows.
-     *
-     * @param pXtraCols the number of columns to add.
-     */
-    void addAdditionalCols(final int pXtraCols) {
+    @Override
+    public void addAdditionalCols(final int pXtraCols) {
         if (theRows != null) {
             theRows.addAdditionalCols(pXtraCols);
         }
@@ -264,99 +241,53 @@ class PrometheusOdfSheetCore {
         return new PrometheusOdfSheet(theBook, this, theIndex, false);
     }
 
-    /**
-     * Obtain a readOnly row by its index.
-     *
-     * @param pSheet    the owning sheet
-     * @param pRowIndex the index of the row.
-     * @return the row
-     */
-    PrometheusOdfRow getReadOnlyRowByIndex(final PrometheusOdfSheet pSheet,
-                                           final int pRowIndex) {
-        return theRows.getReadOnlyRowByIndex(pSheet, pRowIndex);
-    }
-
-    /**
-     * Obtain an iterator of non-null rows for the range.
-     *
-     * @param pSheet    the sheet for the rows
-     * @param pFirstRow the index of the first row.
-     * @param pLastRow  the index of the last row.
-     * @return the iterator
-     */
-    ListIterator<PrometheusSheetRow> iteratorForRange(final PrometheusOdfSheet pSheet,
-                                                      final int pFirstRow,
-                                                      final int pLastRow) {
+    @Override
+    public ListIterator<PrometheusSheetRow> iteratorForRange(final PrometheusOdfSheetCtl pSheet,
+                                                             final int pFirstRow,
+                                                             final int pLastRow) {
         return theRows.iteratorForRange(pSheet, pFirstRow, pLastRow);
     }
 
-    /**
-     * Obtain a mutable row by its index, creating row if it does not exist.
-     *
-     * @param pSheet    the owning sheet
-     * @param pRowIndex the index of the row.
-     * @return the row
-     */
-    PrometheusOdfRow getMutableRowByIndex(final PrometheusOdfSheet pSheet,
-                                          final int pRowIndex) {
+    @Override
+    public PrometheusOdfRow getReadOnlyRowByIndex(final PrometheusOdfSheetCtl pSheet,
+                                                  final int pRowIndex) {
+        return theRows.getReadOnlyRowByIndex(pSheet, pRowIndex);
+    }
+
+    @Override
+    public PrometheusOdfRow getMutableRowByIndex(final PrometheusOdfSheetCtl pSheet,
+                                                 final int pRowIndex) {
         return theRows.getMutableRowByIndex(pSheet, pRowIndex);
     }
 
-    /**
-     * Obtain a readOnly column by its index.
-     *
-     * @param pSheet    the owning sheet
-     * @param pColIndex the index of the row.
-     * @return the column
-     */
-    PrometheusOdfColumn getReadOnlyColumnByIndex(final PrometheusOdfSheet pSheet,
-                                                 final int pColIndex) {
+    @Override
+    public PrometheusOdfColumn getReadOnlyColumnByIndex(final PrometheusOdfSheetCtl pSheet,
+                                                        final int pColIndex) {
         return theColumns.getReadOnlyColumnByIndex(pSheet, pColIndex);
     }
 
-    /**
-     * Obtain a mutable column by its index, creating column if it does not exist.
-     *
-     * @param pSheet    the owning sheet
-     * @param pColIndex the index of the column.
-     * @return the column
-     */
-    PrometheusOdfColumn getMutableColumnByIndex(final PrometheusOdfSheet pSheet,
-                                                final int pColIndex) {
+    @Override
+    public PrometheusOdfColumn getMutableColumnByIndex(final PrometheusOdfSheetCtl pSheet,
+                                                       final int pColIndex) {
         return theColumns.getMutableColumnByIndex(pSheet, pColIndex);
     }
 
-    /**
-     * Set the column style for the column.
-     *
-     * @param pColumn the column
-     * @param pStyle  the style
-     */
-    void setColumnStyle(final Element pColumn,
-                        final PrometheusSheetCellStyleType pStyle) {
+    @Override
+    public void setColumnStyle(final Element pColumn,
+                               final PrometheusSheetCellStyleType pStyle) {
         theParser.setAttribute(pColumn, PrometheusOdfTableItem.STYLENAME, PrometheusOdfStyler.getColumnStyleName(pStyle));
     }
 
-    /**
-     * Set the default style for the column.
-     *
-     * @param pColumn the column index
-     * @param pStyle  the style
-     */
-    void setDefaultCellStyle(final Element pColumn,
-                             final PrometheusSheetCellStyleType pStyle) {
+    @Override
+    public void setDefaultCellStyle(final Element pColumn,
+                                    final PrometheusSheetCellStyleType pStyle) {
         final String myStyle = theStyler.getCellStyle(pStyle);
         theParser.setAttribute(pColumn, PrometheusOdfTableItem.DEFAULTCELLSTYLE, myStyle);
     }
 
-    /**
-     * Set cell style.
-     *
-     * @param pCell  the cell to style
-     * @param pValue the cell value
-     */
-    void setCellStyle(final Element pCell,
-                      final Object pValue) {
+    @Override
+    public void setCellStyle(final Element pCell,
+                             final Object pValue) {
         final String myStyle = theStyler.getCellStyle(pValue);
         theParser.setAttribute(pCell, PrometheusOdfTableItem.STYLENAME, myStyle);
     }
@@ -367,56 +298,34 @@ class PrometheusOdfSheetCore {
      * @param pCell  the cell to style
      * @param pValue the cell value
      */
-    void setAlternateCellStyle(final Element pCell,
-                               final Object pValue) {
+    public void setAlternateCellStyle(final Element pCell,
+                                      final Object pValue) {
         final String myStyle = theStyler.getAlternateCellStyle(pValue);
         theParser.setAttribute(pCell, PrometheusOdfTableItem.STYLENAME, myStyle);
     }
 
-    /**
-     * Declare the named range.
-     *
-     * @param pName  the name of the range
-     * @param pRange the range to declare
-     * @throws OceanusException on error
-     */
-    void declareRange(final String pName,
-                      final PrometheusSheetCellRange pRange) throws OceanusException {
+    @Override
+    public void declareRange(final String pName,
+                             final PrometheusSheetCellRange pRange) throws OceanusException {
         theStore.declareRange(pName, pRange);
     }
 
-    /**
-     * Apply Data Validation.
-     *
-     * @param pFirstCell  the the first cell in the range
-     * @param pLastCell   the last cell in the range
-     * @param pValidRange the name of the validation range
-     */
-    void applyDataValidation(final PrometheusSheetCellPosition pFirstCell,
-                             final PrometheusSheetCellPosition pLastCell,
-                             final String pValidRange) {
+    @Override
+    public void applyDataValidation(final PrometheusSheetCellPosition pFirstCell,
+                                    final PrometheusSheetCellPosition pLastCell,
+                                    final String pValidRange) {
         theStore.applyDataValidation(this, pFirstCell, pLastCell, pValidRange);
     }
 
-    /**
-     * Apply validation.
-     *
-     * @param pValidation the validation name
-     * @param pFirstCell  the first cell
-     * @param pLastCell   the last cell
-     */
-    void applyValidation(final String pValidation,
-                         final PrometheusSheetCellPosition pFirstCell,
-                         final PrometheusSheetCellPosition pLastCell) {
+    @Override
+    public void applyValidation(final String pValidation,
+                                final PrometheusSheetCellPosition pFirstCell,
+                                final PrometheusSheetCellPosition pLastCell) {
         theRows.applyValidation(pValidation, pFirstCell, pLastCell);
     }
 
-    /**
-     * Apply Data Filter.
-     *
-     * @param pRange the range
-     */
-    void applyDataFilter(final PrometheusSheetCellRange pRange) {
+    @Override
+    public void applyDataFilter(final PrometheusSheetCellRange pRange) {
         theStore.applyDataFilter(pRange);
     }
 

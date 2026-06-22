@@ -16,20 +16,24 @@
  */
 package io.github.tonywasher.joceanus.prometheus.service.sheet.odf;
 
-import java.util.ListIterator;
-
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetRow;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfRowCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfRowStoreCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfSheetCtl;
+
+import java.util.ListIterator;
 
 /**
  * Row implementation.
  */
 public class PrometheusOdfRow
-        extends PrometheusSheetRow {
+        extends PrometheusSheetRow
+        implements PrometheusOdfRowCtl {
     /**
      * The row store.
      */
-    private final PrometheusOdfRowStore theStore;
+    private final PrometheusOdfRowStoreCtl theStore;
 
     /**
      * Constructor .
@@ -39,8 +43,8 @@ public class PrometheusOdfRow
      * @param pIndex    the index
      * @param pReadOnly is the cell readOnly?
      */
-    PrometheusOdfRow(final PrometheusOdfRowStore pStore,
-                     final PrometheusOdfSheet pSheet,
+    PrometheusOdfRow(final PrometheusOdfRowStoreCtl pStore,
+                     final PrometheusOdfSheetCtl pSheet,
                      final int pIndex,
                      final boolean pReadOnly) {
         /* Store parameters */
@@ -49,18 +53,18 @@ public class PrometheusOdfRow
     }
 
     @Override
-    public PrometheusOdfSheet getSheet() {
-        return (PrometheusOdfSheet) super.getSheet();
+    public PrometheusOdfSheetCtl getSheet() {
+        return (PrometheusOdfSheetCtl) super.getSheet();
     }
 
     @Override
     public PrometheusOdfRow getNextRow() {
-        return theStore.getReadOnlyRowByIndex(getSheet(), getRowIndex() + 1);
+        return (PrometheusOdfRow) theStore.getReadOnlyRowByIndex(getSheet(), getRowIndex() + 1);
     }
 
     @Override
     public PrometheusOdfRow getPreviousRow() {
-        return theStore.getReadOnlyRowByIndex(getSheet(), getRowIndex() - 1);
+        return (PrometheusOdfRow) theStore.getReadOnlyRowByIndex(getSheet(), getRowIndex() - 1);
     }
 
     @Override
@@ -91,11 +95,11 @@ public class PrometheusOdfRow
 
     @Override
     public PrometheusOdfCell getReadOnlyCellByIndex(final int pIndex) {
-        return theStore.getReadOnlyCellByIndex(this, pIndex);
+        return (PrometheusOdfCell) theStore.getReadOnlyCellByIndex(this, pIndex);
     }
 
     @Override
     protected PrometheusOdfCell getWriteableCellByIndex(final int pIndex) {
-        return theStore.getMutableCellByIndex(this, pIndex);
+        return (PrometheusOdfCell) theStore.getMutableCellByIndex(this, pIndex);
     }
 }

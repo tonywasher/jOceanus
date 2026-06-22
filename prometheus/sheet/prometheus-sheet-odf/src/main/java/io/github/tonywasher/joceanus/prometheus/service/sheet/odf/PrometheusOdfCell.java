@@ -25,16 +25,21 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCell;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfCellCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfCellStoreCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfRowCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfSheetCtl;
 
 /**
  * Cell implementation.
  */
 public class PrometheusOdfCell
-        extends PrometheusSheetCell {
+        extends PrometheusSheetCell
+        implements PrometheusOdfCellCtl {
     /**
      * The cell storage.
      */
-    private final PrometheusOdfCellStore theStore;
+    private final PrometheusOdfCellStoreCtl theStore;
 
     /**
      * Constructor .
@@ -44,8 +49,8 @@ public class PrometheusOdfCell
      * @param pIndex    the index
      * @param pReadOnly is the cell readOnly?
      */
-    PrometheusOdfCell(final PrometheusOdfCellStore pStore,
-                      final PrometheusOdfRow pRow,
+    PrometheusOdfCell(final PrometheusOdfCellStoreCtl pStore,
+                      final PrometheusOdfRowCtl pRow,
                       final int pIndex,
                       final boolean pReadOnly) {
         /* Store parameters */
@@ -54,8 +59,8 @@ public class PrometheusOdfCell
     }
 
     @Override
-    public PrometheusOdfSheet getSheet() {
-        return (PrometheusOdfSheet) super.getSheet();
+    public PrometheusOdfSheetCtl getSheet() {
+        return (PrometheusOdfSheetCtl) super.getSheet();
     }
 
     @Override

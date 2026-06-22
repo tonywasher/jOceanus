@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetView;
-import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfWorkBookCtl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -31,7 +31,7 @@ import java.io.OutputStream;
  * Odf WorkBook.
  */
 public class PrometheusOdfWorkBook
-        implements PrometheusSheetWorkBook {
+        implements PrometheusOdfWorkBookCtl {
     /**
      * The Contents Document.
      */
@@ -129,30 +129,18 @@ public class PrometheusOdfWorkBook
         return isReadOnly;
     }
 
-    /**
-     * Obtain the parser.
-     *
-     * @return the parser
-     */
-    PrometheusOdfParser getParser() {
+    @Override
+    public PrometheusOdfParser getParser() {
         return theParser;
     }
 
-    /**
-     * Obtain the styler.
-     *
-     * @return the styler
-     */
-    PrometheusOdfStyler getStyler() {
+    @Override
+    public PrometheusOdfStyler getStyler() {
         return theStyler;
     }
 
-    /**
-     * Obtain the data formatter.
-     *
-     * @return the formatter
-     */
-    OceanusDataFormatter getFormatter() {
+    @Override
+    public OceanusDataFormatter getFormatter() {
         return theDataFormatter;
     }
 
