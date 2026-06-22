@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisAccountBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBaseBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket.MoneyWiseXAnalysisTaxBasisBucketList;
 import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
@@ -216,7 +217,7 @@ public class MoneyWiseUIXTaxBasisAnalysisSelect
         theTaxBases = pAnalysis.getTaxBasis();
 
         /* Obtain the current basis */
-        MoneyWiseXAnalysisTaxBasisBucket myBasis = theState.getTaxBasis();
+        MoneyWiseXAnalysisTaxBasisBaseBucket myBasis = theState.getTaxBasis();
 
         /* Switch to versions from the analysis */
         myBasis = myBasis != null
@@ -234,7 +235,7 @@ public class MoneyWiseUIXTaxBasisAnalysisSelect
         /* If this is the correct filter type */
         if (pFilter instanceof MoneyWiseXAnalysisTaxBasisFilter myFilter) {
             /* Obtain the filter bucket */
-            MoneyWiseXAnalysisTaxBasisBucket myTaxBasis = myFilter.getBucket();
+            MoneyWiseXAnalysisTaxBasisBaseBucket myTaxBasis = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
             myTaxBasis = theTaxBases.getMatchingBasis(myTaxBasis);
@@ -420,7 +421,7 @@ public class MoneyWiseUIXTaxBasisAnalysisSelect
          * @param pTaxBasis the TaxBasis
          * @return true/false did a change occur
          */
-        private boolean setTaxBasis(final MoneyWiseXAnalysisTaxBasisBucket pTaxBasis) {
+        private boolean setTaxBasis(final MoneyWiseXAnalysisTaxBasisBaseBucket pTaxBasis) {
             /* Adjust the selected taxBasis */
             if (!MetisDataDifference.isEqual(pTaxBasis, theBasis)) {
                 setTheTaxBasis(pTaxBasis);
@@ -434,7 +435,7 @@ public class MoneyWiseUIXTaxBasisAnalysisSelect
          *
          * @param pTaxBasis the TaxBasis
          */
-        private void setTheTaxBasis(final MoneyWiseXAnalysisTaxBasisBucket pTaxBasis) {
+        private void setTheTaxBasis(final MoneyWiseXAnalysisTaxBasisBaseBucket pTaxBasis) {
             /* Adjust the selected taxBasis */
             if (pTaxBasis instanceof MoneyWiseXAnalysisTaxBasisAccountBucket myBucket) {
                 theAccount = myBucket;
@@ -444,7 +445,7 @@ public class MoneyWiseUIXTaxBasisAnalysisSelect
                 theFilter.setDateRange(theDateRange);
             } else {
                 theAccount = null;
-                theBasis = pTaxBasis;
+                theBasis = (MoneyWiseXAnalysisTaxBasisBucket) pTaxBasis;
                 if (theBasis != null) {
                     theFilter = new MoneyWiseXAnalysisTaxBasisFilter(theBasis);
                     theFilter.setDateRange(theDateRange);

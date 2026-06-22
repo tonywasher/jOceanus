@@ -39,7 +39,7 @@ import java.util.Map;
  * The TaxBasis Account Bucket class.
  */
 public final class MoneyWiseXAnalysisTaxBasisAccountBucket
-        extends MoneyWiseXAnalysisTaxBasisBucket {
+        extends MoneyWiseXAnalysisTaxBasisBaseBucket {
     /**
      * Local Report fields.
      */
@@ -311,9 +311,9 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
          * @param pAdjust  adjustment control
          * @return the adjusted taxBasisAccountBucket (or null)
          */
-        MoneyWiseXAnalysisTaxBasisAccountBucket adjustValue(final MoneyWiseTransAsset pAccount,
-                                                            final OceanusMoney pValue,
-                                                            final MoneyWiseXTaxBasisAdjust pAdjust) {
+        MoneyWiseXAnalysisTaxBasisBaseBucket adjustValue(final MoneyWiseTransAsset pAccount,
+                                                         final OceanusMoney pValue,
+                                                         final MoneyWiseXTaxBasisAdjust pAdjust) {
             /* Access the relevant account bucket */
             final MoneyWiseXAnalysisTaxBasisAccountBucket myBucket = getBucket(pAccount);
 

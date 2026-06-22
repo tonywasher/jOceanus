@@ -30,7 +30,7 @@ import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.Money
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioCashBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
-import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBaseBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransTagBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisType;
@@ -712,13 +712,13 @@ public abstract class MoneyWiseXAnalysisFilter<B, T extends Enum<T> & MoneyWiseX
      * TaxBasis Bucket filter class.
      */
     public static class MoneyWiseXAnalysisTaxBasisFilter
-            extends MoneyWiseXAnalysisFilter<MoneyWiseXAnalysisTaxBasisBucket, MoneyWiseXAnalysisTaxBasisAttr> {
+            extends MoneyWiseXAnalysisFilter<MoneyWiseXAnalysisTaxBasisBaseBucket, MoneyWiseXAnalysisTaxBasisAttr> {
         /**
          * Constructor.
          *
          * @param pTaxBasis the taxBasis bucket
          */
-        public MoneyWiseXAnalysisTaxBasisFilter(final MoneyWiseXAnalysisTaxBasisBucket pTaxBasis) {
+        public MoneyWiseXAnalysisTaxBasisFilter(final MoneyWiseXAnalysisTaxBasisBaseBucket pTaxBasis) {
             /* Store parameter */
             super(pTaxBasis, MoneyWiseXAnalysisTaxBasisAttr.class);
             setCurrentAttribute(getAnalysisType().getDefaultValue());
