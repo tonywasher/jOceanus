@@ -16,12 +16,13 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseMarginalReduction;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTax.MoneyWiseUKTaxConfigCtl;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Iterator;
 
@@ -109,7 +110,7 @@ public class MoneyWiseUKSavingsAllowance
     }
 
     @Override
-    protected OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
+    public OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfigCtl pConfig) {
         /* Determine Basic allowance */
         OceanusMoney myAllowance = getAllowance();
 
@@ -133,13 +134,13 @@ public class MoneyWiseUKSavingsAllowance
     }
 
     @Override
-    protected OceanusMoney calculateSavingsAllowance(final MoneyWiseUKTaxConfig pConfig) {
+    public OceanusMoney calculateSavingsAllowance(final MoneyWiseUKTaxConfigCtl pConfig) {
         /* Obtain the gross taxable and allowance */
         final OceanusMoney myGross = pConfig.getGrossTaxable();
         final OceanusMoney myBoundary = new OceanusMoney(pConfig.getAllowance());
 
         /* Obtain the tax bands */
-        final MoneyWiseUKTaxBands myBands = pConfig.getTaxYear().getTaxBands();
+        final MoneyWiseUKTaxBands myBands = (MoneyWiseUKTaxBands) pConfig.getTaxYear().getTaxBands();
         final Iterator<MoneyWiseTaxBand> myIterator = myBands.getStandardSet().iterator();
 
         /* If we have a basic band */
@@ -168,7 +169,7 @@ public class MoneyWiseUKSavingsAllowance
     }
 
     @Override
-    protected OceanusMoney calculateDividendAllowance() {
+    public OceanusMoney calculateDividendAllowance() {
         return theDividendAllowance;
     }
 

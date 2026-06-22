@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
-import io.github.tonywasher.joceanus.moneywise.atlas.ui.controls.MoneyWiseXAnalysisSelect;
+import io.github.tonywasher.joceanus.moneywise.atlas.ui.controls.MoneyWiseUIXAnalysisSelect;
 import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXTransactionFilters;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
@@ -52,8 +52,8 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoCl
 import io.github.tonywasher.joceanus.moneywise.data.validate.MoneyWiseValidateTransaction;
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseIcon;
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
-import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
-import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseItemPanel;
+import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseUIBaseTable;
+import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseUIItemPanel;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
@@ -91,7 +91,7 @@ import java.util.Map;
  * Panel to display/edit/create a Transaction.
  */
 public class MoneyWiseXTransactionDialog
-        extends MoneyWiseItemPanel<MoneyWiseXAnalysisEvent> {
+        extends MoneyWiseUIItemPanel<MoneyWiseXAnalysisEvent> {
     /**
      * Info Tab Title.
      */
@@ -120,7 +120,7 @@ public class MoneyWiseXTransactionDialog
     /**
      * Analysis selection panel.
      */
-    private final MoneyWiseXAnalysisSelect theAnalysisSelect;
+    private final MoneyWiseUIXAnalysisSelect theAnalysisSelect;
 
     /**
      * dateRange.
@@ -152,8 +152,8 @@ public class MoneyWiseXTransactionDialog
      */
     public MoneyWiseXTransactionDialog(final TethysUIFactory<?> pFactory,
                                        final PrometheusEditSet pEditSet,
-                                       final MoneyWiseXAnalysisSelect pAnalysisSelect,
-                                       final MoneyWiseBaseTable<MoneyWiseXAnalysisEvent> pOwner) {
+                                       final MoneyWiseUIXAnalysisSelect pAnalysisSelect,
+                                       final MoneyWiseUIBaseTable<MoneyWiseXAnalysisEvent> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
         theAnalysisSelect = pAnalysisSelect;

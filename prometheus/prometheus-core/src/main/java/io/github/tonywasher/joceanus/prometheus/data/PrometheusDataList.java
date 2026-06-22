@@ -30,7 +30,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDa
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataListCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValidator;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem.PrometheusDataInfoList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusDataInfoListCtl;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 
 import java.util.Iterator;
@@ -811,7 +811,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
      */
     public void postProcessOnUpdate() {
         /* Note whether this is a DataInfoList */
-        final boolean isDataInfo = this instanceof PrometheusDataInfoList;
+        final boolean isDataInfo = this instanceof PrometheusDataInfoListCtl;
 
         /* Reset the map */
         if (theDataMap != null) {

@@ -30,6 +30,7 @@ import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxDueBucket;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxSource;
 import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKChargeableGainsScheme.MoneyWiseUKSlicedTaxDueBucket;
+import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTax.MoneyWiseUKTaxYearCtl;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
@@ -66,7 +67,7 @@ public class MoneyWiseUKTaxAnalysis
     /**
      * The TaxYear.
      */
-    private final MoneyWiseUKTaxYear theTaxYear;
+    private final MoneyWiseUKTaxYearCtl theTaxYear;
 
     /**
      * The TaxSource.
@@ -189,7 +190,7 @@ public class MoneyWiseUKTaxAnalysis
      */
     protected MoneyWiseUKTaxAnalysis(final MoneyWiseTaxSource pTaxSource,
                                      final MetisPreferenceManager pPrefMgr,
-                                     final MoneyWiseUKTaxYear pTaxYear) {
+                                     final MoneyWiseUKTaxYearCtl pTaxYear) {
         /* Store the parameters */
         theTaxYear = pTaxYear;
         theTaxSource = pTaxSource;
@@ -213,7 +214,7 @@ public class MoneyWiseUKTaxAnalysis
     }
 
     @Override
-    public MoneyWiseUKTaxYear getTaxYear() {
+    public MoneyWiseUKTaxYearCtl getTaxYear() {
         return theTaxYear;
     }
 

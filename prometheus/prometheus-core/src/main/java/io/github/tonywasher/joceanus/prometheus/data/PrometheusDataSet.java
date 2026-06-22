@@ -704,11 +704,7 @@ public abstract class PrometheusDataSet
         return getControlData().getControl();
     }
 
-    /**
-     * Get the active control key.
-     *
-     * @return the control key
-     */
+    @Override
     public PrometheusControlKey getControlKey() {
         /* Access the control element from the database */
         final PrometheusControlData myControl = getControl();

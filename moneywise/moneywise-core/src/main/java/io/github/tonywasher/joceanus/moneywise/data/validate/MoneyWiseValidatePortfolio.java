@@ -118,7 +118,7 @@ public class MoneyWiseValidatePortfolio
             }
 
             /* If we are open then parent must be open */
-            if (!myPortfolio.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
+            if (!Boolean.TRUE.equals(myPortfolio.isClosed()) && Boolean.TRUE.equals(myParent.isClosed())) {
                 myPortfolio.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
         }
@@ -168,7 +168,7 @@ public class MoneyWiseValidatePortfolio
     @Override
     public void autoCorrect(final MoneyWisePortfolio pPortfolio) throws OceanusException {
         /* Ensure that we have a valid parent */
-        final MoneyWisePayee myParent = (MoneyWisePayee) pPortfolio.getParent();
+        final MoneyWisePayee myParent = pPortfolio.getParent();
         if (myParent == null
                 || !myParent.getCategoryClass().canParentPortfolio()) {
             pPortfolio.setParent(getDefaultParent());

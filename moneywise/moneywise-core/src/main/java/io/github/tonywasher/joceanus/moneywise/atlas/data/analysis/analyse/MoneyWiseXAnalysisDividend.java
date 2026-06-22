@@ -87,7 +87,7 @@ public class MoneyWiseXAnalysisDividend {
         final OceanusUnits myDeltaUnits = pTrans.getCreditUnitsDelta();
 
         /* True debit account is the parent */
-        final MoneyWisePayee myDebit = (MoneyWisePayee) mySecurity.getParent();
+        final MoneyWisePayee myDebit = mySecurity.getParent();
 
         /* Access the Asset Account Bucket */
         final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(myHolding);

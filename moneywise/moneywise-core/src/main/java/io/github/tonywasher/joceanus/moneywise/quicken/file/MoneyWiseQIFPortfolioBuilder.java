@@ -1203,7 +1203,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* Switch on transaction type */
         switch (pTrans.getCategoryClass()) {
             case INTEREST, LOYALTYBONUS:
-                processIncomeToPortfolio((MoneyWisePayee) pSource.getParent(), pTarget, pTrans);
+                processIncomeToPortfolio(pSource.getParent(), pTarget, pTrans);
                 break;
             case PORTFOLIOXFER:
                 processPortfolioXferBetweenPortfolios(pSource, pTarget, pTrans);

@@ -23,7 +23,12 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionValues;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValuesCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusGroupedItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusDataInfoItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusDataInfoSetCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusDataInfoSetItemCtl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -42,38 +47,6 @@ import java.util.Map.Entry;
  */
 public class PrometheusDataValues
         implements PrometheusDataValuesCtl {
-    /**
-     * Interface for an infoSet item.
-     */
-    @FunctionalInterface
-    public interface PrometheusInfoSetItem {
-        /**
-         * Obtain infoSet.
-         *
-         * @return the infoSet
-         */
-        PrometheusDataInfoSet<?> getInfoSet();
-    }
-
-    /**
-     * Interface for a grouped item.
-     */
-    public interface PrometheusGroupedItem {
-        /**
-         * Is the item a child.
-         *
-         * @return true/false
-         */
-        boolean isChild();
-
-        /**
-         * Obtain the child iterator.
-         *
-         * @return the iterator
-         */
-        Iterator<? extends PrometheusDataItem> childIterator();
-    }
-
     /**
      * InfoSet Items tag.
      */
@@ -164,9 +137,9 @@ public class PrometheusDataValues
         }
 
         /* If the item is an infoSet item */
-        if (pItem instanceof PrometheusInfoSetItem myInfoItem) {
+        if (pItem instanceof PrometheusDataInfoSetItemCtl myInfoItem) {
             /* Access InfoSet */
-            final PrometheusDataInfoSet<?> myInfoSet = myInfoItem.getInfoSet();
+            final PrometheusDataInfoSetCtl myInfoSet = myInfoItem.getInfoSet();
 
             /* If the InfoSet is non-empty */
             if (myInfoSet.isEmpty()) {
@@ -182,7 +155,7 @@ public class PrometheusDataValues
                     final Object myCurr = myInfoIterator.next();
 
                     /* If this is a DataInfo item */
-                    if (myCurr instanceof PrometheusDataInfoItem myItem) {
+                    if (myCurr instanceof PrometheusDataInfoItemCtl myItem) {
                         /* Add item to the list */
                         final PrometheusInfoItem myInfo = new PrometheusInfoItem(myItem);
                         theInfoItems.add(myInfo);
@@ -196,9 +169,9 @@ public class PrometheusDataValues
         }
 
         /* If the item is a grouped item */
-        if (pItem instanceof PrometheusGroupedItem myGrouped) {
+        if (pItem instanceof PrometheusGroupedItemCtl myGrouped) {
             /* Access child iterator */
-            final Iterator<? extends PrometheusDataItem> myChildIterator = myGrouped.childIterator();
+            final Iterator<PrometheusDataItemCtl> myChildIterator = myGrouped.childIterator();
 
             /* If there are no children */
             if (myChildIterator == null) {
@@ -209,7 +182,7 @@ public class PrometheusDataValues
 
                 /* Iterator over the values */
                 while (myChildIterator.hasNext()) {
-                    final PrometheusDataItem myCurr = myChildIterator.next();
+                    final PrometheusDataItem myCurr = (PrometheusDataItem) myChildIterator.next();
 
                     /* Add child to the list */
                     final PrometheusDataValues myChild = new PrometheusDataValues(myCurr, TAG_CHILD);
@@ -614,7 +587,7 @@ public class PrometheusDataValues
          *
          * @param pInfo the info Item
          */
-        private PrometheusInfoItem(final PrometheusDataInfoItem pInfo) {
+        private PrometheusInfoItem(final PrometheusDataInfoItemCtl pInfo) {
             /* Access the infoClass */
             final PrometheusDataInfoClass myClass = pInfo.getInfoClass();
 

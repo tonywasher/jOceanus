@@ -22,14 +22,17 @@ import io.github.tonywasher.joceanus.metis.field.MetisField;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusEncryptedDataItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusEncryptedFieldSetCtl;
 
 /**
  * Prometheus Data fieldSet.
  *
  * @param <T> the data type
  */
-public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedDataItem>
-        extends MetisFieldVersionedSet<T> {
+public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedDataItemCtl>
+        extends MetisFieldVersionedSet<T>
+        implements PrometheusEncryptedFieldSetCtl<T> {
     /**
      * Constructor.
      *
@@ -51,7 +54,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedDataItem>
      * @param pClazz the class of the fieldSet
      * @return the fieldSet.
      */
-    public static <T extends PrometheusEncryptedDataItem> PrometheusEncryptedFieldSet<T> newEncryptedFieldSet(final Class<T> pClazz) {
+    public static <T extends PrometheusEncryptedDataItemCtl> PrometheusEncryptedFieldSet<T> newEncryptedFieldSet(final Class<T> pClazz) {
         /* Synchronise on class */
         synchronized (MetisFieldSet.class) {
             /* Locate the parent fieldSet if it exists */

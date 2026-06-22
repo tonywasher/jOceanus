@@ -31,7 +31,7 @@ import io.github.tonywasher.joceanus.metis.toolkit.MetisToolkit;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusGroupedItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusGroupedItemCtl;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusIOException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusSecurityException;
@@ -356,7 +356,7 @@ public class PrometheusDataValuesFormatter {
             }
 
             /* Skip over child items */
-            if (myItem instanceof PrometheusGroupedItem myGrouped
+            if (myItem instanceof PrometheusGroupedItemCtl myGrouped
                     && myGrouped.isChild()) {
                 continue;
             }

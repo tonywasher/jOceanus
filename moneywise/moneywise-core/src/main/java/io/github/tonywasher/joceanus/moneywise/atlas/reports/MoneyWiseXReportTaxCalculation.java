@@ -98,7 +98,7 @@ public class MoneyWiseXReportTaxCalculation
     public Document createReport(final MoneyWiseXAnalysis pAnalysis) {
         /* Access the bucket lists */
         final MoneyWiseTaxAnalysis myTaxAnalysis = pAnalysis.getTaxAnalysis();
-        final MoneyWiseTaxYear myYear = myTaxAnalysis.getTaxYear();
+        final MoneyWiseTaxYear myYear = (MoneyWiseTaxYear) myTaxAnalysis.getTaxYear();
 
         /* Start the report */
         final Element myBody = theBuilder.startReport();

@@ -33,7 +33,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusDataInfoSetItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -158,7 +158,7 @@ public class MoneyWisePortfolioInfo
      */
     @SuppressWarnings("unchecked")
     private PrometheusDataInfoSet<MoneyWisePortfolioInfo> getInfoSet() {
-        return (PrometheusDataInfoSet<MoneyWisePortfolioInfo>) ((PrometheusInfoSetItem) getOwner()).getInfoSet();
+        return (PrometheusDataInfoSet<MoneyWisePortfolioInfo>) ((PrometheusDataInfoSetItemCtl<?>) getOwner()).getInfoSet();
     }
 
     @Override

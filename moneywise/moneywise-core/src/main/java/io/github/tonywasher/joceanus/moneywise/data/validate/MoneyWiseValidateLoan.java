@@ -34,6 +34,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * Validator for Loan.
@@ -78,7 +79,7 @@ public class MoneyWiseValidateLoan
         /* Category must be non-null */
         if (myCategory == null) {
             myLoan.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
-        } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
+        } else if (Objects.requireNonNull(myCategory.getCategoryTypeClass()).isParentCategory()) {
             myLoan.addError(ERROR_BADCATEGORY, MoneyWiseBasicResource.CATEGORY_NAME);
         }
 
@@ -103,7 +104,8 @@ public class MoneyWiseValidateLoan
             }
 
             /* If we are open then parent must be open */
-            if (!myLoan.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
+            if (!Boolean.TRUE.equals(myLoan.isClosed())
+                    && Boolean.TRUE.equals(myParent.isClosed())) {
                 myLoan.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
         }
@@ -135,7 +137,7 @@ public class MoneyWiseValidateLoan
     public void autoCorrect(final MoneyWiseLoan pLoan) throws OceanusException {
         /* Access category class and parent */
         final MoneyWiseLoanCategoryClass myClass = pLoan.getCategoryClass();
-        final MoneyWisePayee myParent = (MoneyWisePayee) pLoan.getParent();
+        final MoneyWisePayee myParent = pLoan.getParent();
 
         /* Ensure that we have valid parent */
         if (myParent == null

@@ -22,9 +22,11 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataT
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
-import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxConfig;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxSource;
+import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTax.MoneyWiseUKBasicAllowanceCtl;
+import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTax.MoneyWiseUKTaxConfigCtl;
+import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTax.MoneyWiseUKTaxYearCtl;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateUtils;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
@@ -34,7 +36,7 @@ import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
  * Tax configuration.
  */
 public class MoneyWiseUKTaxConfig
-        implements MetisFieldItem, MoneyWiseTaxConfig {
+        implements MetisFieldItem, MoneyWiseUKTaxConfigCtl {
     /**
      * Local Report fields.
      */
@@ -63,7 +65,7 @@ public class MoneyWiseUKTaxConfig
     /**
      * TaxYear.
      */
-    private final MoneyWiseUKTaxYear theTaxYear;
+    private final MoneyWiseUKTaxYearCtl theTaxYear;
 
     /**
      * The taxSource.
@@ -137,7 +139,7 @@ public class MoneyWiseUKTaxConfig
      * @param pTaxSource the tax source
      * @param pBirthday  the client birthday
      */
-    protected MoneyWiseUKTaxConfig(final MoneyWiseUKTaxYear pTaxYear,
+    protected MoneyWiseUKTaxConfig(final MoneyWiseUKTaxYearCtl pTaxYear,
                                    final MoneyWiseTaxSource pTaxSource,
                                    final OceanusDate pBirthday) {
         /* Store details */
@@ -151,7 +153,7 @@ public class MoneyWiseUKTaxConfig
         theGrossTaxable = determineGrossTaxableIncome();
 
         /* Access the basic allowances */
-        final MoneyWiseUKBasicAllowance myAllowances = theTaxYear.getAllowances();
+        final MoneyWiseUKBasicAllowanceCtl myAllowances = theTaxYear.getAllowances();
 
         /* Calculate the allowances */
         theAllowance = new OceanusMoney(myAllowances.calculateBasicAllowance(this));
@@ -161,7 +163,7 @@ public class MoneyWiseUKTaxConfig
         theCapitalAllowance = new OceanusMoney(myAllowances.getCapitalAllowance());
 
         /* Access the taxBands */
-        final MoneyWiseUKTaxBands myBands = theTaxYear.getTaxBands();
+        final MoneyWiseUKTaxBands myBands = (MoneyWiseUKTaxBands) theTaxYear.getTaxBands();
         theTaxBands = new MoneyWiseTaxBandSet(myBands.getStandardSet());
 
         /* Calculate the loSavings band */
@@ -195,12 +197,8 @@ public class MoneyWiseUKTaxConfig
         theLoSavings = new MoneyWiseTaxBand(pSource.getLoSavingsBand());
     }
 
-    /**
-     * Obtain the tax year.
-     *
-     * @return the tax year
-     */
-    public MoneyWiseUKTaxYear getTaxYear() {
+    @Override
+    public MoneyWiseUKTaxYearCtl getTaxYear() {
         return theTaxYear;
     }
 
@@ -213,38 +211,22 @@ public class MoneyWiseUKTaxConfig
         return theTaxSource;
     }
 
-    /**
-     * Obtain the gross preSavings income.
-     *
-     * @return the gross preSavings
-     */
+    @Override
     public OceanusMoney getGrossPreSavings() {
         return theGrossPreSavings;
     }
 
-    /**
-     * Obtain the gross taxable income.
-     *
-     * @return the gross taxable
-     */
+    @Override
     public OceanusMoney getGrossTaxable() {
         return theGrossTaxable;
     }
 
-    /**
-     * Obtain the client birthday.
-     *
-     * @return the birthday
-     */
+    @Override
     public OceanusDate getBirthday() {
         return theBirthday;
     }
 
-    /**
-     * Obtain the client age.
-     *
-     * @return the gross taxable
-     */
+    @Override
     public Integer getClientAge() {
         return theClientAge;
     }
@@ -258,20 +240,12 @@ public class MoneyWiseUKTaxConfig
         return hasAgeRelatedAllowance;
     }
 
-    /**
-     * Set whether we have an age related allowance?
-     *
-     * @param pFlag true/false
-     */
-    protected void setHasAgeRelatedAllowance(final boolean pFlag) {
+    @Override
+    public void setHasAgeRelatedAllowance(final boolean pFlag) {
         hasAgeRelatedAllowance = pFlag;
     }
 
-    /**
-     * Obtain the allowance.
-     *
-     * @return the allowance
-     */
+    @Override
     public OceanusMoney getAllowance() {
         return theAllowance;
     }
@@ -385,7 +359,7 @@ public class MoneyWiseUKTaxConfig
      */
     private OceanusMoney determineGrossPreSavings() {
         /* Access the basic allowances */
-        final MoneyWiseUKBasicAllowance myAllowances = theTaxYear.getAllowances();
+        final MoneyWiseUKBasicAllowanceCtl myAllowances = theTaxYear.getAllowances();
 
         /* Initialise income to correct currency */
         final OceanusMoney myIncome = new OceanusMoney(myAllowances.getAllowance());

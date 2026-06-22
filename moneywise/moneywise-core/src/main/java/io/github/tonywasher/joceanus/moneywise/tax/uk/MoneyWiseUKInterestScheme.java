@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTax.MoneyWiseUKTaxYearCtl;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 
@@ -51,7 +52,7 @@ public abstract class MoneyWiseUKInterestScheme
      * @param pTaxYear the taxYear
      * @return the taxCredit rate
      */
-    protected abstract OceanusRate getTaxCreditRate(MoneyWiseUKTaxYear pTaxYear);
+    protected abstract OceanusRate getTaxCreditRate(MoneyWiseUKTaxYearCtl pTaxYear);
 
     @Override
     protected OceanusMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
@@ -171,7 +172,7 @@ public abstract class MoneyWiseUKInterestScheme
         }
 
         @Override
-        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
+        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYearCtl pTaxYear) {
             return pTaxYear.getTaxBands().getBasicTaxRate();
         }
 
@@ -218,7 +219,7 @@ public abstract class MoneyWiseUKInterestScheme
         }
 
         @Override
-        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
+        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYearCtl pTaxYear) {
             return theBaseRate;
         }
 

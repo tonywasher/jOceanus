@@ -19,13 +19,15 @@ package io.github.tonywasher.joceanus.prometheus.data;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersioned;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusEncryptedDataItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusEncryptedFieldSetCtl;
 
 /**
  * Prometheus Data fields.
  *
  * @param <T> the data type
  */
-public class PrometheusEncryptedField<T extends PrometheusEncryptedDataItem>
+public class PrometheusEncryptedField<T extends PrometheusEncryptedDataItemCtl>
         extends MetisFieldVersioned<T> {
     /**
      * Constructor.
@@ -35,7 +37,7 @@ public class PrometheusEncryptedField<T extends PrometheusEncryptedDataItem>
      * @param pDataType  the dataType of the field
      * @param pMaxLength the maximum length of the field
      */
-    PrometheusEncryptedField(final PrometheusEncryptedFieldSet<T> pAnchor,
+    PrometheusEncryptedField(final PrometheusEncryptedFieldSetCtl<T> pAnchor,
                              final MetisDataFieldId pId,
                              final MetisDataType pDataType,
                              final Integer pMaxLength) {

@@ -22,6 +22,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxSource;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxYear;
+import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTax.MoneyWiseUKTaxYearCtl;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusFiscalYear;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
@@ -32,7 +33,8 @@ import java.time.Month;
  * The UK Tax Year.
  */
 public class MoneyWiseUKTaxYear
-        extends MoneyWiseTaxYear {
+        extends MoneyWiseTaxYear
+        implements MoneyWiseUKTaxYearCtl {
     /**
      * Local Report fields.
      */

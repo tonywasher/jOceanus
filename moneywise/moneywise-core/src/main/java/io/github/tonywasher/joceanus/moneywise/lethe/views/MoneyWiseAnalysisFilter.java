@@ -36,7 +36,7 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWis
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioCashBucket;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
-import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBaseBucket;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransTagBucket;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisType;
@@ -714,13 +714,13 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
      * TaxBasis Bucket filter class.
      */
     public static class MoneyWiseAnalysisTaxBasisFilter
-            extends MoneyWiseAnalysisFilter<MoneyWiseAnalysisTaxBasisBucket, MoneyWiseAnalysisTaxBasisAttr> {
+            extends MoneyWiseAnalysisFilter<MoneyWiseAnalysisTaxBasisBaseBucket, MoneyWiseAnalysisTaxBasisAttr> {
         /**
          * Constructor.
          *
          * @param pTaxBasis the taxBasis bucket
          */
-        public MoneyWiseAnalysisTaxBasisFilter(final MoneyWiseAnalysisTaxBasisBucket pTaxBasis) {
+        public MoneyWiseAnalysisTaxBasisFilter(final MoneyWiseAnalysisTaxBasisBaseBucket pTaxBasis) {
             /* Store parameter */
             super(pTaxBasis, MoneyWiseAnalysisTaxBasisAttr.class);
             setCurrentAttribute(getAnalysisType().getDefaultValue());

@@ -42,7 +42,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoItem;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusDataInfoSetItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -55,7 +55,7 @@ import java.util.Map;
  */
 public class MoneyWisePayee
         extends MoneyWiseAssetBase
-        implements PrometheusInfoSetItem {
+        implements PrometheusDataInfoSetItemCtl<MoneyWisePayeeInfo> {
     /**
      * Object name.
      */

@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.launch;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseIcon;
-import io.github.tonywasher.joceanus.moneywise.ui.panel.MoneyWiseMainTab;
+import io.github.tonywasher.joceanus.moneywise.ui.panel.MoneyWiseUIMainTab;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUILaunchProgram;
@@ -69,6 +69,6 @@ public class MoneyWiseApp
 
     @Override
     public TethysUIMainPanel createMainPanel(final TethysUIFactory<?> pFactory) throws OceanusException {
-        return new MoneyWiseMainTab(pFactory);
+        return new MoneyWiseUIMainTab(pFactory);
     }
 }

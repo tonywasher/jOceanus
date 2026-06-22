@@ -32,11 +32,18 @@ public interface PrometheusCryptographyData {
     interface PrometheusCryptographicDataSet
             extends PrometheusDataSetCtl {
         /**
+         * Get the control data.
+         *
+         * @return the control data
+         */
+        PrometheusControlDataCtl getControl();
+
+        /**
          * Get the control key.
          *
          * @return the control key
          */
-        PrometheusControlDataCtl getControl();
+        PrometheusControlKeyCtl getControlKey();
     }
 
     /**

@@ -30,6 +30,8 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusCryptographicDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusDataInfoItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusDataInfoListCtl;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusLogicException;
 
@@ -39,7 +41,8 @@ import io.github.tonywasher.joceanus.prometheus.exc.PrometheusLogicException;
  * @author Tony Washer
  */
 public abstract class PrometheusDataInfoItem
-        extends PrometheusEncryptedDataItem {
+        extends PrometheusEncryptedDataItem
+        implements PrometheusDataInfoItemCtl {
     /**
      * Maximum DataLength.
      */
@@ -220,13 +223,6 @@ public abstract class PrometheusDataInfoItem
     public abstract PrometheusStaticDataItem getInfoType();
 
     /**
-     * Obtain InfoClass.
-     *
-     * @return the InfoClass
-     */
-    public abstract PrometheusDataInfoClass getInfoClass();
-
-    /**
      * Obtain InfoTypeId.
      *
      * @return the InfoTypeId
@@ -271,22 +267,12 @@ public abstract class PrometheusDataInfoItem
         return null;
     }
 
-    /**
-     * Obtain Link.
-     *
-     * @return the Link
-     */
-    protected PrometheusDataItem getLink() {
+    @Override
+    public PrometheusDataItem getLink() {
         return getValues().getValue(PrometheusDataResource.DATAINFO_LINK, PrometheusDataItem.class);
     }
 
-    /**
-     * Obtain Value as object.
-     *
-     * @param <X>    the object type
-     * @param pClass the object class
-     * @return the Value
-     */
+    @Override
     public <X> X getValue(final Class<X> pClass) {
         return getValues().getValue(PrometheusDataResource.DATAINFO_VALUE, pClass);
     }
@@ -838,7 +824,8 @@ public abstract class PrometheusDataInfoItem
      * @param <T> the DataType
      */
     public abstract static class PrometheusDataInfoList<T extends PrometheusDataInfoItem>
-            extends PrometheusEncryptedList<T> {
+            extends PrometheusEncryptedList<T>
+            implements PrometheusDataInfoListCtl {
         /*
          * Report fields.
          */
