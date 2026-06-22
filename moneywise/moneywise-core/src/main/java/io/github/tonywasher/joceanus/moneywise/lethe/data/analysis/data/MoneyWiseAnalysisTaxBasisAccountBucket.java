@@ -39,7 +39,7 @@ import java.util.Map;
  * The TaxBasis Account Bucket class.
  */
 public final class MoneyWiseAnalysisTaxBasisAccountBucket
-        extends MoneyWiseAnalysisTaxBasisBucket {
+        extends MoneyWiseAnalysisTaxBasisBaseBucket {
     /**
      * Local Report fields.
      */

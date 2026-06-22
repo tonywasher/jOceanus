@@ -23,6 +23,7 @@ import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisRe
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisAccountBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBaseBucket;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisAttr;
@@ -201,7 +202,7 @@ public class MoneyWiseReportTaxationBasis
 
     @Override
     public MoneyWiseAnalysisFilter<?, MoneyWiseAnalysisTaxBasisAttr> processFilter(final Object pSource) {
-        if (pSource instanceof MoneyWiseAnalysisTaxBasisBucket mySource) {
+        if (pSource instanceof MoneyWiseAnalysisTaxBasisBaseBucket mySource) {
             /* Create the new filter */
             return new MoneyWiseAnalysisTaxBasisFilter(mySource);
         }
