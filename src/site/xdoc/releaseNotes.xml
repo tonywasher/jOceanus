@@ -8,6 +8,7 @@
     </section>
     <section name="Build History">
       <dl>
+        <dt>1.6.4-b2</dt> <dd>DeTangle packages</dd>
         <dt>1.6.4-b1</dt> <dd>Rewrite of Themis</dd>
         <dt>1.6.3-b6</dt> <dd>New security agreements</dd>
         <dt>1.6.3-b5</dt> <dd>Initial analysis of new events</dd>

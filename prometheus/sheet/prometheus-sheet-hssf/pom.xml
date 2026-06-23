@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.github.tonywasher.joceanus.prometheus</groupId>
     <artifactId>sheet</artifactId>
-    <version>1.6.4-SNAPSHOT</version>
+    <version>1.6.4-b2</version>
   </parent>
   <groupId>io.github.tonywasher.joceanus.prometheus.sheet</groupId>
   <artifactId>prometheus-sheet-hssf</artifactId>
