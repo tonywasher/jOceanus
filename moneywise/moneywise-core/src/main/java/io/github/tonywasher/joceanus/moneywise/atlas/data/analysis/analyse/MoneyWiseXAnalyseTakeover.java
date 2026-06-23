@@ -16,6 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseSecurityCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransCtl;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisAccountBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -36,7 +40,7 @@ import java.util.Objects;
 /**
  * Stock Takeover analysis.
  */
-public class MoneyWiseXAnalysisTakeover {
+public class MoneyWiseXAnalyseTakeover {
     /**
      * The portfolioBuckets.
      */
@@ -45,22 +49,22 @@ public class MoneyWiseXAnalysisTakeover {
     /**
      * The analysis state.
      */
-    private final MoneyWiseXAnalysisState theState;
+    private final MoneyWiseXAnalyseState theState;
 
     /**
      * The transAnalyser.
      */
-    private final MoneyWiseXAnalysisTransAnalyser theTransAnalyser;
+    private final MoneyWiseXAnalyseTransAnalyserCtl theTransAnalyser;
 
     /**
      * The securityAnalyser.
      */
-    private final MoneyWiseXAnalysisSecurity theSecurity;
+    private final MoneyWiseXAnalyseSecurityCtl theSecurity;
 
     /**
      * The transaction.
      */
-    private MoneyWiseXAnalysisTransaction theTransaction;
+    private MoneyWiseXAnalyseTransCtl theTransaction;
 
     /**
      * Constructor.
@@ -68,8 +72,8 @@ public class MoneyWiseXAnalysisTakeover {
      * @param pAnalyser the event analyser
      * @param pSecurity the securityAnalyser
      */
-    MoneyWiseXAnalysisTakeover(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
-                               final MoneyWiseXAnalysisSecurity pSecurity) {
+    MoneyWiseXAnalyseTakeover(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser,
+                              final MoneyWiseXAnalyseSecurityCtl pSecurity) {
         thePortfolios = pAnalyser.getAnalysis().getPortfolios();
         theState = pAnalyser.getState();
         theSecurity = pSecurity;
@@ -81,7 +85,7 @@ public class MoneyWiseXAnalysisTakeover {
      *
      * @param pTrans the transaction
      */
-    void processStockTakeover(final MoneyWiseXAnalysisTransaction pTrans) {
+    void processStockTakeover(final MoneyWiseXAnalyseTransCtl pTrans) {
         /* Store the transaction */
         theTransaction = pTrans;
 
@@ -193,8 +197,8 @@ public class MoneyWiseXAnalysisTakeover {
         myDebitValues.setValue(MoneyWiseXAnalysisSecurityAttr.CONSIDERATION, myConsideration);
 
         /* Determine whether this is a large cash transaction */
-        final OceanusMoney myPortion = myConsideration.valueAtRate(MoneyWiseXAnalysisXferOut.LIMIT_RATE);
-        final boolean isLargeCash = pCashValue.compareTo(MoneyWiseXAnalysisXferOut.LIMIT_VALUE) > 0
+        final OceanusMoney myPortion = myConsideration.valueAtRate(MoneyWiseXAnalyseXferOut.LIMIT_RATE);
+        final boolean isLargeCash = pCashValue.compareTo(MoneyWiseXAnalyseXferOut.LIMIT_VALUE) > 0
                 && pCashValue.compareTo(myPortion) > 0;
         myDebitValues.setValue(MoneyWiseXAnalysisSecurityAttr.CASHTYPE, isLargeCash
                 ? MoneyWiseCashType.LARGECASH

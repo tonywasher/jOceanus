@@ -33,7 +33,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransBase.MoneyWiseDataValidatorTrans;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
@@ -683,13 +683,12 @@ public class MoneyWiseUITransactionDialog
      */
     public static MoneyWiseTransAsset resolveAsset(final MoneyWiseTransAsset pAsset) {
         /* If this is a security holding */
-        if (pAsset instanceof MoneyWiseSecurityHolding) {
+        if (pAsset instanceof MoneyWiseSecurityHolding myHolding) {
             /* declare holding via map */
-            final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) pAsset;
             final MoneyWisePortfolio myPortfolio = myHolding.getPortfolio();
             final MoneyWiseSecurity mySecurity = myHolding.getSecurity();
             final MoneyWiseDataSet myData = (MoneyWiseDataSet) myPortfolio.getDataSet();
-            final MoneyWiseSecurityHoldingMap myMap = myData.getPortfolios().getSecurityHoldingsMap();
+            final MoneyWiseSecurityHoldingMap myMap = (MoneyWiseSecurityHoldingMap) myData.getPortfolios().getSecurityHoldingsMap();
             return myMap.declareHolding(myPortfolio, mySecurity);
         }
 
@@ -820,7 +819,7 @@ public class MoneyWiseUITransactionDialog
         /* Access Portfolios and Holdings Map */
         final MoneyWiseDataSet myData = (MoneyWiseDataSet) pTrans.getDataSet();
         final MoneyWisePortfolioList myPortfolios = myData.getPortfolios();
-        final MoneyWiseSecurityHoldingMap myMap = myPortfolios.getSecurityHoldingsMap();
+        final MoneyWiseSecurityHoldingMap myMap = (MoneyWiseSecurityHoldingMap) myPortfolios.getSecurityHoldingsMap();
 
         /* Loop through the Portfolios */
         final Iterator<MoneyWisePortfolio> myPortIterator = myPortfolios.iterator();

@@ -16,9 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseSecurityCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransCtl;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -32,15 +33,19 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.Mon
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMap;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
  * Credit XferIn Analysis.
  */
-public class MoneyWiseXAnalysisXferIn {
+public class MoneyWiseXAnalyseXferIn {
     /**
      * The analysis.
      */
@@ -54,17 +59,17 @@ public class MoneyWiseXAnalysisXferIn {
     /**
      * The analysis state.
      */
-    private final MoneyWiseXAnalysisState theState;
+    private final MoneyWiseXAnalyseState theState;
 
     /**
      * The transAnalyser.
      */
-    private final MoneyWiseXAnalysisTransAnalyser theTransAnalyser;
+    private final MoneyWiseXAnalyseTransAnalyserCtl theTransAnalyser;
 
     /**
      * The securityAnalyser.
      */
-    private final MoneyWiseXAnalysisSecurity theSecurity;
+    private final MoneyWiseXAnalyseSecurityCtl theSecurity;
 
     /**
      * The statePension bucket.
@@ -74,7 +79,7 @@ public class MoneyWiseXAnalysisXferIn {
     /**
      * The transaction.
      */
-    private MoneyWiseXAnalysisTransaction theTransaction;
+    private MoneyWiseXAnalyseTransCtl theTransaction;
 
     /**
      * Constructor.
@@ -83,8 +88,8 @@ public class MoneyWiseXAnalysisXferIn {
      * @param pSecurity the securityAnalyser
      * @throws OceanusException on error
      */
-    MoneyWiseXAnalysisXferIn(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
-                             final MoneyWiseXAnalysisSecurity pSecurity) throws OceanusException {
+    MoneyWiseXAnalyseXferIn(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser,
+                            final MoneyWiseXAnalyseSecurityCtl pSecurity) throws OceanusException {
         /* Initialise values */
         theAnalysis = pAnalyser.getAnalysis();
         thePortfolios = theAnalysis.getPortfolios();
@@ -112,7 +117,8 @@ public class MoneyWiseXAnalysisXferIn {
         /* If they exist, access the bucket */
         if (myPensionPort != null
                 && myStatePension != null) {
-            final MoneyWiseSecurityHolding myHolding = myPortfolioList.getSecurityHoldingsMap().declareHolding(myPensionPort, myStatePension);
+            final MoneyWiseSecurityHoldingMap myMap = (MoneyWiseSecurityHoldingMap) myPortfolioList.getSecurityHoldingsMap();
+            final MoneyWiseSecurityHolding myHolding = myMap.declareHolding(myPensionPort, myStatePension);
             return theAnalysis.getPortfolios().getBucket(myHolding);
         }
 
@@ -125,7 +131,7 @@ public class MoneyWiseXAnalysisXferIn {
      *
      * @param pTrans the transaction
      */
-    void processTransferIn(final MoneyWiseXAnalysisTransaction pTrans) {
+    void processTransferIn(final MoneyWiseXAnalyseTransaction pTrans) {
         /* Record the transaction */
         theTransaction = pTrans;
 
@@ -153,7 +159,7 @@ public class MoneyWiseXAnalysisXferIn {
      *
      * @param pTrans the transaction
      */
-    void processCreditXferIn(final MoneyWiseXAnalysisTransaction pTrans) {
+    void processCreditXferIn(final MoneyWiseXAnalyseTransaction pTrans) {
         /* Record the transaction */
         theTransaction = pTrans;
 

@@ -23,7 +23,7 @@ import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
 import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
-import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisManager;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyseManager;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisDataType;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.atlas.ui.controls.MoneyWiseUIXAnalysisSelect;
@@ -100,7 +100,7 @@ public class MoneyWiseUIXEventTable
     /**
      * Analysis View.
      */
-    private final MoneyWiseXAnalysisManager theAnalysisMgr;
+    private final MoneyWiseXAnalyseManager theAnalysisMgr;
 
     /**
      * Analysis Selection panel.
@@ -154,7 +154,7 @@ public class MoneyWiseUIXEventTable
      */
     MoneyWiseUIXEventTable(final MoneyWiseView pView,
                            final PrometheusEditSet pEditSet,
-                           final MoneyWiseXAnalysisManager pAnalysisMgr,
+                           final MoneyWiseXAnalyseManager pAnalysisMgr,
                            final MetisErrorPanel pError,
                            final MetisViewerEntry pFilter,
                            final MetisViewerEntry pAnalysis) {
@@ -1113,7 +1113,7 @@ public class MoneyWiseUIXEventTable
          * @param pAnalysisMgr the analysisManager
          */
         public MoneyWiseXStatementPanel(final MoneyWiseView pView,
-                                        final MoneyWiseXAnalysisManager pAnalysisMgr) {
+                                        final MoneyWiseXAnalyseManager pAnalysisMgr) {
             /* Build the Update set and entry */
             theEditSet = new PrometheusEditSet(pView);
 

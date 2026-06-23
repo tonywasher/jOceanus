@@ -18,16 +18,20 @@ package io.github.tonywasher.joceanus.prometheus.service.sheet.odf;
 
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetColumn;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfColumnCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfColumnStoreCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfSheetCtl;
 
 /**
  * Column class.
  */
 public class PrometheusOdfColumn
-        extends PrometheusSheetColumn {
+        extends PrometheusSheetColumn
+        implements PrometheusOdfColumnCtl {
     /**
      * The column storage.
      */
-    private final PrometheusOdfColumnStore theStore;
+    private final PrometheusOdfColumnStoreCtl theStore;
 
     /**
      * Constructor.
@@ -37,8 +41,8 @@ public class PrometheusOdfColumn
      * @param pIndex    the index
      * @param pReadOnly is the column readOnly?
      */
-    PrometheusOdfColumn(final PrometheusOdfColumnStore pStore,
-                        final PrometheusOdfSheet pSheet,
+    PrometheusOdfColumn(final PrometheusOdfColumnStoreCtl pStore,
+                        final PrometheusOdfSheetCtl pSheet,
                         final int pIndex,
                         final boolean pReadOnly) {
         /* Store parameters */
@@ -47,18 +51,18 @@ public class PrometheusOdfColumn
     }
 
     @Override
-    public PrometheusOdfSheet getSheet() {
-        return (PrometheusOdfSheet) super.getSheet();
+    public PrometheusOdfSheetCtl getSheet() {
+        return (PrometheusOdfSheetCtl) super.getSheet();
     }
 
     @Override
     public PrometheusOdfColumn getNextColumn() {
-        return theStore.getReadOnlyColumnByIndex(getSheet(), getColumnIndex() + 1);
+        return (PrometheusOdfColumn) theStore.getReadOnlyColumnByIndex(getSheet(), getColumnIndex() + 1);
     }
 
     @Override
     public PrometheusOdfColumn getPreviousColumn() {
-        return theStore.getReadOnlyColumnByIndex(getSheet(), getColumnIndex() - 1);
+        return (PrometheusOdfColumn) theStore.getReadOnlyColumnByIndex(getSheet(), getColumnIndex() - 1);
     }
 
     @Override

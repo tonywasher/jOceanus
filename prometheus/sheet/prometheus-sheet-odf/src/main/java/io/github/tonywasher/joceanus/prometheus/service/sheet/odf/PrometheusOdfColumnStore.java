@@ -16,17 +16,20 @@
  */
 package io.github.tonywasher.joceanus.prometheus.service.sheet.odf;
 
-import java.util.Arrays;
-import java.util.Objects;
-
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfColumnStoreCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfSheetCoreCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfSheetCtl;
 import org.w3c.dom.Element;
 
-import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Hold columns as a list of values.
  */
-class PrometheusOdfColumnStore {
+public class PrometheusOdfColumnStore
+        implements PrometheusOdfColumnStoreCtl {
     /**
      * Column Expansion.
      */
@@ -35,7 +38,7 @@ class PrometheusOdfColumnStore {
     /**
      * Underlying sheet.
      */
-    private final PrometheusOdfSheetCore theSheet;
+    private final PrometheusOdfSheetCoreCtl theSheet;
 
     /**
      * The Parser.
@@ -62,7 +65,7 @@ class PrometheusOdfColumnStore {
      *
      * @param pSheet the owning sheet.
      */
-    PrometheusOdfColumnStore(final PrometheusOdfSheetCore pSheet) {
+    PrometheusOdfColumnStore(final PrometheusOdfSheetCoreCtl pSheet) {
         /* Store details */
         theSheet = pSheet;
         theParser = theSheet.getParser();
@@ -76,7 +79,7 @@ class PrometheusOdfColumnStore {
      * @param pSheet   the owning sheet.
      * @param pNumCols the initial # of columns
      */
-    PrometheusOdfColumnStore(final PrometheusOdfSheetCore pSheet,
+    PrometheusOdfColumnStore(final PrometheusOdfSheetCoreCtl pSheet,
                              final int pNumCols) {
         /* Store details */
         theSheet = pSheet;
@@ -91,7 +94,7 @@ class PrometheusOdfColumnStore {
      *
      * @return the row.
      */
-    PrometheusOdfSheetCore getSheet() {
+    PrometheusOdfSheetCoreCtl getSheet() {
         return theSheet;
     }
 
@@ -149,15 +152,9 @@ class PrometheusOdfColumnStore {
         theSheet.addAdditionalCols(pXtraCols);
     }
 
-    /**
-     * Obtain a readOnly column by its index.
-     *
-     * @param pSheet    the owning sheet
-     * @param pColIndex the index of the column.
-     * @return the column if it exists, else null
-     */
-    PrometheusOdfColumn getReadOnlyColumnByIndex(final PrometheusOdfSheet pSheet,
-                                                 final int pColIndex) {
+    @Override
+    public PrometheusOdfColumn getReadOnlyColumnByIndex(final PrometheusOdfSheetCtl pSheet,
+                                                        final int pColIndex) {
         /* Handle index out of range */
         if (pColIndex < 0 || pColIndex >= theNumCols) {
             return null;
@@ -174,7 +171,7 @@ class PrometheusOdfColumnStore {
      * @param pColIndex the index of the column.
      * @return the column
      */
-    PrometheusOdfColumn getMutableColumnByIndex(final PrometheusOdfSheet pSheet,
+    PrometheusOdfColumn getMutableColumnByIndex(final PrometheusOdfSheetCtl pSheet,
                                                 final int pColIndex) {
         /* Handle negative column index */
         if (pColIndex < 0) {
@@ -196,35 +193,20 @@ class PrometheusOdfColumnStore {
         return new PrometheusOdfColumn(this, pSheet, pColIndex, false);
     }
 
-    /**
-     * Get hidden flag at index.
-     *
-     * @param pIndex the index
-     * @return the value
-     */
-    boolean getHiddenAtIndex(final int pIndex) {
+    @Override
+    public boolean getHiddenAtIndex(final int pIndex) {
         return theHiddens[pIndex] != null;
     }
 
-    /**
-     * Set hidden flag at index.
-     *
-     * @param pIndex  the index
-     * @param pHidden true/false
-     */
-    void setHiddenAtIndex(final int pIndex,
-                          final boolean pHidden) {
+    @Override
+    public void setHiddenAtIndex(final int pIndex,
+                                 final boolean pHidden) {
         theHiddens[pIndex] = pHidden;
     }
 
-    /**
-     * Set style at index.
-     *
-     * @param pIndex the index
-     * @param pStyle the style
-     */
-    void setStyleAtIndex(final int pIndex,
-                         final PrometheusSheetCellStyleType pStyle) {
+    @Override
+    public void setStyleAtIndex(final int pIndex,
+                                final PrometheusSheetCellStyleType pStyle) {
         theStyles[pIndex] = pStyle;
     }
 

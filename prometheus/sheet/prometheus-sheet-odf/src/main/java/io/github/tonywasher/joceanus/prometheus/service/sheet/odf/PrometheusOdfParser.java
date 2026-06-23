@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * Parser for Document.
  */
-class PrometheusOdfParser {
+public class PrometheusOdfParser {
     /**
      * The document.
      */

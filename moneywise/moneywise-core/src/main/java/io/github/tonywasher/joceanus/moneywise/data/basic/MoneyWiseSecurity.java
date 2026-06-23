@@ -25,7 +25,6 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityInfo.MoneyWiseSecurityInfoList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
@@ -252,7 +251,7 @@ public class MoneyWiseSecurity
      */
     public MoneyWiseSecurity getUnderlyingStock() {
         return hasInfoSet
-                ? theInfoSet.getSecurity(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK)
+                ? (MoneyWiseSecurity) theInfoSet.getSecurity(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK)
                 : null;
     }
 
@@ -464,7 +463,7 @@ public class MoneyWiseSecurity
         final MoneyWisePortfolioList myPortfolios = myEditSet == null
                 ? getDataSet().getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class)
                 : myEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
-        final MoneyWiseSecurityHoldingMap myMap = myPortfolios.getSecurityHoldingsMap();
+        final MoneyWiseSecurityHoldingMapCtl myMap = myPortfolios.getSecurityHoldingsMap();
         myMap.deRegister(this);
     }
 

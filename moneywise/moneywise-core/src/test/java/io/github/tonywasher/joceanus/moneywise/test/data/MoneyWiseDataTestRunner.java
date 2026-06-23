@@ -16,9 +16,7 @@
  */
 package io.github.tonywasher.joceanus.moneywise.test.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
-import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisBuilder;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyseBuilder;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseIOException;
@@ -37,6 +35,8 @@ import io.github.tonywasher.joceanus.moneywise.test.data.trans.MoneyWiseDataTest
 import io.github.tonywasher.joceanus.moneywise.test.data.trans.MoneyWiseDataTestTransfers;
 import io.github.tonywasher.joceanus.moneywise.test.data.xdoc.MoneyWiseDataXDocBuilder;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
@@ -71,7 +71,7 @@ public class MoneyWiseDataTestRunner {
     /**
      * Analysis Builder.
      */
-    private final MoneyWiseXAnalysisBuilder theAnalysisBuilder;
+    private final MoneyWiseXAnalyseBuilder theAnalysisBuilder;
 
     /**
      * The testCases.
@@ -87,7 +87,7 @@ public class MoneyWiseDataTestRunner {
     MoneyWiseDataTestRunner(final MoneyWiseView pView) throws OceanusException {
         /* Create the analyser */
         theView = pView;
-        theAnalysisBuilder = new MoneyWiseXAnalysisBuilder(theView);
+        theAnalysisBuilder = new MoneyWiseXAnalyseBuilder(theView);
 
         /* Create the dataSet */
         theDataSet = theView.getNewData();

@@ -28,7 +28,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWi
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
@@ -662,7 +662,7 @@ public class MoneyWiseValidateTransDefaults {
     private MoneyWiseSecurityHolding getDefaultHolding(final MoneyWiseTransCategory pCategory) {
         /* Access Portfolios and Holdings Map */
         final MoneyWisePortfolioList myPortfolios = theEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
-        final MoneyWiseSecurityHoldingMap myMap = myPortfolios.getSecurityHoldingsMap();
+        final MoneyWiseSecurityHoldingMap myMap = (MoneyWiseSecurityHoldingMap) myPortfolios.getSecurityHoldingsMap();
 
         /* Loop through the Portfolios */
         final Iterator<MoneyWisePortfolio> myPortIterator = myPortfolios.iterator();
@@ -670,7 +670,7 @@ public class MoneyWiseValidateTransDefaults {
             final MoneyWisePortfolio myPortfolio = myPortIterator.next();
 
             /* Ignore deleted or closed */
-            if (myPortfolio.isDeleted() || myPortfolio.isClosed()) {
+            if (myPortfolio.isDeleted() || Boolean.TRUE.equals(myPortfolio.isClosed())) {
                 continue;
             }
 
@@ -704,7 +704,7 @@ public class MoneyWiseValidateTransDefaults {
                                                               final MoneyWiseTransCategory pCategory) {
         /* Access Portfolios and Holdings Map */
         final MoneyWisePortfolioList myPortfolios = theEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
-        final MoneyWiseSecurityHoldingMap myMap = myPortfolios.getSecurityHoldingsMap();
+        final MoneyWiseSecurityHoldingMap myMap = (MoneyWiseSecurityHoldingMap) myPortfolios.getSecurityHoldingsMap();
 
         /* Loop through the Portfolios */
         final Iterator<MoneyWisePortfolio> myPortIterator = myPortfolios.iterator();
@@ -712,7 +712,7 @@ public class MoneyWiseValidateTransDefaults {
             final MoneyWisePortfolio myPortfolio = myPortIterator.next();
 
             /* Ignore deleted or closed */
-            if (myPortfolio.isDeleted() || myPortfolio.isClosed()) {
+            if (myPortfolio.isDeleted() || Boolean.TRUE.equals(myPortfolio.isClosed())) {
                 continue;
             }
 

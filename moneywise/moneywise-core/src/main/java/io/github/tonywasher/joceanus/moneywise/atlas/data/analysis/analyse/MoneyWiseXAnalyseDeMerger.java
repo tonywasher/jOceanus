@@ -16,20 +16,23 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseSecurityCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransCtl;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Share deMerge Analysis.
  */
-public class MoneyWiseXAnalysisDeMerger {
+public class MoneyWiseXAnalyseDeMerger {
     /**
      * The portfolioBuckets.
      */
@@ -38,12 +41,12 @@ public class MoneyWiseXAnalysisDeMerger {
     /**
      * The analysis state.
      */
-    private final MoneyWiseXAnalysisState theState;
+    private final MoneyWiseXAnalyseState theState;
 
     /**
      * The securityAnalyser.
      */
-    private final MoneyWiseXAnalysisSecurity theSecurity;
+    private final MoneyWiseXAnalyseSecurityCtl theSecurity;
 
     /**
      * Constructor.
@@ -51,8 +54,8 @@ public class MoneyWiseXAnalysisDeMerger {
      * @param pAnalyser the event analyser
      * @param pSecurity the securityAnalyser
      */
-    MoneyWiseXAnalysisDeMerger(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
-                               final MoneyWiseXAnalysisSecurity pSecurity) {
+    MoneyWiseXAnalyseDeMerger(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser,
+                              final MoneyWiseXAnalyseSecurityCtl pSecurity) {
         final MoneyWiseXAnalysis myAnalysis = pAnalyser.getAnalysis();
         thePortfolios = myAnalysis.getPortfolios();
         theState = pAnalyser.getState();
@@ -64,7 +67,7 @@ public class MoneyWiseXAnalysisDeMerger {
      *
      * @param pTrans the transaction
      */
-    void processStockDeMerger(final MoneyWiseXAnalysisTransaction pTrans) {
+    void processStockDeMerger(final MoneyWiseXAnalyseTransCtl pTrans) {
         /* Access the Debit Asset Security Bucket */
         final MoneyWiseSecurityHolding mySource = (MoneyWiseSecurityHolding) pTrans.getDebitAccount();
         MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(mySource);

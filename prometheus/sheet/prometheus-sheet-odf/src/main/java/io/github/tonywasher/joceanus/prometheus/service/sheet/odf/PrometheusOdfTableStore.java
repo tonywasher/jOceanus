@@ -23,6 +23,9 @@ import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCel
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetException;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetView;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfSheetCoreCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfTableStoreCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfWorkBookCtl;
 import org.w3c.dom.Element;
 
 import java.util.HashMap;
@@ -32,7 +35,8 @@ import java.util.Map;
 /**
  * Table storage.
  */
-class PrometheusOdfTableStore {
+public class PrometheusOdfTableStore
+        implements PrometheusOdfTableStoreCtl {
     /**
      * The map of sheets.
      */
@@ -51,7 +55,7 @@ class PrometheusOdfTableStore {
     /**
      * The workBook.
      */
-    private final PrometheusOdfWorkBook theBook;
+    private final PrometheusOdfWorkBookCtl theBook;
 
     /**
      * The parser.
@@ -84,7 +88,7 @@ class PrometheusOdfTableStore {
      * @param pBook        the workBook.
      * @param pSpreadSheet the spreadSheet element
      */
-    PrometheusOdfTableStore(final PrometheusOdfWorkBook pBook,
+    PrometheusOdfTableStore(final PrometheusOdfWorkBookCtl pBook,
                             final Element pSpreadSheet) {
         /* Store parameters */
         theBook = pBook;
@@ -97,12 +101,8 @@ class PrometheusOdfTableStore {
         theConstraints = new HashMap<>();
     }
 
-    /**
-     * Obtain the workBook.
-     *
-     * @return the WorkBook
-     */
-    PrometheusOdfWorkBook getWorkBook() {
+    @Override
+    public PrometheusOdfWorkBookCtl getWorkBook() {
         return theBook;
     }
 
@@ -238,15 +238,9 @@ class PrometheusOdfTableStore {
         return new PrometheusSheetView(mySheet, myFirstCell, myLastCell);
     }
 
-    /**
-     * Declare the named range.
-     *
-     * @param pName  the name of the range
-     * @param pRange the range to declare
-     * @throws OceanusException on error
-     */
-    void declareRange(final String pName,
-                      final PrometheusSheetCellRange pRange) throws OceanusException {
+    @Override
+    public void declareRange(final String pName,
+                             final PrometheusSheetCellRange pRange) throws OceanusException {
         /* Check for existing range */
         if (theRanges.get(pName) != null) {
             throw new PrometheusSheetException("Name "
@@ -271,18 +265,11 @@ class PrometheusOdfTableStore {
         }
     }
 
-    /**
-     * Apply Data Validation.
-     *
-     * @param pSheet      the workSheet containing the cells
-     * @param pFirstCell  the the first cell in the range
-     * @param pLastCell   the last cell in the range
-     * @param pValidRange the name of the validation range
-     */
-    void applyDataValidation(final PrometheusOdfSheetCore pSheet,
-                             final PrometheusSheetCellPosition pFirstCell,
-                             final PrometheusSheetCellPosition pLastCell,
-                             final String pValidRange) {
+    @Override
+    public void applyDataValidation(final PrometheusOdfSheetCoreCtl pSheet,
+                                    final PrometheusSheetCellPosition pFirstCell,
+                                    final PrometheusSheetCellPosition pLastCell,
+                                    final String pValidRange) {
         /* Access constraint */
         Element myConstraint = theConstraints.get(pValidRange);
         if (myConstraint == null) {
@@ -297,18 +284,11 @@ class PrometheusOdfTableStore {
         pSheet.applyValidation(theParser.getAttribute(myConstraint, PrometheusOdfTableItem.NAME), pFirstCell, pLastCell);
     }
 
-    /**
-     * Apply Data Validation.
-     *
-     * @param pSheet     the workSheet containing the cells
-     * @param pFirstCell the first cell in the range
-     * @param pLastCell  the last cell in the range
-     * @param pValueList the value list
-     */
-    void applyDataValidation(final PrometheusOdfSheetCore pSheet,
-                             final PrometheusSheetCellPosition pFirstCell,
-                             final PrometheusSheetCellPosition pLastCell,
-                             final String[] pValueList) {
+    @Override
+    public void applyDataValidation(final PrometheusOdfSheetCoreCtl pSheet,
+                                    final PrometheusSheetCellPosition pFirstCell,
+                                    final PrometheusSheetCellPosition pLastCell,
+                                    final String[] pValueList) {
         /* Access constraint */
         Element myConstraint = theConstraints.get(pValueList);
         if (myConstraint == null) {
@@ -374,12 +354,8 @@ class PrometheusOdfTableStore {
         return myConstraint;
     }
 
-    /**
-     * Apply Data Filter.
-     *
-     * @param pRange the range
-     */
-    void applyDataFilter(final PrometheusSheetCellRange pRange) {
+    @Override
+    public void applyDataFilter(final PrometheusSheetCellRange pRange) {
         /* Access the dbRanges */
         Element myDBRanges = theParser.getFirstNamedChild(theSpreadSheet, PrometheusOdfTableItem.DATARANGES);
         if (myDBRanges == null) {

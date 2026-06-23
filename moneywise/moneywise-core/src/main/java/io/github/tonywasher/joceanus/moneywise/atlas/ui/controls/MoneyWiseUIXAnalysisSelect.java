@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.moneywise.atlas.ui.controls;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
-import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisManager;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyseManager;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisAttribute;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisType;
@@ -225,7 +225,7 @@ public class MoneyWiseUIXAnalysisSelect
     /**
      * The analysis manager.
      */
-    private final MoneyWiseXAnalysisManager theAnalysisMgr;
+    private final MoneyWiseXAnalyseManager theAnalysisMgr;
 
     /**
      * Select panel map.
@@ -287,7 +287,7 @@ public class MoneyWiseUIXAnalysisSelect
      */
     public MoneyWiseUIXAnalysisSelect(final TethysUIFactory<?> pFactory,
                                       final MoneyWiseView pView,
-                                      final MoneyWiseXAnalysisManager pAnalysisMgr,
+                                      final MoneyWiseXAnalyseManager pAnalysisMgr,
                                       final TethysUIButton pNewButton) {
         /* Access the analysis manager */
         theView = pView;

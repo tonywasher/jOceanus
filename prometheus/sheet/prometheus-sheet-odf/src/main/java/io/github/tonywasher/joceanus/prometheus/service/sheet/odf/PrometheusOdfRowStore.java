@@ -21,6 +21,10 @@ import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetRow;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfRowCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfRowStoreCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfSheetCoreCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfSheetCtl;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -32,7 +36,8 @@ import java.util.Objects;
 /**
  * Row store.
  */
-class PrometheusOdfRowStore {
+public class PrometheusOdfRowStore
+        implements PrometheusOdfRowStoreCtl {
     /**
      * Row Expansion.
      */
@@ -41,7 +46,7 @@ class PrometheusOdfRowStore {
     /**
      * Underlying sheet.
      */
-    private final PrometheusOdfSheetCore theSheet;
+    private final PrometheusOdfSheetCoreCtl theSheet;
 
     /**
      * The Parser.
@@ -79,7 +84,7 @@ class PrometheusOdfRowStore {
      * @param pSheet the owning sheet.
      * @throws OceanusException on error
      */
-    PrometheusOdfRowStore(final PrometheusOdfSheetCore pSheet) throws OceanusException {
+    PrometheusOdfRowStore(final PrometheusOdfSheetCoreCtl pSheet) throws OceanusException {
         /* Store details */
         theSheet = pSheet;
         theParser = theSheet.getParser();
@@ -95,7 +100,7 @@ class PrometheusOdfRowStore {
      * @param pNumRows the initial number of rows
      * @param pNumCols the initial number of columns
      */
-    PrometheusOdfRowStore(final PrometheusOdfSheetCore pSheet,
+    PrometheusOdfRowStore(final PrometheusOdfSheetCoreCtl pSheet,
                           final int pNumRows,
                           final int pNumCols) {
         /* Store details */
@@ -108,12 +113,8 @@ class PrometheusOdfRowStore {
         theRows = new PrometheusOdfCellStore[theNumRows];
     }
 
-    /**
-     * Obtain OasisSheet.
-     *
-     * @return the row.
-     */
-    PrometheusOdfSheetCore getSheet() {
+    @Override
+    public PrometheusOdfSheetCoreCtl getSheet() {
         return theSheet;
     }
 
@@ -126,12 +127,8 @@ class PrometheusOdfRowStore {
         return theNumRows;
     }
 
-    /**
-     * Obtain Cell count.
-     *
-     * @return the cell count.
-     */
-    int getCellCount() {
+    @Override
+    public int getCellCount() {
         return theNumCols;
     }
 
@@ -193,15 +190,9 @@ class PrometheusOdfRowStore {
         }
     }
 
-    /**
-     * Obtain a readOnly row by its index.
-     *
-     * @param pSheet    the owning sheet
-     * @param pRowIndex the index of the row.
-     * @return the row
-     */
-    PrometheusOdfRow getReadOnlyRowByIndex(final PrometheusOdfSheet pSheet,
-                                           final int pRowIndex) {
+    @Override
+    public PrometheusOdfRow getReadOnlyRowByIndex(final PrometheusOdfSheetCtl pSheet,
+                                                  final int pRowIndex) {
         /* Handle index out of range */
         if (pRowIndex < 0 || pRowIndex >= theNumRows) {
             return null;
@@ -225,7 +216,7 @@ class PrometheusOdfRowStore {
      * @param pLastRow  the index of the last row.
      * @return the iterator
      */
-    ListIterator<PrometheusSheetRow> iteratorForRange(final PrometheusOdfSheet pSheet,
+    ListIterator<PrometheusSheetRow> iteratorForRange(final PrometheusOdfSheetCtl pSheet,
                                                       final int pFirstRow,
                                                       final int pLastRow) {
         /* Determine upper bound for search */
@@ -245,17 +236,10 @@ class PrometheusOdfRowStore {
         return myList.listIterator();
     }
 
-    /**
-     * Obtain an iterator of non-null cells for the range.
-     *
-     * @param pRow        the row for the cell
-     * @param pFirstIndex the index of the first cell.
-     * @param pLastIndex  the index of the last cell.
-     * @return the iterator
-     */
-    ListIterator<PrometheusSheetCell> iteratorForRange(final PrometheusOdfRow pRow,
-                                                       final int pFirstIndex,
-                                                       final int pLastIndex) {
+    @Override
+    public ListIterator<PrometheusSheetCell> iteratorForRange(final PrometheusOdfRowCtl pRow,
+                                                              final int pFirstIndex,
+                                                              final int pLastIndex) {
         /* Access cells */
         final PrometheusOdfCellStore myCells = theRows[pRow.getRowIndex()];
         return myCells.iteratorForRange(pRow, pFirstIndex, pLastIndex);
@@ -268,7 +252,7 @@ class PrometheusOdfRowStore {
      * @param pRowIndex the index of the row.
      * @return the row
      */
-    PrometheusOdfRow getMutableRowByIndex(final PrometheusOdfSheet pSheet,
+    PrometheusOdfRow getMutableRowByIndex(final PrometheusOdfSheetCtl pSheet,
                                           final int pRowIndex) {
         /* Handle negative row index */
         if (pRowIndex < 0) {
@@ -296,15 +280,9 @@ class PrometheusOdfRowStore {
         return new PrometheusOdfRow(this, pSheet, pRowIndex, false);
     }
 
-    /**
-     * Obtain a readOnly cell by its index.
-     *
-     * @param pRow       the row containing the cell.
-     * @param pCellIndex the index of the cell.
-     * @return the row
-     */
-    PrometheusOdfCell getReadOnlyCellByIndex(final PrometheusOdfRow pRow,
-                                             final int pCellIndex) {
+    @Override
+    public PrometheusOdfCell getReadOnlyCellByIndex(final PrometheusOdfRowCtl pRow,
+                                                    final int pCellIndex) {
         /* Handle index out of range */
         final PrometheusOdfCellStore myCells = theRows[pRow.getRowIndex()];
 
@@ -312,15 +290,9 @@ class PrometheusOdfRowStore {
         return myCells.getReadOnlyCellByIndex(pRow, pCellIndex);
     }
 
-    /**
-     * Obtain a mutable cell by its index.
-     *
-     * @param pRow       the row containing the cell.
-     * @param pCellIndex the index of the cell.
-     * @return the row
-     */
-    PrometheusOdfCell getMutableCellByIndex(final PrometheusOdfRow pRow,
-                                            final int pCellIndex) {
+    @Override
+    public PrometheusOdfCell getMutableCellByIndex(final PrometheusOdfRowCtl pRow,
+                                                   final int pCellIndex) {
         /* Access cells */
         final PrometheusOdfCellStore myCells = theRows[pRow.getRowIndex()];
 
@@ -328,13 +300,8 @@ class PrometheusOdfRowStore {
         return myCells.getMutableCellByIndex(pRow, pCellIndex);
     }
 
-    /**
-     * Obtain the index of the max valued cell.
-     *
-     * @param pRow the row containing the cell.
-     * @return the index
-     */
-    int getMaxValuedCellForRow(final PrometheusOdfRow pRow) {
+    @Override
+    public int getMaxValuedCellForRow(final PrometheusOdfRowCtl pRow) {
         /* Access cells */
         final PrometheusOdfCellStore myCells = theRows[pRow.getRowIndex()];
 
@@ -373,85 +340,45 @@ class PrometheusOdfRowStore {
         }
     }
 
-    /**
-     * Get hidden flag at index.
-     *
-     * @param pIndex the index
-     * @return the value
-     */
-    boolean getHiddenAtIndex(final int pIndex) {
+    @Override
+    public boolean getHiddenAtIndex(final int pIndex) {
         return theHiddens[pIndex] != null;
     }
 
-    /**
-     * Set hidden flag at index.
-     *
-     * @param pIndex  the index
-     * @param pHidden true/false
-     */
-    void setHiddenAtIndex(final int pIndex,
-                          final boolean pHidden) {
+    @Override
+    public void setHiddenAtIndex(final int pIndex,
+                                 final boolean pHidden) {
         theHiddens[pIndex] = pHidden;
     }
 
-    /**
-     * Format object value.
-     *
-     * @param pValue the value
-     * @return the formatted value
-     */
-    String formatValue(final Object pValue) {
+    @Override
+    public String formatValue(final Object pValue) {
         return theFormatter.formatObject(pValue);
     }
 
-    /**
-     * Parse object value.
-     *
-     * @param <T>     the value type
-     * @param pSource the source value
-     * @param pClass  the value type class
-     * @return the formatted value
-     */
-    <T> T parseValue(final String pSource,
-                     final Class<T> pClass) {
+    @Override
+    public <T> T parseValue(final String pSource,
+                            final Class<T> pClass) {
         return theFormatter.parseValue(pSource, pClass);
     }
 
-    /**
-     * Parse object value.
-     *
-     * @param <T>       the value type
-     * @param pSource   the source value
-     * @param pCurrCode the currency code
-     * @param pClass    the value type class
-     * @return the formatted value
-     */
-    <T> T parseValue(final Double pSource,
-                     final String pCurrCode,
-                     final Class<T> pClass) {
+    @Override
+    public <T> T parseValue(final Double pSource,
+                            final String pCurrCode,
+                            final Class<T> pClass) {
         return theFormatter.parseValue(pSource, pCurrCode, pClass);
     }
 
-    /**
-     * Ensure and determine the cell style.
-     *
-     * @param pCell  the cell to style
-     * @param pValue the cell value
-     */
-    void setCellStyle(final Element pCell,
-                      final Object pValue) {
+    @Override
+    public void setCellStyle(final Element pCell,
+                             final Object pValue) {
         /* Pass through to the sheet */
         getSheet().setCellStyle(pCell, pValue);
     }
 
-    /**
-     * Ensure and determine the alternate cell style.
-     *
-     * @param pCell  the cell to style
-     * @param pValue the cell value
-     */
-    void setAlternateCellStyle(final Element pCell,
-                               final Object pValue) {
+    @Override
+    public void setAlternateCellStyle(final Element pCell,
+                                      final Object pValue) {
         /* Pass through to the sheet */
         getSheet().setAlternateCellStyle(pCell, pValue);
     }

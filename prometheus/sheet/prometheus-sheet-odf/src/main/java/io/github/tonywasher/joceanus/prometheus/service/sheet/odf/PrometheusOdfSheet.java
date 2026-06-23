@@ -21,6 +21,9 @@ import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCel
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellRange;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfSheetCoreCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfSheetCtl;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdf.PrometheusOdfWorkBookCtl;
 
 import java.util.ListIterator;
 
@@ -28,11 +31,12 @@ import java.util.ListIterator;
  * Sheet class.
  */
 public class PrometheusOdfSheet
-        extends PrometheusSheetSheet {
+        extends PrometheusSheetSheet
+        implements PrometheusOdfSheetCtl {
     /**
      * The underlying sheet.
      */
-    private final PrometheusOdfSheetCore theSheet;
+    private final PrometheusOdfSheetCoreCtl theSheet;
 
     /**
      * The index.
@@ -47,8 +51,8 @@ public class PrometheusOdfSheet
      * @param pIndex    the index
      * @param pReadOnly is the sheet readOnly?
      */
-    PrometheusOdfSheet(final PrometheusOdfWorkBook pBook,
-                       final PrometheusOdfSheetCore pSheet,
+    PrometheusOdfSheet(final PrometheusOdfWorkBookCtl pBook,
+                       final PrometheusOdfSheetCoreCtl pSheet,
                        final int pIndex,
                        final boolean pReadOnly) {
         super(pBook, pSheet.getName(), pReadOnly);
@@ -62,33 +66,33 @@ public class PrometheusOdfSheet
     }
 
     @Override
-    public PrometheusOdfRow getReadOnlyRowByIndex(final int pRowIndex) {
-        return theSheet.getReadOnlyRowByIndex(this, pRowIndex);
-    }
-
-    @Override
     public ListIterator<PrometheusSheetRow> iteratorForRange(final int pFirstIndex,
                                                              final int pLastIndex) {
         return theSheet.iteratorForRange(this, pFirstIndex, pLastIndex);
     }
 
     @Override
+    public PrometheusOdfRow getReadOnlyRowByIndex(final int pRowIndex) {
+        return (PrometheusOdfRow) theSheet.getReadOnlyRowByIndex(this, pRowIndex);
+    }
+
+    @Override
     public PrometheusOdfRow getMutableRowByIndex(final int pRowIndex) {
         return isReadOnly()
                 ? null
-                : theSheet.getMutableRowByIndex(this, pRowIndex);
+                : (PrometheusOdfRow) theSheet.getMutableRowByIndex(this, pRowIndex);
     }
 
     @Override
     public PrometheusOdfColumn getReadOnlyColumnByIndex(final int pColIndex) {
-        return theSheet.getReadOnlyColumnByIndex(this, pColIndex);
+        return (PrometheusOdfColumn) theSheet.getReadOnlyColumnByIndex(this, pColIndex);
     }
 
     @Override
     public PrometheusOdfColumn getMutableColumnByIndex(final int pColIndex) {
         return isReadOnly()
                 ? null
-                : theSheet.getMutableColumnByIndex(this, pColIndex);
+                : (PrometheusOdfColumn) theSheet.getMutableColumnByIndex(this, pColIndex);
     }
 
     @Override

@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransCtl;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
@@ -32,7 +33,8 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 /**
  * Transaction details.
  */
-public class MoneyWiseXAnalysisTransaction {
+public class MoneyWiseXAnalyseTransaction
+        implements MoneyWiseXAnalyseTransCtl {
     /**
      * The event.
      */
@@ -93,7 +95,7 @@ public class MoneyWiseXAnalysisTransaction {
      *
      * @param pEvent the event
      */
-    MoneyWiseXAnalysisTransaction(final MoneyWiseXAnalysisEvent pEvent) {
+    MoneyWiseXAnalyseTransaction(final MoneyWiseXAnalysisEvent pEvent) {
         /* Store the base */
         theEvent = pEvent;
         theTrans = theEvent.getTransaction();
@@ -137,12 +139,8 @@ public class MoneyWiseXAnalysisTransaction {
         return theEvent;
     }
 
-    /**
-     * Obtain the transaction.
-     *
-     * @return the transaction
-     */
-    MoneyWiseTransaction getTransaction() {
+    @Override
+    public MoneyWiseTransaction getTransaction() {
         return theTrans;
     }
 
@@ -155,21 +153,13 @@ public class MoneyWiseXAnalysisTransaction {
         return isTo;
     }
 
-    /**
-     * Obtain the debit account.
-     *
-     * @return the debit account
-     */
-    MoneyWiseTransAsset getDebitAccount() {
+    @Override
+    public MoneyWiseTransAsset getDebitAccount() {
         return theDebit;
     }
 
-    /**
-     * Obtain the credit account.
-     *
-     * @return the credit account
-     */
-    MoneyWiseTransAsset getCreditAccount() {
+    @Override
+    public MoneyWiseTransAsset getCreditAccount() {
         return theCredit;
     }
 
@@ -191,30 +181,18 @@ public class MoneyWiseXAnalysisTransaction {
         return theCategory;
     }
 
-    /**
-     * Obtain the categoryClass.
-     *
-     * @return the categoryClass
-     */
-    MoneyWiseTransCategoryClass getCategoryClass() {
+    @Override
+    public MoneyWiseTransCategoryClass getCategoryClass() {
         return theCategory == null ? null : theCategory.getCategoryTypeClass();
     }
 
-    /**
-     * Obtain the debit unitsDelta.
-     *
-     * @return the delta
-     */
-    OceanusUnits getDebitUnitsDelta() {
+    @Override
+    public OceanusUnits getDebitUnitsDelta() {
         return theDebitUnitsDelta;
     }
 
-    /**
-     * Obtain the credit unitsDelta.
-     *
-     * @return the delta
-     */
-    OceanusUnits getCreditUnitsDelta() {
+    @Override
+    public OceanusUnits getCreditUnitsDelta() {
         return theCreditUnitsDelta;
     }
 
@@ -256,21 +234,13 @@ public class MoneyWiseXAnalysisTransaction {
         return isRefund() ? theDebitAmount : theCreditAmount;
     }
 
-    /**
-     * Obtain the debit amount.
-     *
-     * @return the debit amount
-     */
-    OceanusMoney getDebitAmount() {
+    @Override
+    public OceanusMoney getDebitAmount() {
         return theDebitAmount;
     }
 
-    /**
-     * Obtain the credit amount.
-     *
-     * @return the credit amount
-     */
-    OceanusMoney getCreditAmount() {
+    @Override
+    public OceanusMoney getCreditAmount() {
         return theCreditAmount;
     }
 
@@ -300,10 +270,8 @@ public class MoneyWiseXAnalysisTransaction {
         }
     }
 
-    /**
-     * Adjust parent/child.
-     */
-    void adjustParent() {
+    @Override
+    public void adjustParent() {
         /* Switch on category class */
         switch (getCategoryClass()) {
             case INTEREST, LOYALTYBONUS:
@@ -357,5 +325,25 @@ public class MoneyWiseXAnalysisTransaction {
             default:
                 break;
         }
+    }
+
+    /**
+     * is the account a securityHolding?
+     *
+     * @param pAccount the account
+     * @return true/false
+     */
+    static boolean isSecurityHolding(final MoneyWiseTransAsset pAccount) {
+        return pAccount instanceof MoneyWiseSecurityHolding;
+    }
+
+    /**
+     * is the account a securityHolding?
+     *
+     * @param pAccount the account
+     * @return true/false
+     */
+    static boolean isPortfolio(final MoneyWiseTransAsset pAccount) {
+        return pAccount instanceof MoneyWisePortfolio;
     }
 }

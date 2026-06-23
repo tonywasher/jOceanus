@@ -196,7 +196,7 @@ public class MoneyWiseSecurityInfoSet
      * @param pInfoClass the Info Class
      * @return the security
      */
-    public MoneyWiseSecurity getSecurity(final MoneyWiseAccountInfoClass pInfoClass) {
+    public MoneyWiseAssetBase getSecurity(final MoneyWiseAccountInfoClass pInfoClass) {
         /* Access existing entry */
         final MoneyWiseSecurityInfo myValue = getInfo(pInfoClass);
 

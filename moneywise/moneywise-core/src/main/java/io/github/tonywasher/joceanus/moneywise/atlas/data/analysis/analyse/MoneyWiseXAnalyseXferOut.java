@@ -16,6 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseSecurityCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransCtl;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -36,7 +40,7 @@ import java.time.temporal.ChronoUnit;
 /**
  * Debit XferOut Analysis.
  */
-public class MoneyWiseXAnalysisXferOut {
+public class MoneyWiseXAnalyseXferOut {
     /**
      * The Amount Tax threshold for "small" transactions (£3000).
      */
@@ -60,22 +64,22 @@ public class MoneyWiseXAnalysisXferOut {
     /**
      * The analysis state.
      */
-    private final MoneyWiseXAnalysisState theState;
+    private final MoneyWiseXAnalyseState theState;
 
     /**
      * The transAnalyser.
      */
-    private final MoneyWiseXAnalysisTransAnalyser theTransAnalyser;
+    private final MoneyWiseXAnalyseTransAnalyserCtl theTransAnalyser;
 
     /**
      * The securityAnalyser.
      */
-    private final MoneyWiseXAnalysisSecurity theSecurity;
+    private final MoneyWiseXAnalyseSecurityCtl theSecurity;
 
     /**
      * The transaction.
      */
-    private MoneyWiseXAnalysisTransaction theTransaction;
+    private MoneyWiseXAnalyseTransCtl theTransaction;
 
     /**
      * Constructor.
@@ -83,8 +87,8 @@ public class MoneyWiseXAnalysisXferOut {
      * @param pAnalyser the event analyser
      * @param pSecurity the securityAnalyser
      */
-    MoneyWiseXAnalysisXferOut(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
-                              final MoneyWiseXAnalysisSecurity pSecurity) {
+    MoneyWiseXAnalyseXferOut(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser,
+                             final MoneyWiseXAnalyseSecurityCtl pSecurity) {
         /* Store parameters */
         final MoneyWiseXAnalysis myAnalysis = pAnalyser.getAnalysis();
         thePortfolios = myAnalysis.getPortfolios();
@@ -99,7 +103,7 @@ public class MoneyWiseXAnalysisXferOut {
      *
      * @param pTrans the transaction
      */
-    void processTransferOut(final MoneyWiseXAnalysisTransaction pTrans) {
+    void processTransferOut(final MoneyWiseXAnalyseTransaction pTrans) {
         /* Record the transaction */
         theTransaction = pTrans;
 
@@ -119,7 +123,7 @@ public class MoneyWiseXAnalysisXferOut {
      *
      * @param pTrans the transaction
      */
-    void processDebitXferOut(final MoneyWiseXAnalysisTransaction pTrans) {
+    void processDebitXferOut(final MoneyWiseXAnalyseTransaction pTrans) {
         /* Record the transaction */
         theTransaction = pTrans;
 

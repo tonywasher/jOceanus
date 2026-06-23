@@ -16,6 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseMarketCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseSecurityCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransAnalyserCtl;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -38,7 +42,8 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 /**
  * Security analysis.
  */
-public class MoneyWiseXAnalysisSecurity {
+public class MoneyWiseXAnalyseSecurity
+        implements MoneyWiseXAnalyseSecurityCtl {
     /**
      * Local Report fields.
      */
@@ -52,47 +57,47 @@ public class MoneyWiseXAnalysisSecurity {
     /**
      * The analysis state.
      */
-    private final MoneyWiseXAnalysisState theState;
+    private final MoneyWiseXAnalyseState theState;
 
     /**
      * The market analysis.
      */
-    private final MoneyWiseXAnalysisMarket theMarket;
+    private final MoneyWiseXAnalyseMarketCtl theMarket;
 
     /**
      * The transAnalyser.
      */
-    private final MoneyWiseXAnalysisTransAnalyser theTransAnalyser;
+    private final MoneyWiseXAnalyseTransAnalyserCtl theTransAnalyser;
 
     /**
      * The xferIn analysis.
      */
-    private final MoneyWiseXAnalysisXferIn theXferIn;
+    private final MoneyWiseXAnalyseXferIn theXferIn;
 
     /**
      * The xferOut analysis.
      */
-    private final MoneyWiseXAnalysisXferOut theXferOut;
+    private final MoneyWiseXAnalyseXferOut theXferOut;
 
     /**
      * The dividend analysis.
      */
-    private final MoneyWiseXAnalysisDividend theDividend;
+    private final MoneyWiseXAnalyseDividend theDividend;
 
     /**
      * The deMerger analysis.
      */
-    private final MoneyWiseXAnalysisDeMerger theDeMerger;
+    private final MoneyWiseXAnalyseDeMerger theDeMerger;
 
     /**
      * The takeover analysis.
      */
-    private final MoneyWiseXAnalysisTakeover theTakeover;
+    private final MoneyWiseXAnalyseTakeover theTakeover;
 
     /**
      * The transaction.
      */
-    private MoneyWiseXAnalysisTransaction theTransaction;
+    private MoneyWiseXAnalyseTransaction theTransaction;
 
     /**
      * The capitalGains category.
@@ -141,8 +146,8 @@ public class MoneyWiseXAnalysisSecurity {
      * @param pTrans    the transAnalyser
      * @throws OceanusException on error
      */
-    MoneyWiseXAnalysisSecurity(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
-                               final MoneyWiseXAnalysisTransAnalyser pTrans) throws OceanusException {
+    MoneyWiseXAnalyseSecurity(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser,
+                              final MoneyWiseXAnalyseTransAnalyserCtl pTrans) throws OceanusException {
         /* Record important classes */
         final MoneyWiseXAnalysis myAnalysis = pAnalyser.getAnalysis();
         thePortfolios = myAnalysis.getPortfolios();
@@ -151,11 +156,11 @@ public class MoneyWiseXAnalysisSecurity {
         theTransAnalyser = pTrans;
 
         /* Create analysers */
-        theXferIn = new MoneyWiseXAnalysisXferIn(pAnalyser, this);
-        theXferOut = new MoneyWiseXAnalysisXferOut(pAnalyser, this);
-        theDividend = new MoneyWiseXAnalysisDividend(pAnalyser, this);
-        theDeMerger = new MoneyWiseXAnalysisDeMerger(pAnalyser, this);
-        theTakeover = new MoneyWiseXAnalysisTakeover(pAnalyser, this);
+        theXferIn = new MoneyWiseXAnalyseXferIn(pAnalyser, this);
+        theXferOut = new MoneyWiseXAnalyseXferOut(pAnalyser, this);
+        theDividend = new MoneyWiseXAnalyseDividend(pAnalyser, this);
+        theDeMerger = new MoneyWiseXAnalyseDeMerger(pAnalyser, this);
+        theTakeover = new MoneyWiseXAnalyseTakeover(pAnalyser, this);
 
         /* Determine important categoryBuckets */
         final MoneyWiseXAnalysisTransCategoryBucketList myCategories = myAnalysis.getTransCategories();
@@ -172,12 +177,8 @@ public class MoneyWiseXAnalysisSecurity {
         theChargeableTax = myTaxBases.getBucket(MoneyWiseTaxClass.CHARGEABLEGAINS);
     }
 
-    /**
-     * Obtain the trans analyser.
-     *
-     * @return the transAnalyser
-     */
-    MoneyWiseXAnalysisTransAnalyser getTransAnalyser() {
+    @Override
+    public MoneyWiseXAnalyseTransAnalyserCtl getTransAnalyser() {
         return theTransAnalyser;
     }
 
@@ -186,7 +187,7 @@ public class MoneyWiseXAnalysisSecurity {
      *
      * @return the xferInAnalyser
      */
-    MoneyWiseXAnalysisXferIn getXferInAnalyser() {
+    MoneyWiseXAnalyseXferIn getXferInAnalyser() {
         return theXferIn;
     }
 
@@ -196,12 +197,12 @@ public class MoneyWiseXAnalysisSecurity {
      * @param pTrans the transaction
      * @throws OceanusException on error
      */
-    void processDebitSecurity(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
+    void processDebitSecurity(final MoneyWiseXAnalyseTransaction pTrans) throws OceanusException {
         /* Store transaction */
         theTransaction = pTrans;
 
         /* If credit account is also SecurityHolding */
-        if (MoneyWiseXAnalysisTransAnalyser.isSecurityHolding(theTransaction.getCreditAccount())) {
+        if (MoneyWiseXAnalyseTransaction.isSecurityHolding(theTransaction.getCreditAccount())) {
             /* Split out working */
             processDebitCreditSecurity();
             return;
@@ -231,7 +232,7 @@ public class MoneyWiseXAnalysisSecurity {
      * @param pTrans the transaction
      * @throws OceanusException on error
      */
-    void processCreditSecurity(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
+    void processCreditSecurity(final MoneyWiseXAnalyseTransaction pTrans) throws OceanusException {
         /* Store transaction */
         theTransaction = pTrans;
 
@@ -285,12 +286,8 @@ public class MoneyWiseXAnalysisSecurity {
         }
     }
 
-    /**
-     * adjust Asset Valuation.
-     *
-     * @param pAsset the asset
-     */
-    void adjustAssetValuation(final MoneyWiseXAnalysisSecurityBucket pAsset) {
+    @Override
+    public void adjustAssetValuation(final MoneyWiseXAnalysisSecurityBucket pAsset) {
         /* Value the asset and calculate unrealised gains */
         pAsset.valueAsset();
         pAsset.adjustValuation();
@@ -301,14 +298,9 @@ public class MoneyWiseXAnalysisSecurity {
         theMarket.adjustTotalsForMarketGrowth(theTransaction.getEvent(), myDeltaValue);
     }
 
-    /**
-     * Adjust for Standard Gains.
-     *
-     * @param pSource the source security holding
-     * @param pGains  the gains
-     */
-    void adjustStandardGain(final MoneyWiseSecurityHolding pSource,
-                            final OceanusMoney pGains) {
+    @Override
+    public void adjustStandardGain(final MoneyWiseSecurityHolding pSource,
+                                   final OceanusMoney pGains) {
         /* Access security and portfolio */
         final MoneyWiseSecurity mySecurity = pSource.getSecurity();
         final MoneyWisePortfolio myPortfolio = pSource.getPortfolio();
