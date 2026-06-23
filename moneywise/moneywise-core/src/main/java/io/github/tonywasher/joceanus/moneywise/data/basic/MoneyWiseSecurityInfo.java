@@ -19,8 +19,8 @@ package io.github.tonywasher.joceanus.moneywise.data.basic;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
@@ -161,8 +161,8 @@ public class MoneyWiseSecurityInfo
      *
      * @return the Security
      */
-    public MoneyWiseSecurity getSecurity() {
-        return getValues().getValue(PrometheusDataResource.DATAINFO_LINK, MoneyWiseSecurity.class);
+    public MoneyWiseAssetBase getSecurity() {
+        return getValues().getValue(PrometheusDataResource.DATAINFO_LINK, MoneyWiseAssetBase.class);
     }
 
     @Override
@@ -171,7 +171,7 @@ public class MoneyWiseSecurityInfo
         if (myItem instanceof MoneyWiseRegion myRegion) {
             return myRegion.getName();
         }
-        if (myItem instanceof MoneyWiseSecurity mySecurity) {
+        if (myItem instanceof MoneyWiseAssetBase mySecurity) {
             return mySecurity.getName();
         }
         return null;
@@ -263,8 +263,8 @@ public class MoneyWiseSecurityInfo
                     break;
                 case UNDERLYINGSTOCK:
                     resolveDataLink(PrometheusDataResource.DATAINFO_LINK, pEditSet == null
-                            ? myData.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class)
-                            : pEditSet.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class));
+                            ? myData.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseAssetBaseList.class)
+                            : pEditSet.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseAssetBaseList.class));
                     if (myLinkId == null) {
                         setValueValue(getSecurity().getIndexedId());
                     }

@@ -252,7 +252,7 @@ public class MoneyWiseSecurity
      */
     public MoneyWiseSecurity getUnderlyingStock() {
         return hasInfoSet
-                ? theInfoSet.getSecurity(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK)
+                ? (MoneyWiseSecurity) theInfoSet.getSecurity(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK)
                 : null;
     }
 
