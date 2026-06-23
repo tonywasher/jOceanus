@@ -27,7 +27,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
@@ -635,7 +635,7 @@ public final class MoneyWiseArchiveCache {
      */
     void resolveSecurityHoldings(final MoneyWiseDataSet pData) {
         /* Access securityHoldingsMap and Portfolio list */
-        final MoneyWiseSecurityHoldingMap myMap = pData.getPortfolios().getSecurityHoldingsMap();
+        final MoneyWiseSecurityHoldingMap myMap = (MoneyWiseSecurityHoldingMap) pData.getPortfolios().getSecurityHoldingsMap();
         final MoneyWisePortfolioList myPortfolios = pData.getPortfolios();
 
         /* Loop through the name map */
@@ -670,7 +670,7 @@ public final class MoneyWiseArchiveCache {
             throw new MoneyWiseDataException(pTarget, "Inconsistent portfolios");
         }
 
-        final MoneyWiseSecurityHoldingMap myMap = pData.getPortfolios().getSecurityHoldingsMap();
+        final MoneyWiseSecurityHoldingMap myMap = (MoneyWiseSecurityHoldingMap) pData.getPortfolios().getSecurityHoldingsMap();
 
         /* Loop through the name map */
         for (Entry<String, Object> myEntry : theNameMap.entrySet()) {

@@ -29,7 +29,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
@@ -101,7 +101,8 @@ public class MoneyWiseXAnalysisEventAnalyser {
         myTask.startTask("Initialise");
         theState = new MoneyWiseXAnalysisState(pEditSet);
         theAnalysis = new MoneyWiseXAnalysis(pEditSet, theState, pPreferenceMgr);
-        theHoldingMap = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();
+        theHoldingMap = (MoneyWiseSecurityHoldingMap) pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class)
+                .getSecurityHoldingsMap();
 
         /* Create the analysers */
         theMarket = new MoneyWiseXAnalysisMarket(this);

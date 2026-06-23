@@ -38,6 +38,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.Mon
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolioInfo.MoneyWisePortfolioInfoList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMapCtl.MoneyWiseSecurityHoldingMapGenerator;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityInfo.MoneyWiseSecurityInfoList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
@@ -67,6 +68,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyDataT
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.util.Iterator;
@@ -77,7 +79,7 @@ import java.util.Map.Entry;
  */
 public class MoneyWiseDataSet
         extends PrometheusDataSet
-        implements MoneyWiseDataSetCtl {
+        implements MoneyWiseDataSetCtl, MoneyWiseSecurityHoldingMapGenerator {
     /**
      * Local Report fields.
      */
@@ -483,6 +485,17 @@ public class MoneyWiseDataSet
             theReportingCurrency = getAccountCurrencies().findReporting();
         }
         return theReportingCurrency;
+    }
+
+    @Override
+    public MoneyWiseSecurityHoldingMap newSecurityHoldingMap() {
+        return new MoneyWiseSecurityHoldingMap(this);
+    }
+
+
+    @Override
+    public MoneyWiseSecurityHoldingMap newSecurityHoldingMap(final PrometheusEditSet pEditSet) {
+        return new MoneyWiseSecurityHoldingMap(pEditSet);
     }
 
     /**

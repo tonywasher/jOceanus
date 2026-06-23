@@ -25,7 +25,6 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit.Money
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
@@ -856,7 +855,8 @@ public abstract class MoneyWiseTransBase
 
         /* If the name is a security holding */
         if (myAssetType.isSecurityHolding()) {
-            final MoneyWiseSecurityHoldingMap myMap = pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();
+            final MoneyWiseSecurityHoldingMap myMap
+                    = (MoneyWiseSecurityHoldingMap) pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();
             return myMap.findHoldingById(pId);
         } else if (myAssetType.isPayee()) {
             return pData.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class).findItemById(MoneyWiseAssetType.getBaseId(pId));
@@ -884,7 +884,8 @@ public abstract class MoneyWiseTransBase
                                                          final String pName) {
         /* If the name is a security holding */
         if (pName.contains(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP)) {
-            final MoneyWiseSecurityHoldingMap myMap = pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();
+            final MoneyWiseSecurityHoldingMap myMap
+                    = (MoneyWiseSecurityHoldingMap) pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();
             return myMap.findHoldingByName(pName);
         } else {
             MoneyWiseTransAsset myAsset = pData.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class).findItemByName(pName);

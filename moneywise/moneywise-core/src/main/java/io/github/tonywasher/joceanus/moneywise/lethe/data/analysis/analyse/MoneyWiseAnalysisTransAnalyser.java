@@ -30,7 +30,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
@@ -205,7 +205,8 @@ public class MoneyWiseAnalysisTransAnalyser
         final MoneyWiseDataSet myDataSet = (MoneyWiseDataSet) pEditSet.getDataSet();
 
         /* Store the parameters */
-        theHoldingMap = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();
+        theHoldingMap = (MoneyWiseSecurityHoldingMap) pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class)
+                .getSecurityHoldingsMap();
         thePriceMap = myDataSet.getSecurityPriceDataMap();
 
         /* Access the lists */
@@ -269,7 +270,8 @@ public class MoneyWiseAnalysisTransAnalyser
         /* If they exist, access the bucket */
         if (myPensionPort != null
                 && myStatePension != null) {
-            final MoneyWiseSecurityHolding myHolding = pData.getPortfolios().getSecurityHoldingsMap().declareHolding(myPensionPort, myStatePension);
+            final MoneyWiseSecurityHoldingMap myMap = (MoneyWiseSecurityHoldingMap) pData.getPortfolios().getSecurityHoldingsMap();
+            final MoneyWiseSecurityHolding myHolding = myMap.declareHolding(myPensionPort, myStatePension);
             return thePortfolioBuckets.getBucket(myHolding);
         }
 

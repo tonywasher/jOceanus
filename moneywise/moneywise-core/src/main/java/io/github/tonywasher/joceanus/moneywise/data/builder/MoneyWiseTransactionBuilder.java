@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirectio
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
@@ -702,7 +703,8 @@ public class MoneyWiseTransactionBuilder {
 
             /* Build security holding */
             if (mySec != null && myPort != null) {
-                return theDataSet.getPortfolios().getSecurityHoldingsMap().declareHolding(myPort, mySec);
+                final MoneyWiseSecurityHoldingMap myMap = (MoneyWiseSecurityHoldingMap) theDataSet.getPortfolios().getSecurityHoldingsMap();
+                return myMap.declareHolding(myPort, mySec);
             } else {
                 return null;
             }

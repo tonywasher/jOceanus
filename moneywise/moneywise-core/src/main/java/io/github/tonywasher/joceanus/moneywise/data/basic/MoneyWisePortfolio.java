@@ -26,7 +26,7 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolioInfo.MoneyWisePortfolioInfoList;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMapCtl.MoneyWiseSecurityHoldingMapGenerator;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
@@ -487,7 +487,7 @@ public class MoneyWisePortfolio
 
     @Override
     public void deRegister() {
-        final MoneyWiseSecurityHoldingMap myMap = getList().getSecurityHoldingsMap();
+        final MoneyWiseSecurityHoldingMapCtl myMap = getList().getSecurityHoldingsMap();
         myMap.deRegister(this);
     }
 
@@ -760,7 +760,7 @@ public class MoneyWisePortfolio
         /**
          * SecurityHoldings Map.
          */
-        private MoneyWiseSecurityHoldingMap theSecurityHoldings;
+        private MoneyWiseSecurityHoldingMapCtl theSecurityHoldings;
 
         /**
          * Construct an empty CORE Portfolio list.
@@ -831,11 +831,13 @@ public class MoneyWisePortfolio
          *
          * @return the holdings map
          */
-        public MoneyWiseSecurityHoldingMap getSecurityHoldingsMap() {
+        public MoneyWiseSecurityHoldingMapCtl getSecurityHoldingsMap() {
             if (theSecurityHoldings == null) {
+                final MoneyWiseSecurityHoldingMapGenerator myGenerator =
+                        (MoneyWiseSecurityHoldingMapGenerator) getDataSet();
                 theSecurityHoldings = getEditSet() == null
-                        ? new MoneyWiseSecurityHoldingMap((PrometheusDataSet) getDataSet())
-                        : new MoneyWiseSecurityHoldingMap(getEditSet());
+                        ? myGenerator.newSecurityHoldingMap()
+                        : myGenerator.newSecurityHoldingMap(getEditSet());
             }
             return theSecurityHoldings;
         }
