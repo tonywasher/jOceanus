@@ -157,32 +157,34 @@
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>         <em class="jxr_comment">/* Loop through the available modules */</em>
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>         <strong class="jxr_keyword">for</strong> (<a name="ThemisSolverModule" href="../../../../../../../io/github/tonywasher/joceanus/themis/solver/proj/ThemisSolverModule.html#ThemisSolverModule">ThemisSolverModule</a> myModule : theProject.getModules()) {
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>             <em class="jxr_comment">/* Create a new MenuItem and add it to the popUp */</em>
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>             <strong class="jxr_keyword">final</strong> TethysUIScrollItem&lt;ThemisSolverModule&gt; myItem = theModuleMenu.addItem(myModule);
-<a class="jxr_linenumber" name="L153" href="#L153">153</a> 
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>             <em class="jxr_comment">/* If this is the active module */</em>
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>             <strong class="jxr_keyword">if</strong> (myModule.equals(myCurr)) {
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>                 <em class="jxr_comment">/* Record it */</em>
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>                 myActive = myItem;
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>             }
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>         }
-<a class="jxr_linenumber" name="L160" href="#L160">160</a> 
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>         <em class="jxr_comment">/* Ensure active item is visible */</em>
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>         <strong class="jxr_keyword">if</strong> (myActive != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>             myActive.scrollToItem();
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>         }
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>     }
-<a class="jxr_linenumber" name="L166" href="#L166">166</a> 
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L168" href="#L168">168</a> <em class="jxr_javadoccomment">     * Handle new Module.</em>
-<a class="jxr_linenumber" name="L169" href="#L169">169</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> handleNewModule() {
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>         <em class="jxr_comment">/* Select the new module */</em>
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>         theModule = theButton.getValue();
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>         theEventManager.fireEvent(TethysUIEvent.NEWVALUE);
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>     }
-<a class="jxr_linenumber" name="L175" href="#L175">175</a> }
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>             <strong class="jxr_keyword">final</strong> TethysUIScrollItem&lt;ThemisSolverModule&gt; myItem = myModule.isInError()
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>                     ? theModuleMenu.addItem(myModule, ThemisUIRefIcon.ERROR)
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>                     : theModuleMenu.addItem(myModule);
+<a class="jxr_linenumber" name="L155" href="#L155">155</a> 
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>             <em class="jxr_comment">/* If this is the active module */</em>
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>             <strong class="jxr_keyword">if</strong> (myModule.equals(myCurr)) {
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>                 <em class="jxr_comment">/* Record it */</em>
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>                 myActive = myItem;
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>             }
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>         }
+<a class="jxr_linenumber" name="L162" href="#L162">162</a> 
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>         <em class="jxr_comment">/* Ensure active item is visible */</em>
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>         <strong class="jxr_keyword">if</strong> (myActive != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>             myActive.scrollToItem();
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>         }
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>     }
+<a class="jxr_linenumber" name="L168" href="#L168">168</a> 
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L170" href="#L170">170</a> <em class="jxr_javadoccomment">     * Handle new Module.</em>
+<a class="jxr_linenumber" name="L171" href="#L171">171</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> handleNewModule() {
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>         <em class="jxr_comment">/* Select the new module */</em>
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>         theModule = theButton.getValue();
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>         theEventManager.fireEvent(TethysUIEvent.NEWVALUE);
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>     }
+<a class="jxr_linenumber" name="L177" href="#L177">177</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

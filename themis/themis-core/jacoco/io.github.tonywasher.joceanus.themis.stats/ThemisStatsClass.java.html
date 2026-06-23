@@ -16,6 +16,9 @@
  */
 package io.github.tonywasher.joceanus.themis.stats;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
 
 import java.util.ArrayList;
@@ -26,6 +29,20 @@ import java.util.List;
  */
 public class ThemisStatsClass
         implements ThemisStatsElement {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L35">    private static final MetisFieldSet&lt;ThemisStatsClass&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisStatsClass.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L41">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_METHODS, ThemisStatsClass::getMethods);</span>
+<span class="fc" id="L42">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisStatsClass::getUnderlying);</span>
+<span class="fc" id="L43">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_STATS, ThemisStatsClass::getStats);</span>
+<span class="fc" id="L44">    }</span>
+
     /**
      * The underlying class.
      */
@@ -51,17 +68,27 @@ public class ThemisStatsClass
      *
      * @param pClass the parsed class
      */
-<span class="fc" id="L54">    ThemisStatsClass(final ThemisClassInstance pClass) {</span>
+<span class="fc" id="L71">    ThemisStatsClass(final ThemisClassInstance pClass) {</span>
         /* Store the class */
-<span class="fc" id="L56">        theClass = pClass;</span>
+<span class="fc" id="L73">        theClass = pClass;</span>
 
         /* Create the stats */
-<span class="fc" id="L59">        theStats = new ThemisStats();</span>
+<span class="fc" id="L76">        theStats = new ThemisStats();</span>
 
         /* Create the class and method lists */
-<span class="fc" id="L62">        theMethods = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L63">        theClasses = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L64">    }</span>
+<span class="fc" id="L79">        theMethods = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L80">        theClasses = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L81">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisStatsClass&gt; getDataFieldSet() {
+<span class="nc" id="L85">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L90">        return toString();</span>
+    }
 
     /**
      * Obtain the class.
@@ -69,12 +96,12 @@ public class ThemisStatsClass
      * @return the class
      */
     public ThemisClassInstance getUnderlying() {
-<span class="nc" id="L72">        return theClass;</span>
+<span class="nc" id="L99">        return theClass;</span>
     }
 
     @Override
     public ThemisStats getStats() {
-<span class="nc" id="L77">        return theStats;</span>
+<span class="nc" id="L104">        return theStats;</span>
     }
 
     /**
@@ -83,7 +110,7 @@ public class ThemisStatsClass
      * @return the methods
      */
     public List&lt;ThemisStatsElement&gt; getMethods() {
-<span class="nc" id="L86">        return theMethods;</span>
+<span class="nc" id="L113">        return theMethods;</span>
     }
 
     /**
@@ -92,51 +119,51 @@ public class ThemisStatsClass
      * @return the classes
      */
     public List&lt;ThemisStatsElement&gt; getClasses() {
-<span class="nc" id="L95">        return theClasses;</span>
+<span class="nc" id="L122">        return theClasses;</span>
     }
 
     @Override
     public String getName() {
-<span class="nc" id="L100">        return theClass.getName();</span>
+<span class="nc" id="L127">        return theClass.getName();</span>
     }
 
     @Override
     public void addMethod(final ThemisStatsElement pElement) {
-<span class="fc" id="L105">        theMethods.add(pElement);</span>
-<span class="fc" id="L106">    }</span>
+<span class="fc" id="L132">        theMethods.add(pElement);</span>
+<span class="fc" id="L133">    }</span>
 
     @Override
     public void addClass(final ThemisStatsElement pElement) {
-<span class="fc" id="L110">        theClasses.add(pElement);</span>
-<span class="fc" id="L111">    }</span>
+<span class="fc" id="L137">        theClasses.add(pElement);</span>
+<span class="fc" id="L138">    }</span>
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L117">            return true;</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L144">            return true;</span>
         }
-<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L120">            return false;</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L147">            return false;</span>
         }
 
         /* Make sure that the object is a StatsClass */
-<span class="nc bnc" id="L124" title="All 2 branches missed.">        if (!(pThat instanceof ThemisStatsClass myThat)) {</span>
-<span class="nc" id="L125">            return false;</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">        if (!(pThat instanceof ThemisStatsClass myThat)) {</span>
+<span class="nc" id="L152">            return false;</span>
         }
 
         /* Check equality of class */
-<span class="nc" id="L129">        return theClass.equals(myThat.getUnderlying());</span>
+<span class="nc" id="L156">        return theClass.equals(myThat.getUnderlying());</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L134">        return theClass.hashCode();</span>
+<span class="nc" id="L161">        return theClass.hashCode();</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L139">        return theClass.toString();</span>
+<span class="nc" id="L166">        return theClass.toString();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

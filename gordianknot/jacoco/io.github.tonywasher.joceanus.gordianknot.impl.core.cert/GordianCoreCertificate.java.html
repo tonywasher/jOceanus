@@ -30,6 +30,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEnt
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
@@ -56,8 +57,10 @@ import org.bouncycastle.asn1.x509.V3TBSCertificateGenerator;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.spec.X509EncodedKeySpec;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -140,39 +143,39 @@ public class GordianCoreCertificate
      */
     public GordianCoreCertificate(final GordianBaseFactory pFactory,
                                   final GordianKeyPair pKeyPair,
-<span class="fc" id="L143">                                  final X500Name pSubject) throws GordianException {</span>
+<span class="fc" id="L146">                                  final X500Name pSubject) throws GordianException {</span>
         /* Check that the keyPair is OK */
-<span class="pc bpc" id="L145" title="1 of 2 branches missed.">        if (isPublicOnly(pKeyPair)) {</span>
-<span class="nc" id="L146">            throw new GordianLogicException(&quot;Invalid keyPair&quot;);</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">        if (isPublicOnly(pKeyPair)) {</span>
+<span class="nc" id="L149">            throw new GordianLogicException(&quot;Invalid keyPair&quot;);</span>
         }
 
         /* Store the parameters */
-<span class="fc" id="L150">        theFactory = pFactory;</span>
-<span class="fc" id="L151">        theKeyPair = getPublicOnly(pKeyPair);</span>
+<span class="fc" id="L153">        theFactory = pFactory;</span>
+<span class="fc" id="L154">        theKeyPair = getPublicOnly(pKeyPair);</span>
 
         /* Determine the signatureSpec */
-<span class="fc" id="L154">        theSigSpec = determineSignatureSpecForKeyPair(theKeyPair);</span>
+<span class="fc" id="L157">        theSigSpec = determineSignatureSpecForKeyPair(theKeyPair);</span>
 
         /* Determine the algorithmId for the signatureSpec */
-<span class="fc" id="L157">        theSigAlgId = determineAlgIdForSignatureSpec(theSigSpec, theKeyPair);</span>
+<span class="fc" id="L160">        theSigAlgId = determineAlgIdForSignatureSpec(theSigSpec, theKeyPair);</span>
 
         /* Create the TBSCertificate */
-<span class="fc" id="L160">        theKeyUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE);</span>
-<span class="fc" id="L161">        theCAStatus = new GordianCAStatus(true);</span>
-<span class="fc" id="L162">        theTbsCertificate = buildCertificate(null, pSubject);</span>
-<span class="fc" id="L163">        theSerialNo = theTbsCertificate.getSerialNumber().getValue();</span>
+<span class="fc" id="L163">        theKeyUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE);</span>
+<span class="fc" id="L164">        theCAStatus = new GordianCAStatus(true);</span>
+<span class="fc" id="L165">        theTbsCertificate = buildCertificate(null, pSubject);</span>
+<span class="fc" id="L166">        theSerialNo = theTbsCertificate.getSerialNumber().getValue();</span>
 
         /* Create the signature */
-<span class="fc" id="L166">        theSignature = createSignature(pKeyPair);</span>
-<span class="fc" id="L167">        isSelfSigned = true;</span>
+<span class="fc" id="L169">        theSignature = createSignature(pKeyPair);</span>
+<span class="fc" id="L170">        isSelfSigned = true;</span>
 
         /* Create the ids */
-<span class="fc" id="L170">        theSubject = buildSubjectId();</span>
-<span class="fc" id="L171">        theIssuer = buildIssuerId();</span>
+<span class="fc" id="L173">        theSubject = buildSubjectId();</span>
+<span class="fc" id="L174">        theIssuer = buildIssuerId();</span>
 
         /* Store the encoded representation */
-<span class="fc" id="L174">        theEncoded = encodeCertificate();</span>
-<span class="fc" id="L175">    }</span>
+<span class="fc" id="L177">        theEncoded = encodeCertificate();</span>
+<span class="fc" id="L178">    }</span>
 
     /**
      * Create a new certificate, signed by the relevant authority.
@@ -188,45 +191,45 @@ public class GordianCoreCertificate
                                   final GordianKeyStorePair pSigner,
                                   final GordianKeyPair pKeyPair,
                                   final X500Name pSubject,
-<span class="fc" id="L191">                                  final GordianKeyPairUsage pUsage) throws GordianException {</span>
+<span class="fc" id="L194">                                  final GordianKeyPairUsage pUsage) throws GordianException {</span>
         /* Store the parameters */
-<span class="fc" id="L193">        theFactory = pFactory;</span>
-<span class="fc" id="L194">        theKeyPair = getPublicOnly(pKeyPair);</span>
-<span class="fc" id="L195">        theKeyUsage = pUsage;</span>
+<span class="fc" id="L196">        theFactory = pFactory;</span>
+<span class="fc" id="L197">        theKeyPair = getPublicOnly(pKeyPair);</span>
+<span class="fc" id="L198">        theKeyUsage = pUsage;</span>
 
         /* Check that the signer is allowed to sign certificates */
-<span class="fc" id="L198">        final GordianKeyPair mySignerPair = pSigner.getKeyPair();</span>
-<span class="fc" id="L199">        final GordianCoreCertificate mySignerCert = (GordianCoreCertificate) pSigner.getCertificateChain().getFirst();</span>
-<span class="pc bpc" id="L200" title="1 of 2 branches missed.">        if (!mySignerCert.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)</span>
-<span class="pc bpc" id="L201" title="1 of 2 branches missed.">                || !mySignerCert.isValidNow()</span>
-<span class="pc bpc" id="L202" title="1 of 2 branches missed.">                || isPublicOnly(mySignerPair)) {</span>
-<span class="nc" id="L203">            throw new GordianLogicException(&quot;Invalid signer&quot;);</span>
+<span class="fc" id="L201">        final GordianKeyPair mySignerPair = pSigner.getKeyPair();</span>
+<span class="fc" id="L202">        final GordianCoreCertificate mySignerCert = (GordianCoreCertificate) pSigner.getCertificateChain().getFirst();</span>
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">        if (!mySignerCert.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)</span>
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">                || !mySignerCert.isValidNow()</span>
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">                || isPublicOnly(mySignerPair)) {</span>
+<span class="nc" id="L206">            throw new GordianLogicException(&quot;Invalid signer&quot;);</span>
         }
 
         /* Determine CA Status */
-<span class="fc" id="L207">        theCAStatus = new GordianCAStatus(theKeyUsage, mySignerCert.theCAStatus);</span>
+<span class="fc" id="L210">        theCAStatus = new GordianCAStatus(theKeyUsage, mySignerCert.theCAStatus);</span>
 
         /* Determine the signatureSpec */
-<span class="fc" id="L210">        theSigSpec = determineSignatureSpecForKeyPair(pSigner.getKeyPair());</span>
+<span class="fc" id="L213">        theSigSpec = determineSignatureSpecForKeyPair(pSigner.getKeyPair());</span>
 
         /* Determine the algorithm Id for the signatureSpec */
-<span class="fc" id="L213">        theSigAlgId = determineAlgIdForSignatureSpec(theSigSpec, pSigner.getKeyPair());</span>
+<span class="fc" id="L216">        theSigAlgId = determineAlgIdForSignatureSpec(theSigSpec, pSigner.getKeyPair());</span>
 
         /* Create the TBSCertificate */
-<span class="fc" id="L216">        theTbsCertificate = buildCertificate(mySignerCert, pSubject);</span>
-<span class="fc" id="L217">        theSerialNo = theTbsCertificate.getSerialNumber().getValue();</span>
+<span class="fc" id="L219">        theTbsCertificate = buildCertificate(mySignerCert, pSubject);</span>
+<span class="fc" id="L220">        theSerialNo = theTbsCertificate.getSerialNumber().getValue();</span>
 
         /* Create the signature */
-<span class="fc" id="L220">        theSignature = createSignature(mySignerPair);</span>
-<span class="fc" id="L221">        isSelfSigned = false;</span>
+<span class="fc" id="L223">        theSignature = createSignature(mySignerPair);</span>
+<span class="fc" id="L224">        isSelfSigned = false;</span>
 
         /* Create the ids */
-<span class="fc" id="L224">        theSubject = buildSubjectId();</span>
-<span class="fc" id="L225">        theIssuer = buildIssuerId();</span>
+<span class="fc" id="L227">        theSubject = buildSubjectId();</span>
+<span class="fc" id="L228">        theIssuer = buildIssuerId();</span>
 
         /* Store the encoded representation */
-<span class="fc" id="L228">        theEncoded = encodeCertificate();</span>
-<span class="fc" id="L229">    }</span>
+<span class="fc" id="L231">        theEncoded = encodeCertificate();</span>
+<span class="fc" id="L232">    }</span>
 
     /**
      * Parse a certificate.
@@ -237,8 +240,8 @@ public class GordianCoreCertificate
      */
     public GordianCoreCertificate(final GordianBaseFactory pFactory,
                                   final byte[] pSequence) throws GordianException {
-<span class="fc" id="L240">        this(pFactory, Certificate.getInstance(pSequence));</span>
-<span class="fc" id="L241">    }</span>
+<span class="fc" id="L243">        this(pFactory, Certificate.getInstance(pSequence));</span>
+<span class="fc" id="L244">    }</span>
 
     /**
      * Parse a certificate.
@@ -248,46 +251,46 @@ public class GordianCoreCertificate
      * @throws GordianException on error
      */
     public GordianCoreCertificate(final GordianBaseFactory pFactory,
-<span class="fc" id="L251">                                  final Certificate pCertificate) throws GordianException {</span>
+<span class="fc" id="L254">                                  final Certificate pCertificate) throws GordianException {</span>
         /* Protect against exceptions */
         try {
             /* Store the parameters */
-<span class="fc" id="L255">            theFactory = pFactory;</span>
+<span class="fc" id="L258">            theFactory = pFactory;</span>
 
             /* Extract the details */
-<span class="fc" id="L258">            theTbsCertificate = pCertificate.getTBSCertificate();</span>
-<span class="fc" id="L259">            theSigAlgId = pCertificate.getSignatureAlgorithm();</span>
-<span class="fc" id="L260">            theSignature = pCertificate.getSignature().getBytes();</span>
+<span class="fc" id="L261">            theTbsCertificate = pCertificate.getTBSCertificate();</span>
+<span class="fc" id="L262">            theSigAlgId = pCertificate.getSignatureAlgorithm();</span>
+<span class="fc" id="L263">            theSignature = pCertificate.getSignature().getBytes();</span>
 
             /* Determine the signatureSpec for the algorithmId */
-<span class="fc" id="L263">            theSigSpec = determineSignatureSpecForAlgId(theSigAlgId);</span>
-<span class="pc bpc" id="L264" title="1 of 2 branches missed.">            if (theSigSpec == null) {</span>
-<span class="nc" id="L265">                throw new GordianDataException(&quot;Unsupported Signature AlgorithmId: &quot; + theSigAlgId);</span>
+<span class="fc" id="L266">            theSigSpec = determineSignatureSpecForAlgId(theSigAlgId);</span>
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">            if (theSigSpec == null) {</span>
+<span class="nc" id="L268">                throw new GordianDataException(&quot;Unsupported Signature AlgorithmId: &quot; + theSigAlgId);</span>
             }
 
             /* Derive the keyPair */
-<span class="fc" id="L269">            theKeyPair = parseEncodedKey();</span>
+<span class="fc" id="L272">            theKeyPair = parseEncodedKey();</span>
 
             /* Access the extensions */
-<span class="fc" id="L272">            final Extensions myExtensions = theTbsCertificate.getExtensions();</span>
-<span class="fc" id="L273">            theKeyUsage = GordianCertUtils.determineUsage(myExtensions);</span>
-<span class="fc" id="L274">            theCAStatus = GordianCAStatus.determineStatus(myExtensions);</span>
+<span class="fc" id="L275">            final Extensions myExtensions = theTbsCertificate.getExtensions();</span>
+<span class="fc" id="L276">            theKeyUsage = GordianCertUtils.determineUsage(myExtensions);</span>
+<span class="fc" id="L277">            theCAStatus = GordianCAStatus.determineStatus(myExtensions);</span>
 
             /* Create the ids */
-<span class="fc" id="L277">            theSubject = buildSubjectId();</span>
-<span class="fc" id="L278">            theIssuer = buildIssuerId();</span>
-<span class="fc" id="L279">            theSerialNo = theTbsCertificate.getSerialNumber().getValue();</span>
+<span class="fc" id="L280">            theSubject = buildSubjectId();</span>
+<span class="fc" id="L281">            theIssuer = buildIssuerId();</span>
+<span class="fc" id="L282">            theSerialNo = theTbsCertificate.getSerialNumber().getValue();</span>
 
             /* Determine whether we are self-signed */
-<span class="fc" id="L282">            final X500Name mySignerName = getSubjectName();</span>
-<span class="fc" id="L283">            isSelfSigned = mySignerName.equals(getIssuerName());</span>
+<span class="fc" id="L285">            final X500Name mySignerName = getSubjectName();</span>
+<span class="fc" id="L286">            isSelfSigned = mySignerName.equals(getIssuerName());</span>
 
             /* Store the encoded representation */
-<span class="fc" id="L286">            theEncoded = pCertificate.getEncoded();</span>
-<span class="nc" id="L287">        } catch (IOException e) {</span>
-<span class="nc" id="L288">            throw new GordianIOException(&quot;Failed to parse certificate&quot;, e);</span>
-<span class="fc" id="L289">        }</span>
-<span class="fc" id="L290">    }</span>
+<span class="fc" id="L289">            theEncoded = pCertificate.getEncoded();</span>
+<span class="nc" id="L290">        } catch (IOException e) {</span>
+<span class="nc" id="L291">            throw new GordianIOException(&quot;Failed to parse certificate&quot;, e);</span>
+<span class="fc" id="L292">        }</span>
+<span class="fc" id="L293">    }</span>
 
     /**
      * Obtain the factory.
@@ -295,7 +298,7 @@ public class GordianCoreCertificate
      * @return the factory
      */
     protected GordianBaseFactory getFactory() {
-<span class="fc" id="L298">        return theFactory;</span>
+<span class="fc" id="L301">        return theFactory;</span>
     }
 
     /**
@@ -304,7 +307,7 @@ public class GordianCoreCertificate
      * @return get the issuer id
      */
     private GordianCoreCertificateId buildSubjectId() {
-<span class="fc" id="L307">        return new GordianCoreCertificateId(theTbsCertificate.getSubject(), GordianCertUtils.determineSubjectId(theTbsCertificate));</span>
+<span class="fc" id="L310">        return new GordianCoreCertificateId(theTbsCertificate.getSubject(), GordianCertUtils.determineSubjectId(theTbsCertificate));</span>
     }
 
     /**
@@ -313,14 +316,22 @@ public class GordianCoreCertificate
      * @return get the issuer id
      */
     private GordianCoreCertificateId buildIssuerId() {
-<span class="fc" id="L316">        return new GordianCoreCertificateId(theTbsCertificate.getIssuer(), GordianCertUtils.determineIssuerId(theTbsCertificate));</span>
+<span class="fc" id="L319">        return new GordianCoreCertificateId(theTbsCertificate.getIssuer(), GordianCertUtils.determineIssuerId(theTbsCertificate));</span>
     }
 
     @Override
-    public boolean isValidOnDate(final Date pDate) {
+    public boolean isValidNow() {
+<span class="fc" id="L324">        return isValidOnDate(LocalDate.now(GordianBaseData.CLOCK));</span>
+    }
+
+    @Override
+    public boolean isValidOnDate(final LocalDate pDate) {
         /* Access the date */
-<span class="pc bpc" id="L322" title="1 of 2 branches missed.">        return pDate.compareTo(theTbsCertificate.getStartDate().getDate()) &gt;= 0</span>
-<span class="pc bpc" id="L323" title="1 of 2 branches missed.">                &amp;&amp; pDate.compareTo(theTbsCertificate.getEndDate().getDate()) &lt;= 0;</span>
+<span class="fc" id="L330">        final ZoneId myZone = GordianBaseData.CLOCK.getZone();</span>
+<span class="fc" id="L331">        final Instant myStart = theTbsCertificate.getStartDate().getDate().toInstant();</span>
+<span class="fc" id="L332">        final Instant myEnd = theTbsCertificate.getEndDate().getDate().toInstant();</span>
+<span class="pc bpc" id="L333" title="1 of 2 branches missed.">        return !pDate.isBefore(myStart.atZone(myZone).toLocalDate())</span>
+<span class="pc bpc" id="L334" title="1 of 2 branches missed.">                &amp;&amp; !pDate.isAfter(myEnd.atZone(myZone).toLocalDate());</span>
     }
 
     /**
@@ -329,22 +340,22 @@ public class GordianCoreCertificate
      * @return the certificate
      */
     public Certificate getCertificate() {
-<span class="fc" id="L332">        return Certificate.getInstance(getEncoded());</span>
+<span class="fc" id="L343">        return Certificate.getInstance(getEncoded());</span>
     }
 
     @Override
     public byte[] getEncoded() {
-<span class="fc" id="L337">        return theEncoded.clone();</span>
+<span class="fc" id="L348">        return theEncoded.clone();</span>
     }
 
     @Override
     public GordianCertificateId getSubject() {
-<span class="fc" id="L342">        return theSubject;</span>
+<span class="fc" id="L353">        return theSubject;</span>
     }
 
     @Override
     public GordianCertificateId getIssuer() {
-<span class="fc bfc" id="L347" title="All 2 branches covered.">        return isSelfSigned ? theSubject : theIssuer;</span>
+<span class="fc bfc" id="L358" title="All 2 branches covered.">        return isSelfSigned ? theSubject : theIssuer;</span>
     }
 
     /**
@@ -353,7 +364,7 @@ public class GordianCoreCertificate
      * @return the subject
      */
     public X500Name getSubjectName() {
-<span class="fc" id="L356">        return theSubject.getName();</span>
+<span class="fc" id="L367">        return theSubject.getName();</span>
     }
 
     /**
@@ -362,7 +373,7 @@ public class GordianCoreCertificate
      * @return the subjectId
      */
     byte[] getSubjectId() {
-<span class="fc" id="L365">        return theSubject.getId();</span>
+<span class="fc" id="L376">        return theSubject.getId();</span>
     }
 
     /**
@@ -371,7 +382,7 @@ public class GordianCoreCertificate
      * @return the issuer name
      */
     X500Name getIssuerName() {
-<span class="fc" id="L374">        return theIssuer.getName();</span>
+<span class="fc" id="L385">        return theIssuer.getName();</span>
     }
 
     /**
@@ -380,24 +391,24 @@ public class GordianCoreCertificate
      * @return the issuerId
      */
     byte[] getIssuerId() {
-<span class="pc bpc" id="L383" title="1 of 2 branches missed.">        return isSelfSigned</span>
-<span class="nc" id="L384">                ? getSubjectId()</span>
-<span class="fc" id="L385">                : theIssuer.getId();</span>
+<span class="pc bpc" id="L394" title="1 of 2 branches missed.">        return isSelfSigned</span>
+<span class="nc" id="L395">                ? getSubjectId()</span>
+<span class="fc" id="L396">                : theIssuer.getId();</span>
     }
 
     @Override
     public boolean isSelfSigned() {
-<span class="fc" id="L390">        return isSelfSigned;</span>
+<span class="fc" id="L401">        return isSelfSigned;</span>
     }
 
     @Override
     public GordianKeyPairUsage getUsage() {
-<span class="fc" id="L395">        return theKeyUsage;</span>
+<span class="fc" id="L406">        return theKeyUsage;</span>
     }
 
     @Override
     public GordianKeyPair getKeyPair() {
-<span class="fc" id="L400">        return theKeyPair;</span>
+<span class="fc" id="L411">        return theKeyPair;</span>
     }
 
     /**
@@ -406,7 +417,7 @@ public class GordianCoreCertificate
      * @return the serial number.
      */
     public BigInteger getSerialNo() {
-<span class="fc" id="L409">        return theSerialNo;</span>
+<span class="fc" id="L420">        return theSerialNo;</span>
     }
 
     /**
@@ -415,7 +426,7 @@ public class GordianCoreCertificate
      * @return the signatureSpec
      */
     protected GordianCoreSignatureSpec getSignatureSpec() {
-<span class="fc" id="L418">        return theSigSpec;</span>
+<span class="fc" id="L429">        return theSigSpec;</span>
     }
 
     /**
@@ -425,7 +436,7 @@ public class GordianCoreCertificate
      * @return true/false
      */
     protected boolean isPublicOnly(final GordianKeyPair pKeyPair) {
-<span class="fc" id="L428">        return pKeyPair.isPublicOnly();</span>
+<span class="fc" id="L439">        return pKeyPair.isPublicOnly();</span>
     }
 
     /**
@@ -435,9 +446,9 @@ public class GordianCoreCertificate
      * @return the publicOnly version
      */
     protected GordianKeyPair getPublicOnly(final GordianKeyPair pKeyPair) {
-<span class="fc bfc" id="L438" title="All 2 branches covered.">        return pKeyPair instanceof GordianCompositeKeyPair myComposite</span>
-<span class="fc" id="L439">                ? myComposite.getPublicOnly()</span>
-<span class="fc" id="L440">                : ((GordianCoreKeyPair) pKeyPair).getPublicOnly();</span>
+<span class="fc bfc" id="L449" title="All 2 branches covered.">        return pKeyPair instanceof GordianCompositeKeyPair myComposite</span>
+<span class="fc" id="L450">                ? myComposite.getPublicOnly()</span>
+<span class="fc" id="L451">                : ((GordianCoreKeyPair) pKeyPair).getPublicOnly();</span>
     }
 
     /**
@@ -447,7 +458,7 @@ public class GordianCoreCertificate
      * @return the signatureSpec
      */
     GordianCoreSignatureSpec determineSignatureSpecForKeyPair(final GordianKeyPair pKeyPair) {
-<span class="fc" id="L450">        return (GordianCoreSignatureSpec) theFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(pKeyPair.getKeyPairSpec());</span>
+<span class="fc" id="L461">        return (GordianCoreSignatureSpec) theFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(pKeyPair.getKeyPairSpec());</span>
     }
 
     /**
@@ -457,8 +468,8 @@ public class GordianCoreCertificate
      * @return the signatureSpec
      */
     GordianCoreSignatureSpec determineSignatureSpecForAlgId(final AlgorithmIdentifier pAlgId) {
-<span class="fc" id="L460">        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsyncFactory().getSignatureFactory();</span>
-<span class="fc" id="L461">        return (GordianCoreSignatureSpec) mySigns.getSpecForIdentifier(pAlgId);</span>
+<span class="fc" id="L471">        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsyncFactory().getSignatureFactory();</span>
+<span class="fc" id="L472">        return (GordianCoreSignatureSpec) mySigns.getSpecForIdentifier(pAlgId);</span>
     }
 
     /**
@@ -470,8 +481,8 @@ public class GordianCoreCertificate
      */
     AlgorithmIdentifier determineAlgIdForSignatureSpec(final GordianSignatureSpec pSpec,
                                                        final GordianKeyPair pSigner) {
-<span class="fc" id="L473">        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsyncFactory().getSignatureFactory();</span>
-<span class="fc" id="L474">        return mySigns.getIdentifierForSpecAndKeyPair(pSpec, pSigner);</span>
+<span class="fc" id="L484">        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsyncFactory().getSignatureFactory();</span>
+<span class="fc" id="L485">        return mySigns.getIdentifierForSpecAndKeyPair(pSpec, pSigner);</span>
     }
 
     /**
@@ -481,9 +492,9 @@ public class GordianCoreCertificate
      * @return matches true/false
      */
     public boolean checkMatchingPublicKey(final GordianKeyPair pKeyPair) {
-<span class="fc bfc" id="L484" title="All 2 branches covered.">        return pKeyPair instanceof GordianCompositeKeyPair myComposite</span>
-<span class="fc" id="L485">                ? myComposite.checkMatchingPublicKey(getKeyPair())</span>
-<span class="fc" id="L486">                : ((GordianCoreKeyPair) pKeyPair).checkMatchingPublicKey(getKeyPair());</span>
+<span class="fc bfc" id="L495" title="All 2 branches covered.">        return pKeyPair instanceof GordianCompositeKeyPair myComposite</span>
+<span class="fc" id="L496">                ? myComposite.checkMatchingPublicKey(getKeyPair())</span>
+<span class="fc" id="L497">                : ((GordianCoreKeyPair) pKeyPair).checkMatchingPublicKey(getKeyPair());</span>
     }
 
     /**
@@ -494,11 +505,11 @@ public class GordianCoreCertificate
      */
     protected GordianKeyPair parseEncodedKey() throws GordianException {
         /* Derive the keyPair */
-<span class="fc" id="L497">        final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();</span>
-<span class="fc" id="L498">        final X509EncodedKeySpec myX509 = getX509KeySpec();</span>
-<span class="fc" id="L499">        final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509);</span>
-<span class="fc" id="L500">        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);</span>
-<span class="fc" id="L501">        return myGenerator.derivePublicOnlyKeyPair(myX509);</span>
+<span class="fc" id="L508">        final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();</span>
+<span class="fc" id="L509">        final X509EncodedKeySpec myX509 = getX509KeySpec();</span>
+<span class="fc" id="L510">        final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509);</span>
+<span class="fc" id="L511">        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);</span>
+<span class="fc" id="L512">        return myGenerator.derivePublicOnlyKeyPair(myX509);</span>
     }
 
     /**
@@ -509,14 +520,14 @@ public class GordianCoreCertificate
      */
     protected byte[] getPublicKeyEncoded() throws GordianException {
         /* Access the keyPair */
-<span class="fc" id="L512">        final GordianKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L523">        final GordianKeyPair myPair = getKeyPair();</span>
 
         /* Access the keyPair generator */
-<span class="fc" id="L515">        final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();</span>
-<span class="fc" id="L516">        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myPair.getKeyPairSpec());</span>
+<span class="fc" id="L526">        final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();</span>
+<span class="fc" id="L527">        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myPair.getKeyPairSpec());</span>
 
         /* Obtain the publicKey Info */
-<span class="fc" id="L519">        return myGenerator.getX509Encoding(myPair).getEncoded();</span>
+<span class="fc" id="L530">        return myGenerator.getX509Encoding(myPair).getEncoded();</span>
     }
 
     /**
@@ -525,7 +536,7 @@ public class GordianCoreCertificate
      * @return the digestSpec
      */
     protected GordianDigestSpec getDigestSpec() {
-<span class="nc" id="L528">        return getSignatureSpec().getDigestSpec();</span>
+<span class="nc" id="L539">        return getSignatureSpec().getDigestSpec();</span>
     }
 
     /**
@@ -536,39 +547,39 @@ public class GordianCoreCertificate
      */
     protected GordianSignature createSigner() throws GordianException {
         /* Create the signer */
-<span class="fc" id="L539">        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsyncFactory().getSignatureFactory();</span>
-<span class="fc" id="L540">        return mySigns.createSigner(getSignatureSpec());</span>
+<span class="fc" id="L550">        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsyncFactory().getSignatureFactory();</span>
+<span class="fc" id="L551">        return mySigns.createSigner(getSignatureSpec());</span>
     }
 
     @Override
     public boolean validateCertificate(final GordianCertificate pSigner) throws GordianException {
         /* Check that the certificate is not self-signed */
-<span class="pc bpc" id="L546" title="1 of 2 branches missed.">        if (isSelfSigned) {</span>
-<span class="nc" id="L547">            throw new GordianDataException(&quot;Root certificate used as intermediary&quot;);</span>
+<span class="pc bpc" id="L557" title="1 of 2 branches missed.">        if (isSelfSigned) {</span>
+<span class="nc" id="L558">            throw new GordianDataException(&quot;Root certificate used as intermediary&quot;);</span>
         }
 
         /* Reject attempt to validate using a miniCertificate */
-<span class="pc bpc" id="L551" title="1 of 2 branches missed.">        if (pSigner instanceof GordianMiniCertificate) {</span>
-<span class="nc" id="L552">            throw new GordianDataException(&quot;MiniCertificate is not valid to describe signer&quot;);</span>
+<span class="pc bpc" id="L562" title="1 of 2 branches missed.">        if (pSigner instanceof GordianMiniCertificate) {</span>
+<span class="nc" id="L563">            throw new GordianDataException(&quot;MiniCertificate is not valid to describe signer&quot;);</span>
         }
 
         /* Check that the signing certificate is correct */
-<span class="fc" id="L556">        final GordianCoreCertificate mySigner = (GordianCoreCertificate) pSigner;</span>
-<span class="fc" id="L557">        final X500Name mySignerName = mySigner.getSubjectName();</span>
-<span class="fc" id="L558">        final byte[] mySignerId = mySigner.getSubjectId();</span>
-<span class="pc bpc" id="L559" title="1 of 2 branches missed.">        if (!mySignerName.equals(getIssuerName())</span>
-<span class="pc bpc" id="L560" title="1 of 2 branches missed.">                || !Arrays.equals(mySignerId, getIssuerId())) {</span>
-<span class="nc" id="L561">            throw new GordianDataException(&quot;Incorrect signer certificate&quot;);</span>
+<span class="fc" id="L567">        final GordianCoreCertificate mySigner = (GordianCoreCertificate) pSigner;</span>
+<span class="fc" id="L568">        final X500Name mySignerName = mySigner.getSubjectName();</span>
+<span class="fc" id="L569">        final byte[] mySignerId = mySigner.getSubjectId();</span>
+<span class="pc bpc" id="L570" title="1 of 2 branches missed.">        if (!mySignerName.equals(getIssuerName())</span>
+<span class="pc bpc" id="L571" title="1 of 2 branches missed.">                || !Arrays.equals(mySignerId, getIssuerId())) {</span>
+<span class="nc" id="L572">            throw new GordianDataException(&quot;Incorrect signer certificate&quot;);</span>
         }
 
         /* Check that the signing certificate is valid */
-<span class="pc bpc" id="L565" title="1 of 2 branches missed.">        if (!pSigner.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)</span>
-<span class="pc bpc" id="L566" title="1 of 2 branches missed.">                || !pSigner.isValidNow()) {</span>
-<span class="nc" id="L567">            throw new GordianDataException(&quot;Invalid signer certificate&quot;);</span>
+<span class="pc bpc" id="L576" title="1 of 2 branches missed.">        if (!pSigner.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)</span>
+<span class="pc bpc" id="L577" title="1 of 2 branches missed.">                || !pSigner.isValidNow()) {</span>
+<span class="nc" id="L578">            throw new GordianDataException(&quot;Invalid signer certificate&quot;);</span>
         }
 
         /* Check that the signature is valid */
-<span class="fc" id="L571">        return validateSignature(pSigner.getKeyPair());</span>
+<span class="fc" id="L582">        return validateSignature(pSigner.getKeyPair());</span>
     }
 
     /**
@@ -579,23 +590,23 @@ public class GordianCoreCertificate
      */
     public boolean validateRootCertificate() throws GordianException {
         /* Check that the certificate is self-signed */
-<span class="pc bpc" id="L582" title="1 of 2 branches missed.">        if (!isSelfSigned) {</span>
-<span class="nc" id="L583">            throw new GordianDataException(&quot;Non-root certificate used as root&quot;);</span>
+<span class="pc bpc" id="L593" title="1 of 2 branches missed.">        if (!isSelfSigned) {</span>
+<span class="nc" id="L594">            throw new GordianDataException(&quot;Non-root certificate used as root&quot;);</span>
         }
 
         /* Check that the certificate is valid self-signed */
-<span class="pc bpc" id="L587" title="1 of 2 branches missed.">        if (!theKeyUsage.hasUse(GordianKeyPairUse.CERTIFICATE)</span>
-<span class="pc bpc" id="L588" title="1 of 2 branches missed.">                || theCAStatus.getPathLen() != null) {</span>
-<span class="nc" id="L589">            throw new GordianDataException(&quot;Invalid root certificate&quot;);</span>
+<span class="pc bpc" id="L598" title="1 of 2 branches missed.">        if (!theKeyUsage.hasUse(GordianKeyPairUse.CERTIFICATE)</span>
+<span class="pc bpc" id="L599" title="1 of 2 branches missed.">                || theCAStatus.getPathLen() != null) {</span>
+<span class="nc" id="L600">            throw new GordianDataException(&quot;Invalid root certificate&quot;);</span>
         }
 
         /* Check that the issuerId is null */
-<span class="pc bpc" id="L593" title="1 of 2 branches missed.">        if (theTbsCertificate.getIssuerUniqueId() != null) {</span>
-<span class="nc" id="L594">            throw new GordianDataException(&quot;Root certificate has distinct issuerUniqueId&quot;);</span>
+<span class="pc bpc" id="L604" title="1 of 2 branches missed.">        if (theTbsCertificate.getIssuerUniqueId() != null) {</span>
+<span class="nc" id="L605">            throw new GordianDataException(&quot;Root certificate has distinct issuerUniqueId&quot;);</span>
         }
 
         /* Check that the signature is valid */
-<span class="fc" id="L598">        return validateSignature(theKeyPair);</span>
+<span class="fc" id="L609">        return validateSignature(theKeyPair);</span>
     }
 
     /**
@@ -609,41 +620,39 @@ public class GordianCoreCertificate
     private TBSCertificate buildCertificate(final GordianCoreCertificate pSigner,
                                             final X500Name pSubject) throws GordianException {
         /* Create the name of the certificate */
-<span class="fc bfc" id="L612" title="All 2 branches covered.">        final X500Name myIssuer = pSigner == null</span>
-<span class="fc" id="L613">                ? pSubject</span>
-<span class="fc" id="L614">                : pSigner.getSubjectName();</span>
+<span class="fc bfc" id="L623" title="All 2 branches covered.">        final X500Name myIssuer = pSigner == null</span>
+<span class="fc" id="L624">                ? pSubject</span>
+<span class="fc" id="L625">                : pSigner.getSubjectName();</span>
 
         /* Using the current timestamp as the certificate serial number */
-<span class="fc" id="L617">        final BigInteger mySerialNo = GordianCertUtils.newSerialNo();</span>
+<span class="fc" id="L628">        final BigInteger mySerialNo = GordianCertUtils.newSerialNo();</span>
 
         /* Create the startDate and endDate for the certificate */
-<span class="fc" id="L620">        final Date myStart = new Date(System.currentTimeMillis());</span>
-<span class="fc" id="L621">        final Calendar myCalendar = Calendar.getInstance();</span>
-<span class="fc" id="L622">        myCalendar.setTime(myStart);</span>
-<span class="fc" id="L623">        myCalendar.add(Calendar.YEAR, 1);</span>
-<span class="fc" id="L624">        final Date myEnd = myCalendar.getTime();</span>
+<span class="fc" id="L631">        final LocalDate myStart = LocalDate.now(GordianBaseData.CLOCK);</span>
+<span class="fc" id="L632">        final LocalDate myEnd = myStart.plusYears(1);</span>
+<span class="fc" id="L633">        final ZoneId myZone = GordianBaseData.CLOCK.getZone();</span>
 
         /* Obtain the publicKey Info */
-<span class="fc" id="L627">        final byte[] myPublicKeyEncoded = getPublicKeyEncoded();</span>
-<span class="fc" id="L628">        final SubjectPublicKeyInfo myPublicKeyInfo = SubjectPublicKeyInfo.getInstance(myPublicKeyEncoded);</span>
+<span class="fc" id="L636">        final byte[] myPublicKeyEncoded = getPublicKeyEncoded();</span>
+<span class="fc" id="L637">        final SubjectPublicKeyInfo myPublicKeyInfo = SubjectPublicKeyInfo.getInstance(myPublicKeyEncoded);</span>
 
         /* Build basic information */
-<span class="fc" id="L631">        final V3TBSCertificateGenerator myCertBuilder = new V3TBSCertificateGenerator();</span>
-<span class="fc" id="L632">        myCertBuilder.setSubject(pSubject);</span>
-<span class="fc" id="L633">        myCertBuilder.setIssuer(myIssuer);</span>
-<span class="fc" id="L634">        myCertBuilder.setStartDate(new Time(myStart));</span>
-<span class="fc" id="L635">        myCertBuilder.setEndDate(new Time(myEnd));</span>
-<span class="fc" id="L636">        myCertBuilder.setSerialNumber(new ASN1Integer(mySerialNo));</span>
-<span class="fc" id="L637">        myCertBuilder.setSubjectPublicKeyInfo(myPublicKeyInfo);</span>
-<span class="fc" id="L638">        myCertBuilder.setSignature(theSigAlgId);</span>
-<span class="fc" id="L639">        final byte[] mySubjectId = GordianCertUtils.createKeyId(theFactory, myPublicKeyEncoded);</span>
-<span class="fc bfc" id="L640" title="All 2 branches covered.">        final byte[] myIssuerId = pSigner == null ? null : pSigner.getSubjectId();</span>
+<span class="fc" id="L640">        final V3TBSCertificateGenerator myCertBuilder = new V3TBSCertificateGenerator();</span>
+<span class="fc" id="L641">        myCertBuilder.setSubject(pSubject);</span>
+<span class="fc" id="L642">        myCertBuilder.setIssuer(myIssuer);</span>
+<span class="fc" id="L643">        myCertBuilder.setStartDate(new Time(Date.from(myStart.atStartOfDay().atZone(myZone).toInstant())));</span>
+<span class="fc" id="L644">        myCertBuilder.setEndDate(new Time(Date.from(myEnd.atStartOfDay().atZone(myZone).toInstant())));</span>
+<span class="fc" id="L645">        myCertBuilder.setSerialNumber(new ASN1Integer(mySerialNo));</span>
+<span class="fc" id="L646">        myCertBuilder.setSubjectPublicKeyInfo(myPublicKeyInfo);</span>
+<span class="fc" id="L647">        myCertBuilder.setSignature(theSigAlgId);</span>
+<span class="fc" id="L648">        final byte[] mySubjectId = GordianCertUtils.createKeyId(theFactory, myPublicKeyEncoded);</span>
+<span class="fc bfc" id="L649" title="All 2 branches covered.">        final byte[] myIssuerId = pSigner == null ? null : pSigner.getSubjectId();</span>
 
         /* Create extensions for the certificate */
-<span class="fc" id="L643">        myCertBuilder.setExtensions(GordianCertUtils.createExtensions(theCAStatus, theKeyUsage, mySubjectId, myIssuerId));</span>
+<span class="fc" id="L652">        myCertBuilder.setExtensions(GordianCertUtils.createExtensions(theCAStatus, theKeyUsage, mySubjectId, myIssuerId));</span>
 
         /* Generate the TBS Certificate */
-<span class="fc" id="L646">        return myCertBuilder.generateTBSCertificate();</span>
+<span class="fc" id="L655">        return myCertBuilder.generateTBSCertificate();</span>
     }
 
     /**
@@ -657,18 +666,18 @@ public class GordianCoreCertificate
         /* Protect against exceptions */
         try {
             /* Build the signature */
-<span class="fc" id="L660">            final GordianSignature mySigner = createSigner();</span>
-<span class="fc" id="L661">            final GordianNewSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();</span>
-<span class="fc" id="L662">            mySigner.initForSigning(myBuilder.keyPair(pSigner));</span>
-<span class="fc" id="L663">            final GordianStreamConsumer myConsumer = new GordianStreamConsumer(mySigner);</span>
-<span class="fc" id="L664">            final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);</span>
-<span class="fc" id="L665">            myOut.writeObject(theTbsCertificate);</span>
-<span class="fc" id="L666">            myOut.close();</span>
+<span class="fc" id="L669">            final GordianSignature mySigner = createSigner();</span>
+<span class="fc" id="L670">            final GordianNewSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();</span>
+<span class="fc" id="L671">            mySigner.initForSigning(myBuilder.keyPair(pSigner));</span>
+<span class="fc" id="L672">            final GordianStreamConsumer myConsumer = new GordianStreamConsumer(mySigner);</span>
+<span class="fc" id="L673">            final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);</span>
+<span class="fc" id="L674">            myOut.writeObject(theTbsCertificate);</span>
+<span class="fc" id="L675">            myOut.close();</span>
 
             /* Create the signature */
-<span class="fc" id="L669">            return mySigner.sign();</span>
-<span class="nc" id="L670">        } catch (IOException e) {</span>
-<span class="nc" id="L671">            throw new GordianIOException(&quot;Failed to create signature&quot;, e);</span>
+<span class="fc" id="L678">            return mySigner.sign();</span>
+<span class="nc" id="L679">        } catch (IOException e) {</span>
+<span class="nc" id="L680">            throw new GordianIOException(&quot;Failed to create signature&quot;, e);</span>
         }
     }
 
@@ -682,10 +691,10 @@ public class GordianCoreCertificate
         /* Protect against exceptions */
         try {
             /* Obtain the X509 keySpec */
-<span class="fc" id="L685">            final SubjectPublicKeyInfo myInfo = theTbsCertificate.getSubjectPublicKeyInfo();</span>
-<span class="fc" id="L686">            return new X509EncodedKeySpec(myInfo.getEncoded());</span>
-<span class="nc" id="L687">        } catch (IOException e) {</span>
-<span class="nc" id="L688">            throw new GordianIOException(&quot;Failed to extract keySpec&quot;, e);</span>
+<span class="fc" id="L694">            final SubjectPublicKeyInfo myInfo = theTbsCertificate.getSubjectPublicKeyInfo();</span>
+<span class="fc" id="L695">            return new X509EncodedKeySpec(myInfo.getEncoded());</span>
+<span class="nc" id="L696">        } catch (IOException e) {</span>
+<span class="nc" id="L697">            throw new GordianIOException(&quot;Failed to extract keySpec&quot;, e);</span>
         }
     }
 
@@ -700,18 +709,18 @@ public class GordianCoreCertificate
         /* Protect against exceptions */
         try {
             /* Build the signature */
-<span class="fc" id="L703">            final GordianSignature myValidator = createSigner();</span>
-<span class="fc" id="L704">            final GordianNewSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();</span>
-<span class="fc" id="L705">            myValidator.initForVerify(myBuilder.keyPair(pSigner));</span>
-<span class="fc" id="L706">            final GordianStreamConsumer myConsumer = new GordianStreamConsumer(myValidator);</span>
-<span class="fc" id="L707">            final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);</span>
-<span class="fc" id="L708">            myOut.writeObject(theTbsCertificate);</span>
-<span class="fc" id="L709">            myOut.close();</span>
+<span class="fc" id="L712">            final GordianSignature myValidator = createSigner();</span>
+<span class="fc" id="L713">            final GordianNewSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();</span>
+<span class="fc" id="L714">            myValidator.initForVerify(myBuilder.keyPair(pSigner));</span>
+<span class="fc" id="L715">            final GordianStreamConsumer myConsumer = new GordianStreamConsumer(myValidator);</span>
+<span class="fc" id="L716">            final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);</span>
+<span class="fc" id="L717">            myOut.writeObject(theTbsCertificate);</span>
+<span class="fc" id="L718">            myOut.close();</span>
 
             /* Verify the signature */
-<span class="fc" id="L712">            return myValidator.verify(theSignature);</span>
-<span class="nc" id="L713">        } catch (IOException e) {</span>
-<span class="nc" id="L714">            throw new GordianIOException(&quot;Failed to validate signature&quot;, e);</span>
+<span class="fc" id="L721">            return myValidator.verify(theSignature);</span>
+<span class="nc" id="L722">        } catch (IOException e) {</span>
+<span class="nc" id="L723">            throw new GordianIOException(&quot;Failed to validate signature&quot;, e);</span>
         }
     }
 
@@ -725,35 +734,35 @@ public class GordianCoreCertificate
         /* Protect against exceptions */
         try {
             /* Create the DERSequence */
-<span class="fc" id="L728">            final ASN1EncodableVector myVector = new ASN1EncodableVector();</span>
-<span class="fc" id="L729">            myVector.add(theTbsCertificate);</span>
-<span class="fc" id="L730">            myVector.add(theSigAlgId);</span>
-<span class="fc" id="L731">            myVector.add(new DERBitString(theSignature));</span>
-<span class="fc" id="L732">            final DERSequence mySeq = new DERSequence(myVector);</span>
-<span class="fc" id="L733">            return mySeq.getEncoded();</span>
-<span class="nc" id="L734">        } catch (IOException e) {</span>
-<span class="nc" id="L735">            throw new GordianIOException(&quot;Failed to generate encoding&quot;, e);</span>
+<span class="fc" id="L737">            final ASN1EncodableVector myVector = new ASN1EncodableVector();</span>
+<span class="fc" id="L738">            myVector.add(theTbsCertificate);</span>
+<span class="fc" id="L739">            myVector.add(theSigAlgId);</span>
+<span class="fc" id="L740">            myVector.add(new DERBitString(theSignature));</span>
+<span class="fc" id="L741">            final DERSequence mySeq = new DERSequence(myVector);</span>
+<span class="fc" id="L742">            return mySeq.getEncoded();</span>
+<span class="nc" id="L743">        } catch (IOException e) {</span>
+<span class="nc" id="L744">            throw new GordianIOException(&quot;Failed to generate encoding&quot;, e);</span>
         }
     }
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial case */
-<span class="fc bfc" id="L742" title="All 2 branches covered.">        if (pThat == this) {</span>
-<span class="fc" id="L743">            return true;</span>
+<span class="fc bfc" id="L751" title="All 2 branches covered.">        if (pThat == this) {</span>
+<span class="fc" id="L752">            return true;</span>
         }
-<span class="pc bpc" id="L745" title="1 of 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L746">            return false;</span>
+<span class="pc bpc" id="L754" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L755">            return false;</span>
         }
 
         /* Ensure object is correct class */
-<span class="fc" id="L750">        return pThat instanceof GordianCoreCertificate myThat</span>
-<span class="pc bpc" id="L751" title="1 of 4 branches missed.">                &amp;&amp; Arrays.equals(theEncoded, myThat.theEncoded);</span>
+<span class="fc" id="L759">        return pThat instanceof GordianCoreCertificate myThat</span>
+<span class="pc bpc" id="L760" title="1 of 4 branches missed.">                &amp;&amp; Arrays.equals(theEncoded, myThat.theEncoded);</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L756">        return Arrays.hashCode(theEncoded);</span>
+<span class="nc" id="L765">        return Arrays.hashCode(theEncoded);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

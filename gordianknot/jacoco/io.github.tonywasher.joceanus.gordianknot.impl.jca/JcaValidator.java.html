@@ -20,47 +20,48 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKe
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianValidator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.digest.JcaDigest;
 
 /**
  * Jca Validator.
  */
-<span class="fc" id="L27">public class JcaValidator</span>
+<span class="fc" id="L28">public class JcaValidator</span>
         extends GordianValidator {
     @Override
     public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
-<span class="fc bfc" id="L31" title="All 2 branches covered.">        return supportedSymKeyType(pKeyType)</span>
-<span class="pc bpc" id="L32" title="1 of 2 branches missed.">                &amp;&amp; super.validSymKeyType(pKeyType);</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        return supportedSymKeyType(pKeyType)</span>
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">                &amp;&amp; super.validSymKeyType(pKeyType);</span>
     }
 
     @Override
     protected boolean validHMacDigestType(final GordianDigestType pDigestType) {
-<span class="fc bfc" id="L37" title="All 2 branches covered.">        return JcaDigest.isHMacSupported(pDigestType)</span>
-<span class="fc bfc" id="L38" title="All 2 branches covered.">                &amp;&amp; validDigestType(pDigestType);</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        return JcaDigest.isHMacSupported(pDigestType)</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">                &amp;&amp; validDigestType(pDigestType);</span>
     }
 
     @Override
     public boolean validDigestType(final GordianDigestType pDigestType) {
         /* Perform standard checks */
-<span class="pc bpc" id="L44" title="1 of 2 branches missed.">        if (!super.validDigestType(pDigestType)) {</span>
-<span class="nc" id="L45">            return false;</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">        if (!super.validDigestType(pDigestType)) {</span>
+<span class="nc" id="L46">            return false;</span>
         }
 
         /* Disable non-JCE digests */
-<span class="fc bfc" id="L49" title="All 2 branches covered.">        return switch (pDigestType) {</span>
-<span class="fc" id="L50">            case JH, GROESTL, CUBEHASH, KANGAROO, ASCON, ISAP, PHOTONBEETLE, ROMULUS, SPARKLE, XOODYAK -&gt; false;</span>
-<span class="fc" id="L51">            default -&gt; true;</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        return switch (pDigestType) {</span>
+<span class="fc" id="L51">            case JH, GROESTL, CUBEHASH, KANGAROO, ASCON, ISAP, PHOTONBEETLE, ROMULUS, SPARKLE, XOODYAK -&gt; false;</span>
+<span class="fc" id="L52">            default -&gt; true;</span>
         };
     }
 
     @Override
     public boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
-<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        if (pKeyType == null) {</span>
-<span class="nc" id="L58">            return false;</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        if (pKeyType == null) {</span>
+<span class="nc" id="L59">            return false;</span>
         }
-<span class="fc bfc" id="L60" title="All 2 branches covered.">        return switch (pKeyType) {</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        return switch (pKeyType) {</span>
             case ISAAC, SOSEMANUK, RABBIT, SNOW3G, SKEINXOF, BLAKE2XOF, BLAKE3XOF, ASCON, ELEPHANT, ISAP, PHOTONBEETLE,
-<span class="fc" id="L62">                 ROMULUS, SPARKLE, XOODYAK -&gt; false;</span>
-<span class="fc" id="L63">            default -&gt; super.validStreamKeyType(pKeyType);</span>
+<span class="fc" id="L63">                 ROMULUS, SPARKLE, XOODYAK -&gt; false;</span>
+<span class="fc" id="L64">            default -&gt; super.validStreamKeyType(pKeyType);</span>
         };
     }
 
@@ -71,18 +72,18 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianValidator
      * @return true/false
      */
     private static boolean supportedSymKeyType(final GordianSymKeyType pKeyType) {
-<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if (pKeyType == null) {</span>
-<span class="nc" id="L75">            return false;</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        if (pKeyType == null) {</span>
+<span class="nc" id="L76">            return false;</span>
         }
-<span class="fc bfc" id="L77" title="All 2 branches covered.">        return switch (pKeyType) {</span>
-<span class="fc" id="L78">            case SPECK, ANUBIS, SIMON, MARS, LEA -&gt; false;</span>
-<span class="fc" id="L79">            default -&gt; true;</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        return switch (pKeyType) {</span>
+<span class="fc" id="L79">            case SPECK, ANUBIS, SIMON, MARS, LEA -&gt; false;</span>
+<span class="fc" id="L80">            default -&gt; true;</span>
         };
     }
 
     @Override
     public boolean isXofSupported() {
-<span class="fc" id="L85">        return false;</span>
+<span class="fc" id="L86">        return false;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

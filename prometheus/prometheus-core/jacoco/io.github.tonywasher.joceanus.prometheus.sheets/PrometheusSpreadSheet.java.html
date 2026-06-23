@@ -33,15 +33,10 @@ import java.io.OutputStream;
  */
 public abstract class PrometheusSpreadSheet {
     /**
-     * The Data file name.
-     */
-    public static final String FILE_NAME = &quot;zipData&quot;;
-
-    /**
      * Constructor.
      */
-<span class="nc" id="L43">    protected PrometheusSpreadSheet() {</span>
-<span class="nc" id="L44">    }</span>
+<span class="nc" id="L38">    protected PrometheusSpreadSheet() {</span>
+<span class="nc" id="L39">    }</span>
 
     /**
      * Obtain a sheet reader.
@@ -75,11 +70,11 @@ public abstract class PrometheusSpreadSheet {
                            final PrometheusDataSet pData,
                            final File pFile) throws OceanusException {
         /* Create a sheet reader object */
-<span class="nc" id="L78">        final PrometheusSheetReader myReader = getSheetReader(pReport, pPasswordMgr);</span>
+<span class="nc" id="L73">        final PrometheusSheetReader myReader = getSheetReader(pReport, pPasswordMgr);</span>
 
         /* Load the backup */
-<span class="nc" id="L81">        myReader.loadBackup(pFile, pData);</span>
-<span class="nc" id="L82">    }</span>
+<span class="nc" id="L76">        myReader.loadBackup(pFile, pData);</span>
+<span class="nc" id="L77">    }</span>
 
     /**
      * Load a Backup Workbook.
@@ -97,11 +92,11 @@ public abstract class PrometheusSpreadSheet {
                            final InputStream pInStream,
                            final String pName) throws OceanusException {
         /* Create a sheet reader object */
-<span class="nc" id="L100">        final PrometheusSheetReader myReader = getSheetReader(pReport, pPasswordMgr);</span>
+<span class="nc" id="L95">        final PrometheusSheetReader myReader = getSheetReader(pReport, pPasswordMgr);</span>
 
         /* Load the backup */
-<span class="nc" id="L103">        myReader.loadBackup(pInStream, pData, pName);</span>
-<span class="nc" id="L104">    }</span>
+<span class="nc" id="L98">        myReader.loadBackup(pInStream, pData, pName);</span>
+<span class="nc" id="L99">    }</span>
 
     /**
      * Create a Backup Workbook.
@@ -117,11 +112,11 @@ public abstract class PrometheusSpreadSheet {
                              final File pFile,
                              final PrometheusSheetWorkBookType pType) throws OceanusException {
         /* Create a sheet writer object */
-<span class="nc" id="L120">        final PrometheusSheetWriter myWriter = getSheetWriter(pReport);</span>
+<span class="nc" id="L115">        final PrometheusSheetWriter myWriter = getSheetWriter(pReport);</span>
 
         /* Create the backup */
-<span class="nc" id="L123">        myWriter.createBackup(pData, pFile, pType);</span>
-<span class="nc" id="L124">    }</span>
+<span class="nc" id="L118">        myWriter.createBackup(pData, pFile, pType);</span>
+<span class="nc" id="L119">    }</span>
 
     /**
      * Create a Backup Workbook.
@@ -137,10 +132,10 @@ public abstract class PrometheusSpreadSheet {
                              final OutputStream pZipStream,
                              final PrometheusSheetWorkBookType pType) throws OceanusException {
         /* Create a sheet writer object */
-<span class="nc" id="L140">        final PrometheusSheetWriter myWriter = getSheetWriter(pReport);</span>
+<span class="nc" id="L135">        final PrometheusSheetWriter myWriter = getSheetWriter(pReport);</span>
 
         /* Create the backup */
-<span class="nc" id="L143">        myWriter.createBackup(pData, pZipStream, pType);</span>
-<span class="nc" id="L144">    }</span>
+<span class="nc" id="L138">        myWriter.createBackup(pData, pZipStream, pType);</span>
+<span class="nc" id="L139">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

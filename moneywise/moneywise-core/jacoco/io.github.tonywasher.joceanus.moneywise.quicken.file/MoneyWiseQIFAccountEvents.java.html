@@ -16,12 +16,13 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import java.util.Objects;
 
 /**
  * Class representing an account and its events.
@@ -41,45 +42,41 @@ public class MoneyWiseQIFAccountEvents
     /**
      * Constructor.
      *
-     * @param pFile    the QIF file.
      * @param pAccount the account.
      */
-    protected MoneyWiseQIFAccountEvents(final MoneyWiseQIFFile pFile,
-<span class="nc" id="L48">                                        final MoneyWiseTransAsset pAccount) {</span>
+<span class="nc" id="L47">    protected MoneyWiseQIFAccountEvents(final MoneyWiseTransAsset pAccount) {</span>
         /* Store parameters */
-<span class="nc" id="L50">        theAccount = new MoneyWiseQIFAccount(pFile, pAccount);</span>
+<span class="nc" id="L49">        theAccount = new MoneyWiseQIFAccount(pAccount);</span>
 
         /* Create the list */
-<span class="nc" id="L53">        theEvents = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L54">    }</span>
+<span class="nc" id="L52">        theEvents = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L53">    }</span>
 
     /**
      * Constructor.
      *
-     * @param pFile    the QIF file.
      * @param pAccount the account name.
      */
-    protected MoneyWiseQIFAccountEvents(final MoneyWiseQIFFile pFile,
-<span class="nc" id="L63">                                        final String pAccount) {</span>
+<span class="nc" id="L60">    protected MoneyWiseQIFAccountEvents(final String pAccount) {</span>
         /* Store parameters */
-<span class="nc" id="L65">        theAccount = new MoneyWiseQIFAccount(pFile, pAccount);</span>
+<span class="nc" id="L62">        theAccount = new MoneyWiseQIFAccount(pAccount);</span>
 
         /* Create the list */
-<span class="nc" id="L68">        theEvents = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L69">    }</span>
+<span class="nc" id="L65">        theEvents = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L66">    }</span>
 
     /**
      * Constructor.
      *
      * @param pAccount the account.
      */
-<span class="nc" id="L76">    protected MoneyWiseQIFAccountEvents(final MoneyWiseQIFAccount pAccount) {</span>
+<span class="nc" id="L73">    protected MoneyWiseQIFAccountEvents(final MoneyWiseQIFAccount pAccount) {</span>
         /* Store parameters */
-<span class="nc" id="L78">        theAccount = pAccount;</span>
+<span class="nc" id="L75">        theAccount = pAccount;</span>
 
         /* Create the list */
-<span class="nc" id="L81">        theEvents = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L82">    }</span>
+<span class="nc" id="L78">        theEvents = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L79">    }</span>
 
     /**
      * Obtain the account.
@@ -87,7 +84,7 @@ public class MoneyWiseQIFAccountEvents
      * @return the account
      */
     public MoneyWiseQIFAccount getAccount() {
-<span class="nc" id="L90">        return theAccount;</span>
+<span class="nc" id="L87">        return theAccount;</span>
     }
 
     /**
@@ -96,7 +93,7 @@ public class MoneyWiseQIFAccountEvents
      * @return the events
      */
     public List&lt;MoneyWiseQIFEventRecord&lt;?&gt;&gt; getEvents() {
-<span class="nc" id="L99">        return theEvents;</span>
+<span class="nc" id="L96">        return theEvents;</span>
     }
 
     /**
@@ -105,7 +102,7 @@ public class MoneyWiseQIFAccountEvents
      * @return the iterator
      */
     public Iterator&lt;MoneyWiseQIFEventRecord&lt;?&gt;&gt; eventIterator() {
-<span class="nc" id="L108">        return theEvents.iterator();</span>
+<span class="nc" id="L105">        return theEvents.iterator();</span>
     }
 
     /**
@@ -115,52 +112,51 @@ public class MoneyWiseQIFAccountEvents
      */
     protected void addEvent(final MoneyWiseQIFEventRecord&lt;?&gt; pEvent) {
         /* Add the event */
-<span class="nc" id="L118">        theEvents.add(pEvent);</span>
-<span class="nc" id="L119">    }</span>
+<span class="nc" id="L115">        theEvents.add(pEvent);</span>
+<span class="nc" id="L116">    }</span>
 
     /**
      * Sort the events.
      */
     protected void sortEvents() {
-<span class="nc" id="L125">        Collections.sort(theEvents);</span>
-<span class="nc" id="L126">    }</span>
+<span class="nc" id="L122">        Collections.sort(theEvents);</span>
+<span class="nc" id="L123">    }</span>
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle trivial cases */
-<span class="nc bnc" id="L131" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L132">            return true;</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L129">            return true;</span>
         }
-<span class="nc bnc" id="L134" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L135">            return false;</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L132">            return false;</span>
         }
 
         /* Check class */
-<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (!getClass().equals(pThat.getClass())) {</span>
-<span class="nc" id="L140">            return false;</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L137">            return false;</span>
         }
 
         /* Cast correctly */
-<span class="nc" id="L144">        final MoneyWiseQIFAccountEvents myEvents = (MoneyWiseQIFAccountEvents) pThat;</span>
+<span class="nc" id="L141">        final MoneyWiseQIFAccountEvents myEvents = (MoneyWiseQIFAccountEvents) pThat;</span>
 
         /* Check account */
-<span class="nc bnc" id="L147" title="All 2 branches missed.">        if (!theAccount.equals(myEvents.getAccount())) {</span>
-<span class="nc" id="L148">            return false;</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">        if (!theAccount.equals(myEvents.getAccount())) {</span>
+<span class="nc" id="L145">            return false;</span>
         }
 
         /* Check events */
-<span class="nc" id="L152">        return theEvents.equals(myEvents.getEvents());</span>
+<span class="nc" id="L149">        return theEvents.equals(myEvents.getEvents());</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L157">        final int myResult = MoneyWiseQIFFile.HASH_BASE * theAccount.hashCode();</span>
-<span class="nc" id="L158">        return myResult + theEvents.hashCode();</span>
+<span class="nc" id="L154">        return Objects.hash(theAccount, theEvents);</span>
     }
 
     @Override
     public int compareTo(final MoneyWiseQIFAccountEvents pThat) {
-<span class="nc" id="L163">        return theAccount.compareTo(pThat.getAccount());</span>
+<span class="nc" id="L159">        return theAccount.compareTo(pThat.getAccount());</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

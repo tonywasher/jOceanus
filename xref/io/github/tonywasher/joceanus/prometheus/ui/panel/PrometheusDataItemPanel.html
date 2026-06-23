@@ -24,14 +24,14 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.prometheus.ui.panel;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.field.MetisFieldVersionValues;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.list.MetisListKey;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.field.MetisFieldVersionValues;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.list.MetisListKey;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusTableItem;
@@ -39,7 +39,7 @@
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.ui.PrometheusGoToEvent;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.ui.PrometheusItemActions;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.ui.PrometheusItemEditActions;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.ui.PrometheusItemEditActions.PrometheusItemEditParent;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.ui.PrometheusItemEditParent;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.ui.PrometheusUIResource;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
@@ -59,7 +59,7 @@
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  <em class="jxr_javadoccomment"> * @param &lt;G&gt; the goto id type</em>
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> PrometheusDataItemPanel&lt;T <strong class="jxr_keyword">extends</strong> <a name="PrometheusTableItem" href="../../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusTableItem.html#PrometheusTableItem">PrometheusTableItem</a> &amp; Comparable&lt;? <strong class="jxr_keyword">super</strong> T&gt;, G <strong class="jxr_keyword">extends</strong> Enum&lt;G&gt;&gt;
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>          <strong class="jxr_keyword">implements</strong> OceanusEventProvider&lt;PrometheusDataEvent&gt;, TethysUIComponent, PrometheusItemEditParent {
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>          <strong class="jxr_keyword">implements</strong> OceanusEventProvider&lt;PrometheusDataEvent&gt;, TethysUIComponent, <a name="PrometheusItemEditParent" href="../../../../../../../io/github/tonywasher/joceanus/prometheus/ui/PrometheusItemEditParent.html#PrometheusItemEditParent">PrometheusItemEditParent</a> {
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment">     * Details Tab Title.</em>
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">     */</em>
@@ -336,7 +336,7 @@
 <a class="jxr_linenumber" name="L328" href="#L328">328</a>             <strong class="jxr_keyword">if</strong> (isEditable) {
 <a class="jxr_linenumber" name="L329" href="#L329">329</a>                 <strong class="jxr_keyword">if</strong> (!isEditing()) {
 <a class="jxr_linenumber" name="L330" href="#L330">330</a>                     theEditVersion = theEditSet.getVersion();
-<a class="jxr_linenumber" name="L331" href="#L331">331</a>                     theBaseValues = theItem.getValues();
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>                     theBaseValues = (<a name="MetisFieldVersionValues" href="../../../../../../../io/github/tonywasher/joceanus/metis/field/MetisFieldVersionValues.html#MetisFieldVersionValues">MetisFieldVersionValues</a>) theItem.getValues();
 <a class="jxr_linenumber" name="L332" href="#L332">332</a>                 }
 <a class="jxr_linenumber" name="L333" href="#L333">333</a>             } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L334" href="#L334">334</a>                 theEditVersion = VERSION_READONLY;
@@ -658,6 +658,6 @@
 <a class="jxr_linenumber" name="L650" href="#L650">650</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

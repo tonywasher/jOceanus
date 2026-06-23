@@ -52,54 +52,42 @@ public abstract class PrometheusSheetStaticData&lt;T extends PrometheusStaticDat
     /**
      * Constructor for loading a spreadsheet.
      *
-     * @param pReader the spreadsheet reader
-     * @param pRange  the range to load
+     * @param pControl the spreadsheet control
+     * @param pRange   the range to load
      */
-    protected PrometheusSheetStaticData(final PrometheusSheetReader pReader,
+    protected PrometheusSheetStaticData(final PrometheusSheetControl pControl,
                                         final String pRange) {
         /* Call super constructor */
-<span class="nc" id="L61">        super(pReader, pRange);</span>
+<span class="nc" id="L61">        super(pControl, pRange);</span>
 <span class="nc" id="L62">    }</span>
-
-    /**
-     * Constructor for creating a spreadsheet.
-     *
-     * @param pWriter the spreadsheet writer
-     * @param pRange  the range to create
-     */
-    protected PrometheusSheetStaticData(final PrometheusSheetWriter pWriter,
-                                        final String pRange) {
-        /* Call super constructor */
-<span class="nc" id="L73">        super(pWriter, pRange);</span>
-<span class="nc" id="L74">    }</span>
 
     @Override
     protected void insertSecureItem(final T pItem) throws OceanusException {
         /* Set the fields */
-<span class="nc" id="L79">        super.insertSecureItem(pItem);</span>
-<span class="nc" id="L80">        writeBoolean(COL_ENABLED, pItem.getEnabled());</span>
-<span class="nc" id="L81">        writeInteger(COL_ORDER, pItem.getOrder());</span>
-<span class="nc" id="L82">        writeBytes(COL_NAME, pItem.getNameBytes());</span>
-<span class="nc" id="L83">        writeBytes(COL_DESC, pItem.getDescBytes());</span>
-<span class="nc" id="L84">    }</span>
+<span class="nc" id="L67">        super.insertSecureItem(pItem);</span>
+<span class="nc" id="L68">        writeBoolean(COL_ENABLED, pItem.getEnabled());</span>
+<span class="nc" id="L69">        writeInteger(COL_ORDER, pItem.getOrder());</span>
+<span class="nc" id="L70">        writeBytes(COL_NAME, pItem.getNameBytes());</span>
+<span class="nc" id="L71">        writeBytes(COL_DESC, pItem.getDescBytes());</span>
+<span class="nc" id="L72">    }</span>
 
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-<span class="nc" id="L89">        return COL_DESC;</span>
+<span class="nc" id="L77">        return COL_DESC;</span>
     }
 
     @Override
     protected PrometheusDataValues getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
-<span class="nc" id="L95">        final PrometheusDataValues myValues = super.getRowValues(pName);</span>
+<span class="nc" id="L83">        final PrometheusDataValues myValues = super.getRowValues(pName);</span>
 
         /* Add the info and return the new values */
-<span class="nc" id="L98">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, loadBytes(COL_NAME));</span>
-<span class="nc" id="L99">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_DESC, loadBytes(COL_DESC));</span>
-<span class="nc" id="L100">        myValues.addValue(PrometheusDataResource.STATICDATA_SORT, loadInteger(COL_ORDER));</span>
-<span class="nc" id="L101">        myValues.addValue(PrometheusDataResource.STATICDATA_ENABLED, loadBoolean(COL_ENABLED));</span>
-<span class="nc" id="L102">        return myValues;</span>
+<span class="nc" id="L86">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, loadBytes(COL_NAME));</span>
+<span class="nc" id="L87">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_DESC, loadBytes(COL_DESC));</span>
+<span class="nc" id="L88">        myValues.addValue(PrometheusDataResource.STATICDATA_SORT, loadInteger(COL_ORDER));</span>
+<span class="nc" id="L89">        myValues.addValue(PrometheusDataResource.STATICDATA_ENABLED, loadBoolean(COL_ENABLED));</span>
+<span class="nc" id="L90">        return myValues;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

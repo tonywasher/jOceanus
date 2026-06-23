@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyXMSSKeyPair.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair</a> &gt; <span class="el_source">BouncyXMSSKeyPair.java</span></div><h1>BouncyXMSSKeyPair.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSDigestType;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyStateAwarePrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreXMSSSpec;
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.KeyGenerationParameters;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.digests.SHA512Digest;
+import org.bouncycastle.crypto.digests.SHAKEDigest;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.pqc.crypto.xmss.XMSSKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.xmss.XMSSKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.xmss.XMSSMTKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.xmss.XMSSMTKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.xmss.XMSSMTParameters;
+import org.bouncycastle.pqc.crypto.xmss.XMSSMTPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.xmss.XMSSMTPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.xmss.XMSSParameters;
+import org.bouncycastle.pqc.crypto.xmss.XMSSPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.xmss.XMSSPublicKeyParameters;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+/**
+ * XMSS KeyPair classes.
+ */
+public final class BouncyXMSSKeyPair {
+    /**
+     * Private constructor.
+     */
+    private BouncyXMSSKeyPair() {
+    }
+
+    /**
+     * Bouncy XMSS PublicKey.
+     */
+    public static class BouncyXMSSPublicKey
+            extends BouncyPublicKey&lt;XMSSPublicKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec   the keySpec
+         * @param pPublicKey the public key
+         */
+        BouncyXMSSPublicKey(final GordianKeyPairSpec pKeySpec,
+                            final XMSSPublicKeyParameters pPublicKey) {
+<span class="fc" id="L70">            super(pKeySpec, pPublicKey);</span>
+<span class="fc" id="L71">        }</span>
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L76">            final XMSSPublicKeyParameters myThis = getPublicKey();</span>
+<span class="fc" id="L77">            final XMSSPublicKeyParameters myThat = (XMSSPublicKeyParameters) pThat;</span>
+
+            /* Check equality */
+<span class="fc" id="L80">            return compareKeys(myThis, myThat);</span>
+        }
+
+        /**
+         * CompareKeys.
+         *
+         * @param pFirst  the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final XMSSPublicKeyParameters pFirst,
+                                           final XMSSPublicKeyParameters pSecond) {
+            try {
+<span class="fc" id="L93">                return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());</span>
+<span class="nc" id="L94">            } catch (IOException e) {</span>
+<span class="nc" id="L95">                throw new IllegalArgumentException(e);</span>
+            }
+        }
+    }
+
+    /**
+     * Bouncy XMSS PrivateKey.
+     */
+    public static class BouncyXMSSPrivateKey
+            extends BouncyStateAwarePrivateKey&lt;XMSSPrivateKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec    the keySpec
+         * @param pPrivateKey the private key
+         */
+        BouncyXMSSPrivateKey(final GordianKeyPairSpec pKeySpec,
+                             final XMSSPrivateKeyParameters pPrivateKey) {
+<span class="fc" id="L113">            super(pKeySpec, pPrivateKey);</span>
+<span class="fc" id="L114">        }</span>
+
+        @Override
+        public long getUsagesRemaining() {
+<span class="nc" id="L118">            return getPrivateKey().getUsagesRemaining();</span>
+        }
+
+        @Override
+        public BouncyXMSSPrivateKey getKeyShard(final int pNumUsages) {
+<span class="nc" id="L123">            return new BouncyXMSSPrivateKey(getKeySpec(), getPrivateKey().extractKeyShard(pNumUsages));</span>
+        }
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L129">            final XMSSPrivateKeyParameters myThis = getPrivateKey();</span>
+<span class="fc" id="L130">            final XMSSPrivateKeyParameters myThat = (XMSSPrivateKeyParameters) pThat;</span>
+
+            /* Check equality */
+<span class="fc" id="L133">            return compareKeys(myThis, myThat);</span>
+        }
+
+        /**
+         * CompareKeys.
+         *
+         * @param pFirst  the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final XMSSPrivateKeyParameters pFirst,
+                                           final XMSSPrivateKeyParameters pSecond) {
+            try {
+<span class="fc" id="L146">                return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());</span>
+<span class="nc" id="L147">            } catch (IOException e) {</span>
+<span class="nc" id="L148">                throw new IllegalArgumentException(e);</span>
+            }
+        }
+    }
+
+    /**
+     * BouncyCastle XMSS KeyPair generator.
+     */
+    public static class BouncyXMSSKeyPairGenerator
+            extends BouncyKeyPairGenerator&lt;XMSSPrivateKeyParameters, XMSSPublicKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         */
+        BouncyXMSSKeyPairGenerator(final GordianBaseFactory pFactory,
+                                   final GordianKeyPairSpec pKeySpec) {
+            /* Initialise underlying class */
+<span class="fc" id="L167">            super(pFactory, pKeySpec);</span>
+
+            /* Create and initialise the generator */
+<span class="fc" id="L170">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;</span>
+<span class="fc" id="L171">            final GordianCoreXMSSSpec mySpec = myKeySpec.getXMSSSpec();</span>
+<span class="fc" id="L172">            final KeyGenerationParameters myParams = new XMSSKeyGenerationParameters(</span>
+<span class="fc" id="L173">                    new XMSSParameters(mySpec.getHeight().getHeight(), createDigest(getKeyType())), getRandom());</span>
+
+            /* Create and initialise the generator */
+<span class="fc" id="L176">            setGenerator(new XMSSKeyPairGenerator(), myParams);</span>
+<span class="fc" id="L177">            setFactorySet(BouncyPqKeyFactorySet.INSTANCE);</span>
+<span class="fc" id="L178">        }</span>
+
+        /**
+         * Obtain the keyTypeType.
+         *
+         * @return the keyTypeType
+         */
+        private GordianXMSSDigestType getKeyType() {
+<span class="fc" id="L186">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) getKeySpec();</span>
+<span class="fc" id="L187">            return myKeySpec.getXMSSSpec().getDigestType();</span>
+        }
+
+        @Override
+        BouncyXMSSPrivateKey newPrivateKey(final AsymmetricKeyParameter pThat) {
+<span class="fc" id="L192">            return new BouncyXMSSPrivateKey(getKeySpec(), (XMSSPrivateKeyParameters) pThat);</span>
+        }
+
+        @Override
+        BouncyXMSSPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
+<span class="fc" id="L197">            return new BouncyXMSSPublicKey(getKeySpec(), (XMSSPublicKeyParameters) pThat);</span>
+        }
+    }
+
+    /**
+     * Create digest for XMSSKeyType.
+     *
+     * @param pKeyType the key type
+     * @return the digest
+     */
+    static Digest createDigest(final GordianXMSSDigestType pKeyType) {
+<span class="pc bpc" id="L208" title="2 of 4 branches missed.">        return switch (pKeyType) {</span>
+<span class="nc" id="L209">            case SHAKE128 -&gt; new SHAKEDigest(GordianLength.LEN_128.getLength());</span>
+<span class="nc" id="L210">            case SHAKE256 -&gt; new SHAKEDigest(GordianLength.LEN_256.getLength());</span>
+<span class="fc" id="L211">            case SHA256 -&gt; new SHA256Digest();</span>
+<span class="fc" id="L212">            default -&gt; new SHA512Digest();</span>
+        };
+    }
+
+    /**
+     * Bouncy XMSSMT PublicKey.
+     */
+    public static class BouncyXMSSMTPublicKey
+            extends BouncyPublicKey&lt;XMSSMTPublicKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec   the keySpec
+         * @param pPublicKey the public key
+         */
+        BouncyXMSSMTPublicKey(final GordianKeyPairSpec pKeySpec,
+                              final XMSSMTPublicKeyParameters pPublicKey) {
+<span class="nc" id="L229">            super(pKeySpec, pPublicKey);</span>
+<span class="nc" id="L230">        }</span>
+
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="nc" id="L236">            final XMSSMTPublicKeyParameters myThis = getPublicKey();</span>
+<span class="nc" id="L237">            final XMSSMTPublicKeyParameters myThat = (XMSSMTPublicKeyParameters) pThat;</span>
+
+            /* Check equality */
+<span class="nc" id="L240">            return compareKeys(myThis, myThat);</span>
+        }
+
+        /**
+         * CompareKeys.
+         *
+         * @param pFirst  the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final XMSSMTPublicKeyParameters pFirst,
+                                           final XMSSMTPublicKeyParameters pSecond) {
+            try {
+<span class="nc" id="L253">                return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());</span>
+<span class="nc" id="L254">            } catch (IOException e) {</span>
+<span class="nc" id="L255">                throw new IllegalArgumentException(e);</span>
+            }
+        }
+    }
+
+    /**
+     * Bouncy XMSSMT PrivateKey.
+     */
+    public static class BouncyXMSSMTPrivateKey
+            extends BouncyStateAwarePrivateKey&lt;XMSSMTPrivateKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec    the keySpec
+         * @param pPrivateKey the private key
+         */
+        BouncyXMSSMTPrivateKey(final GordianKeyPairSpec pKeySpec,
+                               final XMSSMTPrivateKeyParameters pPrivateKey) {
+<span class="nc" id="L273">            super(pKeySpec, pPrivateKey);</span>
+<span class="nc" id="L274">        }</span>
+
+        @Override
+        public long getUsagesRemaining() {
+<span class="nc" id="L278">            return getPrivateKey().getUsagesRemaining();</span>
+        }
+
+        @Override
+        public BouncyXMSSMTPrivateKey getKeyShard(final int pNumUsages) {
+<span class="nc" id="L283">            return new BouncyXMSSMTPrivateKey(getKeySpec(), getPrivateKey().extractKeyShard(pNumUsages));</span>
+        }
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="nc" id="L289">            final XMSSMTPrivateKeyParameters myThis = getPrivateKey();</span>
+<span class="nc" id="L290">            final XMSSMTPrivateKeyParameters myThat = (XMSSMTPrivateKeyParameters) pThat;</span>
+
+            /* Check equality */
+<span class="nc" id="L293">            return compareKeys(myThis, myThat);</span>
+        }
+
+        /**
+         * CompareKeys.
+         *
+         * @param pFirst  the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final XMSSMTPrivateKeyParameters pFirst,
+                                           final XMSSMTPrivateKeyParameters pSecond) {
+            try {
+<span class="nc" id="L306">                return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());</span>
+<span class="nc" id="L307">            } catch (IOException e) {</span>
+<span class="nc" id="L308">                throw new IllegalArgumentException(e);</span>
+            }
+        }
+    }
+
+    /**
+     * BouncyCastle XMSSMT KeyPair generator.
+     */
+    public static class BouncyXMSSMTKeyPairGenerator
+            extends BouncyKeyPairGenerator&lt;XMSSMTPrivateKeyParameters, XMSSMTPublicKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         */
+        BouncyXMSSMTKeyPairGenerator(final GordianBaseFactory pFactory,
+                                     final GordianKeyPairSpec pKeySpec) {
+            /* Initialise underlying class */
+<span class="nc" id="L327">            super(pFactory, pKeySpec);</span>
+
+            /* Create and initialise the generator */
+<span class="nc" id="L330">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;</span>
+<span class="nc" id="L331">            final GordianCoreXMSSSpec mySpec = myKeySpec.getXMSSSpec();</span>
+<span class="nc" id="L332">            final KeyGenerationParameters myParams = new XMSSMTKeyGenerationParameters(</span>
+<span class="nc" id="L333">                    new XMSSMTParameters(mySpec.getHeight().getHeight(), mySpec.getLayers().getLayers(),</span>
+<span class="nc" id="L334">                            createDigest(getKeyType())), getRandom());</span>
+
+            /* Create and initialise the generator */
+<span class="nc" id="L337">            setGenerator(new XMSSMTKeyPairGenerator(), myParams);</span>
+<span class="nc" id="L338">            setFactorySet(BouncyPqKeyFactorySet.INSTANCE);</span>
+<span class="nc" id="L339">        }</span>
+
+        /**
+         * Obtain the digestType.
+         *
+         * @return the digestType
+         */
+        private GordianXMSSDigestType getKeyType() {
+<span class="nc" id="L347">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) getKeySpec();</span>
+<span class="nc" id="L348">            return myKeySpec.getXMSSSpec().getDigestType();</span>
+        }
+
+        @Override
+        BouncyXMSSMTPrivateKey newPrivateKey(final AsymmetricKeyParameter pThat) {
+<span class="nc" id="L353">            return new BouncyXMSSMTPrivateKey(getKeySpec(), (XMSSMTPrivateKeyParameters) pThat);</span>
+        }
+
+        @Override
+        BouncyXMSSMTPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
+<span class="nc" id="L358">            return new BouncyXMSSMTPublicKey(getKeySpec(), (XMSSMTPublicKeyParameters) pThat);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JcaMacFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.jca.mac</a> &gt; <span class="el_source">JcaMacFactory.java</span></div><h1>JcaMacFactory.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.mac;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.base.JcaKeyGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.base.JcaProvider;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.cipher.JcaCipherFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.digest.JcaDigest;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.Mac;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Jca Cipher Factory.
+ */
+public class JcaMacFactory
+        extends GordianCoreMacFactory {
+    /**
+     * CMAC algorithm name.
+     */
+    private static final String CMAC_ALGORITHM = &quot;CMAC&quot;;
+
+    /**
+     * GOST algorithm name.
+     */
+    private static final String GOST_ALGORITHM = &quot;GOST28147&quot;;
+
+    /**
+     * ZUC-128 algorithm name.
+     */
+    private static final String ZUC256_ALGORITHM = &quot;ZUC-256&quot;;
+
+    /**
+     * KeyGenerator Cache.
+     */
+    private final Map&lt;GordianKeySpec, JcaKeyGenerator&lt;? extends GordianKeySpec&gt;&gt; theCache;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+    public JcaMacFactory(final GordianBaseFactory pFactory) {
+        /* Initialise underlying class */
+<span class="fc" id="L78">        super(pFactory);</span>
+
+        /* Create the cache */
+<span class="fc" id="L81">        theCache = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L82">    }</span>
+
+    @Override
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public &lt;T extends GordianKeySpec&gt; GordianKeyGenerator&lt;T&gt; getKeyGenerator(final T pMacSpec) throws GordianException {
+        /* Look up in the cache */
+<span class="fc" id="L88">        JcaKeyGenerator&lt;T&gt; myGenerator = (JcaKeyGenerator&lt;T&gt;) theCache.get(pMacSpec);</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if (myGenerator == null) {</span>
+            /* Check validity of MacSpec */
+<span class="fc" id="L91">            checkMacSpec(pMacSpec);</span>
+
+            /* Create the new generator */
+<span class="fc" id="L94">            final String myAlgorithm = getMacSpecAlgorithm((GordianCoreMacSpec) pMacSpec);</span>
+<span class="fc" id="L95">            final KeyGenerator myJavaGenerator = getJavaKeyGenerator(myAlgorithm);</span>
+<span class="fc" id="L96">            myGenerator = new JcaKeyGenerator&lt;&gt;(getFactory(), pMacSpec, myJavaGenerator);</span>
+
+            /* Add to cache */
+<span class="fc" id="L99">            theCache.put(pMacSpec, myGenerator);</span>
+        }
+<span class="fc" id="L101">        return myGenerator;</span>
+    }
+
+    @Override
+    public JcaMac createMac(final GordianMacSpec pMacSpec) throws GordianException {
+        /* Check validity of MacSpec */
+<span class="fc" id="L107">        checkMacSpec(pMacSpec);</span>
+
+        /* Create Mac */
+<span class="fc" id="L110">        final Mac myJavaMac = getJavaMac((GordianCoreMacSpec) pMacSpec);</span>
+<span class="fc" id="L111">        return new JcaMac(getFactory(), pMacSpec, myJavaMac);</span>
+    }
+
+    @Override
+    protected boolean validMacType(final GordianMacType pMacType) {
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        return switch (pMacType) {</span>
+<span class="fc" id="L117">            case BLAKE2, BLAKE3, KALYNA, CBCMAC, CFBMAC -&gt; false;</span>
+<span class="fc" id="L118">            default -&gt; super.validMacType(pMacType);</span>
+        };
+    }
+
+    /**
+     * Create the BouncyCastle MAC via JCA.
+     *
+     * @param pMacSpec the MacSpec
+     * @return the MAC
+     * @throws GordianException on error
+     */
+    private Mac getJavaMac(final GordianCoreMacSpec pMacSpec) throws GordianException {
+<span class="pc bpc" id="L130" title="1 of 3 branches missed.">        return switch (pMacSpec.getMacType()) {</span>
+            case HMAC, GMAC, CMAC, POLY1305, SKEIN, KUPYNA, SIPHASH, GOST, ZUC, KMAC -&gt;
+<span class="fc" id="L132">                    getJavaMac(getMacSpecAlgorithm(pMacSpec));</span>
+<span class="fc" id="L133">            case VMPC -&gt; getJavaMac(&quot;VMPC-MAC&quot;);</span>
+<span class="nc" id="L134">            default -&gt; throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));</span>
+        };
+    }
+
+    /**
+     * Create the BouncyCastle MAC via JCA.
+     *
+     * @param pAlgorithm the Algorithm
+     * @return the MAC
+     * @throws GordianException on error
+     */
+    private static Mac getJavaMac(final String pAlgorithm) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Return a MAC for the algorithm */
+<span class="fc" id="L149">            return Mac.getInstance(pAlgorithm, JcaProvider.BCPROV);</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L152">        } catch (NoSuchAlgorithmException e) {</span>
+            /* Throw the exception */
+<span class="nc" id="L154">            throw new GordianCryptoException(&quot;Failed to create Mac&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Create the BouncyCastle KeyGenerator via JCA.
+     *
+     * @param pAlgorithm the Algorithm
+     * @return the KeyGenerator
+     * @throws GordianException on error
+     */
+    private static KeyGenerator getJavaKeyGenerator(final String pAlgorithm) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Massage the keyGenerator name */
+<span class="fc" id="L169">            String myAlgorithm = pAlgorithm;</span>
+
+            /* CMAC generators use the symKeyGenerator */
+<span class="fc bfc" id="L172" title="All 2 branches covered.">            if (myAlgorithm.endsWith(CMAC_ALGORITHM)) {</span>
+<span class="fc" id="L173">                myAlgorithm = myAlgorithm.substring(0, myAlgorithm.length() - CMAC_ALGORITHM.length());</span>
+            }
+
+            /* GOST generators use the GOST28147 key generator */
+<span class="fc bfc" id="L177" title="All 2 branches covered.">            if (myAlgorithm.startsWith(GOST_ALGORITHM)) {</span>
+<span class="fc" id="L178">                myAlgorithm = GOST_ALGORITHM;</span>
+            }
+
+            /* ZUC-256 generators use the ZUC-256 key generator */
+<span class="fc bfc" id="L182" title="All 2 branches covered.">            if (myAlgorithm.startsWith(ZUC256_ALGORITHM)) {</span>
+<span class="fc" id="L183">                myAlgorithm = ZUC256_ALGORITHM;</span>
+            }
+
+            /* Return a KeyGenerator for the algorithm */
+<span class="fc" id="L187">            return KeyGenerator.getInstance(myAlgorithm, JcaProvider.BCPROV);</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L190">        } catch (NoSuchAlgorithmException e) {</span>
+            /* Throw the exception */
+<span class="nc" id="L192">            throw new GordianCryptoException(&quot;Failed to create KeyGenerator&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Obtain the MacSpec Key algorithm.
+     *
+     * @param pMacSpec the MacSpec
+     * @return the Algorithm
+     * @throws GordianException on error
+     */
+    private static String getMacSpecAlgorithm(final GordianCoreMacSpec pMacSpec) throws GordianException {
+<span class="pc bpc" id="L204" title="1 of 12 branches missed.">        return switch (pMacSpec.getMacType()) {</span>
+<span class="fc" id="L205">            case HMAC -&gt; getHMacAlgorithm(pMacSpec.getDigestSpec());</span>
+<span class="fc" id="L206">            case GMAC -&gt; getGMacAlgorithm(pMacSpec.getSymKeySpec());</span>
+<span class="fc" id="L207">            case CMAC -&gt; getCMacAlgorithm(pMacSpec.getSymKeySpec());</span>
+<span class="fc" id="L208">            case POLY1305 -&gt; getPoly1305Algorithm(pMacSpec.getSymKeySpec());</span>
+<span class="fc" id="L209">            case SKEIN -&gt; getSkeinMacAlgorithm(pMacSpec.getDigestSpec());</span>
+<span class="fc" id="L210">            case KUPYNA -&gt; getKupynaMacAlgorithm(pMacSpec.getDigestSpec());</span>
+<span class="fc" id="L211">            case ZUC -&gt; getZucMacAlgorithm(pMacSpec);</span>
+<span class="fc" id="L212">            case SIPHASH -&gt; pMacSpec.toString();</span>
+<span class="fc" id="L213">            case KMAC -&gt; pMacSpec.getMacType().toString() + pMacSpec.getDigestSpec().getCoreDigestState();</span>
+<span class="fc" id="L214">            case GOST -&gt; &quot;GOST28147MAC&quot;;</span>
+<span class="fc" id="L215">            case VMPC -&gt; &quot;VMPC-KSA3&quot;;</span>
+<span class="nc" id="L216">            default -&gt; throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));</span>
+        };
+    }
+
+    /**
+     * Return the associated HMac algorithm.
+     *
+     * @param pDigestSpec the digestSpec
+     * @return the algorithm
+     * @throws GordianException on error
+     */
+    private static String getHMacAlgorithm(final GordianDigestSpec pDigestSpec) throws GordianException {
+<span class="fc" id="L228">        return &quot;HMac&quot; + JcaDigest.getHMacAlgorithm((GordianCoreDigestSpec) pDigestSpec);</span>
+    }
+
+    /**
+     * Obtain the GMAC algorithm.
+     *
+     * @param pKeySpec the symmetric keySpec
+     * @return the algorithm
+     * @throws GordianException on error
+     */
+    private static String getGMacAlgorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
+        /* Return algorithm name */
+<span class="fc" id="L240">        return JcaCipherFactory.getSymKeyAlgorithm(pKeySpec) + &quot;GMAC&quot;;</span>
+    }
+
+    /**
+     * Obtain the GMAC algorithm.
+     *
+     * @param pKeySpec the symmetric keySpec
+     * @return the algorithm
+     * @throws GordianException on error
+     */
+    private static String getCMacAlgorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
+        /* Return algorithm name */
+<span class="fc" id="L252">        return JcaCipherFactory.getSymKeyAlgorithm(pKeySpec) + CMAC_ALGORITHM;</span>
+    }
+
+    /**
+     * Obtain the Poly1305 algorithm.
+     *
+     * @param pKeySpec the symmetric keySpec
+     * @return the algorithm
+     * @throws GordianException on error
+     */
+    private static String getPoly1305Algorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
+        /* Return algorithm name */
+<span class="fc bfc" id="L264" title="All 2 branches covered.">        return pKeySpec == null</span>
+<span class="fc" id="L265">                ? &quot;POLY1305&quot;</span>
+<span class="fc" id="L266">                : &quot;POLY1305-&quot; + JcaCipherFactory.getSymKeyAlgorithm(pKeySpec);</span>
+    }
+
+    /**
+     * Obtain the Skein MAC algorithm.
+     *
+     * @param pSpec the digestSpec
+     * @return the algorithm
+     */
+    private static String getSkeinMacAlgorithm(final GordianDigestSpec pSpec) {
+<span class="fc" id="L276">        return &quot;Skein-MAC-&quot;</span>
+<span class="fc" id="L277">                + ((GordianCoreDigestSpec) pSpec).getCoreDigestState()</span>
+                + '-'
+<span class="fc" id="L279">                + pSpec.getDigestLength();</span>
+    }
+
+    /**
+     * Obtain the Skein MAC algorithm.
+     *
+     * @param pSpec the digestSpec
+     * @return the algorithm
+     */
+    private static String getZucMacAlgorithm(final GordianCoreMacSpec pSpec) {
+<span class="fc" id="L289">        final String myKeyLen = Integer.toString(pSpec.getKeyLength().getLength());</span>
+<span class="fc" id="L290">        final String myMacLen = Integer.toString(pSpec.getMacLength().getLength());</span>
+<span class="fc" id="L291">        final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="fc" id="L292">        myBuilder.append(&quot;ZUC-&quot;)</span>
+<span class="fc" id="L293">                .append(myKeyLen);</span>
+<span class="fc bfc" id="L294" title="All 2 branches covered.">        if (GordianLength.LEN_256 == pSpec.getKeyLength()) {</span>
+<span class="fc" id="L295">            myBuilder.append('-')</span>
+<span class="fc" id="L296">                    .append(myMacLen);</span>
+        }
+<span class="fc" id="L298">        return myBuilder.toString();</span>
+    }
+
+    /**
+     * Obtain the Kupyna MAC algorithm.
+     *
+     * @param pSpec the digestSpec
+     * @return the algorithm
+     * @throws GordianException on error
+     */
+    private static String getKupynaMacAlgorithm(final GordianDigestSpec pSpec) throws GordianException {
+        /* For some reason this is accessed as HMAC !!! */
+<span class="fc" id="L310">        return getHMacAlgorithm(pSpec);</span>
+    }
+
+    @Override
+    protected boolean validCMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
+<span class="fc bfc" id="L315" title="All 2 branches covered.">        return switch (pKeySpec.getSymKeyType()) {</span>
+<span class="fc" id="L316">            case AES, DESEDE, BLOWFISH, SHACAL2, THREEFISH, SEED, SM4 -&gt; super.validCMacSymKeySpec(pKeySpec);</span>
+<span class="fc" id="L317">            default -&gt; false;</span>
+        };
+    }
+
+    @Override
+    protected boolean validGMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
+<span class="fc bfc" id="L323" title="All 2 branches covered.">        return switch (pKeySpec.getSymKeyType()) {</span>
+<span class="fc" id="L324">            case KUZNYECHIK, KALYNA -&gt; false;</span>
+<span class="fc" id="L325">            default -&gt; super.validGMacSymKeySpec(pKeySpec);</span>
+        };
+    }
+
+    @Override
+    protected boolean validPoly1305SymKeySpec(final GordianSymKeySpec pKeySpec) {
+<span class="fc bfc" id="L331" title="All 2 branches covered.">        if (GordianSymKeyType.KALYNA.equals(pKeySpec.getSymKeyType())) {</span>
+<span class="fc" id="L332">            return false;</span>
+        }
+<span class="fc" id="L334">        return super.validPoly1305SymKeySpec(pKeySpec);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

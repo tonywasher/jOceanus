@@ -21,6 +21,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.cipher.BouncyCipherFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.digest.BouncyDigestFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.mac.BouncyMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianFactoryGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameters;
@@ -41,27 +44,27 @@ public class BouncyFactory
     public BouncyFactory(final GordianFactoryGenerator pGenerator,
                          final GordianParameters pParameters) throws GordianException {
         /* initialize underlying factory */
-<span class="fc" id="L44">        super(pGenerator, pParameters);</span>
-<span class="fc" id="L45">    }</span>
+<span class="fc" id="L47">        super(pGenerator, pParameters);</span>
+<span class="fc" id="L48">    }</span>
 
     @Override
     public GordianDigestFactory newDigestFactory(final GordianBaseFactory pFactory) {
-<span class="fc" id="L49">        return new BouncyDigestFactory(this);</span>
+<span class="fc" id="L52">        return new BouncyDigestFactory(this);</span>
     }
 
     @Override
     public GordianCipherFactory newCipherFactory(final GordianBaseFactory pFactory) {
-<span class="fc" id="L54">        return new BouncyCipherFactory(this);</span>
+<span class="fc" id="L57">        return new BouncyCipherFactory(this);</span>
     }
 
     @Override
     public GordianMacFactory newMacFactory(final GordianBaseFactory pFactory) {
-<span class="fc" id="L59">        return new BouncyMacFactory(this);</span>
+<span class="fc" id="L62">        return new BouncyMacFactory(this);</span>
     }
 
     @Override
     public GordianAsyncFactory newAsyncFactory(final GordianBaseFactory pFactory) {
-<span class="fc" id="L64">        return new BouncyAsyncFactory(this);</span>
+<span class="fc" id="L67">        return new BouncyAsyncFactory(this);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -196,13 +196,13 @@
 <a class="jxr_linenumber" name="L188" href="#L188">188</a>         <strong class="jxr_keyword">public</strong> StringBuffer format(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">double</strong> pValue,
 <a class="jxr_linenumber" name="L189" href="#L189">189</a>                                    <strong class="jxr_keyword">final</strong> StringBuffer pBuffer,
 <a class="jxr_linenumber" name="L190" href="#L190">190</a>                                    <strong class="jxr_keyword">final</strong> FieldPosition pLoc) {
-<a class="jxr_linenumber" name="L191" href="#L191">191</a>             <strong class="jxr_keyword">final</strong> <a name="OceanusMoney" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusMoney.html#OceanusMoney">OceanusMoney</a> myMoney = <strong class="jxr_keyword">new</strong> <a name="OceanusMoney" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusMoney.html#OceanusMoney">OceanusMoney</a>(Double.toString(pValue));
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>             <strong class="jxr_keyword">final</strong> <a name="OceanusMoney" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusMoney.html#OceanusMoney">OceanusMoney</a> myMoney = getParser().parseMoneyValue(Double.toString(pValue));
 <a class="jxr_linenumber" name="L192" href="#L192">192</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> StringBuffer(getFormatter().formatMoney(myMoney));
 <a class="jxr_linenumber" name="L193" href="#L193">193</a>         }
 <a class="jxr_linenumber" name="L194" href="#L194">194</a>     }
 <a class="jxr_linenumber" name="L195" href="#L195">195</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

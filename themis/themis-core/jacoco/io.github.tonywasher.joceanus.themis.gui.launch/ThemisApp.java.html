@@ -52,18 +52,23 @@ public class ThemisApp
     }
 
     @Override
+    public boolean useSliderStatus() {
+<span class="nc" id="L56">        return true;</span>
+    }
+
+    @Override
     public TethysUIIconId getSplash() {
-<span class="nc" id="L56">        return ThemisUIIcon.SPLASH;</span>
+<span class="nc" id="L61">        return ThemisUIIcon.SPLASH;</span>
     }
 
     @Override
     public int[] getPanelDimensions() {
-<span class="nc" id="L61">        return new int[]{WIDTH_SCENE, HEIGHT_SCENE};</span>
+<span class="nc" id="L66">        return new int[]{WIDTH_SCENE, HEIGHT_SCENE};</span>
     }
 
     @Override
     public TethysUIMainPanel createMainPanel(final TethysUIFactory&lt;?&gt; pFactory) throws OceanusException {
-<span class="nc" id="L66">        return new ThemisUIMainPanel(pFactory);</span>
+<span class="nc" id="L71">        return new ThemisUIMainPanel(pFactory);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

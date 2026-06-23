@@ -16,19 +16,21 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+
 /**
  * Asset Direction.
  */
-<span class="fc" id="L22">public enum MoneyWiseAssetDirection {</span>
+<span class="fc" id="L24">public enum MoneyWiseAssetDirection {</span>
     /**
      * To.
      */
-<span class="fc" id="L26">    TO(1),</span>
+<span class="fc" id="L28">    TO(1),</span>
 
     /**
      * From.
      */
-<span class="fc" id="L31">    FROM(2);</span>
+<span class="fc" id="L33">    FROM(2);</span>
 
     /**
      * The String name.
@@ -45,9 +47,9 @@ package io.github.tonywasher.joceanus.moneywise.data.basic;
      *
      * @param uId the Id
      */
-<span class="fc" id="L48">    MoneyWiseAssetDirection(final int uId) {</span>
-<span class="fc" id="L49">        theId = uId;</span>
-<span class="fc" id="L50">    }</span>
+<span class="fc" id="L50">    MoneyWiseAssetDirection(final int uId) {</span>
+<span class="fc" id="L51">        theId = uId;</span>
+<span class="fc" id="L52">    }</span>
 
     /**
      * Obtain class Id.
@@ -55,19 +57,19 @@ package io.github.tonywasher.joceanus.moneywise.data.basic;
      * @return the Id
      */
     public int getId() {
-<span class="nc" id="L58">        return theId;</span>
+<span class="nc" id="L60">        return theId;</span>
     }
 
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (theName == null) {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (theName == null) {</span>
             /* Load the name */
-<span class="fc" id="L66">            theName = MoneyWiseBasicResource.getKeyForAssetDirection(this).getValue();</span>
+<span class="fc" id="L68">            theName = bundleIdForAssetDirection(this).getValue();</span>
         }
 
         /* return the name */
-<span class="fc" id="L70">        return theName;</span>
+<span class="fc" id="L72">        return theName;</span>
     }
 
     /**
@@ -76,9 +78,9 @@ package io.github.tonywasher.joceanus.moneywise.data.basic;
      * @return the reversed direction
      */
     public MoneyWiseAssetDirection reverse() {
-<span class="nc bnc" id="L79" title="All 2 branches missed.">        return this == TO</span>
-<span class="nc" id="L80">                ? FROM</span>
-<span class="nc" id="L81">                : TO;</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        return this == TO</span>
+<span class="nc" id="L82">                ? FROM</span>
+<span class="nc" id="L83">                : TO;</span>
     }
 
     /**
@@ -87,7 +89,7 @@ package io.github.tonywasher.joceanus.moneywise.data.basic;
      * @return true/false
      */
     public boolean isFrom() {
-<span class="fc bfc" id="L90" title="All 2 branches covered.">        return this == FROM;</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        return this == FROM;</span>
     }
 
     /**
@@ -96,7 +98,7 @@ package io.github.tonywasher.joceanus.moneywise.data.basic;
      * @return true/false
      */
     public boolean isTo() {
-<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        return this == TO;</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        return this == TO;</span>
     }
 
     /**
@@ -106,12 +108,27 @@ package io.github.tonywasher.joceanus.moneywise.data.basic;
      * @return the corresponding enum object
      */
     public static MoneyWiseAssetDirection fromName(final String pName) {
-<span class="pc bpc" id="L109" title="1 of 2 branches missed.">        for (MoneyWiseAssetDirection myDir : values()) {</span>
-<span class="fc bfc" id="L110" title="All 2 branches covered.">            if (pName.equals(myDir.toString())) {</span>
-<span class="fc" id="L111">                return myDir;</span>
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">        for (MoneyWiseAssetDirection myDir : values()) {</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">            if (pName.equals(myDir.toString())) {</span>
+<span class="fc" id="L113">                return myDir;</span>
             }
         }
-<span class="nc" id="L114">        return null;</span>
+<span class="nc" id="L116">        return null;</span>
+    }
+
+    /**
+     * Obtain the resource bundleId for the assetDirection.
+     *
+     * @param pDirection the direction
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForAssetDirection(final MoneyWiseAssetDirection pDirection) {
+        /* Create the map and return it */
+<span class="pc bpc" id="L127" title="1 of 3 branches missed.">        return switch (pDirection) {</span>
+<span class="fc" id="L128">            case TO -&gt; MoneyWiseBasicResource.ASSETDIRECTION_TO;</span>
+<span class="fc" id="L129">            case FROM -&gt; MoneyWiseBasicResource.ASSETDIRECTION_FROM;</span>
+<span class="nc" id="L130">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

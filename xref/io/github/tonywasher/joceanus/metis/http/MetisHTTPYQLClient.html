@@ -24,13 +24,13 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.metis.http;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.exc.MetisDataException;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.exc.MetisDataException;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.json.JSONArray;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.json.JSONException;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.json.JSONObject;
@@ -319,7 +319,7 @@
 <a class="jxr_linenumber" name="L311" href="#L311">311</a> 
 <a class="jxr_linenumber" name="L312" href="#L312">312</a>             <em class="jxr_comment">/* return parsed rate if possible */</em>
 <a class="jxr_linenumber" name="L313" href="#L313">313</a>             <strong class="jxr_keyword">return</strong> (myRate != <strong class="jxr_keyword">null</strong>)
-<a class="jxr_linenumber" name="L314" href="#L314">314</a>                     ? <strong class="jxr_keyword">new</strong> <a name="OceanusRatio" href="../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusRatio.html#OceanusRatio">OceanusRatio</a>(myRate)
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>                     ? theParser.parseRatioValue(myRate)
 <a class="jxr_linenumber" name="L315" href="#L315">315</a>                     : <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L316" href="#L316">316</a> 
 <a class="jxr_linenumber" name="L317" href="#L317">317</a>         } <strong class="jxr_keyword">catch</strong> (JSONException e) {
@@ -385,9 +385,9 @@
 <a class="jxr_linenumber" name="L377" href="#L377">377</a>                     String myId = myEntry.getString(YQLFLD_ID);
 <a class="jxr_linenumber" name="L378" href="#L378">378</a>                     myId = myId.substring(myFrom.length());
 <a class="jxr_linenumber" name="L379" href="#L379">379</a>                     <strong class="jxr_keyword">final</strong> Currency myCurr = Currency.getInstance(myId);
-<a class="jxr_linenumber" name="L380" href="#L380">380</a>                     <strong class="jxr_keyword">final</strong> <a name="OceanusRatio" href="../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusRatio.html#OceanusRatio">OceanusRatio</a> myRate = <strong class="jxr_keyword">new</strong> <a name="OceanusRatio" href="../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusRatio.html#OceanusRatio">OceanusRatio</a>(myStrRate);
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>                     <strong class="jxr_keyword">final</strong> <a name="OceanusRatio" href="../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusRatio.html#OceanusRatio">OceanusRatio</a> myRate = theParser.parseRatioValue(myStrRate);
 <a class="jxr_linenumber" name="L381" href="#L381">381</a> 
-<a class="jxr_linenumber" name="L382" href="#L382">382</a>                     <em class="jxr_comment">/* Add the the map */</em>
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>                     <em class="jxr_comment">/* Add to the map */</em>
 <a class="jxr_linenumber" name="L383" href="#L383">383</a>                     myMap.put(myCurr, myRate);
 <a class="jxr_linenumber" name="L384" href="#L384">384</a>                 }
 <a class="jxr_linenumber" name="L385" href="#L385">385</a>             }
@@ -403,6 +403,6 @@
 <a class="jxr_linenumber" name="L395" href="#L395">395</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

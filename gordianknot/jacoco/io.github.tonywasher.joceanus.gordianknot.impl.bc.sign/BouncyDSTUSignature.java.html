@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyDSTUSignature.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc.sign</a> &gt; <span class="el_source">BouncyDSTUSignature.java</span></div><h1>BouncyDSTUSignature.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyEllipticKeyPair.BouncyECPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyEllipticKeyPair.BouncyECPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.sign.BouncySignature.BouncyDSACoder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.ua.DSTU4145Params;
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.digests.GOST3411Digest;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
+import org.bouncycastle.crypto.signers.DSTU4145Signer;
+
+import java.math.BigInteger;
+
+/**
+ * DSTU signer.
+ */
+public class BouncyDSTUSignature
+        extends BouncyDigestSignature {
+    /**
+     * Expanded sandBox length.
+     */
+    private static final int EXPANDED_LEN = 128;
+
+    /**
+     * The Signer.
+     */
+    private final DSTU4145Signer theSigner;
+
+    /**
+     * The Coder.
+     */
+    private final BouncyDSTUCoder theCoder;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pSpec    the signatureSpec.
+     */
+    BouncyDSTUSignature(final GordianBaseFactory pFactory,
+                        final GordianSignatureSpec pSpec) {
+        /* Initialise underlying class */
+<span class="fc" id="L70">        super(pFactory, pSpec, newDigest());</span>
+
+        /* Create the signer and Coder */
+<span class="fc" id="L73">        theSigner = new DSTU4145Signer();</span>
+<span class="fc" id="L74">        theCoder = new BouncyDSTUCoder();</span>
+<span class="fc" id="L75">    }</span>
+
+    @Override
+    public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
+        /* Initialise detail */
+<span class="fc" id="L80">        super.initForSigning(pParams);</span>
+<span class="fc" id="L81">        final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L82">        BouncyKeyPair.checkKeyPair(myPair);</span>
+
+        /* Initialise and set the signer */
+<span class="fc" id="L85">        final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) myPair.getPrivateKey();</span>
+<span class="fc" id="L86">        final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());</span>
+<span class="fc" id="L87">        theSigner.init(true, myParms);</span>
+<span class="fc" id="L88">    }</span>
+
+    @Override
+    public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
+        /* Initialise detail */
+<span class="fc" id="L93">        super.initForVerify(pParams);</span>
+<span class="fc" id="L94">        final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L95">        BouncyKeyPair.checkKeyPair(myPair);</span>
+
+        /* Initialise and set the signer */
+<span class="fc" id="L98">        final BouncyECPublicKey myPublic = (BouncyECPublicKey) myPair.getPublicKey();</span>
+<span class="fc" id="L99">        theSigner.init(false, myPublic.getPublicKey());</span>
+<span class="fc" id="L100">    }</span>
+
+    @Override
+    public byte[] sign() throws GordianException {
+        /* Check that we are in signing mode */
+<span class="fc" id="L105">        checkMode(GordianSignatureMode.SIGN);</span>
+
+        /* Sign the message */
+<span class="fc" id="L108">        final BigInteger[] myValues = theSigner.generateSignature(getDigest());</span>
+<span class="fc" id="L109">        return theCoder.dsaEncode(myValues[0], myValues[1]);</span>
+    }
+
+    @Override
+    public boolean verify(final byte[] pSignature) throws GordianException {
+        /* Check that we are in verify mode */
+<span class="fc" id="L115">        checkMode(GordianSignatureMode.VERIFY);</span>
+
+        /* Verify the message */
+<span class="fc" id="L118">        final BigInteger[] myValues = theCoder.dsaDecode(pSignature);</span>
+<span class="fc" id="L119">        return theSigner.verifySignature(getDigest(), myValues[0], myValues[1]);</span>
+    }
+
+    /**
+     * Obtain new digest for DSTU signer.
+     *
+     * @return the new digest
+     */
+    private static Digest newDigest() {
+<span class="fc" id="L128">        final byte[] myCompressed = DSTU4145Params.getDefaultDKE();</span>
+<span class="fc" id="L129">        final byte[] myExpanded = new byte[EXPANDED_LEN];</span>
+
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        for (int i = 0; i &lt; myCompressed.length; i++) {</span>
+<span class="fc" id="L132">            myExpanded[i * 2] = (byte) ((myCompressed[i] &gt;&gt; GordianDataConverter.NYBBLE_SHIFT)</span>
+                    &amp; GordianDataConverter.NYBBLE_MASK);
+<span class="fc" id="L134">            myExpanded[i * 2 + 1] = (byte) (myCompressed[i] &amp; GordianDataConverter.NYBBLE_MASK);</span>
+        }
+<span class="fc" id="L136">        return new GOST3411Digest(myExpanded);</span>
+    }
+
+    /**
+     * DSTU encoder.
+     */
+<span class="fc" id="L142">    static final class BouncyDSTUCoder implements BouncyDSACoder {</span>
+        @Override
+        public byte[] dsaEncode(final BigInteger r,
+                                final BigInteger s) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Access byteArrays */
+<span class="fc" id="L149">                final byte[] myFirst = s.toByteArray();</span>
+<span class="fc" id="L150">                final byte[] mySecond = r.toByteArray();</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">                final byte[] myResult = myFirst.length &gt; mySecond.length</span>
+<span class="nc" id="L152">                        ? new byte[myFirst.length * 2]</span>
+<span class="fc" id="L153">                        : new byte[mySecond.length * 2];</span>
+
+                /* Build array and return */
+<span class="fc" id="L156">                System.arraycopy(myFirst, 0, myResult, myResult.length / 2 - myFirst.length, myFirst.length);</span>
+<span class="fc" id="L157">                System.arraycopy(mySecond, 0, myResult, myResult.length - mySecond.length, mySecond.length);</span>
+<span class="fc" id="L158">                return new DEROctetString(myResult).getEncoded();</span>
+<span class="nc" id="L159">            } catch (Exception e) {</span>
+<span class="nc" id="L160">                throw new GordianCryptoException(BouncySignature.ERROR_SIGGEN, e);</span>
+            }
+        }
+
+        @Override
+        public BigInteger[] dsaDecode(final byte[] pEncoded) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Access the bytes */
+<span class="fc" id="L169">                final byte[] bytes = ((ASN1OctetString) ASN1Primitive.fromByteArray(pEncoded)).getOctets();</span>
+
+                /* Build the value arrays */
+<span class="fc" id="L172">                final byte[] myFirst = new byte[bytes.length / 2];</span>
+<span class="fc" id="L173">                final byte[] mySecond = new byte[bytes.length / 2];</span>
+<span class="fc" id="L174">                System.arraycopy(bytes, 0, myFirst, 0, myFirst.length);</span>
+<span class="fc" id="L175">                System.arraycopy(bytes, myFirst.length, mySecond, 0, mySecond.length);</span>
+
+                /* Create the signature values and return */
+<span class="fc" id="L178">                final BigInteger[] sig = new BigInteger[2];</span>
+<span class="fc" id="L179">                sig[1] = new BigInteger(1, myFirst);</span>
+<span class="fc" id="L180">                sig[0] = new BigInteger(1, mySecond);</span>
+<span class="fc" id="L181">                return sig;</span>
+<span class="nc" id="L182">            } catch (Exception e) {</span>
+<span class="nc" id="L183">                throw new GordianCryptoException(BouncySignature.ERROR_SIGPARSE, e);</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

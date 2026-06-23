@@ -1,0 +1,712 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalyseTax.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse</a> &gt; <span class="el_source">MoneyWiseXAnalyseTax.java</span></div><h1>MoneyWiseXAnalyseTax.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
+
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseSecurityCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTaxCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisCursor;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBaseBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket.MoneyWiseXAnalysisTaxBasisBucketList;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket.MoneyWiseXAnalysisTransCategoryBucketList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+
+/**
+ * Tax Analysis.
+ */
+public class MoneyWiseXAnalyseTax
+        implements MoneyWiseXAnalyseTaxCtl {
+    /**
+     * The analysis.
+     */
+    private final MoneyWiseXAnalysis theAnalysis;
+
+    /**
+     * The analysis state.
+     */
+    private final MoneyWiseXAnalyseState theState;
+
+    /**
+     * The taxMan account.
+     */
+    private final MoneyWiseXAnalysisPayeeBucket theTaxManPayee;
+
+    /**
+     * The taxCredit category.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theTaxCreditCat;
+
+    /**
+     * The employeeNatIns category.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theEmployeeNatInsCat;
+
+    /**
+     * The employerNatIns category.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theEmployerNatInsCat;
+
+    /**
+     * The deemedBenefit category.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theDeemedBenefitCat;
+
+    /**
+     * The withheld category.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theWithheldCat;
+
+    /**
+     * The taxRelief category.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theTaxReliefCat;
+
+    /**
+     * The expense TaxBasis.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucket theExpenseTax;
+
+    /**
+     * The taxPaid TaxBasis.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucket theTaxPaidTax;
+
+    /**
+     * The taxFree TaxBasis.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucket theTaxFreeTax;
+
+    /**
+     * The virtual TaxBasis.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucket theVirtualTax;
+
+    /**
+     * The XferIn analyser.
+     */
+    private MoneyWiseXAnalyseXferIn theXferIn;
+
+    /**
+     * Currently active Transaction.
+     */
+    private MoneyWiseXAnalyseTransaction theTransaction;
+
+    /**
+     * Currently active Payee Bucket.
+     */
+    private MoneyWiseXAnalysisPayeeBucket thePayeeBucket;
+
+    /**
+     * Currently active Transaction Category Bucket.
+     */
+    private MoneyWiseXAnalysisTransCategoryBucket theCategoryBucket;
+
+    /**
+     * Currently active TaxBucket.
+     */
+    private MoneyWiseXAnalysisTaxBasisBucket theTaxBucket;
+
+    /**
+     * Currently active Account.
+     */
+    private MoneyWiseTransAsset theAccount;
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalyser the analyser
+     */
+<span class="fc" id="L147">    MoneyWiseXAnalyseTax(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser) {</span>
+        /* Store the state */
+<span class="fc" id="L149">        theAnalysis = pAnalyser.getAnalysis();</span>
+<span class="fc" id="L150">        theState = pAnalyser.getState();</span>
+
+        /* Store the taxMan Payee Bucket */
+<span class="fc" id="L153">        theTaxManPayee = theAnalysis.getPayees().getBucket(MoneyWisePayeeClass.TAXMAN);</span>
+
+        /* Store the various Category buckets */
+<span class="fc" id="L156">        final MoneyWiseXAnalysisTransCategoryBucketList myCategories = theAnalysis.getTransCategories();</span>
+<span class="fc" id="L157">        theTaxCreditCat = myCategories.getEventInfoBucket(MoneyWiseTransInfoClass.TAXCREDIT);</span>
+<span class="fc" id="L158">        theEmployeeNatInsCat = myCategories.getEventInfoBucket(MoneyWiseTransInfoClass.EMPLOYEENATINS);</span>
+<span class="fc" id="L159">        theEmployerNatInsCat = myCategories.getEventInfoBucket(MoneyWiseTransInfoClass.EMPLOYERNATINS);</span>
+<span class="fc" id="L160">        theDeemedBenefitCat = myCategories.getEventInfoBucket(MoneyWiseTransInfoClass.DEEMEDBENEFIT);</span>
+<span class="fc" id="L161">        theWithheldCat = myCategories.getEventInfoBucket(MoneyWiseTransInfoClass.WITHHELD);</span>
+<span class="fc" id="L162">        theTaxReliefCat = myCategories.getEventSingularBucket(MoneyWiseTransCategoryClass.TAXRELIEF);</span>
+
+        /* Store the various taxBuckets */
+<span class="fc" id="L165">        final MoneyWiseXAnalysisTaxBasisBucketList myBases = theAnalysis.getTaxBasis();</span>
+<span class="fc" id="L166">        theTaxPaidTax = myBases.getBucket(MoneyWiseTaxClass.TAXPAID);</span>
+<span class="fc" id="L167">        theTaxFreeTax = myBases.getBucket(MoneyWiseTaxClass.TAXFREE);</span>
+<span class="fc" id="L168">        theExpenseTax = myBases.getBucket(MoneyWiseTaxClass.EXPENSE);</span>
+<span class="fc" id="L169">        theVirtualTax = myBases.getBucket(MoneyWiseTaxClass.VIRTUAL);</span>
+<span class="fc" id="L170">    }</span>
+
+    @Override
+    public void declareSecurityAnalyser(final MoneyWiseXAnalyseSecurityCtl pSecurity) {
+<span class="fc" id="L174">        theXferIn = ((MoneyWiseXAnalyseSecurity) pSecurity).getXferInAnalyser();</span>
+<span class="fc" id="L175">    }</span>
+
+    @Override
+    public void adjustTaxBasis(final MoneyWiseXAnalyseTransCtl pTrans) throws OceanusException {
+        /* Record the transaction */
+<span class="fc" id="L180">        final MoneyWiseXAnalyseTransaction myTrans = (MoneyWiseXAnalyseTransaction) pTrans;</span>
+<span class="fc" id="L181">        recordTransaction(myTrans);</span>
+
+        /* If this is not a transfer */
+<span class="fc bfc" id="L184" title="All 2 branches covered.">        if (theTaxBucket != null) {</span>
+            /* Adjust for additional transactional elements */
+<span class="fc" id="L186">            adjustForAdditionalTax();</span>
+
+            /* Adjust the Gross and Nett values */
+<span class="fc" id="L189">            final MoneyWiseXAnalysisTaxBasisBaseBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myTrans.getTransactionValue());</span>
+<span class="fc" id="L190">            theState.registerBucketInterest(theTaxBucket);</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">            if (myAccBucket != null) {</span>
+<span class="nc" id="L192">                theState.registerBucketInterest(myAccBucket);</span>
+            }
+        }
+
+        /* Reset Payee bucket */
+<span class="fc" id="L197">        thePayeeBucket = null;</span>
+<span class="fc" id="L198">    }</span>
+
+    @Override
+    public void recordPayeeBucket(final MoneyWiseXAnalysisPayeeBucket pPayee) {
+<span class="fc" id="L202">        thePayeeBucket = pPayee;</span>
+<span class="fc" id="L203">    }</span>
+
+    @Override
+    public void processAutoExpense(final OceanusMoney pAmount) {
+        /* Adjust the expense taxBasis by amount */
+<span class="fc" id="L208">        theExpenseTax.adjustGrossAndNett(pAmount);</span>
+<span class="fc" id="L209">        theState.registerBucketInterest(theExpenseTax);</span>
+<span class="fc" id="L210">    }</span>
+
+    /**
+     * Adjust for additional transaction elements.
+     *
+     * @throws OceanusException on error
+     */
+    private void adjustForAdditionalTax() throws OceanusException {
+        /* adjust for various additions */
+<span class="fc bfc" id="L219" title="All 2 branches covered.">        if (theTransaction.getCategory().isCategoryClass(MoneyWiseTransCategoryClass.LOANINTERESTCHARGED)) {</span>
+<span class="fc" id="L220">            adjustForTaxRelief();</span>
+        } else {
+<span class="fc" id="L222">            adjustForTaxCredit();</span>
+        }
+<span class="fc" id="L224">        adjustForEmployerNI();</span>
+<span class="fc" id="L225">        adjustForEmployeeNI();</span>
+<span class="fc" id="L226">        adjustForBenefit();</span>
+<span class="fc" id="L227">        adjustForWithheld();</span>
+<span class="fc" id="L228">    }</span>
+
+    /**
+     * Adjust Buckets for taxCredit.
+     *
+     * @throws OceanusException on error
+     */
+    private void adjustForTaxCredit() throws OceanusException {
+        /* If we have taxCredit */
+<span class="fc" id="L237">        OceanusMoney myTaxCredit = theTransaction.getTransaction().getTaxCredit();</span>
+<span class="pc bpc" id="L238" title="1 of 4 branches missed.">        if (myTaxCredit != null &amp;&amp; myTaxCredit.isNonZero()) {</span>
+            /* Ensure taxCredit is in reporting currency */
+<span class="fc" id="L240">            myTaxCredit = getReportingAmount(myTaxCredit);</span>
+
+            /* Determine whether this is income or expense */
+<span class="fc" id="L243">            final boolean isIncome = theTransaction.isIncomeCategory();</span>
+
+            /* check validity of transaction */
+<span class="fc" id="L246">            checkForValidAdditional();</span>
+
+            /* If this is a refund, negate the taxCredit */
+<span class="fc bfc" id="L249" title="All 2 branches covered.">            if (theTransaction.isRefund()) {</span>
+<span class="fc" id="L250">                myTaxCredit = new OceanusMoney(myTaxCredit);</span>
+<span class="fc" id="L251">                myTaxCredit.negate();</span>
+            }
+
+            /* If this is an income */
+<span class="pc bpc" id="L255" title="1 of 2 branches missed.">            if (isIncome) {</span>
+                /* CashFlow is Income from Payee and Expense to taxMan */
+<span class="fc" id="L257">                thePayeeBucket.addIncome(myTaxCredit);</span>
+<span class="fc" id="L258">                theTaxManPayee.addExpense(myTaxCredit);</span>
+
+                /* Income from category and Expense to taxCredit */
+<span class="fc" id="L261">                theCategoryBucket.addIncome(myTaxCredit);</span>
+<span class="fc" id="L262">                theTaxCreditCat.addExpense(myTaxCredit);</span>
+
+                /* Register income and expense for tax */
+<span class="fc" id="L265">                final MoneyWiseXAnalysisTaxBasisBaseBucket myAccBucket = theTaxBucket.adjustGrossAndTax(theAccount, myTaxCredit);</span>
+<span class="fc" id="L266">                theTaxPaidTax.adjustGrossAndNett(myTaxCredit);</span>
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">                if (myAccBucket != null) {</span>
+<span class="nc" id="L268">                    theState.registerBucketInterest(myAccBucket);</span>
+                }
+
+                /* else this is expense */
+<span class="fc" id="L272">            } else {</span>
+                /* CashFlow is Expense from Payee and Income from taxMan */
+<span class="nc" id="L274">                thePayeeBucket.addExpense(myTaxCredit);</span>
+<span class="nc" id="L275">                theTaxManPayee.addIncome(myTaxCredit);</span>
+
+                /* Expense to category and Income from taxCredit */
+<span class="nc" id="L278">                theCategoryBucket.addExpense(myTaxCredit);</span>
+<span class="nc" id="L279">                theTaxCreditCat.addIncome(myTaxCredit);</span>
+
+                /* Register income and expense for tax */
+<span class="nc" id="L282">                final MoneyWiseXAnalysisTaxBasisBaseBucket myAccBucket = theTaxBucket.adjustGrossAndTax(theAccount, myTaxCredit);</span>
+<span class="nc" id="L283">                theTaxPaidTax.adjustGrossAndNett(myTaxCredit);</span>
+<span class="nc bnc" id="L284" title="All 2 branches missed.">                if (myAccBucket != null) {</span>
+<span class="nc" id="L285">                    theState.registerBucketInterest(myAccBucket);</span>
+                }
+            }
+
+            /* Register the various interests */
+<span class="fc" id="L290">            theState.registerBucketInterest(theTaxManPayee);</span>
+<span class="fc" id="L291">            theState.registerBucketInterest(theTaxCreditCat);</span>
+<span class="fc" id="L292">            theState.registerBucketInterest(theTaxPaidTax);</span>
+        }
+<span class="fc" id="L294">    }</span>
+
+    /**
+     * Adjust Buckets for taxCredit.
+     *
+     * @throws OceanusException on error
+     */
+    private void adjustForTaxRelief() throws OceanusException {
+        /* If we have taxCredit */
+<span class="fc" id="L303">        OceanusMoney myTaxCredit = theTransaction.getTransaction().getTaxCredit();</span>
+<span class="pc bpc" id="L304" title="1 of 4 branches missed.">        if (myTaxCredit != null &amp;&amp; myTaxCredit.isNonZero()) {</span>
+            /* Ensure taxCredit is in reporting currency */
+<span class="fc" id="L306">            myTaxCredit = getReportingAmount(myTaxCredit);</span>
+
+            /* Determine whether this is income or expense */
+<span class="fc" id="L309">            final boolean isIncome = theTransaction.isIncomeCategory();</span>
+
+            /* check validity of transaction */
+<span class="fc" id="L312">            checkForValidAdditional();</span>
+
+            /* If this is a refund, negate the taxCredit */
+<span class="fc" id="L315">            final OceanusMoney myNegTaxCredit = new OceanusMoney(myTaxCredit);</span>
+<span class="pc bpc" id="L316" title="1 of 2 branches missed.">            if (theTransaction.isRefund()) {</span>
+<span class="nc" id="L317">                myTaxCredit = new OceanusMoney(myTaxCredit);</span>
+<span class="nc" id="L318">                myTaxCredit.negate();</span>
+            } else {
+<span class="fc" id="L320">                myNegTaxCredit.negate();</span>
+            }
+
+            /* If this is an income */
+<span class="pc bpc" id="L324" title="1 of 2 branches missed.">            if (isIncome) {</span>
+                /* CashFlow is Income from Payee and Expense to taxMan */
+<span class="nc" id="L326">                thePayeeBucket.addIncome(myTaxCredit);</span>
+<span class="nc" id="L327">                theTaxManPayee.addExpense(myTaxCredit);</span>
+
+                /* Income from category and Expense to taxCredit */
+<span class="nc" id="L330">                theCategoryBucket.addIncome(myTaxCredit);</span>
+<span class="nc" id="L331">                theTaxReliefCat.addExpense(myTaxCredit);</span>
+
+                /* Register income and expense for tax */
+<span class="nc" id="L334">                final MoneyWiseXAnalysisTaxBasisBaseBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myTaxCredit);</span>
+<span class="nc" id="L335">                theVirtualTax.adjustGrossAndNett(myNegTaxCredit);</span>
+<span class="nc bnc" id="L336" title="All 2 branches missed.">                if (myAccBucket != null) {</span>
+<span class="nc" id="L337">                    theState.registerBucketInterest(myAccBucket);</span>
+                }
+
+                /* else this is expense */
+<span class="nc" id="L341">            } else {</span>
+                /* CashFlow is Expense from Payee and Income from taxMan */
+<span class="fc" id="L343">                thePayeeBucket.addExpense(myTaxCredit);</span>
+<span class="fc" id="L344">                theTaxManPayee.addIncome(myTaxCredit);</span>
+
+                /* Expense to category and Income from taxCredit */
+<span class="fc" id="L347">                theCategoryBucket.addExpense(myTaxCredit);</span>
+<span class="fc" id="L348">                theTaxReliefCat.addIncome(myTaxCredit);</span>
+
+                /* Register income and expense for tax */
+<span class="fc" id="L351">                final MoneyWiseXAnalysisTaxBasisBaseBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myTaxCredit);</span>
+<span class="fc" id="L352">                theVirtualTax.adjustGrossAndNett(myNegTaxCredit);</span>
+<span class="pc bpc" id="L353" title="1 of 2 branches missed.">                if (myAccBucket != null) {</span>
+<span class="nc" id="L354">                    theState.registerBucketInterest(myAccBucket);</span>
+                }
+            }
+
+            /* Register the various interests */
+<span class="fc" id="L359">            theState.registerBucketInterest(theTaxManPayee);</span>
+<span class="fc" id="L360">            theState.registerBucketInterest(theTaxReliefCat);</span>
+<span class="fc" id="L361">            theState.registerBucketInterest(theExpenseTax);</span>
+<span class="fc" id="L362">            theState.registerBucketInterest(theVirtualTax);</span>
+        }
+<span class="fc" id="L364">    }</span>
+
+    /**
+     * Adjust Buckets for employeeNI.
+     *
+     * @throws OceanusException on error
+     */
+    private void adjustForEmployeeNI() throws OceanusException {
+        /* If we have NatIns */
+<span class="fc" id="L373">        OceanusMoney myNatIns = theTransaction.getTransaction().getEmployeeNatIns();</span>
+<span class="pc bpc" id="L374" title="3 of 4 branches missed.">        if (myNatIns != null &amp;&amp; myNatIns.isNonZero()) {</span>
+            /* Ensure natIns is in reporting currency */
+<span class="nc" id="L376">            myNatIns = getReportingAmount(myNatIns);</span>
+
+            /* Determine whether this is income or expense */
+<span class="nc" id="L379">            final boolean isIncome = theTransaction.isIncomeCategory();</span>
+<span class="nc" id="L380">            final boolean isPension = theTransaction.getCategory().isCategoryClass(MoneyWiseTransCategoryClass.PENSIONCONTRIB);</span>
+<span class="nc bnc" id="L381" title="All 2 branches missed.">            final MoneyWiseXAnalysisTransCategoryBucket myCatBucket = isPension ? theCategoryBucket : theEmployeeNatInsCat;</span>
+
+            /* check validity of transaction */
+<span class="nc" id="L384">            checkForValidAdditional();</span>
+
+            /* If this is a refund, negate the withheld */
+<span class="nc bnc" id="L387" title="All 2 branches missed.">            if (theTransaction.isRefund()) {</span>
+<span class="nc" id="L388">                myNatIns = new OceanusMoney(myNatIns);</span>
+<span class="nc" id="L389">                myNatIns.negate();</span>
+            }
+
+            /* If this is an income */
+<span class="nc bnc" id="L393" title="All 2 branches missed.">            if (isIncome) {</span>
+                /* CashFlow is Income from Payee */
+<span class="nc" id="L395">                thePayeeBucket.addIncome(myNatIns);</span>
+<span class="nc" id="L396">                theXferIn.processStatePensionContribution(myNatIns);</span>
+
+                /* Income from EeNatIns */
+<span class="nc" id="L399">                myCatBucket.addIncome(myNatIns);</span>
+
+                /* Income for tax */
+<span class="nc" id="L402">                final MoneyWiseXAnalysisTaxBasisBaseBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myNatIns);</span>
+<span class="nc bnc" id="L403" title="All 2 branches missed.">                if (myAccBucket != null) {</span>
+<span class="nc" id="L404">                    theState.registerBucketInterest(myAccBucket);</span>
+                }
+
+                /* else this is expense */
+<span class="nc" id="L408">            } else {</span>
+                /* CashFlow is to Payee */
+<span class="nc" id="L410">                thePayeeBucket.addExpense(myNatIns);</span>
+
+                /* Expense to category and Income from virtual */
+<span class="nc" id="L413">                myCatBucket.addExpense(myNatIns);</span>
+
+                /* Register income for tax */
+<span class="nc" id="L416">                final MoneyWiseXAnalysisTaxBasisBaseBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myNatIns);</span>
+<span class="nc bnc" id="L417" title="All 2 branches missed.">                if (myAccBucket != null) {</span>
+<span class="nc" id="L418">                    theState.registerBucketInterest(myAccBucket);</span>
+                }
+            }
+        }
+<span class="fc" id="L422">    }</span>
+
+
+    /**
+     * Adjust Buckets for employerNI.
+     *
+     * @throws OceanusException on error
+     */
+    private void adjustForEmployerNI() throws OceanusException {
+        /* If we have NatIns */
+<span class="fc" id="L432">        OceanusMoney myNatIns = theTransaction.getTransaction().getEmployerNatIns();</span>
+<span class="pc bpc" id="L433" title="3 of 4 branches missed.">        if (myNatIns != null &amp;&amp; myNatIns.isNonZero()) {</span>
+            /* Ensure natIns is in reporting currency */
+<span class="nc" id="L435">            myNatIns = getReportingAmount(myNatIns);</span>
+
+            /* Determine whether this is income or expense */
+<span class="nc" id="L438">            final boolean isIncome = theTransaction.isIncomeCategory();</span>
+<span class="nc" id="L439">            final boolean isPension = theTransaction.getCategory().isCategoryClass(MoneyWiseTransCategoryClass.PENSIONCONTRIB);</span>
+<span class="nc bnc" id="L440" title="All 2 branches missed.">            final MoneyWiseXAnalysisTransCategoryBucket myCatBucket = isPension ? theCategoryBucket : theEmployerNatInsCat;</span>
+
+            /* check validity of transaction */
+<span class="nc" id="L443">            checkForValidAdditional();</span>
+
+            /* If this is a refund, negate the withheld */
+<span class="nc bnc" id="L446" title="All 2 branches missed.">            if (theTransaction.isRefund()) {</span>
+<span class="nc" id="L447">                myNatIns = new OceanusMoney(myNatIns);</span>
+<span class="nc" id="L448">                myNatIns.negate();</span>
+            }
+
+            /* If this is an income */
+<span class="nc bnc" id="L452" title="All 2 branches missed.">            if (isIncome) {</span>
+                /* CashFlow is Income from Payee */
+<span class="nc" id="L454">                thePayeeBucket.addIncome(myNatIns);</span>
+<span class="nc" id="L455">                theXferIn.processStatePensionContribution(myNatIns);</span>
+
+                /* Income from ErNatIns */
+<span class="nc" id="L458">                myCatBucket.addIncome(myNatIns);</span>
+
+                /* Income for tax */
+<span class="nc" id="L461">                final MoneyWiseXAnalysisTaxBasisBaseBucket myAccBucket = theTaxFreeTax.adjustGrossAndNett(theAccount, myNatIns);</span>
+<span class="nc bnc" id="L462" title="All 2 branches missed.">                if (myAccBucket != null) {</span>
+<span class="nc" id="L463">                    theState.registerBucketInterest(myAccBucket);</span>
+                }
+
+                /* else this is expense */
+<span class="nc" id="L467">            } else {</span>
+                /* CashFlow is to Payee */
+<span class="nc" id="L469">                thePayeeBucket.addExpense(myNatIns);</span>
+
+                /* Expense to category and Income from virtual */
+<span class="nc" id="L472">                myCatBucket.addExpense(myNatIns);</span>
+
+                /* Register income for tax */
+<span class="nc" id="L475">                final MoneyWiseXAnalysisTaxBasisBaseBucket myAccBucket = theTaxFreeTax.adjustGrossAndNett(theAccount, myNatIns);</span>
+<span class="nc bnc" id="L476" title="All 2 branches missed.">                if (myAccBucket != null) {</span>
+<span class="nc" id="L477">                    theState.registerBucketInterest(myAccBucket);</span>
+                }
+            }
+
+            /* Register the various interests */
+<span class="nc" id="L482">            theState.registerBucketInterest(theEmployerNatInsCat);</span>
+<span class="nc" id="L483">            theState.registerBucketInterest(theTaxFreeTax);</span>
+        }
+<span class="fc" id="L485">    }</span>
+
+    /**
+     * Adjust Buckets for benefit.
+     *
+     * @throws OceanusException on error
+     */
+    private void adjustForBenefit() throws OceanusException {
+        /* If we have benefit */
+<span class="fc" id="L494">        OceanusMoney myBenefit = theTransaction.getTransaction().getDeemedBenefit();</span>
+<span class="pc bpc" id="L495" title="1 of 4 branches missed.">        if (myBenefit != null &amp;&amp; myBenefit.isNonZero()) {</span>
+            /* Ensure benefit is in reporting currency */
+<span class="fc" id="L497">            myBenefit = getReportingAmount(myBenefit);</span>
+
+            /* Determine whether this is income or expense */
+<span class="fc" id="L500">            final boolean isIncome = theTransaction.isIncomeCategory();</span>
+
+            /* check validity of transaction */
+<span class="fc" id="L503">            checkForValidAdditional();</span>
+
+            /* If this is a refund, negate the withheld */
+<span class="fc bfc" id="L506" title="All 2 branches covered.">            if (theTransaction.isRefund()) {</span>
+<span class="fc" id="L507">                myBenefit = new OceanusMoney(myBenefit);</span>
+<span class="fc" id="L508">                myBenefit.negate();</span>
+            }
+
+            /* If this is an income */
+<span class="pc bpc" id="L512" title="1 of 2 branches missed.">            if (isIncome) {</span>
+                /* CashFlow is Income from Payee and Expense back to Payee */
+<span class="fc" id="L514">                thePayeeBucket.addIncome(myBenefit);</span>
+<span class="fc" id="L515">                thePayeeBucket.addExpense(myBenefit);</span>
+
+                /* Income from Benefit and Expense to withheld */
+<span class="fc" id="L518">                theDeemedBenefitCat.addIncome(myBenefit);</span>
+<span class="fc" id="L519">                theWithheldCat.addExpense(myBenefit);</span>
+
+                /* Register income and expense for tax */
+<span class="fc" id="L522">                final MoneyWiseXAnalysisTaxBasisBaseBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myBenefit);</span>
+<span class="fc" id="L523">                theVirtualTax.adjustGrossAndNett(myBenefit);</span>
+<span class="pc bpc" id="L524" title="1 of 2 branches missed.">                if (myAccBucket != null) {</span>
+<span class="nc" id="L525">                    theState.registerBucketInterest(myAccBucket);</span>
+                }
+
+                /* else this is expense */
+<span class="fc" id="L529">            } else {</span>
+                /* CashFlow is Expense from Payee and Income from taxMan */
+<span class="nc" id="L531">                thePayeeBucket.addIncome(myBenefit);</span>
+<span class="nc" id="L532">                thePayeeBucket.addExpense(myBenefit);</span>
+
+                /* Expense to benefit and Income from withheld */
+<span class="nc" id="L535">                theDeemedBenefitCat.addExpense(myBenefit);</span>
+<span class="nc" id="L536">                theWithheldCat.addIncome(myBenefit);</span>
+
+                /* Register income and expense for tax */
+<span class="nc" id="L539">                final MoneyWiseXAnalysisTaxBasisBaseBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myBenefit);</span>
+<span class="nc" id="L540">                theVirtualTax.adjustGrossAndNett(myBenefit);</span>
+<span class="nc bnc" id="L541" title="All 2 branches missed.">                if (myAccBucket != null) {</span>
+<span class="nc" id="L542">                    theState.registerBucketInterest(myAccBucket);</span>
+                }
+            }
+
+            /* Register the various interests */
+<span class="fc" id="L547">            theState.registerBucketInterest(theDeemedBenefitCat);</span>
+<span class="fc" id="L548">            theState.registerBucketInterest(theWithheldCat);</span>
+<span class="fc" id="L549">            theState.registerBucketInterest(theVirtualTax);</span>
+        }
+<span class="fc" id="L551">    }</span>
+
+    /**
+     * Adjust Buckets for withheld.
+     *
+     * @throws OceanusException on error
+     */
+    private void adjustForWithheld() throws OceanusException {
+        /* If we have withheld */
+<span class="fc" id="L560">        OceanusMoney myWithheld = theTransaction.getTransaction().getWithheld();</span>
+<span class="pc bpc" id="L561" title="1 of 4 branches missed.">        if (myWithheld != null &amp;&amp; myWithheld.isNonZero()) {</span>
+            /* Ensure withheld is in reporting currency */
+<span class="fc" id="L563">            myWithheld = getReportingAmount(myWithheld);</span>
+
+            /* Determine whether this is income or expense */
+<span class="fc" id="L566">            final boolean isIncome = theTransaction.isIncomeCategory();</span>
+
+            /* check validity of transaction */
+<span class="fc" id="L569">            checkForValidAdditional();</span>
+
+            /* If this is a refund, negate the withheld */
+<span class="fc bfc" id="L572" title="All 2 branches covered.">            if (theTransaction.isRefund()) {</span>
+<span class="fc" id="L573">                myWithheld = new OceanusMoney(myWithheld);</span>
+<span class="fc" id="L574">                myWithheld.negate();</span>
+            }
+
+            /* If this is an income */
+<span class="pc bpc" id="L578" title="1 of 2 branches missed.">            if (isIncome) {</span>
+                /* CashFlow is Income from Payee and Expense back to Payee */
+<span class="fc" id="L580">                thePayeeBucket.addIncome(myWithheld);</span>
+<span class="fc" id="L581">                thePayeeBucket.addExpense(myWithheld);</span>
+
+                /* Income from category and Expense to virtual */
+<span class="fc" id="L584">                theCategoryBucket.addIncome(myWithheld);</span>
+<span class="fc" id="L585">                theWithheldCat.addExpense(myWithheld);</span>
+
+                /* Register income and expense for tax */
+<span class="fc" id="L588">                final MoneyWiseXAnalysisTaxBasisBaseBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myWithheld);</span>
+<span class="fc" id="L589">                theVirtualTax.adjustGrossAndNett(myWithheld);</span>
+<span class="pc bpc" id="L590" title="1 of 2 branches missed.">                if (myAccBucket != null) {</span>
+<span class="nc" id="L591">                    theState.registerBucketInterest(myAccBucket);</span>
+                }
+
+                /* else this is expense */
+<span class="fc" id="L595">            } else {</span>
+                /* CashFlow is Expense from Payee and Income from taxMan */
+<span class="nc" id="L597">                thePayeeBucket.addIncome(myWithheld);</span>
+<span class="nc" id="L598">                thePayeeBucket.addExpense(myWithheld);</span>
+
+                /* Expense to category and Income from virtual */
+<span class="nc" id="L601">                theCategoryBucket.addExpense(myWithheld);</span>
+<span class="nc" id="L602">                theWithheldCat.addIncome(myWithheld);</span>
+
+                /* Register income and expense for tax */
+<span class="nc" id="L605">                final MoneyWiseXAnalysisTaxBasisBaseBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myWithheld);</span>
+<span class="nc" id="L606">                theVirtualTax.adjustGrossAndNett(myWithheld);</span>
+<span class="nc bnc" id="L607" title="All 2 branches missed.">                if (myAccBucket != null) {</span>
+<span class="nc" id="L608">                    theState.registerBucketInterest(myAccBucket);</span>
+                }
+            }
+
+            /* Register the various interests */
+<span class="fc" id="L613">            theState.registerBucketInterest(theWithheldCat);</span>
+<span class="fc" id="L614">            theState.registerBucketInterest(theVirtualTax);</span>
+        }
+<span class="fc" id="L616">    }</span>
+
+    /**
+     * Convert infoAmount to reporting currency if necessary.
+     *
+     * @param pAmount the relevant amount
+     * @return the reportingAmount
+     */
+    private OceanusMoney getReportingAmount(final OceanusMoney pAmount) {
+        /* If the account is foreign */
+<span class="fc bfc" id="L626" title="All 2 branches covered.">        if (theAccount.isForeign()) {</span>
+            /* Convert the infoAmount to reporting currency */
+<span class="fc" id="L628">            final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();</span>
+<span class="fc" id="L629">            final OceanusRatio myRate = myCursor.getCurrentXchgRate(theAccount.getAssetCurrency());</span>
+<span class="fc" id="L630">            return pAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);</span>
+        }
+
+        /* else just return the infoAmount */
+<span class="fc" id="L634">        return pAmount;</span>
+    }
+
+    /**
+     * Check validity of additional items.
+     *
+     * @throws OceanusException on error
+     */
+    private void checkForValidAdditional() throws OceanusException {
+<span class="pc bpc" id="L643" title="2 of 4 branches missed.">        if (theTaxBucket == null || thePayeeBucket == null) {</span>
+<span class="nc" id="L644">            throw new MoneyWiseLogicException(&quot;Invalid additional items on transaction&quot;);</span>
+        }
+<span class="fc" id="L646">    }</span>
+
+    /**
+     * Record the account for a transaction.
+     *
+     * @param pTrans the transaction
+     * @throws OceanusException on error
+     */
+    private void recordTransaction(final MoneyWiseXAnalyseTransaction pTrans) throws OceanusException {
+        /* Determine the taxBucket */
+<span class="fc" id="L656">        theTaxBucket = determineTaxBasicBucket(pTrans);</span>
+
+        /* Record transaction and account */
+<span class="fc" id="L659">        theTransaction = pTrans;</span>
+<span class="fc" id="L660">        theAccount = pTrans.getTransaction().getAccount();</span>
+
+        /* Record the category bucket */
+<span class="fc" id="L663">        final MoneyWiseTransCategory myCategory = theTransaction.getCategory();</span>
+<span class="fc" id="L664">        theCategoryBucket = theAnalysis.getTransCategories().getBucket(myCategory);</span>
+<span class="fc" id="L665">    }</span>
+
+    /**
+     * Obtain tax basis bucket for transaction.
+     *
+     * @param pTrans the transaction
+     * @return the taxBasis bucket
+     * @throws OceanusException on error
+     */
+    private MoneyWiseXAnalysisTaxBasisBucket determineTaxBasicBucket(final MoneyWiseXAnalyseTransaction pTrans) throws OceanusException {
+<span class="fc" id="L675">        final MoneyWiseTaxClass myClass = determineTaxClass(pTrans);</span>
+<span class="fc bfc" id="L676" title="All 2 branches covered.">        return myClass == null ? null : theAnalysis.getTaxBasis().getBucket(myClass);</span>
+    }
+
+    /**
+     * Obtain tax class for transaction.
+     *
+     * @param pTrans the transaction
+     * @return the taxClass
+     * @throws OceanusException on error
+     */
+    private MoneyWiseTaxClass determineTaxClass(final MoneyWiseXAnalyseTransaction pTrans) throws OceanusException {
+        /* Switch on the category type */
+<span class="pc bpc" id="L688" title="10 of 17 branches missed.">        return switch (pTrans.getCategoryClass()) {</span>
+<span class="fc" id="L689">            case TAXEDINCOME, GROSSINCOME -&gt; MoneyWiseTaxClass.SALARY;</span>
+<span class="nc" id="L690">            case OTHERINCOME -&gt; MoneyWiseTaxClass.OTHERINCOME;</span>
+<span class="fc" id="L691">            case INTEREST, TAXEDINTEREST, TAXEDLOYALTYBONUS -&gt; MoneyWiseTaxClass.TAXEDINTEREST;</span>
+<span class="fc" id="L692">            case GROSSINTEREST, GROSSLOYALTYBONUS -&gt; MoneyWiseTaxClass.UNTAXEDINTEREST;</span>
+<span class="nc" id="L693">            case PEER2PEERINTEREST, BADDEBTINTEREST -&gt; MoneyWiseTaxClass.PEER2PEERINTEREST;</span>
+<span class="fc" id="L694">            case DIVIDEND, SHAREDIVIDEND -&gt; MoneyWiseTaxClass.DIVIDEND;</span>
+<span class="nc" id="L695">            case UNITTRUSTDIVIDEND -&gt; MoneyWiseTaxClass.UNITTRUSTDIVIDEND;</span>
+<span class="nc" id="L696">            case FOREIGNDIVIDEND -&gt; MoneyWiseTaxClass.FOREIGNDIVIDEND;</span>
+<span class="nc" id="L697">            case RENTALINCOME -&gt; MoneyWiseTaxClass.RENTALINCOME;</span>
+<span class="nc" id="L698">            case ROOMRENTALINCOME -&gt; MoneyWiseTaxClass.ROOMRENTAL;</span>
+<span class="nc" id="L699">            case INCOMETAX -&gt; MoneyWiseTaxClass.TAXPAID;</span>
+            case TAXFREEINTEREST, TAXFREEDIVIDEND, LOANINTERESTEARNED, INHERITED, CASHBACK, LOYALTYBONUS,
+<span class="fc" id="L701">                 TAXFREELOYALTYBONUS, GIFTEDINCOME, PENSIONCONTRIB -&gt; MoneyWiseTaxClass.TAXFREE;</span>
+<span class="nc" id="L702">            case BADDEBTCAPITAL -&gt; MoneyWiseTaxClass.CAPITALGAINS;</span>
+            case EXPENSE, LOCALTAXES, WRITEOFF, LOANINTERESTCHARGED, TAXRELIEF, RECOVEREDEXPENSES -&gt;
+<span class="fc" id="L704">                    MoneyWiseTaxClass.EXPENSE;</span>
+<span class="nc" id="L705">            case RENTALEXPENSE -&gt; MoneyWiseTaxClass.RENTALINCOME;</span>
+            case UNITSADJUST, SECURITYREPLACE, SECURITYCLOSURE, STOCKTAKEOVER, STOCKSPLIT, STOCKDEMERGER,
+<span class="fc" id="L707">                 STOCKRIGHTSISSUE, PORTFOLIOXFER, TRANSFER -&gt; null;</span>
+<span class="nc" id="L708">            default -&gt; throw new MoneyWiseLogicException(&quot;Unexpected Category: &quot; + pTrans.getCategoryClass());</span>
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

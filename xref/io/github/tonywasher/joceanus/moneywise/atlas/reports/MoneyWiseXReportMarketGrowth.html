@@ -24,25 +24,25 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.moneywise.atlas.reports;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportBase;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportManager;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket.MoneyWiseXAnalysisSecurityBucketList;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisValuesResource;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisSecurityFilter;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportDelayedTable;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportManager;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket.MoneyWiseXAnalysisSecurityBucketList;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisValuesResource;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisSecurityFilter;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Document;
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Element;
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  
@@ -124,7 +124,7 @@
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));
 <a class="jxr_linenumber" name="L117" href="#L117">117</a> 
 <a class="jxr_linenumber" name="L118" href="#L118">118</a>         <em class="jxr_comment">/* Initialise the table */</em>
-<a class="jxr_linenumber" name="L119" href="#L119">119</a>         <strong class="jxr_keyword">final</strong> MetisHTMLTable myTable = theBuilder.startTable(myBody);
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>         <strong class="jxr_keyword">final</strong> MetisReportHTMLTable myTable = theBuilder.startTable(myBody);
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>         theBuilder.startHdrRow(myTable);
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>         theBuilder.makeTitleCell(myTable);
 <a class="jxr_linenumber" name="L122" href="#L122">122</a>         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
@@ -176,7 +176,7 @@
 <a class="jxr_linenumber" name="L168" href="#L168">168</a> 
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>         <em class="jxr_comment">/* Create the total row */</em>
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>         theBuilder.startTotalRow(myTable);
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>         theBuilder.makeTitleCell(myTable, MoneyWiseXReportBuilder.TEXT_TOTAL);
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>         theBuilder.makeTitleCell(myTable, MoneyWiseXReportConstants.TEXT_TOTAL);
 <a class="jxr_linenumber" name="L172" href="#L172">172</a>         theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(false));
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>         theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(<strong class="jxr_keyword">true</strong>));
 <a class="jxr_linenumber" name="L174" href="#L174">174</a>         <em class="jxr_comment">//theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.INVESTED));</em>
@@ -194,7 +194,7 @@
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>     }
 <a class="jxr_linenumber" name="L187" href="#L187">187</a> 
 <a class="jxr_linenumber" name="L188" href="#L188">188</a>     @Override
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>     <strong class="jxr_keyword">public</strong> MetisHTMLTable createDelayedTable(<strong class="jxr_keyword">final</strong> DelayedTable pTable) {
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>     <strong class="jxr_keyword">public</strong> MetisReportHTMLTable createDelayedTable(<strong class="jxr_keyword">final</strong> <a name="MetisReportDelayedTable" href="../../../../../../../io/github/tonywasher/joceanus/metis/report/MetisReportDelayedTable.html#MetisReportDelayedTable">MetisReportDelayedTable</a> pTable) {
 <a class="jxr_linenumber" name="L190" href="#L190">190</a>         <em class="jxr_comment">/* Access the source */</em>
 <a class="jxr_linenumber" name="L191" href="#L191">191</a>         <strong class="jxr_keyword">final</strong> Object mySource = pTable.getSource();
 <a class="jxr_linenumber" name="L192" href="#L192">192</a>         <strong class="jxr_keyword">if</strong> (mySource instanceof <a name="MoneyWiseXAnalysisPortfolioBucket" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisPortfolioBucket.html#MoneyWiseXAnalysisPortfolioBucket">MoneyWiseXAnalysisPortfolioBucket</a> mySourceBucket) {
@@ -212,13 +212,13 @@
 <a class="jxr_linenumber" name="L204" href="#L204">204</a> <em class="jxr_javadoccomment">     * @param pSource the source bucket</em>
 <a class="jxr_linenumber" name="L205" href="#L205">205</a> <em class="jxr_javadoccomment">     * @return the new document fragment</em>
 <a class="jxr_linenumber" name="L206" href="#L206">206</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>     <strong class="jxr_keyword">private</strong> MetisHTMLTable createDelayedPortfolio(<strong class="jxr_keyword">final</strong> MetisHTMLTable pParent,
-<a class="jxr_linenumber" name="L208" href="#L208">208</a>                                                   <strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisPortfolioBucket" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisPortfolioBucket.html#MoneyWiseXAnalysisPortfolioBucket">MoneyWiseXAnalysisPortfolioBucket</a> pSource) {
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>     <strong class="jxr_keyword">private</strong> MetisReportHTMLTable createDelayedPortfolio(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pParent,
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>                                                         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisPortfolioBucket" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisPortfolioBucket.html#MoneyWiseXAnalysisPortfolioBucket">MoneyWiseXAnalysisPortfolioBucket</a> pSource) {
 <a class="jxr_linenumber" name="L209" href="#L209">209</a>         <em class="jxr_comment">/* Access the securities */</em>
 <a class="jxr_linenumber" name="L210" href="#L210">210</a>         <strong class="jxr_keyword">final</strong> MoneyWiseXAnalysisSecurityBucketList mySecurities = pSource.getSecurities();
 <a class="jxr_linenumber" name="L211" href="#L211">211</a> 
 <a class="jxr_linenumber" name="L212" href="#L212">212</a>         <em class="jxr_comment">/* Create a new table */</em>
-<a class="jxr_linenumber" name="L213" href="#L213">213</a>         <strong class="jxr_keyword">final</strong> MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>         <strong class="jxr_keyword">final</strong> MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 <a class="jxr_linenumber" name="L214" href="#L214">214</a> 
 <a class="jxr_linenumber" name="L215" href="#L215">215</a>         <em class="jxr_comment">/* Loop through the Security Buckets */</em>
 <a class="jxr_linenumber" name="L216" href="#L216">216</a>         <strong class="jxr_keyword">final</strong> Iterator&lt;MoneyWiseXAnalysisSecurityBucket&gt; myIterator = mySecurities.iterator();
@@ -326,6 +326,6 @@
 <a class="jxr_linenumber" name="L318" href="#L318">318</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

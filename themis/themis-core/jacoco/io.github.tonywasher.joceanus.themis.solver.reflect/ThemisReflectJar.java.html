@@ -23,11 +23,11 @@ import io.github.tonywasher.joceanus.themis.parser.ThemisParser;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisTypeInstance;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisMavenId;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenId;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenLocation;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 import io.github.tonywasher.joceanus.themis.parser.type.ThemisTypeClassInterface;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -270,21 +270,20 @@ public class ThemisReflectJar
 <span class="fc bfc" id="L270" title="All 2 branches covered.">        for (ThemisMavenId myId : pProject.getDependencies()) {</span>
             /* Protect against exceptions */
             try {
-<span class="fc" id="L273">                final File myJar = myId.getMavenJarPath();</span>
-<span class="fc" id="L274">                final String myName = myJar.toString().replace(&quot;\\&quot;, &quot;/&quot;);</span>
-<span class="pc bpc" id="L275" title="1 of 2 branches missed.">                final String myPrefix = myName.startsWith(&quot;/&quot;) ? URLJAR_PREFIX + ThemisChar.COMMENT : URLJAR_PREFIX;</span>
-<span class="fc" id="L276">                final URL myUrl = (new URI(myPrefix + myName + URLJAR_SUFFIX)).toURL();</span>
-<span class="fc" id="L277">                myList.add(myUrl);</span>
+<span class="fc" id="L273">                final String myName = ThemisMavenLocation.getLocalJarFileName(myId);</span>
+<span class="pc bpc" id="L274" title="1 of 2 branches missed.">                final String myPrefix = myName.startsWith(&quot;/&quot;) ? URLJAR_PREFIX + ThemisChar.COMMENT : URLJAR_PREFIX;</span>
+<span class="fc" id="L275">                final URL myUrl = (new URI(myPrefix + myName + URLJAR_SUFFIX)).toURL();</span>
+<span class="fc" id="L276">                myList.add(myUrl);</span>
 
                 /* Handle exceptions */
-<span class="nc" id="L280">            } catch (URISyntaxException</span>
+<span class="nc" id="L279">            } catch (URISyntaxException</span>
                      | MalformedURLException e) {
-<span class="nc" id="L282">                throw new ThemisDataException(&quot;Failed to build URL&quot;, e);</span>
-<span class="fc" id="L283">            }</span>
-<span class="fc" id="L284">        }</span>
+<span class="nc" id="L281">                throw new ThemisDataException(&quot;Failed to build URL&quot;, e);</span>
+<span class="fc" id="L282">            }</span>
+<span class="fc" id="L283">        }</span>
 
         /* Convert list to array */
-<span class="fc" id="L287">        return myList.toArray(new URL[0]);</span>
+<span class="fc" id="L286">        return myList.toArray(new URL[0]);</span>
     }
 
     /**
@@ -297,18 +296,18 @@ public class ThemisReflectJar
     private Class&lt;?&gt; loadClass(final String pClassName) throws OceanusException {
         /* Protect against exceptions */
         try {
-<span class="fc" id="L300">            return theClassLoader.loadClass(pClassName);</span>
+<span class="fc" id="L299">            return theClassLoader.loadClass(pClassName);</span>
 
             /* If we failed to find the class */
-<span class="fc" id="L303">        } catch (ClassNotFoundException e) {</span>
+<span class="fc" id="L302">        } catch (ClassNotFoundException e) {</span>
             /* Try again with the canonical name converted to a subClass */
-<span class="fc" id="L305">            final String mySubClass = trySubClass(pClassName);</span>
-<span class="fc bfc" id="L306" title="All 2 branches covered.">            if (mySubClass != null) {</span>
-<span class="fc" id="L307">                return loadClass(mySubClass);</span>
+<span class="fc" id="L304">            final String mySubClass = trySubClass(pClassName);</span>
+<span class="fc bfc" id="L305" title="All 2 branches covered.">            if (mySubClass != null) {</span>
+<span class="fc" id="L306">                return loadClass(mySubClass);</span>
             }
 
             /* Failed to find the class */
-<span class="fc" id="L311">            throw new ThemisDataException(&quot;Failed to find class &quot; + pClassName, e);</span>
+<span class="fc" id="L310">            throw new ThemisDataException(&quot;Failed to find class &quot; + pClassName, e);</span>
         }
     }
 
@@ -320,10 +319,10 @@ public class ThemisReflectJar
      */
     private static String trySubClass(final String pClassName) {
         /* Swap last period for dollar */
-<span class="fc" id="L323">        final int myLastIndex = pClassName.lastIndexOf(ThemisChar.PERIOD);</span>
-<span class="fc bfc" id="L324" title="All 2 branches covered.">        return myLastIndex != -1</span>
-<span class="fc" id="L325">                ? pClassName.substring(0, myLastIndex) + ThemisChar.DOLLAR + pClassName.substring(myLastIndex + 1)</span>
-<span class="fc" id="L326">                : null;</span>
+<span class="fc" id="L322">        final int myLastIndex = pClassName.lastIndexOf(ThemisChar.PERIOD);</span>
+<span class="fc bfc" id="L323" title="All 2 branches covered.">        return myLastIndex != -1</span>
+<span class="fc" id="L324">                ? pClassName.substring(0, myLastIndex) + ThemisChar.DOLLAR + pClassName.substring(myLastIndex + 1)</span>
+<span class="fc" id="L325">                : null;</span>
     }
 
     /**
@@ -335,26 +334,26 @@ public class ThemisReflectJar
      */
     private BodyDeclaration&lt;?&gt; buildClass(final Class&lt;?&gt; pSource) throws OceanusException {
         /* Build the relevant class type */
-<span class="fc bfc" id="L338" title="All 2 branches covered.">        if (pSource.isAnnotation()) {</span>
-<span class="fc" id="L339">            return new ThemisReflectAnnotation(pSource);</span>
-<span class="fc bfc" id="L340" title="All 2 branches covered.">        } else if (pSource.isEnum()) {</span>
-<span class="fc" id="L341">            return new ThemisReflectEnum(pSource);</span>
-<span class="pc bpc" id="L342" title="1 of 2 branches missed.">        } else if (pSource.isRecord()) {</span>
-<span class="nc" id="L343">            return new ThemisReflectRecord(pSource);</span>
+<span class="fc bfc" id="L337" title="All 2 branches covered.">        if (pSource.isAnnotation()) {</span>
+<span class="fc" id="L338">            return new ThemisReflectAnnotation(pSource);</span>
+<span class="fc bfc" id="L339" title="All 2 branches covered.">        } else if (pSource.isEnum()) {</span>
+<span class="fc" id="L340">            return new ThemisReflectEnum(pSource);</span>
+<span class="pc bpc" id="L341" title="1 of 2 branches missed.">        } else if (pSource.isRecord()) {</span>
+<span class="nc" id="L342">            return new ThemisReflectRecord(pSource);</span>
         } else {
-<span class="fc" id="L345">            return new ThemisReflectClass(pSource);</span>
+<span class="fc" id="L344">            return new ThemisReflectClass(pSource);</span>
         }
     }
 
     @Override
     public void close() {
         try {
-<span class="pc bpc" id="L352" title="1 of 2 branches missed.">            if (theClassLoader != null) {</span>
-<span class="fc" id="L353">                theClassLoader.close();</span>
+<span class="pc bpc" id="L351" title="1 of 2 branches missed.">            if (theClassLoader != null) {</span>
+<span class="fc" id="L352">                theClassLoader.close();</span>
             }
-<span class="nc" id="L355">        } catch (IOException e) {</span>
+<span class="nc" id="L354">        } catch (IOException e) {</span>
             /* Do nothing */
-<span class="fc" id="L357">        }</span>
-<span class="fc" id="L358">    }</span>
+<span class="fc" id="L356">        }</span>
+<span class="fc" id="L357">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

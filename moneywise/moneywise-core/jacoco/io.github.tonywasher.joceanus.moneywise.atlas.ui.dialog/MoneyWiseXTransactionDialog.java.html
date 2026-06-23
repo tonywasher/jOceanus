@@ -16,19 +16,11 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.ui.dialog;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
-import io.github.tonywasher.joceanus.moneywise.atlas.ui.controls.MoneyWiseXAnalysisSelect;
+import io.github.tonywasher.joceanus.moneywise.atlas.ui.controls.MoneyWiseUIXAnalysisSelect;
 import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXTransactionFilters;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
@@ -39,7 +31,6 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorTrans;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
@@ -47,8 +38,9 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransBase.MoneyWiseDataValidatorTrans;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransInfoSet;
@@ -60,8 +52,16 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoCl
 import io.github.tonywasher.joceanus.moneywise.data.validate.MoneyWiseValidateTransaction;
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseIcon;
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
-import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
-import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseItemPanel;
+import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseUIBaseTable;
+import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseUIItemPanel;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -79,7 +79,7 @@ import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.Teth
 import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldFactory;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
-import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu.TethysUIScrollSubMenu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,7 +91,7 @@ import java.util.Map;
  * Panel to display/edit/create a Transaction.
  */
 public class MoneyWiseXTransactionDialog
-        extends MoneyWiseItemPanel&lt;MoneyWiseXAnalysisEvent&gt; {
+        extends MoneyWiseUIItemPanel&lt;MoneyWiseXAnalysisEvent&gt; {
     /**
      * Info Tab Title.
      */
@@ -120,7 +120,7 @@ public class MoneyWiseXTransactionDialog
     /**
      * Analysis selection panel.
      */
-    private final MoneyWiseXAnalysisSelect theAnalysisSelect;
+    private final MoneyWiseUIXAnalysisSelect theAnalysisSelect;
 
     /**
      * dateRange.
@@ -152,8 +152,8 @@ public class MoneyWiseXTransactionDialog
      */
     public MoneyWiseXTransactionDialog(final TethysUIFactory&lt;?&gt; pFactory,
                                        final PrometheusEditSet pEditSet,
-                                       final MoneyWiseXAnalysisSelect pAnalysisSelect,
-                                       final MoneyWiseBaseTable&lt;MoneyWiseXAnalysisEvent&gt; pOwner) {
+                                       final MoneyWiseUIXAnalysisSelect pAnalysisSelect,
+                                       final MoneyWiseUIBaseTable&lt;MoneyWiseXAnalysisEvent&gt; pOwner) {
         /* Initialise the panel */
 <span class="nc" id="L158">        super(pFactory, pEditSet, pOwner);</span>
 <span class="nc" id="L159">        theAnalysisSelect = pAnalysisSelect;</span>
@@ -656,8 +656,8 @@ public class MoneyWiseXTransactionDialog
             /* declare holding via map */
 <span class="nc" id="L657">            final MoneyWisePortfolio myPortfolio = myHolding.getPortfolio();</span>
 <span class="nc" id="L658">            final MoneyWiseSecurity mySecurity = myHolding.getSecurity();</span>
-<span class="nc" id="L659">            final MoneyWiseDataSet myData = myPortfolio.getDataSet();</span>
-<span class="nc" id="L660">            final MoneyWiseSecurityHoldingMap myMap = myData.getPortfolios().getSecurityHoldingsMap();</span>
+<span class="nc" id="L659">            final MoneyWiseDataSet myData = (MoneyWiseDataSet) myPortfolio.getDataSet();</span>
+<span class="nc" id="L660">            final MoneyWiseSecurityHoldingMap myMap = (MoneyWiseSecurityHoldingMap) myData.getPortfolios().getSecurityHoldingsMap();</span>
 <span class="nc" id="L661">            return myMap.declareHolding(myPortfolio, mySecurity);</span>
         }
 
@@ -788,9 +788,9 @@ public class MoneyWiseXTransactionDialog
 <span class="nc" id="L788">        TethysUIScrollSubMenu&lt;MoneyWiseTransAsset&gt; myMenu = null;</span>
 
         /* Access Portfolios and Holdings Map */
-<span class="nc" id="L791">        final MoneyWiseDataSet myData = pTrans.getDataSet();</span>
+<span class="nc" id="L791">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pTrans.getDataSet();</span>
 <span class="nc" id="L792">        final MoneyWisePortfolioList myPortfolios = myData.getPortfolios();</span>
-<span class="nc" id="L793">        final MoneyWiseSecurityHoldingMap myMap = myPortfolios.getSecurityHoldingsMap();</span>
+<span class="nc" id="L793">        final MoneyWiseSecurityHoldingMap myMap = (MoneyWiseSecurityHoldingMap) myPortfolios.getSecurityHoldingsMap();</span>
 
         /* Loop through the Portfolios */
 <span class="nc" id="L796">        final Iterator&lt;MoneyWisePortfolio&gt; myPortIterator = myPortfolios.iterator();</span>
@@ -997,4 +997,4 @@ public class MoneyWiseXTransactionDialog
 <span class="nc" id="L997">        return myList.iterator();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

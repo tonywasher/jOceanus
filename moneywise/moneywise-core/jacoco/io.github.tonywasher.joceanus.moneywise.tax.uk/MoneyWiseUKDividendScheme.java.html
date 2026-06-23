@@ -16,12 +16,13 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTax.MoneyWiseUKTaxYearCtl;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,15 +37,15 @@ public abstract class MoneyWiseUKDividendScheme
      * Local Report fields.
      */
     static {
-<span class="fc" id="L39">        MetisFieldSet.newFieldSet(MoneyWiseUKDividendScheme.class);</span>
-<span class="fc" id="L40">    }</span>
+<span class="fc" id="L40">        MetisFieldSet.newFieldSet(MoneyWiseUKDividendScheme.class);</span>
+<span class="fc" id="L41">    }</span>
 
     /**
      * Constructor.
      */
     protected MoneyWiseUKDividendScheme() {
-<span class="fc" id="L46">        this(Boolean.TRUE);</span>
-<span class="fc" id="L47">    }</span>
+<span class="fc" id="L47">        this(Boolean.TRUE);</span>
+<span class="fc" id="L48">    }</span>
 
     /**
      * Constructor.
@@ -52,8 +53,8 @@ public abstract class MoneyWiseUKDividendScheme
      * @param pReliefAvailable Is tax relief available?
      */
     protected MoneyWiseUKDividendScheme(final Boolean pReliefAvailable) {
-<span class="fc" id="L55">        super(pReliefAvailable);</span>
-<span class="fc" id="L56">    }</span>
+<span class="fc" id="L56">        super(pReliefAvailable);</span>
+<span class="fc" id="L57">    }</span>
 
     /**
      * Obtain theTaxCredit rate for dividend.
@@ -61,46 +62,46 @@ public abstract class MoneyWiseUKDividendScheme
      * @param pTaxYear the taxYear
      * @return the taxCredit rate
      */
-    protected abstract OceanusRate getTaxCreditRate(MoneyWiseUKTaxYear pTaxYear);
+    protected abstract OceanusRate getTaxCreditRate(MoneyWiseUKTaxYearCtl pTaxYear);
 
     @Override
     protected OceanusMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
                                             final OceanusMoney pAmount) {
         /* Adjust against the basic allowance */
-<span class="nc" id="L70">        final OceanusMoney myRemaining = super.adjustAllowances(pConfig, pAmount);</span>
+<span class="nc" id="L71">        final OceanusMoney myRemaining = super.adjustAllowances(pConfig, pAmount);</span>
 
         /* If we have any dividends left */
-<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (myRemaining.isNonZero()) {</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        if (myRemaining.isNonZero()) {</span>
             /* Adjust the dividend allowance noting that it still counts against the taxBand */
-<span class="nc" id="L75">            adjustForAllowance(pConfig.getDividendAllowance(), myRemaining);</span>
+<span class="nc" id="L76">            adjustForAllowance(pConfig.getDividendAllowance(), myRemaining);</span>
         }
 
         /* Return unallocated income */
-<span class="nc" id="L79">        return myRemaining;</span>
+<span class="nc" id="L80">        return myRemaining;</span>
     }
 
     @Override
     protected OceanusMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
                                                 final OceanusMoney pAmount) {
         /* Obtain the amount covered by the basic allowance */
-<span class="nc" id="L86">        OceanusMoney myAmount = super.getAmountInAllowance(pConfig, pAmount);</span>
+<span class="nc" id="L87">        OceanusMoney myAmount = super.getAmountInAllowance(pConfig, pAmount);</span>
 
         /* If we have income left over */
-<span class="nc bnc" id="L89" title="All 2 branches missed.">        if (myAmount.compareTo(pAmount) &lt; 0) {</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if (myAmount.compareTo(pAmount) &lt; 0) {</span>
             /* Calculate remaining amount */
-<span class="nc" id="L91">            final OceanusMoney myRemaining = new OceanusMoney(pAmount);</span>
-<span class="nc" id="L92">            myRemaining.subtractAmount(myAmount);</span>
+<span class="nc" id="L92">            final OceanusMoney myRemaining = new OceanusMoney(pAmount);</span>
+<span class="nc" id="L93">            myRemaining.subtractAmount(myAmount);</span>
 
             /* Calculate the amount covered by dividend allowance */
-<span class="nc" id="L95">            final OceanusMoney myXtra = getAmountInBand(pConfig.getDividendAllowance(), myRemaining);</span>
+<span class="nc" id="L96">            final OceanusMoney myXtra = getAmountInBand(pConfig.getDividendAllowance(), myRemaining);</span>
 
             /* Determine the total amount covered by the allowance */
-<span class="nc" id="L98">            myAmount = new OceanusMoney(myAmount);</span>
-<span class="nc" id="L99">            myAmount.addAmount(myXtra);</span>
+<span class="nc" id="L99">            myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L100">            myAmount.addAmount(myXtra);</span>
         }
 
         /* return the amount */
-<span class="nc" id="L103">        return myAmount;</span>
+<span class="nc" id="L104">        return myAmount;</span>
     }
 
     /**
@@ -109,7 +110,7 @@ public abstract class MoneyWiseUKDividendScheme
      * @return the base rate
      */
     protected OceanusRate getBaseRate() {
-<span class="nc" id="L112">        return null;</span>
+<span class="nc" id="L113">        return null;</span>
     }
 
     /**
@@ -118,7 +119,7 @@ public abstract class MoneyWiseUKDividendScheme
      * @return the higher rate
      */
     protected OceanusRate getHigherRate() {
-<span class="nc" id="L121">        return null;</span>
+<span class="nc" id="L122">        return null;</span>
     }
 
     /**
@@ -127,7 +128,7 @@ public abstract class MoneyWiseUKDividendScheme
      * @return the additional rate
      */
     protected OceanusRate getAdditionalRate() {
-<span class="nc" id="L130">        return null;</span>
+<span class="nc" id="L131">        return null;</span>
     }
 
     @Override
@@ -135,58 +136,58 @@ public abstract class MoneyWiseUKDividendScheme
                                                          final MoneyWiseTaxClass pBasis) {
 
         /* Create a new List */
-<span class="nc" id="L138">        final List&lt;MoneyWiseTaxBand&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L139">        final List&lt;MoneyWiseTaxBand&gt; myList = new ArrayList&lt;&gt;();</span>
 
         /* Access underlying iterator */
-<span class="nc" id="L141">        final Iterator&lt;MoneyWiseTaxBand&gt; myIterator = super.taxBandIterator(pConfig, pBasis);</span>
-<span class="nc" id="L142">        MoneyWiseTaxBand myBand = myIterator.next();</span>
-<span class="nc" id="L143">        OceanusMoney myAmount = myBand.getAmount();</span>
-<span class="nc" id="L144">        OceanusRate myRate = getBaseRate();</span>
+<span class="nc" id="L142">        final Iterator&lt;MoneyWiseTaxBand&gt; myIterator = super.taxBandIterator(pConfig, pBasis);</span>
+<span class="nc" id="L143">        MoneyWiseTaxBand myBand = myIterator.next();</span>
+<span class="nc" id="L144">        OceanusMoney myAmount = myBand.getAmount();</span>
+<span class="nc" id="L145">        OceanusRate myRate = getBaseRate();</span>
 
         /* If we are a LoHigher instance */
-<span class="nc bnc" id="L147" title="All 2 branches missed.">        if (this instanceof MoneyWiseUKDividendLoHigherRateScheme) {</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        if (this instanceof MoneyWiseUKDividendLoHigherRateScheme) {</span>
             /* Access the true basic band and merge in the lower rate */
-<span class="nc" id="L149">            myBand = myIterator.next();</span>
-<span class="nc" id="L150">            myAmount = new OceanusMoney(myAmount);</span>
-<span class="nc" id="L151">            myAmount.addAmount(myBand.getAmount());</span>
+<span class="nc" id="L150">            myBand = myIterator.next();</span>
+<span class="nc" id="L151">            myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L152">            myAmount.addAmount(myBand.getAmount());</span>
         }
 
         /* Add the basic band */
-<span class="nc bnc" id="L155" title="All 2 branches missed.">        if (myRate == null) {</span>
-<span class="nc" id="L156">            myRate = myBand.getRate();</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (myRate == null) {</span>
+<span class="nc" id="L157">            myRate = myBand.getRate();</span>
         }
-<span class="nc" id="L158">        myList.add(new MoneyWiseTaxBand(myAmount, myRate));</span>
+<span class="nc" id="L159">        myList.add(new MoneyWiseTaxBand(myAmount, myRate));</span>
 
         /* If we have a &quot;higher&quot; band */
-<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (myIterator.hasNext()) {</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        if (myIterator.hasNext()) {</span>
             /* Add the higher band */
-<span class="nc" id="L163">            myBand = myIterator.next();</span>
-<span class="nc" id="L164">            myRate = getHigherRate();</span>
-<span class="nc bnc" id="L165" title="All 2 branches missed.">            if (myRate == null) {</span>
-<span class="nc" id="L166">                myRate = myBand.getRate();</span>
+<span class="nc" id="L164">            myBand = myIterator.next();</span>
+<span class="nc" id="L165">            myRate = getHigherRate();</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">            if (myRate == null) {</span>
+<span class="nc" id="L167">                myRate = myBand.getRate();</span>
             }
-<span class="nc" id="L168">            myList.add(new MoneyWiseTaxBand(myBand.getAmount(), myRate));</span>
+<span class="nc" id="L169">            myList.add(new MoneyWiseTaxBand(myBand.getAmount(), myRate));</span>
         }
 
         /* If we have an &quot;additional&quot; band */
-<span class="nc bnc" id="L172" title="All 2 branches missed.">        if (myIterator.hasNext()) {</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">        if (myIterator.hasNext()) {</span>
             /* Add the higher band */
-<span class="nc" id="L174">            myBand = myIterator.next();</span>
-<span class="nc" id="L175">            myRate = getAdditionalRate();</span>
-<span class="nc bnc" id="L176" title="All 2 branches missed.">            if (myRate == null) {</span>
-<span class="nc" id="L177">                myRate = myBand.getRate();</span>
+<span class="nc" id="L175">            myBand = myIterator.next();</span>
+<span class="nc" id="L176">            myRate = getAdditionalRate();</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">            if (myRate == null) {</span>
+<span class="nc" id="L178">                myRate = myBand.getRate();</span>
             }
-<span class="nc" id="L179">            myList.add(new MoneyWiseTaxBand(myBand.getAmount(), myRate));</span>
+<span class="nc" id="L180">            myList.add(new MoneyWiseTaxBand(myBand.getAmount(), myRate));</span>
         }
 
         /* Loop through remaining tax bands */
-<span class="nc bnc" id="L183" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L184">            myBand = myIterator.next();</span>
-<span class="nc" id="L185">            myList.add(myBand);</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L185">            myBand = myIterator.next();</span>
+<span class="nc" id="L186">            myList.add(myBand);</span>
         }
 
         /* Return the iterator */
-<span class="nc" id="L189">        return myList.iterator();</span>
+<span class="nc" id="L190">        return myList.iterator();</span>
     }
 
     /**
@@ -197,22 +198,22 @@ public abstract class MoneyWiseUKDividendScheme
         /**
          * Local Report fields.
          */
-<span class="fc" id="L200">        private static final MetisFieldSet&lt;MoneyWiseUKDividendAsIncomeScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendAsIncomeScheme.class);</span>
+<span class="fc" id="L201">        private static final MetisFieldSet&lt;MoneyWiseUKDividendAsIncomeScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendAsIncomeScheme.class);</span>
 
         /**
          * Constructor.
          */
-<span class="fc" id="L205">        protected MoneyWiseUKDividendAsIncomeScheme() {</span>
-<span class="fc" id="L206">        }</span>
+<span class="fc" id="L206">        protected MoneyWiseUKDividendAsIncomeScheme() {</span>
+<span class="fc" id="L207">        }</span>
 
         @Override
-        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
-<span class="nc" id="L210">            return pTaxYear.getTaxBands().getBasicTaxRate();</span>
+        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYearCtl pTaxYear) {
+<span class="nc" id="L211">            return pTaxYear.getTaxBands().getBasicTaxRate();</span>
         }
 
         @Override
         public MetisFieldSet&lt;MoneyWiseUKDividendAsIncomeScheme&gt; getDataFieldSet() {
-<span class="nc" id="L215">            return FIELD_DEFS;</span>
+<span class="nc" id="L216">            return FIELD_DEFS;</span>
         }
     }
 
@@ -224,14 +225,14 @@ public abstract class MoneyWiseUKDividendScheme
         /**
          * Local Report fields.
          */
-<span class="fc" id="L227">        private static final MetisFieldSet&lt;MoneyWiseUKDividendBaseRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendBaseRateScheme.class);</span>
+<span class="fc" id="L228">        private static final MetisFieldSet&lt;MoneyWiseUKDividendBaseRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendBaseRateScheme.class);</span>
 
         /*
          * Declare Fields.
          */
         static {
-<span class="fc" id="L233">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE, MoneyWiseUKDividendBaseRateScheme::getBaseRate);</span>
-<span class="fc" id="L234">        }</span>
+<span class="fc" id="L234">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE, MoneyWiseUKDividendBaseRateScheme::getBaseRate);</span>
+<span class="fc" id="L235">        }</span>
 
         /**
          * The Base Rate.
@@ -245,10 +246,10 @@ public abstract class MoneyWiseUKDividendScheme
          * @param pReliefAvailable Is tax relief available?
          */
         protected MoneyWiseUKDividendBaseRateScheme(final OceanusRate pRate,
-                                                    final Boolean pReliefAvailable) {
-<span class="fc" id="L249">            super(pReliefAvailable);</span>
-<span class="fc" id="L250">            theBaseRate = pRate;</span>
-<span class="fc" id="L251">        }</span>
+                                                    final boolean pReliefAvailable) {
+<span class="fc" id="L250">            super(pReliefAvailable);</span>
+<span class="fc" id="L251">            theBaseRate = pRate;</span>
+<span class="fc" id="L252">        }</span>
 
         /**
          * Constructor.
@@ -256,22 +257,22 @@ public abstract class MoneyWiseUKDividendScheme
          * @param pRate the base rate
          */
         protected MoneyWiseUKDividendBaseRateScheme(final OceanusRate pRate) {
-<span class="fc" id="L259">            this(pRate, Boolean.TRUE);</span>
-<span class="fc" id="L260">        }</span>
+<span class="fc" id="L260">            this(pRate, Boolean.TRUE);</span>
+<span class="fc" id="L261">        }</span>
 
         @Override
         protected OceanusRate getBaseRate() {
-<span class="nc" id="L264">            return theBaseRate;</span>
+<span class="nc" id="L265">            return theBaseRate;</span>
         }
 
         @Override
-        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
-<span class="nc" id="L269">            return theBaseRate;</span>
+        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYearCtl pTaxYear) {
+<span class="nc" id="L270">            return theBaseRate;</span>
         }
 
         @Override
         public MetisFieldSet&lt;? extends MoneyWiseUKDividendBaseRateScheme&gt; getDataFieldSet() {
-<span class="nc" id="L274">            return FIELD_DEFS;</span>
+<span class="nc" id="L275">            return FIELD_DEFS;</span>
         }
     }
 
@@ -283,14 +284,14 @@ public abstract class MoneyWiseUKDividendScheme
         /**
          * Local Report fields.
          */
-<span class="fc" id="L286">        private static final MetisFieldSet&lt;MoneyWiseUKDividendHigherRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendHigherRateScheme.class);</span>
+<span class="fc" id="L287">        private static final MetisFieldSet&lt;MoneyWiseUKDividendHigherRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendHigherRateScheme.class);</span>
 
         /*
          * Declare Fields.
          */
         static {
-<span class="fc" id="L292">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_HIGH_RATE, MoneyWiseUKDividendHigherRateScheme::getHigherRate);</span>
-<span class="fc" id="L293">        }</span>
+<span class="fc" id="L293">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_HIGH_RATE, MoneyWiseUKDividendHigherRateScheme::getHigherRate);</span>
+<span class="fc" id="L294">        }</span>
 
         /**
          * The Higher Rate.
@@ -305,8 +306,8 @@ public abstract class MoneyWiseUKDividendScheme
          */
         protected MoneyWiseUKDividendHigherRateScheme(final OceanusRate pRate,
                                                       final OceanusRate pHighRate) {
-<span class="fc" id="L308">            this(pRate, pHighRate, Boolean.FALSE);</span>
-<span class="fc" id="L309">        }</span>
+<span class="fc" id="L309">            this(pRate, pHighRate, Boolean.FALSE);</span>
+<span class="fc" id="L310">        }</span>
 
         /**
          * Constructor.
@@ -318,18 +319,18 @@ public abstract class MoneyWiseUKDividendScheme
         protected MoneyWiseUKDividendHigherRateScheme(final OceanusRate pRate,
                                                       final OceanusRate pHighRate,
                                                       final Boolean pReliefAvailable) {
-<span class="fc" id="L321">            super(pRate, pReliefAvailable);</span>
-<span class="fc" id="L322">            theHighRate = pHighRate;</span>
-<span class="fc" id="L323">        }</span>
+<span class="fc" id="L322">            super(pRate, pReliefAvailable);</span>
+<span class="fc" id="L323">            theHighRate = pHighRate;</span>
+<span class="fc" id="L324">        }</span>
 
         @Override
         protected OceanusRate getHigherRate() {
-<span class="nc" id="L327">            return theHighRate;</span>
+<span class="nc" id="L328">            return theHighRate;</span>
         }
 
         @Override
         public MetisFieldSet&lt;? extends MoneyWiseUKDividendHigherRateScheme&gt; getDataFieldSet() {
-<span class="nc" id="L332">            return FIELD_DEFS;</span>
+<span class="nc" id="L333">            return FIELD_DEFS;</span>
         }
     }
 
@@ -341,7 +342,7 @@ public abstract class MoneyWiseUKDividendScheme
         /**
          * Local Report fields.
          */
-<span class="fc" id="L344">        private static final MetisFieldSet&lt;MoneyWiseUKDividendLoHigherRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendLoHigherRateScheme.class);</span>
+<span class="fc" id="L345">        private static final MetisFieldSet&lt;MoneyWiseUKDividendLoHigherRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendLoHigherRateScheme.class);</span>
 
         /**
          * Constructor.
@@ -351,12 +352,12 @@ public abstract class MoneyWiseUKDividendScheme
          */
         protected MoneyWiseUKDividendLoHigherRateScheme(final OceanusRate pRate,
                                                         final OceanusRate pHigherRate) {
-<span class="fc" id="L354">            super(pRate, pHigherRate);</span>
-<span class="fc" id="L355">        }</span>
+<span class="fc" id="L355">            super(pRate, pHigherRate);</span>
+<span class="fc" id="L356">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWiseUKDividendLoHigherRateScheme&gt; getDataFieldSet() {
-<span class="nc" id="L359">            return FIELD_DEFS;</span>
+<span class="nc" id="L360">            return FIELD_DEFS;</span>
         }
     }
 
@@ -368,14 +369,14 @@ public abstract class MoneyWiseUKDividendScheme
         /**
          * Local Report fields.
          */
-<span class="fc" id="L371">        private static final MetisFieldSet&lt;MoneyWiseUKDividendAdditionalRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendAdditionalRateScheme.class);</span>
+<span class="fc" id="L372">        private static final MetisFieldSet&lt;MoneyWiseUKDividendAdditionalRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendAdditionalRateScheme.class);</span>
 
         /*
          * Declare Fields.
          */
         static {
-<span class="fc" id="L377">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_ADDITIONAL_RATE, MoneyWiseUKDividendHigherRateScheme::getAdditionalRate);</span>
-<span class="fc" id="L378">        }</span>
+<span class="fc" id="L378">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_ADDITIONAL_RATE, MoneyWiseUKDividendHigherRateScheme::getAdditionalRate);</span>
+<span class="fc" id="L379">        }</span>
 
         /**
          * The Additional Rate.
@@ -392,8 +393,8 @@ public abstract class MoneyWiseUKDividendScheme
         protected MoneyWiseUKDividendAdditionalRateScheme(final OceanusRate pRate,
                                                           final OceanusRate pHighRate,
                                                           final OceanusRate pAddRate) {
-<span class="fc" id="L395">            this(pRate, pHighRate, pAddRate, Boolean.FALSE);</span>
-<span class="fc" id="L396">        }</span>
+<span class="fc" id="L396">            this(pRate, pHighRate, pAddRate, Boolean.FALSE);</span>
+<span class="fc" id="L397">        }</span>
 
         /**
          * Constructor.
@@ -407,19 +408,19 @@ public abstract class MoneyWiseUKDividendScheme
                                                           final OceanusRate pHighRate,
                                                           final OceanusRate pAddRate,
                                                           final Boolean pReliefAvailable) {
-<span class="fc" id="L410">            super(pRate, pHighRate, pReliefAvailable);</span>
-<span class="fc" id="L411">            theAdditionalRate = pAddRate;</span>
-<span class="fc" id="L412">        }</span>
+<span class="fc" id="L411">            super(pRate, pHighRate, pReliefAvailable);</span>
+<span class="fc" id="L412">            theAdditionalRate = pAddRate;</span>
+<span class="fc" id="L413">        }</span>
 
         @Override
         protected OceanusRate getAdditionalRate() {
-<span class="nc" id="L416">            return theAdditionalRate;</span>
+<span class="nc" id="L417">            return theAdditionalRate;</span>
         }
 
         @Override
         public MetisFieldSet&lt;MoneyWiseUKDividendAdditionalRateScheme&gt; getDataFieldSet() {
-<span class="nc" id="L421">            return FIELD_DEFS;</span>
+<span class="nc" id="L422">            return FIELD_DEFS;</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

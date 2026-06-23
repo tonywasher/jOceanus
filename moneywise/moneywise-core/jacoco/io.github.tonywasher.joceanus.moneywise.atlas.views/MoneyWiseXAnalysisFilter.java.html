@@ -30,7 +30,7 @@ import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.Money
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioCashBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
-import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBaseBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransTagBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisType;
@@ -712,13 +712,13 @@ public abstract class MoneyWiseXAnalysisFilter&lt;B, T extends Enum&lt;T&gt; &am
      * TaxBasis Bucket filter class.
      */
     public static class MoneyWiseXAnalysisTaxBasisFilter
-            extends MoneyWiseXAnalysisFilter&lt;MoneyWiseXAnalysisTaxBasisBucket, MoneyWiseXAnalysisTaxBasisAttr&gt; {
+            extends MoneyWiseXAnalysisFilter&lt;MoneyWiseXAnalysisTaxBasisBaseBucket, MoneyWiseXAnalysisTaxBasisAttr&gt; {
         /**
          * Constructor.
          *
          * @param pTaxBasis the taxBasis bucket
          */
-        public MoneyWiseXAnalysisTaxBasisFilter(final MoneyWiseXAnalysisTaxBasisBucket pTaxBasis) {
+        public MoneyWiseXAnalysisTaxBasisFilter(final MoneyWiseXAnalysisTaxBasisBaseBucket pTaxBasis) {
             /* Store parameter */
 <span class="nc" id="L723">            super(pTaxBasis, MoneyWiseXAnalysisTaxBasisAttr.class);</span>
 <span class="nc" id="L724">            setCurrentAttribute(getAnalysisType().getDefaultValue());</span>
@@ -874,4 +874,4 @@ public abstract class MoneyWiseXAnalysisFilter&lt;B, T extends Enum&lt;T&gt; &am
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

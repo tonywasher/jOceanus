@@ -18,18 +18,14 @@ package io.github.tonywasher.joceanus.oceanus.date;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusLocale;
 
+import java.time.Clock;
 import java.time.DayOfWeek;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -39,6 +35,11 @@ import java.util.Locale;
  */
 public class OceanusDate
         implements Comparable&lt;OceanusDate&gt; {
+    /**
+     * Standard clock.
+     */
+<span class="fc" id="L41">    public static final Clock CLOCK = Clock.systemDefaultZone();</span>
+
     /**
      * The Hash prime.
      */
@@ -57,17 +58,17 @@ public class OceanusDate
     /**
      * Text for Null Date Error.
      */
-<span class="fc" id="L60">    private static final String ERROR_NULLDATE = OceanusDateResource.ERROR_NULLDATE.getValue();</span>
+<span class="fc" id="L61">    private static final String ERROR_NULLDATE = OceanusDateResource.ERROR_NULLDATE.getValue();</span>
 
     /**
      * Text for Null Locale Error.
      */
-<span class="fc" id="L65">    private static final String ERROR_NULLLOCALE = OceanusDateResource.ERROR_NULLLOCALE.getValue();</span>
+<span class="fc" id="L66">    private static final String ERROR_NULLLOCALE = OceanusDateResource.ERROR_NULLLOCALE.getValue();</span>
 
     /**
      * Text for Bad Format Error.
      */
-<span class="fc" id="L70">    private static final String ERROR_BADFORMAT = OceanusDateResource.ERROR_BADFORMAT.getValue();</span>
+<span class="fc" id="L71">    private static final String ERROR_BADFORMAT = OceanusDateResource.ERROR_BADFORMAT.getValue();</span>
 
     /**
      * The format to be used.
@@ -82,7 +83,7 @@ public class OceanusDate
     /**
      * The format to be used.
      */
-<span class="pc" id="L85">    private String theFormat = FORMAT_DEFAULT;</span>
+<span class="pc" id="L86">    private String theFormat = FORMAT_DEFAULT;</span>
 
     /**
      * The Simple Date format for the locale and format string.
@@ -123,17 +124,17 @@ public class OceanusDate
      * Construct a new Date and initialise with today's date.
      */
     public OceanusDate() {
-<span class="fc" id="L126">        this(OceanusLocale.getDefaultLocale());</span>
-<span class="fc" id="L127">    }</span>
+<span class="fc" id="L127">        this(OceanusLocale.getDefaultLocale());</span>
+<span class="fc" id="L128">    }</span>
 
     /**
-     * Construct a new Date and initialise with todays date.
+     * Construct a new Date and initialise with today's date.
      *
      * @param pLocale the locale
      */
     public OceanusDate(final Locale pLocale) {
-<span class="fc" id="L135">        this(LocalDate.now(), pLocale);</span>
-<span class="fc" id="L136">    }</span>
+<span class="fc" id="L136">        this(LocalDate.now(CLOCK), pLocale);</span>
+<span class="fc" id="L137">    }</span>
 
     /**
      * Construct a new Date and initialise from a java date.
@@ -141,8 +142,8 @@ public class OceanusDate
      * @param pDate the java date to initialise from
      */
     public OceanusDate(final LocalDate pDate) {
-<span class="fc" id="L144">        this(pDate, OceanusLocale.getDefaultLocale());</span>
-<span class="fc" id="L145">    }</span>
+<span class="fc" id="L145">        this(pDate, OceanusLocale.getDefaultLocale());</span>
+<span class="fc" id="L146">    }</span>
 
     /**
      * Construct a new Date and initialise from a java date.
@@ -151,52 +152,24 @@ public class OceanusDate
      * @param pLocale the locale for this date
      */
     public OceanusDate(final LocalDate pDate,
-<span class="fc" id="L154">                       final Locale pLocale) {</span>
-<span class="fc" id="L155">        buildDateDay(pDate, pLocale);</span>
-<span class="fc" id="L156">    }</span>
-
-    /**
-     * Construct a new Date and initialise from a java date.
-     *
-     * @param pDate the java calendar to initialise from
-     */
-    public OceanusDate(final Date pDate) {
-<span class="nc" id="L164">        this(pDate, OceanusLocale.getDefaultLocale());</span>
-<span class="nc" id="L165">    }</span>
-
-    /**
-     * Construct a new Date and initialise from a java date.
-     *
-     * @param pDate   the java date to initialise from
-     * @param pLocale the locale for this date
-     */
-    public OceanusDate(final Date pDate,
-<span class="nc" id="L174">                       final Locale pLocale) {</span>
-        /* Null dates not allowed */
-<span class="nc bnc" id="L176" title="All 2 branches missed.">        if (pDate == null) {</span>
-<span class="nc" id="L177">            throw new IllegalArgumentException(ERROR_NULLDATE);</span>
-        }
-
-        /* Create the Date */
-<span class="nc" id="L181">        final Instant myInstant = Instant.ofEpochMilli(pDate.getTime());</span>
-<span class="nc" id="L182">        final LocalDateTime myDateTime = LocalDateTime.ofInstant(myInstant, ZoneId.systemDefault());</span>
-<span class="nc" id="L183">        buildDateDay(myDateTime.toLocalDate(), pLocale);</span>
-<span class="nc" id="L184">    }</span>
+<span class="fc" id="L155">                       final Locale pLocale) {</span>
+<span class="fc" id="L156">        buildDateDay(pDate, pLocale);</span>
+<span class="fc" id="L157">    }</span>
 
     /**
      * Construct a new Date and initialise from a date.
      *
      * @param pDate the finance date to initialise from
      */
-<span class="nc" id="L191">    public OceanusDate(final OceanusDate pDate) {</span>
+<span class="nc" id="L164">    public OceanusDate(final OceanusDate pDate) {</span>
         /* Null dates not allowed */
-<span class="nc bnc" id="L193" title="All 2 branches missed.">        if (pDate == null) {</span>
-<span class="nc" id="L194">            throw new IllegalArgumentException(ERROR_NULLDATE);</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">        if (pDate == null) {</span>
+<span class="nc" id="L167">            throw new IllegalArgumentException(ERROR_NULLDATE);</span>
         }
 
         /* Create the Date */
-<span class="nc" id="L198">        buildDateDay(pDate.getYear(), pDate.getMonth(), pDate.getDay(), pDate.getLocale());</span>
-<span class="nc" id="L199">    }</span>
+<span class="nc" id="L171">        buildDateDay(pDate.getYear(), pDate.getMonth(), pDate.getDay(), pDate.getLocale());</span>
+<span class="nc" id="L172">    }</span>
 
     /**
      * Construct an explicit Date.
@@ -208,8 +181,8 @@ public class OceanusDate
     public OceanusDate(final int pYear,
                        final int pMonth,
                        final int pDay) {
-<span class="nc" id="L211">        this(pYear, pMonth, pDay, OceanusLocale.getDefaultLocale());</span>
-<span class="nc" id="L212">    }</span>
+<span class="nc" id="L184">        this(pYear, pMonth, pDay, OceanusLocale.getDefaultLocale());</span>
+<span class="nc" id="L185">    }</span>
 
     /**
      * Construct an explicit Date.
@@ -221,8 +194,8 @@ public class OceanusDate
     public OceanusDate(final int pYear,
                        final Month pMonth,
                        final int pDay) {
-<span class="nc" id="L224">        this(pYear, pMonth.getValue(), pDay);</span>
-<span class="nc" id="L225">    }</span>
+<span class="nc" id="L197">        this(pYear, pMonth.getValue(), pDay);</span>
+<span class="nc" id="L198">    }</span>
 
     /**
      * Construct an explicit Date for a locale.
@@ -235,9 +208,9 @@ public class OceanusDate
     public OceanusDate(final int pYear,
                        final int pMonth,
                        final int pDay,
-<span class="nc" id="L238">                       final Locale pLocale) {</span>
-<span class="nc" id="L239">        buildDateDay(pYear, pMonth, pDay, pLocale);</span>
-<span class="nc" id="L240">    }</span>
+<span class="nc" id="L211">                       final Locale pLocale) {</span>
+<span class="nc" id="L212">        buildDateDay(pYear, pMonth, pDay, pLocale);</span>
+<span class="nc" id="L213">    }</span>
 
     /**
      * Construct an explicit Date for a locale.
@@ -251,8 +224,8 @@ public class OceanusDate
                        final Month pMonth,
                        final int pDay,
                        final Locale pLocale) {
-<span class="nc" id="L254">        this(pYear, pMonth.getValue(), pDay, pLocale);</span>
-<span class="nc" id="L255">    }</span>
+<span class="nc" id="L227">        this(pYear, pMonth.getValue(), pDay, pLocale);</span>
+<span class="nc" id="L228">    }</span>
 
     /**
      * Construct a Date from a formatted string.
@@ -260,8 +233,8 @@ public class OceanusDate
      * @param pValue the formatted string
      */
     public OceanusDate(final String pValue) {
-<span class="nc" id="L263">        this(pValue, OceanusLocale.getDefaultLocale());</span>
-<span class="nc" id="L264">    }</span>
+<span class="nc" id="L236">        this(pValue, OceanusLocale.getDefaultLocale());</span>
+<span class="nc" id="L237">    }</span>
 
     /**
      * Construct a Date from a formatted string.
@@ -272,8 +245,8 @@ public class OceanusDate
     public OceanusDate(final String pValue,
                        final Locale pLocale) {
         /* Parse using default format */
-<span class="nc" id="L275">        this(pValue, pLocale, FORMAT_DEFAULT);</span>
-<span class="nc" id="L276">    }</span>
+<span class="nc" id="L248">        this(pValue, pLocale, FORMAT_DEFAULT);</span>
+<span class="nc" id="L249">    }</span>
 
     /**
      * Construct a Date from a formatted string.
@@ -284,26 +257,26 @@ public class OceanusDate
      */
     public OceanusDate(final String pValue,
                        final Locale pLocale,
-<span class="nc" id="L287">                       final String pFormat) {</span>
+<span class="nc" id="L260">                       final String pFormat) {</span>
         /* Null dates not allowed */
-<span class="nc bnc" id="L289" title="All 2 branches missed.">        if (pValue == null) {</span>
-<span class="nc" id="L290">            throw new IllegalArgumentException(ERROR_NULLDATE);</span>
+<span class="nc bnc" id="L262" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L263">            throw new IllegalArgumentException(ERROR_NULLDATE);</span>
         }
 
         try {
             /* Access the date format */
-<span class="nc" id="L295">            theFormat = pFormat;</span>
-<span class="nc" id="L296">            theDateFormat = DateTimeFormatter.ofPattern(theFormat, pLocale);</span>
+<span class="nc" id="L268">            theFormat = pFormat;</span>
+<span class="nc" id="L269">            theDateFormat = DateTimeFormatter.ofPattern(theFormat, pLocale);</span>
 
             /* Parse and build the date */
-<span class="nc" id="L299">            final LocalDate myDate = LocalDate.parse(pValue, theDateFormat);</span>
-<span class="nc" id="L300">            buildDateDay(myDate, pLocale);</span>
-<span class="nc" id="L301">        } catch (DateTimeParseException e) {</span>
-<span class="nc" id="L302">            throw new IllegalArgumentException(ERROR_BADFORMAT</span>
+<span class="nc" id="L272">            final LocalDate myDate = LocalDate.parse(pValue, theDateFormat);</span>
+<span class="nc" id="L273">            buildDateDay(myDate, pLocale);</span>
+<span class="nc" id="L274">        } catch (DateTimeParseException e) {</span>
+<span class="nc" id="L275">            throw new IllegalArgumentException(ERROR_BADFORMAT</span>
                     + &quot; &quot;
                     + pValue, e);
-<span class="nc" id="L305">        }</span>
-<span class="nc" id="L306">    }</span>
+<span class="nc" id="L278">        }</span>
+<span class="nc" id="L279">    }</span>
 
     /**
      * Get the year of the date.
@@ -311,7 +284,7 @@ public class OceanusDate
      * @return the year of the date
      */
     public int getYear() {
-<span class="nc" id="L314">        return theYear;</span>
+<span class="nc" id="L287">        return theYear;</span>
     }
 
     /**
@@ -320,7 +293,7 @@ public class OceanusDate
      * @return the month of the date
      */
     public int getMonth() {
-<span class="nc" id="L323">        return theMonth;</span>
+<span class="nc" id="L296">        return theMonth;</span>
     }
 
     /**
@@ -329,7 +302,7 @@ public class OceanusDate
      * @return the day of the date
      */
     public int getDay() {
-<span class="nc" id="L332">        return theDay;</span>
+<span class="nc" id="L305">        return theDay;</span>
     }
 
     /**
@@ -338,7 +311,7 @@ public class OceanusDate
      * @return the day of the week
      */
     public DayOfWeek getDayOfWeek() {
-<span class="nc" id="L341">        return theDate.getDayOfWeek();</span>
+<span class="nc" id="L314">        return theDate.getDayOfWeek();</span>
     }
 
     /**
@@ -347,7 +320,7 @@ public class OceanusDate
      * @return the month value
      */
     public Month getMonthValue() {
-<span class="nc" id="L350">        return theDate.getMonth();</span>
+<span class="nc" id="L323">        return theDate.getMonth();</span>
     }
 
     /**
@@ -357,7 +330,7 @@ public class OceanusDate
      * @return the id of the date
      */
     public int getId() {
-<span class="nc" id="L360">        return theId;</span>
+<span class="nc" id="L333">        return theId;</span>
     }
 
     /**
@@ -366,7 +339,7 @@ public class OceanusDate
      * @return the date
      */
     public LocalDate getDate() {
-<span class="fc" id="L369">        return theDate;</span>
+<span class="fc" id="L342">        return theDate;</span>
     }
 
     /**
@@ -375,7 +348,7 @@ public class OceanusDate
      * @return the java locale
      */
     public Locale getLocale() {
-<span class="nc" id="L378">        return theLocale;</span>
+<span class="nc" id="L351">        return theLocale;</span>
     }
 
     /**
@@ -387,20 +360,20 @@ public class OceanusDate
     private void buildDateDay(final LocalDate pDate,
                               final Locale pLocale) {
         /* Null dates not allowed */
-<span class="pc bpc" id="L390" title="1 of 2 branches missed.">        if (pDate == null) {</span>
-<span class="nc" id="L391">            throw new IllegalArgumentException(ERROR_NULLDATE);</span>
+<span class="pc bpc" id="L363" title="1 of 2 branches missed.">        if (pDate == null) {</span>
+<span class="nc" id="L364">            throw new IllegalArgumentException(ERROR_NULLDATE);</span>
         }
 
         /* Null locale not allowed */
-<span class="pc bpc" id="L395" title="1 of 2 branches missed.">        if (pLocale == null) {</span>
-<span class="nc" id="L396">            throw new IllegalArgumentException(ERROR_NULLLOCALE);</span>
+<span class="pc bpc" id="L368" title="1 of 2 branches missed.">        if (pLocale == null) {</span>
+<span class="nc" id="L369">            throw new IllegalArgumentException(ERROR_NULLLOCALE);</span>
         }
 
         /* Build date values */
-<span class="fc" id="L400">        theLocale = pLocale;</span>
-<span class="fc" id="L401">        theDate = pDate;</span>
-<span class="fc" id="L402">        obtainValues();</span>
-<span class="fc" id="L403">    }</span>
+<span class="fc" id="L373">        theLocale = pLocale;</span>
+<span class="fc" id="L374">        theDate = pDate;</span>
+<span class="fc" id="L375">        obtainValues();</span>
+<span class="fc" id="L376">    }</span>
 
     /**
      * Construct an explicit Date for a locale.
@@ -415,8 +388,8 @@ public class OceanusDate
                               final int pDay,
                               final Locale pLocale) {
         /* Build the date day */
-<span class="nc" id="L418">        buildDateDay(LocalDate.of(pYear, pMonth, pDay), pLocale);</span>
-<span class="nc" id="L419">    }</span>
+<span class="nc" id="L391">        buildDateDay(LocalDate.of(pYear, pMonth, pDay), pLocale);</span>
+<span class="nc" id="L392">    }</span>
 
     /**
      * Set locale for the DateDay.
@@ -425,14 +398,14 @@ public class OceanusDate
      */
     public void setLocale(final Locale pLocale) {
         /* Record the locale */
-<span class="nc" id="L428">        theLocale = pLocale;</span>
+<span class="nc" id="L401">        theLocale = pLocale;</span>
 
         /* rebuild the date into the new locale */
-<span class="nc" id="L431">        buildDateDay(theYear, theMonth, theDay, pLocale);</span>
+<span class="nc" id="L404">        buildDateDay(theYear, theMonth, theDay, pLocale);</span>
 
         /* Reset the date format */
-<span class="nc" id="L434">        theDateFormat = null;</span>
-<span class="nc" id="L435">    }</span>
+<span class="nc" id="L407">        theDateFormat = null;</span>
+<span class="nc" id="L408">    }</span>
 
     /**
      * Set the date format.
@@ -441,12 +414,12 @@ public class OceanusDate
      */
     public void setFormat(final String pFormat) {
         /* Store the format string */
-<span class="nc" id="L444">        theFormat = pFormat;</span>
+<span class="nc" id="L417">        theFormat = pFormat;</span>
 
         /* Reset the date format */
-<span class="nc" id="L447">        theDateFormat = null;</span>
-<span class="nc" id="L448">        theFormattedDate = null;</span>
-<span class="nc" id="L449">    }</span>
+<span class="nc" id="L420">        theDateFormat = null;</span>
+<span class="nc" id="L421">        theFormattedDate = null;</span>
+<span class="nc" id="L422">    }</span>
 
     /**
      * Adjust the date by a number of years.
@@ -454,9 +427,9 @@ public class OceanusDate
      * @param iYear the number of years to adjust by
      */
     public void adjustYear(final int iYear) {
-<span class="nc" id="L457">        theDate = theDate.plusYears(iYear);</span>
-<span class="nc" id="L458">        obtainValues();</span>
-<span class="nc" id="L459">    }</span>
+<span class="nc" id="L430">        theDate = theDate.plusYears(iYear);</span>
+<span class="nc" id="L431">        obtainValues();</span>
+<span class="nc" id="L432">    }</span>
 
     /**
      * Adjust the date by a number of months.
@@ -464,9 +437,9 @@ public class OceanusDate
      * @param iMonth the number of months to adjust by
      */
     public void adjustMonth(final int iMonth) {
-<span class="nc" id="L467">        theDate = theDate.plusMonths(iMonth);</span>
-<span class="nc" id="L468">        obtainValues();</span>
-<span class="nc" id="L469">    }</span>
+<span class="nc" id="L440">        theDate = theDate.plusMonths(iMonth);</span>
+<span class="nc" id="L441">        obtainValues();</span>
+<span class="nc" id="L442">    }</span>
 
     /**
      * Adjust the date by a number of days.
@@ -474,9 +447,9 @@ public class OceanusDate
      * @param iDay the number of days to adjust by
      */
     public void adjustDay(final int iDay) {
-<span class="nc" id="L477">        theDate = theDate.plusDays(iDay);</span>
-<span class="nc" id="L478">        obtainValues();</span>
-<span class="nc" id="L479">    }</span>
+<span class="nc" id="L450">        theDate = theDate.plusDays(iDay);</span>
+<span class="nc" id="L451">        obtainValues();</span>
+<span class="nc" id="L452">    }</span>
 
     /**
      * Adjust the date by a determined amount.
@@ -486,9 +459,9 @@ public class OceanusDate
      */
     public void adjustField(final TemporalUnit iField,
                             final int iUnits) {
-<span class="nc" id="L489">        theDate = theDate.plus(iUnits, iField);</span>
-<span class="nc" id="L490">        obtainValues();</span>
-<span class="nc" id="L491">    }</span>
+<span class="nc" id="L462">        theDate = theDate.plus(iUnits, iField);</span>
+<span class="nc" id="L463">        obtainValues();</span>
+<span class="nc" id="L464">    }</span>
 
     /**
      * Adjust the date by a period in a forward direction.
@@ -496,11 +469,11 @@ public class OceanusDate
      * @param pPeriod the period to adjust by
      */
     public void adjustForwardByPeriod(final OceanusDatePeriod pPeriod) {
-<span class="nc bnc" id="L499" title="All 2 branches missed.">        if (pPeriod == OceanusDatePeriod.ALLDATES) {</span>
-<span class="nc" id="L500">            return;</span>
+<span class="nc bnc" id="L472" title="All 2 branches missed.">        if (pPeriod == OceanusDatePeriod.ALLDATES) {</span>
+<span class="nc" id="L473">            return;</span>
         }
-<span class="nc" id="L502">        adjustField(pPeriod.getField(), pPeriod.getAmount(true));</span>
-<span class="nc" id="L503">    }</span>
+<span class="nc" id="L475">        adjustField(pPeriod.getField(), pPeriod.getAmount(true));</span>
+<span class="nc" id="L476">    }</span>
 
     /**
      * Adjust the date by a period in a backward direction.
@@ -508,155 +481,11 @@ public class OceanusDate
      * @param pPeriod the period to adjust by
      */
     public void adjustBackwardByPeriod(final OceanusDatePeriod pPeriod) {
-<span class="nc bnc" id="L511" title="All 2 branches missed.">        if (pPeriod == OceanusDatePeriod.ALLDATES) {</span>
-<span class="nc" id="L512">            return;</span>
+<span class="nc bnc" id="L484" title="All 2 branches missed.">        if (pPeriod == OceanusDatePeriod.ALLDATES) {</span>
+<span class="nc" id="L485">            return;</span>
         }
-<span class="nc" id="L514">        adjustField(pPeriod.getField(), pPeriod.getAmount(false));</span>
-<span class="nc" id="L515">    }</span>
-
-    /**
-     * Adjust the date to the start of the period.
-     *
-     * @param pPeriod the period to adjust by
-     */
-    public void startPeriod(final OceanusDatePeriod pPeriod) {
-<span class="nc bnc" id="L523" title="All 5 branches missed.">        switch (pPeriod) {</span>
-            case CALENDARMONTH:
-<span class="nc" id="L525">                startCalendarMonth();</span>
-<span class="nc" id="L526">                break;</span>
-            case CALENDARQUARTER:
-<span class="nc" id="L528">                startCalendarQuarter();</span>
-<span class="nc" id="L529">                break;</span>
-            case CALENDARYEAR:
-<span class="nc" id="L531">                startCalendarYear();</span>
-<span class="nc" id="L532">                break;</span>
-            case FISCALYEAR:
-<span class="nc" id="L534">                startFiscalYear();</span>
-<span class="nc" id="L535">                break;</span>
-            default:
-                break;
-        }
-<span class="nc" id="L539">    }</span>
-
-    /**
-     * Adjust the date to the end of the following month.
-     */
-    public void endNextMonth() {
-        /* Move to the first of the current month */
-<span class="nc" id="L546">        theDate = theDate.withDayOfMonth(1);</span>
-
-        /* Add two months and move back a day */
-<span class="nc" id="L549">        theDate = theDate.plusMonths(2);</span>
-<span class="nc" id="L550">        theDate = theDate.minusDays(1);</span>
-<span class="nc" id="L551">        obtainValues();</span>
-<span class="nc" id="L552">    }</span>
-
-    /**
-     * Adjust the date to the start of the month.
-     */
-    public void startCalendarMonth() {
-        /* Move to the first of the current month */
-<span class="nc" id="L559">        theDate = theDate.withDayOfMonth(1);</span>
-<span class="nc" id="L560">        obtainValues();</span>
-<span class="nc" id="L561">    }</span>
-
-    /**
-     * Adjust the date to the end of the month.
-     */
-    public void endCalendarMonth() {
-        /* Move to the first of the next month and then one day before */
-<span class="nc" id="L568">        theDate = theDate.withDayOfMonth(1);</span>
-<span class="nc" id="L569">        theDate = theDate.plusMonths(1);</span>
-<span class="nc" id="L570">        theDate = theDate.minusDays(1);</span>
-<span class="nc" id="L571">        obtainValues();</span>
-<span class="nc" id="L572">    }</span>
-
-    /**
-     * Adjust the date to the start of the quarter.
-     */
-    public void startCalendarQuarter() {
-        /* Determine the month in quarter */
-<span class="nc" id="L579">        final int myMiQ = (theMonth - 1)</span>
-                % MONTHS_IN_QUARTER;
-
-        /* Move to the first of the current month */
-<span class="nc" id="L583">        theDate = theDate.withDayOfMonth(1);</span>
-
-        /* Move to the first of the quarter */
-<span class="nc" id="L586">        theDate = theDate.minusMonths(myMiQ);</span>
-<span class="nc" id="L587">        obtainValues();</span>
-<span class="nc" id="L588">    }</span>
-
-    /**
-     * Adjust the date to the start of the year.
-     */
-    public void startCalendarYear() {
-        /* Move to the first of the current year */
-<span class="nc" id="L595">        theDate = theDate.withDayOfMonth(1);</span>
-<span class="nc" id="L596">        theDate = theDate.withMonth(Month.JANUARY.getValue());</span>
-<span class="nc" id="L597">        obtainValues();</span>
-<span class="nc" id="L598">    }</span>
-
-    /**
-     * Adjust the date to the end of the year.
-     */
-    public void endCalendarYear() {
-        /* Move to the first of the current year */
-<span class="nc" id="L605">        theDate = theDate.plusYears(1);</span>
-<span class="nc" id="L606">        theDate = theDate.withDayOfMonth(1);</span>
-<span class="nc" id="L607">        theDate = theDate.withMonth(Month.JANUARY.getValue());</span>
-<span class="nc" id="L608">        theDate = theDate.minusDays(1);</span>
-<span class="nc" id="L609">        obtainValues();</span>
-<span class="nc" id="L610">    }</span>
-
-    /**
-     * Adjust the date to the start of the fiscal year.
-     */
-    public void startFiscalYear() {
-        /* Determine Fiscal year type */
-<span class="nc" id="L617">        final OceanusFiscalYear myFiscal = OceanusFiscalYear.determineFiscalYear(theLocale);</span>
-<span class="nc" id="L618">        final int myMonth = myFiscal.getFirstMonth().getValue();</span>
-<span class="nc" id="L619">        final int myDay = myFiscal.getFirstDay();</span>
-
-        /* Determine which year we are in */
-<span class="nc bnc" id="L622" title="All 6 branches missed.">        if (theMonth &lt; myMonth</span>
-                || (theMonth == myMonth &amp;&amp; theDay &lt; myDay)) {
-<span class="nc" id="L624">            theDate = theDate.minusYears(1);</span>
-        }
-
-        /* Move to the first of the current year */
-<span class="nc" id="L628">        theDate = theDate.withDayOfMonth(myDay);</span>
-<span class="nc" id="L629">        theDate = theDate.withMonth(myMonth);</span>
-<span class="nc" id="L630">        obtainValues();</span>
-<span class="nc" id="L631">    }</span>
-
-    /**
-     * Calculate the age that someone born on this date will be on a given date.
-     *
-     * @param pDate the date for which to calculate the age
-     * @return the age on that date
-     */
-    public int ageOn(final OceanusDate pDate) {
-        /* Calculate the initial age assuming same date in year */
-<span class="nc" id="L641">        int myAge = pDate.theDate.getYear();</span>
-<span class="nc" id="L642">        myAge -= theDate.getYear();</span>
-
-        /* Check whether we are later in the year */
-<span class="nc" id="L645">        int myDelta = theDate.getMonthValue()</span>
-<span class="nc" id="L646">                - pDate.theDate.getMonthValue();</span>
-<span class="nc bnc" id="L647" title="All 2 branches missed.">        if (myDelta == 0) {</span>
-<span class="nc" id="L648">            myDelta = theDate.getDayOfMonth()</span>
-<span class="nc" id="L649">                    - pDate.theDate.getDayOfMonth();</span>
-        }
-
-        /* If so then subtract one from the year */
-<span class="nc bnc" id="L653" title="All 2 branches missed.">        if (myDelta &gt; 0) {</span>
-<span class="nc" id="L654">            myAge--;</span>
-        }
-
-        /* Return to caller */
-<span class="nc" id="L658">        return myAge;</span>
-    }
+<span class="nc" id="L487">        adjustField(pPeriod.getField(), pPeriod.getAmount(false));</span>
+<span class="nc" id="L488">    }</span>
 
     /**
      * Calculate the days until the specified date.
@@ -666,7 +495,7 @@ public class OceanusDate
      */
     public long daysUntil(final OceanusDate pDate) {
         /* Calculate the initial age assuming same date in year */
-<span class="nc" id="L669">        return theDate.until(pDate.theDate, ChronoUnit.DAYS);</span>
+<span class="nc" id="L498">        return theDate.until(pDate.theDate, ChronoUnit.DAYS);</span>
     }
 
     /**
@@ -675,116 +504,91 @@ public class OceanusDate
      * @param pDate the date to copy from
      */
     public void copyDate(final OceanusDate pDate) {
-<span class="nc" id="L678">        buildDateDay(pDate.getDate(), theLocale);</span>
-<span class="nc" id="L679">        obtainValues();</span>
-<span class="nc" id="L680">    }</span>
+<span class="nc" id="L507">        buildDateDay(pDate.getDate(), theLocale);</span>
+<span class="nc" id="L508">        obtainValues();</span>
+<span class="nc" id="L509">    }</span>
 
     /**
      * Obtain the year,month and day values from the date.
      */
     private void obtainValues() {
         /* Access date details */
-<span class="fc" id="L687">        theYear = theDate.getYear();</span>
-<span class="fc" id="L688">        theMonth = theDate.getMonthValue();</span>
-<span class="fc" id="L689">        theDay = theDate.getDayOfMonth();</span>
+<span class="fc" id="L516">        theYear = theDate.getYear();</span>
+<span class="fc" id="L517">        theMonth = theDate.getMonthValue();</span>
+<span class="fc" id="L518">        theDay = theDate.getDayOfMonth();</span>
 
         /* Calculate the id (512*year + dayofYear) */
-<span class="fc" id="L692">        theId = (theYear &lt;&lt; SHIFT_ID_YEAR)</span>
-<span class="fc" id="L693">                + theDate.getDayOfYear();</span>
+<span class="fc" id="L521">        theId = (theYear &lt;&lt; SHIFT_ID_YEAR)</span>
+<span class="fc" id="L522">                + theDate.getDayOfYear();</span>
 
         /* Reset formatted date */
-<span class="fc" id="L696">        theFormattedDate = null;</span>
-<span class="fc" id="L697">    }</span>
+<span class="fc" id="L525">        theFormattedDate = null;</span>
+<span class="fc" id="L526">    }</span>
 
     @Override
     public String toString() {
         /* If we already have a formatted date */
-<span class="nc bnc" id="L702" title="All 2 branches missed.">        if (theFormattedDate != null) {</span>
-<span class="nc" id="L703">            return theFormattedDate;</span>
+<span class="nc bnc" id="L531" title="All 2 branches missed.">        if (theFormattedDate != null) {</span>
+<span class="nc" id="L532">            return theFormattedDate;</span>
         }
 
         /* If we have not obtained the date format */
-<span class="nc bnc" id="L707" title="All 2 branches missed.">        if (theDateFormat == null) {</span>
+<span class="nc bnc" id="L536" title="All 2 branches missed.">        if (theDateFormat == null) {</span>
             /* Create the simple date format */
-<span class="nc" id="L709">            theDateFormat = DateTimeFormatter.ofPattern(theFormat, theLocale);</span>
+<span class="nc" id="L538">            theDateFormat = DateTimeFormatter.ofPattern(theFormat, theLocale);</span>
         }
 
         /* Format the date */
-<span class="nc" id="L713">        theFormattedDate = theDate.format(theDateFormat);</span>
+<span class="nc" id="L542">        theFormattedDate = theDate.format(theDateFormat);</span>
 
         /* Return the date */
-<span class="nc" id="L716">        return theFormattedDate;</span>
+<span class="nc" id="L545">        return theFormattedDate;</span>
     }
 
     @Override
     public int compareTo(final OceanusDate pThat) {
         /* Handle trivial compares */
-<span class="nc bnc" id="L722" title="All 2 branches missed.">        if (this.equals(pThat)) {</span>
-<span class="nc" id="L723">            return 0;</span>
-<span class="nc bnc" id="L724" title="All 2 branches missed.">        } else if (pThat == null) {</span>
-<span class="nc" id="L725">            return -1;</span>
+<span class="nc bnc" id="L551" title="All 2 branches missed.">        if (this.equals(pThat)) {</span>
+<span class="nc" id="L552">            return 0;</span>
+<span class="nc bnc" id="L553" title="All 2 branches missed.">        } else if (pThat == null) {</span>
+<span class="nc" id="L554">            return -1;</span>
         }
 
         /* Compare the year, month and date */
-<span class="nc" id="L729">        int iDiff = theYear</span>
+<span class="nc" id="L558">        int iDiff = theYear</span>
                 - pThat.theYear;
-<span class="nc bnc" id="L731" title="All 2 branches missed.">        if (iDiff != 0) {</span>
-<span class="nc" id="L732">            return iDiff;</span>
+<span class="nc bnc" id="L560" title="All 2 branches missed.">        if (iDiff != 0) {</span>
+<span class="nc" id="L561">            return iDiff;</span>
         }
-<span class="nc" id="L734">        iDiff = theMonth</span>
+<span class="nc" id="L563">        iDiff = theMonth</span>
                 - pThat.theMonth;
-<span class="nc bnc" id="L736" title="All 2 branches missed.">        if (iDiff != 0) {</span>
-<span class="nc" id="L737">            return iDiff;</span>
+<span class="nc bnc" id="L565" title="All 2 branches missed.">        if (iDiff != 0) {</span>
+<span class="nc" id="L566">            return iDiff;</span>
         }
-<span class="nc" id="L739">        return theDay</span>
+<span class="nc" id="L568">        return theDay</span>
                 - pThat.theDay;
-    }
-
-    /**
-     * Compare this date to a range.
-     *
-     * @param pRange the range to compare to
-     * @return -1 if date is before range, 0 if date is within range, 1 if date is after range
-     */
-    public int compareToRange(final OceanusDateRange pRange) {
-        /* Check start of range */
-<span class="nc" id="L751">        final OceanusDate myStart = pRange.getStart();</span>
-<span class="nc bnc" id="L752" title="All 2 branches missed.">        if (myStart != null</span>
-<span class="nc bnc" id="L753" title="All 2 branches missed.">                &amp;&amp; compareTo(myStart) &lt; 0) {</span>
-<span class="nc" id="L754">            return -1;</span>
-        }
-
-        /* Check end of range */
-<span class="nc" id="L758">        final OceanusDate myEnd = pRange.getEnd();</span>
-<span class="nc bnc" id="L759" title="All 2 branches missed.">        if (myEnd != null</span>
-<span class="nc bnc" id="L760" title="All 2 branches missed.">                &amp;&amp; compareTo(myEnd) &gt; 0) {</span>
-<span class="nc" id="L761">            return 1;</span>
-        }
-
-        /* Must be within range */
-<span class="nc" id="L765">        return 0;</span>
     }
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-<span class="pc bpc" id="L771" title="1 of 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L772">            return true;</span>
+<span class="pc bpc" id="L575" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L576">            return true;</span>
         }
-<span class="pc bpc" id="L774" title="1 of 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L775">            return false;</span>
+<span class="pc bpc" id="L578" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L579">            return false;</span>
         }
 
         /* Make sure that the object is a TethysDate */
-<span class="pc bpc" id="L779" title="1 of 2 branches missed.">        if (pThat.getClass() != this.getClass()) {</span>
-<span class="nc" id="L780">            return false;</span>
+<span class="pc bpc" id="L583" title="1 of 2 branches missed.">        if (pThat.getClass() != this.getClass()) {</span>
+<span class="nc" id="L584">            return false;</span>
         }
 
         /* Access the object as a TethysDate */
-<span class="fc" id="L784">        final OceanusDate myThat = (OceanusDate) pThat;</span>
+<span class="fc" id="L588">        final OceanusDate myThat = (OceanusDate) pThat;</span>
 
         /* Check components */
-<span class="pc bpc" id="L787" title="3 of 6 branches missed.">        return theYear == myThat.theYear</span>
+<span class="pc bpc" id="L591" title="3 of 6 branches missed.">        return theYear == myThat.theYear</span>
                 &amp;&amp; theMonth == myThat.theMonth
                 &amp;&amp; theDay == myThat.theDay;
     }
@@ -792,33 +596,12 @@ public class OceanusDate
     @Override
     public int hashCode() {
         /* Calculate hash based on Year/Month/Day */
-<span class="nc" id="L795">        int iHash = theYear;</span>
-<span class="nc" id="L796">        iHash *= HASH_PRIME;</span>
-<span class="nc" id="L797">        iHash += theMonth + 1;</span>
-<span class="nc" id="L798">        iHash *= HASH_PRIME;</span>
-<span class="nc" id="L799">        iHash += theDay;</span>
-<span class="nc" id="L800">        return iHash;</span>
-    }
-
-    /**
-     * Convert the LocalDate to a Date.
-     *
-     * @return the associated date
-     */
-    public Date toDate() {
-<span class="nc" id="L809">        final Instant myInstant = theDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();</span>
-<span class="nc" id="L810">        return Date.from(myInstant);</span>
-    }
-
-    /**
-     * Convert the LocalDate to a Calendar.
-     *
-     * @return the Calendar
-     */
-    public Calendar toCalendar() {
-<span class="nc" id="L819">        final Calendar myCalendar = Calendar.getInstance(theLocale);</span>
-<span class="nc" id="L820">        myCalendar.setTime(toDate());</span>
-<span class="nc" id="L821">        return myCalendar;</span>
+<span class="nc" id="L599">        int iHash = theYear;</span>
+<span class="nc" id="L600">        iHash *= HASH_PRIME;</span>
+<span class="nc" id="L601">        iHash += theMonth + 1;</span>
+<span class="nc" id="L602">        iHash *= HASH_PRIME;</span>
+<span class="nc" id="L603">        iHash += theDay;</span>
+<span class="nc" id="L604">        return iHash;</span>
     }
 
     /**
@@ -831,17 +614,17 @@ public class OceanusDate
     public static boolean isDifferent(final OceanusDate pCurr,
                                       final OceanusDate pNew) {
         /* Handle case where current value is null */
-<span class="nc bnc" id="L834" title="All 2 branches missed.">        if (pCurr == null) {</span>
-<span class="nc bnc" id="L835" title="All 2 branches missed.">            return pNew != null;</span>
+<span class="nc bnc" id="L617" title="All 2 branches missed.">        if (pCurr == null) {</span>
+<span class="nc bnc" id="L618" title="All 2 branches missed.">            return pNew != null;</span>
         }
 
         /* Handle case where new value is null */
-<span class="nc bnc" id="L839" title="All 2 branches missed.">        if (pNew == null) {</span>
-<span class="nc" id="L840">            return true;</span>
+<span class="nc bnc" id="L622" title="All 2 branches missed.">        if (pNew == null) {</span>
+<span class="nc" id="L623">            return true;</span>
         }
 
         /* Handle Standard cases */
-<span class="nc bnc" id="L844" title="All 2 branches missed.">        return !pCurr.equals(pNew);</span>
+<span class="nc bnc" id="L627" title="All 2 branches missed.">        return !pCurr.equals(pNew);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -17,6 +17,10 @@
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.Objects;
 
 /**
  * Class representing a Payee.
@@ -35,20 +39,20 @@ public class MoneyWiseQIFPayee
      *
      * @param pPayee the Payee
      */
-<span class="nc" id="L38">    public MoneyWiseQIFPayee(final MoneyWisePayee pPayee) {</span>
+<span class="nc" id="L42">    public MoneyWiseQIFPayee(final MoneyWisePayee pPayee) {</span>
         /* Store data */
-<span class="nc" id="L40">        theName = pPayee.getName();</span>
-<span class="nc" id="L41">    }</span>
+<span class="nc" id="L44">        theName = pPayee.getName();</span>
+<span class="nc" id="L45">    }</span>
 
     /**
      * Constructor.
      *
      * @param pPayee the Payee
      */
-<span class="nc" id="L48">    public MoneyWiseQIFPayee(final String pPayee) {</span>
+<span class="nc" id="L52">    public MoneyWiseQIFPayee(final String pPayee) {</span>
         /* Store data */
-<span class="nc" id="L50">        theName = pPayee;</span>
-<span class="nc" id="L51">    }</span>
+<span class="nc" id="L54">        theName = pPayee;</span>
+<span class="nc" id="L55">    }</span>
 
     /**
      * Obtain the Name.
@@ -56,44 +60,121 @@ public class MoneyWiseQIFPayee
      * @return the Name
      */
     public String getName() {
-<span class="nc" id="L59">        return theName;</span>
+<span class="nc" id="L63">        return theName;</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L64">        return getName();</span>
+<span class="nc" id="L68">        return getName();</span>
     }
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle trivial cases */
-<span class="nc bnc" id="L70" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L71">            return true;</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L75">            return true;</span>
         }
-<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L74">            return false;</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L78">            return false;</span>
         }
 
         /* Check class */
-<span class="nc bnc" id="L78" title="All 2 branches missed.">        if (!getClass().equals(pThat.getClass())) {</span>
-<span class="nc" id="L79">            return false;</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L83">            return false;</span>
         }
 
         /* Cast correctly */
-<span class="nc" id="L83">        final MoneyWiseQIFPayee myPayee = (MoneyWiseQIFPayee) pThat;</span>
+<span class="nc" id="L87">        final MoneyWiseQIFPayee myPayee = (MoneyWiseQIFPayee) pThat;</span>
 
         /* Check date */
-<span class="nc" id="L86">        return theName.equals(myPayee.getName());</span>
+<span class="nc" id="L90">        return theName.equals(myPayee.getName());</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L91">        return theName.hashCode();</span>
+<span class="nc" id="L95">        return theName.hashCode();</span>
     }
 
     @Override
     public int compareTo(final MoneyWiseQIFPayee pThat) {
-<span class="nc" id="L96">        return theName.compareTo(pThat.getName());</span>
+<span class="nc" id="L100">        return theName.compareTo(pThat.getName());</span>
+    }
+
+
+    /**
+     * The Payee line.
+     *
+     * @param &lt;X&gt; the line type
+     */
+    public abstract static class MoneyWiseQIFPayeeLine&lt;X extends MoneyWiseQLineType&gt;
+            extends MoneyWiseQIFLine&lt;X&gt; {
+        /**
+         * The payee.
+         */
+        private final MoneyWiseQIFPayee thePayee;
+
+        /**
+         * Constructor.
+         *
+         * @param pPayee the Payee
+         */
+<span class="nc" id="L121">        protected MoneyWiseQIFPayeeLine(final MoneyWiseQIFPayee pPayee) {</span>
+            /* Store data */
+<span class="nc" id="L123">            thePayee = pPayee;</span>
+<span class="nc" id="L124">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L128">            return thePayee.toString();</span>
+        }
+
+        /**
+         * Obtain payee.
+         *
+         * @return the payee
+         */
+        public MoneyWiseQIFPayee getPayee() {
+<span class="nc" id="L137">            return thePayee;</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the string data */
+<span class="nc" id="L144">            pBuilder.append(thePayee.getName());</span>
+<span class="nc" id="L145">        }</span>
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L150" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L151">                return true;</span>
+            }
+<span class="nc bnc" id="L153" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L154">                return false;</span>
+            }
+
+            /* Check class */
+<span class="nc bnc" id="L158" title="All 2 branches missed.">            if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L159">                return false;</span>
+            }
+
+            /* Cast correctly */
+<span class="nc" id="L163">            final MoneyWiseQIFPayeeLine&lt;?&gt; myLine = (MoneyWiseQIFPayeeLine&lt;?&gt;) pThat;</span>
+
+            /* Check line type */
+<span class="nc bnc" id="L166" title="All 2 branches missed.">            if (!getLineType().equals(myLine.getLineType())) {</span>
+<span class="nc" id="L167">                return false;</span>
+            }
+
+            /* Check value */
+<span class="nc" id="L171">            return thePayee.equals(myLine.getPayee());</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L176">            return Objects.hash(getLineType(), thePayee);</span>
+        }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

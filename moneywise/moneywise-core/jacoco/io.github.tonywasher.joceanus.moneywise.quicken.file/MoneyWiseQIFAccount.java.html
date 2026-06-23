@@ -26,15 +26,18 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCashCategor
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQAccountLineType;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFMoneyLine;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 /**
  * Class representing a QIF Account record.
@@ -80,7 +83,7 @@ public class MoneyWiseQIFAccount
     /**
      * Category Map.
      */
-<span class="nc" id="L83">    protected static final Map&lt;Enum&lt;?&gt;, String&gt; QIF_ACTCATMAP = createClassMap();</span>
+<span class="nc" id="L86">    protected static final Map&lt;Enum&lt;?&gt;, String&gt; QIF_ACTCATMAP = createClassMap();</span>
 
     /**
      * The Account Name.
@@ -100,127 +103,121 @@ public class MoneyWiseQIFAccount
     /**
      * Constructor.
      *
-     * @param pFile    the QIF File
      * @param pAccount the Account
      */
-    public MoneyWiseQIFAccount(final MoneyWiseQIFFile pFile,
-                               final MoneyWiseTransAsset pAccount) {
+    public MoneyWiseQIFAccount(final MoneyWiseTransAsset pAccount) {
         /* Call super-constructor */
-<span class="nc" id="L109">        super(pFile, MoneyWiseQAccountLineType.class);</span>
+<span class="nc" id="L110">        super(MoneyWiseQAccountLineType.class);</span>
 
         /* Store data */
-<span class="nc" id="L112">        theName = pAccount.getName();</span>
+<span class="nc" id="L113">        theName = pAccount.getName();</span>
 
         /* Switch on account */
-<span class="nc bnc" id="L115" title="All 5 branches missed.">        switch (pAccount) {</span>
-<span class="nc" id="L116">            case MoneyWiseDeposit myDeposit -&gt; {</span>
-<span class="nc" id="L117">                theClass = myDeposit.getCategoryClass();</span>
-<span class="nc" id="L118">                theDesc = myDeposit.getDesc();</span>
-<span class="nc" id="L119">            }</span>
-<span class="nc" id="L120">            case MoneyWiseCash myCash -&gt; {</span>
-<span class="nc" id="L121">                theClass = myCash.getCategoryClass();</span>
-<span class="nc" id="L122">                theDesc = myCash.getDesc();</span>
-<span class="nc" id="L123">            }</span>
-<span class="nc" id="L124">            case MoneyWiseLoan myLoan -&gt; {</span>
-<span class="nc" id="L125">                theClass = myLoan.getCategoryClass();</span>
-<span class="nc" id="L126">                theDesc = myLoan.getDesc();</span>
-<span class="nc" id="L127">            }</span>
-<span class="nc" id="L128">            case MoneyWisePortfolio myPortfolio -&gt; {</span>
-<span class="nc" id="L129">                theClass = MoneyWiseBasicDataType.PORTFOLIO;</span>
-<span class="nc" id="L130">                theDesc = myPortfolio.getDesc();</span>
-<span class="nc" id="L131">            }</span>
-<span class="nc" id="L132">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="nc bnc" id="L116" title="All 5 branches missed.">        switch (pAccount) {</span>
+<span class="nc" id="L117">            case MoneyWiseDeposit myDeposit -&gt; {</span>
+<span class="nc" id="L118">                theClass = myDeposit.getCategoryClass();</span>
+<span class="nc" id="L119">                theDesc = myDeposit.getDesc();</span>
+<span class="nc" id="L120">            }</span>
+<span class="nc" id="L121">            case MoneyWiseCash myCash -&gt; {</span>
+<span class="nc" id="L122">                theClass = myCash.getCategoryClass();</span>
+<span class="nc" id="L123">                theDesc = myCash.getDesc();</span>
+<span class="nc" id="L124">            }</span>
+<span class="nc" id="L125">            case MoneyWiseLoan myLoan -&gt; {</span>
+<span class="nc" id="L126">                theClass = myLoan.getCategoryClass();</span>
+<span class="nc" id="L127">                theDesc = myLoan.getDesc();</span>
+<span class="nc" id="L128">            }</span>
+<span class="nc" id="L129">            case MoneyWisePortfolio myPortfolio -&gt; {</span>
+<span class="nc" id="L130">                theClass = MoneyWiseBasicDataType.PORTFOLIO;</span>
+<span class="nc" id="L131">                theDesc = myPortfolio.getDesc();</span>
+<span class="nc" id="L132">            }</span>
+<span class="nc" id="L133">            default -&gt; throw new IllegalArgumentException();</span>
         }
 
         /* Build lines */
-<span class="nc" id="L136">        addLine(new MoneyWiseQIFAccountNameLine(theName));</span>
-<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (theDesc != null) {</span>
-<span class="nc" id="L138">            addLine(new MoneyWiseQIFAccountDescLine(theDesc));</span>
+<span class="nc" id="L137">        addLine(new MoneyWiseQIFAccountNameLine(theName));</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">        if (theDesc != null) {</span>
+<span class="nc" id="L139">            addLine(new MoneyWiseQIFAccountDescLine(theDesc));</span>
         }
-<span class="nc" id="L140">        addLine(new MoneyWiseQIFAccountTypeLine(theClass));</span>
-<span class="nc" id="L141">    }</span>
+<span class="nc" id="L141">        addLine(new MoneyWiseQIFAccountTypeLine(theClass));</span>
+<span class="nc" id="L142">    }</span>
 
     /**
      * Constructor for holding account.
      *
-     * @param pFile the QIF File
      * @param pName the Portfolio Name
      */
-    protected MoneyWiseQIFAccount(final MoneyWiseQIFFile pFile,
-                                  final String pName) {
+    protected MoneyWiseQIFAccount(final String pName) {
         /* Call super-constructor */
-<span class="nc" id="L152">        super(pFile, MoneyWiseQAccountLineType.class);</span>
+<span class="nc" id="L151">        super(MoneyWiseQAccountLineType.class);</span>
 
         /* Store data */
-<span class="nc" id="L155">        theName = pName;</span>
-<span class="nc" id="L156">        theClass = MoneyWiseDepositCategoryClass.SAVINGS;</span>
-<span class="nc" id="L157">        theDesc = null;</span>
+<span class="nc" id="L154">        theName = pName;</span>
+<span class="nc" id="L155">        theClass = MoneyWiseDepositCategoryClass.SAVINGS;</span>
+<span class="nc" id="L156">        theDesc = null;</span>
 
         /* Build lines */
-<span class="nc" id="L160">        addLine(new MoneyWiseQIFAccountNameLine(theName));</span>
-<span class="nc" id="L161">        addLine(new MoneyWiseQIFAccountTypeLine(theClass));</span>
-<span class="nc" id="L162">    }</span>
+<span class="nc" id="L159">        addLine(new MoneyWiseQIFAccountNameLine(theName));</span>
+<span class="nc" id="L160">        addLine(new MoneyWiseQIFAccountTypeLine(theClass));</span>
+<span class="nc" id="L161">    }</span>
 
     /**
      * Constructor.
      *
-     * @param pFile      the QIF File
      * @param pFormatter the formatter
      * @param pLines     the data lines
      */
-    protected MoneyWiseQIFAccount(final MoneyWiseQIFFile pFile,
-                                  final OceanusDataFormatter pFormatter,
+    protected MoneyWiseQIFAccount(final OceanusDataFormatter pFormatter,
                                   final List&lt;String&gt; pLines) {
         /* Call super-constructor */
-<span class="nc" id="L175">        super(pFile, MoneyWiseQAccountLineType.class);</span>
+<span class="nc" id="L172">        super(MoneyWiseQAccountLineType.class);</span>
 
         /* Determine details */
-<span class="nc" id="L178">        String myName = null;</span>
-<span class="nc" id="L179">        String myDesc = null;</span>
-<span class="nc" id="L180">        Enum&lt;?&gt; myClass = null;</span>
+<span class="nc" id="L175">        String myName = null;</span>
+<span class="nc" id="L176">        String myDesc = null;</span>
+<span class="nc" id="L177">        Enum&lt;?&gt; myClass = null;</span>
 
         /* Loop through the lines */
-<span class="nc bnc" id="L183" title="All 2 branches missed.">        for (String myLine : pLines) {</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        for (String myLine : pLines) {</span>
             /* Determine the category */
-<span class="nc" id="L185">            final MoneyWiseQAccountLineType myType = MoneyWiseQAccountLineType.parseLine(myLine);</span>
-<span class="nc bnc" id="L186" title="All 2 branches missed.">            if (myType != null) {</span>
+<span class="nc" id="L182">            final MoneyWiseQAccountLineType myType = MoneyWiseQAccountLineType.parseLine(myLine);</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">            if (myType != null) {</span>
                 /* Access data */
-<span class="nc" id="L188">                final String myData = myLine.substring(myType.getSymbol().length());</span>
+<span class="nc" id="L185">                final String myData = myLine.substring(myType.getSymbol().length());</span>
 
                 /* Switch on line type */
-<span class="nc bnc" id="L191" title="All 5 branches missed.">                switch (myType) {</span>
+<span class="nc bnc" id="L188" title="All 5 branches missed.">                switch (myType) {</span>
                     case NAME:
-<span class="nc" id="L193">                        addLine(new MoneyWiseQIFAccountNameLine(myData));</span>
-<span class="nc" id="L194">                        myName = myData;</span>
-<span class="nc" id="L195">                        break;</span>
+<span class="nc" id="L190">                        addLine(new MoneyWiseQIFAccountNameLine(myData));</span>
+<span class="nc" id="L191">                        myName = myData;</span>
+<span class="nc" id="L192">                        break;</span>
                     case DESCRIPTION:
-<span class="nc" id="L197">                        addLine(new MoneyWiseQIFAccountDescLine(myData));</span>
-<span class="nc" id="L198">                        myDesc = myData;</span>
-<span class="nc" id="L199">                        break;</span>
+<span class="nc" id="L194">                        addLine(new MoneyWiseQIFAccountDescLine(myData));</span>
+<span class="nc" id="L195">                        myDesc = myData;</span>
+<span class="nc" id="L196">                        break;</span>
                     case TYPE:
-<span class="nc" id="L201">                        final MoneyWiseQIFAccountTypeLine myQLine = new MoneyWiseQIFAccountTypeLine(myData);</span>
-<span class="nc" id="L202">                        addLine(myQLine);</span>
-<span class="nc" id="L203">                        myClass = myQLine.getAccountClass();</span>
-<span class="nc" id="L204">                        break;</span>
+<span class="nc" id="L198">                        final MoneyWiseQIFAccountTypeLine myQLine = new MoneyWiseQIFAccountTypeLine(myData);</span>
+<span class="nc" id="L199">                        addLine(myQLine);</span>
+<span class="nc" id="L200">                        myClass = myQLine.getAccountClass();</span>
+<span class="nc" id="L201">                        break;</span>
                     case CREDITLIMIT:
-<span class="nc" id="L206">                        final OceanusMoney myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);</span>
-<span class="nc" id="L207">                        addLine(new MoneyWiseQIFAccountLimitLine(myMoney));</span>
-<span class="nc" id="L208">                        break;</span>
+<span class="nc" id="L203">                        final OceanusMoney myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);</span>
+<span class="nc" id="L204">                        addLine(new MoneyWiseQIFAccountLimitLine(myMoney));</span>
+<span class="nc" id="L205">                        break;</span>
                     default:
                         break;
                 }
             }
-<span class="nc" id="L213">        }</span>
+<span class="nc" id="L210">        }</span>
 
         /* Build details */
-<span class="nc" id="L216">        theName = myName;</span>
-<span class="nc" id="L217">        theDesc = myDesc;</span>
-<span class="nc" id="L218">        theClass = myClass;</span>
-<span class="nc" id="L219">    }</span>
+<span class="nc" id="L213">        theName = myName;</span>
+<span class="nc" id="L214">        theDesc = myDesc;</span>
+<span class="nc" id="L215">        theClass = myClass;</span>
+<span class="nc" id="L216">    }</span>
 
     @Override
     public String toString() {
-<span class="nc" id="L223">        return getName();</span>
+<span class="nc" id="L220">        return getName();</span>
     }
 
     /**
@@ -229,7 +226,7 @@ public class MoneyWiseQIFAccount
      * @return the Name
      */
     public String getName() {
-<span class="nc" id="L232">        return theName;</span>
+<span class="nc" id="L229">        return theName;</span>
     }
 
     /**
@@ -238,7 +235,7 @@ public class MoneyWiseQIFAccount
      * @return the Name
      */
     public String getDesc() {
-<span class="nc" id="L241">        return theDesc;</span>
+<span class="nc" id="L238">        return theDesc;</span>
     }
 
     /**
@@ -247,7 +244,7 @@ public class MoneyWiseQIFAccount
      * @return the Type
      */
     public String getType() {
-<span class="nc" id="L250">        return QIF_ACTCATMAP.get(theClass);</span>
+<span class="nc" id="L247">        return QIF_ACTCATMAP.get(theClass);</span>
     }
 
     /**
@@ -257,27 +254,27 @@ public class MoneyWiseQIFAccount
      */
     private static Map&lt;Enum&lt;?&gt;, String&gt; createClassMap() {
         /* Create the map */
-<span class="nc" id="L260">        final Map&lt;Enum&lt;?&gt;, String&gt; myMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L257">        final Map&lt;Enum&lt;?&gt;, String&gt; myMap = new HashMap&lt;&gt;();</span>
 
         /* Add the entries */
-<span class="nc" id="L263">        myMap.put(MoneyWiseDepositCategoryClass.CHECKING, QIFACT_BANK);</span>
-<span class="nc" id="L264">        myMap.put(MoneyWiseDepositCategoryClass.SAVINGS, QIFACT_BANK);</span>
-<span class="nc" id="L265">        myMap.put(MoneyWiseDepositCategoryClass.PEER2PEER, QIFACT_BANK);</span>
-<span class="nc" id="L266">        myMap.put(MoneyWiseDepositCategoryClass.BOND, QIFACT_BANK);</span>
-<span class="nc" id="L267">        myMap.put(MoneyWiseCashCategoryClass.CASH, QIFACT_CASH);</span>
-<span class="nc" id="L268">        myMap.put(MoneyWiseCashCategoryClass.AUTOEXPENSE, QIFACT_CASH);</span>
-<span class="nc" id="L269">        myMap.put(MoneyWiseLoanCategoryClass.CREDITCARD, QIFACT_CCARD);</span>
-<span class="nc" id="L270">        myMap.put(MoneyWiseBasicDataType.PORTFOLIO, QIFACT_INVST);</span>
-<span class="nc" id="L271">        myMap.put(MoneyWiseLoanCategoryClass.PRIVATELOAN, QIFACT_ASSET);</span>
-<span class="nc" id="L272">        myMap.put(MoneyWiseLoanCategoryClass.LOAN, QIFACT_LOAN);</span>
+<span class="nc" id="L260">        myMap.put(MoneyWiseDepositCategoryClass.CHECKING, QIFACT_BANK);</span>
+<span class="nc" id="L261">        myMap.put(MoneyWiseDepositCategoryClass.SAVINGS, QIFACT_BANK);</span>
+<span class="nc" id="L262">        myMap.put(MoneyWiseDepositCategoryClass.PEER2PEER, QIFACT_BANK);</span>
+<span class="nc" id="L263">        myMap.put(MoneyWiseDepositCategoryClass.BOND, QIFACT_BANK);</span>
+<span class="nc" id="L264">        myMap.put(MoneyWiseCashCategoryClass.CASH, QIFACT_CASH);</span>
+<span class="nc" id="L265">        myMap.put(MoneyWiseCashCategoryClass.AUTOEXPENSE, QIFACT_CASH);</span>
+<span class="nc" id="L266">        myMap.put(MoneyWiseLoanCategoryClass.CREDITCARD, QIFACT_CCARD);</span>
+<span class="nc" id="L267">        myMap.put(MoneyWiseBasicDataType.PORTFOLIO, QIFACT_INVST);</span>
+<span class="nc" id="L268">        myMap.put(MoneyWiseLoanCategoryClass.PRIVATELOAN, QIFACT_ASSET);</span>
+<span class="nc" id="L269">        myMap.put(MoneyWiseLoanCategoryClass.LOAN, QIFACT_LOAN);</span>
 
         /* Return the map */
-<span class="nc" id="L275">        return myMap;</span>
+<span class="nc" id="L272">        return myMap;</span>
     }
 
     @Override
     public int compareTo(final MoneyWiseQIFAccount pThat) {
-<span class="nc" id="L280">        return theName.compareTo(pThat.getName());</span>
+<span class="nc" id="L277">        return theName.compareTo(pThat.getName());</span>
     }
 
     /**
@@ -292,12 +289,12 @@ public class MoneyWiseQIFAccount
          */
         protected MoneyWiseQIFAccountNameLine(final String pName) {
             /* Call super-constructor */
-<span class="nc" id="L295">            super(pName);</span>
-<span class="nc" id="L296">        }</span>
+<span class="nc" id="L292">            super(pName);</span>
+<span class="nc" id="L293">        }</span>
 
         @Override
         public MoneyWiseQAccountLineType getLineType() {
-<span class="nc" id="L300">            return MoneyWiseQAccountLineType.NAME;</span>
+<span class="nc" id="L297">            return MoneyWiseQAccountLineType.NAME;</span>
         }
 
         /**
@@ -306,7 +303,7 @@ public class MoneyWiseQIFAccount
          * @return the name
          */
         public String getName() {
-<span class="nc" id="L309">            return getValue();</span>
+<span class="nc" id="L306">            return getValue();</span>
         }
     }
 
@@ -322,12 +319,12 @@ public class MoneyWiseQIFAccount
          */
         protected MoneyWiseQIFAccountDescLine(final String pDesc) {
             /* Call super-constructor */
-<span class="nc" id="L325">            super(pDesc);</span>
-<span class="nc" id="L326">        }</span>
+<span class="nc" id="L322">            super(pDesc);</span>
+<span class="nc" id="L323">        }</span>
 
         @Override
         public MoneyWiseQAccountLineType getLineType() {
-<span class="nc" id="L330">            return MoneyWiseQAccountLineType.DESCRIPTION;</span>
+<span class="nc" id="L327">            return MoneyWiseQAccountLineType.DESCRIPTION;</span>
         }
 
         /**
@@ -336,7 +333,7 @@ public class MoneyWiseQIFAccount
          * @return the description
          */
         public String getDesc() {
-<span class="nc" id="L339">            return getValue();</span>
+<span class="nc" id="L336">            return getValue();</span>
         }
     }
 
@@ -357,11 +354,11 @@ public class MoneyWiseQIFAccount
          */
         protected MoneyWiseQIFAccountTypeLine(final Enum&lt;?&gt; pClass) {
             /* Call super-constructor */
-<span class="nc" id="L360">            super(QIF_ACTCATMAP.get(pClass));</span>
+<span class="nc" id="L357">            super(QIF_ACTCATMAP.get(pClass));</span>
 
             /* Record the class */
-<span class="nc" id="L363">            theClass = pClass;</span>
-<span class="nc" id="L364">        }</span>
+<span class="nc" id="L360">            theClass = pClass;</span>
+<span class="nc" id="L361">        }</span>
 
         /**
          * Constructor.
@@ -370,30 +367,30 @@ public class MoneyWiseQIFAccount
          */
         protected MoneyWiseQIFAccountTypeLine(final String pType) {
             /* Call super-constructor */
-<span class="nc" id="L373">            super(pType);</span>
+<span class="nc" id="L370">            super(pType);</span>
 
             /* Loop through the map entries */
-<span class="nc" id="L376">            Enum&lt;?&gt; myClass = null;</span>
-<span class="nc bnc" id="L377" title="All 2 branches missed.">            for (Entry&lt;Enum&lt;?&gt;, String&gt; myEntry : QIF_ACTCATMAP.entrySet()) {</span>
+<span class="nc" id="L373">            Enum&lt;?&gt; myClass = null;</span>
+<span class="nc bnc" id="L374" title="All 2 branches missed.">            for (Entry&lt;Enum&lt;?&gt;, String&gt; myEntry : QIF_ACTCATMAP.entrySet()) {</span>
                 /* If we have a match */
-<span class="nc bnc" id="L379" title="All 2 branches missed.">                if (pType.equals(myEntry.getValue())) {</span>
-<span class="nc" id="L380">                    myClass = myEntry.getKey();</span>
-<span class="nc" id="L381">                    break;</span>
+<span class="nc bnc" id="L376" title="All 2 branches missed.">                if (pType.equals(myEntry.getValue())) {</span>
+<span class="nc" id="L377">                    myClass = myEntry.getKey();</span>
+<span class="nc" id="L378">                    break;</span>
                 }
-<span class="nc" id="L383">            }</span>
+<span class="nc" id="L380">            }</span>
 
             /* Store the class */
-<span class="nc" id="L386">            theClass = myClass;</span>
-<span class="nc" id="L387">        }</span>
+<span class="nc" id="L383">            theClass = myClass;</span>
+<span class="nc" id="L384">        }</span>
 
         @Override
         public MoneyWiseQAccountLineType getLineType() {
-<span class="nc" id="L391">            return MoneyWiseQAccountLineType.TYPE;</span>
+<span class="nc" id="L388">            return MoneyWiseQAccountLineType.TYPE;</span>
         }
 
         @Override
         public String toString() {
-<span class="nc" id="L396">            return theClass.toString();</span>
+<span class="nc" id="L393">            return theClass.toString();</span>
         }
 
         /**
@@ -402,7 +399,7 @@ public class MoneyWiseQIFAccount
          * @return the account class
          */
         public Enum&lt;?&gt; getAccountClass() {
-<span class="nc" id="L405">            return theClass;</span>
+<span class="nc" id="L402">            return theClass;</span>
         }
     }
 
@@ -418,12 +415,12 @@ public class MoneyWiseQIFAccount
          */
         protected MoneyWiseQIFAccountLimitLine(final OceanusMoney pLimit) {
             /* Call super-constructor */
-<span class="nc" id="L421">            super(pLimit);</span>
-<span class="nc" id="L422">        }</span>
+<span class="nc" id="L418">            super(pLimit);</span>
+<span class="nc" id="L419">        }</span>
 
         @Override
         public MoneyWiseQAccountLineType getLineType() {
-<span class="nc" id="L426">            return MoneyWiseQAccountLineType.CREDITLIMIT;</span>
+<span class="nc" id="L423">            return MoneyWiseQAccountLineType.CREDITLIMIT;</span>
         }
 
         /**
@@ -432,8 +429,141 @@ public class MoneyWiseQIFAccount
          * @return the credit limit
          */
         public OceanusMoney getCreditLimit() {
-<span class="nc" id="L435">            return getMoney();</span>
+<span class="nc" id="L432">            return getMoney();</span>
+        }
+    }
+
+    /**
+     * The Account line.
+     *
+     * @param &lt;X&gt; the line type
+     */
+    public abstract static class MoneyWiseQIFXferAccountLine&lt;X extends MoneyWiseQLineType&gt;
+            extends MoneyWiseQIFLine&lt;X&gt; {
+        /**
+         * The account.
+         */
+        private final MoneyWiseQIFAccount theAccount;
+
+        /**
+         * The class list.
+         */
+        private final List&lt;MoneyWiseQIFClass&gt; theClasses;
+
+        /**
+         * Constructor.
+         *
+         * @param pAccount the Account
+         */
+        protected MoneyWiseQIFXferAccountLine(final MoneyWiseQIFAccount pAccount) {
+<span class="nc" id="L459">            this(pAccount, null);</span>
+<span class="nc" id="L460">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pAccount the Account
+         * @param pClasses the classes
+         */
+        protected MoneyWiseQIFXferAccountLine(final MoneyWiseQIFAccount pAccount,
+<span class="nc" id="L469">                                              final List&lt;MoneyWiseQIFClass&gt; pClasses) {</span>
+            /* Store data */
+<span class="nc" id="L471">            theAccount = pAccount;</span>
+<span class="nc" id="L472">            theClasses = pClasses;</span>
+<span class="nc" id="L473">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L477">            return theAccount.toString();</span>
+        }
+
+        /**
+         * Obtain account.
+         *
+         * @return the account
+         */
+        public MoneyWiseQIFAccount getAccount() {
+<span class="nc" id="L486">            return theAccount;</span>
+        }
+
+        /**
+         * Obtain class list.
+         *
+         * @return the class list
+         */
+        public List&lt;MoneyWiseQIFClass&gt; getClassList() {
+<span class="nc" id="L495">            return theClasses;</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the string data */
+<span class="nc" id="L502">            pBuilder.append(MoneyWiseQIFConstants.QIF_XFERSTART);</span>
+<span class="nc" id="L503">            pBuilder.append(theAccount.getName());</span>
+<span class="nc" id="L504">            pBuilder.append(MoneyWiseQIFConstants.QIF_XFEREND);</span>
+
+            /* If we have classes */
+<span class="nc bnc" id="L507" title="All 2 branches missed.">            if (theClasses != null) {</span>
+                /* Add class indicator */
+<span class="nc" id="L509">                pBuilder.append(MoneyWiseQIFConstants.QIF_CLASS);</span>
+
+                /* Iterate through the list */
+<span class="nc" id="L512">                final Iterator&lt;MoneyWiseQIFClass&gt; myIterator = theClasses.iterator();</span>
+<span class="nc bnc" id="L513" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
+<span class="nc" id="L514">                    final MoneyWiseQIFClass myClass = myIterator.next();</span>
+
+                    /* Add to the list */
+<span class="nc" id="L517">                    pBuilder.append(myClass.getName());</span>
+<span class="nc bnc" id="L518" title="All 2 branches missed.">                    if (myIterator.hasNext()) {</span>
+<span class="nc" id="L519">                        pBuilder.append(MoneyWiseQIFConstants.QIF_CLASSSEP);</span>
+                    }
+<span class="nc" id="L521">                }</span>
+            }
+<span class="nc" id="L523">        }</span>
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L528" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L529">                return true;</span>
+            }
+<span class="nc bnc" id="L531" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L532">                return false;</span>
+            }
+
+            /* Check class */
+<span class="nc bnc" id="L536" title="All 2 branches missed.">            if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L537">                return false;</span>
+            }
+
+            /* Cast correctly */
+<span class="nc" id="L541">            final MoneyWiseQIFXferAccountLine&lt;?&gt; myLine = (MoneyWiseQIFXferAccountLine&lt;?&gt;) pThat;</span>
+
+            /* Check line type */
+<span class="nc bnc" id="L544" title="All 2 branches missed.">            if (!getLineType().equals(myLine.getLineType())) {</span>
+<span class="nc" id="L545">                return false;</span>
+            }
+
+            /* Check account */
+<span class="nc bnc" id="L549" title="All 2 branches missed.">            if (!theAccount.equals(myLine.getAccount())) {</span>
+<span class="nc" id="L550">                return false;</span>
+            }
+
+            /* Check classes */
+<span class="nc" id="L554">            final List&lt;MoneyWiseQIFClass&gt; myClasses = myLine.getClassList();</span>
+<span class="nc bnc" id="L555" title="All 2 branches missed.">            if (theClasses == null) {</span>
+<span class="nc bnc" id="L556" title="All 2 branches missed.">                return myClasses == null;</span>
+<span class="nc bnc" id="L557" title="All 2 branches missed.">            } else if (myClasses == null) {</span>
+<span class="nc" id="L558">                return true;</span>
+            }
+<span class="nc" id="L560">            return theClasses.equals(myClasses);</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L565">            return Objects.hash(getLineType(), theClasses, theAccount);</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

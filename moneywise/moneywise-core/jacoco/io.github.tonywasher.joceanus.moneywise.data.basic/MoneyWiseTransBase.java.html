@@ -16,29 +16,33 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorTrans;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetListCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedPair;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
  * Transaction data type.
@@ -46,11 +50,12 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedValues;
  * @author Tony Washer
  */
 public abstract class MoneyWiseTransBase
-        extends PrometheusEncryptedDataItem {
+        extends PrometheusEncryptedDataItem
+        implements MoneyWiseAssetTouch {
     /**
      * Object name.
      */
-<span class="fc" id="L53">    public static final String OBJECT_NAME = MoneyWiseTransBase.class.getSimpleName();</span>
+<span class="fc" id="L58">    public static final String OBJECT_NAME = MoneyWiseTransBase.class.getSimpleName();</span>
 
     /**
      * Blank character.
@@ -60,34 +65,34 @@ public abstract class MoneyWiseTransBase
     /**
      * Local Report fields.
      */
-<span class="fc" id="L63">    private static final PrometheusEncryptedFieldSet&lt;MoneyWiseTransBase&gt; FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(MoneyWiseTransBase.class);</span>
+<span class="fc" id="L68">    private static final PrometheusEncryptedFieldSet&lt;MoneyWiseTransBase&gt; FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(MoneyWiseTransBase.class);</span>
 
     /*
      * FieldIds.
      */
     static {
-<span class="fc" id="L69">        FIELD_DEFS.declareLinkField(MoneyWiseBasicResource.TRANSACTION_ACCOUNT);</span>
-<span class="fc" id="L70">        FIELD_DEFS.declareEnumField(MoneyWiseBasicResource.TRANSACTION_DIRECTION);</span>
-<span class="fc" id="L71">        FIELD_DEFS.declareLinkField(MoneyWiseBasicResource.TRANSACTION_PARTNER);</span>
-<span class="fc" id="L72">        FIELD_DEFS.declareEncryptedMoneyField(MoneyWiseBasicResource.TRANSACTION_AMOUNT);</span>
-<span class="fc" id="L73">        FIELD_DEFS.declareLinkField(MoneyWiseBasicDataType.TRANSCATEGORY);</span>
-<span class="fc" id="L74">        FIELD_DEFS.declareBooleanField(MoneyWiseBasicResource.TRANSACTION_RECONCILED);</span>
+<span class="fc" id="L74">        FIELD_DEFS.declareLinkField(MoneyWiseBasicResource.TRANSACTION_ACCOUNT);</span>
+<span class="fc" id="L75">        FIELD_DEFS.declareEnumField(MoneyWiseBasicResource.TRANSACTION_DIRECTION);</span>
+<span class="fc" id="L76">        FIELD_DEFS.declareLinkField(MoneyWiseBasicResource.TRANSACTION_PARTNER);</span>
+<span class="fc" id="L77">        FIELD_DEFS.declareEncryptedMoneyField(MoneyWiseBasicResource.TRANSACTION_AMOUNT);</span>
+<span class="fc" id="L78">        FIELD_DEFS.declareLinkField(MoneyWiseBasicDataType.TRANSCATEGORY);</span>
+<span class="fc" id="L79">        FIELD_DEFS.declareBooleanField(MoneyWiseBasicResource.TRANSACTION_RECONCILED);</span>
     }
 
     /**
      * Invalid Debit/Credit/Category Combination Error Text.
      */
-<span class="fc" id="L80">    public static final String ERROR_COMBO = MoneyWiseBasicResource.TRANSACTION_ERROR_ASSETPAIR.getValue();</span>
+<span class="fc" id="L85">    public static final String ERROR_COMBO = MoneyWiseBasicResource.TRANSACTION_ERROR_ASSETPAIR.getValue();</span>
 
     /**
      * Zero Amount Error Text.
      */
-<span class="fc" id="L85">    protected static final String ERROR_ZEROAMOUNT = MoneyWiseBasicResource.TRANSACTION_ERROR_ZERO.getValue();</span>
+<span class="fc" id="L90">    protected static final String ERROR_ZEROAMOUNT = MoneyWiseBasicResource.TRANSACTION_ERROR_ZERO.getValue();</span>
 
     /**
      * Currency Error Text.
      */
-<span class="fc" id="L90">    public static final String ERROR_CURRENCY = MoneyWiseBasicResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();</span>
+<span class="fc" id="L95">    public static final String ERROR_CURRENCY = MoneyWiseBasicResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();</span>
 
     /**
      * Copy Constructor.
@@ -98,8 +103,8 @@ public abstract class MoneyWiseTransBase
     protected MoneyWiseTransBase(final MoneyWiseTransBaseList&lt;?&gt; pList,
                                  final MoneyWiseTransBase pTrans) {
         /* Set standard values */
-<span class="fc" id="L101">        super(pList, pTrans);</span>
-<span class="fc" id="L102">    }</span>
+<span class="fc" id="L106">        super(pList, pTrans);</span>
+<span class="fc" id="L107">    }</span>
 
     /**
      * Edit constructor.
@@ -107,10 +112,10 @@ public abstract class MoneyWiseTransBase
      * @param pList the list
      */
     protected MoneyWiseTransBase(final MoneyWiseTransBaseList&lt;?&gt; pList) {
-<span class="fc" id="L110">        super(pList, 0);</span>
-<span class="fc" id="L111">        setNextDataKeySet();</span>
-<span class="fc" id="L112">        setValueReconciled(Boolean.FALSE);</span>
-<span class="fc" id="L113">    }</span>
+<span class="fc" id="L115">        super(pList, 0);</span>
+<span class="fc" id="L116">        setNextDataKeySet();</span>
+<span class="fc" id="L117">        setValueReconciled(Boolean.FALSE);</span>
+<span class="fc" id="L118">    }</span>
 
     /**
      * Values constructor.
@@ -122,149 +127,149 @@ public abstract class MoneyWiseTransBase
     protected MoneyWiseTransBase(final MoneyWiseTransBaseList&lt;?&gt; pList,
                                  final PrometheusDataValues pValues) throws OceanusException {
         /* Initialise the item */
-<span class="fc" id="L125">        super(pList, pValues);</span>
+<span class="fc" id="L130">        super(pList, pValues);</span>
 
         /* Access formatter */
-<span class="fc" id="L128">        final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();</span>
+<span class="fc" id="L133">        final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();</span>
 
         /* Protect against exceptions */
         try {
             /* Store the AssetPair */
-<span class="fc" id="L133">            Object myValue = pValues.getValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION);</span>
-<span class="fc bfc" id="L134" title="All 2 branches covered.">            if (myValue instanceof Boolean b) {</span>
-<span class="fc" id="L135">                setValueDirection(b);</span>
-<span class="pc bpc" id="L136" title="1 of 2 branches missed.">            } else if (myValue instanceof String s) {</span>
-<span class="fc" id="L137">                setValueDirection(s);</span>
-<span class="nc bnc" id="L138" title="All 2 branches missed.">            } else if (myValue instanceof MoneyWiseAssetDirection d) {</span>
-<span class="nc" id="L139">                setValueDirection(d);</span>
+<span class="fc" id="L138">            Object myValue = pValues.getValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION);</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">            if (myValue instanceof Boolean b) {</span>
+<span class="fc" id="L140">                setValueDirection(b);</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">            } else if (myValue instanceof String s) {</span>
+<span class="fc" id="L142">                setValueDirection(s);</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">            } else if (myValue instanceof MoneyWiseAssetDirection d) {</span>
+<span class="nc" id="L144">                setValueDirection(d);</span>
             }
 
             /* Store the Account */
-<span class="fc" id="L143">            myValue = pValues.getValue(MoneyWiseBasicResource.TRANSACTION_ACCOUNT);</span>
-<span class="fc bfc" id="L144" title="All 2 branches covered.">            if (myValue instanceof Long l) {</span>
-<span class="fc" id="L145">                setValueAccount(l);</span>
-<span class="pc bpc" id="L146" title="1 of 2 branches missed.">            } else if (myValue instanceof String s) {</span>
-<span class="fc" id="L147">                setValueAccount(s);</span>
-<span class="nc bnc" id="L148" title="All 2 branches missed.">            } else if (myValue instanceof MoneyWiseTransAsset a) {</span>
-<span class="nc" id="L149">                setValueAccount(a);</span>
+<span class="fc" id="L148">            myValue = pValues.getValue(MoneyWiseBasicResource.TRANSACTION_ACCOUNT);</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">            if (myValue instanceof Long l) {</span>
+<span class="fc" id="L150">                setValueAccount(l);</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">            } else if (myValue instanceof String s) {</span>
+<span class="fc" id="L152">                setValueAccount(s);</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">            } else if (myValue instanceof MoneyWiseTransAsset a) {</span>
+<span class="nc" id="L154">                setValueAccount(a);</span>
             }
 
             /* Store the Partner */
-<span class="fc" id="L153">            myValue = pValues.getValue(MoneyWiseBasicResource.TRANSACTION_PARTNER);</span>
-<span class="fc bfc" id="L154" title="All 2 branches covered.">            if (myValue instanceof Long l) {</span>
-<span class="fc" id="L155">                setValuePartner(l);</span>
-<span class="pc bpc" id="L156" title="1 of 2 branches missed.">            } else if (myValue instanceof String s) {</span>
-<span class="fc" id="L157">                setValuePartner(s);</span>
-<span class="nc bnc" id="L158" title="All 2 branches missed.">            } else if (myValue instanceof MoneyWiseTransAsset a) {</span>
-<span class="nc" id="L159">                setValuePartner(a);</span>
+<span class="fc" id="L158">            myValue = pValues.getValue(MoneyWiseBasicResource.TRANSACTION_PARTNER);</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">            if (myValue instanceof Long l) {</span>
+<span class="fc" id="L160">                setValuePartner(l);</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">            } else if (myValue instanceof String s) {</span>
+<span class="fc" id="L162">                setValuePartner(s);</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">            } else if (myValue instanceof MoneyWiseTransAsset a) {</span>
+<span class="nc" id="L164">                setValuePartner(a);</span>
             }
 
             /* Store the Category */
-<span class="fc" id="L163">            myValue = pValues.getValue(MoneyWiseBasicDataType.TRANSCATEGORY);</span>
-<span class="fc bfc" id="L164" title="All 2 branches covered.">            if (myValue instanceof Integer i) {</span>
-<span class="fc" id="L165">                setValueCategory(i);</span>
-<span class="pc bpc" id="L166" title="1 of 2 branches missed.">            } else if (myValue instanceof String s) {</span>
-<span class="fc" id="L167">                setValueCategory(s);</span>
-<span class="nc bnc" id="L168" title="All 2 branches missed.">            } else if (myValue instanceof MoneyWiseTransCategory c) {</span>
-<span class="nc" id="L169">                setValueCategory(c);</span>
+<span class="fc" id="L168">            myValue = pValues.getValue(MoneyWiseBasicDataType.TRANSCATEGORY);</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">            if (myValue instanceof Integer i) {</span>
+<span class="fc" id="L170">                setValueCategory(i);</span>
+<span class="pc bpc" id="L171" title="1 of 2 branches missed.">            } else if (myValue instanceof String s) {</span>
+<span class="fc" id="L172">                setValueCategory(s);</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">            } else if (myValue instanceof MoneyWiseTransCategory c) {</span>
+<span class="nc" id="L174">                setValueCategory(c);</span>
             }
 
             /* Store the Amount */
-<span class="fc" id="L173">            myValue = pValues.getValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT);</span>
-<span class="pc bpc" id="L174" title="1 of 2 branches missed.">            if (myValue instanceof OceanusMoney m) {</span>
-<span class="nc" id="L175">                setValueAmount(m);</span>
-<span class="fc bfc" id="L176" title="All 2 branches covered.">            } else if (myValue instanceof byte[] ba) {</span>
-<span class="fc" id="L177">                setValueAmount(ba);</span>
-<span class="fc bfc" id="L178" title="All 2 branches covered.">            } else if (myValue instanceof String myString) {</span>
-<span class="fc" id="L179">                setValueAmount(myString);</span>
-<span class="fc" id="L180">                setValueAmount(myFormatter.parseValue(myString, OceanusMoney.class));</span>
+<span class="fc" id="L178">            myValue = pValues.getValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT);</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">            if (myValue instanceof OceanusMoney m) {</span>
+<span class="nc" id="L180">                setValueAmount(m);</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">            } else if (myValue instanceof byte[] ba) {</span>
+<span class="fc" id="L182">                setValueAmount(ba);</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">            } else if (myValue instanceof String myString) {</span>
+<span class="fc" id="L184">                setValueAmount(myString);</span>
+<span class="fc" id="L185">                setValueAmount(myFormatter.parseValue(myString, OceanusMoney.class));</span>
             }
 
             /* Store the reconciled flag */
-<span class="fc" id="L184">            myValue = pValues.getValue(MoneyWiseBasicResource.TRANSACTION_RECONCILED);</span>
-<span class="fc bfc" id="L185" title="All 2 branches covered.">            if (myValue instanceof Boolean b) {</span>
-<span class="fc" id="L186">                setValueReconciled(b);</span>
-<span class="pc bpc" id="L187" title="1 of 2 branches missed.">            } else if (myValue instanceof String s) {</span>
-<span class="nc" id="L188">                setValueReconciled(myFormatter.parseValue(s, Boolean.class));</span>
+<span class="fc" id="L189">            myValue = pValues.getValue(MoneyWiseBasicResource.TRANSACTION_RECONCILED);</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">            if (myValue instanceof Boolean b) {</span>
+<span class="fc" id="L191">                setValueReconciled(b);</span>
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">            } else if (myValue instanceof String s) {</span>
+<span class="nc" id="L193">                setValueReconciled(myFormatter.parseValue(s, Boolean.class));</span>
             }
 
             /* Catch Exceptions */
-<span class="nc" id="L192">        } catch (IllegalArgumentException</span>
+<span class="nc" id="L197">        } catch (IllegalArgumentException</span>
                  | OceanusException e) {
             /* Pass on exception */
-<span class="nc" id="L195">            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);</span>
-<span class="fc" id="L196">        }</span>
-<span class="fc" id="L197">    }</span>
+<span class="nc" id="L200">            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);</span>
+<span class="fc" id="L201">        }</span>
+<span class="fc" id="L202">    }</span>
 
     @Override
     public boolean includeXmlField(final MetisDataFieldId pField) {
         /* Determine whether fields should be included */
-<span class="fc bfc" id="L202" title="All 2 branches covered.">        if (MoneyWiseBasicResource.TRANSACTION_DIRECTION.equals(pField)) {</span>
-<span class="fc" id="L203">            return true;</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">        if (MoneyWiseBasicResource.TRANSACTION_DIRECTION.equals(pField)) {</span>
+<span class="fc" id="L208">            return true;</span>
         }
-<span class="fc bfc" id="L205" title="All 2 branches covered.">        if (MoneyWiseBasicDataType.TRANSCATEGORY.equals(pField)) {</span>
-<span class="fc" id="L206">            return true;</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">        if (MoneyWiseBasicDataType.TRANSCATEGORY.equals(pField)) {</span>
+<span class="fc" id="L211">            return true;</span>
         }
-<span class="fc bfc" id="L208" title="All 2 branches covered.">        if (MoneyWiseBasicResource.TRANSACTION_ACCOUNT.equals(pField)) {</span>
-<span class="fc" id="L209">            return true;</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">        if (MoneyWiseBasicResource.TRANSACTION_ACCOUNT.equals(pField)) {</span>
+<span class="fc" id="L214">            return true;</span>
         }
-<span class="fc bfc" id="L211" title="All 2 branches covered.">        if (MoneyWiseBasicResource.TRANSACTION_PARTNER.equals(pField)) {</span>
-<span class="fc" id="L212">            return true;</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">        if (MoneyWiseBasicResource.TRANSACTION_PARTNER.equals(pField)) {</span>
+<span class="fc" id="L217">            return true;</span>
         }
-<span class="fc bfc" id="L214" title="All 2 branches covered.">        if (MoneyWiseBasicResource.TRANSACTION_AMOUNT.equals(pField)) {</span>
-<span class="fc bfc" id="L215" title="All 2 branches covered.">            return getAmount() != null;</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">        if (MoneyWiseBasicResource.TRANSACTION_AMOUNT.equals(pField)) {</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">            return getAmount() != null;</span>
         }
-<span class="fc bfc" id="L217" title="All 2 branches covered.">        if (MoneyWiseBasicResource.TRANSACTION_RECONCILED.equals(pField)) {</span>
-<span class="fc" id="L218">            return isReconciled();</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        if (MoneyWiseBasicResource.TRANSACTION_RECONCILED.equals(pField)) {</span>
+<span class="fc" id="L223">            return isReconciled();</span>
         }
 
         /* Pass call on */
-<span class="fc" id="L222">        return super.includeXmlField(pField);</span>
+<span class="fc" id="L227">        return super.includeXmlField(pField);</span>
     }
 
     @Override
     public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L227">        return toString();</span>
+<span class="nc" id="L232">        return toString();</span>
     }
 
     @Override
     public String toString() {
         /* Handle header */
-<span class="nc bnc" id="L233" title="All 2 branches missed.">        if (isHeader()) {</span>
-<span class="nc" id="L234">            return PrometheusDataResource.DATAITEM_HEADER.getValue();</span>
+<span class="nc bnc" id="L238" title="All 2 branches missed.">        if (isHeader()) {</span>
+<span class="nc" id="L239">            return PrometheusDataResource.DATAITEM_HEADER.getValue();</span>
         }
 
         /* Access Key Values */
-<span class="nc" id="L238">        final PrometheusEncryptedValues myValues = getValues();</span>
-<span class="nc" id="L239">        final Object myAccount = myValues.getValue(MoneyWiseBasicResource.TRANSACTION_ACCOUNT);</span>
-<span class="nc" id="L240">        final Object myPartner = myValues.getValue(MoneyWiseBasicResource.TRANSACTION_PARTNER);</span>
-<span class="nc" id="L241">        final Object myDir = myValues.getValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION);</span>
-<span class="nc" id="L242">        final Object myCategory = myValues.getValue(MoneyWiseBasicDataType.TRANSCATEGORY);</span>
-<span class="nc" id="L243">        final Object myAmount = myValues.getValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT);</span>
+<span class="nc" id="L243">        final PrometheusEncryptedValues myValues = getValues();</span>
+<span class="nc" id="L244">        final Object myAccount = myValues.getValue(MoneyWiseBasicResource.TRANSACTION_ACCOUNT);</span>
+<span class="nc" id="L245">        final Object myPartner = myValues.getValue(MoneyWiseBasicResource.TRANSACTION_PARTNER);</span>
+<span class="nc" id="L246">        final Object myDir = myValues.getValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION);</span>
+<span class="nc" id="L247">        final Object myCategory = myValues.getValue(MoneyWiseBasicDataType.TRANSCATEGORY);</span>
+<span class="nc" id="L248">        final Object myAmount = myValues.getValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT);</span>
 
         /* Access formatter */
-<span class="nc" id="L246">        final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();</span>
+<span class="nc" id="L251">        final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();</span>
 
         /* Create string builder */
-<span class="nc" id="L249">        final StringBuilder myBuilder = new StringBuilder();</span>
-<span class="nc" id="L250">        myBuilder.append(myFormatter.formatObject(myCategory));</span>
-<span class="nc" id="L251">        myBuilder.append(CHAR_BLANK);</span>
-<span class="nc bnc" id="L252" title="All 2 branches missed.">        myBuilder.append(myAmount == null</span>
-<span class="nc" id="L253">                ? &quot;&quot;</span>
-<span class="nc" id="L254">                : myFormatter.formatObject(myAmount));</span>
-<span class="nc" id="L255">        myBuilder.append(CHAR_BLANK);</span>
-<span class="nc" id="L256">        myBuilder.append(myFormatter.formatObject(myAccount));</span>
-<span class="nc bnc" id="L257" title="All 2 branches missed.">        if (myDir == null) {</span>
-<span class="nc" id="L258">            myBuilder.append(&quot;??&quot;);</span>
+<span class="nc" id="L254">        final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="nc" id="L255">        myBuilder.append(myFormatter.formatObject(myCategory));</span>
+<span class="nc" id="L256">        myBuilder.append(CHAR_BLANK);</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">        myBuilder.append(myAmount == null</span>
+<span class="nc" id="L258">                ? &quot;&quot;</span>
+<span class="nc" id="L259">                : myFormatter.formatObject(myAmount));</span>
+<span class="nc" id="L260">        myBuilder.append(CHAR_BLANK);</span>
+<span class="nc" id="L261">        myBuilder.append(myFormatter.formatObject(myAccount));</span>
+<span class="nc bnc" id="L262" title="All 2 branches missed.">        if (myDir == null) {</span>
+<span class="nc" id="L263">            myBuilder.append(&quot;??&quot;);</span>
         } else {
-<span class="nc bnc" id="L260" title="All 2 branches missed.">            myBuilder.append(MoneyWiseAssetDirection.FROM.equals(myDir)</span>
-<span class="nc" id="L261">                    ? &quot;&lt;-&quot;</span>
-<span class="nc" id="L262">                    : &quot;-&gt;&quot;);</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">            myBuilder.append(MoneyWiseAssetDirection.FROM.equals(myDir)</span>
+<span class="nc" id="L266">                    ? &quot;&lt;-&quot;</span>
+<span class="nc" id="L267">                    : &quot;-&gt;&quot;);</span>
         }
-<span class="nc" id="L264">        myBuilder.append(myFormatter.formatObject(myPartner));</span>
+<span class="nc" id="L269">        myBuilder.append(myFormatter.formatObject(myPartner));</span>
 
         /* return it */
-<span class="nc" id="L267">        return myBuilder.toString();</span>
+<span class="nc" id="L272">        return myBuilder.toString();</span>
     }
 
     /**
@@ -273,7 +278,7 @@ public abstract class MoneyWiseTransBase
      * @return the category
      */
     public final MoneyWiseTransCategory getCategory() {
-<span class="fc" id="L276">        return getValues().getValue(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategory.class);</span>
+<span class="fc" id="L281">        return getValues().getValue(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategory.class);</span>
     }
 
     /**
@@ -282,10 +287,10 @@ public abstract class MoneyWiseTransBase
      * @return the categoryId
      */
     public Integer getCategoryId() {
-<span class="fc" id="L285">        final MoneyWiseTransCategory myCategory = getCategory();</span>
-<span class="pc bpc" id="L286" title="1 of 2 branches missed.">        return myCategory == null</span>
-<span class="nc" id="L287">                ? null</span>
-<span class="fc" id="L288">                : myCategory.getIndexedId();</span>
+<span class="fc" id="L290">        final MoneyWiseTransCategory myCategory = getCategory();</span>
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">        return myCategory == null</span>
+<span class="nc" id="L292">                ? null</span>
+<span class="fc" id="L293">                : myCategory.getIndexedId();</span>
     }
 
     /**
@@ -294,10 +299,10 @@ public abstract class MoneyWiseTransBase
      * @return the categoryName
      */
     public String getCategoryName() {
-<span class="nc" id="L297">        final MoneyWiseTransCategory myCategory = getCategory();</span>
-<span class="nc bnc" id="L298" title="All 2 branches missed.">        return myCategory == null</span>
-<span class="nc" id="L299">                ? null</span>
-<span class="nc" id="L300">                : myCategory.getName();</span>
+<span class="nc" id="L302">        final MoneyWiseTransCategory myCategory = getCategory();</span>
+<span class="nc bnc" id="L303" title="All 2 branches missed.">        return myCategory == null</span>
+<span class="nc" id="L304">                ? null</span>
+<span class="nc" id="L305">                : myCategory.getName();</span>
     }
 
     /**
@@ -306,10 +311,10 @@ public abstract class MoneyWiseTransBase
      * @return the eventCategoryClass
      */
     public MoneyWiseTransCategoryClass getCategoryClass() {
-<span class="fc" id="L309">        final MoneyWiseTransCategory myCategory = getCategory();</span>
-<span class="pc bpc" id="L310" title="1 of 2 branches missed.">        return myCategory == null</span>
-<span class="nc" id="L311">                ? null</span>
-<span class="fc" id="L312">                : myCategory.getCategoryTypeClass();</span>
+<span class="fc" id="L314">        final MoneyWiseTransCategory myCategory = getCategory();</span>
+<span class="pc bpc" id="L315" title="1 of 2 branches missed.">        return myCategory == null</span>
+<span class="nc" id="L316">                ? null</span>
+<span class="fc" id="L317">                : myCategory.getCategoryTypeClass();</span>
     }
 
     /**
@@ -318,7 +323,7 @@ public abstract class MoneyWiseTransBase
      * @return the amount
      */
     public OceanusMoney getAmount() {
-<span class="fc" id="L321">        return getValues().getValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, OceanusMoney.class);</span>
+<span class="fc" id="L326">        return getValues().getValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, OceanusMoney.class);</span>
     }
 
     /**
@@ -327,7 +332,7 @@ public abstract class MoneyWiseTransBase
      * @return the bytes
      */
     public byte[] getAmountBytes() {
-<span class="fc" id="L330">        return getValues().getEncryptedBytes(MoneyWiseBasicResource.TRANSACTION_AMOUNT);</span>
+<span class="fc" id="L335">        return getValues().getEncryptedBytes(MoneyWiseBasicResource.TRANSACTION_AMOUNT);</span>
     }
 
     /**
@@ -336,7 +341,7 @@ public abstract class MoneyWiseTransBase
      * @return the Field
      */
     protected PrometheusEncryptedPair getAmountField() {
-<span class="nc" id="L339">        return getValues().getEncryptedPair(MoneyWiseBasicResource.TRANSACTION_AMOUNT);</span>
+<span class="nc" id="L344">        return getValues().getEncryptedPair(MoneyWiseBasicResource.TRANSACTION_AMOUNT);</span>
     }
 
     /**
@@ -345,7 +350,7 @@ public abstract class MoneyWiseTransBase
      * @return the account
      */
     public MoneyWiseTransAsset getAccount() {
-<span class="fc" id="L348">        return getValues().getValue(MoneyWiseBasicResource.TRANSACTION_ACCOUNT, MoneyWiseTransAsset.class);</span>
+<span class="fc" id="L353">        return getValues().getValue(MoneyWiseBasicResource.TRANSACTION_ACCOUNT, MoneyWiseTransAsset.class);</span>
     }
 
     /**
@@ -354,10 +359,10 @@ public abstract class MoneyWiseTransBase
      * @return the accountId
      */
     public Long getAccountId() {
-<span class="fc" id="L357">        final MoneyWiseTransAsset myAccount = getAccount();</span>
-<span class="pc bpc" id="L358" title="1 of 2 branches missed.">        return myAccount == null</span>
-<span class="nc" id="L359">                ? null</span>
-<span class="fc" id="L360">                : myAccount.getExternalId();</span>
+<span class="fc" id="L362">        final MoneyWiseTransAsset myAccount = getAccount();</span>
+<span class="pc bpc" id="L363" title="1 of 2 branches missed.">        return myAccount == null</span>
+<span class="nc" id="L364">                ? null</span>
+<span class="fc" id="L365">                : myAccount.getExternalId();</span>
     }
 
     /**
@@ -366,7 +371,7 @@ public abstract class MoneyWiseTransBase
      * @return the partner
      */
     public MoneyWiseTransAsset getPartner() {
-<span class="fc" id="L369">        return getValues().getValue(MoneyWiseBasicResource.TRANSACTION_PARTNER, MoneyWiseTransAsset.class);</span>
+<span class="fc" id="L374">        return getValues().getValue(MoneyWiseBasicResource.TRANSACTION_PARTNER, MoneyWiseTransAsset.class);</span>
     }
 
     /**
@@ -375,10 +380,10 @@ public abstract class MoneyWiseTransBase
      * @return the partnerId
      */
     public Long getPartnerId() {
-<span class="fc" id="L378">        final MoneyWiseTransAsset myPartner = getPartner();</span>
-<span class="pc bpc" id="L379" title="1 of 2 branches missed.">        return myPartner == null</span>
-<span class="nc" id="L380">                ? null</span>
-<span class="fc" id="L381">                : myPartner.getExternalId();</span>
+<span class="fc" id="L383">        final MoneyWiseTransAsset myPartner = getPartner();</span>
+<span class="pc bpc" id="L384" title="1 of 2 branches missed.">        return myPartner == null</span>
+<span class="nc" id="L385">                ? null</span>
+<span class="fc" id="L386">                : myPartner.getExternalId();</span>
     }
 
     /**
@@ -387,16 +392,12 @@ public abstract class MoneyWiseTransBase
      * @return the direction
      */
     public MoneyWiseAssetDirection getDirection() {
-<span class="fc" id="L390">        return getValues().getValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION, MoneyWiseAssetDirection.class);</span>
+<span class="fc" id="L395">        return getValues().getValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION, MoneyWiseAssetDirection.class);</span>
     }
 
-    /**
-     * Obtain Reconciled State.
-     *
-     * @return the reconciled state
-     */
+    @Override
     public Boolean isReconciled() {
-<span class="fc" id="L399">        return getValues().getValue(MoneyWiseBasicResource.TRANSACTION_RECONCILED, Boolean.class);</span>
+<span class="fc" id="L400">        return getValues().getValue(MoneyWiseBasicResource.TRANSACTION_RECONCILED, Boolean.class);</span>
     }
 
     /**
@@ -405,8 +406,8 @@ public abstract class MoneyWiseTransBase
      * @param pValue the value
      */
     private void setValueCategory(final MoneyWiseTransCategory pValue) {
-<span class="fc" id="L408">        getValues().setUncheckedValue(MoneyWiseBasicDataType.TRANSCATEGORY, pValue);</span>
-<span class="fc" id="L409">    }</span>
+<span class="fc" id="L409">        getValues().setUncheckedValue(MoneyWiseBasicDataType.TRANSCATEGORY, pValue);</span>
+<span class="fc" id="L410">    }</span>
 
     /**
      * Set category id.
@@ -414,8 +415,8 @@ public abstract class MoneyWiseTransBase
      * @param pId the id
      */
     private void setValueCategory(final Integer pId) {
-<span class="fc" id="L417">        getValues().setUncheckedValue(MoneyWiseBasicDataType.TRANSCATEGORY, pId);</span>
-<span class="fc" id="L418">    }</span>
+<span class="fc" id="L418">        getValues().setUncheckedValue(MoneyWiseBasicDataType.TRANSCATEGORY, pId);</span>
+<span class="fc" id="L419">    }</span>
 
     /**
      * Set category name.
@@ -423,8 +424,8 @@ public abstract class MoneyWiseTransBase
      * @param pName the name
      */
     private void setValueCategory(final String pName) {
-<span class="fc" id="L426">        getValues().setUncheckedValue(MoneyWiseBasicDataType.TRANSCATEGORY, pName);</span>
-<span class="fc" id="L427">    }</span>
+<span class="fc" id="L427">        getValues().setUncheckedValue(MoneyWiseBasicDataType.TRANSCATEGORY, pName);</span>
+<span class="fc" id="L428">    }</span>
 
     /**
      * Set description value.
@@ -433,8 +434,8 @@ public abstract class MoneyWiseTransBase
      * @throws OceanusException on error
      */
     private void setValueAmount(final OceanusMoney pValue) throws OceanusException {
-<span class="fc" id="L436">        setEncryptedValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, pValue);</span>
-<span class="fc" id="L437">    }</span>
+<span class="fc" id="L437">        setEncryptedValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, pValue);</span>
+<span class="fc" id="L438">    }</span>
 
     /**
      * Set amount value.
@@ -443,8 +444,8 @@ public abstract class MoneyWiseTransBase
      * @throws OceanusException on error
      */
     private void setValueAmount(final byte[] pBytes) throws OceanusException {
-<span class="fc" id="L446">        setEncryptedValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, pBytes, OceanusMoney.class);</span>
-<span class="fc" id="L447">    }</span>
+<span class="fc" id="L447">        setEncryptedValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, pBytes, OceanusMoney.class);</span>
+<span class="fc" id="L448">    }</span>
 
     /**
      * Set amount value.
@@ -452,8 +453,8 @@ public abstract class MoneyWiseTransBase
      * @param pValue the value
      */
     protected final void setValueAmount(final PrometheusEncryptedPair pValue) {
-<span class="nc" id="L455">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, pValue);</span>
-<span class="nc" id="L456">    }</span>
+<span class="nc" id="L456">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, pValue);</span>
+<span class="nc" id="L457">    }</span>
 
     /**
      * Set amount value.
@@ -461,8 +462,8 @@ public abstract class MoneyWiseTransBase
      * @param pValue the value
      */
     private void setValueAmount(final String pValue) {
-<span class="fc" id="L464">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, pValue);</span>
-<span class="fc" id="L465">    }</span>
+<span class="fc" id="L465">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, pValue);</span>
+<span class="fc" id="L466">    }</span>
 
     /**
      * Set account value.
@@ -470,8 +471,8 @@ public abstract class MoneyWiseTransBase
      * @param pValue the value
      */
     protected final void setValueAccount(final MoneyWiseTransAsset pValue) {
-<span class="fc" id="L473">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_ACCOUNT, pValue);</span>
-<span class="fc" id="L474">    }</span>
+<span class="fc" id="L474">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_ACCOUNT, pValue);</span>
+<span class="fc" id="L475">    }</span>
 
     /**
      * Set debit name.
@@ -479,8 +480,8 @@ public abstract class MoneyWiseTransBase
      * @param pName the name
      */
     private void setValueAccount(final String pName) {
-<span class="fc" id="L482">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_ACCOUNT, pName);</span>
-<span class="fc" id="L483">    }</span>
+<span class="fc" id="L483">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_ACCOUNT, pName);</span>
+<span class="fc" id="L484">    }</span>
 
     /**
      * Set debit id.
@@ -488,8 +489,8 @@ public abstract class MoneyWiseTransBase
      * @param pId the value
      */
     private void setValueAccount(final Long pId) {
-<span class="fc" id="L491">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_ACCOUNT, pId);</span>
-<span class="fc" id="L492">    }</span>
+<span class="fc" id="L492">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_ACCOUNT, pId);</span>
+<span class="fc" id="L493">    }</span>
 
     /**
      * Set partner value.
@@ -497,8 +498,8 @@ public abstract class MoneyWiseTransBase
      * @param pValue the value
      */
     protected final void setValuePartner(final MoneyWiseTransAsset pValue) {
-<span class="fc" id="L500">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_PARTNER, pValue);</span>
-<span class="fc" id="L501">    }</span>
+<span class="fc" id="L501">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_PARTNER, pValue);</span>
+<span class="fc" id="L502">    }</span>
 
     /**
      * Set partner id.
@@ -506,8 +507,8 @@ public abstract class MoneyWiseTransBase
      * @param pId the id
      */
     private void setValuePartner(final Long pId) {
-<span class="fc" id="L509">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_PARTNER, pId);</span>
-<span class="fc" id="L510">    }</span>
+<span class="fc" id="L510">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_PARTNER, pId);</span>
+<span class="fc" id="L511">    }</span>
 
     /**
      * Set partner name.
@@ -515,8 +516,8 @@ public abstract class MoneyWiseTransBase
      * @param pName the name
      */
     private void setValuePartner(final String pName) {
-<span class="fc" id="L518">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_PARTNER, pName);</span>
-<span class="fc" id="L519">    }</span>
+<span class="fc" id="L519">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_PARTNER, pName);</span>
+<span class="fc" id="L520">    }</span>
 
     /**
      * Set direction state.
@@ -524,8 +525,8 @@ public abstract class MoneyWiseTransBase
      * @param pValue the value
      */
     protected final void setValueDirection(final MoneyWiseAssetDirection pValue) {
-<span class="fc" id="L527">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION, pValue);</span>
-<span class="fc" id="L528">    }</span>
+<span class="fc" id="L528">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION, pValue);</span>
+<span class="fc" id="L529">    }</span>
 
     /**
      * Set direction state.
@@ -533,11 +534,11 @@ public abstract class MoneyWiseTransBase
      * @param pValue the value
      */
     private void setValueDirection(final Boolean pValue) {
-<span class="fc bfc" id="L536" title="All 2 branches covered.">        final MoneyWiseAssetDirection myValue = Boolean.TRUE.equals(pValue)</span>
-<span class="fc" id="L537">                ? MoneyWiseAssetDirection.FROM</span>
-<span class="fc" id="L538">                : MoneyWiseAssetDirection.TO;</span>
-<span class="fc" id="L539">        setValueDirection(myValue);</span>
-<span class="fc" id="L540">    }</span>
+<span class="fc bfc" id="L537" title="All 2 branches covered.">        final MoneyWiseAssetDirection myValue = Boolean.TRUE.equals(pValue)</span>
+<span class="fc" id="L538">                ? MoneyWiseAssetDirection.FROM</span>
+<span class="fc" id="L539">                : MoneyWiseAssetDirection.TO;</span>
+<span class="fc" id="L540">        setValueDirection(myValue);</span>
+<span class="fc" id="L541">    }</span>
 
     /**
      * Set direction state.
@@ -545,9 +546,9 @@ public abstract class MoneyWiseTransBase
      * @param pValue the value
      */
     private void setValueDirection(final String pValue) {
-<span class="fc" id="L548">        final MoneyWiseAssetDirection myValue = MoneyWiseAssetDirection.fromName(pValue);</span>
-<span class="fc" id="L549">        setValueDirection(myValue);</span>
-<span class="fc" id="L550">    }</span>
+<span class="fc" id="L549">        final MoneyWiseAssetDirection myValue = MoneyWiseAssetDirection.fromName(pValue);</span>
+<span class="fc" id="L550">        setValueDirection(myValue);</span>
+<span class="fc" id="L551">    }</span>
 
     /**
      * Set reconciled state.
@@ -555,17 +556,12 @@ public abstract class MoneyWiseTransBase
      * @param pValue the value
      */
     protected final void setValueReconciled(final Boolean pValue) {
-<span class="fc" id="L558">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_RECONCILED, pValue);</span>
-<span class="fc" id="L559">    }</span>
-
-    @Override
-    public final MoneyWiseDataSet getDataSet() {
-<span class="fc" id="L563">        return (MoneyWiseDataSet) super.getDataSet();</span>
-    }
+<span class="fc" id="L559">        getValues().setUncheckedValue(MoneyWiseBasicResource.TRANSACTION_RECONCILED, pValue);</span>
+<span class="fc" id="L560">    }</span>
 
     @Override
     public MoneyWiseTransBaseList&lt;?&gt; getList() {
-<span class="fc" id="L568">        return (MoneyWiseTransBaseList&lt;?&gt;) super.getList();</span>
+<span class="fc" id="L564">        return (MoneyWiseTransBaseList&lt;?&gt;) super.getList();</span>
     }
 
     /**
@@ -575,19 +571,19 @@ public abstract class MoneyWiseTransBase
      */
     public MoneyWisePortfolio getPortfolio() {
         /* Access account portfolio if it is a security holding */
-<span class="nc" id="L578">        MoneyWiseTransAsset myAsset = getAccount();</span>
-<span class="nc bnc" id="L579" title="All 2 branches missed.">        if (myAsset instanceof MoneyWiseSecurityHolding myHolding) {</span>
-<span class="nc" id="L580">            return myHolding.getPortfolio();</span>
+<span class="nc" id="L574">        MoneyWiseTransAsset myAsset = getAccount();</span>
+<span class="nc bnc" id="L575" title="All 2 branches missed.">        if (myAsset instanceof MoneyWiseSecurityHolding myHolding) {</span>
+<span class="nc" id="L576">            return myHolding.getPortfolio();</span>
         }
 
         /* Access partner portfolio if it is a security holding */
-<span class="nc" id="L584">        myAsset = getPartner();</span>
-<span class="nc bnc" id="L585" title="All 2 branches missed.">        if (myAsset instanceof MoneyWiseSecurityHolding myHolding) {</span>
-<span class="nc" id="L586">            return myHolding.getPortfolio();</span>
+<span class="nc" id="L580">        myAsset = getPartner();</span>
+<span class="nc bnc" id="L581" title="All 2 branches missed.">        if (myAsset instanceof MoneyWiseSecurityHolding myHolding) {</span>
+<span class="nc" id="L582">            return myHolding.getPortfolio();</span>
         }
 
         /* No portfolio */
-<span class="nc" id="L590">        return null;</span>
+<span class="nc" id="L586">        return null;</span>
     }
 
     /**
@@ -600,45 +596,45 @@ public abstract class MoneyWiseTransBase
     @Override
     public int compareValues(final PrometheusDataItem pThat) {
         /* Check the category */
-<span class="fc" id="L603">        final MoneyWiseTransBase myThat = (MoneyWiseTransBase) pThat;</span>
-<span class="fc" id="L604">        return MetisDataDifference.compareObject(getCategory(), myThat.getCategory());</span>
+<span class="fc" id="L599">        final MoneyWiseTransBase myThat = (MoneyWiseTransBase) pThat;</span>
+<span class="fc" id="L600">        return MetisDataDifference.compareObject(getCategory(), myThat.getCategory());</span>
     }
 
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
-<span class="fc" id="L610">        super.resolveDataSetLinks();</span>
+<span class="fc" id="L606">        super.resolveDataSetLinks();</span>
 
         /* Resolve data links */
-<span class="fc" id="L613">        final MoneyWiseDataSet myData = getDataSet();</span>
-<span class="fc" id="L614">        final PrometheusEncryptedValues myValues = getValues();</span>
+<span class="fc" id="L609">        final PrometheusDataSetCtl myData = getDataSet();</span>
+<span class="fc" id="L610">        final PrometheusEncryptedValues myValues = getValues();</span>
 
         /* Adjust Reconciled */
-<span class="fc" id="L617">        final Object myReconciled = myValues.getValue(MoneyWiseBasicResource.TRANSACTION_RECONCILED);</span>
-<span class="fc bfc" id="L618" title="All 2 branches covered.">        if (myReconciled == null) {</span>
-<span class="fc" id="L619">            setValueReconciled(Boolean.FALSE);</span>
+<span class="fc" id="L613">        final Object myReconciled = myValues.getValue(MoneyWiseBasicResource.TRANSACTION_RECONCILED);</span>
+<span class="fc bfc" id="L614" title="All 2 branches covered.">        if (myReconciled == null) {</span>
+<span class="fc" id="L615">            setValueReconciled(Boolean.FALSE);</span>
         }
 
         /* Adjust Reconciled */
-<span class="fc" id="L623">        final Object myDirection = myValues.getValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION);</span>
-<span class="pc bpc" id="L624" title="1 of 2 branches missed.">        if (myDirection == null) {</span>
-<span class="nc" id="L625">            setValueDirection(MoneyWiseAssetDirection.TO);</span>
+<span class="fc" id="L619">        final Object myDirection = myValues.getValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION);</span>
+<span class="pc bpc" id="L620" title="1 of 2 branches missed.">        if (myDirection == null) {</span>
+<span class="nc" id="L621">            setValueDirection(MoneyWiseAssetDirection.TO);</span>
         }
 
         /* Resolve data links */
-<span class="fc" id="L629">        resolveTransactionAsset(myData, this, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);</span>
-<span class="fc" id="L630">        resolveTransactionAsset(myData, this, MoneyWiseBasicResource.TRANSACTION_PARTNER);</span>
-<span class="fc" id="L631">        resolveDataLink(MoneyWiseBasicDataType.TRANSCATEGORY, myData.getTransCategories());</span>
-<span class="fc" id="L632">    }</span>
+<span class="fc" id="L625">        resolveTransactionAsset(myData, this, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);</span>
+<span class="fc" id="L626">        resolveTransactionAsset(myData, this, MoneyWiseBasicResource.TRANSACTION_PARTNER);</span>
+<span class="fc" id="L627">        resolveDataLink(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseBasicDataType.TRANSCATEGORY);</span>
+<span class="fc" id="L628">    }</span>
 
     @Override
     public boolean isLocked() {
-<span class="nc" id="L636">        final MoneyWiseTransAsset myAccount = getAccount();</span>
-<span class="nc" id="L637">        final MoneyWiseTransAsset myPartner = getPartner();</span>
+<span class="nc" id="L632">        final MoneyWiseTransAsset myAccount = getAccount();</span>
+<span class="nc" id="L633">        final MoneyWiseTransAsset myPartner = getPartner();</span>
 
         /* Check credit and debit accounts */
-<span class="nc bnc" id="L640" title="All 6 branches missed.">        return (myAccount != null &amp;&amp; myAccount.isClosed())</span>
-<span class="nc bnc" id="L641" title="All 2 branches missed.">                || (myPartner != null &amp;&amp; myPartner.isClosed());</span>
+<span class="nc bnc" id="L636" title="All 6 branches missed.">        return (myAccount != null &amp;&amp; myAccount.isClosed())</span>
+<span class="nc bnc" id="L637" title="All 2 branches missed.">                || (myPartner != null &amp;&amp; myPartner.isClosed());</span>
     }
 
     /**
@@ -649,7 +645,7 @@ public abstract class MoneyWiseTransBase
      */
     public boolean isCategoryClass(final MoneyWiseTransCategoryClass pClass) {
         /* Check for match */
-<span class="nc" id="L652">        return getCategoryClass().equals(pClass);</span>
+<span class="nc" id="L648">        return getCategoryClass().equals(pClass);</span>
     }
 
     /**
@@ -659,11 +655,11 @@ public abstract class MoneyWiseTransBase
      */
     public boolean isDividendReInvestment() {
         /* Check for dividend re-investment */
-<span class="nc bnc" id="L662" title="All 2 branches missed.">        if (!isDividend()) {</span>
-<span class="nc" id="L663">            return false;</span>
+<span class="nc bnc" id="L658" title="All 2 branches missed.">        if (!isDividend()) {</span>
+<span class="nc" id="L659">            return false;</span>
         }
-<span class="nc bnc" id="L665" title="All 2 branches missed.">        return getAccount() != null</span>
-<span class="nc bnc" id="L666" title="All 2 branches missed.">                &amp;&amp; MetisDataDifference.isEqual(getAccount(), getPartner());</span>
+<span class="nc bnc" id="L661" title="All 2 branches missed.">        return getAccount() != null</span>
+<span class="nc bnc" id="L662" title="All 2 branches missed.">                &amp;&amp; MetisDataDifference.isEqual(getAccount(), getPartner());</span>
     }
 
     /**
@@ -673,9 +669,9 @@ public abstract class MoneyWiseTransBase
      */
     public boolean isInterest() {
         /* Check for interest */
-<span class="nc" id="L676">        final MoneyWiseTransCategoryClass myClass = getCategoryClass();</span>
-<span class="nc bnc" id="L677" title="All 2 branches missed.">        return myClass != null</span>
-<span class="nc bnc" id="L678" title="All 2 branches missed.">                &amp;&amp; myClass.isInterest();</span>
+<span class="nc" id="L672">        final MoneyWiseTransCategoryClass myClass = getCategoryClass();</span>
+<span class="nc bnc" id="L673" title="All 2 branches missed.">        return myClass != null</span>
+<span class="nc bnc" id="L674" title="All 2 branches missed.">                &amp;&amp; myClass.isInterest();</span>
     }
 
     /**
@@ -684,9 +680,9 @@ public abstract class MoneyWiseTransBase
      * @return dividend true/false
      */
     public boolean isDividend() {
-<span class="nc" id="L687">        final MoneyWiseTransCategoryClass myClass = getCategoryClass();</span>
-<span class="nc bnc" id="L688" title="All 2 branches missed.">        return myClass != null</span>
-<span class="nc bnc" id="L689" title="All 2 branches missed.">                &amp;&amp; myClass.isDividend();</span>
+<span class="nc" id="L683">        final MoneyWiseTransCategoryClass myClass = getCategoryClass();</span>
+<span class="nc bnc" id="L684" title="All 2 branches missed.">        return myClass != null</span>
+<span class="nc bnc" id="L685" title="All 2 branches missed.">                &amp;&amp; myClass.isDividend();</span>
     }
 
     /**
@@ -695,9 +691,9 @@ public abstract class MoneyWiseTransBase
      * @return true/false
      */
     public boolean needsNullAmount() {
-<span class="nc" id="L698">        final MoneyWiseTransCategoryClass myClass = getCategoryClass();</span>
-<span class="nc bnc" id="L699" title="All 2 branches missed.">        return myClass != null</span>
-<span class="nc bnc" id="L700" title="All 2 branches missed.">                &amp;&amp; myClass.needsNullAmount();</span>
+<span class="nc" id="L694">        final MoneyWiseTransCategoryClass myClass = getCategoryClass();</span>
+<span class="nc bnc" id="L695" title="All 2 branches missed.">        return myClass != null</span>
+<span class="nc bnc" id="L696" title="All 2 branches missed.">                &amp;&amp; myClass.needsNullAmount();</span>
     }
 
     /**
@@ -706,7 +702,7 @@ public abstract class MoneyWiseTransBase
      * @return true/false
      */
     public boolean canSwitchDirection() {
-<span class="nc" id="L709">        return getList().getValidator().isValidDirection(getAccount(), getCategory(), getDirection().reverse());</span>
+<span class="nc" id="L705">        return getList().getValidator().isValidDirection(getAccount(), getCategory(), getDirection().reverse());</span>
     }
 
     /**
@@ -716,8 +712,8 @@ public abstract class MoneyWiseTransBase
      */
     public void setAccount(final MoneyWiseTransAsset pAccount) {
         /* Set account value */
-<span class="fc" id="L719">        setValueAccount(pAccount);</span>
-<span class="fc" id="L720">    }</span>
+<span class="fc" id="L715">        setValueAccount(pAccount);</span>
+<span class="fc" id="L716">    }</span>
 
     /**
      * Set a new partner.
@@ -726,8 +722,8 @@ public abstract class MoneyWiseTransBase
      */
     public void setPartner(final MoneyWiseTransAsset pPartner) {
         /* Set partner value */
-<span class="fc" id="L729">        setValuePartner(pPartner);</span>
-<span class="fc" id="L730">    }</span>
+<span class="fc" id="L725">        setValuePartner(pPartner);</span>
+<span class="fc" id="L726">    }</span>
 
     /**
      * Set a direction.
@@ -736,15 +732,15 @@ public abstract class MoneyWiseTransBase
      */
     public void setDirection(final MoneyWiseAssetDirection pDirection) {
         /* Set partner value */
-<span class="fc" id="L739">        setValueDirection(pDirection);</span>
-<span class="fc" id="L740">    }</span>
+<span class="fc" id="L735">        setValueDirection(pDirection);</span>
+<span class="fc" id="L736">    }</span>
 
     /**
      * Switch direction.
      */
     public void switchDirection() {
-<span class="nc" id="L746">        setValueDirection(getDirection().reverse());</span>
-<span class="nc" id="L747">    }</span>
+<span class="nc" id="L742">        setValueDirection(getDirection().reverse());</span>
+<span class="nc" id="L743">    }</span>
 
     /**
      * Flip assets.
@@ -753,12 +749,12 @@ public abstract class MoneyWiseTransBase
      */
     public void flipAssets() throws OceanusException {
         /* Flip details */
-<span class="nc" id="L756">        final MoneyWiseTransAsset myAccount = getAccount();</span>
-<span class="nc" id="L757">        final MoneyWiseTransAsset myPartner = getPartner();</span>
-<span class="nc" id="L758">        setValueAccount(myPartner);</span>
-<span class="nc" id="L759">        setValuePartner(myAccount);</span>
-<span class="nc" id="L760">        switchDirection();</span>
-<span class="nc" id="L761">    }</span>
+<span class="nc" id="L752">        final MoneyWiseTransAsset myAccount = getAccount();</span>
+<span class="nc" id="L753">        final MoneyWiseTransAsset myPartner = getPartner();</span>
+<span class="nc" id="L754">        setValueAccount(myPartner);</span>
+<span class="nc" id="L755">        setValuePartner(myAccount);</span>
+<span class="nc" id="L756">        switchDirection();</span>
+<span class="nc" id="L757">    }</span>
 
     /**
      * Set a new category.
@@ -766,8 +762,8 @@ public abstract class MoneyWiseTransBase
      * @param pCategory the category
      */
     public void setCategory(final MoneyWiseTransCategory pCategory) {
-<span class="fc" id="L769">        setValueCategory(pCategory);</span>
-<span class="fc" id="L770">    }</span>
+<span class="fc" id="L765">        setValueCategory(pCategory);</span>
+<span class="fc" id="L766">    }</span>
 
     /**
      * Set a new amount.
@@ -776,8 +772,8 @@ public abstract class MoneyWiseTransBase
      * @throws OceanusException on error
      */
     public void setAmount(final OceanusMoney pAmount) throws OceanusException {
-<span class="fc" id="L779">        setValueAmount(pAmount);</span>
-<span class="fc" id="L780">    }</span>
+<span class="fc" id="L775">        setValueAmount(pAmount);</span>
+<span class="fc" id="L776">    }</span>
 
     /**
      * Set a reconciled indication.
@@ -785,18 +781,18 @@ public abstract class MoneyWiseTransBase
      * @param pReconciled the reconciled state
      */
     public void setReconciled(final Boolean pReconciled) {
-<span class="fc" id="L788">        setValueReconciled(pReconciled);</span>
-<span class="fc" id="L789">    }</span>
+<span class="fc" id="L784">        setValueReconciled(pReconciled);</span>
+<span class="fc" id="L785">    }</span>
 
     @Override
     public void touchUnderlyingItems() {
         /* touch the event category referred to */
-<span class="fc" id="L794">        getCategory().touchItem(this);</span>
+<span class="fc" id="L790">        getCategory().touchItem(this);</span>
 
         /* Touch the account and partner */
-<span class="fc" id="L797">        getAccount().touchItem(this);</span>
-<span class="fc" id="L798">        getPartner().touchItem(this);</span>
-<span class="fc" id="L799">    }</span>
+<span class="fc" id="L793">        getAccount().touchItem(this);</span>
+<span class="fc" id="L794">        getPartner().touchItem(this);</span>
+<span class="fc" id="L795">    }</span>
 
     /**
      * Resolve transAsset.
@@ -806,18 +802,18 @@ public abstract class MoneyWiseTransBase
      * @param pField the fieldId
      * @throws OceanusException on error
      */
-    public void resolveTransactionAsset(final PrometheusDataListSet pData,
+    public void resolveTransactionAsset(final PrometheusDataSetListCtl pData,
                                         final PrometheusDataItem pOwner,
                                         final MetisDataFieldId pField) throws OceanusException {
         /* Obtain baseValue, and then resolve */
-<span class="fc" id="L813">        final Object myBaseValue = pOwner.getValues().getValue(pField);</span>
-<span class="fc" id="L814">        final Object myValue = resolveTransactionAsset(pData, myBaseValue);</span>
-<span class="pc bpc" id="L815" title="1 of 2 branches missed.">        if (myValue == null) {</span>
-<span class="nc" id="L816">            pOwner.addError(ERROR_UNKNOWN, pField);</span>
-<span class="nc" id="L817">            throw new MoneyWiseDataException(this, ERROR_RESOLUTION);</span>
+<span class="fc" id="L809">        final Object myBaseValue = pOwner.getValues().getValue(pField);</span>
+<span class="fc" id="L810">        final Object myValue = resolveTransactionAsset(pData, myBaseValue);</span>
+<span class="pc bpc" id="L811" title="1 of 2 branches missed.">        if (myValue == null) {</span>
+<span class="nc" id="L812">            pOwner.addError(ERROR_UNKNOWN, pField);</span>
+<span class="nc" id="L813">            throw new MoneyWiseDataException(this, ERROR_RESOLUTION);</span>
         }
-<span class="fc" id="L819">        pOwner.getValues().setUncheckedValue(pField, myValue);</span>
-<span class="fc" id="L820">    }</span>
+<span class="fc" id="L815">        pOwner.getValues().setUncheckedValue(pField, myValue);</span>
+<span class="fc" id="L816">    }</span>
 
     /**
      * Resolve transAsset.
@@ -827,21 +823,21 @@ public abstract class MoneyWiseTransBase
      * @return the asset
      * @throws OceanusException on error
      */
-    private MoneyWiseTransAsset resolveTransactionAsset(final PrometheusDataListSet pData,
+    private MoneyWiseTransAsset resolveTransactionAsset(final PrometheusDataSetListCtl pData,
                                                         final Object pValue) throws OceanusException {
         /* If we are being passed a TransactionAsset, convert to Id */
-<span class="fc" id="L833">        Object myValue = pValue;</span>
-<span class="fc bfc" id="L834" title="All 2 branches covered.">        if (myValue instanceof MoneyWiseTransAsset myAsset) {</span>
-<span class="fc" id="L835">            myValue = myAsset.getExternalId();</span>
+<span class="fc" id="L829">        Object myValue = pValue;</span>
+<span class="fc bfc" id="L830" title="All 2 branches covered.">        if (myValue instanceof MoneyWiseTransAsset myAsset) {</span>
+<span class="fc" id="L831">            myValue = myAsset.getExternalId();</span>
         }
 
         /* Access the values */
-<span class="fc bfc" id="L839" title="All 2 branches covered.">        if (myValue instanceof String s) {</span>
-<span class="fc" id="L840">            return resolveTransAsset(pData, s);</span>
-<span class="pc bpc" id="L841" title="1 of 2 branches missed.">        } else if (myValue instanceof Long l) {</span>
-<span class="fc" id="L842">            return resolveTransAsset(pData, l);</span>
+<span class="fc bfc" id="L835" title="All 2 branches covered.">        if (myValue instanceof String s) {</span>
+<span class="fc" id="L836">            return resolveTransAsset(pData, s);</span>
+<span class="pc bpc" id="L837" title="1 of 2 branches missed.">        } else if (myValue instanceof Long l) {</span>
+<span class="fc" id="L838">            return resolveTransAsset(pData, l);</span>
         }
-<span class="nc" id="L844">        return null;</span>
+<span class="nc" id="L840">        return null;</span>
     }
 
     /**
@@ -852,27 +848,28 @@ public abstract class MoneyWiseTransBase
      * @return the asset
      * @throws OceanusException on error
      */
-    private static MoneyWiseTransAsset resolveTransAsset(final PrometheusDataListSet pData,
+    private static MoneyWiseTransAsset resolveTransAsset(final PrometheusDataSetListCtl pData,
                                                          final Long pId) throws OceanusException {
         /* Access the assetType */
-<span class="fc" id="L858">        final MoneyWiseAssetType myAssetType = MoneyWiseAssetType.getAssetType(pId);</span>
+<span class="fc" id="L854">        final MoneyWiseAssetType myAssetType = MoneyWiseAssetType.getAssetType(pId);</span>
 
         /* If the name is a security holding */
-<span class="fc bfc" id="L861" title="All 2 branches covered.">        if (myAssetType.isSecurityHolding()) {</span>
-<span class="fc" id="L862">            final MoneyWiseSecurityHoldingMap myMap = pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();</span>
-<span class="fc" id="L863">            return myMap.findHoldingById(pId);</span>
-<span class="fc bfc" id="L864" title="All 2 branches covered.">        } else if (myAssetType.isPayee()) {</span>
-<span class="fc" id="L865">            return pData.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class).findItemById(MoneyWiseAssetType.getBaseId(pId));</span>
-<span class="fc bfc" id="L866" title="All 2 branches covered.">        } else if (myAssetType.isDeposit()) {</span>
-<span class="fc" id="L867">            return pData.getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class).findItemById(MoneyWiseAssetType.getBaseId(pId));</span>
-<span class="fc bfc" id="L868" title="All 4 branches covered.">        } else if (myAssetType.isCash() || myAssetType.isAutoExpense()) {</span>
-<span class="fc" id="L869">            return pData.getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class).findItemById(MoneyWiseAssetType.getBaseId(pId));</span>
-<span class="pc bpc" id="L870" title="1 of 2 branches missed.">        } else if (myAssetType.isLoan()) {</span>
-<span class="fc" id="L871">            return pData.getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class).findItemById(MoneyWiseAssetType.getBaseId(pId));</span>
-<span class="nc bnc" id="L872" title="All 2 branches missed.">        } else if (myAssetType.isPortfolio()) {</span>
-<span class="nc" id="L873">            return pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).findItemById(MoneyWiseAssetType.getBaseId(pId));</span>
+<span class="fc bfc" id="L857" title="All 2 branches covered.">        if (myAssetType.isSecurityHolding()) {</span>
+<span class="fc" id="L858">            final MoneyWiseSecurityHoldingMap myMap</span>
+<span class="fc" id="L859">                    = (MoneyWiseSecurityHoldingMap) pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();</span>
+<span class="fc" id="L860">            return myMap.findHoldingById(pId);</span>
+<span class="fc bfc" id="L861" title="All 2 branches covered.">        } else if (myAssetType.isPayee()) {</span>
+<span class="fc" id="L862">            return pData.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class).findItemById(MoneyWiseAssetType.getBaseId(pId));</span>
+<span class="fc bfc" id="L863" title="All 2 branches covered.">        } else if (myAssetType.isDeposit()) {</span>
+<span class="fc" id="L864">            return pData.getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class).findItemById(MoneyWiseAssetType.getBaseId(pId));</span>
+<span class="fc bfc" id="L865" title="All 4 branches covered.">        } else if (myAssetType.isCash() || myAssetType.isAutoExpense()) {</span>
+<span class="fc" id="L866">            return pData.getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class).findItemById(MoneyWiseAssetType.getBaseId(pId));</span>
+<span class="pc bpc" id="L867" title="1 of 2 branches missed.">        } else if (myAssetType.isLoan()) {</span>
+<span class="fc" id="L868">            return pData.getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class).findItemById(MoneyWiseAssetType.getBaseId(pId));</span>
+<span class="nc bnc" id="L869" title="All 2 branches missed.">        } else if (myAssetType.isPortfolio()) {</span>
+<span class="nc" id="L870">            return pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).findItemById(MoneyWiseAssetType.getBaseId(pId));</span>
         } else {
-<span class="nc" id="L875">            return null;</span>
+<span class="nc" id="L872">            return null;</span>
         }
     }
 
@@ -883,27 +880,28 @@ public abstract class MoneyWiseTransBase
      * @param pName the item name
      * @return the asset
      */
-    private static MoneyWiseTransAsset resolveTransAsset(final PrometheusDataListSet pData,
+    private static MoneyWiseTransAsset resolveTransAsset(final PrometheusDataSetListCtl pData,
                                                          final String pName) {
         /* If the name is a security holding */
-<span class="fc bfc" id="L889" title="All 2 branches covered.">        if (pName.contains(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP)) {</span>
-<span class="fc" id="L890">            final MoneyWiseSecurityHoldingMap myMap = pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();</span>
-<span class="fc" id="L891">            return myMap.findHoldingByName(pName);</span>
+<span class="fc bfc" id="L886" title="All 2 branches covered.">        if (pName.contains(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP)) {</span>
+<span class="fc" id="L887">            final MoneyWiseSecurityHoldingMap myMap</span>
+<span class="fc" id="L888">                    = (MoneyWiseSecurityHoldingMap) pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();</span>
+<span class="fc" id="L889">            return myMap.findHoldingByName(pName);</span>
         } else {
-<span class="fc" id="L893">            MoneyWiseTransAsset myAsset = pData.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class).findItemByName(pName);</span>
-<span class="fc bfc" id="L894" title="All 2 branches covered.">            if (myAsset == null) {</span>
-<span class="fc" id="L895">                myAsset = pData.getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class).findItemByName(pName);</span>
+<span class="fc" id="L891">            MoneyWiseTransAsset myAsset = pData.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class).findItemByName(pName);</span>
+<span class="fc bfc" id="L892" title="All 2 branches covered.">            if (myAsset == null) {</span>
+<span class="fc" id="L893">                myAsset = pData.getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class).findItemByName(pName);</span>
             }
-<span class="fc bfc" id="L897" title="All 2 branches covered.">            if (myAsset == null) {</span>
-<span class="fc" id="L898">                myAsset = pData.getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class).findItemByName(pName);</span>
+<span class="fc bfc" id="L895" title="All 2 branches covered.">            if (myAsset == null) {</span>
+<span class="fc" id="L896">                myAsset = pData.getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class).findItemByName(pName);</span>
             }
-<span class="fc bfc" id="L900" title="All 2 branches covered.">            if (myAsset == null) {</span>
-<span class="fc" id="L901">                myAsset = pData.getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class).findItemByName(pName);</span>
+<span class="fc bfc" id="L898" title="All 2 branches covered.">            if (myAsset == null) {</span>
+<span class="fc" id="L899">                myAsset = pData.getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class).findItemByName(pName);</span>
             }
-<span class="pc bpc" id="L903" title="1 of 2 branches missed.">            if (myAsset == null) {</span>
-<span class="nc" id="L904">                myAsset = pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).findItemByName(pName);</span>
+<span class="pc bpc" id="L901" title="1 of 2 branches missed.">            if (myAsset == null) {</span>
+<span class="nc" id="L902">                myAsset = pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).findItemByName(pName);</span>
             }
-<span class="fc" id="L906">            return myAsset;</span>
+<span class="fc" id="L904">            return myAsset;</span>
         }
     }
 
@@ -914,35 +912,35 @@ public abstract class MoneyWiseTransBase
      */
     protected void applyBasicChanges(final MoneyWiseTransBase pTrans) {
         /* Update the assetPair if required */
-<span class="nc bnc" id="L917" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDirection(), pTrans.getDirection())) {</span>
-<span class="nc" id="L918">            setValueDirection(pTrans.getDirection());</span>
+<span class="nc bnc" id="L915" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDirection(), pTrans.getDirection())) {</span>
+<span class="nc" id="L916">            setValueDirection(pTrans.getDirection());</span>
         }
 
         /* Update the category if required */
-<span class="nc bnc" id="L922" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getCategory(), pTrans.getCategory())) {</span>
-<span class="nc" id="L923">            setValueCategory(pTrans.getCategory());</span>
+<span class="nc bnc" id="L920" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getCategory(), pTrans.getCategory())) {</span>
+<span class="nc" id="L921">            setValueCategory(pTrans.getCategory());</span>
         }
 
         /* Update the account if required */
-<span class="nc bnc" id="L927" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getAccount(), pTrans.getAccount())) {</span>
-<span class="nc" id="L928">            setValueAccount(pTrans.getAccount());</span>
+<span class="nc bnc" id="L925" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getAccount(), pTrans.getAccount())) {</span>
+<span class="nc" id="L926">            setValueAccount(pTrans.getAccount());</span>
         }
 
         /* Update the partner if required */
-<span class="nc bnc" id="L932" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getPartner(), pTrans.getPartner())) {</span>
-<span class="nc" id="L933">            setValuePartner(pTrans.getPartner());</span>
+<span class="nc bnc" id="L930" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getPartner(), pTrans.getPartner())) {</span>
+<span class="nc" id="L931">            setValuePartner(pTrans.getPartner());</span>
         }
 
         /* Update the amount if required */
-<span class="nc bnc" id="L937" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getAmount(), pTrans.getAmount())) {</span>
-<span class="nc" id="L938">            setValueAmount(pTrans.getAmountField());</span>
+<span class="nc bnc" id="L935" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getAmount(), pTrans.getAmount())) {</span>
+<span class="nc" id="L936">            setValueAmount(pTrans.getAmountField());</span>
         }
 
         /* Update the reconciled state if required */
-<span class="nc bnc" id="L942" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(isReconciled(), pTrans.isReconciled())) {</span>
-<span class="nc" id="L943">            setValueReconciled(pTrans.isReconciled());</span>
+<span class="nc bnc" id="L940" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(isReconciled(), pTrans.isReconciled())) {</span>
+<span class="nc" id="L941">            setValueReconciled(pTrans.isReconciled());</span>
         }
-<span class="nc" id="L945">    }</span>
+<span class="nc" id="L943">    }</span>
 
     /**
      * The Event List class.
@@ -955,8 +953,8 @@ public abstract class MoneyWiseTransBase
          * Report fields.
          */
         static {
-<span class="fc" id="L958">            MetisFieldSet.newFieldSet(MoneyWiseTransBaseList.class);</span>
-<span class="fc" id="L959">        }</span>
+<span class="fc" id="L956">            MetisFieldSet.newFieldSet(MoneyWiseTransBaseList.class);</span>
+<span class="fc" id="L957">        }</span>
 
         /**
          * Construct an empty CORE Event list.
@@ -965,12 +963,12 @@ public abstract class MoneyWiseTransBase
          * @param pClass    the class of the item
          * @param pItemType the item type
          */
-        protected MoneyWiseTransBaseList(final MoneyWiseDataSet pData,
+        protected MoneyWiseTransBaseList(final PrometheusDataSet pData,
                                          final Class&lt;T&gt; pClass,
                                          final MoneyWiseBasicDataType pItemType) {
             /* Call super-constructor */
-<span class="fc" id="L972">            super(pClass, pData, pItemType, PrometheusListStyle.CORE);</span>
-<span class="fc" id="L973">        }</span>
+<span class="fc" id="L970">            super(pClass, pData, pItemType, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L971">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -979,19 +977,93 @@ public abstract class MoneyWiseTransBase
          */
         protected MoneyWiseTransBaseList(final MoneyWiseTransBaseList&lt;T&gt; pSource) {
             /* Call super-constructor */
-<span class="fc" id="L982">            super(pSource);</span>
-<span class="fc" id="L983">        }</span>
-
-        @Override
-        public MoneyWiseDataSet getDataSet() {
-<span class="fc" id="L987">            return (MoneyWiseDataSet) super.getDataSet();</span>
-        }
+<span class="fc" id="L980">            super(pSource);</span>
+<span class="fc" id="L981">        }</span>
 
         @Override
         @SuppressWarnings(&quot;unchecked&quot;)
         public MoneyWiseDataValidatorTrans&lt;T&gt; getValidator() {
-<span class="fc" id="L993">            return (MoneyWiseDataValidatorTrans&lt;T&gt;) super.getValidator();</span>
+<span class="fc" id="L986">            return (MoneyWiseDataValidatorTrans&lt;T&gt;) super.getValidator();</span>
         }
     }
+
+    /**
+     * Transaction validator.
+     *
+     * @param &lt;T&gt; the itemType
+     */
+    public interface MoneyWiseDataValidatorTrans&lt;T extends MoneyWiseTransBase&gt;
+            extends MoneyWiseDataValidatorAutoCorrect&lt;T&gt; {
+        /**
+         * Is the account valid as the base account in a transaction?
+         *
+         * @param pAccount the account
+         * @return true/false
+         */
+        boolean isValidAccount(MoneyWiseTransAsset pAccount);
+
+        /**
+         * Is the transaction valid for the base account in the transaction?.
+         *
+         * @param pAccount  the account
+         * @param pCategory The category of the event
+         * @return true/false
+         */
+        boolean isValidCategory(MoneyWiseTransAsset pAccount,
+                                MoneyWiseTransCategory pCategory);
+
+        /**
+         * Is the direction valid for the base account and category in the transaction?.
+         *
+         * @param pAccount   the account
+         * @param pCategory  The category of the event
+         * @param pDirection the direction
+         * @return true/false
+         */
+        boolean isValidDirection(MoneyWiseTransAsset pAccount,
+                                 MoneyWiseTransCategory pCategory,
+                                 MoneyWiseAssetDirection pDirection);
+
+        /**
+         * Is the partner valid for the base account and category in the transaction?.
+         *
+         * @param pAccount  the account
+         * @param pCategory The category of the event
+         * @param pPartner  the partner
+         * @return true/false
+         */
+        boolean isValidPartner(MoneyWiseTransAsset pAccount,
+                               MoneyWiseTransCategory pCategory,
+                               MoneyWiseTransAsset pPartner);
+
+        /**
+         * Build default transaction.
+         *
+         * @param pKey the key to base the new transaction around (or null)
+         * @return the new transaction (or null if no possible transaction)
+         */
+        MoneyWiseTransBase buildTransaction(Object pKey);
+
+        /**
+         * Set range.
+         *
+         * @param pRange the date range
+         */
+        void setRange(OceanusDateRange pRange);
+
+        /**
+         * Get range.
+         *
+         * @return the date range
+         */
+        OceanusDateRange getRange();
+
+        /**
+         * Obtain the editSet.
+         *
+         * @return the editSet
+         */
+        PrometheusEditSet getEditSet();
+    }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

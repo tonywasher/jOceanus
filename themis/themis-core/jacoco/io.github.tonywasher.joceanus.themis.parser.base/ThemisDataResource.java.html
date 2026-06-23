@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisDataResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.parser.base</a> &gt; <span class="el_source">ThemisDataResource.java</span></div><h1>ThemisDataResource.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.parser.base;
+
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
+
+import java.util.ResourceBundle;
+
+<span class="fc" id="L26">public enum ThemisDataResource</span>
+        implements OceanusBundleId, MetisDataFieldId {
+    /**
+     * Data Source.
+     */
+<span class="fc" id="L31">    DATA_SOURCE(&quot;source&quot;),</span>
+
+    /**
+     * Data Solver.
+     */
+<span class="fc" id="L36">    DATA_SOLVER(&quot;solver&quot;),</span>
+
+    /**
+     * Data Stats.
+     */
+<span class="fc" id="L41">    DATA_STATS(&quot;stats&quot;),</span>
+
+    /**
+     * Data Name.
+     */
+<span class="fc" id="L46">    DATA_NAME(&quot;name&quot;),</span>
+
+    /**
+     * Data Project.
+     */
+<span class="fc" id="L51">    DATA_PROJECT(&quot;project&quot;),</span>
+
+    /**
+     * Data Module.
+     */
+<span class="fc" id="L56">    DATA_MODULE(&quot;module&quot;),</span>
+
+    /**
+     * Data Modules.
+     */
+<span class="fc" id="L61">    DATA_MODULES(&quot;modules&quot;),</span>
+
+    /**
+     * Data Packages.
+     */
+<span class="fc" id="L66">    DATA_PACKAGES(&quot;packages&quot;),</span>
+
+    /**
+     * Data Files.
+     */
+<span class="fc" id="L71">    DATA_FILES(&quot;files&quot;),</span>
+
+    /**
+     * Data Class.
+     */
+<span class="fc" id="L76">    DATA_CLASS(&quot;class&quot;),</span>
+
+    /**
+     * Data Classes.
+     */
+<span class="fc" id="L81">    DATA_CLASSES(&quot;classes&quot;),</span>
+
+    /**
+     * Data Methods.
+     */
+<span class="fc" id="L86">    DATA_METHODS(&quot;methods&quot;),</span>
+
+    /**
+     * Data Parent.
+     */
+<span class="fc" id="L91">    DATA_PARENT(&quot;parent&quot;),</span>
+
+    /**
+     * Data Children.
+     */
+<span class="fc" id="L96">    DATA_CHILDREN(&quot;children&quot;),</span>
+
+    /**
+     * Data Underlying.
+     */
+<span class="fc" id="L101">    DATA_UNDERLYING(&quot;underlying&quot;),</span>
+
+    /**
+     * Data Totals.
+     */
+<span class="fc" id="L106">    DATA_TOTALS(&quot;totals&quot;),</span>
+
+    /**
+     * Data RefType.
+     */
+<span class="fc" id="L111">    DATA_REFTYPE(&quot;refType&quot;),</span>
+
+    /**
+     * Data References.
+     */
+<span class="fc" id="L116">    DATA_REFERENCES(&quot;references&quot;),</span>
+
+    /**
+     * Data Referenced.
+     */
+<span class="fc" id="L121">    DATA_REFERENCED(&quot;referenced&quot;),</span>
+
+    /**
+     * Data LocalRefs.
+     */
+<span class="fc" id="L126">    DATA_LOCALREFS(&quot;localRefs&quot;),</span>
+
+    /**
+     * Data ImpliedRefs.
+     */
+<span class="fc" id="L131">    DATA_IMPLIEDREFS(&quot;impliedRefs&quot;),</span>
+
+    /**
+     * Data Standard.
+     */
+<span class="fc" id="L136">    DATA_STANDARD(&quot;standard&quot;),</span>
+
+    /**
+     * Data Circular.
+     */
+<span class="fc" id="L141">    DATA_CIRCULAR(&quot;circular&quot;),</span>
+
+    /**
+     * Data Incestuous.
+     */
+<span class="fc" id="L146">    DATA_INCESTUOUS(&quot;incestuous&quot;),</span>
+
+    /**
+     * Data GroupId.
+     */
+<span class="fc" id="L151">    DATA_GROUPID(&quot;groupId&quot;),</span>
+
+    /**
+     * Data ArtifactId.
+     */
+<span class="fc" id="L156">    DATA_ARTIFACTID(&quot;artifactId&quot;),</span>
+
+    /**
+     * Data Version.
+     */
+<span class="fc" id="L161">    DATA_VERSION(&quot;version&quot;),</span>
+
+    /**
+     * Data Classifier.
+     */
+<span class="fc" id="L166">    DATA_CLASSIFIER(&quot;classifier&quot;),</span>
+
+    /**
+     * Data Scope.
+     */
+<span class="fc" id="L171">    DATA_SCOPE(&quot;scope&quot;),</span>
+
+    /**
+     * Data Optional.
+     */
+<span class="fc" id="L176">    DATA_OPTIONAL(&quot;optional&quot;),</span>
+
+    /**
+     * Data Optional.
+     */
+<span class="fc" id="L181">    DATA_ID(&quot;id&quot;),</span>
+
+    /**
+     * Data Properties.
+     */
+<span class="fc" id="L186">    DATA_PROPERTIES(&quot;properties&quot;),</span>
+
+    /**
+     * Data xtraDirs.
+     */
+<span class="fc" id="L191">    DATA_XTRADIRS(&quot;xtraDirs&quot;),</span>
+
+    /**
+     * Data Versions.
+     */
+<span class="fc" id="L196">    DATA_VERSIONS(&quot;versions&quot;),</span>
+
+    /**
+     * Data Dependencies.
+     */
+<span class="fc" id="L201">    DATA_DIRECTDEPENDENCIES(&quot;directDependencies&quot;),</span>
+
+    /**
+     * Data Dependencies.
+     */
+<span class="fc" id="L206">    DATA_DEPENDENCIES(&quot;dependencies&quot;),</span>
+
+    /**
+     * Data ParsedModules.
+     */
+<span class="fc" id="L211">    DATA_PARSEDMODULES(&quot;parsedModules&quot;),</span>
+
+    /**
+     * Task DataLoad.
+     */
+<span class="fc" id="L216">    TASK_DATALOAD(&quot;task.dataLoad&quot;),</span>
+
+    /**
+     * Task ParseCode.
+     */
+<span class="fc" id="L221">    TASK_PARSECODE(&quot;task.parseCode&quot;),</span>
+
+    /**
+     * Task Solver.
+     */
+<span class="fc" id="L226">    TASK_SOLVER(&quot;task.solver&quot;),</span>
+
+    /**
+     * Task SolverPreProcess.
+     */
+<span class="fc" id="L231">    TASK_SOLVERPREPROCESS(&quot;task.solverPreProcess&quot;),</span>
+
+    /**
+     * Task SolverProcess.
+     */
+<span class="fc" id="L236">    TASK_SOLVERPROCESS(&quot;task.solverProcess&quot;),</span>
+
+    /**
+     * Task Resolving.
+     */
+<span class="fc" id="L241">    TASK_RESOLVING(&quot;task.resolving&quot;),</span>
+
+    /**
+     * Task Discover.
+     */
+<span class="fc" id="L246">    TASK_DISCOVER(&quot;task.discover&quot;),</span>
+
+    /**
+     * Task Discover Local.
+     */
+<span class="fc" id="L251">    TASK_DISCOVERLOCAL(&quot;task.discoverLocal&quot;),</span>
+
+    /**
+     * Task Discover Dependency.
+     */
+<span class="fc" id="L256">    TASK_DISCOVERDEPENDENCY(&quot;task.discoverDependency&quot;);</span>
+
+    /**
+     * The Resource Loader.
+     */
+<span class="fc" id="L261">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(ThemisDataResource.class.getCanonicalName(),</span>
+            ResourceBundle::getBundle);
+
+    /**
+     * The Id.
+     */
+    private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
+
+    /**
+     * Constructor.
+     *
+     * @param pKeyName the key name
+     */
+<span class="fc" id="L279">    ThemisDataResource(final String pKeyName) {</span>
+<span class="fc" id="L280">        theKeyName = pKeyName;</span>
+<span class="fc" id="L281">    }</span>
+
+    @Override
+    public String getKeyName() {
+<span class="fc" id="L285">        return theKeyName;</span>
+    }
+
+    @Override
+    public String getNameSpace() {
+<span class="fc" id="L290">        return &quot;Themis.data&quot;;</span>
+    }
+
+    @Override
+    public String getValue() {
+        /* If we have not initialised the value */
+<span class="fc bfc" id="L296" title="All 2 branches covered.">        if (theValue == null) {</span>
+<span class="fc" id="L297">            theValue = LOADER.getValue(this);</span>
+        }
+
+        /* return the value */
+<span class="fc" id="L301">        return theValue;</span>
+    }
+
+    @Override
+    public String getId() {
+<span class="fc" id="L306">        return getValue();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -16,9 +16,12 @@
  */
 package io.github.tonywasher.joceanus.themis.solver.proj;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.themis.parser.ThemisParser;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisModule;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisModule;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverProjectDef;
 
 import java.util.ArrayList;
@@ -29,6 +32,19 @@ import java.util.List;
  */
 public class ThemisSolverProject
         implements ThemisSolverProjectDef {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L38">    private static final MetisFieldSet&lt;ThemisSolverProject&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSolverProject.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L44">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_MODULES, ThemisSolverProject::getModules);</span>
+<span class="fc" id="L45">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisSolverProject::getUnderlyingProject);</span>
+<span class="fc" id="L46">    }</span>
+
     /**
      * The project parser.
      */
@@ -49,19 +65,29 @@ public class ThemisSolverProject
      *
      * @param pParser the analysis parser
      */
-<span class="fc" id="L52">    public ThemisSolverProject(final ThemisParser pParser) {</span>
+<span class="fc" id="L68">    public ThemisSolverProject(final ThemisParser pParser) {</span>
         /* Store the parameters */
-<span class="fc" id="L54">        theParser = pParser;</span>
-<span class="fc" id="L55">        theProject = theParser.getProject();</span>
+<span class="fc" id="L70">        theParser = pParser;</span>
+<span class="fc" id="L71">        theProject = theParser.getProject();</span>
 
         /* Create the Module list and parser */
-<span class="fc" id="L58">        theModules = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L74">        theModules = new ArrayList&lt;&gt;();</span>
 
         /* Initialise the modules */
-<span class="fc bfc" id="L61" title="All 2 branches covered.">        for (ThemisModule myModule : theProject.getModules()) {</span>
-<span class="fc" id="L62">            theModules.add(new ThemisSolverModule(this, myModule));</span>
-<span class="fc" id="L63">        }</span>
-<span class="fc" id="L64">    }</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        for (ThemisModule myModule : theProject.getModules()) {</span>
+<span class="fc" id="L78">            theModules.add(new ThemisSolverModule(this, myModule));</span>
+<span class="fc" id="L79">        }</span>
+<span class="fc" id="L80">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisSolverProject&gt; getDataFieldSet() {
+<span class="nc" id="L84">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L89">        return toString();</span>
+    }
 
     /**
      * Obtain the project parser.
@@ -69,12 +95,12 @@ public class ThemisSolverProject
      * @return the parser
      */
     public ThemisParser getProjectParser() {
-<span class="fc" id="L72">        return theParser;</span>
+<span class="fc" id="L98">        return theParser;</span>
     }
 
     @Override
     public ThemisProject getUnderlyingProject() {
-<span class="nc" id="L77">        return theProject;</span>
+<span class="nc" id="L103">        return theProject;</span>
     }
 
     /**
@@ -83,12 +109,12 @@ public class ThemisSolverProject
      * @return the modules
      */
     public List&lt;ThemisSolverModule&gt; getModules() {
-<span class="fc" id="L86">        return theModules;</span>
+<span class="fc" id="L112">        return theModules;</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L91">        return theProject.toString();</span>
+<span class="nc" id="L117">        return theProject.toString();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

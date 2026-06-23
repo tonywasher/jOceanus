@@ -16,11 +16,10 @@
  */
 package io.github.tonywasher.joceanus.prometheus.ui;
 
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
-import io.github.tonywasher.joceanus.prometheus.ui.PrometheusItemEditActions.PrometheusItemEditParent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusUIEvent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
@@ -80,69 +79,69 @@ public class PrometheusItemActions&lt;G extends Enum&lt;G&gt;&gt;
      * @param pParent  the parent
      */
     public PrometheusItemActions(final TethysUIFactory&lt;?&gt; pFactory,
-<span class="nc" id="L83">                                 final PrometheusItemEditParent pParent) {</span>
+<span class="nc" id="L82">                                 final PrometheusItemEditParent pParent) {</span>
         /* Record the parent */
-<span class="nc" id="L85">        theParent = pParent;</span>
+<span class="nc" id="L84">        theParent = pParent;</span>
 
         /* Create the event manager */
-<span class="nc" id="L88">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+<span class="nc" id="L87">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
 
         /* Create the buttons */
-<span class="nc" id="L91">        final TethysUIButtonFactory&lt;?&gt; myButtons = pFactory.buttonFactory();</span>
-<span class="nc" id="L92">        theGoToButton = myButtons.newScrollButton(TethysUIGenericWrapper.class);</span>
-<span class="nc" id="L93">        theEditButton = myButtons.newButton();</span>
-<span class="nc" id="L94">        theDeleteButton = myButtons.newButton();</span>
+<span class="nc" id="L90">        final TethysUIButtonFactory&lt;?&gt; myButtons = pFactory.buttonFactory();</span>
+<span class="nc" id="L91">        theGoToButton = myButtons.newScrollButton(TethysUIGenericWrapper.class);</span>
+<span class="nc" id="L92">        theEditButton = myButtons.newButton();</span>
+<span class="nc" id="L93">        theDeleteButton = myButtons.newButton();</span>
 
         /* Configure the buttons */
-<span class="nc" id="L97">        PrometheusIcon.configureGoToScrollButton(theGoToButton);</span>
-<span class="nc" id="L98">        MetisIcon.configureEditIconButton(theEditButton);</span>
-<span class="nc" id="L99">        MetisIcon.configureDeleteIconButton(theDeleteButton);</span>
+<span class="nc" id="L96">        PrometheusIcon.configureGoToScrollButton(theGoToButton);</span>
+<span class="nc" id="L97">        MetisIcon.configureEditIconButton(theEditButton);</span>
+<span class="nc" id="L98">        MetisIcon.configureDeleteIconButton(theDeleteButton);</span>
 
         /* Create the panel */
-<span class="nc" id="L102">        thePanel = pFactory.paneFactory().newVBoxPane();</span>
-<span class="nc" id="L103">        thePanel.setBorderPadding(BORDER_PADDING);</span>
+<span class="nc" id="L101">        thePanel = pFactory.paneFactory().newVBoxPane();</span>
+<span class="nc" id="L102">        thePanel.setBorderPadding(BORDER_PADDING);</span>
 
         /* Create the layout */
-<span class="nc" id="L106">        thePanel.addNode(theGoToButton);</span>
-<span class="nc" id="L107">        thePanel.addNode(theEditButton);</span>
-<span class="nc" id="L108">        thePanel.addNode(theDeleteButton);</span>
+<span class="nc" id="L105">        thePanel.addNode(theGoToButton);</span>
+<span class="nc" id="L106">        thePanel.addNode(theEditButton);</span>
+<span class="nc" id="L107">        thePanel.addNode(theDeleteButton);</span>
 
         /* Add the listener for item changes */
-<span class="nc" id="L111">        final OceanusEventRegistrar&lt;TethysUIEvent&gt; myRegistrar = theGoToButton.getEventRegistrar();</span>
-<span class="nc" id="L112">        theGoToButton.setMenuConfigurator(c -&gt; theEventManager.fireEvent(PrometheusUIEvent.BUILDGOTO, c));</span>
-<span class="nc" id="L113">        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -&gt; theEventManager.fireEvent(PrometheusUIEvent.GOTO, theGoToButton.getValue().getData()));</span>
-<span class="nc" id="L114">        theEditButton.getEventRegistrar().addEventListener(e -&gt; theEventManager.fireEvent(PrometheusUIEvent.EDIT));</span>
-<span class="nc" id="L115">        theDeleteButton.getEventRegistrar().addEventListener(e -&gt; theEventManager.fireEvent(PrometheusUIEvent.DELETE));</span>
+<span class="nc" id="L110">        final OceanusEventRegistrar&lt;TethysUIEvent&gt; myRegistrar = theGoToButton.getEventRegistrar();</span>
+<span class="nc" id="L111">        theGoToButton.setMenuConfigurator(c -&gt; theEventManager.fireEvent(PrometheusUIEvent.BUILDGOTO, c));</span>
+<span class="nc" id="L112">        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -&gt; theEventManager.fireEvent(PrometheusUIEvent.GOTO, theGoToButton.getValue().getData()));</span>
+<span class="nc" id="L113">        theEditButton.getEventRegistrar().addEventListener(e -&gt; theEventManager.fireEvent(PrometheusUIEvent.EDIT));</span>
+<span class="nc" id="L114">        theDeleteButton.getEventRegistrar().addEventListener(e -&gt; theEventManager.fireEvent(PrometheusUIEvent.DELETE));</span>
 
         /* Buttons are initially disabled */
-<span class="nc" id="L118">        setEnabled(false);</span>
-<span class="nc" id="L119">    }</span>
+<span class="nc" id="L117">        setEnabled(false);</span>
+<span class="nc" id="L118">    }</span>
 
     @Override
     public TethysUIComponent getUnderlying() {
-<span class="nc" id="L123">        return thePanel;</span>
+<span class="nc" id="L122">        return thePanel;</span>
     }
 
     @Override
     public OceanusEventRegistrar&lt;PrometheusUIEvent&gt; getEventRegistrar() {
-<span class="nc" id="L128">        return theEventManager.getEventRegistrar();</span>
+<span class="nc" id="L127">        return theEventManager.getEventRegistrar();</span>
     }
 
     @Override
     public void setEnabled(final boolean bEnabled) {
         /* If the table is locked clear the buttons */
-<span class="nc bnc" id="L134" title="All 2 branches missed.">        if (!bEnabled) {</span>
-<span class="nc" id="L135">            theGoToButton.setEnabled(false);</span>
-<span class="nc" id="L136">            theEditButton.setEnabled(false);</span>
-<span class="nc" id="L137">            theDeleteButton.setEnabled(false);</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (!bEnabled) {</span>
+<span class="nc" id="L134">            theGoToButton.setEnabled(false);</span>
+<span class="nc" id="L135">            theEditButton.setEnabled(false);</span>
+<span class="nc" id="L136">            theDeleteButton.setEnabled(false);</span>
 
             /* Else look at the edit state */
         } else {
             /* Set the states */
-<span class="nc" id="L142">            theGoToButton.setEnabled(true);</span>
-<span class="nc" id="L143">            theEditButton.setEnabled(theParent.isEditable());</span>
-<span class="nc" id="L144">            theDeleteButton.setEnabled(theParent.isDeletable());</span>
+<span class="nc" id="L141">            theGoToButton.setEnabled(true);</span>
+<span class="nc" id="L142">            theEditButton.setEnabled(theParent.isEditable());</span>
+<span class="nc" id="L143">            theDeleteButton.setEnabled(theParent.isDeletable());</span>
         }
-<span class="nc" id="L146">    }</span>
+<span class="nc" id="L145">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

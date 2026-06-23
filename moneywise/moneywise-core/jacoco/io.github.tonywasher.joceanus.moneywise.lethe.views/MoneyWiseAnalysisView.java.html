@@ -16,15 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.views;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
-import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
@@ -42,6 +33,16 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWis
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseViewResource;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditEntry;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -56,20 +57,20 @@ public class MoneyWiseAnalysisView
     /**
      * Report fields.
      */
-<span class="nc" id="L59">    private static final MetisFieldSet&lt;MoneyWiseAnalysisView&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisView.class);</span>
+<span class="nc" id="L60">    private static final MetisFieldSet&lt;MoneyWiseAnalysisView&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisView.class);</span>
 
     /*
      * Declare Fields.
      */
     static {
-<span class="nc" id="L65">        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_UPDATESET, MoneyWiseAnalysisView::getEditSet);</span>
-<span class="nc" id="L66">        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_NAME, MoneyWiseAnalysisView::getAnalysis);</span>
+<span class="nc" id="L66">        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_UPDATESET, MoneyWiseAnalysisView::getEditSet);</span>
+<span class="nc" id="L67">        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_NAME, MoneyWiseAnalysisView::getAnalysis);</span>
     }
 
     /**
      * Logger.
      */
-<span class="nc" id="L72">    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseAnalysisView.class);</span>
+<span class="nc" id="L73">    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseAnalysisView.class);</span>
 
     /**
      * The Event Manager.
@@ -123,32 +124,32 @@ public class MoneyWiseAnalysisView
      * @param pEditSet the edit set
      */
     public MoneyWiseAnalysisView(final MoneyWiseView pView,
-<span class="nc" id="L126">                                 final PrometheusEditSet pEditSet) {</span>
+<span class="nc" id="L127">                                 final PrometheusEditSet pEditSet) {</span>
         /* Store update set */
-<span class="nc" id="L128">        theView = pView;</span>
-<span class="nc" id="L129">        theEditSet = pEditSet;</span>
+<span class="nc" id="L129">        theView = pView;</span>
+<span class="nc" id="L130">        theEditSet = pEditSet;</span>
 
         /* Register data entries */
-<span class="nc" id="L132">        theTransEntry = theEditSet.registerType(MoneyWiseBasicDataType.TRANSACTION);</span>
-<span class="nc" id="L133">        theInfoEntry = theEditSet.registerType(MoneyWiseBasicDataType.TRANSACTIONINFO);</span>
+<span class="nc" id="L133">        theTransEntry = theEditSet.registerType(MoneyWiseBasicDataType.TRANSACTION);</span>
+<span class="nc" id="L134">        theInfoEntry = theEditSet.registerType(MoneyWiseBasicDataType.TRANSACTIONINFO);</span>
 
         /* Create event manager */
-<span class="nc" id="L136">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
-<span class="nc" id="L137">    }</span>
+<span class="nc" id="L137">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+<span class="nc" id="L138">    }</span>
 
     @Override
     public MetisFieldSet&lt;MoneyWiseAnalysisView&gt; getDataFieldSet() {
-<span class="nc" id="L141">        return FIELD_DEFS;</span>
+<span class="nc" id="L142">        return FIELD_DEFS;</span>
     }
 
     @Override
     public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L146">        return FIELD_DEFS.getName();</span>
+<span class="nc" id="L147">        return FIELD_DEFS.getName();</span>
     }
 
     @Override
     public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
-<span class="nc" id="L151">        return theEventManager.getEventRegistrar();</span>
+<span class="nc" id="L152">        return theEventManager.getEventRegistrar();</span>
     }
 
     /**
@@ -157,7 +158,7 @@ public class MoneyWiseAnalysisView
      * @return the active analysis
      */
     public MoneyWiseAnalysis getAnalysis() {
-<span class="nc" id="L160">        return theAnalysis;</span>
+<span class="nc" id="L161">        return theAnalysis;</span>
     }
 
     /**
@@ -166,7 +167,7 @@ public class MoneyWiseAnalysisView
      * @return the editSet
      */
     private PrometheusEditSet getEditSet() {
-<span class="nc" id="L169">        return theEditSet;</span>
+<span class="nc" id="L170">        return theEditSet;</span>
     }
 
     /**
@@ -175,7 +176,7 @@ public class MoneyWiseAnalysisView
      * @return the transaction list
      */
     public MoneyWiseTransactionList getTransactions() {
-<span class="nc" id="L178">        return theTransactions;</span>
+<span class="nc" id="L179">        return theTransactions;</span>
     }
 
     /**
@@ -184,7 +185,7 @@ public class MoneyWiseAnalysisView
      * @return the range
      */
     public OceanusDateRange getRange() {
-<span class="nc" id="L187">        return theRange;</span>
+<span class="nc" id="L188">        return theRange;</span>
     }
 
     /**
@@ -194,35 +195,35 @@ public class MoneyWiseAnalysisView
         /* Protect against exceptions */
         try {
             /* Access the new analysis manager */
-<span class="nc" id="L197">            theManager = theView.getAnalysisManager();</span>
-<span class="nc" id="L198">            theEditSet.setDataSet(theView.getData());</span>
+<span class="nc" id="L198">            theManager = theView.getAnalysisManager();</span>
+<span class="nc" id="L199">            theEditSet.setDataSet(theView.getData());</span>
 
             /* If we have a range */
-<span class="nc bnc" id="L201" title="All 2 branches missed.">            if (theRange != null) {</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">            if (theRange != null) {</span>
                 /* Obtain the required analysis and reset to it */
-<span class="nc" id="L203">                theAnalysis = theManager.getRangedAnalysis(theRange);</span>
+<span class="nc" id="L204">                theAnalysis = theManager.getRangedAnalysis(theRange);</span>
 
                 /* Create the new transaction list */
-<span class="nc" id="L206">                final MoneyWiseDataSet myData = theView.getData();</span>
-<span class="nc" id="L207">                theTransactions = new MoneyWiseTransactionView(myData.getTransactions());</span>
+<span class="nc" id="L207">                final MoneyWiseDataSet myData = theView.getData();</span>
+<span class="nc" id="L208">                theTransactions = new MoneyWiseTransactionView(myData.getTransactions());</span>
 
                 /* else no range */
-<span class="nc" id="L210">            } else {</span>
+<span class="nc" id="L211">            } else {</span>
                 /* Set nulls */
-<span class="nc" id="L212">                theAnalysis = null;</span>
-<span class="nc" id="L213">                theTransactions = null;</span>
+<span class="nc" id="L213">                theAnalysis = null;</span>
+<span class="nc" id="L214">                theTransactions = null;</span>
             }
 
             /* register the lists */
-<span class="nc" id="L217">            registerLists();</span>
+<span class="nc" id="L218">            registerLists();</span>
 
             /* Notify listeners */
-<span class="nc" id="L220">            theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);</span>
+<span class="nc" id="L221">            theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);</span>
 
-<span class="nc" id="L222">        } catch (OceanusException e) {</span>
-<span class="nc" id="L223">            LOGGER.error(&quot;Failed to refreshData&quot;, e);</span>
-<span class="nc" id="L224">        }</span>
-<span class="nc" id="L225">    }</span>
+<span class="nc" id="L223">        } catch (OceanusException e) {</span>
+<span class="nc" id="L224">            LOGGER.error(&quot;Failed to refreshData&quot;, e);</span>
+<span class="nc" id="L225">        }</span>
+<span class="nc" id="L226">    }</span>
 
     /**
      * Set the selected date range.
@@ -231,30 +232,30 @@ public class MoneyWiseAnalysisView
      */
     public void setRange(final OceanusDateRange pRange) {
         /* If we have changed the range */
-<span class="nc bnc" id="L234" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(theRange, pRange)) {</span>
+<span class="nc bnc" id="L235" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(theRange, pRange)) {</span>
             /* Obtain the required analysis and reset to it */
-<span class="nc" id="L236">            theRange = pRange;</span>
-<span class="nc bnc" id="L237" title="All 2 branches missed.">            theAnalysis = theManager == null ? null : theManager.getRangedAnalysis(theRange);</span>
+<span class="nc" id="L237">            theRange = pRange;</span>
+<span class="nc bnc" id="L238" title="All 2 branches missed.">            theAnalysis = theManager == null ? null : theManager.getRangedAnalysis(theRange);</span>
 
             /* Notify listeners */
-<span class="nc" id="L240">            theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);</span>
+<span class="nc" id="L241">            theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);</span>
         }
-<span class="nc" id="L242">    }</span>
+<span class="nc" id="L243">    }</span>
 
     /**
      * /** Register lists.
      */
     private void registerLists() {
         /* If we have transactions */
-<span class="nc bnc" id="L249" title="All 2 branches missed.">        if (theTransactions != null) {</span>
-<span class="nc" id="L250">            final MoneyWiseTransInfoList myInfo = theTransactions.getTransactionInfo();</span>
-<span class="nc" id="L251">            theTransEntry.setDataList(theTransactions);</span>
-<span class="nc" id="L252">            theInfoEntry.setDataList(myInfo);</span>
-<span class="nc" id="L253">        } else {</span>
-<span class="nc" id="L254">            theTransEntry.setDataList(null);</span>
-<span class="nc" id="L255">            theInfoEntry.setDataList(null);</span>
+<span class="nc bnc" id="L250" title="All 2 branches missed.">        if (theTransactions != null) {</span>
+<span class="nc" id="L251">            final MoneyWiseTransInfoList myInfo = theTransactions.getTransactionInfo();</span>
+<span class="nc" id="L252">            theTransEntry.setDataList(theTransactions);</span>
+<span class="nc" id="L253">            theInfoEntry.setDataList(myInfo);</span>
+<span class="nc" id="L254">        } else {</span>
+<span class="nc" id="L255">            theTransEntry.setDataList(null);</span>
+<span class="nc" id="L256">            theInfoEntry.setDataList(null);</span>
         }
-<span class="nc" id="L257">    }</span>
+<span class="nc" id="L258">    }</span>
 
     /**
      * TransactionView class.
@@ -267,76 +268,76 @@ public class MoneyWiseAnalysisView
          * @param pSource the source transaction list
          * @throws OceanusException on error
          */
-<span class="nc" id="L270">        private MoneyWiseTransactionView(final MoneyWiseTransactionList pSource) throws OceanusException {</span>
+<span class="nc" id="L271">        private MoneyWiseTransactionView(final MoneyWiseTransactionList pSource) throws OceanusException {</span>
             /* Initialise as edit list */
-<span class="nc" id="L272">            super(pSource);</span>
-<span class="nc" id="L273">            setStyle(PrometheusListStyle.EDIT);</span>
-<span class="nc" id="L274">            setEditSet(theEditSet);</span>
-<span class="nc" id="L275">            theEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSACTION, this);</span>
+<span class="nc" id="L273">            super(pSource);</span>
+<span class="nc" id="L274">            setStyle(PrometheusListStyle.EDIT);</span>
+<span class="nc" id="L275">            setEditSet(theEditSet);</span>
+<span class="nc" id="L276">            theEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSACTION, this);</span>
 
             /* Store InfoType list */
-<span class="nc" id="L278">            setTransInfoTypes(theEditSet.getDataList(MoneyWiseStaticDataType.TRANSINFOTYPE, MoneyWiseTransInfoTypeList.class));</span>
+<span class="nc" id="L279">            setTransInfoTypes(theEditSet.getDataList(MoneyWiseStaticDataType.TRANSINFOTYPE, MoneyWiseTransInfoTypeList.class));</span>
 
             /* Create and store info List */
-<span class="nc" id="L281">            final MoneyWiseTransInfoList myTransInfo = pSource.getTransactionInfo().getEmptyList(PrometheusListStyle.EDIT);</span>
-<span class="nc" id="L282">            theEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSACTIONINFO, myTransInfo);</span>
-<span class="nc" id="L283">            setTransactionInfo(myTransInfo);</span>
+<span class="nc" id="L282">            final MoneyWiseTransInfoList myTransInfo = pSource.getTransactionInfo().getEmptyList(PrometheusListStyle.EDIT);</span>
+<span class="nc" id="L283">            theEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSACTIONINFO, myTransInfo);</span>
+<span class="nc" id="L284">            setTransactionInfo(myTransInfo);</span>
 
             /* Loop through the Transactions extracting relevant elements */
-<span class="nc" id="L286">            final Iterator&lt;MoneyWiseTransaction&gt; myIterator = pSource.iterator();</span>
-<span class="nc bnc" id="L287" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
-<span class="nc" id="L288">                final MoneyWiseTransaction myCurr = myIterator.next();</span>
+<span class="nc" id="L287">            final Iterator&lt;MoneyWiseTransaction&gt; myIterator = pSource.iterator();</span>
+<span class="nc bnc" id="L288" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L289">                final MoneyWiseTransaction myCurr = myIterator.next();</span>
 
                 /* Ignore deleted events */
-<span class="nc bnc" id="L291" title="All 2 branches missed.">                if (myCurr.isDeleted()) {</span>
-<span class="nc" id="L292">                    continue;</span>
+<span class="nc bnc" id="L292" title="All 2 branches missed.">                if (myCurr.isDeleted()) {</span>
+<span class="nc" id="L293">                    continue;</span>
                 }
 
                 /* Build the new linked transaction and add it to the list */
-<span class="nc" id="L296">                final MoneyWiseTransaction myTrans = new MoneyWiseTransaction(this, myCurr);</span>
-<span class="nc" id="L297">                add(myTrans);</span>
-<span class="nc" id="L298">                myTrans.resolveEditSetLinks();</span>
+<span class="nc" id="L297">                final MoneyWiseTransaction myTrans = new MoneyWiseTransaction(this, myCurr);</span>
+<span class="nc" id="L298">                add(myTrans);</span>
+<span class="nc" id="L299">                myTrans.resolveEditSetLinks();</span>
 
                 /* Adjust the map */
-<span class="nc" id="L301">                myTrans.adjustMapForItem();</span>
-<span class="nc" id="L302">            }</span>
-<span class="nc" id="L303">        }</span>
+<span class="nc" id="L302">                myTrans.adjustMapForItem();</span>
+<span class="nc" id="L303">            }</span>
+<span class="nc" id="L304">        }</span>
 
         @Override
         public void postProcessOnUpdate() {
             /* Pass call on */
-<span class="nc" id="L308">            super.postProcessOnUpdate();</span>
+<span class="nc" id="L309">            super.postProcessOnUpdate();</span>
 
             /* Obtain the active profile */
-<span class="nc" id="L311">            OceanusProfile myTask = theView.getActiveTask();</span>
-<span class="nc" id="L312">            myTask = myTask.startTask(&quot;updateAnalysis&quot;);</span>
+<span class="nc" id="L312">            OceanusProfile myTask = theView.getActiveTask();</span>
+<span class="nc" id="L313">            myTask = myTask.startTask(&quot;updateAnalysis&quot;);</span>
 
             /* Protect against exceptions */
             try {
                 /* Sort the transaction list */
-<span class="nc" id="L317">                myTask.startTask(&quot;sortTransactions&quot;);</span>
-<span class="nc" id="L318">                reSort();</span>
+<span class="nc" id="L318">                myTask.startTask(&quot;sortTransactions&quot;);</span>
+<span class="nc" id="L319">                reSort();</span>
 
                 /* Initialise the analysis */
-<span class="nc" id="L321">                myTask.startTask(&quot;UpdateMaps&quot;);</span>
-<span class="nc" id="L322">                theView.getData().updateMaps();</span>
+<span class="nc" id="L322">                myTask.startTask(&quot;UpdateMaps&quot;);</span>
+<span class="nc" id="L323">                theView.getData().updateMaps();</span>
 
                 /* Analyse the data */
-<span class="nc" id="L325">                myTask.startTask(&quot;analyseData&quot;);</span>
-<span class="nc" id="L326">                final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(myTask, theEditSet, theView.getPreferenceManager());</span>
-<span class="nc" id="L327">                final MoneyWiseAnalysis myAnalysis = myAnalyser.getAnalysis();</span>
-<span class="nc" id="L328">                theManager = new MoneyWiseAnalysisManager(myAnalysis);</span>
-<span class="nc" id="L329">                theAnalysis = theManager.getRangedAnalysis(theRange);</span>
+<span class="nc" id="L326">                myTask.startTask(&quot;analyseData&quot;);</span>
+<span class="nc" id="L327">                final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(myTask, theEditSet, theView.getPreferenceManager());</span>
+<span class="nc" id="L328">                final MoneyWiseAnalysis myAnalysis = myAnalyser.getAnalysis();</span>
+<span class="nc" id="L329">                theManager = new MoneyWiseAnalysisManager(myAnalysis);</span>
+<span class="nc" id="L330">                theAnalysis = theManager.getRangedAnalysis(theRange);</span>
 
                 /* Notify listeners */
-<span class="nc" id="L332">                myTask.startTask(&quot;Notify&quot;);</span>
-<span class="nc" id="L333">                theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);</span>
+<span class="nc" id="L333">                myTask.startTask(&quot;Notify&quot;);</span>
+<span class="nc" id="L334">                theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);</span>
 
                 /* Catch exceptions */
-<span class="nc" id="L336">            } catch (OceanusException e) {</span>
-<span class="nc" id="L337">                LOGGER.error(&quot;Failed to analyse changes&quot;, e);</span>
-<span class="nc" id="L338">            }</span>
-<span class="nc" id="L339">        }</span>
+<span class="nc" id="L337">            } catch (OceanusException e) {</span>
+<span class="nc" id="L338">                LOGGER.error(&quot;Failed to analyse changes&quot;, e);</span>
+<span class="nc" id="L339">            }</span>
+<span class="nc" id="L340">        }</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

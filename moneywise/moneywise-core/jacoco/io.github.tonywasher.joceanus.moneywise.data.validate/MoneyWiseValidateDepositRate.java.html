@@ -16,58 +16,59 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositRate;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositRate.MoneyWiseDepositRateDataMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositRate.MoneyWiseDepositRateList;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValidator;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator;
 
 /**
  * Validator for DepositRate.
  */
-<span class="nc" id="L31">public class MoneyWiseValidateDepositRate</span>
+<span class="nc" id="L32">public class MoneyWiseValidateDepositRate</span>
         implements PrometheusDataValidator {
 
     @Override
-    public void validate(final PrometheusDataItem pRate) {
-<span class="nc" id="L36">        final MoneyWiseDepositRate myRate = (MoneyWiseDepositRate) pRate;</span>
-<span class="nc" id="L37">        final MoneyWiseDepositRateList myList = myRate.getList();</span>
-<span class="nc" id="L38">        final OceanusDate myDate = myRate.getEndDate();</span>
-<span class="nc" id="L39">        final OceanusRate myDepRate = myRate.getRate();</span>
-<span class="nc" id="L40">        final OceanusRate myBonus = myRate.getBonus();</span>
+    public void validate(final PrometheusDataItemCtl pRate) {
+<span class="nc" id="L37">        final MoneyWiseDepositRate myRate = (MoneyWiseDepositRate) pRate;</span>
+<span class="nc" id="L38">        final MoneyWiseDepositRateList myList = myRate.getList();</span>
+<span class="nc" id="L39">        final OceanusDate myDate = myRate.getEndDate();</span>
+<span class="nc" id="L40">        final OceanusRate myDepRate = myRate.getRate();</span>
+<span class="nc" id="L41">        final OceanusRate myBonus = myRate.getBonus();</span>
 
         /* Count instances of this date for the account */
-<span class="nc" id="L43">        final MoneyWiseDepositRateDataMap myMap = myList.getDataMap();</span>
-<span class="nc bnc" id="L44" title="All 2 branches missed.">        if (!myMap.validRateCount(myRate)) {</span>
+<span class="nc" id="L44">        final MoneyWiseDepositRateDataMap myMap = myList.getDataMap();</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (!myMap.validRateCount(myRate)) {</span>
             /* Each date must be unique for deposit (even null) */
-<span class="nc bnc" id="L46" title="All 2 branches missed.">            pRate.addError(myDate == null</span>
-<span class="nc" id="L47">                    ? MoneyWiseDepositRate.ERROR_NULLDATE</span>
-<span class="nc" id="L48">                    : PrometheusDataItem.ERROR_DUPLICATE, MoneyWiseBasicResource.DEPOSITRATE_ENDDATE);</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">            myRate.addError(myDate == null</span>
+<span class="nc" id="L48">                    ? MoneyWiseDepositRate.ERROR_NULLDATE</span>
+<span class="nc" id="L49">                    : PrometheusDataItem.ERROR_DUPLICATE, MoneyWiseBasicResource.DEPOSITRATE_ENDDATE);</span>
         }
 
         /* The Rate must be non-zero and greater than zero */
-<span class="nc bnc" id="L52" title="All 2 branches missed.">        if (myDepRate == null) {</span>
-<span class="nc" id="L53">            pRate.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE);</span>
-<span class="nc bnc" id="L54" title="All 2 branches missed.">        } else if (!myDepRate.isPositive()) {</span>
-<span class="nc" id="L55">            pRate.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE);</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        if (myDepRate == null) {</span>
+<span class="nc" id="L54">            myRate.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE);</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        } else if (!myDepRate.isPositive()) {</span>
+<span class="nc" id="L56">            myRate.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE);</span>
         }
 
         /* The bonus rate must be non-zero if it exists */
-<span class="nc bnc" id="L59" title="All 2 branches missed.">        if (myBonus != null) {</span>
-<span class="nc bnc" id="L60" title="All 2 branches missed.">            if (myBonus.isZero()) {</span>
-<span class="nc" id="L61">                pRate.addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseBasicResource.DEPOSITRATE_BONUS);</span>
-<span class="nc bnc" id="L62" title="All 2 branches missed.">            } else if (!myBonus.isPositive()) {</span>
-<span class="nc" id="L63">                pRate.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.DEPOSITRATE_BONUS);</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        if (myBonus != null) {</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">            if (myBonus.isZero()) {</span>
+<span class="nc" id="L62">                myRate.addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseBasicResource.DEPOSITRATE_BONUS);</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">            } else if (!myBonus.isPositive()) {</span>
+<span class="nc" id="L64">                myRate.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.DEPOSITRATE_BONUS);</span>
             }
         }
 
         /* Set validation flag */
-<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (!pRate.hasErrors()) {</span>
-<span class="nc" id="L69">            pRate.setValidEdit();</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        if (!myRate.hasErrors()) {</span>
+<span class="nc" id="L70">            myRate.setValidEdit();</span>
         }
-<span class="nc" id="L71">    }</span>
+<span class="nc" id="L72">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

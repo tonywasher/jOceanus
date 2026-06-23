@@ -18,6 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianFRODOSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.frodo.FrodoParameters;
@@ -29,16 +30,17 @@ import java.util.Map;
 /**
  * FRODO KeySpecs.
  */
-public final class GordianCoreFRODOSpec {
+public final class GordianCoreFRODOSpec
+        implements GordianCoreKeyPairIdSpec&lt;GordianFRODOSpec&gt; {
     /**
      * The specMap.
      */
-<span class="fc" id="L36">    private static final Map&lt;GordianFRODOSpec, GordianCoreFRODOSpec&gt; SPECMAP = newSpecMap();</span>
+<span class="fc" id="L38">    private static final Map&lt;GordianFRODOSpec, GordianCoreFRODOSpec&gt; SPECMAP = newSpecMap();</span>
 
     /**
      * The specArray.
      */
-<span class="fc" id="L41">    private static final GordianCoreFRODOSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreFRODOSpec[0]);</span>
+<span class="fc" id="L43">    private static final GordianCoreFRODOSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreFRODOSpec[0]);</span>
 
     /**
      * The Spec.
@@ -50,19 +52,19 @@ public final class GordianCoreFRODOSpec {
      *
      * @param pSpec the spec
      */
-<span class="fc" id="L53">    private GordianCoreFRODOSpec(final GordianFRODOSpec pSpec) {</span>
-<span class="fc" id="L54">        theSpec = pSpec;</span>
-<span class="fc" id="L55">    }</span>
+<span class="fc" id="L55">    private GordianCoreFRODOSpec(final GordianFRODOSpec pSpec) {</span>
+<span class="fc" id="L56">        theSpec = pSpec;</span>
+<span class="fc" id="L57">    }</span>
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
-    public GordianFRODOSpec getSpec() {
-<span class="fc" id="L63">        return theSpec;</span>
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+<span class="fc" id="L61">        return GordianKeyPairType.FRODO;</span>
     }
 
+    @Override
+    public GordianFRODOSpec getSpec() {
+<span class="fc" id="L66">        return theSpec;</span>
+    }
 
     /**
      * Obtain Frodo Parameters.
@@ -70,14 +72,14 @@ public final class GordianCoreFRODOSpec {
      * @return the parameters.
      */
     public FrodoParameters getParameters() {
-<span class="pc bpc" id="L73" title="6 of 7 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L74">            case AES640 -&gt; FrodoParameters.frodokem640aes;</span>
-<span class="nc" id="L75">            case SHAKE640 -&gt; FrodoParameters.frodokem640shake;</span>
-<span class="nc" id="L76">            case AES976 -&gt; FrodoParameters.frodokem976aes;</span>
-<span class="nc" id="L77">            case SHAKE976 -&gt; FrodoParameters.frodokem976shake;</span>
-<span class="nc" id="L78">            case AES1344 -&gt; FrodoParameters.frodokem1344aes;</span>
-<span class="nc" id="L79">            case SHAKE1344 -&gt; FrodoParameters.frodokem1344shake;</span>
-<span class="nc" id="L80">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L75" title="6 of 7 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L76">            case AES640 -&gt; FrodoParameters.frodokem640aes;</span>
+<span class="nc" id="L77">            case SHAKE640 -&gt; FrodoParameters.frodokem640shake;</span>
+<span class="nc" id="L78">            case AES976 -&gt; FrodoParameters.frodokem976aes;</span>
+<span class="nc" id="L79">            case SHAKE976 -&gt; FrodoParameters.frodokem976shake;</span>
+<span class="nc" id="L80">            case AES1344 -&gt; FrodoParameters.frodokem1344aes;</span>
+<span class="nc" id="L81">            case SHAKE1344 -&gt; FrodoParameters.frodokem1344shake;</span>
+<span class="nc" id="L82">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
@@ -87,57 +89,53 @@ public final class GordianCoreFRODOSpec {
      * @return the parameters.
      */
     public FrodoParameterSpec getParameterSpec() {
-<span class="pc bpc" id="L90" title="6 of 7 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L91">            case AES640 -&gt; FrodoParameterSpec.frodokem640aes;</span>
-<span class="nc" id="L92">            case SHAKE640 -&gt; FrodoParameterSpec.frodokem640shake;</span>
-<span class="nc" id="L93">            case AES976 -&gt; FrodoParameterSpec.frodokem976aes;</span>
-<span class="nc" id="L94">            case SHAKE976 -&gt; FrodoParameterSpec.frodokem976shake;</span>
-<span class="nc" id="L95">            case AES1344 -&gt; FrodoParameterSpec.frodokem1344aes;</span>
-<span class="nc" id="L96">            case SHAKE1344 -&gt; FrodoParameterSpec.frodokem1344shake;</span>
-<span class="nc" id="L97">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L92" title="6 of 7 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L93">            case AES640 -&gt; FrodoParameterSpec.frodokem640aes;</span>
+<span class="nc" id="L94">            case SHAKE640 -&gt; FrodoParameterSpec.frodokem640shake;</span>
+<span class="nc" id="L95">            case AES976 -&gt; FrodoParameterSpec.frodokem976aes;</span>
+<span class="nc" id="L96">            case SHAKE976 -&gt; FrodoParameterSpec.frodokem976shake;</span>
+<span class="nc" id="L97">            case AES1344 -&gt; FrodoParameterSpec.frodokem1344aes;</span>
+<span class="nc" id="L98">            case SHAKE1344 -&gt; FrodoParameterSpec.frodokem1344shake;</span>
+<span class="nc" id="L99">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
-    /**
-     * Obtain Frodo algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
-<span class="pc bpc" id="L107" title="1 of 7 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L108">            case AES640 -&gt; BCObjectIdentifiers.frodokem640aes;</span>
-<span class="fc" id="L109">            case SHAKE640 -&gt; BCObjectIdentifiers.frodokem640shake;</span>
-<span class="fc" id="L110">            case AES976 -&gt; BCObjectIdentifiers.frodokem976aes;</span>
-<span class="fc" id="L111">            case SHAKE976 -&gt; BCObjectIdentifiers.frodokem976shake;</span>
-<span class="fc" id="L112">            case AES1344 -&gt; BCObjectIdentifiers.frodokem1344aes;</span>
-<span class="fc" id="L113">            case SHAKE1344 -&gt; BCObjectIdentifiers.frodokem1344shake;</span>
-<span class="nc" id="L114">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L105" title="1 of 7 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L106">            case AES640 -&gt; BCObjectIdentifiers.frodokem640aes;</span>
+<span class="fc" id="L107">            case SHAKE640 -&gt; BCObjectIdentifiers.frodokem640shake;</span>
+<span class="fc" id="L108">            case AES976 -&gt; BCObjectIdentifiers.frodokem976aes;</span>
+<span class="fc" id="L109">            case SHAKE976 -&gt; BCObjectIdentifiers.frodokem976shake;</span>
+<span class="fc" id="L110">            case AES1344 -&gt; BCObjectIdentifiers.frodokem1344aes;</span>
+<span class="fc" id="L111">            case SHAKE1344 -&gt; BCObjectIdentifiers.frodokem1344shake;</span>
+<span class="nc" id="L112">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L120">        return theSpec.toString();</span>
+<span class="fc" id="L118">        return theSpec.toString();</span>
     }
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L127">            return true;</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L125">            return true;</span>
         }
-<span class="nc bnc" id="L129" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L130">            return false;</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L128">            return false;</span>
         }
 
         /* Check subFields */
-<span class="nc" id="L134">        return pThat instanceof GordianCoreFRODOSpec myThat</span>
-<span class="nc bnc" id="L135" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
+<span class="nc" id="L132">        return pThat instanceof GordianCoreFRODOSpec myThat</span>
+<span class="nc bnc" id="L133" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
     }
 
     @Override
     public int hashCode() {
-<span class="fc" id="L140">        return theSpec.hashCode();</span>
+<span class="fc" id="L138">        return theSpec.hashCode();</span>
     }
 
     /**
@@ -147,7 +145,7 @@ public final class GordianCoreFRODOSpec {
      * @return the core spec
      */
     public static GordianCoreFRODOSpec mapCoreSpec(final Object pSpec) {
-<span class="pc bpc" id="L150" title="1 of 2 branches missed.">        return pSpec instanceof GordianFRODOSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">        return pSpec instanceof GordianFRODOSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
     }
 
     /**
@@ -156,11 +154,11 @@ public final class GordianCoreFRODOSpec {
      * @return the type map
      */
     private static Map&lt;GordianFRODOSpec, GordianCoreFRODOSpec&gt; newSpecMap() {
-<span class="fc" id="L159">        final Map&lt;GordianFRODOSpec, GordianCoreFRODOSpec&gt; myMap = new EnumMap&lt;&gt;(GordianFRODOSpec.class);</span>
-<span class="fc bfc" id="L160" title="All 2 branches covered.">        for (GordianFRODOSpec mySpec : GordianFRODOSpec.values()) {</span>
-<span class="fc" id="L161">            myMap.put(mySpec, new GordianCoreFRODOSpec(mySpec));</span>
+<span class="fc" id="L157">        final Map&lt;GordianFRODOSpec, GordianCoreFRODOSpec&gt; myMap = new EnumMap&lt;&gt;(GordianFRODOSpec.class);</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">        for (GordianFRODOSpec mySpec : GordianFRODOSpec.values()) {</span>
+<span class="fc" id="L159">            myMap.put(mySpec, new GordianCoreFRODOSpec(mySpec));</span>
         }
-<span class="fc" id="L163">        return myMap;</span>
+<span class="fc" id="L161">        return myMap;</span>
     }
 
     /**
@@ -169,7 +167,7 @@ public final class GordianCoreFRODOSpec {
      * @return the values
      */
     public static GordianCoreFRODOSpec[] values() {
-<span class="fc" id="L172">        return VALUES;</span>
+<span class="fc" id="L170">        return VALUES;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -29,6 +29,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEnt
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway.GordianLockResolver;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
@@ -83,11 +84,11 @@ public class GordianPEMCoder {
      *
      * @param pKeyStore the keyStore
      */
-<span class="fc" id="L86">    GordianPEMCoder(final GordianCoreKeyStore pKeyStore) {</span>
+<span class="fc" id="L87">    GordianPEMCoder(final GordianCoreKeyStore pKeyStore) {</span>
         /* Store details */
-<span class="fc" id="L88">        theFactory = pKeyStore.getFactory();</span>
-<span class="fc" id="L89">        theParser = new GordianPEMParser();</span>
-<span class="fc" id="L90">    }</span>
+<span class="fc" id="L89">        theFactory = pKeyStore.getFactory();</span>
+<span class="fc" id="L90">        theParser = new GordianPEMParser();</span>
+<span class="fc" id="L91">    }</span>
 
     /**
      * Set the lock resolver the lock resolver.
@@ -95,8 +96,8 @@ public class GordianPEMCoder {
      * @param pResolver the resolver
      */
     void setLockResolver(final GordianLockResolver pResolver) {
-<span class="fc" id="L98">        theLockResolver = pResolver;</span>
-<span class="fc" id="L99">    }</span>
+<span class="fc" id="L99">        theLockResolver = pResolver;</span>
+<span class="fc" id="L100">    }</span>
 
     /**
      * Export a keyStoreEntry to stream.
@@ -110,15 +111,15 @@ public class GordianPEMCoder {
                                     final OutputStream pStream,
                                     final GordianCoreZipLock pLock) throws GordianException {
         /* Check that the lock is usable */
-<span class="pc bpc" id="L113" title="2 of 4 branches missed.">        if (pLock == null || !pLock.isFresh()) {</span>
-<span class="nc" id="L114">            throw new GordianDataException(&quot;Invalid lock&quot;);</span>
+<span class="pc bpc" id="L114" title="2 of 4 branches missed.">        if (pLock == null || !pLock.isFresh()) {</span>
+<span class="nc" id="L115">            throw new GordianDataException(&quot;Invalid lock&quot;);</span>
         }
-<span class="fc" id="L116">        pLock.markAsUsed();</span>
+<span class="fc" id="L117">        pLock.markAsUsed();</span>
 
         /* Encode and write the object */
-<span class="fc" id="L119">        final List&lt;GordianPEMObject&gt; myObjects = encodeKeyStoreEntry(pEntry, pLock);</span>
-<span class="fc" id="L120">        theParser.writePEMFile(pStream, myObjects);</span>
-<span class="fc" id="L121">    }</span>
+<span class="fc" id="L120">        final List&lt;GordianPEMObject&gt; myObjects = encodeKeyStoreEntry(pEntry, pLock);</span>
+<span class="fc" id="L121">        theParser.writePEMFile(pStream, myObjects);</span>
+<span class="fc" id="L122">    }</span>
 
     /**
      * Import a keyStoreEntry from stream.
@@ -128,8 +129,8 @@ public class GordianPEMCoder {
      * @throws GordianException on error
      */
     public GordianKeyStoreEntry importKeyStoreEntry(final InputStream pStream) throws GordianException {
-<span class="fc" id="L131">        final List&lt;GordianPEMObject&gt; myObjects = theParser.parsePEMFile(pStream);</span>
-<span class="fc" id="L132">        return decodePEMObjectList(myObjects);</span>
+<span class="fc" id="L132">        final List&lt;GordianPEMObject&gt; myObjects = theParser.parsePEMFile(pStream);</span>
+<span class="fc" id="L133">        return decodePEMObjectList(myObjects);</span>
     }
 
     /**
@@ -140,8 +141,8 @@ public class GordianPEMCoder {
      * @throws GordianException on error
      */
     public List&lt;GordianKeyStoreEntry&gt; importCertificates(final InputStream pStream) throws GordianException {
-<span class="nc" id="L143">        final List&lt;GordianPEMObject&gt; myObjects = theParser.parsePEMFile(pStream);</span>
-<span class="nc" id="L144">        return decodePEMCertificateList(myObjects);</span>
+<span class="nc" id="L144">        final List&lt;GordianPEMObject&gt; myObjects = theParser.parsePEMFile(pStream);</span>
+<span class="nc" id="L145">        return decodePEMCertificateList(myObjects);</span>
     }
 
     /**
@@ -155,26 +156,26 @@ public class GordianPEMCoder {
     private List&lt;GordianPEMObject&gt; encodeKeyStoreEntry(final GordianKeyStoreEntry pEntry,
                                                        final GordianCoreZipLock pLock) throws GordianException {
         /* Handle certificates */
-<span class="pc bpc" id="L158" title="1 of 2 branches missed.">        if (pEntry instanceof GordianKeyStoreCertificate myEntry) {</span>
-<span class="nc" id="L159">            final GordianCertificate myCert = myEntry.getCertificate();</span>
-<span class="nc" id="L160">            return Collections.singletonList(encodeCertificate(myCert));</span>
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">        if (pEntry instanceof GordianKeyStoreCertificate myEntry) {</span>
+<span class="nc" id="L160">            final GordianCertificate myCert = myEntry.getCertificate();</span>
+<span class="nc" id="L161">            return Collections.singletonList(encodeCertificate(myCert));</span>
         }
 
         /* Handle keyPair */
-<span class="fc bfc" id="L164" title="All 2 branches covered.">        if (pEntry instanceof GordianKeyStorePair myEntry) {</span>
-<span class="fc" id="L165">            return encodePrivateKeyPair(myEntry, pLock);</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">        if (pEntry instanceof GordianKeyStorePair myEntry) {</span>
+<span class="fc" id="L166">            return encodePrivateKeyPair(myEntry, pLock);</span>
         }
 
         /* Handle keySet and key */
-<span class="fc bfc" id="L169" title="All 2 branches covered.">        if (pEntry instanceof GordianKeyStoreSet myEntry) {</span>
-<span class="fc" id="L170">            return Collections.singletonList(encodeKeySet(myEntry, pLock));</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        if (pEntry instanceof GordianKeyStoreSet myEntry) {</span>
+<span class="fc" id="L171">            return Collections.singletonList(encodeKeySet(myEntry, pLock));</span>
         }
-<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        if (pEntry instanceof GordianKeyStoreKey&lt;?&gt; myEntry) {</span>
-<span class="fc" id="L173">            return Collections.singletonList(encodeKey(myEntry, pLock));</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        if (pEntry instanceof GordianKeyStoreKey&lt;?&gt; myEntry) {</span>
+<span class="fc" id="L174">            return Collections.singletonList(encodeKey(myEntry, pLock));</span>
         }
 
         /* Unsupported entry */
-<span class="nc" id="L177">        throw new GordianDataException(ERROR_UNSUPPORTED);</span>
+<span class="nc" id="L178">        throw new GordianDataException(ERROR_UNSUPPORTED);</span>
     }
 
     /**
@@ -186,21 +187,21 @@ public class GordianPEMCoder {
      */
     private GordianKeyStoreEntry decodePEMObjectList(final List&lt;GordianPEMObject&gt; pObjects) throws GordianException {
         /* List must be non-empty */
-<span class="pc bpc" id="L189" title="1 of 2 branches missed.">        if (pObjects.isEmpty()) {</span>
-<span class="nc" id="L190">            throw new GordianDataException(&quot;Empty list&quot;);</span>
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">        if (pObjects.isEmpty()) {</span>
+<span class="nc" id="L191">            throw new GordianDataException(&quot;Empty list&quot;);</span>
         }
 
         /* Access first element and switch on object type */
-<span class="fc" id="L194">        final GordianPEMObject myFirst = pObjects.getFirst();</span>
-<span class="pc bpc" id="L195" title="2 of 5 branches missed.">        return switch (myFirst.getObjectType()) {</span>
+<span class="fc" id="L195">        final GordianPEMObject myFirst = pObjects.getFirst();</span>
+<span class="pc bpc" id="L196" title="2 of 5 branches missed.">        return switch (myFirst.getObjectType()) {</span>
             /* Decode objects */
-<span class="fc" id="L197">            case PRIVATEKEY -&gt; decodeKeyPair(pObjects);</span>
-<span class="nc" id="L198">            case CERT -&gt; decodeCertificate(pObjects);</span>
-<span class="fc" id="L199">            case KEYSET -&gt; decodeKeySet(pObjects);</span>
-<span class="fc" id="L200">            case KEY -&gt; decodeKey(pObjects);</span>
+<span class="fc" id="L198">            case PRIVATEKEY -&gt; decodeKeyPair(pObjects);</span>
+<span class="nc" id="L199">            case CERT -&gt; decodeCertificate(pObjects);</span>
+<span class="fc" id="L200">            case KEYSET -&gt; decodeKeySet(pObjects);</span>
+<span class="fc" id="L201">            case KEY -&gt; decodeKey(pObjects);</span>
 
             /* Unsupported entry */
-<span class="nc" id="L203">            default -&gt; throw new GordianDataException(ERROR_UNSUPPORTED);</span>
+<span class="nc" id="L204">            default -&gt; throw new GordianDataException(ERROR_UNSUPPORTED);</span>
         };
     }
 
@@ -213,35 +214,35 @@ public class GordianPEMCoder {
      */
     private List&lt;GordianKeyStoreEntry&gt; decodePEMCertificateList(final List&lt;GordianPEMObject&gt; pObjects) throws GordianException {
         /* List must be non-empty */
-<span class="nc bnc" id="L216" title="All 2 branches missed.">        if (pObjects.isEmpty()) {</span>
-<span class="nc" id="L217">            throw new GordianDataException(&quot;Empty list&quot;);</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">        if (pObjects.isEmpty()) {</span>
+<span class="nc" id="L218">            throw new GordianDataException(&quot;Empty list&quot;);</span>
         }
 
         /* Prepare for loop */
-<span class="nc" id="L221">        final List&lt;GordianKeyStoreEntry&gt; myChain = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L222">        final GordianPEMObjectType myType = pObjects.getFirst().getObjectType();</span>
-<span class="nc" id="L223">        final LocalDate myDate = LocalDate.now();</span>
+<span class="nc" id="L222">        final List&lt;GordianKeyStoreEntry&gt; myChain = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L223">        final GordianPEMObjectType myType = pObjects.getFirst().getObjectType();</span>
+<span class="nc" id="L224">        final LocalDate myDate = LocalDate.now(GordianBaseData.CLOCK);</span>
 
         /* Loop through the objects */
-<span class="nc bnc" id="L226" title="All 2 branches missed.">        for (GordianPEMObject myObject : pObjects) {</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">        for (GordianPEMObject myObject : pObjects) {</span>
             /* Check that the list is homogenous */
-<span class="nc bnc" id="L228" title="All 2 branches missed.">            if (myObject.getObjectType() != myType) {</span>
-<span class="nc" id="L229">                throw new GordianDataException(&quot;Inconsistent chain&quot;);</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">            if (myObject.getObjectType() != myType) {</span>
+<span class="nc" id="L230">                throw new GordianDataException(&quot;Inconsistent chain&quot;);</span>
             }
 
             /* Decode objects */
-<span class="nc bnc" id="L233" title="All 2 branches missed.">            if (myObject.getObjectType() == GordianPEMObjectType.CERT) {</span>
-<span class="nc" id="L234">                final GordianCoreCertificate myKeyPairCert = decodeCertificate(myObject);</span>
-<span class="nc" id="L235">                myChain.add(new GordianCoreKeyStoreCertificate(myKeyPairCert, myDate));</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">            if (myObject.getObjectType() == GordianPEMObjectType.CERT) {</span>
+<span class="nc" id="L235">                final GordianCoreCertificate myKeyPairCert = decodeCertificate(myObject);</span>
+<span class="nc" id="L236">                myChain.add(new GordianCoreKeyStoreCertificate(myKeyPairCert, myDate));</span>
 
                 /* Unsupported entry */
-<span class="nc" id="L238">            } else {</span>
-<span class="nc" id="L239">                throw new GordianDataException(ERROR_UNSUPPORTED);</span>
+<span class="nc" id="L239">            } else {</span>
+<span class="nc" id="L240">                throw new GordianDataException(ERROR_UNSUPPORTED);</span>
             }
-<span class="nc" id="L241">        }</span>
+<span class="nc" id="L242">        }</span>
 
         /* Return the chain */
-<span class="nc" id="L244">        return myChain;</span>
+<span class="nc" id="L245">        return myChain;</span>
     }
 
     /**
@@ -251,7 +252,7 @@ public class GordianPEMCoder {
      * @return the encoded object.
      */
     static GordianPEMObject encodeCertificate(final GordianCertificate pCertificate) {
-<span class="fc" id="L254">        return new GordianPEMObject(GordianPEMObjectType.CERT, pCertificate.getEncoded());</span>
+<span class="fc" id="L255">        return new GordianPEMObject(GordianPEMObjectType.CERT, pCertificate.getEncoded());</span>
     }
 
     /**
@@ -267,10 +268,10 @@ public class GordianPEMCoder {
         /* Protect against exceptions */
         try {
             /* Create a PEM Object */
-<span class="fc" id="L270">            return new GordianPEMObject(pObjectType, pObject.getEncoded());</span>
+<span class="fc" id="L271">            return new GordianPEMObject(pObjectType, pObject.getEncoded());</span>
 
-<span class="nc" id="L272">        } catch (IOException e) {</span>
-<span class="nc" id="L273">            throw new GordianIOException(&quot;Failed to create PEMObject&quot;, e);</span>
+<span class="nc" id="L273">        } catch (IOException e) {</span>
+<span class="nc" id="L274">            throw new GordianIOException(&quot;Failed to create PEMObject&quot;, e);</span>
         }
     }
 
@@ -285,19 +286,19 @@ public class GordianPEMCoder {
     private List&lt;GordianPEMObject&gt; encodePrivateKeyPair(final GordianKeyStorePair pKeyPair,
                                                         final GordianCoreZipLock pLock) throws GordianException {
         /* Create the list */
-<span class="fc" id="L288">        final List&lt;GordianPEMObject&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L289">        final List&lt;GordianPEMObject&gt; myList = new ArrayList&lt;&gt;();</span>
 
         /* Add the private key entry */
-<span class="fc" id="L291">        myList.add(encodePrivateKey(pKeyPair, pLock));</span>
+<span class="fc" id="L292">        myList.add(encodePrivateKey(pKeyPair, pLock));</span>
 
         /* Loop through the certificates */
-<span class="fc bfc" id="L294" title="All 2 branches covered.">        for (GordianCertificate myCert : pKeyPair.getCertificateChain()) {</span>
+<span class="fc bfc" id="L295" title="All 2 branches covered.">        for (GordianCertificate myCert : pKeyPair.getCertificateChain()) {</span>
             /* Add the encoded certificate */
-<span class="fc" id="L296">            myList.add(encodeCertificate(myCert));</span>
-<span class="fc" id="L297">        }</span>
+<span class="fc" id="L297">            myList.add(encodeCertificate(myCert));</span>
+<span class="fc" id="L298">        }</span>
 
         /* Return the list */
-<span class="fc" id="L300">        return myList;</span>
+<span class="fc" id="L301">        return myList;</span>
     }
 
     /**
@@ -313,14 +314,14 @@ public class GordianPEMCoder {
         /* Protect against exception */
         try {
             /* Build encoded object and return it */
-<span class="fc" id="L316">            final GordianKeySet myKeySet = pLock.getKeySet();</span>
-<span class="fc" id="L317">            final byte[] mySecuredKey = myKeySet.securePrivateKey(pKeyPair.getKeyPair());</span>
-<span class="fc" id="L318">            final EncryptedPrivateKeyInfo myInfo = buildPrivateKeyInfo(pLock, mySecuredKey);</span>
-<span class="fc" id="L319">            return new GordianPEMObject(GordianPEMObjectType.PRIVATEKEY, myInfo.getEncoded());</span>
+<span class="fc" id="L317">            final GordianKeySet myKeySet = pLock.getKeySet();</span>
+<span class="fc" id="L318">            final byte[] mySecuredKey = myKeySet.securePrivateKey(pKeyPair.getKeyPair());</span>
+<span class="fc" id="L319">            final EncryptedPrivateKeyInfo myInfo = buildPrivateKeyInfo(pLock, mySecuredKey);</span>
+<span class="fc" id="L320">            return new GordianPEMObject(GordianPEMObjectType.PRIVATEKEY, myInfo.getEncoded());</span>
 
             /* Handle exceptions */
-<span class="nc" id="L322">        } catch (IOException e) {</span>
-<span class="nc" id="L323">            throw new GordianIOException(&quot;Failed to encode privateKey&quot;, e);</span>
+<span class="nc" id="L323">        } catch (IOException e) {</span>
+<span class="nc" id="L324">            throw new GordianIOException(&quot;Failed to encode privateKey&quot;, e);</span>
         }
     }
 
@@ -337,14 +338,14 @@ public class GordianPEMCoder {
         /* Protect against exception */
         try {
             /* Build encoded object and return it */
-<span class="fc" id="L340">            final GordianKeySet myKeySet = pLock.getKeySet();</span>
-<span class="fc" id="L341">            final byte[] mySecuredKeySet = myKeySet.secureKeySet(pKeySet.getKeySet());</span>
-<span class="fc" id="L342">            final EncryptedPrivateKeyInfo myInfo = buildPrivateKeyInfo(pLock, mySecuredKeySet);</span>
-<span class="fc" id="L343">            return new GordianPEMObject(GordianPEMObjectType.KEYSET, myInfo.getEncoded());</span>
+<span class="fc" id="L341">            final GordianKeySet myKeySet = pLock.getKeySet();</span>
+<span class="fc" id="L342">            final byte[] mySecuredKeySet = myKeySet.secureKeySet(pKeySet.getKeySet());</span>
+<span class="fc" id="L343">            final EncryptedPrivateKeyInfo myInfo = buildPrivateKeyInfo(pLock, mySecuredKeySet);</span>
+<span class="fc" id="L344">            return new GordianPEMObject(GordianPEMObjectType.KEYSET, myInfo.getEncoded());</span>
 
             /* Handle exceptions */
-<span class="nc" id="L346">        } catch (IOException e) {</span>
-<span class="nc" id="L347">            throw new GordianIOException(&quot;Failed to encode keySet&quot;, e);</span>
+<span class="nc" id="L347">        } catch (IOException e) {</span>
+<span class="nc" id="L348">            throw new GordianIOException(&quot;Failed to encode keySet&quot;, e);</span>
         }
     }
 
@@ -361,27 +362,27 @@ public class GordianPEMCoder {
         /* Protect against exception */
         try {
             /* Access keyType */
-<span class="fc" id="L364">            final GordianKey&lt;?&gt; myKey = pKey.getKey();</span>
-<span class="fc" id="L365">            final GordianKnuthObfuscater myObfuscater = theFactory.getObfuscater();</span>
-<span class="fc" id="L366">            final int myId = myObfuscater.deriveExternalIdFromType(myKey.getKeyType());</span>
-<span class="fc" id="L367">            final byte[] myTypeDef = GordianDataConverter.integerToByteArray(myId);</span>
+<span class="fc" id="L365">            final GordianKey&lt;?&gt; myKey = pKey.getKey();</span>
+<span class="fc" id="L366">            final GordianKnuthObfuscater myObfuscater = theFactory.getObfuscater();</span>
+<span class="fc" id="L367">            final int myId = myObfuscater.deriveExternalIdFromType(myKey.getKeyType());</span>
+<span class="fc" id="L368">            final byte[] myTypeDef = GordianDataConverter.integerToByteArray(myId);</span>
 
             /* Secure the key */
-<span class="fc" id="L370">            final GordianKeySet myKeySet = pLock.getKeySet();</span>
-<span class="fc" id="L371">            final byte[] mySecuredKey = myKeySet.secureKey(myKey);</span>
+<span class="fc" id="L371">            final GordianKeySet myKeySet = pLock.getKeySet();</span>
+<span class="fc" id="L372">            final byte[] mySecuredKey = myKeySet.secureKey(myKey);</span>
 
             /* Build key definition */
-<span class="fc" id="L374">            final byte[] myKeyDef = new byte[mySecuredKey.length + Integer.BYTES];</span>
-<span class="fc" id="L375">            System.arraycopy(mySecuredKey, 0, myKeyDef, Integer.BYTES, mySecuredKey.length);</span>
-<span class="fc" id="L376">            System.arraycopy(myTypeDef, 0, myKeyDef, 0, Integer.BYTES);</span>
+<span class="fc" id="L375">            final byte[] myKeyDef = new byte[mySecuredKey.length + Integer.BYTES];</span>
+<span class="fc" id="L376">            System.arraycopy(mySecuredKey, 0, myKeyDef, Integer.BYTES, mySecuredKey.length);</span>
+<span class="fc" id="L377">            System.arraycopy(myTypeDef, 0, myKeyDef, 0, Integer.BYTES);</span>
 
             /* Build encoded object and return it */
-<span class="fc" id="L379">            final EncryptedPrivateKeyInfo myInfo = buildPrivateKeyInfo(pLock, myKeyDef);</span>
-<span class="fc" id="L380">            return new GordianPEMObject(GordianPEMObjectType.KEY, myInfo.getEncoded());</span>
+<span class="fc" id="L380">            final EncryptedPrivateKeyInfo myInfo = buildPrivateKeyInfo(pLock, myKeyDef);</span>
+<span class="fc" id="L381">            return new GordianPEMObject(GordianPEMObjectType.KEY, myInfo.getEncoded());</span>
 
             /* Handle exceptions */
-<span class="nc" id="L383">        } catch (IOException e) {</span>
-<span class="nc" id="L384">            throw new GordianIOException(&quot;Failed to encode keySet&quot;, e);</span>
+<span class="nc" id="L384">        } catch (IOException e) {</span>
+<span class="nc" id="L385">            throw new GordianIOException(&quot;Failed to encode keySet&quot;, e);</span>
         }
     }
 
@@ -394,10 +395,10 @@ public class GordianPEMCoder {
      */
     private GordianKeyStoreCertificate decodeCertificate(final List&lt;GordianPEMObject&gt; pObjects) throws GordianException {
         /* Reject if not singleton list */
-<span class="nc" id="L397">        checkSingletonList(pObjects);</span>
+<span class="nc" id="L398">        checkSingletonList(pObjects);</span>
 
         /* parse the certificate */
-<span class="nc" id="L400">        return new GordianCoreKeyStoreCertificate(decodeCertificate(pObjects.getFirst()), LocalDate.now());</span>
+<span class="nc" id="L401">        return new GordianCoreKeyStoreCertificate(decodeCertificate(pObjects.getFirst()), LocalDate.now(GordianBaseData.CLOCK));</span>
     }
 
     /**
@@ -409,10 +410,10 @@ public class GordianPEMCoder {
      */
     private GordianCoreCertificate decodeCertificate(final GordianPEMObject pObject) throws GordianException {
         /* Reject if not keySetCertificate */
-<span class="fc" id="L412">        checkObjectType(pObject, GordianPEMObjectType.CERT);</span>
+<span class="fc" id="L413">        checkObjectType(pObject, GordianPEMObjectType.CERT);</span>
 
         /* parse the encoded bytes */
-<span class="fc" id="L415">        return new GordianCoreCertificate(theFactory, pObject.getEncoded());</span>
+<span class="fc" id="L416">        return new GordianCoreCertificate(theFactory, pObject.getEncoded());</span>
     }
 
     /**
@@ -424,14 +425,14 @@ public class GordianPEMCoder {
      */
     static CertReqMsg decodeCertRequest(final List&lt;GordianPEMObject&gt; pObjects) throws GordianException {
         /* Reject if not singleton list */
-<span class="fc" id="L427">        checkSingletonList(pObjects);</span>
-<span class="fc" id="L428">        final GordianPEMObject myObject = pObjects.getFirst();</span>
+<span class="fc" id="L428">        checkSingletonList(pObjects);</span>
+<span class="fc" id="L429">        final GordianPEMObject myObject = pObjects.getFirst();</span>
 
         /* Reject if not certificateRequest */
-<span class="fc" id="L431">        checkObjectType(myObject, GordianPEMObjectType.CERTREQ);</span>
+<span class="fc" id="L432">        checkObjectType(myObject, GordianPEMObjectType.CERTREQ);</span>
 
         /* parse the encoded bytes */
-<span class="fc" id="L434">        return CertReqMsg.getInstance(myObject.getEncoded());</span>
+<span class="fc" id="L435">        return CertReqMsg.getInstance(myObject.getEncoded());</span>
     }
 
     /**
@@ -443,14 +444,14 @@ public class GordianPEMCoder {
      */
     static GordianCertResponseASN1 decodeCertResponse(final List&lt;GordianPEMObject&gt; pObjects) throws GordianException {
         /* Reject if not singleton list */
-<span class="fc" id="L446">        checkSingletonList(pObjects);</span>
-<span class="fc" id="L447">        final GordianPEMObject myObject = pObjects.getFirst();</span>
+<span class="fc" id="L447">        checkSingletonList(pObjects);</span>
+<span class="fc" id="L448">        final GordianPEMObject myObject = pObjects.getFirst();</span>
 
         /* Reject if not certificateResponse */
-<span class="fc" id="L450">        checkObjectType(myObject, GordianPEMObjectType.CERTRESP);</span>
+<span class="fc" id="L451">        checkObjectType(myObject, GordianPEMObjectType.CERTRESP);</span>
 
         /* parse the encoded bytes */
-<span class="fc" id="L453">        return GordianCertResponseASN1.getInstance(myObject.getEncoded());</span>
+<span class="fc" id="L454">        return GordianCertResponseASN1.getInstance(myObject.getEncoded());</span>
     }
 
     /**
@@ -462,14 +463,14 @@ public class GordianPEMCoder {
      */
     static GordianCertAckASN1 decodeCertAck(final List&lt;GordianPEMObject&gt; pObjects) throws GordianException {
         /* Reject if not singleton list */
-<span class="fc" id="L465">        checkSingletonList(pObjects);</span>
-<span class="fc" id="L466">        final GordianPEMObject myObject = pObjects.getFirst();</span>
+<span class="fc" id="L466">        checkSingletonList(pObjects);</span>
+<span class="fc" id="L467">        final GordianPEMObject myObject = pObjects.getFirst();</span>
 
         /* Reject if not certificateAck */
-<span class="fc" id="L469">        checkObjectType(myObject, GordianPEMObjectType.CERTACK);</span>
+<span class="fc" id="L470">        checkObjectType(myObject, GordianPEMObjectType.CERTACK);</span>
 
         /* parse the encoded bytes */
-<span class="fc" id="L472">        return GordianCertAckASN1.getInstance(myObject.getEncoded());</span>
+<span class="fc" id="L473">        return GordianCertAckASN1.getInstance(myObject.getEncoded());</span>
     }
 
     /**
@@ -481,33 +482,33 @@ public class GordianPEMCoder {
      */
     private GordianKeyStorePair decodeKeyPair(final List&lt;GordianPEMObject&gt; pObjects) throws GordianException {
         /* Initialise variables */
-<span class="fc" id="L484">        EncryptedPrivateKeyInfo myPrivateInfo = null;</span>
-<span class="fc" id="L485">        final List&lt;GordianCertificate&gt; myChain = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L485">        EncryptedPrivateKeyInfo myPrivateInfo = null;</span>
+<span class="fc" id="L486">        final List&lt;GordianCertificate&gt; myChain = new ArrayList&lt;&gt;();</span>
 
         /* Loop through the entries */
-<span class="fc bfc" id="L488" title="All 2 branches covered.">        for (GordianPEMObject myObject : pObjects) {</span>
+<span class="fc bfc" id="L489" title="All 2 branches covered.">        for (GordianPEMObject myObject : pObjects) {</span>
             /* Decode private key if first element */
-<span class="fc bfc" id="L490" title="All 2 branches covered.">            if (myPrivateInfo == null) {</span>
-<span class="fc" id="L491">                myPrivateInfo = EncryptedPrivateKeyInfo.getInstance(myObject.getEncoded());</span>
+<span class="fc bfc" id="L491" title="All 2 branches covered.">            if (myPrivateInfo == null) {</span>
+<span class="fc" id="L492">                myPrivateInfo = EncryptedPrivateKeyInfo.getInstance(myObject.getEncoded());</span>
 
                 /* else decode next certificate in chain */
             } else {
-<span class="fc" id="L495">                myChain.add(decodeCertificate(myObject));</span>
+<span class="fc" id="L496">                myChain.add(decodeCertificate(myObject));</span>
             }
-<span class="fc" id="L497">        }</span>
+<span class="fc" id="L498">        }</span>
 
         /* Check that we have a privateKey and at least one certificate */
-<span class="pc bpc" id="L500" title="2 of 4 branches missed.">        if (myPrivateInfo == null || myChain.isEmpty()) {</span>
-<span class="nc" id="L501">            throw new GordianDataException(&quot;Insufficient entries&quot;);</span>
+<span class="pc bpc" id="L501" title="2 of 4 branches missed.">        if (myPrivateInfo == null || myChain.isEmpty()) {</span>
+<span class="nc" id="L502">            throw new GordianDataException(&quot;Insufficient entries&quot;);</span>
         }
 
         /* Derive the keyPair */
-<span class="fc" id="L505">        final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myPrivateInfo);</span>
-<span class="fc" id="L506">        final GordianCoreCertificate myCert = (GordianCoreCertificate) myChain.getFirst();</span>
-<span class="fc" id="L507">        final GordianKeyPair myPair = mySecuringKeySet.deriveKeyPair(myCert.getX509KeySpec(), myPrivateInfo.getEncryptedData());</span>
+<span class="fc" id="L506">        final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myPrivateInfo);</span>
+<span class="fc" id="L507">        final GordianCoreCertificate myCert = (GordianCoreCertificate) myChain.getFirst();</span>
+<span class="fc" id="L508">        final GordianKeyPair myPair = mySecuringKeySet.deriveKeyPair(myCert.getX509KeySpec(), myPrivateInfo.getEncryptedData());</span>
 
         /* Return the new keyPair */
-<span class="fc" id="L510">        return new GordianCoreKeyStorePair(myPair, myChain, LocalDate.now());</span>
+<span class="fc" id="L511">        return new GordianCoreKeyStorePair(myPair, myChain, LocalDate.now(GordianBaseData.CLOCK));</span>
     }
 
     /**
@@ -518,8 +519,8 @@ public class GordianPEMCoder {
      * @throws GordianException on error
      */
     private GordianKeyStoreSet decodeKeySet(final List&lt;GordianPEMObject&gt; pObjects) throws GordianException {
-<span class="fc" id="L521">        checkSingletonList(pObjects);</span>
-<span class="fc" id="L522">        return decodeKeySet(pObjects.getFirst());</span>
+<span class="fc" id="L522">        checkSingletonList(pObjects);</span>
+<span class="fc" id="L523">        return decodeKeySet(pObjects.getFirst());</span>
     }
 
     /**
@@ -531,15 +532,15 @@ public class GordianPEMCoder {
      */
     private GordianCoreKeyStoreSet decodeKeySet(final GordianPEMObject pObject) throws GordianException {
         /* Reject if not KeySet */
-<span class="fc" id="L534">        checkObjectType(pObject, GordianPEMObjectType.KEYSET);</span>
+<span class="fc" id="L535">        checkObjectType(pObject, GordianPEMObjectType.KEYSET);</span>
 
         /* Derive the securing keySet */
-<span class="fc" id="L537">        final EncryptedPrivateKeyInfo myInfo = EncryptedPrivateKeyInfo.getInstance(pObject.getEncoded());</span>
-<span class="fc" id="L538">        final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myInfo);</span>
+<span class="fc" id="L538">        final EncryptedPrivateKeyInfo myInfo = EncryptedPrivateKeyInfo.getInstance(pObject.getEncoded());</span>
+<span class="fc" id="L539">        final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myInfo);</span>
 
         /* Derive the keySet */
-<span class="fc" id="L541">        final GordianKeySet myKeySet = mySecuringKeySet.deriveKeySet(myInfo.getEncryptedData());</span>
-<span class="fc" id="L542">        return new GordianCoreKeyStoreSet(myKeySet, LocalDate.now());</span>
+<span class="fc" id="L542">        final GordianKeySet myKeySet = mySecuringKeySet.deriveKeySet(myInfo.getEncryptedData());</span>
+<span class="fc" id="L543">        return new GordianCoreKeyStoreSet(myKeySet, LocalDate.now(GordianBaseData.CLOCK));</span>
     }
 
     /**
@@ -550,8 +551,8 @@ public class GordianPEMCoder {
      * @throws GordianException on error
      */
     private GordianKeyStoreKey&lt;?&gt; decodeKey(final List&lt;GordianPEMObject&gt; pObjects) throws GordianException {
-<span class="fc" id="L553">        checkSingletonList(pObjects);</span>
-<span class="fc" id="L554">        return decodeKey(pObjects.getFirst());</span>
+<span class="fc" id="L554">        checkSingletonList(pObjects);</span>
+<span class="fc" id="L555">        return decodeKey(pObjects.getFirst());</span>
     }
 
     /**
@@ -563,27 +564,27 @@ public class GordianPEMCoder {
      */
     private GordianCoreKeyStoreKey&lt;?&gt; decodeKey(final GordianPEMObject pObject) throws GordianException {
         /* Reject if not Key */
-<span class="fc" id="L566">        checkObjectType(pObject, GordianPEMObjectType.KEY);</span>
+<span class="fc" id="L567">        checkObjectType(pObject, GordianPEMObjectType.KEY);</span>
 
         /* Derive the securing keySet */
-<span class="fc" id="L569">        final EncryptedPrivateKeyInfo myInfo = EncryptedPrivateKeyInfo.getInstance(pObject.getEncoded());</span>
-<span class="fc" id="L570">        final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myInfo);</span>
+<span class="fc" id="L570">        final EncryptedPrivateKeyInfo myInfo = EncryptedPrivateKeyInfo.getInstance(pObject.getEncoded());</span>
+<span class="fc" id="L571">        final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myInfo);</span>
 
         /* Extract key definition */
-<span class="fc" id="L573">        final byte[] mySecured = myInfo.getEncryptedData();</span>
-<span class="fc" id="L574">        final byte[] myTypeDef = new byte[Integer.BYTES];</span>
-<span class="fc" id="L575">        System.arraycopy(mySecured, 0, myTypeDef, 0, Integer.BYTES);</span>
-<span class="fc" id="L576">        final byte[] myKeyDef = new byte[mySecured.length - Integer.BYTES];</span>
-<span class="fc" id="L577">        System.arraycopy(mySecured, Integer.BYTES, myKeyDef, 0, mySecured.length - Integer.BYTES);</span>
+<span class="fc" id="L574">        final byte[] mySecured = myInfo.getEncryptedData();</span>
+<span class="fc" id="L575">        final byte[] myTypeDef = new byte[Integer.BYTES];</span>
+<span class="fc" id="L576">        System.arraycopy(mySecured, 0, myTypeDef, 0, Integer.BYTES);</span>
+<span class="fc" id="L577">        final byte[] myKeyDef = new byte[mySecured.length - Integer.BYTES];</span>
+<span class="fc" id="L578">        System.arraycopy(mySecured, Integer.BYTES, myKeyDef, 0, mySecured.length - Integer.BYTES);</span>
 
         /* Obtain the keySpec */
-<span class="fc" id="L580">        final GordianKnuthObfuscater myObfuscater = theFactory.getObfuscater();</span>
-<span class="fc" id="L581">        final int myType = GordianDataConverter.byteArrayToInteger(myTypeDef);</span>
-<span class="fc" id="L582">        final GordianKeySpec myKeyType = (GordianKeySpec) myObfuscater.deriveTypeFromExternalId(myType);</span>
+<span class="fc" id="L581">        final GordianKnuthObfuscater myObfuscater = theFactory.getObfuscater();</span>
+<span class="fc" id="L582">        final int myType = GordianDataConverter.byteArrayToInteger(myTypeDef);</span>
+<span class="fc" id="L583">        final GordianKeySpec myKeyType = (GordianKeySpec) myObfuscater.deriveTypeFromExternalId(myType);</span>
 
         /* Derive the key */
-<span class="fc" id="L585">        final GordianKey&lt;?&gt; myKey = mySecuringKeySet.deriveKey(myKeyDef, myKeyType);</span>
-<span class="fc" id="L586">        return new GordianCoreKeyStoreKey&lt;&gt;(myKey, LocalDate.now());</span>
+<span class="fc" id="L586">        final GordianKey&lt;?&gt; myKey = mySecuringKeySet.deriveKey(myKeyDef, myKeyType);</span>
+<span class="fc" id="L587">        return new GordianCoreKeyStoreKey&lt;&gt;(myKey, LocalDate.now(GordianBaseData.CLOCK));</span>
     }
 
     /**
@@ -595,7 +596,7 @@ public class GordianPEMCoder {
      */
     private static EncryptedPrivateKeyInfo buildPrivateKeyInfo(final GordianCoreZipLock pLock,
                                                                final byte[] pInfo) {
-<span class="fc" id="L598">        return new EncryptedPrivateKeyInfo(pLock.getAlgorithmId(), pInfo);</span>
+<span class="fc" id="L599">        return new EncryptedPrivateKeyInfo(pLock.getAlgorithmId(), pInfo);</span>
     }
 
     /**
@@ -607,23 +608,23 @@ public class GordianPEMCoder {
      */
     private GordianKeySet deriveSecuringKeySet(final EncryptedPrivateKeyInfo pInfo) throws GordianException {
         /* Validate the algorithmId */
-<span class="fc" id="L610">        final AlgorithmIdentifier myId = pInfo.getEncryptionAlgorithm();</span>
-<span class="pc bpc" id="L611" title="1 of 2 branches missed.">        if (!myId.getAlgorithm().equals(GordianZipLockASN1.LOCKOID)) {</span>
-<span class="nc" id="L612">            throw new GordianDataException(&quot;Unsupported algorithm&quot;);</span>
+<span class="fc" id="L611">        final AlgorithmIdentifier myId = pInfo.getEncryptionAlgorithm();</span>
+<span class="pc bpc" id="L612" title="1 of 2 branches missed.">        if (!myId.getAlgorithm().equals(GordianZipLockASN1.LOCKOID)) {</span>
+<span class="nc" id="L613">            throw new GordianDataException(&quot;Unsupported algorithm&quot;);</span>
         }
-<span class="pc bpc" id="L614" title="1 of 2 branches missed.">        if (theLockResolver == null) {</span>
-<span class="nc" id="L615">            throw new GordianDataException(&quot;No lock resolver set&quot;);</span>
+<span class="pc bpc" id="L615" title="1 of 2 branches missed.">        if (theLockResolver == null) {</span>
+<span class="nc" id="L616">            throw new GordianDataException(&quot;No lock resolver set&quot;);</span>
         }
 
         /* Resolve the lock */
-<span class="fc" id="L619">        final GordianCoreZipLock myLock = new GordianCoreZipLock(theFactory, myId.getParameters());</span>
-<span class="fc" id="L620">        theLockResolver.resolveLock(myLock);</span>
-<span class="pc bpc" id="L621" title="1 of 2 branches missed.">        if (myLock.isLocked()) {</span>
-<span class="nc" id="L622">            throw new GordianDataException(&quot;Lock was not resolved&quot;);</span>
+<span class="fc" id="L620">        final GordianCoreZipLock myLock = new GordianCoreZipLock(theFactory, myId.getParameters());</span>
+<span class="fc" id="L621">        theLockResolver.resolveLock(myLock);</span>
+<span class="pc bpc" id="L622" title="1 of 2 branches missed.">        if (myLock.isLocked()) {</span>
+<span class="nc" id="L623">            throw new GordianDataException(&quot;Lock was not resolved&quot;);</span>
         }
 
         /* Derive the securing keySet */
-<span class="fc" id="L626">        return myLock.getKeySet();</span>
+<span class="fc" id="L627">        return myLock.getKeySet();</span>
     }
 
     /**
@@ -634,10 +635,10 @@ public class GordianPEMCoder {
      */
     private static void checkSingletonList(final List&lt;GordianPEMObject&gt; pObjects) throws GordianException {
         /* Throw error on non-singleton */
-<span class="pc bpc" id="L637" title="1 of 2 branches missed.">        if (pObjects.size() != 1) {</span>
-<span class="nc" id="L638">            throw new GordianDataException(&quot;Too many objects&quot;);</span>
+<span class="pc bpc" id="L638" title="1 of 2 branches missed.">        if (pObjects.size() != 1) {</span>
+<span class="nc" id="L639">            throw new GordianDataException(&quot;Too many objects&quot;);</span>
         }
-<span class="fc" id="L640">    }</span>
+<span class="fc" id="L641">    }</span>
 
     /**
      * Check PEM objectType.
@@ -649,10 +650,10 @@ public class GordianPEMCoder {
     static void checkObjectType(final GordianPEMObject pObject,
                                 final GordianPEMObjectType pRequired) throws GordianException {
         /* Throw error on mismatch */
-<span class="fc" id="L652">        final GordianPEMObjectType myType = pObject.getObjectType();</span>
-<span class="pc bpc" id="L653" title="1 of 2 branches missed.">        if (myType != pRequired) {</span>
-<span class="nc" id="L654">            throw new GordianDataException(&quot;unexpected objectType &quot; + myType + &quot; - Expected &quot; + pRequired);</span>
+<span class="fc" id="L653">        final GordianPEMObjectType myType = pObject.getObjectType();</span>
+<span class="pc bpc" id="L654" title="1 of 2 branches missed.">        if (myType != pRequired) {</span>
+<span class="nc" id="L655">            throw new GordianDataException(&quot;unexpected objectType &quot; + myType + &quot; - Expected &quot; + pRequired);</span>
         }
-<span class="fc" id="L656">    }</span>
+<span class="fc" id="L657">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

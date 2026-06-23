@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OceanusDateUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Oceanus Java Core Utilities</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.oceanus.date</a> &gt; <span class="el_source">OceanusDateUtils.java</span></div><h1>OceanusDateUtils.java</h1><pre class="source lang-java linenums">/*
+ * Oceanus: Java Utilities
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.oceanus.date;
+
+import java.time.LocalDate;
+import java.time.Month;
+
+/**
+ * Date utilities.
+ */
+public final class OceanusDateUtils {
+    /**
+     * The Number of months in a Quarter.
+     */
+    private static final int MONTHS_IN_QUARTER = 3;
+
+    /**
+     * Private constructor.
+     */
+    private OceanusDateUtils() {
+    }
+
+    /**
+     * Obtain the date of the start of the period.
+     *
+     * @param pDate   the date to adjust
+     * @param pPeriod the period to adjust by
+     * @return the adjusted date
+     */
+    public static OceanusDate startPeriod(final OceanusDate pDate,
+                                          final OceanusDatePeriod pPeriod) {
+<span class="nc bnc" id="L47" title="All 5 branches missed.">        return switch (pPeriod) {</span>
+<span class="nc" id="L48">            case CALENDARMONTH -&gt; startCalendarMonth(pDate);</span>
+<span class="nc" id="L49">            case CALENDARQUARTER -&gt; startCalendarQuarter(pDate);</span>
+<span class="nc" id="L50">            case CALENDARYEAR -&gt; startCalendarYear(pDate);</span>
+<span class="nc" id="L51">            case FISCALYEAR -&gt; startFiscalYear(pDate);</span>
+<span class="nc" id="L52">            default -&gt; pDate;</span>
+        };
+    }
+
+    /**
+     * Obtain the date of the end of the following month.
+     *
+     * @param pDate the date to adjust
+     * @return the date
+     */
+    public static OceanusDate endNextMonth(final OceanusDate pDate) {
+        /* Move to the first of the current month */
+<span class="nc" id="L64">        LocalDate myDate = pDate.getDate().withDayOfMonth(1);</span>
+
+        /* Add two months and move back a day */
+<span class="nc" id="L67">        myDate = myDate.plusMonths(2);</span>
+<span class="nc" id="L68">        myDate = myDate.minusDays(1);</span>
+<span class="nc" id="L69">        return new OceanusDate(myDate);</span>
+    }
+
+    /**
+     * Obtain the date of the start of the month.
+     *
+     * @param pDate the date to adjust
+     * @return the date
+     */
+    public static OceanusDate startCalendarMonth(final OceanusDate pDate) {
+        /* Move to the first of the current month */
+<span class="nc" id="L80">        final LocalDate myDate = pDate.getDate().withDayOfMonth(1);</span>
+<span class="nc" id="L81">        return new OceanusDate(myDate);</span>
+    }
+
+    /**
+     * Obtain the date of the end of the month.
+     *
+     * @param pDate the date to adjust
+     * @return the date
+     */
+    public static OceanusDate endCalendarMonth(final OceanusDate pDate) {
+        /* Move to the first of the next month and then one day before */
+<span class="nc" id="L92">        LocalDate myDate = pDate.getDate().withDayOfMonth(1);</span>
+<span class="nc" id="L93">        myDate = myDate.plusMonths(1);</span>
+<span class="nc" id="L94">        myDate = myDate.minusDays(1);</span>
+<span class="nc" id="L95">        return new OceanusDate(myDate);</span>
+    }
+
+    /**
+     * Obtain the date of the start of the quarter.
+     *
+     * @param pDate the date to adjust
+     * @return the date
+     */
+    public static OceanusDate startCalendarQuarter(final OceanusDate pDate) {
+        /* Determine the month in quarter */
+<span class="nc" id="L106">        LocalDate myDate = pDate.getDate();</span>
+<span class="nc" id="L107">        final int myMiQ = (pDate.getMonth() - 1)</span>
+                % MONTHS_IN_QUARTER;
+
+        /* Move to the first of the current month */
+<span class="nc" id="L111">        myDate = myDate.withDayOfMonth(1);</span>
+
+        /* Move to the first of the quarter */
+<span class="nc" id="L114">        myDate = myDate.minusMonths(myMiQ);</span>
+<span class="nc" id="L115">        return new OceanusDate(myDate);</span>
+    }
+
+    /**
+     * Obtain the date of the start of the year.
+     *
+     * @param pDate the date to adjust
+     * @return the date
+     */
+    public static OceanusDate startCalendarYear(final OceanusDate pDate) {
+        /* Move to the first of the current year */
+<span class="nc" id="L126">        LocalDate myDate = pDate.getDate().withDayOfMonth(1);</span>
+<span class="nc" id="L127">        myDate = myDate.withMonth(Month.JANUARY.getValue());</span>
+<span class="nc" id="L128">        return new OceanusDate(myDate);</span>
+    }
+
+    /**
+     * Obtain the date of the end of the year.
+     *
+     * @param pDate the date to adjust
+     * @return the date
+     */
+    public static OceanusDate endCalendarYear(final OceanusDate pDate) {
+        /* Move to the first of the current year */
+<span class="nc" id="L139">        LocalDate myDate = pDate.getDate().plusYears(1);</span>
+<span class="nc" id="L140">        myDate = myDate.withDayOfMonth(1);</span>
+<span class="nc" id="L141">        myDate = myDate.withMonth(Month.JANUARY.getValue());</span>
+<span class="nc" id="L142">        myDate = myDate.minusDays(1);</span>
+<span class="nc" id="L143">        return new OceanusDate(myDate);</span>
+    }
+
+    /**
+     * Adjust the date to the start of the fiscal year.
+     *
+     * @param pDate the date to adjust
+     * @return the date
+     */
+    public static OceanusDate startFiscalYear(final OceanusDate pDate) {
+        /* Determine Fiscal year type */
+<span class="nc" id="L154">        final OceanusFiscalYear myFiscal = OceanusFiscalYear.determineFiscalYear(pDate.getLocale());</span>
+<span class="nc" id="L155">        final int myFiscalMonth = myFiscal.getFirstMonth().getValue();</span>
+<span class="nc" id="L156">        final int myFiscalDay = myFiscal.getFirstDay();</span>
+
+        /* Access date details */
+<span class="nc" id="L159">        LocalDate myDate = pDate.getDate();</span>
+<span class="nc" id="L160">        final int myMonth = pDate.getMonth();</span>
+<span class="nc" id="L161">        final int myDay = pDate.getDay();</span>
+
+        /* Determine which year we are in */
+<span class="nc bnc" id="L164" title="All 6 branches missed.">        if (myMonth &lt; myFiscalMonth</span>
+                || (myMonth == myFiscalMonth &amp;&amp; myDay &lt; myFiscalDay)) {
+<span class="nc" id="L166">            myDate = myDate.minusYears(1);</span>
+        }
+
+        /* Move to the first of the current year */
+<span class="nc" id="L170">        myDate = myDate.withDayOfMonth(myFiscalDay);</span>
+<span class="nc" id="L171">        myDate = myDate.withMonth(myFiscalMonth);</span>
+<span class="nc" id="L172">        return new OceanusDate(myDate);</span>
+    }
+
+    /**
+     * Calculate the age that someone born on a particular date will be on a given date.
+     *
+     * @param pBirthDate the birthDate
+     * @param pDate      the date for which to calculate the age
+     * @return the age on that date
+     */
+    public static int ageOn(final OceanusDate pBirthDate,
+                            final OceanusDate pDate) {
+        /* Access dates */
+<span class="nc" id="L185">        final LocalDate myBirthDate = pBirthDate.getDate();</span>
+<span class="nc" id="L186">        final LocalDate myDate = pDate.getDate();</span>
+
+        /* Calculate the initial age assuming same date in year */
+<span class="nc" id="L189">        int myAge = myDate.getYear();</span>
+<span class="nc" id="L190">        myAge -= myBirthDate.getYear();</span>
+
+        /* Check whether we are later in the year */
+<span class="nc" id="L193">        int myDelta = myBirthDate.getMonthValue()</span>
+<span class="nc" id="L194">                - myDate.getMonthValue();</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">        if (myDelta == 0) {</span>
+<span class="nc" id="L196">            myDelta = myBirthDate.getDayOfMonth()</span>
+<span class="nc" id="L197">                    - myDate.getDayOfMonth();</span>
+        }
+
+        /* If so then subtract one from the year */
+<span class="nc bnc" id="L201" title="All 2 branches missed.">        if (myDelta &gt; 0) {</span>
+<span class="nc" id="L202">            myAge--;</span>
+        }
+
+        /* Return to caller */
+<span class="nc" id="L206">        return myAge;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.prometheus.ui.fieldset;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
@@ -42,7 +42,7 @@ import java.util.function.Function;
  * @param &lt;T&gt; the item type
  */
 public class PrometheusFieldSet&lt;T&gt;
-        implements OceanusEventProvider&lt;TethysUIEvent&gt; {
+        implements PrometheusFieldSetControl&lt;T&gt;, OceanusEventProvider&lt;TethysUIEvent&gt; {
     /**
      * The gui factory.
      */
@@ -231,17 +231,11 @@ public class PrometheusFieldSet&lt;T&gt;
 <span class="nc" id="L231">        theChanged = pChanged;</span>
 <span class="nc" id="L232">    }</span>
 
-    /**
-     * Is the cell changed?
-     *
-     * @param pItem  the item
-     * @param pField the field id
-     * @return true/false
-     */
-    boolean isChanged(final T pItem,
-                      final MetisDataFieldId pField) {
-<span class="nc bnc" id="L243" title="All 2 branches missed.">        return theChanged != null</span>
-<span class="nc bnc" id="L244" title="All 2 branches missed.">                &amp;&amp; theChanged.test(pItem, pField);</span>
+    @Override
+    public boolean isChanged(final T pItem,
+                             final MetisDataFieldId pField) {
+<span class="nc bnc" id="L237" title="All 2 branches missed.">        return theChanged != null</span>
+<span class="nc bnc" id="L238" title="All 2 branches missed.">                &amp;&amp; theChanged.test(pItem, pField);</span>
     }
 
     /**
@@ -251,20 +245,20 @@ public class PrometheusFieldSet&lt;T&gt;
      */
     public void setEditable(final boolean isEditable) {
         /* Update all the panels */
-<span class="nc bnc" id="L254" title="All 2 branches missed.">        for (PrometheusFieldSetPanel&lt;T&gt; myPanel : thePanels) {</span>
-<span class="nc" id="L255">            myPanel.setEditable(isEditable);</span>
-<span class="nc" id="L256">        }</span>
-<span class="nc" id="L257">    }</span>
+<span class="nc bnc" id="L248" title="All 2 branches missed.">        for (PrometheusFieldSetPanel&lt;T&gt; myPanel : thePanels) {</span>
+<span class="nc" id="L249">            myPanel.setEditable(isEditable);</span>
+<span class="nc" id="L250">        }</span>
+<span class="nc" id="L251">    }</span>
 
     /**
      * Adjust changed indications.
      */
     public void adjustChanged() {
         /* Update all the panels */
-<span class="nc bnc" id="L264" title="All 2 branches missed.">        for (PrometheusFieldSetPanel&lt;T&gt; myPanel : thePanels) {</span>
-<span class="nc" id="L265">            myPanel.adjustChanged();</span>
-<span class="nc" id="L266">        }</span>
-<span class="nc" id="L267">    }</span>
+<span class="nc bnc" id="L258" title="All 2 branches missed.">        for (PrometheusFieldSetPanel&lt;T&gt; myPanel : thePanels) {</span>
+<span class="nc" id="L259">            myPanel.adjustChanged();</span>
+<span class="nc" id="L260">        }</span>
+<span class="nc" id="L261">    }</span>
 
     /**
      * Set item.
@@ -273,32 +267,27 @@ public class PrometheusFieldSet&lt;T&gt;
      */
     public void setItem(final T pItem) {
         /* Note that we are refreshing */
-<span class="nc" id="L276">        isRefreshing = true;</span>
+<span class="nc" id="L270">        isRefreshing = true;</span>
 
         /* Update all the panels */
-<span class="nc bnc" id="L279" title="All 2 branches missed.">        for (PrometheusFieldSetPanel&lt;T&gt; myPanel : thePanels) {</span>
-<span class="nc" id="L280">            myPanel.setItem(pItem);</span>
-<span class="nc" id="L281">            myPanel.setReporter(theReporter);</span>
-<span class="nc bnc" id="L282" title="All 2 branches missed.">            if (!areLabelsAdjusted) {</span>
-<span class="nc" id="L283">                myPanel.adjustLabelWidth();</span>
+<span class="nc bnc" id="L273" title="All 2 branches missed.">        for (PrometheusFieldSetPanel&lt;T&gt; myPanel : thePanels) {</span>
+<span class="nc" id="L274">            myPanel.setItem(pItem);</span>
+<span class="nc" id="L275">            myPanel.setReporter(theReporter);</span>
+<span class="nc bnc" id="L276" title="All 2 branches missed.">            if (!areLabelsAdjusted) {</span>
+<span class="nc" id="L277">                myPanel.adjustLabelWidth();</span>
             }
-<span class="nc" id="L285">        }</span>
+<span class="nc" id="L279">        }</span>
 
         /* Note that we have finished refreshing */
-<span class="nc" id="L288">        isRefreshing = false;</span>
-<span class="nc" id="L289">        areLabelsAdjusted = true;</span>
-<span class="nc" id="L290">    }</span>
+<span class="nc" id="L282">        isRefreshing = false;</span>
+<span class="nc" id="L283">        areLabelsAdjusted = true;</span>
+<span class="nc" id="L284">    }</span>
 
-    /**
-     * Register a field.
-     *
-     * @param pFieldId the field.
-     * @param pPanel   the panel.
-     */
-    void registerField(final MetisDataFieldId pFieldId,
-                       final PrometheusFieldSetPanel&lt;T&gt; pPanel) {
-<span class="nc" id="L300">        theFieldMap.put(pFieldId, pPanel);</span>
-<span class="nc" id="L301">    }</span>
+    @Override
+    public void registerField(final MetisDataFieldId pFieldId,
+                              final PrometheusFieldSetPanel&lt;T&gt; pPanel) {
+<span class="nc" id="L289">        theFieldMap.put(pFieldId, pPanel);</span>
+<span class="nc" id="L290">    }</span>
 
     /**
      * Set field visibility.
@@ -309,20 +298,20 @@ public class PrometheusFieldSet&lt;T&gt;
     public void setFieldVisible(final MetisDataFieldId pFieldId,
                                 final boolean pVisible) {
         /* Adjust visibility of field */
-<span class="nc" id="L312">        final PrometheusFieldSetPanel&lt;T&gt; myPanel = theFieldMap.get(pFieldId);</span>
-<span class="nc" id="L313">        myPanel.setVisible(pFieldId, pVisible);</span>
-<span class="nc" id="L314">    }</span>
+<span class="nc" id="L301">        final PrometheusFieldSetPanel&lt;T&gt; myPanel = theFieldMap.get(pFieldId);</span>
+<span class="nc" id="L302">        myPanel.setVisible(pFieldId, pVisible);</span>
+<span class="nc" id="L303">    }</span>
 
     /**
      * Adjust tab visibility.
      */
     public void adjustTabVisibility() {
         /* Adjust visibility of tabs if present */
-<span class="nc bnc" id="L321" title="All 2 branches missed.">        if (theTabs != null) {</span>
-<span class="nc" id="L322">            theTabs.adjustVisibility();</span>
+<span class="nc bnc" id="L310" title="All 2 branches missed.">        if (theTabs != null) {</span>
+<span class="nc" id="L311">            theTabs.adjustVisibility();</span>
         }
-<span class="nc" id="L324">        adjustChanged();</span>
-<span class="nc" id="L325">    }</span>
+<span class="nc" id="L313">        adjustChanged();</span>
+<span class="nc" id="L314">    }</span>
 
     /**
      * Set field editability.
@@ -333,27 +322,22 @@ public class PrometheusFieldSet&lt;T&gt;
     public void setFieldEditable(final MetisDataFieldId pFieldId,
                                  final boolean pEditable) {
         /* Adjust edit-ability of field */
-<span class="nc" id="L336">        final PrometheusFieldSetPanel&lt;T&gt; myPanel = theFieldMap.get(pFieldId);</span>
-<span class="nc" id="L337">        myPanel.setEditable(pFieldId, pEditable);</span>
-<span class="nc" id="L338">    }</span>
+<span class="nc" id="L325">        final PrometheusFieldSetPanel&lt;T&gt; myPanel = theFieldMap.get(pFieldId);</span>
+<span class="nc" id="L326">        myPanel.setEditable(pFieldId, pEditable);</span>
+<span class="nc" id="L327">    }</span>
 
-    /**
-     * Notify listeners of new data.
-     *
-     * @param pFieldId  the fieldId.
-     * @param pNewValue the new value
-     */
-    void newData(final MetisDataFieldId pFieldId,
-                 final Object pNewValue) {
+    @Override
+    public void newData(final MetisDataFieldId pFieldId,
+                        final Object pNewValue) {
         /* If we are not refreshing data */
-<span class="nc bnc" id="L349" title="All 2 branches missed.">        if (!isRefreshing) {</span>
+<span class="nc bnc" id="L333" title="All 2 branches missed.">        if (!isRefreshing) {</span>
             /* Create the notification */
-<span class="nc" id="L351">            final PrometheusFieldSetEvent myUpdate = new PrometheusFieldSetEvent(pFieldId, pNewValue);</span>
+<span class="nc" id="L335">            final PrometheusFieldSetEvent myUpdate = new PrometheusFieldSetEvent(pFieldId, pNewValue);</span>
 
             /* Fire the notification */
-<span class="nc" id="L354">            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myUpdate);</span>
+<span class="nc" id="L338">            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myUpdate);</span>
         }
-<span class="nc" id="L356">    }</span>
+<span class="nc" id="L340">    }</span>
 
     /**
      * Set preferred width and height.
@@ -364,26 +348,26 @@ public class PrometheusFieldSet&lt;T&gt;
     public void setPreferredWidthAndHeight(final int pWidth,
                                            final int pHeight) {
         /* If we have Tabs */
-<span class="nc" id="L367">        int myWidth = pWidth;</span>
-<span class="nc bnc" id="L368" title="All 2 branches missed.">        if (theTabs != null) {</span>
+<span class="nc" id="L351">        int myWidth = pWidth;</span>
+<span class="nc bnc" id="L352" title="All 2 branches missed.">        if (theTabs != null) {</span>
             /* Everything is half width */
-<span class="nc" id="L370">            myWidth &gt;&gt;= 1;</span>
+<span class="nc" id="L354">            myWidth &gt;&gt;= 1;</span>
 
             /* Set all tabs visible */
-<span class="nc" id="L373">            theTabs.setAllVisible();</span>
+<span class="nc" id="L357">            theTabs.setAllVisible();</span>
 
             /* Set the tab size */
-<span class="nc" id="L376">            final TethysUIComponent myComponent = theTabs.getComponent();</span>
-<span class="nc" id="L377">            myComponent.setPreferredWidth(myWidth);</span>
-<span class="nc" id="L378">            myComponent.setPreferredHeight(pHeight);</span>
+<span class="nc" id="L360">            final TethysUIComponent myComponent = theTabs.getComponent();</span>
+<span class="nc" id="L361">            myComponent.setPreferredWidth(myWidth);</span>
+<span class="nc" id="L362">            myComponent.setPreferredHeight(pHeight);</span>
         }
 
         /* Update the initial panel */
-<span class="nc" id="L382">        final PrometheusFieldSetPanel&lt;T&gt; myPanel = thePanels.iterator().next();</span>
-<span class="nc" id="L383">        final TethysUIComponent myComponent = myPanel.getUnderlying();</span>
-<span class="nc" id="L384">        myComponent.setPreferredWidth(myWidth);</span>
-<span class="nc" id="L385">        myComponent.setPreferredHeight(pHeight);</span>
-<span class="nc" id="L386">    }</span>
+<span class="nc" id="L366">        final PrometheusFieldSetPanel&lt;T&gt; myPanel = thePanels.iterator().next();</span>
+<span class="nc" id="L367">        final TethysUIComponent myComponent = myPanel.getUnderlying();</span>
+<span class="nc" id="L368">        myComponent.setPreferredWidth(myWidth);</span>
+<span class="nc" id="L369">        myComponent.setPreferredHeight(pHeight);</span>
+<span class="nc" id="L370">    }</span>
 
     /**
      * Set reporter.
@@ -391,7 +375,7 @@ public class PrometheusFieldSet&lt;T&gt;
      * @param pReporter the reporter
      */
     public void setReporter(final Consumer&lt;String&gt; pReporter) {
-<span class="nc" id="L394">        theReporter = pReporter;</span>
-<span class="nc" id="L395">    }</span>
+<span class="nc" id="L378">        theReporter = pReporter;</span>
+<span class="nc" id="L379">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

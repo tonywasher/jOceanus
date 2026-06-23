@@ -16,13 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 
@@ -36,17 +37,17 @@ public class MoneyWiseDepositCategoryType
     /**
      * Object name.
      */
-<span class="fc" id="L39">    public static final String OBJECT_NAME = MoneyWiseStaticDataType.DEPOSITTYPE.getItemName();</span>
+<span class="fc" id="L40">    public static final String OBJECT_NAME = MoneyWiseStaticDataType.DEPOSITTYPE.getItemName();</span>
 
     /**
      * List name.
      */
-<span class="fc" id="L44">    public static final String LIST_NAME = MoneyWiseStaticDataType.DEPOSITTYPE.getListName();</span>
+<span class="fc" id="L45">    public static final String LIST_NAME = MoneyWiseStaticDataType.DEPOSITTYPE.getListName();</span>
 
     /**
      * Report fields.
      */
-<span class="fc" id="L49">    private static final MetisFieldSet&lt;MoneyWiseDepositCategoryType&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseDepositCategoryType.class);</span>
+<span class="fc" id="L50">    private static final MetisFieldSet&lt;MoneyWiseDepositCategoryType&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseDepositCategoryType.class);</span>
 
     /**
      * Copy Constructor.
@@ -56,8 +57,8 @@ public class MoneyWiseDepositCategoryType
      */
     protected MoneyWiseDepositCategoryType(final MoneyWiseDepositCategoryTypeList pList,
                                            final MoneyWiseDepositCategoryType pDepCatType) {
-<span class="fc" id="L59">        super(pList, pDepCatType);</span>
-<span class="fc" id="L60">    }</span>
+<span class="fc" id="L60">        super(pList, pDepCatType);</span>
+<span class="fc" id="L61">    }</span>
 
     /**
      * Basic constructor.
@@ -68,8 +69,8 @@ public class MoneyWiseDepositCategoryType
      */
     private MoneyWiseDepositCategoryType(final MoneyWiseDepositCategoryTypeList pList,
                                          final String pName) throws OceanusException {
-<span class="fc" id="L71">        super(pList, pName);</span>
-<span class="fc" id="L72">    }</span>
+<span class="fc" id="L72">        super(pList, pName);</span>
+<span class="fc" id="L73">    }</span>
 
     /**
      * Basic constructor.
@@ -80,8 +81,8 @@ public class MoneyWiseDepositCategoryType
      */
     private MoneyWiseDepositCategoryType(final MoneyWiseDepositCategoryTypeList pList,
                                          final MoneyWiseDepositCategoryClass pClass) throws OceanusException {
-<span class="nc" id="L83">        super(pList, pClass);</span>
-<span class="nc" id="L84">    }</span>
+<span class="nc" id="L84">        super(pList, pClass);</span>
+<span class="nc" id="L85">    }</span>
 
     /**
      * Values constructor.
@@ -92,12 +93,12 @@ public class MoneyWiseDepositCategoryType
      */
     private MoneyWiseDepositCategoryType(final MoneyWiseDepositCategoryTypeList pList,
                                          final PrometheusDataValues pValues) throws OceanusException {
-<span class="fc" id="L95">        super(pList, pValues);</span>
-<span class="fc" id="L96">    }</span>
+<span class="fc" id="L96">        super(pList, pValues);</span>
+<span class="fc" id="L97">    }</span>
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
-<span class="fc" id="L100">        return FIELD_DEFS;</span>
+<span class="fc" id="L101">        return FIELD_DEFS;</span>
     }
 
     /**
@@ -106,7 +107,7 @@ public class MoneyWiseDepositCategoryType
      * @return the class
      */
     public MoneyWiseDepositCategoryClass getDepositClass() {
-<span class="fc" id="L109">        return (MoneyWiseDepositCategoryClass) super.getStaticClass();</span>
+<span class="fc" id="L110">        return (MoneyWiseDepositCategoryClass) super.getStaticClass();</span>
     }
 
     /**
@@ -117,17 +118,17 @@ public class MoneyWiseDepositCategoryType
      * &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isDepositCategory(final MoneyWiseDepositCategoryClass pClass) {
-<span class="nc" id="L120">        return getDepositClass().equals(pClass);</span>
+<span class="nc" id="L121">        return getDepositClass().equals(pClass);</span>
     }
 
     @Override
     public MoneyWiseDepositCategoryType getBase() {
-<span class="fc" id="L125">        return (MoneyWiseDepositCategoryType) super.getBase();</span>
+<span class="fc" id="L126">        return (MoneyWiseDepositCategoryType) super.getBase();</span>
     }
 
     @Override
     public MoneyWiseDepositCategoryTypeList getList() {
-<span class="fc" id="L130">        return (MoneyWiseDepositCategoryTypeList) super.getList();</span>
+<span class="fc" id="L131">        return (MoneyWiseDepositCategoryTypeList) super.getList();</span>
     }
 
     /**
@@ -138,7 +139,7 @@ public class MoneyWiseDepositCategoryType
         /**
          * Report fields.
          */
-<span class="fc" id="L141">        private static final MetisFieldSet&lt;MoneyWiseDepositCategoryTypeList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseDepositCategoryTypeList.class);</span>
+<span class="fc" id="L142">        private static final MetisFieldSet&lt;MoneyWiseDepositCategoryTypeList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseDepositCategoryTypeList.class);</span>
 
         /**
          * Construct an empty CORE account category list.
@@ -146,8 +147,8 @@ public class MoneyWiseDepositCategoryType
          * @param pData the DataSet for the list
          */
         public MoneyWiseDepositCategoryTypeList(final PrometheusDataSet pData) {
-<span class="fc" id="L149">            super(MoneyWiseDepositCategoryType.class, pData, MoneyWiseStaticDataType.DEPOSITTYPE, PrometheusListStyle.CORE);</span>
-<span class="fc" id="L150">        }</span>
+<span class="fc" id="L150">            super(MoneyWiseDepositCategoryType.class, pData, MoneyWiseStaticDataType.DEPOSITTYPE, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L151">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -155,51 +156,51 @@ public class MoneyWiseDepositCategoryType
          * @param pSource the source List
          */
         private MoneyWiseDepositCategoryTypeList(final MoneyWiseDepositCategoryTypeList pSource) {
-<span class="fc" id="L158">            super(pSource);</span>
-<span class="fc" id="L159">        }</span>
+<span class="fc" id="L159">            super(pSource);</span>
+<span class="fc" id="L160">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWiseDepositCategoryTypeList&gt; getDataFieldSet() {
-<span class="nc" id="L163">            return FIELD_DEFS;</span>
+<span class="nc" id="L164">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String listName() {
-<span class="fc" id="L168">            return LIST_NAME;</span>
+<span class="fc" id="L169">            return LIST_NAME;</span>
         }
 
         @Override
         public MetisFieldSetDef getItemFields() {
-<span class="fc" id="L173">            return MoneyWiseDepositCategoryType.FIELD_DEFS;</span>
+<span class="fc" id="L174">            return MoneyWiseDepositCategoryType.FIELD_DEFS;</span>
         }
 
         @Override
         protected Class&lt;MoneyWiseDepositCategoryClass&gt; getEnumClass() {
-<span class="fc" id="L178">            return MoneyWiseDepositCategoryClass.class;</span>
+<span class="fc" id="L179">            return MoneyWiseDepositCategoryClass.class;</span>
         }
 
         @Override
         protected MoneyWiseDepositCategoryTypeList getEmptyList(final PrometheusListStyle pStyle) {
-<span class="fc" id="L183">            final MoneyWiseDepositCategoryTypeList myList = new MoneyWiseDepositCategoryTypeList(this);</span>
-<span class="fc" id="L184">            myList.setStyle(pStyle);</span>
-<span class="fc" id="L185">            return myList;</span>
+<span class="fc" id="L184">            final MoneyWiseDepositCategoryTypeList myList = new MoneyWiseDepositCategoryTypeList(this);</span>
+<span class="fc" id="L185">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L186">            return myList;</span>
         }
 
         @Override
         public MoneyWiseDepositCategoryType addCopyItem(final PrometheusDataItem pItem) {
             /* Can only clone a DepositCategoryType */
-<span class="pc bpc" id="L191" title="1 of 2 branches missed.">            if (!(pItem instanceof MoneyWiseDepositCategoryType)) {</span>
-<span class="nc" id="L192">                throw new UnsupportedOperationException();</span>
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">            if (!(pItem instanceof MoneyWiseDepositCategoryType)) {</span>
+<span class="nc" id="L193">                throw new UnsupportedOperationException();</span>
             }
 
-<span class="fc" id="L195">            final MoneyWiseDepositCategoryType myType = new MoneyWiseDepositCategoryType(this, (MoneyWiseDepositCategoryType) pItem);</span>
-<span class="fc" id="L196">            add(myType);</span>
-<span class="fc" id="L197">            return myType;</span>
+<span class="fc" id="L196">            final MoneyWiseDepositCategoryType myType = new MoneyWiseDepositCategoryType(this, (MoneyWiseDepositCategoryType) pItem);</span>
+<span class="fc" id="L197">            add(myType);</span>
+<span class="fc" id="L198">            return myType;</span>
         }
 
         @Override
         public MoneyWiseDepositCategoryType addNewItem() {
-<span class="nc" id="L202">            throw new UnsupportedOperationException();</span>
+<span class="nc" id="L203">            throw new UnsupportedOperationException();</span>
         }
 
         /**
@@ -208,7 +209,7 @@ public class MoneyWiseDepositCategoryType
          * @return the type of the item
          */
         public String itemType() {
-<span class="nc" id="L211">            return LIST_NAME;</span>
+<span class="nc" id="L212">            return LIST_NAME;</span>
         }
 
         /**
@@ -220,54 +221,54 @@ public class MoneyWiseDepositCategoryType
          */
         public MoneyWiseDepositCategoryType addBasicItem(final String pDepCatType) throws OceanusException {
             /* Create a new Deposit Category Type */
-<span class="fc" id="L223">            final MoneyWiseDepositCategoryType myDepType = new MoneyWiseDepositCategoryType(this, pDepCatType);</span>
+<span class="fc" id="L224">            final MoneyWiseDepositCategoryType myDepType = new MoneyWiseDepositCategoryType(this, pDepCatType);</span>
 
             /* Check that this DepositCategoryTypeId has not been previously added */
-<span class="pc bpc" id="L226" title="1 of 2 branches missed.">            if (!isIdUnique(myDepType.getIndexedId())) {</span>
-<span class="nc" id="L227">                myDepType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L228">                throw new MoneyWiseDataException(myDepType, ERROR_VALIDATION);</span>
+<span class="pc bpc" id="L227" title="1 of 2 branches missed.">            if (!isIdUnique(myDepType.getIndexedId())) {</span>
+<span class="nc" id="L228">                myDepType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L229">                throw new MoneyWiseDataException(myDepType, ERROR_VALIDATION);</span>
             }
 
             /* Add the Deposit Category to the list */
-<span class="fc" id="L232">            add(myDepType);</span>
-<span class="fc" id="L233">            return myDepType;</span>
+<span class="fc" id="L233">            add(myDepType);</span>
+<span class="fc" id="L234">            return myDepType;</span>
         }
 
         @Override
         public MoneyWiseDepositCategoryType addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
             /* Create the type */
-<span class="fc" id="L239">            final MoneyWiseDepositCategoryType myType = new MoneyWiseDepositCategoryType(this, pValues);</span>
+<span class="fc" id="L240">            final MoneyWiseDepositCategoryType myType = new MoneyWiseDepositCategoryType(this, pValues);</span>
 
             /* Check that this TypeId has not been previously added */
-<span class="pc bpc" id="L242" title="1 of 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
-<span class="nc" id="L243">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L244">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L244">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L245">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="fc" id="L248">            add(myType);</span>
+<span class="fc" id="L249">            add(myType);</span>
 
             /* Return it */
-<span class="fc" id="L251">            return myType;</span>
+<span class="fc" id="L252">            return myType;</span>
         }
 
         @Override
         protected MoneyWiseDepositCategoryType newItem(final PrometheusStaticDataClass pClass) throws OceanusException {
             /* Create the type */
-<span class="nc" id="L257">            final MoneyWiseDepositCategoryType myType = new MoneyWiseDepositCategoryType(this, (MoneyWiseDepositCategoryClass) pClass);</span>
+<span class="nc" id="L258">            final MoneyWiseDepositCategoryType myType = new MoneyWiseDepositCategoryType(this, (MoneyWiseDepositCategoryClass) pClass);</span>
 
             /* Check that this TypeId has not been previously added */
-<span class="nc bnc" id="L260" title="All 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
-<span class="nc" id="L261">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L262">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+<span class="nc bnc" id="L261" title="All 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L262">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L263">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="nc" id="L266">            add(myType);</span>
+<span class="nc" id="L267">            add(myType);</span>
 
             /* Return it */
-<span class="nc" id="L269">            return myType;</span>
+<span class="nc" id="L270">            return myType;</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

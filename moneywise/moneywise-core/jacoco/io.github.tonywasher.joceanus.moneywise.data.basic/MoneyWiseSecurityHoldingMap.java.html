@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseSecurityHoldingMap.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.basic</a> &gt; <span class="el_source">MoneyWiseSecurityHoldingMap.java</span></div><h1>MoneyWiseSecurityHoldingMap.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.moneywise.data.basic;
+
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMap.MoneyWisePortfolioHoldingsMap;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * SecurityHolding Map.
+ */
+public class MoneyWiseSecurityHoldingMap
+        implements MetisDataObjectFormat, MetisDataMap&lt;Integer, MoneyWisePortfolioHoldingsMap&gt;, MoneyWiseSecurityHoldingMapCtl {
+    /**
+     * Underlying portfolio list.
+     */
+    private final MoneyWisePortfolioList thePortfolios;
+
+    /**
+     * Underlying security list.
+     */
+    private final MoneyWiseSecurityList theSecurities;
+
+    /**
+     * The underlying map.
+     */
+    private final Map&lt;Integer, MoneyWisePortfolioHoldingsMap&gt; theMap;
+
+    /**
+     * Constructor.
+     *
+     * @param pData the dataSet
+     */
+<span class="fc" id="L62">    public MoneyWiseSecurityHoldingMap(final PrometheusDataSet pData) {</span>
+        /* Access lists */
+<span class="fc" id="L64">        thePortfolios = pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);</span>
+<span class="fc" id="L65">        theSecurities = pData.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class);</span>
+<span class="fc" id="L66">        theMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L67">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pEditSet the editSet
+     */
+<span class="fc" id="L74">    public MoneyWiseSecurityHoldingMap(final PrometheusEditSet pEditSet) {</span>
+        /* Access lists */
+<span class="fc" id="L76">        thePortfolios = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);</span>
+<span class="fc" id="L77">        theSecurities = pEditSet.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class);</span>
+<span class="fc" id="L78">        theMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L79">    }</span>
+
+    @Override
+    public Map&lt;Integer, MoneyWisePortfolioHoldingsMap&gt; getUnderlyingMap() {
+<span class="nc" id="L83">        return theMap;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L88">        return MoneyWiseSecurityHoldingMap.class.getSimpleName();</span>
+    }
+
+    @Override
+    public void clear() {
+<span class="fc" id="L93">        theMap.clear();</span>
+<span class="fc" id="L94">    }</span>
+
+    /**
+     * Look up a security holding.
+     *
+     * @param pId the id of the security holding
+     * @return the security holding
+     */
+    public MoneyWiseSecurityHolding findHoldingById(final Long pId) {
+        /* Access the component IDs */
+<span class="fc" id="L104">        final Integer myPortId = getPortfolioId(pId);</span>
+<span class="fc" id="L105">        final Integer mySecId = getSecurityId(pId);</span>
+
+        /* Look up security map for portfolio */
+<span class="fc" id="L108">        final MoneyWisePortfolioHoldingsMap myMap = getMapForPortfolio(myPortId);</span>
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">        return myMap == null</span>
+<span class="nc" id="L110">                ? null</span>
+<span class="fc" id="L111">                : myMap.getHoldingForSecurity(mySecId);</span>
+    }
+
+    /**
+     * Look up a security holding.
+     *
+     * @param pName the name of the security holding
+     * @return the security holding
+     */
+    public MoneyWiseSecurityHolding findHoldingByName(final String pName) {
+        /* Access the component Names */
+<span class="fc" id="L122">        final String myPortName = getPortfolioName(pName);</span>
+<span class="fc" id="L123">        final String mySecName = getSecurityName(pName);</span>
+
+        /* Look up security map for portfolio */
+<span class="fc" id="L126">        final MoneyWisePortfolioHoldingsMap myMap = getMapForPortfolio(myPortName);</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">        return myMap == null</span>
+<span class="nc" id="L128">                ? null</span>
+<span class="fc" id="L129">                : myMap.getHoldingForSecurity(mySecName);</span>
+    }
+
+    /**
+     * Obtain portfolio name from composite name.
+     *
+     * @param pName the composite name
+     * @return the portfolio name
+     */
+    private static String getPortfolioName(final String pName) {
+<span class="fc" id="L139">        final int iIndex = pName.indexOf(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP);</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        return iIndex == -1</span>
+<span class="nc" id="L141">                ? pName</span>
+<span class="fc" id="L142">                : pName.substring(0, iIndex);</span>
+    }
+
+    /**
+     * Obtain security name from composite name.
+     *
+     * @param pName the composite name
+     * @return the security name
+     */
+    private static String getSecurityName(final String pName) {
+<span class="fc" id="L152">        final int iIndex = pName.indexOf(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP);</span>
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">        return iIndex == -1</span>
+<span class="nc" id="L154">                ? &quot;&quot;</span>
+<span class="fc" id="L155">                : pName.substring(iIndex + 1);</span>
+    }
+
+    /**
+     * Obtain portfolio id from composite id.
+     *
+     * @param pId the composite id
+     * @return the portfolio id
+     */
+    private static Integer getPortfolioId(final Long pId) {
+<span class="fc" id="L165">        return MoneyWiseAssetType.getMajorId(pId);</span>
+    }
+
+    /**
+     * Obtain security id from composite id.
+     *
+     * @param pId the composite id
+     * @return the security id
+     */
+    private static Integer getSecurityId(final Long pId) {
+<span class="fc" id="L175">        return MoneyWiseAssetType.getBaseId(pId);</span>
+    }
+
+    /**
+     * Declare holding.
+     *
+     * @param pPortfolio the portfolio
+     * @param pSecurity  the security
+     * @return the holding
+     */
+    public MoneyWiseSecurityHolding declareHolding(final MoneyWisePortfolio pPortfolio,
+                                                   final MoneyWiseSecurity pSecurity) {
+        /* Access the portfolio map */
+<span class="fc" id="L188">        final MoneyWisePortfolioHoldingsMap myPortMap = getMapForPortfolio(pPortfolio.getIndexedId());</span>
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">        if (myPortMap == null) {</span>
+<span class="nc" id="L190">            throw new IllegalStateException(&quot;Invalid Portfolio&quot;);</span>
+        }
+<span class="fc" id="L192">        final Map&lt;Integer, MoneyWiseSecurityHolding&gt; myMap = myPortMap.getUnderlyingMap();</span>
+
+        /* Look up existing holding */
+<span class="fc" id="L195">        final Integer myId = pSecurity.getIndexedId();</span>
+<span class="fc" id="L196">        return myMap.computeIfAbsent(myId, i -&gt; new MoneyWiseSecurityHolding(pPortfolio, pSecurity));</span>
+    }
+
+    /**
+     * Obtain or allocate the map for the portfolio.
+     *
+     * @param pId the id of the portfolio
+     * @return the map
+     */
+    private MoneyWisePortfolioHoldingsMap getMapForPortfolio(final Integer pId) {
+        /* Look up in the map */
+<span class="fc" id="L207">        MoneyWisePortfolioHoldingsMap myMap = theMap.get(pId);</span>
+
+        /* If the Id is not found */
+<span class="fc bfc" id="L210" title="All 2 branches covered.">        if (myMap == null) {</span>
+            /* Look up the portfolio as a double check */
+<span class="fc" id="L212">            final MoneyWisePortfolio myPortfolio = thePortfolios.findItemById(pId);</span>
+
+            /* Reject if no such portfolio */
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">            if (myPortfolio == null</span>
+<span class="pc bpc" id="L216" title="1 of 2 branches missed.">                    || myPortfolio.isDeleted()) {</span>
+<span class="nc" id="L217">                return null;</span>
+            }
+
+            /* Allocate and store the map */
+<span class="fc" id="L221">            myMap = new MoneyWisePortfolioHoldingsMap(myPortfolio, theSecurities);</span>
+<span class="fc" id="L222">            theMap.put(pId, myMap);</span>
+        }
+
+        /* Return the map */
+<span class="fc" id="L226">        return myMap;</span>
+    }
+
+    /**
+     * Obtain or allocate the map for the portfolio.
+     *
+     * @param pName the name of the portfolio
+     * @return the map
+     */
+    private MoneyWisePortfolioHoldingsMap getMapForPortfolio(final String pName) {
+        /* Look up the portfolio */
+<span class="fc" id="L237">        final MoneyWisePortfolio myPortfolio = thePortfolios.findItemByName(pName);</span>
+
+        /* Reject if no such portfolio */
+<span class="pc bpc" id="L240" title="1 of 2 branches missed.">        if (myPortfolio == null) {</span>
+<span class="nc" id="L241">            return null;</span>
+        }
+
+        /* Look up in the map */
+<span class="fc" id="L245">        final Integer myId = myPortfolio.getIndexedId();</span>
+<span class="fc" id="L246">        return theMap.computeIfAbsent(myId, i -&gt; new MoneyWisePortfolioHoldingsMap(myPortfolio, theSecurities));</span>
+    }
+
+    @Override
+    public void deRegister(final MoneyWiseAssetBase pAsset) {
+        /* Ensure that we do not reference this asset */
+<span class="nc bnc" id="L252" title="All 3 branches missed.">        switch (pAsset) {</span>
+<span class="nc" id="L253">            case MoneyWisePortfolio myPortfolio -&gt; deRegister(myPortfolio);</span>
+<span class="nc" id="L254">            case MoneyWiseSecurity mySecurity -&gt; deRegister(mySecurity);</span>
+            default -&gt; {
+                /* NoOp */
+            }
+        }
+<span class="nc" id="L259">    }</span>
+
+    /**
+     * DeRegister Portfolio.
+     *
+     * @param pPortfolio the portfolio
+     */
+    private void deRegister(final MoneyWisePortfolio pPortfolio) {
+        /* Ensure that we do not reference this portfolio */
+<span class="nc" id="L268">        final Integer myId = pPortfolio.getIndexedId();</span>
+<span class="nc" id="L269">        theMap.remove(myId);</span>
+<span class="nc" id="L270">    }</span>
+
+    /**
+     * DeRegister Security.
+     *
+     * @param pSecurity the security
+     */
+    private void deRegister(final MoneyWiseSecurity pSecurity) {
+        /* Access the id */
+<span class="nc" id="L279">        final Integer myId = pSecurity.getIndexedId();</span>
+
+        /* Iterate through the portfolio maps */
+<span class="nc" id="L282">        final Iterator&lt;MoneyWisePortfolioHoldingsMap&gt; myIterator = theMap.values().iterator();</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L284">            final MoneyWisePortfolioHoldingsMap myMap = myIterator.next();</span>
+
+            /* Ensure that we do not reference this security */
+<span class="nc" id="L287">            myMap.getUnderlyingMap().remove(myId);</span>
+<span class="nc" id="L288">        }</span>
+<span class="nc" id="L289">    }</span>
+
+    /**
+     * Obtain existing holding list for Portfolio.
+     *
+     * @param pPortfolio the portfolio
+     * @return the iterator
+     */
+    public Iterator&lt;MoneyWiseSecurityHolding&gt; existingIterator(final MoneyWisePortfolio pPortfolio) {
+        /* Look up in the map */
+<span class="nc" id="L299">        final MoneyWisePortfolioHoldingsMap myMap = theMap.get(pPortfolio.getIndexedId());</span>
+
+        /* return the iterator */
+<span class="nc bnc" id="L302" title="All 2 branches missed.">        return myMap == null</span>
+<span class="nc" id="L303">                ? null</span>
+<span class="nc" id="L304">                : myMap.existingIterator();</span>
+    }
+
+    /**
+     * Obtain new holding list for Portfolio.
+     *
+     * @param pPortfolio the portfolio
+     * @return the iterator
+     */
+    public Iterator&lt;MoneyWiseSecurityHolding&gt; newIterator(final MoneyWisePortfolio pPortfolio) {
+<span class="nc" id="L314">        return newIterator(pPortfolio, null);</span>
+    }
+
+    /**
+     * Obtain new holding list for Portfolio.
+     *
+     * @param pPortfolio the portfolio
+     * @param pClass     the class of holdings or null for all
+     * @return the iterator
+     */
+    public Iterator&lt;MoneyWiseSecurityHolding&gt; newIterator(final MoneyWisePortfolio pPortfolio,
+                                                          final MoneyWiseSecurityClass pClass) {
+        /* Look up in the map */
+<span class="nc" id="L327">        final MoneyWisePortfolioHoldingsMap myMap = theMap.get(pPortfolio.getIndexedId());</span>
+
+        /* return the iterator */
+<span class="nc bnc" id="L330" title="All 2 branches missed.">        return myMap == null</span>
+<span class="nc" id="L331">                ? fullIterator(pPortfolio, pClass)</span>
+<span class="nc" id="L332">                : myMap.newIterator(pClass);</span>
+    }
+
+    /**
+     * Obtain new holding list for Portfolio.
+     *
+     * @param pPortfolio the portfolio
+     * @param pClass     the class of holdings or null for all
+     * @return the iterator
+     */
+    private Iterator&lt;MoneyWiseSecurityHolding&gt; fullIterator(final MoneyWisePortfolio pPortfolio,
+                                                            final MoneyWiseSecurityClass pClass) {
+        /* If the portfolio is closed/deleted */
+<span class="nc bnc" id="L345" title="All 4 branches missed.">        if (Boolean.TRUE.equals(pPortfolio.isClosed()) || pPortfolio.isDeleted()) {</span>
+            /* No iterator */
+<span class="nc" id="L347">            return null;</span>
+        }
+
+        /* Create an empty list */
+<span class="nc" id="L351">        List&lt;MoneyWiseSecurityHolding&gt; myList = new ArrayList&lt;&gt;();</span>
+
+        /* Loop through the securities */
+<span class="nc" id="L354">        final Iterator&lt;MoneyWiseSecurity&gt; myIterator = theSecurities.iterator();</span>
+<span class="nc bnc" id="L355" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L356">            final MoneyWiseSecurity mySecurity = myIterator.next();</span>
+
+            /* Ignore closed/deleted and wrong class */
+<span class="nc bnc" id="L359" title="All 4 branches missed.">            boolean bIgnore = mySecurity.isClosed() || mySecurity.isDeleted();</span>
+<span class="nc bnc" id="L360" title="All 4 branches missed.">            bIgnore |= pClass != null &amp;&amp; !pClass.equals(mySecurity.getCategoryClass());</span>
+<span class="nc bnc" id="L361" title="All 2 branches missed.">            if (bIgnore) {</span>
+<span class="nc" id="L362">                continue;</span>
+            }
+
+            /* Create a new holding and add to the list */
+<span class="nc" id="L366">            final MoneyWiseSecurityHolding myHolding = new MoneyWiseSecurityHolding(pPortfolio, mySecurity);</span>
+<span class="nc" id="L367">            myList.add(myHolding);</span>
+<span class="nc" id="L368">        }</span>
+
+        /* Sort list or delete if empty */
+<span class="nc bnc" id="L371" title="All 2 branches missed.">        if (myList.isEmpty()) {</span>
+<span class="nc" id="L372">            myList = null;</span>
+        } else {
+<span class="nc" id="L374">            Collections.sort(myList);</span>
+        }
+
+        /* return iterator */
+<span class="nc bnc" id="L378" title="All 2 branches missed.">        return myList == null</span>
+<span class="nc" id="L379">                ? null</span>
+<span class="nc" id="L380">                : myList.iterator();</span>
+    }
+
+    /**
+     * PortfolioHoldings Map.
+     */
+    public static final class MoneyWisePortfolioHoldingsMap
+            implements MetisDataObjectFormat, MetisDataMap&lt;Integer, MoneyWiseSecurityHolding&gt; {
+        /**
+         * Portfolio.
+         */
+        private final MoneyWisePortfolio thePortfolio;
+
+        /**
+         * Underlying security list.
+         */
+        private final MoneyWiseSecurityList theSecurities;
+
+        /**
+         * The underlying map.
+         */
+        private final Map&lt;Integer, MoneyWiseSecurityHolding&gt; theMap;
+
+        /**
+         * Constructor.
+         *
+         * @param pPortfolio  the portfolio
+         * @param pSecurities the security list
+         */
+        private MoneyWisePortfolioHoldingsMap(final MoneyWisePortfolio pPortfolio,
+<span class="fc" id="L410">                                              final MoneyWiseSecurityList pSecurities) {</span>
+<span class="fc" id="L411">            thePortfolio = pPortfolio;</span>
+<span class="fc" id="L412">            theSecurities = pSecurities;</span>
+<span class="fc" id="L413">            theMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L414">        }</span>
+
+        @Override
+        public Map&lt;Integer, MoneyWiseSecurityHolding&gt; getUnderlyingMap() {
+<span class="fc" id="L418">            return theMap;</span>
+        }
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L423">            return thePortfolio.formatObject(pFormatter);</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="nc" id="L428">            return thePortfolio.toString();</span>
+        }
+
+        /**
+         * Obtain or allocate the holding for the security.
+         *
+         * @param pId the id of the security
+         * @return the holding
+         */
+        private MoneyWiseSecurityHolding getHoldingForSecurity(final Integer pId) {
+            /* Look up in the map */
+<span class="fc" id="L439">            MoneyWiseSecurityHolding myHolding = theMap.get(pId);</span>
+
+            /* If the Id is not found */
+<span class="fc bfc" id="L442" title="All 2 branches covered.">            if (myHolding == null) {</span>
+                /* Look up the security as a double check */
+<span class="fc" id="L444">                final MoneyWiseSecurity mySecurity = theSecurities.findItemById(pId);</span>
+
+                /* Reject if no such security */
+<span class="pc bpc" id="L447" title="2 of 4 branches missed.">                if (mySecurity == null || mySecurity.isDeleted()) {</span>
+<span class="nc" id="L448">                    return null;</span>
+                }
+
+                /* Allocate and store the holding */
+<span class="fc" id="L452">                myHolding = new MoneyWiseSecurityHolding(thePortfolio, mySecurity);</span>
+<span class="fc" id="L453">                theMap.put(pId, myHolding);</span>
+            }
+
+            /* Return the holding */
+<span class="fc" id="L457">            return myHolding;</span>
+        }
+
+        /**
+         * Obtain or allocate the holding for the security.
+         *
+         * @param pName the name of the security
+         * @return the holding
+         */
+        private MoneyWiseSecurityHolding getHoldingForSecurity(final String pName) {
+            /* Look up the security */
+<span class="fc" id="L468">            final MoneyWiseSecurity mySecurity = theSecurities.findItemByName(pName);</span>
+
+            /* Reject if no such security */
+<span class="pc bpc" id="L471" title="1 of 2 branches missed.">            if (mySecurity == null) {</span>
+<span class="nc" id="L472">                return null;</span>
+            }
+
+            /* Look up in the map */
+<span class="fc" id="L476">            final Integer myId = mySecurity.getIndexedId();</span>
+<span class="fc" id="L477">            return theMap.computeIfAbsent(myId, i -&gt; new MoneyWiseSecurityHolding(thePortfolio, mySecurity));</span>
+        }
+
+        /**
+         * Obtain existing holding list for Portfolio.
+         *
+         * @return the iterator
+         */
+        private Iterator&lt;MoneyWiseSecurityHolding&gt; existingIterator() {
+            /* If the portfolio is closed/deleted */
+<span class="nc bnc" id="L487" title="All 4 branches missed.">            if (Boolean.TRUE.equals(thePortfolio.isClosed()) || thePortfolio.isDeleted()) {</span>
+                /* No iterator */
+<span class="nc" id="L489">                return null;</span>
+            }
+
+            /* Create an empty list */
+<span class="nc" id="L493">            List&lt;MoneyWiseSecurityHolding&gt; myList = new ArrayList&lt;&gt;();</span>
+
+            /* Loop through the holdings */
+<span class="nc" id="L496">            final Iterator&lt;MoneyWiseSecurityHolding&gt; myIterator = theMap.values().iterator();</span>
+<span class="nc bnc" id="L497" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L498">                final MoneyWiseSecurityHolding myHolding = myIterator.next();</span>
+<span class="nc" id="L499">                final MoneyWiseSecurity mySecurity = myHolding.getSecurity();</span>
+
+                /* Ignore closed/deleted */
+<span class="nc bnc" id="L502" title="All 4 branches missed.">                if (Boolean.FALSE.equals(mySecurity.isClosed()) &amp;&amp; !mySecurity.isDeleted()) {</span>
+                    /* Add to the list */
+<span class="nc" id="L504">                    myList.add(myHolding);</span>
+                }
+<span class="nc" id="L506">            }</span>
+
+            /* Sort list or delete if empty */
+<span class="nc bnc" id="L509" title="All 2 branches missed.">            if (myList.isEmpty()) {</span>
+<span class="nc" id="L510">                myList = null;</span>
+            } else {
+<span class="nc" id="L512">                Collections.sort(myList);</span>
+            }
+
+            /* return iterator */
+<span class="nc bnc" id="L516" title="All 2 branches missed.">            return myList == null</span>
+<span class="nc" id="L517">                    ? null</span>
+<span class="nc" id="L518">                    : myList.iterator();</span>
+        }
+
+        /**
+         * Obtain new holding list for Portfolio.
+         *
+         * @param pClass the class of holdings or null for all
+         * @return the iterator
+         */
+        private Iterator&lt;MoneyWiseSecurityHolding&gt; newIterator(final MoneyWiseSecurityClass pClass) {
+            /* If the portfolio is closed/deleted */
+<span class="nc bnc" id="L529" title="All 4 branches missed.">            if (Boolean.TRUE.equals(thePortfolio.isClosed()) || thePortfolio.isDeleted()) {</span>
+                /* No iterator */
+<span class="nc" id="L531">                return null;</span>
+            }
+
+            /* Create an empty list */
+<span class="nc" id="L535">            List&lt;MoneyWiseSecurityHolding&gt; myList = new ArrayList&lt;&gt;();</span>
+
+            /* Loop through the securities */
+<span class="nc" id="L538">            final Iterator&lt;MoneyWiseSecurity&gt; myIterator = theSecurities.iterator();</span>
+<span class="nc bnc" id="L539" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L540">                final MoneyWiseSecurity mySecurity = myIterator.next();</span>
+
+                /* Ignore closed/deleted and wrong class/currency */
+<span class="nc bnc" id="L543" title="All 4 branches missed.">                boolean bIgnore = mySecurity.isClosed() || mySecurity.isDeleted();</span>
+<span class="nc bnc" id="L544" title="All 4 branches missed.">                bIgnore |= pClass != null &amp;&amp; pClass.equals(mySecurity.getCategoryClass());</span>
+<span class="nc bnc" id="L545" title="All 2 branches missed.">                if (bIgnore) {</span>
+<span class="nc" id="L546">                    continue;</span>
+                }
+
+                /* Only add if not currently present */
+<span class="nc bnc" id="L550" title="All 2 branches missed.">                if (theMap.get(mySecurity.getIndexedId()) == null) {</span>
+                    /* Create a new holding and add to the list */
+<span class="nc" id="L552">                    final MoneyWiseSecurityHolding myHolding = new MoneyWiseSecurityHolding(thePortfolio, mySecurity);</span>
+<span class="nc" id="L553">                    myList.add(myHolding);</span>
+                }
+<span class="nc" id="L555">            }</span>
+
+            /* Sort list or delete if empty */
+<span class="nc bnc" id="L558" title="All 2 branches missed.">            if (myList.isEmpty()) {</span>
+<span class="nc" id="L559">                myList = null;</span>
+            } else {
+<span class="nc" id="L561">                Collections.sort(myList);</span>
+            }
+
+            /* return iterator */
+<span class="nc bnc" id="L565" title="All 2 branches missed.">            return myList == null</span>
+<span class="nc" id="L566">                    ? null</span>
+<span class="nc" id="L567">                    : myList.iterator();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyMac.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc.mac</a> &gt; <span class="el_source">BouncyMac.java</span></div><h1>BouncyMac.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.bc.mac;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParams;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.cipher.BouncyKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMac;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters.GordianBlake2ParametersBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters.GordianSkeinParametersBuilder;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
+
+import java.util.Objects;
+
+/**
+ * Wrapper for BouncyCastle MAC.
+ */
+public class BouncyMac
+        extends GordianCoreMac {
+    /**
+     * Mac.
+     */
+    private final Mac theMac;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the Security Factory
+     * @param pMacSpec the MacSpec
+     * @param pMac     the MAC
+     */
+    BouncyMac(final GordianBaseFactory pFactory,
+              final GordianMacSpec pMacSpec,
+              final Mac pMac) {
+<span class="fc" id="L56">        super(pFactory, pMacSpec);</span>
+<span class="fc" id="L57">        theMac = pMac;</span>
+<span class="fc" id="L58">    }</span>
+
+    @Override
+    public BouncyKey&lt;GordianMacSpec&gt; getKey() {
+<span class="fc" id="L62">        return (BouncyKey&lt;GordianMacSpec&gt;) super.getKey();</span>
+    }
+
+    @Override
+    public void init(final GordianMacParams pParams) throws GordianException {
+        /* Process the parameters and access the key */
+<span class="fc" id="L68">        processParameters(pParams);</span>
+<span class="fc" id="L69">        final BouncyKey&lt;GordianMacSpec&gt; myKey = BouncyKey.accessKey(getKey());</span>
+
+        /* Initialise the cipher */
+<span class="fc" id="L72">        final CipherParameters myParms = buildInitParams(myKey, getInitVector());</span>
+<span class="fc" id="L73">        theMac.init(myParms);</span>
+<span class="fc" id="L74">    }</span>
+
+    @Override
+    public int getMacSize() {
+<span class="fc" id="L78">        return theMac.getMacSize();</span>
+    }
+
+    /**
+     * Build initParameters.
+     *
+     * @param pKey the key
+     * @param pIV  the initVector
+     * @return the parameters
+     */
+    private CipherParameters buildInitParams(final BouncyKey&lt;GordianMacSpec&gt; pKey,
+                                             final byte[] pIV) {
+        /* Handle Skein Parameters */
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (GordianMacType.SKEIN.equals(getMacSpec().getMacType())) {</span>
+<span class="fc" id="L92">            final GordianSkeinParametersBuilder myBuilder = new GordianSkeinParametersBuilder();</span>
+<span class="fc" id="L93">            myBuilder.setKey(pKey.getKey());</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">            if (pIV != null) {</span>
+<span class="fc" id="L95">                myBuilder.setNonce(pIV);</span>
+            }
+<span class="fc" id="L97">            return myBuilder.build();</span>
+        }
+
+        /* Handle Blake Parameters */
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (GordianMacType.BLAKE2.equals(getMacSpec().getMacType())) {</span>
+<span class="fc" id="L102">            final GordianBlake2ParametersBuilder myBuilder = new GordianBlake2ParametersBuilder();</span>
+<span class="fc" id="L103">            myBuilder.setKey(pKey.getKey());</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">            if (pIV != null) {</span>
+<span class="fc" id="L105">                myBuilder.setSalt(pIV);</span>
+            }
+<span class="fc bfc" id="L107" title="All 2 branches covered.">            if (Objects.requireNonNull(((GordianCoreMacSpec) getMacSpec()).getDigestSpec()).isXofMode()) {</span>
+<span class="fc" id="L108">                myBuilder.setMaxOutputLen(-1);</span>
+            }
+<span class="fc" id="L110">            return myBuilder.build();</span>
+        }
+
+        /* Handle standard MACs */
+<span class="fc" id="L114">        CipherParameters myParms = new KeyParameter(pKey.getKey());</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        if (pIV != null) {</span>
+<span class="fc" id="L116">            myParms = new ParametersWithIV(myParms, pIV);</span>
+        }
+<span class="fc" id="L118">        return myParms;</span>
+    }
+
+    @Override
+    public void doUpdate(final byte[] pBytes,
+                         final int pOffset,
+                         final int pLength) {
+<span class="fc" id="L125">        theMac.update(pBytes, pOffset, pLength);</span>
+<span class="fc" id="L126">    }</span>
+
+    @Override
+    public void update(final byte pByte) {
+<span class="fc" id="L130">        theMac.update(pByte);</span>
+<span class="fc" id="L131">    }</span>
+
+    @Override
+    public void reset() {
+<span class="nc" id="L135">        theMac.reset();</span>
+<span class="nc" id="L136">    }</span>
+
+    @Override
+    public byte[] finish() {
+<span class="fc" id="L140">        final byte[] myResult = new byte[getMacSize()];</span>
+<span class="fc" id="L141">        doFinish(myResult, 0);</span>
+<span class="fc" id="L142">        return myResult;</span>
+    }
+
+    @Override
+    public int doFinish(final byte[] pBuffer,
+                        final int pOffset) {
+<span class="fc" id="L148">        return theMac.doFinal(pBuffer, pOffset);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

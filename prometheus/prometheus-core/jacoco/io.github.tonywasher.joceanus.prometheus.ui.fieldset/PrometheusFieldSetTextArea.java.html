@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.prometheus.ui.fieldset;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
@@ -27,6 +24,9 @@ import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.Teth
 import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldAttribute;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIScrollPaneManager;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * FieldSet TextArea.
@@ -43,7 +43,7 @@ public class PrometheusFieldSetTextArea&lt;T&gt;
     /**
      * The fieldSet.
      */
-    private final PrometheusFieldSet&lt;T&gt; theFieldSet;
+    private final PrometheusFieldSetControl&lt;T&gt; theFieldSet;
 
     /**
      * The panel.
@@ -82,7 +82,7 @@ public class PrometheusFieldSetTextArea&lt;T&gt;
      * @param pFieldSet the fieldSet
      */
     PrometheusFieldSetTextArea(final TethysUIFactory&lt;?&gt; pFactory,
-<span class="nc" id="L85">                               final PrometheusFieldSet&lt;T&gt; pFieldSet) {</span>
+<span class="nc" id="L85">                               final PrometheusFieldSetControl&lt;T&gt; pFieldSet) {</span>
         /* Store the factory */
 <span class="nc" id="L87">        theFactory = pFactory;</span>
 <span class="nc" id="L88">        theFieldSet = pFieldSet;</span>
@@ -178,5 +178,4 @@ public class PrometheusFieldSetTextArea&lt;T&gt;
 <span class="nc" id="L178">        theTextArea.setReporter(pReporter);</span>
 <span class="nc" id="L179">    }</span>
 }
-
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

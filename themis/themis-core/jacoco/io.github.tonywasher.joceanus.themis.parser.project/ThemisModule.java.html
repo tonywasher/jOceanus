@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisModule.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.parser.project</a> &gt; <span class="el_source">ThemisModule.java</span></div><h1>ThemisModule.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.parser.project;
+
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisParserDef;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenPom;
+import io.github.tonywasher.joceanus.themis.parser.mod.ThemisModModule;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Module.
+ */
+public class ThemisModule
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L43">    private static final MetisFieldSet&lt;ThemisModule&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisModule.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L49">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_NAME, ThemisModule::getName);</span>
+<span class="fc" id="L50">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PACKAGES, ThemisModule::getPackages);</span>
+<span class="fc" id="L51">    }</span>
+
+    /**
+     * The module-info file.
+     */
+    private static final String MODULE_INFO = &quot;module-info&quot; + ThemisFile.SFX_JAVA;
+
+    /**
+     * The module name.
+     */
+    private final String theName;
+
+    /**
+     * The locations.
+     */
+    private final File theLocation;
+
+    /**
+     * The package list.
+     */
+    private final List&lt;ThemisPackage&gt; thePackages;
+
+    /**
+     * The module-info declaration.
+     */
+    private ThemisModModule theModuleInfo;
+
+    /**
+     * Constructor.
+     *
+     * @param pPom the module Pom
+     */
+<span class="fc" id="L83">    ThemisModule(final ThemisMavenPom pPom) {</span>
+        /* Create the list */
+<span class="fc" id="L85">        thePackages = new ArrayList&lt;&gt;();</span>
+
+        /* Store the name and location */
+<span class="fc" id="L88">        final File myLocation = pPom.getLocation();</span>
+<span class="fc" id="L89">        theLocation = new File(myLocation, ThemisPackage.PATH_XTRA);</span>
+<span class="fc" id="L90">        theName = myLocation.getName();</span>
+
+        /* Initiate search for packages */
+<span class="fc" id="L93">        checkForPackage(theLocation, null);</span>
+
+        /* Add any extraDirs */
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        for (String myXtra : pPom.getXtraDirs()) {</span>
+<span class="fc" id="L97">            final File myXtraDir = new File(myLocation, myXtra);</span>
+<span class="fc" id="L98">            checkForPackage(myXtraDir, null);</span>
+<span class="fc" id="L99">        }</span>
+<span class="fc" id="L100">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisModule&gt; getDataFieldSet() {
+<span class="nc" id="L104">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L109">        return toString();</span>
+    }
+
+    /**
+     * Obtain the name.
+     *
+     * @return the name
+     */
+    public String getName() {
+<span class="fc" id="L118">        return theName;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L123">        return getName();</span>
+    }
+
+    /**
+     * Obtain the packages.
+     *
+     * @return the packages
+     */
+    public List&lt;ThemisPackage&gt; getPackages() {
+<span class="fc" id="L132">        return thePackages;</span>
+    }
+
+    /**
+     * Obtain the module-info.
+     *
+     * @return the module-info
+     */
+    public ThemisModModule getModuleInfo() {
+<span class="nc" id="L141">        return theModuleInfo;</span>
+    }
+
+    /**
+     * Check for package.
+     *
+     * @param pLocation the location to search
+     * @param pPackage  the package name
+     */
+    void checkForPackage(final File pLocation,
+                         final String pPackage) {
+        /* Assume not a package */
+<span class="fc" id="L153">        boolean isPackage = false;</span>
+
+        /* Determine the location to search */
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        final File myLocation = pPackage == null</span>
+<span class="fc" id="L157">                ? pLocation</span>
+<span class="fc" id="L158">                : new File(pLocation, pPackage.replace(ThemisChar.PERIOD, ThemisChar.COMMENT));</span>
+
+        /* Look for java files or further packages */
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        for (File myFile : Objects.requireNonNull(myLocation.listFiles())) {</span>
+            /* Access file name */
+<span class="fc" id="L163">            final String myName = myFile.getName();</span>
+
+            /* If this is a directory */
+<span class="fc bfc" id="L166" title="All 2 branches covered.">            if (myFile.isDirectory()) {</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">                final String myPackage = pPackage == null</span>
+<span class="fc" id="L168">                        ? myName</span>
+<span class="fc" id="L169">                        : pPackage + ThemisChar.PERIOD + myName;</span>
+<span class="fc" id="L170">                checkForPackage(pLocation, myPackage);</span>
+            }
+
+            /* If this is a Java file name */
+<span class="fc bfc" id="L174" title="All 2 branches covered.">            if (myName.endsWith(ThemisFile.SFX_JAVA)</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">                    &amp;&amp; !MODULE_INFO.equals(myName)) {</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">                isPackage = pPackage != null;</span>
+            }
+        }
+
+        /* If this is a package */
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        if (isPackage) {</span>
+            /* Add the package to the list */
+<span class="fc" id="L183">            thePackages.add(new ThemisPackage(pLocation, pPackage));</span>
+        }
+<span class="fc" id="L185">    }</span>
+
+    /**
+     * Parse java code.
+     *
+     * @param pParser the parser
+     * @throws OceanusException on error
+     */
+    void parseJavaCode(final ThemisParserDef pParser) throws OceanusException {
+        /* Obtain the reporter */
+<span class="fc" id="L195">        final TethysUIThreadStatusReport myReport = pParser.getReporter();</span>
+<span class="fc" id="L196">        myReport.setNumSteps(thePackages.size());</span>
+
+        /* Loop through the packages */
+<span class="fc bfc" id="L199" title="All 2 branches covered.">        for (ThemisPackage myPackage : thePackages) {</span>
+            /* Process the package */
+<span class="fc" id="L201">            myReport.setNextStep();</span>
+<span class="fc" id="L202">            myPackage.parseJavaCode(pParser);</span>
+<span class="fc" id="L203">        }</span>
+
+        /* Check for and load the module-info file if found */
+<span class="fc" id="L206">        final File myModuleInfo = new File(theLocation, MODULE_INFO);</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">        if (myModuleInfo.exists()) {</span>
+<span class="fc" id="L208">            theModuleInfo = (ThemisModModule) pParser.parseModuleInfo(myModuleInfo);</span>
+        }
+<span class="fc" id="L210">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

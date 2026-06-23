@@ -102,7 +102,7 @@
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>          <strong class="jxr_keyword">final</strong> XYPlot myPlot = (XYPlot) theChart.getPlot();
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>          <strong class="jxr_keyword">final</strong> StackedXYAreaRenderer2 myRenderer = <strong class="jxr_keyword">new</strong> StackedXYAreaRenderer2();
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>          myRenderer.setDefaultToolTipGenerator((pDataset, pSeries, pItem) -&gt; {
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>              <strong class="jxr_keyword">final</strong> <a name="OceanusMoney" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusMoney.html#OceanusMoney">OceanusMoney</a> myValue = <strong class="jxr_keyword">new</strong> <a name="OceanusMoney" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusMoney.html#OceanusMoney">OceanusMoney</a>(pDataset.getY(pSeries, pItem).toString());
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>              <strong class="jxr_keyword">final</strong> <a name="OceanusMoney" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusMoney.html#OceanusMoney">OceanusMoney</a> myValue = getParser().parseMoneyValue(pDataset.getY(pSeries, pItem).toString());
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>              <strong class="jxr_keyword">return</strong> getToolTip(pDataset.getSeriesKey(pSeries).toString(), myValue);
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>          });
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>         myPlot.setRenderer(0, myRenderer);
@@ -208,7 +208,7 @@
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>         <strong class="jxr_keyword">public</strong> StringBuffer format(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">double</strong> pValue,
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>                                    <strong class="jxr_keyword">final</strong> StringBuffer pBuffer,
 <a class="jxr_linenumber" name="L202" href="#L202">202</a>                                    <strong class="jxr_keyword">final</strong> FieldPosition pLoc) {
-<a class="jxr_linenumber" name="L203" href="#L203">203</a>             <strong class="jxr_keyword">final</strong> <a name="OceanusMoney" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusMoney.html#OceanusMoney">OceanusMoney</a> myMoney = <strong class="jxr_keyword">new</strong> <a name="OceanusMoney" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusMoney.html#OceanusMoney">OceanusMoney</a>(Double.toString(pValue));
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>             <strong class="jxr_keyword">final</strong> <a name="OceanusMoney" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusMoney.html#OceanusMoney">OceanusMoney</a> myMoney = getParser().parseMoneyValue(Double.toString(pValue));
 <a class="jxr_linenumber" name="L204" href="#L204">204</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> StringBuffer(getFormatter().formatMoney(myMoney));
 <a class="jxr_linenumber" name="L205" href="#L205">205</a>         }
 <a class="jxr_linenumber" name="L206" href="#L206">206</a>     }
@@ -249,6 +249,6 @@
 <a class="jxr_linenumber" name="L241" href="#L241">241</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

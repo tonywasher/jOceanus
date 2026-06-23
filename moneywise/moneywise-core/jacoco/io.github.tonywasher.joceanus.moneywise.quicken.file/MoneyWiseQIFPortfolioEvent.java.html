@@ -16,6 +16,21 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQActionType;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQPortfolioLineType;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFAccount.MoneyWiseQIFXferAccountLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFEventCategory.MoneyWiseQIFCategoryAccountLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFEventCategory.MoneyWiseQIFCategoryLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFClearedLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFDateLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFMoneyLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFPriceLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFRatioLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFUnitsLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFPayee.MoneyWiseQIFPayeeLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFSecurity.MoneyWiseQIFSecurityLine;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
@@ -24,21 +39,6 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
-import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQActionType;
-import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQPortfolioLineType;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFCategoryAccountLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFCategoryLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFClearedLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFDateLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFMoneyLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFPayeeLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFPriceLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFRatioLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFSecurityLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFUnitsLine;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFXferAccountLine;
 
 import java.util.List;
 
@@ -47,6 +47,11 @@ import java.util.List;
  */
 public class MoneyWiseQIFPortfolioEvent
         extends MoneyWiseQIFEventRecord&lt;MoneyWiseQPortfolioLineType&gt; {
+    /**
+     * The register.
+     */
+    private final MoneyWiseQIFRegister theRegister;
+
     /**
      * The Date.
      */
@@ -65,149 +70,151 @@ public class MoneyWiseQIFPortfolioEvent
     /**
      * Constructor.
      *
-     * @param pFile   the QIF File
-     * @param pTrans  the transaction
-     * @param pAction the action
+     * @param pRegister the QIF Register
+     * @param pTrans    the transaction
+     * @param pAction   the action
      */
-    protected MoneyWiseQIFPortfolioEvent(final MoneyWiseQIFFile pFile,
+    protected MoneyWiseQIFPortfolioEvent(final MoneyWiseQIFRegister pRegister,
                                          final MoneyWiseTransaction pTrans,
                                          final MoneyWiseQActionType pAction) {
         /* Call super-constructor */
-<span class="nc" id="L76">        super(pFile, MoneyWiseQPortfolioLineType.class);</span>
+<span class="nc" id="L81">        super(MoneyWiseQPortfolioLineType.class);</span>
 
         /* Store values */
-<span class="nc" id="L79">        theDate = pTrans.getDate();</span>
-<span class="nc" id="L80">        isCleared = pTrans.isReconciled();</span>
-<span class="nc" id="L81">        theAction = pAction;</span>
+<span class="nc" id="L84">        theRegister = pRegister;</span>
+<span class="nc" id="L85">        theDate = pTrans.getDate();</span>
+<span class="nc" id="L86">        isCleared = pTrans.isReconciled();</span>
+<span class="nc" id="L87">        theAction = pAction;</span>
 
         /* Add the lines */
-<span class="nc" id="L84">        addLine(new MoneyWiseQIFPortfolioDateLine(theDate));</span>
-<span class="nc" id="L85">        addLine(new MoneyWiseQIFPortfolioActionLine(theAction));</span>
-<span class="nc" id="L86">        addLine(new MoneyWiseQIFPortfolioClearedLine(isCleared));</span>
+<span class="nc" id="L90">        addLine(new MoneyWiseQIFPortfolioDateLine(theDate));</span>
+<span class="nc" id="L91">        addLine(new MoneyWiseQIFPortfolioActionLine(theAction));</span>
+<span class="nc" id="L92">        addLine(new MoneyWiseQIFPortfolioClearedLine(isCleared));</span>
 
         /* Add the comment line if it exists */
-<span class="nc" id="L89">        final String myComment = pTrans.getComments();</span>
-<span class="nc bnc" id="L90" title="All 2 branches missed.">        if (myComment != null) {</span>
-<span class="nc" id="L91">            addLine(new MoneyWiseQIFPortfolioCommentLine(myComment));</span>
+<span class="nc" id="L95">        final String myComment = pTrans.getComments();</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        if (myComment != null) {</span>
+<span class="nc" id="L97">            addLine(new MoneyWiseQIFPortfolioCommentLine(myComment));</span>
         }
-<span class="nc" id="L93">    }</span>
+<span class="nc" id="L99">    }</span>
 
     /**
      * Constructor.
      *
-     * @param pFile      the QIF File
+     * @param pRegister  the QIF register
      * @param pFormatter the Data Formatter
      * @param pLines     the data lines
      */
-    protected MoneyWiseQIFPortfolioEvent(final MoneyWiseQIFFile pFile,
+    protected MoneyWiseQIFPortfolioEvent(final MoneyWiseQIFRegister pRegister,
                                          final OceanusDataFormatter pFormatter,
                                          final List&lt;String&gt; pLines) {
         /* Call super-constructor */
-<span class="nc" id="L106">        super(pFile, MoneyWiseQPortfolioLineType.class);</span>
+<span class="nc" id="L112">        super(MoneyWiseQPortfolioLineType.class);</span>
 
         /* Determine details */
-<span class="nc" id="L109">        OceanusDate myDate = null;</span>
-<span class="nc" id="L110">        MoneyWiseQActionType myAction = null;</span>
-<span class="nc" id="L111">        Boolean myCleared = null;</span>
+<span class="nc" id="L115">        theRegister = pRegister;</span>
+<span class="nc" id="L116">        OceanusDate myDate = null;</span>
+<span class="nc" id="L117">        MoneyWiseQActionType myAction = null;</span>
+<span class="nc" id="L118">        Boolean myCleared = null;</span>
 
         /* Obtain parsers */
-<span class="nc" id="L114">        final OceanusDateFormatter myDateParser = pFormatter.getDateFormatter();</span>
-<span class="nc" id="L115">        final OceanusDecimalParser myDecParser = pFormatter.getDecimalParser();</span>
+<span class="nc" id="L121">        final OceanusDateFormatter myDateParser = pFormatter.getDateFormatter();</span>
+<span class="nc" id="L122">        final OceanusDecimalParser myDecParser = pFormatter.getDecimalParser();</span>
 
         /* Loop through the lines */
-<span class="nc bnc" id="L118" title="All 2 branches missed.">        for (String myLine : pLines) {</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        for (String myLine : pLines) {</span>
             /* Determine the category */
-<span class="nc" id="L120">            final MoneyWiseQPortfolioLineType myType = MoneyWiseQPortfolioLineType.parseLine(myLine);</span>
-<span class="nc bnc" id="L121" title="All 2 branches missed.">            if (myType != null) {</span>
+<span class="nc" id="L127">            final MoneyWiseQPortfolioLineType myType = MoneyWiseQPortfolioLineType.parseLine(myLine);</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">            if (myType != null) {</span>
                 /* Access data */
-<span class="nc" id="L123">                final String myData = myLine.substring(myType.getSymbol().length());</span>
+<span class="nc" id="L130">                final String myData = myLine.substring(myType.getSymbol().length());</span>
 
                 /* Switch on line type */
-<span class="nc bnc" id="L126" title="All 13 branches missed.">                switch (myType) {</span>
+<span class="nc bnc" id="L133" title="All 13 branches missed.">                switch (myType) {</span>
                     case DATE:
-<span class="nc" id="L128">                        final OceanusDate myDateDay = myDateParser.parseDateBase(myData, MoneyWiseQIFWriter.QIF_BASEYEAR);</span>
-<span class="nc" id="L129">                        addLine(new MoneyWiseQIFPortfolioDateLine(myDateDay));</span>
-<span class="nc" id="L130">                        myDate = myDateDay;</span>
-<span class="nc" id="L131">                        break;</span>
+<span class="nc" id="L135">                        final OceanusDate myDateDay = myDateParser.parseDateBase(myData, MoneyWiseQIFConstants.QIF_BASEYEAR);</span>
+<span class="nc" id="L136">                        addLine(new MoneyWiseQIFPortfolioDateLine(myDateDay));</span>
+<span class="nc" id="L137">                        myDate = myDateDay;</span>
+<span class="nc" id="L138">                        break;</span>
                     case CLEARED:
-<span class="nc" id="L133">                        final Boolean myFlag = myData.equals(MoneyWiseQIFLine.QIF_RECONCILED);</span>
-<span class="nc" id="L134">                        addLine(new MoneyWiseQIFPortfolioClearedLine(myFlag));</span>
-<span class="nc" id="L135">                        myCleared = myFlag;</span>
-<span class="nc" id="L136">                        break;</span>
-                    case AMOUNT:
-<span class="nc" id="L138">                        OceanusMoney myMoney = myDecParser.parseMoneyValue(myData);</span>
-<span class="nc" id="L139">                        addLine(new MoneyWiseQIFPortfolioAmountLine(myMoney));</span>
-<span class="nc" id="L140">                        break;</span>
-                    case COMMENT:
-<span class="nc" id="L142">                        addLine(new MoneyWiseQIFPortfolioCommentLine(myData));</span>
+<span class="nc" id="L140">                        final Boolean myFlag = myData.equals(MoneyWiseQIFLine.QIF_RECONCILED);</span>
+<span class="nc" id="L141">                        addLine(new MoneyWiseQIFPortfolioClearedLine(myFlag));</span>
+<span class="nc" id="L142">                        myCleared = myFlag;</span>
 <span class="nc" id="L143">                        break;</span>
-                    case ACTION:
-<span class="nc" id="L145">                        myAction = MoneyWiseQActionType.parseLine(myData);</span>
-<span class="nc" id="L146">                        addLine(new MoneyWiseQIFPortfolioActionLine(myAction));</span>
+                    case AMOUNT:
+<span class="nc" id="L145">                        OceanusMoney myMoney = myDecParser.parseMoneyValue(myData);</span>
+<span class="nc" id="L146">                        addLine(new MoneyWiseQIFPortfolioAmountLine(myMoney));</span>
 <span class="nc" id="L147">                        break;</span>
+                    case COMMENT:
+<span class="nc" id="L149">                        addLine(new MoneyWiseQIFPortfolioCommentLine(myData));</span>
+<span class="nc" id="L150">                        break;</span>
+                    case ACTION:
+<span class="nc" id="L152">                        myAction = MoneyWiseQActionType.parseLine(myData);</span>
+<span class="nc" id="L153">                        addLine(new MoneyWiseQIFPortfolioActionLine(myAction));</span>
+<span class="nc" id="L154">                        break;</span>
                     case PRICE:
-<span class="nc" id="L149">                        final OceanusPrice myPrice = myDecParser.parsePriceValue(myData);</span>
-<span class="nc" id="L150">                        addLine(new MoneyWiseQIFPortfolioPriceLine(myPrice));</span>
-<span class="nc" id="L151">                        break;</span>
-                    case COMMISSION:
-<span class="nc" id="L153">                        myMoney = myDecParser.parseMoneyValue(myData);</span>
-<span class="nc" id="L154">                        addLine(new MoneyWiseQIFPortfolioCommissionLine(myMoney));</span>
-<span class="nc" id="L155">                        break;</span>
-                    case PAYEE:
-<span class="nc" id="L157">                        addLine(new MoneyWiseQIFPortfolioPayeeDescLine(myData));</span>
+<span class="nc" id="L156">                        final OceanusPrice myPrice = myDecParser.parsePriceValue(myData);</span>
+<span class="nc" id="L157">                        addLine(new MoneyWiseQIFPortfolioPriceLine(myPrice));</span>
 <span class="nc" id="L158">                        break;</span>
-                    case QUANTITY:
-<span class="nc" id="L160">                        final OceanusUnits myUnits = myDecParser.parseUnitsValue(myData);</span>
-<span class="nc" id="L161">                        addLine(new MoneyWiseQIFPortfolioQuantityLine(myUnits));</span>
+                    case COMMISSION:
+<span class="nc" id="L160">                        myMoney = myDecParser.parseMoneyValue(myData);</span>
+<span class="nc" id="L161">                        addLine(new MoneyWiseQIFPortfolioCommissionLine(myMoney));</span>
 <span class="nc" id="L162">                        break;</span>
-                    case SECURITY:
-<span class="nc" id="L164">                        addLine(new MoneyWiseQIFPortfolioSecurityLine(pFile.getSecurity(myData)));</span>
+                    case PAYEE:
+<span class="nc" id="L164">                        addLine(new MoneyWiseQIFPortfolioPayeeDescLine(myData));</span>
 <span class="nc" id="L165">                        break;</span>
+                    case QUANTITY:
+<span class="nc" id="L167">                        final OceanusUnits myUnits = myDecParser.parseUnitsValue(myData);</span>
+<span class="nc" id="L168">                        addLine(new MoneyWiseQIFPortfolioQuantityLine(myUnits));</span>
+<span class="nc" id="L169">                        break;</span>
+                    case SECURITY:
+<span class="nc" id="L171">                        addLine(new MoneyWiseQIFPortfolioSecurityLine(pRegister.getSecurity(myData)));</span>
+<span class="nc" id="L172">                        break;</span>
                     case XFERACCOUNT:
                         /* Look for account, category and classes */
-<span class="nc" id="L168">                        final MoneyWiseQIFAccount myAccount = MoneyWiseQIFXferAccountLine.parseAccount(pFile, myData);</span>
-<span class="nc" id="L169">                        final MoneyWiseQIFEventCategory myCategory = MoneyWiseQIFCategoryLine.parseCategory(pFile, myData);</span>
-<span class="nc" id="L170">                        List&lt;MoneyWiseQIFClass&gt; myClasses = MoneyWiseQIFXferAccountLine.parseAccountClasses(pFile, myData);</span>
-<span class="nc bnc" id="L171" title="All 2 branches missed.">                        if (myAccount == null) {</span>
-<span class="nc" id="L172">                            myClasses = MoneyWiseQIFCategoryLine.parseCategoryClasses(pFile, myData);</span>
-<span class="nc" id="L173">                            addLine(new MoneyWiseQIFPortfolioCategoryLine(myCategory, myClasses));</span>
-<span class="nc" id="L174">                            convertPayee();</span>
-<span class="nc bnc" id="L175" title="All 2 branches missed.">                        } else if (myCategory == null) {</span>
-<span class="nc" id="L176">                            addLine(new MoneyWiseQIFPortfolioAccountLine(myAccount, myClasses));</span>
+<span class="nc" id="L175">                        final MoneyWiseQIFAccount myAccount = MoneyWiseQIFEvent.parseAccount(pRegister, myData);</span>
+<span class="nc" id="L176">                        final MoneyWiseQIFEventCategory myCategory = MoneyWiseQIFEvent.parseCategory(pRegister, myData);</span>
+<span class="nc" id="L177">                        List&lt;MoneyWiseQIFClass&gt; myClasses = MoneyWiseQIFEvent.parseAccountClasses(pRegister, myData);</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">                        if (myAccount == null) {</span>
+<span class="nc" id="L179">                            myClasses = MoneyWiseQIFEvent.parseCategoryClasses(pRegister, myData);</span>
+<span class="nc" id="L180">                            addLine(new MoneyWiseQIFPortfolioCategoryLine(myCategory, myClasses));</span>
+<span class="nc" id="L181">                            convertPayee();</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">                        } else if (myCategory == null) {</span>
+<span class="nc" id="L183">                            addLine(new MoneyWiseQIFPortfolioAccountLine(myAccount, myClasses));</span>
                         } else {
-<span class="nc" id="L178">                            addLine(new MoneyWiseQIFPortfolioCategoryAccountLine(myCategory, myAccount, myClasses));</span>
-<span class="nc" id="L179">                            convertPayee();</span>
+<span class="nc" id="L185">                            addLine(new MoneyWiseQIFPortfolioCategoryAccountLine(myCategory, myAccount, myClasses));</span>
+<span class="nc" id="L186">                            convertPayee();</span>
                         }
-<span class="nc" id="L181">                        break;</span>
+<span class="nc" id="L188">                        break;</span>
                     case XFERAMOUNT:
-<span class="nc" id="L183">                        myMoney = myDecParser.parseMoneyValue(myData);</span>
-<span class="nc" id="L184">                        addLine(new MoneyWiseQIFPortfolioXferAmountLine(myMoney));</span>
-<span class="nc" id="L185">                        break;</span>
+<span class="nc" id="L190">                        myMoney = myDecParser.parseMoneyValue(myData);</span>
+<span class="nc" id="L191">                        addLine(new MoneyWiseQIFPortfolioXferAmountLine(myMoney));</span>
+<span class="nc" id="L192">                        break;</span>
                     default:
                         break;
                 }
             }
-<span class="nc" id="L190">        }</span>
+<span class="nc" id="L197">        }</span>
 
         /* Convert any split */
-<span class="nc bnc" id="L193" title="All 2 branches missed.">        if (MoneyWiseQActionType.STKSPLIT.equals(myAction)) {</span>
-<span class="nc" id="L194">            convertSplit();</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">        if (MoneyWiseQActionType.STKSPLIT.equals(myAction)) {</span>
+<span class="nc" id="L201">            convertSplit();</span>
         }
 
         /* Build details */
-<span class="nc" id="L198">        theDate = myDate;</span>
-<span class="nc" id="L199">        theAction = myAction;</span>
-<span class="nc" id="L200">        isCleared = myCleared;</span>
-<span class="nc" id="L201">    }</span>
+<span class="nc" id="L205">        theDate = myDate;</span>
+<span class="nc" id="L206">        theAction = myAction;</span>
+<span class="nc" id="L207">        isCleared = myCleared;</span>
+<span class="nc" id="L208">    }</span>
 
     @Override
     public OceanusDate getDate() {
-<span class="nc" id="L205">        return theDate;</span>
+<span class="nc" id="L212">        return theDate;</span>
     }
 
     @Override
     public Boolean isCleared() {
-<span class="nc" id="L210">        return isCleared;</span>
+<span class="nc" id="L217">        return isCleared;</span>
     }
 
     /**
@@ -216,7 +223,7 @@ public class MoneyWiseQIFPortfolioEvent
      * @return the action.
      */
     public MoneyWiseQActionType getAction() {
-<span class="nc" id="L219">        return theAction;</span>
+<span class="nc" id="L226">        return theAction;</span>
     }
 
     /**
@@ -226,8 +233,8 @@ public class MoneyWiseQIFPortfolioEvent
      */
     protected void recordSecurity(final MoneyWiseQIFSecurity pSecurity) {
         /* Add security line */
-<span class="nc" id="L229">        addLine(new MoneyWiseQIFPortfolioSecurityLine(pSecurity));</span>
-<span class="nc" id="L230">    }</span>
+<span class="nc" id="L236">        addLine(new MoneyWiseQIFPortfolioSecurityLine(pSecurity));</span>
+<span class="nc" id="L237">    }</span>
 
     /**
      * record category.
@@ -236,8 +243,8 @@ public class MoneyWiseQIFPortfolioEvent
      */
     protected void recordCategory(final MoneyWiseQIFEventCategory pCategory) {
         /* Add category line */
-<span class="nc" id="L239">        addLine(new MoneyWiseQIFPortfolioCategoryLine(pCategory));</span>
-<span class="nc" id="L240">    }</span>
+<span class="nc" id="L246">        addLine(new MoneyWiseQIFPortfolioCategoryLine(pCategory));</span>
+<span class="nc" id="L247">    }</span>
 
     /**
      * record category.
@@ -248,8 +255,8 @@ public class MoneyWiseQIFPortfolioEvent
     protected void recordCategory(final MoneyWiseQIFEventCategory pCategory,
                                   final List&lt;MoneyWiseQIFClass&gt; pClasses) {
         /* Add category line */
-<span class="nc" id="L251">        addLine(new MoneyWiseQIFPortfolioCategoryLine(pCategory, pClasses));</span>
-<span class="nc" id="L252">    }</span>
+<span class="nc" id="L258">        addLine(new MoneyWiseQIFPortfolioCategoryLine(pCategory, pClasses));</span>
+<span class="nc" id="L259">    }</span>
 
     /**
      * record amount.
@@ -258,8 +265,8 @@ public class MoneyWiseQIFPortfolioEvent
      */
     protected void recordAmount(final OceanusMoney pAmount) {
         /* Add amount line */
-<span class="nc" id="L261">        addLine(new MoneyWiseQIFPortfolioAmountLine(pAmount));</span>
-<span class="nc" id="L262">    }</span>
+<span class="nc" id="L268">        addLine(new MoneyWiseQIFPortfolioAmountLine(pAmount));</span>
+<span class="nc" id="L269">    }</span>
 
     /**
      * record payee.
@@ -268,8 +275,8 @@ public class MoneyWiseQIFPortfolioEvent
      */
     protected void recordPayee(final String pPayee) {
         /* Add payee line */
-<span class="nc" id="L271">        addLine(new MoneyWiseQIFPortfolioPayeeDescLine(pPayee));</span>
-<span class="nc" id="L272">    }</span>
+<span class="nc" id="L278">        addLine(new MoneyWiseQIFPortfolioPayeeDescLine(pPayee));</span>
+<span class="nc" id="L279">    }</span>
 
     /**
      * record payee.
@@ -278,8 +285,8 @@ public class MoneyWiseQIFPortfolioEvent
      */
     protected void recordPayee(final MoneyWiseQIFPayee pPayee) {
         /* Add payee line */
-<span class="nc" id="L281">        addLine(new MoneyWiseQIFPortfolioPayeeLine(pPayee));</span>
-<span class="nc" id="L282">    }</span>
+<span class="nc" id="L288">        addLine(new MoneyWiseQIFPortfolioPayeeLine(pPayee));</span>
+<span class="nc" id="L289">    }</span>
 
     /**
      * record transfer.
@@ -290,9 +297,9 @@ public class MoneyWiseQIFPortfolioEvent
     protected void recordXfer(final MoneyWiseQIFAccount pAccount,
                               final OceanusMoney pAmount) {
         /* Add transfer lines */
-<span class="nc" id="L293">        addLine(new MoneyWiseQIFPortfolioAccountLine(pAccount));</span>
-<span class="nc" id="L294">        addLine(new MoneyWiseQIFPortfolioXferAmountLine(pAmount));</span>
-<span class="nc" id="L295">    }</span>
+<span class="nc" id="L300">        addLine(new MoneyWiseQIFPortfolioAccountLine(pAccount));</span>
+<span class="nc" id="L301">        addLine(new MoneyWiseQIFPortfolioXferAmountLine(pAmount));</span>
+<span class="nc" id="L302">    }</span>
 
     /**
      * record transfer.
@@ -305,9 +312,9 @@ public class MoneyWiseQIFPortfolioEvent
                               final List&lt;MoneyWiseQIFClass&gt; pClasses,
                               final OceanusMoney pAmount) {
         /* Add transfer lines */
-<span class="nc" id="L308">        addLine(new MoneyWiseQIFPortfolioAccountLine(pAccount, pClasses));</span>
-<span class="nc" id="L309">        addLine(new MoneyWiseQIFPortfolioXferAmountLine(pAmount));</span>
-<span class="nc" id="L310">    }</span>
+<span class="nc" id="L315">        addLine(new MoneyWiseQIFPortfolioAccountLine(pAccount, pClasses));</span>
+<span class="nc" id="L316">        addLine(new MoneyWiseQIFPortfolioXferAmountLine(pAmount));</span>
+<span class="nc" id="L317">    }</span>
 
     /**
      * record transfer.
@@ -318,9 +325,9 @@ public class MoneyWiseQIFPortfolioEvent
     protected void recordXfer(final MoneyWiseQIFEventCategory pCategory,
                               final OceanusMoney pAmount) {
         /* Add transfer lines */
-<span class="nc" id="L321">        addLine(new MoneyWiseQIFPortfolioCategoryLine(pCategory));</span>
-<span class="nc" id="L322">        addLine(new MoneyWiseQIFPortfolioXferAmountLine(pAmount));</span>
-<span class="nc" id="L323">    }</span>
+<span class="nc" id="L328">        addLine(new MoneyWiseQIFPortfolioCategoryLine(pCategory));</span>
+<span class="nc" id="L329">        addLine(new MoneyWiseQIFPortfolioXferAmountLine(pAmount));</span>
+<span class="nc" id="L330">    }</span>
 
     /**
      * record quantity.
@@ -329,8 +336,8 @@ public class MoneyWiseQIFPortfolioEvent
      */
     protected void recordQuantity(final OceanusUnits pQuantity) {
         /* Add quantity line */
-<span class="nc" id="L332">        addLine(new MoneyWiseQIFPortfolioQuantityLine(pQuantity));</span>
-<span class="nc" id="L333">    }</span>
+<span class="nc" id="L339">        addLine(new MoneyWiseQIFPortfolioQuantityLine(pQuantity));</span>
+<span class="nc" id="L340">    }</span>
 
     /**
      * record quantity.
@@ -339,8 +346,8 @@ public class MoneyWiseQIFPortfolioEvent
      */
     protected void recordQuantity(final OceanusRatio pRatio) {
         /* Add quantity line */
-<span class="nc" id="L342">        addLine(new MoneyWiseQIFPortfolioSplitRatioLine(pRatio));</span>
-<span class="nc" id="L343">    }</span>
+<span class="nc" id="L349">        addLine(new MoneyWiseQIFPortfolioSplitRatioLine(pRatio));</span>
+<span class="nc" id="L350">    }</span>
 
     /**
      * record price.
@@ -349,8 +356,8 @@ public class MoneyWiseQIFPortfolioEvent
      */
     protected void recordPrice(final OceanusPrice pPrice) {
         /* Add price line */
-<span class="nc" id="L352">        addLine(new MoneyWiseQIFPortfolioPriceLine(pPrice));</span>
-<span class="nc" id="L353">    }</span>
+<span class="nc" id="L359">        addLine(new MoneyWiseQIFPortfolioPriceLine(pPrice));</span>
+<span class="nc" id="L360">    }</span>
 
     /**
      * record commission.
@@ -359,40 +366,40 @@ public class MoneyWiseQIFPortfolioEvent
      */
     protected void recordCommission(final OceanusMoney pCommission) {
         /* Add commission line */
-<span class="nc" id="L362">        addLine(new MoneyWiseQIFPortfolioCommissionLine(pCommission));</span>
-<span class="nc" id="L363">    }</span>
+<span class="nc" id="L369">        addLine(new MoneyWiseQIFPortfolioCommissionLine(pCommission));</span>
+<span class="nc" id="L370">    }</span>
 
     /**
      * Convert Payee.
      */
     private void convertPayee() {
         /* Look for a payee line */
-<span class="nc" id="L370">        final MoneyWiseQIFLine&lt;MoneyWiseQPortfolioLineType&gt; myLine = getLine(MoneyWiseQPortfolioLineType.PAYEE);</span>
-<span class="nc bnc" id="L371" title="All 2 branches missed.">        if (myLine instanceof MoneyWiseQIFPortfolioPayeeDescLine myDesc) {</span>
+<span class="nc" id="L377">        final MoneyWiseQIFLine&lt;MoneyWiseQPortfolioLineType&gt; myLine = getLine(MoneyWiseQPortfolioLineType.PAYEE);</span>
+<span class="nc bnc" id="L378" title="All 2 branches missed.">        if (myLine instanceof MoneyWiseQIFPortfolioPayeeDescLine myDesc) {</span>
             /* Access payee */
-<span class="nc" id="L373">            final String myName = myDesc.getValue();</span>
+<span class="nc" id="L380">            final String myName = myDesc.getValue();</span>
 
             /* Register the payee */
-<span class="nc" id="L376">            final MoneyWiseQIFPayee myPayee = getFile().registerPayee(myName);</span>
-<span class="nc" id="L377">            addLine(new MoneyWiseQIFPortfolioPayeeLine(myPayee));</span>
+<span class="nc" id="L383">            final MoneyWiseQIFPayee myPayee = theRegister.registerPayee(myName);</span>
+<span class="nc" id="L384">            addLine(new MoneyWiseQIFPortfolioPayeeLine(myPayee));</span>
         }
-<span class="nc" id="L379">    }</span>
+<span class="nc" id="L386">    }</span>
 
     /**
      * Convert Split.
      */
     private void convertSplit() {
         /* Look for an action line */
-<span class="nc" id="L386">        final MoneyWiseQIFLine&lt;MoneyWiseQPortfolioLineType&gt; myLine = getLine(MoneyWiseQPortfolioLineType.QUANTITY);</span>
-<span class="nc bnc" id="L387" title="All 2 branches missed.">        if (myLine instanceof MoneyWiseQIFPortfolioQuantityLine myQuantity) {</span>
+<span class="nc" id="L393">        final MoneyWiseQIFLine&lt;MoneyWiseQPortfolioLineType&gt; myLine = getLine(MoneyWiseQPortfolioLineType.QUANTITY);</span>
+<span class="nc bnc" id="L394" title="All 2 branches missed.">        if (myLine instanceof MoneyWiseQIFPortfolioQuantityLine myQuantity) {</span>
             /* Extract action */
-<span class="nc" id="L389">            final OceanusUnits myUnits = myQuantity.getUnits();</span>
+<span class="nc" id="L396">            final OceanusUnits myUnits = myQuantity.getUnits();</span>
 
             /* Convert to ratio line */
-<span class="nc" id="L392">            final OceanusRatio myRatio = new OceanusRatio(myUnits.toString());</span>
-<span class="nc" id="L393">            addLine(new MoneyWiseQIFPortfolioSplitRatioLine(myRatio));</span>
+<span class="nc" id="L399">            final OceanusRatio myRatio = new OceanusRatio(myUnits);</span>
+<span class="nc" id="L400">            addLine(new MoneyWiseQIFPortfolioSplitRatioLine(myRatio));</span>
         }
-<span class="nc" id="L395">    }</span>
+<span class="nc" id="L402">    }</span>
 
     /**
      * The Portfolio Date line.
@@ -406,12 +413,12 @@ public class MoneyWiseQIFPortfolioEvent
          */
         protected MoneyWiseQIFPortfolioDateLine(final OceanusDate pDate) {
             /* Call super-constructor */
-<span class="nc" id="L409">            super(pDate);</span>
-<span class="nc" id="L410">        }</span>
+<span class="nc" id="L416">            super(pDate);</span>
+<span class="nc" id="L417">        }</span>
 
         @Override
         public MoneyWiseQPortfolioLineType getLineType() {
-<span class="nc" id="L414">            return MoneyWiseQPortfolioLineType.DATE;</span>
+<span class="nc" id="L421">            return MoneyWiseQPortfolioLineType.DATE;</span>
         }
     }
 
@@ -427,12 +434,12 @@ public class MoneyWiseQIFPortfolioEvent
          */
         protected MoneyWiseQIFPortfolioCommentLine(final String pComment) {
             /* Call super-constructor */
-<span class="nc" id="L430">            super(pComment);</span>
-<span class="nc" id="L431">        }</span>
+<span class="nc" id="L437">            super(pComment);</span>
+<span class="nc" id="L438">        }</span>
 
         @Override
         public MoneyWiseQPortfolioLineType getLineType() {
-<span class="nc" id="L435">            return MoneyWiseQPortfolioLineType.COMMENT;</span>
+<span class="nc" id="L442">            return MoneyWiseQPortfolioLineType.COMMENT;</span>
         }
 
         /**
@@ -441,7 +448,7 @@ public class MoneyWiseQIFPortfolioEvent
          * @return the comment
          */
         public String getComment() {
-<span class="nc" id="L444">            return getValue();</span>
+<span class="nc" id="L451">            return getValue();</span>
         }
     }
 
@@ -457,12 +464,12 @@ public class MoneyWiseQIFPortfolioEvent
          */
         protected MoneyWiseQIFPortfolioClearedLine(final Boolean pCleared) {
             /* Call super-constructor */
-<span class="nc" id="L460">            super(pCleared);</span>
-<span class="nc" id="L461">        }</span>
+<span class="nc" id="L467">            super(pCleared);</span>
+<span class="nc" id="L468">        }</span>
 
         @Override
         public MoneyWiseQPortfolioLineType getLineType() {
-<span class="nc" id="L465">            return MoneyWiseQPortfolioLineType.CLEARED;</span>
+<span class="nc" id="L472">            return MoneyWiseQPortfolioLineType.CLEARED;</span>
         }
     }
 
@@ -478,12 +485,12 @@ public class MoneyWiseQIFPortfolioEvent
          */
         protected MoneyWiseQIFPortfolioAmountLine(final OceanusMoney pAmount) {
             /* Call super-constructor */
-<span class="nc" id="L481">            super(pAmount);</span>
-<span class="nc" id="L482">        }</span>
+<span class="nc" id="L488">            super(pAmount);</span>
+<span class="nc" id="L489">        }</span>
 
         @Override
         public MoneyWiseQPortfolioLineType getLineType() {
-<span class="nc" id="L486">            return MoneyWiseQPortfolioLineType.AMOUNT;</span>
+<span class="nc" id="L493">            return MoneyWiseQPortfolioLineType.AMOUNT;</span>
         }
 
         /**
@@ -492,7 +499,7 @@ public class MoneyWiseQIFPortfolioEvent
          * @return the amount
          */
         public OceanusMoney getAmount() {
-<span class="nc" id="L495">            return getMoney();</span>
+<span class="nc" id="L502">            return getMoney();</span>
         }
     }
 
@@ -508,12 +515,12 @@ public class MoneyWiseQIFPortfolioEvent
          */
         protected MoneyWiseQIFPortfolioCommissionLine(final OceanusMoney pCommission) {
             /* Call super-constructor */
-<span class="nc" id="L511">            super(pCommission);</span>
-<span class="nc" id="L512">        }</span>
+<span class="nc" id="L518">            super(pCommission);</span>
+<span class="nc" id="L519">        }</span>
 
         @Override
         public MoneyWiseQPortfolioLineType getLineType() {
-<span class="nc" id="L516">            return MoneyWiseQPortfolioLineType.COMMISSION;</span>
+<span class="nc" id="L523">            return MoneyWiseQPortfolioLineType.COMMISSION;</span>
         }
 
         /**
@@ -522,7 +529,7 @@ public class MoneyWiseQIFPortfolioEvent
          * @return the commission
          */
         public OceanusMoney getCommission() {
-<span class="nc" id="L525">            return getMoney();</span>
+<span class="nc" id="L532">            return getMoney();</span>
         }
     }
 
@@ -538,12 +545,12 @@ public class MoneyWiseQIFPortfolioEvent
          */
         protected MoneyWiseQIFPortfolioPriceLine(final OceanusPrice pPrice) {
             /* Call super-constructor */
-<span class="nc" id="L541">            super(pPrice);</span>
-<span class="nc" id="L542">        }</span>
+<span class="nc" id="L548">            super(pPrice);</span>
+<span class="nc" id="L549">        }</span>
 
         @Override
         public MoneyWiseQPortfolioLineType getLineType() {
-<span class="nc" id="L546">            return MoneyWiseQPortfolioLineType.PRICE;</span>
+<span class="nc" id="L553">            return MoneyWiseQPortfolioLineType.PRICE;</span>
         }
     }
 
@@ -559,12 +566,12 @@ public class MoneyWiseQIFPortfolioEvent
          */
         protected MoneyWiseQIFPortfolioQuantityLine(final OceanusUnits pUnits) {
             /* Call super-constructor */
-<span class="nc" id="L562">            super(pUnits);</span>
-<span class="nc" id="L563">        }</span>
+<span class="nc" id="L569">            super(pUnits);</span>
+<span class="nc" id="L570">        }</span>
 
         @Override
         public MoneyWiseQPortfolioLineType getLineType() {
-<span class="nc" id="L567">            return MoneyWiseQPortfolioLineType.QUANTITY;</span>
+<span class="nc" id="L574">            return MoneyWiseQPortfolioLineType.QUANTITY;</span>
         }
     }
 
@@ -580,12 +587,12 @@ public class MoneyWiseQIFPortfolioEvent
          */
         protected MoneyWiseQIFPortfolioSplitRatioLine(final OceanusRatio pRatio) {
             /* Call super-constructor */
-<span class="nc" id="L583">            super(pRatio);</span>
-<span class="nc" id="L584">        }</span>
+<span class="nc" id="L590">            super(pRatio);</span>
+<span class="nc" id="L591">        }</span>
 
         @Override
         public MoneyWiseQPortfolioLineType getLineType() {
-<span class="nc" id="L588">            return MoneyWiseQPortfolioLineType.QUANTITY;</span>
+<span class="nc" id="L595">            return MoneyWiseQPortfolioLineType.QUANTITY;</span>
         }
     }
 
@@ -604,14 +611,14 @@ public class MoneyWiseQIFPortfolioEvent
          *
          * @param pAction the action type
          */
-<span class="nc" id="L607">        protected MoneyWiseQIFPortfolioActionLine(final MoneyWiseQActionType pAction) {</span>
+<span class="nc" id="L614">        protected MoneyWiseQIFPortfolioActionLine(final MoneyWiseQActionType pAction) {</span>
             /* Store the data */
-<span class="nc" id="L609">            theAction = pAction;</span>
-<span class="nc" id="L610">        }</span>
+<span class="nc" id="L616">            theAction = pAction;</span>
+<span class="nc" id="L617">        }</span>
 
         @Override
         public MoneyWiseQPortfolioLineType getLineType() {
-<span class="nc" id="L614">            return MoneyWiseQPortfolioLineType.ACTION;</span>
+<span class="nc" id="L621">            return MoneyWiseQPortfolioLineType.ACTION;</span>
         }
 
         /**
@@ -620,15 +627,15 @@ public class MoneyWiseQIFPortfolioEvent
          * @return the security
          */
         public MoneyWiseQActionType getAction() {
-<span class="nc" id="L623">            return theAction;</span>
+<span class="nc" id="L630">            return theAction;</span>
         }
 
         @Override
         protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Add the action */
-<span class="nc" id="L630">            pBuilder.append(theAction.getSymbol());</span>
-<span class="nc" id="L631">        }</span>
+<span class="nc" id="L637">            pBuilder.append(theAction.getSymbol());</span>
+<span class="nc" id="L638">        }</span>
     }
 
     /**
@@ -643,12 +650,12 @@ public class MoneyWiseQIFPortfolioEvent
          */
         protected MoneyWiseQIFPortfolioSecurityLine(final MoneyWiseQIFSecurity pSecurity) {
             /* Call super-constructor */
-<span class="nc" id="L646">            super(pSecurity);</span>
-<span class="nc" id="L647">        }</span>
+<span class="nc" id="L653">            super(pSecurity);</span>
+<span class="nc" id="L654">        }</span>
 
         @Override
         public MoneyWiseQPortfolioLineType getLineType() {
-<span class="nc" id="L651">            return MoneyWiseQPortfolioLineType.SECURITY;</span>
+<span class="nc" id="L658">            return MoneyWiseQPortfolioLineType.SECURITY;</span>
         }
     }
 
@@ -664,12 +671,12 @@ public class MoneyWiseQIFPortfolioEvent
          */
         protected MoneyWiseQIFPortfolioPayeeLine(final MoneyWiseQIFPayee pPayee) {
             /* Call super-constructor */
-<span class="nc" id="L667">            super(pPayee);</span>
-<span class="nc" id="L668">        }</span>
+<span class="nc" id="L674">            super(pPayee);</span>
+<span class="nc" id="L675">        }</span>
 
         @Override
         public MoneyWiseQPortfolioLineType getLineType() {
-<span class="nc" id="L672">            return MoneyWiseQPortfolioLineType.PAYEE;</span>
+<span class="nc" id="L679">            return MoneyWiseQPortfolioLineType.PAYEE;</span>
         }
     }
 
@@ -685,12 +692,12 @@ public class MoneyWiseQIFPortfolioEvent
          */
         protected MoneyWiseQIFPortfolioPayeeDescLine(final String pPayee) {
             /* Call super-constructor */
-<span class="nc" id="L688">            super(pPayee);</span>
-<span class="nc" id="L689">        }</span>
+<span class="nc" id="L695">            super(pPayee);</span>
+<span class="nc" id="L696">        }</span>
 
         @Override
         public MoneyWiseQPortfolioLineType getLineType() {
-<span class="nc" id="L693">            return MoneyWiseQPortfolioLineType.PAYEE;</span>
+<span class="nc" id="L700">            return MoneyWiseQPortfolioLineType.PAYEE;</span>
         }
     }
 
@@ -706,8 +713,8 @@ public class MoneyWiseQIFPortfolioEvent
          */
         protected MoneyWiseQIFPortfolioAccountLine(final MoneyWiseQIFAccount pAccount) {
             /* Call super-constructor */
-<span class="nc" id="L709">            super(pAccount);</span>
-<span class="nc" id="L710">        }</span>
+<span class="nc" id="L716">            super(pAccount);</span>
+<span class="nc" id="L717">        }</span>
 
         /**
          * Constructor.
@@ -718,12 +725,12 @@ public class MoneyWiseQIFPortfolioEvent
         protected MoneyWiseQIFPortfolioAccountLine(final MoneyWiseQIFAccount pAccount,
                                                    final List&lt;MoneyWiseQIFClass&gt; pClasses) {
             /* Call super-constructor */
-<span class="nc" id="L721">            super(pAccount, pClasses);</span>
-<span class="nc" id="L722">        }</span>
+<span class="nc" id="L728">            super(pAccount, pClasses);</span>
+<span class="nc" id="L729">        }</span>
 
         @Override
         public MoneyWiseQPortfolioLineType getLineType() {
-<span class="nc" id="L726">            return MoneyWiseQPortfolioLineType.XFERACCOUNT;</span>
+<span class="nc" id="L733">            return MoneyWiseQPortfolioLineType.XFERACCOUNT;</span>
         }
     }
 
@@ -739,8 +746,8 @@ public class MoneyWiseQIFPortfolioEvent
          */
         protected MoneyWiseQIFPortfolioCategoryLine(final MoneyWiseQIFEventCategory pCategory) {
             /* Call super-constructor */
-<span class="nc" id="L742">            super(pCategory);</span>
-<span class="nc" id="L743">        }</span>
+<span class="nc" id="L749">            super(pCategory);</span>
+<span class="nc" id="L750">        }</span>
 
         /**
          * Constructor.
@@ -751,12 +758,12 @@ public class MoneyWiseQIFPortfolioEvent
         protected MoneyWiseQIFPortfolioCategoryLine(final MoneyWiseQIFEventCategory pCategory,
                                                     final List&lt;MoneyWiseQIFClass&gt; pClasses) {
             /* Call super-constructor */
-<span class="nc" id="L754">            super(pCategory, pClasses);</span>
-<span class="nc" id="L755">        }</span>
+<span class="nc" id="L761">            super(pCategory, pClasses);</span>
+<span class="nc" id="L762">        }</span>
 
         @Override
         public MoneyWiseQPortfolioLineType getLineType() {
-<span class="nc" id="L759">            return MoneyWiseQPortfolioLineType.XFERACCOUNT;</span>
+<span class="nc" id="L766">            return MoneyWiseQPortfolioLineType.XFERACCOUNT;</span>
         }
     }
 
@@ -774,8 +781,8 @@ public class MoneyWiseQIFPortfolioEvent
         protected MoneyWiseQIFPortfolioCategoryAccountLine(final MoneyWiseQIFEventCategory pCategory,
                                                            final MoneyWiseQIFAccount pAccount) {
             /* Call super-constructor */
-<span class="nc" id="L777">            super(pCategory, pAccount);</span>
-<span class="nc" id="L778">        }</span>
+<span class="nc" id="L784">            super(pCategory, pAccount);</span>
+<span class="nc" id="L785">        }</span>
 
         /**
          * Constructor.
@@ -788,12 +795,12 @@ public class MoneyWiseQIFPortfolioEvent
                                                            final MoneyWiseQIFAccount pAccount,
                                                            final List&lt;MoneyWiseQIFClass&gt; pClasses) {
             /* Call super-constructor */
-<span class="nc" id="L791">            super(pCategory, pAccount, pClasses);</span>
-<span class="nc" id="L792">        }</span>
+<span class="nc" id="L798">            super(pCategory, pAccount, pClasses);</span>
+<span class="nc" id="L799">        }</span>
 
         @Override
         public MoneyWiseQPortfolioLineType getLineType() {
-<span class="nc" id="L796">            return MoneyWiseQPortfolioLineType.XFERACCOUNT;</span>
+<span class="nc" id="L803">            return MoneyWiseQPortfolioLineType.XFERACCOUNT;</span>
         }
     }
 
@@ -809,12 +816,12 @@ public class MoneyWiseQIFPortfolioEvent
          */
         protected MoneyWiseQIFPortfolioXferAmountLine(final OceanusMoney pAmount) {
             /* Call super-constructor */
-<span class="nc" id="L812">            super(pAmount);</span>
-<span class="nc" id="L813">        }</span>
+<span class="nc" id="L819">            super(pAmount);</span>
+<span class="nc" id="L820">        }</span>
 
         @Override
         public MoneyWiseQPortfolioLineType getLineType() {
-<span class="nc" id="L817">            return MoneyWiseQPortfolioLineType.XFERAMOUNT;</span>
+<span class="nc" id="L824">            return MoneyWiseQPortfolioLineType.XFERAMOUNT;</span>
         }
 
         /**
@@ -823,8 +830,8 @@ public class MoneyWiseQIFPortfolioEvent
          * @return the amount
          */
         public OceanusMoney getAmount() {
-<span class="nc" id="L826">            return getMoney();</span>
+<span class="nc" id="L833">            return getMoney();</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

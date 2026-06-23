@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSnovaSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
@@ -29,16 +30,17 @@ import java.util.Map;
 /**
  * Snova KeySpec.
  */
-public final class GordianCoreSnovaSpec {
+public final class GordianCoreSnovaSpec
+        implements GordianCoreKeyPairIdSpec&lt;GordianSnovaSpec&gt; {
     /**
      * The specMap.
      */
-<span class="fc" id="L36">    private static final Map&lt;GordianSnovaSpec, GordianCoreSnovaSpec&gt; SPECMAP = newSpecMap();</span>
+<span class="fc" id="L38">    private static final Map&lt;GordianSnovaSpec, GordianCoreSnovaSpec&gt; SPECMAP = newSpecMap();</span>
 
     /**
      * The specArray.
      */
-<span class="fc" id="L41">    private static final GordianCoreSnovaSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreSnovaSpec[0]);</span>
+<span class="fc" id="L43">    private static final GordianCoreSnovaSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreSnovaSpec[0]);</span>
 
     /**
      * The Spec.
@@ -50,17 +52,18 @@ public final class GordianCoreSnovaSpec {
      *
      * @param pSpec the spec
      */
-<span class="fc" id="L53">    private GordianCoreSnovaSpec(final GordianSnovaSpec pSpec) {</span>
-<span class="fc" id="L54">        theSpec = pSpec;</span>
-<span class="fc" id="L55">    }</span>
+<span class="fc" id="L55">    private GordianCoreSnovaSpec(final GordianSnovaSpec pSpec) {</span>
+<span class="fc" id="L56">        theSpec = pSpec;</span>
+<span class="fc" id="L57">    }</span>
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+<span class="fc" id="L61">        return GordianKeyPairType.SNOVA;</span>
+    }
+
+    @Override
     public GordianSnovaSpec getSpec() {
-<span class="fc" id="L63">        return theSpec;</span>
+<span class="fc" id="L66">        return theSpec;</span>
     }
 
     /**
@@ -69,52 +72,52 @@ public final class GordianCoreSnovaSpec {
      * @return the parameters.
      */
     public SnovaParameters getParameters() {
-<span class="pc bpc" id="L72" title="44 of 45 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L73">            case SNOVA24A_SSK -&gt; SnovaParameters.SNOVA_24_5_4_SSK;</span>
-<span class="nc" id="L74">            case SNOVA24A_ESK -&gt; SnovaParameters.SNOVA_24_5_4_ESK;</span>
-<span class="nc" id="L75">            case SNOVA24A_SHAKE_SSK -&gt; SnovaParameters.SNOVA_24_5_4_SHAKE_SSK;</span>
-<span class="nc" id="L76">            case SNOVA24A_SHAKE_ESK -&gt; SnovaParameters.SNOVA_24_5_4_SHAKE_ESK;</span>
-<span class="nc" id="L77">            case SNOVA24B_SSK -&gt; SnovaParameters.SNOVA_24_5_5_SSK;</span>
-<span class="nc" id="L78">            case SNOVA24B_ESK -&gt; SnovaParameters.SNOVA_24_5_5_ESK;</span>
-<span class="nc" id="L79">            case SNOVA24B_SHAKE_SSK -&gt; SnovaParameters.SNOVA_24_5_5_SHAKE_SSK;</span>
-<span class="nc" id="L80">            case SNOVA24B_SHAKE_ESK -&gt; SnovaParameters.SNOVA_24_5_5_SHAKE_ESK;</span>
-<span class="nc" id="L81">            case SNOVA25_SSK -&gt; SnovaParameters.SNOVA_25_8_3_SSK;</span>
-<span class="nc" id="L82">            case SNOVA25_ESK -&gt; SnovaParameters.SNOVA_25_8_3_ESK;</span>
-<span class="nc" id="L83">            case SNOVA25_SHAKE_SSK -&gt; SnovaParameters.SNOVA_25_8_3_SHAKE_SSK;</span>
-<span class="nc" id="L84">            case SNOVA25_SHAKE_ESK -&gt; SnovaParameters.SNOVA_25_8_3_SHAKE_ESK;</span>
-<span class="nc" id="L85">            case SNOVA29_SSK -&gt; SnovaParameters.SNOVA_29_6_5_SSK;</span>
-<span class="nc" id="L86">            case SNOVA29_ESK -&gt; SnovaParameters.SNOVA_29_6_5_ESK;</span>
-<span class="nc" id="L87">            case SNOVA29_SHAKE_SSK -&gt; SnovaParameters.SNOVA_29_6_5_SHAKE_SSK;</span>
-<span class="nc" id="L88">            case SNOVA29_SHAKE_ESK -&gt; SnovaParameters.SNOVA_29_6_5_SHAKE_ESK;</span>
-<span class="nc" id="L89">            case SNOVA37A_SSK -&gt; SnovaParameters.SNOVA_37_8_4_SSK;</span>
-<span class="nc" id="L90">            case SNOVA37A_ESK -&gt; SnovaParameters.SNOVA_37_8_4_ESK;</span>
-<span class="nc" id="L91">            case SNOVA37A_SHAKE_SSK -&gt; SnovaParameters.SNOVA_37_8_4_SHAKE_SSK;</span>
-<span class="nc" id="L92">            case SNOVA37A_SHAKE_ESK -&gt; SnovaParameters.SNOVA_37_8_4_SHAKE_ESK;</span>
-<span class="nc" id="L93">            case SNOVA37B_SSK -&gt; SnovaParameters.SNOVA_37_17_2_SSK;</span>
-<span class="nc" id="L94">            case SNOVA37B_ESK -&gt; SnovaParameters.SNOVA_37_17_2_ESK;</span>
-<span class="nc" id="L95">            case SNOVA37B_SHAKE_SSK -&gt; SnovaParameters.SNOVA_37_17_2_SHAKE_SSK;</span>
-<span class="nc" id="L96">            case SNOVA37B_SHAKE_ESK -&gt; SnovaParameters.SNOVA_37_17_2_SHAKE_ESK;</span>
-<span class="nc" id="L97">            case SNOVA49_SSK -&gt; SnovaParameters.SNOVA_49_11_3_SSK;</span>
-<span class="nc" id="L98">            case SNOVA49_ESK -&gt; SnovaParameters.SNOVA_49_11_3_ESK;</span>
-<span class="nc" id="L99">            case SNOVA49_SHAKE_SSK -&gt; SnovaParameters.SNOVA_49_11_3_SHAKE_SSK;</span>
-<span class="nc" id="L100">            case SNOVA49_SHAKE_ESK -&gt; SnovaParameters.SNOVA_49_11_3_SHAKE_ESK;</span>
-<span class="nc" id="L101">            case SNOVA56_SSK -&gt; SnovaParameters.SNOVA_56_25_2_SSK;</span>
-<span class="nc" id="L102">            case SNOVA56_ESK -&gt; SnovaParameters.SNOVA_56_25_2_ESK;</span>
-<span class="nc" id="L103">            case SNOVA56_SHAKE_SSK -&gt; SnovaParameters.SNOVA_56_25_2_SHAKE_SSK;</span>
-<span class="nc" id="L104">            case SNOVA56_SHAKE_ESK -&gt; SnovaParameters.SNOVA_56_25_2_SHAKE_ESK;</span>
-<span class="nc" id="L105">            case SNOVA60_SSK -&gt; SnovaParameters.SNOVA_60_10_4_SSK;</span>
-<span class="nc" id="L106">            case SNOVA60_ESK -&gt; SnovaParameters.SNOVA_60_10_4_ESK;</span>
-<span class="nc" id="L107">            case SNOVA60_SHAKE_SSK -&gt; SnovaParameters.SNOVA_60_10_4_SHAKE_SSK;</span>
-<span class="nc" id="L108">            case SNOVA60_SHAKE_ESK -&gt; SnovaParameters.SNOVA_60_10_4_SHAKE_ESK;</span>
-<span class="nc" id="L109">            case SNOVA66_SSK -&gt; SnovaParameters.SNOVA_66_15_3_SSK;</span>
-<span class="nc" id="L110">            case SNOVA66_ESK -&gt; SnovaParameters.SNOVA_66_15_3_ESK;</span>
-<span class="nc" id="L111">            case SNOVA66_SHAKE_SSK -&gt; SnovaParameters.SNOVA_66_15_3_SHAKE_SSK;</span>
-<span class="nc" id="L112">            case SNOVA66_SHAKE_ESK -&gt; SnovaParameters.SNOVA_66_15_3_SHAKE_ESK;</span>
-<span class="nc" id="L113">            case SNOVA75_SSK -&gt; SnovaParameters.SNOVA_75_33_2_SSK;</span>
-<span class="nc" id="L114">            case SNOVA75_ESK -&gt; SnovaParameters.SNOVA_75_33_2_ESK;</span>
-<span class="nc" id="L115">            case SNOVA75_SHAKE_SSK -&gt; SnovaParameters.SNOVA_75_33_2_SHAKE_SSK;</span>
-<span class="nc" id="L116">            case SNOVA75_SHAKE_ESK -&gt; SnovaParameters.SNOVA_75_33_2_SHAKE_ESK;</span>
-<span class="nc" id="L117">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L75" title="44 of 45 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L76">            case SNOVA24A_SSK -&gt; SnovaParameters.SNOVA_24_5_4_SSK;</span>
+<span class="nc" id="L77">            case SNOVA24A_ESK -&gt; SnovaParameters.SNOVA_24_5_4_ESK;</span>
+<span class="nc" id="L78">            case SNOVA24A_SHAKE_SSK -&gt; SnovaParameters.SNOVA_24_5_4_SHAKE_SSK;</span>
+<span class="nc" id="L79">            case SNOVA24A_SHAKE_ESK -&gt; SnovaParameters.SNOVA_24_5_4_SHAKE_ESK;</span>
+<span class="nc" id="L80">            case SNOVA24B_SSK -&gt; SnovaParameters.SNOVA_24_5_5_SSK;</span>
+<span class="nc" id="L81">            case SNOVA24B_ESK -&gt; SnovaParameters.SNOVA_24_5_5_ESK;</span>
+<span class="nc" id="L82">            case SNOVA24B_SHAKE_SSK -&gt; SnovaParameters.SNOVA_24_5_5_SHAKE_SSK;</span>
+<span class="nc" id="L83">            case SNOVA24B_SHAKE_ESK -&gt; SnovaParameters.SNOVA_24_5_5_SHAKE_ESK;</span>
+<span class="nc" id="L84">            case SNOVA25_SSK -&gt; SnovaParameters.SNOVA_25_8_3_SSK;</span>
+<span class="nc" id="L85">            case SNOVA25_ESK -&gt; SnovaParameters.SNOVA_25_8_3_ESK;</span>
+<span class="nc" id="L86">            case SNOVA25_SHAKE_SSK -&gt; SnovaParameters.SNOVA_25_8_3_SHAKE_SSK;</span>
+<span class="nc" id="L87">            case SNOVA25_SHAKE_ESK -&gt; SnovaParameters.SNOVA_25_8_3_SHAKE_ESK;</span>
+<span class="nc" id="L88">            case SNOVA29_SSK -&gt; SnovaParameters.SNOVA_29_6_5_SSK;</span>
+<span class="nc" id="L89">            case SNOVA29_ESK -&gt; SnovaParameters.SNOVA_29_6_5_ESK;</span>
+<span class="nc" id="L90">            case SNOVA29_SHAKE_SSK -&gt; SnovaParameters.SNOVA_29_6_5_SHAKE_SSK;</span>
+<span class="nc" id="L91">            case SNOVA29_SHAKE_ESK -&gt; SnovaParameters.SNOVA_29_6_5_SHAKE_ESK;</span>
+<span class="nc" id="L92">            case SNOVA37A_SSK -&gt; SnovaParameters.SNOVA_37_8_4_SSK;</span>
+<span class="nc" id="L93">            case SNOVA37A_ESK -&gt; SnovaParameters.SNOVA_37_8_4_ESK;</span>
+<span class="nc" id="L94">            case SNOVA37A_SHAKE_SSK -&gt; SnovaParameters.SNOVA_37_8_4_SHAKE_SSK;</span>
+<span class="nc" id="L95">            case SNOVA37A_SHAKE_ESK -&gt; SnovaParameters.SNOVA_37_8_4_SHAKE_ESK;</span>
+<span class="nc" id="L96">            case SNOVA37B_SSK -&gt; SnovaParameters.SNOVA_37_17_2_SSK;</span>
+<span class="nc" id="L97">            case SNOVA37B_ESK -&gt; SnovaParameters.SNOVA_37_17_2_ESK;</span>
+<span class="nc" id="L98">            case SNOVA37B_SHAKE_SSK -&gt; SnovaParameters.SNOVA_37_17_2_SHAKE_SSK;</span>
+<span class="nc" id="L99">            case SNOVA37B_SHAKE_ESK -&gt; SnovaParameters.SNOVA_37_17_2_SHAKE_ESK;</span>
+<span class="nc" id="L100">            case SNOVA49_SSK -&gt; SnovaParameters.SNOVA_49_11_3_SSK;</span>
+<span class="nc" id="L101">            case SNOVA49_ESK -&gt; SnovaParameters.SNOVA_49_11_3_ESK;</span>
+<span class="nc" id="L102">            case SNOVA49_SHAKE_SSK -&gt; SnovaParameters.SNOVA_49_11_3_SHAKE_SSK;</span>
+<span class="nc" id="L103">            case SNOVA49_SHAKE_ESK -&gt; SnovaParameters.SNOVA_49_11_3_SHAKE_ESK;</span>
+<span class="nc" id="L104">            case SNOVA56_SSK -&gt; SnovaParameters.SNOVA_56_25_2_SSK;</span>
+<span class="nc" id="L105">            case SNOVA56_ESK -&gt; SnovaParameters.SNOVA_56_25_2_ESK;</span>
+<span class="nc" id="L106">            case SNOVA56_SHAKE_SSK -&gt; SnovaParameters.SNOVA_56_25_2_SHAKE_SSK;</span>
+<span class="nc" id="L107">            case SNOVA56_SHAKE_ESK -&gt; SnovaParameters.SNOVA_56_25_2_SHAKE_ESK;</span>
+<span class="nc" id="L108">            case SNOVA60_SSK -&gt; SnovaParameters.SNOVA_60_10_4_SSK;</span>
+<span class="nc" id="L109">            case SNOVA60_ESK -&gt; SnovaParameters.SNOVA_60_10_4_ESK;</span>
+<span class="nc" id="L110">            case SNOVA60_SHAKE_SSK -&gt; SnovaParameters.SNOVA_60_10_4_SHAKE_SSK;</span>
+<span class="nc" id="L111">            case SNOVA60_SHAKE_ESK -&gt; SnovaParameters.SNOVA_60_10_4_SHAKE_ESK;</span>
+<span class="nc" id="L112">            case SNOVA66_SSK -&gt; SnovaParameters.SNOVA_66_15_3_SSK;</span>
+<span class="nc" id="L113">            case SNOVA66_ESK -&gt; SnovaParameters.SNOVA_66_15_3_ESK;</span>
+<span class="nc" id="L114">            case SNOVA66_SHAKE_SSK -&gt; SnovaParameters.SNOVA_66_15_3_SHAKE_SSK;</span>
+<span class="nc" id="L115">            case SNOVA66_SHAKE_ESK -&gt; SnovaParameters.SNOVA_66_15_3_SHAKE_ESK;</span>
+<span class="nc" id="L116">            case SNOVA75_SSK -&gt; SnovaParameters.SNOVA_75_33_2_SSK;</span>
+<span class="nc" id="L117">            case SNOVA75_ESK -&gt; SnovaParameters.SNOVA_75_33_2_ESK;</span>
+<span class="nc" id="L118">            case SNOVA75_SHAKE_SSK -&gt; SnovaParameters.SNOVA_75_33_2_SHAKE_SSK;</span>
+<span class="nc" id="L119">            case SNOVA75_SHAKE_ESK -&gt; SnovaParameters.SNOVA_75_33_2_SHAKE_ESK;</span>
+<span class="nc" id="L120">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
@@ -124,133 +127,129 @@ public final class GordianCoreSnovaSpec {
      * @return the parameters.
      */
     public SnovaParameterSpec getParameterSpec() {
-<span class="pc bpc" id="L127" title="44 of 45 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L128">            case SNOVA24A_SSK -&gt; SnovaParameterSpec.SNOVA_24_5_4_SSK;</span>
-<span class="nc" id="L129">            case SNOVA24A_ESK -&gt; SnovaParameterSpec.SNOVA_24_5_4_ESK;</span>
-<span class="nc" id="L130">            case SNOVA24A_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_24_5_4_SHAKE_SSK;</span>
-<span class="nc" id="L131">            case SNOVA24A_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_24_5_4_SHAKE_ESK;</span>
-<span class="nc" id="L132">            case SNOVA24B_SSK -&gt; SnovaParameterSpec.SNOVA_24_5_5_SSK;</span>
-<span class="nc" id="L133">            case SNOVA24B_ESK -&gt; SnovaParameterSpec.SNOVA_24_5_5_ESK;</span>
-<span class="nc" id="L134">            case SNOVA24B_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_24_5_5_SHAKE_SSK;</span>
-<span class="nc" id="L135">            case SNOVA24B_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_24_5_5_SHAKE_ESK;</span>
-<span class="nc" id="L136">            case SNOVA25_SSK -&gt; SnovaParameterSpec.SNOVA_25_8_3_SSK;</span>
-<span class="nc" id="L137">            case SNOVA25_ESK -&gt; SnovaParameterSpec.SNOVA_25_8_3_ESK;</span>
-<span class="nc" id="L138">            case SNOVA25_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_25_8_3_SHAKE_SSK;</span>
-<span class="nc" id="L139">            case SNOVA25_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_25_8_3_SHAKE_ESK;</span>
-<span class="nc" id="L140">            case SNOVA29_SSK -&gt; SnovaParameterSpec.SNOVA_29_6_5_SSK;</span>
-<span class="nc" id="L141">            case SNOVA29_ESK -&gt; SnovaParameterSpec.SNOVA_29_6_5_ESK;</span>
-<span class="nc" id="L142">            case SNOVA29_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_29_6_5_SHAKE_SSK;</span>
-<span class="nc" id="L143">            case SNOVA29_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_29_6_5_SHAKE_ESK;</span>
-<span class="nc" id="L144">            case SNOVA37A_SSK -&gt; SnovaParameterSpec.SNOVA_37_8_4_SSK;</span>
-<span class="nc" id="L145">            case SNOVA37A_ESK -&gt; SnovaParameterSpec.SNOVA_37_8_4_ESK;</span>
-<span class="nc" id="L146">            case SNOVA37A_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_37_8_4_SHAKE_SSK;</span>
-<span class="nc" id="L147">            case SNOVA37A_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_37_8_4_SHAKE_ESK;</span>
-<span class="nc" id="L148">            case SNOVA37B_SSK -&gt; SnovaParameterSpec.SNOVA_37_17_2_SSK;</span>
-<span class="nc" id="L149">            case SNOVA37B_ESK -&gt; SnovaParameterSpec.SNOVA_37_17_2_ESK;</span>
-<span class="nc" id="L150">            case SNOVA37B_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_37_17_2_SHAKE_SSK;</span>
-<span class="nc" id="L151">            case SNOVA37B_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_37_17_2_SHAKE_ESK;</span>
-<span class="nc" id="L152">            case SNOVA49_SSK -&gt; SnovaParameterSpec.SNOVA_49_11_3_SSK;</span>
-<span class="nc" id="L153">            case SNOVA49_ESK -&gt; SnovaParameterSpec.SNOVA_49_11_3_ESK;</span>
-<span class="nc" id="L154">            case SNOVA49_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_49_11_3_SHAKE_SSK;</span>
-<span class="nc" id="L155">            case SNOVA49_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_49_11_3_SHAKE_ESK;</span>
-<span class="nc" id="L156">            case SNOVA56_SSK -&gt; SnovaParameterSpec.SNOVA_56_25_2_SSK;</span>
-<span class="nc" id="L157">            case SNOVA56_ESK -&gt; SnovaParameterSpec.SNOVA_56_25_2_ESK;</span>
-<span class="nc" id="L158">            case SNOVA56_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_56_25_2_SHAKE_SSK;</span>
-<span class="nc" id="L159">            case SNOVA56_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_56_25_2_SHAKE_ESK;</span>
-<span class="nc" id="L160">            case SNOVA60_SSK -&gt; SnovaParameterSpec.SNOVA_60_10_4_SSK;</span>
-<span class="nc" id="L161">            case SNOVA60_ESK -&gt; SnovaParameterSpec.SNOVA_60_10_4_ESK;</span>
-<span class="nc" id="L162">            case SNOVA60_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_60_10_4_SHAKE_SSK;</span>
-<span class="nc" id="L163">            case SNOVA60_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_60_10_4_SHAKE_ESK;</span>
-<span class="nc" id="L164">            case SNOVA66_SSK -&gt; SnovaParameterSpec.SNOVA_66_15_3_SSK;</span>
-<span class="nc" id="L165">            case SNOVA66_ESK -&gt; SnovaParameterSpec.SNOVA_66_15_3_ESK;</span>
-<span class="nc" id="L166">            case SNOVA66_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_66_15_3_SHAKE_SSK;</span>
-<span class="nc" id="L167">            case SNOVA66_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_66_15_3_SHAKE_ESK;</span>
-<span class="nc" id="L168">            case SNOVA75_SSK -&gt; SnovaParameterSpec.SNOVA_75_33_2_SSK;</span>
-<span class="nc" id="L169">            case SNOVA75_ESK -&gt; SnovaParameterSpec.SNOVA_75_33_2_ESK;</span>
-<span class="nc" id="L170">            case SNOVA75_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_75_33_2_SHAKE_SSK;</span>
-<span class="nc" id="L171">            case SNOVA75_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_75_33_2_SHAKE_ESK;</span>
-<span class="nc" id="L172">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L130" title="44 of 45 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L131">            case SNOVA24A_SSK -&gt; SnovaParameterSpec.SNOVA_24_5_4_SSK;</span>
+<span class="nc" id="L132">            case SNOVA24A_ESK -&gt; SnovaParameterSpec.SNOVA_24_5_4_ESK;</span>
+<span class="nc" id="L133">            case SNOVA24A_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_24_5_4_SHAKE_SSK;</span>
+<span class="nc" id="L134">            case SNOVA24A_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_24_5_4_SHAKE_ESK;</span>
+<span class="nc" id="L135">            case SNOVA24B_SSK -&gt; SnovaParameterSpec.SNOVA_24_5_5_SSK;</span>
+<span class="nc" id="L136">            case SNOVA24B_ESK -&gt; SnovaParameterSpec.SNOVA_24_5_5_ESK;</span>
+<span class="nc" id="L137">            case SNOVA24B_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_24_5_5_SHAKE_SSK;</span>
+<span class="nc" id="L138">            case SNOVA24B_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_24_5_5_SHAKE_ESK;</span>
+<span class="nc" id="L139">            case SNOVA25_SSK -&gt; SnovaParameterSpec.SNOVA_25_8_3_SSK;</span>
+<span class="nc" id="L140">            case SNOVA25_ESK -&gt; SnovaParameterSpec.SNOVA_25_8_3_ESK;</span>
+<span class="nc" id="L141">            case SNOVA25_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_25_8_3_SHAKE_SSK;</span>
+<span class="nc" id="L142">            case SNOVA25_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_25_8_3_SHAKE_ESK;</span>
+<span class="nc" id="L143">            case SNOVA29_SSK -&gt; SnovaParameterSpec.SNOVA_29_6_5_SSK;</span>
+<span class="nc" id="L144">            case SNOVA29_ESK -&gt; SnovaParameterSpec.SNOVA_29_6_5_ESK;</span>
+<span class="nc" id="L145">            case SNOVA29_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_29_6_5_SHAKE_SSK;</span>
+<span class="nc" id="L146">            case SNOVA29_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_29_6_5_SHAKE_ESK;</span>
+<span class="nc" id="L147">            case SNOVA37A_SSK -&gt; SnovaParameterSpec.SNOVA_37_8_4_SSK;</span>
+<span class="nc" id="L148">            case SNOVA37A_ESK -&gt; SnovaParameterSpec.SNOVA_37_8_4_ESK;</span>
+<span class="nc" id="L149">            case SNOVA37A_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_37_8_4_SHAKE_SSK;</span>
+<span class="nc" id="L150">            case SNOVA37A_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_37_8_4_SHAKE_ESK;</span>
+<span class="nc" id="L151">            case SNOVA37B_SSK -&gt; SnovaParameterSpec.SNOVA_37_17_2_SSK;</span>
+<span class="nc" id="L152">            case SNOVA37B_ESK -&gt; SnovaParameterSpec.SNOVA_37_17_2_ESK;</span>
+<span class="nc" id="L153">            case SNOVA37B_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_37_17_2_SHAKE_SSK;</span>
+<span class="nc" id="L154">            case SNOVA37B_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_37_17_2_SHAKE_ESK;</span>
+<span class="nc" id="L155">            case SNOVA49_SSK -&gt; SnovaParameterSpec.SNOVA_49_11_3_SSK;</span>
+<span class="nc" id="L156">            case SNOVA49_ESK -&gt; SnovaParameterSpec.SNOVA_49_11_3_ESK;</span>
+<span class="nc" id="L157">            case SNOVA49_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_49_11_3_SHAKE_SSK;</span>
+<span class="nc" id="L158">            case SNOVA49_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_49_11_3_SHAKE_ESK;</span>
+<span class="nc" id="L159">            case SNOVA56_SSK -&gt; SnovaParameterSpec.SNOVA_56_25_2_SSK;</span>
+<span class="nc" id="L160">            case SNOVA56_ESK -&gt; SnovaParameterSpec.SNOVA_56_25_2_ESK;</span>
+<span class="nc" id="L161">            case SNOVA56_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_56_25_2_SHAKE_SSK;</span>
+<span class="nc" id="L162">            case SNOVA56_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_56_25_2_SHAKE_ESK;</span>
+<span class="nc" id="L163">            case SNOVA60_SSK -&gt; SnovaParameterSpec.SNOVA_60_10_4_SSK;</span>
+<span class="nc" id="L164">            case SNOVA60_ESK -&gt; SnovaParameterSpec.SNOVA_60_10_4_ESK;</span>
+<span class="nc" id="L165">            case SNOVA60_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_60_10_4_SHAKE_SSK;</span>
+<span class="nc" id="L166">            case SNOVA60_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_60_10_4_SHAKE_ESK;</span>
+<span class="nc" id="L167">            case SNOVA66_SSK -&gt; SnovaParameterSpec.SNOVA_66_15_3_SSK;</span>
+<span class="nc" id="L168">            case SNOVA66_ESK -&gt; SnovaParameterSpec.SNOVA_66_15_3_ESK;</span>
+<span class="nc" id="L169">            case SNOVA66_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_66_15_3_SHAKE_SSK;</span>
+<span class="nc" id="L170">            case SNOVA66_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_66_15_3_SHAKE_ESK;</span>
+<span class="nc" id="L171">            case SNOVA75_SSK -&gt; SnovaParameterSpec.SNOVA_75_33_2_SSK;</span>
+<span class="nc" id="L172">            case SNOVA75_ESK -&gt; SnovaParameterSpec.SNOVA_75_33_2_ESK;</span>
+<span class="nc" id="L173">            case SNOVA75_SHAKE_SSK -&gt; SnovaParameterSpec.SNOVA_75_33_2_SHAKE_SSK;</span>
+<span class="nc" id="L174">            case SNOVA75_SHAKE_ESK -&gt; SnovaParameterSpec.SNOVA_75_33_2_SHAKE_ESK;</span>
+<span class="nc" id="L175">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
-    /**
-     * Obtain Snova algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
-<span class="pc bpc" id="L182" title="1 of 45 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L183">            case SNOVA24A_SSK -&gt; BCObjectIdentifiers.snova_24_5_4_ssk;</span>
-<span class="fc" id="L184">            case SNOVA24A_ESK -&gt; BCObjectIdentifiers.snova_24_5_4_esk;</span>
-<span class="fc" id="L185">            case SNOVA24A_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_24_5_4_shake_ssk;</span>
-<span class="fc" id="L186">            case SNOVA24A_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_24_5_4_shake_esk;</span>
-<span class="fc" id="L187">            case SNOVA24B_SSK -&gt; BCObjectIdentifiers.snova_24_5_5_ssk;</span>
-<span class="fc" id="L188">            case SNOVA24B_ESK -&gt; BCObjectIdentifiers.snova_24_5_5_esk;</span>
-<span class="fc" id="L189">            case SNOVA24B_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_24_5_5_shake_ssk;</span>
-<span class="fc" id="L190">            case SNOVA24B_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_24_5_5_shake_esk;</span>
-<span class="fc" id="L191">            case SNOVA25_SSK -&gt; BCObjectIdentifiers.snova_25_8_3_ssk;</span>
-<span class="fc" id="L192">            case SNOVA25_ESK -&gt; BCObjectIdentifiers.snova_25_8_3_esk;</span>
-<span class="fc" id="L193">            case SNOVA25_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_25_8_3_shake_ssk;</span>
-<span class="fc" id="L194">            case SNOVA25_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_25_8_3_shake_esk;</span>
-<span class="fc" id="L195">            case SNOVA29_SSK -&gt; BCObjectIdentifiers.snova_29_6_5_ssk;</span>
-<span class="fc" id="L196">            case SNOVA29_ESK -&gt; BCObjectIdentifiers.snova_29_6_5_esk;</span>
-<span class="fc" id="L197">            case SNOVA29_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_29_6_5_shake_ssk;</span>
-<span class="fc" id="L198">            case SNOVA29_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_29_6_5_shake_esk;</span>
-<span class="fc" id="L199">            case SNOVA37A_SSK -&gt; BCObjectIdentifiers.snova_37_8_4_ssk;</span>
-<span class="fc" id="L200">            case SNOVA37A_ESK -&gt; BCObjectIdentifiers.snova_37_8_4_esk;</span>
-<span class="fc" id="L201">            case SNOVA37A_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_37_8_4_shake_ssk;</span>
-<span class="fc" id="L202">            case SNOVA37A_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_37_8_4_shake_esk;</span>
-<span class="fc" id="L203">            case SNOVA37B_SSK -&gt; BCObjectIdentifiers.snova_37_17_2_ssk;</span>
-<span class="fc" id="L204">            case SNOVA37B_ESK -&gt; BCObjectIdentifiers.snova_37_17_2_esk;</span>
-<span class="fc" id="L205">            case SNOVA37B_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_37_17_2_shake_ssk;</span>
-<span class="fc" id="L206">            case SNOVA37B_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_37_17_2_shake_esk;</span>
-<span class="fc" id="L207">            case SNOVA49_SSK -&gt; BCObjectIdentifiers.snova_49_11_3_ssk;</span>
-<span class="fc" id="L208">            case SNOVA49_ESK -&gt; BCObjectIdentifiers.snova_49_11_3_esk;</span>
-<span class="fc" id="L209">            case SNOVA49_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_49_11_3_shake_ssk;</span>
-<span class="fc" id="L210">            case SNOVA49_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_49_11_3_shake_esk;</span>
-<span class="fc" id="L211">            case SNOVA56_SSK -&gt; BCObjectIdentifiers.snova_56_25_2_ssk;</span>
-<span class="fc" id="L212">            case SNOVA56_ESK -&gt; BCObjectIdentifiers.snova_56_25_2_esk;</span>
-<span class="fc" id="L213">            case SNOVA56_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_56_25_2_shake_ssk;</span>
-<span class="fc" id="L214">            case SNOVA56_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_56_25_2_shake_esk;</span>
-<span class="fc" id="L215">            case SNOVA60_SSK -&gt; BCObjectIdentifiers.snova_60_10_4_ssk;</span>
-<span class="fc" id="L216">            case SNOVA60_ESK -&gt; BCObjectIdentifiers.snova_60_10_4_esk;</span>
-<span class="fc" id="L217">            case SNOVA60_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_60_10_4_shake_ssk;</span>
-<span class="fc" id="L218">            case SNOVA60_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_60_10_4_shake_esk;</span>
-<span class="fc" id="L219">            case SNOVA66_SSK -&gt; BCObjectIdentifiers.snova_66_15_3_ssk;</span>
-<span class="fc" id="L220">            case SNOVA66_ESK -&gt; BCObjectIdentifiers.snova_66_15_3_esk;</span>
-<span class="fc" id="L221">            case SNOVA66_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_66_15_3_shake_ssk;</span>
-<span class="fc" id="L222">            case SNOVA66_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_66_15_3_shake_esk;</span>
-<span class="fc" id="L223">            case SNOVA75_SSK -&gt; BCObjectIdentifiers.snova_75_33_2_ssk;</span>
-<span class="fc" id="L224">            case SNOVA75_ESK -&gt; BCObjectIdentifiers.snova_75_33_2_esk;</span>
-<span class="fc" id="L225">            case SNOVA75_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_75_33_2_shake_ssk;</span>
-<span class="fc" id="L226">            case SNOVA75_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_75_33_2_shake_esk;</span>
-<span class="nc" id="L227">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L181" title="1 of 45 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L182">            case SNOVA24A_SSK -&gt; BCObjectIdentifiers.snova_24_5_4_ssk;</span>
+<span class="fc" id="L183">            case SNOVA24A_ESK -&gt; BCObjectIdentifiers.snova_24_5_4_esk;</span>
+<span class="fc" id="L184">            case SNOVA24A_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_24_5_4_shake_ssk;</span>
+<span class="fc" id="L185">            case SNOVA24A_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_24_5_4_shake_esk;</span>
+<span class="fc" id="L186">            case SNOVA24B_SSK -&gt; BCObjectIdentifiers.snova_24_5_5_ssk;</span>
+<span class="fc" id="L187">            case SNOVA24B_ESK -&gt; BCObjectIdentifiers.snova_24_5_5_esk;</span>
+<span class="fc" id="L188">            case SNOVA24B_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_24_5_5_shake_ssk;</span>
+<span class="fc" id="L189">            case SNOVA24B_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_24_5_5_shake_esk;</span>
+<span class="fc" id="L190">            case SNOVA25_SSK -&gt; BCObjectIdentifiers.snova_25_8_3_ssk;</span>
+<span class="fc" id="L191">            case SNOVA25_ESK -&gt; BCObjectIdentifiers.snova_25_8_3_esk;</span>
+<span class="fc" id="L192">            case SNOVA25_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_25_8_3_shake_ssk;</span>
+<span class="fc" id="L193">            case SNOVA25_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_25_8_3_shake_esk;</span>
+<span class="fc" id="L194">            case SNOVA29_SSK -&gt; BCObjectIdentifiers.snova_29_6_5_ssk;</span>
+<span class="fc" id="L195">            case SNOVA29_ESK -&gt; BCObjectIdentifiers.snova_29_6_5_esk;</span>
+<span class="fc" id="L196">            case SNOVA29_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_29_6_5_shake_ssk;</span>
+<span class="fc" id="L197">            case SNOVA29_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_29_6_5_shake_esk;</span>
+<span class="fc" id="L198">            case SNOVA37A_SSK -&gt; BCObjectIdentifiers.snova_37_8_4_ssk;</span>
+<span class="fc" id="L199">            case SNOVA37A_ESK -&gt; BCObjectIdentifiers.snova_37_8_4_esk;</span>
+<span class="fc" id="L200">            case SNOVA37A_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_37_8_4_shake_ssk;</span>
+<span class="fc" id="L201">            case SNOVA37A_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_37_8_4_shake_esk;</span>
+<span class="fc" id="L202">            case SNOVA37B_SSK -&gt; BCObjectIdentifiers.snova_37_17_2_ssk;</span>
+<span class="fc" id="L203">            case SNOVA37B_ESK -&gt; BCObjectIdentifiers.snova_37_17_2_esk;</span>
+<span class="fc" id="L204">            case SNOVA37B_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_37_17_2_shake_ssk;</span>
+<span class="fc" id="L205">            case SNOVA37B_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_37_17_2_shake_esk;</span>
+<span class="fc" id="L206">            case SNOVA49_SSK -&gt; BCObjectIdentifiers.snova_49_11_3_ssk;</span>
+<span class="fc" id="L207">            case SNOVA49_ESK -&gt; BCObjectIdentifiers.snova_49_11_3_esk;</span>
+<span class="fc" id="L208">            case SNOVA49_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_49_11_3_shake_ssk;</span>
+<span class="fc" id="L209">            case SNOVA49_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_49_11_3_shake_esk;</span>
+<span class="fc" id="L210">            case SNOVA56_SSK -&gt; BCObjectIdentifiers.snova_56_25_2_ssk;</span>
+<span class="fc" id="L211">            case SNOVA56_ESK -&gt; BCObjectIdentifiers.snova_56_25_2_esk;</span>
+<span class="fc" id="L212">            case SNOVA56_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_56_25_2_shake_ssk;</span>
+<span class="fc" id="L213">            case SNOVA56_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_56_25_2_shake_esk;</span>
+<span class="fc" id="L214">            case SNOVA60_SSK -&gt; BCObjectIdentifiers.snova_60_10_4_ssk;</span>
+<span class="fc" id="L215">            case SNOVA60_ESK -&gt; BCObjectIdentifiers.snova_60_10_4_esk;</span>
+<span class="fc" id="L216">            case SNOVA60_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_60_10_4_shake_ssk;</span>
+<span class="fc" id="L217">            case SNOVA60_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_60_10_4_shake_esk;</span>
+<span class="fc" id="L218">            case SNOVA66_SSK -&gt; BCObjectIdentifiers.snova_66_15_3_ssk;</span>
+<span class="fc" id="L219">            case SNOVA66_ESK -&gt; BCObjectIdentifiers.snova_66_15_3_esk;</span>
+<span class="fc" id="L220">            case SNOVA66_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_66_15_3_shake_ssk;</span>
+<span class="fc" id="L221">            case SNOVA66_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_66_15_3_shake_esk;</span>
+<span class="fc" id="L222">            case SNOVA75_SSK -&gt; BCObjectIdentifiers.snova_75_33_2_ssk;</span>
+<span class="fc" id="L223">            case SNOVA75_ESK -&gt; BCObjectIdentifiers.snova_75_33_2_esk;</span>
+<span class="fc" id="L224">            case SNOVA75_SHAKE_SSK -&gt; BCObjectIdentifiers.snova_75_33_2_shake_ssk;</span>
+<span class="fc" id="L225">            case SNOVA75_SHAKE_ESK -&gt; BCObjectIdentifiers.snova_75_33_2_shake_esk;</span>
+<span class="nc" id="L226">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L233">        return theSpec.toString();</span>
+<span class="fc" id="L232">        return theSpec.toString();</span>
     }
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-<span class="nc bnc" id="L239" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L240">            return true;</span>
+<span class="nc bnc" id="L238" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L239">            return true;</span>
         }
-<span class="nc bnc" id="L242" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L243">            return false;</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L242">            return false;</span>
         }
 
         /* Check subFields */
-<span class="nc" id="L247">        return pThat instanceof GordianCoreSnovaSpec myThat</span>
-<span class="nc bnc" id="L248" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
+<span class="nc" id="L246">        return pThat instanceof GordianCoreSnovaSpec myThat</span>
+<span class="nc bnc" id="L247" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
     }
 
     @Override
     public int hashCode() {
-<span class="fc" id="L253">        return theSpec.hashCode();</span>
+<span class="fc" id="L252">        return theSpec.hashCode();</span>
     }
 
     /**
@@ -260,7 +259,7 @@ public final class GordianCoreSnovaSpec {
      * @return the core spec
      */
     public static GordianCoreSnovaSpec mapCoreSpec(final Object pSpec) {
-<span class="pc bpc" id="L263" title="1 of 2 branches missed.">        return pSpec instanceof GordianSnovaSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
+<span class="pc bpc" id="L262" title="1 of 2 branches missed.">        return pSpec instanceof GordianSnovaSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
     }
 
     /**
@@ -269,11 +268,11 @@ public final class GordianCoreSnovaSpec {
      * @return the type map
      */
     private static Map&lt;GordianSnovaSpec, GordianCoreSnovaSpec&gt; newSpecMap() {
-<span class="fc" id="L272">        final Map&lt;GordianSnovaSpec, GordianCoreSnovaSpec&gt; myMap = new EnumMap&lt;&gt;(GordianSnovaSpec.class);</span>
-<span class="fc bfc" id="L273" title="All 2 branches covered.">        for (GordianSnovaSpec mySpec : GordianSnovaSpec.values()) {</span>
-<span class="fc" id="L274">            myMap.put(mySpec, new GordianCoreSnovaSpec(mySpec));</span>
+<span class="fc" id="L271">        final Map&lt;GordianSnovaSpec, GordianCoreSnovaSpec&gt; myMap = new EnumMap&lt;&gt;(GordianSnovaSpec.class);</span>
+<span class="fc bfc" id="L272" title="All 2 branches covered.">        for (GordianSnovaSpec mySpec : GordianSnovaSpec.values()) {</span>
+<span class="fc" id="L273">            myMap.put(mySpec, new GordianCoreSnovaSpec(mySpec));</span>
         }
-<span class="fc" id="L276">        return myMap;</span>
+<span class="fc" id="L275">        return myMap;</span>
     }
 
     /**
@@ -282,7 +281,7 @@ public final class GordianCoreSnovaSpec {
      * @return the values
      */
     public static GordianCoreSnovaSpec[] values() {
-<span class="fc" id="L285">        return VALUES;</span>
+<span class="fc" id="L284">        return VALUES;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

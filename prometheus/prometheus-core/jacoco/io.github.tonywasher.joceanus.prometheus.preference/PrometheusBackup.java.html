@@ -16,11 +16,11 @@
  */
 package io.github.tonywasher.joceanus.prometheus.preference;
 
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceParams;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
-import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
-import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
 
 import java.io.File;
@@ -109,11 +109,11 @@ public interface PrometheusBackup {
         /**
          * Constructor.
          *
-         * @param pManager the preference manager
+         * @param pParams the parameters
          * @throws OceanusException on error
          */
-        public PrometheusBackupPreferences(final MetisPreferenceManager pManager) throws OceanusException {
-<span class="nc" id="L116">            super(pManager, PrometheusPreferenceResource.BUPREF_PREFNAME);</span>
+        public PrometheusBackupPreferences(final MetisPreferenceParams pParams) throws OceanusException {
+<span class="nc" id="L116">            super(pParams, PrometheusPreferenceResource.BUPREF_PREFNAME);</span>
 <span class="nc" id="L117">        }</span>
 
         @Override
@@ -167,4 +167,4 @@ public interface PrometheusBackup {
 <span class="nc" id="L167">        }</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JcaElGamalKeyPairGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair</a> &gt; <span class="el_source">JcaElGamalKeyPairGenerator.java</span></div><h1>JcaElGamalKeyPairGenerator.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreDHSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import org.bouncycastle.crypto.params.DHParameters;
+import org.bouncycastle.jce.spec.ElGamalParameterSpec;
+
+import java.security.InvalidAlgorithmParameterException;
+
+/**
+ * Jca ElGamal KeyPair generator.
+ */
+public class JcaElGamalKeyPairGenerator
+        extends JcaKeyPairGenerator {
+    /**
+     * RSA algorithm.
+     */
+    private static final String ELGAMAL_ALGO = &quot;ELGAMAL&quot;;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the Security Factory
+     * @param pKeySpec the keySpec
+     * @throws GordianException on error
+     */
+    JcaElGamalKeyPairGenerator(final GordianBaseFactory pFactory,
+                               final GordianKeyPairSpec pKeySpec) throws GordianException {
+        /* initialize underlying class */
+<span class="fc" id="L51">        super(pFactory, pKeySpec);</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Create the parameter generator */
+<span class="fc" id="L56">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;</span>
+<span class="fc" id="L57">            final GordianCoreDHSpec myGroup = myKeySpec.getDHSpec();</span>
+<span class="fc" id="L58">            final DHParameters myParms = myGroup.getParameters();</span>
+<span class="fc" id="L59">            final ElGamalParameterSpec mySpec = new ElGamalParameterSpec(myParms.getP(), myParms.getQ());</span>
+
+            /* Create and initialize the generator */
+<span class="fc" id="L62">            createFactories(ELGAMAL_ALGO, false);</span>
+<span class="fc" id="L63">            getGenerator().initialize(mySpec, getRandom());</span>
+
+<span class="nc" id="L65">        } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L66">            throw new GordianCryptoException(&quot;Failed to create ElGamalGenerator&quot;, e);</span>
+<span class="fc" id="L67">        }</span>
+<span class="fc" id="L68">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

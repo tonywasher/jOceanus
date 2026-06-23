@@ -16,13 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.builder;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 
 /**
  * SecurityPrice Builder.
@@ -32,6 +33,11 @@ public class MoneyWiseSecurityPriceBuilder {
      * DataSet.
      */
     private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * Parser.
+     */
+    private final OceanusDecimalParser theParser;
 
     /**
      * The Security.
@@ -53,10 +59,11 @@ public class MoneyWiseSecurityPriceBuilder {
      *
      * @param pDataSet the dataSet
      */
-<span class="fc" id="L56">    public MoneyWiseSecurityPriceBuilder(final MoneyWiseDataSet pDataSet) {</span>
-<span class="fc" id="L57">        theDataSet = pDataSet;</span>
-<span class="fc" id="L58">        theDataSet.getSecurityPrices().ensureMap();</span>
-<span class="fc" id="L59">    }</span>
+<span class="fc" id="L62">    public MoneyWiseSecurityPriceBuilder(final MoneyWiseDataSet pDataSet) {</span>
+<span class="fc" id="L63">        theDataSet = pDataSet;</span>
+<span class="fc" id="L64">        theDataSet.getSecurityPrices().ensureMap();</span>
+<span class="fc" id="L65">        theParser = theDataSet.getDataFormatter().getDecimalParser();</span>
+<span class="fc" id="L66">    }</span>
 
     /**
      * Set Security.
@@ -65,8 +72,8 @@ public class MoneyWiseSecurityPriceBuilder {
      * @return the builder
      */
     public MoneyWiseSecurityPriceBuilder security(final MoneyWiseSecurity pSecurity) {
-<span class="fc" id="L68">        theSecurity = pSecurity;</span>
-<span class="fc" id="L69">        return this;</span>
+<span class="fc" id="L75">        theSecurity = pSecurity;</span>
+<span class="fc" id="L76">        return this;</span>
     }
 
     /**
@@ -76,7 +83,7 @@ public class MoneyWiseSecurityPriceBuilder {
      * @return the builder
      */
     public MoneyWiseSecurityPriceBuilder security(final String pSecurity) {
-<span class="fc" id="L79">        return security(theDataSet.getSecurities().findItemByName(pSecurity));</span>
+<span class="fc" id="L86">        return security(theDataSet.getSecurities().findItemByName(pSecurity));</span>
     }
 
     /**
@@ -86,8 +93,8 @@ public class MoneyWiseSecurityPriceBuilder {
      * @return the builder
      */
     public MoneyWiseSecurityPriceBuilder price(final OceanusPrice pPrice) {
-<span class="fc" id="L89">        thePrice = pPrice;</span>
-<span class="fc" id="L90">        return this;</span>
+<span class="fc" id="L96">        thePrice = pPrice;</span>
+<span class="fc" id="L97">        return this;</span>
     }
 
     /**
@@ -97,7 +104,7 @@ public class MoneyWiseSecurityPriceBuilder {
      * @return the builder
      */
     public MoneyWiseSecurityPriceBuilder price(final String pPrice) {
-<span class="fc" id="L100">        return price(new OceanusPrice(pPrice, theSecurity.getAssetCurrency().getCurrency()));</span>
+<span class="fc" id="L107">        return price(theParser.parsePriceValue(pPrice, theSecurity.getAssetCurrency().getCurrency()));</span>
     }
 
     /**
@@ -107,8 +114,8 @@ public class MoneyWiseSecurityPriceBuilder {
      * @return the builder
      */
     public MoneyWiseSecurityPriceBuilder date(final OceanusDate pDate) {
-<span class="fc" id="L110">        theDate = pDate;</span>
-<span class="fc" id="L111">        return this;</span>
+<span class="fc" id="L117">        theDate = pDate;</span>
+<span class="fc" id="L118">        return this;</span>
     }
 
     /**
@@ -118,7 +125,7 @@ public class MoneyWiseSecurityPriceBuilder {
      * @return the builder
      */
     public MoneyWiseSecurityPriceBuilder date(final String pDate) {
-<span class="fc" id="L121">        return date(new OceanusDate(pDate));</span>
+<span class="fc" id="L128">        return date(new OceanusDate(pDate));</span>
     }
 
     /**
@@ -129,24 +136,24 @@ public class MoneyWiseSecurityPriceBuilder {
      */
     public MoneyWiseSecurityPrice build() throws OceanusException {
         /* Create the price */
-<span class="fc" id="L132">        final MoneyWiseSecurityPrice myPrice = theDataSet.getSecurityPrices().addNewItem();</span>
-<span class="fc" id="L133">        myPrice.setSecurity(theSecurity);</span>
-<span class="fc" id="L134">        myPrice.setPrice(thePrice);</span>
-<span class="fc" id="L135">        myPrice.setDate(theDate);</span>
+<span class="fc" id="L139">        final MoneyWiseSecurityPrice myPrice = theDataSet.getSecurityPrices().addNewItem();</span>
+<span class="fc" id="L140">        myPrice.setSecurity(theSecurity);</span>
+<span class="fc" id="L141">        myPrice.setPrice(thePrice);</span>
+<span class="fc" id="L142">        myPrice.setDate(theDate);</span>
 
         /* Reset the values */
-<span class="fc" id="L138">        reset();</span>
+<span class="fc" id="L145">        reset();</span>
 
         /* Check for errors */
-<span class="fc" id="L141">        myPrice.adjustMapForItem();</span>
-<span class="fc" id="L142">        myPrice.validate();</span>
-<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        if (myPrice.hasErrors()) {</span>
-<span class="nc" id="L144">            myPrice.removeItem();</span>
-<span class="nc" id="L145">            throw new MoneyWiseDataException(myPrice, &quot;Failed validation&quot;);</span>
+<span class="fc" id="L148">        myPrice.adjustMapForItem();</span>
+<span class="fc" id="L149">        myPrice.validate();</span>
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">        if (myPrice.hasErrors()) {</span>
+<span class="nc" id="L151">            myPrice.removeItem();</span>
+<span class="nc" id="L152">            throw new MoneyWiseDataException(myPrice, &quot;Failed validation&quot;);</span>
         }
 
         /* Return the price */
-<span class="fc" id="L149">        return myPrice;</span>
+<span class="fc" id="L156">        return myPrice;</span>
     }
 
     /**
@@ -154,9 +161,9 @@ public class MoneyWiseSecurityPriceBuilder {
      */
     public void reset() {
         /* Reset values */
-<span class="fc" id="L157">        theSecurity = null;</span>
-<span class="fc" id="L158">        thePrice = null;</span>
-<span class="fc" id="L159">        theDate = null;</span>
-<span class="fc" id="L160">    }</span>
+<span class="fc" id="L164">        theSecurity = null;</span>
+<span class="fc" id="L165">        thePrice = null;</span>
+<span class="fc" id="L166">        theDate = null;</span>
+<span class="fc" id="L167">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

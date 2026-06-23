@@ -39,7 +39,7 @@
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusGroupedItem;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusGroupedItemCtl;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.exc.PrometheusIOException;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.exc.PrometheusSecurityException;
@@ -178,7 +178,7 @@
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>         <strong class="jxr_keyword">final</strong> <a name="OceanusProfile" href="../../../../../../io/github/tonywasher/joceanus/oceanus/profile/OceanusProfile.html#OceanusProfile">OceanusProfile</a> myTask = theReport.getActiveTask();
 <a class="jxr_linenumber" name="L171" href="#L171">171</a>         <strong class="jxr_keyword">final</strong> <a name="OceanusProfile" href="../../../../../../io/github/tonywasher/joceanus/oceanus/profile/OceanusProfile.html#OceanusProfile">OceanusProfile</a> myStage = myTask.startTask(<span class="jxr_string">"Writing"</span>);
 <a class="jxr_linenumber" name="L172" href="#L172">172</a> 
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>         <em class="jxr_comment">/* Protect agains exceptions */</em>
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>         <em class="jxr_comment">/* Protect against exceptions */</em>
 <a class="jxr_linenumber" name="L174" href="#L174">174</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L175" href="#L175">175</a>             <em class="jxr_comment">/* Create a similar security control */</em>
 <a class="jxr_linenumber" name="L176" href="#L176">176</a>             <strong class="jxr_keyword">final</strong> <a name="PrometheusSecurityPasswordManager" href="../../../../../../io/github/tonywasher/joceanus/prometheus/security/PrometheusSecurityPasswordManager.html#PrometheusSecurityPasswordManager">PrometheusSecurityPasswordManager</a> myPasswordMgr = pData.getPasswordMgr();
@@ -364,7 +364,7 @@
 <a class="jxr_linenumber" name="L356" href="#L356">356</a>             }
 <a class="jxr_linenumber" name="L357" href="#L357">357</a> 
 <a class="jxr_linenumber" name="L358" href="#L358">358</a>             <em class="jxr_comment">/* Skip over child items */</em>
-<a class="jxr_linenumber" name="L359" href="#L359">359</a>             <strong class="jxr_keyword">if</strong> (myItem instanceof PrometheusGroupedItem myGrouped
+<a class="jxr_linenumber" name="L359" href="#L359">359</a>             <strong class="jxr_keyword">if</strong> (myItem instanceof PrometheusGroupedItemCtl myGrouped
 <a class="jxr_linenumber" name="L360" href="#L360">360</a>                     &amp;&amp; myGrouped.isChild()) {
 <a class="jxr_linenumber" name="L361" href="#L361">361</a>                 <strong class="jxr_keyword">continue</strong>;
 <a class="jxr_linenumber" name="L362" href="#L362">362</a>             }
@@ -599,6 +599,6 @@
 <a class="jxr_linenumber" name="L591" href="#L591">591</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

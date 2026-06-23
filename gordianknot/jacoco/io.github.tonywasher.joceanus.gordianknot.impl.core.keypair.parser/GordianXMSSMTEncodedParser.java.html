@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianXMSSMTEncodedParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser</a> &gt; <span class="el_source">GordianXMSSMTEncodedParser.java</span></div><h1>GordianXMSSMTEncodedParser.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSHeight;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSMTLayers;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.isara.IsaraObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
+import org.bouncycastle.pqc.asn1.XMSSMTKeyParams;
+import org.bouncycastle.pqc.crypto.xmss.XMSSMTParameters;
+import org.bouncycastle.util.Pack;
+
+import java.io.IOException;
+import java.util.Objects;
+
+/**
+ * XMSSMT Encoded parser.
+ */
+<span class="fc" id="L45">public final class GordianXMSSMTEncodedParser implements GordianEncodedParser {</span>
+    /**
+     * Registrar.
+     *
+     * @param pIdManager the idManager
+     */
+    public static void register(final GordianKeyPairParserRegistrar pIdManager) {
+<span class="fc" id="L52">        pIdManager.registerParser(PQCObjectIdentifiers.xmss_mt, new GordianXMSSMTEncodedParser());</span>
+<span class="fc" id="L53">        pIdManager.registerParser(IsaraObjectIdentifiers.id_alg_xmssmt, new GordianXMSSMTEncodedParser());</span>
+<span class="fc" id="L54">    }</span>
+
+    @Override
+    public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="nc" id="L58">        final AlgorithmIdentifier myId = pInfo.getAlgorithm();</span>
+<span class="nc" id="L59">        final XMSSMTKeyParams myParms = XMSSMTKeyParams.getInstance(myId.getParameters());</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        if (myParms != null) {</span>
+<span class="nc" id="L61">            return determineKeyPairSpec(myParms);</span>
+        }
+
+        /* Protect against exceptions */
+        try {
+<span class="nc" id="L66">            final byte[] keyEnc = Objects.requireNonNull(ASN1OctetString.getInstance(pInfo.parsePublicKey())).getOctets();</span>
+<span class="nc" id="L67">            final int myOID = Pack.bigEndianToInt(keyEnc, 0);</span>
+<span class="nc" id="L68">            final XMSSMTParameters myParams = XMSSMTParameters.lookupByOID(myOID);</span>
+<span class="nc" id="L69">            final GordianKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();</span>
+<span class="nc" id="L70">            return myBuilder.xmssmt(GordianXMSSEncodedParser.determineKeyType(myParams.getTreeDigestOID()),</span>
+<span class="nc" id="L71">                    GordianXMSSEncodedParser.determineHeight(myParams.getHeight()), determineLayers(myParams.getLayers()));</span>
+<span class="nc" id="L72">        } catch (IOException e) {</span>
+<span class="nc" id="L73">            throw new GordianIOException(&quot;Failed to resolve key&quot;, e);</span>
+        }
+    }
+
+    @Override
+    public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="nc" id="L79">        final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();</span>
+<span class="nc" id="L80">        final XMSSMTKeyParams myParms = XMSSMTKeyParams.getInstance(myId.getParameters());</span>
+<span class="nc" id="L81">        return determineKeyPairSpec(myParms);</span>
+    }
+
+    /**
+     * Obtain keySpec from Parameters.
+     *
+     * @param pParms the parameters
+     * @return the keySpec
+     * @throws GordianException on error
+     */
+    private static GordianKeyPairSpec determineKeyPairSpec(final XMSSMTKeyParams pParms) throws GordianException {
+<span class="nc" id="L92">        final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();</span>
+<span class="nc" id="L93">        final GordianXMSSHeight myHeight = GordianXMSSEncodedParser.determineHeight(pParms.getHeight());</span>
+<span class="nc" id="L94">        final GordianXMSSMTLayers myLayers = determineLayers(pParms.getLayers());</span>
+<span class="nc" id="L95">        final GordianKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();</span>
+<span class="nc" id="L96">        return myBuilder.xmssmt(GordianXMSSEncodedParser.determineKeyType(myDigest), myHeight, myLayers);</span>
+    }
+
+    /**
+     * Obtain layers.
+     *
+     * @param pLayers the layers
+     * @return the xmssMTLayers
+     * @throws GordianException on error
+     */
+    static GordianXMSSMTLayers determineLayers(final int pLayers) throws GordianException {
+        /* Loo through the heights */
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        for (GordianXMSSMTLayers myLayers : GordianXMSSMTLayers.values()) {</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">            if (myLayers.getLayers() == pLayers) {</span>
+<span class="nc" id="L110">                return myLayers;</span>
+            }
+        }
+
+        /* Layers is not supported */
+<span class="nc" id="L115">        throw new GordianDataException(&quot;Invalid layers: &quot; + pLayers);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

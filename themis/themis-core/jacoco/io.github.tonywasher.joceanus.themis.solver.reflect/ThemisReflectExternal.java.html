@@ -16,6 +16,9 @@
  */
 package io.github.tonywasher.joceanus.themis.solver.reflect;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisModifierList;
 import io.github.tonywasher.joceanus.themis.parser.node.ThemisNodeImport;
@@ -29,6 +32,18 @@ import java.util.List;
  */
 public class ThemisReflectExternal
         implements ThemisClassInstance {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L38">    private static final MetisFieldSet&lt;ThemisReflectExternal&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisReflectExternal.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L44">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_NAME, ThemisReflectExternal::getName);</span>
+<span class="fc" id="L45">    }</span>
+
     /**
      * The javaLang prefix.
      */
@@ -64,44 +79,54 @@ public class ThemisReflectExternal
      *
      * @param pImport the import definition
      */
-<span class="fc" id="L67">    public ThemisReflectExternal(final ThemisNodeImport pImport) {</span>
-<span class="fc" id="L68">        theName = pImport.getShortName();</span>
-<span class="fc" id="L69">        theFullName = pImport.getFullName();</span>
-<span class="fc" id="L70">        theModifiers = new ThemisNodeModifierList(new ArrayList&lt;&gt;());</span>
-<span class="fc" id="L71">        theAncestors = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L72">    }</span>
+<span class="fc" id="L82">    public ThemisReflectExternal(final ThemisNodeImport pImport) {</span>
+<span class="fc" id="L83">        theName = pImport.getShortName();</span>
+<span class="fc" id="L84">        theFullName = pImport.getFullName();</span>
+<span class="fc" id="L85">        theModifiers = new ThemisNodeModifierList(new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L86">        theAncestors = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L87">    }</span>
 
     /**
      * Constructor.
      *
      * @param pClazz the loaded class instance
      */
-<span class="fc" id="L79">    ThemisReflectExternal(final ThemisClassInstance pClazz) {</span>
-<span class="fc" id="L80">        theName = pClazz.getName();</span>
-<span class="fc" id="L81">        theFullName = pClazz.getFullName();</span>
-<span class="fc" id="L82">        theModifiers = pClazz.getModifiers();</span>
-<span class="fc" id="L83">        theAncestors = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L84">        theClassInstance = pClazz;</span>
-<span class="fc" id="L85">    }</span>
+<span class="fc" id="L94">    ThemisReflectExternal(final ThemisClassInstance pClazz) {</span>
+<span class="fc" id="L95">        theName = pClazz.getName();</span>
+<span class="fc" id="L96">        theFullName = pClazz.getFullName();</span>
+<span class="fc" id="L97">        theModifiers = pClazz.getModifiers();</span>
+<span class="fc" id="L98">        theAncestors = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L99">        theClassInstance = pClazz;</span>
+<span class="fc" id="L100">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisReflectExternal&gt; getDataFieldSet() {
+<span class="nc" id="L104">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L109">        return getName();</span>
+    }
 
     @Override
     public String getName() {
-<span class="fc" id="L89">        return theName;</span>
+<span class="fc" id="L114">        return theName;</span>
     }
 
     @Override
     public String getFullName() {
-<span class="fc" id="L94">        return theFullName;</span>
+<span class="fc" id="L119">        return theFullName;</span>
     }
 
     @Override
     public ThemisModifierList getModifiers() {
-<span class="nc" id="L99">        return theModifiers;</span>
+<span class="nc" id="L124">        return theModifiers;</span>
     }
 
     @Override
     public boolean isTopLevel() {
-<span class="nc" id="L104">        return true;</span>
+<span class="nc" id="L129">        return true;</span>
     }
 
     /**
@@ -110,7 +135,7 @@ public class ThemisReflectExternal
      * @return the class instance
      */
     public ThemisClassInstance getClassInstance() {
-<span class="fc" id="L113">        return theClassInstance;</span>
+<span class="fc" id="L138">        return theClassInstance;</span>
     }
 
     /**
@@ -119,8 +144,8 @@ public class ThemisReflectExternal
      * @param pClassInstance the class instance
      */
     public void setClassInstance(final ThemisClassInstance pClassInstance) {
-<span class="fc" id="L122">        theClassInstance = pClassInstance;</span>
-<span class="fc" id="L123">    }</span>
+<span class="fc" id="L147">        theClassInstance = pClassInstance;</span>
+<span class="fc" id="L148">    }</span>
 
     /**
      * Obtain the list of ancestors.
@@ -128,7 +153,7 @@ public class ThemisReflectExternal
      * @return the list
      */
     public List&lt;String&gt; getAncestors() {
-<span class="fc" id="L131">        return theAncestors;</span>
+<span class="fc" id="L156">        return theAncestors;</span>
     }
 
     /**
@@ -137,7 +162,7 @@ public class ThemisReflectExternal
      * @param pAncestor the ancestor
      */
     public void addAncestor(final ThemisReflectExternal pAncestor) {
-<span class="fc" id="L140">        theAncestors.add(pAncestor.getFullName());</span>
-<span class="fc" id="L141">    }</span>
+<span class="fc" id="L165">        theAncestors.add(pAncestor.getFullName());</span>
+<span class="fc" id="L166">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

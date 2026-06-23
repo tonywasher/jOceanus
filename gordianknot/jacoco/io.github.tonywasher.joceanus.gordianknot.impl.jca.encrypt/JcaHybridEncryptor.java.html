@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JcaHybridEncryptor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.jca.encrypt</a> &gt; <span class="el_source">JcaHybridEncryptor.java</span></div><h1>JcaHybridEncryptor.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.encrypt;
+
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreSM2EncryptionSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPublicKey;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import java.security.InvalidKeyException;
+
+/**
+ * Hybrid Encryptor.
+ */
+public class JcaHybridEncryptor
+        extends GordianCoreEncryptor {
+    /**
+     * Error string.
+     */
+    private static final String ERROR_INIT = &quot;Failed to initialise&quot;;
+
+    /**
+     * The underlying encryptor.
+     */
+    private final Cipher theEncryptor;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pSpec    the encryptorSpec
+     * @throws GordianException on error
+     */
+    JcaHybridEncryptor(final GordianBaseFactory pFactory,
+                       final GordianCoreEncryptorSpec pSpec) throws GordianException {
+        /* Initialise underlying cipher */
+<span class="fc" id="L65">        super(pFactory, pSpec);</span>
+<span class="fc" id="L66">        theEncryptor = JcaEncryptor.getJavaEncryptor(getAlgorithmName(pSpec));</span>
+<span class="fc" id="L67">    }</span>
+
+    @Override
+    protected JcaPublicKey getPublicKey() {
+<span class="fc" id="L71">        return (JcaPublicKey) super.getPublicKey();</span>
+    }
+
+    @Override
+    protected JcaPrivateKey getPrivateKey() {
+<span class="fc" id="L76">        return (JcaPrivateKey) super.getPrivateKey();</span>
+    }
+
+    @Override
+    public void initForEncrypt(final GordianKeyPair pKeyPair) throws GordianException {
+        try {
+            /* Initialise underlying cipher */
+<span class="fc" id="L83">            JcaKeyPair.checkKeyPair(pKeyPair);</span>
+<span class="fc" id="L84">            super.initForEncrypt(pKeyPair);</span>
+
+            /* Initialise for encryption */
+<span class="fc" id="L87">            theEncryptor.init(Cipher.ENCRYPT_MODE, getPublicKey().getPublicKey(), getRandom());</span>
+<span class="nc" id="L88">        } catch (InvalidKeyException e) {</span>
+<span class="nc" id="L89">            throw new GordianCryptoException(ERROR_INIT, e);</span>
+<span class="fc" id="L90">        }</span>
+<span class="fc" id="L91">    }</span>
+
+    @Override
+    public void initForDecrypt(final GordianKeyPair pKeyPair) throws GordianException {
+        try {
+            /* Initialise underlying cipher */
+<span class="fc" id="L97">            JcaKeyPair.checkKeyPair(pKeyPair);</span>
+<span class="fc" id="L98">            super.initForDecrypt(pKeyPair);</span>
+
+            /* Initialise for decryption */
+<span class="fc" id="L101">            theEncryptor.init(Cipher.DECRYPT_MODE, getPrivateKey().getPrivateKey());</span>
+<span class="nc" id="L102">        } catch (InvalidKeyException e) {</span>
+<span class="nc" id="L103">            throw new GordianCryptoException(ERROR_INIT, e);</span>
+<span class="fc" id="L104">        }</span>
+<span class="fc" id="L105">    }</span>
+
+    @Override
+    public byte[] encrypt(final byte[] pBytes) throws GordianException {
+        /* Check that we are in encryption mode */
+<span class="fc" id="L110">        checkMode(GordianEncryptMode.ENCRYPT);</span>
+
+        /* Encrypt the message */
+<span class="fc" id="L113">        return processData(pBytes);</span>
+    }
+
+    @Override
+    public byte[] decrypt(final byte[] pBytes) throws GordianException {
+        /* Check that we are in decryption mode */
+<span class="fc" id="L119">        checkMode(GordianEncryptMode.DECRYPT);</span>
+
+        /* Decrypt the message */
+<span class="fc" id="L122">        return processData(pBytes);</span>
+    }
+
+    /**
+     * Process a data buffer.
+     *
+     * @param pData the buffer to process
+     * @return the processed buffer
+     * @throws GordianException on error
+     */
+    private byte[] processData(final byte[] pData) throws GordianException {
+        try {
+<span class="fc" id="L134">            return theEncryptor.doFinal(pData, 0, pData.length);</span>
+<span class="nc" id="L135">        } catch (IllegalBlockSizeException</span>
+                 | BadPaddingException e) {
+<span class="nc" id="L137">            throw new GordianCryptoException(&quot;Failed to process data&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Obtain the algorithmName.
+     *
+     * @param pSpec the Spec
+     * @return the algorithm name
+     */
+    private static String getAlgorithmName(final GordianCoreEncryptorSpec pSpec) {
+        /* Switch on encryptor type */
+<span class="fc" id="L149">        final GordianCoreSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();</span>
+<span class="fc" id="L150">        final GordianDigestSpec myDigestSpec = mySpec.getDigestSpec();</span>
+<span class="fc" id="L151">        final GordianDigestType myDigestType = myDigestSpec.getDigestType();</span>
+<span class="fc bfc" id="L152" title="All 3 branches covered.">        return switch (myDigestType) {</span>
+<span class="fc" id="L153">            case SHA2 -&gt; &quot;SM2withSHA&quot; + myDigestSpec.getDigestLength();</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">            case BLAKE2 -&gt; &quot;SM2withBlake2&quot; + (GordianLength.LEN_512.equals(myDigestSpec.getDigestLength()) ? &quot;b&quot; : &quot;s&quot;);</span>
+<span class="fc" id="L155">            default -&gt; &quot;SM2with&quot; + myDigestType;</span>
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -16,12 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.sheets;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetStaticData;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
 
 /**
  * SheetStaticData extension for AccountCurrency.
@@ -33,7 +35,7 @@ public final class MoneyWiseSheetCurrency
     /**
      * NamedArea for AccountCurrencies.
      */
-<span class="fc" id="L36">    private static final String AREA_ACCOUNTCURRENCIES = MoneyWiseCurrency.LIST_NAME;</span>
+<span class="fc" id="L38">    private static final String AREA_ACCOUNTCURRENCIES = MoneyWiseCurrency.LIST_NAME;</span>
 
     /**
      * Default column.
@@ -45,52 +47,52 @@ public final class MoneyWiseSheetCurrency
      *
      * @param pReader the spreadsheet reader
      */
-    MoneyWiseSheetCurrency(final MoneyWiseReader pReader) {
+    MoneyWiseSheetCurrency(final PrometheusSheetReader pReader) {
         /* Call super-constructor */
-<span class="fc" id="L50">        super(pReader, AREA_ACCOUNTCURRENCIES);</span>
+<span class="fc" id="L52">        super(pReader, AREA_ACCOUNTCURRENCIES);</span>
 
         /* Access the list */
-<span class="fc" id="L53">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pReader.getData();</span>
-<span class="fc" id="L54">        setDataList(myData.getAccountCurrencies());</span>
-<span class="fc" id="L55">    }</span>
+<span class="fc" id="L55">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pReader.getData();</span>
+<span class="fc" id="L56">        setDataList(myData.getAccountCurrencies());</span>
+<span class="fc" id="L57">    }</span>
 
     /**
      * Constructor for creating a spreadsheet.
      *
      * @param pWriter the spreadsheet writer
      */
-    MoneyWiseSheetCurrency(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetCurrency(final PrometheusSheetWriter pWriter) {
         /* Call super-constructor */
-<span class="fc" id="L64">        super(pWriter, AREA_ACCOUNTCURRENCIES);</span>
+<span class="fc" id="L66">        super(pWriter, AREA_ACCOUNTCURRENCIES);</span>
 
         /* Access the list */
-<span class="fc" id="L67">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pWriter.getData();</span>
-<span class="fc" id="L68">        setDataList(myData.getAccountCurrencies());</span>
-<span class="fc" id="L69">    }</span>
+<span class="fc" id="L69">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pWriter.getData();</span>
+<span class="fc" id="L70">        setDataList(myData.getAccountCurrencies());</span>
+<span class="fc" id="L71">    }</span>
 
     @Override
     protected PrometheusDataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-<span class="fc" id="L74">        final PrometheusDataValues myValues = getRowValues(MoneyWiseCurrency.OBJECT_NAME);</span>
-<span class="fc" id="L75">        myValues.addValue(MoneyWiseStaticResource.CURRENCY_REPORTING, loadBoolean(COL_DEFAULT));</span>
+<span class="fc" id="L76">        final PrometheusDataValues myValues = getRowValues(MoneyWiseCurrency.OBJECT_NAME);</span>
+<span class="fc" id="L77">        myValues.addValue(MoneyWiseStaticResource.CURRENCY_REPORTING, loadBoolean(COL_DEFAULT));</span>
 
         /* Return the values */
-<span class="fc" id="L78">        return myValues;</span>
+<span class="fc" id="L80">        return myValues;</span>
     }
 
     @Override
     protected void insertSecureItem(final MoneyWiseCurrency pItem) throws OceanusException {
         /* Insert standard fields */
-<span class="fc" id="L84">        super.insertSecureItem(pItem);</span>
+<span class="fc" id="L86">        super.insertSecureItem(pItem);</span>
 
         /* Set default indication */
-<span class="fc" id="L87">        writeBoolean(COL_DEFAULT, pItem.isReporting());</span>
-<span class="fc" id="L88">    }</span>
+<span class="fc" id="L89">        writeBoolean(COL_DEFAULT, pItem.isReporting());</span>
+<span class="fc" id="L90">    }</span>
 
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-<span class="fc" id="L93">        return COL_DEFAULT;</span>
+<span class="fc" id="L95">        return COL_DEFAULT;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -16,10 +16,11 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTax.MoneyWiseUKTaxConfigCtl;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 /**
  * Additional Band UK Tax Allowance.
@@ -29,14 +30,14 @@ public class MoneyWiseUKAdditionalAllowance
     /**
      * Local Report fields.
      */
-<span class="fc" id="L32">    private static final MetisFieldSet&lt;MoneyWiseUKAdditionalAllowance&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKAdditionalAllowance.class);</span>
+<span class="fc" id="L33">    private static final MetisFieldSet&lt;MoneyWiseUKAdditionalAllowance&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKAdditionalAllowance.class);</span>
 
     /*
      * Declare Fields.
      */
     static {
-<span class="fc" id="L38">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.LIMIT_ADDALLOWANCE, MoneyWiseUKAdditionalAllowance::getAdditionalAllowanceLimit);</span>
-<span class="fc" id="L39">    }</span>
+<span class="fc" id="L39">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.LIMIT_ADDALLOWANCE, MoneyWiseUKAdditionalAllowance::getAdditionalAllowanceLimit);</span>
+<span class="fc" id="L40">    }</span>
 
     /**
      * IncomeBoundary.
@@ -61,9 +62,9 @@ public class MoneyWiseUKAdditionalAllowance
                                              final OceanusMoney pHiAgeAllowance,
                                              final OceanusMoney pAgeAllowanceLimit,
                                              final OceanusMoney pAddAllowLimit) {
-<span class="fc" id="L64">        super(pAllowance, pRentalAllowance, pCapitalAllowance, pLoAgeAllowance, pHiAgeAllowance, pAgeAllowanceLimit);</span>
-<span class="fc" id="L65">        theAddAllowLimit = pAddAllowLimit;</span>
-<span class="fc" id="L66">    }</span>
+<span class="fc" id="L65">        super(pAllowance, pRentalAllowance, pCapitalAllowance, pLoAgeAllowance, pHiAgeAllowance, pAgeAllowanceLimit);</span>
+<span class="fc" id="L66">        theAddAllowLimit = pAddAllowLimit;</span>
+<span class="fc" id="L67">    }</span>
 
     /**
      * Obtain the additional Allowance limit.
@@ -71,41 +72,41 @@ public class MoneyWiseUKAdditionalAllowance
      * @return the Limit
      */
     protected OceanusMoney getAdditionalAllowanceLimit() {
-<span class="nc" id="L74">        return theAddAllowLimit;</span>
+<span class="nc" id="L75">        return theAddAllowLimit;</span>
     }
 
     @Override
-    protected OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
+    public OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfigCtl pConfig) {
         /* Determine AgeRelated allowance */
-<span class="nc" id="L80">        OceanusMoney myAllowance = super.calculateBasicAllowance(pConfig);</span>
+<span class="nc" id="L81">        OceanusMoney myAllowance = super.calculateBasicAllowance(pConfig);</span>
 
         /* If we have additional tax possible and we are above the allowance limit */
-<span class="nc" id="L83">        final OceanusMoney myGross = pConfig.getGrossTaxable();</span>
-<span class="nc bnc" id="L84" title="All 2 branches missed.">        if (myGross.compareTo(theAddAllowLimit) &gt; 0) {</span>
+<span class="nc" id="L84">        final OceanusMoney myGross = pConfig.getGrossTaxable();</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        if (myGross.compareTo(theAddAllowLimit) &gt; 0) {</span>
             /* Calculate and apply the reduction */
-<span class="nc" id="L86">            final OceanusMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAddAllowLimit);</span>
-<span class="nc" id="L87">            myAllowance = new OceanusMoney(myAllowance);</span>
-<span class="nc" id="L88">            myAllowance.subtractAmount(myReduction);</span>
+<span class="nc" id="L87">            final OceanusMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAddAllowLimit);</span>
+<span class="nc" id="L88">            myAllowance = new OceanusMoney(myAllowance);</span>
+<span class="nc" id="L89">            myAllowance.subtractAmount(myReduction);</span>
 
             /* If we have reduced below zero */
-<span class="nc bnc" id="L91" title="All 2 branches missed.">            if (!myAllowance.isPositive()) {</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">            if (!myAllowance.isPositive()) {</span>
                 /* Set the allowance to zero */
-<span class="nc" id="L93">                myAllowance.setZero();</span>
+<span class="nc" id="L94">                myAllowance.setZero();</span>
             }
         }
 
         /* Return the allowance */
-<span class="nc" id="L98">        return myAllowance;</span>
+<span class="nc" id="L99">        return myAllowance;</span>
     }
 
     @Override
     public MetisFieldSet&lt;MoneyWiseUKAdditionalAllowance&gt; getDataFieldSet() {
-<span class="nc" id="L103">        return FIELD_DEFS;</span>
+<span class="nc" id="L104">        return FIELD_DEFS;</span>
     }
 
     @Override
     public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L108">        return FIELD_DEFS.getName();</span>
+<span class="nc" id="L109">        return FIELD_DEFS.getName();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

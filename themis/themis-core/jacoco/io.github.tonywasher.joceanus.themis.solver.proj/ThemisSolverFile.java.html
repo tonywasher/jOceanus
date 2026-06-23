@@ -16,8 +16,11 @@
  */
 package io.github.tonywasher.joceanus.themis.solver.proj;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisFile;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisFile;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverFileDef;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverPackageDef;
 
@@ -29,6 +32,23 @@ import java.util.List;
  */
 public class ThemisSolverFile
         implements ThemisSolverFileDef, Comparable&lt;ThemisSolverFile&gt; {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L38">    private static final MetisFieldSet&lt;ThemisSolverFile&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSolverFile.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L44">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_CLASSES, ThemisSolverFile::getClasses);</span>
+<span class="fc" id="L45">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisSolverFile::getUnderlyingFile);</span>
+<span class="fc" id="L46">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_REFERENCED, ThemisSolverFile::getReferenced);</span>
+<span class="fc" id="L47">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_LOCALREFS, ThemisSolverFile::getLocalReferences);</span>
+<span class="fc" id="L48">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_IMPLIEDREFS, ThemisSolverFile::getImpliedReferences);</span>
+<span class="fc" id="L49">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_CIRCULAR, ThemisSolverFile::isCircular);</span>
+<span class="fc" id="L50">    }</span>
+
     /**
      * The owning package.
      */
@@ -81,38 +101,48 @@ public class ThemisSolverFile
      * @param pFile    the parsed file
      */
     ThemisSolverFile(final ThemisSolverPackageDef pPackage,
-<span class="fc" id="L84">                     final ThemisFile pFile) {</span>
+<span class="fc" id="L104">                     final ThemisFile pFile) {</span>
         /* Store the parameters */
-<span class="fc" id="L86">        thePackage = pPackage;</span>
-<span class="fc" id="L87">        theFile = pFile;</span>
+<span class="fc" id="L106">        thePackage = pPackage;</span>
+<span class="fc" id="L107">        theFile = pFile;</span>
 
         /* Note that we need preProcessing */
-<span class="fc" id="L90">        needsPreProcess = true;</span>
+<span class="fc" id="L110">        needsPreProcess = true;</span>
 
         /* Populate the classList */
-<span class="fc" id="L93">        theClasses = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L94" title="All 2 branches covered.">        for (ThemisClassInstance myClass : theFile.getClasses()) {</span>
-<span class="fc" id="L95">            final ThemisSolverClass mySolverClass = new ThemisSolverClass(this, myClass);</span>
-<span class="fc" id="L96">            theClasses.add(mySolverClass);</span>
-<span class="fc" id="L97">        }</span>
+<span class="fc" id="L113">        theClasses = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        for (ThemisClassInstance myClass : theFile.getClasses()) {</span>
+<span class="fc" id="L115">            final ThemisSolverClass mySolverClass = new ThemisSolverClass(this, myClass);</span>
+<span class="fc" id="L116">            theClasses.add(mySolverClass);</span>
+<span class="fc" id="L117">        }</span>
 
         /* Determine top-level class */
-<span class="fc" id="L100">        theTopLevel = theClasses.stream().filter(ThemisSolverClass::isTopLevel).findFirst().orElse(null);</span>
+<span class="fc" id="L120">        theTopLevel = theClasses.stream().filter(ThemisSolverClass::isTopLevel).findFirst().orElse(null);</span>
 
         /* Create the reference lists */
-<span class="fc" id="L103">        theReferenced = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L104">        theLocalReferences = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L105">        theImpliedReferences = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L106">    }</span>
+<span class="fc" id="L123">        theReferenced = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L124">        theLocalReferences = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L125">        theImpliedReferences = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L126">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisSolverFile&gt; getDataFieldSet() {
+<span class="nc" id="L130">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L135">        return toString();</span>
+    }
 
     @Override
     public ThemisSolverPackageDef getOwningPackage() {
-<span class="fc" id="L110">        return thePackage;</span>
+<span class="fc" id="L140">        return thePackage;</span>
     }
 
     @Override
     public ThemisFile getUnderlyingFile() {
-<span class="fc" id="L115">        return theFile;</span>
+<span class="fc" id="L145">        return theFile;</span>
     }
 
     /**
@@ -121,7 +151,7 @@ public class ThemisSolverFile
      * @return the top-level
      */
     public ThemisSolverClass getTopLevel() {
-<span class="fc" id="L124">        return theTopLevel;</span>
+<span class="fc" id="L154">        return theTopLevel;</span>
     }
 
     /**
@@ -130,7 +160,7 @@ public class ThemisSolverFile
      * @return the classes
      */
     public List&lt;ThemisSolverClass&gt; getClasses() {
-<span class="fc" id="L133">        return theClasses;</span>
+<span class="fc" id="L163">        return theClasses;</span>
     }
 
     /**
@@ -139,7 +169,7 @@ public class ThemisSolverFile
      * @return the classes
      */
     public List&lt;ThemisSolverClass&gt; getReferenced() {
-<span class="fc" id="L142">        return theReferenced;</span>
+<span class="fc" id="L172">        return theReferenced;</span>
     }
 
     /**
@@ -148,7 +178,7 @@ public class ThemisSolverFile
      * @return the local references
      */
     public List&lt;ThemisSolverClass&gt; getLocalReferences() {
-<span class="fc" id="L151">        return theLocalReferences;</span>
+<span class="fc" id="L181">        return theLocalReferences;</span>
     }
 
     /**
@@ -157,15 +187,15 @@ public class ThemisSolverFile
      * @return the implied references
      */
     public List&lt;ThemisSolverClass&gt; getImpliedReferences() {
-<span class="nc" id="L160">        return theImpliedReferences;</span>
+<span class="nc" id="L190">        return theImpliedReferences;</span>
     }
 
     /**
      * Mark the file as pre-processed.
      */
     public void markPreProcessed() {
-<span class="fc" id="L167">        needsPreProcess = false;</span>
-<span class="fc" id="L168">    }</span>
+<span class="fc" id="L197">        needsPreProcess = false;</span>
+<span class="fc" id="L198">    }</span>
 
     /**
      * Does this file need preProcessing?
@@ -173,7 +203,7 @@ public class ThemisSolverFile
      * @return true/false
      */
     public boolean needsPreProcess() {
-<span class="fc" id="L176">        return needsPreProcess;</span>
+<span class="fc" id="L206">        return needsPreProcess;</span>
     }
 
     /**
@@ -182,7 +212,7 @@ public class ThemisSolverFile
      * @return true/false
      */
     public boolean isCircular() {
-<span class="nc" id="L185">        return isCircular;</span>
+<span class="nc" id="L215">        return isCircular;</span>
     }
 
     /**
@@ -191,12 +221,12 @@ public class ThemisSolverFile
      * @return the location
      */
     public String getLocation() {
-<span class="nc" id="L194">        return theFile.getLocation();</span>
+<span class="nc" id="L224">        return theFile.getLocation();</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L199">        return theFile.toString();</span>
+<span class="nc" id="L229">        return theFile.toString();</span>
     }
 
     /**
@@ -206,31 +236,31 @@ public class ThemisSolverFile
      */
     public void setReferenced(final List&lt;ThemisSolverClass&gt; pReferenced) {
         /* Add all references except for a self-reference */
-<span class="fc bfc" id="L209" title="All 2 branches covered.">        theReferenced.addAll(pReferenced.stream().filter(s -&gt; !s.equals(getTopLevel())).toList());</span>
+<span class="fc bfc" id="L239" title="All 2 branches covered.">        theReferenced.addAll(pReferenced.stream().filter(s -&gt; !s.equals(getTopLevel())).toList());</span>
 
         /* Build local reference list */
-<span class="fc" id="L212">        final String myPackage = theTopLevel.getPackageName();</span>
-<span class="fc bfc" id="L213" title="All 2 branches covered.">        for (ThemisSolverClass myClass : theReferenced) {</span>
+<span class="fc" id="L242">        final String myPackage = theTopLevel.getPackageName();</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        for (ThemisSolverClass myClass : theReferenced) {</span>
             /* Add reference if this is a local class */
-<span class="fc bfc" id="L215" title="All 2 branches covered.">            if (myClass.getPackageName().equals(myPackage)) {</span>
-<span class="fc" id="L216">                theLocalReferences.add(myClass);</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">            if (myClass.getPackageName().equals(myPackage)) {</span>
+<span class="fc" id="L246">                theLocalReferences.add(myClass);</span>
             }
-<span class="fc" id="L218">        }</span>
-<span class="fc" id="L219">    }</span>
+<span class="fc" id="L248">        }</span>
+<span class="fc" id="L249">    }</span>
 
     /**
      * process local references.
      */
     public void processLocalReferences() {
         /* Loop through the referenced local classes */
-<span class="fc bfc" id="L226" title="All 2 branches covered.">        for (ThemisSolverClass myClass : theLocalReferences) {</span>
+<span class="fc bfc" id="L256" title="All 2 branches covered.">        for (ThemisSolverClass myClass : theLocalReferences) {</span>
             /* Process the class */
-<span class="fc" id="L228">            processLocalReferences(myClass);</span>
-<span class="fc" id="L229">        }</span>
+<span class="fc" id="L258">            processLocalReferences(myClass);</span>
+<span class="fc" id="L259">        }</span>
 
         /* Determine whether we are circular */
-<span class="fc" id="L232">        isCircular = theImpliedReferences.contains(theTopLevel);</span>
-<span class="fc" id="L233">    }</span>
+<span class="fc" id="L262">        isCircular = theImpliedReferences.contains(theTopLevel);</span>
+<span class="fc" id="L263">    }</span>
 
     /**
      * process local references.
@@ -239,69 +269,69 @@ public class ThemisSolverFile
      */
     private void processLocalReferences(final ThemisSolverClass pClass) {
         /* If this is not already in the local reference list */
-<span class="fc bfc" id="L242" title="All 2 branches covered.">        if (!theImpliedReferences.contains(pClass)) {</span>
+<span class="fc bfc" id="L272" title="All 2 branches covered.">        if (!theImpliedReferences.contains(pClass)) {</span>
             /* Add the class */
-<span class="fc" id="L244">            theImpliedReferences.add(pClass);</span>
+<span class="fc" id="L274">            theImpliedReferences.add(pClass);</span>
 
             /* Only process further if we have not found circularity */
-<span class="fc bfc" id="L247" title="All 2 branches covered.">            if (!pClass.equals(theTopLevel)) {</span>
+<span class="pc bpc" id="L277" title="1 of 2 branches missed.">            if (!pClass.equals(theTopLevel)) {</span>
                 /* Loop through the local references */
-<span class="fc bfc" id="L249" title="All 2 branches covered.">                for (ThemisSolverClass myClass : ((ThemisSolverFile) pClass.getOwningFile()).getLocalReferences()) {</span>
+<span class="fc bfc" id="L279" title="All 2 branches covered.">                for (ThemisSolverClass myClass : ((ThemisSolverFile) pClass.getOwningFile()).getLocalReferences()) {</span>
                     /* Process the local references */
-<span class="fc" id="L251">                    processLocalReferences(myClass);</span>
-<span class="fc" id="L252">                }</span>
+<span class="fc" id="L281">                    processLocalReferences(myClass);</span>
+<span class="fc" id="L282">                }</span>
             }
         }
-<span class="fc" id="L255">    }</span>
+<span class="fc" id="L285">    }</span>
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-<span class="nc bnc" id="L260" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L261">            return true;</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L291">            return true;</span>
         }
-<span class="nc bnc" id="L263" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L264">            return false;</span>
+<span class="nc bnc" id="L293" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L294">            return false;</span>
         }
 
         /* Make sure that the object is a File */
-<span class="nc bnc" id="L268" title="All 2 branches missed.">        if (!(pThat instanceof ThemisSolverFile myThat)) {</span>
-<span class="nc" id="L269">            return false;</span>
+<span class="nc bnc" id="L298" title="All 2 branches missed.">        if (!(pThat instanceof ThemisSolverFile myThat)) {</span>
+<span class="nc" id="L299">            return false;</span>
         }
 
         /* Check name of package */
-<span class="nc" id="L273">        return getLocation().equals(myThat.getLocation());</span>
+<span class="nc" id="L303">        return getLocation().equals(myThat.getLocation());</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L278">        return theFile.getLocation().hashCode();</span>
+<span class="nc" id="L308">        return theFile.getLocation().hashCode();</span>
     }
 
     @Override
     public int compareTo(final ThemisSolverFile pThat) {
         /* Access top-level class */
-<span class="nc" id="L284">        final ThemisSolverClass myClass = pThat.getTopLevel();</span>
+<span class="nc" id="L314">        final ThemisSolverClass myClass = pThat.getTopLevel();</span>
 
         /* Handle simple dependency */
-<span class="nc bnc" id="L287" title="All 2 branches missed.">        if (theImpliedReferences.contains(myClass)</span>
-<span class="nc bnc" id="L288" title="All 2 branches missed.">                &amp;&amp; !pThat.getImpliedReferences().contains(theTopLevel)) {</span>
-<span class="nc" id="L289">            return -1;</span>
+<span class="nc bnc" id="L317" title="All 2 branches missed.">        if (theImpliedReferences.contains(myClass)</span>
+<span class="nc bnc" id="L318" title="All 2 branches missed.">                &amp;&amp; !pThat.getImpliedReferences().contains(theTopLevel)) {</span>
+<span class="nc" id="L319">            return -1;</span>
         }
-<span class="nc bnc" id="L291" title="All 2 branches missed.">        if (pThat.getImpliedReferences().contains(theTopLevel)</span>
-<span class="nc bnc" id="L292" title="All 2 branches missed.">                &amp;&amp; !theImpliedReferences.contains(myClass)) {</span>
-<span class="nc" id="L293">            return 1;</span>
+<span class="nc bnc" id="L321" title="All 2 branches missed.">        if (pThat.getImpliedReferences().contains(theTopLevel)</span>
+<span class="nc bnc" id="L322" title="All 2 branches missed.">                &amp;&amp; !theImpliedReferences.contains(myClass)) {</span>
+<span class="nc" id="L323">            return 1;</span>
         }
 
         /* Sort on number of dependencies */
-<span class="nc" id="L297">        final int iDiff = pThat.theImpliedReferences.size()</span>
-<span class="nc" id="L298">                - theImpliedReferences.size();</span>
-<span class="nc bnc" id="L299" title="All 2 branches missed.">        if (iDiff != 0) {</span>
-<span class="nc" id="L300">            return iDiff;</span>
+<span class="nc" id="L327">        final int iDiff = pThat.theImpliedReferences.size()</span>
+<span class="nc" id="L328">                - theImpliedReferences.size();</span>
+<span class="nc bnc" id="L329" title="All 2 branches missed.">        if (iDiff != 0) {</span>
+<span class="nc" id="L330">            return iDiff;</span>
         }
 
         /* If all else fails rely on alphabetical */
-<span class="nc" id="L304">        return getLocation().compareTo(pThat.getLocation());</span>
+<span class="nc" id="L334">        return getLocation().compareTo(pThat.getLocation());</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

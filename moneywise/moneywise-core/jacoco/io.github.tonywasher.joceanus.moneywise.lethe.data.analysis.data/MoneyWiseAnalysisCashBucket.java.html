@@ -16,13 +16,13 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 
 import java.util.Iterator;
 
@@ -54,7 +54,7 @@ public final class MoneyWiseAnalysisCashBucket
      * @param pAnalysis the analysis
      * @param pCash     the cash account
      */
-    private MoneyWiseAnalysisCashBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisCashBucket(final MoneyWiseAnalysisControl pAnalysis,
                                         final MoneyWiseCash pCash) {
         /* Call super-constructor */
 <span class="nc" id="L60">        super(pAnalysis, pCash);</span>
@@ -69,7 +69,7 @@ public final class MoneyWiseAnalysisCashBucket
      * @param pAnalysis the analysis
      * @param pBase     the underlying bucket
      */
-    private MoneyWiseAnalysisCashBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisCashBucket(final MoneyWiseAnalysisControl pAnalysis,
                                         final MoneyWiseAnalysisCashBucket pBase) {
         /* Call super-constructor */
 <span class="nc" id="L75">        super(pAnalysis, pBase);</span>
@@ -85,7 +85,7 @@ public final class MoneyWiseAnalysisCashBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    private MoneyWiseAnalysisCashBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisCashBucket(final MoneyWiseAnalysisControl pAnalysis,
                                         final MoneyWiseAnalysisCashBucket pBase,
                                         final OceanusDate pDate) {
         /* Call super-constructor */
@@ -102,7 +102,7 @@ public final class MoneyWiseAnalysisCashBucket
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    private MoneyWiseAnalysisCashBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisCashBucket(final MoneyWiseAnalysisControl pAnalysis,
                                         final MoneyWiseAnalysisCashBucket pBase,
                                         final OceanusDateRange pRange) {
         /* Call super-constructor */
@@ -141,7 +141,7 @@ public final class MoneyWiseAnalysisCashBucket
          *
          * @param pAnalysis the analysis
          */
-        MoneyWiseAnalysisCashBucketList(final MoneyWiseAnalysis pAnalysis) {
+        MoneyWiseAnalysisCashBucketList(final MoneyWiseAnalysisControl pAnalysis) {
             /* Initialise class */
 <span class="fc" id="L146">            super(pAnalysis);</span>
 <span class="fc" id="L147">        }</span>
@@ -152,7 +152,7 @@ public final class MoneyWiseAnalysisCashBucket
          * @param pAnalysis the analysis
          * @param pBase     the base list
          */
-        MoneyWiseAnalysisCashBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisCashBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                         final MoneyWiseAnalysisCashBucketList pBase) {
             /* Initialise class */
 <span class="nc" id="L158">            this(pAnalysis);</span>
@@ -168,7 +168,7 @@ public final class MoneyWiseAnalysisCashBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        MoneyWiseAnalysisCashBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisCashBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                         final MoneyWiseAnalysisCashBucketList pBase,
                                         final OceanusDate pDate) {
             /* Initialise class */
@@ -185,7 +185,7 @@ public final class MoneyWiseAnalysisCashBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        MoneyWiseAnalysisCashBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisCashBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                         final MoneyWiseAnalysisCashBucketList pBase,
                                         final OceanusDateRange pRange) {
             /* Initialise class */
@@ -223,7 +223,7 @@ public final class MoneyWiseAnalysisCashBucket
             /* Return the first cash in the list if it exists */
 <span class="nc bnc" id="L224" title="All 2 branches missed.">            return isEmpty()</span>
 <span class="nc" id="L225">                    ? null</span>
-<span class="nc" id="L226">                    : getUnderlyingList().get(0);</span>
+<span class="nc" id="L226">                    : getUnderlyingList().getFirst();</span>
         }
 
         /**
@@ -274,4 +274,4 @@ public final class MoneyWiseAnalysisCashBucket
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

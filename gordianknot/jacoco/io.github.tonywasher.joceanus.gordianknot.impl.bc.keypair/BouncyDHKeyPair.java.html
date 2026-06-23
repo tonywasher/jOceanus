@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyDHKeyPair.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair</a> &gt; <span class="el_source">BouncyDHKeyPair.java</span></div><h1>BouncyDHKeyPair.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPairGenerator.BouncyKeyFactorySet;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser.GordianDHEncodedParser;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreDHSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.pkcs.DHParameter;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x9.DomainParameters;
+import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
+import org.bouncycastle.crypto.generators.DHKeyPairGenerator;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.DHKeyGenerationParameters;
+import org.bouncycastle.crypto.params.DHParameters;
+import org.bouncycastle.crypto.params.DHPrivateKeyParameters;
+import org.bouncycastle.crypto.params.DHPublicKeyParameters;
+import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPrivateKey;
+import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPublicKey;
+import org.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
+
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Objects;
+
+/**
+ * DiffieHellman KeyPair classes.
+ */
+public final class BouncyDHKeyPair {
+    /**
+     * Private constructor.
+     */
+    private BouncyDHKeyPair() {
+    }
+
+    /**
+     * Bouncy DH PublicKey.
+     */
+    public static class BouncyDHPublicKey
+            extends BouncyPublicKey&lt;DHPublicKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec   the keySpec
+         * @param pPublicKey the public key
+         */
+        BouncyDHPublicKey(final GordianKeyPairSpec pKeySpec,
+                          final DHPublicKeyParameters pPublicKey) {
+<span class="fc" id="L75">            super(pKeySpec, pPublicKey);</span>
+<span class="fc" id="L76">        }</span>
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L81">            final DHPublicKeyParameters myThis = getPublicKey();</span>
+<span class="fc" id="L82">            final DHPublicKeyParameters myThat = (DHPublicKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="fc" id="L85">            return Objects.equals(myThis, myThat);</span>
+        }
+    }
+
+    /**
+     * Bouncy DH PrivateKey.
+     */
+    public static class BouncyDHPrivateKey
+            extends BouncyPrivateKey&lt;DHPrivateKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec    the keySpec
+         * @param pPrivateKey the private key
+         */
+        BouncyDHPrivateKey(final GordianKeyPairSpec pKeySpec,
+                           final DHPrivateKeyParameters pPrivateKey) {
+<span class="fc" id="L102">            super(pKeySpec, pPrivateKey);</span>
+<span class="fc" id="L103">        }</span>
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L108">            final DHPrivateKeyParameters myThis = getPrivateKey();</span>
+<span class="fc" id="L109">            final DHPrivateKeyParameters myThat = (DHPrivateKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="fc" id="L112">            return Objects.equals(myThis, myThat);</span>
+        }
+    }
+
+    /**
+     * BouncyCastle DH KeyPair generator.
+     */
+    public static class BouncyDHKeyPairGenerator
+            extends BouncyKeyPairGenerator&lt;DHPrivateKeyParameters, DHPublicKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         */
+        BouncyDHKeyPairGenerator(final GordianBaseFactory pFactory,
+                                 final GordianKeyPairSpec pKeySpec) {
+            /* Initialize underlying class */
+<span class="fc" id="L130">            super(pFactory, pKeySpec);</span>
+
+            /* Create the parameter generator */
+<span class="fc" id="L133">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;</span>
+<span class="fc" id="L134">            final GordianCoreDHSpec myGroup = myKeySpec.getDHSpec();</span>
+<span class="fc" id="L135">            final DHParameters myParms = myGroup.getParameters();</span>
+<span class="fc" id="L136">            final DHKeyGenerationParameters myParams = new DHKeyGenerationParameters(getRandom(), myParms);</span>
+
+            /* Create and initialise the generator */
+<span class="fc" id="L139">            setGenerator(new DHKeyPairGenerator(), myParams);</span>
+<span class="fc" id="L140">            setFactorySet(BouncyDHKeyFactorySet.INSTANCE);</span>
+<span class="fc" id="L141">        }</span>
+
+        @Override
+        BouncyDHPrivateKey newPrivateKey(final AsymmetricKeyParameter pThat) {
+<span class="fc" id="L145">            return new BouncyDHPrivateKey(getKeySpec(), (DHPrivateKeyParameters) pThat);</span>
+        }
+
+        @Override
+        BouncyDHPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
+<span class="fc" id="L150">            return new BouncyDHPublicKey(getKeySpec(), (DHPublicKeyParameters) pThat);</span>
+        }
+    }
+
+    /**
+     * DH KeyFactorySet.
+     */
+<span class="fc" id="L157">    private enum BouncyDHKeyFactorySet</span>
+            implements BouncyKeyFactorySet {
+        /**
+         * Instance.
+         */
+<span class="fc" id="L162">        INSTANCE;</span>
+
+        @Override
+        public AsymmetricKeyParameter parsePKCS8EncodedKeySpec(final PKCS8EncodedKeySpec pEncodedKey) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Parse the encoded keySpec */
+<span class="fc" id="L169">                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pEncodedKey.getEncoded());</span>
+<span class="fc" id="L170">                final BCDHPrivateKey myKey = new BCDHPrivateKey(myInfo);</span>
+<span class="fc" id="L171">                final DHParameters myParms = GordianDHEncodedParser.determineParameters(myInfo.getPrivateKeyAlgorithm());</span>
+<span class="fc" id="L172">                return new DHPrivateKeyParameters(myKey.getX(), myParms);</span>
+
+<span class="nc" id="L174">            } catch (IOException e) {</span>
+<span class="nc" id="L175">                throw new GordianCryptoException(BouncyKeyPairGenerator.ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public PKCS8EncodedKeySpec createPKCS8EncodedKeySpec(final AsymmetricKeyParameter pParams) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* build and return the encoding */
+<span class="fc" id="L184">                final DHPrivateKeyParameters myKey = (DHPrivateKeyParameters) pParams;</span>
+<span class="fc" id="L185">                final DHParameters myParms = myKey.getParameters();</span>
+<span class="fc" id="L186">                final AlgorithmIdentifier myId = getAlgorithmIdentifier(myParms);</span>
+<span class="fc" id="L187">                final PrivateKeyInfo myInfo = new PrivateKeyInfo(myId, new ASN1Integer(myKey.getX()));</span>
+<span class="fc" id="L188">                return new PKCS8EncodedKeySpec(myInfo.getEncoded());</span>
+
+<span class="nc" id="L190">            } catch (IOException e) {</span>
+<span class="nc" id="L191">                throw new GordianCryptoException(BouncyKeyPairGenerator.ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public AsymmetricKeyParameter parseX509EncodedKeySpec(final X509EncodedKeySpec pEncodedKey) {
+            /* Parse the encoded keySpec */
+<span class="fc" id="L198">            final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());</span>
+<span class="fc" id="L199">            final BCDHPublicKey myKey = new BCDHPublicKey(myInfo);</span>
+<span class="fc" id="L200">            return myKey.engineGetKeyParameters();</span>
+        }
+
+        @Override
+        public X509EncodedKeySpec createX509EncodedKeySpec(final AsymmetricKeyParameter pParams) {
+            /* build and return the encoding */
+<span class="fc" id="L206">            final DHPublicKeyParameters myKey = (DHPublicKeyParameters) pParams;</span>
+<span class="fc" id="L207">            final DHParameters myParms = myKey.getParameters();</span>
+<span class="fc" id="L208">            final AlgorithmIdentifier myId = getAlgorithmIdentifier(myParms);</span>
+<span class="fc" id="L209">            final byte[] myBytes = KeyUtil.getEncodedSubjectPublicKeyInfo(myId, new ASN1Integer(myKey.getY()));</span>
+<span class="fc" id="L210">            return new X509EncodedKeySpec(myBytes);</span>
+        }
+
+        /**
+         * Obtain algorithm Id from DHParameters.
+         *
+         * @param pParams the parameters
+         * @return the algorithmId.
+         */
+        private static AlgorithmIdentifier getAlgorithmIdentifier(final DHParameters pParams) {
+            /* If this is a public # algorithm */
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">            return pParams.getQ() != null</span>
+<span class="fc" id="L222">                    ? new AlgorithmIdentifier(X9ObjectIdentifiers.dhpublicnumber,</span>
+<span class="fc" id="L223">                    new DomainParameters(pParams.getP(), pParams.getG(), pParams.getQ(), pParams.getJ(), null).toASN1Primitive())</span>
+<span class="nc" id="L224">                    : new AlgorithmIdentifier(PKCSObjectIdentifiers.dhKeyAgreement,</span>
+<span class="nc" id="L225">                    new DHParameter(pParams.getP(), pParams.getG(), pParams.getL()).toASN1Primitive());</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

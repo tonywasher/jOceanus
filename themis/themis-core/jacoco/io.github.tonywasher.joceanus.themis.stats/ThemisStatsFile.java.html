@@ -16,7 +16,10 @@
  */
 package io.github.tonywasher.joceanus.themis.stats;
 
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisFile;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +29,20 @@ import java.util.List;
  */
 public class ThemisStatsFile
         implements ThemisStatsElement {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L35">    private static final MetisFieldSet&lt;ThemisStatsFile&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisStatsFile.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L41">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_CLASSES, ThemisStatsFile::getClasses);</span>
+<span class="fc" id="L42">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisStatsFile::getUnderlying);</span>
+<span class="fc" id="L43">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_STATS, ThemisStatsFile::getStats);</span>
+<span class="fc" id="L44">    }</span>
+
     /**
      * The underlying file.
      */
@@ -46,24 +63,34 @@ public class ThemisStatsFile
      *
      * @param pFile the parsed file
      */
-<span class="fc" id="L49">    ThemisStatsFile(final ThemisFile pFile) {</span>
+<span class="fc" id="L66">    ThemisStatsFile(final ThemisFile pFile) {</span>
         /* Store the file */
-<span class="fc" id="L51">        theFile = pFile;</span>
+<span class="fc" id="L68">        theFile = pFile;</span>
 
         /* Create the stats */
-<span class="fc" id="L54">        theStats = new ThemisStats();</span>
+<span class="fc" id="L71">        theStats = new ThemisStats();</span>
 
         /* Populate the classList */
-<span class="fc" id="L57">        theClasses = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L74">        theClasses = new ArrayList&lt;&gt;();</span>
 
         /* Create a statsParser */
-<span class="fc" id="L60">        final ThemisStatsParser myParser = new ThemisStatsParser();</span>
-<span class="fc" id="L61">        myParser.parseElement(this, theFile.getContents());</span>
-<span class="fc" id="L62">    }</span>
+<span class="fc" id="L77">        final ThemisStatsParser myParser = new ThemisStatsParser();</span>
+<span class="fc" id="L78">        myParser.parseElement(this, theFile.getContents());</span>
+<span class="fc" id="L79">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisStatsFile&gt; getDataFieldSet() {
+<span class="nc" id="L83">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L88">        return toString();</span>
+    }
 
     @Override
     public String getName() {
-<span class="nc" id="L66">        return theFile.getName();</span>
+<span class="nc" id="L93">        return theFile.getName();</span>
     }
 
     /**
@@ -72,12 +99,12 @@ public class ThemisStatsFile
      * @return the file
      */
     public ThemisFile getUnderlying() {
-<span class="nc" id="L75">        return theFile;</span>
+<span class="nc" id="L102">        return theFile;</span>
     }
 
     @Override
     public ThemisStats getStats() {
-<span class="nc" id="L80">        return theStats;</span>
+<span class="nc" id="L107">        return theStats;</span>
     }
 
     /**
@@ -86,41 +113,41 @@ public class ThemisStatsFile
      * @return the class map
      */
     public List&lt;ThemisStatsClass&gt; getClasses() {
-<span class="nc" id="L89">        return theClasses;</span>
+<span class="nc" id="L116">        return theClasses;</span>
     }
 
     @Override
     public void addClass(final ThemisStatsElement pElement) {
-<span class="fc" id="L94">        theClasses.add((ThemisStatsClass) pElement);</span>
-<span class="fc" id="L95">    }</span>
+<span class="fc" id="L121">        theClasses.add((ThemisStatsClass) pElement);</span>
+<span class="fc" id="L122">    }</span>
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-<span class="nc bnc" id="L100" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L101">            return true;</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L128">            return true;</span>
         }
-<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L104">            return false;</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L131">            return false;</span>
         }
 
         /* Make sure that the object is a StatsFile */
-<span class="nc bnc" id="L108" title="All 2 branches missed.">        if (!(pThat instanceof ThemisStatsFile myThat)) {</span>
-<span class="nc" id="L109">            return false;</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        if (!(pThat instanceof ThemisStatsFile myThat)) {</span>
+<span class="nc" id="L136">            return false;</span>
         }
 
         /* Check that file is the same */
-<span class="nc" id="L113">        return theFile.equals(myThat.getUnderlying());</span>
+<span class="nc" id="L140">        return theFile.equals(myThat.getUnderlying());</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L118">        return theFile.hashCode();</span>
+<span class="nc" id="L145">        return theFile.hashCode();</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L123">        return theFile.toString();</span>
+<span class="nc" id="L150">        return theFile.toString();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

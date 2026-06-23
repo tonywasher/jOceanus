@@ -392,7 +392,7 @@ public class OceanusDateConfig
 <span class="nc bnc" id="L392" title="All 2 branches missed.">        if (theEarliest != null</span>
 <span class="nc bnc" id="L393" title="All 2 branches missed.">                &amp;&amp; theMonth.compareTo(theEarliest) &lt; 0) {</span>
 <span class="nc" id="L394">            theMonth = new OceanusDate(theEarliest);</span>
-<span class="nc" id="L395">            theMonth.startCalendarMonth();</span>
+<span class="nc" id="L395">            theMonth = OceanusDateUtils.startCalendarMonth(theEarliest);</span>
         }
 <span class="nc" id="L397">    }</span>
 
@@ -403,10 +403,9 @@ public class OceanusDateConfig
 <span class="nc" id="L403">        theMonth.adjustYear(1);</span>
 <span class="nc bnc" id="L404" title="All 2 branches missed.">        if (theLatest != null</span>
 <span class="nc bnc" id="L405" title="All 2 branches missed.">                &amp;&amp; theMonth.compareTo(theLatest) &gt; 0) {</span>
-<span class="nc" id="L406">            theMonth = new OceanusDate(theLatest);</span>
-<span class="nc" id="L407">            theMonth.startCalendarMonth();</span>
+<span class="nc" id="L406">            theMonth = OceanusDateUtils.startCalendarMonth(theLatest);</span>
         }
-<span class="nc" id="L409">    }</span>
+<span class="nc" id="L408">    }</span>
 
     /**
      * Set the selected date.
@@ -415,8 +414,8 @@ public class OceanusDateConfig
      */
     public final void setSelectedDate(final OceanusDate pDate) {
         /* Store the date */
-<span class="nc" id="L418">        theSelected = pDate;</span>
-<span class="nc" id="L419">    }</span>
+<span class="nc" id="L417">        theSelected = pDate;</span>
+<span class="nc" id="L418">    }</span>
 
     /**
      * Set selected day in current month (called from dialog).
@@ -424,51 +423,50 @@ public class OceanusDateConfig
      * @param pDay the selected day
      */
     public void setSelectedDay(final int pDay) {
-<span class="nc" id="L427">        final OceanusDate myOld = getSelectedDate();</span>
-<span class="nc" id="L428">        OceanusDate myNew = null;</span>
+<span class="nc" id="L426">        final OceanusDate myOld = getSelectedDate();</span>
+<span class="nc" id="L427">        OceanusDate myNew = null;</span>
 
         /* If we are selecting a proper date */
-<span class="nc bnc" id="L431" title="All 2 branches missed.">        if (pDay &gt; 0) {</span>
+<span class="nc bnc" id="L430" title="All 2 branches missed.">        if (pDay &gt; 0) {</span>
             /* Build the new selected date */
-<span class="nc" id="L433">            myNew = new OceanusDate(theMonth);</span>
-<span class="nc" id="L434">            myNew.adjustDay(pDay - 1);</span>
+<span class="nc" id="L432">            myNew = new OceanusDate(theMonth);</span>
+<span class="nc" id="L433">            myNew.adjustDay(pDay - 1);</span>
         }
 
         /* Ignore if there is no change */
-<span class="nc bnc" id="L438" title="All 2 branches missed.">        if (!isDateChanged(myOld, myNew)) {</span>
-<span class="nc" id="L439">            return;</span>
+<span class="nc bnc" id="L437" title="All 2 branches missed.">        if (!isDateChanged(myOld, myNew)) {</span>
+<span class="nc" id="L438">            return;</span>
         }
 
         /* Store the explicitly selected date */
-<span class="nc" id="L443">        theSelected = myNew;</span>
-<span class="nc" id="L444">    }</span>
+<span class="nc" id="L442">        theSelected = myNew;</span>
+<span class="nc" id="L443">    }</span>
 
     /**
      * Initialise the current month.
      */
     public void initialiseCurrent() {
         /* Access Selected Date */
-<span class="nc" id="L451">        OceanusDate myDate = theSelected;</span>
-<span class="nc bnc" id="L452" title="All 2 branches missed.">        if (myDate == null) {</span>
-<span class="nc" id="L453">            myDate = currentDate();</span>
+<span class="nc" id="L450">        OceanusDate myDate = theSelected;</span>
+<span class="nc bnc" id="L451" title="All 2 branches missed.">        if (myDate == null) {</span>
+<span class="nc" id="L452">            myDate = currentDate();</span>
         }
 
         /* Move to start date if we are earlier */
-<span class="nc bnc" id="L457" title="All 2 branches missed.">        if (theEarliest != null</span>
-<span class="nc bnc" id="L458" title="All 2 branches missed.">                &amp;&amp; myDate.compareTo(theEarliest) &lt; 0) {</span>
-<span class="nc" id="L459">            myDate = theEarliest;</span>
+<span class="nc bnc" id="L456" title="All 2 branches missed.">        if (theEarliest != null</span>
+<span class="nc bnc" id="L457" title="All 2 branches missed.">                &amp;&amp; myDate.compareTo(theEarliest) &lt; 0) {</span>
+<span class="nc" id="L458">            myDate = theEarliest;</span>
         }
 
         /* Move to end date if we are later */
-<span class="nc bnc" id="L463" title="All 2 branches missed.">        if (theLatest != null</span>
-<span class="nc bnc" id="L464" title="All 2 branches missed.">                &amp;&amp; myDate.compareTo(theLatest) &gt; 0) {</span>
-<span class="nc" id="L465">            myDate = theLatest;</span>
+<span class="nc bnc" id="L462" title="All 2 branches missed.">        if (theLatest != null</span>
+<span class="nc bnc" id="L463" title="All 2 branches missed.">                &amp;&amp; myDate.compareTo(theLatest) &gt; 0) {</span>
+<span class="nc" id="L464">            myDate = theLatest;</span>
         }
 
         /* Set to 1st of month and record it */
-<span class="nc" id="L469">        theMonth = new OceanusDate(myDate);</span>
-<span class="nc" id="L470">        theMonth.startCalendarMonth();</span>
-<span class="nc" id="L471">    }</span>
+<span class="nc" id="L468">        theMonth = OceanusDateUtils.startCalendarMonth(myDate);</span>
+<span class="nc" id="L469">    }</span>
 
     /**
      * Has the date changed?
@@ -479,10 +477,10 @@ public class OceanusDateConfig
      */
     public static boolean isDateChanged(final OceanusDate pFirst,
                                         final OceanusDate pSecond) {
-<span class="nc bnc" id="L482" title="All 2 branches missed.">        if (pFirst == null) {</span>
-<span class="nc bnc" id="L483" title="All 2 branches missed.">            return pSecond != null;</span>
+<span class="nc bnc" id="L480" title="All 2 branches missed.">        if (pFirst == null) {</span>
+<span class="nc bnc" id="L481" title="All 2 branches missed.">            return pSecond != null;</span>
         } else {
-<span class="nc bnc" id="L485" title="All 2 branches missed.">            return !pFirst.equals(pSecond);</span>
+<span class="nc bnc" id="L483" title="All 2 branches missed.">            return !pFirst.equals(pSecond);</span>
         }
     }
 
@@ -495,10 +493,10 @@ public class OceanusDateConfig
      */
     public static boolean isSameMonth(final OceanusDate pFirst,
                                       final OceanusDate pSecond) {
-<span class="nc bnc" id="L498" title="All 2 branches missed.">        if (!isSameYear(pFirst, pSecond)) {</span>
-<span class="nc" id="L499">            return false;</span>
+<span class="nc bnc" id="L496" title="All 2 branches missed.">        if (!isSameYear(pFirst, pSecond)) {</span>
+<span class="nc" id="L497">            return false;</span>
         } else {
-<span class="nc bnc" id="L501" title="All 2 branches missed.">            return pFirst.getMonth() == pSecond.getMonth();</span>
+<span class="nc bnc" id="L499" title="All 2 branches missed.">            return pFirst.getMonth() == pSecond.getMonth();</span>
         }
     }
 
@@ -511,10 +509,10 @@ public class OceanusDateConfig
      */
     public static boolean isSameYear(final OceanusDate pFirst,
                                      final OceanusDate pSecond) {
-<span class="nc bnc" id="L514" title="All 2 branches missed.">        if (pFirst == null) {</span>
-<span class="nc" id="L515">            return false;</span>
+<span class="nc bnc" id="L512" title="All 2 branches missed.">        if (pFirst == null) {</span>
+<span class="nc" id="L513">            return false;</span>
         }
-<span class="nc bnc" id="L517" title="All 2 branches missed.">        return pFirst.getYear() == pSecond.getYear();</span>
+<span class="nc bnc" id="L515" title="All 2 branches missed.">        return pFirst.getYear() == pSecond.getYear();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -20,40 +20,41 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyDataMap;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateStatic;
 
 /**
  * Validator for Currency.
  */
-<span class="fc" id="L29">public class MoneyWiseValidateCurrency</span>
+<span class="fc" id="L30">public class MoneyWiseValidateCurrency</span>
         extends PrometheusValidateStatic {
 
     @Override
-    public void validate(final PrometheusDataItem pCurrency) {
-<span class="fc" id="L34">        final MoneyWiseCurrency myCurrency = (MoneyWiseCurrency) pCurrency;</span>
-<span class="fc" id="L35">        final MoneyWiseCurrencyList myList = myCurrency.getList();</span>
-<span class="fc" id="L36">        final MoneyWiseCurrencyDataMap myMap = myList.getDataMap();</span>
+    public void validate(final PrometheusDataItemCtl pCurrency) {
+<span class="fc" id="L35">        final MoneyWiseCurrency myCurrency = (MoneyWiseCurrency) pCurrency;</span>
+<span class="fc" id="L36">        final MoneyWiseCurrencyList myList = myCurrency.getList();</span>
+<span class="fc" id="L37">        final MoneyWiseCurrencyDataMap myMap = myList.getDataMap();</span>
 
         /* Check that reporting is non-null */
-<span class="pc bpc" id="L39" title="1 of 2 branches missed.">        if (myCurrency.isReporting() == null) {</span>
-<span class="nc" id="L40">            pCurrency.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticResource.CURRENCY_REPORTING);</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        if (myCurrency.isReporting() == null) {</span>
+<span class="nc" id="L41">            myCurrency.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticResource.CURRENCY_REPORTING);</span>
 
             /* else check various things for a reporting currency */
-<span class="fc bfc" id="L43" title="All 2 branches covered.">        } else if (Boolean.TRUE.equals(myCurrency.isReporting())) {</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        } else if (Boolean.TRUE.equals(myCurrency.isReporting())) {</span>
             /* Check that default is enabled */
-<span class="pc bpc" id="L45" title="1 of 2 branches missed.">            if (!myCurrency.getEnabled()) {</span>
-<span class="nc" id="L46">                pCurrency.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticResource.CURRENCY_REPORTING);</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">            if (!myCurrency.getEnabled()) {</span>
+<span class="nc" id="L47">                myCurrency.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticResource.CURRENCY_REPORTING);</span>
             }
 
             /* Check for multiple reports */
-<span class="pc bpc" id="L50" title="1 of 2 branches missed.">            if (!myMap.validReportCount()) {</span>
-<span class="nc" id="L51">                pCurrency.addError(&quot;Multiple reporting currencies&quot;, MoneyWiseStaticResource.CURRENCY_REPORTING);</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">            if (!myMap.validReportCount()) {</span>
+<span class="nc" id="L52">                myCurrency.addError(&quot;Multiple reporting currencies&quot;, MoneyWiseStaticResource.CURRENCY_REPORTING);</span>
             }
         }
 
         /* Validate it */
-<span class="fc" id="L56">        super.validate(pCurrency);</span>
-<span class="fc" id="L57">    }</span>
+<span class="fc" id="L57">        super.validate(pCurrency);</span>
+<span class="fc" id="L58">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

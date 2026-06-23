@@ -16,13 +16,11 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.reports;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportDelayedTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
-import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
-import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPayeeBucket;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPayeeBucket.MoneyWiseAnalysisPayeeBucketList;
@@ -30,6 +28,8 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisPayeeValues;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisPayeeFilter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -80,12 +80,12 @@ public class MoneyWiseReportCashFlow
 <span class="nc" id="L80">        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));</span>
 
         /* Initialise the table */
-<span class="nc" id="L83">        final MetisHTMLTable myTable = theBuilder.startTable(myBody);</span>
+<span class="nc" id="L83">        final MetisReportHTMLTable myTable = theBuilder.startTable(myBody);</span>
 <span class="nc" id="L84">        theBuilder.startHdrRow(myTable);</span>
 <span class="nc" id="L85">        theBuilder.makeTotalCell(myTable);</span>
-<span class="nc" id="L86">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_INCOME);</span>
-<span class="nc" id="L87">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_EXPENSE);</span>
-<span class="nc" id="L88">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);</span>
+<span class="nc" id="L86">        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_INCOME);</span>
+<span class="nc" id="L87">        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_EXPENSE);</span>
+<span class="nc" id="L88">        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_PROFIT);</span>
 
         /* Loop through the Payee Buckets */
 <span class="nc" id="L91">        final Iterator&lt;MoneyWiseAnalysisPayeeBucket&gt; myIterator = myPayees.iterator();</span>
@@ -114,7 +114,7 @@ public class MoneyWiseReportCashFlow
 
         /* Format the total */
 <span class="nc" id="L116">        theBuilder.startTotalRow(myTable);</span>
-<span class="nc" id="L117">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);</span>
+<span class="nc" id="L117">        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_TOTAL);</span>
 <span class="nc" id="L118">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME));</span>
 <span class="nc" id="L119">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisPayeeAttr.EXPENSE));</span>
 <span class="nc" id="L120">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisPayeeAttr.PROFIT));</span>
@@ -134,8 +134,8 @@ public class MoneyWiseReportCashFlow
     }
 
     @Override
-    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+    public MetisReportHTMLTable createDelayedTable(final MetisReportDelayedTable pTable) {
 <span class="nc" id="L138">        return null;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

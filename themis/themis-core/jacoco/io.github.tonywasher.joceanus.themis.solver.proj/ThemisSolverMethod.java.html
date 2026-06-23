@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.themis.solver.proj;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisMethodInstance;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverClassDef;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverMethodDef;
@@ -25,6 +27,18 @@ import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSo
  */
 public class ThemisSolverMethod
         implements ThemisSolverMethodDef {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L33">    private static final MetisFieldSet&lt;ThemisSolverMethod&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSolverMethod.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L39">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisSolverMethod::getUnderlyingMethod);</span>
+<span class="fc" id="L40">    }</span>
+
     /**
      * The owning class.
      */
@@ -42,20 +56,25 @@ public class ThemisSolverMethod
      * @param pMethod the parsed method
      */
     ThemisSolverMethod(final ThemisSolverClassDef pClass,
-<span class="fc" id="L45">                       final ThemisMethodInstance pMethod) {</span>
+<span class="fc" id="L59">                       final ThemisMethodInstance pMethod) {</span>
         /* Store the parameters */
-<span class="fc" id="L47">        theClass = pClass;</span>
-<span class="fc" id="L48">        theMethod = pMethod;</span>
-<span class="fc" id="L49">    }</span>
+<span class="fc" id="L61">        theClass = pClass;</span>
+<span class="fc" id="L62">        theMethod = pMethod;</span>
+<span class="fc" id="L63">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisSolverMethod&gt; getDataFieldSet() {
+<span class="nc" id="L67">        return FIELD_DEFS;</span>
+    }
 
     @Override
     public ThemisSolverClassDef getOwningClass() {
-<span class="nc" id="L53">        return theClass;</span>
+<span class="nc" id="L72">        return theClass;</span>
     }
 
     @Override
     public ThemisMethodInstance getUnderlyingMethod() {
-<span class="nc" id="L58">        return theMethod;</span>
+<span class="nc" id="L77">        return theMethod;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

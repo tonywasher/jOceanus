@@ -16,11 +16,13 @@
  */
 package io.github.tonywasher.joceanus.prometheus.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlDataCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlKeyCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 
 /**
@@ -29,42 +31,43 @@ import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
  * pointer to the active ControlKey.
  * &lt;p&gt;
  * When code is loaded from a database, it is possible that more than one control key will be
- * active. This will occur if a failure occurs when we are writing the results of a renew security
- * request to the database and we have changed some records, but not all to the required controlKey.
+ * active. This will occur if a failure occurs when we are writing the results of a renewSecurity
+ * request to the database, and we have changed some records, but not all, to the required controlKey.
  * This record points to the active controlKey. All records that are not encrypted by the correct
  * controlKey should be re-encrypted and written to the database.
  *
  * @author Tony Washer
  */
 public class PrometheusControlData
-        extends PrometheusDataItem {
+        extends PrometheusDataItem
+        implements PrometheusControlDataCtl {
     /**
      * Object name.
      */
-<span class="nc" id="L44">    public static final String OBJECT_NAME = PrometheusCryptographyDataType.CONTROLDATA.getItemName();</span>
+<span class="nc" id="L47">    public static final String OBJECT_NAME = PrometheusCryptographyDataType.CONTROLDATA.getItemName();</span>
 
     /**
      * List name.
      */
-<span class="nc" id="L49">    public static final String LIST_NAME = PrometheusCryptographyDataType.CONTROLDATA.getListName();</span>
+<span class="nc" id="L52">    public static final String LIST_NAME = PrometheusCryptographyDataType.CONTROLDATA.getListName();</span>
 
     /**
      * Report fields.
      */
-<span class="nc" id="L54">    private static final MetisFieldVersionedSet&lt;PrometheusControlData&gt; FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(PrometheusControlData.class);</span>
+<span class="nc" id="L57">    private static final MetisFieldVersionedSet&lt;PrometheusControlData&gt; FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(PrometheusControlData.class);</span>
 
     /*
      * FieldIds.
      */
     static {
-<span class="nc" id="L60">        FIELD_DEFS.declareIntegerField(PrometheusDataResource.CONTROLDATA_VERSION);</span>
-<span class="nc" id="L61">        FIELD_DEFS.declareLinkField(PrometheusCryptographyDataType.CONTROLKEY);</span>
+<span class="nc" id="L63">        FIELD_DEFS.declareIntegerField(PrometheusDataResource.CONTROLDATA_VERSION);</span>
+<span class="nc" id="L64">        FIELD_DEFS.declareLinkField(PrometheusCryptographyDataType.CONTROLKEY);</span>
     }
 
     /**
      * Error message for already exists.
      */
-<span class="nc" id="L67">    public static final String ERROR_CTLEXISTS = PrometheusDataResource.CONTROLDATA_ERROR_EXISTS.getValue();</span>
+<span class="nc" id="L70">    public static final String ERROR_CTLEXISTS = PrometheusDataResource.CONTROLDATA_ERROR_EXISTS.getValue();</span>
 
     /**
      * Copy Constructor.
@@ -75,8 +78,8 @@ public class PrometheusControlData
     protected PrometheusControlData(final PrometheusControlDataList pList,
                                     final PrometheusControlData pSource) {
         /* Set standard values */
-<span class="nc" id="L78">        super(pList, pSource);</span>
-<span class="nc" id="L79">    }</span>
+<span class="nc" id="L81">        super(pList, pSource);</span>
+<span class="nc" id="L82">    }</span>
 
     /**
      * Values constructor.
@@ -88,31 +91,30 @@ public class PrometheusControlData
     private PrometheusControlData(final PrometheusControlDataList pList,
                                   final PrometheusDataValues pValues) throws OceanusException {
         /* Initialise the item */
-<span class="nc" id="L91">        super(pList, pValues);</span>
+<span class="nc" id="L94">        super(pList, pValues);</span>
 
         /* Store the Version */
-<span class="nc" id="L94">        Object myValue = pValues.getValue(PrometheusDataResource.CONTROLDATA_VERSION);</span>
-<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (myValue instanceof Integer i) {</span>
-<span class="nc" id="L96">            setValueDataVersion(i);</span>
-<span class="nc bnc" id="L97" title="All 2 branches missed.">        } else if (myValue instanceof String s) {</span>
-<span class="nc" id="L98">            setValueDataVersion(Integer.valueOf(s));</span>
+<span class="nc" id="L97">        Object myValue = pValues.getValue(PrometheusDataResource.CONTROLDATA_VERSION);</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        if (myValue instanceof Integer i) {</span>
+<span class="nc" id="L99">            setValueDataVersion(i);</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        } else if (myValue instanceof String s) {</span>
+<span class="nc" id="L101">            setValueDataVersion(Integer.valueOf(s));</span>
         }
 
         /* Store the ControlKey */
-<span class="nc" id="L102">        myValue = pValues.getValue(PrometheusCryptographyDataType.CONTROLKEY);</span>
-<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (myValue instanceof Integer myInt) {</span>
+<span class="nc" id="L105">        myValue = pValues.getValue(PrometheusCryptographyDataType.CONTROLKEY);</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        if (myValue instanceof Integer myInt) {</span>
             /* Store value */
-<span class="nc" id="L105">            setValueControlKey(myInt);</span>
+<span class="nc" id="L108">            setValueControlKey(myInt);</span>
 
             /* Resolve the ControlKey */
-<span class="nc" id="L108">            final PrometheusDataSet myData = getDataSet();</span>
-<span class="nc" id="L109">            resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());</span>
+<span class="nc" id="L111">            resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, PrometheusCryptographyDataType.CONTROLKEY);</span>
         }
-<span class="nc" id="L111">    }</span>
+<span class="nc" id="L113">    }</span>
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
-<span class="nc" id="L115">        return FIELD_DEFS;</span>
+<span class="nc" id="L117">        return FIELD_DEFS;</span>
     }
 
     /**
@@ -121,16 +123,12 @@ public class PrometheusControlData
      * @return data version
      */
     public Integer getDataVersion() {
-<span class="nc" id="L124">        return getValues().getValue(PrometheusDataResource.CONTROLDATA_VERSION, Integer.class);</span>
+<span class="nc" id="L126">        return getValues().getValue(PrometheusDataResource.CONTROLDATA_VERSION, Integer.class);</span>
     }
 
-    /**
-     * Get the control key.
-     *
-     * @return the control key
-     */
+    @Override
     public PrometheusControlKey getControlKey() {
-<span class="nc" id="L133">        return getValues().getValue(PrometheusCryptographyDataType.CONTROLKEY, PrometheusControlKey.class);</span>
+<span class="nc" id="L131">        return getValues().getValue(PrometheusCryptographyDataType.CONTROLKEY, PrometheusControlKey.class);</span>
     }
 
     /**
@@ -139,10 +137,10 @@ public class PrometheusControlData
      * @return the ControlKeyId
      */
     public Integer getControlKeyId() {
-<span class="nc" id="L142">        final PrometheusControlKey myKey = getControlKey();</span>
-<span class="nc bnc" id="L143" title="All 2 branches missed.">        return (myKey == null)</span>
-<span class="nc" id="L144">                ? null</span>
-<span class="nc" id="L145">                : myKey.getIndexedId();</span>
+<span class="nc" id="L140">        final PrometheusControlKey myKey = getControlKey();</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        return (myKey == null)</span>
+<span class="nc" id="L142">                ? null</span>
+<span class="nc" id="L143">                : myKey.getIndexedId();</span>
     }
 
     /**
@@ -152,8 +150,8 @@ public class PrometheusControlData
      * @throws OceanusException on error
      */
     private void setValueDataVersion(final Integer pValue) throws OceanusException {
-<span class="nc" id="L155">        getValues().setValue(PrometheusDataResource.CONTROLDATA_VERSION, pValue);</span>
-<span class="nc" id="L156">    }</span>
+<span class="nc" id="L153">        getValues().setValue(PrometheusDataResource.CONTROLDATA_VERSION, pValue);</span>
+<span class="nc" id="L154">    }</span>
 
     /**
      * Set the control key value.
@@ -161,9 +159,9 @@ public class PrometheusControlData
      * @param pValue the value
      * @throws OceanusException on error
      */
-    private void setValueControlKey(final PrometheusControlKey pValue) throws OceanusException {
-<span class="nc" id="L165">        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pValue);</span>
-<span class="nc" id="L166">    }</span>
+    private void setValueControlKey(final PrometheusControlKeyCtl pValue) throws OceanusException {
+<span class="nc" id="L163">        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pValue);</span>
+<span class="nc" id="L164">    }</span>
 
     /**
      * Set the control key value as Id.
@@ -172,56 +170,50 @@ public class PrometheusControlData
      * @throws OceanusException on error
      */
     private void setValueControlKey(final Integer pId) throws OceanusException {
-<span class="nc" id="L175">        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pId);</span>
-<span class="nc" id="L176">    }</span>
+<span class="nc" id="L173">        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pId);</span>
+<span class="nc" id="L174">    }</span>
 
     @Override
     public PrometheusControlData getBase() {
-<span class="nc" id="L180">        return (PrometheusControlData) super.getBase();</span>
+<span class="nc" id="L178">        return (PrometheusControlData) super.getBase();</span>
     }
 
     @Override
     public PrometheusControlDataList getList() {
-<span class="nc" id="L185">        return (PrometheusControlDataList) super.getList();</span>
+<span class="nc" id="L183">        return (PrometheusControlDataList) super.getList();</span>
     }
 
     @Override
     public int compareValues(final PrometheusDataItem pThat) {
         /* Check the versions */
-<span class="nc" id="L191">        final PrometheusControlData myThat = (PrometheusControlData) pThat;</span>
-<span class="nc" id="L192">        return getDataVersion() - myThat.getDataVersion();</span>
+<span class="nc" id="L189">        final PrometheusControlData myThat = (PrometheusControlData) pThat;</span>
+<span class="nc" id="L190">        return getDataVersion() - myThat.getDataVersion();</span>
     }
 
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
-<span class="nc" id="L198">        final PrometheusDataSet myData = getDataSet();</span>
-<span class="nc" id="L199">        resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());</span>
-<span class="nc" id="L200">    }</span>
+<span class="nc" id="L196">        resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, PrometheusCryptographyDataType.CONTROLKEY);</span>
+<span class="nc" id="L197">    }</span>
 
-    /**
-     * Set a new ControlKey.
-     *
-     * @param pControl the new control key
-     * @throws OceanusException on error
-     */
-    protected void setControlKey(final PrometheusControlKey pControl) throws OceanusException {
+    @Override
+    public void setControlKey(final PrometheusControlKeyCtl pControl) throws OceanusException {
         /* If we do not have a control Key */
-<span class="nc bnc" id="L210" title="All 2 branches missed.">        if (getControlKey() == null) {</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        if (getControlKey() == null) {</span>
             /* Store the control details and return */
-<span class="nc" id="L212">            setValueControlKey(pControl);</span>
-<span class="nc" id="L213">            return;</span>
+<span class="nc" id="L204">            setValueControlKey(pControl);</span>
+<span class="nc" id="L205">            return;</span>
         }
 
         /* Store the current detail into history */
-<span class="nc" id="L217">        pushHistory();</span>
+<span class="nc" id="L209">        pushHistory();</span>
 
         /* Store the control details */
-<span class="nc" id="L220">        setValueControlKey(pControl);</span>
+<span class="nc" id="L212">        setValueControlKey(pControl);</span>
 
         /* Check for changes */
-<span class="nc" id="L223">        checkForHistory();</span>
-<span class="nc" id="L224">    }</span>
+<span class="nc" id="L215">        checkForHistory();</span>
+<span class="nc" id="L216">    }</span>
 
     /**
      * Control Data List.
@@ -231,16 +223,16 @@ public class PrometheusControlData
         /**
          * Report fields.
          */
-<span class="nc" id="L234">        private static final MetisFieldSet&lt;PrometheusControlDataList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusControlDataList.class);</span>
+<span class="nc" id="L226">        private static final MetisFieldSet&lt;PrometheusControlDataList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusControlDataList.class);</span>
 
         /**
          * Construct an empty CORE Control Data list.
          *
          * @param pData the DataSet for the list
          */
-        protected PrometheusControlDataList(final PrometheusDataSet pData) {
-<span class="nc" id="L242">            this(pData, PrometheusListStyle.CORE);</span>
-<span class="nc" id="L243">        }</span>
+        protected PrometheusControlDataList(final PrometheusDataSetCtl pData) {
+<span class="nc" id="L234">            this(pData, PrometheusListStyle.CORE);</span>
+<span class="nc" id="L235">        }</span>
 
         /**
          * Construct an empty generic ControlData list.
@@ -248,10 +240,10 @@ public class PrometheusControlData
          * @param pData  the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected PrometheusControlDataList(final PrometheusDataSet pData,
+        protected PrometheusControlDataList(final PrometheusDataSetCtl pData,
                                             final PrometheusListStyle pStyle) {
-<span class="nc" id="L253">            super(PrometheusControlData.class, pData, PrometheusCryptographyDataType.CONTROLDATA, pStyle);</span>
-<span class="nc" id="L254">        }</span>
+<span class="nc" id="L245">            super(PrometheusControlData.class, pData, PrometheusCryptographyDataType.CONTROLDATA, pStyle);</span>
+<span class="nc" id="L246">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -259,27 +251,27 @@ public class PrometheusControlData
          * @param pSource the source List
          */
         private PrometheusControlDataList(final PrometheusControlDataList pSource) {
-<span class="nc" id="L262">            super(pSource);</span>
-<span class="nc" id="L263">        }</span>
+<span class="nc" id="L254">            super(pSource);</span>
+<span class="nc" id="L255">        }</span>
 
         @Override
         public MetisFieldSet&lt;PrometheusControlDataList&gt; getDataFieldSet() {
-<span class="nc" id="L267">            return FIELD_DEFS;</span>
+<span class="nc" id="L259">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String listName() {
-<span class="nc" id="L272">            return LIST_NAME;</span>
+<span class="nc" id="L264">            return LIST_NAME;</span>
         }
 
         @Override
         public MetisFieldSet&lt;PrometheusControlData&gt; getItemFields() {
-<span class="nc" id="L277">            return PrometheusControlData.FIELD_DEFS;</span>
+<span class="nc" id="L269">            return PrometheusControlData.FIELD_DEFS;</span>
         }
 
         @Override
         public boolean includeDataXML() {
-<span class="nc" id="L282">            return false;</span>
+<span class="nc" id="L274">            return false;</span>
         }
 
         /**
@@ -288,45 +280,45 @@ public class PrometheusControlData
          * @return the control data
          */
         public PrometheusControlData getControl() {
-<span class="nc bnc" id="L291" title="All 2 branches missed.">            return isEmpty()</span>
-<span class="nc" id="L292">                    ? null</span>
-<span class="nc" id="L293">                    : get(0);</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">            return isEmpty()</span>
+<span class="nc" id="L284">                    ? null</span>
+<span class="nc" id="L285">                    : get(0);</span>
         }
 
         @Override
         protected PrometheusControlDataList getEmptyList(final PrometheusListStyle pStyle) {
-<span class="nc" id="L298">            final PrometheusControlDataList myList = new PrometheusControlDataList(this);</span>
-<span class="nc" id="L299">            myList.setStyle(pStyle);</span>
-<span class="nc" id="L300">            return myList;</span>
+<span class="nc" id="L290">            final PrometheusControlDataList myList = new PrometheusControlDataList(this);</span>
+<span class="nc" id="L291">            myList.setStyle(pStyle);</span>
+<span class="nc" id="L292">            return myList;</span>
         }
 
         @Override
         public PrometheusControlDataList deriveList(final PrometheusListStyle pStyle) throws OceanusException {
-<span class="nc" id="L305">            return (PrometheusControlDataList) super.deriveList(pStyle);</span>
+<span class="nc" id="L297">            return (PrometheusControlDataList) super.deriveList(pStyle);</span>
         }
 
         @Override
-        public PrometheusControlDataList deriveDifferences(final PrometheusDataSet pDataSet,
+        public PrometheusControlDataList deriveDifferences(final PrometheusDataSetCtl pDataSet,
                                                            final PrometheusDataList&lt;?&gt; pOld) {
-<span class="nc" id="L311">            return (PrometheusControlDataList) super.deriveDifferences(pDataSet, pOld);</span>
+<span class="nc" id="L303">            return (PrometheusControlDataList) super.deriveDifferences(pDataSet, pOld);</span>
         }
 
         @Override
         public PrometheusControlData addCopyItem(final PrometheusDataItem pItem) {
             /* Can only clone a ControlData */
-<span class="nc bnc" id="L317" title="All 2 branches missed.">            if (!(pItem instanceof PrometheusControlData)) {</span>
-<span class="nc" id="L318">                return null;</span>
+<span class="nc bnc" id="L309" title="All 2 branches missed.">            if (!(pItem instanceof PrometheusControlData)) {</span>
+<span class="nc" id="L310">                return null;</span>
             }
 
             /* Clone the control data */
-<span class="nc" id="L322">            final PrometheusControlData myControl = new PrometheusControlData(this, (PrometheusControlData) pItem);</span>
-<span class="nc" id="L323">            add(myControl);</span>
-<span class="nc" id="L324">            return myControl;</span>
+<span class="nc" id="L314">            final PrometheusControlData myControl = new PrometheusControlData(this, (PrometheusControlData) pItem);</span>
+<span class="nc" id="L315">            add(myControl);</span>
+<span class="nc" id="L316">            return myControl;</span>
         }
 
         @Override
         public PrometheusControlData addNewItem() {
-<span class="nc" id="L329">            throw new UnsupportedOperationException();</span>
+<span class="nc" id="L321">            throw new UnsupportedOperationException();</span>
         }
 
         /**
@@ -337,42 +329,42 @@ public class PrometheusControlData
          */
         public void addNewControl(final Integer pVersion) throws OceanusException {
             /* Create the ControlData */
-<span class="nc" id="L340">            final PrometheusDataValues myValues = new PrometheusDataValues(OBJECT_NAME);</span>
-<span class="nc" id="L341">            myValues.addValue(PrometheusDataResource.CONTROLDATA_VERSION, pVersion);</span>
+<span class="nc" id="L332">            final PrometheusDataValues myValues = new PrometheusDataValues(OBJECT_NAME);</span>
+<span class="nc" id="L333">            myValues.addValue(PrometheusDataResource.CONTROLDATA_VERSION, pVersion);</span>
 
             /* Add the item */
-<span class="nc" id="L344">            addValuesItem(myValues);</span>
-<span class="nc" id="L345">        }</span>
+<span class="nc" id="L336">            addValuesItem(myValues);</span>
+<span class="nc" id="L337">        }</span>
 
         @Override
         public PrometheusControlData addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
             /* Create the controlData */
-<span class="nc" id="L350">            final PrometheusControlData myControl = new PrometheusControlData(this, pValues);</span>
+<span class="nc" id="L342">            final PrometheusControlData myControl = new PrometheusControlData(this, pValues);</span>
 
             /* Check that this controlId has not been previously added */
-<span class="nc bnc" id="L353" title="All 2 branches missed.">            if (!isIdUnique(myControl.getIndexedId())) {</span>
-<span class="nc" id="L354">                myControl.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L355">                throw new PrometheusDataException(myControl, ERROR_VALIDATION);</span>
+<span class="nc bnc" id="L345" title="All 2 branches missed.">            if (!isIdUnique(myControl.getIndexedId())) {</span>
+<span class="nc" id="L346">                myControl.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L347">                throw new PrometheusDataException(myControl, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="nc" id="L359">            add(myControl);</span>
+<span class="nc" id="L351">            add(myControl);</span>
 
             /* Return it */
-<span class="nc" id="L362">            return myControl;</span>
+<span class="nc" id="L354">            return myControl;</span>
         }
 
         @Override
         public void postProcessOnLoad() throws OceanusException {
             /* Just sort the list */
-<span class="nc" id="L368">            reSort();</span>
-<span class="nc" id="L369">        }</span>
+<span class="nc" id="L360">            reSort();</span>
+<span class="nc" id="L361">        }</span>
 
         @Override
         protected PrometheusDataMapItem allocateDataMap() {
             /* Unused */
-<span class="nc" id="L374">            throw new UnsupportedOperationException();</span>
+<span class="nc" id="L366">            throw new UnsupportedOperationException();</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

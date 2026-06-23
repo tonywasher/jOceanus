@@ -16,22 +16,41 @@
  */
 package io.github.tonywasher.joceanus.themis.stats;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+
 import java.util.EnumMap;
 import java.util.Map;
 
 /**
  * Statistics Set.
  */
-public class ThemisStats {
+public class ThemisStats
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L35">    private static final MetisFieldSet&lt;ThemisStats&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisStats.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L41">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_STATS, ThemisStats::getStats);</span>
+<span class="fc" id="L42">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_TOTALS, ThemisStats::getTotals);</span>
+    }
+
     /**
      * The integer zero.
      */
-<span class="fc" id="L29">    private static final Integer INT_ZERO = 0;</span>
+<span class="fc" id="L48">    private static final Integer INT_ZERO = 0;</span>
 
     /**
      * The double zero.
      */
-<span class="fc" id="L34">    private static final Double DBL_ZERO = 0.0;</span>
+<span class="fc" id="L53">    private static final Double DBL_ZERO = 0.0;</span>
 
     /**
      * The stats.
@@ -46,10 +65,21 @@ public class ThemisStats {
     /**
      * Constructor.
      */
-<span class="fc" id="L49">    ThemisStats() {</span>
-<span class="fc" id="L50">        theStats = initStats();</span>
-<span class="fc" id="L51">        theTotals = initStats();</span>
-<span class="fc" id="L52">    }</span>
+<span class="fc" id="L68">    ThemisStats() {</span>
+<span class="fc" id="L69">        theStats = initStats();</span>
+<span class="fc" id="L70">        theTotals = initStats();</span>
+<span class="fc" id="L71">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisStats&gt; getDataFieldSet() {
+<span class="nc" id="L75">        return FIELD_DEFS;</span>
+    }
+
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L81">        return getClass().getSimpleName();</span>
+    }
 
     /**
      * Obtain the stats.
@@ -57,7 +87,7 @@ public class ThemisStats {
      * @return the stats
      */
     public Map&lt;ThemisStat, Number&gt; getStats() {
-<span class="nc" id="L60">        return theStats;</span>
+<span class="nc" id="L90">        return theStats;</span>
     }
 
     /**
@@ -66,7 +96,7 @@ public class ThemisStats {
      * @return the totals
      */
     public Map&lt;ThemisStat, Number&gt; getTotals() {
-<span class="nc" id="L69">        return theTotals;</span>
+<span class="nc" id="L99">        return theTotals;</span>
     }
 
     /**
@@ -76,7 +106,7 @@ public class ThemisStats {
      * @return the value
      */
     public Integer getIntegerStat(final ThemisStat pStat) {
-<span class="nc" id="L79">        return (Integer) theStats.get(pStat);</span>
+<span class="nc" id="L109">        return (Integer) theStats.get(pStat);</span>
     }
 
     /**
@@ -86,7 +116,7 @@ public class ThemisStats {
      * @return the value
      */
     public Double getDoubleStat(final ThemisStat pStat) {
-<span class="nc" id="L89">        return (Double) theStats.get(pStat);</span>
+<span class="nc" id="L119">        return (Double) theStats.get(pStat);</span>
     }
 
     /**
@@ -96,7 +126,7 @@ public class ThemisStats {
      * @return the value
      */
     public Integer getIntegerTotal(final ThemisStat pStat) {
-<span class="nc" id="L99">        return (Integer) theTotals.get(pStat);</span>
+<span class="nc" id="L129">        return (Integer) theTotals.get(pStat);</span>
     }
 
     /**
@@ -106,7 +136,7 @@ public class ThemisStats {
      * @return the value
      */
     public Double getDoubleTotal(final ThemisStat pStat) {
-<span class="nc" id="L109">        return (Double) theTotals.get(pStat);</span>
+<span class="nc" id="L139">        return (Double) theTotals.get(pStat);</span>
     }
 
     /**
@@ -117,8 +147,8 @@ public class ThemisStats {
      */
     public void setStat(final ThemisStat pStat,
                         final Number pValue) {
-<span class="nc" id="L120">        theStats.put(pStat, pValue);</span>
-<span class="nc" id="L121">    }</span>
+<span class="nc" id="L150">        theStats.put(pStat, pValue);</span>
+<span class="nc" id="L151">    }</span>
 
     /**
      * Set Total value.
@@ -128,8 +158,8 @@ public class ThemisStats {
      */
     public void setTotal(final ThemisStat pStat,
                          final Number pValue) {
-<span class="nc" id="L131">        theTotals.put(pStat, pValue);</span>
-<span class="nc" id="L132">    }</span>
+<span class="nc" id="L161">        theTotals.put(pStat, pValue);</span>
+<span class="nc" id="L162">    }</span>
 
     /**
      * Initialize stats.
@@ -137,15 +167,15 @@ public class ThemisStats {
      * @return the initialized stats
      */
     private Map&lt;ThemisStat, Number&gt; initStats() {
-<span class="fc" id="L140">        final Map&lt;ThemisStat, Number&gt; myStats = new EnumMap&lt;&gt;(ThemisStat.class);</span>
-<span class="fc bfc" id="L141" title="All 2 branches covered.">        for (ThemisStat myStat : ThemisStat.values()) {</span>
-<span class="pc bpc" id="L142" title="1 of 2 branches missed.">            if (myStat.isInteger()) {</span>
-<span class="fc" id="L143">                myStats.put(myStat, INT_ZERO);</span>
+<span class="fc" id="L170">        final Map&lt;ThemisStat, Number&gt; myStats = new EnumMap&lt;&gt;(ThemisStat.class);</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">        for (ThemisStat myStat : ThemisStat.values()) {</span>
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">            if (myStat.isInteger()) {</span>
+<span class="fc" id="L173">                myStats.put(myStat, INT_ZERO);</span>
             } else {
-<span class="nc" id="L145">                myStats.put(myStat, DBL_ZERO);</span>
+<span class="nc" id="L175">                myStats.put(myStat, DBL_ZERO);</span>
             }
         }
-<span class="fc" id="L148">        return myStats;</span>
+<span class="fc" id="L178">        return myStats;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -24,10 +24,10 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.metis.ui;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.preference.MetisPreferenceParams;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.base.TethysUIValueKey;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.base.TethysUIValueSet;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  
@@ -142,11 +142,11 @@
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L135" href="#L135">135</a> <em class="jxr_javadoccomment">         * Constructor.</em>
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L137" href="#L137">137</a> <em class="jxr_javadoccomment">         * @param pManager the preference manager</em>
+<a class="jxr_linenumber" name="L137" href="#L137">137</a> <em class="jxr_javadoccomment">         * @param pParams the parameters</em>
 <a class="jxr_linenumber" name="L138" href="#L138">138</a> <em class="jxr_javadoccomment">         * @throws OceanusException on error</em>
 <a class="jxr_linenumber" name="L139" href="#L139">139</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">public</strong> MetisColorPreferences(<strong class="jxr_keyword">final</strong> <a name="MetisPreferenceManager" href="../../../../../../io/github/tonywasher/joceanus/metis/preference/MetisPreferenceManager.html#MetisPreferenceManager">MetisPreferenceManager</a> pManager) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>             <strong class="jxr_keyword">super</strong>(pManager, MetisColorResource.FIELDCOLOR_PREFS);
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">public</strong> MetisColorPreferences(<strong class="jxr_keyword">final</strong> <a name="MetisPreferenceParams" href="../../../../../../io/github/tonywasher/joceanus/metis/preference/MetisPreferenceParams.html#MetisPreferenceParams">MetisPreferenceParams</a> pParams) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>             <strong class="jxr_keyword">super</strong>(pParams, MetisColorResource.FIELDCOLOR_PREFS);
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>         }
 <a class="jxr_linenumber" name="L143" href="#L143">143</a> 
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>         <em class="jxr_javadoccomment">/**</em>
@@ -225,6 +225,6 @@
 <a class="jxr_linenumber" name="L217" href="#L217">217</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

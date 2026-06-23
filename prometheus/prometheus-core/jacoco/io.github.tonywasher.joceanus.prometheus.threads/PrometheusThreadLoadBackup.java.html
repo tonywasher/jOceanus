@@ -30,7 +30,7 @@ import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIFileSelector;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.io.File;
 
@@ -69,14 +69,14 @@ public class PrometheusThreadLoadBackup
     }
 
     @Override
-    public PrometheusDataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public PrometheusDataSet performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Access the thread manager */
-<span class="nc" id="L74">        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();</span>
+<span class="nc" id="L74">        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pReport.getThreadData();</span>
 <span class="nc" id="L75">        final MetisToolkit myToolkit = myPromToolkit.getToolkit();</span>
 <span class="nc" id="L76">        final PrometheusSecurityPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();</span>
 
         /* Initialise the status window */
-<span class="nc" id="L79">        pManager.initTask(getTaskName());</span>
+<span class="nc" id="L79">        pReport.initTask(getTaskName());</span>
 
         /* Access the Sheet preferences */
 <span class="nc" id="L82">        final MetisPreferenceManager myMgr = theControl.getPreferenceManager();</span>
@@ -89,39 +89,39 @@ public class PrometheusThreadLoadBackup
 <span class="nc" id="L89">        final TethysUIFileSelector myDialog = myToolkit.getGuiFactory().dialogFactory().newFileSelector();</span>
 <span class="nc" id="L90">        myDialog.setTitle(TASK_SELECTFILE);</span>
 <span class="nc" id="L91">        myDialog.setInitialDirectory(myBackupDir);</span>
-<span class="nc" id="L92">        myDialog.setExtension(GordianUtilities.SECUREZIPFILE_EXT);</span>
+<span class="nc" id="L92">        myDialog.addExtension(GordianUtilities.SECUREZIPFILE_EXT);</span>
 <span class="nc" id="L93">        final File myFile = myDialog.selectFile();</span>
 
         /* If we did not select a file */
 <span class="nc bnc" id="L96" title="All 2 branches missed.">        if (myFile == null) {</span>
             /* Throw cancelled exception */
-<span class="nc" id="L98">            pManager.throwCancelException();</span>
+<span class="nc" id="L98">            pReport.throwCancelException();</span>
         }
 
         /* Load workbook */
 <span class="nc" id="L102">        final PrometheusSpreadSheet mySheet = theControl.getSpreadSheet();</span>
 <span class="nc" id="L103">        final PrometheusDataSet myData = theControl.getNewData();</span>
-<span class="nc" id="L104">        mySheet.loadBackup(pManager, myPasswordMgr, myData, myFile);</span>
+<span class="nc" id="L104">        mySheet.loadBackup(pReport, myPasswordMgr, myData, myFile);</span>
 
         /* Create interface */
 <span class="nc" id="L107">        final PrometheusDataStore myDatabase = theControl.getDatabase();</span>
 
         /* Load underlying database */
 <span class="nc" id="L110">        final PrometheusDataSet myStore = theControl.getNewData();</span>
-<span class="nc" id="L111">        myDatabase.loadDatabase(pManager, myStore);</span>
+<span class="nc" id="L111">        myDatabase.loadDatabase(pReport, myStore);</span>
 
         /* Check security on the database */
-<span class="nc" id="L114">        myStore.checkSecurity(pManager);</span>
+<span class="nc" id="L114">        myStore.checkSecurity(pReport);</span>
 <span class="nc bnc" id="L115" title="All 2 branches missed.">        if (myData.hasUpdates()) {</span>
             /* Store any updates */
-<span class="nc" id="L117">            myDatabase.updateDatabase(pManager, myData);</span>
+<span class="nc" id="L117">            myDatabase.updateDatabase(pReport, myData);</span>
         }
 
         /* Re-base the loaded backup onto the database image */
-<span class="nc" id="L121">        myData.reBase(pManager, myStore);</span>
+<span class="nc" id="L121">        myData.reBase(pReport, myStore);</span>
 
         /* State that we have completed */
-<span class="nc" id="L124">        pManager.setCompletion();</span>
+<span class="nc" id="L124">        pReport.setCompletion();</span>
 
         /* Return the Data */
 <span class="nc" id="L127">        return myData;</span>
@@ -132,4 +132,4 @@ public class PrometheusThreadLoadBackup
 <span class="nc" id="L132">        theControl.setData(pResult);</span>
 <span class="nc" id="L133">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

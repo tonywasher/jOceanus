@@ -24,13 +24,13 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> java.util.Iterator;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
@@ -62,7 +62,7 @@
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment">     * @param pAnalysis the analysis</em>
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">     * @param pDeposit  the deposit</em>
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">private</strong> <a name="MoneyWiseXAnalysisDepositBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisDepositBucket.html#MoneyWiseXAnalysisDepositBucket">MoneyWiseXAnalysisDepositBucket</a>(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysis" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysis.html#MoneyWiseXAnalysis">MoneyWiseXAnalysis</a> pAnalysis,
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">private</strong> <a name="MoneyWiseXAnalysisDepositBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisDepositBucket.html#MoneyWiseXAnalysisDepositBucket">MoneyWiseXAnalysisDepositBucket</a>(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisHolder" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisHolder.html#MoneyWiseXAnalysisHolder">MoneyWiseXAnalysisHolder</a> pAnalysis,
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>                                              <strong class="jxr_keyword">final</strong> <a name="MoneyWiseDeposit" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDeposit.html#MoneyWiseDeposit">MoneyWiseDeposit</a> pDeposit) {
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          <em class="jxr_comment">/* Call super-constructor */</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">super</strong>(pAnalysis, pDeposit);
@@ -78,7 +78,7 @@
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">     * @param pAnalysis the analysis</em>
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">     * @param pBase     the underlying bucket</em>
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>      <strong class="jxr_keyword">private</strong> <a name="MoneyWiseXAnalysisDepositBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisDepositBucket.html#MoneyWiseXAnalysisDepositBucket">MoneyWiseXAnalysisDepositBucket</a>(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysis" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysis.html#MoneyWiseXAnalysis">MoneyWiseXAnalysis</a> pAnalysis,
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>      <strong class="jxr_keyword">private</strong> <a name="MoneyWiseXAnalysisDepositBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisDepositBucket.html#MoneyWiseXAnalysisDepositBucket">MoneyWiseXAnalysisDepositBucket</a>(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisHolder" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisHolder.html#MoneyWiseXAnalysisHolder">MoneyWiseXAnalysisHolder</a> pAnalysis,
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>                                              <strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisDepositBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisDepositBucket.html#MoneyWiseXAnalysisDepositBucket">MoneyWiseXAnalysisDepositBucket</a> pBase) {
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          <em class="jxr_comment">/* Call super-constructor */</em>
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>          <strong class="jxr_keyword">super</strong>(pAnalysis, pBase);
@@ -95,7 +95,7 @@
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">     * @param pBase     the underlying bucket</em>
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">     * @param pDate     the date for the bucket</em>
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>      <strong class="jxr_keyword">private</strong> <a name="MoneyWiseXAnalysisDepositBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisDepositBucket.html#MoneyWiseXAnalysisDepositBucket">MoneyWiseXAnalysisDepositBucket</a>(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysis" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysis.html#MoneyWiseXAnalysis">MoneyWiseXAnalysis</a> pAnalysis,
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>      <strong class="jxr_keyword">private</strong> <a name="MoneyWiseXAnalysisDepositBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisDepositBucket.html#MoneyWiseXAnalysisDepositBucket">MoneyWiseXAnalysisDepositBucket</a>(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisHolder" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisHolder.html#MoneyWiseXAnalysisHolder">MoneyWiseXAnalysisHolder</a> pAnalysis,
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>                                              <strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisDepositBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisDepositBucket.html#MoneyWiseXAnalysisDepositBucket">MoneyWiseXAnalysisDepositBucket</a> pBase,
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>                                              <strong class="jxr_keyword">final</strong> <a name="OceanusDate" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/date/OceanusDate.html#OceanusDate">OceanusDate</a> pDate) {
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          <em class="jxr_comment">/* Call super-constructor */</em>
@@ -113,7 +113,7 @@
 <a class="jxr_linenumber" name="L105" href="#L105">105</a> <em class="jxr_javadoccomment">     * @param pBase     the underlying bucket</em>
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">     * @param pRange    the range for the bucket</em>
 <a class="jxr_linenumber" name="L107" href="#L107">107</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>     <strong class="jxr_keyword">private</strong> <a name="MoneyWiseXAnalysisDepositBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisDepositBucket.html#MoneyWiseXAnalysisDepositBucket">MoneyWiseXAnalysisDepositBucket</a>(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysis" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysis.html#MoneyWiseXAnalysis">MoneyWiseXAnalysis</a> pAnalysis,
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>     <strong class="jxr_keyword">private</strong> <a name="MoneyWiseXAnalysisDepositBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisDepositBucket.html#MoneyWiseXAnalysisDepositBucket">MoneyWiseXAnalysisDepositBucket</a>(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisHolder" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisHolder.html#MoneyWiseXAnalysisHolder">MoneyWiseXAnalysisHolder</a> pAnalysis,
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>                                             <strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisDepositBucket" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisDepositBucket.html#MoneyWiseXAnalysisDepositBucket">MoneyWiseXAnalysisDepositBucket</a> pBase,
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>                                             <strong class="jxr_keyword">final</strong> <a name="OceanusDateRange" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/date/OceanusDateRange.html#OceanusDateRange">OceanusDateRange</a> pRange) {
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>         <em class="jxr_comment">/* Call super-constructor */</em>
@@ -161,7 +161,7 @@
 <a class="jxr_linenumber" name="L153" href="#L153">153</a> <em class="jxr_javadoccomment">         *</em>
 <a class="jxr_linenumber" name="L154" href="#L154">154</a> <em class="jxr_javadoccomment">         * @param pAnalysis the analysis</em>
 <a class="jxr_linenumber" name="L155" href="#L155">155</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>         MoneyWiseXAnalysisDepositBucketList(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysis" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysis.html#MoneyWiseXAnalysis">MoneyWiseXAnalysis</a> pAnalysis) {
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>         MoneyWiseXAnalysisDepositBucketList(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisHolder" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisHolder.html#MoneyWiseXAnalysisHolder">MoneyWiseXAnalysisHolder</a> pAnalysis) {
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>             <em class="jxr_comment">/* Initialise class */</em>
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>             <strong class="jxr_keyword">super</strong>(pAnalysis);
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>         }
@@ -173,7 +173,7 @@
 <a class="jxr_linenumber" name="L165" href="#L165">165</a> <em class="jxr_javadoccomment">         * @param pBase     the base list</em>
 <a class="jxr_linenumber" name="L166" href="#L166">166</a> <em class="jxr_javadoccomment">         * @param pDate     the Date</em>
 <a class="jxr_linenumber" name="L167" href="#L167">167</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>         MoneyWiseXAnalysisDepositBucketList(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysis" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysis.html#MoneyWiseXAnalysis">MoneyWiseXAnalysis</a> pAnalysis,
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>         MoneyWiseXAnalysisDepositBucketList(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisHolder" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisHolder.html#MoneyWiseXAnalysisHolder">MoneyWiseXAnalysisHolder</a> pAnalysis,
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>                                             <strong class="jxr_keyword">final</strong> MoneyWiseXAnalysisDepositBucketList pBase,
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>                                             <strong class="jxr_keyword">final</strong> <a name="OceanusDate" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/date/OceanusDate.html#OceanusDate">OceanusDate</a> pDate) {
 <a class="jxr_linenumber" name="L171" href="#L171">171</a>             <em class="jxr_comment">/* Initialise class */</em>
@@ -190,7 +190,7 @@
 <a class="jxr_linenumber" name="L182" href="#L182">182</a> <em class="jxr_javadoccomment">         * @param pBase     the base list</em>
 <a class="jxr_linenumber" name="L183" href="#L183">183</a> <em class="jxr_javadoccomment">         * @param pRange    the Date Range</em>
 <a class="jxr_linenumber" name="L184" href="#L184">184</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>         MoneyWiseXAnalysisDepositBucketList(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysis" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysis.html#MoneyWiseXAnalysis">MoneyWiseXAnalysis</a> pAnalysis,
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>         MoneyWiseXAnalysisDepositBucketList(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisHolder" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisHolder.html#MoneyWiseXAnalysisHolder">MoneyWiseXAnalysisHolder</a> pAnalysis,
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>                                             <strong class="jxr_keyword">final</strong> MoneyWiseXAnalysisDepositBucketList pBase,
 <a class="jxr_linenumber" name="L187" href="#L187">187</a>                                             <strong class="jxr_keyword">final</strong> <a name="OceanusDateRange" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/date/OceanusDateRange.html#OceanusDateRange">OceanusDateRange</a> pRange) {
 <a class="jxr_linenumber" name="L188" href="#L188">188</a>             <em class="jxr_comment">/* Initialise class */</em>
@@ -228,7 +228,7 @@
 <a class="jxr_linenumber" name="L220" href="#L220">220</a>             <em class="jxr_comment">/* Return the first deposit in the list if it exists */</em>
 <a class="jxr_linenumber" name="L221" href="#L221">221</a>             <strong class="jxr_keyword">return</strong> isEmpty()
 <a class="jxr_linenumber" name="L222" href="#L222">222</a>                     ? <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L223" href="#L223">223</a>                     : getUnderlyingList().get(0);
+<a class="jxr_linenumber" name="L223" href="#L223">223</a>                     : getUnderlyingList().getFirst();
 <a class="jxr_linenumber" name="L224" href="#L224">224</a>         }
 <a class="jxr_linenumber" name="L225" href="#L225">225</a> 
 <a class="jxr_linenumber" name="L226" href="#L226">226</a>         <em class="jxr_javadoccomment">/**</em>
@@ -292,6 +292,6 @@
 <a class="jxr_linenumber" name="L284" href="#L284">284</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

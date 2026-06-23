@@ -16,13 +16,13 @@
  */
 package io.github.tonywasher.joceanus.prometheus.database;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
-import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusSortOrder;
 
 /**
  * Database table class for Static Data Items. Each data type that represents Static Data should
@@ -38,7 +38,7 @@ public abstract class PrometheusTableStaticData&lt;T extends PrometheusStaticDat
      * @param pDatabase the database control
      * @param pTabName  the table name
      */
-    protected PrometheusTableStaticData(final PrometheusDataStore pDatabase,
+    protected PrometheusTableStaticData(final PrometheusDatabaseControl pDatabase,
                                         final String pTabName) {
 <span class="nc" id="L43">        super(pDatabase, pTabName);</span>
 
@@ -58,31 +58,27 @@ public abstract class PrometheusTableStaticData&lt;T extends PrometheusStaticDat
                                  final MetisDataFieldId iField) throws OceanusException {
         /* Switch on field id */
 <span class="nc" id="L60">        final PrometheusTableDefinition myTableDef = getTableDef();</span>
-<span class="nc bnc" id="L61" title="All 2 branches missed.">        if (PrometheusDataResource.STATICDATA_ENABLED.equals(iField)) {</span>
-<span class="nc" id="L62">            myTableDef.setBooleanValue(iField, pItem.getEnabled());</span>
-<span class="nc bnc" id="L63" title="All 2 branches missed.">        } else if (PrometheusDataResource.STATICDATA_SORT.equals(iField)) {</span>
-<span class="nc" id="L64">            myTableDef.setIntegerValue(iField, pItem.getOrder());</span>
-<span class="nc bnc" id="L65" title="All 2 branches missed.">        } else if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(iField)) {</span>
-<span class="nc" id="L66">            myTableDef.setBinaryValue(iField, pItem.getNameBytes());</span>
-<span class="nc bnc" id="L67" title="All 2 branches missed.">        } else if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(iField)) {</span>
-<span class="nc" id="L68">            myTableDef.setBinaryValue(iField, pItem.getDescBytes());</span>
-        } else {
-<span class="nc" id="L70">            super.setFieldValue(pItem, iField);</span>
+<span class="nc bnc" id="L61" title="All 5 branches missed.">        switch (iField) {</span>
+<span class="nc" id="L62">            case PrometheusDataResource.STATICDATA_ENABLED -&gt; myTableDef.setBooleanValue(iField, pItem.getEnabled());</span>
+<span class="nc" id="L63">            case PrometheusDataResource.STATICDATA_SORT -&gt; myTableDef.setIntegerValue(iField, pItem.getOrder());</span>
+<span class="nc" id="L64">            case PrometheusDataResource.DATAITEM_FIELD_NAME -&gt; myTableDef.setBinaryValue(iField, pItem.getNameBytes());</span>
+<span class="nc" id="L65">            case PrometheusDataResource.DATAITEM_FIELD_DESC -&gt; myTableDef.setBinaryValue(iField, pItem.getDescBytes());</span>
+<span class="nc" id="L66">            case null, default -&gt; super.setFieldValue(pItem, iField);</span>
         }
-<span class="nc" id="L72">    }</span>
+<span class="nc" id="L68">    }</span>
 
     @Override
     protected PrometheusDataValues getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
-<span class="nc" id="L77">        final PrometheusDataValues myValues = super.getRowValues(pName);</span>
-<span class="nc" id="L78">        final PrometheusTableDefinition myTableDef = getTableDef();</span>
+<span class="nc" id="L73">        final PrometheusDataValues myValues = super.getRowValues(pName);</span>
+<span class="nc" id="L74">        final PrometheusTableDefinition myTableDef = getTableDef();</span>
 
         /* Add the info and return the new values */
-<span class="nc" id="L81">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myTableDef.getBinaryValue(PrometheusDataResource.DATAITEM_FIELD_NAME));</span>
-<span class="nc" id="L82">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_DESC, myTableDef.getBinaryValue(PrometheusDataResource.DATAITEM_FIELD_DESC));</span>
-<span class="nc" id="L83">        myValues.addValue(PrometheusDataResource.STATICDATA_SORT, myTableDef.getIntegerValue(PrometheusDataResource.STATICDATA_SORT));</span>
-<span class="nc" id="L84">        myValues.addValue(PrometheusDataResource.STATICDATA_ENABLED, myTableDef.getBooleanValue(PrometheusDataResource.STATICDATA_ENABLED));</span>
-<span class="nc" id="L85">        return myValues;</span>
+<span class="nc" id="L77">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myTableDef.getBinaryValue(PrometheusDataResource.DATAITEM_FIELD_NAME));</span>
+<span class="nc" id="L78">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_DESC, myTableDef.getBinaryValue(PrometheusDataResource.DATAITEM_FIELD_DESC));</span>
+<span class="nc" id="L79">        myValues.addValue(PrometheusDataResource.STATICDATA_SORT, myTableDef.getIntegerValue(PrometheusDataResource.STATICDATA_SORT));</span>
+<span class="nc" id="L80">        myValues.addValue(PrometheusDataResource.STATICDATA_ENABLED, myTableDef.getBooleanValue(PrometheusDataResource.STATICDATA_ENABLED));</span>
+<span class="nc" id="L81">        return myValues;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

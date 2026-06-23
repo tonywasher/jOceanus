@@ -16,10 +16,9 @@
  */
 package io.github.tonywasher.joceanus.prometheus.database;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
-import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
-import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceManager;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceParams;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceSet;
 
 import java.util.EnumSet;
@@ -32,46 +31,46 @@ public interface PrometheusDatabase {
     /**
      * databasePreferenceKeys.
      */
-<span class="nc" id="L35">    enum PrometheusDatabasePreferenceKey implements MetisPreferenceKey {</span>
+<span class="nc" id="L34">    enum PrometheusDatabasePreferenceKey implements MetisPreferenceKey {</span>
         /**
          * Database Driver.
          */
-<span class="nc" id="L39">        DBDRIVER(&quot;DBDriver&quot;, PrometheusDBResource.DBPREF_DRIVER),</span>
+<span class="nc" id="L38">        DBDRIVER(&quot;DBDriver&quot;, PrometheusDBResource.DBPREF_DRIVER),</span>
 
         /**
          * Database Server.
          */
-<span class="nc" id="L44">        DBSERVER(&quot;DBServer&quot;, PrometheusDBResource.DBPREF_SERVER),</span>
+<span class="nc" id="L43">        DBSERVER(&quot;DBServer&quot;, PrometheusDBResource.DBPREF_SERVER),</span>
 
         /**
          * Database Instance.
          */
-<span class="nc" id="L49">        DBINSTANCE(&quot;DBInstance&quot;, PrometheusDBResource.DBPREF_INSTANCE),</span>
+<span class="nc" id="L48">        DBINSTANCE(&quot;DBInstance&quot;, PrometheusDBResource.DBPREF_INSTANCE),</span>
 
         /**
          * Database Port.
          */
-<span class="nc" id="L54">        DBPORT(&quot;DBPort&quot;, PrometheusDBResource.DBPREF_PORT),</span>
+<span class="nc" id="L53">        DBPORT(&quot;DBPort&quot;, PrometheusDBResource.DBPREF_PORT),</span>
 
         /**
          * Database Name.
          */
-<span class="nc" id="L59">        DBNAME(&quot;DBName&quot;, PrometheusDBResource.DBPREF_NAME),</span>
+<span class="nc" id="L58">        DBNAME(&quot;DBName&quot;, PrometheusDBResource.DBPREF_NAME),</span>
 
         /**
          * Database Batch.
          */
-<span class="nc" id="L64">        DBBATCH(&quot;DBBatchSize&quot;, PrometheusDBResource.DBPREF_BATCH),</span>
+<span class="nc" id="L63">        DBBATCH(&quot;DBBatchSize&quot;, PrometheusDBResource.DBPREF_BATCH),</span>
 
         /**
          * Database User.
          */
-<span class="nc" id="L69">        DBUSER(&quot;DBUser&quot;, PrometheusDBResource.DBPREF_USER),</span>
+<span class="nc" id="L68">        DBUSER(&quot;DBUser&quot;, PrometheusDBResource.DBPREF_USER),</span>
 
         /**
          * Database Password.
          */
-<span class="nc" id="L74">        DBPASS(&quot;DBPass&quot;, PrometheusDBResource.DBPREF_PASS);</span>
+<span class="nc" id="L73">        DBPASS(&quot;DBPass&quot;, PrometheusDBResource.DBPREF_PASS);</span>
 
         /**
          * The name of the Preference.
@@ -90,19 +89,19 @@ public interface PrometheusDatabase {
          * @param pDisplay the display string;
          */
         PrometheusDatabasePreferenceKey(final String pName,
-<span class="nc" id="L93">                                        final PrometheusDBResource pDisplay) {</span>
-<span class="nc" id="L94">            theName = pName;</span>
-<span class="nc" id="L95">            theDisplay = pDisplay.getValue();</span>
-<span class="nc" id="L96">        }</span>
+<span class="nc" id="L92">                                        final PrometheusDBResource pDisplay) {</span>
+<span class="nc" id="L93">            theName = pName;</span>
+<span class="nc" id="L94">            theDisplay = pDisplay.getValue();</span>
+<span class="nc" id="L95">        }</span>
 
         @Override
         public String getName() {
-<span class="nc" id="L100">            return theName;</span>
+<span class="nc" id="L99">            return theName;</span>
         }
 
         @Override
         public String getDisplay() {
-<span class="nc" id="L105">            return theDisplay;</span>
+<span class="nc" id="L104">            return theDisplay;</span>
         }
     }
 
@@ -114,100 +113,100 @@ public interface PrometheusDatabase {
         /**
          * Default Database batch size.
          */
-<span class="nc" id="L117">        private static final Integer DEFAULT_DBBATCH = 50;</span>
+<span class="nc" id="L116">        private static final Integer DEFAULT_DBBATCH = 50;</span>
 
         /**
          * Valid lengths.
          */
-<span class="nc" id="L122">        private static final Set&lt;PrometheusJDBCDriver&gt; VALID_DBS = EnumSet.of(PrometheusJDBCDriver.SQLSERVER, PrometheusJDBCDriver.POSTGRESQL,</span>
+<span class="nc" id="L121">        private static final Set&lt;PrometheusJDBCDriver&gt; VALID_DBS = EnumSet.of(PrometheusJDBCDriver.SQLSERVER, PrometheusJDBCDriver.POSTGRESQL,</span>
                 PrometheusJDBCDriver.MYSQL, PrometheusJDBCDriver.MARIADB);
 
         /**
          * Constructor.
          *
-         * @param pManager the preference manager
+         * @param pParams the parameters
          * @throws OceanusException on error
          */
-        public PrometheusDatabasePreferences(final MetisPreferenceManager pManager) throws OceanusException {
-<span class="nc" id="L132">            super((PrometheusPreferenceManager) pManager, PrometheusDBResource.DBPREF_PREFNAME);</span>
-<span class="nc" id="L133">        }</span>
+        public PrometheusDatabasePreferences(final MetisPreferenceParams pParams) throws OceanusException {
+<span class="nc" id="L131">            super(pParams, PrometheusDBResource.DBPREF_PREFNAME);</span>
+<span class="nc" id="L132">        }</span>
 
         @Override
         protected void definePreferences() throws OceanusException {
-<span class="nc" id="L137">            defineEnumPreference(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.class);</span>
-<span class="nc" id="L138">            defineStringPreference(PrometheusDatabasePreferenceKey.DBSERVER);</span>
-<span class="nc" id="L139">            defineStringPreference(PrometheusDatabasePreferenceKey.DBINSTANCE);</span>
-<span class="nc" id="L140">            defineIntegerPreference(PrometheusDatabasePreferenceKey.DBPORT);</span>
-<span class="nc" id="L141">            defineStringPreference(PrometheusDatabasePreferenceKey.DBNAME);</span>
-<span class="nc" id="L142">            defineIntegerPreference(PrometheusDatabasePreferenceKey.DBBATCH);</span>
-<span class="nc" id="L143">            defineStringPreference(PrometheusDatabasePreferenceKey.DBUSER);</span>
-<span class="nc" id="L144">            defineCharArrayPreference(PrometheusDatabasePreferenceKey.DBPASS);</span>
-<span class="nc" id="L145">        }</span>
+<span class="nc" id="L136">            defineEnumPreference(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.class);</span>
+<span class="nc" id="L137">            defineStringPreference(PrometheusDatabasePreferenceKey.DBSERVER);</span>
+<span class="nc" id="L138">            defineStringPreference(PrometheusDatabasePreferenceKey.DBINSTANCE);</span>
+<span class="nc" id="L139">            defineIntegerPreference(PrometheusDatabasePreferenceKey.DBPORT);</span>
+<span class="nc" id="L140">            defineStringPreference(PrometheusDatabasePreferenceKey.DBNAME);</span>
+<span class="nc" id="L141">            defineIntegerPreference(PrometheusDatabasePreferenceKey.DBBATCH);</span>
+<span class="nc" id="L142">            defineStringPreference(PrometheusDatabasePreferenceKey.DBUSER);</span>
+<span class="nc" id="L143">            defineCharArrayPreference(PrometheusDatabasePreferenceKey.DBPASS);</span>
+<span class="nc" id="L144">        }</span>
 
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the enum is specified */
-<span class="nc" id="L150">            final MetisEnumPreference&lt;PrometheusJDBCDriver&gt; myTypePref = getEnumPreference(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.class);</span>
-<span class="nc bnc" id="L151" title="All 2 branches missed.">            if (!myTypePref.isAvailable()) {</span>
-<span class="nc" id="L152">                myTypePref.setValue(PrometheusJDBCDriver.POSTGRESQL);</span>
+<span class="nc" id="L149">            final MetisEnumPreference&lt;PrometheusJDBCDriver&gt; myTypePref = getEnumPreference(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.class);</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">            if (!myTypePref.isAvailable()) {</span>
+<span class="nc" id="L151">                myTypePref.setValue(PrometheusJDBCDriver.POSTGRESQL);</span>
             }
-<span class="nc" id="L154">            myTypePref.setFilter(VALID_DBS::contains);</span>
-<span class="nc" id="L155">            final PrometheusJDBCDriver myDriver = myTypePref.getValue();</span>
+<span class="nc" id="L153">            myTypePref.setFilter(VALID_DBS::contains);</span>
+<span class="nc" id="L154">            final PrometheusJDBCDriver myDriver = myTypePref.getValue();</span>
 
             /* Make sure that the hostName is specified */
-<span class="nc" id="L158">            MetisStringPreference myPref = getStringPreference(PrometheusDatabasePreferenceKey.DBSERVER);</span>
-<span class="nc bnc" id="L159" title="All 2 branches missed.">            if (!myPref.isAvailable()) {</span>
-<span class="nc" id="L160">                myPref.setValue(&quot;localhost&quot;);</span>
+<span class="nc" id="L157">            MetisStringPreference myPref = getStringPreference(PrometheusDatabasePreferenceKey.DBSERVER);</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">            if (!myPref.isAvailable()) {</span>
+<span class="nc" id="L159">                myPref.setValue(&quot;localhost&quot;);</span>
             }
 
             /* Make sure that the instance is specified (for SQLSERVER) */
-<span class="nc" id="L164">            myPref = getStringPreference(PrometheusDatabasePreferenceKey.DBINSTANCE);</span>
-<span class="nc bnc" id="L165" title="All 2 branches missed.">            myPref.setHidden(!PrometheusJDBCDriver.SQLSERVER.equals(myDriver));</span>
-<span class="nc bnc" id="L166" title="All 2 branches missed.">            if (myPref.isHidden()) {</span>
-<span class="nc" id="L167">                myPref.setValue(null);</span>
-<span class="nc bnc" id="L168" title="All 2 branches missed.">            } else if (!myPref.isAvailable()) {</span>
-<span class="nc" id="L169">                myPref.setValue(PrometheusJDBCDriver.INSTANCE_SQLEXPRESS);</span>
+<span class="nc" id="L163">            myPref = getStringPreference(PrometheusDatabasePreferenceKey.DBINSTANCE);</span>
+<span class="nc bnc" id="L164" title="All 2 branches missed.">            myPref.setHidden(!PrometheusJDBCDriver.SQLSERVER.equals(myDriver));</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">            if (myPref.isHidden()) {</span>
+<span class="nc" id="L166">                myPref.setValue(null);</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">            } else if (!myPref.isAvailable()) {</span>
+<span class="nc" id="L168">                myPref.setValue(PrometheusJDBCDriver.INSTANCE_SQLEXPRESS);</span>
             }
 
             /* Make sure that the port is specified (for MARIADB/MYSQL/POSTGRESQL) */
-<span class="nc" id="L173">            final MetisIntegerPreference myIntPref = getIntegerPreference(PrometheusDatabasePreferenceKey.DBPORT);</span>
-<span class="nc bnc" id="L174" title="All 2 branches missed.">            myIntPref.setHidden(!myDriver.usePort());</span>
-<span class="nc bnc" id="L175" title="All 2 branches missed.">            if (myIntPref.isHidden()) {</span>
-<span class="nc" id="L176">                myIntPref.setValue(null);</span>
-<span class="nc bnc" id="L177" title="All 2 branches missed.">            } else if (!myIntPref.isAvailable()) {</span>
-<span class="nc" id="L178">                myIntPref.setValue(myDriver.getDefaultPort());</span>
+<span class="nc" id="L172">            final MetisIntegerPreference myIntPref = getIntegerPreference(PrometheusDatabasePreferenceKey.DBPORT);</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">            myIntPref.setHidden(!myDriver.usePort());</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">            if (myIntPref.isHidden()) {</span>
+<span class="nc" id="L175">                myIntPref.setValue(null);</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">            } else if (!myIntPref.isAvailable()) {</span>
+<span class="nc" id="L177">                myIntPref.setValue(myDriver.getDefaultPort());</span>
             }
 
             /* Make sure that the database is specified */
-<span class="nc" id="L182">            myPref = getStringPreference(PrometheusDatabasePreferenceKey.DBNAME);</span>
-<span class="nc bnc" id="L183" title="All 2 branches missed.">            if (!myPref.isAvailable()) {</span>
-<span class="nc" id="L184">                myPref.setValue(&quot;MoneyWise&quot;);</span>
+<span class="nc" id="L181">            myPref = getStringPreference(PrometheusDatabasePreferenceKey.DBNAME);</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">            if (!myPref.isAvailable()) {</span>
+<span class="nc" id="L183">                myPref.setValue(&quot;MoneyWise&quot;);</span>
             }
 
             /* Make sure that the user is specified */
-<span class="nc" id="L188">            myPref = getStringPreference(PrometheusDatabasePreferenceKey.DBUSER);</span>
-<span class="nc bnc" id="L189" title="All 2 branches missed.">            if (!myPref.isAvailable()) {</span>
-<span class="nc" id="L190">                myPref.setValue(System.getProperty(&quot;user.name&quot;));</span>
+<span class="nc" id="L187">            myPref = getStringPreference(PrometheusDatabasePreferenceKey.DBUSER);</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">            if (!myPref.isAvailable()) {</span>
+<span class="nc" id="L189">                myPref.setValue(System.getProperty(&quot;user.name&quot;));</span>
             }
 
             /* Make sure that the passWord is specified */
-<span class="nc" id="L194">            final PrometheusCharArrayPreference myPassPref = getCharArrayPreference(PrometheusDatabasePreferenceKey.DBPASS);</span>
-<span class="nc bnc" id="L195" title="All 2 branches missed.">            if (!myPassPref.isAvailable()) {</span>
-<span class="nc" id="L196">                myPassPref.setValue(&quot;secret&quot;.toCharArray());</span>
+<span class="nc" id="L193">            final PrometheusCharArrayPreference myPassPref = getCharArrayPreference(PrometheusDatabasePreferenceKey.DBPASS);</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">            if (!myPassPref.isAvailable()) {</span>
+<span class="nc" id="L195">                myPassPref.setValue(&quot;secret&quot;.toCharArray());</span>
             }
 
             /* Make sure that the value is specified */
-<span class="nc" id="L200">            final MetisIntegerPreference myBatchPref = getIntegerPreference(PrometheusDatabasePreferenceKey.DBBATCH);</span>
-<span class="nc bnc" id="L201" title="All 2 branches missed.">            if (!myBatchPref.isAvailable()) {</span>
-<span class="nc" id="L202">                myBatchPref.setValue(DEFAULT_DBBATCH);</span>
+<span class="nc" id="L199">            final MetisIntegerPreference myBatchPref = getIntegerPreference(PrometheusDatabasePreferenceKey.DBBATCH);</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">            if (!myBatchPref.isAvailable()) {</span>
+<span class="nc" id="L201">                myBatchPref.setValue(DEFAULT_DBBATCH);</span>
             }
 
             /* Define the range */
-<span class="nc" id="L206">            myBatchPref.setRange(DEFAULT_DBBATCH, null);</span>
-<span class="nc bnc" id="L207" title="All 2 branches missed.">            if (!myBatchPref.validate()) {</span>
-<span class="nc" id="L208">                myBatchPref.setValue(DEFAULT_DBBATCH);</span>
+<span class="nc" id="L205">            myBatchPref.setRange(DEFAULT_DBBATCH, null);</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">            if (!myBatchPref.validate()) {</span>
+<span class="nc" id="L207">                myBatchPref.setValue(DEFAULT_DBBATCH);</span>
             }
-<span class="nc" id="L210">        }</span>
+<span class="nc" id="L209">        }</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

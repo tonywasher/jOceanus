@@ -222,7 +222,7 @@ public class MoneyWiseQIFParser {
      */
     private void processClassRecord(final List&lt;String&gt; pLines) {
         /* register the class */
-<span class="nc" id="L225">        final MoneyWiseQIFClass myClass = new MoneyWiseQIFClass(theFile, pLines);</span>
+<span class="nc" id="L225">        final MoneyWiseQIFClass myClass = new MoneyWiseQIFClass(pLines);</span>
 <span class="nc" id="L226">        theFile.registerClass(myClass);</span>
 <span class="nc" id="L227">    }</span>
 
@@ -233,7 +233,7 @@ public class MoneyWiseQIFParser {
      */
     private void processCategoryRecord(final List&lt;String&gt; pLines) {
         /* Register the category */
-<span class="nc" id="L236">        final MoneyWiseQIFEventCategory myCategory = new MoneyWiseQIFEventCategory(theFile, pLines);</span>
+<span class="nc" id="L236">        final MoneyWiseQIFEventCategory myCategory = new MoneyWiseQIFEventCategory(pLines);</span>
 <span class="nc" id="L237">        theFile.registerCategory(myCategory);</span>
 <span class="nc" id="L238">    }</span>
 
@@ -244,7 +244,7 @@ public class MoneyWiseQIFParser {
      */
     private void processAccountRecord(final List&lt;String&gt; pLines) {
         /* Register the account */
-<span class="nc" id="L247">        final MoneyWiseQIFAccount myAccount = new MoneyWiseQIFAccount(theFile, theFormatter, pLines);</span>
+<span class="nc" id="L247">        final MoneyWiseQIFAccount myAccount = new MoneyWiseQIFAccount(theFormatter, pLines);</span>
 <span class="nc" id="L248">        theActive = theFile.registerAccount(myAccount);</span>
 <span class="nc" id="L249">    }</span>
 
@@ -255,7 +255,7 @@ public class MoneyWiseQIFParser {
      */
     private void processSecurityRecord(final List&lt;String&gt; pLines) {
         /* Register the security */
-<span class="nc" id="L258">        final MoneyWiseQIFSecurity mySecurity = new MoneyWiseQIFSecurity(theFile, pLines);</span>
+<span class="nc" id="L258">        final MoneyWiseQIFSecurity mySecurity = new MoneyWiseQIFSecurity(pLines);</span>
 <span class="nc" id="L259">        theFile.registerSecurity(mySecurity);</span>
 <span class="nc" id="L260">    }</span>
 
@@ -356,4 +356,4 @@ public class MoneyWiseQIFParser {
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

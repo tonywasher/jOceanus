@@ -16,14 +16,12 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.reports;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportDelayedTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
-import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
-import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
@@ -33,6 +31,8 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTransCategoryFilter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -89,12 +89,12 @@ public class MoneyWiseReportIncomeExpense
 <span class="nc" id="L89">        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));</span>
 
         /* Initialise the table */
-<span class="nc" id="L92">        final MetisHTMLTable myTable = theBuilder.startTable(myBody);</span>
+<span class="nc" id="L92">        final MetisReportHTMLTable myTable = theBuilder.startTable(myBody);</span>
 <span class="nc" id="L93">        theBuilder.startHdrRow(myTable);</span>
 <span class="nc" id="L94">        theBuilder.makeTitleCell(myTable);</span>
-<span class="nc" id="L95">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_INCOME);</span>
-<span class="nc" id="L96">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_EXPENSE);</span>
-<span class="nc" id="L97">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);</span>
+<span class="nc" id="L95">        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_INCOME);</span>
+<span class="nc" id="L96">        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_EXPENSE);</span>
+<span class="nc" id="L97">        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_PROFIT);</span>
 
         /* Loop through the SubTotal Buckets */
 <span class="nc" id="L100">        final Iterator&lt;MoneyWiseAnalysisTransCategoryBucket&gt; myIterator = myCategories.iterator();</span>
@@ -129,7 +129,7 @@ public class MoneyWiseReportIncomeExpense
 
         /* Format the total */
 <span class="nc" id="L131">        theBuilder.startTotalRow(myTable);</span>
-<span class="nc" id="L132">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);</span>
+<span class="nc" id="L132">        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_TOTAL);</span>
 <span class="nc" id="L133">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTransAttr.INCOME));</span>
 <span class="nc" id="L134">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTransAttr.EXPENSE));</span>
 <span class="nc" id="L135">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTransAttr.PROFIT));</span>
@@ -139,7 +139,7 @@ public class MoneyWiseReportIncomeExpense
     }
 
     @Override
-    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+    public MetisReportHTMLTable createDelayedTable(final MetisReportDelayedTable pTable) {
         /* Access the source */
 <span class="nc" id="L144">        final Object mySource = pTable.getSource();</span>
 <span class="nc bnc" id="L145" title="All 2 branches missed.">        if (mySource instanceof MoneyWiseAnalysisTransCategoryBucket mySourceBucket) {</span>
@@ -157,14 +157,14 @@ public class MoneyWiseReportIncomeExpense
      * @param pSource the source bucket
      * @return the new document fragment
      */
-    protected MetisHTMLTable createDelayedCategory(final MetisHTMLTable pParent,
-                                                   final MoneyWiseAnalysisTransCategoryBucket pSource) {
+    protected MetisReportHTMLTable createDelayedCategory(final MetisReportHTMLTable pParent,
+                                                         final MoneyWiseAnalysisTransCategoryBucket pSource) {
         /* Access the category */
 <span class="nc" id="L163">        final MoneyWiseAnalysisTransCategoryBucketList myCategories = theAnalysis.getTransCategories();</span>
 <span class="nc" id="L164">        final MoneyWiseTransCategory myCategory = pSource.getTransactionCategory();</span>
 
         /* Create an embedded table */
-<span class="nc" id="L167">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+<span class="nc" id="L167">        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
 
         /* Loop through the Category Buckets */
 <span class="nc" id="L170">        final Iterator&lt;MoneyWiseAnalysisTransCategoryBucket&gt; myIterator = myCategories.iterator();</span>
@@ -208,4 +208,4 @@ public class MoneyWiseReportIncomeExpense
 <span class="nc" id="L208">        return null;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

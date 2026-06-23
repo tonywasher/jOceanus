@@ -20,8 +20,8 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyDataType;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusIOException;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
@@ -30,7 +30,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Properties;
@@ -38,7 +37,8 @@ import java.util.Properties;
 /**
  * Class that encapsulates a database connection.
  */
-public abstract class PrometheusDataStore {
+public abstract class PrometheusDataStore
+        implements PrometheusDatabaseControl {
     /**
      * Number of update steps per table (INSERT/UPDATE/DELETE).
      */
@@ -92,7 +92,7 @@ public abstract class PrometheusDataStore {
     /**
      * List of Database tables.
      */
-    private final List&lt;PrometheusTableDataItem&lt;?&gt;&gt; theTables;
+    private final List&lt;PrometheusTableInstance&lt;?&gt;&gt; theTables;
 
     /**
      * Construct a new Database class.
@@ -243,36 +243,23 @@ public abstract class PrometheusDataStore {
      */
     private PrometheusTableDataItem&lt;?&gt; newTable(final PrometheusCryptographyDataType pListType) {
         /* Switch on list Type */
-<span class="nc bnc" id="L246" title="All 5 branches missed.">        switch (pListType) {</span>
-            case CONTROLDATA:
-<span class="nc" id="L248">                return new PrometheusTableControlData(this);</span>
-            case CONTROLKEY:
-<span class="nc" id="L250">                return new PrometheusTableControlKeys(this);</span>
-            case CONTROLKEYSET:
-<span class="nc" id="L252">                return new PrometheusTableControlKeySet(this);</span>
-            case DATAKEYSET:
-<span class="nc" id="L254">                return new PrometheusTableDataKeySet(this);</span>
-            default:
-<span class="nc" id="L256">                throw new IllegalArgumentException(pListType.toString());</span>
-        }
+<span class="nc bnc" id="L246" title="All 5 branches missed.">        return switch (pListType) {</span>
+<span class="nc" id="L247">            case CONTROLDATA -&gt; new PrometheusTableControlData(this);</span>
+<span class="nc" id="L248">            case CONTROLKEY -&gt; new PrometheusTableControlKeys(this);</span>
+<span class="nc" id="L249">            case CONTROLKEYSET -&gt; new PrometheusTableControlKeySet(this);</span>
+<span class="nc" id="L250">            case DATAKEYSET -&gt; new PrometheusTableDataKeySet(this);</span>
+<span class="nc" id="L251">            default -&gt; throw new IllegalArgumentException(pListType.toString());</span>
+        };
     }
 
-    /**
-     * Obtain the Driver.
-     *
-     * @return the driver
-     */
-    protected PrometheusJDBCDriver getDriver() {
-<span class="nc" id="L266">        return theDriver;</span>
+    @Override
+    public PrometheusJDBCDriver getDriver() {
+<span class="nc" id="L257">        return theDriver;</span>
     }
 
-    /**
-     * Access the connection.
-     *
-     * @return the connection
-     */
-    protected Connection getConn() {
-<span class="nc" id="L275">        return theConn;</span>
+    @Override
+    public Connection getConn() {
+<span class="nc" id="L262">        return theConn;</span>
     }
 
     /**
@@ -280,43 +267,45 @@ public abstract class PrometheusDataStore {
      *
      * @param pTable the Table to add
      */
-    protected void addTable(final PrometheusTableDataItem&lt;?&gt; pTable) {
-<span class="nc" id="L284">        pTable.getDefinition().resolveReferences(theTables);</span>
-<span class="nc" id="L285">        theTables.add(pTable);</span>
-<span class="nc" id="L286">    }</span>
+    protected void addTable(final PrometheusTableInstance&lt;?&gt; pTable) {
+<span class="nc" id="L271">        pTable.resolveReferences(theTables);</span>
+<span class="nc" id="L272">        theTables.add(pTable);</span>
+<span class="nc" id="L273">    }</span>
 
     /**
      * Close the connection to the database rolling back any outstanding transaction.
      */
     public void close() {
         /* Ignore if no connection */
-<span class="nc bnc" id="L293" title="All 2 branches missed.">        if (theConn == null) {</span>
-<span class="nc" id="L294">            return;</span>
+<span class="nc bnc" id="L280" title="All 2 branches missed.">        if (theConn == null) {</span>
+<span class="nc" id="L281">            return;</span>
         }
 
         /* Protect against exceptions */
         try {
             /* Roll-back any outstanding transaction */
-<span class="nc bnc" id="L300" title="All 2 branches missed.">            if (!theConn.getAutoCommit()) {</span>
-<span class="nc" id="L301">                theConn.rollback();</span>
+<span class="nc bnc" id="L287" title="All 2 branches missed.">            if (!theConn.getAutoCommit()) {</span>
+<span class="nc" id="L288">                theConn.rollback();</span>
             }
 
             /* Loop through the tables */
-<span class="nc bnc" id="L305" title="All 2 branches missed.">            for (PrometheusTableDataItem&lt;?&gt; myTable : theTables) {</span>
+<span class="nc bnc" id="L292" title="All 2 branches missed.">            for (PrometheusTableInstance&lt;?&gt; myInstance : theTables) {</span>
+<span class="nc" id="L293">                final PrometheusTableDataItem&lt;?&gt; myTable = (PrometheusTableDataItem&lt;?&gt;) myInstance;</span>
+
                 /* Close the Statement */
-<span class="nc" id="L307">                myTable.closeStmt();</span>
-<span class="nc" id="L308">            }</span>
+<span class="nc" id="L296">                myTable.closeStmt();</span>
+<span class="nc" id="L297">            }</span>
 
             /* Close the connection */
-<span class="nc" id="L311">            theConn.close();</span>
-<span class="nc" id="L312">            theConn = null;</span>
+<span class="nc" id="L300">            theConn.close();</span>
+<span class="nc" id="L301">            theConn = null;</span>
 
             /* Discard Exceptions */
-<span class="nc" id="L315">        } catch (SQLException e) {</span>
-<span class="nc" id="L316">            LOGGER.error(&quot;Failed to close database connection&quot;, e);</span>
-<span class="nc" id="L317">            theConn = null;</span>
-<span class="nc" id="L318">        }</span>
-<span class="nc" id="L319">    }</span>
+<span class="nc" id="L304">        } catch (SQLException e) {</span>
+<span class="nc" id="L305">            LOGGER.error(&quot;Failed to close database connection&quot;, e);</span>
+<span class="nc" id="L306">            theConn = null;</span>
+<span class="nc" id="L307">        }</span>
+<span class="nc" id="L308">    }</span>
 
     /**
      * Load data from the database.
@@ -328,25 +317,27 @@ public abstract class PrometheusDataStore {
     public void loadDatabase(final TethysUIThreadStatusReport pReport,
                              final PrometheusDataSet pData) throws OceanusException {
         /* Initialise task */
-<span class="nc" id="L331">        pReport.initTask(&quot;loadDatabase&quot;);</span>
-<span class="nc" id="L332">        pReport.setNumStages(theTables.size());</span>
+<span class="nc" id="L320">        pReport.initTask(&quot;loadDatabase&quot;);</span>
+<span class="nc" id="L321">        pReport.setNumStages(theTables.size());</span>
 
         /* Obtain the active profile */
-<span class="nc" id="L335">        OceanusProfile myTask = pReport.getActiveTask();</span>
-<span class="nc" id="L336">        myTask = myTask.startTask(&quot;loadDatabase&quot;);</span>
+<span class="nc" id="L324">        OceanusProfile myTask = pReport.getActiveTask();</span>
+<span class="nc" id="L325">        myTask = myTask.startTask(&quot;loadDatabase&quot;);</span>
 
         /* Loop through the tables */
-<span class="nc bnc" id="L339" title="All 2 branches missed.">        for (PrometheusTableDataItem&lt;?&gt; myTable : theTables) {</span>
+<span class="nc bnc" id="L328" title="All 2 branches missed.">        for (PrometheusTableInstance&lt;?&gt; myInstance : theTables) {</span>
+<span class="nc" id="L329">            final PrometheusTableDataItem&lt;?&gt; myTable = (PrometheusTableDataItem&lt;?&gt;) myInstance;</span>
+
             /* Note the new step */
-<span class="nc" id="L341">            myTask.startTask(myTable.getTableName());</span>
+<span class="nc" id="L332">            myTask.startTask(myTable.getTableName());</span>
 
             /* Load the items */
-<span class="nc" id="L344">            myTable.loadItems(pReport, pData);</span>
-<span class="nc" id="L345">        }</span>
+<span class="nc" id="L335">            myTable.loadItems(pReport, pData);</span>
+<span class="nc" id="L336">        }</span>
 
         /* Complete the task */
-<span class="nc" id="L348">        myTask.end();</span>
-<span class="nc" id="L349">    }</span>
+<span class="nc" id="L339">        myTask.end();</span>
+<span class="nc" id="L340">    }</span>
 
     /**
      * Update data into database.
@@ -358,68 +349,67 @@ public abstract class PrometheusDataStore {
     public void updateDatabase(final TethysUIThreadStatusReport pReport,
                                final PrometheusDataSet pData) throws OceanusException {
         /* Set the number of stages */
-<span class="nc" id="L361">        final PrometheusBatchControl myBatch = new PrometheusBatchControl(theBatchSize);</span>
-<span class="nc" id="L362">        pReport.setNumStages(NUM_STEPS_PER_TABLE * theTables.size());</span>
+<span class="nc" id="L352">        final PrometheusBatchControl myBatch = new PrometheusBatchControl(theBatchSize);</span>
+<span class="nc" id="L353">        pReport.setNumStages(NUM_STEPS_PER_TABLE * theTables.size());</span>
 
         /* Obtain the active profile */
-<span class="nc" id="L365">        OceanusProfile myTask = pReport.getActiveTask();</span>
-<span class="nc" id="L366">        myTask = myTask.startTask(&quot;updateDatabase&quot;);</span>
+<span class="nc" id="L356">        OceanusProfile myTask = pReport.getActiveTask();</span>
+<span class="nc" id="L357">        myTask = myTask.startTask(&quot;updateDatabase&quot;);</span>
 
         /* Loop through the tables */
-<span class="nc" id="L369">        OceanusProfile myStage = myTask.startTask(&quot;insertData&quot;);</span>
-<span class="nc" id="L370">        final Iterator&lt;PrometheusTableDataItem&lt;?&gt;&gt; myIterator = theTables.iterator();</span>
-<span class="nc bnc" id="L371" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L372">            final PrometheusTableDataItem&lt;?&gt; myTable = myIterator.next();</span>
+<span class="nc" id="L360">        OceanusProfile myStage = myTask.startTask(&quot;insertData&quot;);</span>
+<span class="nc bnc" id="L361" title="All 2 branches missed.">        for (PrometheusTableInstance&lt;?&gt; myInstance : theTables) {</span>
+<span class="nc" id="L362">            final PrometheusTableDataItem&lt;?&gt; myTable = (PrometheusTableDataItem&lt;?&gt;) myInstance;</span>
 
             /* Note the new step */
-<span class="nc" id="L375">            myStage.startTask(myTable.getTableName());</span>
+<span class="nc" id="L365">            myStage.startTask(myTable.getTableName());</span>
 
             /* insert the items */
-<span class="nc" id="L378">            myTable.insertItems(pReport, pData, myBatch);</span>
-<span class="nc" id="L379">        }</span>
+<span class="nc" id="L368">            myTable.insertItems(pReport, pData, myBatch);</span>
+<span class="nc" id="L369">        }</span>
 
         /* Loop through the tables */
-<span class="nc" id="L382">        myStage = myTask.startTask(&quot;updateData&quot;);</span>
-<span class="nc" id="L383">        final ListIterator&lt;PrometheusTableDataItem&lt;?&gt;&gt; myListIterator = theTables.listIterator();</span>
-<span class="nc bnc" id="L384" title="All 2 branches missed.">        while (myListIterator.hasNext()) {</span>
-<span class="nc" id="L385">            final PrometheusTableDataItem&lt;?&gt; myTable = myListIterator.next();</span>
+<span class="nc" id="L372">        myStage = myTask.startTask(&quot;updateData&quot;);</span>
+<span class="nc" id="L373">        final ListIterator&lt;PrometheusTableInstance&lt;?&gt;&gt; myListIterator = theTables.listIterator();</span>
+<span class="nc bnc" id="L374" title="All 2 branches missed.">        while (myListIterator.hasNext()) {</span>
+<span class="nc" id="L375">            final PrometheusTableDataItem&lt;?&gt; myTable = (PrometheusTableDataItem&lt;?&gt;) myListIterator.next();</span>
 
             /* Note the new step */
-<span class="nc" id="L388">            myStage.startTask(myTable.getTableName());</span>
+<span class="nc" id="L378">            myStage.startTask(myTable.getTableName());</span>
 
             /* Load the items */
-<span class="nc" id="L391">            myTable.updateItems(pReport, myBatch);</span>
-<span class="nc" id="L392">        }</span>
+<span class="nc" id="L381">            myTable.updateItems(pReport, myBatch);</span>
+<span class="nc" id="L382">        }</span>
 
         /* Loop through the tables in reverse order */
-<span class="nc" id="L395">        myStage = myTask.startTask(&quot;deleteData&quot;);</span>
-<span class="nc bnc" id="L396" title="All 2 branches missed.">        while (myListIterator.hasPrevious()) {</span>
-<span class="nc" id="L397">            final PrometheusTableDataItem&lt;?&gt; myTable = myListIterator.previous();</span>
+<span class="nc" id="L385">        myStage = myTask.startTask(&quot;deleteData&quot;);</span>
+<span class="nc bnc" id="L386" title="All 2 branches missed.">        while (myListIterator.hasPrevious()) {</span>
+<span class="nc" id="L387">            final PrometheusTableDataItem&lt;?&gt; myTable = (PrometheusTableDataItem&lt;?&gt;) myListIterator.previous();</span>
 
             /* Note the new step */
-<span class="nc" id="L400">            myStage.startTask(myTable.getTableName());</span>
+<span class="nc" id="L390">            myStage.startTask(myTable.getTableName());</span>
 
             /* Delete items from the table */
-<span class="nc" id="L403">            myTable.deleteItems(pReport, myBatch);</span>
-<span class="nc" id="L404">        }</span>
+<span class="nc" id="L393">            myTable.deleteItems(pReport, myBatch);</span>
+<span class="nc" id="L394">        }</span>
 
         /* If we have active work in the batch */
-<span class="nc bnc" id="L407" title="All 2 branches missed.">        if (myBatch.isActive()) {</span>
+<span class="nc bnc" id="L397" title="All 2 branches missed.">        if (myBatch.isActive()) {</span>
             /* Commit the database */
             try {
-<span class="nc" id="L410">                theConn.commit();</span>
-<span class="nc" id="L411">            } catch (SQLException e) {</span>
-<span class="nc" id="L412">                close();</span>
-<span class="nc" id="L413">                throw new PrometheusIOException(&quot;Failed to commit transaction&quot;, e);</span>
-<span class="nc" id="L414">            }</span>
+<span class="nc" id="L400">                theConn.commit();</span>
+<span class="nc" id="L401">            } catch (SQLException e) {</span>
+<span class="nc" id="L402">                close();</span>
+<span class="nc" id="L403">                throw new PrometheusIOException(&quot;Failed to commit transaction&quot;, e);</span>
+<span class="nc" id="L404">            }</span>
 
             /* Commit the batch */
-<span class="nc" id="L417">            myBatch.commitItems();</span>
+<span class="nc" id="L407">            myBatch.commitItems();</span>
         }
 
         /* Complete the task */
-<span class="nc" id="L421">        myTask.end();</span>
-<span class="nc" id="L422">    }</span>
+<span class="nc" id="L411">        myTask.end();</span>
+<span class="nc" id="L412">    }</span>
 
     /**
      * Create database.
@@ -431,20 +421,20 @@ public abstract class PrometheusDataStore {
     public void createDatabase(final TethysUIThreadStatusReport pReport,
                                final String pDatabase) throws OceanusException {
         /* Set the number of stages */
-<span class="nc" id="L434">        pReport.setNumStages(2);</span>
+<span class="nc" id="L424">        pReport.setNumStages(2);</span>
 
         /* Obtain the active profile */
-<span class="nc" id="L437">        OceanusProfile myTask = pReport.getActiveTask();</span>
-<span class="nc" id="L438">        myTask = myTask.startTask(&quot;dropDatabase&quot;);</span>
-<span class="nc" id="L439">        executeStatement(&quot;DROP DATABASE IF EXISTS &quot; + pDatabase);</span>
+<span class="nc" id="L427">        OceanusProfile myTask = pReport.getActiveTask();</span>
+<span class="nc" id="L428">        myTask = myTask.startTask(&quot;dropDatabase&quot;);</span>
+<span class="nc" id="L429">        executeStatement(&quot;DROP DATABASE IF EXISTS &quot; + pDatabase);</span>
 
         /* Create database */
-<span class="nc" id="L442">        myTask = myTask.startTask(&quot;createDatabase&quot;);</span>
-<span class="nc" id="L443">        executeStatement(&quot;CREATE DATABASE &quot; + pDatabase);</span>
+<span class="nc" id="L432">        myTask = myTask.startTask(&quot;createDatabase&quot;);</span>
+<span class="nc" id="L433">        executeStatement(&quot;CREATE DATABASE &quot; + pDatabase);</span>
 
         /* Complete the task */
-<span class="nc" id="L446">        myTask.end();</span>
-<span class="nc" id="L447">    }</span>
+<span class="nc" id="L436">        myTask.end();</span>
+<span class="nc" id="L437">    }</span>
 
     /**
      * Create tables.
@@ -454,33 +444,31 @@ public abstract class PrometheusDataStore {
      */
     public void createTables(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Set the number of stages */
-<span class="nc" id="L457">        pReport.setNumStages(2);</span>
+<span class="nc" id="L447">        pReport.setNumStages(2);</span>
 
         /* Drop any existing tables */
-<span class="nc" id="L460">        dropTables(pReport);</span>
+<span class="nc" id="L450">        dropTables(pReport);</span>
 
         /* Obtain the active profile */
-<span class="nc" id="L463">        OceanusProfile myTask = pReport.getActiveTask();</span>
-<span class="nc" id="L464">        myTask = myTask.startTask(&quot;createTables&quot;);</span>
+<span class="nc" id="L453">        OceanusProfile myTask = pReport.getActiveTask();</span>
+<span class="nc" id="L454">        myTask = myTask.startTask(&quot;createTables&quot;);</span>
 
         /* Loop through the tables */
-<span class="nc" id="L467">        final Iterator&lt;PrometheusTableDataItem&lt;?&gt;&gt; myIterator = theTables.iterator();</span>
-<span class="nc bnc" id="L468" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L469">            final PrometheusTableDataItem&lt;?&gt; myTable = myIterator.next();</span>
-
+<span class="nc bnc" id="L457" title="All 2 branches missed.">        for (PrometheusTableInstance&lt;?&gt; myInstance : theTables) {</span>
+<span class="nc" id="L458">            final PrometheusTableDataItem&lt;?&gt; myTable = (PrometheusTableDataItem&lt;?&gt;) myInstance;</span>
             /* Check for cancellation */
-<span class="nc" id="L472">            pReport.checkForCancellation();</span>
+<span class="nc" id="L460">            pReport.checkForCancellation();</span>
 
             /* Note the new step */
-<span class="nc" id="L475">            myTask.startTask(myTable.getTableName());</span>
+<span class="nc" id="L463">            myTask.startTask(myTable.getTableName());</span>
 
             /* Create the table */
-<span class="nc" id="L478">            myTable.createTable();</span>
-<span class="nc" id="L479">        }</span>
+<span class="nc" id="L466">            myTable.createTable();</span>
+<span class="nc" id="L467">        }</span>
 
         /* Complete the task */
-<span class="nc" id="L482">        myTask.end();</span>
-<span class="nc" id="L483">    }</span>
+<span class="nc" id="L470">        myTask.end();</span>
+<span class="nc" id="L471">    }</span>
 
     /**
      * Drop tables.
@@ -490,27 +478,27 @@ public abstract class PrometheusDataStore {
      */
     private void dropTables(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Obtain the active profile */
-<span class="nc" id="L493">        OceanusProfile myTask = pReport.getActiveTask();</span>
-<span class="nc" id="L494">        myTask = myTask.startTask(&quot;dropTables&quot;);</span>
+<span class="nc" id="L481">        OceanusProfile myTask = pReport.getActiveTask();</span>
+<span class="nc" id="L482">        myTask = myTask.startTask(&quot;dropTables&quot;);</span>
 
         /* Loop through the tables in reverse order */
-<span class="nc" id="L497">        final ListIterator&lt;PrometheusTableDataItem&lt;?&gt;&gt; myIterator = theTables.listIterator(theTables.size());</span>
-<span class="nc bnc" id="L498" title="All 2 branches missed.">        while (myIterator.hasPrevious()) {</span>
-<span class="nc" id="L499">            final PrometheusTableDataItem&lt;?&gt; myTable = myIterator.previous();</span>
+<span class="nc" id="L485">        final ListIterator&lt;PrometheusTableInstance&lt;?&gt;&gt; myIterator = theTables.listIterator(theTables.size());</span>
+<span class="nc bnc" id="L486" title="All 2 branches missed.">        while (myIterator.hasPrevious()) {</span>
+<span class="nc" id="L487">            final PrometheusTableDataItem&lt;?&gt; myTable = (PrometheusTableDataItem&lt;?&gt;) myIterator.previous();</span>
 
             /* Check for cancellation */
-<span class="nc" id="L502">            pReport.checkForCancellation();</span>
+<span class="nc" id="L490">            pReport.checkForCancellation();</span>
 
             /* Note the new step */
-<span class="nc" id="L505">            myTask.startTask(myTable.getTableName());</span>
+<span class="nc" id="L493">            myTask.startTask(myTable.getTableName());</span>
 
             /* Drop the table */
-<span class="nc" id="L508">            myTable.dropTable();</span>
-<span class="nc" id="L509">        }</span>
+<span class="nc" id="L496">            myTable.dropTable();</span>
+<span class="nc" id="L497">        }</span>
 
         /* Complete the task */
-<span class="nc" id="L512">        myTask.end();</span>
-<span class="nc" id="L513">    }</span>
+<span class="nc" id="L500">        myTask.end();</span>
+<span class="nc" id="L501">    }</span>
 
     /**
      * Purge tables.
@@ -520,29 +508,29 @@ public abstract class PrometheusDataStore {
      */
     public void purgeTables(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Set the number of stages */
-<span class="nc" id="L523">        pReport.setNumStages(1);</span>
+<span class="nc" id="L511">        pReport.setNumStages(1);</span>
 
         /* Obtain the active profile */
-<span class="nc" id="L526">        OceanusProfile myTask = pReport.getActiveTask();</span>
-<span class="nc" id="L527">        myTask = myTask.startTask(&quot;purgeTables&quot;);</span>
+<span class="nc" id="L514">        OceanusProfile myTask = pReport.getActiveTask();</span>
+<span class="nc" id="L515">        myTask = myTask.startTask(&quot;purgeTables&quot;);</span>
 
         /* Loop through the tables in reverse order */
-<span class="nc" id="L530">        final ListIterator&lt;PrometheusTableDataItem&lt;?&gt;&gt; myIterator = theTables.listIterator(theTables.size());</span>
-<span class="nc bnc" id="L531" title="All 2 branches missed.">        while (myIterator.hasPrevious()) {</span>
-<span class="nc" id="L532">            final PrometheusTableDataItem&lt;?&gt; myTable = myIterator.previous();</span>
+<span class="nc" id="L518">        final ListIterator&lt;PrometheusTableInstance&lt;?&gt;&gt; myIterator = theTables.listIterator(theTables.size());</span>
+<span class="nc bnc" id="L519" title="All 2 branches missed.">        while (myIterator.hasPrevious()) {</span>
+<span class="nc" id="L520">            final PrometheusTableDataItem&lt;?&gt; myTable = (PrometheusTableDataItem&lt;?&gt;) myIterator.previous();</span>
 
             /* Check for cancellation */
-<span class="nc" id="L535">            pReport.checkForCancellation();</span>
+<span class="nc" id="L523">            pReport.checkForCancellation();</span>
 
             /* Note the new step */
-<span class="nc" id="L538">            myTask.startTask(myTable.getTableName());</span>
+<span class="nc" id="L526">            myTask.startTask(myTable.getTableName());</span>
 
             /* Purge the table */
-<span class="nc" id="L541">            myTable.purgeTable();</span>
-<span class="nc" id="L542">        }</span>
+<span class="nc" id="L529">            myTable.purgeTable();</span>
+<span class="nc" id="L530">        }</span>
 
         /* Complete the task */
-<span class="nc" id="L545">        myTask.end();</span>
-<span class="nc" id="L546">    }</span>
+<span class="nc" id="L533">        myTask.end();</span>
+<span class="nc" id="L534">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

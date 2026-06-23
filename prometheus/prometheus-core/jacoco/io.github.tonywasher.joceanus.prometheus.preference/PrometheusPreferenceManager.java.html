@@ -16,9 +16,9 @@
  */
 package io.github.tonywasher.joceanus.prometheus.preference;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Prometheus Preference Manager.
@@ -26,32 +26,15 @@ import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
 public class PrometheusPreferenceManager
         extends MetisPreferenceManager {
     /**
-     * The Security Manager.
-     */
-    private PrometheusPreferenceSecurity theSecurity;
-
-    /**
      * Constructor.
      *
      * @param pViewer the viewer manager
      * @throws OceanusException on error
      */
     public PrometheusPreferenceManager(final MetisViewerManager pViewer) throws OceanusException {
-<span class="nc" id="L40">        super(pViewer);</span>
-<span class="nc" id="L41">    }</span>
-
-    /**
-     * Obtain the security manager.
-     *
-     * @return the security manager
-     * @throws OceanusException on error
-     */
-    protected PrometheusPreferenceSecurity getSecurity() throws OceanusException {
-        /* If we have not created security and are not in the middle of creating security */
-<span class="nc bnc" id="L51" title="All 2 branches missed.">        if (theSecurity == null) {</span>
-<span class="nc" id="L52">            theSecurity = new PrometheusPreferenceSecurity(this);</span>
-        }
-<span class="nc" id="L54">        return theSecurity;</span>
-    }
+<span class="nc" id="L35">        super(pViewer);</span>
+<span class="nc" id="L36">        final PrometheusPreferenceSecurity mySecurity = new PrometheusPreferenceSecurity(this);</span>
+<span class="nc" id="L37">        setParameters(new PrometheusPreferenceParams(getParameters(), mySecurity));</span>
+<span class="nc" id="L38">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

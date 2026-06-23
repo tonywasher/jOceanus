@@ -16,15 +16,12 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.reports;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportDelayedTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
-import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
-import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
@@ -61,6 +58,9 @@ import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilt
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisLoanFilter;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisPortfolioCashFilter;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -127,12 +127,12 @@ public class MoneyWiseReportBalanceSheet
 <span class="nc" id="L127">        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myDateRange));</span>
 
         /* Initialise the table */
-<span class="nc" id="L130">        final MetisHTMLTable myTable = theBuilder.startTable(myBody);</span>
+<span class="nc" id="L130">        final MetisReportHTMLTable myTable = theBuilder.startTable(myBody);</span>
 <span class="nc" id="L131">        theBuilder.startTotalRow(myTable);</span>
 <span class="nc" id="L132">        theBuilder.makeTitleCell(myTable);</span>
 <span class="nc" id="L133">        theBuilder.makeTitleCell(myTable, theFormatter.formatObject(myDateRange.getEnd()));</span>
 <span class="nc" id="L134">        theBuilder.makeTitleCell(myTable, theFormatter.formatObject(myDateRange.getStart()));</span>
-<span class="nc" id="L135">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);</span>
+<span class="nc" id="L135">        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_PROFIT);</span>
 
         /* If we have deposits */
 <span class="nc bnc" id="L138" title="All 2 branches missed.">        if (!myDeposits.isEmpty()) {</span>
@@ -278,7 +278,7 @@ public class MoneyWiseReportBalanceSheet
 
         /* Format the total */
 <span class="nc" id="L280">        theBuilder.startTotalRow(myTable);</span>
-<span class="nc" id="L281">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);</span>
+<span class="nc" id="L281">        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_TOTAL);</span>
 <span class="nc" id="L282">        theBuilder.makeTotalCell(myTable, myTotal);</span>
 <span class="nc" id="L283">        theBuilder.makeTotalCell(myTable, myBase);</span>
 <span class="nc" id="L284">        theBuilder.makeTotalCell(myTable, myDelta);</span>
@@ -293,14 +293,14 @@ public class MoneyWiseReportBalanceSheet
      * @param pParent   the table parent
      * @param pCategory the category bucket
      */
-    private void makeDepositCategoryReport(final MetisHTMLTable pParent,
+    private void makeDepositCategoryReport(final MetisReportHTMLTable pParent,
                                            final MoneyWiseAnalysisDepositCategoryBucket pCategory) {
         /* Access the category */
 <span class="nc" id="L299">        final MoneyWiseAnalysisDepositCategoryBucketList myCategories = theAnalysis.getDepositCategories();</span>
 <span class="nc" id="L300">        final MoneyWiseDepositCategory myCategory = pCategory.getAccountCategory();</span>
 
         /* Create an embedded table */
-<span class="nc" id="L303">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+<span class="nc" id="L303">        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
 
         /* Loop through the Category Buckets */
 <span class="nc" id="L306">        final Iterator&lt;MoneyWiseAnalysisDepositCategoryBucket&gt; myIterator = myCategories.iterator();</span>
@@ -341,14 +341,14 @@ public class MoneyWiseReportBalanceSheet
      * @param pParent   the table parent
      * @param pCategory the category bucket
      */
-    private void makeCashCategoryReport(final MetisHTMLTable pParent,
+    private void makeCashCategoryReport(final MetisReportHTMLTable pParent,
                                         final MoneyWiseAnalysisCashCategoryBucket pCategory) {
         /* Access the category */
 <span class="nc" id="L347">        final MoneyWiseAnalysisCashCategoryBucketList myCategories = theAnalysis.getCashCategories();</span>
 <span class="nc" id="L348">        final MoneyWiseCashCategory myCategory = pCategory.getAccountCategory();</span>
 
         /* Create an embedded table */
-<span class="nc" id="L351">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+<span class="nc" id="L351">        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
 
         /* Loop through the Category Buckets */
 <span class="nc" id="L354">        final Iterator&lt;MoneyWiseAnalysisCashCategoryBucket&gt; myIterator = myCategories.iterator();</span>
@@ -389,14 +389,14 @@ public class MoneyWiseReportBalanceSheet
      * @param pParent   the table parent
      * @param pCategory the category bucket
      */
-    private void makeLoanCategoryReport(final MetisHTMLTable pParent,
+    private void makeLoanCategoryReport(final MetisReportHTMLTable pParent,
                                         final MoneyWiseAnalysisLoanCategoryBucket pCategory) {
         /* Access the category */
 <span class="nc" id="L395">        final MoneyWiseAnalysisLoanCategoryBucketList myCategories = theAnalysis.getLoanCategories();</span>
 <span class="nc" id="L396">        final MoneyWiseLoanCategory myCategory = pCategory.getAccountCategory();</span>
 
         /* Create an embedded table */
-<span class="nc" id="L399">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+<span class="nc" id="L399">        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
 
         /* Loop through the Category Buckets */
 <span class="nc" id="L402">        final Iterator&lt;MoneyWiseAnalysisLoanCategoryBucket&gt; myIterator = myCategories.iterator();</span>
@@ -436,12 +436,12 @@ public class MoneyWiseReportBalanceSheet
      *
      * @param pParent the table parent
      */
-    private void makePortfolioReport(final MetisHTMLTable pParent) {
+    private void makePortfolioReport(final MetisReportHTMLTable pParent) {
         /* Access the portfolios */
 <span class="nc" id="L441">        final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();</span>
 
         /* Create an embedded table */
-<span class="nc" id="L444">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+<span class="nc" id="L444">        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
 
         /* Loop through the Portfolio Buckets */
 <span class="nc" id="L447">        final Iterator&lt;MoneyWiseAnalysisPortfolioBucket&gt; myIterator = myPortfolios.iterator();</span>
@@ -471,7 +471,7 @@ public class MoneyWiseReportBalanceSheet
 <span class="nc" id="L471">    }</span>
 
     @Override
-    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+    public MetisReportHTMLTable createDelayedTable(final MetisReportDelayedTable pTable) {
         /* Access the source */
 <span class="nc" id="L476">        final Object mySource = pTable.getSource();</span>
 <span class="nc bnc" id="L477" title="All 2 branches missed.">        if (mySource instanceof MoneyWiseAnalysisDepositCategoryBucket mySourceBucket) {</span>
@@ -495,15 +495,15 @@ public class MoneyWiseReportBalanceSheet
      * @param pSource the source bucket
      * @return the new document fragment
      */
-    private MetisHTMLTable createDelayedDeposit(final MetisHTMLTable pParent,
-                                                final MoneyWiseAnalysisDepositCategoryBucket pSource) {
+    private MetisReportHTMLTable createDelayedDeposit(final MetisReportHTMLTable pParent,
+                                                      final MoneyWiseAnalysisDepositCategoryBucket pSource) {
         /* Access the category */
 <span class="nc" id="L501">        final MoneyWiseAnalysisDepositBucketList myDeposits = theAnalysis.getDeposits();</span>
 <span class="nc" id="L502">        final MoneyWiseDepositCategory myCategory = pSource.getAccountCategory();</span>
 <span class="nc" id="L503">        final boolean isForeign = pSource.hasForeignCurrency();</span>
 
         /* Create an embedded table */
-<span class="nc" id="L506">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+<span class="nc" id="L506">        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
 
         /* Loop through the Deposit Buckets */
 <span class="nc" id="L509">        final Iterator&lt;MoneyWiseAnalysisDepositBucket&gt; myIterator = myDeposits.iterator();</span>
@@ -558,15 +558,15 @@ public class MoneyWiseReportBalanceSheet
      * @param pSource the source bucket
      * @return the new document fragment
      */
-    private MetisHTMLTable createDelayedCash(final MetisHTMLTable pParent,
-                                             final MoneyWiseAnalysisCashCategoryBucket pSource) {
+    private MetisReportHTMLTable createDelayedCash(final MetisReportHTMLTable pParent,
+                                                   final MoneyWiseAnalysisCashCategoryBucket pSource) {
         /* Access the category */
 <span class="nc" id="L564">        final MoneyWiseAnalysisCashBucketList myCash = theAnalysis.getCash();</span>
 <span class="nc" id="L565">        final MoneyWiseCashCategory myCategory = pSource.getAccountCategory();</span>
 <span class="nc" id="L566">        final boolean isForeign = pSource.hasForeignCurrency();</span>
 
         /* Create an embedded table */
-<span class="nc" id="L569">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+<span class="nc" id="L569">        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
 
         /* Loop through the Cash Buckets */
 <span class="nc" id="L572">        final Iterator&lt;MoneyWiseAnalysisCashBucket&gt; myIterator = myCash.iterator();</span>
@@ -621,15 +621,15 @@ public class MoneyWiseReportBalanceSheet
      * @param pSource the source bucket
      * @return the new document fragment
      */
-    private MetisHTMLTable createDelayedLoan(final MetisHTMLTable pParent,
-                                             final MoneyWiseAnalysisLoanCategoryBucket pSource) {
+    private MetisReportHTMLTable createDelayedLoan(final MetisReportHTMLTable pParent,
+                                                   final MoneyWiseAnalysisLoanCategoryBucket pSource) {
         /* Access the category */
 <span class="nc" id="L627">        final MoneyWiseAnalysisLoanBucketList myLoans = theAnalysis.getLoans();</span>
 <span class="nc" id="L628">        final MoneyWiseLoanCategory myCategory = pSource.getAccountCategory();</span>
 <span class="nc" id="L629">        final boolean isForeign = pSource.hasForeignCurrency();</span>
 
         /* Create an embedded table */
-<span class="nc" id="L632">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+<span class="nc" id="L632">        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
 
         /* Loop through the Loan Buckets */
 <span class="nc" id="L635">        final Iterator&lt;MoneyWiseAnalysisLoanBucket&gt; myIterator = myLoans.iterator();</span>
@@ -684,15 +684,15 @@ public class MoneyWiseReportBalanceSheet
      * @param pSource the source bucket
      * @return the new document fragment
      */
-    private MetisHTMLTable createDelayedPortfolio(final MetisHTMLTable pParent,
-                                                  final MoneyWiseAnalysisPortfolioBucket pSource) {
+    private MetisReportHTMLTable createDelayedPortfolio(final MetisReportHTMLTable pParent,
+                                                        final MoneyWiseAnalysisPortfolioBucket pSource) {
         /* Access the securities */
 <span class="nc" id="L690">        final MoneyWiseAnalysisPortfolioCashBucket myCash = pSource.getPortfolioCash();</span>
 <span class="nc" id="L691">        final MoneyWiseAnalysisSecurityBucketList mySecurities = pSource.getSecurities();</span>
 <span class="nc" id="L692">        final boolean isForeign = pSource.hasForeignCurrency();</span>
 
         /* Create an embedded table */
-<span class="nc" id="L695">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+<span class="nc" id="L695">        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
 
         /* If the portfolio cash is not idle */
 <span class="nc bnc" id="L698" title="All 2 branches missed.">        if (!myCash.isIdle()) {</span>
@@ -801,4 +801,4 @@ public class MoneyWiseReportBalanceSheet
 <span class="nc" id="L801">        return null;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

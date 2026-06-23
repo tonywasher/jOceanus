@@ -39,8 +39,8 @@
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.gui.base.ThemisUIResource;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.proj.ThemisModule;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.project.ThemisModule;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> java.util.List;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  
@@ -77,12 +77,12 @@
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">     * The current project.</em>
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">private</strong> <a name="ThemisProject" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisProject.html#ThemisProject">ThemisProject</a> theProject;
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">private</strong> <a name="ThemisProject" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisProject.html#ThemisProject">ThemisProject</a> theProject;
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">     * The current module.</em>
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">private</strong> <a name="ThemisModule" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisModule.html#ThemisModule">ThemisModule</a> theModule;
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">private</strong> <a name="ThemisModule" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisModule.html#ThemisModule">ThemisModule</a> theModule;
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>  
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">     * Constructor.</em>
@@ -133,7 +133,7 @@
 <a class="jxr_linenumber" name="L125" href="#L125">125</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L126" href="#L126">126</a> <em class="jxr_javadoccomment">     * @return the current module</em>
 <a class="jxr_linenumber" name="L127" href="#L127">127</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>     <a name="ThemisModule" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisModule.html#ThemisModule">ThemisModule</a> getCurrentModule() {
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>     <a name="ThemisModule" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisModule.html#ThemisModule">ThemisModule</a> getCurrentModule() {
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>         <strong class="jxr_keyword">return</strong> theModule;
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>     }
 <a class="jxr_linenumber" name="L131" href="#L131">131</a> 
@@ -142,13 +142,13 @@
 <a class="jxr_linenumber" name="L134" href="#L134">134</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L135" href="#L135">135</a> <em class="jxr_javadoccomment">     * @param pProject the current project</em>
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>     <strong class="jxr_keyword">void</strong> setCurrentProject(<strong class="jxr_keyword">final</strong> <a name="ThemisProject" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisProject.html#ThemisProject">ThemisProject</a> pProject) {
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>     <strong class="jxr_keyword">void</strong> setCurrentProject(<strong class="jxr_keyword">final</strong> <a name="ThemisProject" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisProject.html#ThemisProject">ThemisProject</a> pProject) {
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>         <em class="jxr_comment">/* Store the project */</em>
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>         theProject = pProject;
 <a class="jxr_linenumber" name="L140" href="#L140">140</a> 
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>         <em class="jxr_comment">/* Set the default module */</em>
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>         <strong class="jxr_keyword">final</strong> List&lt;ThemisModule&gt; myModules = theProject == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">null</strong> : theProject.getModules();
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>         <strong class="jxr_keyword">final</strong> <a name="ThemisModule" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisModule.html#ThemisModule">ThemisModule</a> myModule = (myModules == <strong class="jxr_keyword">null</strong> || myModules.isEmpty()) ? <strong class="jxr_keyword">null</strong> : myModules.getFirst();
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>         <strong class="jxr_keyword">final</strong> <a name="ThemisModule" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisModule.html#ThemisModule">ThemisModule</a> myModule = (myModules == <strong class="jxr_keyword">null</strong> || myModules.isEmpty()) ? <strong class="jxr_keyword">null</strong> : myModules.getFirst();
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>         theButton.setValue(myModule);
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>         handleNewModule();
 <a class="jxr_linenumber" name="L146" href="#L146">146</a>     }
@@ -162,10 +162,10 @@
 <a class="jxr_linenumber" name="L154" href="#L154">154</a> 
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>         <em class="jxr_comment">/* Record active item */</em>
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>         TethysUIScrollItem&lt;ThemisModule&gt; myActive = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>         <strong class="jxr_keyword">final</strong> <a name="ThemisModule" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisModule.html#ThemisModule">ThemisModule</a> myCurr = theButton.getValue();
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>         <strong class="jxr_keyword">final</strong> <a name="ThemisModule" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisModule.html#ThemisModule">ThemisModule</a> myCurr = theButton.getValue();
 <a class="jxr_linenumber" name="L158" href="#L158">158</a> 
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>         <em class="jxr_comment">/* Loop through the available modules */</em>
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>         <strong class="jxr_keyword">for</strong> (<a name="ThemisModule" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisModule.html#ThemisModule">ThemisModule</a> myModule : theProject.getModules()) {
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>         <strong class="jxr_keyword">for</strong> (<a name="ThemisModule" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisModule.html#ThemisModule">ThemisModule</a> myModule : theProject.getModules()) {
 <a class="jxr_linenumber" name="L161" href="#L161">161</a>             <em class="jxr_comment">/* Create a new MenuItem and add it to the popUp */</em>
 <a class="jxr_linenumber" name="L162" href="#L162">162</a>             <strong class="jxr_keyword">final</strong> TethysUIScrollItem&lt;ThemisModule&gt; myItem = theModuleMenu.addItem(myModule);
 <a class="jxr_linenumber" name="L163" href="#L163">163</a> 
@@ -194,6 +194,6 @@
 <a class="jxr_linenumber" name="L186" href="#L186">186</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

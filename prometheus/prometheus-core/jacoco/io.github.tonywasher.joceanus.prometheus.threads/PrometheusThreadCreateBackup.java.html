@@ -31,7 +31,7 @@ import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSpreadSheet;
 import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.io.File;
 
@@ -72,16 +72,16 @@ public class PrometheusThreadCreateBackup
     }
 
     @Override
-    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public Void performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Access the thread manager */
-<span class="nc" id="L77">        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();</span>
+<span class="nc" id="L77">        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pReport.getThreadData();</span>
 <span class="nc" id="L78">        final PrometheusSecurityPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();</span>
 <span class="nc" id="L79">        boolean doDelete = false;</span>
 <span class="nc" id="L80">        File myFile = null;</span>
 
         try {
             /* Initialise the status window */
-<span class="nc" id="L84">            pManager.initTask(getTaskName());</span>
+<span class="nc" id="L84">            pReport.initTask(getTaskName());</span>
 
             /* Access the Backup preferences */
 <span class="nc" id="L87">            final MetisPreferenceManager myMgr = theControl.getPreferenceManager();</span>
@@ -116,25 +116,25 @@ public class PrometheusThreadCreateBackup
             }
 
             /* Set the standard backup name */
-<span class="nc" id="L119">            myFile = new File(myName.toString() + GordianUtilities.SECUREZIPFILE_EXT);</span>
+<span class="nc" id="L119">            myFile = new File(myName.toString() + '.' + GordianUtilities.SECUREZIPFILE_EXT);</span>
 
             /* Create backup */
 <span class="nc" id="L122">            final PrometheusSpreadSheet mySheet = theControl.getSpreadSheet();</span>
 <span class="nc" id="L123">            final PrometheusDataSet myOldData = theControl.getData();</span>
-<span class="nc" id="L124">            mySheet.createBackup(pManager, myOldData, myFile, myType);</span>
+<span class="nc" id="L124">            mySheet.createBackup(pReport, myOldData, myFile, myType);</span>
 
             /* File created, so delete on error */
 <span class="nc" id="L127">            doDelete = true;</span>
 
             /* Initialise the status window */
-<span class="nc" id="L130">            pManager.initTask(&quot;Verifying Backup&quot;);</span>
+<span class="nc" id="L130">            pReport.initTask(&quot;Verifying Backup&quot;);</span>
 
             /* Load workbook */
 <span class="nc" id="L133">            final PrometheusDataSet myNewData = theControl.getNewData();</span>
-<span class="nc" id="L134">            mySheet.loadBackup(pManager, myPasswordMgr, myNewData, myFile);</span>
+<span class="nc" id="L134">            mySheet.loadBackup(pReport, myPasswordMgr, myNewData, myFile);</span>
 
             /* Create a difference set between the two data copies */
-<span class="nc" id="L137">            final PrometheusDataSet myDiff = myNewData.getDifferenceSet(pManager, myOldData);</span>
+<span class="nc" id="L137">            final PrometheusDataSet myDiff = myNewData.getDifferenceSet(pReport, myOldData);</span>
 
             /* If the difference set is non-empty */
 <span class="nc bnc" id="L140" title="All 2 branches missed.">            if (!myDiff.isEmpty()) {</span>
@@ -146,7 +146,7 @@ public class PrometheusThreadCreateBackup
 <span class="nc" id="L146">            doDelete = false;</span>
 
             /* State that we have completed */
-<span class="nc" id="L149">            pManager.setCompletion();</span>
+<span class="nc" id="L149">            pReport.setCompletion();</span>
 
             /* Delete file on error */
         } finally {
@@ -160,4 +160,4 @@ public class PrometheusThreadCreateBackup
 <span class="nc" id="L160">        return null;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

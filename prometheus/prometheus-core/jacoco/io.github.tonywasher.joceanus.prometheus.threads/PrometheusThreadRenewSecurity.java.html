@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Thread to renew security in the data set. A new ControlKey will be created using the same
@@ -51,19 +51,19 @@ public class PrometheusThreadRenewSecurity
     }
 
     @Override
-    public PrometheusDataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public PrometheusDataSet performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Initialise the status window */
-<span class="nc" id="L56">        pManager.initTask(getTaskName());</span>
+<span class="nc" id="L56">        pReport.initTask(getTaskName());</span>
 
         /* Access Data */
 <span class="nc" id="L59">        PrometheusDataSet myData = theControl.getData();</span>
 <span class="nc" id="L60">        myData = myData.deriveCloneSet();</span>
 
         /* ReNew Security */
-<span class="nc" id="L63">        myData.renewSecurity(pManager);</span>
+<span class="nc" id="L63">        myData.renewSecurity(pReport);</span>
 
         /* State that we have completed */
-<span class="nc" id="L66">        pManager.setCompletion();</span>
+<span class="nc" id="L66">        pReport.setCompletion();</span>
 
         /* Return null */
 <span class="nc" id="L69">        return myData;</span>
@@ -74,4 +74,4 @@ public class PrometheusThreadRenewSecurity
 <span class="nc" id="L74">        theControl.setData(pResult);</span>
 <span class="nc" id="L75">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

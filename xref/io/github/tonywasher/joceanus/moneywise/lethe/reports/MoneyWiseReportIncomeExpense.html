@@ -24,23 +24,23 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.moneywise.lethe.reports;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportBase;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportManager;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket.MoneyWiseAnalysisTransCategoryBucketList;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisCategoryValues;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTransCategoryFilter;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportDelayedTable;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.report.MetisReportManager;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket.MoneyWiseAnalysisTransCategoryBucketList;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisCategoryValues;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTransCategoryFilter;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Document;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Element;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  
@@ -97,12 +97,12 @@
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>          theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>          <em class="jxr_comment">/* Initialise the table */</em>
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>          <strong class="jxr_keyword">final</strong> MetisHTMLTable myTable = theBuilder.startTable(myBody);
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>          <strong class="jxr_keyword">final</strong> MetisReportHTMLTable myTable = theBuilder.startTable(myBody);
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          theBuilder.startHdrRow(myTable);
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>          theBuilder.makeTitleCell(myTable);
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>          theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_INCOME);
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>          theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_EXPENSE);
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>          theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>          theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_INCOME);
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>          theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_EXPENSE);
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>          theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_PROFIT);
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>          <em class="jxr_comment">/* Loop through the SubTotal Buckets */</em>
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>         <strong class="jxr_keyword">final</strong> Iterator&lt;MoneyWiseAnalysisTransCategoryBucket&gt; myIterator = myCategories.iterator();
@@ -137,7 +137,7 @@
 <a class="jxr_linenumber" name="L129" href="#L129">129</a> 
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>         <em class="jxr_comment">/* Format the total */</em>
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>         theBuilder.startTotalRow(myTable);
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>         theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>         theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_TOTAL);
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTransAttr.INCOME));
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTransAttr.EXPENSE));
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>         theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTransAttr.PROFIT));
@@ -147,7 +147,7 @@
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>     }
 <a class="jxr_linenumber" name="L140" href="#L140">140</a> 
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>     @Override
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>     <strong class="jxr_keyword">public</strong> MetisHTMLTable createDelayedTable(<strong class="jxr_keyword">final</strong> DelayedTable pTable) {
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>     <strong class="jxr_keyword">public</strong> MetisReportHTMLTable createDelayedTable(<strong class="jxr_keyword">final</strong> <a name="MetisReportDelayedTable" href="../../../../../../../io/github/tonywasher/joceanus/metis/report/MetisReportDelayedTable.html#MetisReportDelayedTable">MetisReportDelayedTable</a> pTable) {
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>         <em class="jxr_comment">/* Access the source */</em>
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>         <strong class="jxr_keyword">final</strong> Object mySource = pTable.getSource();
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>         <strong class="jxr_keyword">if</strong> (mySource instanceof <a name="MoneyWiseAnalysisTransCategoryBucket" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/lethe/data/analysis/data/MoneyWiseAnalysisTransCategoryBucket.html#MoneyWiseAnalysisTransCategoryBucket">MoneyWiseAnalysisTransCategoryBucket</a> mySourceBucket) {
@@ -165,14 +165,14 @@
 <a class="jxr_linenumber" name="L157" href="#L157">157</a> <em class="jxr_javadoccomment">     * @param pSource the source bucket</em>
 <a class="jxr_linenumber" name="L158" href="#L158">158</a> <em class="jxr_javadoccomment">     * @return the new document fragment</em>
 <a class="jxr_linenumber" name="L159" href="#L159">159</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>     <strong class="jxr_keyword">protected</strong> MetisHTMLTable createDelayedCategory(<strong class="jxr_keyword">final</strong> MetisHTMLTable pParent,
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>                                                    <strong class="jxr_keyword">final</strong> <a name="MoneyWiseAnalysisTransCategoryBucket" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/lethe/data/analysis/data/MoneyWiseAnalysisTransCategoryBucket.html#MoneyWiseAnalysisTransCategoryBucket">MoneyWiseAnalysisTransCategoryBucket</a> pSource) {
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>     <strong class="jxr_keyword">protected</strong> MetisReportHTMLTable createDelayedCategory(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pParent,
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>                                                          <strong class="jxr_keyword">final</strong> <a name="MoneyWiseAnalysisTransCategoryBucket" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/lethe/data/analysis/data/MoneyWiseAnalysisTransCategoryBucket.html#MoneyWiseAnalysisTransCategoryBucket">MoneyWiseAnalysisTransCategoryBucket</a> pSource) {
 <a class="jxr_linenumber" name="L162" href="#L162">162</a>         <em class="jxr_comment">/* Access the category */</em>
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>         <strong class="jxr_keyword">final</strong> MoneyWiseAnalysisTransCategoryBucketList myCategories = theAnalysis.getTransCategories();
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseTransCategory" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseTransCategory.html#MoneyWiseTransCategory">MoneyWiseTransCategory</a> myCategory = pSource.getTransactionCategory();
 <a class="jxr_linenumber" name="L165" href="#L165">165</a> 
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>         <em class="jxr_comment">/* Create an embedded table */</em>
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>         <strong class="jxr_keyword">final</strong> MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>         <strong class="jxr_keyword">final</strong> MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 <a class="jxr_linenumber" name="L168" href="#L168">168</a> 
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>         <em class="jxr_comment">/* Loop through the Category Buckets */</em>
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>         <strong class="jxr_keyword">final</strong> Iterator&lt;MoneyWiseAnalysisTransCategoryBucket&gt; myIterator = myCategories.iterator();
@@ -218,6 +218,6 @@
 <a class="jxr_linenumber" name="L210" href="#L210">210</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

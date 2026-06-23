@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.prometheus.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
@@ -26,8 +24,13 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.list.MetisListIndexed;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem.PrometheusDataInfoList;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusTableItem.PrometheusTableList;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataListCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValidator;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusDataInfoListCtl;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 
 import java.util.Iterator;
@@ -41,50 +44,26 @@ import java.util.Map;
  * @author Tony Washer
  */
 public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
-        implements MetisFieldItem, MetisDataList&lt;T&gt;, PrometheusTableList&lt;T&gt; {
-    /**
-     * DataList interface.
-     */
-    public interface PrometheusDataListSet {
-        /**
-         * Obtain the list for a class.
-         *
-         * @param &lt;L&gt;       the list type
-         * @param pDataType the data type
-         * @param pClass    the list class
-         * @return the list
-         */
-        &lt;L extends PrometheusDataList&lt;?&gt;&gt; L getDataList(MetisListKey pDataType,
-                                                        Class&lt;L&gt; pClass);
-
-        /**
-         * Does this list have the dataType?
-         *
-         * @param pDataType the dataType
-         * @return true/false
-         */
-        boolean hasDataType(MetisListKey pDataType);
-    }
-
+        implements MetisFieldItem, MetisDataList&lt;T&gt;, PrometheusDataListCtl&lt;T&gt; {
     /**
      * Report fields.
      */
     @SuppressWarnings(&quot;rawtypes&quot;)
-<span class="nc" id="L73">    private static final MetisFieldSet&lt;PrometheusDataList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusDataList.class);</span>
+<span class="nc" id="L52">    private static final MetisFieldSet&lt;PrometheusDataList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusDataList.class);</span>
 
     /*
      * Declare Fields.
      */
     static {
-<span class="nc" id="L79">        FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, PrometheusDataList::size);</span>
-<span class="nc" id="L80">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_STYLE, PrometheusDataList::getStyle);</span>
-<span class="nc" id="L81">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_NAME, PrometheusDataList::getDataSet);</span>
-<span class="nc" id="L82">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_MAPS, PrometheusDataList::getDataMap);</span>
-<span class="nc" id="L83">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION, PrometheusDataList::getVersion);</span>
-<span class="nc" id="L84">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_EDITSTATE, PrometheusDataList::getEditState);</span>
-<span class="nc" id="L85">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TYPE, PrometheusDataList::getItemType);</span>
-<span class="nc" id="L86">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_BASE, PrometheusDataList::getBaseList);</span>
-<span class="nc" id="L87">    }</span>
+<span class="nc" id="L58">        FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, PrometheusDataList::size);</span>
+<span class="nc" id="L59">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_STYLE, PrometheusDataList::getStyle);</span>
+<span class="nc" id="L60">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_NAME, PrometheusDataList::getDataSet);</span>
+<span class="nc" id="L61">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_MAPS, PrometheusDataList::getDataMap);</span>
+<span class="nc" id="L62">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION, PrometheusDataList::getVersion);</span>
+<span class="nc" id="L63">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_EDITSTATE, PrometheusDataList::getEditState);</span>
+<span class="nc" id="L64">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TYPE, PrometheusDataList::getItemType);</span>
+<span class="nc" id="L65">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_BASE, PrometheusDataList::getBaseList);</span>
+<span class="nc" id="L66">    }</span>
 
     /**
      * The list.
@@ -99,17 +78,17 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
     /**
      * The style of the list.
      */
-<span class="nc" id="L102">    private PrometheusListStyle theStyle = PrometheusListStyle.CORE;</span>
+<span class="nc" id="L81">    private PrometheusListStyle theStyle = PrometheusListStyle.CORE;</span>
 
     /**
      * The edit state of the list.
      */
-<span class="nc" id="L107">    private MetisDataEditState theEdit = MetisDataEditState.CLEAN;</span>
+<span class="nc" id="L86">    private MetisDataEditState theEdit = MetisDataEditState.CLEAN;</span>
 
     /**
      * The DataSet.
      */
-    private PrometheusDataSet theDataSet;
+    private PrometheusDataSetCtl theDataSet;
 
     /**
      * The item type.
@@ -145,18 +124,18 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @param pStyle     the new {@link PrometheusListStyle}
      */
     protected PrometheusDataList(final Class&lt;T&gt; pBaseClass,
-                                 final PrometheusDataSet pDataSet,
+                                 final PrometheusDataSetCtl pDataSet,
                                  final MetisListKey pItemType,
-<span class="nc" id="L150">                                 final PrometheusListStyle pStyle) {</span>
-<span class="nc" id="L151">        theBaseClazz = pBaseClass;</span>
-<span class="nc" id="L152">        theStyle = pStyle;</span>
-<span class="nc" id="L153">        theItemType = pItemType;</span>
-<span class="nc" id="L154">        theDataSet = pDataSet;</span>
+<span class="nc" id="L129">                                 final PrometheusListStyle pStyle) {</span>
+<span class="nc" id="L130">        theBaseClazz = pBaseClass;</span>
+<span class="nc" id="L131">        theStyle = pStyle;</span>
+<span class="nc" id="L132">        theItemType = pItemType;</span>
+<span class="nc" id="L133">        theDataSet = pDataSet;</span>
 
         /* Create the list */
-<span class="nc" id="L157">        theList = new MetisListIndexed&lt;&gt;();</span>
-<span class="nc" id="L158">        theList.setComparator(PrometheusDataItem::compareTo);</span>
-<span class="nc" id="L159">    }</span>
+<span class="nc" id="L136">        theList = new MetisListIndexed&lt;&gt;();</span>
+<span class="nc" id="L137">        theList.setComparator(PrometheusDataItem::compareTo);</span>
+<span class="nc" id="L138">    }</span>
 
     /**
      * Construct a clone object.
@@ -164,13 +143,13 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @param pSource the list to clone
      */
     protected PrometheusDataList(final PrometheusDataList&lt;T&gt; pSource) {
-<span class="nc" id="L167">        this(pSource.getBaseClass(), pSource.getDataSet(), pSource.getItemType(), PrometheusListStyle.COPY);</span>
-<span class="nc" id="L168">        theBase = pSource;</span>
-<span class="nc" id="L169">    }</span>
+<span class="nc" id="L146">        this(pSource.getBaseClass(), pSource.getDataSet(), pSource.getItemType(), PrometheusListStyle.COPY);</span>
+<span class="nc" id="L147">        theBase = pSource;</span>
+<span class="nc" id="L148">    }</span>
 
     @Override
     public List&lt;T&gt; getUnderlyingList() {
-<span class="nc" id="L173">        return theList.getUnderlyingList();</span>
+<span class="nc" id="L152">        return theList.getUnderlyingList();</span>
     }
 
     /**
@@ -182,40 +161,40 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
 
     @Override
     public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L185">        return getDataFieldSet().getName();</span>
+<span class="nc" id="L164">        return getDataFieldSet().getName();</span>
     }
 
     @Override
     public boolean add(final T pItem) {
-<span class="nc" id="L190">        return theList.add(pItem);</span>
+<span class="nc" id="L169">        return theList.add(pItem);</span>
     }
 
     @Override
     public void add(final int pIndex,
                     final T pItem) {
-<span class="nc" id="L196">        theList.add(pIndex, pItem);</span>
-<span class="nc" id="L197">    }</span>
+<span class="nc" id="L175">        theList.add(pIndex, pItem);</span>
+<span class="nc" id="L176">    }</span>
 
     @Override
     public boolean remove(final Object pItem) {
-<span class="nc" id="L201">        return theList.remove(pItem);</span>
+<span class="nc" id="L180">        return theList.remove(pItem);</span>
     }
 
     @Override
     public void clear() {
-<span class="nc" id="L206">        theList.clear();</span>
-<span class="nc" id="L207">    }</span>
+<span class="nc" id="L185">        theList.clear();</span>
+<span class="nc" id="L186">    }</span>
 
     /**
      * reSort the list.
      */
     public void reSort() {
-<span class="nc" id="L213">        theList.sortList();</span>
-<span class="nc" id="L214">    }</span>
+<span class="nc" id="L192">        theList.sortList();</span>
+<span class="nc" id="L193">    }</span>
 
     @Override
     public Class&lt;T&gt; getBaseClass() {
-<span class="nc" id="L218">        return theBaseClazz;</span>
+<span class="nc" id="L197">        return theBaseClazz;</span>
     }
 
     /**
@@ -225,7 +204,7 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @return the item (or null if not present)
      */
     public T findItemById(final Integer pId) {
-<span class="nc" id="L228">        return theList.getItemById(pId);</span>
+<span class="nc" id="L207">        return theList.getItemById(pId);</span>
     }
 
     /**
@@ -234,7 +213,7 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @return true/false
      */
     public boolean includeDataXML() {
-<span class="nc" id="L237">        return true;</span>
+<span class="nc" id="L216">        return true;</span>
     }
 
     /**
@@ -250,7 +229,7 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @return the list style
      */
     public PrometheusListStyle getStyle() {
-<span class="nc" id="L253">        return theStyle;</span>
+<span class="nc" id="L232">        return theStyle;</span>
     }
 
     /**
@@ -259,16 +238,12 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @return the item type
      */
     public MetisListKey getItemType() {
-<span class="nc" id="L262">        return theItemType;</span>
+<span class="nc" id="L241">        return theItemType;</span>
     }
 
-    /**
-     * Get the dataSet.
-     *
-     * @return the dataSet
-     */
-    public PrometheusDataSet getDataSet() {
-<span class="nc" id="L271">        return theDataSet;</span>
+    @Override
+    public PrometheusDataSetCtl getDataSet() {
+<span class="nc" id="L246">        return theDataSet;</span>
     }
 
     /**
@@ -277,8 +252,8 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @param pVersion the version
      */
     public void setVersion(final int pVersion) {
-<span class="nc" id="L280">        theVersion = pVersion;</span>
-<span class="nc" id="L281">    }</span>
+<span class="nc" id="L255">        theVersion = pVersion;</span>
+<span class="nc" id="L256">    }</span>
 
     /**
      * Set the style of the list.
@@ -286,8 +261,8 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @param pStyle the list style
      */
     protected void setStyle(final PrometheusListStyle pStyle) {
-<span class="nc" id="L289">        theStyle = pStyle;</span>
-<span class="nc" id="L290">    }</span>
+<span class="nc" id="L264">        theStyle = pStyle;</span>
+<span class="nc" id="L265">    }</span>
 
     /**
      * Get the EditState of the list.
@@ -295,7 +270,7 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @return the Edit State
      */
     public MetisDataEditState getEditState() {
-<span class="nc" id="L298">        return theEdit;</span>
+<span class="nc" id="L273">        return theEdit;</span>
     }
 
     /**
@@ -304,7 +279,7 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @return the Version
      */
     public int getVersion() {
-<span class="nc" id="L307">        return theVersion;</span>
+<span class="nc" id="L282">        return theVersion;</span>
     }
 
     /**
@@ -313,7 +288,7 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @return the Base list
      */
     public PrometheusDataList&lt;?&gt; getBaseList() {
-<span class="nc" id="L316">        return theBase;</span>
+<span class="nc" id="L291">        return theBase;</span>
     }
 
     /**
@@ -322,7 +297,7 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @return the enumClass
      */
     protected PrometheusDataMapItem getDataMap() {
-<span class="nc" id="L325">        return theDataMap;</span>
+<span class="nc" id="L300">        return theDataMap;</span>
     }
 
     /**
@@ -331,7 +306,7 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @return &lt;code&gt;true/false&lt;/code&gt;
      */
     public boolean hasErrors() {
-<span class="nc bnc" id="L334" title="All 2 branches missed.">        return theEdit == MetisDataEditState.ERROR;</span>
+<span class="nc bnc" id="L309" title="All 2 branches missed.">        return theEdit == MetisDataEditState.ERROR;</span>
     }
 
     /**
@@ -341,7 +316,7 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      */
     public boolean hasUpdates() {
         /* We have changes if version is non-zero */
-<span class="nc bnc" id="L344" title="All 2 branches missed.">        return theVersion != 0;</span>
+<span class="nc bnc" id="L319" title="All 2 branches missed.">        return theVersion != 0;</span>
     }
 
     /**
@@ -350,13 +325,13 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @return &lt;code&gt;true/false&lt;/code&gt;
      */
     public boolean isValid() {
-<span class="nc bnc" id="L353" title="All 4 branches missed.">        return theEdit == MetisDataEditState.CLEAN</span>
+<span class="nc bnc" id="L328" title="All 4 branches missed.">        return theEdit == MetisDataEditState.CLEAN</span>
                 || theEdit == MetisDataEditState.VALID;
     }
 
     @Override
     public boolean isLocked() {
-<span class="nc" id="L359">        return false;</span>
+<span class="nc" id="L334">        return false;</span>
     }
 
     /**
@@ -365,8 +340,8 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @param pBase the list that this list is based upon
      */
     protected void setBase(final PrometheusDataList&lt;? extends PrometheusDataItem&gt; pBase) {
-<span class="nc" id="L368">        theBase = pBase;</span>
-<span class="nc" id="L369">    }</span>
+<span class="nc" id="L343">        theBase = pBase;</span>
+<span class="nc" id="L344">    }</span>
 
     /**
      * Obtain a copy of the Id Map.
@@ -374,19 +349,15 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @return the Id map.
      */
     public Map&lt;Integer, T&gt; copyIdMap() {
-<span class="nc" id="L377">        return theList.copyIdMap();</span>
+<span class="nc" id="L352">        return theList.copyIdMap();</span>
     }
 
-    /**
-     * Obtain the validator.
-     *
-     * @return the validator
-     */
+    @Override
     public PrometheusDataValidator getValidator() {
-<span class="nc bnc" id="L386" title="All 2 branches missed.">        if (theValidator == null) {</span>
-<span class="nc" id="L387">            theValidator = getDataSet().getValidator(theItemType);</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">        if (theValidator == null) {</span>
+<span class="nc" id="L358">            theValidator = getDataSet().getValidator(theItemType);</span>
         }
-<span class="nc" id="L389">        return theValidator;</span>
+<span class="nc" id="L360">        return theValidator;</span>
     }
 
     /**
@@ -404,18 +375,18 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @param pSource the source list
      * @throws OceanusException on error
      */
-    protected void cloneList(final PrometheusDataSet pData,
+    protected void cloneList(final PrometheusDataSetCtl pData,
                              final PrometheusDataList&lt;?&gt; pSource) throws OceanusException {
         /* Correct the dataSet reference */
-<span class="nc" id="L410">        theDataSet = pData;</span>
+<span class="nc" id="L381">        theDataSet = pData;</span>
 
         /* Populate the list */
-<span class="nc" id="L413">        pSource.populateList(this);</span>
+<span class="nc" id="L384">        pSource.populateList(this);</span>
 
         /* Remove base reference and reset to CORE list */
-<span class="nc" id="L416">        theBase = null;</span>
-<span class="nc" id="L417">        theStyle = PrometheusListStyle.CORE;</span>
-<span class="nc" id="L418">    }</span>
+<span class="nc" id="L387">        theBase = null;</span>
+<span class="nc" id="L388">        theStyle = PrometheusListStyle.CORE;</span>
+<span class="nc" id="L389">    }</span>
 
     /**
      * Derive an extract of this list.
@@ -426,13 +397,13 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      */
     public PrometheusDataList&lt;T&gt; deriveList(final PrometheusListStyle pStyle) throws OceanusException {
         /* Obtain an empty list of the correct style */
-<span class="nc" id="L429">        final PrometheusDataList&lt;T&gt; myList = getEmptyList(pStyle);</span>
+<span class="nc" id="L400">        final PrometheusDataList&lt;T&gt; myList = getEmptyList(pStyle);</span>
 
         /* Populate the list */
-<span class="nc" id="L432">        populateList(myList);</span>
+<span class="nc" id="L403">        populateList(myList);</span>
 
         /* Return the derived list */
-<span class="nc" id="L435">        return myList;</span>
+<span class="nc" id="L406">        return myList;</span>
     }
 
     /**
@@ -443,34 +414,34 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      */
     protected void populateList(final PrometheusDataList&lt;?&gt; pList) throws OceanusException {
         /* Determine special styles */
-<span class="nc" id="L446">        final PrometheusListStyle myStyle = pList.getStyle();</span>
-<span class="nc bnc" id="L447" title="All 2 branches missed.">        final boolean isUpdate = myStyle == PrometheusListStyle.UPDATE;</span>
-<span class="nc bnc" id="L448" title="All 2 branches missed.">        final boolean isClone = myStyle == PrometheusListStyle.CLONE;</span>
+<span class="nc" id="L417">        final PrometheusListStyle myStyle = pList.getStyle();</span>
+<span class="nc bnc" id="L418" title="All 2 branches missed.">        final boolean isUpdate = myStyle == PrometheusListStyle.UPDATE;</span>
+<span class="nc bnc" id="L419" title="All 2 branches missed.">        final boolean isClone = myStyle == PrometheusListStyle.CLONE;</span>
 
         /* Create an iterator for all items in the list */
-<span class="nc" id="L451">        final Iterator&lt;? extends PrometheusDataItem&gt; myIterator = iterator();</span>
+<span class="nc" id="L422">        final Iterator&lt;? extends PrometheusDataItem&gt; myIterator = iterator();</span>
 
         /* Loop through the list */
-<span class="nc bnc" id="L454" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc bnc" id="L425" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
             /* Access the item and its state */
-<span class="nc" id="L456">            final PrometheusDataItem myCurr = myIterator.next();</span>
-<span class="nc" id="L457">            final MetisDataState myState = myCurr.getState();</span>
+<span class="nc" id="L427">            final PrometheusDataItem myCurr = myIterator.next();</span>
+<span class="nc" id="L428">            final MetisDataState myState = myCurr.getState();</span>
 
             /* If this is an UPDATE list, ignore clean elements */
-<span class="nc bnc" id="L460" title="All 4 branches missed.">            if (isUpdate &amp;&amp; myState == MetisDataState.CLEAN) {</span>
-<span class="nc" id="L461">                continue;</span>
+<span class="nc bnc" id="L431" title="All 4 branches missed.">            if (isUpdate &amp;&amp; myState == MetisDataState.CLEAN) {</span>
+<span class="nc" id="L432">                continue;</span>
             }
 
             /* Copy the item */
-<span class="nc" id="L465">            pList.addCopyItem(myCurr);</span>
-<span class="nc" id="L466">        }</span>
+<span class="nc" id="L436">            pList.addCopyItem(myCurr);</span>
+<span class="nc" id="L437">        }</span>
 
         /* If this is a Clone list */
-<span class="nc bnc" id="L469" title="All 2 branches missed.">        if (isClone) {</span>
+<span class="nc bnc" id="L440" title="All 2 branches missed.">        if (isClone) {</span>
             /* Adjust the links */
-<span class="nc" id="L471">            pList.resolveDataSetLinks();</span>
+<span class="nc" id="L442">            pList.resolveDataSetLinks();</span>
         }
-<span class="nc" id="L473">    }</span>
+<span class="nc" id="L444">    }</span>
 
     /**
      * Adjust links.
@@ -479,15 +450,15 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      */
     public void resolveDataSetLinks() throws OceanusException {
         /* Loop through the list */
-<span class="nc" id="L482">        final Iterator&lt;? extends PrometheusDataItem&gt; myIterator = iterator();</span>
-<span class="nc bnc" id="L483" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L453">        final Iterator&lt;? extends PrometheusDataItem&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L454" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
             /* Access the item */
-<span class="nc" id="L485">            final PrometheusDataItem myCurr = myIterator.next();</span>
+<span class="nc" id="L456">            final PrometheusDataItem myCurr = myIterator.next();</span>
 
             /* Adjust the links */
-<span class="nc" id="L488">            myCurr.resolveDataSetLinks();</span>
-<span class="nc" id="L489">        }</span>
-<span class="nc" id="L490">    }</span>
+<span class="nc" id="L459">            myCurr.resolveDataSetLinks();</span>
+<span class="nc" id="L460">        }</span>
+<span class="nc" id="L461">    }</span>
 
     /**
      * Construct a difference extract between two DataLists. The difference extract will only have
@@ -499,57 +470,57 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @param pOld     The old list to compare to
      * @return the difference list
      */
-    public PrometheusDataList&lt;T&gt; deriveDifferences(final PrometheusDataSet pDataSet,
+    public PrometheusDataList&lt;T&gt; deriveDifferences(final PrometheusDataSetCtl pDataSet,
                                                    final PrometheusDataList&lt;?&gt; pOld) {
         /* Obtain an empty list of the correct style */
-<span class="nc" id="L505">        final PrometheusDataList&lt;T&gt; myList = getEmptyList(PrometheusListStyle.DIFFER);</span>
-<span class="nc" id="L506">        myList.theDataSet = pDataSet;</span>
+<span class="nc" id="L476">        final PrometheusDataList&lt;T&gt; myList = getEmptyList(PrometheusListStyle.DIFFER);</span>
+<span class="nc" id="L477">        myList.theDataSet = pDataSet;</span>
 
         /* Access an Id Map of the old list */
-<span class="nc" id="L509">        final Map&lt;Integer, ?&gt; myOld = pOld.copyIdMap();</span>
+<span class="nc" id="L480">        final Map&lt;Integer, ?&gt; myOld = pOld.copyIdMap();</span>
 
         /* Loop through the new list */
-<span class="nc" id="L512">        final Iterator&lt;T&gt; myIterator = iterator();</span>
-<span class="nc bnc" id="L513" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L483">        final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L484" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
             /* Locate the item in the old list */
-<span class="nc" id="L515">            final PrometheusDataItem myCurr = myIterator.next();</span>
-<span class="nc" id="L516">            PrometheusDataItem myItem = (PrometheusDataItem) myOld.get(myCurr.getIndexedId());</span>
+<span class="nc" id="L486">            final PrometheusDataItem myCurr = myIterator.next();</span>
+<span class="nc" id="L487">            PrometheusDataItem myItem = (PrometheusDataItem) myOld.get(myCurr.getIndexedId());</span>
 
             /* If the item does not exist in the old list */
-<span class="nc bnc" id="L519" title="All 2 branches missed.">            if (myItem == null) {</span>
+<span class="nc bnc" id="L490" title="All 2 branches missed.">            if (myItem == null) {</span>
                 /* Insert a new item */
-<span class="nc" id="L521">                myItem = myList.addCopyItem(myCurr);</span>
-<span class="nc" id="L522">                myItem.setNewVersion();</span>
+<span class="nc" id="L492">                myItem = myList.addCopyItem(myCurr);</span>
+<span class="nc" id="L493">                myItem.setNewVersion();</span>
 
                 /* else the item exists in the old list */
             } else {
                 /* If the item has changed */
-<span class="nc bnc" id="L527" title="All 2 branches missed.">                if (!myCurr.equals(myItem)) {</span>
+<span class="nc bnc" id="L498" title="All 2 branches missed.">                if (!myCurr.equals(myItem)) {</span>
                     /* Copy the item */
-<span class="nc" id="L529">                    final PrometheusDataItem myNew = myList.addCopyItem(myCurr);</span>
-<span class="nc" id="L530">                    myNew.setBase(myItem);</span>
+<span class="nc" id="L500">                    final PrometheusDataItem myNew = myList.addCopyItem(myCurr);</span>
+<span class="nc" id="L501">                    myNew.setBase(myItem);</span>
 
                     /* Ensure that we record the correct history */
-<span class="nc" id="L533">                    myNew.setHistory(myItem);</span>
+<span class="nc" id="L504">                    myNew.setHistory(myItem);</span>
                 }
 
                 /* Remove the item from the map */
-<span class="nc" id="L537">                myOld.remove(myItem.getIndexedId());</span>
+<span class="nc" id="L508">                myOld.remove(myItem.getIndexedId());</span>
             }
-<span class="nc" id="L539">        }</span>
+<span class="nc" id="L510">        }</span>
 
         /* Loop through the remaining items in the old list */
-<span class="nc" id="L542">        final Iterator&lt;?&gt; myOldIterator = myOld.values().iterator();</span>
-<span class="nc bnc" id="L543" title="All 2 branches missed.">        while (myOldIterator.hasNext()) {</span>
+<span class="nc" id="L513">        final Iterator&lt;?&gt; myOldIterator = myOld.values().iterator();</span>
+<span class="nc bnc" id="L514" title="All 2 branches missed.">        while (myOldIterator.hasNext()) {</span>
             /* Insert a new item */
-<span class="nc" id="L545">            final PrometheusDataItem myCurr = (PrometheusDataItem) myOldIterator.next();</span>
-<span class="nc" id="L546">            final PrometheusDataItem myItem = myList.addCopyItem(myCurr);</span>
-<span class="nc" id="L547">            myItem.setBase(null);</span>
-<span class="nc" id="L548">            myItem.setDeleted(true);</span>
-<span class="nc" id="L549">        }</span>
+<span class="nc" id="L516">            final PrometheusDataItem myCurr = (PrometheusDataItem) myOldIterator.next();</span>
+<span class="nc" id="L517">            final PrometheusDataItem myItem = myList.addCopyItem(myCurr);</span>
+<span class="nc" id="L518">            myItem.setBase(null);</span>
+<span class="nc" id="L519">            myItem.setDeleted(true);</span>
+<span class="nc" id="L520">        }</span>
 
         /* Return the difference list */
-<span class="nc" id="L552">        return myList;</span>
+<span class="nc" id="L523">        return myList;</span>
     }
 
     /**
@@ -563,58 +534,58 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      */
     public boolean reBase(final PrometheusDataList&lt;?&gt; pBase) {
         /* Access an Id Map of the old list */
-<span class="nc" id="L566">        final Map&lt;Integer, ?&gt; myBase = pBase.copyIdMap();</span>
-<span class="nc" id="L567">        boolean bChanges = false;</span>
+<span class="nc" id="L537">        final Map&lt;Integer, ?&gt; myBase = pBase.copyIdMap();</span>
+<span class="nc" id="L538">        boolean bChanges = false;</span>
 
         /* Loop through this list */
-<span class="nc" id="L570">        final Iterator&lt;T&gt; myIterator = iterator();</span>
-<span class="nc bnc" id="L571" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L541">        final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L542" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
             /* Locate the item in the base list */
-<span class="nc" id="L573">            final T myCurr = myIterator.next();</span>
-<span class="nc" id="L574">            final PrometheusDataItem myItem = (PrometheusDataItem) myBase.get(myCurr.getIndexedId());</span>
+<span class="nc" id="L544">            final T myCurr = myIterator.next();</span>
+<span class="nc" id="L545">            final PrometheusDataItem myItem = (PrometheusDataItem) myBase.get(myCurr.getIndexedId());</span>
 
             /* If the underlying item does not exist */
-<span class="nc bnc" id="L577" title="All 2 branches missed.">            if (myItem == null) {</span>
+<span class="nc bnc" id="L548" title="All 2 branches missed.">            if (myItem == null) {</span>
                 /* Mark this as a new item */
-<span class="nc" id="L579">                myCurr.getValues().setVersion(getVersion() + 1);</span>
-<span class="nc" id="L580">                myCurr.setBase(null);</span>
-<span class="nc" id="L581">                bChanges = true;</span>
+<span class="nc" id="L550">                myCurr.getValues().setVersion(getVersion() + 1);</span>
+<span class="nc" id="L551">                myCurr.setBase(null);</span>
+<span class="nc" id="L552">                bChanges = true;</span>
 
                 /* else the item exists in the old list */
             } else {
                 /* if it has changed */
-<span class="nc bnc" id="L586" title="All 2 branches missed.">                if (!myCurr.equals(myItem)) {</span>
+<span class="nc bnc" id="L557" title="All 2 branches missed.">                if (!myCurr.equals(myItem)) {</span>
                     /* Set correct history */
-<span class="nc" id="L588">                    myCurr.setHistory(myItem);</span>
-<span class="nc" id="L589">                    myCurr.setBase(null);</span>
-<span class="nc" id="L590">                    bChanges = true;</span>
+<span class="nc" id="L559">                    myCurr.setHistory(myItem);</span>
+<span class="nc" id="L560">                    myCurr.setBase(null);</span>
+<span class="nc" id="L561">                    bChanges = true;</span>
 
                     /* else it is identical */
                 } else {
                     /* Mark this as a clean item */
-<span class="nc" id="L595">                    myCurr.clearHistory();</span>
-<span class="nc" id="L596">                    myCurr.setBase(null);</span>
+<span class="nc" id="L566">                    myCurr.clearHistory();</span>
+<span class="nc" id="L567">                    myCurr.setBase(null);</span>
                 }
 
                 /* Remove the old item */
-<span class="nc" id="L600">                myBase.remove(myItem.getIndexedId());</span>
+<span class="nc" id="L571">                myBase.remove(myItem.getIndexedId());</span>
             }
-<span class="nc" id="L602">        }</span>
+<span class="nc" id="L573">        }</span>
 
         /* Loop through the remaining items in the base list */
-<span class="nc" id="L605">        final Iterator&lt;?&gt; myBaseIterator = myBase.values().iterator();</span>
-<span class="nc bnc" id="L606" title="All 2 branches missed.">        while (myBaseIterator.hasNext()) {</span>
+<span class="nc" id="L576">        final Iterator&lt;?&gt; myBaseIterator = myBase.values().iterator();</span>
+<span class="nc bnc" id="L577" title="All 2 branches missed.">        while (myBaseIterator.hasNext()) {</span>
             /* Insert a new item */
-<span class="nc" id="L608">            final PrometheusDataItem myCurr = (PrometheusDataItem) myBaseIterator.next();</span>
-<span class="nc" id="L609">            final T myItem = addCopyItem(myCurr);</span>
-<span class="nc" id="L610">            myItem.setBase(null);</span>
-<span class="nc" id="L611">            myItem.setHistory(myCurr);</span>
-<span class="nc" id="L612">            myItem.getValues().setDeletion(true);</span>
-<span class="nc" id="L613">            bChanges = true;</span>
-<span class="nc" id="L614">        }</span>
+<span class="nc" id="L579">            final PrometheusDataItem myCurr = (PrometheusDataItem) myBaseIterator.next();</span>
+<span class="nc" id="L580">            final T myItem = addCopyItem(myCurr);</span>
+<span class="nc" id="L581">            myItem.setBase(null);</span>
+<span class="nc" id="L582">            myItem.setHistory(myCurr);</span>
+<span class="nc" id="L583">            myItem.getValues().setDeletion(true);</span>
+<span class="nc" id="L584">            bChanges = true;</span>
+<span class="nc" id="L585">        }</span>
 
         /* Return flag */
-<span class="nc" id="L617">        return bChanges;</span>
+<span class="nc" id="L588">        return bChanges;</span>
     }
 
     /**
@@ -625,49 +596,45 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      */
     public boolean isIdUnique(final Integer uId) {
         /* Its unique if its unassigned or greater than the max id */
-<span class="nc bnc" id="L628" title="All 2 branches missed.">        if (uId == null</span>
-<span class="nc bnc" id="L629" title="All 2 branches missed.">                || uId == 0</span>
-<span class="nc bnc" id="L630" title="All 2 branches missed.">                || uId &gt; theList.getNextId()) {</span>
-<span class="nc" id="L631">            return true;</span>
+<span class="nc bnc" id="L599" title="All 2 branches missed.">        if (uId == null</span>
+<span class="nc bnc" id="L600" title="All 2 branches missed.">                || uId == 0</span>
+<span class="nc bnc" id="L601" title="All 2 branches missed.">                || uId &gt; theList.getNextId()) {</span>
+<span class="nc" id="L602">            return true;</span>
         }
 
         /* Check in list */
-<span class="nc bnc" id="L635" title="All 2 branches missed.">        return !theList.containsId(uId);</span>
+<span class="nc bnc" id="L606" title="All 2 branches missed.">        return !theList.containsId(uId);</span>
     }
 
-    /**
-     * Generate/Record new id for the item.
-     *
-     * @param pItem the new item
-     */
-    protected void setNewId(final PrometheusDataItem pItem) {
+    @Override
+    public void setNewId(final PrometheusDataItemCtl pItem) {
         /* Access the Id */
-<span class="nc" id="L645">        final Integer myId = pItem.getIndexedId();</span>
+<span class="nc" id="L612">        final Integer myId = pItem.getIndexedId();</span>
 
         /* If we need to generate a new id */
-<span class="nc bnc" id="L648" title="All 2 branches missed.">        if (myId == null</span>
-<span class="nc bnc" id="L649" title="All 2 branches missed.">                || myId == 0) {</span>
+<span class="nc bnc" id="L615" title="All 2 branches missed.">        if (myId == null</span>
+<span class="nc bnc" id="L616" title="All 2 branches missed.">                || myId == 0) {</span>
             /* Obtain the next Id */
-<span class="nc" id="L651">            pItem.setIndexedId(theList.allocateNextId());</span>
+<span class="nc" id="L618">            pItem.setIndexedId(theList.allocateNextId());</span>
         }
-<span class="nc" id="L653">    }</span>
+<span class="nc" id="L620">    }</span>
 
     /**
      * Touch underlying items that are referenced by items in this list.
      */
     public void touchUnderlyingItems() {
         /* Loop through items in the list */
-<span class="nc" id="L660">        final Iterator&lt;T&gt; myIterator = iterator();</span>
-<span class="nc bnc" id="L661" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L662">            final T myItem = myIterator.next();</span>
+<span class="nc" id="L627">        final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L628" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L629">            final T myItem = myIterator.next();</span>
 
             /* If the item is not deleted */
-<span class="nc bnc" id="L665" title="All 2 branches missed.">            if (!myItem.isDeleted()) {</span>
+<span class="nc bnc" id="L632" title="All 2 branches missed.">            if (!myItem.isDeleted()) {</span>
                 /* Touch underlying items */
-<span class="nc" id="L667">                myItem.touchUnderlyingItems();</span>
+<span class="nc" id="L634">                myItem.touchUnderlyingItems();</span>
             }
-<span class="nc" id="L669">        }</span>
-<span class="nc" id="L670">    }</span>
+<span class="nc" id="L636">        }</span>
+<span class="nc" id="L637">    }</span>
 
     /**
      * Set the EditState for the list (forcible on error/change).
@@ -675,21 +642,21 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @param pState the new {@link MetisDataEditState} (only ERROR/DIRTY)
      */
     public void setEditState(final MetisDataEditState pState) {
-<span class="nc bnc" id="L678" title="All 3 branches missed.">        switch (pState) {</span>
+<span class="nc bnc" id="L645" title="All 3 branches missed.">        switch (pState) {</span>
             case CLEAN:
             case VALID:
             case ERROR:
-<span class="nc" id="L682">                theEdit = pState;</span>
-<span class="nc" id="L683">                break;</span>
+<span class="nc" id="L649">                theEdit = pState;</span>
+<span class="nc" id="L650">                break;</span>
             case DIRTY:
-<span class="nc bnc" id="L685" title="All 2 branches missed.">                if (theEdit != MetisDataEditState.ERROR) {</span>
-<span class="nc" id="L686">                    theEdit = pState;</span>
+<span class="nc bnc" id="L652" title="All 2 branches missed.">                if (theEdit != MetisDataEditState.ERROR) {</span>
+<span class="nc" id="L653">                    theEdit = pState;</span>
                 }
                 break;
             default:
                 break;
         }
-<span class="nc" id="L692">    }</span>
+<span class="nc" id="L659">    }</span>
 
     /**
      * Validate the data items.
@@ -698,46 +665,46 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      */
     public PrometheusDataErrorList validate() {
         /* Allocate error list */
-<span class="nc" id="L701">        PrometheusDataErrorList myErrors = null;</span>
-<span class="nc" id="L702">        MetisDataEditState myState = MetisDataEditState.CLEAN;</span>
+<span class="nc" id="L668">        PrometheusDataErrorList myErrors = null;</span>
+<span class="nc" id="L669">        MetisDataEditState myState = MetisDataEditState.CLEAN;</span>
 
         /* Loop through the items */
-<span class="nc" id="L705">        final Iterator&lt;T&gt; myIterator = iterator();</span>
-<span class="nc bnc" id="L706" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L707">            final T myCurr = myIterator.next();</span>
+<span class="nc" id="L672">        final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L673" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L674">            final T myCurr = myIterator.next();</span>
 
             /* Clear errors for the item */
-<span class="nc" id="L710">            myCurr.clearErrors();</span>
+<span class="nc" id="L677">            myCurr.clearErrors();</span>
 
             /* Skip deleted items */
-<span class="nc bnc" id="L713" title="All 2 branches missed.">            if (myCurr.isDeleted()) {</span>
-<span class="nc" id="L714">                myCurr.setValidEdit();</span>
-<span class="nc" id="L715">                myState = myState.combineState(MetisDataEditState.VALID);</span>
-<span class="nc" id="L716">                continue;</span>
+<span class="nc bnc" id="L680" title="All 2 branches missed.">            if (myCurr.isDeleted()) {</span>
+<span class="nc" id="L681">                myCurr.setValidEdit();</span>
+<span class="nc" id="L682">                myState = myState.combineState(MetisDataEditState.VALID);</span>
+<span class="nc" id="L683">                continue;</span>
             }
 
             /* Validate the item and build up the state */
-<span class="nc" id="L720">            myCurr.validate();</span>
-<span class="nc" id="L721">            myState = myState.combineState(myCurr.getEditState());</span>
+<span class="nc" id="L687">            myCurr.validate();</span>
+<span class="nc" id="L688">            myState = myState.combineState(myCurr.getEditState());</span>
 
             /* If the item is in error */
-<span class="nc bnc" id="L724" title="All 2 branches missed.">            if (myCurr.hasErrors()) {</span>
+<span class="nc bnc" id="L691" title="All 2 branches missed.">            if (myCurr.hasErrors()) {</span>
                 /* If this is the first error */
-<span class="nc bnc" id="L726" title="All 2 branches missed.">                if (myErrors == null) {</span>
+<span class="nc bnc" id="L693" title="All 2 branches missed.">                if (myErrors == null) {</span>
                     /* Allocate error list */
-<span class="nc" id="L728">                    myErrors = new PrometheusDataErrorList();</span>
+<span class="nc" id="L695">                    myErrors = new PrometheusDataErrorList();</span>
                 }
 
                 /* Add to the error list */
-<span class="nc" id="L732">                myErrors.add(myCurr);</span>
+<span class="nc" id="L699">                myErrors.add(myCurr);</span>
             }
-<span class="nc" id="L734">        }</span>
+<span class="nc" id="L701">        }</span>
 
         /* Store the edit state */
-<span class="nc" id="L737">        theEdit = myState;</span>
+<span class="nc" id="L704">        theEdit = myState;</span>
 
         /* Return the errors */
-<span class="nc" id="L740">        return myErrors;</span>
+<span class="nc" id="L707">        return myErrors;</span>
     }
 
     /**
@@ -747,11 +714,11 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      */
     public void validateOnLoad() throws OceanusException {
         /* Validate the list */
-<span class="nc" id="L750">        final PrometheusDataErrorList myErrors = validate();</span>
-<span class="nc bnc" id="L751" title="All 2 branches missed.">        if (myErrors != null) {</span>
-<span class="nc" id="L752">            throw new PrometheusDataException(myErrors, PrometheusDataItem.ERROR_VALIDATION);</span>
+<span class="nc" id="L717">        final PrometheusDataErrorList myErrors = validate();</span>
+<span class="nc bnc" id="L718" title="All 2 branches missed.">        if (myErrors != null) {</span>
+<span class="nc" id="L719">            throw new PrometheusDataException(myErrors, PrometheusDataItem.ERROR_VALIDATION);</span>
         }
-<span class="nc" id="L754">    }</span>
+<span class="nc" id="L721">    }</span>
 
     /**
      * Allocate the dataMap.
@@ -766,41 +733,41 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @param pMap the map
      */
     protected void setDataMap(final PrometheusDataMapItem pMap) {
-<span class="nc" id="L769">        theDataMap = pMap;</span>
-<span class="nc" id="L770">    }</span>
+<span class="nc" id="L736">        theDataMap = pMap;</span>
+<span class="nc" id="L737">    }</span>
 
     /**
      * Ensure map.
      */
     public void ensureMap() {
         /* Allocate/Reset the map */
-<span class="nc bnc" id="L777" title="All 2 branches missed.">        if (theDataMap == null) {</span>
-<span class="nc" id="L778">            theDataMap = allocateDataMap();</span>
+<span class="nc bnc" id="L744" title="All 2 branches missed.">        if (theDataMap == null) {</span>
+<span class="nc" id="L745">            theDataMap = allocateDataMap();</span>
         } else {
-<span class="nc" id="L780">            theDataMap.resetMap();</span>
+<span class="nc" id="L747">            theDataMap.resetMap();</span>
         }
-<span class="nc" id="L782">    }</span>
+<span class="nc" id="L749">    }</span>
 
     /**
      * Build map of the data.
      */
     public void mapData() {
         /* Ensure the map */
-<span class="nc" id="L789">        ensureMap();</span>
+<span class="nc" id="L756">        ensureMap();</span>
 
         /* Loop through the items */
-<span class="nc" id="L792">        final Iterator&lt;T&gt; myIterator = iterator();</span>
-<span class="nc bnc" id="L793" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L794">            final T myItem = myIterator.next();</span>
+<span class="nc" id="L759">        final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L760" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L761">            final T myItem = myIterator.next();</span>
 
             /* If the item is not deleted */
-<span class="nc bnc" id="L797" title="All 2 branches missed.">            if (!myItem.isDeleted()) {</span>
+<span class="nc bnc" id="L764" title="All 2 branches missed.">            if (!myItem.isDeleted()) {</span>
                 /* Map the item */
-<span class="nc" id="L799">                myItem.touchUnderlyingItems();</span>
-<span class="nc" id="L800">                theDataMap.adjustForItem(myItem);</span>
+<span class="nc" id="L766">                myItem.touchUnderlyingItems();</span>
+<span class="nc" id="L767">                theDataMap.adjustForItem(myItem);</span>
             }
-<span class="nc" id="L802">        }</span>
-<span class="nc" id="L803">    }</span>
+<span class="nc" id="L769">        }</span>
+<span class="nc" id="L770">    }</span>
 
     /**
      * PostProcess a loaded list.
@@ -809,79 +776,79 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      */
     public void postProcessOnLoad() throws OceanusException {
         /* Default action is to resolve links and then sort */
-<span class="nc" id="L812">        resolveDataSetLinks();</span>
-<span class="nc" id="L813">        theList.sortList();</span>
+<span class="nc" id="L779">        resolveDataSetLinks();</span>
+<span class="nc" id="L780">        theList.sortList();</span>
 
         /* Map the data */
-<span class="nc" id="L816">        mapData();</span>
+<span class="nc" id="L783">        mapData();</span>
 
         /* Now validate the list */
-<span class="nc" id="L819">        validateOnLoad();</span>
-<span class="nc" id="L820">    }</span>
+<span class="nc" id="L786">        validateOnLoad();</span>
+<span class="nc" id="L787">    }</span>
 
     /**
      * Update Maps.
      */
     public void updateMaps() {
         /* Ensure the map */
-<span class="nc" id="L827">        ensureMap();</span>
+<span class="nc" id="L794">        ensureMap();</span>
 
         /* Loop through items clearing active flag */
-<span class="nc" id="L830">        final Iterator&lt;T&gt; myIterator = iterator();</span>
-<span class="nc bnc" id="L831" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L832">            final T myItem = myIterator.next();</span>
+<span class="nc" id="L797">        final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L798" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L799">            final T myItem = myIterator.next();</span>
 
             /* If the item is not deleted */
-<span class="nc bnc" id="L835" title="All 2 branches missed.">            if (!myItem.isDeleted()) {</span>
+<span class="nc bnc" id="L802" title="All 2 branches missed.">            if (!myItem.isDeleted()) {</span>
                 /* Update Maps */
-<span class="nc" id="L837">                myItem.updateMaps();</span>
+<span class="nc" id="L804">                myItem.updateMaps();</span>
             }
-<span class="nc" id="L839">        }</span>
-<span class="nc" id="L840">    }</span>
+<span class="nc" id="L806">        }</span>
+<span class="nc" id="L807">    }</span>
 
     /**
      * postProcessOnUpdate.
      */
     public void postProcessOnUpdate() {
         /* Note whether this is a DataInfoList */
-<span class="nc" id="L847">        final boolean isDataInfo = this instanceof PrometheusDataInfoList;</span>
+<span class="nc" id="L814">        final boolean isDataInfo = this instanceof PrometheusDataInfoListCtl;</span>
 
         /* Reset the map */
-<span class="nc bnc" id="L850" title="All 2 branches missed.">        if (theDataMap != null) {</span>
-<span class="nc" id="L851">            theDataMap.resetMap();</span>
+<span class="nc bnc" id="L817" title="All 2 branches missed.">        if (theDataMap != null) {</span>
+<span class="nc" id="L818">            theDataMap.resetMap();</span>
         }
 
         /* Loop through items clearing active flag */
-<span class="nc" id="L855">        final Iterator&lt;T&gt; myIterator = iterator();</span>
-<span class="nc" id="L856">        MetisDataEditState myState = MetisDataEditState.CLEAN;</span>
-<span class="nc bnc" id="L857" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L858">            final T myCurr = myIterator.next();</span>
+<span class="nc" id="L822">        final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="nc" id="L823">        MetisDataEditState myState = MetisDataEditState.CLEAN;</span>
+<span class="nc bnc" id="L824" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L825">            final T myCurr = myIterator.next();</span>
 
             /* Clear errors for the item */
-<span class="nc" id="L861">            myCurr.clearErrors();</span>
+<span class="nc" id="L828">            myCurr.clearErrors();</span>
 
             /* Skip deleted items */
-<span class="nc bnc" id="L864" title="All 2 branches missed.">            if (myCurr.isDeleted()) {</span>
-<span class="nc" id="L865">                myCurr.setValidEdit();</span>
-<span class="nc" id="L866">                myState = myState.combineState(MetisDataEditState.VALID);</span>
-<span class="nc" id="L867">                continue;</span>
+<span class="nc bnc" id="L831" title="All 2 branches missed.">            if (myCurr.isDeleted()) {</span>
+<span class="nc" id="L832">                myCurr.setValidEdit();</span>
+<span class="nc" id="L833">                myState = myState.combineState(MetisDataEditState.VALID);</span>
+<span class="nc" id="L834">                continue;</span>
             }
 
             /* If this is not a DataInfo */
-<span class="nc bnc" id="L871" title="All 2 branches missed.">            if (!isDataInfo) {</span>
+<span class="nc bnc" id="L838" title="All 2 branches missed.">            if (!isDataInfo) {</span>
                 /* Adjust touches and update map */
-<span class="nc" id="L873">                myCurr.touchOnUpdate();</span>
-<span class="nc" id="L874">                myCurr.adjustMapForItem();</span>
+<span class="nc" id="L840">                myCurr.touchOnUpdate();</span>
+<span class="nc" id="L841">                myCurr.adjustMapForItem();</span>
             }
 
             /* Validate the item and build up the state */
-<span class="nc" id="L878">            myCurr.validate();</span>
-<span class="nc" id="L879">            myState = myState.combineState(myCurr.getEditState());</span>
-<span class="nc" id="L880">        }</span>
+<span class="nc" id="L845">            myCurr.validate();</span>
+<span class="nc" id="L846">            myState = myState.combineState(myCurr.getEditState());</span>
+<span class="nc" id="L847">        }</span>
 
         /* Store the edit state */
-<span class="nc" id="L883">        theEdit = myState;</span>
-<span class="nc" id="L884">    }</span>
+<span class="nc" id="L850">        theEdit = myState;</span>
+<span class="nc" id="L851">    }</span>
 
     /**
      * Create a new element in the list copied from another element (to be over-written).
@@ -914,7 +881,7 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      * @return the matching item
      */
     public T findItemByName(final String pName) {
-<span class="nc" id="L917">        return null;</span>
+<span class="nc" id="L884">        return null;</span>
     }
 
     /**
@@ -924,38 +891,38 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      */
     public void rewindToVersion(final int pVersion) {
         /* Loop through the elements */
-<span class="nc" id="L927">        final Iterator&lt;T&gt; myIterator = theList.iterator();</span>
-<span class="nc bnc" id="L928" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L929">            final T myCurr = myIterator.next();</span>
+<span class="nc" id="L894">        final Iterator&lt;T&gt; myIterator = theList.iterator();</span>
+<span class="nc bnc" id="L895" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L896">            final T myCurr = myIterator.next();</span>
 
             /* If the version is before required version */
-<span class="nc bnc" id="L932" title="All 2 branches missed.">            if (myCurr.getValues().getVersion() &lt;= pVersion) {</span>
+<span class="nc bnc" id="L899" title="All 2 branches missed.">            if (myCurr.getValues().getVersion() &lt;= pVersion) {</span>
                 /* Ignore */
-<span class="nc" id="L934">                continue;</span>
+<span class="nc" id="L901">                continue;</span>
             }
 
             /* If the item was created after the required version */
-<span class="nc bnc" id="L938" title="All 2 branches missed.">            if (myCurr.getOriginalValues().getVersion() &gt; pVersion) {</span>
+<span class="nc bnc" id="L905" title="All 2 branches missed.">            if (myCurr.getOriginalValues().getVersion() &gt; pVersion) {</span>
                 /* Remove from list */
-<span class="nc" id="L940">                myIterator.remove();</span>
-<span class="nc" id="L941">                myCurr.deRegister();</span>
+<span class="nc" id="L907">                myIterator.remove();</span>
+<span class="nc" id="L908">                myCurr.deRegister();</span>
 
                 /* Re-Loop */
-<span class="nc" id="L944">                continue;</span>
+<span class="nc" id="L911">                continue;</span>
             }
 
             /* Adjust values */
-<span class="nc" id="L948">            myCurr.rewindToVersion(pVersion);</span>
-<span class="nc" id="L949">        }</span>
+<span class="nc" id="L915">            myCurr.rewindToVersion(pVersion);</span>
+<span class="nc" id="L916">        }</span>
 
         /* Adjust list value */
-<span class="nc" id="L952">        setVersion(pVersion);</span>
+<span class="nc" id="L919">        setVersion(pVersion);</span>
 
         /* ReSort the list unless we are an edit list */
-<span class="nc bnc" id="L955" title="All 2 branches missed.">        if (theStyle != PrometheusListStyle.EDIT) {</span>
-<span class="nc" id="L956">            theList.sortList();</span>
+<span class="nc bnc" id="L922" title="All 2 branches missed.">        if (theStyle != PrometheusListStyle.EDIT) {</span>
+<span class="nc" id="L923">            theList.sortList();</span>
         }
-<span class="nc" id="L958">    }</span>
+<span class="nc" id="L925">    }</span>
 
     /**
      * Condense history.
@@ -964,69 +931,33 @@ public abstract class PrometheusDataList&lt;T extends PrometheusDataItem&gt;
      */
     public void condenseHistory(final int pNewVersion) {
         /* Loop through the elements */
-<span class="nc" id="L967">        final Iterator&lt;T&gt; myIterator = theList.iterator();</span>
-<span class="nc bnc" id="L968" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L969">            final T myCurr = myIterator.next();</span>
+<span class="nc" id="L934">        final Iterator&lt;T&gt; myIterator = theList.iterator();</span>
+<span class="nc bnc" id="L935" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L936">            final T myCurr = myIterator.next();</span>
 
             /* If the version is before required version */
-<span class="nc bnc" id="L972" title="All 2 branches missed.">            if (myCurr.getValues().getVersion() &lt; pNewVersion) {</span>
+<span class="nc bnc" id="L939" title="All 2 branches missed.">            if (myCurr.getValues().getVersion() &lt; pNewVersion) {</span>
                 /* Ignore */
-<span class="nc" id="L974">                continue;</span>
+<span class="nc" id="L941">                continue;</span>
             }
 
             /* If the item is in DELNEW state */
-<span class="nc bnc" id="L978" title="All 2 branches missed.">            if (myCurr.isDeleted()</span>
-<span class="nc bnc" id="L979" title="All 2 branches missed.">                    &amp;&amp; (myCurr.getOriginalValues().getVersion() &gt;= pNewVersion)) {</span>
+<span class="nc bnc" id="L945" title="All 2 branches missed.">            if (myCurr.isDeleted()</span>
+<span class="nc bnc" id="L946" title="All 2 branches missed.">                    &amp;&amp; (myCurr.getOriginalValues().getVersion() &gt;= pNewVersion)) {</span>
                 /* Remove from list */
-<span class="nc" id="L981">                myIterator.remove();</span>
-<span class="nc" id="L982">                myCurr.deRegister();</span>
+<span class="nc" id="L948">                myIterator.remove();</span>
+<span class="nc" id="L949">                myCurr.deRegister();</span>
 
                 /* Re-Loop */
-<span class="nc" id="L985">                continue;</span>
+<span class="nc" id="L952">                continue;</span>
             }
 
             /* Condense the history */
-<span class="nc" id="L989">            myCurr.condenseHistory(pNewVersion);</span>
-<span class="nc" id="L990">        }</span>
+<span class="nc" id="L956">            myCurr.condenseHistory(pNewVersion);</span>
+<span class="nc" id="L957">        }</span>
 
         /* Adjust list value */
-<span class="nc" id="L993">        setVersion(pNewVersion);</span>
-<span class="nc" id="L994">    }</span>
-
-    /**
-     * ListStyles.
-     */
-<span class="nc" id="L999">    public enum PrometheusListStyle {</span>
-        /**
-         * Core list holding the true version of the data.
-         */
-<span class="nc" id="L1003">        CORE,</span>
-
-        /**
-         * Deep Copy clone for security updates.
-         */
-<span class="nc" id="L1008">        CLONE,</span>
-
-        /**
-         * Shallow Copy list for comparison purposes. Only references to other items can be added to
-         * the list
-         */
-<span class="nc" id="L1014">        COPY,</span>
-
-        /**
-         * Partial extract of the data for the purposes of editing.
-         */
-<span class="nc" id="L1019">        EDIT,</span>
-
-        /**
-         * List of changes to be applied to database.
-         */
-<span class="nc" id="L1024">        UPDATE,</span>
-
-        /**
-         * List of differences.
-         */
-<span class="nc" id="L1029">        DIFFER;</span>
-    }
+<span class="nc" id="L960">        setVersion(pNewVersion);</span>
+<span class="nc" id="L961">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

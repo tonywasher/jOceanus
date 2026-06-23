@@ -16,21 +16,25 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusDataInfoSetItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -44,17 +48,17 @@ public class MoneyWiseLoanInfo
     /**
      * Object name.
      */
-<span class="fc" id="L47">    public static final String OBJECT_NAME = MoneyWiseBasicDataType.LOANINFO.getItemName();</span>
+<span class="fc" id="L51">    public static final String OBJECT_NAME = MoneyWiseBasicDataType.LOANINFO.getItemName();</span>
 
     /**
      * List name.
      */
-<span class="fc" id="L52">    public static final String LIST_NAME = MoneyWiseBasicDataType.LOANINFO.getListName();</span>
+<span class="fc" id="L56">    public static final String LIST_NAME = MoneyWiseBasicDataType.LOANINFO.getListName();</span>
 
     /**
      * Report fields.
      */
-<span class="fc" id="L57">    private static final MetisFieldSet&lt;MoneyWiseLoanInfo&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseLoanInfo.class);</span>
+<span class="fc" id="L61">    private static final MetisFieldSet&lt;MoneyWiseLoanInfo&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseLoanInfo.class);</span>
 
     /**
      * Copy Constructor.
@@ -65,8 +69,8 @@ public class MoneyWiseLoanInfo
     protected MoneyWiseLoanInfo(final MoneyWiseLoanInfoList pList,
                                 final MoneyWiseLoanInfo pInfo) {
         /* Set standard values */
-<span class="fc" id="L68">        super(pList, pInfo);</span>
-<span class="fc" id="L69">    }</span>
+<span class="fc" id="L72">        super(pList, pInfo);</span>
+<span class="fc" id="L73">    }</span>
 
     /**
      * Edit Constructor.
@@ -76,16 +80,16 @@ public class MoneyWiseLoanInfo
      * @param pType the type
      */
     private MoneyWiseLoanInfo(final MoneyWiseLoanInfoList pList,
-                              final MoneyWiseLoan pLoan,
+                              final PrometheusDataItem pLoan,
                               final MoneyWiseAccountInfoType pType) {
         /* Initialise the item */
-<span class="fc" id="L82">        super(pList);</span>
-<span class="fc" id="L83">        setNextDataKeySet();</span>
+<span class="fc" id="L86">        super(pList);</span>
+<span class="fc" id="L87">        setNextDataKeySet();</span>
 
         /* Record the Detail */
-<span class="fc" id="L86">        setValueInfoType(pType);</span>
-<span class="fc" id="L87">        setValueOwner(pLoan);</span>
-<span class="fc" id="L88">    }</span>
+<span class="fc" id="L90">        setValueInfoType(pType);</span>
+<span class="fc" id="L91">        setValueOwner(pLoan);</span>
+<span class="fc" id="L92">    }</span>
 
     /**
      * Values constructor.
@@ -97,84 +101,84 @@ public class MoneyWiseLoanInfo
     private MoneyWiseLoanInfo(final MoneyWiseLoanInfoList pList,
                               final PrometheusDataValues pValues) throws OceanusException {
         /* Initialise the item */
-<span class="fc" id="L100">        super(pList, pValues);</span>
+<span class="fc" id="L104">        super(pList, pValues);</span>
 
         /* Protect against exceptions */
         try {
             /* Resolve links */
-<span class="fc" id="L105">            final MoneyWiseDataSet myData = getDataSet();</span>
-<span class="fc" id="L106">            resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, myData.getActInfoTypes());</span>
-<span class="fc" id="L107">            resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getLoans());</span>
+<span class="fc" id="L109">            resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, MoneyWiseStaticDataType.ACCOUNTINFOTYPE);</span>
+<span class="fc" id="L110">            resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, MoneyWiseBasicDataType.LOAN);</span>
 
             /* Set the value */
-<span class="fc" id="L110">            setValue(pValues.getValue(PrometheusDataResource.DATAINFO_VALUE));</span>
+<span class="fc" id="L113">            setValue(pValues.getValue(PrometheusDataResource.DATAINFO_VALUE));</span>
 
             /* Access the LoanInfoSet and register this data */
-<span class="fc" id="L113">            final MoneyWiseLoanInfoSet mySet = getOwner().getInfoSet();</span>
-<span class="fc" id="L114">            mySet.registerInfo(this);</span>
+<span class="fc" id="L116">            getInfoSet().registerInfo(this);</span>
 
-<span class="nc" id="L116">        } catch (OceanusException e) {</span>
+<span class="nc" id="L118">        } catch (OceanusException e) {</span>
             /* Pass on exception */
-<span class="nc" id="L118">            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);</span>
-<span class="fc" id="L119">        }</span>
-<span class="fc" id="L120">    }</span>
+<span class="nc" id="L120">            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);</span>
+<span class="fc" id="L121">        }</span>
+<span class="fc" id="L122">    }</span>
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
-<span class="fc" id="L124">        return FIELD_DEFS;</span>
+<span class="fc" id="L126">        return FIELD_DEFS;</span>
     }
 
     @Override
     public MoneyWiseAccountInfoType getInfoType() {
-<span class="fc" id="L129">        return getValues().getValue(PrometheusDataResource.DATAINFO_TYPE, MoneyWiseAccountInfoType.class);</span>
+<span class="fc" id="L131">        return getValues().getValue(PrometheusDataResource.DATAINFO_TYPE, MoneyWiseAccountInfoType.class);</span>
     }
 
     @Override
     public MoneyWiseAccountInfoClass getInfoClass() {
-<span class="fc" id="L134">        return getInfoType().getInfoClass();</span>
+<span class="fc" id="L136">        return getInfoType().getInfoClass();</span>
     }
 
     @Override
-    public MoneyWiseLoan getOwner() {
-<span class="fc" id="L139">        return getValues().getValue(PrometheusDataResource.DATAINFO_OWNER, MoneyWiseLoan.class);</span>
-    }
-
-    @Override
-    public MoneyWiseDataSet getDataSet() {
-<span class="fc" id="L144">        return (MoneyWiseDataSet) super.getDataSet();</span>
+    public PrometheusDataItem getOwner() {
+<span class="fc" id="L141">        return getValues().getValue(PrometheusDataResource.DATAINFO_OWNER, PrometheusDataItem.class);</span>
     }
 
     @Override
     public MoneyWiseLoanInfo getBase() {
-<span class="fc" id="L149">        return (MoneyWiseLoanInfo) super.getBase();</span>
+<span class="fc" id="L146">        return (MoneyWiseLoanInfo) super.getBase();</span>
     }
 
     @Override
     public MoneyWiseLoanInfoList getList() {
-<span class="fc" id="L154">        return (MoneyWiseLoanInfoList) super.getList();</span>
+<span class="fc" id="L151">        return (MoneyWiseLoanInfoList) super.getList();</span>
+    }
+
+    /**
+     * Obtain the InfoSet.
+     *
+     * @return the infoSet
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    private PrometheusDataInfoSet&lt;MoneyWiseLoanInfo&gt; getInfoSet() {
+<span class="fc" id="L161">        return (PrometheusDataInfoSet&lt;MoneyWiseLoanInfo&gt;) ((PrometheusDataInfoSetItemCtl&lt;?&gt;) getOwner()).getInfoSet();</span>
     }
 
     @Override
     public void deRegister() {
         /* Access the LoanInfoSet and register this value */
-<span class="nc" id="L160">        final MoneyWiseLoanInfoSet mySet = getOwner().getInfoSet();</span>
-<span class="nc" id="L161">        mySet.deRegisterInfo(this);</span>
-<span class="nc" id="L162">    }</span>
+<span class="nc" id="L167">        getInfoSet().deRegisterInfo(this);</span>
+<span class="nc" id="L168">    }</span>
 
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
-<span class="nc" id="L167">        super.resolveDataSetLinks();</span>
+<span class="nc" id="L173">        super.resolveDataSetLinks();</span>
 
         /* Resolve data links */
-<span class="nc" id="L170">        final MoneyWiseDataSet myData = getDataSet();</span>
-<span class="nc" id="L171">        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, myData.getActInfoTypes());</span>
-<span class="nc" id="L172">        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getLoans());</span>
+<span class="nc" id="L176">        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, MoneyWiseStaticDataType.ACCOUNTINFOTYPE);</span>
+<span class="nc" id="L177">        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, MoneyWiseBasicDataType.LOAN);</span>
 
         /* Access the LoanInfoSet and register this data */
-<span class="nc" id="L175">        final MoneyWiseLoanInfoSet mySet = getOwner().getInfoSet();</span>
-<span class="nc" id="L176">        mySet.registerInfo(this);</span>
-<span class="nc" id="L177">    }</span>
+<span class="nc" id="L180">        getInfoSet().registerInfo(this);</span>
+<span class="nc" id="L181">    }</span>
 
     /**
      * Resolve editSet links.
@@ -184,9 +188,9 @@ public class MoneyWiseLoanInfo
      */
     public void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Resolve data links */
-<span class="fc" id="L187">        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class));</span>
-<span class="fc" id="L188">        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, pEditSet.getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class));</span>
-<span class="fc" id="L189">    }</span>
+<span class="fc" id="L191">        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class));</span>
+<span class="fc" id="L192">        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, pEditSet.getDataList(MoneyWiseBasicDataType.LOAN, PrometheusDataList.class));</span>
+<span class="fc" id="L193">    }</span>
 
     /**
      * Update depositInfo from a depositInfo extract.
@@ -197,23 +201,20 @@ public class MoneyWiseLoanInfo
     @Override
     public boolean applyChanges(final PrometheusDataItem pInfo) {
         /* Can only update from LoanInfo */
-<span class="nc bnc" id="L200" title="All 2 branches missed.">        if (!(pInfo instanceof MoneyWiseLoanInfo)) {</span>
-<span class="nc" id="L201">            return false;</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">        if (!(pInfo instanceof MoneyWiseLoanInfo myLoanInfo)) {</span>
+<span class="nc" id="L205">            return false;</span>
         }
 
-        /* Access as LoanInfo */
-<span class="nc" id="L205">        final MoneyWiseLoanInfo myLoanInfo = (MoneyWiseLoanInfo) pInfo;</span>
-
         /* Store the current detail into history */
-<span class="nc" id="L208">        pushHistory();</span>
+<span class="nc" id="L209">        pushHistory();</span>
 
         /* Update the value if required */
-<span class="nc bnc" id="L211" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getField(), myLoanInfo.getField())) {</span>
-<span class="nc" id="L212">            setValueValue(myLoanInfo.getField());</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getField(), myLoanInfo.getField())) {</span>
+<span class="nc" id="L213">            setValueValue(myLoanInfo.getField());</span>
         }
 
         /* Check for changes */
-<span class="nc" id="L216">        return checkForHistory();</span>
+<span class="nc" id="L217">        return checkForHistory();</span>
     }
 
     /**
@@ -224,16 +225,16 @@ public class MoneyWiseLoanInfo
         /**
          * Report fields.
          */
-<span class="fc" id="L227">        private static final MetisFieldSet&lt;MoneyWiseLoanInfoList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseLoanInfoList.class);</span>
+<span class="fc" id="L228">        private static final MetisFieldSet&lt;MoneyWiseLoanInfoList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseLoanInfoList.class);</span>
 
         /**
          * Construct an empty CORE list.
          *
          * @param pData the DataSet for the list
          */
-        protected MoneyWiseLoanInfoList(final MoneyWiseDataSet pData) {
-<span class="fc" id="L235">            super(MoneyWiseLoanInfo.class, pData, MoneyWiseBasicDataType.LOANINFO, PrometheusListStyle.CORE);</span>
-<span class="fc" id="L236">        }</span>
+        protected MoneyWiseLoanInfoList(final PrometheusDataSet pData) {
+<span class="fc" id="L236">            super(MoneyWiseLoanInfo.class, pData, MoneyWiseBasicDataType.LOANINFO, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L237">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -241,27 +242,22 @@ public class MoneyWiseLoanInfo
          * @param pSource the source List
          */
         private MoneyWiseLoanInfoList(final MoneyWiseLoanInfoList pSource) {
-<span class="fc" id="L244">            super(pSource);</span>
-<span class="fc" id="L245">        }</span>
+<span class="fc" id="L245">            super(pSource);</span>
+<span class="fc" id="L246">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWiseLoanInfoList&gt; getDataFieldSet() {
-<span class="nc" id="L249">            return FIELD_DEFS;</span>
+<span class="nc" id="L250">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String listName() {
-<span class="fc" id="L254">            return LIST_NAME;</span>
+<span class="fc" id="L255">            return LIST_NAME;</span>
         }
 
         @Override
         public MetisFieldSetDef getItemFields() {
-<span class="nc" id="L259">            return MoneyWiseLoanInfo.FIELD_DEFS;</span>
-        }
-
-        @Override
-        public MoneyWiseDataSet getDataSet() {
-<span class="fc" id="L264">            return (MoneyWiseDataSet) super.getDataSet();</span>
+<span class="nc" id="L260">            return MoneyWiseLoanInfo.FIELD_DEFS;</span>
         }
 
         /**
@@ -271,43 +267,43 @@ public class MoneyWiseLoanInfo
          */
         protected void setBase(final MoneyWiseLoanInfoList pBase) {
             /* Set the style and base */
-<span class="nc" id="L274">            setStyle(PrometheusListStyle.EDIT);</span>
-<span class="nc" id="L275">            super.setBase(pBase);</span>
-<span class="nc" id="L276">        }</span>
+<span class="nc" id="L270">            setStyle(PrometheusListStyle.EDIT);</span>
+<span class="nc" id="L271">            super.setBase(pBase);</span>
+<span class="nc" id="L272">        }</span>
 
         @Override
         protected MoneyWiseLoanInfoList getEmptyList(final PrometheusListStyle pStyle) {
-<span class="fc" id="L280">            final MoneyWiseLoanInfoList myList = new MoneyWiseLoanInfoList(this);</span>
-<span class="fc" id="L281">            myList.setStyle(pStyle);</span>
-<span class="fc" id="L282">            return myList;</span>
+<span class="fc" id="L276">            final MoneyWiseLoanInfoList myList = new MoneyWiseLoanInfoList(this);</span>
+<span class="fc" id="L277">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L278">            return myList;</span>
         }
 
         @Override
         public MoneyWiseLoanInfo addCopyItem(final PrometheusDataItem pItem) {
             /* Can only clone a LoanInfo */
-<span class="pc bpc" id="L288" title="1 of 2 branches missed.">            if (!(pItem instanceof MoneyWiseLoanInfo)) {</span>
-<span class="nc" id="L289">                throw new UnsupportedOperationException();</span>
+<span class="pc bpc" id="L284" title="1 of 2 branches missed.">            if (!(pItem instanceof MoneyWiseLoanInfo)) {</span>
+<span class="nc" id="L285">                throw new UnsupportedOperationException();</span>
             }
 
-<span class="fc" id="L292">            final MoneyWiseLoanInfo myInfo = new MoneyWiseLoanInfo(this, (MoneyWiseLoanInfo) pItem);</span>
-<span class="fc" id="L293">            add(myInfo);</span>
-<span class="fc" id="L294">            return myInfo;</span>
+<span class="fc" id="L288">            final MoneyWiseLoanInfo myInfo = new MoneyWiseLoanInfo(this, (MoneyWiseLoanInfo) pItem);</span>
+<span class="fc" id="L289">            add(myInfo);</span>
+<span class="fc" id="L290">            return myInfo;</span>
         }
 
         @Override
         public MoneyWiseLoanInfo addNewItem() {
-<span class="nc" id="L299">            throw new UnsupportedOperationException();</span>
+<span class="nc" id="L295">            throw new UnsupportedOperationException();</span>
         }
 
         @Override
         protected MoneyWiseLoanInfo addNewItem(final PrometheusDataItem pOwner,
                                                final PrometheusStaticDataItem pInfoType) {
             /* Allocate the new entry and add to list */
-<span class="fc" id="L306">            final MoneyWiseLoanInfo myInfo = new MoneyWiseLoanInfo(this, (MoneyWiseLoan) pOwner, (MoneyWiseAccountInfoType) pInfoType);</span>
-<span class="fc" id="L307">            add(myInfo);</span>
+<span class="fc" id="L302">            final MoneyWiseLoanInfo myInfo = new MoneyWiseLoanInfo(this, pOwner, (MoneyWiseAccountInfoType) pInfoType);</span>
+<span class="fc" id="L303">            add(myInfo);</span>
 
             /* return it */
-<span class="fc" id="L310">            return myInfo;</span>
+<span class="fc" id="L306">            return myInfo;</span>
         }
 
         @Override
@@ -316,67 +312,69 @@ public class MoneyWiseLoanInfo
                                 final PrometheusDataInfoClass pInfoClass,
                                 final Object pValue) throws OceanusException {
             /* Ignore item if it is null */
-<span class="nc bnc" id="L319" title="All 2 branches missed.">            if (pValue == null) {</span>
-<span class="nc" id="L320">                return;</span>
+<span class="nc bnc" id="L315" title="All 2 branches missed.">            if (pValue == null) {</span>
+<span class="nc" id="L316">                return;</span>
             }
 
-            /* Access the data set */
-<span class="nc" id="L324">            final MoneyWiseDataSet myData = getDataSet();</span>
+            /* Access the accountInfoTypes */
+<span class="nc" id="L320">            final MoneyWiseAccountInfoTypeList myActInfos</span>
+<span class="nc" id="L321">                    = getDataSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);</span>
 
             /* Look up the Info Type */
-<span class="nc" id="L327">            final MoneyWiseAccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);</span>
-<span class="nc bnc" id="L328" title="All 2 branches missed.">            if (myInfoType == null) {</span>
-<span class="nc" id="L329">                throw new MoneyWiseDataException(pLoan, ERROR_BADINFOCLASS + &quot; [&quot; + pInfoClass + &quot;]&quot;);</span>
+<span class="nc" id="L324">            final MoneyWiseAccountInfoType myInfoType = myActInfos.findItemByClass(pInfoClass);</span>
+<span class="nc bnc" id="L325" title="All 2 branches missed.">            if (myInfoType == null) {</span>
+<span class="nc" id="L326">                throw new MoneyWiseDataException(pLoan, ERROR_BADINFOCLASS + &quot; [&quot; + pInfoClass + &quot;]&quot;);</span>
             }
 
             /* Create the values */
-<span class="nc" id="L333">            final PrometheusDataValues myValues = new PrometheusDataValues(OBJECT_NAME);</span>
-<span class="nc" id="L334">            myValues.addValue(MetisDataResource.DATA_ID, pId);</span>
-<span class="nc" id="L335">            myValues.addValue(PrometheusDataResource.DATAINFO_TYPE, myInfoType);</span>
-<span class="nc" id="L336">            myValues.addValue(PrometheusDataResource.DATAINFO_OWNER, pLoan);</span>
-<span class="nc" id="L337">            myValues.addValue(PrometheusDataResource.DATAINFO_VALUE, pValue);</span>
+<span class="nc" id="L330">            final PrometheusDataValues myValues = new PrometheusDataValues(OBJECT_NAME);</span>
+<span class="nc" id="L331">            myValues.addValue(MetisDataResource.DATA_ID, pId);</span>
+<span class="nc" id="L332">            myValues.addValue(PrometheusDataResource.DATAINFO_TYPE, myInfoType);</span>
+<span class="nc" id="L333">            myValues.addValue(PrometheusDataResource.DATAINFO_OWNER, pLoan);</span>
+<span class="nc" id="L334">            myValues.addValue(PrometheusDataResource.DATAINFO_VALUE, pValue);</span>
 
             /* Create a new Loan Info */
-<span class="nc" id="L340">            final MoneyWiseLoanInfo myInfo = new MoneyWiseLoanInfo(this, myValues);</span>
+<span class="nc" id="L337">            final MoneyWiseLoanInfo myInfo = new MoneyWiseLoanInfo(this, myValues);</span>
 
             /* Check that this InfoTypeId has not been previously added */
-<span class="nc bnc" id="L343" title="All 2 branches missed.">            if (!isIdUnique(pId)) {</span>
-<span class="nc" id="L344">                myInfo.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L345">                throw new MoneyWiseDataException(myInfo, ERROR_VALIDATION);</span>
+<span class="nc bnc" id="L340" title="All 2 branches missed.">            if (!isIdUnique(pId)) {</span>
+<span class="nc" id="L341">                myInfo.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L342">                throw new MoneyWiseDataException(myInfo, ERROR_VALIDATION);</span>
             }
 
             /* Add the Info to the list */
-<span class="nc" id="L349">            add(myInfo);</span>
-<span class="nc" id="L350">        }</span>
+<span class="nc" id="L346">            add(myInfo);</span>
+<span class="nc" id="L347">        }</span>
 
         @Override
         public MoneyWiseLoanInfo addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
             /* Create the info */
-<span class="fc" id="L355">            final MoneyWiseLoanInfo myInfo = new MoneyWiseLoanInfo(this, pValues);</span>
+<span class="fc" id="L352">            final MoneyWiseLoanInfo myInfo = new MoneyWiseLoanInfo(this, pValues);</span>
 
             /* Check that this InfoId has not been previously added */
-<span class="pc bpc" id="L358" title="1 of 2 branches missed.">            if (!isIdUnique(myInfo.getIndexedId())) {</span>
-<span class="nc" id="L359">                myInfo.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L360">                throw new MoneyWiseDataException(myInfo, ERROR_VALIDATION);</span>
+<span class="pc bpc" id="L355" title="1 of 2 branches missed.">            if (!isIdUnique(myInfo.getIndexedId())) {</span>
+<span class="nc" id="L356">                myInfo.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L357">                throw new MoneyWiseDataException(myInfo, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="fc" id="L364">            add(myInfo);</span>
+<span class="fc" id="L361">            add(myInfo);</span>
 
             /* Return it */
-<span class="fc" id="L367">            return myInfo;</span>
+<span class="fc" id="L364">            return myInfo;</span>
         }
 
         @Override
         public void postProcessOnLoad() throws OceanusException {
             /* Validate the LoanInfo */
-<span class="fc" id="L373">            validateOnLoad();</span>
+<span class="fc" id="L370">            validateOnLoad();</span>
 
             /* Map and Validate the Loans */
-<span class="fc" id="L376">            final MoneyWiseLoanList myLoans = getDataSet().getLoans();</span>
-<span class="fc" id="L377">            myLoans.mapData();</span>
-<span class="fc" id="L378">            myLoans.validateOnLoad();</span>
-<span class="fc" id="L379">        }</span>
+<span class="fc" id="L373">            final PrometheusDataList&lt;?&gt; myLoans</span>
+<span class="fc" id="L374">                    = getDataSet().getDataList(MoneyWiseBasicDataType.LOAN, PrometheusDataList.class);</span>
+<span class="fc" id="L375">            myLoans.mapData();</span>
+<span class="fc" id="L376">            myLoans.validateOnLoad();</span>
+<span class="fc" id="L377">        }</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

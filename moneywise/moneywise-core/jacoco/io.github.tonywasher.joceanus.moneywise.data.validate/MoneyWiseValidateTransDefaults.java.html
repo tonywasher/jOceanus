@@ -16,12 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
@@ -34,17 +28,24 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWi
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Currency;
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * Transaction builder.
@@ -55,12 +56,12 @@ public class MoneyWiseValidateTransDefaults {
     /**
      * Logger.
      */
-<span class="fc" id="L58">    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseValidateTransDefaults.class);</span>
+<span class="fc" id="L59">    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseValidateTransDefaults.class);</span>
 
     /**
      * The transaction validator.
      */
-    private final MoneyWiseValidateTransaction theValidator;
+    private final MoneyWiseValidateTransCtl theValidator;
 
     /**
      * The EditSet.
@@ -77,9 +78,9 @@ public class MoneyWiseValidateTransDefaults {
      *
      * @param pValidator the validator
      */
-<span class="fc" id="L80">    public MoneyWiseValidateTransDefaults(final MoneyWiseValidateTransaction pValidator) {</span>
-<span class="fc" id="L81">        theValidator = pValidator;</span>
-<span class="fc" id="L82">    }</span>
+<span class="fc" id="L81">    public MoneyWiseValidateTransDefaults(final MoneyWiseValidateTransCtl pValidator) {</span>
+<span class="fc" id="L82">        theValidator = pValidator;</span>
+<span class="fc" id="L83">    }</span>
 
     /**
      * Obtain range.
@@ -87,7 +88,7 @@ public class MoneyWiseValidateTransDefaults {
      * @return the date range
      */
     public OceanusDateRange getRange() {
-<span class="nc" id="L90">        return theRange;</span>
+<span class="nc" id="L91">        return theRange;</span>
     }
 
     /**
@@ -96,8 +97,8 @@ public class MoneyWiseValidateTransDefaults {
      * @param pRange the date range
      */
     public void setRange(final OceanusDateRange pRange) {
-<span class="nc" id="L99">        theRange = pRange;</span>
-<span class="nc" id="L100">    }</span>
+<span class="nc" id="L100">        theRange = pRange;</span>
+<span class="nc" id="L101">    }</span>
 
     /**
      * autoCorrect transaction after change.
@@ -107,58 +108,58 @@ public class MoneyWiseValidateTransDefaults {
      */
     public void autoCorrect(final MoneyWiseTransaction pTrans) throws OceanusException {
         /* Access details */
-<span class="nc" id="L110">        final MoneyWiseTransAsset myAccount = pTrans.getAccount();</span>
-<span class="nc" id="L111">        MoneyWiseTransAsset myPartner = pTrans.getPartner();</span>
-<span class="nc" id="L112">        MoneyWiseTransCategory myCategory = pTrans.getCategory();</span>
-<span class="nc" id="L113">        final MoneyWiseAssetDirection myDir = pTrans.getDirection();</span>
-<span class="nc" id="L114">        final OceanusMoney myAmount = pTrans.getAmount();</span>
-<span class="nc" id="L115">        final Currency myCurrency = myAccount.getCurrency();</span>
-<span class="nc" id="L116">        theEditSet = theValidator.getEditSet();</span>
+<span class="nc" id="L111">        final MoneyWiseTransAsset myAccount = pTrans.getAccount();</span>
+<span class="nc" id="L112">        MoneyWiseTransAsset myPartner = pTrans.getPartner();</span>
+<span class="nc" id="L113">        MoneyWiseTransCategory myCategory = pTrans.getCategory();</span>
+<span class="nc" id="L114">        final MoneyWiseAssetDirection myDir = pTrans.getDirection();</span>
+<span class="nc" id="L115">        final OceanusMoney myAmount = pTrans.getAmount();</span>
+<span class="nc" id="L116">        final Currency myCurrency = myAccount.getCurrency();</span>
+<span class="nc" id="L117">        theEditSet = theValidator.getEditSet();</span>
 
         /* Check that category is valid */
-<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (!theValidator.isValidCategory(myAccount, myCategory)) {</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        if (!theValidator.isValidCategory(myAccount, myCategory)) {</span>
             /* Determine valid category */
-<span class="nc" id="L121">            myCategory = getDefaultCategoryForAccount(myAccount);</span>
-<span class="nc" id="L122">            pTrans.setCategory(myCategory);</span>
+<span class="nc" id="L122">            myCategory = getDefaultCategoryForAccount(myAccount);</span>
+<span class="nc" id="L123">            pTrans.setCategory(myCategory);</span>
         }
 
         /* Check that direction is valid */
-<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (!theValidator.isValidDirection(myAccount, myCategory, myDir)) {</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        if (!theValidator.isValidDirection(myAccount, myCategory, myDir)) {</span>
             /* Reverse direction */
-<span class="nc" id="L128">            pTrans.switchDirection();</span>
+<span class="nc" id="L129">            pTrans.switchDirection();</span>
         }
 
         /* Check that partner is valid */
-<span class="nc bnc" id="L132" title="All 2 branches missed.">        if (!theValidator.isValidPartner(myAccount, myCategory, myPartner)) {</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (!theValidator.isValidPartner(myAccount, myCategory, myPartner)) {</span>
             /* Determine valid partner */
-<span class="nc" id="L134">            myPartner = getDefaultPartnerForAccountAndCategory(myAccount, myCategory);</span>
-<span class="nc" id="L135">            pTrans.setPartner(myPartner);</span>
+<span class="nc" id="L135">            myPartner = getDefaultPartnerForAccountAndCategory(myAccount, myCategory);</span>
+<span class="nc" id="L136">            pTrans.setPartner(myPartner);</span>
         }
 
         /* If we need to null money */
-<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (myCategory.getCategoryTypeClass().needsNullAmount()) {</span>
-<span class="nc bnc" id="L140" title="All 2 branches missed.">            if (myAmount != null) {</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (Objects.requireNonNull(myCategory.getCategoryTypeClass()).needsNullAmount()) {</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">            if (myAmount != null) {</span>
                 /* Create a zero amount */
-<span class="nc" id="L142">                pTrans.setAmount(null);</span>
+<span class="nc" id="L143">                pTrans.setAmount(null);</span>
             }
 
             /* Else money is required */
         } else {
-<span class="nc bnc" id="L147" title="All 2 branches missed.">            if (myAmount == null) {</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">            if (myAmount == null) {</span>
                 /* Create a zero amount */
-<span class="nc" id="L149">                pTrans.setAmount(new OceanusMoney(myCurrency));</span>
+<span class="nc" id="L150">                pTrans.setAmount(new OceanusMoney(myCurrency));</span>
 
                 /* If we need to change currency */
-<span class="nc bnc" id="L152" title="All 2 branches missed.">            } else if (!myCurrency.equals(myAmount.getCurrency())) {</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">            } else if (!myCurrency.equals(myAmount.getCurrency())) {</span>
                 /* Convert the currency */
-<span class="nc" id="L154">                pTrans.setAmount(myAmount.changeCurrency(myCurrency));</span>
+<span class="nc" id="L155">                pTrans.setAmount(myAmount.changeCurrency(myCurrency));</span>
             }
         }
 
         /* AutoCorrect the InfoSet */
-<span class="nc" id="L159">        final MoneyWiseValidateTransInfoSet myInfoSet = theValidator.getInfoSetValidator();</span>
-<span class="nc" id="L160">        myInfoSet.autoCorrect(pTrans.getInfoSet());</span>
-<span class="nc" id="L161">    }</span>
+<span class="nc" id="L160">        final MoneyWiseValidateTransInfoSet myInfoSet = theValidator.getInfoSetValidator();</span>
+<span class="nc" id="L161">        myInfoSet.autoCorrect(pTrans.getInfoSet());</span>
+<span class="nc" id="L162">    }</span>
 
     /**
      * Build empty transaction.
@@ -167,7 +168,7 @@ public class MoneyWiseValidateTransDefaults {
      */
     private MoneyWiseTransaction newTransaction() {
         /* Obtain a new transaction */
-<span class="nc" id="L170">        return new MoneyWiseTransaction(theEditSet.getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class));</span>
+<span class="nc" id="L171">        return new MoneyWiseTransaction(theEditSet.getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class));</span>
     }
 
     /**
@@ -179,33 +180,33 @@ public class MoneyWiseValidateTransDefaults {
     public MoneyWiseTransaction buildTransaction(final Object pKey) {
         /* Protect against exceptions */
         try {
-<span class="nc" id="L182">            theEditSet = theValidator.getEditSet();</span>
-<span class="nc bnc" id="L183" title="All 2 branches missed.">            if (pKey == null) {</span>
+<span class="nc" id="L183">            theEditSet = theValidator.getEditSet();</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">            if (pKey == null) {</span>
                 /* Build default transaction */
-<span class="nc" id="L185">                return buildDefaultTransaction();</span>
+<span class="nc" id="L186">                return buildDefaultTransaction();</span>
             }
-<span class="nc bnc" id="L187" title="All 2 branches missed.">            if (pKey instanceof MoneyWisePayee myPayee) {</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">            if (pKey instanceof MoneyWisePayee myPayee) {</span>
                 /* Build default payee transaction */
-<span class="nc" id="L189">                return buildDefaultTransactionForPayee(myPayee);</span>
+<span class="nc" id="L190">                return buildDefaultTransactionForPayee(myPayee);</span>
             }
-<span class="nc bnc" id="L191" title="All 2 branches missed.">            if (pKey instanceof MoneyWiseSecurityHolding myHolding) {</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">            if (pKey instanceof MoneyWiseSecurityHolding myHolding) {</span>
                 /* Build default holding transaction */
-<span class="nc" id="L193">                return buildDefaultTransactionForHolding(myHolding);</span>
+<span class="nc" id="L194">                return buildDefaultTransactionForHolding(myHolding);</span>
             }
-<span class="nc bnc" id="L195" title="All 2 branches missed.">            if (pKey instanceof MoneyWiseTransAsset myAsset) {</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">            if (pKey instanceof MoneyWiseTransAsset myAsset) {</span>
                 /* Build default account transaction */
-<span class="nc" id="L197">                return buildDefaultTransactionForAccount(myAsset);</span>
+<span class="nc" id="L198">                return buildDefaultTransactionForAccount(myAsset);</span>
             }
-<span class="nc bnc" id="L199" title="All 2 branches missed.">            if (pKey instanceof MoneyWiseTransCategory myCategory) {</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">            if (pKey instanceof MoneyWiseTransCategory myCategory) {</span>
                 /* Build default category transaction */
-<span class="nc" id="L201">                return buildDefaultTransactionForCategory(myCategory);</span>
+<span class="nc" id="L202">                return buildDefaultTransactionForCategory(myCategory);</span>
             }
-<span class="nc" id="L203">        } catch (OceanusException e) {</span>
-<span class="nc" id="L204">            LOGGER.error(&quot;Unable to build transaction&quot;, e);</span>
-<span class="nc" id="L205">        }</span>
+<span class="nc" id="L204">        } catch (OceanusException e) {</span>
+<span class="nc" id="L205">            LOGGER.error(&quot;Unable to build transaction&quot;, e);</span>
+<span class="nc" id="L206">        }</span>
 
         /* Unrecognised key */
-<span class="nc" id="L208">        return null;</span>
+<span class="nc" id="L209">        return null;</span>
     }
 
     /**
@@ -216,26 +217,26 @@ public class MoneyWiseValidateTransDefaults {
      */
     private void buildStandardDetails(final MoneyWiseTransaction pTrans) throws OceanusException {
         /* Access standard range */
-<span class="nc" id="L219">        final OceanusDateRange myRange = theRange;</span>
+<span class="nc" id="L220">        final OceanusDateRange myRange = theRange;</span>
 
         /* Set default direction */
-<span class="nc" id="L222">        pTrans.setDirection(MoneyWiseAssetDirection.TO);</span>
+<span class="nc" id="L223">        pTrans.setDirection(MoneyWiseAssetDirection.TO);</span>
 
         /* Determine date */
-<span class="nc" id="L225">        OceanusDate myDate = new OceanusDate();</span>
-<span class="nc" id="L226">        final int iResult = myRange.compareToDate(myDate);</span>
-<span class="nc bnc" id="L227" title="All 2 branches missed.">        if (iResult &lt; 0) {</span>
-<span class="nc" id="L228">            myDate = myRange.getEnd();</span>
-<span class="nc bnc" id="L229" title="All 2 branches missed.">        } else if (iResult &gt; 0) {</span>
-<span class="nc" id="L230">            myDate = myRange.getStart();</span>
+<span class="nc" id="L226">        OceanusDate myDate = new OceanusDate();</span>
+<span class="nc" id="L227">        final int iResult = myRange.compareToDate(myDate);</span>
+<span class="nc bnc" id="L228" title="All 2 branches missed.">        if (iResult &lt; 0) {</span>
+<span class="nc" id="L229">            myDate = myRange.getEnd();</span>
+<span class="nc bnc" id="L230" title="All 2 branches missed.">        } else if (iResult &gt; 0) {</span>
+<span class="nc" id="L231">            myDate = myRange.getStart();</span>
         }
-<span class="nc" id="L232">        pTrans.setDate(myDate);</span>
+<span class="nc" id="L233">        pTrans.setDate(myDate);</span>
 
         /* Create a zero amount */
-<span class="nc" id="L235">        final MoneyWiseTransAsset myAccount = pTrans.getAccount();</span>
-<span class="nc" id="L236">        final Currency myCurrency = myAccount.getCurrency();</span>
-<span class="nc" id="L237">        pTrans.setAmount(new OceanusMoney(myCurrency));</span>
-<span class="nc" id="L238">    }</span>
+<span class="nc" id="L236">        final MoneyWiseTransAsset myAccount = pTrans.getAccount();</span>
+<span class="nc" id="L237">        final Currency myCurrency = myAccount.getCurrency();</span>
+<span class="nc" id="L238">        pTrans.setAmount(new OceanusMoney(myCurrency));</span>
+<span class="nc" id="L239">    }</span>
 
     /**
      * Build default transaction.
@@ -244,13 +245,13 @@ public class MoneyWiseValidateTransDefaults {
      * @throws OceanusException on error
      */
     private MoneyWiseTransaction buildDefaultTransaction() throws OceanusException {
-<span class="nc" id="L247">        final MoneyWiseTransCategory myCategory = getDefaultCategory();</span>
-<span class="nc bnc" id="L248" title="All 2 branches missed.">        if (myCategory == null) {</span>
-<span class="nc" id="L249">            return null;</span>
+<span class="nc" id="L248">        final MoneyWiseTransCategory myCategory = getDefaultCategory();</span>
+<span class="nc bnc" id="L249" title="All 2 branches missed.">        if (myCategory == null) {</span>
+<span class="nc" id="L250">            return null;</span>
         }
 
         /* Look for transaction for this category */
-<span class="nc" id="L253">        return buildDefaultTransactionForCategory(myCategory);</span>
+<span class="nc" id="L254">        return buildDefaultTransactionForCategory(myCategory);</span>
     }
 
     /**
@@ -262,43 +263,43 @@ public class MoneyWiseValidateTransDefaults {
      */
     private MoneyWiseTransaction buildDefaultTransactionForPayee(final MoneyWisePayee pPayee) throws OceanusException {
         /* Check for closed/hidden payee */
-<span class="nc bnc" id="L265" title="All 4 branches missed.">        if (pPayee.isClosed() || pPayee.isHidden()) {</span>
-<span class="nc" id="L266">            return null;</span>
+<span class="nc bnc" id="L266" title="All 4 branches missed.">        if (pPayee.isClosed() || pPayee.isHidden()) {</span>
+<span class="nc" id="L267">            return null;</span>
         }
 
         /* Build an empty transaction */
-<span class="nc" id="L270">        final MoneyWiseTransaction myTrans = newTransaction();</span>
+<span class="nc" id="L271">        final MoneyWiseTransaction myTrans = newTransaction();</span>
 
         /* Record the payee */
-<span class="nc" id="L273">        myTrans.setPartner(pPayee);</span>
+<span class="nc" id="L274">        myTrans.setPartner(pPayee);</span>
 
         /* Build default category */
-<span class="nc" id="L276">        final MoneyWiseTransCategory myCategory = getDefaultCategory();</span>
-<span class="nc bnc" id="L277" title="All 2 branches missed.">        if (myCategory == null) {</span>
-<span class="nc" id="L278">            return null;</span>
+<span class="nc" id="L277">        final MoneyWiseTransCategory myCategory = getDefaultCategory();</span>
+<span class="nc bnc" id="L278" title="All 2 branches missed.">        if (myCategory == null) {</span>
+<span class="nc" id="L279">            return null;</span>
         }
-<span class="nc" id="L280">        myTrans.setCategory(myCategory);</span>
+<span class="nc" id="L281">        myTrans.setCategory(myCategory);</span>
 
         /* Build default account */
-<span class="nc" id="L283">        final MoneyWiseTransAsset myAccount = getDefaultAccountForCategory(myCategory);</span>
-<span class="nc bnc" id="L284" title="All 2 branches missed.">        if (myAccount == null) {</span>
-<span class="nc" id="L285">            return null;</span>
+<span class="nc" id="L284">        final MoneyWiseTransAsset myAccount = getDefaultAccountForCategory(myCategory);</span>
+<span class="nc bnc" id="L285" title="All 2 branches missed.">        if (myAccount == null) {</span>
+<span class="nc" id="L286">            return null;</span>
         }
-<span class="nc" id="L287">        myTrans.setAccount(myAccount);</span>
+<span class="nc" id="L288">        myTrans.setAccount(myAccount);</span>
 
         /* Check that we are valid after all this */
-<span class="nc bnc" id="L290" title="All 2 branches missed.">        if (!theValidator.isValidPartner(myAccount, myCategory, pPayee)) {</span>
-<span class="nc" id="L291">            return null;</span>
+<span class="nc bnc" id="L291" title="All 2 branches missed.">        if (!theValidator.isValidPartner(myAccount, myCategory, pPayee)) {</span>
+<span class="nc" id="L292">            return null;</span>
         }
 
         /* build standard details */
-<span class="nc" id="L295">        buildStandardDetails(myTrans);</span>
+<span class="nc" id="L296">        buildStandardDetails(myTrans);</span>
 
         /* AutoCorrect the transaction */
-<span class="nc" id="L298">        autoCorrect(myTrans);</span>
+<span class="nc" id="L299">        autoCorrect(myTrans);</span>
 
         /* Return the new transaction */
-<span class="nc" id="L301">        return myTrans;</span>
+<span class="nc" id="L302">        return myTrans;</span>
     }
 
     /**
@@ -310,38 +311,38 @@ public class MoneyWiseValidateTransDefaults {
      */
     private MoneyWiseTransaction buildDefaultTransactionForCategory(final MoneyWiseTransCategory pCategory) throws OceanusException {
         /* Check for hidden category */
-<span class="nc bnc" id="L313" title="All 2 branches missed.">        if (pCategory.isHidden()) {</span>
-<span class="nc" id="L314">            return null;</span>
+<span class="nc bnc" id="L314" title="All 2 branches missed.">        if (pCategory.isHidden()) {</span>
+<span class="nc" id="L315">            return null;</span>
         }
 
         /* Build an empty transaction */
-<span class="nc" id="L318">        final MoneyWiseTransaction myTrans = newTransaction();</span>
+<span class="nc" id="L319">        final MoneyWiseTransaction myTrans = newTransaction();</span>
 
         /* Record the category */
-<span class="nc" id="L321">        myTrans.setCategory(pCategory);</span>
+<span class="nc" id="L322">        myTrans.setCategory(pCategory);</span>
 
         /* Build default account category */
-<span class="nc" id="L324">        final MoneyWiseTransAsset myAccount = getDefaultAccountForCategory(pCategory);</span>
-<span class="nc bnc" id="L325" title="All 2 branches missed.">        if (myAccount == null) {</span>
-<span class="nc" id="L326">            return null;</span>
+<span class="nc" id="L325">        final MoneyWiseTransAsset myAccount = getDefaultAccountForCategory(pCategory);</span>
+<span class="nc bnc" id="L326" title="All 2 branches missed.">        if (myAccount == null) {</span>
+<span class="nc" id="L327">            return null;</span>
         }
-<span class="nc" id="L328">        myTrans.setAccount(myAccount);</span>
+<span class="nc" id="L329">        myTrans.setAccount(myAccount);</span>
 
         /* Build default partner */
-<span class="nc" id="L331">        final MoneyWiseTransAsset myPartner = getDefaultPartnerForAccountAndCategory(myAccount, pCategory);</span>
-<span class="nc bnc" id="L332" title="All 2 branches missed.">        if (myPartner == null) {</span>
-<span class="nc" id="L333">            return null;</span>
+<span class="nc" id="L332">        final MoneyWiseTransAsset myPartner = getDefaultPartnerForAccountAndCategory(myAccount, pCategory);</span>
+<span class="nc bnc" id="L333" title="All 2 branches missed.">        if (myPartner == null) {</span>
+<span class="nc" id="L334">            return null;</span>
         }
-<span class="nc" id="L335">        myTrans.setPartner(myPartner);</span>
+<span class="nc" id="L336">        myTrans.setPartner(myPartner);</span>
 
         /* build standard details */
-<span class="nc" id="L338">        buildStandardDetails(myTrans);</span>
+<span class="nc" id="L339">        buildStandardDetails(myTrans);</span>
 
         /* AutoCorrect the transaction */
-<span class="nc" id="L341">        autoCorrect(myTrans);</span>
+<span class="nc" id="L342">        autoCorrect(myTrans);</span>
 
         /* Return the new transaction */
-<span class="nc" id="L344">        return myTrans;</span>
+<span class="nc" id="L345">        return myTrans;</span>
     }
 
     /**
@@ -353,38 +354,38 @@ public class MoneyWiseValidateTransDefaults {
      */
     private MoneyWiseTransaction buildDefaultTransactionForAccount(final MoneyWiseTransAsset pAccount) throws OceanusException {
         /* Check for closed account */
-<span class="nc bnc" id="L356" title="All 2 branches missed.">        if (pAccount.isClosed()) {</span>
-<span class="nc" id="L357">            return null;</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">        if (pAccount.isClosed()) {</span>
+<span class="nc" id="L358">            return null;</span>
         }
 
         /* Build an empty transaction */
-<span class="nc" id="L361">        final MoneyWiseTransaction myTrans = newTransaction();</span>
+<span class="nc" id="L362">        final MoneyWiseTransaction myTrans = newTransaction();</span>
 
         /* Record the account */
-<span class="nc" id="L364">        myTrans.setAccount(pAccount);</span>
+<span class="nc" id="L365">        myTrans.setAccount(pAccount);</span>
 
         /* Build default expense category */
-<span class="nc" id="L367">        final MoneyWiseTransCategory myCategory = getDefaultCategory();</span>
-<span class="nc bnc" id="L368" title="All 2 branches missed.">        if (myCategory == null) {</span>
-<span class="nc" id="L369">            return null;</span>
+<span class="nc" id="L368">        final MoneyWiseTransCategory myCategory = getDefaultCategory();</span>
+<span class="nc bnc" id="L369" title="All 2 branches missed.">        if (myCategory == null) {</span>
+<span class="nc" id="L370">            return null;</span>
         }
-<span class="nc" id="L371">        myTrans.setCategory(myCategory);</span>
+<span class="nc" id="L372">        myTrans.setCategory(myCategory);</span>
 
         /* Build default partner */
-<span class="nc" id="L374">        final MoneyWiseTransAsset myPartner = getDefaultPartnerForAccountAndCategory(pAccount, myCategory);</span>
-<span class="nc bnc" id="L375" title="All 2 branches missed.">        if (myPartner == null) {</span>
-<span class="nc" id="L376">            return null;</span>
+<span class="nc" id="L375">        final MoneyWiseTransAsset myPartner = getDefaultPartnerForAccountAndCategory(pAccount, myCategory);</span>
+<span class="nc bnc" id="L376" title="All 2 branches missed.">        if (myPartner == null) {</span>
+<span class="nc" id="L377">            return null;</span>
         }
-<span class="nc" id="L378">        myTrans.setPartner(myPartner);</span>
+<span class="nc" id="L379">        myTrans.setPartner(myPartner);</span>
 
         /* build standard details */
-<span class="nc" id="L381">        buildStandardDetails(myTrans);</span>
+<span class="nc" id="L382">        buildStandardDetails(myTrans);</span>
 
         /* AutoCorrect the transaction */
-<span class="nc" id="L384">        autoCorrect(myTrans);</span>
+<span class="nc" id="L385">        autoCorrect(myTrans);</span>
 
         /* Return the new transaction */
-<span class="nc" id="L387">        return myTrans;</span>
+<span class="nc" id="L388">        return myTrans;</span>
     }
 
     /**
@@ -396,35 +397,35 @@ public class MoneyWiseValidateTransDefaults {
      */
     private MoneyWiseTransaction buildDefaultTransactionForHolding(final MoneyWiseSecurityHolding pHolding) throws OceanusException {
         /* Check for closed holding */
-<span class="nc bnc" id="L399" title="All 2 branches missed.">        if (pHolding.isClosed()) {</span>
-<span class="nc" id="L400">            return null;</span>
+<span class="nc bnc" id="L400" title="All 2 branches missed.">        if (pHolding.isClosed()) {</span>
+<span class="nc" id="L401">            return null;</span>
         }
 
         /* Build an empty transaction */
-<span class="nc" id="L404">        final MoneyWiseTransaction myTrans = newTransaction();</span>
+<span class="nc" id="L405">        final MoneyWiseTransaction myTrans = newTransaction();</span>
 
         /* Record the account */
-<span class="nc" id="L407">        myTrans.setAccount(pHolding);</span>
+<span class="nc" id="L408">        myTrans.setAccount(pHolding);</span>
 
         /* Build default category */
-<span class="nc" id="L410">        final MoneyWiseTransCategory myCategory = getDefaultCategoryForAccount(pHolding);</span>
-<span class="nc" id="L411">        myTrans.setCategory(myCategory);</span>
+<span class="nc" id="L411">        final MoneyWiseTransCategory myCategory = getDefaultCategoryForAccount(pHolding);</span>
+<span class="nc" id="L412">        myTrans.setCategory(myCategory);</span>
 
         /* Build default partner */
-<span class="nc" id="L414">        final MoneyWiseTransAsset myPartner = getDefaultPartnerForAccountAndCategory(pHolding, myCategory);</span>
-<span class="nc bnc" id="L415" title="All 2 branches missed.">        if (myPartner == null) {</span>
-<span class="nc" id="L416">            return null;</span>
+<span class="nc" id="L415">        final MoneyWiseTransAsset myPartner = getDefaultPartnerForAccountAndCategory(pHolding, myCategory);</span>
+<span class="nc bnc" id="L416" title="All 2 branches missed.">        if (myPartner == null) {</span>
+<span class="nc" id="L417">            return null;</span>
         }
-<span class="nc" id="L418">        myTrans.setPartner(myPartner);</span>
+<span class="nc" id="L419">        myTrans.setPartner(myPartner);</span>
 
         /* build standard details */
-<span class="nc" id="L421">        buildStandardDetails(myTrans);</span>
+<span class="nc" id="L422">        buildStandardDetails(myTrans);</span>
 
         /* AutoCorrect the transaction */
-<span class="nc" id="L424">        autoCorrect(myTrans);</span>
+<span class="nc" id="L425">        autoCorrect(myTrans);</span>
 
         /* Return the new transaction */
-<span class="nc" id="L427">        return myTrans;</span>
+<span class="nc" id="L428">        return myTrans;</span>
     }
 
     /**
@@ -435,26 +436,26 @@ public class MoneyWiseValidateTransDefaults {
      */
     private MoneyWiseTransAsset getDefaultAccountForCategory(final MoneyWiseTransCategory pCategory) {
         /* Try deposits/cash/loans */
-<span class="nc" id="L438">        MoneyWiseTransAsset myAccount = getDefaultAssetForCategory(theEditSet.getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), pCategory);</span>
-<span class="nc bnc" id="L439" title="All 2 branches missed.">        if (myAccount == null) {</span>
-<span class="nc" id="L440">            myAccount = getDefaultAssetForCategory(theEditSet.getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class), pCategory);</span>
+<span class="nc" id="L439">        MoneyWiseTransAsset myAccount = getDefaultAssetForCategory(theEditSet.getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), pCategory);</span>
+<span class="nc bnc" id="L440" title="All 2 branches missed.">        if (myAccount == null) {</span>
+<span class="nc" id="L441">            myAccount = getDefaultAssetForCategory(theEditSet.getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class), pCategory);</span>
         }
-<span class="nc bnc" id="L442" title="All 2 branches missed.">        if (myAccount == null) {</span>
-<span class="nc" id="L443">            myAccount = getDefaultAssetForCategory(theEditSet.getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class), pCategory);</span>
+<span class="nc bnc" id="L443" title="All 2 branches missed.">        if (myAccount == null) {</span>
+<span class="nc" id="L444">            myAccount = getDefaultAssetForCategory(theEditSet.getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class), pCategory);</span>
         }
 
         /* Try holdings */
-<span class="nc bnc" id="L447" title="All 2 branches missed.">        if (myAccount == null) {</span>
-<span class="nc" id="L448">            myAccount = getDefaultHolding(pCategory);</span>
+<span class="nc bnc" id="L448" title="All 2 branches missed.">        if (myAccount == null) {</span>
+<span class="nc" id="L449">            myAccount = getDefaultHolding(pCategory);</span>
         }
 
         /* Try portfolios */
-<span class="nc bnc" id="L452" title="All 2 branches missed.">        if (myAccount == null) {</span>
-<span class="nc" id="L453">            myAccount = getDefaultAssetForCategory(theEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class), pCategory);</span>
+<span class="nc bnc" id="L453" title="All 2 branches missed.">        if (myAccount == null) {</span>
+<span class="nc" id="L454">            myAccount = getDefaultAssetForCategory(theEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class), pCategory);</span>
         }
 
         /* Return the account */
-<span class="nc" id="L457">        return myAccount;</span>
+<span class="nc" id="L458">        return myAccount;</span>
     }
 
     /**
@@ -464,16 +465,16 @@ public class MoneyWiseValidateTransDefaults {
      */
     private MoneyWiseTransCategory getDefaultCategory() {
         /* Look for category in order of expense, income, transfer */
-<span class="nc" id="L467">        MoneyWiseTransCategory myCategory = getDefaultCategory(CategoryType.EXPENSE);</span>
-<span class="nc bnc" id="L468" title="All 2 branches missed.">        if (myCategory == null) {</span>
-<span class="nc" id="L469">            myCategory = getDefaultCategory(CategoryType.INCOME);</span>
+<span class="nc" id="L468">        MoneyWiseTransCategory myCategory = getDefaultCategory(CategoryType.EXPENSE);</span>
+<span class="nc bnc" id="L469" title="All 2 branches missed.">        if (myCategory == null) {</span>
+<span class="nc" id="L470">            myCategory = getDefaultCategory(CategoryType.INCOME);</span>
         }
-<span class="nc bnc" id="L471" title="All 2 branches missed.">        if (myCategory == null) {</span>
-<span class="nc" id="L472">            myCategory = getDefaultCategory(CategoryType.TRANSFER);</span>
+<span class="nc bnc" id="L472" title="All 2 branches missed.">        if (myCategory == null) {</span>
+<span class="nc" id="L473">            myCategory = getDefaultCategory(CategoryType.TRANSFER);</span>
         }
 
         /* Return category */
-<span class="nc" id="L476">        return myCategory;</span>
+<span class="nc" id="L477">        return myCategory;</span>
     }
 
     /**
@@ -484,42 +485,42 @@ public class MoneyWiseValidateTransDefaults {
      */
     private MoneyWiseTransCategory getDefaultCategory(final CategoryType pType) {
         /* Access Categories */
-<span class="nc" id="L487">        final MoneyWiseTransCategoryList myCategories = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);</span>
+<span class="nc" id="L488">        final MoneyWiseTransCategoryList myCategories = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);</span>
 
         /* Loop through the available category values */
-<span class="nc" id="L490">        final Iterator&lt;MoneyWiseTransCategory&gt; myIterator = myCategories.iterator();</span>
-<span class="nc bnc" id="L491" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L492">            final MoneyWiseTransCategory myCategory = myIterator.next();</span>
+<span class="nc" id="L491">        final Iterator&lt;MoneyWiseTransCategory&gt; myIterator = myCategories.iterator();</span>
+<span class="nc bnc" id="L492" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L493">            final MoneyWiseTransCategory myCategory = myIterator.next();</span>
 
             /* Only process non-deleted low-level items */
-<span class="nc" id="L495">            final MoneyWiseTransCategoryClass myClass = myCategory.getCategoryTypeClass();</span>
-<span class="nc bnc" id="L496" title="All 4 branches missed.">            if (myCategory.isDeleted() || myClass.canParentCategory()) {</span>
-<span class="nc" id="L497">                continue;</span>
+<span class="nc" id="L496">            final MoneyWiseTransCategoryClass myClass = myCategory.getCategoryTypeClass();</span>
+<span class="nc bnc" id="L497" title="All 4 branches missed.">            if (myCategory.isDeleted() || myClass.canParentCategory()) {</span>
+<span class="nc" id="L498">                continue;</span>
             }
 
             /* Switch on type */
-<span class="nc bnc" id="L501" title="All 3 branches missed.">            switch (pType) {</span>
+<span class="nc bnc" id="L502" title="All 3 branches missed.">            switch (pType) {</span>
                 case EXPENSE:
-<span class="nc bnc" id="L503" title="All 2 branches missed.">                    if (myClass.isExpense()) {</span>
-<span class="nc" id="L504">                        return myCategory;</span>
+<span class="nc bnc" id="L504" title="All 2 branches missed.">                    if (myClass.isExpense()) {</span>
+<span class="nc" id="L505">                        return myCategory;</span>
                     }
                     break;
                 case INCOME:
-<span class="nc bnc" id="L508" title="All 2 branches missed.">                    if (myClass.isIncome()) {</span>
-<span class="nc" id="L509">                        return myCategory;</span>
+<span class="nc bnc" id="L509" title="All 2 branches missed.">                    if (myClass.isIncome()) {</span>
+<span class="nc" id="L510">                        return myCategory;</span>
                     }
                     break;
                 case TRANSFER:
                 default:
-<span class="nc bnc" id="L514" title="All 2 branches missed.">                    if (myClass.isTransfer()) {</span>
-<span class="nc" id="L515">                        return myCategory;</span>
+<span class="nc bnc" id="L515" title="All 2 branches missed.">                    if (myClass.isTransfer()) {</span>
+<span class="nc" id="L516">                        return myCategory;</span>
                     }
                     break;
             }
-<span class="nc" id="L519">        }</span>
+<span class="nc" id="L520">        }</span>
 
         /* No category available */
-<span class="nc" id="L522">        return null;</span>
+<span class="nc" id="L523">        return null;</span>
     }
 
     /**
@@ -530,27 +531,27 @@ public class MoneyWiseValidateTransDefaults {
      */
     private MoneyWiseTransCategory getDefaultCategoryForAccount(final MoneyWiseTransAsset pAccount) {
         /* Access Categories */
-<span class="nc" id="L533">        final MoneyWiseTransCategoryList myCategories = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);</span>
+<span class="nc" id="L534">        final MoneyWiseTransCategoryList myCategories = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);</span>
 
         /* Loop through the available category values */
-<span class="nc" id="L536">        final Iterator&lt;MoneyWiseTransCategory&gt; myIterator = myCategories.iterator();</span>
-<span class="nc bnc" id="L537" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L538">            final MoneyWiseTransCategory myCategory = myIterator.next();</span>
+<span class="nc" id="L537">        final Iterator&lt;MoneyWiseTransCategory&gt; myIterator = myCategories.iterator();</span>
+<span class="nc bnc" id="L538" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L539">            final MoneyWiseTransCategory myCategory = myIterator.next();</span>
 
             /* Only process non-deleted low-level items */
-<span class="nc" id="L541">            final MoneyWiseTransCategoryClass myClass = myCategory.getCategoryTypeClass();</span>
-<span class="nc bnc" id="L542" title="All 4 branches missed.">            if (myCategory.isDeleted() || myClass.canParentCategory()) {</span>
-<span class="nc" id="L543">                continue;</span>
+<span class="nc" id="L542">            final MoneyWiseTransCategoryClass myClass = myCategory.getCategoryTypeClass();</span>
+<span class="nc bnc" id="L543" title="All 4 branches missed.">            if (myCategory.isDeleted() || myClass.canParentCategory()) {</span>
+<span class="nc" id="L544">                continue;</span>
             }
 
             /* Check whether the category is allowable for the owner */
-<span class="nc bnc" id="L547" title="All 2 branches missed.">            if (theValidator.isValidCategory(pAccount, myCategory)) {</span>
-<span class="nc" id="L548">                return myCategory;</span>
+<span class="nc bnc" id="L548" title="All 2 branches missed.">            if (theValidator.isValidCategory(pAccount, myCategory)) {</span>
+<span class="nc" id="L549">                return myCategory;</span>
             }
-<span class="nc" id="L550">        }</span>
+<span class="nc" id="L551">        }</span>
 
         /* No category available */
-<span class="nc" id="L553">        throw new IllegalArgumentException();</span>
+<span class="nc" id="L554">        throw new IllegalArgumentException();</span>
     }
 
     /**
@@ -563,31 +564,31 @@ public class MoneyWiseValidateTransDefaults {
     private MoneyWiseTransAsset getDefaultPartnerForAccountAndCategory(final MoneyWiseTransAsset pAccount,
                                                                        final MoneyWiseTransCategory pCategory) {
         /* Try Payees */
-<span class="nc" id="L566">        MoneyWiseTransAsset myPartner = getDefaultPartnerAsset(theEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class), pAccount, pCategory);</span>
+<span class="nc" id="L567">        MoneyWiseTransAsset myPartner = getDefaultPartnerAsset(theEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class), pAccount, pCategory);</span>
 
         /* Try deposits/cash/loans */
-<span class="nc bnc" id="L569" title="All 2 branches missed.">        if (myPartner == null) {</span>
-<span class="nc" id="L570">            myPartner = getDefaultPartnerAsset(theEditSet.getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), pAccount, pCategory);</span>
+<span class="nc bnc" id="L570" title="All 2 branches missed.">        if (myPartner == null) {</span>
+<span class="nc" id="L571">            myPartner = getDefaultPartnerAsset(theEditSet.getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), pAccount, pCategory);</span>
         }
-<span class="nc bnc" id="L572" title="All 2 branches missed.">        if (myPartner == null) {</span>
-<span class="nc" id="L573">            myPartner = getDefaultPartnerAsset(theEditSet.getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class), pAccount, pCategory);</span>
+<span class="nc bnc" id="L573" title="All 2 branches missed.">        if (myPartner == null) {</span>
+<span class="nc" id="L574">            myPartner = getDefaultPartnerAsset(theEditSet.getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class), pAccount, pCategory);</span>
         }
-<span class="nc bnc" id="L575" title="All 2 branches missed.">        if (myPartner == null) {</span>
-<span class="nc" id="L576">            myPartner = getDefaultPartnerAsset(theEditSet.getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class), pAccount, pCategory);</span>
+<span class="nc bnc" id="L576" title="All 2 branches missed.">        if (myPartner == null) {</span>
+<span class="nc" id="L577">            myPartner = getDefaultPartnerAsset(theEditSet.getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class), pAccount, pCategory);</span>
         }
 
         /* Try portfolios */
-<span class="nc bnc" id="L580" title="All 2 branches missed.">        if (myPartner == null) {</span>
-<span class="nc" id="L581">            myPartner = getDefaultPartnerAsset(theEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class), pAccount, pCategory);</span>
+<span class="nc bnc" id="L581" title="All 2 branches missed.">        if (myPartner == null) {</span>
+<span class="nc" id="L582">            myPartner = getDefaultPartnerAsset(theEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class), pAccount, pCategory);</span>
         }
 
         /* Try holdings */
-<span class="nc bnc" id="L585" title="All 2 branches missed.">        if (myPartner == null) {</span>
-<span class="nc" id="L586">            myPartner = getDefaultPartnerHolding(pAccount, pCategory);</span>
+<span class="nc bnc" id="L586" title="All 2 branches missed.">        if (myPartner == null) {</span>
+<span class="nc" id="L587">            myPartner = getDefaultPartnerHolding(pAccount, pCategory);</span>
         }
 
         /* Return the partner */
-<span class="nc" id="L590">        return myPartner;</span>
+<span class="nc" id="L591">        return myPartner;</span>
     }
 
     /**
@@ -601,23 +602,23 @@ public class MoneyWiseValidateTransDefaults {
     private &lt;X extends MoneyWiseAssetBase&gt; MoneyWiseTransAsset getDefaultAssetForCategory(final MoneyWiseAssetBaseList&lt;X&gt; pList,
                                                                                           final MoneyWiseTransCategory pCategory) {
         /* Loop through the available values */
-<span class="nc" id="L604">        final Iterator&lt;X&gt; myIterator = pList.iterator();</span>
-<span class="nc bnc" id="L605" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L606">            final X myAsset = myIterator.next();</span>
+<span class="nc" id="L605">        final Iterator&lt;X&gt; myIterator = pList.iterator();</span>
+<span class="nc bnc" id="L606" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L607">            final X myAsset = myIterator.next();</span>
 
             /* Only process non-deleted, non-closed items */
-<span class="nc bnc" id="L609" title="All 4 branches missed.">            if (myAsset.isDeleted() || myAsset.isClosed()) {</span>
-<span class="nc" id="L610">                continue;</span>
+<span class="nc bnc" id="L610" title="All 4 branches missed.">            if (myAsset.isDeleted() || myAsset.isClosed()) {</span>
+<span class="nc" id="L611">                continue;</span>
             }
 
             /* Check whether the asset is allowable for the owner */
-<span class="nc bnc" id="L614" title="All 2 branches missed.">            if (theValidator.isValidCategory(myAsset, pCategory)) {</span>
-<span class="nc" id="L615">                return myAsset;</span>
+<span class="nc bnc" id="L615" title="All 2 branches missed.">            if (theValidator.isValidCategory(myAsset, pCategory)) {</span>
+<span class="nc" id="L616">                return myAsset;</span>
             }
-<span class="nc" id="L617">        }</span>
+<span class="nc" id="L618">        }</span>
 
         /* No asset available */
-<span class="nc" id="L620">        return null;</span>
+<span class="nc" id="L621">        return null;</span>
     }
 
     /**
@@ -633,23 +634,23 @@ public class MoneyWiseValidateTransDefaults {
                                                                                       final MoneyWiseTransAsset pAccount,
                                                                                       final MoneyWiseTransCategory pCategory) {
         /* Loop through the available values */
-<span class="nc" id="L636">        final Iterator&lt;X&gt; myIterator = pList.iterator();</span>
-<span class="nc bnc" id="L637" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L638">            final X myAsset = myIterator.next();</span>
+<span class="nc" id="L637">        final Iterator&lt;X&gt; myIterator = pList.iterator();</span>
+<span class="nc bnc" id="L638" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L639">            final X myAsset = myIterator.next();</span>
 
             /* Only process non-deleted, non-closed items */
-<span class="nc bnc" id="L641" title="All 4 branches missed.">            if (myAsset.isDeleted() || myAsset.isClosed()) {</span>
-<span class="nc" id="L642">                continue;</span>
+<span class="nc bnc" id="L642" title="All 4 branches missed.">            if (myAsset.isDeleted() || myAsset.isClosed()) {</span>
+<span class="nc" id="L643">                continue;</span>
             }
 
             /* Check whether the asset is allowable for the owner */
-<span class="nc bnc" id="L646" title="All 2 branches missed.">            if (theValidator.isValidPartner(pAccount, pCategory, myAsset)) {</span>
-<span class="nc" id="L647">                return myAsset;</span>
+<span class="nc bnc" id="L647" title="All 2 branches missed.">            if (theValidator.isValidPartner(pAccount, pCategory, myAsset)) {</span>
+<span class="nc" id="L648">                return myAsset;</span>
             }
-<span class="nc" id="L649">        }</span>
+<span class="nc" id="L650">        }</span>
 
         /* No asset available */
-<span class="nc" id="L652">        return null;</span>
+<span class="nc" id="L653">        return null;</span>
     }
 
     /**
@@ -660,36 +661,36 @@ public class MoneyWiseValidateTransDefaults {
      */
     private MoneyWiseSecurityHolding getDefaultHolding(final MoneyWiseTransCategory pCategory) {
         /* Access Portfolios and Holdings Map */
-<span class="nc" id="L663">        final MoneyWisePortfolioList myPortfolios = theEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);</span>
-<span class="nc" id="L664">        final MoneyWiseSecurityHoldingMap myMap = myPortfolios.getSecurityHoldingsMap();</span>
+<span class="nc" id="L664">        final MoneyWisePortfolioList myPortfolios = theEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);</span>
+<span class="nc" id="L665">        final MoneyWiseSecurityHoldingMap myMap = (MoneyWiseSecurityHoldingMap) myPortfolios.getSecurityHoldingsMap();</span>
 
         /* Loop through the Portfolios */
-<span class="nc" id="L667">        final Iterator&lt;MoneyWisePortfolio&gt; myPortIterator = myPortfolios.iterator();</span>
-<span class="nc bnc" id="L668" title="All 2 branches missed.">        while (myPortIterator.hasNext()) {</span>
-<span class="nc" id="L669">            final MoneyWisePortfolio myPortfolio = myPortIterator.next();</span>
+<span class="nc" id="L668">        final Iterator&lt;MoneyWisePortfolio&gt; myPortIterator = myPortfolios.iterator();</span>
+<span class="nc bnc" id="L669" title="All 2 branches missed.">        while (myPortIterator.hasNext()) {</span>
+<span class="nc" id="L670">            final MoneyWisePortfolio myPortfolio = myPortIterator.next();</span>
 
             /* Ignore deleted or closed */
-<span class="nc bnc" id="L672" title="All 4 branches missed.">            if (myPortfolio.isDeleted() || myPortfolio.isClosed()) {</span>
-<span class="nc" id="L673">                continue;</span>
+<span class="nc bnc" id="L673" title="All 4 branches missed.">            if (myPortfolio.isDeleted() || Boolean.TRUE.equals(myPortfolio.isClosed())) {</span>
+<span class="nc" id="L674">                continue;</span>
             }
 
             /* Look for existing holdings */
-<span class="nc" id="L677">            final Iterator&lt;MoneyWiseSecurityHolding&gt; myExistIterator = myMap.existingIterator(myPortfolio);</span>
-<span class="nc bnc" id="L678" title="All 2 branches missed.">            if (myExistIterator != null) {</span>
+<span class="nc" id="L678">            final Iterator&lt;MoneyWiseSecurityHolding&gt; myExistIterator = myMap.existingIterator(myPortfolio);</span>
+<span class="nc bnc" id="L679" title="All 2 branches missed.">            if (myExistIterator != null) {</span>
                 /* Loop through them */
-<span class="nc bnc" id="L680" title="All 2 branches missed.">                while (myExistIterator.hasNext()) {</span>
-<span class="nc" id="L681">                    final MoneyWiseSecurityHolding myHolding = myExistIterator.next();</span>
+<span class="nc bnc" id="L681" title="All 2 branches missed.">                while (myExistIterator.hasNext()) {</span>
+<span class="nc" id="L682">                    final MoneyWiseSecurityHolding myHolding = myExistIterator.next();</span>
 
                     /* Check whether the asset is allowable for the combination */
-<span class="nc bnc" id="L684" title="All 2 branches missed.">                    if (theValidator.isValidCategory(myHolding, pCategory)) {</span>
-<span class="nc" id="L685">                        return myHolding;</span>
+<span class="nc bnc" id="L685" title="All 2 branches missed.">                    if (theValidator.isValidCategory(myHolding, pCategory)) {</span>
+<span class="nc" id="L686">                        return myHolding;</span>
                     }
-<span class="nc" id="L687">                }</span>
+<span class="nc" id="L688">                }</span>
             }
-<span class="nc" id="L689">        }</span>
+<span class="nc" id="L690">        }</span>
 
         /* No holding available */
-<span class="nc" id="L692">        return null;</span>
+<span class="nc" id="L693">        return null;</span>
     }
 
     /**
@@ -702,56 +703,56 @@ public class MoneyWiseValidateTransDefaults {
     private MoneyWiseSecurityHolding getDefaultPartnerHolding(final MoneyWiseTransAsset pAccount,
                                                               final MoneyWiseTransCategory pCategory) {
         /* Access Portfolios and Holdings Map */
-<span class="nc" id="L705">        final MoneyWisePortfolioList myPortfolios = theEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);</span>
-<span class="nc" id="L706">        final MoneyWiseSecurityHoldingMap myMap = myPortfolios.getSecurityHoldingsMap();</span>
+<span class="nc" id="L706">        final MoneyWisePortfolioList myPortfolios = theEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);</span>
+<span class="nc" id="L707">        final MoneyWiseSecurityHoldingMap myMap = (MoneyWiseSecurityHoldingMap) myPortfolios.getSecurityHoldingsMap();</span>
 
         /* Loop through the Portfolios */
-<span class="nc" id="L709">        final Iterator&lt;MoneyWisePortfolio&gt; myPortIterator = myPortfolios.iterator();</span>
-<span class="nc bnc" id="L710" title="All 2 branches missed.">        while (myPortIterator.hasNext()) {</span>
-<span class="nc" id="L711">            final MoneyWisePortfolio myPortfolio = myPortIterator.next();</span>
+<span class="nc" id="L710">        final Iterator&lt;MoneyWisePortfolio&gt; myPortIterator = myPortfolios.iterator();</span>
+<span class="nc bnc" id="L711" title="All 2 branches missed.">        while (myPortIterator.hasNext()) {</span>
+<span class="nc" id="L712">            final MoneyWisePortfolio myPortfolio = myPortIterator.next();</span>
 
             /* Ignore deleted or closed */
-<span class="nc bnc" id="L714" title="All 4 branches missed.">            if (myPortfolio.isDeleted() || myPortfolio.isClosed()) {</span>
-<span class="nc" id="L715">                continue;</span>
+<span class="nc bnc" id="L715" title="All 4 branches missed.">            if (myPortfolio.isDeleted() || Boolean.TRUE.equals(myPortfolio.isClosed())) {</span>
+<span class="nc" id="L716">                continue;</span>
             }
 
             /* Look for existing holdings */
-<span class="nc" id="L719">            final Iterator&lt;MoneyWiseSecurityHolding&gt; myExistIterator = myMap.existingIterator(myPortfolio);</span>
-<span class="nc bnc" id="L720" title="All 2 branches missed.">            if (myExistIterator != null) {</span>
+<span class="nc" id="L720">            final Iterator&lt;MoneyWiseSecurityHolding&gt; myExistIterator = myMap.existingIterator(myPortfolio);</span>
+<span class="nc bnc" id="L721" title="All 2 branches missed.">            if (myExistIterator != null) {</span>
                 /* Loop through them */
-<span class="nc bnc" id="L722" title="All 2 branches missed.">                while (myExistIterator.hasNext()) {</span>
-<span class="nc" id="L723">                    final MoneyWiseSecurityHolding myHolding = myExistIterator.next();</span>
+<span class="nc bnc" id="L723" title="All 2 branches missed.">                while (myExistIterator.hasNext()) {</span>
+<span class="nc" id="L724">                    final MoneyWiseSecurityHolding myHolding = myExistIterator.next();</span>
 
                     /* Check whether the asset is allowable for the combination */
-<span class="nc bnc" id="L726" title="All 2 branches missed.">                    if (theValidator.isValidPartner(pAccount, pCategory, myHolding)) {</span>
-<span class="nc" id="L727">                        return myHolding;</span>
+<span class="nc bnc" id="L727" title="All 2 branches missed.">                    if (theValidator.isValidPartner(pAccount, pCategory, myHolding)) {</span>
+<span class="nc" id="L728">                        return myHolding;</span>
                     }
-<span class="nc" id="L729">                }</span>
+<span class="nc" id="L730">                }</span>
             }
-<span class="nc" id="L731">        }</span>
+<span class="nc" id="L732">        }</span>
 
         /* No holding available */
-<span class="nc" id="L734">        return null;</span>
+<span class="nc" id="L735">        return null;</span>
     }
 
     /**
      * Category types.
      */
-<span class="nc" id="L740">    private enum CategoryType {</span>
+<span class="nc" id="L741">    private enum CategoryType {</span>
         /**
          * Expense.
          */
-<span class="nc" id="L744">        EXPENSE,</span>
+<span class="nc" id="L745">        EXPENSE,</span>
 
         /**
          * Income.
          */
-<span class="nc" id="L749">        INCOME,</span>
+<span class="nc" id="L750">        INCOME,</span>
 
         /**
          * Transfer.
          */
-<span class="nc" id="L754">        TRANSFER;</span>
+<span class="nc" id="L755">        TRANSFER;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

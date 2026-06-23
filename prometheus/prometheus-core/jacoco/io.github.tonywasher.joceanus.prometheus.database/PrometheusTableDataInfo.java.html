@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.prometheus.database;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
@@ -38,7 +38,7 @@ public abstract class PrometheusTableDataInfo&lt;T extends PrometheusDataInfoIte
      * @param pInfoTable  the InfoTypes table name
      * @param pOwnerTable the Owner table name
      */
-    protected PrometheusTableDataInfo(final PrometheusDataStore pDatabase,
+    protected PrometheusTableDataInfo(final PrometheusDatabaseControl pDatabase,
                                       final String pTabName,
                                       final String pInfoTable,
                                       final String pOwnerTable) {
@@ -56,28 +56,25 @@ public abstract class PrometheusTableDataInfo&lt;T extends PrometheusDataInfoIte
                                  final MetisDataFieldId iField) throws OceanusException {
         /* Switch on field id */
 <span class="nc" id="L58">        final PrometheusTableDefinition myTableDef = getTableDef();</span>
-<span class="nc bnc" id="L59" title="All 2 branches missed.">        if (PrometheusDataResource.DATAINFO_TYPE.equals(iField)) {</span>
-<span class="nc" id="L60">            myTableDef.setIntegerValue(iField, pItem.getInfoTypeId());</span>
-<span class="nc bnc" id="L61" title="All 2 branches missed.">        } else if (PrometheusDataResource.DATAINFO_OWNER.equals(iField)) {</span>
-<span class="nc" id="L62">            myTableDef.setIntegerValue(iField, pItem.getOwnerId());</span>
-<span class="nc bnc" id="L63" title="All 2 branches missed.">        } else if (PrometheusDataResource.DATAINFO_VALUE.equals(iField)) {</span>
-<span class="nc" id="L64">            myTableDef.setBinaryValue(iField, pItem.getValueBytes());</span>
-        } else {
-<span class="nc" id="L66">            super.setFieldValue(pItem, iField);</span>
+<span class="nc bnc" id="L59" title="All 4 branches missed.">        switch (iField) {</span>
+<span class="nc" id="L60">            case PrometheusDataResource.DATAINFO_TYPE -&gt; myTableDef.setIntegerValue(iField, pItem.getInfoTypeId());</span>
+<span class="nc" id="L61">            case PrometheusDataResource.DATAINFO_OWNER -&gt; myTableDef.setIntegerValue(iField, pItem.getOwnerId());</span>
+<span class="nc" id="L62">            case PrometheusDataResource.DATAINFO_VALUE -&gt; myTableDef.setBinaryValue(iField, pItem.getValueBytes());</span>
+<span class="nc" id="L63">            case null, default -&gt; super.setFieldValue(pItem, iField);</span>
         }
-<span class="nc" id="L68">    }</span>
+<span class="nc" id="L65">    }</span>
 
     @Override
     protected PrometheusDataValues getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
-<span class="nc" id="L73">        final PrometheusDataValues myValues = super.getRowValues(pName);</span>
-<span class="nc" id="L74">        final PrometheusTableDefinition myTableDef = getTableDef();</span>
+<span class="nc" id="L70">        final PrometheusDataValues myValues = super.getRowValues(pName);</span>
+<span class="nc" id="L71">        final PrometheusTableDefinition myTableDef = getTableDef();</span>
 
         /* Add the info and return the new values */
-<span class="nc" id="L77">        myValues.addValue(PrometheusDataResource.DATAINFO_TYPE, myTableDef.getIntegerValue(PrometheusDataResource.DATAINFO_TYPE));</span>
-<span class="nc" id="L78">        myValues.addValue(PrometheusDataResource.DATAINFO_OWNER, myTableDef.getIntegerValue(PrometheusDataResource.DATAINFO_OWNER));</span>
-<span class="nc" id="L79">        myValues.addValue(PrometheusDataResource.DATAINFO_VALUE, myTableDef.getBinaryValue(PrometheusDataResource.DATAINFO_VALUE));</span>
-<span class="nc" id="L80">        return myValues;</span>
+<span class="nc" id="L74">        myValues.addValue(PrometheusDataResource.DATAINFO_TYPE, myTableDef.getIntegerValue(PrometheusDataResource.DATAINFO_TYPE));</span>
+<span class="nc" id="L75">        myValues.addValue(PrometheusDataResource.DATAINFO_OWNER, myTableDef.getIntegerValue(PrometheusDataResource.DATAINFO_OWNER));</span>
+<span class="nc" id="L76">        myValues.addValue(PrometheusDataResource.DATAINFO_VALUE, myTableDef.getBinaryValue(PrometheusDataResource.DATAINFO_VALUE));</span>
+<span class="nc" id="L77">        return myValues;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

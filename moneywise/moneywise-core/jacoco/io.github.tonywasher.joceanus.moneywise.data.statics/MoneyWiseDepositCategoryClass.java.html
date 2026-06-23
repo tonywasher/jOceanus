@@ -18,11 +18,12 @@ package io.github.tonywasher.joceanus.moneywise.data.statics;
 
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * Enumeration of DepositCategory Type Classes.
  */
-<span class="fc" id="L25">public enum MoneyWiseDepositCategoryClass</span>
+<span class="fc" id="L26">public enum MoneyWiseDepositCategoryClass</span>
         implements MoneyWiseCategoryInterface {
     /**
      * Checking Deposit.
@@ -30,7 +31,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * These are standard checking deposit accounts that hold money on behalf of the client. Each
      * such account must be owned by a {@link MoneyWisePayeeClass#INSTITUTION} payee.
      */
-<span class="fc" id="L33">    CHECKING(1, 1),</span>
+<span class="fc" id="L34">    CHECKING(1, 1),</span>
 
     /**
      * Savings Deposit.
@@ -39,7 +40,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * distinction as to whether they are easy access or restricted access. Each such account must
      * be owned by a {@link MoneyWisePayeeClass#INSTITUTION} payee.
      */
-<span class="fc" id="L42">    SAVINGS(2, 2),</span>
+<span class="fc" id="L43">    SAVINGS(2, 2),</span>
 
     /**
      * TaxFreeSavings.
@@ -47,7 +48,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * This a bond account which is a specialised form of an {@link #SAVINGS} account. It has an
      * associated maturity date for the account.
      */
-<span class="fc" id="L50">    TAXFREESAVINGS(3, 3),</span>
+<span class="fc" id="L51">    TAXFREESAVINGS(3, 3),</span>
 
     /**
      * Peer2Peer Deposit.
@@ -55,7 +56,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * This a peer2peer account which is a specialised form of an {@link #SAVINGS} account.
      * LoyaltyBonuses are allowed, and the tax situation varies.
      */
-<span class="fc" id="L58">    PEER2PEER(4, 4),</span>
+<span class="fc" id="L59">    PEER2PEER(4, 4),</span>
 
     /**
      * Bond Deposit.
@@ -63,7 +64,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * This a bond account which is a specialised form of an {@link #SAVINGS} account. It has an
      * associated maturity date for the account.
      */
-<span class="fc" id="L66">    BOND(5, 5),</span>
+<span class="fc" id="L67">    BOND(5, 5),</span>
 
     /**
      * Bond Deposit.
@@ -71,14 +72,14 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * This a bond account which is a specialised form of an {@link #SAVINGS} account. It has an
      * associated maturity date for the account.
      */
-<span class="fc" id="L74">    TAXFREEBOND(6, 6),</span>
+<span class="fc" id="L75">    TAXFREEBOND(6, 6),</span>
 
     /**
      * Parent Category.
      * &lt;p&gt;
      * This is used as a sub-total bucket and is used purely for reporting purposes.
      */
-<span class="fc" id="L81">    PARENT(7, 0);</span>
+<span class="fc" id="L82">    PARENT(7, 0);</span>
 
     /**
      * The String name.
@@ -102,31 +103,31 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @param uOrder the default order.
      */
     MoneyWiseDepositCategoryClass(final int uId,
-<span class="fc" id="L105">                                  final int uOrder) {</span>
-<span class="fc" id="L106">        theId = uId;</span>
-<span class="fc" id="L107">        theOrder = uOrder;</span>
-<span class="fc" id="L108">    }</span>
+<span class="fc" id="L106">                                  final int uOrder) {</span>
+<span class="fc" id="L107">        theId = uId;</span>
+<span class="fc" id="L108">        theOrder = uOrder;</span>
+<span class="fc" id="L109">    }</span>
 
     @Override
     public int getClassId() {
-<span class="fc" id="L112">        return theId;</span>
+<span class="fc" id="L113">        return theId;</span>
     }
 
     @Override
     public int getOrder() {
-<span class="fc" id="L117">        return theOrder;</span>
+<span class="fc" id="L118">        return theOrder;</span>
     }
 
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="fc bfc" id="L123" title="All 2 branches covered.">        if (theName == null) {</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        if (theName == null) {</span>
             /* Load the name */
-<span class="fc" id="L125">            theName = MoneyWiseStaticResource.getKeyForDepositType(this).getValue();</span>
+<span class="fc" id="L126">            theName = bundleIdForCategoryClass(this).getValue();</span>
         }
 
         /* return the name */
-<span class="fc" id="L129">        return theName;</span>
+<span class="fc" id="L130">        return theName;</span>
     }
 
     /**
@@ -137,12 +138,12 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @throws OceanusException on error
      */
     public static MoneyWiseDepositCategoryClass fromId(final int id) throws OceanusException {
-<span class="nc bnc" id="L140" title="All 2 branches missed.">        for (MoneyWiseDepositCategoryClass myClass : values()) {</span>
-<span class="nc bnc" id="L141" title="All 2 branches missed.">            if (myClass.getClassId() == id) {</span>
-<span class="nc" id="L142">                return myClass;</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        for (MoneyWiseDepositCategoryClass myClass : values()) {</span>
+<span class="nc bnc" id="L142" title="All 2 branches missed.">            if (myClass.getClassId() == id) {</span>
+<span class="nc" id="L143">                return myClass;</span>
             }
         }
-<span class="nc" id="L145">        throw new MoneyWiseDataException(&quot;Invalid ClassId for &quot; + MoneyWiseStaticDataType.DEPOSITTYPE.toString() + &quot;:&quot; + id);</span>
+<span class="nc" id="L146">        throw new MoneyWiseDataException(&quot;Invalid ClassId for &quot; + MoneyWiseStaticDataType.DEPOSITTYPE.toString() + &quot;:&quot; + id);</span>
     }
 
     /**
@@ -152,9 +153,9 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * otherwise.
      */
     public boolean isChild() {
-<span class="pc bpc" id="L155" title="1 of 2 branches missed.">        return switch (this) {</span>
-<span class="fc" id="L156">            case CHECKING, SAVINGS, TAXFREESAVINGS, PEER2PEER, BOND, TAXFREEBOND -&gt; true;</span>
-<span class="nc" id="L157">            default -&gt; false;</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">        return switch (this) {</span>
+<span class="fc" id="L157">            case CHECKING, SAVINGS, TAXFREESAVINGS, PEER2PEER, BOND, TAXFREEBOND -&gt; true;</span>
+<span class="nc" id="L158">            default -&gt; false;</span>
         };
     }
 
@@ -165,9 +166,9 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * otherwise.
      */
     public boolean isTaxFree() {
-<span class="fc bfc" id="L168" title="All 2 branches covered.">        return switch (this) {</span>
-<span class="fc" id="L169">            case TAXFREESAVINGS, TAXFREEBOND -&gt; true;</span>
-<span class="fc" id="L170">            default -&gt; false;</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc" id="L170">            case TAXFREESAVINGS, TAXFREEBOND -&gt; true;</span>
+<span class="fc" id="L171">            default -&gt; false;</span>
         };
     }
 
@@ -178,9 +179,9 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * otherwise.
      */
     public boolean hasMaturity() {
-<span class="pc bpc" id="L181" title="1 of 2 branches missed.">        return switch (this) {</span>
-<span class="nc" id="L182">            case BOND, TAXFREEBOND -&gt; true;</span>
-<span class="fc" id="L183">            default -&gt; false;</span>
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L183">            case BOND, TAXFREEBOND -&gt; true;</span>
+<span class="fc" id="L184">            default -&gt; false;</span>
         };
     }
 
@@ -191,7 +192,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * otherwise.
      */
     public boolean isGross() {
-<span class="pc bpc" id="L194" title="1 of 2 branches missed.">        return this == PEER2PEER;</span>
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">        return this == PEER2PEER;</span>
     }
 
     /**
@@ -201,9 +202,9 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean canCashBack() {
-<span class="pc bpc" id="L204" title="1 of 2 branches missed.">        return switch (this) {</span>
-<span class="fc" id="L205">            case CHECKING, PEER2PEER -&gt; true;</span>
-<span class="nc" id="L206">            default -&gt; false;</span>
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">        return switch (this) {</span>
+<span class="fc" id="L206">            case CHECKING, PEER2PEER -&gt; true;</span>
+<span class="nc" id="L207">            default -&gt; false;</span>
         };
     }
 
@@ -214,7 +215,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean canLoyaltyBonus() {
-<span class="nc bnc" id="L217" title="All 2 branches missed.">        return this == PEER2PEER;</span>
+<span class="nc bnc" id="L218" title="All 2 branches missed.">        return this == PEER2PEER;</span>
     }
 
     /**
@@ -224,12 +225,32 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isParentCategory() {
-<span class="pc bpc" id="L227" title="1 of 2 branches missed.">        return this == PARENT;</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">        return this == PARENT;</span>
     }
 
     @Override
     public boolean isTotals() {
-<span class="fc" id="L232">        return false;</span>
+<span class="fc" id="L233">        return false;</span>
+    }
+
+    /**
+     * Obtain the resource bundleId for the category class.
+     *
+     * @param pClass the category class
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForCategoryClass(final MoneyWiseDepositCategoryClass pClass) {
+        /* Create the map and return it */
+<span class="pc bpc" id="L244" title="1 of 8 branches missed.">        return switch (pClass) {</span>
+<span class="fc" id="L245">            case CHECKING -&gt; MoneyWiseStaticResource.DEPOSITTYPE_CHECKING;</span>
+<span class="fc" id="L246">            case SAVINGS -&gt; MoneyWiseStaticResource.DEPOSITTYPE_SAVINGS;</span>
+<span class="fc" id="L247">            case TAXFREESAVINGS -&gt; MoneyWiseStaticResource.DEPOSITTYPE_TAXFREESAVINGS;</span>
+<span class="fc" id="L248">            case PEER2PEER -&gt; MoneyWiseStaticResource.DEPOSITTYPE_PEER2PEER;</span>
+<span class="fc" id="L249">            case BOND -&gt; MoneyWiseStaticResource.DEPOSITTYPE_BOND;</span>
+<span class="fc" id="L250">            case TAXFREEBOND -&gt; MoneyWiseStaticResource.DEPOSITTYPE_TAXFREEBOND;</span>
+<span class="fc" id="L251">            case PARENT -&gt; MoneyWiseStaticResource.CATEGORYTYPE_PARENT;</span>
+<span class="nc" id="L252">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -24,52 +24,52 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.moneywise.atlas.ui.dialog;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.ui.controls.MoneyWiseXAnalysisSelect;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXTransactionFilters;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetType;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorTrans;
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransInfoSet;
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.validate.MoneyWiseValidateTransaction;
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseIcon;
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseItemPanel;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.ui.controls.MoneyWiseUIXAnalysisSelect;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXTransactionFilters;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetType;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMap;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransBase.MoneyWiseDataValidatorTrans;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransInfoSet;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.validate.MoneyWiseValidateTransaction;
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseIcon;
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseUIBaseTable;
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseUIItemPanel;
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -87,7 +87,7 @@
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldFactory;
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu.TethysUIScrollSubMenu;
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  <strong class="jxr_keyword">import</strong> java.util.HashMap;
@@ -99,7 +99,7 @@
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  <em class="jxr_javadoccomment"> * Panel to display/edit/create a Transaction.</em>
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="MoneyWiseXTransactionDialog" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/ui/dialog/MoneyWiseXTransactionDialog.html#MoneyWiseXTransactionDialog">MoneyWiseXTransactionDialog</a>
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>          <strong class="jxr_keyword">extends</strong> MoneyWiseItemPanel&lt;MoneyWiseXAnalysisEvent&gt; {
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>          <strong class="jxr_keyword">extends</strong> MoneyWiseUIItemPanel&lt;MoneyWiseXAnalysisEvent&gt; {
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  <em class="jxr_javadoccomment">     * Info Tab Title.</em>
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>  <em class="jxr_javadoccomment">     */</em>
@@ -128,7 +128,7 @@
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L121" href="#L121">121</a> <em class="jxr_javadoccomment">     * Analysis selection panel.</em>
 <a class="jxr_linenumber" name="L122" href="#L122">122</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisSelect" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/ui/controls/MoneyWiseXAnalysisSelect.html#MoneyWiseXAnalysisSelect">MoneyWiseXAnalysisSelect</a> theAnalysisSelect;
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="MoneyWiseUIXAnalysisSelect" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/ui/controls/MoneyWiseUIXAnalysisSelect.html#MoneyWiseUIXAnalysisSelect">MoneyWiseUIXAnalysisSelect</a> theAnalysisSelect;
 <a class="jxr_linenumber" name="L124" href="#L124">124</a> 
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L126" href="#L126">126</a> <em class="jxr_javadoccomment">     * dateRange.</em>
@@ -160,8 +160,8 @@
 <a class="jxr_linenumber" name="L152" href="#L152">152</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>     <strong class="jxr_keyword">public</strong> <a name="MoneyWiseXTransactionDialog" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/ui/dialog/MoneyWiseXTransactionDialog.html#MoneyWiseXTransactionDialog">MoneyWiseXTransactionDialog</a>(<strong class="jxr_keyword">final</strong> TethysUIFactory&lt;?&gt; pFactory,
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>                                        <strong class="jxr_keyword">final</strong> <a name="PrometheusEditSet" href="../../../../../../../../io/github/tonywasher/joceanus/prometheus/views/PrometheusEditSet.html#PrometheusEditSet">PrometheusEditSet</a> pEditSet,
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>                                        <strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisSelect" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/ui/controls/MoneyWiseXAnalysisSelect.html#MoneyWiseXAnalysisSelect">MoneyWiseXAnalysisSelect</a> pAnalysisSelect,
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>                                        <strong class="jxr_keyword">final</strong> MoneyWiseBaseTable&lt;MoneyWiseXAnalysisEvent&gt; pOwner) {
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>                                        <strong class="jxr_keyword">final</strong> <a name="MoneyWiseUIXAnalysisSelect" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/ui/controls/MoneyWiseUIXAnalysisSelect.html#MoneyWiseUIXAnalysisSelect">MoneyWiseUIXAnalysisSelect</a> pAnalysisSelect,
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>                                        <strong class="jxr_keyword">final</strong> MoneyWiseUIBaseTable&lt;MoneyWiseXAnalysisEvent&gt; pOwner) {
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>         <em class="jxr_comment">/* Initialise the panel */</em>
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>         <strong class="jxr_keyword">super</strong>(pFactory, pEditSet, pOwner);
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>         theAnalysisSelect = pAnalysisSelect;
@@ -664,8 +664,8 @@
 <a class="jxr_linenumber" name="L656" href="#L656">656</a>             <em class="jxr_comment">/* declare holding via map */</em>
 <a class="jxr_linenumber" name="L657" href="#L657">657</a>             <strong class="jxr_keyword">final</strong> <a name="MoneyWisePortfolio" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWisePortfolio.html#MoneyWisePortfolio">MoneyWisePortfolio</a> myPortfolio = myHolding.getPortfolio();
 <a class="jxr_linenumber" name="L658" href="#L658">658</a>             <strong class="jxr_keyword">final</strong> <a name="MoneyWiseSecurity" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurity.html#MoneyWiseSecurity">MoneyWiseSecurity</a> mySecurity = myHolding.getSecurity();
-<a class="jxr_linenumber" name="L659" href="#L659">659</a>             <strong class="jxr_keyword">final</strong> <a name="MoneyWiseDataSet" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDataSet.html#MoneyWiseDataSet">MoneyWiseDataSet</a> myData = myPortfolio.getDataSet();
-<a class="jxr_linenumber" name="L660" href="#L660">660</a>             <strong class="jxr_keyword">final</strong> MoneyWiseSecurityHoldingMap myMap = myData.getPortfolios().getSecurityHoldingsMap();
+<a class="jxr_linenumber" name="L659" href="#L659">659</a>             <strong class="jxr_keyword">final</strong> <a name="MoneyWiseDataSet" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDataSet.html#MoneyWiseDataSet">MoneyWiseDataSet</a> myData = (<a name="MoneyWiseDataSet" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDataSet.html#MoneyWiseDataSet">MoneyWiseDataSet</a>) myPortfolio.getDataSet();
+<a class="jxr_linenumber" name="L660" href="#L660">660</a>             <strong class="jxr_keyword">final</strong> <a name="MoneyWiseSecurityHoldingMap" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHoldingMap.html#MoneyWiseSecurityHoldingMap">MoneyWiseSecurityHoldingMap</a> myMap = (<a name="MoneyWiseSecurityHoldingMap" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHoldingMap.html#MoneyWiseSecurityHoldingMap">MoneyWiseSecurityHoldingMap</a>) myData.getPortfolios().getSecurityHoldingsMap();
 <a class="jxr_linenumber" name="L661" href="#L661">661</a>             <strong class="jxr_keyword">return</strong> myMap.declareHolding(myPortfolio, mySecurity);
 <a class="jxr_linenumber" name="L662" href="#L662">662</a>         }
 <a class="jxr_linenumber" name="L663" href="#L663">663</a> 
@@ -796,9 +796,9 @@
 <a class="jxr_linenumber" name="L788" href="#L788">788</a>         TethysUIScrollSubMenu&lt;MoneyWiseTransAsset&gt; myMenu = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L789" href="#L789">789</a> 
 <a class="jxr_linenumber" name="L790" href="#L790">790</a>         <em class="jxr_comment">/* Access Portfolios and Holdings Map */</em>
-<a class="jxr_linenumber" name="L791" href="#L791">791</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseDataSet" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDataSet.html#MoneyWiseDataSet">MoneyWiseDataSet</a> myData = pTrans.getDataSet();
+<a class="jxr_linenumber" name="L791" href="#L791">791</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseDataSet" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDataSet.html#MoneyWiseDataSet">MoneyWiseDataSet</a> myData = (<a name="MoneyWiseDataSet" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDataSet.html#MoneyWiseDataSet">MoneyWiseDataSet</a>) pTrans.getDataSet();
 <a class="jxr_linenumber" name="L792" href="#L792">792</a>         <strong class="jxr_keyword">final</strong> MoneyWisePortfolioList myPortfolios = myData.getPortfolios();
-<a class="jxr_linenumber" name="L793" href="#L793">793</a>         <strong class="jxr_keyword">final</strong> MoneyWiseSecurityHoldingMap myMap = myPortfolios.getSecurityHoldingsMap();
+<a class="jxr_linenumber" name="L793" href="#L793">793</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseSecurityHoldingMap" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHoldingMap.html#MoneyWiseSecurityHoldingMap">MoneyWiseSecurityHoldingMap</a> myMap = (<a name="MoneyWiseSecurityHoldingMap" href="../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHoldingMap.html#MoneyWiseSecurityHoldingMap">MoneyWiseSecurityHoldingMap</a>) myPortfolios.getSecurityHoldingsMap();
 <a class="jxr_linenumber" name="L794" href="#L794">794</a> 
 <a class="jxr_linenumber" name="L795" href="#L795">795</a>         <em class="jxr_comment">/* Loop through the Portfolios */</em>
 <a class="jxr_linenumber" name="L796" href="#L796">796</a>         <strong class="jxr_keyword">final</strong> Iterator&lt;MoneyWisePortfolio&gt; myPortIterator = myPortfolios.iterator();
@@ -1007,6 +1007,6 @@
 <a class="jxr_linenumber" name="L999" href="#L999">999</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

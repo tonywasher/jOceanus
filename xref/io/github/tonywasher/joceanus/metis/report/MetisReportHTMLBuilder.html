@@ -298,7 +298,7 @@
 <a class="jxr_linenumber" name="L290" href="#L290">290</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L291" href="#L291">291</a> <em class="jxr_javadoccomment">     * @param pControl the table control</em>
 <a class="jxr_linenumber" name="L292" href="#L292">292</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L293" href="#L293">293</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeValueCell(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl) {
+<a class="jxr_linenumber" name="L293" href="#L293">293</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeValueCell(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl) {
 <a class="jxr_linenumber" name="L294" href="#L294">294</a>         pControl.createNewCell(false);
 <a class="jxr_linenumber" name="L295" href="#L295">295</a>     }
 <a class="jxr_linenumber" name="L296" href="#L296">296</a> 
@@ -307,7 +307,7 @@
 <a class="jxr_linenumber" name="L299" href="#L299">299</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L300" href="#L300">300</a> <em class="jxr_javadoccomment">     * @param pControl the table control</em>
 <a class="jxr_linenumber" name="L301" href="#L301">301</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L302" href="#L302">302</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeTotalCell(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl) {
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeTotalCell(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl) {
 <a class="jxr_linenumber" name="L303" href="#L303">303</a>         pControl.createNewCell(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L304" href="#L304">304</a>     }
 <a class="jxr_linenumber" name="L305" href="#L305">305</a> 
@@ -316,7 +316,7 @@
 <a class="jxr_linenumber" name="L308" href="#L308">308</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L309" href="#L309">309</a> <em class="jxr_javadoccomment">     * @param pControl the table control</em>
 <a class="jxr_linenumber" name="L310" href="#L310">310</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L311" href="#L311">311</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeTitleCell(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl) {
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeTitleCell(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl) {
 <a class="jxr_linenumber" name="L312" href="#L312">312</a>         pControl.createNewCell(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L313" href="#L313">313</a>     }
 <a class="jxr_linenumber" name="L314" href="#L314">314</a> 
@@ -326,7 +326,7 @@
 <a class="jxr_linenumber" name="L318" href="#L318">318</a> <em class="jxr_javadoccomment">     * @param pControl the table control</em>
 <a class="jxr_linenumber" name="L319" href="#L319">319</a> <em class="jxr_javadoccomment">     * @param pValue   the value</em>
 <a class="jxr_linenumber" name="L320" href="#L320">320</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L321" href="#L321">321</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeValueCell(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl,
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeValueCell(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl,
 <a class="jxr_linenumber" name="L322" href="#L322">322</a>                               <strong class="jxr_keyword">final</strong> Object pValue) {
 <a class="jxr_linenumber" name="L323" href="#L323">323</a>         <strong class="jxr_keyword">final</strong> Element myCell = pControl.createNewCell(false);
 <a class="jxr_linenumber" name="L324" href="#L324">324</a>         setCellValue(myCell, pValue);
@@ -338,7 +338,7 @@
 <a class="jxr_linenumber" name="L330" href="#L330">330</a> <em class="jxr_javadoccomment">     * @param pControl the table control</em>
 <a class="jxr_linenumber" name="L331" href="#L331">331</a> <em class="jxr_javadoccomment">     * @param pValue   the value</em>
 <a class="jxr_linenumber" name="L332" href="#L332">332</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L333" href="#L333">333</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeStretchedValueCell(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl,
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeStretchedValueCell(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl,
 <a class="jxr_linenumber" name="L334" href="#L334">334</a>                                        <strong class="jxr_keyword">final</strong> Object pValue) {
 <a class="jxr_linenumber" name="L335" href="#L335">335</a>         <strong class="jxr_keyword">final</strong> Element myCell = pControl.createNewCell(false);
 <a class="jxr_linenumber" name="L336" href="#L336">336</a>         setCellValue(myCell, pValue);
@@ -351,7 +351,7 @@
 <a class="jxr_linenumber" name="L343" href="#L343">343</a> <em class="jxr_javadoccomment">     * @param pControl the table control</em>
 <a class="jxr_linenumber" name="L344" href="#L344">344</a> <em class="jxr_javadoccomment">     * @param pValue   the value</em>
 <a class="jxr_linenumber" name="L345" href="#L345">345</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L346" href="#L346">346</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeTotalCell(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl,
+<a class="jxr_linenumber" name="L346" href="#L346">346</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeTotalCell(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl,
 <a class="jxr_linenumber" name="L347" href="#L347">347</a>                               <strong class="jxr_keyword">final</strong> Object pValue) {
 <a class="jxr_linenumber" name="L348" href="#L348">348</a>         <strong class="jxr_keyword">final</strong> Element myCell = pControl.createNewCell(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L349" href="#L349">349</a>         setCellValue(myCell, pValue);
@@ -363,7 +363,7 @@
 <a class="jxr_linenumber" name="L355" href="#L355">355</a> <em class="jxr_javadoccomment">     * @param pControl the table control</em>
 <a class="jxr_linenumber" name="L356" href="#L356">356</a> <em class="jxr_javadoccomment">     * @param pValue   the value</em>
 <a class="jxr_linenumber" name="L357" href="#L357">357</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L358" href="#L358">358</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeStretchedTotalCell(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl,
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeStretchedTotalCell(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl,
 <a class="jxr_linenumber" name="L359" href="#L359">359</a>                                        <strong class="jxr_keyword">final</strong> Object pValue) {
 <a class="jxr_linenumber" name="L360" href="#L360">360</a>         <strong class="jxr_keyword">final</strong> Element myCell = pControl.createNewCell(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L361" href="#L361">361</a>         setCellValue(myCell, pValue);
@@ -376,7 +376,7 @@
 <a class="jxr_linenumber" name="L368" href="#L368">368</a> <em class="jxr_javadoccomment">     * @param pControl the table control</em>
 <a class="jxr_linenumber" name="L369" href="#L369">369</a> <em class="jxr_javadoccomment">     * @param pTitle   the title</em>
 <a class="jxr_linenumber" name="L370" href="#L370">370</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L371" href="#L371">371</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeTitleCell(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl,
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeTitleCell(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl,
 <a class="jxr_linenumber" name="L372" href="#L372">372</a>                               <strong class="jxr_keyword">final</strong> String pTitle) {
 <a class="jxr_linenumber" name="L373" href="#L373">373</a>         <strong class="jxr_keyword">final</strong> Element myCell = pControl.createNewCell(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L374" href="#L374">374</a>         setCellTitle(myCell, pTitle);
@@ -388,7 +388,7 @@
 <a class="jxr_linenumber" name="L380" href="#L380">380</a> <em class="jxr_javadoccomment">     * @param pControl the table control</em>
 <a class="jxr_linenumber" name="L381" href="#L381">381</a> <em class="jxr_javadoccomment">     * @param pTitle   the title</em>
 <a class="jxr_linenumber" name="L382" href="#L382">382</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L383" href="#L383">383</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeStretchedTitleCell(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl,
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeStretchedTitleCell(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl,
 <a class="jxr_linenumber" name="L384" href="#L384">384</a>                                        <strong class="jxr_keyword">final</strong> String pTitle) {
 <a class="jxr_linenumber" name="L385" href="#L385">385</a>         <strong class="jxr_keyword">final</strong> Element myCell = pControl.createNewCell(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L386" href="#L386">386</a>         setCellTitle(myCell, pTitle);
@@ -401,7 +401,7 @@
 <a class="jxr_linenumber" name="L393" href="#L393">393</a> <em class="jxr_javadoccomment">     * @param pControl the table control</em>
 <a class="jxr_linenumber" name="L394" href="#L394">394</a> <em class="jxr_javadoccomment">     * @param pLink    the link table name</em>
 <a class="jxr_linenumber" name="L395" href="#L395">395</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L396" href="#L396">396</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeTableLinkCell(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl,
+<a class="jxr_linenumber" name="L396" href="#L396">396</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeTableLinkCell(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl,
 <a class="jxr_linenumber" name="L397" href="#L397">397</a>                                   <strong class="jxr_keyword">final</strong> String pLink) {
 <a class="jxr_linenumber" name="L398" href="#L398">398</a>         makeTableLinkCell(pControl, pLink, pLink);
 <a class="jxr_linenumber" name="L399" href="#L399">399</a>     }
@@ -413,7 +413,7 @@
 <a class="jxr_linenumber" name="L405" href="#L405">405</a> <em class="jxr_javadoccomment">     * @param pLink    the link table name</em>
 <a class="jxr_linenumber" name="L406" href="#L406">406</a> <em class="jxr_javadoccomment">     * @param pName    the link table display name</em>
 <a class="jxr_linenumber" name="L407" href="#L407">407</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L408" href="#L408">408</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeTableLinkCell(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl,
+<a class="jxr_linenumber" name="L408" href="#L408">408</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeTableLinkCell(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl,
 <a class="jxr_linenumber" name="L409" href="#L409">409</a>                                   <strong class="jxr_keyword">final</strong> String pLink,
 <a class="jxr_linenumber" name="L410" href="#L410">410</a>                                   <strong class="jxr_keyword">final</strong> String pName) {
 <a class="jxr_linenumber" name="L411" href="#L411">411</a>         <em class="jxr_comment">/* Determine the id of the link */</em>
@@ -443,7 +443,7 @@
 <a class="jxr_linenumber" name="L435" href="#L435">435</a> <em class="jxr_javadoccomment">     * @param pControl the table control</em>
 <a class="jxr_linenumber" name="L436" href="#L436">436</a> <em class="jxr_javadoccomment">     * @param pLink    the link table name</em>
 <a class="jxr_linenumber" name="L437" href="#L437">437</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L438" href="#L438">438</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeDelayLinkCell(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl,
+<a class="jxr_linenumber" name="L438" href="#L438">438</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeDelayLinkCell(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl,
 <a class="jxr_linenumber" name="L439" href="#L439">439</a>                                   <strong class="jxr_keyword">final</strong> String pLink) {
 <a class="jxr_linenumber" name="L440" href="#L440">440</a>         makeDelayLinkCell(pControl, pLink, pLink);
 <a class="jxr_linenumber" name="L441" href="#L441">441</a>     }
@@ -455,7 +455,7 @@
 <a class="jxr_linenumber" name="L447" href="#L447">447</a> <em class="jxr_javadoccomment">     * @param pLink    the link table name</em>
 <a class="jxr_linenumber" name="L448" href="#L448">448</a> <em class="jxr_javadoccomment">     * @param pName    the link table display name</em>
 <a class="jxr_linenumber" name="L449" href="#L449">449</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L450" href="#L450">450</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeDelayLinkCell(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl,
+<a class="jxr_linenumber" name="L450" href="#L450">450</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeDelayLinkCell(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl,
 <a class="jxr_linenumber" name="L451" href="#L451">451</a>                                   <strong class="jxr_keyword">final</strong> String pLink,
 <a class="jxr_linenumber" name="L452" href="#L452">452</a>                                   <strong class="jxr_keyword">final</strong> String pName) {
 <a class="jxr_linenumber" name="L453" href="#L453">453</a>         <em class="jxr_comment">/* Determine the id of the link */</em>
@@ -485,7 +485,7 @@
 <a class="jxr_linenumber" name="L477" href="#L477">477</a> <em class="jxr_javadoccomment">     * @param pControl the table control</em>
 <a class="jxr_linenumber" name="L478" href="#L478">478</a> <em class="jxr_javadoccomment">     * @param pLink    the link table name</em>
 <a class="jxr_linenumber" name="L479" href="#L479">479</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L480" href="#L480">480</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeFilterLinkCell(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl,
+<a class="jxr_linenumber" name="L480" href="#L480">480</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeFilterLinkCell(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl,
 <a class="jxr_linenumber" name="L481" href="#L481">481</a>                                    <strong class="jxr_keyword">final</strong> String pLink) {
 <a class="jxr_linenumber" name="L482" href="#L482">482</a>         makeFilterLinkCell(pControl, pLink, pLink);
 <a class="jxr_linenumber" name="L483" href="#L483">483</a>     }
@@ -497,7 +497,7 @@
 <a class="jxr_linenumber" name="L489" href="#L489">489</a> <em class="jxr_javadoccomment">     * @param pLink    the link table name</em>
 <a class="jxr_linenumber" name="L490" href="#L490">490</a> <em class="jxr_javadoccomment">     * @param pName    the link table display name</em>
 <a class="jxr_linenumber" name="L491" href="#L491">491</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L492" href="#L492">492</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeFilterLinkCell(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl,
+<a class="jxr_linenumber" name="L492" href="#L492">492</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeFilterLinkCell(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl,
 <a class="jxr_linenumber" name="L493" href="#L493">493</a>                                    <strong class="jxr_keyword">final</strong> String pLink,
 <a class="jxr_linenumber" name="L494" href="#L494">494</a>                                    <strong class="jxr_keyword">final</strong> String pName) {
 <a class="jxr_linenumber" name="L495" href="#L495">495</a>         <strong class="jxr_keyword">final</strong> Element myCell = pControl.createNewCell(false);
@@ -516,7 +516,7 @@
 <a class="jxr_linenumber" name="L508" href="#L508">508</a> <em class="jxr_javadoccomment">     * @param pLink    the link table name</em>
 <a class="jxr_linenumber" name="L509" href="#L509">509</a> <em class="jxr_javadoccomment">     * @param pValue   the link table display value</em>
 <a class="jxr_linenumber" name="L510" href="#L510">510</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L511" href="#L511">511</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeFilterLinkCell(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl,
+<a class="jxr_linenumber" name="L511" href="#L511">511</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> makeFilterLinkCell(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl,
 <a class="jxr_linenumber" name="L512" href="#L512">512</a>                                    <strong class="jxr_keyword">final</strong> String pLink,
 <a class="jxr_linenumber" name="L513" href="#L513">513</a>                                    <strong class="jxr_keyword">final</strong> Object pValue) {
 <a class="jxr_linenumber" name="L514" href="#L514">514</a>         <strong class="jxr_keyword">final</strong> Element myCell = pControl.createNewCell(false);
@@ -578,7 +578,7 @@
 <a class="jxr_linenumber" name="L570" href="#L570">570</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L571" href="#L571">571</a> <em class="jxr_javadoccomment">     * @param pControl the table control</em>
 <a class="jxr_linenumber" name="L572" href="#L572">572</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L573" href="#L573">573</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> startHdrRow(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl) {
+<a class="jxr_linenumber" name="L573" href="#L573">573</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> startHdrRow(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl) {
 <a class="jxr_linenumber" name="L574" href="#L574">574</a>         <em class="jxr_comment">/* Create the row */</em>
 <a class="jxr_linenumber" name="L575" href="#L575">575</a>         pControl.createNewRow(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L576" href="#L576">576</a>     }
@@ -588,7 +588,7 @@
 <a class="jxr_linenumber" name="L580" href="#L580">580</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L581" href="#L581">581</a> <em class="jxr_javadoccomment">     * @param pControl the table control</em>
 <a class="jxr_linenumber" name="L582" href="#L582">582</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L583" href="#L583">583</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> startRow(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl) {
+<a class="jxr_linenumber" name="L583" href="#L583">583</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> startRow(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl) {
 <a class="jxr_linenumber" name="L584" href="#L584">584</a>         <em class="jxr_comment">/* Create the row */</em>
 <a class="jxr_linenumber" name="L585" href="#L585">585</a>         pControl.createNewRow(false);
 <a class="jxr_linenumber" name="L586" href="#L586">586</a>     }
@@ -598,7 +598,7 @@
 <a class="jxr_linenumber" name="L590" href="#L590">590</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L591" href="#L591">591</a> <em class="jxr_javadoccomment">     * @param pControl the table control</em>
 <a class="jxr_linenumber" name="L592" href="#L592">592</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L593" href="#L593">593</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> startTotalRow(<strong class="jxr_keyword">final</strong> MetisHTMLTable pControl) {
+<a class="jxr_linenumber" name="L593" href="#L593">593</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> startTotalRow(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pControl) {
 <a class="jxr_linenumber" name="L594" href="#L594">594</a>         <em class="jxr_comment">/* Create the row */</em>
 <a class="jxr_linenumber" name="L595" href="#L595">595</a>         pControl.createTotalRow();
 <a class="jxr_linenumber" name="L596" href="#L596">596</a>     }
@@ -675,14 +675,14 @@
 <a class="jxr_linenumber" name="L667" href="#L667">667</a> <em class="jxr_javadoccomment">     * @param pBody the document body</em>
 <a class="jxr_linenumber" name="L668" href="#L668">668</a> <em class="jxr_javadoccomment">     * @return the table control</em>
 <a class="jxr_linenumber" name="L669" href="#L669">669</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L670" href="#L670">670</a>     <strong class="jxr_keyword">public</strong> MetisHTMLTable startTable(<strong class="jxr_keyword">final</strong> Element pBody) {
+<a class="jxr_linenumber" name="L670" href="#L670">670</a>     <strong class="jxr_keyword">public</strong> MetisReportHTMLTable startTable(<strong class="jxr_keyword">final</strong> Element pBody) {
 <a class="jxr_linenumber" name="L671" href="#L671">671</a>         <em class="jxr_comment">/* Create the standard structure */</em>
 <a class="jxr_linenumber" name="L672" href="#L672">672</a>         <strong class="jxr_keyword">final</strong> Element myTable = theDocument.createElement(ELEMENT_TABLE);
 <a class="jxr_linenumber" name="L673" href="#L673">673</a>         pBody.appendChild(myTable);
 <a class="jxr_linenumber" name="L674" href="#L674">674</a>         myTable.setAttribute(ATTR_ALIGN, ALIGN_CENTER);
 <a class="jxr_linenumber" name="L675" href="#L675">675</a> 
 <a class="jxr_linenumber" name="L676" href="#L676">676</a>         <em class="jxr_comment">/* Create the table control */</em>
-<a class="jxr_linenumber" name="L677" href="#L677">677</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> MetisHTMLTable(myTable);
+<a class="jxr_linenumber" name="L677" href="#L677">677</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> MetisReportHTMLTable(myTable);
 <a class="jxr_linenumber" name="L678" href="#L678">678</a>     }
 <a class="jxr_linenumber" name="L679" href="#L679">679</a> 
 <a class="jxr_linenumber" name="L680" href="#L680">680</a>     <em class="jxr_javadoccomment">/**</em>
@@ -691,14 +691,14 @@
 <a class="jxr_linenumber" name="L683" href="#L683">683</a> <em class="jxr_javadoccomment">     * @param pParent the parent element</em>
 <a class="jxr_linenumber" name="L684" href="#L684">684</a> <em class="jxr_javadoccomment">     * @return the new table</em>
 <a class="jxr_linenumber" name="L685" href="#L685">685</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L686" href="#L686">686</a>     <strong class="jxr_keyword">public</strong> MetisHTMLTable createEmbeddedTable(<strong class="jxr_keyword">final</strong> MetisHTMLTable pParent) {
+<a class="jxr_linenumber" name="L686" href="#L686">686</a>     <strong class="jxr_keyword">public</strong> MetisReportHTMLTable createEmbeddedTable(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pParent) {
 <a class="jxr_linenumber" name="L687" href="#L687">687</a>         <em class="jxr_comment">/* Create the table */</em>
 <a class="jxr_linenumber" name="L688" href="#L688">688</a>         <strong class="jxr_keyword">final</strong> Element myTable = theDocument.createElement(ELEMENT_TABLE);
 <a class="jxr_linenumber" name="L689" href="#L689">689</a>         myTable.setAttribute(ATTR_CLASS, CLASS_SUBTABLE);
 <a class="jxr_linenumber" name="L690" href="#L690">690</a>         myTable.setAttribute(ATTR_ALIGN, ALIGN_CENTER);
 <a class="jxr_linenumber" name="L691" href="#L691">691</a> 
 <a class="jxr_linenumber" name="L692" href="#L692">692</a>         <em class="jxr_comment">/* Create the table control */</em>
-<a class="jxr_linenumber" name="L693" href="#L693">693</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> MetisHTMLTable(myTable, pParent);
+<a class="jxr_linenumber" name="L693" href="#L693">693</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> MetisReportHTMLTable(myTable, pParent);
 <a class="jxr_linenumber" name="L694" href="#L694">694</a>     }
 <a class="jxr_linenumber" name="L695" href="#L695">695</a> 
 <a class="jxr_linenumber" name="L696" href="#L696">696</a>     <em class="jxr_javadoccomment">/**</em>
@@ -707,10 +707,10 @@
 <a class="jxr_linenumber" name="L699" href="#L699">699</a> <em class="jxr_javadoccomment">     * @param pTable the table to embed</em>
 <a class="jxr_linenumber" name="L700" href="#L700">700</a> <em class="jxr_javadoccomment">     * @param pTitle the title of the table</em>
 <a class="jxr_linenumber" name="L701" href="#L701">701</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L702" href="#L702">702</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> embedTable(<strong class="jxr_keyword">final</strong> MetisHTMLTable pTable,
+<a class="jxr_linenumber" name="L702" href="#L702">702</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> embedTable(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pTable,
 <a class="jxr_linenumber" name="L703" href="#L703">703</a>                            <strong class="jxr_keyword">final</strong> String pTitle) {
 <a class="jxr_linenumber" name="L704" href="#L704">704</a>         <em class="jxr_comment">/* Access body element */</em>
-<a class="jxr_linenumber" name="L705" href="#L705">705</a>         <strong class="jxr_keyword">final</strong> MetisHTMLTable myParent = pTable.getParent();
+<a class="jxr_linenumber" name="L705" href="#L705">705</a>         <strong class="jxr_keyword">final</strong> MetisReportHTMLTable myParent = pTable.getParent();
 <a class="jxr_linenumber" name="L706" href="#L706">706</a>         <strong class="jxr_keyword">final</strong> Element myLink = getLinkRow(pTitle);
 <a class="jxr_linenumber" name="L707" href="#L707">707</a>         <strong class="jxr_keyword">final</strong> Node myNextRow = myLink.getNextSibling();
 <a class="jxr_linenumber" name="L708" href="#L708">708</a> 
@@ -741,9 +741,9 @@
 <a class="jxr_linenumber" name="L733" href="#L733">733</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L734" href="#L734">734</a> <em class="jxr_javadoccomment">     * @param pTable the table to embed</em>
 <a class="jxr_linenumber" name="L735" href="#L735">735</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L736" href="#L736">736</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> embedTable(<strong class="jxr_keyword">final</strong> MetisHTMLTable pTable) {
+<a class="jxr_linenumber" name="L736" href="#L736">736</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> embedTable(<strong class="jxr_keyword">final</strong> MetisReportHTMLTable pTable) {
 <a class="jxr_linenumber" name="L737" href="#L737">737</a>         <em class="jxr_comment">/* Access body element */</em>
-<a class="jxr_linenumber" name="L738" href="#L738">738</a>         <strong class="jxr_keyword">final</strong> MetisHTMLTable myParent = pTable.getParent();
+<a class="jxr_linenumber" name="L738" href="#L738">738</a>         <strong class="jxr_keyword">final</strong> MetisReportHTMLTable myParent = pTable.getParent();
 <a class="jxr_linenumber" name="L739" href="#L739">739</a>         <strong class="jxr_keyword">final</strong> Element myBody = myParent.getTableBody();
 <a class="jxr_linenumber" name="L740" href="#L740">740</a> 
 <a class="jxr_linenumber" name="L741" href="#L741">741</a>         <em class="jxr_comment">/* Create the row */</em>
@@ -798,7 +798,7 @@
 <a class="jxr_linenumber" name="L790" href="#L790">790</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L791" href="#L791">791</a> <em class="jxr_javadoccomment">     * Table control class.</em>
 <a class="jxr_linenumber" name="L792" href="#L792">792</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L793" href="#L793">793</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> MetisHTMLTable {
+<a class="jxr_linenumber" name="L793" href="#L793">793</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> MetisReportHTMLTable {
 <a class="jxr_linenumber" name="L794" href="#L794">794</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L795" href="#L795">795</a> <em class="jxr_javadoccomment">         * Table class type.</em>
 <a class="jxr_linenumber" name="L796" href="#L796">796</a> <em class="jxr_javadoccomment">         */</em>
@@ -807,7 +807,7 @@
 <a class="jxr_linenumber" name="L799" href="#L799">799</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L800" href="#L800">800</a> <em class="jxr_javadoccomment">         * The table parent.</em>
 <a class="jxr_linenumber" name="L801" href="#L801">801</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L802" href="#L802">802</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> MetisHTMLTable theParent;
+<a class="jxr_linenumber" name="L802" href="#L802">802</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> MetisReportHTMLTable theParent;
 <a class="jxr_linenumber" name="L803" href="#L803">803</a> 
 <a class="jxr_linenumber" name="L804" href="#L804">804</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L805" href="#L805">805</a> <em class="jxr_javadoccomment">         * The table element.</em>
@@ -850,8 +850,8 @@
 <a class="jxr_linenumber" name="L842" href="#L842">842</a> <em class="jxr_javadoccomment">         * @param pTable  the table element</em>
 <a class="jxr_linenumber" name="L843" href="#L843">843</a> <em class="jxr_javadoccomment">         * @param pParent the parent table.</em>
 <a class="jxr_linenumber" name="L844" href="#L844">844</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L845" href="#L845">845</a>         <strong class="jxr_keyword">private</strong> MetisHTMLTable(<strong class="jxr_keyword">final</strong> Element pTable,
-<a class="jxr_linenumber" name="L846" href="#L846">846</a>                                <strong class="jxr_keyword">final</strong> MetisHTMLTable pParent) {
+<a class="jxr_linenumber" name="L845" href="#L845">845</a>         <strong class="jxr_keyword">private</strong> MetisReportHTMLTable(<strong class="jxr_keyword">final</strong> Element pTable,
+<a class="jxr_linenumber" name="L846" href="#L846">846</a>                                      <strong class="jxr_keyword">final</strong> MetisReportHTMLTable pParent) {
 <a class="jxr_linenumber" name="L847" href="#L847">847</a>             <em class="jxr_comment">/* Store parameters */</em>
 <a class="jxr_linenumber" name="L848" href="#L848">848</a>             theTable = pTable;
 <a class="jxr_linenumber" name="L849" href="#L849">849</a>             theParent = pParent;
@@ -863,7 +863,7 @@
 <a class="jxr_linenumber" name="L855" href="#L855">855</a> <em class="jxr_javadoccomment">         *</em>
 <a class="jxr_linenumber" name="L856" href="#L856">856</a> <em class="jxr_javadoccomment">         * @param pTable the table element</em>
 <a class="jxr_linenumber" name="L857" href="#L857">857</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L858" href="#L858">858</a>         <strong class="jxr_keyword">private</strong> MetisHTMLTable(<strong class="jxr_keyword">final</strong> Element pTable) {
+<a class="jxr_linenumber" name="L858" href="#L858">858</a>         <strong class="jxr_keyword">private</strong> MetisReportHTMLTable(<strong class="jxr_keyword">final</strong> Element pTable) {
 <a class="jxr_linenumber" name="L859" href="#L859">859</a>             <em class="jxr_comment">/* Store parameters */</em>
 <a class="jxr_linenumber" name="L860" href="#L860">860</a>             theTable = pTable;
 <a class="jxr_linenumber" name="L861" href="#L861">861</a>             theParent = <strong class="jxr_keyword">null</strong>;
@@ -920,7 +920,7 @@
 <a class="jxr_linenumber" name="L912" href="#L912">912</a> <em class="jxr_javadoccomment">         *</em>
 <a class="jxr_linenumber" name="L913" href="#L913">913</a> <em class="jxr_javadoccomment">         * @return the parent</em>
 <a class="jxr_linenumber" name="L914" href="#L914">914</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L915" href="#L915">915</a>         <strong class="jxr_keyword">private</strong> MetisHTMLTable getParent() {
+<a class="jxr_linenumber" name="L915" href="#L915">915</a>         <strong class="jxr_keyword">private</strong> MetisReportHTMLTable getParent() {
 <a class="jxr_linenumber" name="L916" href="#L916">916</a>             <strong class="jxr_keyword">return</strong> theParent;
 <a class="jxr_linenumber" name="L917" href="#L917">917</a>         }
 <a class="jxr_linenumber" name="L918" href="#L918">918</a> 
@@ -1025,7 +1025,7 @@
 <a class="jxr_linenumber" name="L1017" href="#L1017">1017</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L1018" href="#L1018">1018</a> <em class="jxr_javadoccomment">     * Table class.</em>
 <a class="jxr_linenumber" name="L1019" href="#L1019">1019</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L1020" href="#L1020">1020</a>     <strong class="jxr_keyword">public</strong> enum TableClass {
+<a class="jxr_linenumber" name="L1020" href="#L1020">1020</a>     <strong class="jxr_keyword">private</strong> enum TableClass {
 <a class="jxr_linenumber" name="L1021" href="#L1021">1021</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L1022" href="#L1022">1022</a> <em class="jxr_javadoccomment">         * Summary.</em>
 <a class="jxr_linenumber" name="L1023" href="#L1023">1023</a> <em class="jxr_javadoccomment">         */</em>
@@ -1085,6 +1085,6 @@
 <a class="jxr_linenumber" name="L1077" href="#L1077">1077</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncySignature.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc.sign</a> &gt; <span class="el_source">BouncySignature.java</span></div><h1>BouncySignature.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.digest.BouncyDigest;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.crypto.DSA;
+import org.bouncycastle.crypto.signers.DSASigner;
+import org.bouncycastle.crypto.signers.ECDSASigner;
+import org.bouncycastle.crypto.signers.ECNRSigner;
+import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
+
+import java.io.IOException;
+import java.math.BigInteger;
+
+/**
+ * BouncyCastle implementation of signature.
+ */
+public final class BouncySignature {
+    /**
+     * Signature generation error.
+     */
+    static final String ERROR_SIGGEN = &quot;Failed to generate signature&quot;;
+
+    /**
+     * Signature validation error.
+     */
+    static final String ERROR_SIGPARSE = &quot;Failed to parse signature&quot;;
+
+    /**
+     * Private constructor.
+     */
+    private BouncySignature() {
+    }
+
+    /**
+     * DSACoder interface.
+     */
+    interface BouncyDSACoder {
+        /**
+         * Encode integers into byte array.
+         *
+         * @param r first integer
+         * @param s second integer
+         * @return encoded set
+         * @throws GordianException on error
+         */
+        byte[] dsaEncode(BigInteger r,
+                         BigInteger s) throws GordianException;
+
+        /**
+         * Decode byte array into integersBouncyCastle DSA Decoder. Copied from SignatureSpi.java
+         *
+         * @param pEncoded the encode set
+         * @return array of integers
+         * @throws GordianException on error
+         */
+        BigInteger[] dsaDecode(byte[] pEncoded) throws GordianException;
+    }
+
+    /**
+     * DER encoder.
+     */
+<span class="fc" id="L89">    protected static final class BouncyDERCoder implements BouncyDSACoder {</span>
+        @Override
+        public byte[] dsaEncode(final BigInteger r,
+                                final BigInteger s) throws GordianException {
+            try {
+<span class="fc" id="L94">                final ASN1EncodableVector v = new ASN1EncodableVector();</span>
+
+<span class="fc" id="L96">                v.add(new ASN1Integer(r));</span>
+<span class="fc" id="L97">                v.add(new ASN1Integer(s));</span>
+
+<span class="fc" id="L99">                return new DERSequence(v).getEncoded(ASN1Encoding.DER);</span>
+<span class="nc" id="L100">            } catch (IOException e) {</span>
+<span class="nc" id="L101">                throw new GordianCryptoException(ERROR_SIGGEN, e);</span>
+            }
+        }
+
+        @Override
+        public BigInteger[] dsaDecode(final byte[] pEncoded) throws GordianException {
+            try {
+<span class="fc" id="L108">                final ASN1Sequence s = (ASN1Sequence) ASN1Primitive.fromByteArray(pEncoded);</span>
+<span class="fc" id="L109">                final BigInteger[] sig = new BigInteger[2];</span>
+
+<span class="fc" id="L111">                sig[0] = ASN1Integer.getInstance(s.getObjectAt(0)).getValue();</span>
+<span class="fc" id="L112">                sig[1] = ASN1Integer.getInstance(s.getObjectAt(1)).getValue();</span>
+
+<span class="fc" id="L114">                return sig;</span>
+<span class="nc" id="L115">            } catch (IOException e) {</span>
+<span class="nc" id="L116">                throw new GordianCryptoException(ERROR_SIGPARSE, e);</span>
+            }
+        }
+    }
+
+    /**
+     * Obtain DSASigner.
+     *
+     * @param pFactory the factory
+     * @param pSpec    the signatureSpec
+     * @return the ECSigner
+     * @throws GordianException on error
+     */
+    static DSA getDSASigner(final GordianBaseFactory pFactory,
+                            final GordianSignatureSpec pSpec) throws GordianException {
+        /* Note if we are DSA */
+<span class="fc" id="L132">        final boolean isDSA = GordianKeyPairType.DSA.equals(pSpec.getKeyPairType());</span>
+
+        /* Switch on signature type */
+<span class="fc bfc" id="L135" title="All 3 branches covered.">        switch (pSpec.getSignatureType()) {</span>
+            case DDSA:
+<span class="fc" id="L137">                final BouncyDigest myDigest = (BouncyDigest) pFactory.getDigestFactory().createDigest(((GordianCoreSignatureSpec) pSpec).getDigestSpec());</span>
+<span class="fc" id="L138">                final HMacDSAKCalculator myCalc = new HMacDSAKCalculator(myDigest.getDigest());</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">                return isDSA</span>
+<span class="fc" id="L140">                        ? new DSASigner(myCalc)</span>
+<span class="fc" id="L141">                        : new ECDSASigner(myCalc);</span>
+            case NR:
+<span class="fc" id="L143">                return new ECNRSigner();</span>
+            case DSA:
+            default:
+<span class="fc bfc" id="L146" title="All 2 branches covered.">                return isDSA</span>
+<span class="fc" id="L147">                        ? new DSASigner()</span>
+<span class="fc" id="L148">                        : new ECDSASigner();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

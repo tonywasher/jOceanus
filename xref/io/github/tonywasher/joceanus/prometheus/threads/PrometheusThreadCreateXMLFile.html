@@ -38,7 +38,7 @@
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> java.io.File;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
@@ -92,9 +92,9 @@
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>      }
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>      @Override
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>      <strong class="jxr_keyword">public</strong> Void performTask(<strong class="jxr_keyword">final</strong> <a name="TethysUIThreadManager" href="../../../../../../io/github/tonywasher/joceanus/tethys/api/thread/TethysUIThreadManager.html#TethysUIThreadManager">TethysUIThreadManager</a> pManager) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      <strong class="jxr_keyword">public</strong> Void performTask(<strong class="jxr_keyword">final</strong> <a name="TethysUIThreadStatusReport" href="../../../../../../io/github/tonywasher/joceanus/tethys/api/thread/TethysUIThreadStatusReport.html#TethysUIThreadStatusReport">TethysUIThreadStatusReport</a> pReport) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>          <em class="jxr_comment">/* Access the thread manager */</em>
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">final</strong> <a name="PrometheusToolkit" href="../../../../../../io/github/tonywasher/joceanus/prometheus/toolkit/PrometheusToolkit.html#PrometheusToolkit">PrometheusToolkit</a> myPromToolkit = (<a name="PrometheusToolkit" href="../../../../../../io/github/tonywasher/joceanus/prometheus/toolkit/PrometheusToolkit.html#PrometheusToolkit">PrometheusToolkit</a>) pManager.getThreadData();
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">final</strong> <a name="PrometheusToolkit" href="../../../../../../io/github/tonywasher/joceanus/prometheus/toolkit/PrometheusToolkit.html#PrometheusToolkit">PrometheusToolkit</a> myPromToolkit = (<a name="PrometheusToolkit" href="../../../../../../io/github/tonywasher/joceanus/prometheus/toolkit/PrometheusToolkit.html#PrometheusToolkit">PrometheusToolkit</a>) pReport.getThreadData();
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">final</strong> <a name="PrometheusSecurityPasswordManager" href="../../../../../../io/github/tonywasher/joceanus/prometheus/security/PrometheusSecurityPasswordManager.html#PrometheusSecurityPasswordManager">PrometheusSecurityPasswordManager</a> myPasswordMgr = myPromToolkit.getPasswordManager();
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>          <strong class="jxr_keyword">boolean</strong> doDelete = false;
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>          File myFile = <strong class="jxr_keyword">null</strong>;
@@ -102,7 +102,7 @@
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>          <em class="jxr_comment">/* Catch Exceptions */</em>
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>              <em class="jxr_comment">/* Initialise the status window */</em>
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>              pManager.initTask(getTaskName());
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>              pReport.initTask(getTaskName());
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>              <em class="jxr_comment">/* Access the Backup preferences */</em>
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>             <strong class="jxr_keyword">final</strong> <a name="MetisPreferenceManager" href="../../../../../../io/github/tonywasher/joceanus/metis/preference/MetisPreferenceManager.html#MetisPreferenceManager">MetisPreferenceManager</a> myMgr = theControl.getPreferenceManager();
@@ -137,7 +137,7 @@
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>             }
 <a class="jxr_linenumber" name="L130" href="#L130">130</a> 
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>             <em class="jxr_comment">/* Set the standard backup name */</em>
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>             myFile = <strong class="jxr_keyword">new</strong> File(myName.toString() + (isSecure
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>             myFile = <strong class="jxr_keyword">new</strong> File(myName.toString() + '.' + (isSecure
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>                     ? GordianUtilities.SECUREZIPFILE_EXT
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>                     : GordianUtilities.ZIPFILE_EXT));
 <a class="jxr_linenumber" name="L135" href="#L135">135</a> 
@@ -145,7 +145,7 @@
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>             <strong class="jxr_keyword">final</strong> <a name="PrometheusDataSet" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataSet.html#PrometheusDataSet">PrometheusDataSet</a> myOldData = theControl.getData();
 <a class="jxr_linenumber" name="L138" href="#L138">138</a> 
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>             <em class="jxr_comment">/* Create a new formatter */</em>
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>             <strong class="jxr_keyword">final</strong> <a name="PrometheusDataValuesFormatter" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataValuesFormatter.html#PrometheusDataValuesFormatter">PrometheusDataValuesFormatter</a> myFormatter = <strong class="jxr_keyword">new</strong> <a name="PrometheusDataValuesFormatter" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataValuesFormatter.html#PrometheusDataValuesFormatter">PrometheusDataValuesFormatter</a>(pManager, myPasswordMgr);
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>             <strong class="jxr_keyword">final</strong> <a name="PrometheusDataValuesFormatter" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataValuesFormatter.html#PrometheusDataValuesFormatter">PrometheusDataValuesFormatter</a> myFormatter = <strong class="jxr_keyword">new</strong> <a name="PrometheusDataValuesFormatter" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataValuesFormatter.html#PrometheusDataValuesFormatter">PrometheusDataValuesFormatter</a>(pReport, myPasswordMgr);
 <a class="jxr_linenumber" name="L141" href="#L141">141</a> 
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>             <em class="jxr_comment">/* Create backup */</em>
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>             <strong class="jxr_keyword">if</strong> (isSecure) {
@@ -162,20 +162,20 @@
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>                 <em class="jxr_comment">/* Check for cancellation */</em>
 <a class="jxr_linenumber" name="L155" href="#L155">155</a> 
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>                 <em class="jxr_comment">/* Initialise the status window */</em>
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>                 pManager.initTask(<span class="jxr_string">"Reading Backup"</span>);
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>                 pReport.initTask(<span class="jxr_string">"Reading Backup"</span>);
 <a class="jxr_linenumber" name="L158" href="#L158">158</a> 
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>                 <em class="jxr_comment">/* Load workbook */</em>
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>                 <strong class="jxr_keyword">final</strong> <a name="PrometheusDataSet" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataSet.html#PrometheusDataSet">PrometheusDataSet</a> myNewData = theControl.getNewData();
 <a class="jxr_linenumber" name="L161" href="#L161">161</a>                 myFormatter.loadZipFile(myNewData, myFile);
 <a class="jxr_linenumber" name="L162" href="#L162">162</a> 
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>                 <em class="jxr_comment">/* Initialise the security, from the original data */</em>
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>                 myNewData.initialiseSecurity(pManager, myOldData);
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>                 myNewData.initialiseSecurity(pReport, myOldData);
 <a class="jxr_linenumber" name="L165" href="#L165">165</a> 
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>                 <em class="jxr_comment">/* Initialise the status window */</em>
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>                 pManager.initTask(<span class="jxr_string">"Verifying Backup"</span>);
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>                 pReport.initTask(<span class="jxr_string">"Verifying Backup"</span>);
 <a class="jxr_linenumber" name="L168" href="#L168">168</a> 
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>                 <em class="jxr_comment">/* Create a difference set between the two data copies */</em>
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>                 <strong class="jxr_keyword">final</strong> <a name="PrometheusDataSet" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataSet.html#PrometheusDataSet">PrometheusDataSet</a> myDiff = myNewData.getDifferenceSet(pManager, myOldData);
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>                 <strong class="jxr_keyword">final</strong> <a name="PrometheusDataSet" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataSet.html#PrometheusDataSet">PrometheusDataSet</a> myDiff = myNewData.getDifferenceSet(pReport, myOldData);
 <a class="jxr_linenumber" name="L171" href="#L171">171</a> 
 <a class="jxr_linenumber" name="L172" href="#L172">172</a>                 <em class="jxr_comment">/* If the difference set is non-empty */</em>
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>                 <strong class="jxr_keyword">if</strong> (!myDiff.isEmpty()) {
@@ -200,6 +200,6 @@
 <a class="jxr_linenumber" name="L192" href="#L192">192</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

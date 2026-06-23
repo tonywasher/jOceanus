@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisMavenId.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.parser.maven</a> &gt; <span class="el_source">ThemisMavenId.java</span></div><h1>ThemisMavenId.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.parser.maven;
+
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+import org.w3c.dom.Element;
+
+import java.util.Objects;
+
+/**
+ * Maven Module Id.
+ */
+public final class ThemisMavenId
+        implements MetisFieldItem {
+    /**
+     * ElementParser.
+     */
+    interface ThemisXElementParser {
+        /**
+         * Obtain element value.
+         *
+         * @param pElement the element
+         * @param pValue   the value name
+         * @return the value
+         * @throws OceanusException on error
+         */
+        String getElementValue(Element pElement,
+                               String pValue) throws OceanusException;
+    }
+
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L54">    private static final MetisFieldSet&lt;ThemisMavenId&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisMavenId.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L60">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_GROUPID, ThemisMavenId::getGroupId);</span>
+<span class="fc" id="L61">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_ARTIFACTID, ThemisMavenId::getArtifactId);</span>
+<span class="fc" id="L62">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_VERSION, ThemisMavenId::getVersion);</span>
+<span class="fc" id="L63">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_CLASSIFIER, ThemisMavenId::getClassifier);</span>
+<span class="fc" id="L64">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_SCOPE, ThemisMavenId::getScope);</span>
+<span class="fc" id="L65">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_OPTIONAL, ThemisMavenId::isOptional);</span>
+<span class="fc" id="L66">    }</span>
+
+    /**
+     * GroupId element.
+     */
+    private static final String EL_GROUPID = &quot;groupId&quot;;
+
+    /**
+     * ArtifactId element.
+     */
+    private static final String EL_ARTIFACTID = &quot;artifactId&quot;;
+
+    /**
+     * Version element.
+     */
+    private static final String EL_VERSION = &quot;version&quot;;
+
+    /**
+     * Scope element.
+     */
+    private static final String EL_SCOPE = &quot;scope&quot;;
+
+    /**
+     * Classifier element.
+     */
+    private static final String EL_CLASSIFIER = &quot;classifier&quot;;
+
+    /**
+     * Optional element.
+     */
+    private static final String EL_OPTIONAL = &quot;optional&quot;;
+
+    /**
+     * The artifactId.
+     */
+    private final String theArtifactId;
+
+    /**
+     * The scope.
+     */
+    private final String theScope;
+
+    /**
+     * The classifier.
+     */
+    private final String theClassifier;
+
+    /**
+     * Optional.
+     */
+    private final String isOptional;
+
+    /**
+     * The groupId.
+     */
+    private String theGroupId;
+
+    /**
+     * The version.
+     */
+    private String theVersion;
+
+    /**
+     * Constructor.
+     *
+     * @param pParser  the parser
+     * @param pElement the element containing the values
+     * @throws OceanusException on error
+     */
+    ThemisMavenId(final ThemisXElementParser pParser,
+<span class="fc" id="L136">                  final Element pElement) throws OceanusException {</span>
+        /* Access the values */
+<span class="fc" id="L138">        theGroupId = pParser.getElementValue(pElement, EL_GROUPID);</span>
+<span class="fc" id="L139">        theArtifactId = pParser.getElementValue(pElement, EL_ARTIFACTID);</span>
+<span class="fc" id="L140">        theVersion = pParser.getElementValue(pElement, EL_VERSION);</span>
+<span class="fc" id="L141">        theScope = pParser.getElementValue(pElement, EL_SCOPE);</span>
+<span class="fc" id="L142">        theClassifier = pParser.getElementValue(pElement, EL_CLASSIFIER);</span>
+<span class="fc" id="L143">        isOptional = pParser.getElementValue(pElement, EL_OPTIONAL);</span>
+<span class="fc" id="L144">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pParser  the parser
+     * @param pElement the element containing the values
+     * @param pParent  the parentId
+     * @throws OceanusException on error
+     */
+    ThemisMavenId(final ThemisXElementParser pParser,
+                  final Element pElement,
+                  final ThemisMavenId pParent) throws OceanusException {
+        /* Process as much as we can */
+<span class="fc" id="L158">        this(pParser, pElement);</span>
+
+        /* Handle missing groupId/version */
+<span class="pc bpc" id="L161" title="1 of 4 branches missed.">        if (theGroupId == null &amp;&amp; pParent != null) {</span>
+<span class="fc" id="L162">            theGroupId = pParent.getGroupId();</span>
+        }
+<span class="pc bpc" id="L164" title="1 of 4 branches missed.">        if (theVersion == null &amp;&amp; pParent != null) {</span>
+<span class="fc" id="L165">            theVersion = pParent.getVersion();</span>
+        }
+
+        /* If we have a ranged version, set to null */
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        if (theVersion != null</span>
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">                &amp;&amp; theVersion.startsWith(String.valueOf(ThemisChar.ARRAY_OPEN))) {</span>
+<span class="nc" id="L171">            theVersion = null;</span>
+        }
+<span class="fc" id="L173">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSource  the source Id
+     * @param pVersion the new version
+     */
+    ThemisMavenId(final ThemisMavenId pSource,
+<span class="fc" id="L182">                  final String pVersion) {</span>
+        /* Access the values */
+<span class="fc" id="L184">        theGroupId = pSource.getGroupId();</span>
+<span class="fc" id="L185">        theArtifactId = pSource.getArtifactId();</span>
+<span class="fc" id="L186">        theVersion = pVersion;</span>
+<span class="fc" id="L187">        theScope = pSource.getScope();</span>
+<span class="fc" id="L188">        theClassifier = pSource.getClassifier();</span>
+<span class="fc" id="L189">        isOptional = pSource.isOptional();</span>
+<span class="fc" id="L190">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisMavenId&gt; getDataFieldSet() {
+<span class="nc" id="L194">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L199">        return toString();</span>
+    }
+
+    /**
+     * Obtain the groupId.
+     *
+     * @return the groupId
+     */
+    public String getGroupId() {
+<span class="fc" id="L208">        return theGroupId;</span>
+    }
+
+    /**
+     * Obtain the artifactId.
+     *
+     * @return the artifactId
+     */
+    public String getArtifactId() {
+<span class="fc" id="L217">        return theArtifactId;</span>
+    }
+
+    /**
+     * Obtain the version.
+     *
+     * @return the version
+     */
+    public String getVersion() {
+<span class="fc" id="L226">        return theVersion;</span>
+    }
+
+    /**
+     * Obtain the scope.
+     *
+     * @return the scope
+     */
+    public String getScope() {
+<span class="fc" id="L235">        return theScope;</span>
+    }
+
+    /**
+     * Obtain the classifier.
+     *
+     * @return the classifier
+     */
+    public String getClassifier() {
+<span class="fc" id="L244">        return theClassifier;</span>
+    }
+
+    /**
+     * Obtain the optional.
+     *
+     * @return the optional
+     */
+    public String isOptional() {
+<span class="fc" id="L253">        return isOptional;</span>
+    }
+
+    /**
+     * is the dependency skippable?
+     *
+     * @return true/false
+     */
+    public boolean isSkippable() {
+<span class="fc bfc" id="L262" title="All 2 branches covered.">        return &quot;test&quot;.equals(theScope)</span>
+<span class="fc bfc" id="L263" title="All 2 branches covered.">                || &quot;runtime&quot;.equals(theScope)</span>
+<span class="fc bfc" id="L264" title="All 4 branches covered.">                || &quot;provided&quot;.equals(theScope)</span>
+                || isOptional != null;
+    }
+
+    /**
+     * Adjust the version.
+     *
+     * @param pVersion the new version.
+     */
+    void adjustVersion(final String pVersion) {
+<span class="nc" id="L274">        theVersion = pVersion;</span>
+<span class="nc" id="L275">    }</span>
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="pc bpc" id="L280" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L281">            return true;</span>
+        }
+<span class="pc bpc" id="L283" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L284">            return false;</span>
+        }
+
+        /* Make sure that the object is a MavenId */
+<span class="pc bpc" id="L288" title="1 of 2 branches missed.">        if (!(pThat instanceof ThemisMavenId myThat)) {</span>
+<span class="nc" id="L289">            return false;</span>
+        }
+
+        /* Check components */
+<span class="pc bpc" id="L293" title="1 of 2 branches missed.">        return Objects.equals(theGroupId, myThat.getGroupId())</span>
+<span class="pc bpc" id="L294" title="1 of 2 branches missed.">                &amp;&amp; Objects.equals(theArtifactId, myThat.getArtifactId())</span>
+<span class="pc bpc" id="L295" title="1 of 2 branches missed.">                &amp;&amp; Objects.equals(theVersion, myThat.getVersion())</span>
+<span class="pc bpc" id="L296" title="1 of 2 branches missed.">                &amp;&amp; Objects.equals(theClassifier, myThat.getClassifier());</span>
+    }
+
+    /**
+     * Does the id match (excluding version)?
+     *
+     * @param pThat the target id
+     * @return true/false
+     */
+    public boolean equalsPrefix(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="fc bfc" id="L307" title="All 2 branches covered.">        if (this == pThat) {</span>
+<span class="fc" id="L308">            return true;</span>
+        }
+<span class="pc bpc" id="L310" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L311">            return false;</span>
+        }
+
+        /* Make sure that the object is a MavenId */
+<span class="pc bpc" id="L315" title="1 of 2 branches missed.">        if (!(pThat instanceof ThemisMavenId myThat)) {</span>
+<span class="nc" id="L316">            return false;</span>
+        }
+
+        /* Check components */
+<span class="fc bfc" id="L320" title="All 2 branches covered.">        return Objects.equals(theGroupId, myThat.getGroupId())</span>
+<span class="fc bfc" id="L321" title="All 2 branches covered.">                &amp;&amp; Objects.equals(theArtifactId, myThat.getArtifactId())</span>
+<span class="pc bpc" id="L322" title="1 of 2 branches missed.">                &amp;&amp; Objects.equals(theClassifier, myThat.getClassifier());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L327">        return Objects.hash(theGroupId, theArtifactId, theVersion, theClassifier);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L332">        final String myName = theGroupId + ThemisChar.COLON + theArtifactId + ThemisChar.COLON + theVersion;</span>
+<span class="pc bpc" id="L333" title="1 of 2 branches missed.">        return theClassifier == null ? myName : myName + ThemisChar.COLON + theClassifier;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

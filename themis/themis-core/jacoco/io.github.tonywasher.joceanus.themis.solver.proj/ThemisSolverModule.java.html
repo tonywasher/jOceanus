@@ -16,9 +16,12 @@
  */
 package io.github.tonywasher.joceanus.themis.solver.proj;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisModule;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisPackage;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisModule;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisPackage;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverModuleDef;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverProjectDef;
 
@@ -33,6 +36,20 @@ import java.util.Map;
  */
 public class ThemisSolverModule
         implements ThemisSolverModuleDef {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L42">    private static final MetisFieldSet&lt;ThemisSolverModule&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSolverModule.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L48">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PROJECT, ThemisSolverModule::getOwningProject);</span>
+<span class="fc" id="L49">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PACKAGES, ThemisSolverModule::getPackages);</span>
+<span class="fc" id="L50">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisSolverModule::getUnderlyingModule);</span>
+<span class="fc" id="L51">    }</span>
+
     /**
      * The root package.
      */
@@ -60,30 +77,40 @@ public class ThemisSolverModule
      * @param pModule  the parsed module
      */
     ThemisSolverModule(final ThemisSolverProjectDef pProject,
-<span class="fc" id="L63">                       final ThemisModule pModule) {</span>
+<span class="fc" id="L80">                       final ThemisModule pModule) {</span>
         /* Store the parameters */
-<span class="fc" id="L65">        theProject = pProject;</span>
-<span class="fc" id="L66">        theModule = pModule;</span>
+<span class="fc" id="L82">        theProject = pProject;</span>
+<span class="fc" id="L83">        theModule = pModule;</span>
 
         /* Initialise the packages */
-<span class="fc" id="L69">        thePackages = new LinkedHashMap&lt;&gt;();</span>
-<span class="fc bfc" id="L70" title="All 2 branches covered.">        for (ThemisPackage myPackage : theModule.getPackages()) {</span>
-<span class="fc" id="L71">            final ThemisSolverPackage mySolverPackage = new ThemisSolverPackage(this, myPackage);</span>
-<span class="fc" id="L72">            thePackages.put(mySolverPackage.getPackageName(), mySolverPackage);</span>
-<span class="fc" id="L73">        }</span>
+<span class="fc" id="L86">        thePackages = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        for (ThemisPackage myPackage : theModule.getPackages()) {</span>
+<span class="fc" id="L88">            final ThemisSolverPackage mySolverPackage = new ThemisSolverPackage(this, myPackage);</span>
+<span class="fc" id="L89">            thePackages.put(mySolverPackage.getPackageName(), mySolverPackage);</span>
+<span class="fc" id="L90">        }</span>
 
         /* Create placeHolders*/
-<span class="fc" id="L76">        createPlaceHolders();</span>
-<span class="fc" id="L77">    }</span>
+<span class="fc" id="L93">        createPlaceHolders();</span>
+<span class="fc" id="L94">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisSolverModule&gt; getDataFieldSet() {
+<span class="nc" id="L98">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L103">        return toString();</span>
+    }
 
     @Override
     public ThemisSolverProjectDef getOwningProject() {
-<span class="nc" id="L81">        return theProject;</span>
+<span class="nc" id="L108">        return theProject;</span>
     }
 
     @Override
     public ThemisModule getUnderlyingModule() {
-<span class="nc" id="L86">        return theModule;</span>
+<span class="fc" id="L113">        return theModule;</span>
     }
 
     /**
@@ -92,12 +119,22 @@ public class ThemisSolverModule
      * @return the packages
      */
     public Map&lt;String, ThemisSolverPackage&gt; getPackages() {
-<span class="fc" id="L95">        return thePackages;</span>
+<span class="fc" id="L122">        return thePackages;</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L100">        return theModule.toString();</span>
+<span class="nc" id="L127">        return theModule.toString();</span>
+    }
+
+    /**
+     * Is this package in error?
+     *
+     * @return true/false
+     */
+    public boolean isInError() {
+<span class="nc" id="L136">        final ThemisSolverPackage myRoot = getRoot();</span>
+<span class="nc bnc" id="L137" title="All 4 branches missed.">        return myRoot != null &amp;&amp; myRoot.isInError();</span>
     }
 
     /**
@@ -105,15 +142,15 @@ public class ThemisSolverModule
      */
     private void createPlaceHolders() {
         /* Create a list and map of real packages */
-<span class="fc" id="L108">        final HashMap&lt;String, ThemisSolverPackage&gt; myPackageMap = new HashMap&lt;&gt;(thePackages);</span>
-<span class="fc" id="L109">        final List&lt;ThemisSolverPackage&gt; myPackages = new ArrayList&lt;&gt;(thePackages.values());</span>
+<span class="fc" id="L145">        final HashMap&lt;String, ThemisSolverPackage&gt; myPackageMap = new HashMap&lt;&gt;(thePackages);</span>
+<span class="fc" id="L146">        final List&lt;ThemisSolverPackage&gt; myPackages = new ArrayList&lt;&gt;(thePackages.values());</span>
 
         /* Loop through the full packages */
-<span class="fc bfc" id="L112" title="All 2 branches covered.">        for (ThemisSolverPackage myPackage : myPackages) {</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        for (ThemisSolverPackage myPackage : myPackages) {</span>
             /* Add the parent link */
-<span class="fc" id="L114">            addParentLink(myPackageMap, myPackage);</span>
-<span class="fc" id="L115">        }</span>
-<span class="fc" id="L116">    }</span>
+<span class="fc" id="L151">            addParentLink(myPackageMap, myPackage);</span>
+<span class="fc" id="L152">        }</span>
+<span class="fc" id="L153">    }</span>
 
     /**
      * Create placeHolder packages.
@@ -124,29 +161,29 @@ public class ThemisSolverModule
     private void addParentLink(final Map&lt;String, ThemisSolverPackage&gt; pPackageMap,
                                final ThemisSolverPackage pPackage) {
         /* Determine name of parent package */
-<span class="fc" id="L127">        final String myName = pPackage.getPackageName();</span>
-<span class="fc" id="L128">        final int iIndex = myName.lastIndexOf(ThemisChar.PERIOD);</span>
-<span class="fc bfc" id="L129" title="All 2 branches covered.">        final String myParentName = iIndex == -1 ? ROOT : myName.substring(0, iIndex);</span>
+<span class="fc" id="L164">        final String myName = pPackage.getPackageName();</span>
+<span class="fc" id="L165">        final int iIndex = myName.lastIndexOf(ThemisChar.PERIOD);</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        final String myParentName = iIndex == -1 ? ROOT : myName.substring(0, iIndex);</span>
 
         /* Look up parent */
-<span class="fc" id="L132">        ThemisSolverPackage myParent = pPackageMap.get(myParentName);</span>
+<span class="fc" id="L169">        ThemisSolverPackage myParent = pPackageMap.get(myParentName);</span>
 
         /* If we did not find a parent */
-<span class="fc bfc" id="L135" title="All 2 branches covered.">        if (myParent == null) {</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        if (myParent == null) {</span>
             /* Create a placeholder parent and put into maps */
-<span class="fc" id="L137">            myParent = new ThemisSolverPackage(this, new ThemisPackage(myParentName));</span>
-<span class="fc" id="L138">            pPackageMap.put(myParentName, myParent);</span>
-<span class="fc" id="L139">            thePackages.put(myParentName, myParent);</span>
+<span class="fc" id="L174">            myParent = new ThemisSolverPackage(this, new ThemisPackage(myParentName));</span>
+<span class="fc" id="L175">            pPackageMap.put(myParentName, myParent);</span>
+<span class="fc" id="L176">            thePackages.put(myParentName, myParent);</span>
 
             /* Add further links if we have not reached ROOT */
-<span class="fc bfc" id="L142" title="All 2 branches covered.">            if (!ROOT.equals(myParentName)) {</span>
-<span class="fc" id="L143">                addParentLink(pPackageMap, myParent);</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">            if (!ROOT.equals(myParentName)) {</span>
+<span class="fc" id="L180">                addParentLink(pPackageMap, myParent);</span>
             }
         }
 
         /* Add child to parent */
-<span class="fc" id="L148">        myParent.addChild(pPackage);</span>
-<span class="fc" id="L149">    }</span>
+<span class="fc" id="L185">        myParent.addChild(pPackage);</span>
+<span class="fc" id="L186">    }</span>
 
     /**
      * Look for packages that are immediate roots.
@@ -155,7 +192,7 @@ public class ThemisSolverModule
      */
     public ThemisSolverPackage getRoot() {
         /* Return the root */
-<span class="fc" id="L158">        return thePackages.get(ROOT);</span>
+<span class="fc" id="L195">        return thePackages.get(ROOT);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

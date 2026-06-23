@@ -18,6 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianBIKESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
@@ -26,16 +27,17 @@ import org.bouncycastle.pqc.legacy.bike.BIKEParameters;
 import java.util.EnumMap;
 import java.util.Map;
 
-public final class GordianCoreBIKESpec {
+public final class GordianCoreBIKESpec
+        implements GordianCoreKeyPairIdSpec&lt;GordianBIKESpec&gt; {
     /**
      * The specMap.
      */
-<span class="fc" id="L33">    private static final Map&lt;GordianBIKESpec, GordianCoreBIKESpec&gt; SPECMAP = newSpecMap();</span>
+<span class="fc" id="L35">    private static final Map&lt;GordianBIKESpec, GordianCoreBIKESpec&gt; SPECMAP = newSpecMap();</span>
 
     /**
      * The specArray.
      */
-<span class="fc" id="L38">    private static final GordianCoreBIKESpec[] VALUES = SPECMAP.values().toArray(new GordianCoreBIKESpec[0]);</span>
+<span class="fc" id="L40">    private static final GordianCoreBIKESpec[] VALUES = SPECMAP.values().toArray(new GordianCoreBIKESpec[0]);</span>
 
     /**
      * The Spec.
@@ -47,17 +49,18 @@ public final class GordianCoreBIKESpec {
      *
      * @param pSpec the spec
      */
-<span class="fc" id="L50">    private GordianCoreBIKESpec(final GordianBIKESpec pSpec) {</span>
-<span class="fc" id="L51">        theSpec = pSpec;</span>
-<span class="fc" id="L52">    }</span>
+<span class="fc" id="L52">    private GordianCoreBIKESpec(final GordianBIKESpec pSpec) {</span>
+<span class="fc" id="L53">        theSpec = pSpec;</span>
+<span class="fc" id="L54">    }</span>
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+<span class="fc" id="L58">        return GordianKeyPairType.BIKE;</span>
+    }
+
+    @Override
     public GordianBIKESpec getSpec() {
-<span class="fc" id="L60">        return theSpec;</span>
+<span class="fc" id="L63">        return theSpec;</span>
     }
 
     /**
@@ -66,11 +69,11 @@ public final class GordianCoreBIKESpec {
      * @return the parameters.
      */
     public BIKEParameters getParameters() {
-<span class="pc bpc" id="L69" title="3 of 4 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L70">            case BIKE128 -&gt; BIKEParameters.bike128;</span>
-<span class="nc" id="L71">            case BIKE192 -&gt; BIKEParameters.bike192;</span>
-<span class="nc" id="L72">            case BIKE256 -&gt; BIKEParameters.bike256;</span>
-<span class="nc" id="L73">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L72" title="3 of 4 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L73">            case BIKE128 -&gt; BIKEParameters.bike128;</span>
+<span class="nc" id="L74">            case BIKE192 -&gt; BIKEParameters.bike192;</span>
+<span class="nc" id="L75">            case BIKE256 -&gt; BIKEParameters.bike256;</span>
+<span class="nc" id="L76">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
@@ -80,51 +83,47 @@ public final class GordianCoreBIKESpec {
      * @return the parameters.
      */
     public BIKEParameterSpec getParameterSpec() {
-<span class="pc bpc" id="L83" title="3 of 4 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L84">            case BIKE128 -&gt; BIKEParameterSpec.bike128;</span>
-<span class="nc" id="L85">            case BIKE192 -&gt; BIKEParameterSpec.bike192;</span>
-<span class="nc" id="L86">            case BIKE256 -&gt; BIKEParameterSpec.bike256;</span>
-<span class="nc" id="L87">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L86" title="3 of 4 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L87">            case BIKE128 -&gt; BIKEParameterSpec.bike128;</span>
+<span class="nc" id="L88">            case BIKE192 -&gt; BIKEParameterSpec.bike192;</span>
+<span class="nc" id="L89">            case BIKE256 -&gt; BIKEParameterSpec.bike256;</span>
+<span class="nc" id="L90">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
-    /**
-     * Obtain BIKE algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
-<span class="pc bpc" id="L97" title="1 of 4 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L98">            case BIKE128 -&gt; BCObjectIdentifiers.bike128;</span>
-<span class="fc" id="L99">            case BIKE192 -&gt; BCObjectIdentifiers.bike192;</span>
-<span class="fc" id="L100">            case BIKE256 -&gt; BCObjectIdentifiers.bike256;</span>
-<span class="nc" id="L101">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L96" title="1 of 4 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L97">            case BIKE128 -&gt; BCObjectIdentifiers.bike128;</span>
+<span class="fc" id="L98">            case BIKE192 -&gt; BCObjectIdentifiers.bike192;</span>
+<span class="fc" id="L99">            case BIKE256 -&gt; BCObjectIdentifiers.bike256;</span>
+<span class="nc" id="L100">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L107">        return theSpec.toString();</span>
+<span class="fc" id="L106">        return theSpec.toString();</span>
     }
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L114">            return true;</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L113">            return true;</span>
         }
-<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L117">            return false;</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L116">            return false;</span>
         }
 
         /* Check subFields */
-<span class="nc" id="L121">        return pThat instanceof GordianCoreBIKESpec myThat</span>
-<span class="nc bnc" id="L122" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
+<span class="nc" id="L120">        return pThat instanceof GordianCoreBIKESpec myThat</span>
+<span class="nc bnc" id="L121" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
     }
 
     @Override
     public int hashCode() {
-<span class="fc" id="L127">        return theSpec.hashCode();</span>
+<span class="fc" id="L126">        return theSpec.hashCode();</span>
     }
 
     /**
@@ -134,7 +133,7 @@ public final class GordianCoreBIKESpec {
      * @return the core spec
      */
     public static GordianCoreBIKESpec mapCoreSpec(final Object pSpec) {
-<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        return pSpec instanceof GordianBIKESpec mySpec ? SPECMAP.get(mySpec) : null;</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        return pSpec instanceof GordianBIKESpec mySpec ? SPECMAP.get(mySpec) : null;</span>
     }
 
     /**
@@ -143,11 +142,11 @@ public final class GordianCoreBIKESpec {
      * @return the type map
      */
     private static Map&lt;GordianBIKESpec, GordianCoreBIKESpec&gt; newSpecMap() {
-<span class="fc" id="L146">        final Map&lt;GordianBIKESpec, GordianCoreBIKESpec&gt; myMap = new EnumMap&lt;&gt;(GordianBIKESpec.class);</span>
-<span class="fc bfc" id="L147" title="All 2 branches covered.">        for (GordianBIKESpec mySpec : GordianBIKESpec.values()) {</span>
-<span class="fc" id="L148">            myMap.put(mySpec, new GordianCoreBIKESpec(mySpec));</span>
+<span class="fc" id="L145">        final Map&lt;GordianBIKESpec, GordianCoreBIKESpec&gt; myMap = new EnumMap&lt;&gt;(GordianBIKESpec.class);</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        for (GordianBIKESpec mySpec : GordianBIKESpec.values()) {</span>
+<span class="fc" id="L147">            myMap.put(mySpec, new GordianCoreBIKESpec(mySpec));</span>
         }
-<span class="fc" id="L150">        return myMap;</span>
+<span class="fc" id="L149">        return myMap;</span>
     }
 
     /**
@@ -156,7 +155,7 @@ public final class GordianCoreBIKESpec {
      * @return the values
      */
     public static GordianCoreBIKESpec[] values() {
-<span class="fc" id="L159">        return VALUES;</span>
+<span class="fc" id="L158">        return VALUES;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

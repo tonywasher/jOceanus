@@ -367,7 +367,7 @@
 <a class="jxr_linenumber" name="L359" href="#L359">359</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L360" href="#L360">360</a>     <strong class="jxr_keyword">private</strong> <a name="MetisFieldRequired" href="../../../../../../../io/github/tonywasher/joceanus/metis/field/MetisFieldRequired.html#MetisFieldRequired">MetisFieldRequired</a> isXchangeRateClassRequired(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseTransCategoryClass" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/statics/MoneyWiseTransCategoryClass.html#MoneyWiseTransCategoryClass">MoneyWiseTransCategoryClass</a> pCategory) {
 <a class="jxr_linenumber" name="L361" href="#L361">361</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseTransaction" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseTransaction.html#MoneyWiseTransaction">MoneyWiseTransaction</a> myTrans = getOwner();
-<a class="jxr_linenumber" name="L362" href="#L362">362</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseDataSet" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDataSet.html#MoneyWiseDataSet">MoneyWiseDataSet</a> myData = myTrans.getDataSet();
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseDataSet" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDataSet.html#MoneyWiseDataSet">MoneyWiseDataSet</a> myData = (<a name="MoneyWiseDataSet" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDataSet.html#MoneyWiseDataSet">MoneyWiseDataSet</a>) myTrans.getDataSet();
 <a class="jxr_linenumber" name="L363" href="#L363">363</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseTransAsset" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseTransAsset.html#MoneyWiseTransAsset">MoneyWiseTransAsset</a> myAccount = myTrans.getAccount();
 <a class="jxr_linenumber" name="L364" href="#L364">364</a> 
 <a class="jxr_linenumber" name="L365" href="#L365">365</a>         <strong class="jxr_keyword">if</strong> (newValidation) {
@@ -953,6 +953,6 @@
 <a class="jxr_linenumber" name="L945" href="#L945">945</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

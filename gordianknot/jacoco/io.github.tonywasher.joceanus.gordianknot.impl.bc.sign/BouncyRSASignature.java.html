@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyRSASignature.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc.sign</a> &gt; <span class="el_source">BouncyRSASignature.java</span></div><h1>BouncyRSASignature.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyRSAKeyPair.BouncyRSAPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyRSAKeyPair.BouncyRSAPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.CryptoException;
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
+
+/**
+ * RSA signature.
+ */
+public class BouncyRSASignature
+        extends BouncyPSSSignature {
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pSpec    the signatureSpec
+     * @throws GordianException on error
+     */
+    BouncyRSASignature(final GordianBaseFactory pFactory,
+                       final GordianSignatureSpec pSpec) throws GordianException {
+        /* Initialise underlying class */
+<span class="fc" id="L48">        super(pFactory, pSpec);</span>
+<span class="fc" id="L49">    }</span>
+
+    @Override
+    protected BouncyKeyPair getKeyPair() {
+<span class="fc" id="L53">        return (BouncyKeyPair) super.getKeyPair();</span>
+    }
+
+    @Override
+    public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
+        /* Initialise detail */
+<span class="fc" id="L59">        super.initForSigning(pParams);</span>
+<span class="fc" id="L60">        final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L61">        BouncyKeyPair.checkKeyPair(myPair);</span>
+
+        /* Initialise and set the signer */
+<span class="fc" id="L64">        final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) myPair.getPrivateKey();</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        final CipherParameters myParms = getSignatureSpec().getCoreType().isPSS()</span>
+<span class="fc" id="L66">                ? new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom())</span>
+<span class="fc" id="L67">                : myPrivate.getPrivateKey();</span>
+<span class="fc" id="L68">        getSigner().init(true, myParms);</span>
+<span class="fc" id="L69">    }</span>
+
+    @Override
+    public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
+        /* Initialise detail */
+<span class="fc" id="L74">        super.initForVerify(pParams);</span>
+<span class="fc" id="L75">        final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L76">        BouncyKeyPair.checkKeyPair(myPair);</span>
+
+        /* Initialise and set the signer */
+<span class="fc" id="L79">        final BouncyRSAPublicKey myPublic = (BouncyRSAPublicKey) myPair.getPublicKey();</span>
+<span class="fc" id="L80">        getSigner().init(false, myPublic.getPublicKey());</span>
+<span class="fc" id="L81">    }</span>
+
+    @Override
+    public byte[] sign() throws GordianException {
+        /* Check that we are in signing mode */
+<span class="fc" id="L86">        checkMode(GordianSignatureMode.SIGN);</span>
+
+        /* Sign the message */
+        try {
+<span class="fc" id="L90">            return getSigner().generateSignature();</span>
+<span class="nc" id="L91">        } catch (DataLengthException</span>
+                 | CryptoException e) {
+<span class="nc" id="L93">            throw new GordianCryptoException(BouncySignature.ERROR_SIGGEN, e);</span>
+        }
+    }
+
+    @Override
+    public boolean verify(final byte[] pSignature) throws GordianException {
+        /* Check that we are in verify mode */
+<span class="fc" id="L100">        checkMode(GordianSignatureMode.VERIFY);</span>
+
+        /* Verify the message */
+<span class="fc" id="L103">        return getSigner().verifySignature(pSignature);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

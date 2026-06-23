@@ -17,7 +17,13 @@
 
 package io.github.tonywasher.joceanus.themis.solver.proj;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverPackageDef;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverReference.ThemisSolverRefPackage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +33,9 @@ import java.util.Map;
 /**
  * Class holding references to other packages.
  */
-public class ThemisSolverReference {
+public class ThemisSolverReference
+        implements MetisDataMap&lt;ThemisSolverPackageDef, ThemisSolverRefPackage&gt; {
+
     /**
      * Map of references to other packages.
      */
@@ -36,9 +44,9 @@ public class ThemisSolverReference {
     /**
      * Constructor.
      */
-<span class="fc" id="L39">    public ThemisSolverReference() {</span>
-<span class="fc" id="L40">        theMap = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L41">    }</span>
+<span class="fc" id="L47">    public ThemisSolverReference() {</span>
+<span class="fc" id="L48">        theMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L49">    }</span>
 
     /**
      * Obtain the references for a package.
@@ -47,7 +55,7 @@ public class ThemisSolverReference {
      * @return the references
      */
     public ThemisSolverRefPackage getReferences(final ThemisSolverPackageDef pPackage) {
-<span class="nc" id="L50">        return theMap.get(pPackage);</span>
+<span class="nc" id="L58">        return theMap.get(pPackage);</span>
     }
 
     /**
@@ -57,7 +65,7 @@ public class ThemisSolverReference {
      * @return the reference
      */
     public ThemisSolverRefPackage getReferredPackage(final ThemisSolverPackageDef pPackage) {
-<span class="fc" id="L60">        return theMap.get(pPackage);</span>
+<span class="fc" id="L68">        return theMap.get(pPackage);</span>
     }
 
     /**
@@ -66,9 +74,19 @@ public class ThemisSolverReference {
      * @param pReferences the references
      */
     public void addReferences(final ThemisSolverRefPackage pReferences) {
-<span class="fc" id="L69">        final ThemisSolverPackageDef myPackage = pReferences.getPackage();</span>
-<span class="fc" id="L70">        theMap.put(myPackage, pReferences);</span>
-<span class="fc" id="L71">    }</span>
+<span class="fc" id="L77">        final ThemisSolverPackageDef myPackage = pReferences.getPackage();</span>
+<span class="fc" id="L78">        theMap.put(myPackage, pReferences);</span>
+<span class="fc" id="L79">    }</span>
+
+    /**
+     * Does the map have no references of type?
+     *
+     * @param pRefType the refType
+     * @return true/false
+     */
+    public boolean lackingReferences(final ThemisRefType pRefType) {
+<span class="nc" id="L88">        return getReferences(pRefType).isEmpty();</span>
+    }
 
     /**
      * Obtain references of type.
@@ -77,13 +95,37 @@ public class ThemisSolverReference {
      * @return the references
      */
     public List&lt;ThemisSolverRefPackage&gt; getReferences(final ThemisRefType pRefType) {
-<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        return theMap.values().stream().filter(p -&gt; p.getReferenceType() == pRefType).toList();</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        return theMap.values().stream().filter(p -&gt; p.getReferenceType() == pRefType).toList();</span>
+    }
+
+    @Override
+    public Map&lt;ThemisSolverPackageDef, ThemisSolverRefPackage&gt; getUnderlyingMap() {
+<span class="nc" id="L103">        return theMap;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L108">        return getClass().getSimpleName();</span>
     }
 
     /**
      * Class representing links from a class to classes in a particular package.
      */
-    public static class ThemisSolverRefPackage {
+    public static class ThemisSolverRefPackage
+            implements MetisFieldItem {
+        /**
+         * Report fields.
+         */
+<span class="fc" id="L119">        private static final MetisFieldSet&lt;ThemisSolverRefPackage&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSolverRefPackage.class);</span>
+
+        /*
+         * Declare Fields.
+         */
+        static {
+<span class="fc" id="L125">            FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_REFTYPE, ThemisSolverRefPackage::getReferenceType);</span>
+<span class="fc" id="L126">            FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_REFERENCES, ThemisSolverRefPackage::getReferences);</span>
+<span class="fc" id="L127">        }</span>
+
         /**
          * The package that is referred to.
          */
@@ -106,11 +148,21 @@ public class ThemisSolverReference {
          * @param pRefType the reference type
          */
         public ThemisSolverRefPackage(final ThemisSolverPackageDef pPackage,
-<span class="fc" id="L109">                                      final ThemisRefType pRefType) {</span>
-<span class="fc" id="L110">            thePackage = pPackage;</span>
-<span class="fc" id="L111">            theRefType = pRefType;</span>
-<span class="fc" id="L112">            theReferences = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L113">        }</span>
+<span class="fc" id="L151">                                      final ThemisRefType pRefType) {</span>
+<span class="fc" id="L152">            thePackage = pPackage;</span>
+<span class="fc" id="L153">            theRefType = pRefType;</span>
+<span class="fc" id="L154">            theReferences = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L155">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;ThemisSolverRefPackage&gt; getDataFieldSet() {
+<span class="nc" id="L159">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L164">            return toString();</span>
+        }
 
         /**
          * Obtain the class.
@@ -118,7 +170,7 @@ public class ThemisSolverReference {
          * @return the class
          */
         public ThemisSolverPackageDef getPackage() {
-<span class="fc" id="L121">            return thePackage;</span>
+<span class="fc" id="L173">            return thePackage;</span>
         }
 
         /**
@@ -127,7 +179,7 @@ public class ThemisSolverReference {
          * @return the refType
          */
         public ThemisRefType getReferenceType() {
-<span class="fc" id="L130">            return theRefType;</span>
+<span class="fc" id="L182">            return theRefType;</span>
         }
 
         /**
@@ -136,7 +188,7 @@ public class ThemisSolverReference {
          * @return the references
          */
         public List&lt;ThemisSolverRefClass&gt; getReferences() {
-<span class="fc" id="L139">            return theReferences;</span>
+<span class="fc" id="L191">            return theReferences;</span>
         }
 
         /**
@@ -145,19 +197,33 @@ public class ThemisSolverReference {
          * @param pReferences the references
          */
         public void addReferences(final ThemisSolverRefClass pReferences) {
-<span class="fc" id="L148">            theReferences.add(pReferences);</span>
-<span class="fc" id="L149">        }</span>
+<span class="fc" id="L200">            theReferences.add(pReferences);</span>
+<span class="fc" id="L201">        }</span>
 
         @Override
         public String toString() {
-<span class="nc" id="L153">            return thePackage.toString();</span>
+<span class="nc" id="L205">            return thePackage.toString();</span>
         }
     }
 
     /**
      * Class representing links from a class to classes in a particular package.
      */
-    public static class ThemisSolverRefClass {
+    public static class ThemisSolverRefClass
+            implements MetisFieldItem {
+        /**
+         * Report fields.
+         */
+<span class="fc" id="L217">        private static final MetisFieldSet&lt;ThemisSolverRefClass&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSolverRefClass.class);</span>
+
+        /*
+         * Declare Fields.
+         */
+        static {
+<span class="fc" id="L223">            FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_CLASS, ThemisSolverRefClass::getSubject);</span>
+<span class="fc" id="L224">            FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_REFERENCES, ThemisSolverRefClass::getReferences);</span>
+<span class="fc" id="L225">        }</span>
+
         /**
          * The class that holds the references.
          */
@@ -175,10 +241,20 @@ public class ThemisSolverReference {
          * @param pReferences the references
          */
         public ThemisSolverRefClass(final ThemisSolverClass pClass,
-<span class="fc" id="L178">                                    final List&lt;ThemisSolverClass&gt; pReferences) {</span>
-<span class="fc" id="L179">            theClass = pClass;</span>
-<span class="fc" id="L180">            theReferences = pReferences;</span>
-<span class="fc" id="L181">        }</span>
+<span class="fc" id="L244">                                    final List&lt;ThemisSolverClass&gt; pReferences) {</span>
+<span class="fc" id="L245">            theClass = pClass;</span>
+<span class="fc" id="L246">            theReferences = pReferences;</span>
+<span class="fc" id="L247">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;ThemisSolverRefClass&gt; getDataFieldSet() {
+<span class="nc" id="L251">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L256">            return toString();</span>
+        }
 
         /**
          * Obtain the class.
@@ -186,7 +262,7 @@ public class ThemisSolverReference {
          * @return the class
          */
         public ThemisSolverClass getSubject() {
-<span class="nc" id="L189">            return theClass;</span>
+<span class="nc" id="L265">            return theClass;</span>
         }
 
         /**
@@ -195,34 +271,33 @@ public class ThemisSolverReference {
          * @return the references
          */
         public List&lt;ThemisSolverClass&gt; getReferences() {
-<span class="nc" id="L198">            return theReferences;</span>
+<span class="nc" id="L274">            return theReferences;</span>
         }
 
         @Override
         public String toString() {
-<span class="nc" id="L203">            return theClass.getFullName();</span>
+<span class="nc" id="L279">            return theClass.getFullName();</span>
         }
     }
-
 
     /**
      * Map types.
      */
-<span class="fc" id="L211">    public enum ThemisRefType {</span>
+<span class="fc" id="L286">    public enum ThemisRefType {</span>
         /**
          * Sibling.
          */
-<span class="fc" id="L215">        SIBLING,</span>
+<span class="fc" id="L290">        SIBLING,</span>
 
         /**
          * Child.
          */
-<span class="fc" id="L220">        CHILD,</span>
+<span class="fc" id="L295">        CHILD,</span>
 
         /**
          * Parent.
          */
-<span class="fc" id="L225">        PARENT;</span>
+<span class="fc" id="L300">        PARENT;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

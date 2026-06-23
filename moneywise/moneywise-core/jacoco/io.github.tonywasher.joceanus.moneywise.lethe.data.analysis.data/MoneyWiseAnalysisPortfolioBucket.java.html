@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -40,7 +35,13 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
+import java.util.Comparator;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
@@ -53,23 +54,23 @@ public final class MoneyWiseAnalysisPortfolioBucket
     /**
      * Local Report fields.
      */
-<span class="fc" id="L56">    private static final MetisFieldSet&lt;MoneyWiseAnalysisPortfolioBucket&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisPortfolioBucket.class);</span>
+<span class="fc" id="L57">    private static final MetisFieldSet&lt;MoneyWiseAnalysisPortfolioBucket&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisPortfolioBucket.class);</span>
 
     /*
      * Declare Fields.
      */
     static {
-<span class="fc" id="L62">        FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.PORTFOLIO, MoneyWiseAnalysisPortfolioBucket::getPortfolio);</span>
-<span class="fc" id="L63">        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.BUCKET_BASEVALUES, MoneyWiseAnalysisPortfolioBucket::getPortfolioCash);</span>
-<span class="fc" id="L64">        FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.CASH, MoneyWiseAnalysisPortfolioBucket::getBaseValues);</span>
-<span class="fc" id="L65">        FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.SECURITY.getListId(), MoneyWiseAnalysisPortfolioBucket::getSecurities);</span>
-<span class="fc" id="L66">        FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseAnalysisSecurityAttr.class, MoneyWiseAnalysisPortfolioBucket::getAttributeValue);</span>
+<span class="fc" id="L63">        FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.PORTFOLIO, MoneyWiseAnalysisPortfolioBucket::getPortfolio);</span>
+<span class="fc" id="L64">        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.BUCKET_BASEVALUES, MoneyWiseAnalysisPortfolioBucket::getPortfolioCash);</span>
+<span class="fc" id="L65">        FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.CASH, MoneyWiseAnalysisPortfolioBucket::getBaseValues);</span>
+<span class="fc" id="L66">        FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.SECURITY.getListId(), MoneyWiseAnalysisPortfolioBucket::getSecurities);</span>
+<span class="fc" id="L67">        FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseAnalysisSecurityAttr.class, MoneyWiseAnalysisPortfolioBucket::getAttributeValue);</span>
     }
 
     /**
      * Totals bucket name.
      */
-<span class="fc" id="L72">    private static final MetisDataFieldId NAME_TOTALS = MoneyWiseAnalysisDataResource.ANALYSIS_TOTALS;</span>
+<span class="fc" id="L73">    private static final MetisDataFieldId NAME_TOTALS = MoneyWiseAnalysisDataResource.ANALYSIS_TOTALS;</span>
 
     /**
      * The portfolio.
@@ -117,32 +118,32 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @param pAnalysis  the analysis
      * @param pPortfolio the portfolio account
      */
-    private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysis pAnalysis,
-<span class="fc" id="L121">                                             final MoneyWisePortfolio pPortfolio) {</span>
+    private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysisControl pAnalysis,
+<span class="fc" id="L122">                                             final MoneyWisePortfolio pPortfolio) {</span>
         /* Store the portfolio */
-<span class="fc" id="L123">        thePortfolio = pPortfolio;</span>
-<span class="fc" id="L124">        theCurrency = pAnalysis.getCurrency();</span>
+<span class="fc" id="L124">        thePortfolio = pPortfolio;</span>
+<span class="fc" id="L125">        theCurrency = pAnalysis.getCurrency();</span>
 
         /* Create the cash bucket */
-<span class="fc" id="L127">        theCash = new MoneyWiseAnalysisPortfolioCashBucket(pAnalysis, pPortfolio);</span>
+<span class="fc" id="L128">        theCash = new MoneyWiseAnalysisPortfolioCashBucket(pAnalysis, pPortfolio);</span>
 
         /* Create the securities list */
-<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        theSecurities = pPortfolio != null</span>
-<span class="nc" id="L131">                ? new MoneyWiseAnalysisSecurityBucketList(pAnalysis)</span>
-<span class="fc" id="L132">                : null;</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">        theSecurities = pPortfolio != null</span>
+<span class="nc" id="L132">                ? new MoneyWiseAnalysisSecurityBucketList(pAnalysis)</span>
+<span class="fc" id="L133">                : null;</span>
 
         /* Create the value maps and initialise them */
-<span class="pc bpc" id="L135" title="1 of 2 branches missed.">        final Currency myCurrency = theCurrency == null</span>
-<span class="fc" id="L136">                ? MoneyWiseAnalysisAccountBucket.DEFAULT_CURRENCY</span>
-<span class="pc" id="L137">                : theCurrency.getCurrency();</span>
-<span class="fc" id="L138">        theValues = new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
-<span class="fc" id="L139">        theBaseValues = new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
-<span class="fc" id="L140">        initValues();</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        final Currency myCurrency = theCurrency == null</span>
+<span class="fc" id="L137">                ? MoneyWiseAnalysisAccountBucket.DEFAULT_CURRENCY</span>
+<span class="pc" id="L138">                : theCurrency.getCurrency();</span>
+<span class="fc" id="L139">        theValues = new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
+<span class="fc" id="L140">        theBaseValues = new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
+<span class="fc" id="L141">        initValues();</span>
 
         /* Determine whether the portfolio is a foreign currency */
-<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        isForeignCurrency = !MetisDataDifference.isEqual(pAnalysis.getCurrency(), theCurrency);</span>
-<span class="fc" id="L144">        hasForeignCurrency = isForeignCurrency;</span>
-<span class="fc" id="L145">    }</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        isForeignCurrency = !MetisDataDifference.isEqual(pAnalysis.getCurrency(), theCurrency);</span>
+<span class="fc" id="L145">        hasForeignCurrency = isForeignCurrency;</span>
+<span class="fc" id="L146">    }</span>
 
     /**
      * Constructor.
@@ -150,28 +151,28 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @param pAnalysis the analysis
      * @param pBase     the underlying bucket
      */
-    private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysis pAnalysis,
-<span class="nc" id="L154">                                             final MoneyWiseAnalysisPortfolioBucket pBase) {</span>
+    private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysisControl pAnalysis,
+<span class="nc" id="L155">                                             final MoneyWiseAnalysisPortfolioBucket pBase) {</span>
         /* Copy details from base */
-<span class="nc" id="L156">        thePortfolio = pBase.getPortfolio();</span>
-<span class="nc" id="L157">        theCurrency = pBase.getCurrency();</span>
-<span class="nc" id="L158">        isForeignCurrency = pBase.isForeignCurrency();</span>
-<span class="nc" id="L159">        hasForeignCurrency = pBase.hasForeignCurrency();</span>
+<span class="nc" id="L157">        thePortfolio = pBase.getPortfolio();</span>
+<span class="nc" id="L158">        theCurrency = pBase.getCurrency();</span>
+<span class="nc" id="L159">        isForeignCurrency = pBase.isForeignCurrency();</span>
+<span class="nc" id="L160">        hasForeignCurrency = pBase.hasForeignCurrency();</span>
 
         /* Create the cash bucket */
-<span class="nc" id="L162">        theCash = new MoneyWiseAnalysisPortfolioCashBucket(pAnalysis, pBase.getPortfolioCash());</span>
+<span class="nc" id="L163">        theCash = new MoneyWiseAnalysisPortfolioCashBucket(pAnalysis, pBase.getPortfolioCash());</span>
 
         /* Create the securities list */
-<span class="nc bnc" id="L165" title="All 2 branches missed.">        theSecurities = thePortfolio != null</span>
-<span class="nc" id="L166">                ? new MoneyWiseAnalysisSecurityBucketList(pAnalysis, pBase.getSecurities())</span>
-<span class="nc" id="L167">                : null;</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">        theSecurities = thePortfolio != null</span>
+<span class="nc" id="L167">                ? new MoneyWiseAnalysisSecurityBucketList(pAnalysis, pBase.getSecurities())</span>
+<span class="nc" id="L168">                : null;</span>
 
         /* Create the value maps and initialise them */
-<span class="nc" id="L170">        final Currency myCurrency = theCurrency.getCurrency();</span>
-<span class="nc" id="L171">        theValues = new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
-<span class="nc" id="L172">        theBaseValues = new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
-<span class="nc" id="L173">        initValues();</span>
-<span class="nc" id="L174">    }</span>
+<span class="nc" id="L171">        final Currency myCurrency = theCurrency.getCurrency();</span>
+<span class="nc" id="L172">        theValues = new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
+<span class="nc" id="L173">        theBaseValues = new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
+<span class="nc" id="L174">        initValues();</span>
+<span class="nc" id="L175">    }</span>
 
     /**
      * Constructor.
@@ -180,28 +181,28 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysisControl pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucket pBase,
-<span class="nc" id="L185">                                             final OceanusDate pDate) {</span>
+<span class="nc" id="L186">                                             final OceanusDate pDate) {</span>
         /* Copy details from base */
-<span class="nc" id="L187">        thePortfolio = pBase.getPortfolio();</span>
-<span class="nc" id="L188">        theCurrency = pBase.getCurrency();</span>
-<span class="nc" id="L189">        isForeignCurrency = pBase.isForeignCurrency();</span>
+<span class="nc" id="L188">        thePortfolio = pBase.getPortfolio();</span>
+<span class="nc" id="L189">        theCurrency = pBase.getCurrency();</span>
+<span class="nc" id="L190">        isForeignCurrency = pBase.isForeignCurrency();</span>
 
         /* Create the cash bucket */
-<span class="nc" id="L192">        theCash = new MoneyWiseAnalysisPortfolioCashBucket(pAnalysis, pBase.getPortfolioCash(), pDate);</span>
+<span class="nc" id="L193">        theCash = new MoneyWiseAnalysisPortfolioCashBucket(pAnalysis, pBase.getPortfolioCash(), pDate);</span>
 
         /* Create the securities list */
-<span class="nc bnc" id="L195" title="All 2 branches missed.">        theSecurities = thePortfolio != null</span>
-<span class="nc" id="L196">                ? new MoneyWiseAnalysisSecurityBucketList(pAnalysis, pBase.getSecurities(), pDate)</span>
-<span class="nc" id="L197">                : null;</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">        theSecurities = thePortfolio != null</span>
+<span class="nc" id="L197">                ? new MoneyWiseAnalysisSecurityBucketList(pAnalysis, pBase.getSecurities(), pDate)</span>
+<span class="nc" id="L198">                : null;</span>
 
         /* Create the value maps and initialise them */
-<span class="nc" id="L200">        final Currency myCurrency = theCurrency.getCurrency();</span>
-<span class="nc" id="L201">        theValues = new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
-<span class="nc" id="L202">        theBaseValues = new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
-<span class="nc" id="L203">        initValues();</span>
-<span class="nc" id="L204">    }</span>
+<span class="nc" id="L201">        final Currency myCurrency = theCurrency.getCurrency();</span>
+<span class="nc" id="L202">        theValues = new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
+<span class="nc" id="L203">        theBaseValues = new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
+<span class="nc" id="L204">        initValues();</span>
+<span class="nc" id="L205">    }</span>
 
     /**
      * Constructor.
@@ -210,42 +211,42 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @param pBase     the underlying bucket
      * @param pRange    the date range for the bucket
      */
-    private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysisControl pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucket pBase,
-<span class="nc" id="L215">                                             final OceanusDateRange pRange) {</span>
+<span class="nc" id="L216">                                             final OceanusDateRange pRange) {</span>
         /* Copy details from base */
-<span class="nc" id="L217">        thePortfolio = pBase.getPortfolio();</span>
-<span class="nc" id="L218">        theCurrency = pBase.getCurrency();</span>
-<span class="nc" id="L219">        isForeignCurrency = pBase.isForeignCurrency();</span>
+<span class="nc" id="L218">        thePortfolio = pBase.getPortfolio();</span>
+<span class="nc" id="L219">        theCurrency = pBase.getCurrency();</span>
+<span class="nc" id="L220">        isForeignCurrency = pBase.isForeignCurrency();</span>
 
         /* Create the cash bucket */
-<span class="nc" id="L222">        theCash = new MoneyWiseAnalysisPortfolioCashBucket(pAnalysis, pBase.getPortfolioCash(), pRange);</span>
+<span class="nc" id="L223">        theCash = new MoneyWiseAnalysisPortfolioCashBucket(pAnalysis, pBase.getPortfolioCash(), pRange);</span>
 
         /* Create the securities list */
-<span class="nc bnc" id="L225" title="All 2 branches missed.">        theSecurities = thePortfolio != null</span>
-<span class="nc" id="L226">                ? new MoneyWiseAnalysisSecurityBucketList(pAnalysis, pBase.getSecurities(), pRange)</span>
-<span class="nc" id="L227">                : null;</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">        theSecurities = thePortfolio != null</span>
+<span class="nc" id="L227">                ? new MoneyWiseAnalysisSecurityBucketList(pAnalysis, pBase.getSecurities(), pRange)</span>
+<span class="nc" id="L228">                : null;</span>
 
         /* Create the value maps and initialise them */
-<span class="nc" id="L230">        final Currency myCurrency = theCurrency.getCurrency();</span>
-<span class="nc" id="L231">        theValues = new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
-<span class="nc" id="L232">        theBaseValues = new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
-<span class="nc" id="L233">        initValues();</span>
-<span class="nc" id="L234">    }</span>
+<span class="nc" id="L231">        final Currency myCurrency = theCurrency.getCurrency();</span>
+<span class="nc" id="L232">        theValues = new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
+<span class="nc" id="L233">        theBaseValues = new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
+<span class="nc" id="L234">        initValues();</span>
+<span class="nc" id="L235">    }</span>
 
     @Override
     public MetisFieldSet&lt;MoneyWiseAnalysisPortfolioBucket&gt; getDataFieldSet() {
-<span class="nc" id="L238">        return FIELD_DEFS;</span>
+<span class="nc" id="L239">        return FIELD_DEFS;</span>
     }
 
     @Override
     public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L243">        return toString();</span>
+<span class="nc" id="L244">        return toString();</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L248">        return getName();</span>
+<span class="nc" id="L249">        return getName();</span>
     }
 
     /**
@@ -254,7 +255,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @return true/false
      */
     public Boolean isForeignCurrency() {
-<span class="nc" id="L257">        return isForeignCurrency;</span>
+<span class="nc" id="L258">        return isForeignCurrency;</span>
     }
 
     /**
@@ -263,7 +264,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @return true/false
      */
     public Boolean hasForeignCurrency() {
-<span class="nc" id="L266">        return hasForeignCurrency;</span>
+<span class="nc" id="L267">        return hasForeignCurrency;</span>
     }
 
     /**
@@ -272,14 +273,14 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @return the name
      */
     public String getName() {
-<span class="nc bnc" id="L275" title="All 2 branches missed.">        return thePortfolio == null</span>
-<span class="nc" id="L276">                ? NAME_TOTALS.getId()</span>
-<span class="nc" id="L277">                : thePortfolio.getName();</span>
+<span class="nc bnc" id="L276" title="All 2 branches missed.">        return thePortfolio == null</span>
+<span class="nc" id="L277">                ? NAME_TOTALS.getId()</span>
+<span class="nc" id="L278">                : thePortfolio.getName();</span>
     }
 
     @Override
     public Integer getIndexedId() {
-<span class="nc" id="L282">        return thePortfolio.getIndexedId();</span>
+<span class="nc" id="L283">        return thePortfolio.getIndexedId();</span>
     }
 
     /**
@@ -288,7 +289,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @return the portfolio
      */
     public MoneyWisePortfolio getPortfolio() {
-<span class="nc" id="L291">        return thePortfolio;</span>
+<span class="nc" id="L292">        return thePortfolio;</span>
     }
 
     /**
@@ -297,7 +298,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @return the currency
      */
     public MoneyWiseCurrency getCurrency() {
-<span class="nc" id="L300">        return theCurrency;</span>
+<span class="nc" id="L301">        return theCurrency;</span>
     }
 
     /**
@@ -306,7 +307,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @return the bucket
      */
     public MoneyWiseAnalysisPortfolioCashBucket getPortfolioCash() {
-<span class="fc" id="L309">        return theCash;</span>
+<span class="fc" id="L310">        return theCash;</span>
     }
 
     /**
@@ -315,7 +316,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @return the buckets
      */
     public MoneyWiseAnalysisSecurityBucketList getSecurities() {
-<span class="nc" id="L318">        return theSecurities;</span>
+<span class="nc" id="L319">        return theSecurities;</span>
     }
 
     /**
@@ -324,7 +325,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @return the iterator
      */
     public Iterator&lt;MoneyWiseAnalysisSecurityBucket&gt; securityIterator() {
-<span class="nc" id="L327">        return theSecurities.iterator();</span>
+<span class="nc" id="L328">        return theSecurities.iterator();</span>
     }
 
     /**
@@ -333,7 +334,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @return the values
      */
     public MoneyWiseAnalysisSecurityValues getValues() {
-<span class="nc" id="L336">        return theValues;</span>
+<span class="nc" id="L337">        return theValues;</span>
     }
 
     /**
@@ -342,7 +343,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      * @return the base values
      */
     public MoneyWiseAnalysisSecurityValues getBaseValues() {
-<span class="nc" id="L345">        return theBaseValues;</span>
+<span class="nc" id="L346">        return theBaseValues;</span>
     }
 
     /**
@@ -354,8 +355,8 @@ public final class MoneyWiseAnalysisPortfolioBucket
     void setValue(final MoneyWiseAnalysisSecurityAttr pAttr,
                   final OceanusMoney pValue) {
         /* Set the value into the list */
-<span class="fc" id="L357">        theValues.setValue(pAttr, pValue);</span>
-<span class="fc" id="L358">    }</span>
+<span class="fc" id="L358">        theValues.setValue(pAttr, pValue);</span>
+<span class="fc" id="L359">    }</span>
 
     /**
      * Get an attribute value.
@@ -365,12 +366,12 @@ public final class MoneyWiseAnalysisPortfolioBucket
      */
     private Object getAttributeValue(final MoneyWiseAnalysisSecurityAttr pAttr) {
         /* Access value of object */
-<span class="nc" id="L368">        final Object myValue = getValue(pAttr);</span>
+<span class="nc" id="L369">        final Object myValue = getValue(pAttr);</span>
 
         /* Return the value */
-<span class="nc bnc" id="L371" title="All 2 branches missed.">        return myValue != null</span>
-<span class="nc" id="L372">                ? myValue</span>
-<span class="nc" id="L373">                : MetisDataFieldValue.SKIP;</span>
+<span class="nc bnc" id="L372" title="All 2 branches missed.">        return myValue != null</span>
+<span class="nc" id="L373">                ? myValue</span>
+<span class="nc" id="L374">                : MetisDataFieldValue.SKIP;</span>
     }
 
     /**
@@ -381,7 +382,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      */
     private Object getValue(final MoneyWiseAnalysisSecurityAttr pAttr) {
         /* Obtain the attribute */
-<span class="nc" id="L384">        return theValues.getValue(pAttr);</span>
+<span class="nc" id="L385">        return theValues.getValue(pAttr);</span>
     }
 
     /**
@@ -389,23 +390,23 @@ public final class MoneyWiseAnalysisPortfolioBucket
      */
     private void initValues() {
         /* Determine currency */
-<span class="pc bpc" id="L392" title="1 of 2 branches missed.">        final Currency myCurrency = theCurrency == null</span>
-<span class="fc" id="L393">                ? MoneyWiseAnalysisAccountBucket.DEFAULT_CURRENCY</span>
-<span class="pc" id="L394">                : theCurrency.getCurrency();</span>
+<span class="pc bpc" id="L393" title="1 of 2 branches missed.">        final Currency myCurrency = theCurrency == null</span>
+<span class="fc" id="L394">                ? MoneyWiseAnalysisAccountBucket.DEFAULT_CURRENCY</span>
+<span class="pc" id="L395">                : theCurrency.getCurrency();</span>
 
         /* Create valuation fields for the portfolio */
-<span class="fc" id="L397">        theValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, new OceanusMoney(myCurrency));</span>
-<span class="fc" id="L398">        theBaseValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, new OceanusMoney(myCurrency));</span>
+<span class="fc" id="L398">        theValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, new OceanusMoney(myCurrency));</span>
+<span class="fc" id="L399">        theBaseValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, new OceanusMoney(myCurrency));</span>
 
         /* Create profit fields for the portfolio */
-<span class="fc" id="L401">        theValues.setValue(MoneyWiseAnalysisSecurityAttr.PROFIT, new OceanusMoney(myCurrency));</span>
-<span class="fc" id="L402">        theBaseValues.setValue(MoneyWiseAnalysisSecurityAttr.PROFIT, new OceanusMoney(myCurrency));</span>
+<span class="fc" id="L402">        theValues.setValue(MoneyWiseAnalysisSecurityAttr.PROFIT, new OceanusMoney(myCurrency));</span>
+<span class="fc" id="L403">        theBaseValues.setValue(MoneyWiseAnalysisSecurityAttr.PROFIT, new OceanusMoney(myCurrency));</span>
 
         /* Create market fields for the portfolio */
-<span class="fc" id="L405">        theValues.setValue(MoneyWiseAnalysisSecurityAttr.MARKETGROWTH, new OceanusMoney(myCurrency));</span>
-<span class="fc" id="L406">        theValues.setValue(MoneyWiseAnalysisSecurityAttr.CURRENCYFLUCT, new OceanusMoney(myCurrency));</span>
-<span class="fc" id="L407">        theValues.setValue(MoneyWiseAnalysisSecurityAttr.MARKETPROFIT, new OceanusMoney(myCurrency));</span>
-<span class="fc" id="L408">    }</span>
+<span class="fc" id="L406">        theValues.setValue(MoneyWiseAnalysisSecurityAttr.MARKETGROWTH, new OceanusMoney(myCurrency));</span>
+<span class="fc" id="L407">        theValues.setValue(MoneyWiseAnalysisSecurityAttr.CURRENCYFLUCT, new OceanusMoney(myCurrency));</span>
+<span class="fc" id="L408">        theValues.setValue(MoneyWiseAnalysisSecurityAttr.MARKETPROFIT, new OceanusMoney(myCurrency));</span>
+<span class="fc" id="L409">    }</span>
 
     /**
      * Obtain the SecurityBucket from this portfolio for a security holding.
@@ -415,7 +416,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      */
     public MoneyWiseAnalysisSecurityBucket getSecurityBucket(final MoneyWiseSecurityHolding pHolding) {
         /* Return the security bucket for the portfolio's list */
-<span class="nc" id="L418">        return theSecurities.getBucket(pHolding);</span>
+<span class="nc" id="L419">        return theSecurities.getBucket(pHolding);</span>
     }
 
     /**
@@ -426,24 +427,23 @@ public final class MoneyWiseAnalysisPortfolioBucket
      */
     public MoneyWiseAnalysisSecurityBucket findSecurityBucket(final MoneyWiseSecurity pSecurity) {
         /* Return the security bucket for the portfolio's list */
-<span class="nc" id="L429">        return theSecurities.findItemById(pSecurity.getIndexedId());</span>
+<span class="nc" id="L430">        return theSecurities.findItemById(pSecurity.getIndexedId());</span>
     }
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-<span class="nc bnc" id="L435" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L436">            return true;</span>
+<span class="nc bnc" id="L436" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L437">            return true;</span>
         }
-<span class="nc bnc" id="L438" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L439">            return false;</span>
+<span class="nc bnc" id="L439" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L440">            return false;</span>
         }
-<span class="nc bnc" id="L441" title="All 2 branches missed.">        if (!(pThat instanceof MoneyWiseAnalysisPortfolioBucket)) {</span>
-<span class="nc" id="L442">            return false;</span>
+<span class="nc bnc" id="L442" title="All 2 branches missed.">        if (!(pThat instanceof MoneyWiseAnalysisPortfolioBucket myThat)) {</span>
+<span class="nc" id="L443">            return false;</span>
         }
 
         /* Compare the Portfolios */
-<span class="nc" id="L446">        final MoneyWiseAnalysisPortfolioBucket myThat = (MoneyWiseAnalysisPortfolioBucket) pThat;</span>
 <span class="nc" id="L447">        return getPortfolio().equals(myThat.getPortfolio());</span>
     }
 
@@ -611,7 +611,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
      */
     public boolean isIdle() {
         /* Look for non-idle cash */
-<span class="nc bnc" id="L614" title="All 2 branches missed.">        if (Boolean.FALSE.equals(theCash.isIdle())) {</span>
+<span class="nc bnc" id="L614" title="All 2 branches missed.">        if (!theCash.isIdle()) {</span>
 <span class="nc" id="L615">            return false;</span>
         }
 
@@ -621,7 +621,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 <span class="nc" id="L621">            final MoneyWiseAnalysisSecurityBucket mySecurity = myIterator.next();</span>
 
             /* Look for active security */
-<span class="nc bnc" id="L624" title="All 2 branches missed.">            if (Boolean.FALSE.equals(mySecurity.isIdle())) {</span>
+<span class="nc bnc" id="L624" title="All 2 branches missed.">            if (!mySecurity.isIdle()) {</span>
 <span class="nc" id="L625">                return false;</span>
             }
 <span class="nc" id="L627">        }</span>
@@ -681,7 +681,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
         /**
          * The analysis.
          */
-        private final MoneyWiseAnalysis theAnalysis;
+        private final MoneyWiseAnalysisControl theAnalysis;
 
         /**
          * The list.
@@ -708,12 +708,12 @@ public final class MoneyWiseAnalysisPortfolioBucket
          *
          * @param pAnalysis the analysis
          */
-<span class="fc" id="L711">        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis) {</span>
+<span class="fc" id="L711">        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysisControl pAnalysis) {</span>
             /* Initialise class */
 <span class="fc" id="L713">            theAnalysis = pAnalysis;</span>
 <span class="fc" id="L714">            theTotals = allocateTotalsBucket();</span>
 <span class="fc" id="L715">            theList = new MetisListIndexed&lt;&gt;();</span>
-<span class="pc" id="L716">            theList.setComparator((l, r) -&gt; l.getPortfolio().compareTo(r.getPortfolio()));</span>
+<span class="fc" id="L716">            theList.setComparator(Comparator.comparing(MoneyWiseAnalysisPortfolioBucket::getPortfolio));</span>
 <span class="fc" id="L717">        }</span>
 
         /**
@@ -722,7 +722,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
          * @param pAnalysis the analysis
          * @param pBase     the base list
          */
-        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucketList pBase) {
             /* Initialise class */
 <span class="nc" id="L728">            this(pAnalysis);</span>
@@ -750,7 +750,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucketList pBase,
                                              final OceanusDate pDate) {
             /* Initialise class */
@@ -779,7 +779,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucketList pBase,
                                              final OceanusDateRange pRange) {
             /* Initialise class */
@@ -821,7 +821,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
          *
          * @return the analysis
          */
-        MoneyWiseAnalysis getAnalysis() {
+        MoneyWiseAnalysisControl getAnalysis() {
 <span class="nc" id="L825">            return theAnalysis;</span>
         }
 
@@ -955,7 +955,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
             /* Return the first portfolio in the list if it exists */
 <span class="nc bnc" id="L956" title="All 2 branches missed.">            return isEmpty()</span>
 <span class="nc" id="L957">                    ? null</span>
-<span class="nc" id="L958">                    : theList.getUnderlyingList().get(0);</span>
+<span class="nc" id="L958">                    : theList.getUnderlyingList().getFirst();</span>
         }
 
         /**
@@ -1090,4 +1090,4 @@ public final class MoneyWiseAnalysisPortfolioBucket
 <span class="fc" id="L1090">        }</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

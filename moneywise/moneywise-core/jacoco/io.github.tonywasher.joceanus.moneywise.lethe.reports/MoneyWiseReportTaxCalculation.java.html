@@ -16,12 +16,11 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.reports;
 
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportDelayedTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
-import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
-import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
@@ -32,6 +31,7 @@ import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxDueBucket;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxDueBucket.MoneyWiseTaxBandBucket;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxYear;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -98,14 +98,14 @@ public class MoneyWiseReportTaxCalculation
     public Document createReport(final MoneyWiseAnalysis pAnalysis) {
         /* Access the bucket lists */
 <span class="nc" id="L100">        final MoneyWiseTaxAnalysis myTaxAnalysis = pAnalysis.getTaxAnalysis();</span>
-<span class="nc" id="L101">        final MoneyWiseTaxYear myYear = myTaxAnalysis.getTaxYear();</span>
+<span class="nc" id="L101">        final MoneyWiseTaxYear myYear = (MoneyWiseTaxYear) myTaxAnalysis.getTaxYear();</span>
 
         /* Start the report */
 <span class="nc" id="L104">        final Element myBody = theBuilder.startReport();</span>
 <span class="nc" id="L105">        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myYear.getYearEnd()));</span>
 
         /* Format the header */
-<span class="nc" id="L108">        final MetisHTMLTable myTable = theBuilder.startTable(myBody);</span>
+<span class="nc" id="L108">        final MetisReportHTMLTable myTable = theBuilder.startTable(myBody);</span>
 <span class="nc" id="L109">        theBuilder.startHdrRow(myTable);</span>
 <span class="nc" id="L110">        theBuilder.makeTitleCell(myTable, MoneyWiseStaticResource.TAXBASIS_NAME.getValue());</span>
 <span class="nc" id="L111">        theBuilder.makeTitleCell(myTable, TEXT_INCOME);</span>
@@ -128,7 +128,7 @@ public class MoneyWiseReportTaxCalculation
 
         /* Access the Totals */
 <span class="nc" id="L130">        theBuilder.startTotalRow(myTable);</span>
-<span class="nc" id="L131">        theBuilder.makeTotalCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);</span>
+<span class="nc" id="L131">        theBuilder.makeTotalCell(myTable, MoneyWiseReportConstants.TEXT_TOTAL);</span>
 <span class="nc" id="L132">        theBuilder.makeTotalCell(myTable, myTaxAnalysis.getTaxableIncome());</span>
 <span class="nc" id="L133">        theBuilder.makeTotalCell(myTable, myTaxAnalysis.getTaxDue());</span>
 <span class="nc" id="L134">        theBuilder.startTotalRow(myTable);</span>
@@ -148,10 +148,10 @@ public class MoneyWiseReportTaxCalculation
      * @param pParent  the parent table
      * @param pSummary the tax summary
      */
-    public void makeTaxReport(final MetisHTMLTable pParent,
+    public void makeTaxReport(final MetisReportHTMLTable pParent,
                               final MoneyWiseTaxDueBucket pSummary) {
         /* Format the detail */
-<span class="nc" id="L154">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+<span class="nc" id="L154">        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
 <span class="nc" id="L155">        theBuilder.startRow(myTable);</span>
 <span class="nc" id="L156">        theBuilder.makeTitleCell(myTable, TEXT_INCOME);</span>
 <span class="nc" id="L157">        theBuilder.makeTitleCell(myTable, TEXT_RATE);</span>
@@ -179,8 +179,8 @@ public class MoneyWiseReportTaxCalculation
     }
 
     @Override
-    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+    public MetisReportHTMLTable createDelayedTable(final MetisReportDelayedTable pTable) {
 <span class="nc" id="L183">        return null;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

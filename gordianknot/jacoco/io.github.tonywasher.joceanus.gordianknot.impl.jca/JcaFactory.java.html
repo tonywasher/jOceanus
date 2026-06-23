@@ -26,6 +26,9 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianFactoryGe
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameters;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianValidator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.factory.GordianCoreFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.cipher.JcaCipherFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.digest.JcaDigestFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.mac.JcaMacFactory;
 
 /**
  * Jca Factory.
@@ -42,32 +45,32 @@ public class JcaFactory
     public JcaFactory(final GordianFactoryGenerator pGenerator,
                       final GordianParameters pParameters) throws GordianException {
         /* initialize underlying factory */
-<span class="fc" id="L45">        super(pGenerator, pParameters);</span>
-<span class="fc" id="L46">    }</span>
+<span class="fc" id="L48">        super(pGenerator, pParameters);</span>
+<span class="fc" id="L49">    }</span>
 
     @Override
     public GordianDigestFactory newDigestFactory(final GordianBaseFactory pFactory) {
-<span class="fc" id="L50">        return new JcaDigestFactory(this);</span>
+<span class="fc" id="L53">        return new JcaDigestFactory(this);</span>
     }
 
     @Override
     public GordianCipherFactory newCipherFactory(final GordianBaseFactory pFactory) {
-<span class="fc" id="L55">        return new JcaCipherFactory(this);</span>
+<span class="fc" id="L58">        return new JcaCipherFactory(this);</span>
     }
 
     @Override
     public GordianMacFactory newMacFactory(final GordianBaseFactory pFactory) {
-<span class="fc" id="L60">        return new JcaMacFactory(this);</span>
+<span class="fc" id="L63">        return new JcaMacFactory(this);</span>
     }
 
     @Override
     public GordianValidator newValidator() {
-<span class="fc" id="L65">        return new JcaValidator();</span>
+<span class="fc" id="L68">        return new JcaValidator();</span>
     }
 
     @Override
     public GordianAsyncFactory newAsyncFactory(final GordianBaseFactory pFactory) {
-<span class="fc" id="L70">        return new JcaAsyncFactory(this);</span>
+<span class="fc" id="L73">        return new JcaAsyncFactory(this);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

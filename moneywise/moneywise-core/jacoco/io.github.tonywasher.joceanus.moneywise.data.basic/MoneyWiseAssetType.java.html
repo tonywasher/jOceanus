@@ -18,70 +18,71 @@ package io.github.tonywasher.joceanus.moneywise.data.basic;
 
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * Enumeration of Asset Types.
  */
-<span class="fc" id="L25">public enum MoneyWiseAssetType {</span>
+<span class="fc" id="L26">public enum MoneyWiseAssetType {</span>
     /**
      * Deposit.
      */
-<span class="fc" id="L29">    DEPOSIT(1),</span>
+<span class="fc" id="L30">    DEPOSIT(1),</span>
 
     /**
      * Cash.
      */
-<span class="fc" id="L34">    CASH(2),</span>
+<span class="fc" id="L35">    CASH(2),</span>
 
     /**
      * AutoExpense.
      */
-<span class="fc" id="L39">    AUTOEXPENSE(3),</span>
+<span class="fc" id="L40">    AUTOEXPENSE(3),</span>
 
     /**
      * Portfolio.
      */
-<span class="fc" id="L44">    PORTFOLIO(4),</span>
+<span class="fc" id="L45">    PORTFOLIO(4),</span>
 
     /**
      * Loan.
      */
-<span class="fc" id="L49">    LOAN(5),</span>
+<span class="fc" id="L50">    LOAN(5),</span>
 
     /**
      * Security.
      */
-<span class="fc" id="L54">    SECURITY(6),</span>
+<span class="fc" id="L55">    SECURITY(6),</span>
 
     /**
      * Payee.
      */
-<span class="fc" id="L59">    PAYEE(7),</span>
+<span class="fc" id="L60">    PAYEE(7),</span>
 
     /**
      * SecurityHolding.
      */
-<span class="fc" id="L64">    SECURITYHOLDING(8),</span>
+<span class="fc" id="L65">    SECURITYHOLDING(8),</span>
 
     /**
      * PortfolioCash.
      */
-<span class="fc" id="L69">    PORTFOLIOCASH(9),</span>
+<span class="fc" id="L70">    PORTFOLIOCASH(9),</span>
 
     /**
      * TransactionCategory.
      */
-<span class="fc" id="L74">    TRANSACTIONCATEGORY(10),</span>
+<span class="fc" id="L75">    TRANSACTIONCATEGORY(10),</span>
 
     /**
      * TaxBasis.
      */
-<span class="fc" id="L79">    TAXBASIS(11),</span>
+<span class="fc" id="L80">    TAXBASIS(11),</span>
 
     /**
      * TaxBasisAccount.
      */
-<span class="fc" id="L84">    TAXBASISACCOUNT(12);</span>
+<span class="fc" id="L85">    TAXBASISACCOUNT(12);</span>
 
     /**
      * The asset shift for external Ids.
@@ -118,9 +119,9 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      *
      * @param uId the Id
      */
-<span class="fc" id="L121">    MoneyWiseAssetType(final int uId) {</span>
-<span class="fc" id="L122">        theId = uId;</span>
-<span class="fc" id="L123">    }</span>
+<span class="fc" id="L122">    MoneyWiseAssetType(final int uId) {</span>
+<span class="fc" id="L123">        theId = uId;</span>
+<span class="fc" id="L124">    }</span>
 
     /**
      * Obtain class Id.
@@ -128,7 +129,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @return the Id
      */
     public int getId() {
-<span class="fc" id="L131">        return theId;</span>
+<span class="fc" id="L132">        return theId;</span>
     }
 
     /**
@@ -140,8 +141,8 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      */
     public static long createExternalId(final MoneyWiseAssetType pType,
                                         final long pBaseId) {
-<span class="fc" id="L143">        return pBaseId</span>
-<span class="fc" id="L144">                + (((long) pType.getId()) &lt;&lt; ASSETSHIFT);</span>
+<span class="fc" id="L144">        return pBaseId</span>
+<span class="fc" id="L145">                + (((long) pType.getId()) &lt;&lt; ASSETSHIFT);</span>
     }
 
     /**
@@ -155,10 +156,9 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
     public static long createExternalId(final MoneyWiseAssetType pType,
                                         final int pMajorId,
                                         final int pBaseId) {
-<span class="fc" id="L158">        final long myBase = pBaseId;</span>
 <span class="fc" id="L159">        final long myMajor = ((long) pMajorId) &lt;&lt; Integer.SIZE;</span>
 <span class="fc" id="L160">        final long myAsset = ((long) pType.getId()) &lt;&lt; ASSETSHIFT;</span>
-<span class="fc" id="L161">        return myAsset + myMajor + myBase;</span>
+<span class="fc" id="L161">        return myAsset + myMajor + pBaseId;</span>
     }
 
     /**
@@ -215,7 +215,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
         /* If we have not yet loaded the name */
 <span class="nc bnc" id="L216" title="All 2 branches missed.">        if (theName == null) {</span>
             /* Load the name */
-<span class="nc" id="L218">            theName = MoneyWiseBasicResource.getKeyForAssetType(this).getValue();</span>
+<span class="nc" id="L218">            theName = bundleIdForAssetType(this).getValue();</span>
         }
 
         /* return the name */
@@ -345,5 +345,26 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
     public boolean isAutoExpense() {
 <span class="fc bfc" id="L346" title="All 2 branches covered.">        return this == AUTOEXPENSE;</span>
     }
+
+    /**
+     * Obtain the resource bundleId for the assetType.
+     *
+     * @param pType the dataType
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForAssetType(final MoneyWiseAssetType pType) {
+        /* Create the map and return it */
+<span class="nc bnc" id="L357" title="All 9 branches missed.">        return switch (pType) {</span>
+<span class="nc" id="L358">            case PAYEE -&gt; MoneyWiseBasicResource.ASSETTYPE_PAYEE;</span>
+<span class="nc" id="L359">            case SECURITY -&gt; MoneyWiseBasicResource.ASSETTYPE_SECURITY;</span>
+<span class="nc" id="L360">            case DEPOSIT -&gt; MoneyWiseBasicResource.ASSETTYPE_DEPOSIT;</span>
+<span class="nc" id="L361">            case CASH -&gt; MoneyWiseBasicResource.ASSETTYPE_CASH;</span>
+<span class="nc" id="L362">            case AUTOEXPENSE -&gt; MoneyWiseBasicResource.ASSETTYPE_AUTOEXPENSE;</span>
+<span class="nc" id="L363">            case LOAN -&gt; MoneyWiseBasicResource.ASSETTYPE_LOAN;</span>
+<span class="nc" id="L364">            case PORTFOLIO -&gt; MoneyWiseBasicResource.ASSETTYPE_PORTFOLIO;</span>
+<span class="nc" id="L365">            case SECURITYHOLDING -&gt; MoneyWiseBasicResource.ASSETTYPE_SECURITYHOLDING;</span>
+<span class="nc" id="L366">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

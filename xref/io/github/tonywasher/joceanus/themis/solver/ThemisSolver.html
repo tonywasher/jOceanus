@@ -25,64 +25,106 @@
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.themis.solver;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.solver.mapper.ThemisMapper;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.solver.mapper.ThemisMapperReference;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverModule;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverPackage;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverProject;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <em class="jxr_javadoccomment"> * Solver.</em>
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="ThemisSolver" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/ThemisSolver.html#ThemisSolver">ThemisSolver</a> {
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment">     * The error.</em>
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>      <strong class="jxr_keyword">private</strong> <a name="OceanusException" href="../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> theError;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment">     * Constructor.</em>
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">     * @param pProject the project</em>
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.ThemisParser;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.solver.mapper.ThemisMapper;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.solver.mapper.ThemisMapperReference;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverModule;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverPackage;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverProject;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment"> * Solver.</em>
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="ThemisSolver" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/ThemisSolver.html#ThemisSolver">ThemisSolver</a> {
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">     * The SolverProject.</em>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">public</strong> <a name="ThemisSolver" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/ThemisSolver.html#ThemisSolver">ThemisSolver</a>(<strong class="jxr_keyword">final</strong> <a name="ThemisSolverProject" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/proj/ThemisSolverProject.html#ThemisSolverProject">ThemisSolverProject</a> pProject) {
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>          <em class="jxr_comment">/* Protect against exceptions */</em>
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>          <strong class="jxr_keyword">try</strong> (<a name="ThemisMapper" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/mapper/ThemisMapper.html#ThemisMapper">ThemisMapper</a> myMapper = <strong class="jxr_keyword">new</strong> <a name="ThemisMapper" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/mapper/ThemisMapper.html#ThemisMapper">ThemisMapper</a>(pProject)) {
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>              <em class="jxr_comment">/* Loop through all packages */</em>
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>              <strong class="jxr_keyword">for</strong> (<a name="ThemisSolverModule" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/proj/ThemisSolverModule.html#ThemisSolverModule">ThemisSolverModule</a> myModule : pProject.getModules()) {
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>                  <strong class="jxr_keyword">for</strong> (<a name="ThemisSolverPackage" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/proj/ThemisSolverPackage.html#ThemisSolverPackage">ThemisSolverPackage</a> myPackage : myModule.getPackages().values()) {
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>                      <em class="jxr_comment">/* preProcess each package */</em>
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>                      myMapper.preProcessPackage(myPackage);
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>                  }
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>              }
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>  
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>              <em class="jxr_comment">/* Loop through all packages */</em>
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>              <strong class="jxr_keyword">for</strong> (<a name="ThemisSolverModule" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/proj/ThemisSolverModule.html#ThemisSolverModule">ThemisSolverModule</a> myModule : pProject.getModules()) {
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>                  <strong class="jxr_keyword">for</strong> (<a name="ThemisSolverPackage" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/proj/ThemisSolverPackage.html#ThemisSolverPackage">ThemisSolverPackage</a> myPackage : myModule.getPackages().values()) {
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>                      <em class="jxr_comment">/* Process each package */</em>
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>                      myMapper.processPackage(myPackage);
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>                  }
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>              }
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>  
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>              <em class="jxr_comment">/* Process all references */</em>
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>              <strong class="jxr_keyword">new</strong> <a name="ThemisMapperReference" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/mapper/ThemisMapperReference.html#ThemisMapperReference">ThemisMapperReference</a>().processReferences(pProject);
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="ThemisSolverProject" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/proj/ThemisSolverProject.html#ThemisSolverProject">ThemisSolverProject</a> theProject;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment">     * Constructor.</em>
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">     * @param pParser the parser</em>
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">     * @throws OceanusException on error</em>
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>      <strong class="jxr_keyword">public</strong> <a name="ThemisSolver" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/ThemisSolver.html#ThemisSolver">ThemisSolver</a>(<strong class="jxr_keyword">final</strong> <a name="ThemisParser" href="../../../../../../io/github/tonywasher/joceanus/themis/parser/ThemisParser.html#ThemisParser">ThemisParser</a> pParser) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>          <em class="jxr_comment">/* Create SolverProject */</em>
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>          theProject = <strong class="jxr_keyword">new</strong> <a name="ThemisSolverProject" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/proj/ThemisSolverProject.html#ThemisSolverProject">ThemisSolverProject</a>(pParser);
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>          <strong class="jxr_keyword">final</strong> List&lt;ThemisSolverModule&gt; myModules = theProject.getModules();
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>          <em class="jxr_comment">/* Obtain the reporter */</em>
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>          <strong class="jxr_keyword">final</strong> <a name="TethysUIThreadStatusReport" href="../../../../../../io/github/tonywasher/joceanus/tethys/api/thread/TethysUIThreadStatusReport.html#TethysUIThreadStatusReport">TethysUIThreadStatusReport</a> myReport = pParser.getReporter();
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>          <em class="jxr_comment">/* Protect against exceptions */</em>
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">try</strong> (<a name="ThemisMapper" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/mapper/ThemisMapper.html#ThemisMapper">ThemisMapper</a> myMapper = <strong class="jxr_keyword">new</strong> <a name="ThemisMapper" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/mapper/ThemisMapper.html#ThemisMapper">ThemisMapper</a>(theProject)) {
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>              <em class="jxr_comment">/* Obtain the active profile */</em>
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>              <a name="OceanusProfile" href="../../../../../../io/github/tonywasher/joceanus/oceanus/profile/OceanusProfile.html#OceanusProfile">OceanusProfile</a> myTask = myReport.getActiveTask();
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>              myTask = myTask.startTask(ThemisDataResource.TASK_SOLVER);
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>          } <strong class="jxr_keyword">catch</strong> (<a name="OceanusException" href="../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> e) {
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>              theError = e;
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>          }
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      }
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>  
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">     * Obtain the error.</em>
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">     * @return the error</em>
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">public</strong> <a name="OceanusException" href="../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> getError() {
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">return</strong> theError;
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>      }
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>  }
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>              <em class="jxr_comment">/* Loop through all modules */</em>
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>              myReport.initTask(ThemisDataResource.TASK_SOLVERPREPROCESS);
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>              myReport.setNumStages(myModules.size());
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>              <a name="OceanusProfile" href="../../../../../../io/github/tonywasher/joceanus/oceanus/profile/OceanusProfile.html#OceanusProfile">OceanusProfile</a> mySubTask = myTask.startTask(ThemisDataResource.TASK_SOLVERPREPROCESS);
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>              <strong class="jxr_keyword">for</strong> (<a name="ThemisSolverModule" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/proj/ThemisSolverModule.html#ThemisSolverModule">ThemisSolverModule</a> myModule : myModules) {
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>                  <em class="jxr_comment">/* Update reporter and profile */</em>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>                  <strong class="jxr_keyword">final</strong> Map&lt;String, ThemisSolverPackage&gt; myPackages = myModule.getPackages();
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>                  <strong class="jxr_keyword">final</strong> String myName = myModule.getUnderlyingModule().getName();
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>                  myReport.setNewStage(myName);
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>                  myReport.setNumSteps(myPackages.size());
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>                  mySubTask.startTask(myName);
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>                  <em class="jxr_comment">/* Loop through all packages */</em>
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>                  <strong class="jxr_keyword">for</strong> (<a name="ThemisSolverPackage" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/proj/ThemisSolverPackage.html#ThemisSolverPackage">ThemisSolverPackage</a> myPackage : myPackages.values()) {
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>                      <em class="jxr_comment">/* preProcess each package */</em>
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>                      myReport.setNextStep();
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>                      myMapper.preProcessPackage(myPackage);
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>                  }
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>              }
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>  
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>              <em class="jxr_comment">/* Loop through all modules */</em>
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>              myReport.initTask(ThemisDataResource.TASK_SOLVERPROCESS);
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>              myReport.setNumStages(myModules.size());
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>              mySubTask = myTask.startTask(ThemisDataResource.TASK_SOLVERPROCESS);
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>              <strong class="jxr_keyword">for</strong> (<a name="ThemisSolverModule" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/proj/ThemisSolverModule.html#ThemisSolverModule">ThemisSolverModule</a> myModule : myModules) {
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>                  <em class="jxr_comment">/* Update reporter and profile */</em>
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>                  <strong class="jxr_keyword">final</strong> String myName = myModule.getUnderlyingModule().getName();
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>                  myReport.setNewStage(myName);
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>                  <strong class="jxr_keyword">final</strong> Map&lt;String, ThemisSolverPackage&gt; myPackages = myModule.getPackages();
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>                  myReport.setNumSteps(myPackages.size());
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>                  mySubTask.startTask(myName);
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>  
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>                  <em class="jxr_comment">/* Loop through all packages */</em>
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>                  <strong class="jxr_keyword">for</strong> (<a name="ThemisSolverPackage" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/proj/ThemisSolverPackage.html#ThemisSolverPackage">ThemisSolverPackage</a> myPackage : myPackages.values()) {
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>                      <em class="jxr_comment">/* Process each package */</em>
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>                      myReport.setNextStep();
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>                      myMapper.processPackage(myPackage);
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>                  }
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>             }
+<a class="jxr_linenumber" name="L101" href="#L101">101</a> 
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>             <em class="jxr_comment">/* Resolve all references */</em>
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>             myTask.startTask(ThemisDataResource.TASK_RESOLVING);
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>             <strong class="jxr_keyword">new</strong> <a name="ThemisMapperReference" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/mapper/ThemisMapperReference.html#ThemisMapperReference">ThemisMapperReference</a>().processReferences(theProject);
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>             myTask.end();
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>         }
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>     }
+<a class="jxr_linenumber" name="L108" href="#L108">108</a> 
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L110" href="#L110">110</a> <em class="jxr_javadoccomment">     * Obtain the project.</em>
+<a class="jxr_linenumber" name="L111" href="#L111">111</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L112" href="#L112">112</a> <em class="jxr_javadoccomment">     * @return the project</em>
+<a class="jxr_linenumber" name="L113" href="#L113">113</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>     <strong class="jxr_keyword">public</strong> <a name="ThemisSolverProject" href="../../../../../../io/github/tonywasher/joceanus/themis/solver/proj/ThemisSolverProject.html#ThemisSolverProject">ThemisSolverProject</a> getProject() {
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>         <strong class="jxr_keyword">return</strong> theProject;
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>     }
+<a class="jxr_linenumber" name="L117" href="#L117">117</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

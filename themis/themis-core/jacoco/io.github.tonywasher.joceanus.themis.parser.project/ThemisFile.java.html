@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisFile.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.parser.project</a> &gt; <span class="el_source">ThemisFile.java</span></div><h1>ThemisFile.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.parser.project;
+
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisNodeInstance;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisParserDef;
+import io.github.tonywasher.joceanus.themis.parser.node.ThemisNodeCompilationUnit;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Analysis representation of a java file.
+ */
+public class ThemisFile
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L41">    private static final MetisFieldSet&lt;ThemisFile&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisFile.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L47">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_NAME, ThemisFile::getName);</span>
+<span class="fc" id="L48">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_CLASSES, ThemisFile::getClasses);</span>
+<span class="fc" id="L49">    }</span>
+
+    /**
+     * The java suffix.
+     */
+    public static final String SFX_JAVA = &quot;.java&quot;;
+
+    /**
+     * The location of the file.
+     */
+    private final File theLocation;
+
+    /**
+     * The name of the file.
+     */
+    private final String theName;
+
+    /**
+     * The class list.
+     */
+    private final List&lt;ThemisClassInstance&gt; theClasses;
+
+    /**
+     * The contents.
+     */
+    private ThemisNodeCompilationUnit theContents;
+
+    /**
+     * Constructor.
+     *
+     * @param pFile the file to analyse
+     */
+<span class="fc" id="L81">    ThemisFile(final File pFile) {</span>
+        /* Store the parameters */
+<span class="fc" id="L83">        theLocation = pFile;</span>
+<span class="fc" id="L84">        theName = pFile.getName().replace(SFX_JAVA, &quot;&quot;);</span>
+<span class="fc" id="L85">        theClasses = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L86">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisFile&gt; getDataFieldSet() {
+<span class="nc" id="L90">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L95">        return toString();</span>
+    }
+
+    /**
+     * Obtain the name of the fileClass.
+     *
+     * @return the name
+     */
+    public String getName() {
+<span class="nc" id="L104">        return theName;</span>
+    }
+
+    /**
+     * Obtain the location of the fileClass.
+     *
+     * @return the location
+     */
+    public String getLocation() {
+<span class="nc" id="L113">        return theLocation.getAbsolutePath();</span>
+    }
+
+    /**
+     * Obtain the contents.
+     *
+     * @return the contents
+     */
+    public ThemisNodeCompilationUnit getContents() {
+<span class="fc" id="L122">        return theContents;</span>
+    }
+
+    /**
+     * Obtain the classList.
+     *
+     * @return the classList
+     */
+    public List&lt;ThemisClassInstance&gt; getClasses() {
+<span class="fc" id="L131">        return theClasses;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L136">        return theName;</span>
+    }
+
+    /**
+     * Process the file.
+     *
+     * @param pParser the parser
+     * @throws OceanusException on error
+     */
+    void parseJavaCode(final ThemisParserDef pParser) throws OceanusException {
+        /* Set the current file */
+<span class="fc" id="L147">        pParser.setCurrentFile(theLocation);</span>
+
+        /* Parse the file */
+<span class="fc" id="L150">        theContents = (ThemisNodeCompilationUnit) pParser.parseJavaFile();</span>
+
+        /* Check that we have a class that is the same name as the file */
+<span class="fc" id="L153">        final ThemisClassInstance myClass = theContents.getContents();</span>
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        if (!theName.equals(myClass.getName())) {</span>
+<span class="nc" id="L155">            throw pParser.buildException(&quot;Incorrect name for class in file&quot;, ((ThemisNodeInstance) myClass).getNode());</span>
+        }
+
+        /* Obtain a copy of the classList from the parser */
+<span class="fc" id="L159">        theClasses.addAll(pParser.getClasses());</span>
+<span class="fc" id="L160">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

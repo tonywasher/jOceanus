@@ -16,18 +16,18 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxAnalysis.MoneyWiseTaxYearCtl;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 /**
  * The Tax Year.
  */
 public abstract class MoneyWiseTaxYear
-        implements MetisFieldItem, MoneyWiseTaxCredit {
+        implements MetisFieldItem, MoneyWiseTaxYearCtl {
     /**
      * Local Report fields.
      */
@@ -79,4 +79,4 @@ public abstract class MoneyWiseTaxYear
 <span class="nc" id="L79">        return Integer.toString(theYear.getYear());</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

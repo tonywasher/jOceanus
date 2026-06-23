@@ -21,7 +21,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Thread to create tables in a database to represent a data set. Existing tables will be dropped
@@ -50,9 +50,9 @@ public class PrometheusThreadCreateTables
     }
 
     @Override
-    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public Void performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Initialise the status window */
-<span class="nc" id="L55">        pManager.initTask(getTaskName());</span>
+<span class="nc" id="L55">        pReport.initTask(getTaskName());</span>
 
         /* Access Database */
 <span class="nc" id="L58">        final PrometheusDataStore myDatabase = theControl.getDatabase();</span>
@@ -60,18 +60,18 @@ public class PrometheusThreadCreateTables
         /* Protect against failures */
         try {
             /* Create database tables */
-<span class="nc" id="L63">            myDatabase.createTables(pManager);</span>
+<span class="nc" id="L63">            myDatabase.createTables(pReport);</span>
 
             /* Re-base this set on a null set */
 <span class="nc" id="L66">            final PrometheusDataSet myNull = theControl.getNewData();</span>
 <span class="nc" id="L67">            final PrometheusDataSet myData = theControl.getData();</span>
-<span class="nc" id="L68">            myData.reBase(pManager, myNull);</span>
+<span class="nc" id="L68">            myData.reBase(pReport, myNull);</span>
 
             /* Derive the new set of updates */
 <span class="nc" id="L71">            theControl.deriveUpdates();</span>
 
             /* State that we have completed */
-<span class="nc" id="L74">            pManager.setCompletion();</span>
+<span class="nc" id="L74">            pReport.setCompletion();</span>
 
             /* Return null value */
 <span class="nc" id="L77">            return null;</span>
@@ -83,4 +83,4 @@ public class PrometheusThreadCreateTables
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

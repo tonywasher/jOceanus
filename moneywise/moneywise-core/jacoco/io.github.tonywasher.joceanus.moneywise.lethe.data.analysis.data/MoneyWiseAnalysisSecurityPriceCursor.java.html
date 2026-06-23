@@ -16,12 +16,12 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 
 import java.util.Currency;
@@ -77,18 +77,7 @@ public class MoneyWiseAnalysisSecurityPriceCursor {
      * @return the cursor
      */
     private MoneyWiseSecurityCursor getCursor(final MoneyWiseSecurity pSecurity) {
-        /* Look for existing cursor */
-<span class="nc" id="L81">        MoneyWiseSecurityCursor myCursor = theCursorMap.get(pSecurity);</span>
-
-        /* If we do not have a cursor */
-<span class="nc bnc" id="L84" title="All 2 branches missed.">        if (myCursor == null) {</span>
-            /* Allocate new cursor */
-<span class="nc" id="L86">            myCursor = new MoneyWiseSecurityCursor(pSecurity);</span>
-<span class="nc" id="L87">            theCursorMap.put(pSecurity, myCursor);</span>
-        }
-
-        /* return the cursor */
-<span class="nc" id="L91">        return myCursor;</span>
+<span class="nc" id="L80">        return theCursorMap.computeIfAbsent(pSecurity, s -&gt; new MoneyWiseSecurityCursor(pSecurity));</span>
     }
 
     /**
@@ -120,36 +109,36 @@ public class MoneyWiseAnalysisSecurityPriceCursor {
          *
          * @param pSecurity the security
          */
-<span class="nc" id="L123">        private MoneyWiseSecurityCursor(final MoneyWiseSecurity pSecurity) {</span>
+<span class="nc" id="L112">        private MoneyWiseSecurityCursor(final MoneyWiseSecurity pSecurity) {</span>
             /* Create the default price */
-<span class="nc" id="L125">            final Currency myCurrency = pSecurity.getCurrency();</span>
-<span class="nc" id="L126">            theCurrent = OceanusPrice.getWholeUnits(PrometheusDataInstanceMap.ONE, myCurrency);</span>
+<span class="nc" id="L114">            final Currency myCurrency = pSecurity.getCurrency();</span>
+<span class="nc" id="L115">            theCurrent = OceanusPrice.getWholeUnits(PrometheusDataInstanceMap.ONE, myCurrency);</span>
 
             /* Access the Price list */
-<span class="nc" id="L129">            theIterator = theDataMap.priceIterator(pSecurity);</span>
+<span class="nc" id="L118">            theIterator = theDataMap.priceIterator(pSecurity);</span>
 
             /* If we have an iterator */
-<span class="nc bnc" id="L132" title="All 2 branches missed.">            if (theIterator != null) {</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">            if (theIterator != null) {</span>
                 /* move the cursor */
-<span class="nc" id="L134">                moveCursor();</span>
+<span class="nc" id="L123">                moveCursor();</span>
             }
-<span class="nc" id="L136">        }</span>
+<span class="nc" id="L125">        }</span>
 
         /**
          * Move the cursor.
          */
         private void moveCursor() {
             /* If we have an iterator */
-<span class="nc bnc" id="L143" title="All 2 branches missed.">            if (theIterator.hasPrevious()) {</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">            if (theIterator.hasPrevious()) {</span>
                 /* access next rate and record */
-<span class="nc" id="L145">                final MoneyWiseSecurityPrice myPrice = theIterator.previous();</span>
-<span class="nc" id="L146">                theNextPrice = myPrice.getPrice();</span>
-<span class="nc" id="L147">                theNextDate = myPrice.getDate();</span>
-<span class="nc" id="L148">            } else {</span>
-<span class="nc" id="L149">                theNextDate = null;</span>
-<span class="nc" id="L150">                theNextPrice = null;</span>
+<span class="nc" id="L134">                final MoneyWiseSecurityPrice myPrice = theIterator.previous();</span>
+<span class="nc" id="L135">                theNextPrice = myPrice.getPrice();</span>
+<span class="nc" id="L136">                theNextDate = myPrice.getDate();</span>
+<span class="nc" id="L137">            } else {</span>
+<span class="nc" id="L138">                theNextDate = null;</span>
+<span class="nc" id="L139">                theNextPrice = null;</span>
             }
-<span class="nc" id="L152">        }</span>
+<span class="nc" id="L141">        }</span>
 
         /**
          * Obtain security price for date.
@@ -159,20 +148,20 @@ public class MoneyWiseAnalysisSecurityPriceCursor {
          */
         private OceanusPrice getSecurityPrice(final OceanusDate pDate) {
             /* if we have a later price */
-<span class="nc bnc" id="L162" title="All 2 branches missed.">            if (theNextDate != null) {</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">            if (theNextDate != null) {</span>
                 /* while we need to move the cursor */
-<span class="nc bnc" id="L164" title="All 2 branches missed.">                while (pDate.compareTo(theNextDate) &gt;= 0) {</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">                while (pDate.compareTo(theNextDate) &gt;= 0) {</span>
                     /* store price */
-<span class="nc" id="L166">                    theCurrent = theNextPrice;</span>
+<span class="nc" id="L155">                    theCurrent = theNextPrice;</span>
 
                     /* move the cursor */
-<span class="nc" id="L169">                    moveCursor();</span>
+<span class="nc" id="L158">                    moveCursor();</span>
                 }
             }
 
             /* Return the price */
-<span class="nc" id="L174">            return theCurrent;</span>
+<span class="nc" id="L163">            return theCurrent;</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

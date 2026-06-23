@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JcaPostQuantumEngine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.jca.agree</a> &gt; <span class="el_source">JcaPostQuantumEngine.java</span></div><h1>JcaPostQuantumEngine.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.agree;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaAgreementBase;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPublicKey;
+import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
+import org.bouncycastle.jcajce.spec.KEMExtractSpec;
+import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
+
+import javax.crypto.KeyGenerator;
+import java.security.InvalidAlgorithmParameterException;
+
+/**
+ * Jca PostQuantum Agreement.
+ */
+public class JcaPostQuantumEngine
+        extends JcaAgreementBase {
+    /**
+     * Key Agreement.
+     */
+    private final KeyGenerator theGenerator;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory   the security factory
+     * @param pSpec      the agreementSpec
+     * @param pGenerator the generator
+     */
+    JcaPostQuantumEngine(final GordianCoreAgreementFactory pFactory,
+                         final GordianCoreAgreementSpec pSpec,
+                         final KeyGenerator pGenerator) throws GordianException {
+        /* Initialize underlying class */
+<span class="fc" id="L57">        super(pFactory, pSpec);</span>
+
+        /* Store the generator */
+<span class="fc" id="L60">        theGenerator = pGenerator;</span>
+<span class="fc" id="L61">    }</span>
+
+    @Override
+    public void buildClientHello() throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Create encapsulation */
+<span class="fc" id="L68">            final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="fc" id="L69">            final KEMGenerateSpec mySpec = new KEMGenerateSpec.Builder(myPublic.getPublicKey(),</span>
+<span class="fc" id="L70">                    GordianSymKeyType.AES.toString(), GordianLength.LEN_256.getLength()).withKdfAlgorithm(derivationAlgorithmId()).build();</span>
+<span class="fc" id="L71">            theGenerator.init(mySpec, getRandom());</span>
+<span class="fc" id="L72">            final SecretKeyWithEncapsulation mySecret = (SecretKeyWithEncapsulation) theGenerator.generateKey();</span>
+
+            /* Store the encapsulation */
+<span class="fc" id="L75">            setEncapsulated(mySecret.getEncapsulation());</span>
+
+            /* Store secret */
+<span class="fc" id="L78">            storeSecret(mySecret.getEncoded());</span>
+
+<span class="nc" id="L80">        } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L81">            throw new GordianCryptoException(JcaAgreement.ERR_AGREEMENT, e);</span>
+<span class="fc" id="L82">        }</span>
+<span class="fc" id="L83">    }</span>
+
+    @Override
+    public void processClientHello() throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Create extractor */
+<span class="fc" id="L90">            final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getServerKeyPair());</span>
+<span class="fc" id="L91">            final KEMExtractSpec mySpec = new KEMExtractSpec.Builder(myPrivate.getPrivateKey(), getEncapsulated(),</span>
+<span class="fc" id="L92">                    GordianSymKeyType.AES.toString(), GordianLength.LEN_256.getLength()).withKdfAlgorithm(derivationAlgorithmId()).build();</span>
+<span class="fc" id="L93">            theGenerator.init(mySpec);</span>
+
+            /* Store secret */
+<span class="fc" id="L96">            final SecretKeyWithEncapsulation mySecret = (SecretKeyWithEncapsulation) theGenerator.generateKey();</span>
+<span class="fc" id="L97">            storeSecret(mySecret.getEncoded());</span>
+
+<span class="nc" id="L99">        } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L100">            throw new GordianCryptoException(JcaAgreement.ERR_AGREEMENT, e);</span>
+<span class="fc" id="L101">        }</span>
+<span class="fc" id="L102">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

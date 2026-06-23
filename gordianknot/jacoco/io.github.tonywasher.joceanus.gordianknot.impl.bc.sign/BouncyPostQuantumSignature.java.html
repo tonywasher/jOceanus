@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyPostQuantumSignature.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc.sign</a> &gt; <span class="el_source">BouncyPostQuantumSignature.java</span></div><h1>BouncyPostQuantumSignature.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairType;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
+import org.bouncycastle.pqc.crypto.MessageSigner;
+
+/**
+ * PostQuantum signer.
+ */
+public abstract class BouncyPostQuantumSignature
+        extends BouncyDigestSignature {
+    /**
+     * The Mayo Signer.
+     */
+    private MessageSigner theSigner;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pSpec    the signatureSpec.
+     * @throws GordianException on error
+     */
+    BouncyPostQuantumSignature(final GordianBaseFactory pFactory,
+                               final GordianSignatureSpec pSpec) throws GordianException {
+        /* Initialise underlying class */
+<span class="fc" id="L52">        super(pFactory, pSpec);</span>
+<span class="fc" id="L53">    }</span>
+
+    /**
+     * Set the signer.
+     *
+     * @param pSigner the signer
+     */
+    void setSigner(final MessageSigner pSigner) {
+<span class="fc" id="L61">        theSigner = pSigner;</span>
+<span class="fc" id="L62">    }</span>
+
+    @Override
+    public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
+        /* Initialise detail */
+<span class="fc" id="L67">        super.initForSigning(pParams);</span>
+<span class="fc" id="L68">        BouncyKeyPair.checkKeyPair(getKeyPair());</span>
+
+        /* Determine whether we should use random for signatures */
+<span class="fc" id="L71">        final GordianCoreKeyPairType myType = GordianCoreKeyPairType.mapCoreType(getSignatureSpec().getKeyPairType());</span>
+<span class="fc" id="L72">        final boolean useRandom = myType.useRandomForSignatures();</span>
+
+        /* Initialise and set the signer */
+<span class="fc" id="L75">        final BouncyPrivateKey&lt;?&gt; myPrivate = getKeyPair().getPrivateKey();</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        final CipherParameters myParms = useRandom</span>
+<span class="fc" id="L77">                ? new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom())</span>
+<span class="fc" id="L78">                : myPrivate.getPrivateKey();</span>
+<span class="fc" id="L79">        theSigner.init(true, myParms);</span>
+<span class="fc" id="L80">    }</span>
+
+    @Override
+    public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
+        /* Initialise detail */
+<span class="fc" id="L85">        super.initForVerify(pParams);</span>
+<span class="fc" id="L86">        BouncyKeyPair.checkKeyPair(getKeyPair());</span>
+
+        /* Initialise and set the signer */
+<span class="fc" id="L89">        final BouncyPublicKey&lt;?&gt; myPublic = getKeyPair().getPublicKey();</span>
+<span class="fc" id="L90">        theSigner.init(false, myPublic.getPublicKey());</span>
+<span class="fc" id="L91">    }</span>
+
+    @Override
+    public byte[] sign() throws GordianException {
+        /* Check that we are in signing mode */
+<span class="fc" id="L96">        checkMode(GordianSignatureMode.SIGN);</span>
+
+        /* Sign the message */
+<span class="fc" id="L99">        return theSigner.generateSignature(getDigest());</span>
+    }
+
+    @Override
+    public boolean verify(final byte[] pSignature) throws GordianException {
+        /* Check that we are in verify mode */
+<span class="fc" id="L105">        checkMode(GordianSignatureMode.VERIFY);</span>
+
+        /* Verify the message */
+<span class="fc" id="L108">        return theSigner.verifySignature(getDigest(), pSignature);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

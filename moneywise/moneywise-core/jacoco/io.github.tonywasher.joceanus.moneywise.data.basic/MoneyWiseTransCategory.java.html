@@ -31,7 +31,9 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -48,24 +50,24 @@ public final class MoneyWiseTransCategory
     /**
      * Object name.
      */
-<span class="fc" id="L51">    public static final String OBJECT_NAME = MoneyWiseBasicDataType.TRANSCATEGORY.getItemName();</span>
+<span class="fc" id="L53">    public static final String OBJECT_NAME = MoneyWiseBasicDataType.TRANSCATEGORY.getItemName();</span>
 
     /**
      * List name.
      */
-<span class="fc" id="L56">    public static final String LIST_NAME = MoneyWiseBasicDataType.TRANSCATEGORY.getListName();</span>
+<span class="fc" id="L58">    public static final String LIST_NAME = MoneyWiseBasicDataType.TRANSCATEGORY.getListName();</span>
 
     /**
      * Local Report fields.
      */
-<span class="fc" id="L61">    private static final MetisFieldVersionedSet&lt;MoneyWiseTransCategory&gt; FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(MoneyWiseTransCategory.class);</span>
+<span class="fc" id="L63">    private static final MetisFieldVersionedSet&lt;MoneyWiseTransCategory&gt; FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(MoneyWiseTransCategory.class);</span>
 
     /*
      * FieldIds.
      */
     static {
-<span class="fc" id="L67">        FIELD_DEFS.declareLinkField(MoneyWiseStaticDataType.TRANSTYPE);</span>
-<span class="fc" id="L68">    }</span>
+<span class="fc" id="L69">        FIELD_DEFS.declareLinkField(MoneyWiseStaticDataType.TRANSTYPE);</span>
+<span class="fc" id="L70">    }</span>
 
     /**
      * Copy Constructor.
@@ -76,8 +78,8 @@ public final class MoneyWiseTransCategory
     MoneyWiseTransCategory(final MoneyWiseTransCategoryList pList,
                            final MoneyWiseTransCategory pCategory) {
         /* Set standard values */
-<span class="fc" id="L79">        super(pList, pCategory);</span>
-<span class="fc" id="L80">    }</span>
+<span class="fc" id="L81">        super(pList, pCategory);</span>
+<span class="fc" id="L82">    }</span>
 
     /**
      * Values constructor.
@@ -89,16 +91,16 @@ public final class MoneyWiseTransCategory
     private MoneyWiseTransCategory(final MoneyWiseTransCategoryList pList,
                                    final PrometheusDataValues pValues) throws OceanusException {
         /* Initialise the item */
-<span class="fc" id="L92">        super(pList, pValues);</span>
+<span class="fc" id="L94">        super(pList, pValues);</span>
 
         /* Store the Category Type */
-<span class="fc" id="L95">        final Object myValue = pValues.getValue(MoneyWiseStaticDataType.TRANSTYPE);</span>
-<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (myValue instanceof Integer i) {</span>
-<span class="fc" id="L97">            setValueType(i);</span>
-<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        } else if (myValue instanceof String s) {</span>
-<span class="fc" id="L99">            setValueType(s);</span>
+<span class="fc" id="L97">        final Object myValue = pValues.getValue(MoneyWiseStaticDataType.TRANSTYPE);</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (myValue instanceof Integer i) {</span>
+<span class="fc" id="L99">            setValueType(i);</span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">        } else if (myValue instanceof String s) {</span>
+<span class="fc" id="L101">            setValueType(s);</span>
         }
-<span class="fc" id="L101">    }</span>
+<span class="fc" id="L103">    }</span>
 
     /**
      * Edit Constructor.
@@ -106,46 +108,46 @@ public final class MoneyWiseTransCategory
      * @param pList the list
      */
     public MoneyWiseTransCategory(final MoneyWiseTransCategoryList pList) {
-<span class="fc" id="L109">        super(pList);</span>
-<span class="fc" id="L110">    }</span>
+<span class="fc" id="L111">        super(pList);</span>
+<span class="fc" id="L112">    }</span>
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
-<span class="fc" id="L114">        return FIELD_DEFS;</span>
+<span class="fc" id="L116">        return FIELD_DEFS;</span>
     }
 
     @Override
     public boolean isActive() {
-<span class="nc bnc" id="L119" title="All 4 branches missed.">        return super.isActive() || isHidden();</span>
+<span class="nc bnc" id="L121" title="All 4 branches missed.">        return super.isActive() || isHidden();</span>
     }
 
     @Override
     public boolean includeXmlField(final MetisDataFieldId pField) {
         /* Determine whether fields should be included */
-<span class="fc bfc" id="L125" title="All 2 branches covered.">        if (MoneyWiseStaticDataType.TRANSTYPE.equals(pField)) {</span>
-<span class="fc" id="L126">            return true;</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">        if (MoneyWiseStaticDataType.TRANSTYPE.equals(pField)) {</span>
+<span class="fc" id="L128">            return true;</span>
         }
 
         /* Pass call on */
-<span class="fc" id="L130">        return super.includeXmlField(pField);</span>
+<span class="fc" id="L132">        return super.includeXmlField(pField);</span>
     }
 
     @Override
     public MoneyWiseTransCategoryType getCategoryType() {
-<span class="fc" id="L135">        return getValues().getValue(MoneyWiseStaticDataType.TRANSTYPE, MoneyWiseTransCategoryType.class);</span>
+<span class="fc" id="L137">        return getValues().getValue(MoneyWiseStaticDataType.TRANSTYPE, MoneyWiseTransCategoryType.class);</span>
     }
 
     @Override
     public MoneyWiseTransCategoryClass getCategoryTypeClass() {
-<span class="fc" id="L140">        final MoneyWiseTransCategoryType myType = getCategoryType();</span>
-<span class="pc bpc" id="L141" title="1 of 2 branches missed.">        return myType == null</span>
-<span class="nc" id="L142">                ? null</span>
-<span class="fc" id="L143">                : myType.getCategoryClass();</span>
+<span class="fc" id="L142">        final MoneyWiseTransCategoryType myType = getCategoryType();</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        return myType == null</span>
+<span class="nc" id="L144">                ? null</span>
+<span class="fc" id="L145">                : myType.getCategoryClass();</span>
     }
 
     @Override
     public MoneyWiseTransCategory getParentCategory() {
-<span class="fc" id="L148">        return getValues().getValue(PrometheusDataResource.DATAGROUP_PARENT, MoneyWiseTransCategory.class);</span>
+<span class="fc" id="L150">        return getValues().getValue(PrometheusDataResource.DATAGROUP_PARENT, MoneyWiseTransCategory.class);</span>
     }
 
     /**
@@ -154,8 +156,8 @@ public final class MoneyWiseTransCategory
      * @param pValue the value
      */
     private void setValueType(final MoneyWiseTransCategoryType pValue) {
-<span class="fc" id="L157">        getValues().setUncheckedValue(MoneyWiseStaticDataType.TRANSTYPE, pValue);</span>
-<span class="fc" id="L158">    }</span>
+<span class="fc" id="L159">        getValues().setUncheckedValue(MoneyWiseStaticDataType.TRANSTYPE, pValue);</span>
+<span class="fc" id="L160">    }</span>
 
     /**
      * Set category type id.
@@ -163,8 +165,8 @@ public final class MoneyWiseTransCategory
      * @param pValue the value
      */
     private void setValueType(final Integer pValue) {
-<span class="fc" id="L166">        getValues().setUncheckedValue(MoneyWiseStaticDataType.TRANSTYPE, pValue);</span>
-<span class="fc" id="L167">    }</span>
+<span class="fc" id="L168">        getValues().setUncheckedValue(MoneyWiseStaticDataType.TRANSTYPE, pValue);</span>
+<span class="fc" id="L169">    }</span>
 
     /**
      * Set category type name.
@@ -172,12 +174,12 @@ public final class MoneyWiseTransCategory
      * @param pValue the value
      */
     private void setValueType(final String pValue) {
-<span class="fc" id="L175">        getValues().setUncheckedValue(MoneyWiseStaticDataType.TRANSTYPE, pValue);</span>
-<span class="fc" id="L176">    }</span>
+<span class="fc" id="L177">        getValues().setUncheckedValue(MoneyWiseStaticDataType.TRANSTYPE, pValue);</span>
+<span class="fc" id="L178">    }</span>
 
     @Override
     public MoneyWiseTransCategoryList getList() {
-<span class="fc" id="L180">        return (MoneyWiseTransCategoryList) super.getList();</span>
+<span class="fc" id="L182">        return (MoneyWiseTransCategoryList) super.getList();</span>
     }
 
     /**
@@ -188,7 +190,7 @@ public final class MoneyWiseTransCategory
      */
     public boolean isCategoryClass(final MoneyWiseTransCategoryClass pClass) {
         /* Check for match */
-<span class="fc bfc" id="L191" title="All 2 branches covered.">        return getCategoryTypeClass() == pClass;</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">        return getCategoryTypeClass() == pClass;</span>
     }
 
     /**
@@ -198,9 +200,9 @@ public final class MoneyWiseTransCategory
      */
     public boolean isTransfer() {
         /* Check for match */
-<span class="fc" id="L201">        final MoneyWiseTransCategoryClass myClass = getCategoryTypeClass();</span>
-<span class="pc bpc" id="L202" title="1 of 2 branches missed.">        return myClass != null</span>
-<span class="fc bfc" id="L203" title="All 2 branches covered.">                &amp;&amp; myClass.isTransfer();</span>
+<span class="fc" id="L203">        final MoneyWiseTransCategoryClass myClass = getCategoryTypeClass();</span>
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">        return myClass != null</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">                &amp;&amp; myClass.isTransfer();</span>
     }
 
     /**
@@ -210,35 +212,34 @@ public final class MoneyWiseTransCategory
      * @throws OceanusException on error
      */
     public void setDefaults(final MoneyWiseTransCategory pParent) throws OceanusException {
-<span class="nc" id="L213">        getList().getValidator().setDefaults(pParent, this);</span>
-<span class="nc" id="L214">    }</span>
+<span class="nc" id="L215">        getList().getValidator().setDefaults(pParent, this);</span>
+<span class="nc" id="L216">    }</span>
 
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Update the Underlying details */
-<span class="fc" id="L219">        super.resolveDataSetLinks();</span>
+<span class="fc" id="L221">        super.resolveDataSetLinks();</span>
 
         /* Resolve category type and parent */
-<span class="fc" id="L222">        final MoneyWiseDataSet myData = getDataSet();</span>
-<span class="fc" id="L223">        resolveDataLink(MoneyWiseStaticDataType.TRANSTYPE, myData.getTransCategoryTypes());</span>
-<span class="fc" id="L224">    }</span>
+<span class="fc" id="L224">        resolveDataLink(MoneyWiseStaticDataType.TRANSTYPE, MoneyWiseStaticDataType.TRANSTYPE);</span>
+<span class="fc" id="L225">    }</span>
 
     @Override
     protected void resolveEditSetLinks() throws OceanusException {
         /* Resolve parent within list */
-<span class="fc" id="L229">        resolveDataLink(PrometheusDataResource.DATAGROUP_PARENT, getList());</span>
+<span class="fc" id="L230">        resolveDataLink(PrometheusDataResource.DATAGROUP_PARENT, getList());</span>
 
         /* Resolve StaticType if required */
-<span class="fc" id="L232">        final PrometheusEditSet myEditSet = getList().getEditSet();</span>
-<span class="fc bfc" id="L233" title="All 2 branches covered.">        if (myEditSet.hasDataType(MoneyWiseStaticDataType.TRANSTYPE)) {</span>
-<span class="fc" id="L234">            resolveDataLink(MoneyWiseStaticDataType.TRANSTYPE, myEditSet.getDataList(MoneyWiseStaticDataType.TRANSTYPE, MoneyWiseTransCategoryTypeList.class));</span>
+<span class="fc" id="L233">        final PrometheusEditSet myEditSet = getList().getEditSet();</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">        if (myEditSet.hasDataType(MoneyWiseStaticDataType.TRANSTYPE)) {</span>
+<span class="fc" id="L235">            resolveDataLink(MoneyWiseStaticDataType.TRANSTYPE, myEditSet.getDataList(MoneyWiseStaticDataType.TRANSTYPE, MoneyWiseTransCategoryTypeList.class));</span>
         }
-<span class="fc" id="L236">    }</span>
+<span class="fc" id="L237">    }</span>
 
     @Override
     public void setCategoryType(final PrometheusStaticDataItem pType) {
-<span class="fc" id="L240">        setValueType((MoneyWiseTransCategoryType) pType);</span>
-<span class="fc" id="L241">    }</span>
+<span class="fc" id="L241">        setValueType((MoneyWiseTransCategoryType) pType);</span>
+<span class="fc" id="L242">    }</span>
 
     /**
      * Update base category from an edited category.
@@ -249,23 +250,23 @@ public final class MoneyWiseTransCategory
     @Override
     public boolean applyChanges(final PrometheusDataItem pCategory) {
         /* Can only update from a transaction category */
-<span class="nc bnc" id="L252" title="All 2 branches missed.">        if (!(pCategory instanceof MoneyWiseTransCategory myCategory)) {</span>
-<span class="nc" id="L253">            return false;</span>
+<span class="nc bnc" id="L253" title="All 2 branches missed.">        if (!(pCategory instanceof MoneyWiseTransCategory myCategory)) {</span>
+<span class="nc" id="L254">            return false;</span>
         }
 
         /* Store the current detail into history */
-<span class="nc" id="L257">        pushHistory();</span>
+<span class="nc" id="L258">        pushHistory();</span>
 
         /* Apply basic changes */
-<span class="nc" id="L260">        applyBasicChanges(myCategory);</span>
+<span class="nc" id="L261">        applyBasicChanges(myCategory);</span>
 
         /* Update the category type if required */
-<span class="nc bnc" id="L263" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getCategoryType(), myCategory.getCategoryType())) {</span>
-<span class="nc" id="L264">            setValueType(myCategory.getCategoryType());</span>
+<span class="nc bnc" id="L264" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getCategoryType(), myCategory.getCategoryType())) {</span>
+<span class="nc" id="L265">            setValueType(myCategory.getCategoryType());</span>
         }
 
         /* Check for changes */
-<span class="nc" id="L268">        return checkForHistory();</span>
+<span class="nc" id="L269">        return checkForHistory();</span>
     }
 
     /**
@@ -274,9 +275,9 @@ public final class MoneyWiseTransCategory
      * @return true/false
      */
     public boolean isHidden() {
-<span class="nc" id="L277">        final MoneyWiseTransCategoryClass myClass = this.getCategoryTypeClass();</span>
-<span class="nc bnc" id="L278" title="All 2 branches missed.">        return myClass != null</span>
-<span class="nc bnc" id="L279" title="All 2 branches missed.">                &amp;&amp; myClass.isHiddenType();</span>
+<span class="nc" id="L278">        final MoneyWiseTransCategoryClass myClass = this.getCategoryTypeClass();</span>
+<span class="nc bnc" id="L279" title="All 2 branches missed.">        return myClass != null</span>
+<span class="nc bnc" id="L280" title="All 2 branches missed.">                &amp;&amp; myClass.isHiddenType();</span>
     }
 
     /**
@@ -287,7 +288,7 @@ public final class MoneyWiseTransCategory
         /**
          * Report fields.
          */
-<span class="fc" id="L290">        private static final MetisFieldSet&lt;MoneyWiseTransCategoryList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTransCategoryList.class);</span>
+<span class="fc" id="L291">        private static final MetisFieldSet&lt;MoneyWiseTransCategoryList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTransCategoryList.class);</span>
 
         /**
          * The EditSet.
@@ -299,9 +300,9 @@ public final class MoneyWiseTransCategory
          *
          * @param pData the DataSet for the list
          */
-        public MoneyWiseTransCategoryList(final MoneyWiseDataSet pData) {
-<span class="fc" id="L303">            super(pData, MoneyWiseTransCategory.class, MoneyWiseBasicDataType.TRANSCATEGORY);</span>
-<span class="fc" id="L304">        }</span>
+        public MoneyWiseTransCategoryList(final PrometheusDataSet pData) {
+<span class="fc" id="L304">            super(pData, MoneyWiseTransCategory.class, MoneyWiseBasicDataType.TRANSCATEGORY);</span>
+<span class="fc" id="L305">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -309,22 +310,22 @@ public final class MoneyWiseTransCategory
          * @param pSource the source List
          */
         protected MoneyWiseTransCategoryList(final MoneyWiseTransCategoryList pSource) {
-<span class="fc" id="L312">            super(pSource);</span>
-<span class="fc" id="L313">        }</span>
+<span class="fc" id="L313">            super(pSource);</span>
+<span class="fc" id="L314">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWiseTransCategoryList&gt; getDataFieldSet() {
-<span class="nc" id="L317">            return FIELD_DEFS;</span>
+<span class="nc" id="L318">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String listName() {
-<span class="fc" id="L322">            return LIST_NAME;</span>
+<span class="fc" id="L323">            return LIST_NAME;</span>
         }
 
         @Override
         public MetisFieldSetDef getItemFields() {
-<span class="fc" id="L327">            return MoneyWiseTransCategory.FIELD_DEFS;</span>
+<span class="fc" id="L328">            return MoneyWiseTransCategory.FIELD_DEFS;</span>
         }
 
         /**
@@ -333,19 +334,19 @@ public final class MoneyWiseTransCategory
          * @return the editSet
          */
         public PrometheusEditSet getEditSet() {
-<span class="fc" id="L336">            return theEditSet;</span>
+<span class="fc" id="L337">            return theEditSet;</span>
         }
 
         @Override
         public MoneyWiseTransCategoryDataMap getDataMap() {
-<span class="fc" id="L341">            return (MoneyWiseTransCategoryDataMap) super.getDataMap();</span>
+<span class="fc" id="L342">            return (MoneyWiseTransCategoryDataMap) super.getDataMap();</span>
         }
 
         @Override
         protected MoneyWiseTransCategoryList getEmptyList(final PrometheusListStyle pStyle) {
-<span class="fc" id="L346">            final MoneyWiseTransCategoryList myList = new MoneyWiseTransCategoryList(this);</span>
-<span class="fc" id="L347">            myList.setStyle(pStyle);</span>
-<span class="fc" id="L348">            return myList;</span>
+<span class="fc" id="L347">            final MoneyWiseTransCategoryList myList = new MoneyWiseTransCategoryList(this);</span>
+<span class="fc" id="L348">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L349">            return myList;</span>
         }
 
         /**
@@ -357,35 +358,35 @@ public final class MoneyWiseTransCategory
          */
         public MoneyWiseTransCategoryList deriveEditList(final PrometheusEditSet pEditSet) throws OceanusException {
             /* Build an empty List */
-<span class="fc" id="L360">            final MoneyWiseTransCategoryList myList = getEmptyList(PrometheusListStyle.EDIT);</span>
-<span class="fc" id="L361">            myList.ensureMap();</span>
-<span class="fc" id="L362">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSCATEGORY, myList);</span>
-<span class="fc" id="L363">            myList.getValidator().setEditSet(pEditSet);</span>
+<span class="fc" id="L361">            final MoneyWiseTransCategoryList myList = getEmptyList(PrometheusListStyle.EDIT);</span>
+<span class="fc" id="L362">            myList.ensureMap();</span>
+<span class="fc" id="L363">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSCATEGORY, myList);</span>
+<span class="fc" id="L364">            myList.getValidator().setEditSet(pEditSet);</span>
 
             /* Store the editSet */
-<span class="fc" id="L366">            myList.theEditSet = pEditSet;</span>
+<span class="fc" id="L367">            myList.theEditSet = pEditSet;</span>
 
             /* Loop through the categories */
-<span class="fc" id="L369">            final Iterator&lt;MoneyWiseTransCategory&gt; myIterator = iterator();</span>
-<span class="fc bfc" id="L370" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
-<span class="fc" id="L371">                final MoneyWiseTransCategory myCurr = myIterator.next();</span>
+<span class="fc" id="L370">            final Iterator&lt;MoneyWiseTransCategory&gt; myIterator = iterator();</span>
+<span class="fc bfc" id="L371" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L372">                final MoneyWiseTransCategory myCurr = myIterator.next();</span>
 
                 /* Ignore deleted events */
-<span class="pc bpc" id="L374" title="1 of 2 branches missed.">                if (myCurr.isDeleted()) {</span>
-<span class="nc" id="L375">                    continue;</span>
+<span class="pc bpc" id="L375" title="1 of 2 branches missed.">                if (myCurr.isDeleted()) {</span>
+<span class="nc" id="L376">                    continue;</span>
                 }
 
                 /* Build the new linked category and add it to the list */
-<span class="fc" id="L379">                final MoneyWiseTransCategory myCategory = new MoneyWiseTransCategory(myList, myCurr);</span>
-<span class="fc" id="L380">                myList.add(myCategory);</span>
-<span class="fc" id="L381">                myCategory.resolveEditSetLinks();</span>
+<span class="fc" id="L380">                final MoneyWiseTransCategory myCategory = new MoneyWiseTransCategory(myList, myCurr);</span>
+<span class="fc" id="L381">                myList.add(myCategory);</span>
+<span class="fc" id="L382">                myCategory.resolveEditSetLinks();</span>
 
                 /* Adjust the map */
-<span class="fc" id="L384">                myCategory.adjustMapForItem();</span>
-<span class="fc" id="L385">            }</span>
+<span class="fc" id="L385">                myCategory.adjustMapForItem();</span>
+<span class="fc" id="L386">            }</span>
 
             /* Return the list */
-<span class="fc" id="L388">            return myList;</span>
+<span class="fc" id="L389">            return myList;</span>
         }
 
         /**
@@ -397,13 +398,13 @@ public final class MoneyWiseTransCategory
         @Override
         public MoneyWiseTransCategory addCopyItem(final PrometheusDataItem pCategory) {
             /* Can only clone a TransactionCategory */
-<span class="pc bpc" id="L400" title="1 of 2 branches missed.">            if (!(pCategory instanceof MoneyWiseTransCategory)) {</span>
-<span class="nc" id="L401">                throw new UnsupportedOperationException();</span>
+<span class="pc bpc" id="L401" title="1 of 2 branches missed.">            if (!(pCategory instanceof MoneyWiseTransCategory)) {</span>
+<span class="nc" id="L402">                throw new UnsupportedOperationException();</span>
             }
 
-<span class="fc" id="L404">            final MoneyWiseTransCategory myCategory = new MoneyWiseTransCategory(this, (MoneyWiseTransCategory) pCategory);</span>
-<span class="fc" id="L405">            add(myCategory);</span>
-<span class="fc" id="L406">            return myCategory;</span>
+<span class="fc" id="L405">            final MoneyWiseTransCategory myCategory = new MoneyWiseTransCategory(this, (MoneyWiseTransCategory) pCategory);</span>
+<span class="fc" id="L406">            add(myCategory);</span>
+<span class="fc" id="L407">            return myCategory;</span>
         }
 
         /**
@@ -413,9 +414,9 @@ public final class MoneyWiseTransCategory
          */
         @Override
         public MoneyWiseTransCategory addNewItem() {
-<span class="fc" id="L416">            final MoneyWiseTransCategory myCategory = new MoneyWiseTransCategory(this);</span>
-<span class="fc" id="L417">            add(myCategory);</span>
-<span class="fc" id="L418">            return myCategory;</span>
+<span class="fc" id="L417">            final MoneyWiseTransCategory myCategory = new MoneyWiseTransCategory(this);</span>
+<span class="fc" id="L418">            add(myCategory);</span>
+<span class="fc" id="L419">            return myCategory;</span>
         }
 
         /**
@@ -426,7 +427,7 @@ public final class MoneyWiseTransCategory
          */
         public MoneyWiseTransCategory getSingularClass(final MoneyWiseTransCategoryClass pClass) {
             /* Lookup in the map */
-<span class="fc" id="L429">            return getDataMap().findSingularItem(pClass);</span>
+<span class="fc" id="L430">            return getDataMap().findSingularItem(pClass);</span>
         }
 
         /**
@@ -437,43 +438,43 @@ public final class MoneyWiseTransCategory
          */
         public MoneyWiseTransCategory getEventInfoCategory(final MoneyWiseTransInfoClass pInfoClass) {
             /* Switch on info class */
-<span class="pc bpc" id="L440" title="1 of 6 branches missed.">            switch (pInfoClass) {</span>
+<span class="pc bpc" id="L441" title="1 of 6 branches missed.">            switch (pInfoClass) {</span>
                 case TAXCREDIT:
-<span class="fc" id="L442">                    return getSingularClass(MoneyWiseTransCategoryClass.INCOMETAX);</span>
+<span class="fc" id="L443">                    return getSingularClass(MoneyWiseTransCategoryClass.INCOMETAX);</span>
                 case DEEMEDBENEFIT:
-<span class="fc" id="L444">                    return getSingularClass(MoneyWiseTransCategoryClass.VIRTUALINCOME);</span>
+<span class="fc" id="L445">                    return getSingularClass(MoneyWiseTransCategoryClass.VIRTUALINCOME);</span>
                 case EMPLOYEENATINS:
-<span class="fc" id="L446">                    return getSingularClass(MoneyWiseTransCategoryClass.EMPLOYEENATINS);</span>
+<span class="fc" id="L447">                    return getSingularClass(MoneyWiseTransCategoryClass.EMPLOYEENATINS);</span>
                 case EMPLOYERNATINS:
-<span class="fc" id="L448">                    return getSingularClass(MoneyWiseTransCategoryClass.EMPLOYERNATINS);</span>
+<span class="fc" id="L449">                    return getSingularClass(MoneyWiseTransCategoryClass.EMPLOYERNATINS);</span>
                 case WITHHELD:
-<span class="fc" id="L450">                    return getSingularClass(MoneyWiseTransCategoryClass.WITHHELD);</span>
+<span class="fc" id="L451">                    return getSingularClass(MoneyWiseTransCategoryClass.WITHHELD);</span>
                 default:
-<span class="nc" id="L452">                    return null;</span>
+<span class="nc" id="L453">                    return null;</span>
             }
         }
 
         @Override
         public MoneyWiseTransCategory addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
             /* Create the category */
-<span class="fc" id="L459">            final MoneyWiseTransCategory myCategory = new MoneyWiseTransCategory(this, pValues);</span>
+<span class="fc" id="L460">            final MoneyWiseTransCategory myCategory = new MoneyWiseTransCategory(this, pValues);</span>
 
             /* Check that this CategoryId has not been previously added */
-<span class="pc bpc" id="L462" title="1 of 2 branches missed.">            if (!isIdUnique(myCategory.getIndexedId())) {</span>
-<span class="nc" id="L463">                myCategory.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L464">                throw new MoneyWiseDataException(myCategory, ERROR_VALIDATION);</span>
+<span class="pc bpc" id="L463" title="1 of 2 branches missed.">            if (!isIdUnique(myCategory.getIndexedId())) {</span>
+<span class="nc" id="L464">                myCategory.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L465">                throw new MoneyWiseDataException(myCategory, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="fc" id="L468">            add(myCategory);</span>
+<span class="fc" id="L469">            add(myCategory);</span>
 
             /* Return it */
-<span class="fc" id="L471">            return myCategory;</span>
+<span class="fc" id="L472">            return myCategory;</span>
         }
 
         @Override
         protected MoneyWiseTransCategoryDataMap allocateDataMap() {
-<span class="fc" id="L476">            return new MoneyWiseTransCategoryDataMap();</span>
+<span class="fc" id="L477">            return new MoneyWiseTransCategoryDataMap();</span>
         }
     }
 
@@ -485,15 +486,15 @@ public final class MoneyWiseTransCategory
         /**
          * Report fields.
          */
-<span class="fc" id="L488">        private static final MetisFieldSet&lt;MoneyWiseTransCategoryDataMap&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTransCategoryDataMap.class);</span>
+<span class="fc" id="L489">        private static final MetisFieldSet&lt;MoneyWiseTransCategoryDataMap&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTransCategoryDataMap.class);</span>
 
         /*
          * Declare Fields.
          */
         static {
-<span class="fc" id="L494">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_SINGULARMAP, MoneyWiseTransCategoryDataMap::getSingularMap);</span>
-<span class="fc" id="L495">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_SINGULARCOUNTS, MoneyWiseTransCategoryDataMap::getSingularCountMap);</span>
-<span class="fc" id="L496">        }</span>
+<span class="fc" id="L495">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_SINGULARMAP, MoneyWiseTransCategoryDataMap::getSingularMap);</span>
+<span class="fc" id="L496">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_SINGULARCOUNTS, MoneyWiseTransCategoryDataMap::getSingularCountMap);</span>
+<span class="fc" id="L497">        }</span>
 
         /**
          * Map of category counts.
@@ -508,20 +509,20 @@ public final class MoneyWiseTransCategory
         /**
          * Constructor.
          */
-<span class="fc" id="L511">        public MoneyWiseTransCategoryDataMap() {</span>
+<span class="fc" id="L512">        public MoneyWiseTransCategoryDataMap() {</span>
             /* Create the maps */
-<span class="fc" id="L513">            theCategoryCountMap = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L514">            theCategoryMap = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L515">        }</span>
+<span class="fc" id="L514">            theCategoryCountMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L515">            theCategoryMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L516">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWiseTransCategoryDataMap&gt; getDataFieldSet() {
-<span class="nc" id="L519">            return FIELD_DEFS;</span>
+<span class="nc" id="L520">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L524">            return FIELD_DEFS.getName();</span>
+<span class="nc" id="L525">            return FIELD_DEFS.getName();</span>
         }
 
         /**
@@ -530,7 +531,7 @@ public final class MoneyWiseTransCategory
          * @return the map
          */
         private Map&lt;Integer, MoneyWiseTransCategory&gt; getSingularMap() {
-<span class="nc" id="L533">            return theCategoryMap;</span>
+<span class="nc" id="L534">            return theCategoryMap;</span>
         }
 
         /**
@@ -539,40 +540,40 @@ public final class MoneyWiseTransCategory
          * @return the map
          */
         private Map&lt;Integer, Integer&gt; getSingularCountMap() {
-<span class="nc" id="L542">            return theCategoryCountMap;</span>
+<span class="nc" id="L543">            return theCategoryCountMap;</span>
         }
 
         @Override
         public void resetMap() {
-<span class="fc" id="L547">            super.resetMap();</span>
-<span class="fc" id="L548">            theCategoryCountMap.clear();</span>
-<span class="fc" id="L549">            theCategoryMap.clear();</span>
-<span class="fc" id="L550">        }</span>
+<span class="fc" id="L548">            super.resetMap();</span>
+<span class="fc" id="L549">            theCategoryCountMap.clear();</span>
+<span class="fc" id="L550">            theCategoryMap.clear();</span>
+<span class="fc" id="L551">        }</span>
 
         @Override
         public void adjustForItem(final PrometheusDataItem pItem) {
             /* Access item */
-<span class="fc" id="L555">            final MoneyWiseTransCategory myItem = (MoneyWiseTransCategory) pItem;</span>
+<span class="fc" id="L556">            final MoneyWiseTransCategory myItem = (MoneyWiseTransCategory) pItem;</span>
 
             /* If the class is singular */
-<span class="fc" id="L558">            final MoneyWiseTransCategoryClass myClass = Objects.requireNonNull(myItem.getCategoryTypeClass());</span>
-<span class="fc bfc" id="L559" title="All 2 branches covered.">            if (myClass.isSingular()) {</span>
+<span class="fc" id="L559">            final MoneyWiseTransCategoryClass myClass = Objects.requireNonNull(myItem.getCategoryTypeClass());</span>
+<span class="fc bfc" id="L560" title="All 2 branches covered.">            if (myClass.isSingular()) {</span>
                 /* Adjust category count */
-<span class="fc" id="L561">                final Integer myId = myClass.getClassId();</span>
-<span class="fc" id="L562">                final Integer myCount = theCategoryCountMap.get(myId);</span>
-<span class="pc bpc" id="L563" title="1 of 2 branches missed.">                if (myCount == null) {</span>
-<span class="fc" id="L564">                    theCategoryCountMap.put(myId, ONE);</span>
+<span class="fc" id="L562">                final Integer myId = myClass.getClassId();</span>
+<span class="fc" id="L563">                final Integer myCount = theCategoryCountMap.get(myId);</span>
+<span class="pc bpc" id="L564" title="1 of 2 branches missed.">                if (myCount == null) {</span>
+<span class="fc" id="L565">                    theCategoryCountMap.put(myId, ONE);</span>
                 } else {
-<span class="nc" id="L566">                    theCategoryCountMap.put(myId, myCount + 1);</span>
+<span class="nc" id="L567">                    theCategoryCountMap.put(myId, myCount + 1);</span>
                 }
 
                 /* Adjust category map */
-<span class="fc" id="L570">                theCategoryMap.put(myId, myItem);</span>
+<span class="fc" id="L571">                theCategoryMap.put(myId, myItem);</span>
             }
 
             /* Adjust name count */
-<span class="fc" id="L574">            adjustForItem(myItem, myItem.getName());</span>
-<span class="fc" id="L575">        }</span>
+<span class="fc" id="L575">            adjustForItem(myItem, myItem.getName());</span>
+<span class="fc" id="L576">        }</span>
 
         /**
          * find singular item.
@@ -581,7 +582,7 @@ public final class MoneyWiseTransCategory
          * @return the matching item
          */
         public MoneyWiseTransCategory findSingularItem(final MoneyWiseTransCategoryClass pClass) {
-<span class="fc" id="L584">            return theCategoryMap.get(pClass.getClassId());</span>
+<span class="fc" id="L585">            return theCategoryMap.get(pClass.getClassId());</span>
         }
 
         /**
@@ -591,9 +592,9 @@ public final class MoneyWiseTransCategory
          * @return true/false
          */
         public boolean validSingularCount(final MoneyWiseTransCategoryClass pClass) {
-<span class="fc" id="L594">            final Integer myResult = theCategoryCountMap.get(pClass.getClassId());</span>
-<span class="fc" id="L595">            return ONE.equals(myResult);</span>
+<span class="fc" id="L595">            final Integer myResult = theCategoryCountMap.get(pClass.getClassId());</span>
+<span class="fc" id="L596">            return ONE.equals(myResult);</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

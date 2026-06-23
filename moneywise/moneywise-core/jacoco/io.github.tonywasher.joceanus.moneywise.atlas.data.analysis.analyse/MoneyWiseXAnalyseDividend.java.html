@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalyseDividend.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse</a> &gt; <span class="el_source">MoneyWiseXAnalyseDividend.java</span></div><h1>MoneyWiseXAnalyseDividend.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
+
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseSecurityCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+
+/**
+ * Dividend Analysis.
+ */
+public class MoneyWiseXAnalyseDividend {
+    /**
+     * The portfolioBuckets.
+     */
+    private final MoneyWiseXAnalysisPortfolioBucketList thePortfolios;
+
+    /**
+     * The analysis state.
+     */
+    private final MoneyWiseXAnalyseState theState;
+
+    /**
+     * The transAnalyser.
+     */
+    private final MoneyWiseXAnalyseTransAnalyserCtl theTransAnalyser;
+
+    /**
+     * The securityAnalyser.
+     */
+    private final MoneyWiseXAnalyseSecurityCtl theSecurity;
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalyser the event analyser
+     * @param pSecurity the securityAnalyser
+     */
+    MoneyWiseXAnalyseDividend(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser,
+<span class="fc" id="L68">                              final MoneyWiseXAnalyseSecurityCtl pSecurity) {</span>
+<span class="fc" id="L69">        final MoneyWiseXAnalysis myAnalysis = pAnalyser.getAnalysis();</span>
+<span class="fc" id="L70">        thePortfolios = myAnalysis.getPortfolios();</span>
+<span class="fc" id="L71">        theState = pAnalyser.getState();</span>
+<span class="fc" id="L72">        theSecurity = pSecurity;</span>
+<span class="fc" id="L73">        theTransAnalyser = theSecurity.getTransAnalyser();</span>
+<span class="fc" id="L74">    }</span>
+
+    /**
+     * Process a transaction that is a dividend.
+     *
+     * @param pTrans the transaction
+     */
+    void processDividend(final MoneyWiseXAnalyseTransCtl pTrans) {
+        /* Adjust the parent for the transaction */
+<span class="fc" id="L83">        pTrans.adjustParent();</span>
+
+        /* The main security that we are interested in is the debit account */
+<span class="fc" id="L86">        final MoneyWiseTransaction myTransaction = pTrans.getTransaction();</span>
+<span class="fc" id="L87">        final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) myTransaction.getAccount();</span>
+<span class="fc" id="L88">        final MoneyWiseSecurity mySecurity = myHolding.getSecurity();</span>
+<span class="fc" id="L89">        final MoneyWiseTransAsset myCredit = pTrans.getCreditAccount();</span>
+<span class="fc" id="L90">        final OceanusMoney myTaxCredit = myTransaction.getTaxCredit();</span>
+<span class="fc" id="L91">        final OceanusUnits myDeltaUnits = pTrans.getCreditUnitsDelta();</span>
+
+        /* True debit account is the parent */
+<span class="fc" id="L94">        final MoneyWisePayee myDebit = mySecurity.getParent();</span>
+
+        /* Access the Asset Account Bucket */
+<span class="fc" id="L97">        final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(myHolding);</span>
+<span class="fc" id="L98">        final MoneyWiseXAnalysisSecurityValues myValues = myAsset.getValues();</span>
+<span class="fc" id="L99">        final boolean isForeign = myAsset.isForeignCurrency();</span>
+<span class="fc" id="L100">        final boolean isReInvest = myCredit instanceof MoneyWiseSecurityHolding;</span>
+
+        /* Determine the debit amount */
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        final OceanusMoney myAmount = isForeign</span>
+<span class="fc" id="L104">                ? theTransAnalyser.adjustForeignAssetDebit(myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE))</span>
+<span class="fc" id="L105">                : pTrans.getDebitAmount();</span>
+
+        /* Adjust the debit payee bucket */
+<span class="fc" id="L108">        theTransAnalyser.processDebitPayee(myDebit);</span>
+
+        /* If this is a re-investment */
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if (isReInvest) {</span>
+            /* This amount is added to the cost, so record as the delta cost */
+<span class="fc" id="L113">            myAsset.adjustResidualCost(myAmount);</span>
+
+            /* If we have new units */
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">            if (myDeltaUnits != null) {</span>
+                /* Record delta units */
+<span class="nc" id="L118">                myAsset.adjustUnits(myDeltaUnits);</span>
+            }
+
+            /* If we have a tax credit */
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">            if (myTaxCredit != null) {</span>
+                /* The Tax Credit is viewed as a received dividend from the account */
+<span class="fc" id="L124">                myAsset.adjustDividend(myTaxCredit);</span>
+            }
+
+            /* Adjust the valuation */
+<span class="fc" id="L128">            theSecurity.adjustAssetValuation(myAsset);</span>
+
+            /* else we are paying out to another account */
+        } else {
+            /* Adjust the dividend total for this asset */
+<span class="fc" id="L133">            final OceanusMoney myAdjust = new OceanusMoney(myAmount);</span>
+
+            /* Any tax credit is viewed as a realised dividend from the account */
+            //if (myTaxCredit != null) {
+            //    myAdjust.addAmount(myTaxCredit);
+            //}
+
+            /* The Dividend is viewed as a dividend from the account */
+<span class="fc" id="L141">            myAsset.adjustDividend(myAdjust);</span>
+
+            /* Adjust the credit account bucket */
+<span class="fc" id="L144">            theTransAnalyser.processCreditAsset((MoneyWiseAssetBase) myCredit);</span>
+        }
+
+        /* Register the transaction */
+<span class="fc" id="L148">        theState.registerBucketInterest(myAsset);</span>
+<span class="fc" id="L149">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

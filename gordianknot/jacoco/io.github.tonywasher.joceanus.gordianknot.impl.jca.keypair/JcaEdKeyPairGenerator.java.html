@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JcaEdKeyPairGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair</a> &gt; <span class="el_source">JcaEdKeyPairGenerator.java</span></div><h1>JcaEdKeyPairGenerator.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
+import org.bouncycastle.jcajce.spec.XDHParameterSpec;
+
+import java.security.InvalidAlgorithmParameterException;
+import java.security.spec.AlgorithmParameterSpec;
+
+/**
+ * Jca Edwards KeyPair generator.
+ */
+public class JcaEdKeyPairGenerator
+        extends JcaKeyPairGenerator {
+    /**
+     * Constructor.
+     *
+     * @param pFactory the Security Factory
+     * @param pKeySpec the keySpec
+     * @throws GordianException on error
+     */
+    protected JcaEdKeyPairGenerator(final GordianBaseFactory pFactory,
+                                    final GordianKeyPairSpec pKeySpec) throws GordianException {
+        /* initialize underlying class */
+<span class="fc" id="L47">        super(pFactory, pKeySpec);</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Create the parameters */
+            final AlgorithmParameterSpec myAlgo;
+<span class="fc" id="L53">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;</span>
+<span class="fc" id="L54">            final boolean is25519 = myKeySpec.getEdwardsSpec().is25519();</span>
+<span class="pc bpc" id="L55" title="1 of 3 branches missed.">            myAlgo = switch (pKeySpec.getKeyPairType()) {</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">                case XDH -&gt; is25519</span>
+<span class="fc" id="L57">                        ? new XDHParameterSpec(XDHParameterSpec.X25519)</span>
+<span class="fc" id="L58">                        : new XDHParameterSpec(XDHParameterSpec.X448);</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">                case EDDSA -&gt; is25519</span>
+<span class="fc" id="L60">                        ? new EdDSAParameterSpec(EdDSAParameterSpec.Ed25519)</span>
+<span class="fc" id="L61">                        : new EdDSAParameterSpec(EdDSAParameterSpec.Ed448);</span>
+<span class="pc" id="L62">                default -&gt; throw new GordianLogicException(&quot;Invalid KeySpec&quot; + pKeySpec);</span>
+            };
+
+            /* Create and initialize the generator */
+<span class="fc" id="L66">            final String myJavaType = pKeySpec.toString();</span>
+<span class="fc" id="L67">            createFactories(myJavaType, false);</span>
+<span class="fc" id="L68">            getGenerator().initialize(myAlgo, getRandom());</span>
+
+<span class="nc" id="L70">        } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L71">            throw new GordianCryptoException(&quot;Failed to create EdwardsGenerator&quot;, e);</span>
+<span class="fc" id="L72">        }</span>
+<span class="fc" id="L73">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

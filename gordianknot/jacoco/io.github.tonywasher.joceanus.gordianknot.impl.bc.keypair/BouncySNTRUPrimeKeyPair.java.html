@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncySNTRUPrimeKeyPair.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair</a> &gt; <span class="el_source">BouncySNTRUPrimeKeyPair.java</span></div><h1>BouncySNTRUPrimeKeyPair.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.pqc.crypto.ntruprime.SNTRUPrimeKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.ntruprime.SNTRUPrimeKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.ntruprime.SNTRUPrimeParameters;
+import org.bouncycastle.pqc.crypto.ntruprime.SNTRUPrimePrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.ntruprime.SNTRUPrimePublicKeyParameters;
+
+import java.util.Arrays;
+
+/**
+ * SNTRUPrime KeyPair classes.
+ */
+public final class BouncySNTRUPrimeKeyPair {
+    /**
+     * Private constructor.
+     */
+    private BouncySNTRUPrimeKeyPair() {
+    }
+
+    /**
+     * Bouncy SNTRUPrime PublicKey.
+     */
+    public static class BouncySNTRUPrimePublicKey
+            extends BouncyPublicKey&lt;SNTRUPrimePublicKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec   the keySpec
+         * @param pPublicKey the public key
+         */
+        BouncySNTRUPrimePublicKey(final GordianKeyPairSpec pKeySpec,
+                                  final SNTRUPrimePublicKeyParameters pPublicKey) {
+<span class="nc" id="L56">            super(pKeySpec, pPublicKey);</span>
+<span class="nc" id="L57">        }</span>
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="nc" id="L62">            final SNTRUPrimePublicKeyParameters myThis = getPublicKey();</span>
+<span class="nc" id="L63">            final SNTRUPrimePublicKeyParameters myThat = (SNTRUPrimePublicKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="nc" id="L66">            return Arrays.equals(myThis.getEncoded(), myThat.getEncoded());</span>
+        }
+    }
+
+    /**
+     * Bouncy SNTRUPrime PrivateKey.
+     */
+    public static class BouncySNTRUPrimePrivateKey
+            extends BouncyPrivateKey&lt;SNTRUPrimePrivateKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec    the keySpec
+         * @param pPrivateKey the private key
+         */
+        BouncySNTRUPrimePrivateKey(final GordianKeyPairSpec pKeySpec,
+                                   final SNTRUPrimePrivateKeyParameters pPrivateKey) {
+<span class="nc" id="L83">            super(pKeySpec, pPrivateKey);</span>
+<span class="nc" id="L84">        }</span>
+
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="nc" id="L90">            final SNTRUPrimePrivateKeyParameters myThis = getPrivateKey();</span>
+<span class="nc" id="L91">            final SNTRUPrimePrivateKeyParameters myThat = (SNTRUPrimePrivateKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="nc" id="L94">            return Arrays.equals(myThis.getEncoded(), myThat.getEncoded());</span>
+        }
+    }
+
+    /**
+     * BouncyCastle SNTRUPrime KeyPair generator.
+     */
+    public static class BouncySNTRUPrimeKeyPairGenerator
+            extends BouncyKeyPairGenerator&lt;SNTRUPrimePrivateKeyParameters, SNTRUPrimePublicKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         */
+        BouncySNTRUPrimeKeyPairGenerator(final GordianBaseFactory pFactory,
+                                         final GordianKeyPairSpec pKeySpec) {
+            /* Initialise underlying class */
+<span class="nc" id="L112">            super(pFactory, pKeySpec);</span>
+
+            /* Determine the parameters */
+<span class="nc" id="L115">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;</span>
+<span class="nc" id="L116">            final SNTRUPrimeParameters myParms = myKeySpec.getNTRUPrimeSpec().getCoreParams().getSNTRUParameters();</span>
+<span class="nc" id="L117">            final SNTRUPrimeKeyGenerationParameters myParams = new SNTRUPrimeKeyGenerationParameters(getRandom(), myParms);</span>
+
+            /* Create and initialise the generator */
+<span class="nc" id="L120">            setGenerator(new SNTRUPrimeKeyPairGenerator(), myParams);</span>
+<span class="nc" id="L121">            setFactorySet(BouncyPqKeyFactorySet.INSTANCE);</span>
+<span class="nc" id="L122">        }</span>
+
+        @Override
+        BouncySNTRUPrimePrivateKey newPrivateKey(final AsymmetricKeyParameter pThat) {
+<span class="nc" id="L126">            return new BouncySNTRUPrimePrivateKey(getKeySpec(), (SNTRUPrimePrivateKeyParameters) pThat);</span>
+        }
+
+        @Override
+        BouncySNTRUPrimePublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
+<span class="nc" id="L131">            return new BouncySNTRUPrimePublicKey(getKeySpec(), (SNTRUPrimePublicKeyParameters) pThat);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

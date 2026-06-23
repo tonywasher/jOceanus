@@ -32,7 +32,7 @@ public class OceanusRatio
     /**
      * Ratio of one.
      */
-<span class="fc" id="L35">    public static final OceanusRatio ONE = new OceanusRatio(&quot;1&quot;);</span>
+<span class="fc" id="L35">    public static final OceanusRatio ONE = getWholeUnits(1);</span>
 
     /**
      * Number of days in a standard year.
@@ -42,29 +42,30 @@ public class OceanusRatio
     /**
      * Constructor.
      */
-<span class="nc" id="L45">    protected OceanusRatio() {</span>
-<span class="nc" id="L46">    }</span>
+<span class="fc" id="L45">    protected OceanusRatio() {</span>
+<span class="fc" id="L46">    }</span>
 
     /**
      * Construct a new Ratio by copying another ratio.
      *
      * @param pRatio the Ratio to copy
      */
-    public OceanusRatio(final OceanusRatio pRatio) {
+    public OceanusRatio(final OceanusDecimal pRatio) {
 <span class="nc" id="L54">        super(pRatio.unscaledValue(), pRatio.scale());</span>
-<span class="nc" id="L55">    }</span>
+<span class="nc" id="L55">        adjustToScale(NUM_DECIMALS);</span>
+<span class="nc" id="L56">    }</span>
 
     /**
-     * Constructor for ratio from a decimal string.
+     * Construct a new Units by setting the value explicitly.
      *
-     * @param pSource The source decimal string
-     * @throws IllegalArgumentException on invalidly formatted argument
+     * @param pValue the unscaled value
+     * @return the new Rate
      */
-<span class="fc" id="L63">    public OceanusRatio(final String pSource) {</span>
-        /* Parse the string and correct the scale */
-<span class="fc" id="L65">        OceanusDecimalParser.parseDecimalValue(pSource, this);</span>
-<span class="fc" id="L66">        adjustToScale(NUM_DECIMALS);</span>
-<span class="fc" id="L67">    }</span>
+    public static OceanusRatio getWholeUnits(final long pValue) {
+<span class="fc" id="L65">        final OceanusRatio myRatio = new OceanusRatio();</span>
+<span class="fc" id="L66">        myRatio.setValue(adjustDecimals(pValue, NUM_DECIMALS), NUM_DECIMALS);</span>
+<span class="fc" id="L67">        return myRatio;</span>
+    }
 
     /**
      * Construct a new Ratio by the ratio between two decimals.
@@ -73,10 +74,10 @@ public class OceanusRatio
      * @param pSecond the second decimal
      */
     public OceanusRatio(final OceanusDecimal pFirst,
-<span class="nc" id="L76">                        final OceanusDecimal pSecond) {</span>
-<span class="nc" id="L77">        recordScale(NUM_DECIMALS);</span>
-<span class="nc" id="L78">        calculateQuotient(pFirst, pSecond);</span>
-<span class="nc" id="L79">    }</span>
+<span class="nc" id="L77">                        final OceanusDecimal pSecond) {</span>
+<span class="nc" id="L78">        recordScale(NUM_DECIMALS);</span>
+<span class="nc" id="L79">        calculateQuotient(pFirst, pSecond);</span>
+<span class="nc" id="L80">    }</span>
 
     /**
      * Create the ratio from a byte array.
@@ -84,16 +85,16 @@ public class OceanusRatio
      * @param pBuffer the buffer
      */
     public OceanusRatio(final byte[] pBuffer) {
-<span class="fc" id="L87">        super(pBuffer);</span>
-<span class="fc" id="L88">    }</span>
+<span class="fc" id="L88">        super(pBuffer);</span>
+<span class="fc" id="L89">    }</span>
 
     /**
-     * Obtain inverse ratio of this ratio (i.e. 100%/this rate).
+     * Obtain inverse ratio of this ratio (i.e. 1/this rate).
      *
      * @return the inverse ratio
      */
     public OceanusRatio getInverseRatio() {
-<span class="nc" id="L96">        return new OceanusRatio(OceanusRate.RATE_ONEHUNDREDPERCENT, this);</span>
+<span class="nc" id="L97">        return new OceanusRatio(ONE, this);</span>
     }
 
     /**
@@ -103,10 +104,10 @@ public class OceanusRatio
      * @return the new ratio
      */
     public OceanusRatio multiplyBy(final OceanusRatio pRatio) {
-<span class="nc" id="L106">        final OceanusRatio myRatio = new OceanusRatio();</span>
-<span class="nc" id="L107">        myRatio.recordScale(NUM_DECIMALS);</span>
-<span class="nc" id="L108">        myRatio.calculateProduct(this, pRatio);</span>
-<span class="nc" id="L109">        return myRatio;</span>
+<span class="nc" id="L107">        final OceanusRatio myRatio = new OceanusRatio();</span>
+<span class="nc" id="L108">        myRatio.recordScale(NUM_DECIMALS);</span>
+<span class="nc" id="L109">        myRatio.calculateProduct(this, pRatio);</span>
+<span class="nc" id="L110">        return myRatio;</span>
     }
 
     /**
@@ -115,23 +116,23 @@ public class OceanusRatio
      * @param pDays the number of days in the period
      * @return the annualised ratio
      */
-    public OceanusRate annualise(final long pDays) {
+    public OceanusRatio annualise(final long pDays) {
         /* Calculate the annualised value and convert to rate */
-<span class="nc" id="L120">        double myValue = Math.pow(doubleValue(), ((double) DAYS_IN_YEAR) / pDays);</span>
-<span class="nc" id="L121">        myValue -= 1;</span>
-<span class="nc" id="L122">        BigDecimal myDecimal = BigDecimal.valueOf(myValue);</span>
-<span class="nc" id="L123">        myDecimal = myDecimal.setScale(OceanusRate.NUM_DECIMALS, RoundingMode.HALF_UP);</span>
-<span class="nc" id="L124">        return new OceanusRate(myDecimal.toString());</span>
+<span class="nc" id="L121">        double myValue = Math.pow(doubleValue(), ((double) DAYS_IN_YEAR) / pDays);</span>
+<span class="nc" id="L122">        myValue -= 1;</span>
+<span class="nc" id="L123">        BigDecimal myDecimal = BigDecimal.valueOf(myValue);</span>
+<span class="nc" id="L124">        myDecimal = myDecimal.setScale(NUM_DECIMALS, RoundingMode.HALF_UP);</span>
+<span class="nc" id="L125">        return new OceanusRatio(new OceanusDecimal(myDecimal));</span>
     }
 
     @Override
     public void addValue(final OceanusDecimal pValue) {
-<span class="nc" id="L129">        throw new UnsupportedOperationException();</span>
+<span class="nc" id="L130">        throw new UnsupportedOperationException();</span>
     }
 
     @Override
     public void subtractValue(final OceanusDecimal pValue) {
-<span class="nc" id="L134">        throw new UnsupportedOperationException();</span>
+<span class="nc" id="L135">        throw new UnsupportedOperationException();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

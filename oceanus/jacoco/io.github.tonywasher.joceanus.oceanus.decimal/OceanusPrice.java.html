@@ -32,8 +32,8 @@ public class OceanusPrice
      * Constructor for price of value zero in the default currency.
      */
     public OceanusPrice() {
-<span class="fc" id="L35">        this(DEFAULT_CURRENCY);</span>
-<span class="fc" id="L36">    }</span>
+<span class="nc" id="L35">        this(DEFAULT_CURRENCY);</span>
+<span class="nc" id="L36">    }</span>
 
     /**
      * Constructor for money of value zero in specified currency.
@@ -57,47 +57,13 @@ public class OceanusPrice
 <span class="nc" id="L57">    }</span>
 
     /**
-     * Constructor for price from a decimal string.
-     *
-     * @param pSource The source decimal string
-     * @throws IllegalArgumentException on invalidly formatted argument
-     */
-    public OceanusPrice(final String pSource) {
-        /* Use default constructor */
-<span class="fc" id="L67">        this();</span>
-
-        /* Parse the string and correct the scale */
-<span class="fc" id="L70">        OceanusDecimalParser.parseDecimalValue(pSource, this);</span>
-<span class="fc" id="L71">        adjustToScale(getCurrency().getDefaultFractionDigits()</span>
-                + XTRA_DECIMALS);
-<span class="fc" id="L73">    }</span>
-
-    /**
-     * Constructor for price from a decimal string.
-     *
-     * @param pSource   The source decimal string
-     * @param pCurrency the currency
-     * @throws IllegalArgumentException on invalidly formatted argument
-     */
-    public OceanusPrice(final String pSource,
-                        final Currency pCurrency) {
-        /* Use default constructor */
-<span class="nc" id="L85">        this(pCurrency);</span>
-
-        /* Parse the string and correct the scale */
-<span class="nc" id="L88">        OceanusDecimalParser.parseDecimalValue(pSource, this);</span>
-<span class="nc" id="L89">        adjustToScale(getCurrency().getDefaultFractionDigits()</span>
-                + XTRA_DECIMALS);
-<span class="nc" id="L91">    }</span>
-
-    /**
      * Create the price from a byte array.
      *
      * @param pBuffer the buffer
      */
     public OceanusPrice(final byte[] pBuffer) {
-<span class="fc" id="L99">        super(pBuffer);</span>
-<span class="fc" id="L100">    }</span>
+<span class="fc" id="L65">        super(pBuffer);</span>
+<span class="fc" id="L66">    }</span>
 
     /**
      * Factory method for generating whole monetary units for a currency (e.g. £)
@@ -109,10 +75,10 @@ public class OceanusPrice
     public static OceanusPrice getWholeUnits(final long pUnits,
                                              final Currency pCurrency) {
         /* Allocate the money */
-<span class="nc" id="L112">        final OceanusPrice myResult = new OceanusPrice(pCurrency);</span>
-<span class="nc" id="L113">        final int myScale = myResult.scale();</span>
-<span class="nc" id="L114">        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);</span>
-<span class="nc" id="L115">        return myResult;</span>
+<span class="nc" id="L78">        final OceanusPrice myResult = new OceanusPrice(pCurrency);</span>
+<span class="nc" id="L79">        final int myScale = myResult.scale();</span>
+<span class="nc" id="L80">        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);</span>
+<span class="nc" id="L81">        return myResult;</span>
     }
 
     /**
@@ -123,30 +89,30 @@ public class OceanusPrice
      */
     public static OceanusPrice getWholeUnits(final long pUnits) {
         /* Allocate the price */
-<span class="nc" id="L126">        final OceanusPrice myResult = new OceanusPrice();</span>
-<span class="nc" id="L127">        final int myScale = myResult.scale();</span>
-<span class="nc" id="L128">        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);</span>
-<span class="nc" id="L129">        return myResult;</span>
+<span class="nc" id="L92">        final OceanusPrice myResult = new OceanusPrice();</span>
+<span class="nc" id="L93">        final int myScale = myResult.scale();</span>
+<span class="nc" id="L94">        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);</span>
+<span class="nc" id="L95">        return myResult;</span>
     }
 
     @Override
     public OceanusPrice changeCurrency(final Currency pCurrency) {
         /* Convert currency with an exchange rate of one */
-<span class="nc" id="L135">        return convertCurrency(pCurrency, OceanusRatio.ONE);</span>
+<span class="nc" id="L101">        return convertCurrency(pCurrency, OceanusRatio.ONE);</span>
     }
 
     @Override
     public OceanusPrice convertCurrency(final Currency pCurrency,
                                         final OceanusRatio pRate) {
         /* If this is the same currency then no conversion */
-<span class="nc bnc" id="L142" title="All 2 branches missed.">        if (getCurrency().equals(pCurrency)) {</span>
-<span class="nc" id="L143">            return new OceanusPrice(this);</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        if (getCurrency().equals(pCurrency)) {</span>
+<span class="nc" id="L109">            return new OceanusPrice(this);</span>
         }
 
         /* Create the new Price */
-<span class="nc" id="L147">        final OceanusPrice myResult = new OceanusPrice(pCurrency);</span>
-<span class="nc" id="L148">        myResult.calculateProduct(this, pRate);</span>
-<span class="nc" id="L149">        return myResult;</span>
+<span class="nc" id="L113">        final OceanusPrice myResult = new OceanusPrice(pCurrency);</span>
+<span class="nc" id="L114">        myResult.calculateProduct(this, pRate);</span>
+<span class="nc" id="L115">        return myResult;</span>
     }
 
     /**
@@ -156,12 +122,25 @@ public class OceanusPrice
      */
     public void subtractPrice(final OceanusPrice pValue) {
         /* Currency must be identical */
-<span class="nc bnc" id="L159" title="All 2 branches missed.">        if (!getCurrency().equals(pValue.getCurrency())) {</span>
-<span class="nc" id="L160">            throw new IllegalArgumentException(ERROR_DIFFER);</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (!getCurrency().equals(pValue.getCurrency())) {</span>
+<span class="nc" id="L126">            throw new IllegalArgumentException(ERROR_DIFFER);</span>
         }
 
         /* Subtract the value */
-<span class="nc" id="L164">        super.subtractValue(pValue);</span>
-<span class="nc" id="L165">    }</span>
+<span class="nc" id="L130">        super.subtractValue(pValue);</span>
+<span class="nc" id="L131">    }</span>
+
+    /**
+     * calculate the value of specified units at this price.
+     *
+     * @param pUnits the number of units
+     * @return the calculated value
+     */
+    public OceanusMoney unitsAtPrice(final OceanusUnits pUnits) {
+        /* Calculate value of units */
+<span class="nc" id="L141">        final OceanusPrice myPrice = new OceanusPrice(this);</span>
+<span class="nc" id="L142">        myPrice.calculateProduct(myPrice, pUnits);</span>
+<span class="nc" id="L143">        return new OceanusMoney(myPrice);</span>
+    }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

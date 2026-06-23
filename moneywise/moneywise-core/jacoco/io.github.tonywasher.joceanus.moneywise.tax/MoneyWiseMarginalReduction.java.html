@@ -17,22 +17,23 @@
 package io.github.tonywasher.joceanus.moneywise.tax;
 
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 import java.util.Currency;
 
 /**
  * Marginal allowance reduction.
  */
-<span class="fc" id="L26">public enum MoneyWiseMarginalReduction {</span>
+<span class="fc" id="L27">public enum MoneyWiseMarginalReduction {</span>
     /**
      * Half.
      */
-<span class="fc" id="L30">    ONEINTWO(1, 2),</span>
+<span class="fc" id="L31">    ONEINTWO(1, 2),</span>
 
     /**
      * TwoThirds.
      */
-<span class="fc" id="L35">    TWOINTHREE(2, 3);</span>
+<span class="fc" id="L36">    TWOINTHREE(2, 3);</span>
 
     /**
      * The String name.
@@ -56,21 +57,21 @@ import java.util.Currency;
      * @param pQuotient   the quotient
      */
     MoneyWiseMarginalReduction(final int pMultiplier,
-<span class="fc" id="L59">                               final int pQuotient) {</span>
-<span class="fc" id="L60">        theMultiplier = pMultiplier;</span>
-<span class="fc" id="L61">        theQuotient = pQuotient;</span>
-<span class="fc" id="L62">    }</span>
+<span class="fc" id="L60">                               final int pQuotient) {</span>
+<span class="fc" id="L61">        theMultiplier = pMultiplier;</span>
+<span class="fc" id="L62">        theQuotient = pQuotient;</span>
+<span class="fc" id="L63">    }</span>
 
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="nc bnc" id="L67" title="All 2 branches missed.">        if (theName == null) {</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (theName == null) {</span>
             /* Load the name */
-<span class="nc" id="L69">            theName = MoneyWiseTaxResource.getKeyForMarginalReduction(this).getValue();</span>
+<span class="nc" id="L70">            theName = bundleIdForReduction(this).getValue();</span>
         }
 
         /* return the name */
-<span class="nc" id="L73">        return theName;</span>
+<span class="nc" id="L74">        return theName;</span>
     }
 
     /**
@@ -83,20 +84,34 @@ import java.util.Currency;
     public OceanusMoney calculateReduction(final OceanusMoney pGrossTaxable,
                                            final OceanusMoney pLimit) {
         /* Determine the amount by which we are over the limit */
-<span class="nc" id="L86">        final OceanusMoney myExcess = new OceanusMoney(pGrossTaxable);</span>
-<span class="nc" id="L87">        myExcess.subtractAmount(pLimit);</span>
+<span class="nc" id="L87">        final OceanusMoney myExcess = new OceanusMoney(pGrossTaxable);</span>
+<span class="nc" id="L88">        myExcess.subtractAmount(pLimit);</span>
 
         /* Determine the quotient and multiplier in the required currency */
-<span class="nc" id="L90">        final Currency myCurrency = myExcess.getCurrency();</span>
-<span class="nc" id="L91">        final OceanusMoney myQuotient = OceanusMoney.getWholeUnits(theQuotient, myCurrency);</span>
-<span class="nc" id="L92">        final OceanusMoney myMultiplier = OceanusMoney.getWholeUnits(theMultiplier, myCurrency);</span>
+<span class="nc" id="L91">        final Currency myCurrency = myExcess.getCurrency();</span>
+<span class="nc" id="L92">        final OceanusMoney myQuotient = OceanusMoney.getWholeUnits(theQuotient, myCurrency);</span>
+<span class="nc" id="L93">        final OceanusMoney myMultiplier = OceanusMoney.getWholeUnits(theMultiplier, myCurrency);</span>
 
         /* Calculate the reduction */
-<span class="nc" id="L95">        myExcess.divide(myQuotient.unscaledValue());</span>
-<span class="nc" id="L96">        myExcess.multiply(myMultiplier.unscaledValue());</span>
+<span class="nc" id="L96">        myExcess.divide(myQuotient.unscaledValue());</span>
+<span class="nc" id="L97">        myExcess.multiply(myMultiplier.unscaledValue());</span>
 
         /* return the reduction */
-<span class="nc" id="L99">        return myExcess;</span>
+<span class="nc" id="L100">        return myExcess;</span>
+    }
+
+    /**
+     * Obtain the resource bundleId for the reduction.
+     *
+     * @param pReduction the reduction
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForReduction(final MoneyWiseMarginalReduction pReduction) {
+<span class="nc bnc" id="L110" title="All 3 branches missed.">        return switch (pReduction) {</span>
+<span class="nc" id="L111">            case ONEINTWO -&gt; MoneyWiseTaxResource.MARGINAL_ONEINTWO;</span>
+<span class="nc" id="L112">            case TWOINTHREE -&gt; MoneyWiseTaxResource.MARGINAL_TWOINTHREE;</span>
+<span class="nc" id="L113">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

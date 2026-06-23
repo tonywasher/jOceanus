@@ -26,7 +26,7 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolioInfo.MoneyWisePortfolioInfoList;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMapCtl.MoneyWiseSecurityHoldingMapGenerator;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
@@ -46,43 +46,46 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataMapItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoItem;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusDataInfoSetItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Portfolio class.
  */
 public class MoneyWisePortfolio
         extends MoneyWiseAssetBase
-        implements PrometheusInfoSetItem {
+        implements PrometheusDataInfoSetItemCtl&lt;MoneyWisePortfolioInfo&gt; {
     /**
      * Object name.
      */
-<span class="fc" id="L67">    public static final String OBJECT_NAME = MoneyWiseBasicDataType.PORTFOLIO.getItemName();</span>
+<span class="fc" id="L70">    public static final String OBJECT_NAME = MoneyWiseBasicDataType.PORTFOLIO.getItemName();</span>
 
     /**
      * List name.
      */
-<span class="fc" id="L72">    public static final String LIST_NAME = MoneyWiseBasicDataType.PORTFOLIO.getListName();</span>
+<span class="fc" id="L75">    public static final String LIST_NAME = MoneyWiseBasicDataType.PORTFOLIO.getListName();</span>
 
     /**
      * Local Report fields.
      */
-<span class="fc" id="L77">    private static final MetisFieldVersionedSet&lt;MoneyWisePortfolio&gt; FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(MoneyWisePortfolio.class);</span>
+<span class="fc" id="L80">    private static final MetisFieldVersionedSet&lt;MoneyWisePortfolio&gt; FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(MoneyWisePortfolio.class);</span>
 
     /*
      * FieldIds.
      */
     static {
-<span class="fc" id="L83">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME, MoneyWisePortfolio::getInfoSet);</span>
-<span class="fc" id="L84">        FIELD_DEFS.buildFieldMap(MoneyWiseAccountInfoClass.class, MoneyWisePortfolio::getFieldValue);</span>
-<span class="fc" id="L85">    }</span>
+<span class="fc" id="L86">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME, MoneyWisePortfolio::getInfoSet);</span>
+<span class="fc" id="L87">        FIELD_DEFS.buildFieldMap(MoneyWiseAccountInfoClass.class, MoneyWisePortfolio::getFieldValue);</span>
+<span class="fc" id="L88">    }</span>
 
     /**
      * Do we have an InfoSet.
@@ -108,28 +111,28 @@ public class MoneyWisePortfolio
     protected MoneyWisePortfolio(final MoneyWisePortfolioList pList,
                                  final MoneyWisePortfolio pPortfolio) {
         /* Set standard values */
-<span class="fc" id="L111">        super(pList, pPortfolio);</span>
+<span class="fc" id="L114">        super(pList, pPortfolio);</span>
 
         /* switch on list type */
-<span class="pc bpc" id="L114" title="1 of 3 branches missed.">        switch (getList().getStyle()) {</span>
+<span class="pc bpc" id="L117" title="1 of 3 branches missed.">        switch (getList().getStyle()) {</span>
             case EDIT:
-<span class="fc" id="L116">                theInfoSet = new MoneyWisePortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());</span>
-<span class="fc" id="L117">                theInfoSet.cloneDataInfoSet(pPortfolio.getInfoSet());</span>
-<span class="fc" id="L118">                hasInfoSet = true;</span>
-<span class="fc" id="L119">                useInfoSet = true;</span>
-<span class="fc" id="L120">                break;</span>
+<span class="fc" id="L119">                theInfoSet = new MoneyWisePortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());</span>
+<span class="fc" id="L120">                theInfoSet.cloneDataInfoSet(pPortfolio.getInfoSet());</span>
+<span class="fc" id="L121">                hasInfoSet = true;</span>
+<span class="fc" id="L122">                useInfoSet = true;</span>
+<span class="fc" id="L123">                break;</span>
             case CLONE, CORE:
-<span class="nc" id="L122">                theInfoSet = new MoneyWisePortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());</span>
-<span class="nc" id="L123">                hasInfoSet = true;</span>
-<span class="nc" id="L124">                useInfoSet = false;</span>
-<span class="nc" id="L125">                break;</span>
+<span class="nc" id="L125">                theInfoSet = new MoneyWisePortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());</span>
+<span class="nc" id="L126">                hasInfoSet = true;</span>
+<span class="nc" id="L127">                useInfoSet = false;</span>
+<span class="nc" id="L128">                break;</span>
             default:
-<span class="fc" id="L127">                theInfoSet = null;</span>
-<span class="fc" id="L128">                hasInfoSet = false;</span>
-<span class="fc" id="L129">                useInfoSet = false;</span>
+<span class="fc" id="L130">                theInfoSet = null;</span>
+<span class="fc" id="L131">                hasInfoSet = false;</span>
+<span class="fc" id="L132">                useInfoSet = false;</span>
                 break;
         }
-<span class="fc" id="L132">    }</span>
+<span class="fc" id="L135">    }</span>
 
     /**
      * Values constructor.
@@ -141,13 +144,13 @@ public class MoneyWisePortfolio
     private MoneyWisePortfolio(final MoneyWisePortfolioList pList,
                                final PrometheusDataValues pValues) throws OceanusException {
         /* Initialise the item */
-<span class="fc" id="L144">        super(pList, pValues);</span>
+<span class="fc" id="L147">        super(pList, pValues);</span>
 
         /* Create the InfoSet */
-<span class="fc" id="L147">        theInfoSet = new MoneyWisePortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());</span>
-<span class="fc" id="L148">        hasInfoSet = true;</span>
-<span class="fc" id="L149">        useInfoSet = false;</span>
-<span class="fc" id="L150">    }</span>
+<span class="fc" id="L150">        theInfoSet = new MoneyWisePortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());</span>
+<span class="fc" id="L151">        hasInfoSet = true;</span>
+<span class="fc" id="L152">        useInfoSet = false;</span>
+<span class="fc" id="L153">    }</span>
 
     /**
      * Edit Constructor.
@@ -155,44 +158,49 @@ public class MoneyWisePortfolio
      * @param pList the list
      */
     public MoneyWisePortfolio(final MoneyWisePortfolioList pList) {
-<span class="fc" id="L158">        super(pList);</span>
+<span class="fc" id="L161">        super(pList);</span>
 
         /* Build InfoSet */
-<span class="fc" id="L161">        theInfoSet = new MoneyWisePortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());</span>
-<span class="fc" id="L162">        hasInfoSet = true;</span>
-<span class="fc" id="L163">        useInfoSet = true;</span>
-<span class="fc" id="L164">    }</span>
+<span class="fc" id="L164">        theInfoSet = new MoneyWisePortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());</span>
+<span class="fc" id="L165">        hasInfoSet = true;</span>
+<span class="fc" id="L166">        useInfoSet = true;</span>
+<span class="fc" id="L167">    }</span>
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
-<span class="fc" id="L168">        return FIELD_DEFS;</span>
+<span class="fc" id="L171">        return FIELD_DEFS;</span>
     }
 
     @Override
     public boolean includeXmlField(final MetisDataFieldId pField) {
         /* Determine whether fields should be included */
-<span class="fc bfc" id="L174" title="All 2 branches covered.">        if (MoneyWiseBasicResource.CATEGORY_NAME.equals(pField)) {</span>
-<span class="fc" id="L175">            return true;</span>
-        }
-<span class="fc bfc" id="L177" title="All 2 branches covered.">        if (MoneyWiseBasicResource.ASSET_PARENT.equals(pField)) {</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        if (MoneyWiseBasicResource.CATEGORY_NAME.equals(pField)) {</span>
 <span class="fc" id="L178">            return true;</span>
         }
-<span class="fc bfc" id="L180" title="All 2 branches covered.">        if (MoneyWiseStaticDataType.CURRENCY.equals(pField)) {</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">        if (MoneyWiseBasicResource.ASSET_PARENT.equals(pField)) {</span>
 <span class="fc" id="L181">            return true;</span>
+        }
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        if (MoneyWiseStaticDataType.CURRENCY.equals(pField)) {</span>
+<span class="fc" id="L184">            return true;</span>
         }
 
         /* Pass call on */
-<span class="fc" id="L185">        return super.includeXmlField(pField);</span>
+<span class="fc" id="L188">        return super.includeXmlField(pField);</span>
     }
 
     @Override
     public Long getExternalId() {
-<span class="nc" id="L190">        return MoneyWiseAssetType.createExternalId(MoneyWiseAssetType.PORTFOLIO, getIndexedId());</span>
+<span class="nc" id="L193">        return MoneyWiseAssetType.createExternalId(MoneyWiseAssetType.PORTFOLIO, getIndexedId());</span>
     }
 
     @Override
     public MoneyWisePortfolioInfoSet getInfoSet() {
-<span class="fc" id="L195">        return theInfoSet;</span>
+<span class="fc" id="L198">        return theInfoSet;</span>
+    }
+
+    @Override
+    public MoneyWisePayee getParent() {
+<span class="fc" id="L203">        return (MoneyWisePayee) super.getParent();</span>
     }
 
     /**
@@ -202,7 +210,7 @@ public class MoneyWisePortfolio
      * @return the value
      */
     private Object getFieldValue(final MetisDataFieldId pFieldId) {
-<span class="pc bpc" id="L205" title="1 of 2 branches missed.">        return theInfoSet != null ? theInfoSet.getFieldValue(pFieldId) : null;</span>
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">        return theInfoSet != null ? theInfoSet.getFieldValue(pFieldId) : null;</span>
     }
 
     /**
@@ -211,9 +219,9 @@ public class MoneyWisePortfolio
      * @return the webSite
      */
     public char[] getWebSite() {
-<span class="nc bnc" id="L214" title="All 2 branches missed.">        return hasInfoSet</span>
-<span class="nc" id="L215">                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.WEBSITE, char[].class)</span>
-<span class="nc" id="L216">                : null;</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">        return hasInfoSet</span>
+<span class="nc" id="L223">                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.WEBSITE, char[].class)</span>
+<span class="nc" id="L224">                : null;</span>
     }
 
     /**
@@ -222,9 +230,9 @@ public class MoneyWisePortfolio
      * @return the customer #
      */
     public char[] getCustNo() {
-<span class="nc bnc" id="L225" title="All 2 branches missed.">        return hasInfoSet</span>
-<span class="nc" id="L226">                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.CUSTOMERNO, char[].class)</span>
-<span class="nc" id="L227">                : null;</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">        return hasInfoSet</span>
+<span class="nc" id="L234">                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.CUSTOMERNO, char[].class)</span>
+<span class="nc" id="L235">                : null;</span>
     }
 
     /**
@@ -233,9 +241,9 @@ public class MoneyWisePortfolio
      * @return the userId
      */
     public char[] getUserId() {
-<span class="nc bnc" id="L236" title="All 2 branches missed.">        return hasInfoSet</span>
-<span class="nc" id="L237">                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.USERID, char[].class)</span>
-<span class="nc" id="L238">                : null;</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">        return hasInfoSet</span>
+<span class="nc" id="L245">                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.USERID, char[].class)</span>
+<span class="nc" id="L246">                : null;</span>
     }
 
     /**
@@ -244,9 +252,9 @@ public class MoneyWisePortfolio
      * @return the password
      */
     public char[] getPassword() {
-<span class="nc bnc" id="L247" title="All 2 branches missed.">        return hasInfoSet</span>
-<span class="nc" id="L248">                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.PASSWORD, char[].class)</span>
-<span class="nc" id="L249">                : null;</span>
+<span class="nc bnc" id="L255" title="All 2 branches missed.">        return hasInfoSet</span>
+<span class="nc" id="L256">                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.PASSWORD, char[].class)</span>
+<span class="nc" id="L257">                : null;</span>
     }
 
     /**
@@ -255,9 +263,9 @@ public class MoneyWisePortfolio
      * @return the sort code
      */
     public char[] getSortCode() {
-<span class="nc bnc" id="L258" title="All 2 branches missed.">        return hasInfoSet</span>
-<span class="nc" id="L259">                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.SORTCODE, char[].class)</span>
-<span class="nc" id="L260">                : null;</span>
+<span class="nc bnc" id="L266" title="All 2 branches missed.">        return hasInfoSet</span>
+<span class="nc" id="L267">                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.SORTCODE, char[].class)</span>
+<span class="nc" id="L268">                : null;</span>
     }
 
     /**
@@ -266,9 +274,9 @@ public class MoneyWisePortfolio
      * @return the reference
      */
     public char[] getReference() {
-<span class="nc bnc" id="L269" title="All 2 branches missed.">        return hasInfoSet</span>
-<span class="nc" id="L270">                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.REFERENCE, char[].class)</span>
-<span class="nc" id="L271">                : null;</span>
+<span class="nc bnc" id="L277" title="All 2 branches missed.">        return hasInfoSet</span>
+<span class="nc" id="L278">                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.REFERENCE, char[].class)</span>
+<span class="nc" id="L279">                : null;</span>
     }
 
     /**
@@ -277,9 +285,9 @@ public class MoneyWisePortfolio
      * @return the account
      */
     public char[] getAccount() {
-<span class="nc bnc" id="L280" title="All 2 branches missed.">        return hasInfoSet</span>
-<span class="nc" id="L281">                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.ACCOUNT, char[].class)</span>
-<span class="nc" id="L282">                : null;</span>
+<span class="nc bnc" id="L288" title="All 2 branches missed.">        return hasInfoSet</span>
+<span class="nc" id="L289">                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.ACCOUNT, char[].class)</span>
+<span class="nc" id="L290">                : null;</span>
     }
 
     /**
@@ -288,14 +296,14 @@ public class MoneyWisePortfolio
      * @return the notes
      */
     public char[] getNotes() {
-<span class="nc bnc" id="L291" title="All 2 branches missed.">        return hasInfoSet</span>
-<span class="nc" id="L292">                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.NOTES, char[].class)</span>
-<span class="nc" id="L293">                : null;</span>
+<span class="nc bnc" id="L299" title="All 2 branches missed.">        return hasInfoSet</span>
+<span class="nc" id="L300">                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.NOTES, char[].class)</span>
+<span class="nc" id="L301">                : null;</span>
     }
 
     @Override
     public MoneyWisePortfolioType getCategory() {
-<span class="fc" id="L298">        return getValues().getValue(MoneyWiseBasicResource.CATEGORY_NAME, MoneyWisePortfolioType.class);</span>
+<span class="fc" id="L306">        return getValues().getValue(MoneyWiseBasicResource.CATEGORY_NAME, MoneyWisePortfolioType.class);</span>
     }
 
     /**
@@ -304,10 +312,10 @@ public class MoneyWisePortfolio
      * @return the categoryId
      */
     public Integer getCategoryId() {
-<span class="fc" id="L307">        final MoneyWisePortfolioType myType = getCategory();</span>
-<span class="pc bpc" id="L308" title="1 of 2 branches missed.">        return myType == null</span>
-<span class="nc" id="L309">                ? null</span>
-<span class="fc" id="L310">                : myType.getIndexedId();</span>
+<span class="fc" id="L315">        final MoneyWisePortfolioType myType = getCategory();</span>
+<span class="pc bpc" id="L316" title="1 of 2 branches missed.">        return myType == null</span>
+<span class="nc" id="L317">                ? null</span>
+<span class="fc" id="L318">                : myType.getIndexedId();</span>
     }
 
     /**
@@ -316,10 +324,10 @@ public class MoneyWisePortfolio
      * @return the categoryName
      */
     public String getCategoryName() {
-<span class="nc" id="L319">        final MoneyWisePortfolioType myType = getCategory();</span>
-<span class="nc bnc" id="L320" title="All 2 branches missed.">        return myType == null</span>
-<span class="nc" id="L321">                ? null</span>
-<span class="nc" id="L322">                : myType.getName();</span>
+<span class="nc" id="L327">        final MoneyWisePortfolioType myType = getCategory();</span>
+<span class="nc bnc" id="L328" title="All 2 branches missed.">        return myType == null</span>
+<span class="nc" id="L329">                ? null</span>
+<span class="nc" id="L330">                : myType.getName();</span>
     }
 
     /**
@@ -328,143 +336,143 @@ public class MoneyWisePortfolio
      * @return the categoryClass
      */
     public MoneyWisePortfolioClass getCategoryClass() {
-<span class="fc" id="L331">        final MoneyWisePortfolioType myType = getCategory();</span>
-<span class="pc bpc" id="L332" title="1 of 2 branches missed.">        return myType == null</span>
-<span class="nc" id="L333">                ? null</span>
-<span class="fc" id="L334">                : myType.getPortfolioClass();</span>
+<span class="fc" id="L339">        final MoneyWisePortfolioType myType = getCategory();</span>
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">        return myType == null</span>
+<span class="nc" id="L341">                ? null</span>
+<span class="fc" id="L342">                : myType.getPortfolioClass();</span>
     }
 
     @Override
     public boolean isTaxFree() {
-<span class="fc" id="L339">        final MoneyWisePortfolioClass myClass = getCategoryClass();</span>
-<span class="pc bpc" id="L340" title="1 of 4 branches missed.">        return myClass != null &amp;&amp; myClass.isTaxFree();</span>
+<span class="fc" id="L347">        final MoneyWisePortfolioClass myClass = getCategoryClass();</span>
+<span class="pc bpc" id="L348" title="1 of 4 branches missed.">        return myClass != null &amp;&amp; myClass.isTaxFree();</span>
     }
 
     @Override
     public boolean isForeign() {
-<span class="nc" id="L345">        final MoneyWiseCurrency myDefault = getDataSet().getReportingCurrency();</span>
-<span class="nc bnc" id="L346" title="All 2 branches missed.">        return !myDefault.equals(getAssetCurrency());</span>
+<span class="nc" id="L353">        final MoneyWiseCurrency myDefault = getDefaultCurrency();</span>
+<span class="nc bnc" id="L354" title="All 2 branches missed.">        return !myDefault.equals(getAssetCurrency());</span>
     }
 
     @Override
     public MoneyWisePortfolio getBase() {
-<span class="fc" id="L351">        return (MoneyWisePortfolio) super.getBase();</span>
+<span class="fc" id="L359">        return (MoneyWisePortfolio) super.getBase();</span>
     }
 
     @Override
     public MoneyWisePortfolioList getList() {
-<span class="fc" id="L356">        return (MoneyWisePortfolioList) super.getList();</span>
+<span class="fc" id="L364">        return (MoneyWisePortfolioList) super.getList();</span>
     }
 
     @Override
     public MetisDataState getState() {
         /* Pop history for self */
-<span class="fc" id="L362">        MetisDataState myState = super.getState();</span>
+<span class="fc" id="L370">        MetisDataState myState = super.getState();</span>
 
         /* If we should use the InfoSet */
-<span class="fc bfc" id="L365" title="All 4 branches covered.">        if ((myState == MetisDataState.CLEAN) &amp;&amp; useInfoSet) {</span>
+<span class="fc bfc" id="L373" title="All 4 branches covered.">        if ((myState == MetisDataState.CLEAN) &amp;&amp; useInfoSet) {</span>
             /* Get state for infoSet */
-<span class="fc" id="L367">            myState = theInfoSet.getState();</span>
+<span class="fc" id="L375">            myState = theInfoSet.getState();</span>
         }
 
         /* Return the state */
-<span class="fc" id="L371">        return myState;</span>
+<span class="fc" id="L379">        return myState;</span>
     }
 
     @Override
     public MetisDataEditState getEditState() {
         /* Pop history for self */
-<span class="fc" id="L377">        MetisDataEditState myState = super.getEditState();</span>
+<span class="fc" id="L385">        MetisDataEditState myState = super.getEditState();</span>
 
         /* If we should use the InfoSet */
-<span class="pc bpc" id="L380" title="1 of 4 branches missed.">        if (myState == MetisDataEditState.CLEAN</span>
+<span class="pc bpc" id="L388" title="1 of 4 branches missed.">        if (myState == MetisDataEditState.CLEAN</span>
                 &amp;&amp; useInfoSet) {
             /* Get state for infoSet */
-<span class="fc" id="L383">            myState = theInfoSet.getEditState();</span>
+<span class="fc" id="L391">            myState = theInfoSet.getEditState();</span>
         }
 
         /* Return the state */
-<span class="fc" id="L387">        return myState;</span>
+<span class="fc" id="L395">        return myState;</span>
     }
 
     @Override
     public boolean hasHistory() {
         /* Check for history for self */
-<span class="nc" id="L393">        boolean hasHistory = super.hasHistory();</span>
+<span class="nc" id="L401">        boolean hasHistory = super.hasHistory();</span>
 
         /* If we should use the InfoSet */
-<span class="nc bnc" id="L396" title="All 4 branches missed.">        if (!hasHistory &amp;&amp; useInfoSet) {</span>
+<span class="nc bnc" id="L404" title="All 4 branches missed.">        if (!hasHistory &amp;&amp; useInfoSet) {</span>
             /* Check history for infoSet */
-<span class="nc" id="L398">            hasHistory = theInfoSet.hasHistory();</span>
+<span class="nc" id="L406">            hasHistory = theInfoSet.hasHistory();</span>
         }
 
         /* Return details */
-<span class="nc" id="L402">        return hasHistory;</span>
+<span class="nc" id="L410">        return hasHistory;</span>
     }
 
     @Override
     public void pushHistory() {
         /* Push history for self */
-<span class="nc" id="L408">        super.pushHistory();</span>
+<span class="nc" id="L416">        super.pushHistory();</span>
 
         /* If we should use the InfoSet */
-<span class="nc bnc" id="L411" title="All 2 branches missed.">        if (useInfoSet) {</span>
+<span class="nc bnc" id="L419" title="All 2 branches missed.">        if (useInfoSet) {</span>
             /* Push history for infoSet */
-<span class="nc" id="L413">            theInfoSet.pushHistory();</span>
+<span class="nc" id="L421">            theInfoSet.pushHistory();</span>
         }
-<span class="nc" id="L415">    }</span>
+<span class="nc" id="L423">    }</span>
 
     @Override
     public void popHistory() {
         /* Pop history for self */
-<span class="nc" id="L420">        super.popHistory();</span>
+<span class="nc" id="L428">        super.popHistory();</span>
 
         /* If we should use the InfoSet */
-<span class="nc bnc" id="L423" title="All 2 branches missed.">        if (useInfoSet) {</span>
+<span class="nc bnc" id="L431" title="All 2 branches missed.">        if (useInfoSet) {</span>
             /* Pop history for infoSet */
-<span class="nc" id="L425">            theInfoSet.popHistory();</span>
+<span class="nc" id="L433">            theInfoSet.popHistory();</span>
         }
-<span class="nc" id="L427">    }</span>
+<span class="nc" id="L435">    }</span>
 
     @Override
     public boolean checkForHistory() {
         /* Check for history for self */
-<span class="nc" id="L432">        boolean bChanges = super.checkForHistory();</span>
+<span class="nc" id="L440">        boolean bChanges = super.checkForHistory();</span>
 
         /* If we should use the InfoSet */
-<span class="nc bnc" id="L435" title="All 2 branches missed.">        if (useInfoSet) {</span>
+<span class="nc bnc" id="L443" title="All 2 branches missed.">        if (useInfoSet) {</span>
             /* Check for history for infoSet */
-<span class="nc" id="L437">            bChanges |= theInfoSet.checkForHistory();</span>
+<span class="nc" id="L445">            bChanges |= theInfoSet.checkForHistory();</span>
         }
 
         /* return result */
-<span class="nc" id="L441">        return bChanges;</span>
+<span class="nc" id="L449">        return bChanges;</span>
     }
 
     @Override
     public MetisDataDifference fieldChanged(final MetisDataFieldId pField) {
         /* Handle InfoSet fields */
-<span class="nc" id="L447">        final MoneyWiseAccountInfoClass myClass = MoneyWisePortfolioInfoSet.getClassForField(pField);</span>
-<span class="nc bnc" id="L448" title="All 2 branches missed.">        if (myClass != null) {</span>
-<span class="nc bnc" id="L449" title="All 2 branches missed.">            return useInfoSet</span>
-<span class="nc" id="L450">                    ? theInfoSet.fieldChanged(myClass)</span>
-<span class="nc" id="L451">                    : MetisDataDifference.IDENTICAL;</span>
+<span class="nc" id="L455">        final MoneyWiseAccountInfoClass myClass = MoneyWisePortfolioInfoSet.getClassForField(pField);</span>
+<span class="nc bnc" id="L456" title="All 2 branches missed.">        if (myClass != null) {</span>
+<span class="nc bnc" id="L457" title="All 2 branches missed.">            return useInfoSet</span>
+<span class="nc" id="L458">                    ? theInfoSet.fieldChanged(myClass)</span>
+<span class="nc" id="L459">                    : MetisDataDifference.IDENTICAL;</span>
         }
 
         /* Check super fields */
-<span class="nc" id="L455">        return super.fieldChanged(pField);</span>
+<span class="nc" id="L463">        return super.fieldChanged(pField);</span>
     }
 
     @Override
     public void setDeleted(final boolean bDeleted) {
         /* Pass call to infoSet if required */
-<span class="nc bnc" id="L461" title="All 2 branches missed.">        if (useInfoSet) {</span>
-<span class="nc" id="L462">            theInfoSet.setDeleted(bDeleted);</span>
+<span class="nc bnc" id="L469" title="All 2 branches missed.">        if (useInfoSet) {</span>
+<span class="nc" id="L470">            theInfoSet.setDeleted(bDeleted);</span>
         }
 
         /* Pass call onwards */
-<span class="nc" id="L466">        super.setDeleted(bDeleted);</span>
-<span class="nc" id="L467">    }</span>
+<span class="nc" id="L474">        super.setDeleted(bDeleted);</span>
+<span class="nc" id="L475">    }</span>
 
     /**
      * Is this portfolio the required class.
@@ -474,14 +482,14 @@ public class MoneyWisePortfolio
      */
     public boolean isPortfolioClass(final MoneyWisePortfolioClass pClass) {
         /* Check for match */
-<span class="nc bnc" id="L477" title="All 2 branches missed.">        return getCategoryClass() == pClass;</span>
+<span class="nc bnc" id="L485" title="All 2 branches missed.">        return getCategoryClass() == pClass;</span>
     }
 
     @Override
     public void deRegister() {
-<span class="nc" id="L482">        final MoneyWiseSecurityHoldingMap myMap = getList().getSecurityHoldingsMap();</span>
-<span class="nc" id="L483">        myMap.deRegister(this);</span>
-<span class="nc" id="L484">    }</span>
+<span class="nc" id="L490">        final MoneyWiseSecurityHoldingMapCtl myMap = getList().getSecurityHoldingsMap();</span>
+<span class="nc" id="L491">        myMap.deRegister(this);</span>
+<span class="nc" id="L492">    }</span>
 
     /**
      * Set defaults.
@@ -489,8 +497,8 @@ public class MoneyWisePortfolio
      * @throws OceanusException on error
      */
     public void setDefaults() throws OceanusException {
-<span class="nc" id="L492">        getList().getValidator().setDefaults(this);</span>
-<span class="nc" id="L493">    }</span>
+<span class="nc" id="L500">        getList().getValidator().setDefaults(this);</span>
+<span class="nc" id="L501">    }</span>
 
     /**
      * adjust values after change.
@@ -498,49 +506,48 @@ public class MoneyWisePortfolio
      * @throws OceanusException on error
      */
     public void autoCorrect() throws OceanusException {
-<span class="nc" id="L501">        getList().getValidator().autoCorrect(this);</span>
-<span class="nc" id="L502">    }</span>
+<span class="nc" id="L509">        getList().getValidator().autoCorrect(this);</span>
+<span class="nc" id="L510">    }</span>
 
     @Override
     public int compareValues(final PrometheusDataItem pThat) {
         /* Check the category and then the name */
-<span class="fc" id="L507">        final MoneyWisePortfolio myThat = (MoneyWisePortfolio) pThat;</span>
-<span class="fc" id="L508">        int iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());</span>
-<span class="pc bpc" id="L509" title="1 of 2 branches missed.">        if (iDiff == 0) {</span>
-<span class="nc" id="L510">            iDiff = MetisDataDifference.compareObject(getName(), myThat.getName());</span>
+<span class="fc" id="L515">        final MoneyWisePortfolio myThat = (MoneyWisePortfolio) pThat;</span>
+<span class="fc" id="L516">        int iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());</span>
+<span class="pc bpc" id="L517" title="1 of 2 branches missed.">        if (iDiff == 0) {</span>
+<span class="nc" id="L518">            iDiff = MetisDataDifference.compareObject(getName(), myThat.getName());</span>
         }
-<span class="fc" id="L512">        return iDiff;</span>
+<span class="fc" id="L520">        return iDiff;</span>
     }
 
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Update the Base details */
-<span class="fc" id="L518">        super.resolveDataSetLinks();</span>
+<span class="fc" id="L526">        super.resolveDataSetLinks();</span>
 
         /* Resolve holding account */
-<span class="fc" id="L521">        final MoneyWiseDataSet myData = getDataSet();</span>
-<span class="fc" id="L522">        resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myData.getPayees());</span>
-<span class="fc" id="L523">        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myData.getPortfolioTypes());</span>
-<span class="fc" id="L524">        resolveDataLink(MoneyWiseStaticDataType.CURRENCY, myData.getAccountCurrencies());</span>
-<span class="fc" id="L525">    }</span>
+<span class="fc" id="L529">        resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, MoneyWiseBasicDataType.PAYEE);</span>
+<span class="fc" id="L530">        resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, MoneyWiseStaticDataType.PORTFOLIOTYPE);</span>
+<span class="fc" id="L531">        resolveDataLink(MoneyWiseStaticDataType.CURRENCY, MoneyWiseStaticDataType.CURRENCY);</span>
+<span class="fc" id="L532">    }</span>
 
     @Override
     protected void resolveEditSetLinks() throws OceanusException {
         /* Access the editSet */
-<span class="fc" id="L530">        final PrometheusEditSet myEditSet = getList().getEditSet();</span>
+<span class="fc" id="L537">        final PrometheusEditSet myEditSet = getList().getEditSet();</span>
 
         /* Resolve Parent/Category/Currency if required */
-<span class="fc" id="L533">        resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class));</span>
-<span class="fc bfc" id="L534" title="All 2 branches covered.">        if (myEditSet.hasDataType(MoneyWiseStaticDataType.PORTFOLIOTYPE)) {</span>
-<span class="fc" id="L535">            resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myEditSet.getDataList(MoneyWiseStaticDataType.PORTFOLIOTYPE, MoneyWisePortfolioTypeList.class));</span>
+<span class="fc" id="L540">        resolveDataLink(MoneyWiseBasicResource.ASSET_PARENT, myEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class));</span>
+<span class="fc bfc" id="L541" title="All 2 branches covered.">        if (myEditSet.hasDataType(MoneyWiseStaticDataType.PORTFOLIOTYPE)) {</span>
+<span class="fc" id="L542">            resolveDataLink(MoneyWiseBasicResource.CATEGORY_NAME, myEditSet.getDataList(MoneyWiseStaticDataType.PORTFOLIOTYPE, MoneyWisePortfolioTypeList.class));</span>
         }
-<span class="fc bfc" id="L537" title="All 2 branches covered.">        if (myEditSet.hasDataType(MoneyWiseStaticDataType.CURRENCY)) {</span>
-<span class="fc" id="L538">            resolveDataLink(MoneyWiseStaticDataType.CURRENCY, myEditSet.getDataList(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrencyList.class));</span>
+<span class="fc bfc" id="L544" title="All 2 branches covered.">        if (myEditSet.hasDataType(MoneyWiseStaticDataType.CURRENCY)) {</span>
+<span class="fc" id="L545">            resolveDataLink(MoneyWiseStaticDataType.CURRENCY, myEditSet.getDataList(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrencyList.class));</span>
         }
 
         /* Resolve links in infoSet */
-<span class="fc" id="L542">        theInfoSet.resolveEditSetLinks(myEditSet);</span>
-<span class="fc" id="L543">    }</span>
+<span class="fc" id="L549">        theInfoSet.resolveEditSetLinks(myEditSet);</span>
+<span class="fc" id="L550">    }</span>
 
     /**
      * Set a new WebSite.
@@ -549,8 +556,8 @@ public class MoneyWisePortfolio
      * @throws OceanusException on error
      */
     public void setWebSite(final char[] pWebSite) throws OceanusException {
-<span class="nc" id="L552">        setInfoSetValue(MoneyWiseAccountInfoClass.WEBSITE, pWebSite);</span>
-<span class="nc" id="L553">    }</span>
+<span class="nc" id="L559">        setInfoSetValue(MoneyWiseAccountInfoClass.WEBSITE, pWebSite);</span>
+<span class="nc" id="L560">    }</span>
 
     /**
      * Set a new CustNo.
@@ -559,8 +566,8 @@ public class MoneyWisePortfolio
      * @throws OceanusException on error
      */
     public void setCustNo(final char[] pCustNo) throws OceanusException {
-<span class="nc" id="L562">        setInfoSetValue(MoneyWiseAccountInfoClass.CUSTOMERNO, pCustNo);</span>
-<span class="nc" id="L563">    }</span>
+<span class="nc" id="L569">        setInfoSetValue(MoneyWiseAccountInfoClass.CUSTOMERNO, pCustNo);</span>
+<span class="nc" id="L570">    }</span>
 
     /**
      * Set a new UserId.
@@ -569,8 +576,8 @@ public class MoneyWisePortfolio
      * @throws OceanusException on error
      */
     public void setUserId(final char[] pUserId) throws OceanusException {
-<span class="nc" id="L572">        setInfoSetValue(MoneyWiseAccountInfoClass.USERID, pUserId);</span>
-<span class="nc" id="L573">    }</span>
+<span class="nc" id="L579">        setInfoSetValue(MoneyWiseAccountInfoClass.USERID, pUserId);</span>
+<span class="nc" id="L580">    }</span>
 
     /**
      * Set a new Password.
@@ -579,8 +586,8 @@ public class MoneyWisePortfolio
      * @throws OceanusException on error
      */
     public void setPassword(final char[] pPassword) throws OceanusException {
-<span class="nc" id="L582">        setInfoSetValue(MoneyWiseAccountInfoClass.PASSWORD, pPassword);</span>
-<span class="nc" id="L583">    }</span>
+<span class="nc" id="L589">        setInfoSetValue(MoneyWiseAccountInfoClass.PASSWORD, pPassword);</span>
+<span class="nc" id="L590">    }</span>
 
     /**
      * Set a new SortCode.
@@ -589,8 +596,8 @@ public class MoneyWisePortfolio
      * @throws OceanusException on error
      */
     public void setSortCode(final char[] pSortCode) throws OceanusException {
-<span class="nc" id="L592">        setInfoSetValue(MoneyWiseAccountInfoClass.SORTCODE, pSortCode);</span>
-<span class="nc" id="L593">    }</span>
+<span class="nc" id="L599">        setInfoSetValue(MoneyWiseAccountInfoClass.SORTCODE, pSortCode);</span>
+<span class="nc" id="L600">    }</span>
 
     /**
      * Set a new Account.
@@ -599,8 +606,8 @@ public class MoneyWisePortfolio
      * @throws OceanusException on error
      */
     public void setAccount(final char[] pAccount) throws OceanusException {
-<span class="nc" id="L602">        setInfoSetValue(MoneyWiseAccountInfoClass.ACCOUNT, pAccount);</span>
-<span class="nc" id="L603">    }</span>
+<span class="nc" id="L609">        setInfoSetValue(MoneyWiseAccountInfoClass.ACCOUNT, pAccount);</span>
+<span class="nc" id="L610">    }</span>
 
     /**
      * Set a new Reference.
@@ -609,8 +616,8 @@ public class MoneyWisePortfolio
      * @throws OceanusException on error
      */
     public void setReference(final char[] pReference) throws OceanusException {
-<span class="nc" id="L612">        setInfoSetValue(MoneyWiseAccountInfoClass.REFERENCE, pReference);</span>
-<span class="nc" id="L613">    }</span>
+<span class="nc" id="L619">        setInfoSetValue(MoneyWiseAccountInfoClass.REFERENCE, pReference);</span>
+<span class="nc" id="L620">    }</span>
 
     /**
      * Set a new Notes.
@@ -619,8 +626,8 @@ public class MoneyWisePortfolio
      * @throws OceanusException on error
      */
     public void setNotes(final char[] pNotes) throws OceanusException {
-<span class="nc" id="L622">        setInfoSetValue(MoneyWiseAccountInfoClass.NOTES, pNotes);</span>
-<span class="nc" id="L623">    }</span>
+<span class="nc" id="L629">        setInfoSetValue(MoneyWiseAccountInfoClass.NOTES, pNotes);</span>
+<span class="nc" id="L630">    }</span>
 
     /**
      * Set an infoSet value.
@@ -632,60 +639,60 @@ public class MoneyWisePortfolio
     private void setInfoSetValue(final MoneyWiseAccountInfoClass pInfoClass,
                                  final Object pValue) throws OceanusException {
         /* Reject if there is no infoSet */
-<span class="nc bnc" id="L635" title="All 2 branches missed.">        if (!hasInfoSet) {</span>
-<span class="nc" id="L636">            throw new MoneyWiseLogicException(ERROR_BADINFOSET);</span>
+<span class="nc bnc" id="L642" title="All 2 branches missed.">        if (!hasInfoSet) {</span>
+<span class="nc" id="L643">            throw new MoneyWiseLogicException(ERROR_BADINFOSET);</span>
         }
 
         /* Set the value */
-<span class="nc" id="L640">        theInfoSet.setValue(pInfoClass, pValue);</span>
-<span class="nc" id="L641">    }</span>
+<span class="nc" id="L647">        theInfoSet.setValue(pInfoClass, pValue);</span>
+<span class="nc" id="L648">    }</span>
 
     @Override
     public MoneyWiseTransCategory getDetailedCategory(final MoneyWiseTransCategory pCategory,
                                                       final MoneyWiseTaxCredit pYear) {
         /* Switch on category type */
-<span class="fc" id="L647">        final MoneyWiseTransCategoryList myCategories = getDataSet().getTransCategories();</span>
-<span class="pc bpc" id="L648" title="3 of 4 branches missed.">        switch (pCategory.getCategoryTypeClass()) {</span>
-            case INTEREST:
-<span class="nc bnc" id="L650" title="All 2 branches missed.">                if (isTaxFree()) {</span>
-<span class="nc" id="L651">                    return myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEINTEREST);</span>
+<span class="fc" id="L654">        final MoneyWiseTransCategoryList myCategories = getDataSet().getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);</span>
+<span class="pc bpc" id="L655" title="3 of 4 branches missed.">        return switch (Objects.requireNonNull(pCategory.getCategoryTypeClass())) {</span>
+            case INTEREST -&gt; {
+<span class="nc bnc" id="L657" title="All 2 branches missed.">                if (isTaxFree()) {</span>
+<span class="nc" id="L658">                    yield myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEINTEREST);</span>
                 }
-<span class="nc bnc" id="L653" title="All 2 branches missed.">                return myCategories.getSingularClass(isGross()</span>
-<span class="nc bnc" id="L654" title="All 2 branches missed.">                        || !pYear.isTaxCreditRequired()</span>
-<span class="nc" id="L655">                        ? MoneyWiseTransCategoryClass.GROSSINTEREST</span>
-<span class="nc" id="L656">                        : MoneyWiseTransCategoryClass.TAXEDINTEREST);</span>
-            case LOYALTYBONUS:
-<span class="nc bnc" id="L658" title="All 2 branches missed.">                if (isTaxFree()) {</span>
-<span class="nc" id="L659">                    return myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREELOYALTYBONUS);</span>
+<span class="nc bnc" id="L660" title="All 2 branches missed.">                yield myCategories.getSingularClass(isGross()</span>
+<span class="nc bnc" id="L661" title="All 2 branches missed.">                        || !pYear.isTaxCreditRequired()</span>
+<span class="nc" id="L662">                        ? MoneyWiseTransCategoryClass.GROSSINTEREST</span>
+<span class="nc" id="L663">                        : MoneyWiseTransCategoryClass.TAXEDINTEREST);</span>
+            }
+            case LOYALTYBONUS -&gt; {
+<span class="nc bnc" id="L666" title="All 2 branches missed.">                if (isTaxFree()) {</span>
+<span class="nc" id="L667">                    yield myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREELOYALTYBONUS);</span>
                 }
-<span class="nc bnc" id="L661" title="All 2 branches missed.">                return myCategories.getSingularClass(isGross()</span>
-<span class="nc" id="L662">                        ? MoneyWiseTransCategoryClass.GROSSLOYALTYBONUS</span>
-<span class="nc" id="L663">                        : MoneyWiseTransCategoryClass.TAXEDLOYALTYBONUS);</span>
-            case DIVIDEND:
-<span class="pc bpc" id="L665" title="1 of 2 branches missed.">                return isTaxFree()</span>
-<span class="nc" id="L666">                        ? myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEDIVIDEND)</span>
-<span class="fc" id="L667">                        : pCategory;</span>
-            default:
-<span class="nc" id="L669">                return pCategory;</span>
-        }
+<span class="nc bnc" id="L669" title="All 2 branches missed.">                yield myCategories.getSingularClass(isGross()</span>
+<span class="nc" id="L670">                        ? MoneyWiseTransCategoryClass.GROSSLOYALTYBONUS</span>
+<span class="nc" id="L671">                        : MoneyWiseTransCategoryClass.TAXEDLOYALTYBONUS);</span>
+            }
+<span class="pc bpc" id="L673" title="1 of 2 branches missed.">            case DIVIDEND -&gt; isTaxFree()</span>
+<span class="nc" id="L674">                    ? myCategories.getSingularClass(MoneyWiseTransCategoryClass.TAXFREEDIVIDEND)</span>
+<span class="fc" id="L675">                    : pCategory;</span>
+<span class="nc" id="L676">            default -&gt; pCategory;</span>
+        };
     }
 
     @Override
     public void touchUnderlyingItems() {
         /* Touch parent and currency */
-<span class="fc" id="L676">        getCategory().touchItem(this);</span>
-<span class="fc" id="L677">        getParent().touchItem(this);</span>
-<span class="fc" id="L678">        getAssetCurrency().touchItem(this);</span>
+<span class="fc" id="L683">        getCategory().touchItem(this);</span>
+<span class="fc" id="L684">        getParent().touchItem(this);</span>
+<span class="fc" id="L685">        getAssetCurrency().touchItem(this);</span>
 
         /* touch infoSet items */
-<span class="fc" id="L681">        theInfoSet.touchUnderlyingItems();</span>
-<span class="fc" id="L682">    }</span>
+<span class="fc" id="L688">        theInfoSet.touchUnderlyingItems();</span>
+<span class="fc" id="L689">    }</span>
 
     @Override
     public void touchOnUpdate() {
         /* Touch parent */
-<span class="nc" id="L687">        getParent().touchItem(this);</span>
-<span class="nc" id="L688">    }</span>
+<span class="nc" id="L694">        getParent().touchItem(this);</span>
+<span class="nc" id="L695">    }</span>
 
     /**
      * Update base portfolio from an edited portfolio.
@@ -696,32 +703,32 @@ public class MoneyWisePortfolio
     @Override
     public boolean applyChanges(final PrometheusDataItem pPortfolio) {
         /* Can only update from a portfolio */
-<span class="nc bnc" id="L699" title="All 2 branches missed.">        if (!(pPortfolio instanceof MoneyWisePortfolio myPortfolio)) {</span>
-<span class="nc" id="L700">            return false;</span>
+<span class="nc bnc" id="L706" title="All 2 branches missed.">        if (!(pPortfolio instanceof MoneyWisePortfolio myPortfolio)) {</span>
+<span class="nc" id="L707">            return false;</span>
         }
 
         /* Store the current detail into history */
-<span class="nc" id="L704">        pushHistory();</span>
+<span class="nc" id="L711">        pushHistory();</span>
 
         /* Apply basic changes */
-<span class="nc" id="L707">        applyBasicChanges(myPortfolio);</span>
+<span class="nc" id="L714">        applyBasicChanges(myPortfolio);</span>
 
         /* Check for changes */
-<span class="nc" id="L710">        return checkForHistory();</span>
+<span class="nc" id="L717">        return checkForHistory();</span>
     }
 
     @Override
     public void adjustMapForItem() {
-<span class="fc" id="L715">        final MoneyWisePortfolioList myList = getList();</span>
-<span class="fc" id="L716">        final MoneyWisePortfolioDataMap myMap = myList.getDataMap();</span>
-<span class="fc" id="L717">        myMap.adjustForItem(this);</span>
-<span class="fc" id="L718">    }</span>
+<span class="fc" id="L722">        final MoneyWisePortfolioList myList = getList();</span>
+<span class="fc" id="L723">        final MoneyWisePortfolioDataMap myMap = myList.getDataMap();</span>
+<span class="fc" id="L724">        myMap.adjustForItem(this);</span>
+<span class="fc" id="L725">    }</span>
 
     @Override
     public void removeItem() {
-<span class="nc" id="L722">        theInfoSet.removeItems();</span>
-<span class="nc" id="L723">        super.removeItem();</span>
-<span class="nc" id="L724">    }</span>
+<span class="nc" id="L729">        theInfoSet.removeItems();</span>
+<span class="nc" id="L730">        super.removeItem();</span>
+<span class="nc" id="L731">    }</span>
 
     /**
      * The Portfolio List class.
@@ -731,14 +738,14 @@ public class MoneyWisePortfolio
         /**
          * Report fields.
          */
-<span class="fc" id="L734">        private static final MetisFieldSet&lt;MoneyWisePortfolioList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePortfolioList.class);</span>
+<span class="fc" id="L741">        private static final MetisFieldSet&lt;MoneyWisePortfolioList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePortfolioList.class);</span>
 
         /*
          * FieldIds.
          */
         static {
-<span class="fc" id="L740">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_HOLDINGSMAP, MoneyWisePortfolioList::getSecurityHoldingsMap);</span>
-<span class="fc" id="L741">        }</span>
+<span class="fc" id="L747">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_HOLDINGSMAP, MoneyWisePortfolioList::getSecurityHoldingsMap);</span>
+<span class="fc" id="L748">        }</span>
 
         /**
          * The PortfolioInfo List.
@@ -753,16 +760,16 @@ public class MoneyWisePortfolio
         /**
          * SecurityHoldings Map.
          */
-        private MoneyWiseSecurityHoldingMap theSecurityHoldings;
+        private MoneyWiseSecurityHoldingMapCtl theSecurityHoldings;
 
         /**
          * Construct an empty CORE Portfolio list.
          *
          * @param pData the DataSet for the list
          */
-        public MoneyWisePortfolioList(final MoneyWiseDataSet pData) {
-<span class="fc" id="L764">            super(pData, MoneyWisePortfolio.class, MoneyWiseBasicDataType.PORTFOLIO);</span>
-<span class="fc" id="L765">        }</span>
+        public MoneyWisePortfolioList(final PrometheusDataSet pData) {
+<span class="fc" id="L771">            super(pData, MoneyWisePortfolio.class, MoneyWiseBasicDataType.PORTFOLIO);</span>
+<span class="fc" id="L772">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -770,27 +777,27 @@ public class MoneyWisePortfolio
          * @param pSource the source List
          */
         protected MoneyWisePortfolioList(final MoneyWisePortfolioList pSource) {
-<span class="fc" id="L773">            super(pSource);</span>
-<span class="fc" id="L774">        }</span>
+<span class="fc" id="L780">            super(pSource);</span>
+<span class="fc" id="L781">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWisePortfolioList&gt; getDataFieldSet() {
-<span class="nc" id="L778">            return FIELD_DEFS;</span>
+<span class="nc" id="L785">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String listName() {
-<span class="fc" id="L783">            return LIST_NAME;</span>
+<span class="fc" id="L790">            return LIST_NAME;</span>
         }
 
         @Override
         public MetisFieldSetDef getItemFields() {
-<span class="fc" id="L788">            return MoneyWisePortfolio.FIELD_DEFS;</span>
+<span class="fc" id="L795">            return MoneyWisePortfolio.FIELD_DEFS;</span>
         }
 
         @Override
         public MoneyWisePortfolioDataMap getDataMap() {
-<span class="fc" id="L793">            return (MoneyWisePortfolioDataMap) super.getDataMap();</span>
+<span class="fc" id="L800">            return (MoneyWisePortfolioDataMap) super.getDataMap();</span>
         }
 
         /**
@@ -799,10 +806,10 @@ public class MoneyWisePortfolio
          * @return the portfolio info list
          */
         public MoneyWisePortfolioInfoList getPortfolioInfo() {
-<span class="fc bfc" id="L802" title="All 2 branches covered.">            if (theInfoList == null) {</span>
-<span class="fc" id="L803">                theInfoList = getDataSet().getPortfolioInfo();</span>
+<span class="fc bfc" id="L809" title="All 2 branches covered.">            if (theInfoList == null) {</span>
+<span class="fc" id="L810">                theInfoList = getDataSet().getDataList(MoneyWiseBasicDataType.PORTFOLIOINFO, MoneyWisePortfolioInfoList.class);</span>
             }
-<span class="fc" id="L805">            return theInfoList;</span>
+<span class="fc" id="L812">            return theInfoList;</span>
         }
 
         /**
@@ -811,12 +818,12 @@ public class MoneyWisePortfolio
          * @return the account info type list
          */
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
-<span class="fc bfc" id="L814" title="All 2 branches covered.">            if (theInfoTypeList == null) {</span>
-<span class="pc bpc" id="L815" title="1 of 2 branches missed.">                theInfoTypeList = getEditSet() == null</span>
-<span class="fc" id="L816">                        ? getDataSet().getActInfoTypes()</span>
-<span class="pc" id="L817">                        : getEditSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);</span>
+<span class="fc bfc" id="L821" title="All 2 branches covered.">            if (theInfoTypeList == null) {</span>
+<span class="pc bpc" id="L822" title="1 of 2 branches missed.">                theInfoTypeList = getEditSet() == null</span>
+<span class="fc" id="L823">                        ? getDataSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class)</span>
+<span class="pc" id="L824">                        : getEditSet().getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);</span>
             }
-<span class="fc" id="L819">            return theInfoTypeList;</span>
+<span class="fc" id="L826">            return theInfoTypeList;</span>
         }
 
         /**
@@ -824,20 +831,22 @@ public class MoneyWisePortfolio
          *
          * @return the holdings map
          */
-        public MoneyWiseSecurityHoldingMap getSecurityHoldingsMap() {
-<span class="fc bfc" id="L828" title="All 2 branches covered.">            if (theSecurityHoldings == null) {</span>
-<span class="fc bfc" id="L829" title="All 2 branches covered.">                theSecurityHoldings = getEditSet() == null</span>
-<span class="fc" id="L830">                        ? new MoneyWiseSecurityHoldingMap(getDataSet())</span>
-<span class="fc" id="L831">                        : new MoneyWiseSecurityHoldingMap(getEditSet());</span>
+        public MoneyWiseSecurityHoldingMapCtl getSecurityHoldingsMap() {
+<span class="fc bfc" id="L835" title="All 2 branches covered.">            if (theSecurityHoldings == null) {</span>
+<span class="fc" id="L836">                final MoneyWiseSecurityHoldingMapGenerator myGenerator =</span>
+<span class="fc" id="L837">                        (MoneyWiseSecurityHoldingMapGenerator) getDataSet();</span>
+<span class="fc bfc" id="L838" title="All 2 branches covered.">                theSecurityHoldings = getEditSet() == null</span>
+<span class="fc" id="L839">                        ? myGenerator.newSecurityHoldingMap()</span>
+<span class="fc" id="L840">                        : myGenerator.newSecurityHoldingMap(getEditSet());</span>
             }
-<span class="fc" id="L833">            return theSecurityHoldings;</span>
+<span class="fc" id="L842">            return theSecurityHoldings;</span>
         }
 
         @Override
         protected MoneyWisePortfolioList getEmptyList(final PrometheusListStyle pStyle) {
-<span class="fc" id="L838">            final MoneyWisePortfolioList myList = new MoneyWisePortfolioList(this);</span>
-<span class="fc" id="L839">            myList.setStyle(pStyle);</span>
-<span class="fc" id="L840">            return myList;</span>
+<span class="fc" id="L847">            final MoneyWisePortfolioList myList = new MoneyWisePortfolioList(this);</span>
+<span class="fc" id="L848">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L849">            return myList;</span>
         }
 
         /**
@@ -849,70 +858,70 @@ public class MoneyWisePortfolio
          */
         public MoneyWisePortfolioList deriveEditList(final PrometheusEditSet pEditSet) throws OceanusException {
             /* Build an empty List */
-<span class="fc" id="L852">            final MoneyWisePortfolioList myList = getEmptyList(PrometheusListStyle.EDIT);</span>
-<span class="fc" id="L853">            final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);</span>
-<span class="fc" id="L854">            myList.ensureMap(myPayees);</span>
-<span class="fc" id="L855">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.PORTFOLIO, myList);</span>
-<span class="fc" id="L856">            myList.getValidator().setEditSet(pEditSet);</span>
+<span class="fc" id="L861">            final MoneyWisePortfolioList myList = getEmptyList(PrometheusListStyle.EDIT);</span>
+<span class="fc" id="L862">            final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);</span>
+<span class="fc" id="L863">            myList.ensureMap(myPayees);</span>
+<span class="fc" id="L864">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.PORTFOLIO, myList);</span>
+<span class="fc" id="L865">            myList.getValidator().setEditSet(pEditSet);</span>
 
             /* Store InfoType list */
-<span class="fc" id="L859">            myList.theInfoTypeList = pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);</span>
+<span class="fc" id="L868">            myList.theInfoTypeList = pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);</span>
 
             /* Create info List */
-<span class="fc" id="L862">            final MoneyWisePortfolioInfoList myPortInfo = getPortfolioInfo();</span>
-<span class="fc" id="L863">            myList.theInfoList = myPortInfo.getEmptyList(PrometheusListStyle.EDIT);</span>
-<span class="fc" id="L864">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.PORTFOLIOINFO, myList.theInfoList);</span>
+<span class="fc" id="L871">            final MoneyWisePortfolioInfoList myPortInfo = getPortfolioInfo();</span>
+<span class="fc" id="L872">            myList.theInfoList = myPortInfo.getEmptyList(PrometheusListStyle.EDIT);</span>
+<span class="fc" id="L873">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.PORTFOLIOINFO, myList.theInfoList);</span>
 
             /* Store the editSet */
-<span class="fc" id="L867">            myList.setEditSet(pEditSet);</span>
+<span class="fc" id="L876">            myList.setEditSet(pEditSet);</span>
 
             /* Loop through the portfolios */
-<span class="fc" id="L870">            final Iterator&lt;MoneyWisePortfolio&gt; myIterator = iterator();</span>
-<span class="fc bfc" id="L871" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
-<span class="fc" id="L872">                final MoneyWisePortfolio myCurr = myIterator.next();</span>
+<span class="fc" id="L879">            final Iterator&lt;MoneyWisePortfolio&gt; myIterator = iterator();</span>
+<span class="fc bfc" id="L880" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L881">                final MoneyWisePortfolio myCurr = myIterator.next();</span>
 
                 /* Ignore deleted portfolios */
-<span class="pc bpc" id="L875" title="1 of 2 branches missed.">                if (myCurr.isDeleted()) {</span>
-<span class="nc" id="L876">                    continue;</span>
+<span class="pc bpc" id="L884" title="1 of 2 branches missed.">                if (myCurr.isDeleted()) {</span>
+<span class="nc" id="L885">                    continue;</span>
                 }
 
                 /* Build the new linked portfolio and add it to the list */
-<span class="fc" id="L880">                final MoneyWisePortfolio myPortfolio = new MoneyWisePortfolio(myList, myCurr);</span>
-<span class="fc" id="L881">                myList.add(myPortfolio);</span>
-<span class="fc" id="L882">                myPortfolio.resolveEditSetLinks();</span>
+<span class="fc" id="L889">                final MoneyWisePortfolio myPortfolio = new MoneyWisePortfolio(myList, myCurr);</span>
+<span class="fc" id="L890">                myList.add(myPortfolio);</span>
+<span class="fc" id="L891">                myPortfolio.resolveEditSetLinks();</span>
 
                 /* Adjust the map */
-<span class="fc" id="L885">                myPortfolio.adjustMapForItem();</span>
-<span class="fc" id="L886">            }</span>
+<span class="fc" id="L894">                myPortfolio.adjustMapForItem();</span>
+<span class="fc" id="L895">            }</span>
 
             /* Return the list */
-<span class="fc" id="L889">            return myList;</span>
+<span class="fc" id="L898">            return myList;</span>
         }
 
         @Override
         public void clear() {
-<span class="fc" id="L894">            super.clear();</span>
-<span class="fc bfc" id="L895" title="All 2 branches covered.">            if (theSecurityHoldings != null) {</span>
-<span class="fc" id="L896">                theSecurityHoldings.clear();</span>
+<span class="fc" id="L903">            super.clear();</span>
+<span class="fc bfc" id="L904" title="All 2 branches covered.">            if (theSecurityHoldings != null) {</span>
+<span class="fc" id="L905">                theSecurityHoldings.clear();</span>
             }
-<span class="fc" id="L898">        }</span>
+<span class="fc" id="L907">        }</span>
 
         @Override
         public MoneyWisePortfolio findItemByName(final String pName) {
             /* look up the name in the map */
-<span class="fc" id="L903">            return getDataMap().findItemByName(pName);</span>
+<span class="fc" id="L912">            return getDataMap().findItemByName(pName);</span>
         }
 
         @Override
         public boolean checkAvailableName(final String pName) {
             /* check availability in map */
-<span class="nc" id="L909">            return getDataMap().availableName(pName);</span>
+<span class="nc" id="L918">            return getDataMap().availableName(pName);</span>
         }
 
         @Override
         public boolean validNameCount(final String pName) {
             /* check availability in map */
-<span class="fc" id="L915">            return getDataMap().validNameCount(pName);</span>
+<span class="fc" id="L924">            return getDataMap().validNameCount(pName);</span>
         }
 
         /**
@@ -924,13 +933,13 @@ public class MoneyWisePortfolio
         @Override
         public MoneyWisePortfolio addCopyItem(final PrometheusDataItem pPortfolio) {
             /* Can only clone a Portfolio */
-<span class="pc bpc" id="L927" title="1 of 2 branches missed.">            if (!(pPortfolio instanceof MoneyWisePortfolio)) {</span>
-<span class="nc" id="L928">                throw new UnsupportedOperationException();</span>
+<span class="pc bpc" id="L936" title="1 of 2 branches missed.">            if (!(pPortfolio instanceof MoneyWisePortfolio)) {</span>
+<span class="nc" id="L937">                throw new UnsupportedOperationException();</span>
             }
 
-<span class="fc" id="L931">            final MoneyWisePortfolio myPortfolio = new MoneyWisePortfolio(this, (MoneyWisePortfolio) pPortfolio);</span>
-<span class="fc" id="L932">            add(myPortfolio);</span>
-<span class="fc" id="L933">            return myPortfolio;</span>
+<span class="fc" id="L940">            final MoneyWisePortfolio myPortfolio = new MoneyWisePortfolio(this, (MoneyWisePortfolio) pPortfolio);</span>
+<span class="fc" id="L941">            add(myPortfolio);</span>
+<span class="fc" id="L942">            return myPortfolio;</span>
         }
 
         /**
@@ -940,9 +949,9 @@ public class MoneyWisePortfolio
          */
         @Override
         public MoneyWisePortfolio addNewItem() {
-<span class="fc" id="L943">            final MoneyWisePortfolio myPortfolio = new MoneyWisePortfolio(this);</span>
-<span class="fc" id="L944">            add(myPortfolio);</span>
-<span class="fc" id="L945">            return myPortfolio;</span>
+<span class="fc" id="L952">            final MoneyWisePortfolio myPortfolio = new MoneyWisePortfolio(this);</span>
+<span class="fc" id="L953">            add(myPortfolio);</span>
+<span class="fc" id="L954">            return myPortfolio;</span>
         }
 
         /**
@@ -953,38 +962,38 @@ public class MoneyWisePortfolio
          */
         public MoneyWisePortfolio getSingularClass(final MoneyWisePortfolioClass pClass) {
             /* Lookup in the map */
-<span class="fc" id="L956">            return getDataMap().findSingularItem(pClass);</span>
+<span class="fc" id="L965">            return getDataMap().findSingularItem(pClass);</span>
         }
 
         @Override
         public MoneyWisePortfolio addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
             /* Create the portfolio */
-<span class="fc" id="L962">            final MoneyWisePortfolio myPortfolio = new MoneyWisePortfolio(this, pValues);</span>
+<span class="fc" id="L971">            final MoneyWisePortfolio myPortfolio = new MoneyWisePortfolio(this, pValues);</span>
 
             /* Check that this PortfolioId has not been previously added */
-<span class="pc bpc" id="L965" title="1 of 2 branches missed.">            if (!isIdUnique(myPortfolio.getIndexedId())) {</span>
-<span class="nc" id="L966">                myPortfolio.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L967">                throw new MoneyWiseDataException(myPortfolio, ERROR_VALIDATION);</span>
+<span class="pc bpc" id="L974" title="1 of 2 branches missed.">            if (!isIdUnique(myPortfolio.getIndexedId())) {</span>
+<span class="nc" id="L975">                myPortfolio.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L976">                throw new MoneyWiseDataException(myPortfolio, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="fc" id="L971">            add(myPortfolio);</span>
+<span class="fc" id="L980">            add(myPortfolio);</span>
 
             /* Loop through the info items */
-<span class="pc bpc" id="L974" title="1 of 2 branches missed.">            if (pValues.hasInfoItems()) {</span>
+<span class="pc bpc" id="L983" title="1 of 2 branches missed.">            if (pValues.hasInfoItems()) {</span>
                 /* Loop through the items */
-<span class="nc" id="L976">                final Iterator&lt;PrometheusInfoItem&gt; myIterator = pValues.infoIterator();</span>
-<span class="nc bnc" id="L977" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
-<span class="nc" id="L978">                    final PrometheusInfoItem myItem = myIterator.next();</span>
+<span class="nc" id="L985">                final Iterator&lt;PrometheusInfoItem&gt; myIterator = pValues.infoIterator();</span>
+<span class="nc bnc" id="L986" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
+<span class="nc" id="L987">                    final PrometheusInfoItem myItem = myIterator.next();</span>
 
                     /* Build info */
-<span class="nc" id="L981">                    final PrometheusDataValues myValues = myItem.getValues(myPortfolio);</span>
-<span class="nc" id="L982">                    theInfoList.addValuesItem(myValues);</span>
-<span class="nc" id="L983">                }</span>
+<span class="nc" id="L990">                    final PrometheusDataValues myValues = myItem.getValues(myPortfolio);</span>
+<span class="nc" id="L991">                    theInfoList.addValuesItem(myValues);</span>
+<span class="nc" id="L992">                }</span>
             }
 
             /* Return it */
-<span class="fc" id="L987">            return myPortfolio;</span>
+<span class="fc" id="L996">            return myPortfolio;</span>
         }
 
         /**
@@ -993,20 +1002,20 @@ public class MoneyWisePortfolio
          * @param pPayees the payee list
          */
         private void ensureMap(final MoneyWisePayeeList pPayees) {
-<span class="fc" id="L996">            setDataMap(new MoneyWisePortfolioDataMap(pPayees));</span>
-<span class="fc" id="L997">        }</span>
+<span class="fc" id="L1005">            setDataMap(new MoneyWisePortfolioDataMap(pPayees));</span>
+<span class="fc" id="L1006">        }</span>
 
         @Override
         protected MoneyWisePortfolioDataMap allocateDataMap() {
-<span class="fc" id="L1001">            return new MoneyWisePortfolioDataMap(getDataSet().getPayees());</span>
+<span class="fc" id="L1010">            return new MoneyWisePortfolioDataMap(getDataSet().getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class));</span>
         }
 
         @Override
         public void postProcessOnLoad() throws OceanusException {
             /* Resolve links and sort the data */
-<span class="fc" id="L1007">            super.resolveDataSetLinks();</span>
-<span class="fc" id="L1008">            reSort();</span>
-<span class="fc" id="L1009">        }</span>
+<span class="fc" id="L1016">            super.resolveDataSetLinks();</span>
+<span class="fc" id="L1017">            reSort();</span>
+<span class="fc" id="L1018">        }</span>
     }
 
     /**
@@ -1017,16 +1026,16 @@ public class MoneyWisePortfolio
         /**
          * Report fields.
          */
-<span class="fc" id="L1020">        private static final MetisFieldSet&lt;MoneyWisePortfolioDataMap&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePortfolioDataMap.class);</span>
+<span class="fc" id="L1029">        private static final MetisFieldSet&lt;MoneyWisePortfolioDataMap&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePortfolioDataMap.class);</span>
 
         /*
          * UnderlyingMap Field Id.
          */
         static {
-<span class="fc" id="L1026">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_UNDERLYING, MoneyWisePortfolioDataMap::getUnderlyingMap);</span>
-<span class="fc" id="L1027">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_SINGULARMAP, MoneyWisePortfolioDataMap::getPortfolioMap);</span>
-<span class="fc" id="L1028">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_SINGULARCOUNTS, MoneyWisePortfolioDataMap::getPortfolioCountMap);</span>
-<span class="fc" id="L1029">        }</span>
+<span class="fc" id="L1035">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_UNDERLYING, MoneyWisePortfolioDataMap::getUnderlyingMap);</span>
+<span class="fc" id="L1036">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_SINGULARMAP, MoneyWisePortfolioDataMap::getPortfolioMap);</span>
+<span class="fc" id="L1037">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_SINGULARCOUNTS, MoneyWisePortfolioDataMap::getPortfolioCountMap);</span>
+<span class="fc" id="L1038">        }</span>
 
         /**
          * The assetMap.
@@ -1048,23 +1057,23 @@ public class MoneyWisePortfolio
          *
          * @param pPayees the payee list
          */
-<span class="fc" id="L1051">        protected MoneyWisePortfolioDataMap(final MoneyWisePayeeList pPayees) {</span>
+<span class="fc" id="L1060">        protected MoneyWisePortfolioDataMap(final MoneyWisePayeeList pPayees) {</span>
             /* Access underlying nameMap */
-<span class="fc" id="L1053">            theUnderlyingMap = pPayees.getDataMap().getUnderlyingMap();</span>
+<span class="fc" id="L1062">            theUnderlyingMap = pPayees.getDataMap().getUnderlyingMap();</span>
 
             /* Create the maps */
-<span class="fc" id="L1056">            thePortfolioCountMap = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L1057">            thePortfolioMap = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L1058">        }</span>
+<span class="fc" id="L1065">            thePortfolioCountMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L1066">            thePortfolioMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L1067">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWisePortfolioDataMap&gt; getDataFieldSet() {
-<span class="nc" id="L1062">            return FIELD_DEFS;</span>
+<span class="nc" id="L1071">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L1067">            return FIELD_DEFS.getName();</span>
+<span class="nc" id="L1076">            return FIELD_DEFS.getName();</span>
         }
 
         /**
@@ -1073,7 +1082,7 @@ public class MoneyWisePortfolio
          * @return the underlying map
          */
         private MoneyWiseAssetDataMap getUnderlyingMap() {
-<span class="nc" id="L1076">            return theUnderlyingMap;</span>
+<span class="nc" id="L1085">            return theUnderlyingMap;</span>
         }
 
         /**
@@ -1082,7 +1091,7 @@ public class MoneyWisePortfolio
          * @return the underlying map
          */
         private Map&lt;Integer, MoneyWisePortfolio&gt; getPortfolioMap() {
-<span class="nc" id="L1085">            return thePortfolioMap;</span>
+<span class="nc" id="L1094">            return thePortfolioMap;</span>
         }
 
         /**
@@ -1091,37 +1100,37 @@ public class MoneyWisePortfolio
          * @return the underlying map
          */
         private Map&lt;Integer, Integer&gt; getPortfolioCountMap() {
-<span class="nc" id="L1094">            return thePortfolioCountMap;</span>
+<span class="nc" id="L1103">            return thePortfolioCountMap;</span>
         }
 
         @Override
         public void resetMap() {
-<span class="fc" id="L1099">            thePortfolioCountMap.clear();</span>
-<span class="fc" id="L1100">            thePortfolioMap.clear();</span>
-<span class="fc" id="L1101">        }</span>
+<span class="fc" id="L1108">            thePortfolioCountMap.clear();</span>
+<span class="fc" id="L1109">            thePortfolioMap.clear();</span>
+<span class="fc" id="L1110">        }</span>
 
         @Override
         public void adjustForItem(final PrometheusDataItem pItem) {
             /* If the class is singular */
-<span class="fc" id="L1106">            final MoneyWisePortfolio myItem = (MoneyWisePortfolio) pItem;</span>
-<span class="fc" id="L1107">            final MoneyWisePortfolioClass myClass = myItem.getCategoryClass();</span>
-<span class="fc bfc" id="L1108" title="All 2 branches covered.">            if (myClass.isSingular()) {</span>
+<span class="fc" id="L1115">            final MoneyWisePortfolio myItem = (MoneyWisePortfolio) pItem;</span>
+<span class="fc" id="L1116">            final MoneyWisePortfolioClass myClass = myItem.getCategoryClass();</span>
+<span class="fc bfc" id="L1117" title="All 2 branches covered.">            if (myClass.isSingular()) {</span>
                 /* Adjust category count */
-<span class="fc" id="L1110">                final Integer myId = myClass.getClassId();</span>
-<span class="fc" id="L1111">                final Integer myCount = thePortfolioCountMap.get(myId);</span>
-<span class="pc bpc" id="L1112" title="1 of 2 branches missed.">                if (myCount == null) {</span>
-<span class="fc" id="L1113">                    thePortfolioCountMap.put(myId, PrometheusDataInstanceMap.ONE);</span>
+<span class="fc" id="L1119">                final Integer myId = myClass.getClassId();</span>
+<span class="fc" id="L1120">                final Integer myCount = thePortfolioCountMap.get(myId);</span>
+<span class="pc bpc" id="L1121" title="1 of 2 branches missed.">                if (myCount == null) {</span>
+<span class="fc" id="L1122">                    thePortfolioCountMap.put(myId, PrometheusDataInstanceMap.ONE);</span>
                 } else {
-<span class="nc" id="L1115">                    thePortfolioCountMap.put(myId, myCount + 1);</span>
+<span class="nc" id="L1124">                    thePortfolioCountMap.put(myId, myCount + 1);</span>
                 }
 
                 /* Adjust portfolio map */
-<span class="fc" id="L1119">                thePortfolioMap.put(myId, myItem);</span>
+<span class="fc" id="L1128">                thePortfolioMap.put(myId, myItem);</span>
             }
 
             /* Adjust name count */
-<span class="fc" id="L1123">            theUnderlyingMap.adjustForItem(pItem);</span>
-<span class="fc" id="L1124">        }</span>
+<span class="fc" id="L1132">            theUnderlyingMap.adjustForItem(pItem);</span>
+<span class="fc" id="L1133">        }</span>
 
         /**
          * find item by name.
@@ -1130,10 +1139,10 @@ public class MoneyWisePortfolio
          * @return the matching item
          */
         public MoneyWisePortfolio findItemByName(final String pName) {
-<span class="fc" id="L1133">            final MoneyWiseAssetBase myAsset = theUnderlyingMap.findAssetByName(pName);</span>
-<span class="pc bpc" id="L1134" title="1 of 2 branches missed.">            return myAsset instanceof MoneyWisePortfolio myPortfolio</span>
-<span class="fc" id="L1135">                    ? myPortfolio</span>
-<span class="nc" id="L1136">                    : null;</span>
+<span class="fc" id="L1142">            final MoneyWiseAssetBase myAsset = theUnderlyingMap.findAssetByName(pName);</span>
+<span class="pc bpc" id="L1143" title="1 of 2 branches missed.">            return myAsset instanceof MoneyWisePortfolio myPortfolio</span>
+<span class="fc" id="L1144">                    ? myPortfolio</span>
+<span class="nc" id="L1145">                    : null;</span>
         }
 
         /**
@@ -1143,7 +1152,7 @@ public class MoneyWisePortfolio
          * @return true/false
          */
         public boolean validNameCount(final String pName) {
-<span class="fc" id="L1146">            return theUnderlyingMap.validNameCount(pName);</span>
+<span class="fc" id="L1155">            return theUnderlyingMap.validNameCount(pName);</span>
         }
 
         /**
@@ -1153,7 +1162,7 @@ public class MoneyWisePortfolio
          * @return true/false
          */
         public boolean availableName(final String pName) {
-<span class="nc" id="L1156">            return theUnderlyingMap.availableKey(pName);</span>
+<span class="nc" id="L1165">            return theUnderlyingMap.availableKey(pName);</span>
         }
 
         /**
@@ -1163,7 +1172,7 @@ public class MoneyWisePortfolio
          * @return the matching item
          */
         public MoneyWisePortfolio findSingularItem(final MoneyWisePortfolioClass pClass) {
-<span class="fc" id="L1166">            return thePortfolioMap.get(pClass.getClassId());</span>
+<span class="fc" id="L1175">            return thePortfolioMap.get(pClass.getClassId());</span>
         }
 
         /**
@@ -1173,9 +1182,9 @@ public class MoneyWisePortfolio
          * @return true/false
          */
         public boolean validSingularCount(final MoneyWisePortfolioClass pClass) {
-<span class="fc" id="L1176">            final Integer myResult = thePortfolioCountMap.get(pClass.getClassId());</span>
-<span class="fc" id="L1177">            return PrometheusDataInstanceMap.ONE.equals(myResult);</span>
+<span class="fc" id="L1185">            final Integer myResult = thePortfolioCountMap.get(pClass.getClassId());</span>
+<span class="fc" id="L1186">            return PrometheusDataInstanceMap.ONE.equals(myResult);</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -16,36 +16,37 @@
  */
 package io.github.tonywasher.joceanus.prometheus.database;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
 
 /**
  * Database Drivers. Also code that encapsulates differences between databases.
  */
-<span class="nc" id="L24">public enum PrometheusJDBCDriver {</span>
+<span class="nc" id="L25">public enum PrometheusJDBCDriver {</span>
     /**
      * SQLServer.
      */
-<span class="nc" id="L28">    SQLSERVER,</span>
+<span class="nc" id="L29">    SQLSERVER,</span>
 
     /**
      * PostgreSQL.
      */
-<span class="nc" id="L33">    POSTGRESQL,</span>
+<span class="nc" id="L34">    POSTGRESQL,</span>
 
     /**
      * MySQL.
      */
-<span class="nc" id="L38">    MYSQL,</span>
+<span class="nc" id="L39">    MYSQL,</span>
 
     /**
      * MariaDB.
      */
-<span class="nc" id="L43">    MARIADB,</span>
+<span class="nc" id="L44">    MARIADB,</span>
 
     /**
      * H2.
      */
-<span class="nc" id="L48">    H2;</span>
+<span class="nc" id="L49">    H2;</span>
 
     /**
      * Buffer length.
@@ -80,13 +81,13 @@ import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="nc bnc" id="L83" title="All 2 branches missed.">        if (theName == null) {</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        if (theName == null) {</span>
             /* Load the name */
-<span class="nc" id="L85">            theName = PrometheusDBResource.getKeyForDriver(this).getValue();</span>
+<span class="nc" id="L86">            theName = bundleIdForDriver(this).getValue();</span>
         }
 
         /* return the name */
-<span class="nc" id="L89">        return theName;</span>
+<span class="nc" id="L90">        return theName;</span>
     }
 
     /**
@@ -95,16 +96,7 @@ import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
      * @return true/false
      */
     public boolean useInstance() {
-<span class="nc bnc" id="L98" title="All 2 branches missed.">        switch (this) {</span>
-            case SQLSERVER:
-<span class="nc" id="L100">                return true;</span>
-            case MYSQL:
-            case MARIADB:
-            case H2:
-            case POSTGRESQL:
-            default:
-<span class="nc" id="L106">                return false;</span>
-        }
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        return this == SQLSERVER;</span>
     }
 
     /**
@@ -113,16 +105,10 @@ import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
      * @return true/false
      */
     public boolean useQuotes() {
-<span class="nc bnc" id="L116" title="All 2 branches missed.">        switch (this) {</span>
-            case MYSQL:
-            case MARIADB:
-<span class="nc" id="L119">                return false;</span>
-            case SQLSERVER:
-            case H2:
-            case POSTGRESQL:
-            default:
-<span class="nc" id="L124">                return true;</span>
-        }
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L109">            case MYSQL, MARIADB -&gt; false;</span>
+<span class="nc" id="L110">            default -&gt; true;</span>
+        };
     }
 
     /**
@@ -131,16 +117,10 @@ import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
      * @return true/false
      */
     public boolean usePort() {
-<span class="nc bnc" id="L134" title="All 2 branches missed.">        switch (this) {</span>
-            case MYSQL:
-            case MARIADB:
-            case POSTGRESQL:
-            case SQLSERVER:
-<span class="nc" id="L139">                return true;</span>
-            case H2:
-            default:
-<span class="nc" id="L142">                return false;</span>
-        }
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L121">            case MYSQL, MARIADB, POSTGRESQL, SQLSERVER -&gt; true;</span>
+<span class="nc" id="L122">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -149,18 +129,12 @@ import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
      * @return the default port
      */
     public Integer getDefaultPort() {
-<span class="nc bnc" id="L152" title="All 4 branches missed.">        switch (this) {</span>
-            case MYSQL:
-            case MARIADB:
-<span class="nc" id="L155">                return PORT_MARIADB;</span>
-            case POSTGRESQL:
-<span class="nc" id="L157">                return PORT_POSTGRESQL;</span>
-            case SQLSERVER:
-<span class="nc" id="L159">                return PORT_SQLEXPRESS;</span>
-            case H2:
-            default:
-<span class="nc" id="L162">                return null;</span>
-        }
+<span class="nc bnc" id="L132" title="All 4 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L133">            case MYSQL, MARIADB -&gt; PORT_MARIADB;</span>
+<span class="nc" id="L134">            case POSTGRESQL -&gt; PORT_POSTGRESQL;</span>
+<span class="nc" id="L135">            case SQLSERVER -&gt; PORT_SQLEXPRESS;</span>
+<span class="nc" id="L136">            default -&gt; null;</span>
+        };
     }
 
     /**
@@ -169,19 +143,13 @@ import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
      * @return the connection prefix
      */
     public String getPrefix() {
-<span class="nc bnc" id="L172" title="All 5 branches missed.">        switch (this) {</span>
-            case SQLSERVER:
-<span class="nc" id="L174">                return &quot;jdbc:sqlserver://&quot;;</span>
-            case MYSQL:
-<span class="nc" id="L176">                return &quot;jdbc:mysql://&quot;;</span>
-            case MARIADB:
-<span class="nc" id="L178">                return &quot;jdbc:mariadb://&quot;;</span>
-            case H2:
-<span class="nc" id="L180">                return &quot;jdbc:h2:mem:&quot;;</span>
-            case POSTGRESQL:
-            default:
-<span class="nc" id="L183">                return &quot;jdbc:postgresql://&quot;;</span>
-        }
+<span class="nc bnc" id="L146" title="All 5 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L147">            case SQLSERVER -&gt; &quot;jdbc:sqlserver://&quot;;</span>
+<span class="nc" id="L148">            case MYSQL -&gt; &quot;jdbc:mysql://&quot;;</span>
+<span class="nc" id="L149">            case MARIADB -&gt; &quot;jdbc:mariadb://&quot;;</span>
+<span class="nc" id="L150">            case H2 -&gt; &quot;jdbc:h2:mem:&quot;;</span>
+<span class="nc" id="L151">            default -&gt; &quot;jdbc:postgresql://&quot;;</span>
+        };
     }
 
     /**
@@ -196,27 +164,27 @@ import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
                                       final String pServer,
                                       final Integer pPort) {
         /* Create the buffer */
-<span class="nc" id="L199">        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);</span>
-<span class="nc" id="L200">        myBuilder.append(getPrefix());</span>
-<span class="nc bnc" id="L201" title="All 2 branches missed.">        if (this != H2) {</span>
-<span class="nc" id="L202">            myBuilder.append(pServer);</span>
-<span class="nc bnc" id="L203" title="All 2 branches missed.">            if (pPort != null) {</span>
-<span class="nc" id="L204">                myBuilder.append(&quot;:&quot;);</span>
-<span class="nc" id="L205">                myBuilder.append(pPort);</span>
+<span class="nc" id="L167">        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);</span>
+<span class="nc" id="L168">        myBuilder.append(getPrefix());</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        if (this != H2) {</span>
+<span class="nc" id="L170">            myBuilder.append(pServer);</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">            if (pPort != null) {</span>
+<span class="nc" id="L172">                myBuilder.append(&quot;:&quot;);</span>
+<span class="nc" id="L173">                myBuilder.append(pPort);</span>
             }
-<span class="nc bnc" id="L207" title="All 2 branches missed.">            if (this != SQLSERVER) {</span>
-<span class="nc" id="L208">                myBuilder.append(&quot;/&quot;);</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">            if (this != SQLSERVER) {</span>
+<span class="nc" id="L176">                myBuilder.append(&quot;/&quot;);</span>
             }
         }
-<span class="nc bnc" id="L211" title="All 2 branches missed.">        if (this != SQLSERVER) {</span>
-<span class="nc" id="L212">            myBuilder.append(pDatabase);</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        if (this != SQLSERVER) {</span>
+<span class="nc" id="L180">            myBuilder.append(pDatabase);</span>
         }
-<span class="nc bnc" id="L214" title="All 2 branches missed.">        if (this == H2) {</span>
-<span class="nc" id="L215">            myBuilder.append(&quot;;DB_CLOSE_DELAY=-1&quot;);</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">        if (this == H2) {</span>
+<span class="nc" id="L183">            myBuilder.append(&quot;;DB_CLOSE_DELAY=-1&quot;);</span>
         }
 
         /* Return the string */
-<span class="nc" id="L219">        return myBuilder.toString();</span>
+<span class="nc" id="L187">        return myBuilder.toString();</span>
     }
 
     /**
@@ -229,22 +197,22 @@ import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
     public String getConnectionString(final String pServer,
                                       final Integer pPort) {
         /* Create the buffer */
-<span class="nc" id="L232">        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);</span>
-<span class="nc" id="L233">        myBuilder.append(getPrefix());</span>
-<span class="nc" id="L234">        myBuilder.append(pServer);</span>
-<span class="nc bnc" id="L235" title="All 2 branches missed.">        if (pPort != null) {</span>
-<span class="nc" id="L236">            myBuilder.append(&quot;:&quot;);</span>
-<span class="nc" id="L237">            myBuilder.append(pPort);</span>
+<span class="nc" id="L200">        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);</span>
+<span class="nc" id="L201">        myBuilder.append(getPrefix());</span>
+<span class="nc" id="L202">        myBuilder.append(pServer);</span>
+<span class="nc bnc" id="L203" title="All 2 branches missed.">        if (pPort != null) {</span>
+<span class="nc" id="L204">            myBuilder.append(&quot;:&quot;);</span>
+<span class="nc" id="L205">            myBuilder.append(pPort);</span>
         }
-<span class="nc bnc" id="L239" title="All 2 branches missed.">        if (this != SQLSERVER) {</span>
-<span class="nc" id="L240">            myBuilder.append(&quot;/&quot;);</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">        if (this != SQLSERVER) {</span>
+<span class="nc" id="L208">            myBuilder.append(&quot;/&quot;);</span>
         }
-<span class="nc bnc" id="L242" title="All 2 branches missed.">        if (this == POSTGRESQL) {</span>
-<span class="nc" id="L243">            myBuilder.append(&quot;postgres&quot;);</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">        if (this == POSTGRESQL) {</span>
+<span class="nc" id="L211">            myBuilder.append(&quot;postgres&quot;);</span>
         }
 
         /* Return the string */
-<span class="nc" id="L247">        return myBuilder.toString();</span>
+<span class="nc" id="L215">        return myBuilder.toString();</span>
     }
 
     /**
@@ -254,45 +222,34 @@ import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
      * @return the database column type
      */
     public String getDatabaseType(final PrometheusColumnType pType) {
-<span class="nc" id="L257">        final boolean isSQLServer = this.equals(SQLSERVER);</span>
-<span class="nc" id="L258">        final boolean isPostgreSQL = this.equals(POSTGRESQL);</span>
-<span class="nc bnc" id="L259" title="All 11 branches missed.">        switch (pType) {</span>
-            case BOOLEAN:
-<span class="nc bnc" id="L261" title="All 2 branches missed.">                return isPostgreSQL</span>
-<span class="nc" id="L262">                        ? &quot;boolean&quot;</span>
-<span class="nc" id="L263">                        : &quot;bit&quot;;</span>
-            case SHORT:
-<span class="nc" id="L265">                return &quot;smallint&quot;;</span>
-            case INTEGER:
-<span class="nc" id="L267">                return &quot;int&quot;;</span>
-            case LONG:
-<span class="nc" id="L269">                return &quot;bigint&quot;;</span>
-            case FLOAT:
-<span class="nc" id="L271">                return &quot;real&quot;;</span>
-            case DOUBLE:
-<span class="nc bnc" id="L273" title="All 2 branches missed.">                return isSQLServer</span>
-<span class="nc" id="L274">                        ? &quot;float&quot;</span>
-<span class="nc bnc" id="L275" title="All 2 branches missed.">                        : isPostgreSQL</span>
-<span class="nc" id="L276">                        ? &quot;double precision&quot;</span>
-<span class="nc" id="L277">                        : &quot;double&quot;;</span>
-            case DATE:
-<span class="nc" id="L279">                return &quot;date&quot;;</span>
-            case MONEY:
-<span class="nc bnc" id="L281" title="All 2 branches missed.">                return isSQLServer</span>
-<span class="nc" id="L282">                        ? &quot;money&quot;</span>
-<span class="nc" id="L283">                        : &quot;numeric(18,2)&quot;;</span>
-            case DECIMAL:
-<span class="nc bnc" id="L285" title="All 2 branches missed.">                return isSQLServer</span>
-<span class="nc" id="L286">                        ? &quot;decimal&quot;</span>
-<span class="nc" id="L287">                        : &quot;numeric&quot;;</span>
-            case BINARY:
-<span class="nc bnc" id="L289" title="All 2 branches missed.">                return isPostgreSQL</span>
-<span class="nc" id="L290">                        ? &quot;bytea&quot;</span>
-<span class="nc" id="L291">                        : &quot;varbinary&quot;;</span>
-            case STRING:
-            default:
-<span class="nc" id="L294">                return &quot;varchar&quot;;</span>
-        }
+<span class="nc" id="L225">        final boolean isSQLServer = this.equals(SQLSERVER);</span>
+<span class="nc" id="L226">        final boolean isPostgreSQL = this.equals(POSTGRESQL);</span>
+<span class="nc bnc" id="L227" title="All 11 branches missed.">        return switch (pType) {</span>
+<span class="nc bnc" id="L228" title="All 2 branches missed.">            case BOOLEAN -&gt; isPostgreSQL</span>
+<span class="nc" id="L229">                    ? &quot;boolean&quot;</span>
+<span class="nc" id="L230">                    : &quot;bit&quot;;</span>
+<span class="nc" id="L231">            case SHORT -&gt; &quot;smallint&quot;;</span>
+<span class="nc" id="L232">            case INTEGER -&gt; &quot;int&quot;;</span>
+<span class="nc" id="L233">            case LONG -&gt; &quot;bigint&quot;;</span>
+<span class="nc" id="L234">            case FLOAT -&gt; &quot;real&quot;;</span>
+            case DOUBLE -&gt; {
+<span class="nc bnc" id="L236" title="All 2 branches missed.">                if (isSQLServer) {</span>
+<span class="nc" id="L237">                    yield &quot;float&quot;;</span>
+                }
+<span class="nc bnc" id="L239" title="All 2 branches missed.">                yield isPostgreSQL ? &quot;double precision&quot; : &quot;double&quot;;</span>
+            }
+<span class="nc" id="L241">            case DATE -&gt; &quot;date&quot;;</span>
+<span class="nc bnc" id="L242" title="All 2 branches missed.">            case MONEY -&gt; isSQLServer</span>
+<span class="nc" id="L243">                    ? &quot;money&quot;</span>
+<span class="nc" id="L244">                    : &quot;numeric(18,2)&quot;;</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">            case DECIMAL -&gt; isSQLServer</span>
+<span class="nc" id="L246">                    ? &quot;decimal&quot;</span>
+<span class="nc" id="L247">                    : &quot;numeric&quot;;</span>
+<span class="nc bnc" id="L248" title="All 2 branches missed.">            case BINARY -&gt; isPostgreSQL</span>
+<span class="nc" id="L249">                    ? &quot;bytea&quot;</span>
+<span class="nc" id="L250">                    : &quot;varbinary&quot;;</span>
+<span class="nc" id="L251">            default -&gt; &quot;varchar&quot;;</span>
+        };
     }
 
     /**
@@ -301,16 +258,10 @@ import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
      * @return true/false
      */
     public boolean defineBinaryLength() {
-<span class="nc bnc" id="L304" title="All 2 branches missed.">        switch (this) {</span>
-            case MYSQL:
-            case MARIADB:
-            case SQLSERVER:
-            case H2:
-<span class="nc" id="L309">                return true;</span>
-            case POSTGRESQL:
-            default:
-<span class="nc" id="L312">                return false;</span>
-        }
+<span class="nc bnc" id="L261" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L262">            case MYSQL, MARIADB, SQLSERVER, H2 -&gt; true;</span>
+<span class="nc" id="L263">            default -&gt; false;</span>
+        };
     }
 
     /**
@@ -319,16 +270,27 @@ import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
      * @return true/false
      */
     public boolean explicitDropIndex() {
-<span class="nc bnc" id="L322" title="All 2 branches missed.">        switch (this) {</span>
-            case POSTGRESQL:
-            case SQLSERVER:
-            case H2:
-<span class="nc" id="L326">                return true;</span>
-            case MYSQL:
-            case MARIADB:
-            default:
-<span class="nc" id="L330">                return false;</span>
-        }
+<span class="nc bnc" id="L273" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L274">            case POSTGRESQL, SQLSERVER, H2 -&gt; true;</span>
+<span class="nc" id="L275">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the driver.
+     *
+     * @param pDriver the driver
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForDriver(final PrometheusJDBCDriver pDriver) {
+<span class="nc bnc" id="L286" title="All 6 branches missed.">        return switch (pDriver) {</span>
+<span class="nc" id="L287">            case SQLSERVER -&gt; PrometheusDBResource.DRIVER_SQLSERVER;</span>
+<span class="nc" id="L288">            case POSTGRESQL -&gt; PrometheusDBResource.DRIVER_POSTGRESQL;</span>
+<span class="nc" id="L289">            case MYSQL -&gt; PrometheusDBResource.DRIVER_MYSQL;</span>
+<span class="nc" id="L290">            case MARIADB -&gt; PrometheusDBResource.DRIVER_MARIADB;</span>
+<span class="nc" id="L291">            case H2 -&gt; PrometheusDBResource.DRIVER_H2;</span>
+<span class="nc" id="L292">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

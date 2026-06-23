@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysePortfolioXfer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse</a> &gt; <span class="el_source">MoneyWiseXAnalysePortfolioXfer.java</span></div><h1>MoneyWiseXAnalysePortfolioXfer.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
+
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseSecurityCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioCashBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountAttr;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+
+import java.util.Iterator;
+
+/**
+ * Portfolio Xfer support.
+ */
+public class MoneyWiseXAnalysePortfolioXfer {
+    /**
+     * The portfolioBuckets.
+     */
+    private final MoneyWiseXAnalysisPortfolioBucketList thePortfolios;
+
+    /**
+     * The analysis state.
+     */
+    private final MoneyWiseXAnalyseState theState;
+
+    /**
+     * The securityAnalyser.
+     */
+    private final MoneyWiseXAnalyseSecurityCtl theSecurity;
+
+    /**
+     * The security holding map.
+     */
+    private final MoneyWiseSecurityHoldingMap theHoldingMap;
+
+    /**
+     * The current transaction.
+     */
+    private MoneyWiseXAnalyseTransCtl theTransaction;
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalyser the analyser
+     * @param pSecurity the securityAnalyser
+     */
+    MoneyWiseXAnalysePortfolioXfer(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser,
+<span class="fc" id="L76">                                   final MoneyWiseXAnalyseSecurityCtl pSecurity) {</span>
+        /* Access details */
+<span class="fc" id="L78">        thePortfolios = pAnalyser.getAnalysis().getPortfolios();</span>
+<span class="fc" id="L79">        theState = pAnalyser.getState();</span>
+<span class="fc" id="L80">        theSecurity = pSecurity;</span>
+<span class="fc" id="L81">        theHoldingMap = pAnalyser.getSecurityHoldingMap();</span>
+<span class="fc" id="L82">    }</span>
+
+    /**
+     * Process a transaction that is a portfolio transfer.
+     *
+     * @param pTrans the transaction
+     * @throws OceanusException on error
+     */
+    void processPortfolioXfer(final MoneyWiseXAnalyseTransaction pTrans) throws OceanusException {
+        /* Store the transaction */
+<span class="nc" id="L92">        theTransaction = pTrans;</span>
+
+        /* Target must be portfolio */
+<span class="nc" id="L95">        final MoneyWiseTransAsset myCredit = theTransaction.getCreditAccount();</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        if (!MoneyWiseXAnalyseTransaction.isPortfolio(myCredit)) {</span>
+<span class="nc" id="L97">            throw new MoneyWiseLogicException(&quot;Credit account is no portfolio&quot;);</span>
+        }
+
+        /* If this is a transfer from a portfolio */
+<span class="nc" id="L101">        final MoneyWiseTransAsset myDebit = theTransaction.getDebitAccount();</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (MoneyWiseXAnalyseTransaction.isPortfolio(myDebit)) {</span>
+<span class="nc" id="L103">            processPortfolio2Portfolio();</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        } else if (MoneyWiseXAnalyseTransaction.isSecurityHolding(myDebit)) {</span>
+<span class="nc" id="L105">            processHolding2Portfolio();</span>
+        } else {
+<span class="nc" id="L107">            throw new MoneyWiseLogicException(&quot;Debit account is neither portfolio or securityHolding&quot;);</span>
+        }
+<span class="nc" id="L109">    }</span>
+
+    /**
+     * Process a transaction that is a portfolio to portfolio transfer.
+     */
+    private void processPortfolio2Portfolio() {
+        /* Access the portfolio buckets */
+<span class="nc" id="L116">        final MoneyWisePortfolio mySrcPortfolio = (MoneyWisePortfolio) theTransaction.getDebitAccount();</span>
+<span class="nc" id="L117">        final MoneyWisePortfolio myTgtPortfolio = (MoneyWisePortfolio) theTransaction.getCreditAccount();</span>
+<span class="nc" id="L118">        final MoneyWiseXAnalysisPortfolioBucket mySource = thePortfolios.getBucket(mySrcPortfolio);</span>
+<span class="nc" id="L119">        final MoneyWiseXAnalysisPortfolioBucket myTarget = thePortfolios.getBucket(myTgtPortfolio);</span>
+
+        /* Access source cash bucket */
+<span class="nc" id="L122">        final MoneyWiseXAnalysisPortfolioCashBucket mySourceCash = mySource.getPortfolioCash();</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">        if (mySourceCash.isActive()) {</span>
+            /* Adjust target bucket */
+<span class="nc" id="L125">            final OceanusMoney myCashValue = mySourceCash.getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);</span>
+<span class="nc" id="L126">            mySourceCash.addToBalance(myCashValue);</span>
+<span class="nc" id="L127">            mySourceCash.adjustValuation();</span>
+<span class="nc" id="L128">            theState.registerBucketInterest(mySourceCash);</span>
+
+            /* Adjust target bucket */
+<span class="nc" id="L131">            final MoneyWiseXAnalysisPortfolioCashBucket myTargetCash = myTarget.getPortfolioCash();</span>
+<span class="nc" id="L132">            myTargetCash.addToBalance(myCashValue);</span>
+<span class="nc" id="L133">            myTargetCash.adjustValuation();</span>
+<span class="nc" id="L134">            theState.registerBucketInterest(myTargetCash);</span>
+        }
+
+        /* Loop through the source portfolio */
+<span class="nc" id="L138">        final Iterator&lt;MoneyWiseXAnalysisSecurityBucket&gt; myIterator = mySource.securityIterator();</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L140">            final MoneyWiseXAnalysisSecurityBucket myBucket = myIterator.next();</span>
+
+            /* If the bucket is active */
+<span class="nc bnc" id="L143" title="All 2 branches missed.">            if (myBucket.isActive()) {</span>
+                /* Adjust the Target Bucket */
+<span class="nc" id="L145">                final MoneyWiseSecurityHolding myTargetHolding = theHoldingMap.declareHolding(myTgtPortfolio, myBucket.getSecurity());</span>
+<span class="nc" id="L146">                final MoneyWiseXAnalysisSecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);</span>
+
+                /* Process the Transfer */
+<span class="nc" id="L149">                processPortfolioXfer(myBucket, myTargetBucket);</span>
+            }
+<span class="nc" id="L151">        }</span>
+<span class="nc" id="L152">    }</span>
+
+    /**
+     * Process a transaction that is a holding to portfolio transfer.
+     */
+    private void processHolding2Portfolio() {
+        /* Access the portfolio buckets */
+<span class="nc" id="L159">        final MoneyWiseSecurityHolding mySrcHolding = (MoneyWiseSecurityHolding) theTransaction.getDebitAccount();</span>
+<span class="nc" id="L160">        final MoneyWisePortfolio myTgtPortfolio = (MoneyWisePortfolio) theTransaction.getCreditAccount();</span>
+<span class="nc" id="L161">        final MoneyWiseXAnalysisPortfolioBucket mySource = thePortfolios.getBucket(mySrcHolding.getPortfolio());</span>
+<span class="nc" id="L162">        final MoneyWiseXAnalysisPortfolioBucket myTarget = thePortfolios.getBucket(myTgtPortfolio);</span>
+
+        /* Access source security bucket */
+<span class="nc" id="L165">        final MoneyWiseXAnalysisSecurityBucket myBucket = mySource.getSecurityBucket(mySrcHolding);</span>
+
+        /* If the bucket is active */
+<span class="nc bnc" id="L168" title="All 2 branches missed.">        if (myBucket.isActive()) {</span>
+            /* Adjust the Target Bucket */
+<span class="nc" id="L170">            final MoneyWiseSecurityHolding myTargetHolding = theHoldingMap.declareHolding(myTgtPortfolio, myBucket.getSecurity());</span>
+<span class="nc" id="L171">            final MoneyWiseXAnalysisSecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);</span>
+
+            /* Process the Transfer */
+<span class="nc" id="L174">            processPortfolioXfer(myBucket, myTargetBucket);</span>
+        }
+<span class="nc" id="L176">    }</span>
+
+    /**
+     * Process a portfolio transfer.
+     *
+     * @param pSource the source holding
+     * @param pTarget the target holding
+     */
+    private void processPortfolioXfer(final MoneyWiseXAnalysisSecurityBucket pSource,
+                                      final MoneyWiseXAnalysisSecurityBucket pTarget) {
+        /* Access source details */
+<span class="nc" id="L187">        final MoneyWiseXAnalysisSecurityValues mySourceValues = pSource.getValues();</span>
+<span class="nc" id="L188">        final OceanusUnits myUnits = mySourceValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L189">        final OceanusMoney myCost = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);</span>
+<span class="nc" id="L190">        final OceanusMoney myGains = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS);</span>
+
+        /* Determine value of the stock being transferred */
+<span class="nc" id="L193">        final OceanusMoney myStockValue = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);</span>
+
+        /* Transfer Units/Cost/Gains to target */
+<span class="nc" id="L196">        pTarget.adjustUnits(myUnits);</span>
+<span class="nc" id="L197">        pTarget.adjustResidualCost(myCost);</span>
+<span class="nc" id="L198">        pTarget.adjustRealisedGains(myGains);</span>
+<span class="nc" id="L199">        final MoneyWiseXAnalysisSecurityValues myTargetValues = pTarget.getValues();</span>
+<span class="nc" id="L200">        myTargetValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, myCost);</span>
+<span class="nc" id="L201">        myTargetValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, myStockValue);</span>
+
+        /* Adjust the Source Units/Cost/Invested to zero */
+<span class="nc" id="L204">        mySourceValues.setZeroUnits(MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L205">        mySourceValues.setZeroMoney(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);</span>
+<span class="nc" id="L206">        mySourceValues.setZeroMoney(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS);</span>
+<span class="nc" id="L207">        mySourceValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, myCost);</span>
+<span class="nc" id="L208">        mySourceValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, myStockValue);</span>
+
+        /* Value the assets */
+<span class="nc" id="L211">        theSecurity.adjustAssetValuation(pSource);</span>
+<span class="nc" id="L212">        theSecurity.adjustAssetValuation(pTarget);</span>
+
+        /* Register the transaction */
+<span class="nc" id="L215">        theState.registerBucketInterest(pSource);</span>
+<span class="nc" id="L216">        theState.registerBucketInterest(pTarget);</span>
+<span class="nc" id="L217">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

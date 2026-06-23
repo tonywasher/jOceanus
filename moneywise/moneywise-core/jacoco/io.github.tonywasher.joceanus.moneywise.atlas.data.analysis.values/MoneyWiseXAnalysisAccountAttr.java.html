@@ -18,41 +18,42 @@ package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisAttribute;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * AccountAttribute enumeration.
  */
-<span class="fc" id="L25">public enum MoneyWiseXAnalysisAccountAttr</span>
+<span class="fc" id="L26">public enum MoneyWiseXAnalysisAccountAttr</span>
         implements MoneyWiseXAnalysisAttribute {
     /**
      * Local Currency Balance.
      */
-<span class="fc" id="L30">    BALANCE,</span>
+<span class="fc" id="L31">    BALANCE,</span>
 
     /**
      * Exchange Rate.
      */
-<span class="fc" id="L35">    EXCHANGERATE,</span>
+<span class="fc" id="L36">    EXCHANGERATE,</span>
 
     /**
      * Reported Valuation.
      */
-<span class="fc" id="L40">    VALUATION,</span>
+<span class="fc" id="L41">    VALUATION,</span>
 
     /**
      * Valuation Delta.
      */
-<span class="fc" id="L45">    VALUEDELTA,</span>
+<span class="fc" id="L46">    VALUEDELTA,</span>
 
     /**
      * Deposit Rate.
      */
-<span class="fc" id="L50">    DEPOSITRATE,</span>
+<span class="fc" id="L51">    DEPOSITRATE,</span>
 
     /**
      * Maturity.
      */
-<span class="fc" id="L55">    MATURITY;</span>
+<span class="fc" id="L56">    MATURITY;</span>
 
     /**
      * The String name.
@@ -62,31 +63,49 @@ import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWis
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (theName == null) {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (theName == null) {</span>
             /* Load the name */
-<span class="fc" id="L67">            theName = MoneyWiseXAnalysisValuesResource.getKeyForAccountAttr(this).getValue();</span>
+<span class="fc" id="L68">            theName = bundleIdForAttribute(this).getValue();</span>
         }
 
         /* return the name */
-<span class="fc" id="L71">        return theName;</span>
+<span class="fc" id="L72">        return theName;</span>
     }
 
     @Override
     public boolean isPreserved() {
-<span class="fc bfc" id="L76" title="All 2 branches covered.">        return switch (this) {</span>
-<span class="fc" id="L77">            case BALANCE, MATURITY, DEPOSITRATE, EXCHANGERATE, VALUATION -&gt; true;</span>
-<span class="fc" id="L78">            default -&gt; false;</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc" id="L78">            case BALANCE, MATURITY, DEPOSITRATE, EXCHANGERATE, VALUATION -&gt; true;</span>
+<span class="fc" id="L79">            default -&gt; false;</span>
         };
     }
 
     @Override
     public MetisDataType getDataType() {
-<span class="nc bnc" id="L84" title="All 4 branches missed.">        return switch (this) {</span>
-<span class="nc" id="L85">            case DEPOSITRATE -&gt; MetisDataType.RATE;</span>
-<span class="nc" id="L86">            case EXCHANGERATE -&gt; MetisDataType.RATIO;</span>
-<span class="nc" id="L87">            case MATURITY -&gt; MetisDataType.DATE;</span>
-<span class="nc" id="L88">            default -&gt; MetisDataType.MONEY;</span>
+<span class="nc bnc" id="L85" title="All 4 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L86">            case DEPOSITRATE -&gt; MetisDataType.RATE;</span>
+<span class="nc" id="L87">            case EXCHANGERATE -&gt; MetisDataType.RATIO;</span>
+<span class="nc" id="L88">            case MATURITY -&gt; MetisDataType.DATE;</span>
+<span class="nc" id="L89">            default -&gt; MetisDataType.MONEY;</span>
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the attribute.
+     *
+     * @param pAttr the attribute
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForAttribute(final MoneyWiseXAnalysisAccountAttr pAttr) {
+<span class="pc bpc" id="L100" title="1 of 7 branches missed.">        return switch (pAttr) {</span>
+<span class="fc" id="L101">            case BALANCE -&gt; MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_BALANCE;</span>
+<span class="fc" id="L102">            case VALUATION -&gt; MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_VALUATION;</span>
+<span class="fc" id="L103">            case VALUEDELTA -&gt; MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_VALUEDELTA;</span>
+<span class="fc" id="L104">            case DEPOSITRATE -&gt; MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_DEPOSITRATE;</span>
+<span class="fc" id="L105">            case EXCHANGERATE -&gt; MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_EXCHANGERATE;</span>
+<span class="fc" id="L106">            case MATURITY -&gt; MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_MATURITY;</span>
+<span class="nc" id="L107">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.builder;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
@@ -25,6 +23,9 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * Loan Builder.
@@ -34,6 +35,11 @@ public class MoneyWiseLoanBuilder {
      * DataSet.
      */
     private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * Parser.
+     */
+    private final OceanusDecimalParser theParser;
 
     /**
      * The LoanName.
@@ -65,11 +71,12 @@ public class MoneyWiseLoanBuilder {
      *
      * @param pDataSet the dataSet
      */
-<span class="fc" id="L68">    public MoneyWiseLoanBuilder(final MoneyWiseDataSet pDataSet) {</span>
-<span class="fc" id="L69">        theDataSet = pDataSet;</span>
-<span class="fc" id="L70">        theDataSet.getLoans().ensureMap();</span>
-<span class="fc" id="L71">        reportingCurrency();</span>
-<span class="fc" id="L72">    }</span>
+<span class="fc" id="L74">    public MoneyWiseLoanBuilder(final MoneyWiseDataSet pDataSet) {</span>
+<span class="fc" id="L75">        theDataSet = pDataSet;</span>
+<span class="fc" id="L76">        theDataSet.getLoans().ensureMap();</span>
+<span class="fc" id="L77">        theParser = theDataSet.getDataFormatter().getDecimalParser();</span>
+<span class="fc" id="L78">        reportingCurrency();</span>
+<span class="fc" id="L79">    }</span>
 
     /**
      * Set Name.
@@ -78,8 +85,8 @@ public class MoneyWiseLoanBuilder {
      * @return the builder
      */
     public MoneyWiseLoanBuilder name(final String pName) {
-<span class="fc" id="L81">        theName = pName;</span>
-<span class="fc" id="L82">        return this;</span>
+<span class="fc" id="L88">        theName = pName;</span>
+<span class="fc" id="L89">        return this;</span>
     }
 
     /**
@@ -89,8 +96,8 @@ public class MoneyWiseLoanBuilder {
      * @return the builder
      */
     public MoneyWiseLoanBuilder parent(final MoneyWisePayee pParent) {
-<span class="fc" id="L92">        theParent = pParent;</span>
-<span class="fc" id="L93">        return this;</span>
+<span class="fc" id="L99">        theParent = pParent;</span>
+<span class="fc" id="L100">        return this;</span>
     }
 
     /**
@@ -100,7 +107,7 @@ public class MoneyWiseLoanBuilder {
      * @return the builder
      */
     public MoneyWiseLoanBuilder parent(final String pParent) {
-<span class="fc" id="L103">        return parent(theDataSet.getPayees().findItemByName(pParent));</span>
+<span class="fc" id="L110">        return parent(theDataSet.getPayees().findItemByName(pParent));</span>
     }
 
     /**
@@ -110,8 +117,8 @@ public class MoneyWiseLoanBuilder {
      * @return the builder
      */
     public MoneyWiseLoanBuilder category(final MoneyWiseLoanCategory pCategory) {
-<span class="fc" id="L113">        theCategory = pCategory;</span>
-<span class="fc" id="L114">        return this;</span>
+<span class="fc" id="L120">        theCategory = pCategory;</span>
+<span class="fc" id="L121">        return this;</span>
     }
 
     /**
@@ -121,7 +128,7 @@ public class MoneyWiseLoanBuilder {
      * @return the builder
      */
     public MoneyWiseLoanBuilder category(final String pCategory) {
-<span class="fc" id="L124">        return category(theDataSet.getLoanCategories().findItemByName(pCategory));</span>
+<span class="fc" id="L131">        return category(theDataSet.getLoanCategories().findItemByName(pCategory));</span>
     }
 
     /**
@@ -131,8 +138,8 @@ public class MoneyWiseLoanBuilder {
      * @return the builder
      */
     public MoneyWiseLoanBuilder currency(final MoneyWiseCurrency pCurrency) {
-<span class="fc" id="L134">        theCurrency = pCurrency;</span>
-<span class="fc" id="L135">        return this;</span>
+<span class="fc" id="L141">        theCurrency = pCurrency;</span>
+<span class="fc" id="L142">        return this;</span>
     }
 
     /**
@@ -142,15 +149,15 @@ public class MoneyWiseLoanBuilder {
      * @return the builder
      */
     public MoneyWiseLoanBuilder currency(final MoneyWiseCurrencyClass pCurrency) {
-<span class="nc" id="L145">        return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));</span>
+<span class="nc" id="L152">        return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));</span>
     }
 
     /**
      * Set the reporting currency.
      */
     private void reportingCurrency() {
-<span class="fc" id="L152">        currency(lookupReportingCurrency());</span>
-<span class="fc" id="L153">    }</span>
+<span class="fc" id="L159">        currency(lookupReportingCurrency());</span>
+<span class="fc" id="L160">    }</span>
 
     /**
      * Obtain the reporting currency.
@@ -158,7 +165,7 @@ public class MoneyWiseLoanBuilder {
      * @return the currency
      */
     private MoneyWiseCurrency lookupReportingCurrency() {
-<span class="fc" id="L161">        return theDataSet.getReportingCurrency();</span>
+<span class="fc" id="L168">        return theDataSet.getReportingCurrency();</span>
     }
 
     /**
@@ -168,8 +175,8 @@ public class MoneyWiseLoanBuilder {
      * @return the builder
      */
     public MoneyWiseLoanBuilder openingBalance(final OceanusMoney pOpening) {
-<span class="fc" id="L171">        theOpeningBalance = pOpening;</span>
-<span class="fc" id="L172">        return this;</span>
+<span class="fc" id="L178">        theOpeningBalance = pOpening;</span>
+<span class="fc" id="L179">        return this;</span>
     }
 
     /**
@@ -179,7 +186,7 @@ public class MoneyWiseLoanBuilder {
      * @return the builder
      */
     public MoneyWiseLoanBuilder openingBalance(final String pOpening) {
-<span class="fc" id="L182">        return openingBalance(new OceanusMoney(pOpening, theCurrency.getCurrency()));</span>
+<span class="fc" id="L189">        return openingBalance(theParser.parseMoneyValue(pOpening, theCurrency.getCurrency()));</span>
     }
 
     /**
@@ -190,27 +197,27 @@ public class MoneyWiseLoanBuilder {
      */
     public MoneyWiseLoan build() throws OceanusException {
         /* Create the loan */
-<span class="fc" id="L193">        final MoneyWiseLoan myLoan = theDataSet.getLoans().addNewItem();</span>
-<span class="fc" id="L194">        myLoan.setName(theName);</span>
-<span class="fc" id="L195">        myLoan.setParent(theParent);</span>
-<span class="fc" id="L196">        myLoan.setCategory(theCategory);</span>
-<span class="fc" id="L197">        myLoan.setAssetCurrency(theCurrency);</span>
-<span class="fc" id="L198">        myLoan.setOpeningBalance(theOpeningBalance);</span>
-<span class="fc" id="L199">        myLoan.setClosed(Boolean.FALSE);</span>
+<span class="fc" id="L200">        final MoneyWiseLoan myLoan = theDataSet.getLoans().addNewItem();</span>
+<span class="fc" id="L201">        myLoan.setName(theName);</span>
+<span class="fc" id="L202">        myLoan.setParent(theParent);</span>
+<span class="fc" id="L203">        myLoan.setCategory(theCategory);</span>
+<span class="fc" id="L204">        myLoan.setAssetCurrency(theCurrency);</span>
+<span class="fc" id="L205">        myLoan.setOpeningBalance(theOpeningBalance);</span>
+<span class="fc" id="L206">        myLoan.setClosed(Boolean.FALSE);</span>
 
         /* Reset the values */
-<span class="fc" id="L202">        reset();</span>
+<span class="fc" id="L209">        reset();</span>
 
         /* Check for errors */
-<span class="fc" id="L205">        myLoan.adjustMapForItem();</span>
-<span class="fc" id="L206">        myLoan.validate();</span>
-<span class="pc bpc" id="L207" title="1 of 2 branches missed.">        if (myLoan.hasErrors()) {</span>
-<span class="nc" id="L208">            myLoan.removeItem();</span>
-<span class="nc" id="L209">            throw new MoneyWiseDataException(myLoan, &quot;Failed validation&quot;);</span>
+<span class="fc" id="L212">        myLoan.adjustMapForItem();</span>
+<span class="fc" id="L213">        myLoan.validate();</span>
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">        if (myLoan.hasErrors()) {</span>
+<span class="nc" id="L215">            myLoan.removeItem();</span>
+<span class="nc" id="L216">            throw new MoneyWiseDataException(myLoan, &quot;Failed validation&quot;);</span>
         }
 
         /* Return the loan */
-<span class="fc" id="L213">        return myLoan;</span>
+<span class="fc" id="L220">        return myLoan;</span>
     }
 
     /**
@@ -218,11 +225,11 @@ public class MoneyWiseLoanBuilder {
      */
     public void reset() {
         /* Reset values */
-<span class="fc" id="L221">        theName = null;</span>
-<span class="fc" id="L222">        theCategory = null;</span>
-<span class="fc" id="L223">        theParent = null;</span>
-<span class="fc" id="L224">        theOpeningBalance = null;</span>
-<span class="fc" id="L225">        reportingCurrency();</span>
-<span class="fc" id="L226">    }</span>
+<span class="fc" id="L228">        theName = null;</span>
+<span class="fc" id="L229">        theCategory = null;</span>
+<span class="fc" id="L230">        theParent = null;</span>
+<span class="fc" id="L231">        theOpeningBalance = null;</span>
+<span class="fc" id="L232">        reportingCurrency();</span>
+<span class="fc" id="L233">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

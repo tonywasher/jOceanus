@@ -16,15 +16,16 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolioInfo.MoneyWisePortfolioInfoList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Arrays;
@@ -41,17 +42,17 @@ public class MoneyWisePortfolioInfoSet
     /**
      * Report fields.
      */
-<span class="fc" id="L44">    private static final MetisFieldSet&lt;MoneyWisePortfolioInfoSet&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePortfolioInfoSet.class);</span>
+<span class="fc" id="L45">    private static final MetisFieldSet&lt;MoneyWisePortfolioInfoSet&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePortfolioInfoSet.class);</span>
 
     /**
      * FieldSet map.
      */
-<span class="fc" id="L49">    private static final Map&lt;MetisDataFieldId, MoneyWiseAccountInfoClass&gt; FIELDSET_MAP = FIELD_DEFS.buildFieldMap(MoneyWiseAccountInfoClass.class, MoneyWisePortfolioInfoSet::getFieldValue);</span>
+<span class="fc" id="L50">    private static final Map&lt;MetisDataFieldId, MoneyWiseAccountInfoClass&gt; FIELDSET_MAP = FIELD_DEFS.buildFieldMap(MoneyWiseAccountInfoClass.class, MoneyWisePortfolioInfoSet::getFieldValue);</span>
 
     /**
      * Reverse FieldSet map.
      */
-<span class="fc" id="L54">    private static final Map&lt;MoneyWiseAccountInfoClass, MetisDataFieldId&gt; REVERSE_FIELDMAP = MetisFieldSet.reverseFieldMap(FIELDSET_MAP, MoneyWiseAccountInfoClass.class);</span>
+<span class="fc" id="L55">    private static final Map&lt;MoneyWiseAccountInfoClass, MetisDataFieldId&gt; REVERSE_FIELDMAP = MetisFieldSet.reverseFieldMap(FIELDSET_MAP, MoneyWiseAccountInfoClass.class);</span>
 
     /**
      * Constructor.
@@ -60,21 +61,16 @@ public class MoneyWisePortfolioInfoSet
      * @param pTypeList the infoTypeList for the set
      * @param pInfoList the InfoList for the set
      */
-    protected MoneyWisePortfolioInfoSet(final MoneyWisePortfolio pOwner,
+    protected MoneyWisePortfolioInfoSet(final PrometheusDataItem pOwner,
                                         final MoneyWiseAccountInfoTypeList pTypeList,
                                         final MoneyWisePortfolioInfoList pInfoList) {
         /* Store the Owner and Info List */
-<span class="fc" id="L67">        super(pOwner, pTypeList, pInfoList);</span>
-<span class="fc" id="L68">    }</span>
+<span class="fc" id="L68">        super(pOwner, pTypeList, pInfoList);</span>
+<span class="fc" id="L69">    }</span>
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
-<span class="nc" id="L72">        return FIELD_DEFS;</span>
-    }
-
-    @Override
-    public MoneyWisePortfolio getOwner() {
-<span class="fc" id="L77">        return (MoneyWisePortfolio) super.getOwner();</span>
+<span class="nc" id="L73">        return FIELD_DEFS;</span>
     }
 
     /**
@@ -85,13 +81,13 @@ public class MoneyWisePortfolioInfoSet
      */
     public Object getFieldValue(final MetisDataFieldId pFieldId) {
         /* Handle InfoSet fields */
-<span class="fc" id="L88">        final MoneyWiseAccountInfoClass myClass = getClassForField(pFieldId);</span>
-<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        if (myClass != null) {</span>
-<span class="fc" id="L90">            return getInfoSetValue(myClass);</span>
+<span class="fc" id="L84">        final MoneyWiseAccountInfoClass myClass = getClassForField(pFieldId);</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        if (myClass != null) {</span>
+<span class="fc" id="L86">            return getInfoSetValue(myClass);</span>
         }
 
         /* Pass onwards */
-<span class="nc" id="L94">        return null;</span>
+<span class="nc" id="L90">        return null;</span>
     }
 
     /**
@@ -102,10 +98,10 @@ public class MoneyWisePortfolioInfoSet
      */
     private Object getInfoSetValue(final MoneyWiseAccountInfoClass pInfoClass) {
         /* Return the value */
-<span class="fc" id="L105">        final Object myValue = getField(pInfoClass);</span>
-<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        return myValue != null</span>
-<span class="nc" id="L107">                ? myValue</span>
-<span class="fc" id="L108">                : MetisDataFieldValue.SKIP;</span>
+<span class="fc" id="L101">        final Object myValue = getField(pInfoClass);</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        return myValue != null</span>
+<span class="nc" id="L103">                ? myValue</span>
+<span class="fc" id="L104">                : MetisDataFieldValue.SKIP;</span>
     }
 
     /**
@@ -116,7 +112,7 @@ public class MoneyWisePortfolioInfoSet
      */
     public static MoneyWiseAccountInfoClass getClassForField(final MetisDataFieldId pField) {
         /* Look up field in map */
-<span class="fc" id="L119">        return FIELDSET_MAP.get(pField);</span>
+<span class="fc" id="L115">        return FIELDSET_MAP.get(pField);</span>
     }
 
     /**
@@ -127,18 +123,18 @@ public class MoneyWisePortfolioInfoSet
      */
     public static MetisDataFieldId getFieldForClass(final MoneyWiseAccountInfoClass pClass) {
         /* Look up field in map */
-<span class="nc" id="L130">        return REVERSE_FIELDMAP.get(pClass);</span>
+<span class="nc" id="L126">        return REVERSE_FIELDMAP.get(pClass);</span>
     }
 
     @Override
     public MetisDataFieldId getFieldForClass(final PrometheusDataInfoClass pClass) {
-<span class="nc" id="L135">        return getFieldForClass((MoneyWiseAccountInfoClass) pClass);</span>
+<span class="nc" id="L131">        return getFieldForClass((MoneyWiseAccountInfoClass) pClass);</span>
     }
 
     @Override
     public Iterator&lt;PrometheusDataInfoClass&gt; classIterator() {
-<span class="fc" id="L140">        final PrometheusDataInfoClass[] myValues = MoneyWiseAccountInfoClass.values();</span>
-<span class="fc" id="L141">        return Arrays.stream(myValues).iterator();</span>
+<span class="fc" id="L136">        final PrometheusDataInfoClass[] myValues = MoneyWiseAccountInfoClass.values();</span>
+<span class="fc" id="L137">        return Arrays.stream(myValues).iterator();</span>
     }
 
     /**
@@ -148,8 +144,8 @@ public class MoneyWisePortfolioInfoSet
      */
     protected void cloneDataInfoSet(final MoneyWisePortfolioInfoSet pSource) {
         /* Clone the dataInfoSet */
-<span class="fc" id="L151">        cloneTheDataInfoSet(pSource);</span>
-<span class="fc" id="L152">    }</span>
+<span class="fc" id="L147">        cloneTheDataInfoSet(pSource);</span>
+<span class="fc" id="L148">    }</span>
 
     /**
      * Resolve editSetLinks.
@@ -159,9 +155,9 @@ public class MoneyWisePortfolioInfoSet
      */
     void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Loop through the items */
-<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        for (MoneyWisePortfolioInfo myInfo : this) {</span>
-<span class="nc" id="L163">            myInfo.resolveEditSetLinks(pEditSet);</span>
-<span class="nc" id="L164">        }</span>
-<span class="fc" id="L165">    }</span>
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">        for (MoneyWisePortfolioInfo myInfo : this) {</span>
+<span class="nc" id="L159">            myInfo.resolveEditSetLinks(pEditSet);</span>
+<span class="nc" id="L160">        }</span>
+<span class="fc" id="L161">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

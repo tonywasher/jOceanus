@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.views;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
@@ -29,6 +26,9 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.analyse.Money
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
 import io.github.tonywasher.joceanus.moneywise.sheets.MoneyWiseSheet;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusDBConfig;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
@@ -174,7 +174,7 @@ public class MoneyWiseView
      */
     @Override
     public PrometheusSpreadSheet getSpreadSheet() {
-<span class="nc" id="L177">        return new MoneyWiseSheet(getGuiFactory());</span>
+<span class="nc" id="L177">        return new MoneyWiseSheet();</span>
     }
 
     /**
@@ -290,4 +290,4 @@ public class MoneyWiseView
 <span class="nc" id="L290">        incrementVersion();</span>
 <span class="nc" id="L291">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

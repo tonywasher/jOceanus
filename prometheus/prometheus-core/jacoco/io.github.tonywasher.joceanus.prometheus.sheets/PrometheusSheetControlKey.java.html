@@ -45,56 +45,42 @@ public class PrometheusSheetControlKey
     private static final int COL_KEYDATA = COL_CREATION + 1;
 
     /**
-     * Constructor for loading a spreadsheet.
+     * Constructor.
      *
-     * @param pReader the spreadsheet reader
+     * @param pControl the spreadsheet control
      */
-    protected PrometheusSheetControlKey(final PrometheusSheetReader pReader) {
+    protected PrometheusSheetControlKey(final PrometheusSheetControl pControl) {
         /* Call super constructor */
-<span class="nc" id="L54">        super(pReader, SHEET_NAME);</span>
+<span class="nc" id="L54">        super(pControl, SHEET_NAME);</span>
 
         /* Access the Lists */
-<span class="nc" id="L57">        final PrometheusDataSet myData = pReader.getData();</span>
+<span class="nc" id="L57">        final PrometheusDataSet myData = pControl.getData();</span>
 <span class="nc" id="L58">        setDataList(myData.getControlKeys());</span>
 <span class="nc" id="L59">    }</span>
-
-    /**
-     * Constructor for creating a spreadsheet.
-     *
-     * @param pWriter the Spreadsheet writer
-     */
-    protected PrometheusSheetControlKey(final PrometheusSheetWriter pWriter) {
-        /* Call super constructor */
-<span class="nc" id="L68">        super(pWriter, SHEET_NAME);</span>
-
-        /* Access the Control list */
-<span class="nc" id="L71">        final PrometheusDataSet myData = pWriter.getData();</span>
-<span class="nc" id="L72">        setDataList(myData.getControlKeys());</span>
-<span class="nc" id="L73">    }</span>
 
     @Override
     protected PrometheusDataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-<span class="nc" id="L78">        final PrometheusDataValues myValues = getRowValues(PrometheusControlKey.OBJECT_NAME);</span>
-<span class="nc" id="L79">        myValues.addValue(PrometheusDataResource.CONTROLKEY_CREATION, loadDate(COL_CREATION));</span>
-<span class="nc" id="L80">        myValues.addValue(PrometheusDataResource.CONTROLKEY_LOCKBYTES, loadBytes(COL_KEYDATA));</span>
+<span class="nc" id="L64">        final PrometheusDataValues myValues = getRowValues(PrometheusControlKey.OBJECT_NAME);</span>
+<span class="nc" id="L65">        myValues.addValue(PrometheusDataResource.CONTROLKEY_CREATION, loadDate(COL_CREATION));</span>
+<span class="nc" id="L66">        myValues.addValue(PrometheusDataResource.CONTROLKEY_LOCKBYTES, loadBytes(COL_KEYDATA));</span>
 
         /* Return the values */
-<span class="nc" id="L83">        return myValues;</span>
+<span class="nc" id="L69">        return myValues;</span>
     }
 
     @Override
     protected void insertSecureItem(final PrometheusControlKey pItem) throws OceanusException {
         /* Set the fields */
-<span class="nc" id="L89">        super.insertSecureItem(pItem);</span>
-<span class="nc" id="L90">        writeDate(COL_CREATION, pItem.getCreationDate());</span>
-<span class="nc" id="L91">        writeBytes(COL_KEYDATA, pItem.getLockBytes());</span>
-<span class="nc" id="L92">    }</span>
+<span class="nc" id="L75">        super.insertSecureItem(pItem);</span>
+<span class="nc" id="L76">        writeDate(COL_CREATION, pItem.getCreationDate());</span>
+<span class="nc" id="L77">        writeBytes(COL_KEYDATA, pItem.getLockBytes());</span>
+<span class="nc" id="L78">    }</span>
 
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-<span class="nc" id="L97">        return COL_KEYDATA;</span>
+<span class="nc" id="L83">        return COL_KEYDATA;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

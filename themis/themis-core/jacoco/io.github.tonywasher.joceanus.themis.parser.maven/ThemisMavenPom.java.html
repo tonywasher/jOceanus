@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisMavenPom.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.parser.maven</a> &gt; <span class="el_source">ThemisMavenPom.java</span></div><h1>ThemisMavenPom.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.parser.maven;
+
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Maven Pom.
+ */
+public class ThemisMavenPom
+        implements MetisFieldItem {
+    /**
+     * The controller.
+     */
+    interface ThemisXMavenControl {
+        /**
+         * Load a pom via its id.
+         *
+         * @param pId the id of the pom
+         * @return the loaded pom
+         * @throws OceanusException on error
+         */
+        ThemisMavenPom loadPomViaId(ThemisMavenId pId) throws OceanusException;
+
+        /**
+         * Load a pom at the location.
+         *
+         * @param pLocation the location of the pom
+         * @return the loaded pom
+         */
+        ThemisMavenPom loadPomAtLocation(File pLocation) throws OceanusException;
+    }
+
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L61">    private static final MetisFieldSet&lt;ThemisMavenPom&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisMavenPom.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L67">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_ID, ThemisMavenPom::getId);</span>
+<span class="fc" id="L68">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PARENT, ThemisMavenPom::getParent);</span>
+<span class="fc" id="L69">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PROPERTIES, ThemisMavenPom::getProperties);</span>
+<span class="fc" id="L70">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_XTRADIRS, ThemisMavenPom::getXtraDirs);</span>
+<span class="fc" id="L71">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_MODULES, ThemisMavenPom::getModules);</span>
+<span class="fc" id="L72">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_VERSIONS, ThemisMavenPom::getTheVersions);</span>
+<span class="fc" id="L73">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_DIRECTDEPENDENCIES, ThemisMavenPom::getTheDirectDependencies);</span>
+<span class="fc" id="L74">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_DEPENDENCIES, ThemisMavenPom::getTheDependencies);</span>
+<span class="fc" id="L75">    }</span>
+
+    /**
+     * The controller.
+     */
+    private final ThemisXMavenControl theControl;
+
+    /**
+     * The location.
+     */
+    private final File theLocation;
+
+    /**
+     * The parser.
+     */
+    private final ThemisMavenPomParser theParser;
+
+    /**
+     * The Maven Id.
+     */
+    private final ThemisMavenId theId;
+
+    /**
+     * The parent.
+     */
+    private final ThemisMavenPom theParent;
+
+    /**
+     * The property cache.
+     */
+    private final ThemisMavenPropertyCache theProperties;
+
+    /**
+     * The list of extra directories.
+     */
+    private final List&lt;String&gt; theXtraDirs;
+
+    /**
+     * The list of modules.
+     */
+    private final List&lt;ThemisMavenPom&gt; theModules;
+
+    /**
+     * Is this a jar package.
+     */
+    private final boolean isJarPackage;
+
+    /**
+     * The version cache.
+     */
+    private ThemisMavenVersionCache theVersions;
+
+    /**
+     * The list of direct dependencies.
+     */
+    private List&lt;ThemisMavenPom&gt; theDirectDependencies;
+
+    /**
+     * The full list of dependencies.
+     */
+    private List&lt;ThemisMavenId&gt; theDependencies;
+
+    /**
+     * Constructor.
+     *
+     * @param pController the controller
+     * @param pLocation   the location
+     * @throws OceanusException on error
+     */
+    ThemisMavenPom(final ThemisXMavenControl pController,
+<span class="fc" id="L145">                   final File pLocation) throws OceanusException {</span>
+        /* Store the controller and location */
+<span class="fc" id="L147">        theControl = pController;</span>
+<span class="fc" id="L148">        theLocation = new File(pLocation.getParent());</span>
+
+        /* Create the caches */
+<span class="fc" id="L151">        theProperties = new ThemisMavenPropertyCache();</span>
+
+        /* Create the parser */
+<span class="fc" id="L154">        theParser = new ThemisMavenPomParser(pLocation, theProperties);</span>
+
+        /* Create the various lists */
+<span class="fc" id="L157">        theModules = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L158">        theXtraDirs = new ArrayList&lt;&gt;();</span>
+
+        /* Access the parent Pom */
+<span class="fc" id="L161">        final ThemisMavenId myParentId = theParser.getParent();</span>
+
+        /* If we have a parent */
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        if (myParentId != null) {</span>
+            /* Access pom details */
+<span class="fc" id="L166">            theParent = theControl.loadPomViaId(myParentId);</span>
+
+            /* Inherit the parent properties and read own properties */
+<span class="fc" id="L169">            theProperties.setParent(theParent.getProperties());</span>
+
+        } else {
+<span class="fc" id="L172">            theParent = null;</span>
+        }
+
+        /* Read the properties */
+<span class="fc" id="L176">        theParser.readProperties();</span>
+
+        /* Load the id */
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        theId = theParser.getId(theParent == null ? null : theParent.getId());</span>
+
+        /* Determine jar packaging */
+<span class="fc" id="L182">        isJarPackage = theParser.isJarPackaging();</span>
+<span class="fc" id="L183">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pId the id
+     * @throws OceanusException on error
+     */
+<span class="fc" id="L191">    ThemisMavenPom(final ThemisMavenId pId) throws OceanusException {</span>
+        /* Store the id */
+<span class="fc" id="L193">        theId = pId;</span>
+
+        /* Store the controller and location */
+<span class="fc" id="L196">        theControl = null;</span>
+<span class="fc" id="L197">        theLocation = null;</span>
+<span class="fc" id="L198">        theParent = null;</span>
+
+        /* Create the cache */
+<span class="fc" id="L201">        theProperties = new ThemisMavenPropertyCache();</span>
+<span class="fc" id="L202">        theVersions = new ThemisMavenVersionCache();</span>
+
+        /* Create the parser */
+<span class="fc" id="L205">        theParser = null;</span>
+
+        /* Set Pom packaging */
+<span class="fc" id="L208">        isJarPackage = false;</span>
+
+        /* Create the various lists */
+<span class="fc" id="L211">        theModules = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L212">        theXtraDirs = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L213">        theDirectDependencies = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L214">        theDependencies = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L215">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisMavenPom&gt; getDataFieldSet() {
+<span class="nc" id="L219">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L224">        return getId().formatObject(pFormatter);</span>
+    }
+
+    /**
+     * Obtain the id.
+     *
+     * @return the id
+     */
+    public ThemisMavenId getId() {
+<span class="fc" id="L233">        return theId;</span>
+    }
+
+    /**
+     * Obtain the artifactId.
+     *
+     * @return the id
+     */
+    public String getArtifactId() {
+<span class="fc" id="L242">        return theId.getArtifactId();</span>
+    }
+
+    /**
+     * Obtain the location.
+     *
+     * @return the parent
+     */
+    public File getLocation() {
+<span class="fc" id="L251">        return theLocation;</span>
+    }
+
+    /**
+     * Obtain the parent.
+     *
+     * @return the parent
+     */
+    private ThemisMavenPom getParent() {
+<span class="nc" id="L260">        return theParent;</span>
+    }
+
+    /**
+     * Is this jar packaging?
+     *
+     * @return true/false
+     * @throws OceanusException on error
+     */
+    public boolean isJarPackaging() throws OceanusException {
+<span class="fc" id="L270">        return isJarPackage;</span>
+    }
+
+    /**
+     * Obtain the modules.
+     *
+     * @return the modules
+     */
+    public List&lt;ThemisMavenPom&gt; getModules() {
+<span class="nc" id="L279">        return theModules;</span>
+    }
+
+    /**
+     * Obtain the dependencies.
+     *
+     * @return the dependencies
+     * @throws OceanusException on error
+     */
+    public List&lt;ThemisMavenPom&gt; getDirectDependencies() throws OceanusException {
+        /* If we have not processed dependencies */
+<span class="fc bfc" id="L290" title="All 2 branches covered.">        if (theDirectDependencies == null) {</span>
+            /* Process dependencies */
+<span class="fc" id="L292">            theDirectDependencies = processDependencies();</span>
+        }
+
+        /* Return the dependencies */
+<span class="fc" id="L296">        return theDirectDependencies;</span>
+    }
+
+    /**
+     * Obtain the direct dependencies.
+     *
+     * @return the dependencies
+     */
+    private List&lt;ThemisMavenPom&gt; getTheDirectDependencies() {
+        /* Return the dependencies */
+<span class="nc" id="L306">        return theDirectDependencies;</span>
+    }
+
+    /**
+     * Obtain the dependencies.
+     *
+     * @return the dependencies
+     * @throws OceanusException on error
+     */
+    public List&lt;ThemisMavenId&gt; getDependencies() throws OceanusException {
+        /* If we have not combined dependencies */
+<span class="fc bfc" id="L317" title="All 2 branches covered.">        if (theDependencies == null) {</span>
+            /* Combine dependencies */
+<span class="fc" id="L319">            theDependencies = combineDependencies();</span>
+        }
+
+        /* Return the dependencies */
+<span class="fc" id="L323">        return theDependencies;</span>
+    }
+
+    /**
+     * Obtain the dependencies.
+     *
+     * @return the dependencies
+     */
+    public List&lt;ThemisMavenId&gt; getTheDependencies() {
+        /* Return the dependencies */
+<span class="nc" id="L333">        return theDependencies;</span>
+    }
+
+    /**
+     * Obtain the extraDirectories.
+     *
+     * @return the extra Directories
+     */
+    public List&lt;String&gt; getXtraDirs() {
+<span class="fc" id="L342">        return theXtraDirs;</span>
+    }
+
+    /**
+     * Obtain the versions.
+     *
+     * @return the versions
+     * @throws OceanusException on error
+     */
+    public ThemisMavenVersionCache getVersions() throws OceanusException {
+        /* If we have not processed versions */
+<span class="fc bfc" id="L353" title="All 2 branches covered.">        if (theVersions == null) {</span>
+            /* Process dependencies */
+<span class="fc" id="L355">            theVersions = processDependencyManagement();</span>
+        }
+
+        /* Return the versions */
+<span class="fc" id="L359">        return theVersions;</span>
+    }
+
+    /**
+     * Obtain the versions.
+     *
+     * @return the versions
+     */
+    private ThemisMavenVersionCache getTheVersions() {
+        /* Return the versions */
+<span class="nc" id="L369">        return theVersions;</span>
+    }
+
+    /**
+     * Obtain the properties.
+     *
+     * @return the properties
+     */
+    ThemisMavenPropertyCache getProperties() {
+<span class="fc" id="L378">        return theProperties;</span>
+    }
+
+    /**
+     * Process local details.
+     *
+     * @throws OceanusException on error
+     */
+    void processLocalDetails() throws OceanusException {
+        /* Look up any modules */
+<span class="fc" id="L388">        final List&lt;String&gt; myModules = theParser.getModules();</span>
+<span class="fc bfc" id="L389" title="All 2 branches covered.">        for (String myModule : myModules) {</span>
+            /* Load the file at the location */
+<span class="fc" id="L391">            final ThemisMavenPom myLoaded = theControl.loadPomAtLocation(new File(theLocation, myModule));</span>
+<span class="fc" id="L392">            theModules.add(myLoaded);</span>
+<span class="fc" id="L393">        }</span>
+
+        /* Look up any extra directories */
+<span class="fc" id="L396">        final List&lt;String&gt; myXtraDirs = theParser.getXtraDirs();</span>
+<span class="fc" id="L397">        theXtraDirs.addAll(myXtraDirs);</span>
+<span class="fc" id="L398">    }</span>
+
+    /**
+     * Process dependencies.
+     *
+     * @return the dependencies
+     * @throws OceanusException on error
+     */
+    private ThemisMavenVersionCache processDependencyManagement() throws OceanusException {
+        /* Allocate the cache */
+<span class="fc" id="L408">        final ThemisMavenVersionCache myCache = new ThemisMavenVersionCache();</span>
+
+        /* Attach to parent if present */
+<span class="fc bfc" id="L411" title="All 2 branches covered.">        if (theParent != null) {</span>
+<span class="fc" id="L412">            myCache.setParent(theParent.getVersions());</span>
+        }
+
+        /* Look up any dependencyManagement */
+<span class="fc" id="L416">        final List&lt;ThemisMavenId&gt; myDependencyMgmt = theParser.getDependencyManagement();</span>
+<span class="fc bfc" id="L417" title="All 2 branches covered.">        for (ThemisMavenId myDependency : myDependencyMgmt) {</span>
+            /* If this is a BOM */
+<span class="fc bfc" id="L419" title="All 2 branches covered.">            if (&quot;import&quot;.equals(myDependency.getScope())) {</span>
+<span class="fc" id="L420">                final ThemisMavenPom myLoaded = theControl.loadPomViaId(myDependency);</span>
+<span class="fc" id="L421">                myCache.importDependencies(myLoaded.getVersions());</span>
+<span class="fc" id="L422">            } else {</span>
+<span class="fc" id="L423">                myCache.addToCache(myDependency);</span>
+            }
+<span class="fc" id="L425">        }</span>
+
+        /* Return the cache */
+<span class="fc" id="L428">        return myCache;</span>
+    }
+
+    /**
+     * Process dependencies.
+     *
+     * @return the dependencies
+     * @throws OceanusException on error
+     */
+    private List&lt;ThemisMavenPom&gt; processDependencies() throws OceanusException {
+        /* Allocate the dependencies */
+<span class="fc" id="L439">        final List&lt;ThemisMavenPom&gt; myPoms = new ArrayList&lt;&gt;();</span>
+
+        /* Look up any dependencies */
+<span class="fc" id="L442">        final List&lt;ThemisMavenId&gt; myDependencies = theParser.getDependencies();</span>
+<span class="fc bfc" id="L443" title="All 2 branches covered.">        for (ThemisMavenId myDependency : myDependencies) {</span>
+            /* Load the dependency via its id */
+<span class="fc" id="L445">            final ThemisMavenId myId = theVersions.lookUpVersion(myDependency);</span>
+<span class="fc" id="L446">            final ThemisMavenPom myLoaded = theControl.loadPomViaId(myId);</span>
+<span class="fc" id="L447">            myPoms.add(myLoaded);</span>
+<span class="fc" id="L448">        }</span>
+
+        /* Return the poms */
+<span class="fc" id="L451">        return myPoms;</span>
+    }
+
+    /**
+     * Combine direct dependencies.
+     *
+     * @return the dependencies
+     * @throws OceanusException on error
+     */
+    private List&lt;ThemisMavenId&gt; combineDependencies() throws OceanusException {
+        /* Allocate the dependencies */
+<span class="fc" id="L462">        final List&lt;ThemisMavenId&gt; myIds = new ArrayList&lt;&gt;();</span>
+
+        /* Combine dependencies for this pom */
+<span class="fc" id="L465">        combineDependencies(myIds, this);</span>
+
+        /* Return the id */
+<span class="fc" id="L468">        return myIds;</span>
+    }
+
+    /**
+     * Combine direct dependencies.
+     *
+     * @param pIds the list to populate
+     * @param pPom the pom to process
+     * @throws OceanusException on error
+     */
+    private static void combineDependencies(final List&lt;ThemisMavenId&gt; pIds,
+                                            final ThemisMavenPom pPom) throws OceanusException {
+        /* Loop through direct dependencies */
+<span class="fc bfc" id="L481" title="All 2 branches covered.">        for (ThemisMavenPom myDependency : pPom.getDirectDependencies()) {</span>
+            /* If we have not processed this dependency before */
+<span class="fc" id="L483">            final ThemisMavenId myId = myDependency.getId();</span>
+<span class="fc bfc" id="L484" title="All 2 branches covered.">            if (checkDependencyId(pIds, myId)) {</span>
+                /* Combine underlying dependencies */
+<span class="fc" id="L486">                combineDependencies(pIds, myDependency);</span>
+            }
+<span class="fc" id="L488">        }</span>
+<span class="fc" id="L489">    }</span>
+
+    /**
+     * Check id.
+     *
+     * @param pDependencies the list of existing dependencies
+     * @param pId           to id to check
+     * @return was the id added true/false
+     * @throws OceanusException on error
+     */
+    static boolean checkDependencyId(final List&lt;ThemisMavenId&gt; pDependencies,
+                                     final ThemisMavenId pId) throws OceanusException {
+        /* Loop through the existing dependencies */
+<span class="fc bfc" id="L502" title="All 2 branches covered.">        for (ThemisMavenId myDependency : pDependencies) {</span>
+            /* If we have a match */
+<span class="fc bfc" id="L504" title="All 2 branches covered.">            if (myDependency.equalsPrefix(pId)) {</span>
+                /* OK as long as version matches */
+<span class="pc bpc" id="L506" title="1 of 2 branches missed.">                if (myDependency.getVersion().equals(pId.getVersion())) {</span>
+<span class="fc" id="L507">                    return false;</span>
+                }
+
+                /* Reject mismatch of versions */
+<span class="nc" id="L511">                throw new ThemisDataException(&quot;Mismatch of dependency versions &quot; + myDependency + &quot; vs &quot; + pId);</span>
+            }
+<span class="fc" id="L513">        }</span>
+
+        /* No match, so add to list */
+<span class="fc" id="L516">        pDependencies.add(pId);</span>
+<span class="fc" id="L517">        return true;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

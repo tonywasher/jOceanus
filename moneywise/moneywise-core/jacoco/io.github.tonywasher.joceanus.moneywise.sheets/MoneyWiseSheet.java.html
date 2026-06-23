@@ -20,7 +20,6 @@ import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPassw
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSpreadSheet;
-import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
@@ -31,30 +30,23 @@ import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusRepor
 public class MoneyWiseSheet
         extends PrometheusSpreadSheet {
     /**
-     * The Data file name.
-     */
-    private final TethysUIFactory&lt;?&gt; theGuiFactory;
-
-    /**
      * Constructor.
-     *
-     * @param pFactory the factory
      */
-<span class="fc" id="L43">    public MoneyWiseSheet(final TethysUIFactory&lt;?&gt; pFactory) {</span>
-<span class="fc" id="L44">        theGuiFactory = pFactory;</span>
-<span class="fc" id="L45">    }</span>
+<span class="fc" id="L35">    public MoneyWiseSheet() {</span>
+        /* NoOp */
+<span class="fc" id="L37">    }</span>
 
     @Override
     protected PrometheusSheetReader getSheetReader(final TethysUIThreadStatusReport pReport,
                                                    final PrometheusSecurityPasswordManager pPasswordMgr) {
         /* Create a MoneyWise Reader object and return it */
-<span class="fc" id="L51">        return new MoneyWiseReader(theGuiFactory, pReport, pPasswordMgr);</span>
+<span class="fc" id="L43">        return new MoneyWiseReader(pReport, pPasswordMgr);</span>
     }
 
     @Override
     protected PrometheusSheetWriter getSheetWriter(final TethysUIThreadStatusReport pReport) {
         /* Create a MoneyWise Writer object and return it */
-<span class="fc" id="L57">        return new MoneyWiseWriter(theGuiFactory, pReport);</span>
+<span class="fc" id="L49">        return new MoneyWiseWriter(pReport);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

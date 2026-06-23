@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.prometheus.database;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
@@ -24,9 +26,6 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
-import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
 
@@ -36,6 +35,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -45,7 +45,8 @@ import java.util.ListIterator;
  *
  * @author Tony Washer
  */
-public abstract class PrometheusColumnDefinition {
+public abstract class PrometheusColumnDefinition
+        implements PrometheusColumnControl {
     /**
      * Open bracket.
      */
@@ -79,7 +80,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * Table Definition.
      */
-    private final PrometheusTableDefinition theTable;
+    private final PrometheusTableControl theTable;
 
     /**
      * Column Identity.
@@ -112,15 +113,15 @@ public abstract class PrometheusColumnDefinition {
      * @param pTable the table to which the column belongs
      * @param pId    the column id
      */
-    protected PrometheusColumnDefinition(final PrometheusTableDefinition pTable,
-<span class="nc" id="L116">                                         final MetisDataFieldId pId) {</span>
+    protected PrometheusColumnDefinition(final PrometheusTableControl pTable,
+<span class="nc" id="L117">                                         final MetisDataFieldId pId) {</span>
         /* Record the identity and table */
-<span class="nc" id="L118">        theIdentity = pId;</span>
-<span class="nc" id="L119">        theTable = pTable;</span>
+<span class="nc" id="L119">        theIdentity = pId;</span>
+<span class="nc" id="L120">        theTable = pTable;</span>
 
         /* Add to the map */
-<span class="nc" id="L122">        theTable.getMap().put(theIdentity, this);</span>
-<span class="nc" id="L123">    }</span>
+<span class="nc" id="L123">        theTable.getMap().put(theIdentity, this);</span>
+<span class="nc" id="L124">    }</span>
 
     /**
      * Obtain the column name.
@@ -128,7 +129,7 @@ public abstract class PrometheusColumnDefinition {
      * @return the name
      */
     protected String getColumnName() {
-<span class="nc" id="L131">        return theIdentity.getId();</span>
+<span class="nc" id="L132">        return theIdentity.getId();</span>
     }
 
     /**
@@ -137,7 +138,7 @@ public abstract class PrometheusColumnDefinition {
      * @return the id
      */
     protected MetisDataFieldId getColumnId() {
-<span class="nc" id="L140">        return theIdentity;</span>
+<span class="nc" id="L141">        return theIdentity;</span>
     }
 
     /**
@@ -146,7 +147,7 @@ public abstract class PrometheusColumnDefinition {
      * @return the sort order
      */
     protected PrometheusSortOrder getSortOrder() {
-<span class="nc" id="L149">        return theOrder;</span>
+<span class="nc" id="L150">        return theOrder;</span>
     }
 
     /**
@@ -155,7 +156,7 @@ public abstract class PrometheusColumnDefinition {
      * @return the value
      */
     protected Object getObject() {
-<span class="nc" id="L158">        return theValue;</span>
+<span class="nc" id="L159">        return theValue;</span>
     }
 
     /**
@@ -163,8 +164,8 @@ public abstract class PrometheusColumnDefinition {
      *
      * @return the table
      */
-    protected PrometheusTableDefinition getTable() {
-<span class="nc" id="L167">        return theTable;</span>
+    protected PrometheusTableControl getTable() {
+<span class="nc" id="L168">        return theTable;</span>
     }
 
     /**
@@ -173,16 +174,16 @@ public abstract class PrometheusColumnDefinition {
      * @return the value
      */
     protected PrometheusJDBCDriver getDriver() {
-<span class="nc" id="L176">        return theTable.getDriver();</span>
+<span class="nc" id="L177">        return theTable.getDriver();</span>
     }
 
     /**
      * Clear value.
      */
     protected void clearValue() {
-<span class="nc" id="L183">        theValue = null;</span>
-<span class="nc" id="L184">        isValueSet = false;</span>
-<span class="nc" id="L185">    }</span>
+<span class="nc" id="L184">        theValue = null;</span>
+<span class="nc" id="L185">        isValueSet = false;</span>
+<span class="nc" id="L186">    }</span>
 
     /**
      * Set value.
@@ -190,9 +191,9 @@ public abstract class PrometheusColumnDefinition {
      * @param pValue the value
      */
     protected void setObject(final Object pValue) {
-<span class="nc" id="L193">        theValue = pValue;</span>
-<span class="nc" id="L194">        isValueSet = true;</span>
-<span class="nc" id="L195">    }</span>
+<span class="nc" id="L194">        theValue = pValue;</span>
+<span class="nc" id="L195">        isValueSet = true;</span>
+<span class="nc" id="L196">    }</span>
 
     /**
      * Is the value set.
@@ -200,7 +201,7 @@ public abstract class PrometheusColumnDefinition {
      * @return true/false
      */
     protected boolean isValueSet() {
-<span class="nc" id="L203">        return isValueSet;</span>
+<span class="nc" id="L204">        return isValueSet;</span>
     }
 
     /**
@@ -210,37 +211,37 @@ public abstract class PrometheusColumnDefinition {
      */
     protected void buildCreateString(final StringBuilder pBuilder) {
         /* Add the name of the column */
-<span class="nc" id="L213">        theTable.addQuoteIfAllowed(pBuilder);</span>
-<span class="nc" id="L214">        pBuilder.append(getColumnName());</span>
-<span class="nc" id="L215">        theTable.addQuoteIfAllowed(pBuilder);</span>
-<span class="nc" id="L216">        pBuilder.append(' ');</span>
+<span class="nc" id="L214">        theTable.addQuoteIfAllowed(pBuilder);</span>
+<span class="nc" id="L215">        pBuilder.append(getColumnName());</span>
+<span class="nc" id="L216">        theTable.addQuoteIfAllowed(pBuilder);</span>
+<span class="nc" id="L217">        pBuilder.append(' ');</span>
 
         /* Add the type of the column */
-<span class="nc" id="L219">        buildColumnType(pBuilder);</span>
+<span class="nc" id="L220">        buildColumnType(pBuilder);</span>
 
         /* Add null-able indication */
-<span class="nc bnc" id="L222" title="All 2 branches missed.">        if (!isNullable) {</span>
-<span class="nc" id="L223">            pBuilder.append(&quot; not&quot;);</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">        if (!isNullable) {</span>
+<span class="nc" id="L224">            pBuilder.append(&quot; not&quot;);</span>
         }
-<span class="nc" id="L225">        pBuilder.append(&quot; null&quot;);</span>
+<span class="nc" id="L226">        pBuilder.append(&quot; null&quot;);</span>
 
         /* build the key reference */
-<span class="nc" id="L228">        buildKeyReference(pBuilder);</span>
-<span class="nc" id="L229">    }</span>
+<span class="nc" id="L229">        buildKeyReference(pBuilder);</span>
+<span class="nc" id="L230">    }</span>
 
     /**
      * Set null-able column.
      */
     protected void setNullable() {
-<span class="nc" id="L235">        isNullable = true;</span>
-<span class="nc" id="L236">    }</span>
+<span class="nc" id="L236">        isNullable = true;</span>
+<span class="nc" id="L237">    }</span>
 
     /**
      * Note that we have a sort on reference.
      */
     protected void setSortOnReference() {
-<span class="nc" id="L242">        theTable.setSortOnReference();</span>
-<span class="nc" id="L243">    }</span>
+<span class="nc" id="L243">        theTable.setSortOnReference();</span>
+<span class="nc" id="L244">    }</span>
 
     /**
      * Set sortOrder.
@@ -248,9 +249,9 @@ public abstract class PrometheusColumnDefinition {
      * @param pOrder the Sort direction
      */
     public void setSortOrder(final PrometheusSortOrder pOrder) {
-<span class="nc" id="L251">        theOrder = pOrder;</span>
-<span class="nc" id="L252">        theTable.getSortList().add(this);</span>
-<span class="nc" id="L253">    }</span>
+<span class="nc" id="L252">        theOrder = pOrder;</span>
+<span class="nc" id="L253">        theTable.getSortList().add(this);</span>
+<span class="nc" id="L254">    }</span>
 
     /**
      * Build the column type for this column.
@@ -285,20 +286,20 @@ public abstract class PrometheusColumnDefinition {
      * @param pBuilder the String builder
      */
     protected void buildKeyReference(final StringBuilder pBuilder) {
-<span class="nc" id="L288">    }</span>
+<span class="nc" id="L289">    }</span>
 
     /**
      * Locate reference.
      *
      * @param pTables the list of defined tables
      */
-    protected void locateReference(final List&lt;PrometheusTableDataItem&lt;?&gt;&gt; pTables) {
-<span class="nc" id="L296">    }</span>
+    protected void locateReference(final List&lt;PrometheusTableInstance&lt;?&gt;&gt; pTables) {
+<span class="nc" id="L297">    }</span>
 
     /**
      * The integerColumn Class.
      */
-    protected static class PrometheusIntegerColumn
+    public static class PrometheusIntegerColumn
             extends PrometheusColumnDefinition {
         /**
          * Constructor.
@@ -306,17 +307,17 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        protected PrometheusIntegerColumn(final PrometheusTableDefinition pTable,
+        protected PrometheusIntegerColumn(final PrometheusTableControl pTable,
                                           final MetisDataFieldId pId) {
             /* Record the column type and name */
-<span class="nc" id="L312">            super(pTable, pId);</span>
-<span class="nc" id="L313">        }</span>
+<span class="nc" id="L313">            super(pTable, pId);</span>
+<span class="nc" id="L314">        }</span>
 
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-<span class="nc" id="L318">            pBuilder.append(getDriver().getDatabaseType(PrometheusColumnType.INTEGER));</span>
-<span class="nc" id="L319">        }</span>
+<span class="nc" id="L319">            pBuilder.append(getDriver().getDatabaseType(PrometheusColumnType.INTEGER));</span>
+<span class="nc" id="L320">        }</span>
 
         /**
          * Set the value.
@@ -324,8 +325,8 @@ public abstract class PrometheusColumnDefinition {
          * @param pValue the value
          */
         protected void setValue(final Integer pValue) {
-<span class="nc" id="L327">            super.setObject(pValue);</span>
-<span class="nc" id="L328">        }</span>
+<span class="nc" id="L328">            super.setObject(pValue);</span>
+<span class="nc" id="L329">        }</span>
 
         /**
          * Get the value.
@@ -333,58 +334,58 @@ public abstract class PrometheusColumnDefinition {
          * @return the value
          */
         protected Integer getValue() {
-<span class="nc" id="L336">            return (Integer) super.getObject();</span>
+<span class="nc" id="L337">            return (Integer) super.getObject();</span>
         }
 
         @Override
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
-<span class="nc" id="L342">            final int myValue = pResults.getInt(pIndex);</span>
-<span class="nc bnc" id="L343" title="All 2 branches missed.">            if (pResults.wasNull()) {</span>
-<span class="nc" id="L344">                setValue(null);</span>
+<span class="nc" id="L343">            final int myValue = pResults.getInt(pIndex);</span>
+<span class="nc bnc" id="L344" title="All 2 branches missed.">            if (pResults.wasNull()) {</span>
+<span class="nc" id="L345">                setValue(null);</span>
             } else {
-<span class="nc" id="L346">                setValue(myValue);</span>
+<span class="nc" id="L347">                setValue(myValue);</span>
             }
-<span class="nc" id="L348">        }</span>
+<span class="nc" id="L349">        }</span>
 
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-<span class="nc" id="L353">            final Integer myValue = getValue();</span>
-<span class="nc bnc" id="L354" title="All 2 branches missed.">            if (myValue == null) {</span>
-<span class="nc" id="L355">                pStatement.setNull(pIndex, Types.INTEGER);</span>
+<span class="nc" id="L354">            final Integer myValue = getValue();</span>
+<span class="nc bnc" id="L355" title="All 2 branches missed.">            if (myValue == null) {</span>
+<span class="nc" id="L356">                pStatement.setNull(pIndex, Types.INTEGER);</span>
             } else {
-<span class="nc" id="L357">                pStatement.setInt(pIndex, myValue);</span>
+<span class="nc" id="L358">                pStatement.setInt(pIndex, myValue);</span>
             }
-<span class="nc" id="L359">        }</span>
+<span class="nc" id="L360">        }</span>
     }
 
     /**
      * The idColumn Class.
      */
-    protected static final class PrometheusIdColumn
+    public static final class PrometheusIdColumn
             extends PrometheusIntegerColumn {
         /**
          * Constructor.
          *
          * @param pTable the table to which the column belongs
          */
-        PrometheusIdColumn(final PrometheusTableDefinition pTable) {
+        PrometheusIdColumn(final PrometheusTableControl pTable) {
             /* Record the column type */
-<span class="nc" id="L374">            super(pTable, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L375">        }</span>
+<span class="nc" id="L375">            super(pTable, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L376">        }</span>
 
         @Override
         protected void buildKeyReference(final StringBuilder pBuilder) {
             /* Add the column type */
-<span class="nc" id="L380">            pBuilder.append(&quot; primary key&quot;);</span>
-<span class="nc" id="L381">        }</span>
+<span class="nc" id="L381">            pBuilder.append(&quot; primary key&quot;);</span>
+<span class="nc" id="L382">        }</span>
     }
 
     /**
      * The referenceColumn Class.
      */
-    protected static final class PrometheusReferenceColumn
+    public static final class PrometheusReferenceColumn
             extends PrometheusIntegerColumn {
         /**
          * The name of the referenced table.
@@ -394,7 +395,7 @@ public abstract class PrometheusColumnDefinition {
         /**
          * The definition of the referenced table.
          */
-        private PrometheusTableDefinition theDefinition;
+        private PrometheusTableControl theDefinition;
 
         /**
          * Constructor.
@@ -403,53 +404,53 @@ public abstract class PrometheusColumnDefinition {
          * @param pId       the column id
          * @param pRefTable the name of the referenced table
          */
-        PrometheusReferenceColumn(final PrometheusTableDefinition pTable,
+        PrometheusReferenceColumn(final PrometheusTableControl pTable,
                                   final MetisDataFieldId pId,
                                   final String pRefTable) {
             /* Record the column type */
-<span class="nc" id="L410">            super(pTable, pId);</span>
-<span class="nc" id="L411">            theReference = pRefTable;</span>
-<span class="nc" id="L412">        }</span>
+<span class="nc" id="L411">            super(pTable, pId);</span>
+<span class="nc" id="L412">            theReference = pRefTable;</span>
+<span class="nc" id="L413">        }</span>
 
         @Override
         public void setSortOrder(final PrometheusSortOrder pOrder) {
-<span class="nc" id="L416">            super.setSortOrder(pOrder);</span>
-<span class="nc" id="L417">            setSortOnReference();</span>
-<span class="nc" id="L418">        }</span>
+<span class="nc" id="L417">            super.setSortOrder(pOrder);</span>
+<span class="nc" id="L418">            setSortOnReference();</span>
+<span class="nc" id="L419">        }</span>
 
         @Override
         protected void buildKeyReference(final StringBuilder pBuilder) {
             /* Add the reference */
-<span class="nc" id="L423">            pBuilder.append(&quot; REFERENCES &quot;);</span>
-<span class="nc" id="L424">            getTable().addQuoteIfAllowed(pBuilder);</span>
-<span class="nc" id="L425">            pBuilder.append(theReference);</span>
-<span class="nc" id="L426">            getTable().addQuoteIfAllowed(pBuilder);</span>
-<span class="nc" id="L427">            pBuilder.append(STR_OPNBRK);</span>
-<span class="nc" id="L428">            getTable().addQuoteIfAllowed(pBuilder);</span>
-<span class="nc" id="L429">            pBuilder.append(MetisDataResource.DATA_ID.getValue());</span>
-<span class="nc" id="L430">            getTable().addQuoteIfAllowed(pBuilder);</span>
-<span class="nc" id="L431">            pBuilder.append(STR_CLSBRK);</span>
-<span class="nc" id="L432">        }</span>
+<span class="nc" id="L424">            pBuilder.append(&quot; REFERENCES &quot;);</span>
+<span class="nc" id="L425">            getTable().addQuoteIfAllowed(pBuilder);</span>
+<span class="nc" id="L426">            pBuilder.append(theReference);</span>
+<span class="nc" id="L427">            getTable().addQuoteIfAllowed(pBuilder);</span>
+<span class="nc" id="L428">            pBuilder.append(STR_OPNBRK);</span>
+<span class="nc" id="L429">            getTable().addQuoteIfAllowed(pBuilder);</span>
+<span class="nc" id="L430">            pBuilder.append(MetisDataResource.DATA_ID.getValue());</span>
+<span class="nc" id="L431">            getTable().addQuoteIfAllowed(pBuilder);</span>
+<span class="nc" id="L432">            pBuilder.append(STR_CLSBRK);</span>
+<span class="nc" id="L433">        }</span>
 
         @Override
-        protected void locateReference(final List&lt;PrometheusTableDataItem&lt;?&gt;&gt; pTables) {
+        protected void locateReference(final List&lt;PrometheusTableInstance&lt;?&gt;&gt; pTables) {
             /* Access the Iterator */
-            final ListIterator&lt;PrometheusTableDataItem&lt;?&gt;&gt; myIterator;
-<span class="nc" id="L438">            myIterator = pTables.listIterator();</span>
+            final ListIterator&lt;PrometheusTableInstance&lt;?&gt;&gt; myIterator;
+<span class="nc" id="L439">            myIterator = pTables.listIterator();</span>
 
             /* Loop through the Tables */
-<span class="nc bnc" id="L441" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc bnc" id="L442" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
                 /* Access Table */
-<span class="nc" id="L443">                final PrometheusTableDataItem&lt;?&gt; myTable = myIterator.next();</span>
+<span class="nc" id="L444">                final PrometheusTableInstance&lt;?&gt; myTable = myIterator.next();</span>
 
                 /* If this is the referenced table */
-<span class="nc bnc" id="L446" title="All 2 branches missed.">                if (theReference.compareTo(myTable.getTableName()) == 0) {</span>
+<span class="nc bnc" id="L447" title="All 2 branches missed.">                if (theReference.compareTo(myTable.getTableName()) == 0) {</span>
                     /* Store the reference and break the loop */
-<span class="nc" id="L448">                    theDefinition = myTable.getDefinition();</span>
-<span class="nc" id="L449">                    break;</span>
+<span class="nc" id="L449">                    theDefinition = myTable.getDefinition();</span>
+<span class="nc" id="L450">                    break;</span>
                 }
-<span class="nc" id="L451">            }</span>
-<span class="nc" id="L452">        }</span>
+<span class="nc" id="L452">            }</span>
+<span class="nc" id="L453">        }</span>
 
         /**
          * build Join String.
@@ -461,39 +462,39 @@ public abstract class PrometheusColumnDefinition {
         void buildJoinString(final StringBuilder pBuilder,
                              final char pChar,
                              final Integer pOffset) {
-<span class="nc" id="L464">            Integer myOffset = pOffset;</span>
+<span class="nc" id="L465">            Integer myOffset = pOffset;</span>
 
             /* Calculate join character */
-<span class="nc" id="L467">            final char myChar = (char) ('a' + myOffset);</span>
+<span class="nc" id="L468">            final char myChar = (char) ('a' + myOffset);</span>
 
             /* Build Initial part of string */
-<span class="nc" id="L470">            pBuilder.append(&quot; join &quot;);</span>
-<span class="nc" id="L471">            getTable().addQuoteIfAllowed(pBuilder);</span>
-<span class="nc" id="L472">            pBuilder.append(theReference);</span>
-<span class="nc" id="L473">            getTable().addQuoteIfAllowed(pBuilder);</span>
-<span class="nc" id="L474">            pBuilder.append(&quot; &quot;);</span>
-<span class="nc" id="L475">            pBuilder.append(myChar);</span>
+<span class="nc" id="L471">            pBuilder.append(&quot; join &quot;);</span>
+<span class="nc" id="L472">            getTable().addQuoteIfAllowed(pBuilder);</span>
+<span class="nc" id="L473">            pBuilder.append(theReference);</span>
+<span class="nc" id="L474">            getTable().addQuoteIfAllowed(pBuilder);</span>
+<span class="nc" id="L475">            pBuilder.append(&quot; &quot;);</span>
+<span class="nc" id="L476">            pBuilder.append(myChar);</span>
 
             /* Build the join */
-<span class="nc" id="L478">            pBuilder.append(&quot; on &quot;);</span>
-<span class="nc" id="L479">            pBuilder.append(pChar);</span>
-<span class="nc" id="L480">            pBuilder.append(&quot;.&quot;);</span>
-<span class="nc" id="L481">            getTable().addQuoteIfAllowed(pBuilder);</span>
-<span class="nc" id="L482">            pBuilder.append(getColumnName());</span>
-<span class="nc" id="L483">            getTable().addQuoteIfAllowed(pBuilder);</span>
-<span class="nc" id="L484">            pBuilder.append(&quot; = &quot;);</span>
-<span class="nc" id="L485">            pBuilder.append(myChar);</span>
-<span class="nc" id="L486">            pBuilder.append(&quot;.&quot;);</span>
-<span class="nc" id="L487">            getTable().addQuoteIfAllowed(pBuilder);</span>
-<span class="nc" id="L488">            pBuilder.append(MetisDataResource.DATA_ID.getValue());</span>
-<span class="nc" id="L489">            getTable().addQuoteIfAllowed(pBuilder);</span>
+<span class="nc" id="L479">            pBuilder.append(&quot; on &quot;);</span>
+<span class="nc" id="L480">            pBuilder.append(pChar);</span>
+<span class="nc" id="L481">            pBuilder.append(&quot;.&quot;);</span>
+<span class="nc" id="L482">            getTable().addQuoteIfAllowed(pBuilder);</span>
+<span class="nc" id="L483">            pBuilder.append(getColumnName());</span>
+<span class="nc" id="L484">            getTable().addQuoteIfAllowed(pBuilder);</span>
+<span class="nc" id="L485">            pBuilder.append(&quot; = &quot;);</span>
+<span class="nc" id="L486">            pBuilder.append(myChar);</span>
+<span class="nc" id="L487">            pBuilder.append(&quot;.&quot;);</span>
+<span class="nc" id="L488">            getTable().addQuoteIfAllowed(pBuilder);</span>
+<span class="nc" id="L489">            pBuilder.append(MetisDataResource.DATA_ID.getValue());</span>
+<span class="nc" id="L490">            getTable().addQuoteIfAllowed(pBuilder);</span>
 
             /* Increment offset */
-<span class="nc" id="L492">            myOffset++;</span>
+<span class="nc" id="L493">            myOffset++;</span>
 
             /* Add the join string for the underlying table */
-<span class="nc" id="L495">            pBuilder.append(theDefinition.getJoinString(myChar, myOffset));</span>
-<span class="nc" id="L496">        }</span>
+<span class="nc" id="L496">            pBuilder.append(theDefinition.getJoinString(myChar, myOffset));</span>
+<span class="nc" id="L497">        }</span>
 
         /**
          * build Order String.
@@ -503,62 +504,62 @@ public abstract class PrometheusColumnDefinition {
          */
         void buildOrderString(final StringBuilder pBuilder,
                               final Integer pOffset) {
-            final Iterator&lt;PrometheusColumnDefinition&gt; myIterator;
+            final Iterator&lt;PrometheusColumnControl&gt; myIterator;
             PrometheusColumnDefinition myDef;
-<span class="nc" id="L508">            boolean myFirst = true;</span>
-<span class="nc" id="L509">            Integer myOffset = pOffset;</span>
+<span class="nc" id="L509">            boolean myFirst = true;</span>
+<span class="nc" id="L510">            Integer myOffset = pOffset;</span>
 
             /* Calculate join character */
-<span class="nc" id="L512">            final char myChar = (char) ('a' + myOffset);</span>
+<span class="nc" id="L513">            final char myChar = (char) ('a' + myOffset);</span>
 
             /* Create the iterator */
-<span class="nc" id="L515">            myIterator = theDefinition.getSortList().iterator();</span>
+<span class="nc" id="L516">            myIterator = theDefinition.getSortList().iterator();</span>
 
             /* Loop through the columns */
-<span class="nc bnc" id="L518" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc bnc" id="L519" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
                 /* Access next column */
-<span class="nc" id="L520">                myDef = myIterator.next();</span>
+<span class="nc" id="L521">                myDef = (PrometheusColumnDefinition) myIterator.next();</span>
 
                 /* Handle subsequent columns */
-<span class="nc bnc" id="L523" title="All 2 branches missed.">                if (!myFirst) {</span>
-<span class="nc" id="L524">                    pBuilder.append(&quot;, &quot;);</span>
+<span class="nc bnc" id="L524" title="All 2 branches missed.">                if (!myFirst) {</span>
+<span class="nc" id="L525">                    pBuilder.append(&quot;, &quot;);</span>
                 }
 
                 /* If this is a reference column */
-<span class="nc bnc" id="L528" title="All 2 branches missed.">                if (myDef instanceof PrometheusReferenceColumn myColumn) {</span>
+<span class="nc bnc" id="L529" title="All 2 branches missed.">                if (myDef instanceof PrometheusReferenceColumn myColumn) {</span>
                     /* Increment offset */
-<span class="nc" id="L530">                    myOffset++;</span>
+<span class="nc" id="L531">                    myOffset++;</span>
 
                     /* Determine new char */
-<span class="nc" id="L533">                    final char myNewChar = (char) ('a' + myOffset);</span>
+<span class="nc" id="L534">                    final char myNewChar = (char) ('a' + myOffset);</span>
 
                     /* Add the order string for the underlying table. */
                     /* Note that forced to implement in one line to avoid Sonar false positive. */
-<span class="nc" id="L537">                    pBuilder.append(myColumn.theDefinition.getOrderString(myNewChar, myOffset));</span>
+<span class="nc" id="L538">                    pBuilder.append(myColumn.theDefinition.getOrderString(myNewChar, myOffset));</span>
 
                     /* else standard column */
-<span class="nc" id="L540">                } else {</span>
+<span class="nc" id="L541">                } else {</span>
                     /* Build the column name */
-<span class="nc" id="L542">                    pBuilder.append(myChar);</span>
-<span class="nc" id="L543">                    pBuilder.append(&quot;.&quot;);</span>
-<span class="nc" id="L544">                    getTable().addQuoteIfAllowed(pBuilder);</span>
-<span class="nc" id="L545">                    pBuilder.append(myDef.getColumnName());</span>
-<span class="nc" id="L546">                    getTable().addQuoteIfAllowed(pBuilder);</span>
-<span class="nc bnc" id="L547" title="All 2 branches missed.">                    if (myDef.getSortOrder() == PrometheusSortOrder.DESCENDING) {</span>
-<span class="nc" id="L548">                        pBuilder.append(&quot; DESC&quot;);</span>
+<span class="nc" id="L543">                    pBuilder.append(myChar);</span>
+<span class="nc" id="L544">                    pBuilder.append(&quot;.&quot;);</span>
+<span class="nc" id="L545">                    getTable().addQuoteIfAllowed(pBuilder);</span>
+<span class="nc" id="L546">                    pBuilder.append(myDef.getColumnName());</span>
+<span class="nc" id="L547">                    getTable().addQuoteIfAllowed(pBuilder);</span>
+<span class="nc bnc" id="L548" title="All 2 branches missed.">                    if (myDef.getSortOrder() == PrometheusSortOrder.DESCENDING) {</span>
+<span class="nc" id="L549">                        pBuilder.append(&quot; DESC&quot;);</span>
                     }
                 }
 
                 /* Note we have a column */
-<span class="nc" id="L553">                myFirst = false;</span>
+<span class="nc" id="L554">                myFirst = false;</span>
             }
-<span class="nc" id="L555">        }</span>
+<span class="nc" id="L556">        }</span>
     }
 
     /**
      * The shortColumn Class.
      */
-    protected static final class PrometheusShortColumn
+    public static final class PrometheusShortColumn
             extends PrometheusColumnDefinition {
         /**
          * Constructor.
@@ -566,17 +567,17 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusShortColumn(final PrometheusTableDefinition pTable,
+        PrometheusShortColumn(final PrometheusTableControl pTable,
                               final MetisDataFieldId pId) {
             /* Record the column type */
-<span class="nc" id="L572">            super(pTable, pId);</span>
-<span class="nc" id="L573">        }</span>
+<span class="nc" id="L573">            super(pTable, pId);</span>
+<span class="nc" id="L574">        }</span>
 
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-<span class="nc" id="L578">            pBuilder.append(getDriver().getDatabaseType(PrometheusColumnType.SHORT));</span>
-<span class="nc" id="L579">        }</span>
+<span class="nc" id="L579">            pBuilder.append(getDriver().getDatabaseType(PrometheusColumnType.SHORT));</span>
+<span class="nc" id="L580">        }</span>
 
         /**
          * Set the value.
@@ -584,8 +585,8 @@ public abstract class PrometheusColumnDefinition {
          * @param pValue the value
          */
         void setValue(final Short pValue) {
-<span class="nc" id="L587">            super.setObject(pValue);</span>
-<span class="nc" id="L588">        }</span>
+<span class="nc" id="L588">            super.setObject(pValue);</span>
+<span class="nc" id="L589">        }</span>
 
         /**
          * Get the value.
@@ -593,36 +594,36 @@ public abstract class PrometheusColumnDefinition {
          * @return the value
          */
         Short getValue() {
-<span class="nc" id="L596">            return (Short) super.getObject();</span>
+<span class="nc" id="L597">            return (Short) super.getObject();</span>
         }
 
         @Override
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
-<span class="nc" id="L602">            final short myValue = pResults.getShort(pIndex);</span>
-<span class="nc bnc" id="L603" title="All 2 branches missed.">            if (pResults.wasNull()) {</span>
-<span class="nc" id="L604">                setValue(null);</span>
+<span class="nc" id="L603">            final short myValue = pResults.getShort(pIndex);</span>
+<span class="nc bnc" id="L604" title="All 2 branches missed.">            if (pResults.wasNull()) {</span>
+<span class="nc" id="L605">                setValue(null);</span>
             } else {
-<span class="nc" id="L606">                setValue(myValue);</span>
+<span class="nc" id="L607">                setValue(myValue);</span>
             }
-<span class="nc" id="L608">        }</span>
+<span class="nc" id="L609">        }</span>
 
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-<span class="nc" id="L613">            final Short myValue = getValue();</span>
-<span class="nc bnc" id="L614" title="All 2 branches missed.">            if (myValue == null) {</span>
-<span class="nc" id="L615">                pStatement.setNull(pIndex, Types.SMALLINT);</span>
+<span class="nc" id="L614">            final Short myValue = getValue();</span>
+<span class="nc bnc" id="L615" title="All 2 branches missed.">            if (myValue == null) {</span>
+<span class="nc" id="L616">                pStatement.setNull(pIndex, Types.SMALLINT);</span>
             } else {
-<span class="nc" id="L617">                pStatement.setShort(pIndex, myValue);</span>
+<span class="nc" id="L618">                pStatement.setShort(pIndex, myValue);</span>
             }
-<span class="nc" id="L619">        }</span>
+<span class="nc" id="L620">        }</span>
     }
 
     /**
      * The longColumn Class.
      */
-    protected static final class PrometheusLongColumn
+    public static final class PrometheusLongColumn
             extends PrometheusColumnDefinition {
         /**
          * Constructor.
@@ -630,17 +631,17 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusLongColumn(final PrometheusTableDefinition pTable,
+        PrometheusLongColumn(final PrometheusTableControl pTable,
                              final MetisDataFieldId pId) {
             /* Record the column type */
-<span class="nc" id="L636">            super(pTable, pId);</span>
-<span class="nc" id="L637">        }</span>
+<span class="nc" id="L637">            super(pTable, pId);</span>
+<span class="nc" id="L638">        }</span>
 
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-<span class="nc" id="L642">            pBuilder.append(getDriver().getDatabaseType(PrometheusColumnType.LONG));</span>
-<span class="nc" id="L643">        }</span>
+<span class="nc" id="L643">            pBuilder.append(getDriver().getDatabaseType(PrometheusColumnType.LONG));</span>
+<span class="nc" id="L644">        }</span>
 
         /**
          * Set the value.
@@ -648,8 +649,8 @@ public abstract class PrometheusColumnDefinition {
          * @param pValue the value
          */
         void setValue(final Long pValue) {
-<span class="nc" id="L651">            super.setObject(pValue);</span>
-<span class="nc" id="L652">        }</span>
+<span class="nc" id="L652">            super.setObject(pValue);</span>
+<span class="nc" id="L653">        }</span>
 
         /**
          * Get the value.
@@ -657,36 +658,36 @@ public abstract class PrometheusColumnDefinition {
          * @return the value
          */
         Long getValue() {
-<span class="nc" id="L660">            return (Long) super.getObject();</span>
+<span class="nc" id="L661">            return (Long) super.getObject();</span>
         }
 
         @Override
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
-<span class="nc" id="L666">            final long myValue = pResults.getLong(pIndex);</span>
-<span class="nc bnc" id="L667" title="All 2 branches missed.">            if (pResults.wasNull()) {</span>
-<span class="nc" id="L668">                setValue(null);</span>
+<span class="nc" id="L667">            final long myValue = pResults.getLong(pIndex);</span>
+<span class="nc bnc" id="L668" title="All 2 branches missed.">            if (pResults.wasNull()) {</span>
+<span class="nc" id="L669">                setValue(null);</span>
             } else {
-<span class="nc" id="L670">                setValue(myValue);</span>
+<span class="nc" id="L671">                setValue(myValue);</span>
             }
-<span class="nc" id="L672">        }</span>
+<span class="nc" id="L673">        }</span>
 
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-<span class="nc" id="L677">            final Long myValue = getValue();</span>
-<span class="nc bnc" id="L678" title="All 2 branches missed.">            if (myValue == null) {</span>
-<span class="nc" id="L679">                pStatement.setNull(pIndex, Types.BIGINT);</span>
+<span class="nc" id="L678">            final Long myValue = getValue();</span>
+<span class="nc bnc" id="L679" title="All 2 branches missed.">            if (myValue == null) {</span>
+<span class="nc" id="L680">                pStatement.setNull(pIndex, Types.BIGINT);</span>
             } else {
-<span class="nc" id="L681">                pStatement.setLong(pIndex, myValue);</span>
+<span class="nc" id="L682">                pStatement.setLong(pIndex, myValue);</span>
             }
-<span class="nc" id="L683">        }</span>
+<span class="nc" id="L684">        }</span>
     }
 
     /**
      * The dateColumn Class.
      */
-    protected static final class PrometheusDateColumn
+    public static final class PrometheusDateColumn
             extends PrometheusColumnDefinition {
         /**
          * Constructor.
@@ -694,17 +695,17 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusDateColumn(final PrometheusTableDefinition pTable,
+        PrometheusDateColumn(final PrometheusTableControl pTable,
                              final MetisDataFieldId pId) {
             /* Record the column type */
-<span class="nc" id="L700">            super(pTable, pId);</span>
-<span class="nc" id="L701">        }</span>
+<span class="nc" id="L701">            super(pTable, pId);</span>
+<span class="nc" id="L702">        }</span>
 
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-<span class="nc" id="L706">            pBuilder.append(getDriver().getDatabaseType(PrometheusColumnType.DATE));</span>
-<span class="nc" id="L707">        }</span>
+<span class="nc" id="L707">            pBuilder.append(getDriver().getDatabaseType(PrometheusColumnType.DATE));</span>
+<span class="nc" id="L708">        }</span>
 
         /**
          * Set the value.
@@ -712,8 +713,8 @@ public abstract class PrometheusColumnDefinition {
          * @param pValue the value
          */
         void setValue(final OceanusDate pValue) {
-<span class="nc" id="L715">            super.setObject(pValue);</span>
-<span class="nc" id="L716">        }</span>
+<span class="nc" id="L716">            super.setObject(pValue);</span>
+<span class="nc" id="L717">        }</span>
 
         /**
          * Get the value.
@@ -721,30 +722,29 @@ public abstract class PrometheusColumnDefinition {
          * @return the value
          */
         OceanusDate getValue() {
-<span class="nc" id="L724">            return (OceanusDate) super.getObject();</span>
+<span class="nc" id="L725">            return (OceanusDate) super.getObject();</span>
         }
 
         @Override
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
-<span class="nc" id="L730">            final Date myValue = pResults.getDate(pIndex);</span>
-<span class="nc bnc" id="L731" title="All 2 branches missed.">            setValue((myValue == null)</span>
-<span class="nc" id="L732">                    ? null</span>
-<span class="nc" id="L733">                    : new OceanusDate(myValue));</span>
-<span class="nc" id="L734">        }</span>
+<span class="nc" id="L731">            final Date myValue = pResults.getDate(pIndex);</span>
+<span class="nc bnc" id="L732" title="All 2 branches missed.">            setValue(myValue == null</span>
+<span class="nc" id="L733">                    ? null</span>
+<span class="nc" id="L734">                    : new OceanusDate(myValue.toLocalDate()));</span>
+<span class="nc" id="L735">        }</span>
 
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-<span class="nc" id="L739">            final OceanusDate myValue = getValue();</span>
+<span class="nc" id="L740">            final OceanusDate myValue = getValue();</span>
 
             /* Build the date as a SQL date */
-<span class="nc bnc" id="L742" title="All 2 branches missed.">            if (myValue == null) {</span>
-<span class="nc" id="L743">                pStatement.setNull(pIndex, Types.DATE);</span>
+<span class="nc bnc" id="L743" title="All 2 branches missed.">            if (myValue == null) {</span>
+<span class="nc" id="L744">                pStatement.setNull(pIndex, Types.DATE);</span>
             } else {
-<span class="nc" id="L745">                final long myDateValue = myValue.toDate().getTime();</span>
-<span class="nc" id="L746">                final Date myDate = new Date(myDateValue);</span>
-<span class="nc" id="L747">                pStatement.setDate(pIndex, myDate);</span>
+<span class="nc" id="L746">                final LocalDate myDateValue = myValue.getDate();</span>
+<span class="nc" id="L747">                pStatement.setDate(pIndex, Date.valueOf(myDateValue));</span>
             }
 <span class="nc" id="L749">        }</span>
     }
@@ -752,7 +752,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The booleanColumn Class.
      */
-    protected static final class PrometheusBooleanColumn
+    public static final class PrometheusBooleanColumn
             extends PrometheusColumnDefinition {
         /**
          * Constructor.
@@ -760,7 +760,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusBooleanColumn(final PrometheusTableDefinition pTable,
+        PrometheusBooleanColumn(final PrometheusTableControl pTable,
                                 final MetisDataFieldId pId) {
             /* Record the column type */
 <span class="nc" id="L766">            super(pTable, pId);</span>
@@ -816,7 +816,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The stringColumn Class.
      */
-    protected static class PrometheusStringColumn
+    public static class PrometheusStringColumn
             extends PrometheusColumnDefinition {
         /**
          * The length of the column.
@@ -830,7 +830,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pId     the column id
          * @param pLength the length
          */
-        protected PrometheusStringColumn(final PrometheusTableDefinition pTable,
+        protected PrometheusStringColumn(final PrometheusTableControl pTable,
                                          final MetisDataFieldId pId,
                                          final int pLength) {
             /* Record the column type */
@@ -887,7 +887,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The moneyColumn Class.
      */
-    protected static final class PrometheusMoneyColumn
+    public static final class PrometheusMoneyColumn
             extends PrometheusStringColumn {
         /**
          * Constructor.
@@ -895,7 +895,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusMoneyColumn(final PrometheusTableDefinition pTable,
+        PrometheusMoneyColumn(final PrometheusTableControl pTable,
                               final MetisDataFieldId pId) {
             /* Record the column type */
 <span class="nc" id="L901">            super(pTable, pId, 0);</span>
@@ -951,7 +951,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The rateColumn Class.
      */
-    protected static final class PrometheusRateColumn
+    public static final class PrometheusRateColumn
             extends PrometheusStringColumn {
         /**
          * Constructor.
@@ -959,7 +959,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusRateColumn(final PrometheusTableDefinition pTable,
+        PrometheusRateColumn(final PrometheusTableControl pTable,
                              final MetisDataFieldId pId) {
             /* Record the column type */
 <span class="nc" id="L965">            super(pTable, pId, 0);</span>
@@ -1020,7 +1020,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The priceColumn Class.
      */
-    protected static final class PrometheusPriceColumn
+    public static final class PrometheusPriceColumn
             extends PrometheusStringColumn {
         /**
          * Constructor.
@@ -1028,7 +1028,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusPriceColumn(final PrometheusTableDefinition pTable,
+        PrometheusPriceColumn(final PrometheusTableControl pTable,
                               final MetisDataFieldId pId) {
             /* Record the column type */
 <span class="nc" id="L1034">            super(pTable, pId, 0);</span>
@@ -1089,7 +1089,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The unitsColumn Class.
      */
-    protected static final class PrometheusUnitsColumn
+    public static final class PrometheusUnitsColumn
             extends PrometheusStringColumn {
         /**
          * Constructor.
@@ -1097,7 +1097,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusUnitsColumn(final PrometheusTableDefinition pTable,
+        PrometheusUnitsColumn(final PrometheusTableControl pTable,
                               final MetisDataFieldId pId) {
             /* Record the column type */
 <span class="nc" id="L1103">            super(pTable, pId, 0);</span>
@@ -1158,7 +1158,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The ratioColumn Class.
      */
-    protected static final class PrometheusRatioColumn
+    public static final class PrometheusRatioColumn
             extends PrometheusStringColumn {
         /**
          * Constructor.
@@ -1166,7 +1166,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pTable the table to which the column belongs
          * @param pId    the column id
          */
-        PrometheusRatioColumn(final PrometheusTableDefinition pTable,
+        PrometheusRatioColumn(final PrometheusTableControl pTable,
                               final MetisDataFieldId pId) {
             /* Record the column type */
 <span class="nc" id="L1172">            super(pTable, pId, 0);</span>
@@ -1227,7 +1227,7 @@ public abstract class PrometheusColumnDefinition {
     /**
      * The binaryColumn Class.
      */
-    protected static final class PrometheusBinaryColumn
+    public static final class PrometheusBinaryColumn
             extends PrometheusColumnDefinition {
         /**
          * The length of the column.
@@ -1241,7 +1241,7 @@ public abstract class PrometheusColumnDefinition {
          * @param pId     the column id
          * @param pLength the length of the column
          */
-        PrometheusBinaryColumn(final PrometheusTableDefinition pTable,
+        PrometheusBinaryColumn(final PrometheusTableControl pTable,
                                final MetisDataFieldId pId,
                                final int pLength) {
             /* Record the column type */
@@ -1292,5 +1292,20 @@ public abstract class PrometheusColumnDefinition {
 <span class="nc" id="L1292">            pStatement.setBytes(pIndex, getValue());</span>
 <span class="nc" id="L1293">        }</span>
     }
+
+    /**
+     * SortOrder.
+     */
+<span class="nc" id="L1299">    public enum PrometheusSortOrder {</span>
+        /**
+         * Ascending.
+         */
+<span class="nc" id="L1303">        ASCENDING,</span>
+
+        /**
+         * Descending.
+         */
+<span class="nc" id="L1308">        DESCENDING;</span>
+    }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

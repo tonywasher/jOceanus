@@ -16,13 +16,19 @@
  */
 package io.github.tonywasher.joceanus.prometheus.data;
 
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionValues;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValuesCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusGroupedItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusDataInfoItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusDataInfoSetCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusDataInfoSetItemCtl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -39,68 +45,37 @@ import java.util.Map.Entry;
  *
  * @author Tony Washer
  */
-public class PrometheusDataValues {
-    /**
-     * Interface for an infoSet item.
-     */
-    @FunctionalInterface
-    public interface PrometheusInfoSetItem {
-        /**
-         * Obtain infoSet.
-         *
-         * @return the infoSet
-         */
-        PrometheusDataInfoSet&lt;?&gt; getInfoSet();
-    }
-
-    /**
-     * Interface for a grouped item.
-     */
-    public interface PrometheusGroupedItem {
-        /**
-         * Is the item a child.
-         *
-         * @return true/false
-         */
-        boolean isChild();
-
-        /**
-         * Obtain the child iterator.
-         *
-         * @return the iterator
-         */
-        Iterator&lt;? extends PrometheusDataItem&gt; childIterator();
-    }
-
+public class PrometheusDataValues
+        implements PrometheusDataValuesCtl {
     /**
      * InfoSet Items tag.
      */
-<span class="nc" id="L78">    private static final String TAG_INFOSET = PrometheusDataResource.DATAINFOSET_NAME.getValue();</span>
+<span class="nc" id="L53">    private static final String TAG_INFOSET = PrometheusDataResource.DATAINFOSET_NAME.getValue();</span>
 
     /**
      * Children Items tag.
      */
-<span class="nc" id="L83">    private static final String TAG_CHILDREN = PrometheusDataResource.DATAVALUES_CHILDREN.getValue();</span>
+<span class="nc" id="L58">    private static final String TAG_CHILDREN = PrometheusDataResource.DATAVALUES_CHILDREN.getValue();</span>
 
     /**
      * Child Item tag.
      */
-<span class="nc" id="L88">    private static final String TAG_CHILD = PrometheusDataResource.DATAVALUES_CHILD.getValue();</span>
+<span class="nc" id="L63">    private static final String TAG_CHILD = PrometheusDataResource.DATAVALUES_CHILD.getValue();</span>
 
     /**
      * List type attribute.
      */
-<span class="nc" id="L93">    protected static final String ATTR_TYPE = PrometheusDataResource.DATAVALUES_ATTRTYPE.getValue();</span>
+<span class="nc" id="L68">    protected static final String ATTR_TYPE = PrometheusDataResource.DATAVALUES_ATTRTYPE.getValue();</span>
 
     /**
      * List size attribute.
      */
-<span class="nc" id="L98">    protected static final String ATTR_SIZE = PrometheusDataResource.DATAVALUES_ATTRSIZE.getValue();</span>
+<span class="nc" id="L73">    protected static final String ATTR_SIZE = PrometheusDataResource.DATAVALUES_ATTRSIZE.getValue();</span>
 
     /**
      * Data Version attribute.
      */
-<span class="nc" id="L103">    protected static final String ATTR_VERS = PrometheusDataResource.DATAVALUES_ATTRVER.getValue();</span>
+<span class="nc" id="L78">    protected static final String ATTR_VERS = PrometheusDataResource.DATAVALUES_ATTRVER.getValue();</span>
 
     /**
      * The item type.
@@ -129,97 +104,97 @@ public class PrometheusDataValues {
      * @param pItemName the item name
      */
     protected PrometheusDataValues(final PrometheusDataItem pItem,
-<span class="nc" id="L132">                                   final String pItemName) {</span>
+<span class="nc" id="L107">                                   final String pItemName) {</span>
         /* Store Item type */
-<span class="nc" id="L134">        theItemType = pItemName;</span>
+<span class="nc" id="L109">        theItemType = pItemName;</span>
 
         /* Create the map and list */
-<span class="nc" id="L137">        theFields = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L112">        theFields = new LinkedHashMap&lt;&gt;();</span>
 
         /* Store the id */
-<span class="nc" id="L140">        theFields.put(MetisDataResource.DATA_ID, pItem.getIndexedId());</span>
+<span class="nc" id="L115">        theFields.put(MetisDataResource.DATA_ID, pItem.getIndexedId());</span>
 
         /* Access values */
-<span class="nc" id="L143">        final MetisFieldVersionValues myValues = pItem.getValues();</span>
+<span class="nc" id="L118">        final MetisFieldVersionValues myValues = pItem.getValues();</span>
 
         /* Iterate through the fields */
-<span class="nc" id="L146">        final Iterator&lt;MetisFieldDef&gt; myIterator = pItem.getDataFieldSet().fieldIterator();</span>
-<span class="nc bnc" id="L147" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L148">            final MetisFieldDef myField = myIterator.next();</span>
-<span class="nc" id="L149">            final MetisDataFieldId myFieldId = myField.getFieldId();</span>
+<span class="nc" id="L121">        final Iterator&lt;MetisFieldDef&gt; myIterator = pItem.getDataFieldSet().fieldIterator();</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L123">            final MetisFieldDef myField = myIterator.next();</span>
+<span class="nc" id="L124">            final MetisDataFieldId myFieldId = myField.getFieldId();</span>
 
             /* Ignore field if it is irrelevant */
-<span class="nc bnc" id="L152" title="All 2 branches missed.">            if (!(myField instanceof MetisFieldVersionedDef myVersioned)</span>
-<span class="nc bnc" id="L153" title="All 2 branches missed.">                    || !myVersioned.isEquality()) {</span>
-<span class="nc" id="L154">                continue;</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">            if (!(myField instanceof MetisFieldVersionedDef myVersioned)</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">                    || !myVersioned.isEquality()) {</span>
+<span class="nc" id="L129">                continue;</span>
             }
 
             /* If the field is to be included */
-<span class="nc bnc" id="L158" title="All 2 branches missed.">            if (pItem.includeXmlField(myFieldId)) {</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">            if (pItem.includeXmlField(myFieldId)) {</span>
                 /* Store the value if it is non-null */
-<span class="nc" id="L160">                theFields.put(myFieldId, myValues.getValue(myField));</span>
+<span class="nc" id="L135">                theFields.put(myFieldId, myValues.getValue(myField));</span>
             }
-<span class="nc" id="L162">        }</span>
+<span class="nc" id="L137">        }</span>
 
         /* If the item is an infoSet item */
-<span class="nc bnc" id="L165" title="All 2 branches missed.">        if (pItem instanceof PrometheusInfoSetItem myInfoItem) {</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (pItem instanceof PrometheusDataInfoSetItemCtl myInfoItem) {</span>
             /* Access InfoSet */
-<span class="nc" id="L167">            final PrometheusDataInfoSet&lt;?&gt; myInfoSet = myInfoItem.getInfoSet();</span>
+<span class="nc" id="L142">            final PrometheusDataInfoSetCtl myInfoSet = myInfoItem.getInfoSet();</span>
 
             /* If the InfoSet is non-empty */
-<span class="nc bnc" id="L170" title="All 2 branches missed.">            if (myInfoSet.isEmpty()) {</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">            if (myInfoSet.isEmpty()) {</span>
                 /* No infoSet items */
-<span class="nc" id="L172">                theInfoItems = null;</span>
+<span class="nc" id="L147">                theInfoItems = null;</span>
             } else {
                 /* Allocate infoItems list */
-<span class="nc" id="L175">                theInfoItems = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L150">                theInfoItems = new ArrayList&lt;&gt;();</span>
 
                 /* Iterator over the values */
-<span class="nc" id="L178">                final Iterator&lt;?&gt; myInfoIterator = myInfoSet.iterator();</span>
-<span class="nc bnc" id="L179" title="All 2 branches missed.">                while (myInfoIterator.hasNext()) {</span>
-<span class="nc" id="L180">                    final Object myCurr = myInfoIterator.next();</span>
+<span class="nc" id="L153">                final Iterator&lt;?&gt; myInfoIterator = myInfoSet.iterator();</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">                while (myInfoIterator.hasNext()) {</span>
+<span class="nc" id="L155">                    final Object myCurr = myInfoIterator.next();</span>
 
                     /* If this is a DataInfo item */
-<span class="nc bnc" id="L183" title="All 2 branches missed.">                    if (myCurr instanceof PrometheusDataInfoItem myItem) {</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">                    if (myCurr instanceof PrometheusDataInfoItemCtl myItem) {</span>
                         /* Add item to the list */
-<span class="nc" id="L185">                        final PrometheusInfoItem myInfo = new PrometheusInfoItem(myItem);</span>
-<span class="nc" id="L186">                        theInfoItems.add(myInfo);</span>
+<span class="nc" id="L160">                        final PrometheusInfoItem myInfo = new PrometheusInfoItem(myItem);</span>
+<span class="nc" id="L161">                        theInfoItems.add(myInfo);</span>
                     }
-<span class="nc" id="L188">                }</span>
+<span class="nc" id="L163">                }</span>
             }
 
             /* Else not that we have no infoItems */
-<span class="nc" id="L192">        } else {</span>
-<span class="nc" id="L193">            theInfoItems = null;</span>
+<span class="nc" id="L167">        } else {</span>
+<span class="nc" id="L168">            theInfoItems = null;</span>
         }
 
         /* If the item is a grouped item */
-<span class="nc bnc" id="L197" title="All 2 branches missed.">        if (pItem instanceof PrometheusGroupedItem myGrouped) {</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        if (pItem instanceof PrometheusGroupedItemCtl myGrouped) {</span>
             /* Access child iterator */
-<span class="nc" id="L199">            final Iterator&lt;? extends PrometheusDataItem&gt; myChildIterator = myGrouped.childIterator();</span>
+<span class="nc" id="L174">            final Iterator&lt;PrometheusDataItemCtl&gt; myChildIterator = myGrouped.childIterator();</span>
 
             /* If there are no children */
-<span class="nc bnc" id="L202" title="All 2 branches missed.">            if (myChildIterator == null) {</span>
-<span class="nc" id="L203">                theChildren = null;</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">            if (myChildIterator == null) {</span>
+<span class="nc" id="L178">                theChildren = null;</span>
             } else {
                 /* Allocate child list */
-<span class="nc" id="L206">                theChildren = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L181">                theChildren = new ArrayList&lt;&gt;();</span>
 
                 /* Iterator over the values */
-<span class="nc bnc" id="L209" title="All 2 branches missed.">                while (myChildIterator.hasNext()) {</span>
-<span class="nc" id="L210">                    final PrometheusDataItem myCurr = myChildIterator.next();</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">                while (myChildIterator.hasNext()) {</span>
+<span class="nc" id="L185">                    final PrometheusDataItem myCurr = (PrometheusDataItem) myChildIterator.next();</span>
 
                     /* Add child to the list */
-<span class="nc" id="L213">                    final PrometheusDataValues myChild = new PrometheusDataValues(myCurr, TAG_CHILD);</span>
-<span class="nc" id="L214">                    theChildren.add(myChild);</span>
-<span class="nc" id="L215">                }</span>
+<span class="nc" id="L188">                    final PrometheusDataValues myChild = new PrometheusDataValues(myCurr, TAG_CHILD);</span>
+<span class="nc" id="L189">                    theChildren.add(myChild);</span>
+<span class="nc" id="L190">                }</span>
             }
 
             /* Else note that we have no children */
-<span class="nc" id="L219">        } else {</span>
-<span class="nc" id="L220">            theChildren = null;</span>
+<span class="nc" id="L194">        } else {</span>
+<span class="nc" id="L195">            theChildren = null;</span>
         }
-<span class="nc" id="L222">    }</span>
+<span class="nc" id="L197">    }</span>
 
     /**
      * Constructor.
@@ -228,32 +203,32 @@ public class PrometheusDataValues {
      * @param pInfo  the values of the DataInfo Item
      */
     private PrometheusDataValues(final PrometheusDataItem pOwner,
-<span class="nc" id="L231">                                 final PrometheusInfoItem pInfo) {</span>
+<span class="nc" id="L206">                                 final PrometheusInfoItem pInfo) {</span>
         /* Store Item type */
-<span class="nc" id="L233">        theItemType = &quot;&quot;;</span>
+<span class="nc" id="L208">        theItemType = &quot;&quot;;</span>
 
         /* Create the map and list */
-<span class="nc" id="L236">        theFields = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L211">        theFields = new LinkedHashMap&lt;&gt;();</span>
 
         /* Store the id if available */
-<span class="nc" id="L239">        final Integer myId = pInfo.getId();</span>
-<span class="nc bnc" id="L240" title="All 2 branches missed.">        if (myId != null) {</span>
-<span class="nc" id="L241">            theFields.put(MetisDataResource.DATA_ID, myId);</span>
+<span class="nc" id="L214">        final Integer myId = pInfo.getId();</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">        if (myId != null) {</span>
+<span class="nc" id="L216">            theFields.put(MetisDataResource.DATA_ID, myId);</span>
         }
 
         /* Store the Info Type */
-<span class="nc" id="L245">        theFields.put(PrometheusDataResource.DATAINFO_TYPE, pInfo.getName());</span>
+<span class="nc" id="L220">        theFields.put(PrometheusDataResource.DATAINFO_TYPE, pInfo.getName());</span>
 
         /* Store the Owner */
-<span class="nc" id="L248">        theFields.put(PrometheusDataResource.DATAINFO_OWNER, pOwner.getIndexedId());</span>
+<span class="nc" id="L223">        theFields.put(PrometheusDataResource.DATAINFO_OWNER, pOwner.getIndexedId());</span>
 
         /* Store the value */
-<span class="nc" id="L251">        theFields.put(PrometheusDataResource.DATAINFO_VALUE, pInfo.getValue());</span>
+<span class="nc" id="L226">        theFields.put(PrometheusDataResource.DATAINFO_VALUE, pInfo.getValue());</span>
 
         /* Set other fields to null */
-<span class="nc" id="L254">        theInfoItems = null;</span>
-<span class="nc" id="L255">        theChildren = null;</span>
-<span class="nc" id="L256">    }</span>
+<span class="nc" id="L229">        theInfoItems = null;</span>
+<span class="nc" id="L230">        theChildren = null;</span>
+<span class="nc" id="L231">    }</span>
 
     /**
      * Constructor.
@@ -263,8 +238,8 @@ public class PrometheusDataValues {
      */
     public PrometheusDataValues(final Element pElement,
                                 final MetisFieldSetDef pFields) {
-<span class="nc" id="L266">        this(pElement, pFields, pElement.getNodeName());</span>
-<span class="nc" id="L267">    }</span>
+<span class="nc" id="L241">        this(pElement, pFields, pElement.getNodeName());</span>
+<span class="nc" id="L242">    }</span>
 
     /**
      * Constructor.
@@ -275,96 +250,96 @@ public class PrometheusDataValues {
      */
     protected PrometheusDataValues(final Element pElement,
                                    final MetisFieldSetDef pFields,
-<span class="nc" id="L278">                                   final String pItemName) {</span>
+<span class="nc" id="L253">                                   final String pItemName) {</span>
         /* Store Item type */
-<span class="nc" id="L280">        theItemType = pItemName;</span>
+<span class="nc" id="L255">        theItemType = pItemName;</span>
 
         /* Create the map */
-<span class="nc" id="L283">        theFields = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L258">        theFields = new LinkedHashMap&lt;&gt;();</span>
 
         /* Declare the id if it exists */
-<span class="nc" id="L286">        final Integer myId = getId(pElement);</span>
-<span class="nc bnc" id="L287" title="All 2 branches missed.">        if (myId != null) {</span>
-<span class="nc" id="L288">            theFields.put(MetisDataResource.DATA_ID, myId);</span>
+<span class="nc" id="L261">        final Integer myId = getId(pElement);</span>
+<span class="nc bnc" id="L262" title="All 2 branches missed.">        if (myId != null) {</span>
+<span class="nc" id="L263">            theFields.put(MetisDataResource.DATA_ID, myId);</span>
         }
 
         /* Loop through the children */
-<span class="nc" id="L292">        final Iterator&lt;MetisFieldDef&gt; myIterator = pFields.fieldIterator();</span>
-<span class="nc bnc" id="L293" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L294">            final MetisFieldDef myField = myIterator.next();</span>
+<span class="nc" id="L267">        final Iterator&lt;MetisFieldDef&gt; myIterator = pFields.fieldIterator();</span>
+<span class="nc bnc" id="L268" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L269">            final MetisFieldDef myField = myIterator.next();</span>
 
             /* If the field is an equality valueSet item */
-<span class="nc bnc" id="L297" title="All 2 branches missed.">            if (myField instanceof MetisFieldVersionedDef myVersioned</span>
-<span class="nc bnc" id="L298" title="All 2 branches missed.">                    &amp;&amp; myVersioned.isEquality()) {</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">            if (myField instanceof MetisFieldVersionedDef myVersioned</span>
+<span class="nc bnc" id="L273" title="All 2 branches missed.">                    &amp;&amp; myVersioned.isEquality()) {</span>
                 /* Access element */
-<span class="nc" id="L300">                final Element myChild = getChild(pElement, myField.getFieldId().getId());</span>
-<span class="nc bnc" id="L301" title="All 2 branches missed.">                if (myChild != null) {</span>
+<span class="nc" id="L275">                final Element myChild = getChild(pElement, myField.getFieldId().getId());</span>
+<span class="nc bnc" id="L276" title="All 2 branches missed.">                if (myChild != null) {</span>
                     /* Put value */
-<span class="nc" id="L303">                    theFields.put(myField.getFieldId(), myChild.getTextContent());</span>
+<span class="nc" id="L278">                    theFields.put(myField.getFieldId(), myChild.getTextContent());</span>
                 }
             }
-<span class="nc" id="L306">        }</span>
+<span class="nc" id="L281">        }</span>
 
         /* Look for an InfoSet list */
-<span class="nc" id="L309">        final Element myInfoSet = getChild(pElement, TAG_INFOSET);</span>
-<span class="nc bnc" id="L310" title="All 2 branches missed.">        if (myInfoSet != null) {</span>
+<span class="nc" id="L284">        final Element myInfoSet = getChild(pElement, TAG_INFOSET);</span>
+<span class="nc bnc" id="L285" title="All 2 branches missed.">        if (myInfoSet != null) {</span>
             /* Allocate infoItems list */
-<span class="nc" id="L312">            theInfoItems = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L287">            theInfoItems = new ArrayList&lt;&gt;();</span>
 
             /* Loop through the child values */
-<span class="nc bnc" id="L315" title="All 2 branches missed.">            for (Node myCurr = myInfoSet.getFirstChild(); myCurr != null; myCurr = myCurr.getNextSibling()) {</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">            for (Node myCurr = myInfoSet.getFirstChild(); myCurr != null; myCurr = myCurr.getNextSibling()) {</span>
                 /* If the child is an element */
-<span class="nc bnc" id="L317" title="All 2 branches missed.">                if (myCurr instanceof Element myChild) {</span>
+<span class="nc bnc" id="L292" title="All 2 branches missed.">                if (myCurr instanceof Element myChild) {</span>
                     /* Add item to the list */
-<span class="nc" id="L319">                    final PrometheusInfoItem myInfo = new PrometheusInfoItem(myChild);</span>
-<span class="nc" id="L320">                    theInfoItems.add(myInfo);</span>
+<span class="nc" id="L294">                    final PrometheusInfoItem myInfo = new PrometheusInfoItem(myChild);</span>
+<span class="nc" id="L295">                    theInfoItems.add(myInfo);</span>
                 }
             }
 
             /* Else not that we have no infoItems */
         } else {
-<span class="nc" id="L326">            theInfoItems = null;</span>
+<span class="nc" id="L301">            theInfoItems = null;</span>
         }
 
         /* Look for children */
-<span class="nc" id="L330">        final Element myChildren = getChild(pElement, TAG_CHILDREN);</span>
-<span class="nc bnc" id="L331" title="All 2 branches missed.">        if (myChildren != null) {</span>
+<span class="nc" id="L305">        final Element myChildren = getChild(pElement, TAG_CHILDREN);</span>
+<span class="nc bnc" id="L306" title="All 2 branches missed.">        if (myChildren != null) {</span>
             /* Allocate infoItems list */
-<span class="nc" id="L333">            theChildren = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L308">            theChildren = new ArrayList&lt;&gt;();</span>
 
             /* Loop through the child values */
-<span class="nc bnc" id="L336" title="All 2 branches missed.">            for (Node myCurr = myChildren.getFirstChild(); myCurr != null; myCurr = myCurr.getNextSibling()) {</span>
+<span class="nc bnc" id="L311" title="All 2 branches missed.">            for (Node myCurr = myChildren.getFirstChild(); myCurr != null; myCurr = myCurr.getNextSibling()) {</span>
                 /* If the child is the correct element */
-<span class="nc bnc" id="L338" title="All 2 branches missed.">                if (myCurr instanceof Element myChild</span>
-<span class="nc bnc" id="L339" title="All 2 branches missed.">                        &amp;&amp; TAG_CHILD.equals(myCurr.getNodeName())) {</span>
+<span class="nc bnc" id="L313" title="All 2 branches missed.">                if (myCurr instanceof Element myChild</span>
+<span class="nc bnc" id="L314" title="All 2 branches missed.">                        &amp;&amp; TAG_CHILD.equals(myCurr.getNodeName())) {</span>
                     /* Add item to the list */
-<span class="nc" id="L341">                    final PrometheusDataValues myValues = new PrometheusDataValues(myChild, pFields, theItemType);</span>
-<span class="nc" id="L342">                    theChildren.add(myValues);</span>
+<span class="nc" id="L316">                    final PrometheusDataValues myValues = new PrometheusDataValues(myChild, pFields, theItemType);</span>
+<span class="nc" id="L317">                    theChildren.add(myValues);</span>
                 }
             }
 
             /* Else not that we have no children */
         } else {
-<span class="nc" id="L348">            theChildren = null;</span>
+<span class="nc" id="L323">            theChildren = null;</span>
         }
-<span class="nc" id="L350">    }</span>
+<span class="nc" id="L325">    }</span>
 
     /**
      * Constructor.
      *
      * @param pName the Item type
      */
-<span class="nc" id="L357">    public PrometheusDataValues(final String pName) {</span>
+<span class="nc" id="L332">    public PrometheusDataValues(final String pName) {</span>
         /* Store Item type */
-<span class="nc" id="L359">        theItemType = pName;</span>
+<span class="nc" id="L334">        theItemType = pName;</span>
 
         /* Create the map */
-<span class="nc" id="L362">        theFields = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L337">        theFields = new LinkedHashMap&lt;&gt;();</span>
 
         /* No underlying arrays */
-<span class="nc" id="L365">        theInfoItems = null;</span>
-<span class="nc" id="L366">        theChildren = null;</span>
-<span class="nc" id="L367">    }</span>
+<span class="nc" id="L340">        theInfoItems = null;</span>
+<span class="nc" id="L341">        theChildren = null;</span>
+<span class="nc" id="L342">    }</span>
 
     /**
      * Constructor.
@@ -372,8 +347,8 @@ public class PrometheusDataValues {
      * @param pItem the Item to obtain values from
      */
     public PrometheusDataValues(final PrometheusDataItem pItem) {
-<span class="nc" id="L375">        this(pItem, pItem.getDataFieldSet().getName());</span>
-<span class="nc" id="L376">    }</span>
+<span class="nc" id="L350">        this(pItem, pItem.getDataFieldSet().getName());</span>
+<span class="nc" id="L351">    }</span>
 
     /**
      * Obtain Item Type.
@@ -381,7 +356,7 @@ public class PrometheusDataValues {
      * @return the Item Type
      */
     public final String getItemType() {
-<span class="nc" id="L384">        return theItemType;</span>
+<span class="nc" id="L359">        return theItemType;</span>
     }
 
     /**
@@ -390,7 +365,7 @@ public class PrometheusDataValues {
      * @return the Field iterator
      */
     public final Iterator&lt;Entry&lt;MetisDataFieldId, Object&gt;&gt; fieldIterator() {
-<span class="nc" id="L393">        return theFields.entrySet().iterator();</span>
+<span class="nc" id="L368">        return theFields.entrySet().iterator();</span>
     }
 
     /**
@@ -399,7 +374,7 @@ public class PrometheusDataValues {
      * @return true/false
      */
     public final boolean hasInfoItems() {
-<span class="nc bnc" id="L402" title="All 2 branches missed.">        return theInfoItems != null;</span>
+<span class="nc bnc" id="L377" title="All 2 branches missed.">        return theInfoItems != null;</span>
     }
 
     /**
@@ -408,7 +383,7 @@ public class PrometheusDataValues {
      * @return the iterator
      */
     public final Iterator&lt;PrometheusInfoItem&gt; infoIterator() {
-<span class="nc" id="L411">        return theInfoItems.iterator();</span>
+<span class="nc" id="L386">        return theInfoItems.iterator();</span>
     }
 
     /**
@@ -417,7 +392,7 @@ public class PrometheusDataValues {
      * @return true/false
      */
     public final boolean hasChildren() {
-<span class="nc bnc" id="L420" title="All 2 branches missed.">        return theChildren != null;</span>
+<span class="nc bnc" id="L395" title="All 2 branches missed.">        return theChildren != null;</span>
     }
 
     /**
@@ -426,7 +401,7 @@ public class PrometheusDataValues {
      * @return the iterator
      */
     public final Iterator&lt;PrometheusDataValues&gt; childIterator() {
-<span class="nc" id="L429">        return theChildren.iterator();</span>
+<span class="nc" id="L404">        return theChildren.iterator();</span>
     }
 
     /**
@@ -438,11 +413,11 @@ public class PrometheusDataValues {
     public void addValue(final MetisDataFieldId pField,
                          final Object pValue) {
         /* If the value is non-null */
-<span class="nc bnc" id="L441" title="All 2 branches missed.">        if (pValue != null) {</span>
+<span class="nc bnc" id="L416" title="All 2 branches missed.">        if (pValue != null) {</span>
             /* Add the field */
-<span class="nc" id="L443">            theFields.put(pField, pValue);</span>
+<span class="nc" id="L418">            theFields.put(pField, pValue);</span>
         }
-<span class="nc" id="L445">    }</span>
+<span class="nc" id="L420">    }</span>
 
     /**
      * Obtain value.
@@ -452,7 +427,7 @@ public class PrometheusDataValues {
      */
     public Object getValue(final MetisDataFieldId pField) {
         /* Return the field */
-<span class="nc" id="L455">        return theFields.get(pField);</span>
+<span class="nc" id="L430">        return theFields.get(pField);</span>
     }
 
     /**
@@ -466,7 +441,7 @@ public class PrometheusDataValues {
     public &lt;T&gt; T getValue(final MetisDataFieldId pField,
                           final Class&lt;T&gt; pClass) {
         /* Return the properly cast field */
-<span class="nc" id="L469">        return pClass.cast(getValue(pField));</span>
+<span class="nc" id="L444">        return pClass.cast(getValue(pField));</span>
     }
 
     /**
@@ -477,10 +452,10 @@ public class PrometheusDataValues {
      */
     private static Integer getId(final Element pElement) {
         /* Access the id */
-<span class="nc" id="L480">        final String myId = pElement.getAttribute(MetisDataResource.DATA_ID.getId());</span>
-<span class="nc bnc" id="L481" title="All 2 branches missed.">        return !myId.isEmpty()</span>
-<span class="nc" id="L482">                ? Integer.parseInt(myId)</span>
-<span class="nc" id="L483">                : null;</span>
+<span class="nc" id="L455">        final String myId = pElement.getAttribute(MetisDataResource.DATA_ID.getId());</span>
+<span class="nc bnc" id="L456" title="All 2 branches missed.">        return !myId.isEmpty()</span>
+<span class="nc" id="L457">                ? Integer.parseInt(myId)</span>
+<span class="nc" id="L458">                : null;</span>
     }
 
     /**
@@ -493,17 +468,17 @@ public class PrometheusDataValues {
     private static Element getChild(final Element pParent,
                                     final String pName) {
         /* Loop through the child values */
-<span class="nc bnc" id="L496" title="All 2 branches missed.">        for (Node myCurr = pParent.getFirstChild(); myCurr != null; myCurr = myCurr.getNextSibling()) {</span>
+<span class="nc bnc" id="L471" title="All 2 branches missed.">        for (Node myCurr = pParent.getFirstChild(); myCurr != null; myCurr = myCurr.getNextSibling()) {</span>
             /* If the child is the correct element */
-<span class="nc bnc" id="L498" title="All 2 branches missed.">            if (myCurr instanceof Element myElement</span>
-<span class="nc bnc" id="L499" title="All 2 branches missed.">                    &amp;&amp; pName.equals(myCurr.getNodeName())) {</span>
+<span class="nc bnc" id="L473" title="All 2 branches missed.">            if (myCurr instanceof Element myElement</span>
+<span class="nc bnc" id="L474" title="All 2 branches missed.">                    &amp;&amp; pName.equals(myCurr.getNodeName())) {</span>
                 /* Return the element */
-<span class="nc" id="L501">                return myElement;</span>
+<span class="nc" id="L476">                return myElement;</span>
             }
         }
 
         /* Not found */
-<span class="nc" id="L506">        return null;</span>
+<span class="nc" id="L481">        return null;</span>
     }
 
     /**
@@ -518,19 +493,19 @@ public class PrometheusDataValues {
                                 final OceanusDataFormatter pFormatter,
                                 final boolean pStoreIds) {
         /* Create an element for the item */
-<span class="nc" id="L521">        final Element myElement = pDocument.createElement(theItemType);</span>
+<span class="nc" id="L496">        final Element myElement = pDocument.createElement(theItemType);</span>
 
         /* Loop through the values */
-<span class="nc bnc" id="L524" title="All 2 branches missed.">        for (Entry&lt;MetisDataFieldId, Object&gt; myEntry : theFields.entrySet()) {</span>
+<span class="nc bnc" id="L499" title="All 2 branches missed.">        for (Entry&lt;MetisDataFieldId, Object&gt; myEntry : theFields.entrySet()) {</span>
             /* Access parts */
-<span class="nc" id="L526">            final MetisDataFieldId myFieldId = myEntry.getKey();</span>
-<span class="nc" id="L527">            final Object myValue = myEntry.getValue();</span>
+<span class="nc" id="L501">            final MetisDataFieldId myFieldId = myEntry.getKey();</span>
+<span class="nc" id="L502">            final Object myValue = myEntry.getValue();</span>
 
             /* If this is the Id */
-<span class="nc bnc" id="L530" title="All 2 branches missed.">            if (MetisDataResource.DATA_ID.equals(myFieldId)) {</span>
+<span class="nc bnc" id="L505" title="All 2 branches missed.">            if (MetisDataResource.DATA_ID.equals(myFieldId)) {</span>
                 /* Add as an Attribute if required */
-<span class="nc bnc" id="L532" title="All 2 branches missed.">                if (pStoreIds) {</span>
-<span class="nc" id="L533">                    myElement.setAttribute(myFieldId.getId(), myValue.toString());</span>
+<span class="nc bnc" id="L507" title="All 2 branches missed.">                if (pStoreIds) {</span>
+<span class="nc" id="L508">                    myElement.setAttribute(myFieldId.getId(), myValue.toString());</span>
                 }
 
                 /* Skip to next field */
@@ -538,54 +513,54 @@ public class PrometheusDataValues {
             }
 
             /* Create the child element */
-<span class="nc" id="L541">            final Element myChild = pDocument.createElement(myFieldId.getId());</span>
-<span class="nc" id="L542">            myElement.appendChild(myChild);</span>
+<span class="nc" id="L516">            final Element myChild = pDocument.createElement(myFieldId.getId());</span>
+<span class="nc" id="L517">            myElement.appendChild(myChild);</span>
 
             /* Store the value */
-<span class="nc" id="L545">            myChild.setTextContent(pFormatter.formatObject(myValue));</span>
-<span class="nc" id="L546">        }</span>
+<span class="nc" id="L520">            myChild.setTextContent(pFormatter.formatObject(myValue));</span>
+<span class="nc" id="L521">        }</span>
 
         /* If we have InfoSet items */
-<span class="nc bnc" id="L549" title="All 2 branches missed.">        if (theInfoItems != null) {</span>
+<span class="nc bnc" id="L524" title="All 2 branches missed.">        if (theInfoItems != null) {</span>
             /* Add infoSet */
-<span class="nc" id="L551">            final Element myInfoSet = pDocument.createElement(TAG_INFOSET);</span>
-<span class="nc" id="L552">            myElement.appendChild(myInfoSet);</span>
+<span class="nc" id="L526">            final Element myInfoSet = pDocument.createElement(TAG_INFOSET);</span>
+<span class="nc" id="L527">            myElement.appendChild(myInfoSet);</span>
 
             /* Loop through the items */
-<span class="nc bnc" id="L555" title="All 2 branches missed.">            for (PrometheusInfoItem myInfo : theInfoItems) {</span>
+<span class="nc bnc" id="L530" title="All 2 branches missed.">            for (PrometheusInfoItem myInfo : theInfoItems) {</span>
                 /* Create the element */
-<span class="nc" id="L557">                final Element myItem = pDocument.createElement(myInfo.getName());</span>
-<span class="nc" id="L558">                myInfoSet.appendChild(myItem);</span>
+<span class="nc" id="L532">                final Element myItem = pDocument.createElement(myInfo.getName());</span>
+<span class="nc" id="L533">                myInfoSet.appendChild(myItem);</span>
 
                 /* Set the id if required */
-<span class="nc bnc" id="L561" title="All 2 branches missed.">                if (pStoreIds) {</span>
-<span class="nc" id="L562">                    myItem.setAttribute(MetisDataResource.DATA_ID.getValue(), myInfo.getId().toString());</span>
+<span class="nc bnc" id="L536" title="All 2 branches missed.">                if (pStoreIds) {</span>
+<span class="nc" id="L537">                    myItem.setAttribute(MetisDataResource.DATA_ID.getValue(), myInfo.getId().toString());</span>
                 }
 
                 /* Set the value */
-<span class="nc" id="L566">                myItem.setTextContent(pFormatter.formatObject(myInfo.getValue()));</span>
-<span class="nc" id="L567">            }</span>
+<span class="nc" id="L541">                myItem.setTextContent(pFormatter.formatObject(myInfo.getValue()));</span>
+<span class="nc" id="L542">            }</span>
         }
 
         /* If we have children */
-<span class="nc bnc" id="L571" title="All 2 branches missed.">        if (theChildren != null) {</span>
+<span class="nc bnc" id="L546" title="All 2 branches missed.">        if (theChildren != null) {</span>
             /* Add children */
-<span class="nc" id="L573">            final Element myChildren = pDocument.createElement(TAG_CHILDREN);</span>
-<span class="nc" id="L574">            myElement.appendChild(myChildren);</span>
+<span class="nc" id="L548">            final Element myChildren = pDocument.createElement(TAG_CHILDREN);</span>
+<span class="nc" id="L549">            myElement.appendChild(myChildren);</span>
 
             /* Loop through the children */
-<span class="nc" id="L577">            final Iterator&lt;PrometheusDataValues&gt; myIterator = theChildren.iterator();</span>
-<span class="nc bnc" id="L578" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
-<span class="nc" id="L579">                final PrometheusDataValues myValues = myIterator.next();</span>
+<span class="nc" id="L552">            final Iterator&lt;PrometheusDataValues&gt; myIterator = theChildren.iterator();</span>
+<span class="nc bnc" id="L553" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L554">                final PrometheusDataValues myValues = myIterator.next();</span>
 
                 /* Create the subElement and append */
-<span class="nc" id="L582">                final Element myChild = myValues.createXML(pDocument, pFormatter, pStoreIds);</span>
-<span class="nc" id="L583">                myChildren.appendChild(myChild);</span>
-<span class="nc" id="L584">            }</span>
+<span class="nc" id="L557">                final Element myChild = myValues.createXML(pDocument, pFormatter, pStoreIds);</span>
+<span class="nc" id="L558">                myChildren.appendChild(myChild);</span>
+<span class="nc" id="L559">            }</span>
         }
 
         /* Return the element */
-<span class="nc" id="L588">        return myElement;</span>
+<span class="nc" id="L563">        return myElement;</span>
     }
 
     /**
@@ -612,29 +587,29 @@ public class PrometheusDataValues {
          *
          * @param pInfo the info Item
          */
-<span class="nc" id="L615">        private PrometheusInfoItem(final PrometheusDataInfoItem pInfo) {</span>
+<span class="nc" id="L590">        private PrometheusInfoItem(final PrometheusDataInfoItemCtl pInfo) {</span>
             /* Access the infoClass */
-<span class="nc" id="L617">            final PrometheusDataInfoClass myClass = pInfo.getInfoClass();</span>
+<span class="nc" id="L592">            final PrometheusDataInfoClass myClass = pInfo.getInfoClass();</span>
 
             /* Store values */
-<span class="nc" id="L620">            theName = myClass.toString();</span>
-<span class="nc" id="L621">            theId = pInfo.getIndexedId();</span>
-<span class="nc bnc" id="L622" title="All 2 branches missed.">            theValue = myClass.isLink()</span>
-<span class="nc" id="L623">                    ? pInfo.getLink()</span>
-<span class="nc" id="L624">                    : pInfo.getValue(Object.class);</span>
-<span class="nc" id="L625">        }</span>
+<span class="nc" id="L595">            theName = myClass.toString();</span>
+<span class="nc" id="L596">            theId = pInfo.getIndexedId();</span>
+<span class="nc bnc" id="L597" title="All 2 branches missed.">            theValue = myClass.isLink()</span>
+<span class="nc" id="L598">                    ? pInfo.getLink()</span>
+<span class="nc" id="L599">                    : pInfo.getValue(Object.class);</span>
+<span class="nc" id="L600">        }</span>
 
         /**
          * Constructor.
          *
          * @param pElement the XML element
          */
-<span class="nc" id="L632">        private PrometheusInfoItem(final Element pElement) {</span>
+<span class="nc" id="L607">        private PrometheusInfoItem(final Element pElement) {</span>
             /* Store values */
-<span class="nc" id="L634">            theName = pElement.getNodeName();</span>
-<span class="nc" id="L635">            theId = PrometheusDataValues.getId(pElement);</span>
-<span class="nc" id="L636">            theValue = pElement.getTextContent();</span>
-<span class="nc" id="L637">        }</span>
+<span class="nc" id="L609">            theName = pElement.getNodeName();</span>
+<span class="nc" id="L610">            theId = PrometheusDataValues.getId(pElement);</span>
+<span class="nc" id="L611">            theValue = pElement.getTextContent();</span>
+<span class="nc" id="L612">        }</span>
 
         /**
          * Obtain name of item.
@@ -642,7 +617,7 @@ public class PrometheusDataValues {
          * @return the name
          */
         public String getName() {
-<span class="nc" id="L645">            return theName;</span>
+<span class="nc" id="L620">            return theName;</span>
         }
 
         /**
@@ -651,7 +626,7 @@ public class PrometheusDataValues {
          * @return the id
          */
         public Integer getId() {
-<span class="nc" id="L654">            return theId;</span>
+<span class="nc" id="L629">            return theId;</span>
         }
 
         /**
@@ -660,44 +635,44 @@ public class PrometheusDataValues {
          * @return the value
          */
         public Object getValue() {
-<span class="nc" id="L663">            return theValue;</span>
+<span class="nc" id="L638">            return theValue;</span>
         }
 
         @Override
         public boolean equals(final Object pThat) {
             /* Handle the trivial cases */
-<span class="nc bnc" id="L669" title="All 2 branches missed.">            if (this == pThat) {</span>
-<span class="nc" id="L670">                return true;</span>
+<span class="nc bnc" id="L644" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L645">                return true;</span>
             }
-<span class="nc bnc" id="L672" title="All 2 branches missed.">            if (pThat == null) {</span>
-<span class="nc" id="L673">                return false;</span>
+<span class="nc bnc" id="L647" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L648">                return false;</span>
             }
 
             /* Make sure that the object is the same class */
-<span class="nc bnc" id="L677" title="All 2 branches missed.">            if (pThat.getClass() != getClass()) {</span>
-<span class="nc" id="L678">                return false;</span>
+<span class="nc bnc" id="L652" title="All 2 branches missed.">            if (pThat.getClass() != getClass()) {</span>
+<span class="nc" id="L653">                return false;</span>
             }
 
             /* Access the object as an InfoItem */
-<span class="nc" id="L682">            final PrometheusInfoItem myItem = (PrometheusInfoItem) pThat;</span>
+<span class="nc" id="L657">            final PrometheusInfoItem myItem = (PrometheusInfoItem) pThat;</span>
 
-<span class="nc bnc" id="L684" title="All 2 branches missed.">            if (!theName.equals(myItem.getName())) {</span>
-<span class="nc" id="L685">                return false;</span>
+<span class="nc bnc" id="L659" title="All 2 branches missed.">            if (!theName.equals(myItem.getName())) {</span>
+<span class="nc" id="L660">                return false;</span>
             }
-<span class="nc bnc" id="L687" title="All 2 branches missed.">            if (!theId.equals(myItem.getId())) {</span>
-<span class="nc" id="L688">                return false;</span>
+<span class="nc bnc" id="L662" title="All 2 branches missed.">            if (!theId.equals(myItem.getId())) {</span>
+<span class="nc" id="L663">                return false;</span>
             }
-<span class="nc" id="L690">            return theValue.equals(myItem.getValue());</span>
+<span class="nc" id="L665">            return theValue.equals(myItem.getValue());</span>
         }
 
         @Override
         public int hashCode() {
-<span class="nc" id="L695">            return theName.hashCode() + theId + theValue.hashCode();</span>
+<span class="nc" id="L670">            return theName.hashCode() + theId + theValue.hashCode();</span>
         }
 
         @Override
         public String toString() {
-<span class="nc" id="L700">            return theName + &quot;=&quot; + theValue;</span>
+<span class="nc" id="L675">            return theName + &quot;=&quot; + theValue;</span>
         }
 
         /**
@@ -707,8 +682,8 @@ public class PrometheusDataValues {
          * @return the dataValues
          */
         public PrometheusDataValues getValues(final PrometheusDataItem pOwner) {
-<span class="nc" id="L710">            return new PrometheusDataValues(pOwner, this);</span>
+<span class="nc" id="L685">            return new PrometheusDataValues(pOwner, this);</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

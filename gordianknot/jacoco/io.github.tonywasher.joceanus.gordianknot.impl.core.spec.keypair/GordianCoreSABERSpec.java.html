@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSABERSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
@@ -29,16 +30,17 @@ import java.util.Map;
 /**
  * SABER KeySpec.
  */
-public final class GordianCoreSABERSpec {
+public final class GordianCoreSABERSpec
+        implements GordianCoreKeyPairIdSpec&lt;GordianSABERSpec&gt; {
     /**
      * The specMap.
      */
-<span class="fc" id="L36">    private static final Map&lt;GordianSABERSpec, GordianCoreSABERSpec&gt; SPECMAP = newSpecMap();</span>
+<span class="fc" id="L38">    private static final Map&lt;GordianSABERSpec, GordianCoreSABERSpec&gt; SPECMAP = newSpecMap();</span>
 
     /**
      * The specArray.
      */
-<span class="fc" id="L41">    private static final GordianCoreSABERSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreSABERSpec[0]);</span>
+<span class="fc" id="L43">    private static final GordianCoreSABERSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreSABERSpec[0]);</span>
 
     /**
      * The Spec.
@@ -50,17 +52,18 @@ public final class GordianCoreSABERSpec {
      *
      * @param pSpec the spec
      */
-<span class="fc" id="L53">    private GordianCoreSABERSpec(final GordianSABERSpec pSpec) {</span>
-<span class="fc" id="L54">        theSpec = pSpec;</span>
-<span class="fc" id="L55">    }</span>
+<span class="fc" id="L55">    private GordianCoreSABERSpec(final GordianSABERSpec pSpec) {</span>
+<span class="fc" id="L56">        theSpec = pSpec;</span>
+<span class="fc" id="L57">    }</span>
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+<span class="fc" id="L61">        return GordianKeyPairType.SABER;</span>
+    }
+
+    @Override
     public GordianSABERSpec getSpec() {
-<span class="fc" id="L63">        return theSpec;</span>
+<span class="fc" id="L66">        return theSpec;</span>
     }
 
     /**
@@ -69,17 +72,17 @@ public final class GordianCoreSABERSpec {
      * @return the parameters.
      */
     public SABERParameters getParameters() {
-<span class="pc bpc" id="L72" title="8 of 10 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L73">            case LIGHT128 -&gt; SABERParameters.lightsaberkem128r3;</span>
-<span class="fc" id="L74">            case BASE128 -&gt; SABERParameters.saberkem128r3;</span>
-<span class="nc" id="L75">            case FIRE128 -&gt; SABERParameters.firesaberkem128r3;</span>
-<span class="nc" id="L76">            case LIGHT192 -&gt; SABERParameters.lightsaberkem192r3;</span>
-<span class="nc" id="L77">            case BASE192 -&gt; SABERParameters.saberkem192r3;</span>
-<span class="nc" id="L78">            case FIRE192 -&gt; SABERParameters.firesaberkem192r3;</span>
-<span class="nc" id="L79">            case LIGHT256 -&gt; SABERParameters.lightsaberkem256r3;</span>
-<span class="nc" id="L80">            case BASE256 -&gt; SABERParameters.saberkem256r3;</span>
-<span class="nc" id="L81">            case FIRE256 -&gt; SABERParameters.firesaberkem256r3;</span>
-<span class="nc" id="L82">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L75" title="8 of 10 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L76">            case LIGHT128 -&gt; SABERParameters.lightsaberkem128r3;</span>
+<span class="fc" id="L77">            case BASE128 -&gt; SABERParameters.saberkem128r3;</span>
+<span class="nc" id="L78">            case FIRE128 -&gt; SABERParameters.firesaberkem128r3;</span>
+<span class="nc" id="L79">            case LIGHT192 -&gt; SABERParameters.lightsaberkem192r3;</span>
+<span class="nc" id="L80">            case BASE192 -&gt; SABERParameters.saberkem192r3;</span>
+<span class="nc" id="L81">            case FIRE192 -&gt; SABERParameters.firesaberkem192r3;</span>
+<span class="nc" id="L82">            case LIGHT256 -&gt; SABERParameters.lightsaberkem256r3;</span>
+<span class="nc" id="L83">            case BASE256 -&gt; SABERParameters.saberkem256r3;</span>
+<span class="nc" id="L84">            case FIRE256 -&gt; SABERParameters.firesaberkem256r3;</span>
+<span class="nc" id="L85">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
@@ -89,63 +92,59 @@ public final class GordianCoreSABERSpec {
      * @return the parameters.
      */
     public SABERParameterSpec getParameterSpec() {
-<span class="pc bpc" id="L92" title="8 of 10 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L93">            case LIGHT128 -&gt; SABERParameterSpec.lightsaberkem128r3;</span>
-<span class="fc" id="L94">            case BASE128 -&gt; SABERParameterSpec.saberkem128r3;</span>
-<span class="nc" id="L95">            case FIRE128 -&gt; SABERParameterSpec.firesaberkem128r3;</span>
-<span class="nc" id="L96">            case LIGHT192 -&gt; SABERParameterSpec.lightsaberkem192r3;</span>
-<span class="nc" id="L97">            case BASE192 -&gt; SABERParameterSpec.saberkem192r3;</span>
-<span class="nc" id="L98">            case FIRE192 -&gt; SABERParameterSpec.firesaberkem192r3;</span>
-<span class="nc" id="L99">            case LIGHT256 -&gt; SABERParameterSpec.lightsaberkem256r3;</span>
-<span class="nc" id="L100">            case BASE256 -&gt; SABERParameterSpec.saberkem256r3;</span>
-<span class="nc" id="L101">            case FIRE256 -&gt; SABERParameterSpec.firesaberkem256r3;</span>
-<span class="nc" id="L102">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L95" title="8 of 10 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L96">            case LIGHT128 -&gt; SABERParameterSpec.lightsaberkem128r3;</span>
+<span class="fc" id="L97">            case BASE128 -&gt; SABERParameterSpec.saberkem128r3;</span>
+<span class="nc" id="L98">            case FIRE128 -&gt; SABERParameterSpec.firesaberkem128r3;</span>
+<span class="nc" id="L99">            case LIGHT192 -&gt; SABERParameterSpec.lightsaberkem192r3;</span>
+<span class="nc" id="L100">            case BASE192 -&gt; SABERParameterSpec.saberkem192r3;</span>
+<span class="nc" id="L101">            case FIRE192 -&gt; SABERParameterSpec.firesaberkem192r3;</span>
+<span class="nc" id="L102">            case LIGHT256 -&gt; SABERParameterSpec.lightsaberkem256r3;</span>
+<span class="nc" id="L103">            case BASE256 -&gt; SABERParameterSpec.saberkem256r3;</span>
+<span class="nc" id="L104">            case FIRE256 -&gt; SABERParameterSpec.firesaberkem256r3;</span>
+<span class="nc" id="L105">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
-    /**
-     * Obtain Saber algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
-<span class="pc bpc" id="L112" title="1 of 10 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L113">            case LIGHT128 -&gt; BCObjectIdentifiers.lightsaberkem128r3;</span>
-<span class="fc" id="L114">            case BASE128 -&gt; BCObjectIdentifiers.saberkem128r3;</span>
-<span class="fc" id="L115">            case FIRE128 -&gt; BCObjectIdentifiers.firesaberkem128r3;</span>
-<span class="fc" id="L116">            case LIGHT192 -&gt; BCObjectIdentifiers.lightsaberkem192r3;</span>
-<span class="fc" id="L117">            case BASE192 -&gt; BCObjectIdentifiers.saberkem192r3;</span>
-<span class="fc" id="L118">            case FIRE192 -&gt; BCObjectIdentifiers.firesaberkem192r3;</span>
-<span class="fc" id="L119">            case LIGHT256 -&gt; BCObjectIdentifiers.lightsaberkem256r3;</span>
-<span class="fc" id="L120">            case BASE256 -&gt; BCObjectIdentifiers.saberkem256r3;</span>
-<span class="fc" id="L121">            case FIRE256 -&gt; BCObjectIdentifiers.firesaberkem256r3;</span>
-<span class="nc" id="L122">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L111" title="1 of 10 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L112">            case LIGHT128 -&gt; BCObjectIdentifiers.lightsaberkem128r3;</span>
+<span class="fc" id="L113">            case BASE128 -&gt; BCObjectIdentifiers.saberkem128r3;</span>
+<span class="fc" id="L114">            case FIRE128 -&gt; BCObjectIdentifiers.firesaberkem128r3;</span>
+<span class="fc" id="L115">            case LIGHT192 -&gt; BCObjectIdentifiers.lightsaberkem192r3;</span>
+<span class="fc" id="L116">            case BASE192 -&gt; BCObjectIdentifiers.saberkem192r3;</span>
+<span class="fc" id="L117">            case FIRE192 -&gt; BCObjectIdentifiers.firesaberkem192r3;</span>
+<span class="fc" id="L118">            case LIGHT256 -&gt; BCObjectIdentifiers.lightsaberkem256r3;</span>
+<span class="fc" id="L119">            case BASE256 -&gt; BCObjectIdentifiers.saberkem256r3;</span>
+<span class="fc" id="L120">            case FIRE256 -&gt; BCObjectIdentifiers.firesaberkem256r3;</span>
+<span class="nc" id="L121">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L128">        return theSpec.toString();</span>
+<span class="fc" id="L127">        return theSpec.toString();</span>
     }
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-<span class="nc bnc" id="L134" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L135">            return true;</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L134">            return true;</span>
         }
-<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L138">            return false;</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L137">            return false;</span>
         }
 
         /* Check subFields */
-<span class="nc" id="L142">        return pThat instanceof GordianCoreSABERSpec myThat</span>
-<span class="nc bnc" id="L143" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
+<span class="nc" id="L141">        return pThat instanceof GordianCoreSABERSpec myThat</span>
+<span class="nc bnc" id="L142" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
     }
 
     @Override
     public int hashCode() {
-<span class="fc" id="L148">        return theSpec.hashCode();</span>
+<span class="fc" id="L147">        return theSpec.hashCode();</span>
     }
 
     /**
@@ -155,7 +154,7 @@ public final class GordianCoreSABERSpec {
      * @return the core spec
      */
     public static GordianCoreSABERSpec mapCoreSpec(final Object pSpec) {
-<span class="pc bpc" id="L158" title="1 of 2 branches missed.">        return pSpec instanceof GordianSABERSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        return pSpec instanceof GordianSABERSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
     }
 
     /**
@@ -164,11 +163,11 @@ public final class GordianCoreSABERSpec {
      * @return the type map
      */
     private static Map&lt;GordianSABERSpec, GordianCoreSABERSpec&gt; newSpecMap() {
-<span class="fc" id="L167">        final Map&lt;GordianSABERSpec, GordianCoreSABERSpec&gt; myMap = new EnumMap&lt;&gt;(GordianSABERSpec.class);</span>
-<span class="fc bfc" id="L168" title="All 2 branches covered.">        for (GordianSABERSpec mySpec : GordianSABERSpec.values()) {</span>
-<span class="fc" id="L169">            myMap.put(mySpec, new GordianCoreSABERSpec(mySpec));</span>
+<span class="fc" id="L166">        final Map&lt;GordianSABERSpec, GordianCoreSABERSpec&gt; myMap = new EnumMap&lt;&gt;(GordianSABERSpec.class);</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">        for (GordianSABERSpec mySpec : GordianSABERSpec.values()) {</span>
+<span class="fc" id="L168">            myMap.put(mySpec, new GordianCoreSABERSpec(mySpec));</span>
         }
-<span class="fc" id="L171">        return myMap;</span>
+<span class="fc" id="L170">        return myMap;</span>
     }
 
     /**
@@ -177,7 +176,7 @@ public final class GordianCoreSABERSpec {
      * @return the values
      */
     public static GordianCoreSABERSpec[] values() {
-<span class="fc" id="L180">        return VALUES;</span>
+<span class="fc" id="L179">        return VALUES;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

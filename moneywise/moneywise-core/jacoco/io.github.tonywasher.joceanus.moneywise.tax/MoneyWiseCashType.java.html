@@ -16,19 +16,21 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+
 /**
  * CashType for Capital Gains transactions.
  */
-<span class="fc" id="L22">public enum MoneyWiseCashType {</span>
+<span class="fc" id="L24">public enum MoneyWiseCashType {</span>
     /**
      * LargeCash.
      */
-<span class="fc" id="L26">    LARGECASH,</span>
+<span class="fc" id="L28">    LARGECASH,</span>
 
     /**
      * SmallCash.
      */
-<span class="fc" id="L31">    SMALLCASH;</span>
+<span class="fc" id="L33">    SMALLCASH;</span>
 
     /**
      * The String name.
@@ -38,13 +40,27 @@ package io.github.tonywasher.joceanus.moneywise.tax;
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="nc bnc" id="L41" title="All 2 branches missed.">        if (theName == null) {</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        if (theName == null) {</span>
             /* Load the name */
-<span class="nc" id="L43">            theName = MoneyWiseTaxResource.getKeyForCashType(this).getValue();</span>
+<span class="nc" id="L45">            theName = bundleIdForCashType(this).getValue();</span>
         }
 
         /* return the name */
-<span class="nc" id="L47">        return theName;</span>
+<span class="nc" id="L49">        return theName;</span>
+    }
+
+    /**
+     * Obtain the resource bundleId for the cashType.
+     *
+     * @param pType the type
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForCashType(final MoneyWiseCashType pType) {
+<span class="nc bnc" id="L59" title="All 3 branches missed.">        return switch (pType) {</span>
+<span class="nc" id="L60">            case LARGECASH -&gt; MoneyWiseTaxResource.CASHTYPE_LARGE;</span>
+<span class="nc" id="L61">            case SMALLCASH -&gt; MoneyWiseTaxResource.CASHTYPE_SMALL;</span>
+<span class="nc" id="L62">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

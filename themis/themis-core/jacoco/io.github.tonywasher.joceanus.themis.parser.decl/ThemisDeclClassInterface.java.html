@@ -17,7 +17,10 @@
 package io.github.tonywasher.joceanus.themis.parser.decl;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisDeclarationInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisModifierList;
@@ -32,6 +35,18 @@ import java.util.List;
 public class ThemisDeclClassInterface
         extends ThemisBaseDeclaration&lt;ClassOrInterfaceDeclaration&gt;
         implements ThemisDeclarationInstance, ThemisClassInstance {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L41">    private static final MetisFieldSet&lt;ThemisDeclClassInterface&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisDeclClassInterface.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L47">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_NAME, ThemisDeclClassInterface::getName);</span>
+<span class="fc" id="L48">    }</span>
+
     /**
      * The shortName.
      */
@@ -87,86 +102,96 @@ public class ThemisDeclClassInterface
     ThemisDeclClassInterface(final ThemisParserDef pParser,
                              final ClassOrInterfaceDeclaration pDeclaration) throws OceanusException {
         /* Store values */
-<span class="fc" id="L90">        super(pParser, pDeclaration);</span>
-<span class="fc" id="L91">        theName = ((ThemisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();</span>
-<span class="fc" id="L92">        theModifiers = pParser.parseModifierList(pDeclaration.getModifiers());</span>
-<span class="fc" id="L93">        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());</span>
-<span class="fc" id="L94">        theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());</span>
-<span class="fc" id="L95">        theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());</span>
-<span class="fc" id="L96">        theExtends = pParser.parseTypeList(pDeclaration.getExtendedTypes());</span>
+<span class="fc" id="L105">        super(pParser, pDeclaration);</span>
+<span class="fc" id="L106">        theName = ((ThemisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();</span>
+<span class="fc" id="L107">        theModifiers = pParser.parseModifierList(pDeclaration.getModifiers());</span>
+<span class="fc" id="L108">        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());</span>
+<span class="fc" id="L109">        theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());</span>
+<span class="fc" id="L110">        theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());</span>
+<span class="fc" id="L111">        theExtends = pParser.parseTypeList(pDeclaration.getExtendedTypes());</span>
 
         /* Access the full name and determine whether this is an anonymous class */
-<span class="fc" id="L99">        theFullName = pDeclaration.getFullyQualifiedName().orElse(null);</span>
-<span class="pc bpc" id="L100" title="1 of 4 branches missed.">        isAnonClass = theFullName == null &amp;&amp; !isLocalDeclaration();</span>
-<span class="fc" id="L101">        theFullName = pParser.registerClass(this);</span>
+<span class="fc" id="L114">        theFullName = pDeclaration.getFullyQualifiedName().orElse(null);</span>
+<span class="pc bpc" id="L115" title="1 of 4 branches missed.">        isAnonClass = theFullName == null &amp;&amp; !isLocalDeclaration();</span>
+<span class="fc" id="L116">        theFullName = pParser.registerClass(this);</span>
 
         /* Finally parse the underlying declarations */
-<span class="fc" id="L104">        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());</span>
-<span class="fc" id="L105">    }</span>
+<span class="fc" id="L119">        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());</span>
+<span class="fc" id="L120">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisDeclClassInterface&gt; getDataFieldSet() {
+<span class="nc" id="L124">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L129">        return getName();</span>
+    }
 
     @Override
     public String getName() {
-<span class="fc" id="L109">        return theName;</span>
+<span class="fc" id="L134">        return theName;</span>
     }
 
     @Override
     public String getFullName() {
-<span class="fc" id="L114">        return theFullName;</span>
+<span class="fc" id="L139">        return theFullName;</span>
     }
 
     @Override
     public boolean isTopLevel() {
-<span class="fc" id="L119">        return getNode().isTopLevelType();</span>
+<span class="fc" id="L144">        return getNode().isTopLevelType();</span>
     }
 
     @Override
     public boolean isInner() {
-<span class="nc" id="L124">        return getNode().isInnerClass();</span>
+<span class="nc" id="L149">        return getNode().isInnerClass();</span>
     }
 
     @Override
     public boolean isLocalDeclaration() {
-<span class="fc" id="L129">        return getNode().isLocalClassDeclaration();</span>
+<span class="fc" id="L154">        return getNode().isLocalClassDeclaration();</span>
     }
 
     @Override
     public boolean isAnonClass() {
-<span class="fc" id="L134">        return isAnonClass;</span>
+<span class="fc" id="L159">        return isAnonClass;</span>
     }
 
     @Override
     public boolean isInterface() {
-<span class="fc" id="L139">        return getNode().isInterface();</span>
+<span class="fc" id="L164">        return getNode().isInterface();</span>
     }
 
     @Override
     public ThemisModifierList getModifiers() {
-<span class="fc" id="L144">        return theModifiers;</span>
+<span class="fc" id="L169">        return theModifiers;</span>
     }
 
     @Override
     public List&lt;ThemisDeclarationInstance&gt; getBody() {
-<span class="fc" id="L149">        return theBody;</span>
+<span class="fc" id="L174">        return theBody;</span>
     }
 
     @Override
     public List&lt;ThemisTypeInstance&gt; getExtends() {
-<span class="fc" id="L154">        return theExtends;</span>
+<span class="fc" id="L179">        return theExtends;</span>
     }
 
     @Override
     public List&lt;ThemisTypeInstance&gt; getImplements() {
-<span class="fc" id="L159">        return theImplements;</span>
+<span class="fc" id="L184">        return theImplements;</span>
     }
 
     @Override
     public List&lt;ThemisTypeInstance&gt; getTypeParameters() {
-<span class="fc" id="L164">        return theTypeParameters;</span>
+<span class="fc" id="L189">        return theTypeParameters;</span>
     }
 
     @Override
     public List&lt;ThemisExpressionInstance&gt; getAnnotations() {
-<span class="nc" id="L169">        return theAnnotations;</span>
+<span class="nc" id="L194">        return theAnnotations;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

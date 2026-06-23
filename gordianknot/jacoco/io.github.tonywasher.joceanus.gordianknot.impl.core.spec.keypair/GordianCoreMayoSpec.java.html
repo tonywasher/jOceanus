@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMayoSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
@@ -29,16 +30,17 @@ import java.util.Map;
 /**
  * Mayo KeySpec.
  */
-public final class GordianCoreMayoSpec {
+public final class GordianCoreMayoSpec
+        implements GordianCoreKeyPairIdSpec&lt;GordianMayoSpec&gt; {
     /**
      * The specMap.
      */
-<span class="fc" id="L36">    private static final Map&lt;GordianMayoSpec, GordianCoreMayoSpec&gt; SPECMAP = newSpecMap();</span>
+<span class="fc" id="L38">    private static final Map&lt;GordianMayoSpec, GordianCoreMayoSpec&gt; SPECMAP = newSpecMap();</span>
 
     /**
      * The specArray.
      */
-<span class="fc" id="L41">    private static final GordianCoreMayoSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreMayoSpec[0]);</span>
+<span class="fc" id="L43">    private static final GordianCoreMayoSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreMayoSpec[0]);</span>
 
     /**
      * The Spec.
@@ -50,17 +52,18 @@ public final class GordianCoreMayoSpec {
      *
      * @param pSpec the spec
      */
-<span class="fc" id="L53">    private GordianCoreMayoSpec(final GordianMayoSpec pSpec) {</span>
-<span class="fc" id="L54">        theSpec = pSpec;</span>
-<span class="fc" id="L55">    }</span>
+<span class="fc" id="L55">    private GordianCoreMayoSpec(final GordianMayoSpec pSpec) {</span>
+<span class="fc" id="L56">        theSpec = pSpec;</span>
+<span class="fc" id="L57">    }</span>
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+<span class="fc" id="L61">        return GordianKeyPairType.MAYO;</span>
+    }
+
+    @Override
     public GordianMayoSpec getSpec() {
-<span class="fc" id="L63">        return theSpec;</span>
+<span class="fc" id="L66">        return theSpec;</span>
     }
 
     /**
@@ -69,12 +72,12 @@ public final class GordianCoreMayoSpec {
      * @return the parameters.
      */
     public MayoParameters getParameters() {
-<span class="pc bpc" id="L72" title="4 of 5 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L73">            case MAYO1 -&gt; MayoParameters.mayo1;</span>
-<span class="nc" id="L74">            case MAYO2 -&gt; MayoParameters.mayo2;</span>
-<span class="nc" id="L75">            case MAYO3 -&gt; MayoParameters.mayo3;</span>
-<span class="nc" id="L76">            case MAYO5 -&gt; MayoParameters.mayo5;</span>
-<span class="nc" id="L77">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L75" title="4 of 5 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L76">            case MAYO1 -&gt; MayoParameters.mayo1;</span>
+<span class="nc" id="L77">            case MAYO2 -&gt; MayoParameters.mayo2;</span>
+<span class="nc" id="L78">            case MAYO3 -&gt; MayoParameters.mayo3;</span>
+<span class="nc" id="L79">            case MAYO5 -&gt; MayoParameters.mayo5;</span>
+<span class="nc" id="L80">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
@@ -84,53 +87,49 @@ public final class GordianCoreMayoSpec {
      * @return the parameters.
      */
     public MayoParameterSpec getParameterSpec() {
-<span class="pc bpc" id="L87" title="4 of 5 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L88">            case MAYO1 -&gt; MayoParameterSpec.mayo1;</span>
-<span class="nc" id="L89">            case MAYO2 -&gt; MayoParameterSpec.mayo2;</span>
-<span class="nc" id="L90">            case MAYO3 -&gt; MayoParameterSpec.mayo3;</span>
-<span class="nc" id="L91">            case MAYO5 -&gt; MayoParameterSpec.mayo5;</span>
-<span class="nc" id="L92">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L90" title="4 of 5 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L91">            case MAYO1 -&gt; MayoParameterSpec.mayo1;</span>
+<span class="nc" id="L92">            case MAYO2 -&gt; MayoParameterSpec.mayo2;</span>
+<span class="nc" id="L93">            case MAYO3 -&gt; MayoParameterSpec.mayo3;</span>
+<span class="nc" id="L94">            case MAYO5 -&gt; MayoParameterSpec.mayo5;</span>
+<span class="nc" id="L95">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
-    /**
-     * Obtain MAYO algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
-<span class="pc bpc" id="L102" title="1 of 5 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L103">            case MAYO1 -&gt; BCObjectIdentifiers.mayo1;</span>
-<span class="fc" id="L104">            case MAYO2 -&gt; BCObjectIdentifiers.mayo2;</span>
-<span class="fc" id="L105">            case MAYO3 -&gt; BCObjectIdentifiers.mayo3;</span>
-<span class="fc" id="L106">            case MAYO5 -&gt; BCObjectIdentifiers.mayo5;</span>
-<span class="nc" id="L107">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L101" title="1 of 5 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L102">            case MAYO1 -&gt; BCObjectIdentifiers.mayo1;</span>
+<span class="fc" id="L103">            case MAYO2 -&gt; BCObjectIdentifiers.mayo2;</span>
+<span class="fc" id="L104">            case MAYO3 -&gt; BCObjectIdentifiers.mayo3;</span>
+<span class="fc" id="L105">            case MAYO5 -&gt; BCObjectIdentifiers.mayo5;</span>
+<span class="nc" id="L106">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L113">        return theSpec.toString();</span>
+<span class="fc" id="L112">        return theSpec.toString();</span>
     }
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L120">            return true;</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L119">            return true;</span>
         }
-<span class="nc bnc" id="L122" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L123">            return false;</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L122">            return false;</span>
         }
 
         /* Check subFields */
-<span class="nc" id="L127">        return pThat instanceof GordianCoreMayoSpec myThat</span>
-<span class="nc bnc" id="L128" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
+<span class="nc" id="L126">        return pThat instanceof GordianCoreMayoSpec myThat</span>
+<span class="nc bnc" id="L127" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
     }
 
     @Override
     public int hashCode() {
-<span class="fc" id="L133">        return theSpec.hashCode();</span>
+<span class="fc" id="L132">        return theSpec.hashCode();</span>
     }
 
     /**
@@ -140,7 +139,7 @@ public final class GordianCoreMayoSpec {
      * @return the core spec
      */
     public static GordianCoreMayoSpec mapCoreSpec(final Object pSpec) {
-<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        return pSpec instanceof GordianMayoSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">        return pSpec instanceof GordianMayoSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
     }
 
     /**
@@ -149,11 +148,11 @@ public final class GordianCoreMayoSpec {
      * @return the type map
      */
     private static Map&lt;GordianMayoSpec, GordianCoreMayoSpec&gt; newSpecMap() {
-<span class="fc" id="L152">        final Map&lt;GordianMayoSpec, GordianCoreMayoSpec&gt; myMap = new EnumMap&lt;&gt;(GordianMayoSpec.class);</span>
-<span class="fc bfc" id="L153" title="All 2 branches covered.">        for (GordianMayoSpec mySpec : GordianMayoSpec.values()) {</span>
-<span class="fc" id="L154">            myMap.put(mySpec, new GordianCoreMayoSpec(mySpec));</span>
+<span class="fc" id="L151">        final Map&lt;GordianMayoSpec, GordianCoreMayoSpec&gt; myMap = new EnumMap&lt;&gt;(GordianMayoSpec.class);</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">        for (GordianMayoSpec mySpec : GordianMayoSpec.values()) {</span>
+<span class="fc" id="L153">            myMap.put(mySpec, new GordianCoreMayoSpec(mySpec));</span>
         }
-<span class="fc" id="L156">        return myMap;</span>
+<span class="fc" id="L155">        return myMap;</span>
     }
 
     /**
@@ -162,7 +161,7 @@ public final class GordianCoreMayoSpec {
      * @return the values
      */
     public static GordianCoreMayoSpec[] values() {
-<span class="fc" id="L165">        return VALUES;</span>
+<span class="fc" id="L164">        return VALUES;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

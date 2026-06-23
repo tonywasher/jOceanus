@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.prometheus.ui;
 
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusUIEvent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
 import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButton;
@@ -32,46 +32,6 @@ import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
  */
 public class PrometheusItemEditActions
         implements OceanusEventProvider&lt;PrometheusUIEvent&gt;, TethysUIComponent {
-    /**
-     * ItemEditParent interface.
-     */
-    public interface PrometheusItemEditParent {
-        /**
-         * Is the item editable?
-         *
-         * @return true/false
-         */
-        boolean isEditable();
-
-        /**
-         * Is the item deletable?
-         *
-         * @return true/false
-         */
-        boolean isDeletable();
-
-        /**
-         * Does the parent have updates.
-         *
-         * @return true/false
-         */
-        boolean hasUpdates();
-
-        /**
-         * Does the parent have errors.
-         *
-         * @return true/false
-         */
-        boolean hasErrors();
-
-        /**
-         * Is the parent new.
-         *
-         * @return true/false
-         */
-        boolean isNew();
-    }
-
     /**
      * The panel.
      */
@@ -114,80 +74,80 @@ public class PrometheusItemEditActions
      * @param pParent  the parent
      */
     public PrometheusItemEditActions(final TethysUIFactory&lt;?&gt; pFactory,
-<span class="nc" id="L117">                                     final PrometheusItemEditParent pParent) {</span>
+<span class="nc" id="L77">                                     final PrometheusItemEditParent pParent) {</span>
         /* Record the parent */
-<span class="nc" id="L119">        theParent = pParent;</span>
+<span class="nc" id="L79">        theParent = pParent;</span>
 
         /* Create the event manager */
-<span class="nc" id="L122">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+<span class="nc" id="L82">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
 
         /* Create the buttons */
-<span class="nc" id="L125">        final TethysUIButtonFactory&lt;?&gt; myButtons = pFactory.buttonFactory();</span>
-<span class="nc" id="L126">        theCommitButton = myButtons.newButton();</span>
-<span class="nc" id="L127">        theUndoButton = myButtons.newButton();</span>
-<span class="nc" id="L128">        theResetButton = myButtons.newButton();</span>
-<span class="nc" id="L129">        theCancelButton = myButtons.newButton();</span>
+<span class="nc" id="L85">        final TethysUIButtonFactory&lt;?&gt; myButtons = pFactory.buttonFactory();</span>
+<span class="nc" id="L86">        theCommitButton = myButtons.newButton();</span>
+<span class="nc" id="L87">        theUndoButton = myButtons.newButton();</span>
+<span class="nc" id="L88">        theResetButton = myButtons.newButton();</span>
+<span class="nc" id="L89">        theCancelButton = myButtons.newButton();</span>
 
         /* Configure the buttons */
-<span class="nc" id="L132">        MetisIcon.configureCommitIconButton(theCommitButton);</span>
-<span class="nc" id="L133">        MetisIcon.configureUndoIconButton(theUndoButton);</span>
-<span class="nc" id="L134">        MetisIcon.configureResetIconButton(theResetButton);</span>
-<span class="nc" id="L135">        MetisIcon.configureCancelIconButton(theCancelButton);</span>
+<span class="nc" id="L92">        MetisIcon.configureCommitIconButton(theCommitButton);</span>
+<span class="nc" id="L93">        MetisIcon.configureUndoIconButton(theUndoButton);</span>
+<span class="nc" id="L94">        MetisIcon.configureResetIconButton(theResetButton);</span>
+<span class="nc" id="L95">        MetisIcon.configureCancelIconButton(theCancelButton);</span>
 
         /* Create the panel */
-<span class="nc" id="L138">        thePanel = pFactory.paneFactory().newVBoxPane();</span>
-<span class="nc" id="L139">        thePanel.setBorderPadding(PrometheusItemActions.BORDER_PADDING);</span>
+<span class="nc" id="L98">        thePanel = pFactory.paneFactory().newVBoxPane();</span>
+<span class="nc" id="L99">        thePanel.setBorderPadding(PrometheusItemActions.BORDER_PADDING);</span>
 
         /* Create the layout */
-<span class="nc" id="L142">        thePanel.addNode(theCommitButton);</span>
-<span class="nc" id="L143">        thePanel.addNode(theUndoButton);</span>
-<span class="nc" id="L144">        thePanel.addNode(theResetButton);</span>
-<span class="nc" id="L145">        thePanel.addNode(theCancelButton);</span>
+<span class="nc" id="L102">        thePanel.addNode(theCommitButton);</span>
+<span class="nc" id="L103">        thePanel.addNode(theUndoButton);</span>
+<span class="nc" id="L104">        thePanel.addNode(theResetButton);</span>
+<span class="nc" id="L105">        thePanel.addNode(theCancelButton);</span>
 
         /* Add the listener for item changes */
-<span class="nc" id="L148">        theCommitButton.getEventRegistrar().addEventListener(e -&gt; theEventManager.fireEvent(PrometheusUIEvent.OK));</span>
-<span class="nc" id="L149">        theUndoButton.getEventRegistrar().addEventListener(e -&gt; theEventManager.fireEvent(PrometheusUIEvent.UNDO));</span>
-<span class="nc" id="L150">        theResetButton.getEventRegistrar().addEventListener(e -&gt; theEventManager.fireEvent(PrometheusUIEvent.RESET));</span>
-<span class="nc" id="L151">        theCancelButton.getEventRegistrar().addEventListener(e -&gt; theEventManager.fireEvent(PrometheusUIEvent.CANCEL));</span>
+<span class="nc" id="L108">        theCommitButton.getEventRegistrar().addEventListener(e -&gt; theEventManager.fireEvent(PrometheusUIEvent.OK));</span>
+<span class="nc" id="L109">        theUndoButton.getEventRegistrar().addEventListener(e -&gt; theEventManager.fireEvent(PrometheusUIEvent.UNDO));</span>
+<span class="nc" id="L110">        theResetButton.getEventRegistrar().addEventListener(e -&gt; theEventManager.fireEvent(PrometheusUIEvent.RESET));</span>
+<span class="nc" id="L111">        theCancelButton.getEventRegistrar().addEventListener(e -&gt; theEventManager.fireEvent(PrometheusUIEvent.CANCEL));</span>
 
         /* Buttons are initially disabled */
-<span class="nc" id="L154">        setEnabled(false);</span>
-<span class="nc" id="L155">    }</span>
+<span class="nc" id="L114">        setEnabled(false);</span>
+<span class="nc" id="L115">    }</span>
 
     @Override
     public OceanusEventRegistrar&lt;PrometheusUIEvent&gt; getEventRegistrar() {
-<span class="nc" id="L159">        return theEventManager.getEventRegistrar();</span>
+<span class="nc" id="L119">        return theEventManager.getEventRegistrar();</span>
     }
 
     @Override
     public TethysUIComponent getUnderlying() {
-<span class="nc" id="L164">        return thePanel;</span>
+<span class="nc" id="L124">        return thePanel;</span>
     }
 
     @Override
     public void setEnabled(final boolean bEnabled) {
         /* If the table is locked clear the buttons */
-<span class="nc bnc" id="L170" title="All 2 branches missed.">        if (!bEnabled) {</span>
-<span class="nc" id="L171">            theCommitButton.setEnabled(false);</span>
-<span class="nc" id="L172">            theUndoButton.setEnabled(false);</span>
-<span class="nc" id="L173">            theResetButton.setEnabled(false);</span>
-<span class="nc" id="L174">            theCancelButton.setEnabled(false);</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (!bEnabled) {</span>
+<span class="nc" id="L131">            theCommitButton.setEnabled(false);</span>
+<span class="nc" id="L132">            theUndoButton.setEnabled(false);</span>
+<span class="nc" id="L133">            theResetButton.setEnabled(false);</span>
+<span class="nc" id="L134">            theCancelButton.setEnabled(false);</span>
 
             /* Else look at the edit state */
         } else {
             /* Determine whether we have changes */
-<span class="nc" id="L179">            boolean hasUpdates = theParent.hasUpdates();</span>
-<span class="nc" id="L180">            theUndoButton.setEnabled(hasUpdates);</span>
-<span class="nc" id="L181">            theResetButton.setEnabled(hasUpdates);</span>
+<span class="nc" id="L139">            boolean hasUpdates = theParent.hasUpdates();</span>
+<span class="nc" id="L140">            theUndoButton.setEnabled(hasUpdates);</span>
+<span class="nc" id="L141">            theResetButton.setEnabled(hasUpdates);</span>
 
             /* Check for no errors */
-<span class="nc" id="L184">            final boolean hasErrors = theParent.hasErrors();</span>
-<span class="nc" id="L185">            hasUpdates |= theParent.isNew();</span>
-<span class="nc bnc" id="L186" title="All 4 branches missed.">            theCommitButton.setEnabled(hasUpdates &amp;&amp; !hasErrors);</span>
+<span class="nc" id="L144">            final boolean hasErrors = theParent.hasErrors();</span>
+<span class="nc" id="L145">            hasUpdates |= theParent.isNew();</span>
+<span class="nc bnc" id="L146" title="All 4 branches missed.">            theCommitButton.setEnabled(hasUpdates &amp;&amp; !hasErrors);</span>
 
             /* Enable the cancel button */
-<span class="nc" id="L189">            theCancelButton.setEnabled(true);</span>
+<span class="nc" id="L149">            theCancelButton.setEnabled(true);</span>
         }
-<span class="nc" id="L191">    }</span>
+<span class="nc" id="L151">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

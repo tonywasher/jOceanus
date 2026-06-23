@@ -16,16 +16,16 @@
  */
 package io.github.tonywasher.joceanus.moneywise.threads;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.archive.MoneyWiseArchiveLoader;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * LoaderThread extension to load an archive spreadsheet.
@@ -52,25 +52,25 @@ public class MoneyWiseThreadLoadArchive
     }
 
     @Override
-    public MoneyWiseDataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public MoneyWiseDataSet performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Initialise the status window */
-<span class="nc" id="L57">        pManager.initTask(getTaskName());</span>
+<span class="nc" id="L57">        pReport.initTask(getTaskName());</span>
 
         /* Load workbook */
-<span class="nc" id="L60">        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();</span>
+<span class="nc" id="L60">        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pReport.getThreadData();</span>
 <span class="nc" id="L61">        final PrometheusPreferenceManager myMgr = myPromToolkit.getPreferenceManager();</span>
 <span class="nc" id="L62">        final MoneyWiseDataSet myData = theView.getNewData();</span>
 <span class="nc" id="L63">        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader(myData);</span>
-<span class="nc" id="L64">        myLoader.loadArchive(pManager, myMgr.getPreferenceSet(PrometheusBackupPreferences.class));</span>
+<span class="nc" id="L64">        myLoader.loadArchive(pReport, myMgr.getPreferenceSet(PrometheusBackupPreferences.class));</span>
 
         /* Initialise the status window */
-<span class="nc" id="L67">        pManager.initTask(&quot;Analysing Data&quot;);</span>
+<span class="nc" id="L67">        pReport.initTask(&quot;Analysing Data&quot;);</span>
 
         /* Analyse the Data to ensure that close dates are updated */
 <span class="nc" id="L70">        theView.analyseData(myData);</span>
 
         /* Initialise the status window */
-<span class="nc" id="L73">        pManager.initTask(&quot;Accessing DataStore&quot;);</span>
+<span class="nc" id="L73">        pReport.initTask(&quot;Accessing DataStore&quot;);</span>
 
         /* Create interface */
 <span class="nc" id="L76">        final PrometheusDataStore myDatabase = theView.getDatabase();</span>
@@ -79,23 +79,23 @@ public class MoneyWiseThreadLoadArchive
         try {
             /* Load underlying database */
 <span class="nc" id="L81">            final MoneyWiseDataSet myStore = theView.getNewData();</span>
-<span class="nc" id="L82">            myDatabase.loadDatabase(pManager, myStore);</span>
+<span class="nc" id="L82">            myDatabase.loadDatabase(pReport, myStore);</span>
 
             /* Check security on the database */
-<span class="nc" id="L85">            myStore.checkSecurity(pManager);</span>
+<span class="nc" id="L85">            myStore.checkSecurity(pReport);</span>
 <span class="nc bnc" id="L86" title="All 2 branches missed.">            if (myStore.hasUpdates()) {</span>
                 /* Store any updates */
-<span class="nc" id="L88">                myDatabase.updateDatabase(pManager, myStore);</span>
+<span class="nc" id="L88">                myDatabase.updateDatabase(pReport, myStore);</span>
             }
 
             /* Initialise the security, either from database or with a new security control */
-<span class="nc" id="L92">            myData.initialiseSecurity(pManager, myStore);</span>
+<span class="nc" id="L92">            myData.initialiseSecurity(pReport, myStore);</span>
 
             /* Re-base the loaded spreadsheet onto the database image */
-<span class="nc" id="L95">            myData.reBase(pManager, myStore);</span>
+<span class="nc" id="L95">            myData.reBase(pReport, myStore);</span>
 
             /* State that we have completed */
-<span class="nc" id="L98">            pManager.setCompletion();</span>
+<span class="nc" id="L98">            pReport.setCompletion();</span>
 
             /* Return the loaded data */
 <span class="nc" id="L101">            return myData;</span>
@@ -112,4 +112,4 @@ public class MoneyWiseThreadLoadArchive
 <span class="nc" id="L112">        theView.setData(pResult);</span>
 <span class="nc" id="L113">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

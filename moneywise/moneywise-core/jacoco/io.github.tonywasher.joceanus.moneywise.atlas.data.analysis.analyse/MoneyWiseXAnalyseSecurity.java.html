@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalyseSecurity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse</a> &gt; <span class="el_source">MoneyWiseXAnalyseSecurity.java</span></div><h1>MoneyWiseXAnalyseSecurity.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
+
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseMarketCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseSecurityCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket.MoneyWiseXAnalysisTaxBasisBucketList;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket.MoneyWiseXAnalysisTransCategoryBucketList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+
+/**
+ * Security analysis.
+ */
+public class MoneyWiseXAnalyseSecurity
+        implements MoneyWiseXAnalyseSecurityCtl {
+    /**
+     * Local Report fields.
+     */
+    private static final String ERROR_CATEGORY = &quot;Unexpected Category Type: &quot;;
+
+    /**
+     * The portfolioBuckets.
+     */
+    private final MoneyWiseXAnalysisPortfolioBucketList thePortfolios;
+
+    /**
+     * The analysis state.
+     */
+    private final MoneyWiseXAnalyseState theState;
+
+    /**
+     * The market analysis.
+     */
+    private final MoneyWiseXAnalyseMarketCtl theMarket;
+
+    /**
+     * The transAnalyser.
+     */
+    private final MoneyWiseXAnalyseTransAnalyserCtl theTransAnalyser;
+
+    /**
+     * The xferIn analysis.
+     */
+    private final MoneyWiseXAnalyseXferIn theXferIn;
+
+    /**
+     * The xferOut analysis.
+     */
+    private final MoneyWiseXAnalyseXferOut theXferOut;
+
+    /**
+     * The dividend analysis.
+     */
+    private final MoneyWiseXAnalyseDividend theDividend;
+
+    /**
+     * The deMerger analysis.
+     */
+    private final MoneyWiseXAnalyseDeMerger theDeMerger;
+
+    /**
+     * The takeover analysis.
+     */
+    private final MoneyWiseXAnalyseTakeover theTakeover;
+
+    /**
+     * The transaction.
+     */
+    private MoneyWiseXAnalyseTransaction theTransaction;
+
+    /**
+     * The capitalGains category.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theCapitalCat;
+
+    /**
+     * The taxFreeGains category.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theTaxFreeCat;
+
+    /**
+     * The residentialGains category.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theResidentialCat;
+
+    /**
+     * The chargeableGains category.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theChargeableCat;
+
+    /**
+     * The capitalGains TaxBasis.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucket theCapitalTax;
+
+    /**
+     * The taxFreeGains TaxBasis.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucket theTaxFreeTax;
+
+    /**
+     * The residentialGains TaxBasis.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucket theResidentialTax;
+
+    /**
+     * The chargeableGains TaxBasis.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucket theChargeableTax;
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalyser the event analyser
+     * @param pTrans    the transAnalyser
+     * @throws OceanusException on error
+     */
+    MoneyWiseXAnalyseSecurity(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser,
+<span class="fc" id="L150">                              final MoneyWiseXAnalyseTransAnalyserCtl pTrans) throws OceanusException {</span>
+        /* Record important classes */
+<span class="fc" id="L152">        final MoneyWiseXAnalysis myAnalysis = pAnalyser.getAnalysis();</span>
+<span class="fc" id="L153">        thePortfolios = myAnalysis.getPortfolios();</span>
+<span class="fc" id="L154">        theState = pAnalyser.getState();</span>
+<span class="fc" id="L155">        theMarket = pAnalyser.getMarket();</span>
+<span class="fc" id="L156">        theTransAnalyser = pTrans;</span>
+
+        /* Create analysers */
+<span class="fc" id="L159">        theXferIn = new MoneyWiseXAnalyseXferIn(pAnalyser, this);</span>
+<span class="fc" id="L160">        theXferOut = new MoneyWiseXAnalyseXferOut(pAnalyser, this);</span>
+<span class="fc" id="L161">        theDividend = new MoneyWiseXAnalyseDividend(pAnalyser, this);</span>
+<span class="fc" id="L162">        theDeMerger = new MoneyWiseXAnalyseDeMerger(pAnalyser, this);</span>
+<span class="fc" id="L163">        theTakeover = new MoneyWiseXAnalyseTakeover(pAnalyser, this);</span>
+
+        /* Determine important categoryBuckets */
+<span class="fc" id="L166">        final MoneyWiseXAnalysisTransCategoryBucketList myCategories = myAnalysis.getTransCategories();</span>
+<span class="fc" id="L167">        theCapitalCat = myCategories.getBucket(MoneyWiseTransCategoryClass.CAPITALGAIN);</span>
+<span class="fc" id="L168">        theTaxFreeCat = myCategories.getBucket(MoneyWiseTransCategoryClass.TAXFREEGAIN);</span>
+<span class="fc" id="L169">        theResidentialCat = myCategories.getBucket(MoneyWiseTransCategoryClass.RESIDENTIALGAIN);</span>
+<span class="fc" id="L170">        theChargeableCat = myCategories.getBucket(MoneyWiseTransCategoryClass.CHARGEABLEGAIN);</span>
+
+        /* Determine important taxBuckets */
+<span class="fc" id="L173">        final MoneyWiseXAnalysisTaxBasisBucketList myTaxBases = myAnalysis.getTaxBasis();</span>
+<span class="fc" id="L174">        theCapitalTax = myTaxBases.getBucket(MoneyWiseTaxClass.CAPITALGAINS);</span>
+<span class="fc" id="L175">        theTaxFreeTax = myTaxBases.getBucket(MoneyWiseTaxClass.TAXFREE);</span>
+<span class="fc" id="L176">        theResidentialTax = myTaxBases.getBucket(MoneyWiseTaxClass.RESIDENTIALGAINS);</span>
+<span class="fc" id="L177">        theChargeableTax = myTaxBases.getBucket(MoneyWiseTaxClass.CHARGEABLEGAINS);</span>
+<span class="fc" id="L178">    }</span>
+
+    @Override
+    public MoneyWiseXAnalyseTransAnalyserCtl getTransAnalyser() {
+<span class="fc" id="L182">        return theTransAnalyser;</span>
+    }
+
+    /**
+     * Obtain the xferIn analyser.
+     *
+     * @return the xferInAnalyser
+     */
+    MoneyWiseXAnalyseXferIn getXferInAnalyser() {
+<span class="fc" id="L191">        return theXferIn;</span>
+    }
+
+    /**
+     * Process a debit security transaction.
+     *
+     * @param pTrans the transaction
+     * @throws OceanusException on error
+     */
+    void processDebitSecurity(final MoneyWiseXAnalyseTransaction pTrans) throws OceanusException {
+        /* Store transaction */
+<span class="fc" id="L202">        theTransaction = pTrans;</span>
+
+        /* If credit account is also SecurityHolding */
+<span class="fc bfc" id="L205" title="All 2 branches covered.">        if (MoneyWiseXAnalyseTransaction.isSecurityHolding(theTransaction.getCreditAccount())) {</span>
+            /* Split out working */
+<span class="fc" id="L207">            processDebitCreditSecurity();</span>
+<span class="fc" id="L208">            return;</span>
+        }
+
+        /* Switch on the category */
+<span class="fc" id="L212">        final MoneyWiseTransCategoryClass myCatClass = theTransaction.getCategoryClass();</span>
+<span class="pc bpc" id="L213" title="1 of 3 branches missed.">        switch (myCatClass) {</span>
+            /* Process a dividend */
+            case DIVIDEND:
+<span class="fc" id="L216">                theDividend.processDividend(theTransaction);</span>
+<span class="fc" id="L217">                break;</span>
+            /* Process standard transfer in/out */
+            case TRANSFER, SECURITYCLOSURE, EXPENSE, INHERITED, OTHERINCOME, STOCKRIGHTSISSUE:
+<span class="fc" id="L220">                theXferOut.processTransferOut(theTransaction);</span>
+<span class="fc" id="L221">                break;</span>
+            /* Throw an Exception */
+            default:
+<span class="nc" id="L224">                throw new MoneyWiseLogicException(ERROR_CATEGORY</span>
+                        + myCatClass);
+        }
+<span class="fc" id="L227">    }</span>
+
+    /**
+     * Process a credit security transaction.
+     *
+     * @param pTrans the transaction
+     * @throws OceanusException on error
+     */
+    void processCreditSecurity(final MoneyWiseXAnalyseTransaction pTrans) throws OceanusException {
+        /* Store transaction */
+<span class="fc" id="L237">        theTransaction = pTrans;</span>
+
+        /* Switch on the category */
+<span class="fc" id="L240">        final MoneyWiseTransCategoryClass myCatClass = theTransaction.getCategoryClass();</span>
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">        switch (myCatClass) {</span>
+            /* Process standard transfer in/out */
+            case STOCKRIGHTSISSUE, TRANSFER, EXPENSE, INHERITED, OTHERINCOME, PENSIONCONTRIB:
+<span class="fc" id="L244">                theXferIn.processTransferIn(theTransaction);</span>
+<span class="fc" id="L245">                break;</span>
+            /* Throw an Exception */
+            default:
+<span class="nc" id="L248">                throw new MoneyWiseLogicException(ERROR_CATEGORY</span>
+                        + myCatClass);
+        }
+<span class="fc" id="L251">    }</span>
+
+    /**
+     * Process a debit+credit security transaction.
+     *
+     * @throws OceanusException on error
+     */
+    private void processDebitCreditSecurity() throws OceanusException {
+        /* Switch on the category */
+<span class="fc" id="L260">        final MoneyWiseTransCategoryClass myCatClass = theTransaction.getCategoryClass();</span>
+<span class="pc bpc" id="L261" title="4 of 6 branches missed.">        switch (myCatClass) {</span>
+            /* Process a stock split */
+            case STOCKSPLIT, UNITSADJUST:
+<span class="fc" id="L264">                processUnitsAdjust();</span>
+<span class="fc" id="L265">                break;</span>
+            /* Process a stock DeMerger */
+            case STOCKDEMERGER:
+<span class="nc" id="L268">                theDeMerger.processStockDeMerger(theTransaction);</span>
+<span class="nc" id="L269">                break;</span>
+            /* Process a Stock TakeOver */
+            case SECURITYREPLACE, STOCKTAKEOVER:
+<span class="nc" id="L272">                theTakeover.processStockTakeover(theTransaction);</span>
+<span class="nc" id="L273">                break;</span>
+            /* Process a dividend */
+            case DIVIDEND:
+<span class="fc" id="L276">                theDividend.processDividend(theTransaction);</span>
+<span class="fc" id="L277">                break;</span>
+            /* Process standard transfer in/out */
+            case TRANSFER:
+<span class="nc" id="L280">                processStockXchange();</span>
+<span class="nc" id="L281">                break;</span>
+            /* Throw an Exception */
+            default:
+<span class="nc" id="L284">                throw new MoneyWiseLogicException(ERROR_CATEGORY</span>
+                        + myCatClass);
+        }
+<span class="fc" id="L287">    }</span>
+
+    @Override
+    public void adjustAssetValuation(final MoneyWiseXAnalysisSecurityBucket pAsset) {
+        /* Value the asset and calculate unrealised gains */
+<span class="fc" id="L292">        pAsset.valueAsset();</span>
+<span class="fc" id="L293">        pAsset.adjustValuation();</span>
+<span class="fc" id="L294">        pAsset.calculateUnrealisedGains();</span>
+
+        /* determine the MarketGrowth */
+<span class="fc" id="L297">        final OceanusMoney myDeltaValue = pAsset.getDeltaUnrealisedGains();</span>
+<span class="fc" id="L298">        theMarket.adjustTotalsForMarketGrowth(theTransaction.getEvent(), myDeltaValue);</span>
+<span class="fc" id="L299">    }</span>
+
+    @Override
+    public void adjustStandardGain(final MoneyWiseSecurityHolding pSource,
+                                   final OceanusMoney pGains) {
+        /* Access security and portfolio */
+<span class="fc" id="L305">        final MoneyWiseSecurity mySecurity = pSource.getSecurity();</span>
+<span class="fc" id="L306">        final MoneyWisePortfolio myPortfolio = pSource.getPortfolio();</span>
+<span class="fc" id="L307">        final MoneyWiseSecurityClass myClass = mySecurity.getCategoryClass();</span>
+
+        /* Determine the type of gains */
+<span class="fc" id="L310">        MoneyWiseXAnalysisTransCategoryBucket myCategory = theCapitalCat;</span>
+<span class="fc" id="L311">        MoneyWiseXAnalysisTaxBasisBucket myTaxBasis = theCapitalTax;</span>
+<span class="pc bpc" id="L312" title="1 of 2 branches missed.">        if (myPortfolio.isTaxFree()) {</span>
+<span class="nc" id="L313">            myCategory = theTaxFreeCat;</span>
+<span class="nc" id="L314">            myTaxBasis = theTaxFreeTax;</span>
+<span class="pc bpc" id="L315" title="1 of 2 branches missed.">        } else if (myClass.isResidentialGains()) {</span>
+<span class="nc" id="L316">            myCategory = theResidentialCat;</span>
+<span class="nc" id="L317">            myTaxBasis = theResidentialTax;</span>
+<span class="pc bpc" id="L318" title="1 of 2 branches missed.">        } else if (myClass.isChargeableGains()) {</span>
+<span class="nc" id="L319">            myCategory = theChargeableCat;</span>
+<span class="nc" id="L320">            myTaxBasis = theChargeableTax;</span>
+        }
+
+        /* Add to Capital Gains income/expense */
+<span class="fc bfc" id="L324" title="All 2 branches covered.">        if (pGains.isPositive()) {</span>
+<span class="fc" id="L325">            myCategory.addIncome(pGains);</span>
+        } else {
+<span class="fc" id="L327">            myCategory.subtractExpense(pGains);</span>
+        }
+<span class="fc" id="L329">        myTaxBasis.adjustGrossAndNett(pGains);</span>
+<span class="fc" id="L330">        theMarket.adjustForGains(pGains);</span>
+
+        /* Register the buckets */
+<span class="fc" id="L333">        theState.registerBucketInterest(myCategory);</span>
+<span class="fc" id="L334">        theState.registerBucketInterest(myTaxBasis);</span>
+<span class="fc" id="L335">    }</span>
+
+    /**
+     * Process a transaction that is a unitsAdjust.
+     */
+    void processUnitsAdjust() {
+        /* Access the units */
+<span class="fc" id="L342">        final OceanusUnits myDelta = theTransaction.getDebitUnitsDelta();</span>
+
+        /* Adjust the Security Units */
+<span class="fc" id="L345">        final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) theTransaction.getDebitAccount();</span>
+<span class="fc" id="L346">        final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(myHolding);</span>
+<span class="fc" id="L347">        myAsset.adjustUnits(myDelta);</span>
+
+        /* Record the price of the asset if we have a price */
+<span class="fc" id="L350">        final OceanusPrice myPrice = theTransaction.getTransaction().getPrice();</span>
+<span class="fc bfc" id="L351" title="All 2 branches covered.">        if (myPrice != null) {</span>
+            /* Record the new price and update the bucket */
+<span class="fc" id="L353">            theState.setNewPriceViaTransaction(myHolding.getSecurity(), myPrice);</span>
+
+            /* update the price and determine the value delta */
+<span class="fc" id="L356">            myAsset.recordSecurityPrice();</span>
+        }
+
+        /* Adjust the valuation */
+<span class="fc" id="L360">        adjustAssetValuation(myAsset);</span>
+
+        /* Register the transaction */
+<span class="fc" id="L363">        theState.registerBucketInterest(myAsset);</span>
+<span class="fc" id="L364">    }</span>
+
+    /**
+     * Process a transaction that is a stockXchange.
+     */
+    void processStockXchange() {
+        /* Adjust the debit transfer details */
+<span class="nc" id="L371">        theXferOut.processDebitXferOut(theTransaction);</span>
+
+        /* Adjust the credit transfer details */
+<span class="nc" id="L374">        theXferIn.processCreditXferIn(theTransaction);</span>
+<span class="nc" id="L375">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

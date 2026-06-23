@@ -16,6 +16,9 @@
  */
 package io.github.tonywasher.joceanus.themis.stats;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisMethodInstance;
 
 import java.util.ArrayList;
@@ -26,6 +29,20 @@ import java.util.List;
  */
 public class ThemisStatsMethod
         implements ThemisStatsElement {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L35">    private static final MetisFieldSet&lt;ThemisStatsMethod&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisStatsMethod.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L41">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_CLASSES, ThemisStatsMethod::getClasses);</span>
+<span class="fc" id="L42">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisStatsMethod::getUnderlying);</span>
+<span class="fc" id="L43">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_STATS, ThemisStatsMethod::getStats);</span>
+<span class="fc" id="L44">    }</span>
+
     /**
      * The underlying package.
      */
@@ -46,20 +63,30 @@ public class ThemisStatsMethod
      *
      * @param pMethod the parsed method
      */
-<span class="fc" id="L49">    ThemisStatsMethod(final ThemisMethodInstance pMethod) {</span>
+<span class="fc" id="L66">    ThemisStatsMethod(final ThemisMethodInstance pMethod) {</span>
         /* Store the method */
-<span class="fc" id="L51">        theMethod = pMethod;</span>
+<span class="fc" id="L68">        theMethod = pMethod;</span>
 
         /* Create the stats */
-<span class="fc" id="L54">        theStats = new ThemisStats();</span>
+<span class="fc" id="L71">        theStats = new ThemisStats();</span>
 
         /* Create the class list */
-<span class="fc" id="L57">        theClasses = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L58">    }</span>
+<span class="fc" id="L74">        theClasses = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L75">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisStatsMethod&gt; getDataFieldSet() {
+<span class="nc" id="L79">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L84">        return toString();</span>
+    }
 
     @Override
     public String getName() {
-<span class="nc" id="L62">        return theMethod.getName();</span>
+<span class="nc" id="L89">        return theMethod.getName();</span>
     }
 
     /**
@@ -68,12 +95,12 @@ public class ThemisStatsMethod
      * @return the method
      */
     public ThemisMethodInstance getUnderlying() {
-<span class="nc" id="L71">        return theMethod;</span>
+<span class="nc" id="L98">        return theMethod;</span>
     }
 
     @Override
     public ThemisStats getStats() {
-<span class="nc" id="L76">        return theStats;</span>
+<span class="nc" id="L103">        return theStats;</span>
     }
 
     /**
@@ -82,17 +109,17 @@ public class ThemisStatsMethod
      * @return the classes
      */
     public List&lt;ThemisStatsElement&gt; getClasses() {
-<span class="nc" id="L85">        return theClasses;</span>
+<span class="nc" id="L112">        return theClasses;</span>
     }
 
     @Override
     public void addClass(final ThemisStatsElement pElement) {
-<span class="fc" id="L90">        theClasses.add(pElement);</span>
-<span class="fc" id="L91">    }</span>
+<span class="fc" id="L117">        theClasses.add(pElement);</span>
+<span class="fc" id="L118">    }</span>
 
     @Override
     public String toString() {
-<span class="nc" id="L95">        return theMethod.toString();</span>
+<span class="nc" id="L122">        return theMethod.toString();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -28,10 +28,6 @@ io.github.tonywasher.joceanus.gordianknot.api.random.spec
 io.github.tonywasher.joceanus.gordianknot.api.sign
 io.github.tonywasher.joceanus.gordianknot.api.sign.spec
 io.github.tonywasher.joceanus.gordianknot.api.zip
-io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base
-io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher
-io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest
-io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac
 io.github.tonywasher.joceanus.gordianknot.util
 module:io.github.tonywasher.joceanus.metis
 io.github.tonywasher.joceanus.metis.data
@@ -76,7 +72,7 @@ io.github.tonywasher.joceanus.prometheus.validate
 io.github.tonywasher.joceanus.prometheus.views
 module:io.github.tonywasher.joceanus.prometheus.sheet.api
 io.github.tonywasher.joceanus.prometheus.service.sheet
-module:io.github.tonywasher.joceanus.tethys.core
+module:io.github.tonywasher.joceanus.tethys.api
 io.github.tonywasher.joceanus.tethys.api.base
 io.github.tonywasher.joceanus.tethys.api.button
 io.github.tonywasher.joceanus.tethys.api.chart
@@ -88,6 +84,7 @@ io.github.tonywasher.joceanus.tethys.api.menu
 io.github.tonywasher.joceanus.tethys.api.pane
 io.github.tonywasher.joceanus.tethys.api.table
 io.github.tonywasher.joceanus.tethys.api.thread
+module:io.github.tonywasher.joceanus.tethys.core
 io.github.tonywasher.joceanus.tethys.core.base
 io.github.tonywasher.joceanus.tethys.core.button
 io.github.tonywasher.joceanus.tethys.core.chart
@@ -99,6 +96,7 @@ io.github.tonywasher.joceanus.tethys.core.menu
 io.github.tonywasher.joceanus.tethys.core.pane
 io.github.tonywasher.joceanus.tethys.core.table
 io.github.tonywasher.joceanus.tethys.core.thread
+module:io.github.tonywasher.joceanus.tethys.helper
 io.github.tonywasher.joceanus.tethys.helper
 module:io.github.tonywasher.joceanus.tethys.javafx
 io.github.tonywasher.joceanus.tethys.javafx.launch

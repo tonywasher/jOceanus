@@ -18,9 +18,9 @@ package io.github.tonywasher.joceanus.moneywise.data.statics;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSimpleId;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedItem;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyDataType;
 
 /**
  * MoneyWise Item Types.
@@ -126,7 +126,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.Prometheu
         /* If we have not yet loaded the id */
 <span class="fc bfc" id="L127" title="All 2 branches covered.">        if (theNameId == null) {</span>
             /* Load the id */
-<span class="fc" id="L129">            theNameId = MetisFieldSimpleId.convertResource(MoneyWiseStaticResource.getKeyForDataType(this));</span>
+<span class="fc" id="L129">            theNameId = MetisFieldSimpleId.convertResource(bundleIdForDataType(this));</span>
         }
 
         /* Return the name id */
@@ -152,7 +152,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.Prometheu
         /* If we have not yet loaded the id */
 <span class="fc bfc" id="L153" title="All 2 branches covered.">        if (theListId == null) {</span>
             /* Load the id */
-<span class="fc" id="L155">            theListId = MetisFieldSimpleId.convertResource(MoneyWiseStaticResource.getKeyForDataList(this));</span>
+<span class="fc" id="L155">            theListId = MetisFieldSimpleId.convertResource(bundleIdForDataList(this));</span>
         }
 
         /* return the list id */
@@ -174,43 +174,59 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.Prometheu
     }
 
     @Override
-    public Class&lt;? extends MetisFieldVersionedItem&gt; getClazz() {
-<span class="nc bnc" id="L178" title="All 12 branches missed.">        switch (this) {</span>
-            case DEPOSITTYPE:
-<span class="nc" id="L180">                return MoneyWiseDepositCategoryType.class;</span>
-            case CASHTYPE:
-<span class="nc" id="L182">                return MoneyWiseCashCategoryType.class;</span>
-            case LOANTYPE:
-<span class="nc" id="L184">                return MoneyWiseLoanCategoryType.class;</span>
-            case PAYEETYPE:
-<span class="nc" id="L186">                return MoneyWisePayeeType.class;</span>
-            case PORTFOLIOTYPE:
-<span class="nc" id="L188">                return MoneyWisePortfolioType.class;</span>
-            case SECURITYTYPE:
-<span class="nc" id="L190">                return MoneyWiseSecurityType.class;</span>
-            case TRANSTYPE:
-<span class="nc" id="L192">                return MoneyWiseTransCategoryType.class;</span>
-            case CURRENCY:
-<span class="nc" id="L194">                return MoneyWiseCurrency.class;</span>
-            case TAXBASIS:
-<span class="nc" id="L196">                return MoneyWiseTaxBasis.class;</span>
-            case ACCOUNTINFOTYPE:
-<span class="nc" id="L198">                return MoneyWiseAccountInfoType.class;</span>
-            case TRANSINFOTYPE:
-<span class="nc" id="L200">                return MoneyWiseTransInfoType.class;</span>
-            default:
-<span class="nc" id="L202">                return null;</span>
-        }
-    }
-
-    @Override
     public String getId() {
-<span class="fc" id="L208">        return getItemName();</span>
+<span class="fc" id="L178">        return getItemName();</span>
     }
 
     @Override
     public Integer getItemKey() {
-<span class="fc" id="L213">        return theKey;</span>
+<span class="fc" id="L183">        return theKey;</span>
+    }
+
+    /**
+     * Obtain the resource bundleId for the dataType.
+     *
+     * @param pType the dataType
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForDataType(final MoneyWiseStaticDataType pType) {
+<span class="pc bpc" id="L193" title="1 of 12 branches missed.">        return switch (pType) {</span>
+<span class="fc" id="L194">            case DEPOSITTYPE -&gt; MoneyWiseStaticResource.DEPOSITTYPE_NAME;</span>
+<span class="fc" id="L195">            case CASHTYPE -&gt; MoneyWiseStaticResource.CASHTYPE_NAME;</span>
+<span class="fc" id="L196">            case LOANTYPE -&gt; MoneyWiseStaticResource.LOANTYPE_NAME;</span>
+<span class="fc" id="L197">            case PORTFOLIOTYPE -&gt; MoneyWiseStaticResource.PORTFOLIOTYPE_NAME;</span>
+<span class="fc" id="L198">            case SECURITYTYPE -&gt; MoneyWiseStaticResource.SECURITYTYPE_NAME;</span>
+<span class="fc" id="L199">            case PAYEETYPE -&gt; MoneyWiseStaticResource.PAYEETYPE_NAME;</span>
+<span class="fc" id="L200">            case TRANSTYPE -&gt; MoneyWiseStaticResource.TRANSTYPE_NAME;</span>
+<span class="fc" id="L201">            case TAXBASIS -&gt; MoneyWiseStaticResource.TAXBASIS_NAME;</span>
+<span class="fc" id="L202">            case CURRENCY -&gt; MoneyWiseStaticResource.CURRENCY_NAME;</span>
+<span class="fc" id="L203">            case ACCOUNTINFOTYPE -&gt; MoneyWiseStaticResource.ACCOUNTINFOTYPE_NAME;</span>
+<span class="fc" id="L204">            case TRANSINFOTYPE -&gt; MoneyWiseStaticResource.TRANSINFOTYPE_NAME;</span>
+<span class="nc" id="L205">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the dataType List.
+     *
+     * @param pType the dataType
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForDataList(final MoneyWiseStaticDataType pType) {
+<span class="pc bpc" id="L216" title="1 of 12 branches missed.">        return switch (pType) {</span>
+<span class="fc" id="L217">            case DEPOSITTYPE -&gt; MoneyWiseStaticResource.DEPOSITTYPE_LIST;</span>
+<span class="fc" id="L218">            case CASHTYPE -&gt; MoneyWiseStaticResource.CASHTYPE_LIST;</span>
+<span class="fc" id="L219">            case LOANTYPE -&gt; MoneyWiseStaticResource.LOANTYPE_LIST;</span>
+<span class="fc" id="L220">            case PORTFOLIOTYPE -&gt; MoneyWiseStaticResource.PORTFOLIOTYPE_LIST;</span>
+<span class="fc" id="L221">            case SECURITYTYPE -&gt; MoneyWiseStaticResource.SECURITYTYPE_LIST;</span>
+<span class="fc" id="L222">            case PAYEETYPE -&gt; MoneyWiseStaticResource.PAYEETYPE_LIST;</span>
+<span class="fc" id="L223">            case TRANSTYPE -&gt; MoneyWiseStaticResource.TRANSTYPE_LIST;</span>
+<span class="fc" id="L224">            case TAXBASIS -&gt; MoneyWiseStaticResource.TAXBASIS_LIST;</span>
+<span class="fc" id="L225">            case CURRENCY -&gt; MoneyWiseStaticResource.CURRENCY_LIST;</span>
+<span class="fc" id="L226">            case ACCOUNTINFOTYPE -&gt; MoneyWiseStaticResource.ACCOUNTINFOTYPE_LIST;</span>
+<span class="fc" id="L227">            case TRANSINFOTYPE -&gt; MoneyWiseStaticResource.TRANSINFOTYPE_LIST;</span>
+<span class="nc" id="L228">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
@@ -36,6 +35,8 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityCla
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityType.MoneyWiseSecurityTypeList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -51,7 +52,7 @@ public class MoneyWiseValidateSecurity
     /**
      * New Account name.
      */
-<span class="fc" id="L54">    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.SECURITY_NEWACCOUNT.getValue();</span>
+<span class="fc" id="L55">    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.SECURITY_NEWACCOUNT.getValue();</span>
 
     /**
      * The infoSet validator.
@@ -61,117 +62,118 @@ public class MoneyWiseValidateSecurity
     /**
      * Constructor.
      */
-<span class="fc" id="L64">    MoneyWiseValidateSecurity() {</span>
-<span class="fc" id="L65">        theInfoSet = new MoneyWiseValidateSecurityInfoSet();</span>
-<span class="fc" id="L66">    }</span>
+<span class="fc" id="L65">    MoneyWiseValidateSecurity() {</span>
+<span class="fc" id="L66">        theInfoSet = new MoneyWiseValidateSecurityInfoSet();</span>
+<span class="fc" id="L67">    }</span>
 
     @Override
     public void setEditSet(final PrometheusEditSet pEditSet) {
-<span class="fc" id="L70">        super.setEditSet(pEditSet);</span>
-<span class="fc" id="L71">        theInfoSet.storeEditSet(pEditSet);</span>
-<span class="fc" id="L72">    }</span>
+<span class="fc" id="L71">        super.setEditSet(pEditSet);</span>
+<span class="fc" id="L72">        theInfoSet.storeEditSet(pEditSet);</span>
+<span class="fc" id="L73">    }</span>
 
     @Override
-    public void validate(final PrometheusDataItem pSecurity) {
-<span class="fc" id="L76">        final MoneyWiseSecurity mySecurity = (MoneyWiseSecurity) pSecurity;</span>
-<span class="fc" id="L77">        final MoneyWiseSecurityList myList = mySecurity.getList();</span>
-<span class="fc" id="L78">        final MoneyWisePayee myParent = mySecurity.getParent();</span>
-<span class="fc" id="L79">        final MoneyWiseSecurityType mySecType = mySecurity.getCategory();</span>
-<span class="fc" id="L80">        final MoneyWiseCurrency myCurrency = mySecurity.getAssetCurrency();</span>
-<span class="fc" id="L81">        final String mySymbol = mySecurity.getSymbol();</span>
+    public void validate(final PrometheusDataItemCtl pSecurity) {
+<span class="fc" id="L77">        final MoneyWiseSecurity mySecurity = (MoneyWiseSecurity) pSecurity;</span>
+<span class="fc" id="L78">        final MoneyWiseSecurityList myList = mySecurity.getList();</span>
+<span class="fc" id="L79">        final MoneyWisePayee myParent = mySecurity.getParent();</span>
+<span class="fc" id="L80">        final MoneyWiseSecurityType mySecType = mySecurity.getCategory();</span>
+<span class="fc" id="L81">        final MoneyWiseCurrency myCurrency = mySecurity.getAssetCurrency();</span>
+<span class="fc" id="L82">        final String mySymbol = mySecurity.getSymbol();</span>
 
         /* Validate base components */
-<span class="fc" id="L84">        super.validate(pSecurity);</span>
+<span class="fc" id="L85">        super.validate(pSecurity);</span>
 
         /* SecurityType must be non-null */
-<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        if (mySecType == null) {</span>
-<span class="nc" id="L88">            pSecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">        if (mySecType == null) {</span>
+<span class="nc" id="L89">            mySecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);</span>
         } else {
             /* Access the class */
-<span class="fc" id="L91">            final MoneyWiseSecurityClass myClass = mySecType.getSecurityClass();</span>
+<span class="fc" id="L92">            final MoneyWiseSecurityClass myClass = mySecType.getSecurityClass();</span>
 
             /* SecurityType must be enabled */
-<span class="pc bpc" id="L94" title="1 of 2 branches missed.">            if (!mySecType.getEnabled()) {</span>
-<span class="nc" id="L95">                pSecurity.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseBasicResource.CATEGORY_NAME);</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">            if (!mySecType.getEnabled()) {</span>
+<span class="nc" id="L96">                mySecurity.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseBasicResource.CATEGORY_NAME);</span>
             }
 
             /* If the SecurityType is singular */
-<span class="fc bfc" id="L99" title="All 2 branches covered.">            if (myClass.isSingular()) {</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            if (myClass.isSingular()) {</span>
                 /* Count the elements of this class */
-<span class="fc" id="L101">                final MoneyWiseSecurityDataMap myMap = myList.getDataMap();</span>
-<span class="pc bpc" id="L102" title="1 of 2 branches missed.">                if (!myMap.validSingularCount(myClass)) {</span>
-<span class="nc" id="L103">                    pSecurity.addError(PrometheusDataItem.ERROR_MULT, MoneyWiseBasicResource.CATEGORY_NAME);</span>
+<span class="fc" id="L102">                final MoneyWiseSecurityDataMap myMap = myList.getDataMap();</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">                if (!myMap.validSingularCount(myClass)) {</span>
+<span class="nc" id="L104">                    mySecurity.addError(PrometheusDataItem.ERROR_MULT, MoneyWiseBasicResource.CATEGORY_NAME);</span>
                 }
             }
         }
 
         /* Currency must be non-null and enabled */
-<span class="pc bpc" id="L109" title="1 of 2 branches missed.">        if (myCurrency == null) {</span>
-<span class="nc" id="L110">            pSecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);</span>
-<span class="pc bpc" id="L111" title="1 of 2 branches missed.">        } else if (!myCurrency.getEnabled()) {</span>
-<span class="nc" id="L112">            pSecurity.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        if (myCurrency == null) {</span>
+<span class="nc" id="L111">            mySecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">        } else if (!myCurrency.getEnabled()) {</span>
+<span class="nc" id="L113">            mySecurity.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);</span>
         }
 
         /* Parent must be non-null */
-<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if (myParent == null) {</span>
-<span class="nc" id="L117">            pSecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        if (myParent == null) {</span>
+<span class="nc" id="L118">            mySecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);</span>
         } else {
             /* If we are open then parent must be open */
-<span class="pc bpc" id="L120" title="2 of 4 branches missed.">            if (!mySecurity.isClosed() &amp;&amp; Boolean.TRUE.equals(myParent.isClosed())) {</span>
-<span class="nc" id="L121">                pSecurity.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">            if (!Boolean.TRUE.equals(mySecurity.isClosed())</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">                    &amp;&amp; Boolean.TRUE.equals(myParent.isClosed())) {</span>
+<span class="nc" id="L123">                mySecurity.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);</span>
             }
 
             /* Check class */
-<span class="pc bpc" id="L125" title="1 of 2 branches missed.">            if (mySecType != null) {</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">            if (mySecType != null) {</span>
                 /* Access the classes */
-<span class="fc" id="L127">                final MoneyWiseSecurityClass myClass = mySecType.getSecurityClass();</span>
-<span class="fc" id="L128">                final MoneyWisePayeeClass myParClass = myParent.getCategoryClass();</span>
+<span class="fc" id="L129">                final MoneyWiseSecurityClass myClass = mySecType.getSecurityClass();</span>
+<span class="fc" id="L130">                final MoneyWisePayeeClass myParClass = myParent.getCategoryClass();</span>
 
                 /* Parent must be suitable */
-<span class="pc bpc" id="L131" title="1 of 2 branches missed.">                if (!myParClass.canParentSecurity(myClass)) {</span>
-<span class="nc" id="L132">                    pSecurity.addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">                if (!myParClass.canParentSecurity(myClass)) {</span>
+<span class="nc" id="L134">                    mySecurity.addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);</span>
                 }
             }
         }
 
         /* If we have a securityType */
-<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        if (mySecType != null) {</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        if (mySecType != null) {</span>
             /* Check symbol rules */
-<span class="fc bfc" id="L140" title="All 2 branches covered.">            if (mySecType.getSecurityClass().needsSymbol()) {</span>
-<span class="pc bpc" id="L141" title="1 of 2 branches missed.">                if (mySymbol == null) {</span>
-<span class="nc" id="L142">                    pSecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));</span>
-<span class="pc bpc" id="L143" title="1 of 2 branches missed.">                } else if (!myList.validSymbolCount(mySymbol)) {</span>
-<span class="nc" id="L144">                    pSecurity.addError(PrometheusDataItem.ERROR_DUPLICATE, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">            if (mySecType.getSecurityClass().needsSymbol()) {</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">                if (mySymbol == null) {</span>
+<span class="nc" id="L144">                    mySecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">                } else if (!myList.validSymbolCount(mySymbol)) {</span>
+<span class="nc" id="L146">                    mySecurity.addError(PrometheusDataItem.ERROR_DUPLICATE, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));</span>
                 }
-<span class="pc bpc" id="L146" title="1 of 2 branches missed.">            } else if (mySymbol != null) {</span>
-<span class="nc" id="L147">                pSecurity.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">            } else if (mySymbol != null) {</span>
+<span class="nc" id="L149">                mySecurity.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));</span>
             }
         }
 
         /* If we have an infoSet */
-<span class="pc bpc" id="L152" title="1 of 2 branches missed.">        if (mySecurity.getInfoSet() != null) {</span>
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        if (mySecurity.getInfoSet() != null) {</span>
             /* Validate the InfoSet */
-<span class="fc" id="L154">            theInfoSet.validate(mySecurity.getInfoSet());</span>
+<span class="fc" id="L156">            theInfoSet.validate(mySecurity.getInfoSet());</span>
         }
 
         /* Set validation flag */
-<span class="pc bpc" id="L158" title="1 of 2 branches missed.">        if (!pSecurity.hasErrors()) {</span>
-<span class="fc" id="L159">            pSecurity.setValidEdit();</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">        if (!mySecurity.hasErrors()) {</span>
+<span class="fc" id="L161">            mySecurity.setValidEdit();</span>
         }
-<span class="fc" id="L161">    }</span>
+<span class="fc" id="L163">    }</span>
 
     @Override
     public void validateName(final MoneyWiseAssetBase pSecurity,
                              final String pName) {
         /* Perform basic checks */
-<span class="fc" id="L167">        super.validateName(pSecurity, pName);</span>
+<span class="fc" id="L169">        super.validateName(pSecurity, pName);</span>
 
         /* Check that the name is not a reserved name */
-<span class="pc bpc" id="L170" title="1 of 2 branches missed.">        if (pName.equals(MoneyWiseSecurityHolding.SECURITYHOLDING_NEW)</span>
-<span class="pc bpc" id="L171" title="1 of 2 branches missed.">                || pName.equals(MoneyWiseValidatePortfolio.NAME_CASHACCOUNT)) {</span>
-<span class="nc" id="L172">            pSecurity.addError(ERROR_RESERVED, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        if (pName.equals(MoneyWiseSecurityHolding.SECURITYHOLDING_NEW)</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">                || pName.equals(MoneyWiseValidatePortfolio.NAME_CASHACCOUNT)) {</span>
+<span class="nc" id="L174">            pSecurity.addError(ERROR_RESERVED, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
         }
-<span class="fc" id="L174">    }</span>
+<span class="fc" id="L176">    }</span>
 
     /**
      * Determine if an infoSet class is required.
@@ -180,36 +182,36 @@ public class MoneyWiseValidateSecurity
      * @return the status
      */
     public MetisFieldRequired isClassRequired(final MoneyWiseAccountInfoClass pClass) {
-<span class="nc" id="L183">        return theInfoSet.isClassRequired(pClass);</span>
+<span class="nc" id="L185">        return theInfoSet.isClassRequired(pClass);</span>
     }
 
     @Override
     public void setDefaults(final MoneyWiseSecurity pSecurity) throws OceanusException {
         /* Set values */
-<span class="nc" id="L189">        final MoneyWiseSecurityList myList = pSecurity.getList();</span>
-<span class="nc" id="L190">        pSecurity.setName(getUniqueName(myList, NAME_NEWACCOUNT));</span>
-<span class="nc" id="L191">        pSecurity.setCategory(getDefaultSecurityType());</span>
-<span class="nc" id="L192">        pSecurity.setAssetCurrency(getReportingCurrency());</span>
-<span class="nc" id="L193">        pSecurity.setSymbol(pSecurity.getName());</span>
-<span class="nc" id="L194">        pSecurity.setClosed(Boolean.FALSE);</span>
-<span class="nc" id="L195">        autoCorrect(pSecurity);</span>
-<span class="nc" id="L196">    }</span>
+<span class="nc" id="L191">        final MoneyWiseSecurityList myList = pSecurity.getList();</span>
+<span class="nc" id="L192">        pSecurity.setName(getUniqueName(myList, NAME_NEWACCOUNT));</span>
+<span class="nc" id="L193">        pSecurity.setCategory(getDefaultSecurityType());</span>
+<span class="nc" id="L194">        pSecurity.setAssetCurrency(getReportingCurrency());</span>
+<span class="nc" id="L195">        pSecurity.setSymbol(pSecurity.getName());</span>
+<span class="nc" id="L196">        pSecurity.setClosed(Boolean.FALSE);</span>
+<span class="nc" id="L197">        autoCorrect(pSecurity);</span>
+<span class="nc" id="L198">    }</span>
 
     @Override
     public void autoCorrect(final MoneyWiseSecurity pSecurity) throws OceanusException {
         /* Access category class and parent */
-<span class="nc" id="L201">        final MoneyWiseSecurityClass myClass = pSecurity.getCategoryClass();</span>
-<span class="nc" id="L202">        final MoneyWisePayee myParent = pSecurity.getParent();</span>
+<span class="nc" id="L203">        final MoneyWiseSecurityClass myClass = pSecurity.getCategoryClass();</span>
+<span class="nc" id="L204">        final MoneyWisePayee myParent = pSecurity.getParent();</span>
 
         /* Ensure that we have a valid parent */
-<span class="nc bnc" id="L205" title="All 2 branches missed.">        if (myParent == null</span>
-<span class="nc bnc" id="L206" title="All 2 branches missed.">                || myParent.getCategoryClass().canParentSecurity(myClass)) {</span>
-<span class="nc" id="L207">            pSecurity.setParent(getDefaultParent(pSecurity));</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">        if (myParent == null</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">                || myParent.getCategoryClass().canParentSecurity(myClass)) {</span>
+<span class="nc" id="L209">            pSecurity.setParent(getDefaultParent(pSecurity));</span>
         }
 
         /* autoCorrect the infoSet */
-<span class="nc" id="L211">        theInfoSet.autoCorrect(pSecurity.getInfoSet());</span>
-<span class="nc" id="L212">    }</span>
+<span class="nc" id="L213">        theInfoSet.autoCorrect(pSecurity.getInfoSet());</span>
+<span class="nc" id="L214">    }</span>
 
     /**
      * Obtain security type for new security account.
@@ -218,20 +220,20 @@ public class MoneyWiseValidateSecurity
      */
     private MoneyWiseSecurityType getDefaultSecurityType() {
         /* loop through the security types */
-<span class="nc" id="L221">        final MoneyWiseSecurityTypeList myTypes</span>
-<span class="nc" id="L222">                = getEditSet().getDataList(MoneyWiseStaticDataType.SECURITYTYPE, MoneyWiseSecurityTypeList.class);</span>
-<span class="nc" id="L223">        final Iterator&lt;MoneyWiseSecurityType&gt; myIterator = myTypes.iterator();</span>
-<span class="nc bnc" id="L224" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L225">            final MoneyWiseSecurityType myType = myIterator.next();</span>
+<span class="nc" id="L223">        final MoneyWiseSecurityTypeList myTypes</span>
+<span class="nc" id="L224">                = getEditSet().getDataList(MoneyWiseStaticDataType.SECURITYTYPE, MoneyWiseSecurityTypeList.class);</span>
+<span class="nc" id="L225">        final Iterator&lt;MoneyWiseSecurityType&gt; myIterator = myTypes.iterator();</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L227">            final MoneyWiseSecurityType myType = myIterator.next();</span>
 
             /* Ignore deleted types */
-<span class="nc bnc" id="L228" title="All 2 branches missed.">            if (!myType.isDeleted()) {</span>
-<span class="nc" id="L229">                return myType;</span>
+<span class="nc bnc" id="L230" title="All 2 branches missed.">            if (!myType.isDeleted()) {</span>
+<span class="nc" id="L231">                return myType;</span>
             }
-<span class="nc" id="L231">        }</span>
+<span class="nc" id="L233">        }</span>
 
         /* Return no category */
-<span class="nc" id="L234">        return null;</span>
+<span class="nc" id="L236">        return null;</span>
     }
 
     /**
@@ -242,27 +244,27 @@ public class MoneyWiseValidateSecurity
      */
     private MoneyWisePayee getDefaultParent(final MoneyWiseSecurity pSecurity) {
         /* Access details */
-<span class="nc" id="L245">        final MoneyWisePayeeList myPayees = getEditSet().getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);</span>
-<span class="nc" id="L246">        final MoneyWiseSecurityClass myClass = pSecurity.getCategoryClass();</span>
+<span class="nc" id="L247">        final MoneyWisePayeeList myPayees = getEditSet().getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);</span>
+<span class="nc" id="L248">        final MoneyWiseSecurityClass myClass = pSecurity.getCategoryClass();</span>
 
         /* loop through the payees */
-<span class="nc" id="L249">        final Iterator&lt;MoneyWisePayee&gt; myIterator = myPayees.iterator();</span>
-<span class="nc bnc" id="L250" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L251">            final MoneyWisePayee myPayee = myIterator.next();</span>
+<span class="nc" id="L251">        final Iterator&lt;MoneyWisePayee&gt; myIterator = myPayees.iterator();</span>
+<span class="nc bnc" id="L252" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L253">            final MoneyWisePayee myPayee = myIterator.next();</span>
 
             /* Ignore deleted and closed payees */
-<span class="nc bnc" id="L254" title="All 4 branches missed.">            if (myPayee.isDeleted() || Boolean.TRUE.equals(myPayee.isClosed())) {</span>
-<span class="nc" id="L255">                continue;</span>
+<span class="nc bnc" id="L256" title="All 4 branches missed.">            if (myPayee.isDeleted() || Boolean.TRUE.equals(myPayee.isClosed())) {</span>
+<span class="nc" id="L257">                continue;</span>
             }
 
             /* If the payee can parent */
-<span class="nc bnc" id="L259" title="All 2 branches missed.">            if (myPayee.getCategoryClass().canParentSecurity(myClass)) {</span>
-<span class="nc" id="L260">                return myPayee;</span>
+<span class="nc bnc" id="L261" title="All 2 branches missed.">            if (myPayee.getCategoryClass().canParentSecurity(myClass)) {</span>
+<span class="nc" id="L262">                return myPayee;</span>
             }
-<span class="nc" id="L262">        }</span>
+<span class="nc" id="L264">        }</span>
 
         /* Return no payee */
-<span class="nc" id="L265">        return null;</span>
+<span class="nc" id="L267">        return null;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

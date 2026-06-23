@@ -16,9 +16,9 @@
  */
 package io.github.tonywasher.joceanus.prometheus.database;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyDataType;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 
@@ -36,7 +36,7 @@ public abstract class PrometheusTableEncrypted&lt;T extends PrometheusEncryptedD
      * @param pDatabase the database control
      * @param pTabName  the table name
      */
-    protected PrometheusTableEncrypted(final PrometheusDataStore pDatabase,
+    protected PrometheusTableEncrypted(final PrometheusDatabaseControl pDatabase,
                                        final String pTabName) {
 <span class="nc" id="L41">        super(pDatabase, pTabName);</span>
 <span class="nc" id="L42">        final PrometheusTableDefinition myTableDef = getTableDef();</span>
@@ -66,4 +66,4 @@ public abstract class PrometheusTableEncrypted&lt;T extends PrometheusEncryptedD
 <span class="nc" id="L66">        return myValues;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

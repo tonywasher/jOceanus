@@ -28,10 +28,12 @@ import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedPair;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Iterator;
@@ -45,25 +47,25 @@ public class MoneyWiseTransTag
     /**
      * Object name.
      */
-<span class="fc" id="L48">    public static final String OBJECT_NAME = MoneyWiseBasicDataType.TRANSTAG.getItemName();</span>
+<span class="fc" id="L50">    public static final String OBJECT_NAME = MoneyWiseBasicDataType.TRANSTAG.getItemName();</span>
 
     /**
      * List name.
      */
-<span class="fc" id="L53">    public static final String LIST_NAME = MoneyWiseBasicDataType.TRANSTAG.getListName();</span>
+<span class="fc" id="L55">    public static final String LIST_NAME = MoneyWiseBasicDataType.TRANSTAG.getListName();</span>
 
     /**
      * Local Report fields.
      */
-<span class="fc" id="L58">    private static final PrometheusEncryptedFieldSet&lt;MoneyWiseTransTag&gt; FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(MoneyWiseTransTag.class);</span>
+<span class="fc" id="L60">    private static final PrometheusEncryptedFieldSet&lt;MoneyWiseTransTag&gt; FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(MoneyWiseTransTag.class);</span>
 
     /*
      * FieldIds.
      */
     static {
-<span class="fc" id="L64">        FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_NAME, NAMELEN);</span>
-<span class="fc" id="L65">        FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_DESC, DESCLEN);</span>
-<span class="fc" id="L66">    }</span>
+<span class="fc" id="L66">        FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_NAME, NAMELEN);</span>
+<span class="fc" id="L67">        FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_DESC, DESCLEN);</span>
+<span class="fc" id="L68">    }</span>
 
     /**
      * Copy Constructor.
@@ -74,8 +76,8 @@ public class MoneyWiseTransTag
     protected MoneyWiseTransTag(final MoneyWiseTransTagList pList,
                                 final MoneyWiseTransTag pClass) {
         /* Set standard values */
-<span class="fc" id="L77">        super(pList, pClass);</span>
-<span class="fc" id="L78">    }</span>
+<span class="fc" id="L79">        super(pList, pClass);</span>
+<span class="fc" id="L80">    }</span>
 
     /**
      * Values constructor.
@@ -87,32 +89,32 @@ public class MoneyWiseTransTag
     private MoneyWiseTransTag(final MoneyWiseTransTagList pList,
                               final PrometheusDataValues pValues) throws OceanusException {
         /* Initialise the item */
-<span class="fc" id="L90">        super(pList, pValues);</span>
+<span class="fc" id="L92">        super(pList, pValues);</span>
 
         /* Protect against exceptions */
         try {
             /* Store the Name */
-<span class="fc" id="L95">            Object myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
-<span class="fc bfc" id="L96" title="All 2 branches covered.">            if (myValue instanceof String s) {</span>
-<span class="fc" id="L97">                setValueName(s);</span>
-<span class="pc bpc" id="L98" title="1 of 2 branches missed.">            } else if (myValue instanceof byte[] ba) {</span>
-<span class="fc" id="L99">                setValueName(ba);</span>
+<span class="fc" id="L97">            Object myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">            if (myValue instanceof String s) {</span>
+<span class="fc" id="L99">                setValueName(s);</span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">            } else if (myValue instanceof byte[] ba) {</span>
+<span class="fc" id="L101">                setValueName(ba);</span>
             }
 
             /* Store the Description */
-<span class="fc" id="L103">            myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
-<span class="pc bpc" id="L104" title="1 of 2 branches missed.">            if (myValue instanceof String s) {</span>
-<span class="nc" id="L105">                setValueDesc(s);</span>
-<span class="pc bpc" id="L106" title="1 of 2 branches missed.">            } else if (myValue instanceof byte[] ba) {</span>
-<span class="nc" id="L107">                setValueDesc(ba);</span>
+<span class="fc" id="L105">            myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">            if (myValue instanceof String s) {</span>
+<span class="nc" id="L107">                setValueDesc(s);</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">            } else if (myValue instanceof byte[] ba) {</span>
+<span class="nc" id="L109">                setValueDesc(ba);</span>
             }
 
             /* Catch Exceptions */
-<span class="nc" id="L111">        } catch (OceanusException e) {</span>
+<span class="nc" id="L113">        } catch (OceanusException e) {</span>
             /* Pass on exception */
-<span class="nc" id="L113">            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);</span>
-<span class="fc" id="L114">        }</span>
-<span class="fc" id="L115">    }</span>
+<span class="nc" id="L115">            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);</span>
+<span class="fc" id="L116">        }</span>
+<span class="fc" id="L117">    }</span>
 
     /**
      * Edit Constructor.
@@ -120,42 +122,42 @@ public class MoneyWiseTransTag
      * @param pList the list
      */
     public MoneyWiseTransTag(final MoneyWiseTransTagList pList) {
-<span class="fc" id="L123">        super(pList, 0);</span>
-<span class="fc" id="L124">        setNextDataKeySet();</span>
-<span class="fc" id="L125">    }</span>
+<span class="fc" id="L125">        super(pList, 0);</span>
+<span class="fc" id="L126">        setNextDataKeySet();</span>
+<span class="fc" id="L127">    }</span>
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
-<span class="fc" id="L129">        return FIELD_DEFS;</span>
+<span class="fc" id="L131">        return FIELD_DEFS;</span>
     }
 
     @Override
     public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L134">        return toString();</span>
+<span class="nc" id="L136">        return toString();</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L139">        return getName();</span>
+<span class="nc" id="L141">        return getName();</span>
     }
 
     @Override
     public boolean includeXmlField(final MetisDataFieldId pField) {
         /* Determine whether fields should be included */
-<span class="fc bfc" id="L145" title="All 2 branches covered.">        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(pField)) {</span>
-<span class="fc" id="L146">            return true;</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(pField)) {</span>
+<span class="fc" id="L148">            return true;</span>
         }
-<span class="fc bfc" id="L148" title="All 2 branches covered.">        if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(pField)) {</span>
-<span class="pc bpc" id="L149" title="1 of 2 branches missed.">            return getDesc() != null;</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">        if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(pField)) {</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">            return getDesc() != null;</span>
         }
 
         /* Pass call on */
-<span class="fc" id="L153">        return super.includeXmlField(pField);</span>
+<span class="fc" id="L155">        return super.includeXmlField(pField);</span>
     }
 
     @Override
     public String getName() {
-<span class="fc" id="L158">        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_NAME, String.class);</span>
+<span class="fc" id="L160">        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_NAME, String.class);</span>
     }
 
     /**
@@ -164,7 +166,7 @@ public class MoneyWiseTransTag
      * @return the bytes
      */
     public byte[] getNameBytes() {
-<span class="fc" id="L167">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="fc" id="L169">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
     }
 
     /**
@@ -173,7 +175,7 @@ public class MoneyWiseTransTag
      * @return the Field
      */
     private PrometheusEncryptedPair getNameField() {
-<span class="nc" id="L176">        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="nc" id="L178">        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
     }
 
     /**
@@ -182,7 +184,7 @@ public class MoneyWiseTransTag
      * @return the description
      */
     public String getDesc() {
-<span class="fc" id="L185">        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_DESC, String.class);</span>
+<span class="fc" id="L187">        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_DESC, String.class);</span>
     }
 
     /**
@@ -191,7 +193,7 @@ public class MoneyWiseTransTag
      * @return the bytes
      */
     public byte[] getDescBytes() {
-<span class="fc" id="L194">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
+<span class="fc" id="L196">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
     }
 
     /**
@@ -200,7 +202,7 @@ public class MoneyWiseTransTag
      * @return the Field
      */
     private PrometheusEncryptedPair getDescField() {
-<span class="nc" id="L203">        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
+<span class="nc" id="L205">        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
     }
 
     /**
@@ -210,8 +212,8 @@ public class MoneyWiseTransTag
      * @throws OceanusException on error
      */
     private void setValueName(final String pValue) throws OceanusException {
-<span class="fc" id="L213">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);</span>
-<span class="fc" id="L214">    }</span>
+<span class="fc" id="L215">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);</span>
+<span class="fc" id="L216">    }</span>
 
     /**
      * Set name value.
@@ -220,8 +222,8 @@ public class MoneyWiseTransTag
      * @throws OceanusException on error
      */
     private void setValueName(final byte[] pBytes) throws OceanusException {
-<span class="fc" id="L223">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pBytes, String.class);</span>
-<span class="fc" id="L224">    }</span>
+<span class="fc" id="L225">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pBytes, String.class);</span>
+<span class="fc" id="L226">    }</span>
 
     /**
      * Set name value.
@@ -229,8 +231,8 @@ public class MoneyWiseTransTag
      * @param pValue the value
      */
     private void setValueName(final PrometheusEncryptedPair pValue) {
-<span class="nc" id="L232">        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);</span>
-<span class="nc" id="L233">    }</span>
+<span class="nc" id="L234">        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);</span>
+<span class="nc" id="L235">    }</span>
 
     /**
      * Set description value.
@@ -239,8 +241,8 @@ public class MoneyWiseTransTag
      * @throws OceanusException on error
      */
     private void setValueDesc(final String pValue) throws OceanusException {
-<span class="nc" id="L242">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);</span>
-<span class="nc" id="L243">    }</span>
+<span class="nc" id="L244">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);</span>
+<span class="nc" id="L245">    }</span>
 
     /**
      * Set description value.
@@ -249,8 +251,8 @@ public class MoneyWiseTransTag
      * @throws OceanusException on error
      */
     private void setValueDesc(final byte[] pBytes) throws OceanusException {
-<span class="nc" id="L252">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pBytes, String.class);</span>
-<span class="nc" id="L253">    }</span>
+<span class="nc" id="L254">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pBytes, String.class);</span>
+<span class="nc" id="L255">    }</span>
 
     /**
      * Set description value.
@@ -258,22 +260,17 @@ public class MoneyWiseTransTag
      * @param pValue the value
      */
     private void setValueDesc(final PrometheusEncryptedPair pValue) {
-<span class="nc" id="L261">        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);</span>
-<span class="nc" id="L262">    }</span>
-
-    @Override
-    public MoneyWiseDataSet getDataSet() {
-<span class="fc" id="L266">        return (MoneyWiseDataSet) super.getDataSet();</span>
-    }
+<span class="nc" id="L263">        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);</span>
+<span class="nc" id="L264">    }</span>
 
     @Override
     public MoneyWiseTransTag getBase() {
-<span class="fc" id="L271">        return (MoneyWiseTransTag) super.getBase();</span>
+<span class="fc" id="L268">        return (MoneyWiseTransTag) super.getBase();</span>
     }
 
     @Override
     public MoneyWiseTransTagList getList() {
-<span class="fc" id="L276">        return (MoneyWiseTransTagList) super.getList();</span>
+<span class="fc" id="L273">        return (MoneyWiseTransTagList) super.getList();</span>
     }
 
     /**
@@ -282,14 +279,14 @@ public class MoneyWiseTransTag
      * @throws OceanusException on error
      */
     public void setDefaults() throws OceanusException {
-<span class="nc" id="L285">        getList().getValidator().setDefaults(this);</span>
-<span class="nc" id="L286">    }</span>
+<span class="nc" id="L282">        getList().getValidator().setDefaults(this);</span>
+<span class="nc" id="L283">    }</span>
 
     @Override
     public int compareValues(final PrometheusDataItem pThat) {
         /* Check the names */
-<span class="fc" id="L291">        final MoneyWiseTransTag myThat = (MoneyWiseTransTag) pThat;</span>
-<span class="fc" id="L292">        return MetisDataDifference.compareObject(getName(), myThat.getName());</span>
+<span class="fc" id="L288">        final MoneyWiseTransTag myThat = (MoneyWiseTransTag) pThat;</span>
+<span class="fc" id="L289">        return MetisDataDifference.compareObject(getName(), myThat.getName());</span>
     }
 
     /**
@@ -299,8 +296,8 @@ public class MoneyWiseTransTag
      * @throws OceanusException on error
      */
     public void setName(final String pName) throws OceanusException {
-<span class="fc" id="L302">        setValueName(pName);</span>
-<span class="fc" id="L303">    }</span>
+<span class="fc" id="L299">        setValueName(pName);</span>
+<span class="fc" id="L300">    }</span>
 
     /**
      * Set a new description.
@@ -309,8 +306,8 @@ public class MoneyWiseTransTag
      * @throws OceanusException on error
      */
     public void setDescription(final String pDesc) throws OceanusException {
-<span class="nc" id="L312">        setValueDesc(pDesc);</span>
-<span class="nc" id="L313">    }</span>
+<span class="nc" id="L309">        setValueDesc(pDesc);</span>
+<span class="nc" id="L310">    }</span>
 
     /**
      * Update base tag from an edited tag.
@@ -321,33 +318,33 @@ public class MoneyWiseTransTag
     @Override
     public boolean applyChanges(final PrometheusDataItem pTag) {
         /* Can only update from a transaction tag */
-<span class="nc bnc" id="L324" title="All 2 branches missed.">        if (!(pTag instanceof MoneyWiseTransTag myTag)) {</span>
-<span class="nc" id="L325">            return false;</span>
+<span class="nc bnc" id="L321" title="All 2 branches missed.">        if (!(pTag instanceof MoneyWiseTransTag myTag)) {</span>
+<span class="nc" id="L322">            return false;</span>
         }
 
         /* Store the current detail into history */
-<span class="nc" id="L329">        pushHistory();</span>
+<span class="nc" id="L326">        pushHistory();</span>
 
         /* Update the Name if required */
-<span class="nc bnc" id="L332" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getName(), myTag.getName())) {</span>
-<span class="nc" id="L333">            setValueName(myTag.getNameField());</span>
+<span class="nc bnc" id="L329" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getName(), myTag.getName())) {</span>
+<span class="nc" id="L330">            setValueName(myTag.getNameField());</span>
         }
 
         /* Update the description if required */
-<span class="nc bnc" id="L337" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDesc(), myTag.getDesc())) {</span>
-<span class="nc" id="L338">            setValueDesc(myTag.getDescField());</span>
+<span class="nc bnc" id="L334" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDesc(), myTag.getDesc())) {</span>
+<span class="nc" id="L335">            setValueDesc(myTag.getDescField());</span>
         }
 
         /* Check for changes */
-<span class="nc" id="L342">        return checkForHistory();</span>
+<span class="nc" id="L339">        return checkForHistory();</span>
     }
 
     @Override
     public void adjustMapForItem() {
-<span class="fc" id="L347">        final MoneyWiseTransTagList myList = getList();</span>
-<span class="fc" id="L348">        final MoneyWiseTagDataMap myMap = myList.getDataMap();</span>
-<span class="fc" id="L349">        myMap.adjustForItem(this);</span>
-<span class="fc" id="L350">    }</span>
+<span class="fc" id="L344">        final MoneyWiseTransTagList myList = getList();</span>
+<span class="fc" id="L345">        final MoneyWiseTagDataMap myMap = myList.getDataMap();</span>
+<span class="fc" id="L346">        myMap.adjustForItem(this);</span>
+<span class="fc" id="L347">    }</span>
 
     /**
      * The Transaction Tag List class.
@@ -357,16 +354,16 @@ public class MoneyWiseTransTag
         /**
          * Report fields.
          */
-<span class="fc" id="L360">        private static final MetisFieldSet&lt;MoneyWiseTransTagList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTransTagList.class);</span>
+<span class="fc" id="L357">        private static final MetisFieldSet&lt;MoneyWiseTransTagList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTransTagList.class);</span>
 
         /**
          * Construct an empty CORE Tag list.
          *
          * @param pData the DataSet for the list
          */
-        protected MoneyWiseTransTagList(final MoneyWiseDataSet pData) {
-<span class="fc" id="L368">            super(MoneyWiseTransTag.class, pData, MoneyWiseBasicDataType.TRANSTAG, PrometheusListStyle.CORE);</span>
-<span class="fc" id="L369">        }</span>
+        protected MoneyWiseTransTagList(final PrometheusDataSet pData) {
+<span class="fc" id="L365">            super(MoneyWiseTransTag.class, pData, MoneyWiseBasicDataType.TRANSTAG, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L366">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -374,45 +371,40 @@ public class MoneyWiseTransTag
          * @param pSource the source List
          */
         protected MoneyWiseTransTagList(final MoneyWiseTransTagList pSource) {
-<span class="fc" id="L377">            super(pSource);</span>
-<span class="fc" id="L378">        }</span>
+<span class="fc" id="L374">            super(pSource);</span>
+<span class="fc" id="L375">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWiseTransTagList&gt; getDataFieldSet() {
-<span class="nc" id="L382">            return FIELD_DEFS;</span>
+<span class="nc" id="L379">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String listName() {
-<span class="fc" id="L387">            return LIST_NAME;</span>
+<span class="fc" id="L384">            return LIST_NAME;</span>
         }
 
         @Override
         public MetisFieldSetDef getItemFields() {
-<span class="fc" id="L392">            return MoneyWiseTransTag.FIELD_DEFS;</span>
-        }
-
-        @Override
-        public MoneyWiseDataSet getDataSet() {
-<span class="fc" id="L397">            return (MoneyWiseDataSet) super.getDataSet();</span>
+<span class="fc" id="L389">            return MoneyWiseTransTag.FIELD_DEFS;</span>
         }
 
         @Override
         public MoneyWiseTagDataMap getDataMap() {
-<span class="fc" id="L402">            return (MoneyWiseTagDataMap) super.getDataMap();</span>
+<span class="fc" id="L394">            return (MoneyWiseTagDataMap) super.getDataMap();</span>
         }
 
         @Override
         @SuppressWarnings(&quot;unchecked&quot;)
         public MoneyWiseDataValidatorDefaults&lt;MoneyWiseTransTag&gt; getValidator() {
-<span class="fc" id="L408">            return (MoneyWiseDataValidatorDefaults&lt;MoneyWiseTransTag&gt;) super.getValidator();</span>
+<span class="fc" id="L400">            return (MoneyWiseDataValidatorDefaults&lt;MoneyWiseTransTag&gt;) super.getValidator();</span>
         }
 
         @Override
         protected MoneyWiseTransTagList getEmptyList(final PrometheusListStyle pStyle) {
-<span class="fc" id="L413">            final MoneyWiseTransTagList myList = new MoneyWiseTransTagList(this);</span>
-<span class="fc" id="L414">            myList.setStyle(pStyle);</span>
-<span class="fc" id="L415">            return myList;</span>
+<span class="fc" id="L405">            final MoneyWiseTransTagList myList = new MoneyWiseTransTagList(this);</span>
+<span class="fc" id="L406">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L407">            return myList;</span>
         }
 
         /**
@@ -423,31 +415,31 @@ public class MoneyWiseTransTag
          */
         public MoneyWiseTransTagList deriveEditList(final PrometheusEditSet pEditSet) {
             /* Build an empty List */
-<span class="fc" id="L426">            final MoneyWiseTransTagList myList = getEmptyList(PrometheusListStyle.EDIT);</span>
-<span class="fc" id="L427">            myList.ensureMap();</span>
-<span class="fc" id="L428">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSTAG, myList);</span>
-<span class="fc" id="L429">            myList.getValidator().setEditSet(pEditSet);</span>
+<span class="fc" id="L418">            final MoneyWiseTransTagList myList = getEmptyList(PrometheusListStyle.EDIT);</span>
+<span class="fc" id="L419">            myList.ensureMap();</span>
+<span class="fc" id="L420">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSTAG, myList);</span>
+<span class="fc" id="L421">            myList.getValidator().setEditSet(pEditSet);</span>
 
             /* Loop through the tags */
-<span class="fc" id="L432">            final Iterator&lt;MoneyWiseTransTag&gt; myIterator = iterator();</span>
-<span class="fc bfc" id="L433" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
-<span class="fc" id="L434">                final MoneyWiseTransTag myCurr = myIterator.next();</span>
+<span class="fc" id="L424">            final Iterator&lt;MoneyWiseTransTag&gt; myIterator = iterator();</span>
+<span class="fc bfc" id="L425" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L426">                final MoneyWiseTransTag myCurr = myIterator.next();</span>
 
                 /* Ignore deleted tags */
-<span class="pc bpc" id="L437" title="1 of 2 branches missed.">                if (myCurr.isDeleted()) {</span>
-<span class="nc" id="L438">                    continue;</span>
+<span class="pc bpc" id="L429" title="1 of 2 branches missed.">                if (myCurr.isDeleted()) {</span>
+<span class="nc" id="L430">                    continue;</span>
                 }
 
                 /* Build the new linked tag and add it to the list */
-<span class="fc" id="L442">                final MoneyWiseTransTag myTag = new MoneyWiseTransTag(myList, myCurr);</span>
-<span class="fc" id="L443">                myList.add(myTag);</span>
+<span class="fc" id="L434">                final MoneyWiseTransTag myTag = new MoneyWiseTransTag(myList, myCurr);</span>
+<span class="fc" id="L435">                myList.add(myTag);</span>
 
                 /* Adjust the map */
-<span class="fc" id="L446">                myTag.adjustMapForItem();</span>
-<span class="fc" id="L447">            }</span>
+<span class="fc" id="L438">                myTag.adjustMapForItem();</span>
+<span class="fc" id="L439">            }</span>
 
             /* Return the list */
-<span class="fc" id="L450">            return myList;</span>
+<span class="fc" id="L442">            return myList;</span>
         }
 
         /**
@@ -459,13 +451,13 @@ public class MoneyWiseTransTag
         @Override
         public MoneyWiseTransTag addCopyItem(final PrometheusDataItem pTag) {
             /* Can only clone a TransactionTag */
-<span class="pc bpc" id="L462" title="1 of 2 branches missed.">            if (!(pTag instanceof MoneyWiseTransTag)) {</span>
-<span class="nc" id="L463">                throw new UnsupportedOperationException();</span>
+<span class="pc bpc" id="L454" title="1 of 2 branches missed.">            if (!(pTag instanceof MoneyWiseTransTag)) {</span>
+<span class="nc" id="L455">                throw new UnsupportedOperationException();</span>
             }
 
-<span class="fc" id="L466">            final MoneyWiseTransTag myTag = new MoneyWiseTransTag(this, (MoneyWiseTransTag) pTag);</span>
-<span class="fc" id="L467">            add(myTag);</span>
-<span class="fc" id="L468">            return myTag;</span>
+<span class="fc" id="L458">            final MoneyWiseTransTag myTag = new MoneyWiseTransTag(this, (MoneyWiseTransTag) pTag);</span>
+<span class="fc" id="L459">            add(myTag);</span>
+<span class="fc" id="L460">            return myTag;</span>
         }
 
         /**
@@ -475,52 +467,52 @@ public class MoneyWiseTransTag
          */
         @Override
         public MoneyWiseTransTag addNewItem() {
-<span class="fc" id="L478">            final MoneyWiseTransTag myTag = new MoneyWiseTransTag(this);</span>
-<span class="fc" id="L479">            add(myTag);</span>
-<span class="fc" id="L480">            return myTag;</span>
+<span class="fc" id="L470">            final MoneyWiseTransTag myTag = new MoneyWiseTransTag(this);</span>
+<span class="fc" id="L471">            add(myTag);</span>
+<span class="fc" id="L472">            return myTag;</span>
         }
 
         @Override
         public MoneyWiseTransTag findItemByName(final String pName) {
             /* look up the name in the map */
-<span class="nc" id="L486">            return getDataMap().findItemByName(pName);</span>
+<span class="nc" id="L478">            return getDataMap().findItemByName(pName);</span>
         }
 
         @Override
         public MoneyWiseTransTag addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
             /* Create the tag */
-<span class="fc" id="L492">            final MoneyWiseTransTag myTag = new MoneyWiseTransTag(this, pValues);</span>
+<span class="fc" id="L484">            final MoneyWiseTransTag myTag = new MoneyWiseTransTag(this, pValues);</span>
 
             /* Check that this TagId has not been previously added */
-<span class="pc bpc" id="L495" title="1 of 2 branches missed.">            if (!isIdUnique(myTag.getIndexedId())) {</span>
-<span class="nc" id="L496">                myTag.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L497">                throw new MoneyWiseDataException(myTag, ERROR_VALIDATION);</span>
+<span class="pc bpc" id="L487" title="1 of 2 branches missed.">            if (!isIdUnique(myTag.getIndexedId())) {</span>
+<span class="nc" id="L488">                myTag.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L489">                throw new MoneyWiseDataException(myTag, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="fc" id="L501">            add(myTag);</span>
+<span class="fc" id="L493">            add(myTag);</span>
 
             /* Return it */
-<span class="fc" id="L504">            return myTag;</span>
+<span class="fc" id="L496">            return myTag;</span>
         }
 
         @Override
         protected MoneyWiseTagDataMap allocateDataMap() {
-<span class="fc" id="L509">            return new MoneyWiseTagDataMap();</span>
+<span class="fc" id="L501">            return new MoneyWiseTagDataMap();</span>
         }
     }
 
     /**
      * The dataMap class.
      */
-<span class="fc" id="L516">    public static class MoneyWiseTagDataMap</span>
+<span class="fc" id="L508">    public static class MoneyWiseTagDataMap</span>
             extends PrometheusDataInstanceMap&lt;MoneyWiseTransTag, String&gt; {
         @Override
         public void adjustForItem(final PrometheusDataItem pItem) {
             /* Adjust name count */
-<span class="fc" id="L521">            final MoneyWiseTransTag myItem = (MoneyWiseTransTag) pItem;</span>
-<span class="fc" id="L522">            adjustForItem(myItem, myItem.getName());</span>
-<span class="fc" id="L523">        }</span>
+<span class="fc" id="L513">            final MoneyWiseTransTag myItem = (MoneyWiseTransTag) pItem;</span>
+<span class="fc" id="L514">            adjustForItem(myItem, myItem.getName());</span>
+<span class="fc" id="L515">        }</span>
 
         /**
          * find item by name.
@@ -529,7 +521,7 @@ public class MoneyWiseTransTag
          * @return the matching item
          */
         public MoneyWiseTransTag findItemByName(final String pName) {
-<span class="nc" id="L532">            return findItemByKey(pName);</span>
+<span class="nc" id="L524">            return findItemByKey(pName);</span>
         }
 
         /**
@@ -539,7 +531,7 @@ public class MoneyWiseTransTag
          * @return true/false
          */
         public boolean validNameCount(final String pName) {
-<span class="fc" id="L542">            return validKeyCount(pName);</span>
+<span class="fc" id="L534">            return validKeyCount(pName);</span>
         }
 
         /**
@@ -549,8 +541,8 @@ public class MoneyWiseTransTag
          * @return true/false
          */
         public boolean availableName(final String pName) {
-<span class="nc" id="L552">            return availableKey(pName);</span>
+<span class="nc" id="L544">            return availableKey(pName);</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

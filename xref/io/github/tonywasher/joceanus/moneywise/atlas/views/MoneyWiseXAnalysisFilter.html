@@ -38,7 +38,7 @@
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioCashBucket;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBaseBucket;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransTagBucket;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisType;
@@ -720,13 +720,13 @@
 <a class="jxr_linenumber" name="L712" href="#L712">712</a> <em class="jxr_javadoccomment">     * TaxBasis Bucket filter class.</em>
 <a class="jxr_linenumber" name="L713" href="#L713">713</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L714" href="#L714">714</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> MoneyWiseXAnalysisTaxBasisFilter
-<a class="jxr_linenumber" name="L715" href="#L715">715</a>             <strong class="jxr_keyword">extends</strong> MoneyWiseXAnalysisFilter&lt;MoneyWiseXAnalysisTaxBasisBucket, MoneyWiseXAnalysisTaxBasisAttr&gt; {
+<a class="jxr_linenumber" name="L715" href="#L715">715</a>             <strong class="jxr_keyword">extends</strong> MoneyWiseXAnalysisFilter&lt;MoneyWiseXAnalysisTaxBasisBaseBucket, MoneyWiseXAnalysisTaxBasisAttr&gt; {
 <a class="jxr_linenumber" name="L716" href="#L716">716</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L717" href="#L717">717</a> <em class="jxr_javadoccomment">         * Constructor.</em>
 <a class="jxr_linenumber" name="L718" href="#L718">718</a> <em class="jxr_javadoccomment">         *</em>
 <a class="jxr_linenumber" name="L719" href="#L719">719</a> <em class="jxr_javadoccomment">         * @param pTaxBasis the taxBasis bucket</em>
 <a class="jxr_linenumber" name="L720" href="#L720">720</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L721" href="#L721">721</a>         <strong class="jxr_keyword">public</strong> MoneyWiseXAnalysisTaxBasisFilter(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisTaxBasisBucket" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisTaxBasisBucket.html#MoneyWiseXAnalysisTaxBasisBucket">MoneyWiseXAnalysisTaxBasisBucket</a> pTaxBasis) {
+<a class="jxr_linenumber" name="L721" href="#L721">721</a>         <strong class="jxr_keyword">public</strong> MoneyWiseXAnalysisTaxBasisFilter(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseXAnalysisTaxBasisBaseBucket" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/atlas/data/analysis/buckets/MoneyWiseXAnalysisTaxBasisBaseBucket.html#MoneyWiseXAnalysisTaxBasisBaseBucket">MoneyWiseXAnalysisTaxBasisBaseBucket</a> pTaxBasis) {
 <a class="jxr_linenumber" name="L722" href="#L722">722</a>             <em class="jxr_comment">/* Store parameter */</em>
 <a class="jxr_linenumber" name="L723" href="#L723">723</a>             <strong class="jxr_keyword">super</strong>(pTaxBasis, MoneyWiseXAnalysisTaxBasisAttr.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L724" href="#L724">724</a>             setCurrentAttribute(getAnalysisType().getDefaultValue());
@@ -884,6 +884,6 @@
 <a class="jxr_linenumber" name="L876" href="#L876">876</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

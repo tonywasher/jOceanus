@@ -46,24 +46,9 @@ public class ThemisUIRefPanel
     private final ThemisUIRefModuleSelect theSelect;
 
     /**
-     * The DSM Html.
+     * The Html.
      */
-    private final TethysUIHTMLManager theDSMHtml;
-
-    /**
-     * The Link Html.
-     */
-    private final TethysUIHTMLManager theLinkHtml;
-
-    /**
-     * The DSM Scroll.
-     */
-    private final TethysUIScrollPaneManager theDSMScroll;
-
-    /**
-     * The Link Scroll.
-     */
-    private final TethysUIScrollPaneManager theLinkScroll;
+    private final TethysUIHTMLManager theHtml;
 
     /**
      * The panel.
@@ -76,55 +61,46 @@ public class ThemisUIRefPanel
      * @param pFactory the GUI factory
      * @throws OceanusException on error
      */
-<span class="nc" id="L79">    public ThemisUIRefPanel(final TethysUIFactory&lt;?&gt; pFactory) throws OceanusException {</span>
+<span class="nc" id="L64">    public ThemisUIRefPanel(final TethysUIFactory&lt;?&gt; pFactory) throws OceanusException {</span>
         /* Create the HTML panels */
-<span class="nc" id="L81">        final TethysUIControlFactory myControls = pFactory.controlFactory();</span>
-<span class="nc" id="L82">        theDSMHtml = myControls.newHTMLManager();</span>
-<span class="nc" id="L83">        theDSMHtml.setCSSContent(ThemisUIStyleSheet.CSS);</span>
-<span class="nc" id="L84">        theLinkHtml = myControls.newHTMLManager();</span>
-<span class="nc" id="L85">        theLinkHtml.setCSSContent(ThemisUIStyleSheet.CSS);</span>
+<span class="nc" id="L66">        final TethysUIControlFactory myControls = pFactory.controlFactory();</span>
+<span class="nc" id="L67">        theHtml = myControls.newHTMLManager();</span>
+<span class="nc" id="L68">        theHtml.setCSSContent(ThemisUIStyleSheet.CSS);</span>
 
         /* Create scroll-panes */
-<span class="nc" id="L88">        final TethysUIPaneFactory myPanes = pFactory.paneFactory();</span>
-<span class="nc" id="L89">        theDSMScroll = myPanes.newScrollPane();</span>
-<span class="nc" id="L90">        theDSMScroll.setContent(theDSMHtml);</span>
-<span class="nc" id="L91">        theLinkScroll = myPanes.newScrollPane();</span>
-<span class="nc" id="L92">        theLinkScroll.setContent(theLinkHtml);</span>
+<span class="nc" id="L71">        final TethysUIPaneFactory myPanes = pFactory.paneFactory();</span>
+<span class="nc" id="L72">        final TethysUIScrollPaneManager myScroll = myPanes.newScrollPane();</span>
+<span class="nc" id="L73">        myScroll.setContent(theHtml);</span>
 
         /* Create the document builder */
-<span class="nc" id="L95">        theDoc = new ThemisUIRefDocument();</span>
+<span class="nc" id="L76">        theDoc = new ThemisUIRefDocument();</span>
 
         /* Create the module select */
-<span class="nc" id="L98">        theSelect = new ThemisUIRefModuleSelect(pFactory);</span>
-<span class="nc" id="L99">        final TethysUIBoxPaneManager mySelect = myPanes.newHBoxPane();</span>
-<span class="nc" id="L100">        mySelect.addSpacer();</span>
-<span class="nc" id="L101">        mySelect.addNode(theSelect);</span>
-<span class="nc" id="L102">        mySelect.addSpacer();</span>
-
-        /* Create the display panel */
-<span class="nc" id="L105">        final TethysUIBoxPaneManager myPane = myPanes.newVBoxPane();</span>
-<span class="nc" id="L106">        myPane.addNode(theDSMScroll);</span>
-<span class="nc" id="L107">        myPane.addNode(theLinkScroll);</span>
+<span class="nc" id="L79">        theSelect = new ThemisUIRefModuleSelect(pFactory);</span>
+<span class="nc" id="L80">        final TethysUIBoxPaneManager mySelect = myPanes.newHBoxPane();</span>
+<span class="nc" id="L81">        mySelect.addSpacer();</span>
+<span class="nc" id="L82">        mySelect.addNode(theSelect);</span>
+<span class="nc" id="L83">        mySelect.addSpacer();</span>
 
         /* Create the panel */
-<span class="nc" id="L110">        thePane = myPanes.newBorderPane();</span>
-<span class="nc" id="L111">        thePane.setNorth(mySelect);</span>
-<span class="nc" id="L112">        thePane.setCentre(myPane);</span>
+<span class="nc" id="L86">        thePane = myPanes.newBorderPane();</span>
+<span class="nc" id="L87">        thePane.setNorth(mySelect);</span>
+<span class="nc" id="L88">        thePane.setCentre(myScroll);</span>
 
         /* Handle module select */
-<span class="nc" id="L115">        theSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,</span>
-<span class="nc" id="L116">                s -&gt; selectModule());</span>
+<span class="nc" id="L91">        theSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,</span>
+<span class="nc" id="L92">                s -&gt; selectModule());</span>
 
         /* Handle Reference Select */
-<span class="nc" id="L119">        theDSMHtml.getEventRegistrar().addEventListener(TethysUIEvent.BUILDPAGE, e -&gt; {</span>
-<span class="nc" id="L120">            processReference(e.getDetails(String.class));</span>
-<span class="nc" id="L121">            e.consume();</span>
-<span class="nc" id="L122">        });</span>
-<span class="nc" id="L123">    }</span>
+<span class="nc" id="L95">        theHtml.getEventRegistrar().addEventListener(TethysUIEvent.BUILDPAGE, e -&gt; {</span>
+<span class="nc" id="L96">            processReference(e.getDetails(String.class));</span>
+<span class="nc" id="L97">            e.consume();</span>
+<span class="nc" id="L98">        });</span>
+<span class="nc" id="L99">    }</span>
 
     @Override
     public TethysUIComponent getUnderlying() {
-<span class="nc" id="L127">        return thePane;</span>
+<span class="nc" id="L103">        return thePane;</span>
     }
 
     /**
@@ -134,21 +110,20 @@ public class ThemisUIRefPanel
      */
     public void setCurrentProject(final ThemisSolverProject pProject) {
         /* Declare project to the moduleSelector */
-<span class="nc" id="L137">        theSelect.setCurrentProject(pProject);</span>
-<span class="nc" id="L138">    }</span>
+<span class="nc" id="L113">        theSelect.setCurrentProject(pProject);</span>
+<span class="nc" id="L114">    }</span>
 
     /**
      * Select module.
      */
     private void selectModule() {
         /* Select module and hide link list */
-<span class="nc" id="L145">        theDoc.setModule(theSelect.getCurrentModule());</span>
-<span class="nc" id="L146">        theLinkScroll.setVisible(false);</span>
+<span class="nc" id="L121">        theDoc.setModule(theSelect.getCurrentModule());</span>
 
         /* Format the default package */
-<span class="nc" id="L149">        final String myHTML = theDoc.formatDefaultPackage();</span>
-<span class="nc" id="L150">        theDSMHtml.setHTMLContent(myHTML, &quot;&quot;);</span>
-<span class="nc" id="L151">    }</span>
+<span class="nc" id="L124">        final String myHTML = theDoc.formatDefaultPackage();</span>
+<span class="nc" id="L125">        theHtml.setHTMLContent(myHTML, &quot;&quot;);</span>
+<span class="nc" id="L126">    }</span>
 
     /**
      * Process reference.
@@ -157,19 +132,17 @@ public class ThemisUIRefPanel
      */
     private void processReference(final String pReference) {
         /* If this is a new package */
-<span class="nc bnc" id="L160" title="All 2 branches missed.">        if (theDoc.isNewPackageLink(pReference)) {</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        if (theDoc.isNewPackageLink(pReference)) {</span>
             /* Format the package and hide link list */
-<span class="nc" id="L162">            final String myHTML = theDoc.formatNewPackageLink(pReference);</span>
-<span class="nc" id="L163">            theDSMHtml.setHTMLContent(myHTML, &quot;&quot;);</span>
-<span class="nc" id="L164">            theLinkScroll.setVisible(false);</span>
+<span class="nc" id="L137">            final String myHTML = theDoc.formatNewPackageLink(pReference);</span>
+<span class="nc" id="L138">            theHtml.setHTMLContent(myHTML, &quot;&quot;);</span>
 
             /* If this is a listLink */
-<span class="nc bnc" id="L167" title="All 2 branches missed.">        } else if (theDoc.isListLink(pReference)) {</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        } else if (theDoc.isListLink(pReference)) {</span>
             /* Format the list and show link list */
-<span class="nc" id="L169">            final String myHTML = theDoc.formatListLink(pReference);</span>
-<span class="nc" id="L170">            theLinkHtml.setHTMLContent(myHTML, &quot;&quot;);</span>
-<span class="nc" id="L171">            theLinkScroll.setVisible(true);</span>
+<span class="nc" id="L143">            final String myHTML = theDoc.formatListLink(pReference);</span>
+<span class="nc" id="L144">            theHtml.setHTMLContent(myHTML, &quot;&quot;);</span>
         }
-<span class="nc" id="L173">    }</span>
+<span class="nc" id="L146">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

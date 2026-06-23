@@ -24,21 +24,21 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> java.util.Currency;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
@@ -551,11 +551,11 @@
 <a class="jxr_linenumber" name="L543" href="#L543">543</a>             <strong class="jxr_keyword">final</strong> <a name="OceanusMoney" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusMoney.html#OceanusMoney">OceanusMoney</a> myReturnedCash = theCurrent.getReturnedCash();
 <a class="jxr_linenumber" name="L544" href="#L544">544</a> 
 <a class="jxr_linenumber" name="L545" href="#L545">545</a>             <em class="jxr_comment">/* Determine account prices */</em>
-<a class="jxr_linenumber" name="L546" href="#L546">546</a>             theAccountPrice = theAccount instanceof <a name="MoneyWiseSecurityHolding" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHolding.html#MoneyWiseSecurityHolding">MoneyWiseSecurityHolding</a>
-<a class="jxr_linenumber" name="L547" href="#L547">547</a>                     ? thePriceCursor.getSecurityPrice(((<a name="MoneyWiseSecurityHolding" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHolding.html#MoneyWiseSecurityHolding">MoneyWiseSecurityHolding</a>) theAccount).getSecurity(), theDate)
+<a class="jxr_linenumber" name="L546" href="#L546">546</a>             theAccountPrice = theAccount instanceof <a name="MoneyWiseSecurityHolding" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHolding.html#MoneyWiseSecurityHolding">MoneyWiseSecurityHolding</a> myHolding
+<a class="jxr_linenumber" name="L547" href="#L547">547</a>                     ? thePriceCursor.getSecurityPrice(myHolding.getSecurity(), theDate)
 <a class="jxr_linenumber" name="L548" href="#L548">548</a>                     : <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L549" href="#L549">549</a>             thePartnerPrice = thePartner instanceof <a name="MoneyWiseSecurityHolding" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHolding.html#MoneyWiseSecurityHolding">MoneyWiseSecurityHolding</a>
-<a class="jxr_linenumber" name="L550" href="#L550">550</a>                     ? thePriceCursor.getSecurityPrice(((<a name="MoneyWiseSecurityHolding" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHolding.html#MoneyWiseSecurityHolding">MoneyWiseSecurityHolding</a>) thePartner).getSecurity(), theDate)
+<a class="jxr_linenumber" name="L549" href="#L549">549</a>             thePartnerPrice = thePartner instanceof <a name="MoneyWiseSecurityHolding" href="../../../../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHolding.html#MoneyWiseSecurityHolding">MoneyWiseSecurityHolding</a> myHolding
+<a class="jxr_linenumber" name="L550" href="#L550">550</a>                     ? thePriceCursor.getSecurityPrice(myHolding.getSecurity(), theDate)
 <a class="jxr_linenumber" name="L551" href="#L551">551</a>                     : <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L552" href="#L552">552</a> 
 <a class="jxr_linenumber" name="L553" href="#L553">553</a>             <em class="jxr_comment">/* Determine foreign account detail */</em>
@@ -586,8 +586,8 @@
 <a class="jxr_linenumber" name="L578" href="#L578">578</a>             theAmount = theForeignAccount == <strong class="jxr_keyword">null</strong>
 <a class="jxr_linenumber" name="L579" href="#L579">579</a>                     ? myAmount
 <a class="jxr_linenumber" name="L580" href="#L580">580</a>                     : theForeignPartner == <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L581" href="#L581">581</a>                     ? myPartnerAmount
-<a class="jxr_linenumber" name="L582" href="#L582">582</a>                     : theForeignAccount.theAmount;
+<a class="jxr_linenumber" name="L581" href="#L581">581</a>                       ? myPartnerAmount
+<a class="jxr_linenumber" name="L582" href="#L582">582</a>                       : theForeignAccount.theAmount;
 <a class="jxr_linenumber" name="L583" href="#L583">583</a>             theReturnedCash = theForeignReturnedCash == <strong class="jxr_keyword">null</strong>
 <a class="jxr_linenumber" name="L584" href="#L584">584</a>                     ? myReturnedCash
 <a class="jxr_linenumber" name="L585" href="#L585">585</a>                     : theForeignReturnedCash.theAmount;
@@ -687,11 +687,11 @@
 <a class="jxr_linenumber" name="L679" href="#L679">679</a>         <strong class="jxr_keyword">private</strong> <a name="OceanusMoney" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusMoney.html#OceanusMoney">OceanusMoney</a> getDebitAmount() {
 <a class="jxr_linenumber" name="L680" href="#L680">680</a>             <strong class="jxr_keyword">return</strong> theDirection.isFrom()
 <a class="jxr_linenumber" name="L681" href="#L681">681</a>                     ? theForeignPartner == <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L682" href="#L682">682</a>                     ? theAmount
-<a class="jxr_linenumber" name="L683" href="#L683">683</a>                     : theForeignPartner.theBase
+<a class="jxr_linenumber" name="L682" href="#L682">682</a>                       ? theAmount
+<a class="jxr_linenumber" name="L683" href="#L683">683</a>                       : theForeignPartner.theBase
 <a class="jxr_linenumber" name="L684" href="#L684">684</a>                     : theForeignAccount == <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L685" href="#L685">685</a>                     ? theAmount
-<a class="jxr_linenumber" name="L686" href="#L686">686</a>                     : theForeignAccount.theBase;
+<a class="jxr_linenumber" name="L685" href="#L685">685</a>                       ? theAmount
+<a class="jxr_linenumber" name="L686" href="#L686">686</a>                       : theForeignAccount.theBase;
 <a class="jxr_linenumber" name="L687" href="#L687">687</a>         }
 <a class="jxr_linenumber" name="L688" href="#L688">688</a> 
 <a class="jxr_linenumber" name="L689" href="#L689">689</a>         <em class="jxr_javadoccomment">/**</em>
@@ -711,11 +711,11 @@
 <a class="jxr_linenumber" name="L703" href="#L703">703</a>         <strong class="jxr_keyword">private</strong> <a name="OceanusMoney" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusMoney.html#OceanusMoney">OceanusMoney</a> getCreditAmount() {
 <a class="jxr_linenumber" name="L704" href="#L704">704</a>             <strong class="jxr_keyword">return</strong> theDirection.isTo()
 <a class="jxr_linenumber" name="L705" href="#L705">705</a>                     ? theForeignPartner == <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L706" href="#L706">706</a>                     ? theAmount
-<a class="jxr_linenumber" name="L707" href="#L707">707</a>                     : theForeignPartner.theBase
+<a class="jxr_linenumber" name="L706" href="#L706">706</a>                       ? theAmount
+<a class="jxr_linenumber" name="L707" href="#L707">707</a>                       : theForeignPartner.theBase
 <a class="jxr_linenumber" name="L708" href="#L708">708</a>                     : theForeignAccount == <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L709" href="#L709">709</a>                     ? theAmount
-<a class="jxr_linenumber" name="L710" href="#L710">710</a>                     : theForeignAccount.theBase;
+<a class="jxr_linenumber" name="L709" href="#L709">709</a>                       ? theAmount
+<a class="jxr_linenumber" name="L710" href="#L710">710</a>                       : theForeignAccount.theBase;
 <a class="jxr_linenumber" name="L711" href="#L711">711</a>         }
 <a class="jxr_linenumber" name="L712" href="#L712">712</a> 
 <a class="jxr_linenumber" name="L713" href="#L713">713</a>         <em class="jxr_javadoccomment">/**</em>
@@ -768,11 +768,11 @@
 <a class="jxr_linenumber" name="L760" href="#L760">760</a>         <strong class="jxr_keyword">private</strong> <a name="OceanusRatio" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusRatio.html#OceanusRatio">OceanusRatio</a> getDebitExchangeRate() {
 <a class="jxr_linenumber" name="L761" href="#L761">761</a>             <strong class="jxr_keyword">return</strong> theDirection.isTo()
 <a class="jxr_linenumber" name="L762" href="#L762">762</a>                     ? theForeignAccount == <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L763" href="#L763">763</a>                     ? <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L764" href="#L764">764</a>                     : theForeignAccount.theExchangeRate
+<a class="jxr_linenumber" name="L763" href="#L763">763</a>                       ? <strong class="jxr_keyword">null</strong>
+<a class="jxr_linenumber" name="L764" href="#L764">764</a>                       : theForeignAccount.theExchangeRate
 <a class="jxr_linenumber" name="L765" href="#L765">765</a>                     : theForeignPartner == <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L766" href="#L766">766</a>                     ? <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L767" href="#L767">767</a>                     : theForeignPartner.theExchangeRate;
+<a class="jxr_linenumber" name="L766" href="#L766">766</a>                       ? <strong class="jxr_keyword">null</strong>
+<a class="jxr_linenumber" name="L767" href="#L767">767</a>                       : theForeignPartner.theExchangeRate;
 <a class="jxr_linenumber" name="L768" href="#L768">768</a>         }
 <a class="jxr_linenumber" name="L769" href="#L769">769</a> 
 <a class="jxr_linenumber" name="L770" href="#L770">770</a>         <em class="jxr_javadoccomment">/**</em>
@@ -783,11 +783,11 @@
 <a class="jxr_linenumber" name="L775" href="#L775">775</a>         <strong class="jxr_keyword">private</strong> <a name="OceanusRatio" href="../../../../../../../../../io/github/tonywasher/joceanus/oceanus/decimal/OceanusRatio.html#OceanusRatio">OceanusRatio</a> getCreditExchangeRate() {
 <a class="jxr_linenumber" name="L776" href="#L776">776</a>             <strong class="jxr_keyword">return</strong> theDirection.isTo()
 <a class="jxr_linenumber" name="L777" href="#L777">777</a>                     ? theForeignPartner == <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L778" href="#L778">778</a>                     ? <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L779" href="#L779">779</a>                     : theForeignPartner.theExchangeRate
+<a class="jxr_linenumber" name="L778" href="#L778">778</a>                       ? <strong class="jxr_keyword">null</strong>
+<a class="jxr_linenumber" name="L779" href="#L779">779</a>                       : theForeignPartner.theExchangeRate
 <a class="jxr_linenumber" name="L780" href="#L780">780</a>                     : theForeignAccount == <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L781" href="#L781">781</a>                     ? <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L782" href="#L782">782</a>                     : theForeignAccount.theExchangeRate;
+<a class="jxr_linenumber" name="L781" href="#L781">781</a>                       ? <strong class="jxr_keyword">null</strong>
+<a class="jxr_linenumber" name="L782" href="#L782">782</a>                       : theForeignAccount.theExchangeRate;
 <a class="jxr_linenumber" name="L783" href="#L783">783</a>         }
 <a class="jxr_linenumber" name="L784" href="#L784">784</a> 
 <a class="jxr_linenumber" name="L785" href="#L785">785</a>         <em class="jxr_javadoccomment">/**</em>
@@ -1025,6 +1025,6 @@
 <a class="jxr_linenumber" name="L1017" href="#L1017">1017</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

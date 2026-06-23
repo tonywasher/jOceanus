@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -46,6 +41,11 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWis
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisCategoryValues;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Comparator;
@@ -83,7 +83,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
     /**
      * The analysis.
      */
-    private final MoneyWiseAnalysis theAnalysis;
+    private final MoneyWiseAnalysisControl theAnalysis;
 
     /**
      * The transaction category.
@@ -116,7 +116,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * @param pAnalysis the analysis
      * @param pCategory the transaction category
      */
-    private MoneyWiseAnalysisTransCategoryBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisTransCategoryBucket(final MoneyWiseAnalysisControl pAnalysis,
 <span class="fc" id="L120">                                                 final MoneyWiseTransCategory pCategory) {</span>
         /* Store the parameters */
 <span class="fc" id="L122">        theAnalysis = pAnalysis;</span>
@@ -145,7 +145,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    private MoneyWiseAnalysisTransCategoryBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisTransCategoryBucket(final MoneyWiseAnalysisControl pAnalysis,
                                                  final MoneyWiseAnalysisTransCategoryBucket pBase,
 <span class="nc" id="L150">                                                 final OceanusDate pDate) {</span>
         /* Copy details from base */
@@ -168,7 +168,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    private MoneyWiseAnalysisTransCategoryBucket(final MoneyWiseAnalysis pAnalysis,
+    private MoneyWiseAnalysisTransCategoryBucket(final MoneyWiseAnalysisControl pAnalysis,
                                                  final MoneyWiseAnalysisTransCategoryBucket pBase,
 <span class="nc" id="L173">                                                 final OceanusDateRange pRange) {</span>
         /* Copy details from base */
@@ -238,7 +238,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      *
      * @return true/false
      */
-    public Boolean isIdle() {
+    public boolean isIdle() {
 <span class="nc" id="L242">        return theHistory.isIdle();</span>
     }
 
@@ -308,7 +308,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
      *
      * @return the analysis
      */
-    MoneyWiseAnalysis getAnalysis() {
+    MoneyWiseAnalysisControl getAnalysis() {
 <span class="nc" id="L312">        return theAnalysis;</span>
     }
 
@@ -617,7 +617,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
         /**
          * The analysis.
          */
-        private final MoneyWiseAnalysis theAnalysis;
+        private final MoneyWiseAnalysisControl theAnalysis;
 
         /**
          * The list.
@@ -688,28 +688,30 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * Construct a top-level List.
          *
          * @param pAnalysis the analysis
+         * @param pTaxBasis the tax basis bucket list
          */
-<span class="fc" id="L692">        MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysis pAnalysis) {</span>
+        MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysisControl pAnalysis,
+<span class="fc" id="L694">                                                 final MoneyWiseAnalysisTaxBasisBucketList pTaxBasis) {</span>
             /* Initialise class */
-<span class="fc" id="L694">            theAnalysis = pAnalysis;</span>
-<span class="fc" id="L695">            theEditSet = theAnalysis.getEditSet();</span>
-<span class="fc" id="L696">            theTotals = allocateTotalsBucket();</span>
-<span class="fc" id="L697">            theList = new MetisListIndexed&lt;&gt;();</span>
+<span class="fc" id="L696">            theAnalysis = pAnalysis;</span>
+<span class="fc" id="L697">            theEditSet = theAnalysis.getEditSet();</span>
+<span class="fc" id="L698">            theTotals = allocateTotalsBucket();</span>
+<span class="fc" id="L699">            theList = new MetisListIndexed&lt;&gt;();</span>
 
             /* Access taxBasis list */
-<span class="fc" id="L700">            theTaxBasis = theAnalysis.getTaxBasis();</span>
+<span class="fc" id="L702">            theTaxBasis = pTaxBasis;</span>
 
             /* Obtain the implied buckets */
-<span class="fc" id="L703">            theTaxCredit = getEventInfoBucket(MoneyWiseTransInfoClass.TAXCREDIT);</span>
-<span class="fc" id="L704">            theEmployeeNatIns = getEventInfoBucket(MoneyWiseTransInfoClass.EMPLOYEENATINS);</span>
-<span class="fc" id="L705">            theEmployerNatIns = getEventInfoBucket(MoneyWiseTransInfoClass.EMPLOYERNATINS);</span>
-<span class="fc" id="L706">            theDeemedBenefit = getEventInfoBucket(MoneyWiseTransInfoClass.DEEMEDBENEFIT);</span>
-<span class="fc" id="L707">            theWithheld = getEventInfoBucket(MoneyWiseTransInfoClass.WITHHELD);</span>
-<span class="fc" id="L708">            theTaxRelief = getEventSingularBucket(MoneyWiseTransCategoryClass.TAXRELIEF);</span>
-<span class="fc" id="L709">            theChargeableGains = getEventSingularBucket(MoneyWiseTransCategoryClass.CHARGEABLEGAIN);</span>
-<span class="fc" id="L710">            theTaxFreeGains = getEventSingularBucket(MoneyWiseTransCategoryClass.TAXFREEGAIN);</span>
-<span class="fc" id="L711">            theCapitalGains = getEventSingularBucket(MoneyWiseTransCategoryClass.CAPITALGAIN);</span>
-<span class="fc" id="L712">        }</span>
+<span class="fc" id="L705">            theTaxCredit = getEventInfoBucket(MoneyWiseTransInfoClass.TAXCREDIT);</span>
+<span class="fc" id="L706">            theEmployeeNatIns = getEventInfoBucket(MoneyWiseTransInfoClass.EMPLOYEENATINS);</span>
+<span class="fc" id="L707">            theEmployerNatIns = getEventInfoBucket(MoneyWiseTransInfoClass.EMPLOYERNATINS);</span>
+<span class="fc" id="L708">            theDeemedBenefit = getEventInfoBucket(MoneyWiseTransInfoClass.DEEMEDBENEFIT);</span>
+<span class="fc" id="L709">            theWithheld = getEventInfoBucket(MoneyWiseTransInfoClass.WITHHELD);</span>
+<span class="fc" id="L710">            theTaxRelief = getEventSingularBucket(MoneyWiseTransCategoryClass.TAXRELIEF);</span>
+<span class="fc" id="L711">            theChargeableGains = getEventSingularBucket(MoneyWiseTransCategoryClass.CHARGEABLEGAIN);</span>
+<span class="fc" id="L712">            theTaxFreeGains = getEventSingularBucket(MoneyWiseTransCategoryClass.TAXFREEGAIN);</span>
+<span class="fc" id="L713">            theCapitalGains = getEventSingularBucket(MoneyWiseTransCategoryClass.CAPITALGAIN);</span>
+<span class="fc" id="L714">        }</span>
 
         /**
          * Construct a dated List.
@@ -718,42 +720,42 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                                  final MoneyWiseAnalysisTransCategoryBucketList pBase,
-<span class="nc" id="L723">                                                 final OceanusDate pDate) {</span>
+<span class="nc" id="L725">                                                 final OceanusDate pDate) {</span>
             /* Initialise class */
-<span class="nc" id="L725">            theAnalysis = pAnalysis;</span>
-<span class="nc" id="L726">            theEditSet = theAnalysis.getEditSet();</span>
-<span class="nc" id="L727">            theTotals = allocateTotalsBucket();</span>
-<span class="nc" id="L728">            theList = new MetisListIndexed&lt;&gt;();</span>
+<span class="nc" id="L727">            theAnalysis = pAnalysis;</span>
+<span class="nc" id="L728">            theEditSet = theAnalysis.getEditSet();</span>
+<span class="nc" id="L729">            theTotals = allocateTotalsBucket();</span>
+<span class="nc" id="L730">            theList = new MetisListIndexed&lt;&gt;();</span>
 
             /* Don't use implied buckets */
-<span class="nc" id="L731">            theTaxBasis = null;</span>
-<span class="nc" id="L732">            theTaxCredit = null;</span>
-<span class="nc" id="L733">            theEmployeeNatIns = null;</span>
-<span class="nc" id="L734">            theEmployerNatIns = null;</span>
-<span class="nc" id="L735">            theDeemedBenefit = null;</span>
-<span class="nc" id="L736">            theWithheld = null;</span>
-<span class="nc" id="L737">            theTaxRelief = null;</span>
-<span class="nc" id="L738">            theChargeableGains = null;</span>
-<span class="nc" id="L739">            theTaxFreeGains = null;</span>
-<span class="nc" id="L740">            theCapitalGains = null;</span>
+<span class="nc" id="L733">            theTaxBasis = null;</span>
+<span class="nc" id="L734">            theTaxCredit = null;</span>
+<span class="nc" id="L735">            theEmployeeNatIns = null;</span>
+<span class="nc" id="L736">            theEmployerNatIns = null;</span>
+<span class="nc" id="L737">            theDeemedBenefit = null;</span>
+<span class="nc" id="L738">            theWithheld = null;</span>
+<span class="nc" id="L739">            theTaxRelief = null;</span>
+<span class="nc" id="L740">            theChargeableGains = null;</span>
+<span class="nc" id="L741">            theTaxFreeGains = null;</span>
+<span class="nc" id="L742">            theCapitalGains = null;</span>
 
             /* Loop through the buckets */
-<span class="nc" id="L743">            final Iterator&lt;MoneyWiseAnalysisTransCategoryBucket&gt; myIterator = pBase.iterator();</span>
-<span class="nc bnc" id="L744" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
-<span class="nc" id="L745">                final MoneyWiseAnalysisTransCategoryBucket myCurr = myIterator.next();</span>
+<span class="nc" id="L745">            final Iterator&lt;MoneyWiseAnalysisTransCategoryBucket&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L746" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L747">                final MoneyWiseAnalysisTransCategoryBucket myCurr = myIterator.next();</span>
 
                 /* Access the bucket for this date */
-<span class="nc" id="L748">                final MoneyWiseAnalysisTransCategoryBucket myBucket = new MoneyWiseAnalysisTransCategoryBucket(pAnalysis, myCurr, pDate);</span>
+<span class="nc" id="L750">                final MoneyWiseAnalysisTransCategoryBucket myBucket = new MoneyWiseAnalysisTransCategoryBucket(pAnalysis, myCurr, pDate);</span>
 
                 /* If the bucket is non-idle */
-<span class="nc bnc" id="L751" title="All 2 branches missed.">                if (Boolean.FALSE.equals(myBucket.isIdle())) {</span>
+<span class="nc bnc" id="L753" title="All 2 branches missed.">                if (!myBucket.isIdle()) {</span>
                     /* Calculate the delta and add to the list */
-<span class="nc" id="L753">                    theList.add(myBucket);</span>
+<span class="nc" id="L755">                    theList.add(myBucket);</span>
                 }
-<span class="nc" id="L755">            }</span>
-<span class="nc" id="L756">        }</span>
+<span class="nc" id="L757">            }</span>
+<span class="nc" id="L758">        }</span>
 
         /**
          * Construct a ranged List.
@@ -762,57 +764,57 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysis pAnalysis,
+        MoneyWiseAnalysisTransCategoryBucketList(final MoneyWiseAnalysisControl pAnalysis,
                                                  final MoneyWiseAnalysisTransCategoryBucketList pBase,
-<span class="nc" id="L767">                                                 final OceanusDateRange pRange) {</span>
+<span class="nc" id="L769">                                                 final OceanusDateRange pRange) {</span>
             /* Initialise class */
-<span class="nc" id="L769">            theAnalysis = pAnalysis;</span>
-<span class="nc" id="L770">            theEditSet = theAnalysis.getEditSet();</span>
-<span class="nc" id="L771">            theTotals = allocateTotalsBucket();</span>
-<span class="nc" id="L772">            theList = new MetisListIndexed&lt;&gt;();</span>
+<span class="nc" id="L771">            theAnalysis = pAnalysis;</span>
+<span class="nc" id="L772">            theEditSet = theAnalysis.getEditSet();</span>
+<span class="nc" id="L773">            theTotals = allocateTotalsBucket();</span>
+<span class="nc" id="L774">            theList = new MetisListIndexed&lt;&gt;();</span>
 
             /* Don't use implied buckets */
-<span class="nc" id="L775">            theTaxBasis = null;</span>
-<span class="nc" id="L776">            theTaxCredit = null;</span>
-<span class="nc" id="L777">            theEmployeeNatIns = null;</span>
-<span class="nc" id="L778">            theEmployerNatIns = null;</span>
-<span class="nc" id="L779">            theDeemedBenefit = null;</span>
-<span class="nc" id="L780">            theWithheld = null;</span>
-<span class="nc" id="L781">            theTaxRelief = null;</span>
-<span class="nc" id="L782">            theChargeableGains = null;</span>
-<span class="nc" id="L783">            theTaxFreeGains = null;</span>
-<span class="nc" id="L784">            theCapitalGains = null;</span>
+<span class="nc" id="L777">            theTaxBasis = null;</span>
+<span class="nc" id="L778">            theTaxCredit = null;</span>
+<span class="nc" id="L779">            theEmployeeNatIns = null;</span>
+<span class="nc" id="L780">            theEmployerNatIns = null;</span>
+<span class="nc" id="L781">            theDeemedBenefit = null;</span>
+<span class="nc" id="L782">            theWithheld = null;</span>
+<span class="nc" id="L783">            theTaxRelief = null;</span>
+<span class="nc" id="L784">            theChargeableGains = null;</span>
+<span class="nc" id="L785">            theTaxFreeGains = null;</span>
+<span class="nc" id="L786">            theCapitalGains = null;</span>
 
             /* Loop through the buckets */
-<span class="nc" id="L787">            final Iterator&lt;MoneyWiseAnalysisTransCategoryBucket&gt; myIterator = pBase.iterator();</span>
-<span class="nc bnc" id="L788" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
-<span class="nc" id="L789">                final MoneyWiseAnalysisTransCategoryBucket myCurr = myIterator.next();</span>
+<span class="nc" id="L789">            final Iterator&lt;MoneyWiseAnalysisTransCategoryBucket&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L790" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L791">                final MoneyWiseAnalysisTransCategoryBucket myCurr = myIterator.next();</span>
 
                 /* Access the bucket for this range */
-<span class="nc" id="L792">                final MoneyWiseAnalysisTransCategoryBucket myBucket = new MoneyWiseAnalysisTransCategoryBucket(pAnalysis, myCurr, pRange);</span>
+<span class="nc" id="L794">                final MoneyWiseAnalysisTransCategoryBucket myBucket = new MoneyWiseAnalysisTransCategoryBucket(pAnalysis, myCurr, pRange);</span>
 
                 /* If the bucket is non-idle */
-<span class="nc bnc" id="L795" title="All 2 branches missed.">                if (Boolean.FALSE.equals(myBucket.isIdle())) {</span>
+<span class="nc bnc" id="L797" title="All 2 branches missed.">                if (!myBucket.isIdle()) {</span>
                     /* Adjust to the base */
-<span class="nc" id="L797">                    myBucket.adjustToBase();</span>
-<span class="nc" id="L798">                    theList.add(myBucket);</span>
+<span class="nc" id="L799">                    myBucket.adjustToBase();</span>
+<span class="nc" id="L800">                    theList.add(myBucket);</span>
                 }
-<span class="nc" id="L800">            }</span>
-<span class="nc" id="L801">        }</span>
+<span class="nc" id="L802">            }</span>
+<span class="nc" id="L803">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWiseAnalysisTransCategoryBucketList&gt; getDataFieldSet() {
-<span class="nc" id="L805">            return FIELD_DEFS;</span>
+<span class="nc" id="L807">            return FIELD_DEFS;</span>
         }
 
         @Override
         public List&lt;MoneyWiseAnalysisTransCategoryBucket&gt; getUnderlyingList() {
-<span class="fc" id="L810">            return theList.getUnderlyingList();</span>
+<span class="fc" id="L812">            return theList.getUnderlyingList();</span>
         }
 
         @Override
         public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L815">            return getDataFieldSet().getName();</span>
+<span class="nc" id="L817">            return getDataFieldSet().getName();</span>
         }
 
         /**
@@ -820,8 +822,8 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          *
          * @return the analysis
          */
-        MoneyWiseAnalysis getAnalysis() {
-<span class="nc" id="L824">            return theAnalysis;</span>
+        MoneyWiseAnalysisControl getAnalysis() {
+<span class="nc" id="L826">            return theAnalysis;</span>
         }
 
         /**
@@ -832,7 +834,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          */
         public MoneyWiseAnalysisTransCategoryBucket findItemById(final Integer pId) {
             /* Return results */
-<span class="nc" id="L835">            return theList.getItemById(pId);</span>
+<span class="nc" id="L837">            return theList.getItemById(pId);</span>
         }
 
         /**
@@ -841,7 +843,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          * @return the totals bucket
          */
         public MoneyWiseAnalysisTransCategoryBucket getTotals() {
-<span class="nc" id="L844">            return theTotals;</span>
+<span class="nc" id="L846">            return theTotals;</span>
         }
 
         /**
@@ -851,7 +853,7 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          */
         private MoneyWiseAnalysisTransCategoryBucket allocateTotalsBucket() {
             /* Obtain the totals category */
-<span class="fc" id="L854">            return new MoneyWiseAnalysisTransCategoryBucket(theAnalysis, null);</span>
+<span class="fc" id="L856">            return new MoneyWiseAnalysisTransCategoryBucket(theAnalysis, null);</span>
         }
 
         /**
@@ -862,13 +864,13 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          */
         MoneyWiseAnalysisTransCategoryBucket getEventInfoBucket(final MoneyWiseTransInfoClass pClass) {
             /* Determine category */
-<span class="fc" id="L865">            final MoneyWiseTransCategoryList myList = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);</span>
-<span class="fc" id="L866">            final MoneyWiseTransCategory myCategory = myList.getEventInfoCategory(pClass);</span>
+<span class="fc" id="L867">            final MoneyWiseTransCategoryList myList = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);</span>
+<span class="fc" id="L868">            final MoneyWiseTransCategory myCategory = myList.getEventInfoCategory(pClass);</span>
 
             /* Access bucket */
-<span class="pc bpc" id="L869" title="1 of 2 branches missed.">            return myCategory == null</span>
-<span class="fc" id="L870">                    ? null</span>
-<span class="nc" id="L871">                    : getBucket(myCategory);</span>
+<span class="pc bpc" id="L871" title="1 of 2 branches missed.">            return myCategory == null</span>
+<span class="fc" id="L872">                    ? null</span>
+<span class="nc" id="L873">                    : getBucket(myCategory);</span>
         }
 
         /**
@@ -879,13 +881,13 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          */
         MoneyWiseAnalysisTransCategoryBucket getEventSingularBucket(final MoneyWiseTransCategoryClass pClass) {
             /* Determine category */
-<span class="fc" id="L882">            final MoneyWiseTransCategoryList myList = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);</span>
-<span class="fc" id="L883">            final MoneyWiseTransCategory myCategory = myList.getSingularClass(pClass);</span>
+<span class="fc" id="L884">            final MoneyWiseTransCategoryList myList = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);</span>
+<span class="fc" id="L885">            final MoneyWiseTransCategory myCategory = myList.getSingularClass(pClass);</span>
 
             /* Access bucket */
-<span class="pc bpc" id="L886" title="1 of 2 branches missed.">            return myCategory == null</span>
-<span class="fc" id="L887">                    ? null</span>
-<span class="nc" id="L888">                    : getBucket(myCategory);</span>
+<span class="pc bpc" id="L888" title="1 of 2 branches missed.">            return myCategory == null</span>
+<span class="fc" id="L889">                    ? null</span>
+<span class="nc" id="L890">                    : getBucket(myCategory);</span>
         }
 
         /**
@@ -896,24 +898,24 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          */
         public MoneyWiseAnalysisTransCategoryBucket getBucket(final MoneyWiseTransCategory pCategory) {
             /* Handle null category */
-<span class="nc bnc" id="L899" title="All 2 branches missed.">            if (pCategory == null) {</span>
-<span class="nc" id="L900">                throw new IllegalArgumentException();</span>
+<span class="nc bnc" id="L901" title="All 2 branches missed.">            if (pCategory == null) {</span>
+<span class="nc" id="L902">                throw new IllegalArgumentException();</span>
             }
 
             /* Locate the bucket in the list */
-<span class="nc" id="L904">            MoneyWiseAnalysisTransCategoryBucket myItem = findItemById(pCategory.getIndexedId());</span>
+<span class="nc" id="L906">            MoneyWiseAnalysisTransCategoryBucket myItem = findItemById(pCategory.getIndexedId());</span>
 
             /* If the item does not yet exist */
-<span class="nc bnc" id="L907" title="All 2 branches missed.">            if (myItem == null) {</span>
+<span class="nc bnc" id="L909" title="All 2 branches missed.">            if (myItem == null) {</span>
                 /* Create the new bucket */
-<span class="nc" id="L909">                myItem = new MoneyWiseAnalysisTransCategoryBucket(theAnalysis, pCategory);</span>
+<span class="nc" id="L911">                myItem = new MoneyWiseAnalysisTransCategoryBucket(theAnalysis, pCategory);</span>
 
                 /* Add to the list */
-<span class="nc" id="L912">                theList.add(myItem);</span>
+<span class="nc" id="L914">                theList.add(myItem);</span>
             }
 
             /* Return the bucket */
-<span class="nc" id="L916">            return myItem;</span>
+<span class="nc" id="L918">            return myItem;</span>
         }
 
         /**
@@ -924,11 +926,11 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          */
         public MoneyWiseAnalysisTransCategoryBucket getBucket(final MoneyWiseTransCategoryClass pClass) {
             /* Determine required category */
-<span class="nc" id="L927">            final MoneyWiseTransCategory myCategory = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class)</span>
-<span class="nc" id="L928">                    .getSingularClass(pClass);</span>
+<span class="nc" id="L929">            final MoneyWiseTransCategory myCategory = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class)</span>
+<span class="nc" id="L930">                    .getSingularClass(pClass);</span>
 
             /* Return the bucket */
-<span class="nc" id="L931">            return getBucket(myCategory);</span>
+<span class="nc" id="L933">            return getBucket(myCategory);</span>
         }
 
         /**
@@ -939,10 +941,10 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          */
         public MoneyWiseAnalysisTransCategoryBucket getMatchingCategory(final MoneyWiseTransCategory pCategory) {
             /* Return the matching category if it exists else an orphan bucket */
-<span class="nc" id="L942">            final MoneyWiseAnalysisTransCategoryBucket myCategory = findItemById(pCategory.getIndexedId());</span>
-<span class="nc bnc" id="L943" title="All 2 branches missed.">            return myCategory != null</span>
-<span class="nc" id="L944">                    ? myCategory</span>
-<span class="nc" id="L945">                    : new MoneyWiseAnalysisTransCategoryBucket(theAnalysis, pCategory);</span>
+<span class="nc" id="L944">            final MoneyWiseAnalysisTransCategoryBucket myCategory = findItemById(pCategory.getIndexedId());</span>
+<span class="nc bnc" id="L945" title="All 2 branches missed.">            return myCategory != null</span>
+<span class="nc" id="L946">                    ? myCategory</span>
+<span class="nc" id="L947">                    : new MoneyWiseAnalysisTransCategoryBucket(theAnalysis, pCategory);</span>
         }
 
         /**
@@ -952,9 +954,9 @@ public final class MoneyWiseAnalysisTransCategoryBucket
          */
         public MoneyWiseAnalysisTransCategoryBucket getDefaultCategory() {
             /* Return the first category in the list if it exists */
-<span class="nc bnc" id="L955" title="All 2 branches missed.">            return isEmpty()</span>
-<span class="nc" id="L956">                    ? null</span>
-<span class="nc" id="L957">                    : theList.getUnderlyingList().get(0);</span>
+<span class="nc bnc" id="L957" title="All 2 branches missed.">            return isEmpty()</span>
+<span class="nc" id="L958">                    ? null</span>
+<span class="nc" id="L959">                    : theList.getUnderlyingList().getFirst();</span>
         }
 
         /**
@@ -966,68 +968,68 @@ public final class MoneyWiseAnalysisTransCategoryBucket
         public void adjustCategories(final MoneyWiseAnalysisTransactionHelper pTrans,
                                      final MoneyWiseTransCategory pCategory) {
             /* Adjust the primary category bucket */
-<span class="nc" id="L969">            final MoneyWiseAnalysisTransCategoryBucket myCatBucket = getBucket(pCategory);</span>
+<span class="nc" id="L971">            final MoneyWiseAnalysisTransCategoryBucket myCatBucket = getBucket(pCategory);</span>
 
             /* Adjust for Tax Credit */
-<span class="nc" id="L972">            OceanusMoney myTaxCredit = pTrans.getTaxCredit();</span>
-<span class="nc bnc" id="L973" title="All 2 branches missed.">            if (myTaxCredit != null) {</span>
-<span class="nc bnc" id="L974" title="All 2 branches missed.">                if (pCategory.isCategoryClass(MoneyWiseTransCategoryClass.LOANINTERESTCHARGED)) {</span>
-<span class="nc" id="L975">                    theTaxRelief.addIncome(pTrans, myTaxCredit);</span>
-<span class="nc" id="L976">                    myTaxCredit = new OceanusMoney(myTaxCredit);</span>
-<span class="nc" id="L977">                    myTaxCredit.negate();</span>
-<span class="nc" id="L978">                    theTaxBasis.adjustValue(pTrans, MoneyWiseTaxClass.VIRTUAL, myTaxCredit);</span>
+<span class="nc" id="L974">            OceanusMoney myTaxCredit = pTrans.getTaxCredit();</span>
+<span class="nc bnc" id="L975" title="All 2 branches missed.">            if (myTaxCredit != null) {</span>
+<span class="nc bnc" id="L976" title="All 2 branches missed.">                if (pCategory.isCategoryClass(MoneyWiseTransCategoryClass.LOANINTERESTCHARGED)) {</span>
+<span class="nc" id="L977">                    theTaxRelief.addIncome(pTrans, myTaxCredit);</span>
+<span class="nc" id="L978">                    myTaxCredit = new OceanusMoney(myTaxCredit);</span>
+<span class="nc" id="L979">                    myTaxCredit.negate();</span>
+<span class="nc" id="L980">                    theTaxBasis.adjustValue(pTrans, MoneyWiseTaxClass.VIRTUAL, myTaxCredit);</span>
                 } else {
-<span class="nc" id="L980">                    theTaxCredit.addExpense(pTrans, myTaxCredit);</span>
-<span class="nc" id="L981">                    theTaxBasis.adjustGrossValue(pTrans, MoneyWiseTaxClass.TAXPAID, myTaxCredit);</span>
+<span class="nc" id="L982">                    theTaxCredit.addExpense(pTrans, myTaxCredit);</span>
+<span class="nc" id="L983">                    theTaxBasis.adjustGrossValue(pTrans, MoneyWiseTaxClass.TAXPAID, myTaxCredit);</span>
                 }
             }
 
             /* Adjust for EmployeeNatInsurance */
-<span class="nc" id="L986">            final boolean isPension = pCategory.isCategoryClass(MoneyWiseTransCategoryClass.PENSIONCONTRIB);</span>
-<span class="nc" id="L987">            OceanusMoney myNatIns = pTrans.getEmployeeNatIns();</span>
-<span class="nc bnc" id="L988" title="All 4 branches missed.">            if (myNatIns != null &amp;&amp; myNatIns.isNonZero()) {</span>
-<span class="nc bnc" id="L989" title="All 2 branches missed.">                if (!isPension) {</span>
-<span class="nc" id="L990">                    theEmployeeNatIns.addIncome(pTrans, myNatIns);</span>
+<span class="nc" id="L988">            final boolean isPension = pCategory.isCategoryClass(MoneyWiseTransCategoryClass.PENSIONCONTRIB);</span>
+<span class="nc" id="L989">            OceanusMoney myNatIns = pTrans.getEmployeeNatIns();</span>
+<span class="nc bnc" id="L990" title="All 4 branches missed.">            if (myNatIns != null &amp;&amp; myNatIns.isNonZero()) {</span>
+<span class="nc bnc" id="L991" title="All 2 branches missed.">                if (!isPension) {</span>
+<span class="nc" id="L992">                    theEmployeeNatIns.addIncome(pTrans, myNatIns);</span>
                 } else {
-<span class="nc" id="L992">                    myCatBucket.addIncome(myNatIns);</span>
+<span class="nc" id="L994">                    myCatBucket.addIncome(myNatIns);</span>
                 }
-<span class="nc" id="L994">                myNatIns = new OceanusMoney(myNatIns);</span>
-<span class="nc" id="L995">                myNatIns.negate();</span>
-<span class="nc" id="L996">                theTaxBasis.adjustNettValue(pTrans, MoneyWiseTaxClass.VIRTUAL, myNatIns);</span>
+<span class="nc" id="L996">                myNatIns = new OceanusMoney(myNatIns);</span>
+<span class="nc" id="L997">                myNatIns.negate();</span>
+<span class="nc" id="L998">                theTaxBasis.adjustNettValue(pTrans, MoneyWiseTaxClass.VIRTUAL, myNatIns);</span>
             }
 
             /* Adjust for EmployerNatInsurance */
-<span class="nc" id="L1000">            myNatIns = pTrans.getEmployerNatIns();</span>
-<span class="nc bnc" id="L1001" title="All 2 branches missed.">            if (myNatIns != null) {</span>
-<span class="nc bnc" id="L1002" title="All 2 branches missed.">                if (!isPension) {</span>
-<span class="nc" id="L1003">                    theEmployerNatIns.addIncome(pTrans, myNatIns);</span>
+<span class="nc" id="L1002">            myNatIns = pTrans.getEmployerNatIns();</span>
+<span class="nc bnc" id="L1003" title="All 2 branches missed.">            if (myNatIns != null) {</span>
+<span class="nc bnc" id="L1004" title="All 2 branches missed.">                if (!isPension) {</span>
+<span class="nc" id="L1005">                    theEmployerNatIns.addIncome(pTrans, myNatIns);</span>
                 } else {
-<span class="nc" id="L1005">                    myCatBucket.addIncome(myNatIns);</span>
+<span class="nc" id="L1007">                    myCatBucket.addIncome(myNatIns);</span>
                 }
-<span class="nc" id="L1007">                theTaxBasis.adjustValue(pTrans, MoneyWiseTaxClass.TAXFREE, myNatIns);</span>
+<span class="nc" id="L1009">                theTaxBasis.adjustValue(pTrans, MoneyWiseTaxClass.TAXFREE, myNatIns);</span>
             }
 
             /* Adjust for DeemedBenefit */
-<span class="nc" id="L1011">            final OceanusMoney myBenefit = pTrans.getDeemedBenefit();</span>
-<span class="nc bnc" id="L1012" title="All 2 branches missed.">            if (myBenefit != null) {</span>
-<span class="nc" id="L1013">                theDeemedBenefit.addIncome(pTrans, myBenefit);</span>
-<span class="nc" id="L1014">                theWithheld.addExpense(pTrans, myBenefit);</span>
-<span class="nc" id="L1015">                theTaxBasis.adjustGrossValue(pTrans, MoneyWiseTaxClass.VIRTUAL, myBenefit);</span>
+<span class="nc" id="L1013">            final OceanusMoney myBenefit = pTrans.getDeemedBenefit();</span>
+<span class="nc bnc" id="L1014" title="All 2 branches missed.">            if (myBenefit != null) {</span>
+<span class="nc" id="L1015">                theDeemedBenefit.addIncome(pTrans, myBenefit);</span>
+<span class="nc" id="L1016">                theWithheld.addExpense(pTrans, myBenefit);</span>
+<span class="nc" id="L1017">                theTaxBasis.adjustGrossValue(pTrans, MoneyWiseTaxClass.VIRTUAL, myBenefit);</span>
             }
 
             /* Adjust for Withheld */
-<span class="nc" id="L1019">            final OceanusMoney myWithheld = pTrans.getWithheld();</span>
-<span class="nc bnc" id="L1020" title="All 2 branches missed.">            if (myWithheld != null) {</span>
-<span class="nc" id="L1021">                theWithheld.addExpense(pTrans, myWithheld);</span>
-<span class="nc" id="L1022">                theTaxBasis.adjustValue(pTrans, MoneyWiseTaxClass.VIRTUAL, myWithheld);</span>
+<span class="nc" id="L1021">            final OceanusMoney myWithheld = pTrans.getWithheld();</span>
+<span class="nc bnc" id="L1022" title="All 2 branches missed.">            if (myWithheld != null) {</span>
+<span class="nc" id="L1023">                theWithheld.addExpense(pTrans, myWithheld);</span>
+<span class="nc" id="L1024">                theTaxBasis.adjustValue(pTrans, MoneyWiseTaxClass.VIRTUAL, myWithheld);</span>
             }
 
             /* Adjust the category bucket */
-<span class="nc" id="L1026">            myCatBucket.adjustValues(pTrans);</span>
+<span class="nc" id="L1028">            myCatBucket.adjustValues(pTrans);</span>
 
             /* Adjust tax basis */
-<span class="nc" id="L1029">            theTaxBasis.adjustBasis(pTrans, pCategory);</span>
-<span class="nc" id="L1030">        }</span>
+<span class="nc" id="L1031">            theTaxBasis.adjustBasis(pTrans, pCategory);</span>
+<span class="nc" id="L1032">        }</span>
 
         /**
          * Adjust for Standard Gains.
@@ -1040,26 +1042,26 @@ public final class MoneyWiseAnalysisTransCategoryBucket
                                        final MoneyWiseSecurityHolding pSource,
                                        final OceanusMoney pGains) {
             /* Access security and portfolio */
-<span class="nc" id="L1043">            final MoneyWiseSecurity mySecurity = pSource.getSecurity();</span>
-<span class="nc" id="L1044">            final MoneyWisePortfolio myPortfolio = pSource.getPortfolio();</span>
+<span class="nc" id="L1045">            final MoneyWiseSecurity mySecurity = pSource.getSecurity();</span>
+<span class="nc" id="L1046">            final MoneyWisePortfolio myPortfolio = pSource.getPortfolio();</span>
 
-<span class="nc bnc" id="L1046" title="All 2 branches missed.">            final boolean bTaxFreeGains = myPortfolio.isTaxFree()</span>
-<span class="nc bnc" id="L1047" title="All 2 branches missed.">                    || !mySecurity.getCategoryClass().isCapitalGains();</span>
-<span class="nc bnc" id="L1048" title="All 2 branches missed.">            final MoneyWiseAnalysisTransCategoryBucket myCategory = bTaxFreeGains</span>
-<span class="nc" id="L1049">                    ? theTaxFreeGains</span>
-<span class="nc" id="L1050">                    : theCapitalGains;</span>
-<span class="nc bnc" id="L1051" title="All 2 branches missed.">            final MoneyWiseTaxClass myTaxBasis = bTaxFreeGains</span>
-<span class="nc" id="L1052">                    ? MoneyWiseTaxClass.TAXFREE</span>
-<span class="nc" id="L1053">                    : MoneyWiseTaxClass.CAPITALGAINS;</span>
+<span class="nc bnc" id="L1048" title="All 2 branches missed.">            final boolean bTaxFreeGains = myPortfolio.isTaxFree()</span>
+<span class="nc bnc" id="L1049" title="All 2 branches missed.">                    || !mySecurity.getCategoryClass().isCapitalGains();</span>
+<span class="nc bnc" id="L1050" title="All 2 branches missed.">            final MoneyWiseAnalysisTransCategoryBucket myCategory = bTaxFreeGains</span>
+<span class="nc" id="L1051">                    ? theTaxFreeGains</span>
+<span class="nc" id="L1052">                    : theCapitalGains;</span>
+<span class="nc bnc" id="L1053" title="All 2 branches missed.">            final MoneyWiseTaxClass myTaxBasis = bTaxFreeGains</span>
+<span class="nc" id="L1054">                    ? MoneyWiseTaxClass.TAXFREE</span>
+<span class="nc" id="L1055">                    : MoneyWiseTaxClass.CAPITALGAINS;</span>
 
             /* Add to Capital Gains income/expense */
-<span class="nc bnc" id="L1056" title="All 2 branches missed.">            if (pGains.isPositive()) {</span>
-<span class="nc" id="L1057">                myCategory.addIncome(pTrans, pGains);</span>
+<span class="nc bnc" id="L1058" title="All 2 branches missed.">            if (pGains.isPositive()) {</span>
+<span class="nc" id="L1059">                myCategory.addIncome(pTrans, pGains);</span>
             } else {
-<span class="nc" id="L1059">                myCategory.subtractExpense(pTrans, pGains);</span>
+<span class="nc" id="L1061">                myCategory.subtractExpense(pTrans, pGains);</span>
             }
-<span class="nc" id="L1061">            theTaxBasis.adjustValue(pTrans, myTaxBasis, pGains);</span>
-<span class="nc" id="L1062">        }</span>
+<span class="nc" id="L1063">            theTaxBasis.adjustValue(pTrans, myTaxBasis, pGains);</span>
+<span class="nc" id="L1064">        }</span>
 
         /**
          * Adjust for Chargeable Gains.
@@ -1070,90 +1072,90 @@ public final class MoneyWiseAnalysisTransCategoryBucket
         public void adjustChargeableGain(final MoneyWiseAnalysisTransactionHelper pTrans,
                                          final OceanusMoney pReduction) {
             /* Adjust Taxable Gains */
-<span class="nc" id="L1073">            theChargeableGains.subtractIncome(pReduction);</span>
-<span class="nc" id="L1074">            theChargeableGains.adjustValues(pTrans);</span>
+<span class="nc" id="L1075">            theChargeableGains.subtractIncome(pReduction);</span>
+<span class="nc" id="L1076">            theChargeableGains.adjustValues(pTrans);</span>
 
             /* Obtain normalised value */
-<span class="nc" id="L1077">            final OceanusMoney myGains = new OceanusMoney(pTrans.getLocalAmount());</span>
-<span class="nc" id="L1078">            myGains.subtractAmount(pReduction);</span>
+<span class="nc" id="L1079">            final OceanusMoney myGains = new OceanusMoney(pTrans.getLocalAmount());</span>
+<span class="nc" id="L1080">            myGains.subtractAmount(pReduction);</span>
 
             /* Adjust for Tax Credit */
-<span class="nc" id="L1081">            OceanusMoney myTaxCredit = pTrans.getTaxCredit();</span>
-<span class="nc bnc" id="L1082" title="All 2 branches missed.">            if (myTaxCredit != null) {</span>
+<span class="nc" id="L1083">            OceanusMoney myTaxCredit = pTrans.getTaxCredit();</span>
+<span class="nc bnc" id="L1084" title="All 2 branches missed.">            if (myTaxCredit != null) {</span>
                 /* Adjust the taxCredit category */
-<span class="nc" id="L1084">                theTaxCredit.addExpense(pTrans, myTaxCredit);</span>
+<span class="nc" id="L1086">                theTaxCredit.addExpense(pTrans, myTaxCredit);</span>
 
                 /* Adjust tax basis */
-<span class="nc" id="L1087">                theTaxBasis.adjustGrossValue(pTrans, MoneyWiseTaxClass.TAXPAID, myTaxCredit);</span>
-<span class="nc" id="L1088">                myTaxCredit = new OceanusMoney(myTaxCredit);</span>
-<span class="nc" id="L1089">                myTaxCredit.negate();</span>
-<span class="nc" id="L1090">                theTaxBasis.adjustGrossValue(pTrans, MoneyWiseTaxClass.VIRTUAL, myTaxCredit);</span>
+<span class="nc" id="L1089">                theTaxBasis.adjustGrossValue(pTrans, MoneyWiseTaxClass.TAXPAID, myTaxCredit);</span>
+<span class="nc" id="L1090">                myTaxCredit = new OceanusMoney(myTaxCredit);</span>
+<span class="nc" id="L1091">                myTaxCredit.negate();</span>
+<span class="nc" id="L1092">                theTaxBasis.adjustGrossValue(pTrans, MoneyWiseTaxClass.VIRTUAL, myTaxCredit);</span>
             }
 
             /* Adjust tax basis */
-<span class="nc" id="L1094">            theTaxBasis.adjustValue(pTrans, MoneyWiseTaxClass.CHARGEABLEGAINS, myGains);</span>
-<span class="nc" id="L1095">        }</span>
+<span class="nc" id="L1096">            theTaxBasis.adjustValue(pTrans, MoneyWiseTaxClass.CHARGEABLEGAINS, myGains);</span>
+<span class="nc" id="L1097">        }</span>
 
         /**
          * Produce totals for the TransactionCategories.
          */
         void produceTotals() {
             /* Create a list of new buckets */
-<span class="fc" id="L1102">            final MetisListIndexed&lt;MoneyWiseAnalysisTransCategoryBucket&gt; myTotals = new MetisListIndexed&lt;&gt;();</span>
+<span class="fc" id="L1104">            final MetisListIndexed&lt;MoneyWiseAnalysisTransCategoryBucket&gt; myTotals = new MetisListIndexed&lt;&gt;();</span>
 
             /* Loop through the buckets */
-<span class="fc" id="L1105">            Iterator&lt;MoneyWiseAnalysisTransCategoryBucket&gt; myIterator = iterator();</span>
-<span class="pc bpc" id="L1106" title="1 of 2 branches missed.">            while (myIterator.hasNext()) {</span>
-<span class="nc" id="L1107">                final MoneyWiseAnalysisTransCategoryBucket myCurr = myIterator.next();</span>
+<span class="fc" id="L1107">            Iterator&lt;MoneyWiseAnalysisTransCategoryBucket&gt; myIterator = iterator();</span>
+<span class="pc bpc" id="L1108" title="1 of 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L1109">                final MoneyWiseAnalysisTransCategoryBucket myCurr = myIterator.next();</span>
 
                 /* Obtain category and parent category */
-<span class="nc" id="L1110">                final MoneyWiseTransCategory myCategory = myCurr.getTransactionCategory();</span>
-<span class="nc" id="L1111">                final MoneyWiseTransCategory myParent = myCategory.getParentCategory();</span>
+<span class="nc" id="L1112">                final MoneyWiseTransCategory myCategory = myCurr.getTransactionCategory();</span>
+<span class="nc" id="L1113">                final MoneyWiseTransCategory myParent = myCategory.getParentCategory();</span>
 
                 /* Access parent bucket */
-<span class="nc" id="L1114">                MoneyWiseAnalysisTransCategoryBucket myTotal = findItemById(myParent.getIndexedId());</span>
+<span class="nc" id="L1116">                MoneyWiseAnalysisTransCategoryBucket myTotal = findItemById(myParent.getIndexedId());</span>
 
                 /* Calculate the delta */
-<span class="nc" id="L1117">                myCurr.calculateDelta();</span>
+<span class="nc" id="L1119">                myCurr.calculateDelta();</span>
 
                 /* If the bucket does not exist */
-<span class="nc bnc" id="L1120" title="All 2 branches missed.">                if (myTotal == null) {</span>
+<span class="nc bnc" id="L1122" title="All 2 branches missed.">                if (myTotal == null) {</span>
                     /* Look for bucket in the new list */
-<span class="nc" id="L1122">                    myTotal = myTotals.getItemById(myParent.getIndexedId());</span>
+<span class="nc" id="L1124">                    myTotal = myTotals.getItemById(myParent.getIndexedId());</span>
 
                     /* If the bucket is completely new */
-<span class="nc bnc" id="L1125" title="All 2 branches missed.">                    if (myTotal == null) {</span>
+<span class="nc bnc" id="L1127" title="All 2 branches missed.">                    if (myTotal == null) {</span>
                         /* Create the new bucket and add to new list */
-<span class="nc" id="L1127">                        myTotal = new MoneyWiseAnalysisTransCategoryBucket(theAnalysis, myParent);</span>
-<span class="nc" id="L1128">                        myTotals.add(myTotal);</span>
+<span class="nc" id="L1129">                        myTotal = new MoneyWiseAnalysisTransCategoryBucket(theAnalysis, myParent);</span>
+<span class="nc" id="L1130">                        myTotals.add(myTotal);</span>
                     }
                 }
 
                 /* Add to totals bucket */
-<span class="nc" id="L1133">                myTotal.addValues(myCurr);</span>
-<span class="nc" id="L1134">                theTotals.addValues(myCurr);</span>
-<span class="nc" id="L1135">            }</span>
+<span class="nc" id="L1135">                myTotal.addValues(myCurr);</span>
+<span class="nc" id="L1136">                theTotals.addValues(myCurr);</span>
+<span class="nc" id="L1137">            }</span>
 
             /* Loop through the new totals */
-<span class="fc" id="L1138">            myIterator = myTotals.listIterator();</span>
-<span class="pc bpc" id="L1139" title="1 of 2 branches missed.">            while (myIterator.hasNext()) {</span>
-<span class="nc" id="L1140">                final MoneyWiseAnalysisTransCategoryBucket myCurr = myIterator.next();</span>
+<span class="fc" id="L1140">            myIterator = myTotals.listIterator();</span>
+<span class="pc bpc" id="L1141" title="1 of 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L1142">                final MoneyWiseAnalysisTransCategoryBucket myCurr = myIterator.next();</span>
 
                 /* Calculate delta for the category total */
-<span class="nc" id="L1143">                myCurr.calculateDelta();</span>
+<span class="nc" id="L1145">                myCurr.calculateDelta();</span>
 
                 /* Add it to the list */
-<span class="nc" id="L1146">                theList.add(myCurr);</span>
-<span class="nc" id="L1147">            }</span>
+<span class="nc" id="L1148">                theList.add(myCurr);</span>
+<span class="nc" id="L1149">            }</span>
 
             /* Sort the list */
-<span class="fc" id="L1150">            theList.getUnderlyingList().sort(Comparator.comparing(MoneyWiseAnalysisTransCategoryBucket::getTransactionCategory));</span>
+<span class="fc" id="L1152">            theList.getUnderlyingList().sort(Comparator.comparing(MoneyWiseAnalysisTransCategoryBucket::getTransactionCategory));</span>
 
             /* Calculate delta for the totals */
-<span class="pc bpc" id="L1153" title="1 of 2 branches missed.">            if (theTotals != null) {</span>
-<span class="fc" id="L1154">                theTotals.calculateDelta();</span>
+<span class="pc bpc" id="L1155" title="1 of 2 branches missed.">            if (theTotals != null) {</span>
+<span class="fc" id="L1156">                theTotals.calculateDelta();</span>
             }
-<span class="fc" id="L1156">        }</span>
+<span class="fc" id="L1158">        }</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

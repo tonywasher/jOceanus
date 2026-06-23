@@ -25,6 +25,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfo
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Arrays;
@@ -41,17 +42,17 @@ public class MoneyWiseSecurityInfoSet
     /**
      * Report fields.
      */
-<span class="fc" id="L44">    private static final MetisFieldSet&lt;MoneyWiseSecurityInfoSet&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSecurityInfoSet.class);</span>
+<span class="fc" id="L45">    private static final MetisFieldSet&lt;MoneyWiseSecurityInfoSet&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSecurityInfoSet.class);</span>
 
     /**
      * FieldSet map.
      */
-<span class="fc" id="L49">    private static final Map&lt;MetisDataFieldId, MoneyWiseAccountInfoClass&gt; FIELDSET_MAP = FIELD_DEFS.buildFieldMap(MoneyWiseAccountInfoClass.class, MoneyWiseSecurityInfoSet::getFieldValue);</span>
+<span class="fc" id="L50">    private static final Map&lt;MetisDataFieldId, MoneyWiseAccountInfoClass&gt; FIELDSET_MAP = FIELD_DEFS.buildFieldMap(MoneyWiseAccountInfoClass.class, MoneyWiseSecurityInfoSet::getFieldValue);</span>
 
     /**
      * Reverse FieldSet map.
      */
-<span class="fc" id="L54">    private static final Map&lt;MoneyWiseAccountInfoClass, MetisDataFieldId&gt; REVERSE_FIELDMAP = MetisFieldSet.reverseFieldMap(FIELDSET_MAP, MoneyWiseAccountInfoClass.class);</span>
+<span class="fc" id="L55">    private static final Map&lt;MoneyWiseAccountInfoClass, MetisDataFieldId&gt; REVERSE_FIELDMAP = MetisFieldSet.reverseFieldMap(FIELDSET_MAP, MoneyWiseAccountInfoClass.class);</span>
 
     /**
      * Constructor.
@@ -60,21 +61,16 @@ public class MoneyWiseSecurityInfoSet
      * @param pTypeList the infoTypeList for the set
      * @param pInfoList the InfoList for the set
      */
-    protected MoneyWiseSecurityInfoSet(final MoneyWiseSecurity pOwner,
+    protected MoneyWiseSecurityInfoSet(final PrometheusDataItem pOwner,
                                        final MoneyWiseAccountInfoTypeList pTypeList,
                                        final MoneyWiseSecurityInfoList pInfoList) {
         /* Store the Owner and Info List */
-<span class="fc" id="L67">        super(pOwner, pTypeList, pInfoList);</span>
-<span class="fc" id="L68">    }</span>
+<span class="fc" id="L68">        super(pOwner, pTypeList, pInfoList);</span>
+<span class="fc" id="L69">    }</span>
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
-<span class="nc" id="L72">        return FIELD_DEFS;</span>
-    }
-
-    @Override
-    public MoneyWiseSecurity getOwner() {
-<span class="fc" id="L77">        return (MoneyWiseSecurity) super.getOwner();</span>
+<span class="nc" id="L73">        return FIELD_DEFS;</span>
     }
 
     /**
@@ -85,13 +81,13 @@ public class MoneyWiseSecurityInfoSet
      */
     public Object getFieldValue(final MetisDataFieldId pFieldId) {
         /* Handle InfoSet fields */
-<span class="fc" id="L88">        final MoneyWiseAccountInfoClass myClass = getClassForField(pFieldId);</span>
-<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        if (myClass != null) {</span>
-<span class="fc" id="L90">            return getInfoSetValue(myClass);</span>
+<span class="fc" id="L84">        final MoneyWiseAccountInfoClass myClass = getClassForField(pFieldId);</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        if (myClass != null) {</span>
+<span class="fc" id="L86">            return getInfoSetValue(myClass);</span>
         }
 
         /* Pass onwards */
-<span class="nc" id="L94">        return null;</span>
+<span class="nc" id="L90">        return null;</span>
     }
 
     /**
@@ -101,22 +97,22 @@ public class MoneyWiseSecurityInfoSet
      * @return the value to set
      */
     private Object getInfoSetValue(final MoneyWiseAccountInfoClass pInfoClass) {
-<span class="fc bfc" id="L104" title="All 3 branches covered.">        final Object myValue = switch (pInfoClass) {</span>
+<span class="fc bfc" id="L100" title="All 3 branches covered.">        final Object myValue = switch (pInfoClass) {</span>
             case REGION -&gt;
                 /* Access region of object */
-<span class="fc" id="L107">                    getRegion(pInfoClass);</span>
+<span class="fc" id="L103">                    getRegion(pInfoClass);</span>
             case UNDERLYINGSTOCK -&gt;
                 /* Access underlying Stock of object */
-<span class="fc" id="L110">                    getSecurity(pInfoClass);</span>
+<span class="fc" id="L106">                    getSecurity(pInfoClass);</span>
             default -&gt;
                 /* Access value of object */
-<span class="fc" id="L113">                    getField(pInfoClass);</span>
+<span class="fc" id="L109">                    getField(pInfoClass);</span>
         };
 
         /* Return the value */
-<span class="fc bfc" id="L117" title="All 2 branches covered.">        return myValue != null</span>
-<span class="fc" id="L118">                ? myValue</span>
-<span class="fc" id="L119">                : MetisDataFieldValue.SKIP;</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        return myValue != null</span>
+<span class="fc" id="L114">                ? myValue</span>
+<span class="fc" id="L115">                : MetisDataFieldValue.SKIP;</span>
     }
 
     /**
@@ -127,7 +123,7 @@ public class MoneyWiseSecurityInfoSet
      */
     public static MoneyWiseAccountInfoClass getClassForField(final MetisDataFieldId pField) {
         /* Look up field in map */
-<span class="fc" id="L130">        return FIELDSET_MAP.get(pField);</span>
+<span class="fc" id="L126">        return FIELDSET_MAP.get(pField);</span>
     }
 
     /**
@@ -138,18 +134,18 @@ public class MoneyWiseSecurityInfoSet
      */
     public static MetisDataFieldId getFieldForClass(final MoneyWiseAccountInfoClass pClass) {
         /* Look up field in map */
-<span class="nc" id="L141">        return REVERSE_FIELDMAP.get(pClass);</span>
+<span class="nc" id="L137">        return REVERSE_FIELDMAP.get(pClass);</span>
     }
 
     @Override
     public MetisDataFieldId getFieldForClass(final PrometheusDataInfoClass pClass) {
-<span class="nc" id="L146">        return getFieldForClass((MoneyWiseAccountInfoClass) pClass);</span>
+<span class="nc" id="L142">        return getFieldForClass((MoneyWiseAccountInfoClass) pClass);</span>
     }
 
     @Override
     public Iterator&lt;PrometheusDataInfoClass&gt; classIterator() {
-<span class="fc" id="L151">        final PrometheusDataInfoClass[] myValues = MoneyWiseAccountInfoClass.values();</span>
-<span class="fc" id="L152">        return Arrays.stream(myValues).iterator();</span>
+<span class="fc" id="L147">        final PrometheusDataInfoClass[] myValues = MoneyWiseAccountInfoClass.values();</span>
+<span class="fc" id="L148">        return Arrays.stream(myValues).iterator();</span>
     }
 
     /**
@@ -159,8 +155,8 @@ public class MoneyWiseSecurityInfoSet
      */
     protected void cloneDataInfoSet(final MoneyWiseSecurityInfoSet pSource) {
         /* Clone the dataInfoSet */
-<span class="fc" id="L162">        cloneTheDataInfoSet(pSource);</span>
-<span class="fc" id="L163">    }</span>
+<span class="fc" id="L158">        cloneTheDataInfoSet(pSource);</span>
+<span class="fc" id="L159">    }</span>
 
     /**
      * Resolve editSetLinks.
@@ -170,10 +166,10 @@ public class MoneyWiseSecurityInfoSet
      */
     void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Loop through the items */
-<span class="fc bfc" id="L173" title="All 2 branches covered.">        for (MoneyWiseSecurityInfo myInfo : this) {</span>
-<span class="fc" id="L174">            myInfo.resolveEditSetLinks(pEditSet);</span>
-<span class="fc" id="L175">        }</span>
-<span class="fc" id="L176">    }</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        for (MoneyWiseSecurityInfo myInfo : this) {</span>
+<span class="fc" id="L170">            myInfo.resolveEditSetLinks(pEditSet);</span>
+<span class="fc" id="L171">        }</span>
+<span class="fc" id="L172">    }</span>
 
     /**
      * Obtain the region for the infoClass.
@@ -183,15 +179,15 @@ public class MoneyWiseSecurityInfoSet
      */
     public MoneyWiseRegion getRegion(final MoneyWiseAccountInfoClass pInfoClass) {
         /* Access existing entry */
-<span class="fc" id="L186">        final MoneyWiseSecurityInfo myValue = getInfo(pInfoClass);</span>
+<span class="fc" id="L182">        final MoneyWiseSecurityInfo myValue = getInfo(pInfoClass);</span>
 
         /* If we have no entry, return null */
-<span class="pc bpc" id="L189" title="1 of 2 branches missed.">        if (myValue == null) {</span>
-<span class="fc" id="L190">            return null;</span>
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">        if (myValue == null) {</span>
+<span class="fc" id="L186">            return null;</span>
         }
 
         /* Return the region */
-<span class="nc" id="L194">        return myValue.getRegion();</span>
+<span class="nc" id="L190">        return myValue.getRegion();</span>
     }
 
     /**
@@ -200,17 +196,17 @@ public class MoneyWiseSecurityInfoSet
      * @param pInfoClass the Info Class
      * @return the security
      */
-    public MoneyWiseSecurity getSecurity(final MoneyWiseAccountInfoClass pInfoClass) {
+    public MoneyWiseAssetBase getSecurity(final MoneyWiseAccountInfoClass pInfoClass) {
         /* Access existing entry */
-<span class="fc" id="L205">        final MoneyWiseSecurityInfo myValue = getInfo(pInfoClass);</span>
+<span class="fc" id="L201">        final MoneyWiseSecurityInfo myValue = getInfo(pInfoClass);</span>
 
         /* If we have no entry, return null */
-<span class="pc bpc" id="L208" title="1 of 2 branches missed.">        if (myValue == null) {</span>
-<span class="fc" id="L209">            return null;</span>
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">        if (myValue == null) {</span>
+<span class="fc" id="L205">            return null;</span>
         }
 
         /* Return the security */
-<span class="nc" id="L213">        return myValue.getSecurity();</span>
+<span class="nc" id="L209">        return myValue.getSecurity();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

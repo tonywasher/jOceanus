@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyElGamalKeyPair.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair</a> &gt; <span class="el_source">BouncyElGamalKeyPair.java</span></div><h1>BouncyElGamalKeyPair.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPairGenerator.BouncyKeyFactorySet;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreDHSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.oiw.ElGamalParameter;
+import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.generators.ElGamalKeyPairGenerator;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.DHParameters;
+import org.bouncycastle.crypto.params.ElGamalKeyGenerationParameters;
+import org.bouncycastle.crypto.params.ElGamalParameters;
+import org.bouncycastle.crypto.params.ElGamalPrivateKeyParameters;
+import org.bouncycastle.crypto.params.ElGamalPublicKeyParameters;
+
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Objects;
+
+/**
+ * ElGamal KeyPair classes.
+ */
+public final class BouncyElGamalKeyPair {
+    /**
+     * Private constructor.
+     */
+    private BouncyElGamalKeyPair() {
+    }
+
+    /**
+     * Bouncy ElGamal PublicKey.
+     */
+    public static class BouncyElGamalPublicKey
+            extends BouncyPublicKey&lt;ElGamalPublicKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec   the keySpec
+         * @param pPublicKey the public key
+         */
+        BouncyElGamalPublicKey(final GordianKeyPairSpec pKeySpec,
+                               final ElGamalPublicKeyParameters pPublicKey) {
+<span class="fc" id="L70">            super(pKeySpec, pPublicKey);</span>
+<span class="fc" id="L71">        }</span>
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L76">            final ElGamalPublicKeyParameters myThis = getPublicKey();</span>
+<span class="fc" id="L77">            final ElGamalPublicKeyParameters myThat = (ElGamalPublicKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="fc" id="L80">            return Objects.equals(myThis, myThat);</span>
+        }
+    }
+
+    /**
+     * Bouncy ElGamal PrivateKey.
+     */
+    public static class BouncyElGamalPrivateKey
+            extends BouncyPrivateKey&lt;ElGamalPrivateKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec    the keySpec
+         * @param pPrivateKey the private key
+         */
+        BouncyElGamalPrivateKey(final GordianKeyPairSpec pKeySpec,
+                                final ElGamalPrivateKeyParameters pPrivateKey) {
+<span class="fc" id="L97">            super(pKeySpec, pPrivateKey);</span>
+<span class="fc" id="L98">        }</span>
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L103">            final ElGamalPrivateKeyParameters myThis = getPrivateKey();</span>
+<span class="fc" id="L104">            final ElGamalPrivateKeyParameters myThat = (ElGamalPrivateKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="fc" id="L107">            return Objects.equals(myThis, myThat);</span>
+        }
+    }
+
+    /**
+     * BouncyCastle ElGamal KeyPair generator.
+     */
+    public static class BouncyElGamalKeyPairGenerator
+            extends BouncyKeyPairGenerator&lt;ElGamalPrivateKeyParameters, ElGamalPublicKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         */
+        BouncyElGamalKeyPairGenerator(final GordianBaseFactory pFactory,
+                                      final GordianKeyPairSpec pKeySpec) {
+            /* Initialise underlying class */
+<span class="fc" id="L125">            super(pFactory, pKeySpec);</span>
+
+            /* Create the parameter generator */
+<span class="fc" id="L128">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;</span>
+<span class="fc" id="L129">            final GordianCoreDHSpec myGroup = myKeySpec.getDHSpec();</span>
+<span class="fc" id="L130">            final DHParameters myDHParms = myGroup.getParameters();</span>
+<span class="fc" id="L131">            final ElGamalParameters myParms = new ElGamalParameters(myDHParms.getP(), myDHParms.getQ());</span>
+<span class="fc" id="L132">            final ElGamalKeyGenerationParameters myParams = new ElGamalKeyGenerationParameters(getRandom(), myParms);</span>
+
+            /* Create and initialise the generator */
+<span class="fc" id="L135">            setGenerator(new ElGamalKeyPairGenerator(), myParams);</span>
+<span class="fc" id="L136">            setFactorySet(BouncyElGamalKeyFactorySet.INSTANCE);</span>
+<span class="fc" id="L137">        }</span>
+
+        @Override
+        BouncyElGamalPrivateKey newPrivateKey(final AsymmetricKeyParameter pThat) {
+<span class="fc" id="L141">            return new BouncyElGamalPrivateKey(getKeySpec(), (ElGamalPrivateKeyParameters) pThat);</span>
+        }
+
+        @Override
+        BouncyElGamalPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
+<span class="fc" id="L146">            return new BouncyElGamalPublicKey(getKeySpec(), (ElGamalPublicKeyParameters) pThat);</span>
+        }
+    }
+
+    /**
+     * ElGamal KeyFactorySet.
+     */
+<span class="fc" id="L153">    private enum BouncyElGamalKeyFactorySet</span>
+            implements BouncyKeyFactorySet {
+        /**
+         * Instance.
+         */
+<span class="fc" id="L158">        INSTANCE;</span>
+
+        @Override
+        public AsymmetricKeyParameter parsePKCS8EncodedKeySpec(final PKCS8EncodedKeySpec pEncodedKey) throws GordianException {
+<span class="fc" id="L162">            return BouncyStdKeyFactorySet.INSTANCE.parsePKCS8EncodedKeySpec(pEncodedKey);</span>
+        }
+
+        @Override
+        public PKCS8EncodedKeySpec createPKCS8EncodedKeySpec(final AsymmetricKeyParameter pParams) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* build and return the encoding */
+<span class="fc" id="L170">                final ElGamalPrivateKeyParameters myKey = (ElGamalPrivateKeyParameters) pParams;</span>
+<span class="fc" id="L171">                final AlgorithmIdentifier myAlgId = getAlgorithmIdentifier(myKey.getParameters());</span>
+<span class="fc" id="L172">                final PrivateKeyInfo myInfo = new PrivateKeyInfo(myAlgId, new ASN1Integer(myKey.getX()), null);</span>
+<span class="fc" id="L173">                return new PKCS8EncodedKeySpec(myInfo.getEncoded());</span>
+
+<span class="nc" id="L175">            } catch (IOException e) {</span>
+<span class="nc" id="L176">                throw new GordianCryptoException(BouncyKeyPairGenerator.ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public AsymmetricKeyParameter parseX509EncodedKeySpec(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+            /* Parse the encoded keySpec */
+<span class="fc" id="L183">            return BouncyStdKeyFactorySet.INSTANCE.parseX509EncodedKeySpec(pEncodedKey);</span>
+        }
+
+        @Override
+        public X509EncodedKeySpec createX509EncodedKeySpec(final AsymmetricKeyParameter pParams) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* build and return the encoding */
+<span class="fc" id="L191">                final ElGamalPublicKeyParameters myKey = (ElGamalPublicKeyParameters) pParams;</span>
+<span class="fc" id="L192">                final AlgorithmIdentifier myAlgId = getAlgorithmIdentifier(myKey.getParameters());</span>
+<span class="fc" id="L193">                final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(myAlgId, new ASN1Integer(myKey.getY()));</span>
+<span class="fc" id="L194">                return new X509EncodedKeySpec(myInfo.getEncoded());</span>
+
+<span class="nc" id="L196">            } catch (IOException e) {</span>
+<span class="nc" id="L197">                throw new GordianCryptoException(BouncyKeyPairGenerator.ERROR_PARSE, e);</span>
+            }
+        }
+
+        /**
+         * Obtain algorithm Id from ElGamalParameters.
+         *
+         * @param pParams the parameters
+         * @return the algorithmId.
+         */
+        private static AlgorithmIdentifier getAlgorithmIdentifier(final ElGamalParameters pParams) {
+<span class="fc" id="L208">            return new AlgorithmIdentifier(OIWObjectIdentifiers.elGamalAlgorithm,</span>
+<span class="fc" id="L209">                    new ElGamalParameter(pParams.getP(), pParams.getG()).toASN1Primitive());</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

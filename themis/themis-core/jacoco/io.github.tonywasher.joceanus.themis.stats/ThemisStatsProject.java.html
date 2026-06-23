@@ -16,11 +16,13 @@
  */
 package io.github.tonywasher.joceanus.themis.stats;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.themis.parser.ThemisParser;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisModule;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisModule;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,20 @@ import java.util.List;
  */
 public class ThemisStatsProject
         implements ThemisStatsElement {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L38">    private static final MetisFieldSet&lt;ThemisStatsProject&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisStatsProject.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L44">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_MODULES, ThemisStatsProject::getModules);</span>
+<span class="fc" id="L45">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisStatsProject::getUnderlying);</span>
+<span class="fc" id="L46">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_STATS, ThemisStatsProject::getStats);</span>
+<span class="fc" id="L47">    }</span>
+
     /**
      * The underlying project.
      */
@@ -46,42 +62,40 @@ public class ThemisStatsProject
     private final List&lt;ThemisStatsModule&gt; theModules;
 
     /**
-     * The error.
-     */
-    private OceanusException theError;
-
-    /**
      * Constructor.
      *
      * @param pParser the project parser
+     * @throws OceanusException on error
      */
-<span class="fc" id="L58">    public ThemisStatsProject(final ThemisParser pParser) {</span>
+<span class="fc" id="L70">    public ThemisStatsProject(final ThemisParser pParser) throws OceanusException {</span>
         /* Store the parameters */
-<span class="fc" id="L60">        theProject = pParser.getProject();</span>
+<span class="fc" id="L72">        theProject = pParser.getProject();</span>
 
         /* Create the stats */
-<span class="fc" id="L63">        theStats = new ThemisStats();</span>
+<span class="fc" id="L75">        theStats = new ThemisStats();</span>
 
         /* Create the Module list */
-<span class="fc" id="L66">        theModules = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L78">        theModules = new ArrayList&lt;&gt;();</span>
 
-        /* Protect against exceptions */
-        try {
-            /* Initialise the modules */
-<span class="fc bfc" id="L71" title="All 2 branches covered.">            for (ThemisModule myModule : theProject.getModules()) {</span>
-<span class="fc" id="L72">                theModules.add(new ThemisStatsModule(myModule));</span>
-<span class="fc" id="L73">            }</span>
+        /* Initialise the modules */
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        for (ThemisModule myModule : theProject.getModules()) {</span>
+<span class="fc" id="L82">            theModules.add(new ThemisStatsModule(myModule));</span>
+<span class="fc" id="L83">        }</span>
+<span class="fc" id="L84">    }</span>
 
-            /* Handle exceptions */
-<span class="nc" id="L76">        } catch (OceanusException e) {</span>
-            /* Save Exception */
-<span class="nc" id="L78">            theError = new ThemisIOException(&quot;Failed to parse Stats project&quot;, e);</span>
-<span class="fc" id="L79">        }</span>
-<span class="fc" id="L80">    }</span>
+    @Override
+    public MetisFieldSet&lt;ThemisStatsProject&gt; getDataFieldSet() {
+<span class="nc" id="L88">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L93">        return toString();</span>
+    }
 
     @Override
     public String getName() {
-<span class="nc" id="L84">        return theProject.getName();</span>
+<span class="nc" id="L98">        return theProject.getName();</span>
     }
 
     /**
@@ -90,12 +104,12 @@ public class ThemisStatsProject
      * @return the project
      */
     public ThemisProject getUnderlying() {
-<span class="nc" id="L93">        return theProject;</span>
+<span class="nc" id="L107">        return theProject;</span>
     }
 
     @Override
     public ThemisStats getStats() {
-<span class="nc" id="L98">        return theStats;</span>
+<span class="nc" id="L112">        return theStats;</span>
     }
 
     /**
@@ -104,21 +118,12 @@ public class ThemisStatsProject
      * @return the modules
      */
     public List&lt;ThemisStatsModule&gt; getModules() {
-<span class="nc" id="L107">        return theModules;</span>
-    }
-
-    /**
-     * Obtain the error.
-     *
-     * @return the error
-     */
-    public OceanusException getError() {
-<span class="fc" id="L116">        return theError;</span>
+<span class="nc" id="L121">        return theModules;</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L121">        return theProject.toString();</span>
+<span class="nc" id="L126">        return theProject.toString();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

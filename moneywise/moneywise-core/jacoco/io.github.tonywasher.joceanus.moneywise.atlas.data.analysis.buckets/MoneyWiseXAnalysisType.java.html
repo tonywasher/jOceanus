@@ -22,60 +22,63 @@ import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisAttr;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransAttr;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * Analysis Types.
  */
-<span class="fc" id="L29">public enum MoneyWiseXAnalysisType {</span>
+<span class="nc" id="L32">public enum MoneyWiseXAnalysisType {</span>
     /**
      * Deposit.
      */
-<span class="fc" id="L33">    DEPOSIT,</span>
+<span class="nc" id="L36">    DEPOSIT,</span>
 
     /**
      * Cash.
      */
-<span class="fc" id="L38">    CASH,</span>
+<span class="nc" id="L41">    CASH,</span>
 
     /**
      * Loan.
      */
-<span class="fc" id="L43">    LOAN,</span>
+<span class="nc" id="L46">    LOAN,</span>
 
     /**
      * Security.
      */
-<span class="fc" id="L48">    SECURITY,</span>
+<span class="nc" id="L51">    SECURITY,</span>
 
     /**
      * Portfolio.
      */
-<span class="fc" id="L53">    PORTFOLIO,</span>
+<span class="nc" id="L56">    PORTFOLIO,</span>
 
     /**
      * Payee.
      */
-<span class="fc" id="L58">    PAYEE,</span>
+<span class="nc" id="L61">    PAYEE,</span>
 
     /**
      * EventCategory.
      */
-<span class="fc" id="L63">    CATEGORY,</span>
+<span class="nc" id="L66">    CATEGORY,</span>
 
     /**
      * TaxBasis.
      */
-<span class="fc" id="L68">    TAXBASIS,</span>
+<span class="nc" id="L71">    TAXBASIS,</span>
 
     /**
      * TransactionTag.
      */
-<span class="fc" id="L73">    TRANSTAG,</span>
+<span class="nc" id="L76">    TRANSTAG,</span>
 
     /**
      * All.
      */
-<span class="fc" id="L78">    ALL;</span>
+<span class="nc" id="L81">    ALL;</span>
 
     /**
      * Report Name.
@@ -85,13 +88,13 @@ import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyW
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="nc bnc" id="L88" title="All 2 branches missed.">        if (theName == null) {</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (theName == null) {</span>
             /* Load the name */
-<span class="nc" id="L90">            theName = MoneyWiseXAnalysisBucketResource.getKeyForAnalysisType(this).getValue();</span>
+<span class="nc" id="L93">            theName = bundleIdForType(this).getValue();</span>
         }
 
         /* return the name */
-<span class="nc" id="L94">        return theName;</span>
+<span class="nc" id="L97">        return theName;</span>
     }
 
     /**
@@ -100,10 +103,10 @@ import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyW
      * @return the default
      */
     public MoneyWiseXAnalysisAttribute getDefaultValue() {
-<span class="nc" id="L103">        final MoneyWiseXAnalysisAttribute[] myValues = getValues();</span>
-<span class="nc bnc" id="L104" title="All 4 branches missed.">        return myValues != null &amp;&amp; myValues.length &gt; 0</span>
-<span class="nc" id="L105">                ? myValues[0]</span>
-<span class="nc" id="L106">                : null;</span>
+<span class="nc" id="L106">        final MoneyWiseXAnalysisAttribute[] myValues = getValues();</span>
+<span class="nc bnc" id="L107" title="All 4 branches missed.">        return myValues != null &amp;&amp; myValues.length &gt; 0</span>
+<span class="nc" id="L108">                ? myValues[0]</span>
+<span class="nc" id="L109">                : null;</span>
     }
 
     /**
@@ -112,9 +115,9 @@ import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyW
      * @return true/false
      */
     public boolean hasBalances() {
-<span class="nc bnc" id="L115" title="All 2 branches missed.">        return switch (this) {</span>
-<span class="nc" id="L116">            case DEPOSIT, CASH, LOAN, PAYEE, PORTFOLIO, SECURITY, CATEGORY, TAXBASIS -&gt; true;</span>
-<span class="nc" id="L117">            default -&gt; false;</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L119">            case DEPOSIT, CASH, LOAN, PAYEE, PORTFOLIO, SECURITY, CATEGORY, TAXBASIS -&gt; true;</span>
+<span class="nc" id="L120">            default -&gt; false;</span>
         };
     }
 
@@ -124,14 +127,36 @@ import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyW
      * @return values
      */
     public MoneyWiseXAnalysisAttribute[] getValues() {
-<span class="nc bnc" id="L127" title="All 6 branches missed.">        return switch (this) {</span>
-<span class="nc" id="L128">            case DEPOSIT, CASH, LOAN, PORTFOLIO, TRANSTAG, ALL -&gt; MoneyWiseXAnalysisAccountAttr.values();</span>
-<span class="nc" id="L129">            case SECURITY -&gt; MoneyWiseXAnalysisSecurityAttr.values();</span>
-<span class="nc" id="L130">            case PAYEE -&gt; MoneyWiseXAnalysisPayeeAttr.values();</span>
-<span class="nc" id="L131">            case CATEGORY -&gt; MoneyWiseXAnalysisTransAttr.values();</span>
-<span class="nc" id="L132">            case TAXBASIS -&gt; MoneyWiseXAnalysisTaxBasisAttr.values();</span>
-<span class="nc" id="L133">            default -&gt; throw new IllegalArgumentException(&quot;Invalid Attribute type &quot; + toString());</span>
+<span class="nc bnc" id="L130" title="All 6 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L131">            case DEPOSIT, CASH, LOAN, PORTFOLIO, TRANSTAG, ALL -&gt; MoneyWiseXAnalysisAccountAttr.values();</span>
+<span class="nc" id="L132">            case SECURITY -&gt; MoneyWiseXAnalysisSecurityAttr.values();</span>
+<span class="nc" id="L133">            case PAYEE -&gt; MoneyWiseXAnalysisPayeeAttr.values();</span>
+<span class="nc" id="L134">            case CATEGORY -&gt; MoneyWiseXAnalysisTransAttr.values();</span>
+<span class="nc" id="L135">            case TAXBASIS -&gt; MoneyWiseXAnalysisTaxBasisAttr.values();</span>
+<span class="nc" id="L136">            default -&gt; throw new IllegalArgumentException(&quot;Invalid Attribute type &quot; + toString());</span>
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the type.
+     *
+     * @param pType the type
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForType(final MoneyWiseXAnalysisType pType) {
+<span class="nc bnc" id="L147" title="All 11 branches missed.">        return switch (pType) {</span>
+<span class="nc" id="L148">            case DEPOSIT -&gt; MoneyWiseBasicResource.DEPOSIT_NAME;</span>
+<span class="nc" id="L149">            case CASH -&gt; MoneyWiseBasicResource.CASH_NAME;</span>
+<span class="nc" id="L150">            case LOAN -&gt; MoneyWiseBasicResource.LOAN_NAME;</span>
+<span class="nc" id="L151">            case PAYEE -&gt; MoneyWiseBasicResource.PAYEE_NAME;</span>
+<span class="nc" id="L152">            case SECURITY -&gt; MoneyWiseBasicResource.SECURITY_NAME;</span>
+<span class="nc" id="L153">            case PORTFOLIO -&gt; MoneyWiseBasicResource.PORTFOLIO_NAME;</span>
+<span class="nc" id="L154">            case CATEGORY -&gt; MoneyWiseBasicResource.TRANSCAT_NAME;</span>
+<span class="nc" id="L155">            case TAXBASIS -&gt; MoneyWiseStaticResource.TAXBASIS_NAME;</span>
+<span class="nc" id="L156">            case TRANSTAG -&gt; MoneyWiseBasicResource.TRANSTAG_NAME;</span>
+<span class="nc" id="L157">            case ALL -&gt; MoneyWiseXAnalysisBucketResource.FILTER_ALL;</span>
+<span class="nc" id="L158">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

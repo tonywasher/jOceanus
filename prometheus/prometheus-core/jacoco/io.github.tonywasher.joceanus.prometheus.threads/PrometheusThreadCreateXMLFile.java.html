@@ -30,7 +30,7 @@ import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPassw
 import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.io.File;
 
@@ -84,9 +84,9 @@ public class PrometheusThreadCreateXMLFile
     }
 
     @Override
-    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public Void performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Access the thread manager */
-<span class="nc" id="L89">        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();</span>
+<span class="nc" id="L89">        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pReport.getThreadData();</span>
 <span class="nc" id="L90">        final PrometheusSecurityPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();</span>
 <span class="nc" id="L91">        boolean doDelete = false;</span>
 <span class="nc" id="L92">        File myFile = null;</span>
@@ -94,7 +94,7 @@ public class PrometheusThreadCreateXMLFile
         /* Catch Exceptions */
         try {
             /* Initialise the status window */
-<span class="nc" id="L97">            pManager.initTask(getTaskName());</span>
+<span class="nc" id="L97">            pReport.initTask(getTaskName());</span>
 
             /* Access the Backup preferences */
 <span class="nc" id="L100">            final MetisPreferenceManager myMgr = theControl.getPreferenceManager();</span>
@@ -129,7 +129,7 @@ public class PrometheusThreadCreateXMLFile
             }
 
             /* Set the standard backup name */
-<span class="nc bnc" id="L132" title="All 2 branches missed.">            myFile = new File(myName.toString() + (isSecure</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">            myFile = new File(myName.toString() + '.' + (isSecure</span>
 <span class="nc" id="L133">                    ? GordianUtilities.SECUREZIPFILE_EXT</span>
 <span class="nc" id="L134">                    : GordianUtilities.ZIPFILE_EXT));</span>
 
@@ -137,7 +137,7 @@ public class PrometheusThreadCreateXMLFile
 <span class="nc" id="L137">            final PrometheusDataSet myOldData = theControl.getData();</span>
 
             /* Create a new formatter */
-<span class="nc" id="L140">            final PrometheusDataValuesFormatter myFormatter = new PrometheusDataValuesFormatter(pManager, myPasswordMgr);</span>
+<span class="nc" id="L140">            final PrometheusDataValuesFormatter myFormatter = new PrometheusDataValuesFormatter(pReport, myPasswordMgr);</span>
 
             /* Create backup */
 <span class="nc bnc" id="L143" title="All 2 branches missed.">            if (isSecure) {</span>
@@ -154,20 +154,20 @@ public class PrometheusThreadCreateXMLFile
                 /* Check for cancellation */
 
                 /* Initialise the status window */
-<span class="nc" id="L157">                pManager.initTask(&quot;Reading Backup&quot;);</span>
+<span class="nc" id="L157">                pReport.initTask(&quot;Reading Backup&quot;);</span>
 
                 /* Load workbook */
 <span class="nc" id="L160">                final PrometheusDataSet myNewData = theControl.getNewData();</span>
 <span class="nc" id="L161">                myFormatter.loadZipFile(myNewData, myFile);</span>
 
                 /* Initialise the security, from the original data */
-<span class="nc" id="L164">                myNewData.initialiseSecurity(pManager, myOldData);</span>
+<span class="nc" id="L164">                myNewData.initialiseSecurity(pReport, myOldData);</span>
 
                 /* Initialise the status window */
-<span class="nc" id="L167">                pManager.initTask(&quot;Verifying Backup&quot;);</span>
+<span class="nc" id="L167">                pReport.initTask(&quot;Verifying Backup&quot;);</span>
 
                 /* Create a difference set between the two data copies */
-<span class="nc" id="L170">                final PrometheusDataSet myDiff = myNewData.getDifferenceSet(pManager, myOldData);</span>
+<span class="nc" id="L170">                final PrometheusDataSet myDiff = myNewData.getDifferenceSet(pReport, myOldData);</span>
 
                 /* If the difference set is non-empty */
 <span class="nc bnc" id="L173" title="All 2 branches missed.">                if (!myDiff.isEmpty()) {</span>
@@ -190,4 +190,4 @@ public class PrometheusThreadCreateXMLFile
 <span class="nc" id="L190">        return null;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

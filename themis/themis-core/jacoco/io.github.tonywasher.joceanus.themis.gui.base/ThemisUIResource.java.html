@@ -31,507 +31,532 @@ import java.util.ResourceBundle;
     /**
      * Source Tab.
      */
-<span class="nc" id="L34">    TAB_SOURCE(&quot;tab.source&quot;),</span>
+<span class="nc" id="L34">    MENU_HELP(&quot;menu.help&quot;),</span>
 
     /**
-     * References Tab.
+     * DataViewer Task.
      */
-<span class="nc" id="L39">    TAB_REFERENCES(&quot;tab.references&quot;),</span>
+<span class="nc" id="L39">    MENUITEM_DATAVIEWER(&quot;menuitem.dataViewer&quot;),</span>
 
     /**
-     * Statistics Tab.
+     * About Task.
      */
-<span class="nc" id="L44">    TAB_STATS(&quot;tab.stats&quot;),</span>
+<span class="nc" id="L44">    MENUITEM_ABOUT(&quot;menuitem.about&quot;),</span>
 
     /**
      * Source Tab.
      */
-<span class="nc" id="L49">    TAB_LOG(&quot;tab.log&quot;),</span>
+<span class="nc" id="L49">    TAB_SOURCE(&quot;tab.source&quot;),</span>
+
+    /**
+     * References Tab.
+     */
+<span class="nc" id="L54">    TAB_REFERENCES(&quot;tab.references&quot;),</span>
+
+    /**
+     * Statistics Tab.
+     */
+<span class="nc" id="L59">    TAB_STATS(&quot;tab.stats&quot;),</span>
+
+    /**
+     * Source Tab.
+     */
+<span class="nc" id="L64">    TAB_LOG(&quot;tab.log&quot;),</span>
 
     /**
      * Select Project Title.
      */
-<span class="nc" id="L54">    SELECT_PROJECT(&quot;select.project&quot;),</span>
+<span class="nc" id="L69">    SELECT_PROJECT(&quot;select.project&quot;),</span>
 
     /**
      * Project Prompt.
      */
-<span class="nc" id="L59">    PROMPT_PROJECT(&quot;prompt.project&quot;),</span>
+<span class="nc" id="L74">    PROMPT_PROJECT(&quot;prompt.project&quot;),</span>
+
+    /**
+     * Project None.
+     */
+<span class="nc" id="L79">    PROMPT_NONE(&quot;prompt.none&quot;),</span>
 
     /**
      * Module Prompt.
      */
-<span class="nc" id="L64">    PROMPT_MODULE(&quot;prompt.module&quot;),</span>
+<span class="nc" id="L84">    PROMPT_MODULE(&quot;prompt.module&quot;),</span>
 
     /**
      * Package Prompt.
      */
-<span class="nc" id="L69">    PROMPT_PACKAGE(&quot;prompt.package&quot;),</span>
+<span class="nc" id="L89">    PROMPT_PACKAGE(&quot;prompt.package&quot;),</span>
 
     /**
      * File Prompt.
      */
-<span class="nc" id="L74">    PROMPT_FILE(&quot;prompt.file&quot;),</span>
+<span class="nc" id="L94">    PROMPT_FILE(&quot;prompt.file&quot;),</span>
+
+    /**
+     * Tooltip Refresh.
+     */
+<span class="nc" id="L99">    TOOLTIP_REFRESH(&quot;tooltip.refresh&quot;),</span>
 
     /**
      * Package References Header.
      */
-<span class="nc" id="L79">    HEADER_PACKAGE(&quot;header.package&quot;),</span>
+<span class="nc" id="L104">    HEADER_PACKAGE(&quot;header.package&quot;),</span>
 
     /**
      * Class References Header.
      */
-<span class="nc" id="L84">    HEADER_CLASS(&quot;header.class&quot;),</span>
+<span class="nc" id="L109">    HEADER_CLASS(&quot;header.class&quot;),</span>
 
     /**
      * Reference Local Package.
      */
-<span class="nc" id="L89">    REF_LOCAL(&quot;reference.local&quot;),</span>
+<span class="nc" id="L114">    REF_LOCAL(&quot;reference.local&quot;),</span>
 
     /**
      * Reference Family Package.
      */
-<span class="nc" id="L94">    REF_FAMILY(&quot;reference.family&quot;),</span>
+<span class="nc" id="L119">    REF_FAMILY(&quot;reference.family&quot;),</span>
 
     /**
      * Reference Root Package.
      */
-<span class="nc" id="L99">    REF_ROOT(&quot;reference.root&quot;),</span>
+<span class="nc" id="L124">    REF_ROOT(&quot;reference.root&quot;),</span>
 
     /**
      * Reference Parent Package.
      */
-<span class="nc" id="L104">    REF_PARENT(&quot;reference.parent&quot;),</span>
+<span class="nc" id="L129">    REF_PARENT(&quot;reference.parent&quot;),</span>
 
     /**
      * Reference Home Package.
      */
-<span class="nc" id="L109">    REF_HOME(&quot;reference.home&quot;),</span>
+<span class="nc" id="L134">    REF_HOME(&quot;reference.home&quot;),</span>
 
     /**
      * Reference Links.
      */
-<span class="nc" id="L114">    REF_LINKS(&quot;reference.links&quot;),</span>
+<span class="nc" id="L139">    REF_LINKS(&quot;reference.links&quot;),</span>
 
     /**
      * Stats Local.
      */
-<span class="nc" id="L119">    STATS_LOCAL(&quot;stats.local&quot;),</span>
+<span class="nc" id="L144">    STATS_LOCAL(&quot;stats.local&quot;),</span>
 
     /**
      * Stats Total.
      */
-<span class="nc" id="L124">    STATS_TOTAL(&quot;stats.total&quot;),</span>
+<span class="nc" id="L149">    STATS_TOTAL(&quot;stats.total&quot;),</span>
 
     /**
      * Stats Desc.
      */
-<span class="nc" id="L129">    STATS_DESC(&quot;stats.desc&quot;),</span>
+<span class="nc" id="L154">    STATS_DESC(&quot;stats.desc&quot;),</span>
 
     /**
      * Stats Key.
      */
-<span class="nc" id="L134">    STATS_KEY(&quot;stats.key&quot;),</span>
+<span class="nc" id="L159">    STATS_KEY(&quot;stats.key&quot;),</span>
 
     /**
      * Stats Value.
      */
-<span class="nc" id="L139">    STATS_VALUE(&quot;stats.value&quot;),</span>
+<span class="nc" id="L164">    STATS_VALUE(&quot;stats.value&quot;),</span>
 
     /**
      * SourceDecl Annotation.
      */
-<span class="nc" id="L144">    SOURCEDECL_ANNOT(&quot;source.decl.annot&quot;),</span>
+<span class="nc" id="L169">    SOURCEDECL_ANNOT(&quot;source.decl.annot&quot;),</span>
 
     /**
      * SourceDecl AnnotationMember.
      */
-<span class="nc" id="L149">    SOURCEDECL_ANNOTMEMBER(&quot;source.decl.annotMember&quot;),</span>
+<span class="nc" id="L174">    SOURCEDECL_ANNOTMEMBER(&quot;source.decl.annotMember&quot;),</span>
 
     /**
      * SourceDecl Compact.
      */
-<span class="nc" id="L154">    SOURCEDECL_COMPACT(&quot;source.decl.compact&quot;),</span>
+<span class="nc" id="L179">    SOURCEDECL_COMPACT(&quot;source.decl.compact&quot;),</span>
 
     /**
      * SourceDecl Constructor.
      */
-<span class="nc" id="L159">    SOURCEDECL_CONSTRUCT(&quot;source.decl.construct&quot;),</span>
+<span class="nc" id="L184">    SOURCEDECL_CONSTRUCT(&quot;source.decl.construct&quot;),</span>
 
     /**
      * SourceDecl Field.
      */
-<span class="nc" id="L164">    SOURCEDECL_FIELD(&quot;source.decl.field&quot;),</span>
+<span class="nc" id="L189">    SOURCEDECL_FIELD(&quot;source.decl.field&quot;),</span>
 
     /**
      * SourceDecl Initializer.
      */
-<span class="nc" id="L169">    SOURCEDECL_INIT(&quot;source.decl.init&quot;),</span>
+<span class="nc" id="L194">    SOURCEDECL_INIT(&quot;source.decl.init&quot;),</span>
 
     /**
      * SourceNode ArrayLevel.
      */
-<span class="nc" id="L174">    SOURCENODE_ARRAYLVL(&quot;source.node.arrayLevel&quot;),</span>
+<span class="nc" id="L199">    SOURCENODE_ARRAYLVL(&quot;source.node.arrayLevel&quot;),</span>
 
     /**
      * SourceNode Case.
      */
-<span class="nc" id="L179">    SOURCENODE_CASE(&quot;source.node.case&quot;),</span>
+<span class="nc" id="L204">    SOURCENODE_CASE(&quot;source.node.case&quot;),</span>
 
     /**
      * SourceNode Catch.
      */
-<span class="nc" id="L184">    SOURCENODE_CATCH(&quot;source.node.catch&quot;),</span>
+<span class="nc" id="L209">    SOURCENODE_CATCH(&quot;source.node.catch&quot;),</span>
 
     /**
      * SourceNode Comment.
      */
-<span class="nc" id="L189">    SOURCENODE_COMMENT(&quot;source.node.comment&quot;),</span>
+<span class="nc" id="L214">    SOURCENODE_COMMENT(&quot;source.node.comment&quot;),</span>
 
     /**
      * SourceNode CompilationUnit.
      */
-<span class="nc" id="L194">    SOURCENODE_COMPUNIT(&quot;source.node.compUnit&quot;),</span>
+<span class="nc" id="L219">    SOURCENODE_COMPUNIT(&quot;source.node.compUnit&quot;),</span>
 
     /**
      * SourceNode Import.
      */
-<span class="nc" id="L199">    SOURCENODE_IMPORT(&quot;source.node.import&quot;),</span>
+<span class="nc" id="L224">    SOURCENODE_IMPORT(&quot;source.node.import&quot;),</span>
 
     /**
      * SourceNode Name.
      */
-<span class="nc" id="L204">    SOURCENODE_NAME(&quot;source.node.name&quot;),</span>
+<span class="nc" id="L229">    SOURCENODE_NAME(&quot;source.node.name&quot;),</span>
 
     /**
      * SourceNode Package.
      */
-<span class="nc" id="L209">    SOURCENODE_PACKAGE(&quot;source.node.package&quot;),</span>
+<span class="nc" id="L234">    SOURCENODE_PACKAGE(&quot;source.node.package&quot;),</span>
 
     /**
      * SourceNode ValuePair.
      */
-<span class="nc" id="L214">    SOURCENODE_VALUEPAIR(&quot;source.node.valuePair&quot;),</span>
+<span class="nc" id="L239">    SOURCENODE_VALUEPAIR(&quot;source.node.valuePair&quot;),</span>
 
     /**
      * SourceExpr ArrayAccess.
      */
-<span class="nc" id="L219">    SOURCEEXPR_ARRAYACCESS(&quot;source.expr.arrayAccess&quot;),</span>
+<span class="nc" id="L244">    SOURCEEXPR_ARRAYACCESS(&quot;source.expr.arrayAccess&quot;),</span>
 
     /**
      * SourceExpr MarkerAnnotation.
      */
-<span class="nc" id="L224">    SOURCEEXPR_MARKER(&quot;source.expr.marker&quot;),</span>
+<span class="nc" id="L249">    SOURCEEXPR_MARKER(&quot;source.expr.marker&quot;),</span>
 
     /**
      * SourceExpr NormalAnnotation.
      */
-<span class="nc" id="L229">    SOURCEEXPR_NORMAL(&quot;source.expr.normal&quot;),</span>
+<span class="nc" id="L254">    SOURCEEXPR_NORMAL(&quot;source.expr.normal&quot;),</span>
 
     /**
      * SourceExpr SingleMemberAnnotation.
      */
-<span class="nc" id="L234">    SOURCEEXPR_SINGLE(&quot;source.expr.single&quot;),</span>
+<span class="nc" id="L259">    SOURCEEXPR_SINGLE(&quot;source.expr.single&quot;),</span>
 
     /**
      * SourceExpr ArrayCreation.
      */
-<span class="nc" id="L239">    SOURCEEXPR_ARRAYCREATE(&quot;source.expr.arrayCreate&quot;),</span>
+<span class="nc" id="L264">    SOURCEEXPR_ARRAYCREATE(&quot;source.expr.arrayCreate&quot;),</span>
 
     /**
      * SourceExpr ArrayAccess.
      */
-<span class="nc" id="L244">    SOURCEEXPR_CAST(&quot;source.expr.cast&quot;),</span>
+<span class="nc" id="L269">    SOURCEEXPR_CAST(&quot;source.expr.cast&quot;),</span>
 
     /**
      * SourceExpr Char.
      */
-<span class="nc" id="L249">    SOURCEEXPR_CHAR(&quot;source.expr.char&quot;),</span>
+<span class="nc" id="L274">    SOURCEEXPR_CHAR(&quot;source.expr.char&quot;),</span>
 
     /**
      * SourceExpr ArrayInit.
      */
-<span class="nc" id="L254">    SOURCEEXPR_ARRAYINIT(&quot;source.expr.arrayInit&quot;),</span>
+<span class="nc" id="L279">    SOURCEEXPR_ARRAYINIT(&quot;source.expr.arrayInit&quot;),</span>
 
     /**
      * SourceExpr Integer.
      */
-<span class="nc" id="L259">    SOURCEEXPR_INTEGER(&quot;source.expr.integer&quot;),</span>
+<span class="nc" id="L284">    SOURCEEXPR_INTEGER(&quot;source.expr.integer&quot;),</span>
 
     /**
      * SourceExpr Assign.
      */
-<span class="nc" id="L264">    SOURCEEXPR_ASSIGN(&quot;source.expr.assign&quot;),</span>
+<span class="nc" id="L289">    SOURCEEXPR_ASSIGN(&quot;source.expr.assign&quot;),</span>
 
     /**
      * SourceExpr Binary.
      */
-<span class="nc" id="L269">    SOURCEEXPR_BINARY(&quot;source.expr.binary&quot;),</span>
+<span class="nc" id="L294">    SOURCEEXPR_BINARY(&quot;source.expr.binary&quot;),</span>
 
     /**
      * SourceExpr Boolean.
      */
-<span class="nc" id="L274">    SOURCEEXPR_BOOLEAN(&quot;source.expr.boolean&quot;),</span>
+<span class="nc" id="L299">    SOURCEEXPR_BOOLEAN(&quot;source.expr.boolean&quot;),</span>
 
     /**
      * SourceExpr Class.
      */
-<span class="nc" id="L279">    SOURCEEXPR_CLASS(&quot;source.expr.class&quot;),</span>
+<span class="nc" id="L304">    SOURCEEXPR_CLASS(&quot;source.expr.class&quot;),</span>
 
     /**
      * SourceExpr Conditional.
      */
-<span class="nc" id="L284">    SOURCEEXPR_CONDITIONAL(&quot;source.expr.condition&quot;),</span>
+<span class="nc" id="L309">    SOURCEEXPR_CONDITIONAL(&quot;source.expr.condition&quot;),</span>
 
     /**
      * SourceExpr Null.
      */
-<span class="nc" id="L289">    SOURCEEXPR_NULL(&quot;source.expr.null&quot;),</span>
+<span class="nc" id="L314">    SOURCEEXPR_NULL(&quot;source.expr.null&quot;),</span>
 
     /**
      * SourceExpr Double.
      */
-<span class="nc" id="L294">    SOURCEEXPR_DOUBLE(&quot;source.expr.double&quot;),</span>
+<span class="nc" id="L319">    SOURCEEXPR_DOUBLE(&quot;source.expr.double&quot;),</span>
 
     /**
      * SourceExpr Enclosed.
      */
-<span class="nc" id="L299">    SOURCEEXPR_ENCLOSED(&quot;source.expr.enclosed&quot;),</span>
+<span class="nc" id="L324">    SOURCEEXPR_ENCLOSED(&quot;source.expr.enclosed&quot;),</span>
 
     /**
      * SourceExpr FieldAccess.
      */
-<span class="nc" id="L304">    SOURCEEXPR_FIELDACCESS(&quot;source.expr.fieldAccess&quot;),</span>
+<span class="nc" id="L329">    SOURCEEXPR_FIELDACCESS(&quot;source.expr.fieldAccess&quot;),</span>
 
     /**
      * SourceExpr InstanceOf.
      */
-<span class="nc" id="L309">    SOURCEEXPR_INSTANCEOF(&quot;source.expr.instance&quot;),</span>
+<span class="nc" id="L334">    SOURCEEXPR_INSTANCEOF(&quot;source.expr.instance&quot;),</span>
 
     /**
      * SourceExpr Lambda.
      */
-<span class="nc" id="L314">    SOURCEEXPR_LAMBDA(&quot;source.expr.lambda&quot;),</span>
+<span class="nc" id="L339">    SOURCEEXPR_LAMBDA(&quot;source.expr.lambda&quot;),</span>
 
     /**
      * SourceExpr Long.
      */
-<span class="nc" id="L319">    SOURCEEXPR_LONG(&quot;source.expr.long&quot;),</span>
+<span class="nc" id="L344">    SOURCEEXPR_LONG(&quot;source.expr.long&quot;),</span>
 
     /**
      * SourceExpr MethodCall.
      */
-<span class="nc" id="L324">    SOURCEEXPR_METHODCALL(&quot;source.expr.methodCall&quot;),</span>
+<span class="nc" id="L349">    SOURCEEXPR_METHODCALL(&quot;source.expr.methodCall&quot;),</span>
 
     /**
      * SourceExpr MethodRef.
      */
-<span class="nc" id="L329">    SOURCEEXPR_METHODREF(&quot;source.expr.methodRef&quot;),</span>
+<span class="nc" id="L354">    SOURCEEXPR_METHODREF(&quot;source.expr.methodRef&quot;),</span>
 
     /**
      * SourceExpr Name.
      */
-<span class="nc" id="L334">    SOURCEEXPR_NAME(&quot;source.expr.name&quot;),</span>
+<span class="nc" id="L359">    SOURCEEXPR_NAME(&quot;source.expr.name&quot;),</span>
 
     /**
      * SourceExpr ObjectCreate.
      */
-<span class="nc" id="L339">    SOURCEEXPR_OBJCREATE(&quot;source.expr.objCreate&quot;),</span>
+<span class="nc" id="L364">    SOURCEEXPR_OBJCREATE(&quot;source.expr.objCreate&quot;),</span>
 
     /**
      * SourceExpr String.
      */
-<span class="nc" id="L344">    SOURCEEXPR_STRING(&quot;source.expr.string&quot;),</span>
+<span class="nc" id="L369">    SOURCEEXPR_STRING(&quot;source.expr.string&quot;),</span>
 
     /**
      * SourceExpr Super.
      */
-<span class="nc" id="L349">    SOURCEEXPR_SUPER(&quot;source.expr.super&quot;),</span>
+<span class="nc" id="L374">    SOURCEEXPR_SUPER(&quot;source.expr.super&quot;),</span>
 
     /**
      * SourceExpr Switch.
      */
-<span class="nc" id="L354">    SOURCEEXPR_SWITCH(&quot;source.expr.switch&quot;),</span>
+<span class="nc" id="L379">    SOURCEEXPR_SWITCH(&quot;source.expr.switch&quot;),</span>
 
     /**
      * SourceExpr TextBlock.
      */
-<span class="nc" id="L359">    SOURCEEXPR_TEXT(&quot;source.expr.text&quot;),</span>
+<span class="nc" id="L384">    SOURCEEXPR_TEXT(&quot;source.expr.text&quot;),</span>
 
     /**
      * SourceExpr This.
      */
-<span class="nc" id="L364">    SOURCEEXPR_THIS(&quot;source.expr.this&quot;),</span>
+<span class="nc" id="L389">    SOURCEEXPR_THIS(&quot;source.expr.this&quot;),</span>
 
     /**
      * SourceExpr Type.
      */
-<span class="nc" id="L369">    SOURCEEXPR_TYPE(&quot;source.expr.type&quot;),</span>
+<span class="nc" id="L394">    SOURCEEXPR_TYPE(&quot;source.expr.type&quot;),</span>
 
     /**
      * SourceExpr TypePattern.
      */
-<span class="nc" id="L374">    SOURCEEXPR_TYPEPATTERN(&quot;source.expr.typePattern&quot;),</span>
+<span class="nc" id="L399">    SOURCEEXPR_TYPEPATTERN(&quot;source.expr.typePattern&quot;),</span>
 
     /**
      * SourceExpr Unary.
      */
-<span class="nc" id="L379">    SOURCEEXPR_UNARY(&quot;source.expr.unary&quot;),</span>
+<span class="nc" id="L404">    SOURCEEXPR_UNARY(&quot;source.expr.unary&quot;),</span>
 
     /**
      * SourceExpr Variable.
      */
-<span class="nc" id="L384">    SOURCEEXPR_VARIABLE(&quot;source.expr.var&quot;),</span>
+<span class="nc" id="L409">    SOURCEEXPR_VARIABLE(&quot;source.expr.var&quot;),</span>
 
     /**
      * SourceStmt Assert.
      */
-<span class="nc" id="L389">    SOURCESTMT_ASSERT(&quot;source.stmt.assert&quot;),</span>
+<span class="nc" id="L414">    SOURCESTMT_ASSERT(&quot;source.stmt.assert&quot;),</span>
 
     /**
      * SourceStmt Block.
      */
-<span class="nc" id="L394">    SOURCESTMT_BLOCK(&quot;source.stmt.block&quot;),</span>
+<span class="nc" id="L419">    SOURCESTMT_BLOCK(&quot;source.stmt.block&quot;),</span>
 
     /**
      * SourceStmt Break.
      */
-<span class="nc" id="L399">    SOURCESTMT_BREAK(&quot;source.stmt.break&quot;),</span>
+<span class="nc" id="L424">    SOURCESTMT_BREAK(&quot;source.stmt.break&quot;),</span>
 
     /**
      * SourceStmt Constructor.
      */
-<span class="nc" id="L404">    SOURCESTMT_CONSTRUCT(&quot;source.stmt.construct&quot;),</span>
+<span class="nc" id="L429">    SOURCESTMT_CONSTRUCT(&quot;source.stmt.construct&quot;),</span>
 
     /**
      * SourceStmt Continue.
      */
-<span class="nc" id="L409">    SOURCESTMT_CONTINUE(&quot;source.stmt.continue&quot;),</span>
+<span class="nc" id="L434">    SOURCESTMT_CONTINUE(&quot;source.stmt.continue&quot;),</span>
 
     /**
      * SourceStmt Do.
      */
-<span class="nc" id="L414">    SOURCESTMT_DO(&quot;source.stmt.do&quot;),</span>
+<span class="nc" id="L439">    SOURCESTMT_DO(&quot;source.stmt.do&quot;),</span>
 
     /**
      * SourceStmt Empty.
      */
-<span class="nc" id="L419">    SOURCESTMT_EMPTY(&quot;source.stmt.empty&quot;),</span>
+<span class="nc" id="L444">    SOURCESTMT_EMPTY(&quot;source.stmt.empty&quot;),</span>
 
     /**
      * SourceStmt Expression.
      */
-<span class="nc" id="L424">    SOURCESTMT_EXPR(&quot;source.stmt.expr&quot;),</span>
+<span class="nc" id="L449">    SOURCESTMT_EXPR(&quot;source.stmt.expr&quot;),</span>
 
     /**
      * SourceStmt For.
      */
-<span class="nc" id="L429">    SOURCESTMT_FOR(&quot;source.stmt.for&quot;),</span>
+<span class="nc" id="L454">    SOURCESTMT_FOR(&quot;source.stmt.for&quot;),</span>
 
     /**
      * SourceStmt ForEach.
      */
-<span class="nc" id="L434">    SOURCESTMT_FOREACH(&quot;source.stmt.forEach&quot;),</span>
+<span class="nc" id="L459">    SOURCESTMT_FOREACH(&quot;source.stmt.forEach&quot;),</span>
 
     /**
      * SourceStmt Id.
      */
-<span class="nc" id="L439">    SOURCESTMT_IF(&quot;source.stmt.if&quot;),</span>
+<span class="nc" id="L464">    SOURCESTMT_IF(&quot;source.stmt.if&quot;),</span>
 
     /**
      * SourceStmt Labelled.
      */
-<span class="nc" id="L444">    SOURCESTMT_LABELED(&quot;source.stmt.labeled&quot;),</span>
+<span class="nc" id="L469">    SOURCESTMT_LABELED(&quot;source.stmt.labeled&quot;),</span>
 
     /**
      * SourceStmt Return.
      */
-<span class="nc" id="L449">    SOURCESTMT_RETURN(&quot;source.stmt.return&quot;),</span>
+<span class="nc" id="L474">    SOURCESTMT_RETURN(&quot;source.stmt.return&quot;),</span>
 
     /**
      * SourceStmt Switch.
      */
-<span class="nc" id="L454">    SOURCESTMT_SWITCH(&quot;source.stmt.switch&quot;),</span>
+<span class="nc" id="L479">    SOURCESTMT_SWITCH(&quot;source.stmt.switch&quot;),</span>
 
     /**
      * SourceStmt Synchronised.
      */
-<span class="nc" id="L459">    SOURCESTMT_SYNC(&quot;source.stmt.sync&quot;),</span>
+<span class="nc" id="L484">    SOURCESTMT_SYNC(&quot;source.stmt.sync&quot;),</span>
 
     /**
      * SourceStmt Throw.
      */
-<span class="nc" id="L464">    SOURCESTMT_THROW(&quot;source.stmt.throw&quot;),</span>
+<span class="nc" id="L489">    SOURCESTMT_THROW(&quot;source.stmt.throw&quot;),</span>
 
     /**
      * SourceStmt Try.
      */
-<span class="nc" id="L469">    SOURCESTMT_TRY(&quot;source.stmt.try&quot;),</span>
+<span class="nc" id="L494">    SOURCESTMT_TRY(&quot;source.stmt.try&quot;),</span>
 
     /**
      * SourceStmt While.
      */
-<span class="nc" id="L474">    SOURCESTMT_WHILE(&quot;source.stmt.while&quot;),</span>
+<span class="nc" id="L499">    SOURCESTMT_WHILE(&quot;source.stmt.while&quot;),</span>
 
     /**
      * SourceStmt Yield.
      */
-<span class="nc" id="L479">    SOURCESTMT_YIELD(&quot;source.stmt.yield&quot;),</span>
+<span class="nc" id="L504">    SOURCESTMT_YIELD(&quot;source.stmt.yield&quot;),</span>
 
     /**
      * SourceType Array.
      */
-<span class="nc" id="L484">    SOURCETYPE_ARRAY(&quot;source.type.array&quot;),</span>
+<span class="nc" id="L509">    SOURCETYPE_ARRAY(&quot;source.type.array&quot;),</span>
 
     /**
      * SourceType Class.
      */
-<span class="nc" id="L489">    SOURCETYPE_CLASS(&quot;source.type.class&quot;),</span>
+<span class="nc" id="L514">    SOURCETYPE_CLASS(&quot;source.type.class&quot;),</span>
 
     /**
      * SourceType Intersection.
      */
-<span class="nc" id="L494">    SOURCETYPE_INTERSECT(&quot;source.type.intersect&quot;),</span>
+<span class="nc" id="L519">    SOURCETYPE_INTERSECT(&quot;source.type.intersect&quot;),</span>
 
     /**
      * SourceType Parameter.
      */
-<span class="nc" id="L499">    SOURCETYPE_PARAMETER(&quot;source.type.parameter&quot;),</span>
+<span class="nc" id="L524">    SOURCETYPE_PARAMETER(&quot;source.type.parameter&quot;),</span>
 
     /**
      * SourceType Primitive.
      */
-<span class="nc" id="L504">    SOURCETYPE_PRIMITIVE(&quot;source.type.primitive&quot;),</span>
+<span class="nc" id="L529">    SOURCETYPE_PRIMITIVE(&quot;source.type.primitive&quot;),</span>
 
     /**
      * SourceType Union.
      */
-<span class="nc" id="L509">    SOURCETYPE_UNION(&quot;source.type.union&quot;),</span>
+<span class="nc" id="L534">    SOURCETYPE_UNION(&quot;source.type.union&quot;),</span>
 
     /**
      * SourceType Unknown.
      */
-<span class="nc" id="L514">    SOURCETYPE_UNKNOWN(&quot;source.type.unknown&quot;),</span>
+<span class="nc" id="L539">    SOURCETYPE_UNKNOWN(&quot;source.type.unknown&quot;),</span>
 
     /**
      * SourceType Var.
      */
-<span class="nc" id="L519">    SOURCETYPE_VAR(&quot;source.type.var&quot;),</span>
+<span class="nc" id="L544">    SOURCETYPE_VAR(&quot;source.type.var&quot;),</span>
 
     /**
      * SourceType Void.
      */
-<span class="nc" id="L524">    SOURCETYPE_VOID(&quot;source.type.void&quot;),</span>
+<span class="nc" id="L549">    SOURCETYPE_VOID(&quot;source.type.void&quot;),</span>
 
     /**
      * SourceType Wildcard.
      */
-<span class="nc" id="L529">    SOURCETYPE_WILDCARD(&quot;source.type.wildCard&quot;);</span>
+<span class="nc" id="L554">    SOURCETYPE_WILDCARD(&quot;source.type.wildCard&quot;);</span>
 
     /**
      * The Resource Loader.
      */
-<span class="nc" id="L534">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(ThemisUIResource.class.getCanonicalName(),</span>
+<span class="nc" id="L559">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(ThemisUIResource.class.getCanonicalName(),</span>
             ResourceBundle::getBundle);
 
     /**
@@ -549,34 +574,34 @@ import java.util.ResourceBundle;
      *
      * @param pKeyName the key name
      */
-<span class="nc" id="L552">    ThemisUIResource(final String pKeyName) {</span>
-<span class="nc" id="L553">        theKeyName = pKeyName;</span>
-<span class="nc" id="L554">    }</span>
+<span class="nc" id="L577">    ThemisUIResource(final String pKeyName) {</span>
+<span class="nc" id="L578">        theKeyName = pKeyName;</span>
+<span class="nc" id="L579">    }</span>
 
     @Override
     public String getKeyName() {
-<span class="nc" id="L558">        return theKeyName;</span>
+<span class="nc" id="L583">        return theKeyName;</span>
     }
 
     @Override
     public String getNameSpace() {
-<span class="nc" id="L563">        return &quot;Themis.ui&quot;;</span>
+<span class="nc" id="L588">        return &quot;Themis.ui&quot;;</span>
     }
 
     @Override
     public String getValue() {
         /* If we have not initialised the value */
-<span class="nc bnc" id="L569" title="All 2 branches missed.">        if (theValue == null) {</span>
-<span class="nc" id="L570">            theValue = LOADER.getValue(this);</span>
+<span class="nc bnc" id="L594" title="All 2 branches missed.">        if (theValue == null) {</span>
+<span class="nc" id="L595">            theValue = LOADER.getValue(this);</span>
         }
 
         /* return the value */
-<span class="nc" id="L574">        return theValue;</span>
+<span class="nc" id="L599">        return theValue;</span>
     }
 
     @Override
     public String getId() {
-<span class="nc" id="L579">        return getValue();</span>
+<span class="nc" id="L604">        return getValue();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

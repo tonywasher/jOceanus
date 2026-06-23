@@ -25,6 +25,7 @@ import com.github.javaparser.ast.modules.ModuleDirective;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisDeclarationInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisExpressionInstance;
@@ -42,6 +43,13 @@ import java.util.List;
  * Parser interface.
  */
 public interface ThemisParserDef {
+    /**
+     * Obtain the reporter.
+     *
+     * @return the reporter
+     */
+    TethysUIThreadStatusReport getReporter();
+
     /**
      * Process the file as javaCode.
      *
@@ -133,17 +141,17 @@ public interface ThemisParserDef {
      */
     default List&lt;ThemisDeclarationInstance&gt; parseDeclarationList(final NodeList&lt;? extends BodyDeclaration&lt;?&gt;&gt; pDeclList) throws OceanusException {
         /* Handle null list */
-<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        if (pDeclList == null) {</span>
-<span class="nc" id="L137">            return Collections.emptyList();</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        if (pDeclList == null) {</span>
+<span class="nc" id="L145">            return Collections.emptyList();</span>
         }
 
         /* Create list of declarations */
-<span class="fc" id="L141">        final List&lt;ThemisDeclarationInstance&gt; myList = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L142" title="All 2 branches covered.">        for (BodyDeclaration&lt;?&gt; myDecl : pDeclList) {</span>
-<span class="fc" id="L143">            final ThemisDeclarationInstance myParsed = parseDeclaration(myDecl);</span>
-<span class="fc" id="L144">            myList.add(myParsed);</span>
-<span class="fc" id="L145">        }</span>
-<span class="fc" id="L146">        return myList;</span>
+<span class="fc" id="L149">        final List&lt;ThemisDeclarationInstance&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">        for (BodyDeclaration&lt;?&gt; myDecl : pDeclList) {</span>
+<span class="fc" id="L151">            final ThemisDeclarationInstance myParsed = parseDeclaration(myDecl);</span>
+<span class="fc" id="L152">            myList.add(myParsed);</span>
+<span class="fc" id="L153">        }</span>
+<span class="fc" id="L154">        return myList;</span>
     }
 
     /**
@@ -164,17 +172,17 @@ public interface ThemisParserDef {
      */
     default List&lt;ThemisNodeInstance&gt; parseNodeList(final NodeList&lt;? extends Node&gt; pNodeList) throws OceanusException {
         /* Handle null list */
-<span class="pc bpc" id="L167" title="1 of 2 branches missed.">        if (pNodeList == null) {</span>
-<span class="nc" id="L168">            return Collections.emptyList();</span>
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        if (pNodeList == null) {</span>
+<span class="nc" id="L176">            return Collections.emptyList();</span>
         }
 
         /* Create list of nodes */
-<span class="fc" id="L172">        final List&lt;ThemisNodeInstance&gt; myList = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L173" title="All 2 branches covered.">        for (Node myNode : pNodeList) {</span>
-<span class="fc" id="L174">            final ThemisNodeInstance myParsed = parseNode(myNode);</span>
-<span class="fc" id="L175">            myList.add(myParsed);</span>
-<span class="fc" id="L176">        }</span>
-<span class="fc" id="L177">        return myList;</span>
+<span class="fc" id="L180">        final List&lt;ThemisNodeInstance&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        for (Node myNode : pNodeList) {</span>
+<span class="fc" id="L182">            final ThemisNodeInstance myParsed = parseNode(myNode);</span>
+<span class="fc" id="L183">            myList.add(myParsed);</span>
+<span class="fc" id="L184">        }</span>
+<span class="fc" id="L185">        return myList;</span>
     }
 
     /**
@@ -204,17 +212,17 @@ public interface ThemisParserDef {
      */
     default List&lt;ThemisTypeInstance&gt; parseTypeList(final NodeList&lt;? extends Type&gt; pTypeList) throws OceanusException {
         /* Handle null list */
-<span class="fc bfc" id="L207" title="All 2 branches covered.">        if (pTypeList == null) {</span>
-<span class="fc" id="L208">            return Collections.emptyList();</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">        if (pTypeList == null) {</span>
+<span class="fc" id="L216">            return Collections.emptyList();</span>
         }
 
         /* Create list of nodes */
-<span class="fc" id="L212">        final List&lt;ThemisTypeInstance&gt; myList = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L213" title="All 2 branches covered.">        for (Type myType : pTypeList) {</span>
-<span class="fc" id="L214">            final ThemisTypeInstance myParsed = parseType(myType);</span>
-<span class="fc" id="L215">            myList.add(myParsed);</span>
-<span class="fc" id="L216">        }</span>
-<span class="fc" id="L217">        return myList;</span>
+<span class="fc" id="L220">        final List&lt;ThemisTypeInstance&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        for (Type myType : pTypeList) {</span>
+<span class="fc" id="L222">            final ThemisTypeInstance myParsed = parseType(myType);</span>
+<span class="fc" id="L223">            myList.add(myParsed);</span>
+<span class="fc" id="L224">        }</span>
+<span class="fc" id="L225">        return myList;</span>
     }
 
     /**
@@ -235,17 +243,17 @@ public interface ThemisParserDef {
      */
     default List&lt;ThemisStatementInstance&gt; parseStatementList(final NodeList&lt;? extends Statement&gt; pStatementList) throws OceanusException {
         /* Handle null list */
-<span class="pc bpc" id="L238" title="1 of 2 branches missed.">        if (pStatementList == null) {</span>
-<span class="nc" id="L239">            return Collections.emptyList();</span>
+<span class="pc bpc" id="L246" title="1 of 2 branches missed.">        if (pStatementList == null) {</span>
+<span class="nc" id="L247">            return Collections.emptyList();</span>
         }
 
         /* Create list of statements */
-<span class="fc" id="L243">        final List&lt;ThemisStatementInstance&gt; myList = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L244" title="All 2 branches covered.">        for (Statement myStatement : pStatementList) {</span>
-<span class="fc" id="L245">            final ThemisStatementInstance myParsed = parseStatement(myStatement);</span>
-<span class="fc" id="L246">            myList.add(myParsed);</span>
-<span class="fc" id="L247">        }</span>
-<span class="fc" id="L248">        return myList;</span>
+<span class="fc" id="L251">        final List&lt;ThemisStatementInstance&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L252" title="All 2 branches covered.">        for (Statement myStatement : pStatementList) {</span>
+<span class="fc" id="L253">            final ThemisStatementInstance myParsed = parseStatement(myStatement);</span>
+<span class="fc" id="L254">            myList.add(myParsed);</span>
+<span class="fc" id="L255">        }</span>
+<span class="fc" id="L256">        return myList;</span>
     }
 
     /**
@@ -266,17 +274,17 @@ public interface ThemisParserDef {
      */
     default List&lt;ThemisExpressionInstance&gt; parseExprList(final NodeList&lt;? extends Expression&gt; pExprList) throws OceanusException {
         /* Handle null list */
-<span class="pc bpc" id="L269" title="1 of 2 branches missed.">        if (pExprList == null) {</span>
-<span class="nc" id="L270">            return Collections.emptyList();</span>
+<span class="pc bpc" id="L277" title="1 of 2 branches missed.">        if (pExprList == null) {</span>
+<span class="nc" id="L278">            return Collections.emptyList();</span>
         }
 
         /* Create list of expressions */
-<span class="fc" id="L274">        final List&lt;ThemisExpressionInstance&gt; myList = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L275" title="All 2 branches covered.">        for (Expression myExpr : pExprList) {</span>
-<span class="fc" id="L276">            final ThemisExpressionInstance myParsed = parseExpression(myExpr);</span>
-<span class="fc" id="L277">            myList.add(myParsed);</span>
-<span class="fc" id="L278">        }</span>
-<span class="fc" id="L279">        return myList;</span>
+<span class="fc" id="L282">        final List&lt;ThemisExpressionInstance&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">        for (Expression myExpr : pExprList) {</span>
+<span class="fc" id="L284">            final ThemisExpressionInstance myParsed = parseExpression(myExpr);</span>
+<span class="fc" id="L285">            myList.add(myParsed);</span>
+<span class="fc" id="L286">        }</span>
+<span class="fc" id="L287">        return myList;</span>
     }
 
     /**
@@ -297,17 +305,17 @@ public interface ThemisParserDef {
      */
     default List&lt;ThemisModuleInstance&gt; parseModuleList(final NodeList&lt;? extends ModuleDirective&gt; pDirList) throws OceanusException {
         /* Handle null list */
-<span class="pc bpc" id="L300" title="1 of 2 branches missed.">        if (pDirList == null) {</span>
-<span class="nc" id="L301">            return Collections.emptyList();</span>
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">        if (pDirList == null) {</span>
+<span class="nc" id="L309">            return Collections.emptyList();</span>
         }
 
         /* Create list of directives */
-<span class="fc" id="L305">        final List&lt;ThemisModuleInstance&gt; myList = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L306" title="All 2 branches covered.">        for (ModuleDirective myDir : pDirList) {</span>
-<span class="fc" id="L307">            final ThemisModuleInstance myParsed = parseModule(myDir);</span>
-<span class="fc" id="L308">            myList.add(myParsed);</span>
-<span class="fc" id="L309">        }</span>
-<span class="fc" id="L310">        return myList;</span>
+<span class="fc" id="L313">        final List&lt;ThemisModuleInstance&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L314" title="All 2 branches covered.">        for (ModuleDirective myDir : pDirList) {</span>
+<span class="fc" id="L315">            final ThemisModuleInstance myParsed = parseModule(myDir);</span>
+<span class="fc" id="L316">            myList.add(myParsed);</span>
+<span class="fc" id="L317">        }</span>
+<span class="fc" id="L318">        return myList;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

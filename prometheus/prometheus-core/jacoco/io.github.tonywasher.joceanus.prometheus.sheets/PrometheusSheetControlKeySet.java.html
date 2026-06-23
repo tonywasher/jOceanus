@@ -18,10 +18,10 @@ package io.github.tonywasher.joceanus.prometheus.sheets;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlKeySet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyDataType;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataKeySet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 
 /**
@@ -47,56 +47,42 @@ public class PrometheusSheetControlKeySet
     private static final int COL_KEYSETDEF = COL_CONTROL + 1;
 
     /**
-     * Constructor for loading a spreadsheet.
+     * Constructor.
      *
-     * @param pReader the spreadsheet reader
+     * @param pControl the spreadsheet control
      */
-    protected PrometheusSheetControlKeySet(final PrometheusSheetReader pReader) {
+    protected PrometheusSheetControlKeySet(final PrometheusSheetControl pControl) {
         /* Call super constructor */
-<span class="nc" id="L56">        super(pReader, SHEET_NAME);</span>
+<span class="nc" id="L56">        super(pControl, SHEET_NAME);</span>
 
         /* Access the Lists */
-<span class="nc" id="L59">        final PrometheusDataSet myData = pReader.getData();</span>
+<span class="nc" id="L59">        final PrometheusDataSet myData = pControl.getData();</span>
 <span class="nc" id="L60">        setDataList(myData.getControlKeySets());</span>
 <span class="nc" id="L61">    }</span>
-
-    /**
-     * Constructor for creating a spreadsheet.
-     *
-     * @param pWriter the Spreadsheet writer
-     */
-    protected PrometheusSheetControlKeySet(final PrometheusSheetWriter pWriter) {
-        /* Call super constructor */
-<span class="nc" id="L70">        super(pWriter, SHEET_NAME);</span>
-
-        /* Access the Control list */
-<span class="nc" id="L73">        final PrometheusDataSet myData = pWriter.getData();</span>
-<span class="nc" id="L74">        setDataList(myData.getControlKeySets());</span>
-<span class="nc" id="L75">    }</span>
 
     @Override
     protected PrometheusDataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-<span class="nc" id="L80">        final PrometheusDataValues myValues = getRowValues(PrometheusDataKeySet.OBJECT_NAME);</span>
-<span class="nc" id="L81">        myValues.addValue(PrometheusCryptographyDataType.CONTROLKEY, loadInteger(COL_CONTROL));</span>
-<span class="nc" id="L82">        myValues.addValue(PrometheusDataResource.KEYSET_KEYSETDEF, loadBytes(COL_KEYSETDEF));</span>
+<span class="nc" id="L66">        final PrometheusDataValues myValues = getRowValues(PrometheusDataKeySet.OBJECT_NAME);</span>
+<span class="nc" id="L67">        myValues.addValue(PrometheusCryptographyDataType.CONTROLKEY, loadInteger(COL_CONTROL));</span>
+<span class="nc" id="L68">        myValues.addValue(PrometheusDataResource.KEYSET_KEYSETDEF, loadBytes(COL_KEYSETDEF));</span>
 
         /* Return the values */
-<span class="nc" id="L85">        return myValues;</span>
+<span class="nc" id="L71">        return myValues;</span>
     }
 
     @Override
     protected void insertSecureItem(final PrometheusControlKeySet pItem) throws OceanusException {
         /* Set the fields */
-<span class="nc" id="L91">        super.insertSecureItem(pItem);</span>
-<span class="nc" id="L92">        writeInteger(COL_CONTROL, pItem.getControlKeyId());</span>
-<span class="nc" id="L93">        writeBytes(COL_KEYSETDEF, pItem.getSecuredKeySetDef());</span>
-<span class="nc" id="L94">    }</span>
+<span class="nc" id="L77">        super.insertSecureItem(pItem);</span>
+<span class="nc" id="L78">        writeInteger(COL_CONTROL, pItem.getControlKeyId());</span>
+<span class="nc" id="L79">        writeBytes(COL_KEYSETDEF, pItem.getSecuredKeySetDef());</span>
+<span class="nc" id="L80">    }</span>
 
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-<span class="nc" id="L99">        return COL_KEYSETDEF;</span>
+<span class="nc" id="L85">        return COL_KEYSETDEF;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

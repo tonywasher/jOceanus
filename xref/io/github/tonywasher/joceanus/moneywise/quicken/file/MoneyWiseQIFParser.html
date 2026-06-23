@@ -230,7 +230,7 @@
 <a class="jxr_linenumber" name="L222" href="#L222">222</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L223" href="#L223">223</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> processClassRecord(<strong class="jxr_keyword">final</strong> List&lt;String&gt; pLines) {
 <a class="jxr_linenumber" name="L224" href="#L224">224</a>         <em class="jxr_comment">/* register the class */</em>
-<a class="jxr_linenumber" name="L225" href="#L225">225</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseQIFClass" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/quicken/file/MoneyWiseQIFClass.html#MoneyWiseQIFClass">MoneyWiseQIFClass</a> myClass = <strong class="jxr_keyword">new</strong> <a name="MoneyWiseQIFClass" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/quicken/file/MoneyWiseQIFClass.html#MoneyWiseQIFClass">MoneyWiseQIFClass</a>(theFile, pLines);
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseQIFClass" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/quicken/file/MoneyWiseQIFClass.html#MoneyWiseQIFClass">MoneyWiseQIFClass</a> myClass = <strong class="jxr_keyword">new</strong> <a name="MoneyWiseQIFClass" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/quicken/file/MoneyWiseQIFClass.html#MoneyWiseQIFClass">MoneyWiseQIFClass</a>(pLines);
 <a class="jxr_linenumber" name="L226" href="#L226">226</a>         theFile.registerClass(myClass);
 <a class="jxr_linenumber" name="L227" href="#L227">227</a>     }
 <a class="jxr_linenumber" name="L228" href="#L228">228</a> 
@@ -241,7 +241,7 @@
 <a class="jxr_linenumber" name="L233" href="#L233">233</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L234" href="#L234">234</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> processCategoryRecord(<strong class="jxr_keyword">final</strong> List&lt;String&gt; pLines) {
 <a class="jxr_linenumber" name="L235" href="#L235">235</a>         <em class="jxr_comment">/* Register the category */</em>
-<a class="jxr_linenumber" name="L236" href="#L236">236</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseQIFEventCategory" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/quicken/file/MoneyWiseQIFEventCategory.html#MoneyWiseQIFEventCategory">MoneyWiseQIFEventCategory</a> myCategory = <strong class="jxr_keyword">new</strong> <a name="MoneyWiseQIFEventCategory" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/quicken/file/MoneyWiseQIFEventCategory.html#MoneyWiseQIFEventCategory">MoneyWiseQIFEventCategory</a>(theFile, pLines);
+<a class="jxr_linenumber" name="L236" href="#L236">236</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseQIFEventCategory" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/quicken/file/MoneyWiseQIFEventCategory.html#MoneyWiseQIFEventCategory">MoneyWiseQIFEventCategory</a> myCategory = <strong class="jxr_keyword">new</strong> <a name="MoneyWiseQIFEventCategory" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/quicken/file/MoneyWiseQIFEventCategory.html#MoneyWiseQIFEventCategory">MoneyWiseQIFEventCategory</a>(pLines);
 <a class="jxr_linenumber" name="L237" href="#L237">237</a>         theFile.registerCategory(myCategory);
 <a class="jxr_linenumber" name="L238" href="#L238">238</a>     }
 <a class="jxr_linenumber" name="L239" href="#L239">239</a> 
@@ -252,7 +252,7 @@
 <a class="jxr_linenumber" name="L244" href="#L244">244</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L245" href="#L245">245</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> processAccountRecord(<strong class="jxr_keyword">final</strong> List&lt;String&gt; pLines) {
 <a class="jxr_linenumber" name="L246" href="#L246">246</a>         <em class="jxr_comment">/* Register the account */</em>
-<a class="jxr_linenumber" name="L247" href="#L247">247</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseQIFAccount" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/quicken/file/MoneyWiseQIFAccount.html#MoneyWiseQIFAccount">MoneyWiseQIFAccount</a> myAccount = <strong class="jxr_keyword">new</strong> <a name="MoneyWiseQIFAccount" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/quicken/file/MoneyWiseQIFAccount.html#MoneyWiseQIFAccount">MoneyWiseQIFAccount</a>(theFile, theFormatter, pLines);
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseQIFAccount" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/quicken/file/MoneyWiseQIFAccount.html#MoneyWiseQIFAccount">MoneyWiseQIFAccount</a> myAccount = <strong class="jxr_keyword">new</strong> <a name="MoneyWiseQIFAccount" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/quicken/file/MoneyWiseQIFAccount.html#MoneyWiseQIFAccount">MoneyWiseQIFAccount</a>(theFormatter, pLines);
 <a class="jxr_linenumber" name="L248" href="#L248">248</a>         theActive = theFile.registerAccount(myAccount);
 <a class="jxr_linenumber" name="L249" href="#L249">249</a>     }
 <a class="jxr_linenumber" name="L250" href="#L250">250</a> 
@@ -263,7 +263,7 @@
 <a class="jxr_linenumber" name="L255" href="#L255">255</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L256" href="#L256">256</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> processSecurityRecord(<strong class="jxr_keyword">final</strong> List&lt;String&gt; pLines) {
 <a class="jxr_linenumber" name="L257" href="#L257">257</a>         <em class="jxr_comment">/* Register the security */</em>
-<a class="jxr_linenumber" name="L258" href="#L258">258</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseQIFSecurity" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/quicken/file/MoneyWiseQIFSecurity.html#MoneyWiseQIFSecurity">MoneyWiseQIFSecurity</a> mySecurity = <strong class="jxr_keyword">new</strong> <a name="MoneyWiseQIFSecurity" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/quicken/file/MoneyWiseQIFSecurity.html#MoneyWiseQIFSecurity">MoneyWiseQIFSecurity</a>(theFile, pLines);
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseQIFSecurity" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/quicken/file/MoneyWiseQIFSecurity.html#MoneyWiseQIFSecurity">MoneyWiseQIFSecurity</a> mySecurity = <strong class="jxr_keyword">new</strong> <a name="MoneyWiseQIFSecurity" href="../../../../../../../io/github/tonywasher/joceanus/moneywise/quicken/file/MoneyWiseQIFSecurity.html#MoneyWiseQIFSecurity">MoneyWiseQIFSecurity</a>(pLines);
 <a class="jxr_linenumber" name="L259" href="#L259">259</a>         theFile.registerSecurity(mySecurity);
 <a class="jxr_linenumber" name="L260" href="#L260">260</a>     }
 <a class="jxr_linenumber" name="L261" href="#L261">261</a> 
@@ -366,6 +366,6 @@
 <a class="jxr_linenumber" name="L358" href="#L358">358</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

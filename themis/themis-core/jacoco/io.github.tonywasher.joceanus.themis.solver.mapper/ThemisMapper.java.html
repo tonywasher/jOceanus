@@ -259,148 +259,152 @@ public class ThemisMapper
      */
     private boolean processElement(final ThemisInstance pElement) throws OceanusException {
         /* Handle ClassInstance */
-<span class="fc bfc" id="L262" title="All 2 branches covered.">        if (pElement instanceof ThemisClassInstance myInstance) {</span>
-<span class="fc" id="L263">            final ThemisSolverClass myClass = theProject.getProjectClassMap().get(myInstance.getFullName());</span>
-<span class="fc" id="L264">            theFile.processInherited(myClass);</span>
-        }
+<span class="fc bfc" id="L262" title="All 6 branches covered.">        return switch (pElement) {</span>
+<span class="fc" id="L263">            case ThemisClassInstance myInstance -&gt; processClass(myInstance);</span>
+<span class="fc" id="L264">            case ThemisTypeClassInterface myRef -&gt; processClassReference(myRef);</span>
+<span class="fc" id="L265">            case ThemisExprFieldAccess myAccess -&gt; processFieldAccess(myAccess);</span>
+<span class="fc" id="L266">            case ThemisExprMethodCall myCall -&gt; processMethodCall(myCall);</span>
+<span class="fc" id="L267">            case ThemisExprMethodRef myRef -&gt; processMethodReference(myRef);</span>
+<span class="fc" id="L268">            default -&gt; true;</span>
+        };
+    }
 
-        /* Handle ClassInterface Reference */
-<span class="fc bfc" id="L268" title="All 2 branches covered.">        if (pElement instanceof ThemisTypeClassInterface myRef) {</span>
-<span class="fc" id="L269">            processClassReference(myRef);</span>
-<span class="fc" id="L270">            return false;</span>
-        }
-
-        /* Handle FieldAccess */
-<span class="fc bfc" id="L274" title="All 2 branches covered.">        if (pElement instanceof ThemisExprFieldAccess myAccess) {</span>
-<span class="fc" id="L275">            processFieldAccess(myAccess);</span>
-<span class="fc" id="L276">            return false;</span>
-        }
-
-        /* Handle MethodCall */
-<span class="fc bfc" id="L280" title="All 2 branches covered.">        if (pElement instanceof ThemisExprMethodCall myCall) {</span>
-<span class="fc" id="L281">            processMethodCall(myCall);</span>
-<span class="fc" id="L282">            return false;</span>
-        }
-
-        /* Handle MethodReference */
-<span class="fc bfc" id="L286" title="All 2 branches covered.">        if (pElement instanceof ThemisExprMethodRef myRef) {</span>
-<span class="fc" id="L287">            processMethodReference(myRef);</span>
-<span class="fc" id="L288">            return false;</span>
-        }
-<span class="fc" id="L290">        return true;</span>
+    /**
+     * Process class.
+     *
+     * @param pInstance the class instance
+     * @return true
+     */
+    private boolean processClass(final ThemisClassInstance pInstance) {
+<span class="fc" id="L279">        final ThemisSolverClass myClass = theProject.getProjectClassMap().get(pInstance.getFullName());</span>
+<span class="fc" id="L280">        theFile.processInherited(myClass);</span>
+<span class="fc" id="L281">        return true;</span>
     }
 
     /**
      * Process class reference.
      *
      * @param pReference the reference
+     * @return false
      * @throws OceanusException on error
      */
-    private void processClassReference(final ThemisTypeClassInterface pReference) throws OceanusException {
+    private boolean processClassReference(final ThemisTypeClassInterface pReference) throws OceanusException {
         /* Process as a possible reference */
-<span class="fc" id="L301">        final ThemisClassInstance myResolved = theFile.processPossibleReference(pReference.getFullName());</span>
+<span class="fc" id="L293">        final ThemisClassInstance myResolved = theFile.processPossibleReference(pReference.getFullName());</span>
 
         /* If we failed to resolve */
-<span class="fc bfc" id="L304" title="All 2 branches covered.">        if (myResolved == null) {</span>
+<span class="fc bfc" id="L296" title="All 2 branches covered.">        if (myResolved == null) {</span>
             /* Check for type parameters and variable names */
-<span class="fc" id="L306">            final ThemisInstance myType = theType.lookUpType(pReference.getName());</span>
-<span class="fc" id="L307">            final ThemisInstance myName = theName.lookUpName(pReference.getName());</span>
+<span class="fc" id="L298">            final ThemisInstance myType = theType.lookUpType(pReference.getName());</span>
+<span class="fc" id="L299">            final ThemisInstance myName = theName.lookUpName(pReference.getName());</span>
 
             /* Report failure */
-<span class="pc bpc" id="L310" title="3 of 4 branches missed.">            final boolean bFound = (myType != null || myName != null);</span>
-<span class="pc bpc" id="L311" title="1 of 2 branches missed.">            if (!bFound) {</span>
-<span class="nc" id="L312">                throw new ThemisDataException(&quot;Unresolved link: &quot; + pReference.getFullName());</span>
+<span class="pc bpc" id="L302" title="3 of 4 branches missed.">            final boolean bFound = (myType != null || myName != null);</span>
+<span class="pc bpc" id="L303" title="1 of 2 branches missed.">            if (!bFound) {</span>
+<span class="nc" id="L304">                throw new ThemisDataException(&quot;Unresolved link: &quot; + pReference.getFullName());</span>
             }
         }
-<span class="fc" id="L315">    }</span>
+
+        /* Process any type parameters */
+<span class="fc bfc" id="L309" title="All 2 branches covered.">        for (ThemisTypeInstance myParam : pReference.getTypeParams()) {</span>
+<span class="fc" id="L310">            processInstance(myParam);</span>
+<span class="fc" id="L311">        }</span>
+<span class="fc" id="L312">        return false;</span>
+    }
 
     /**
      * Process field Access.
      *
      * @param pAccess the fieldAccess
+     * @return false
      * @throws OceanusException on error
      */
-    private void processFieldAccess(final ThemisExprFieldAccess pAccess) throws OceanusException {
-<span class="fc" id="L324">        final ThemisExpressionInstance myExpr = pAccess.getScope();</span>
-<span class="fc bfc" id="L325" title="All 2 branches covered.">        if (myExpr instanceof ThemisExprName myNameExpr) {</span>
+    private boolean processFieldAccess(final ThemisExprFieldAccess pAccess) throws OceanusException {
+<span class="fc" id="L323">        final ThemisExpressionInstance myExpr = pAccess.getScope();</span>
+<span class="fc bfc" id="L324" title="All 2 branches covered.">        if (myExpr instanceof ThemisExprName myNameExpr) {</span>
             /* Check to see if the field access is to an explicit class */
-<span class="fc" id="L327">            final String myFullName = pAccess.toString();</span>
-<span class="fc" id="L328">            final String myNameRef = myNameExpr.toString();</span>
-<span class="fc" id="L329">            ThemisClassInstance myResolved = theFile.processPossibleReference(myFullName);</span>
+<span class="fc" id="L326">            final String myFullName = pAccess.toString();</span>
+<span class="fc" id="L327">            final String myNameRef = myNameExpr.toString();</span>
+<span class="fc" id="L328">            ThemisClassInstance myResolved = theFile.processPossibleReference(myFullName);</span>
 
             /* If not a full path look to see whether it is a field of a class */
-<span class="fc bfc" id="L332" title="All 2 branches covered.">            if (myResolved == null) {</span>
-<span class="fc" id="L333">                myResolved = theFile.processPossibleReference(myNameRef);</span>
+<span class="fc bfc" id="L331" title="All 2 branches covered.">            if (myResolved == null) {</span>
+<span class="fc" id="L332">                myResolved = theFile.processPossibleReference(myNameRef);</span>
             }
 
             /* If we still failed to resolve */
-<span class="fc bfc" id="L337" title="All 2 branches covered.">            if (myResolved == null) {</span>
+<span class="fc bfc" id="L336" title="All 2 branches covered.">            if (myResolved == null) {</span>
                 /* Check for variable names */
-<span class="fc" id="L339">                final ThemisInstance myName = theName.lookUpName(myNameRef);</span>
+<span class="fc" id="L338">                final ThemisInstance myName = theName.lookUpName(myNameRef);</span>
 
                 /* Report failure */
-<span class="pc bpc" id="L342" title="1 of 2 branches missed.">                if (myName == null) {</span>
-<span class="nc" id="L343">                    throw new ThemisDataException(&quot;Unresolved fieldAccess: &quot; + myNameRef);</span>
+<span class="pc bpc" id="L341" title="1 of 2 branches missed.">                if (myName == null) {</span>
+<span class="nc" id="L342">                    throw new ThemisDataException(&quot;Unresolved fieldAccess: &quot; + myNameRef);</span>
                 }
             }
         }
-<span class="fc" id="L347">    }</span>
+<span class="fc" id="L346">        return false;</span>
+    }
 
     /**
      * Process method call.
      *
      * @param pCall the methodCall
+     * @return true
      * @throws OceanusException on error
      */
-    private void processMethodCall(final ThemisExprMethodCall pCall) throws OceanusException {
-<span class="fc" id="L356">        final ThemisExpressionInstance myExpr = pCall.getScope();</span>
-<span class="fc bfc" id="L357" title="All 2 branches covered.">        if (myExpr instanceof ThemisExprName myNameExpr) {</span>
+    private boolean processMethodCall(final ThemisExprMethodCall pCall) throws OceanusException {
+<span class="fc" id="L357">        final ThemisExpressionInstance myExpr = pCall.getScope();</span>
+<span class="fc bfc" id="L358" title="All 2 branches covered.">        if (myExpr instanceof ThemisExprName myNameExpr) {</span>
             /* Check to see if the field access is to an explicit class */
-<span class="fc" id="L359">            final String myNameRef = myNameExpr.toString();</span>
-<span class="fc" id="L360">            final ThemisClassInstance myResolved = theFile.processPossibleReference(myNameRef);</span>
+<span class="fc" id="L360">            final String myNameRef = myNameExpr.toString();</span>
+<span class="fc" id="L361">            final ThemisClassInstance myResolved = theFile.processPossibleReference(myNameRef);</span>
 
             /* If we still failed to resolve */
-<span class="fc bfc" id="L363" title="All 2 branches covered.">            if (myResolved == null) {</span>
+<span class="fc bfc" id="L364" title="All 2 branches covered.">            if (myResolved == null) {</span>
                 /* Check for variable names */
-<span class="fc" id="L365">                final ThemisInstance myName = theName.lookUpName(myNameRef);</span>
+<span class="fc" id="L366">                final ThemisInstance myName = theName.lookUpName(myNameRef);</span>
 
                 /* Report failure */
-<span class="pc bpc" id="L368" title="1 of 2 branches missed.">                if (myName == null) {</span>
-<span class="nc" id="L369">                    throw new ThemisDataException(&quot;Unresolved method call using name: &quot; + myNameRef);</span>
+<span class="pc bpc" id="L369" title="1 of 2 branches missed.">                if (myName == null) {</span>
+<span class="nc" id="L370">                    throw new ThemisDataException(&quot;Unresolved method call using name: &quot; + myNameRef);</span>
                 }
             }
-<span class="fc bfc" id="L372" title="All 2 branches covered.">        } else if (myExpr instanceof ThemisExprFieldAccess myFieldExpr) {</span>
-<span class="fc" id="L373">            processFieldAccess(myFieldExpr);</span>
-<span class="fc bfc" id="L374" title="All 2 branches covered.">        } else if (myExpr instanceof ThemisExprMethodCall myMethodCall) {</span>
-<span class="fc" id="L375">            processMethodCall(myMethodCall);</span>
+<span class="fc bfc" id="L373" title="All 2 branches covered.">        } else if (myExpr instanceof ThemisExprFieldAccess myFieldExpr) {</span>
+<span class="fc" id="L374">            processFieldAccess(myFieldExpr);</span>
+<span class="fc bfc" id="L375" title="All 2 branches covered.">        } else if (myExpr instanceof ThemisExprMethodCall myMethodCall) {</span>
+<span class="fc" id="L376">            processMethodCall(myMethodCall);</span>
         }
-<span class="fc" id="L377">    }</span>
+<span class="fc" id="L378">        return true;</span>
+    }
 
     /**
      * Process method Reference.
      *
      * @param pReference the reference
+     * @return false
      * @throws OceanusException on error
      */
-    private void processMethodReference(final ThemisExprMethodRef pReference) throws OceanusException {
-<span class="fc" id="L386">        final ThemisExpressionInstance myExpr = pReference.getScope();</span>
-<span class="pc bpc" id="L387" title="1 of 2 branches missed.">        if (myExpr instanceof ThemisExprName myNameExpr) {</span>
+    private boolean processMethodReference(final ThemisExprMethodRef pReference) throws OceanusException {
+<span class="fc" id="L389">        final ThemisExpressionInstance myExpr = pReference.getScope();</span>
+<span class="pc bpc" id="L390" title="1 of 2 branches missed.">        if (myExpr instanceof ThemisExprName myNameExpr) {</span>
             /* Check to see if the method reference is to an explicit class */
-<span class="nc" id="L389">            final String myNameRef = myNameExpr.toString();</span>
-<span class="nc" id="L390">            final ThemisClassInstance myResolved = theFile.processPossibleReference(myNameRef);</span>
+<span class="nc" id="L392">            final String myNameRef = myNameExpr.toString();</span>
+<span class="nc" id="L393">            final ThemisClassInstance myResolved = theFile.processPossibleReference(myNameRef);</span>
 
             /* If we still failed to resolve */
-<span class="nc bnc" id="L393" title="All 2 branches missed.">            if (myResolved == null) {</span>
+<span class="nc bnc" id="L396" title="All 2 branches missed.">            if (myResolved == null) {</span>
                 /* Check for variable names */
-<span class="nc" id="L395">                final ThemisInstance myName = theName.lookUpName(myNameRef);</span>
+<span class="nc" id="L398">                final ThemisInstance myName = theName.lookUpName(myNameRef);</span>
 
                 /* Report failure */
-<span class="nc bnc" id="L398" title="All 2 branches missed.">                if (myName == null) {</span>
-<span class="nc" id="L399">                    throw new ThemisDataException(&quot;Unresolved methodRef: &quot; + myNameRef);</span>
+<span class="nc bnc" id="L401" title="All 2 branches missed.">                if (myName == null) {</span>
+<span class="nc" id="L402">                    throw new ThemisDataException(&quot;Unresolved methodRef: &quot; + myNameRef);</span>
                 }
             }
         }
-<span class="fc" id="L403">    }</span>
+<span class="fc" id="L406">        return false;</span>
+    }
 
     /**
      * Obtain sorted list of children.
@@ -409,9 +413,9 @@ public class ThemisMapper
      * @return the sorted list
      */
     private List&lt;ThemisInstance&gt; sortedChildren(final ThemisInstance pInstance) {
-<span class="fc" id="L412">        final List&lt;ThemisInstance&gt; myChildren = new ArrayList&lt;&gt;(pInstance.getChildren());</span>
-<span class="fc" id="L413">        myChildren.sort(this::compareTo);</span>
-<span class="fc" id="L414">        return myChildren;</span>
+<span class="fc" id="L416">        final List&lt;ThemisInstance&gt; myChildren = new ArrayList&lt;&gt;(pInstance.getChildren());</span>
+<span class="fc" id="L417">        myChildren.sort(this::compareTo);</span>
+<span class="fc" id="L418">        return myChildren;</span>
     }
 
     /**
@@ -423,15 +427,15 @@ public class ThemisMapper
      */
     private int compareTo(final ThemisInstance pFirst,
                           final ThemisInstance pSecond) {
-<span class="fc bfc" id="L426" title="All 2 branches covered.">        if (pFirst instanceof ThemisClassInstance) {</span>
-<span class="fc bfc" id="L427" title="All 2 branches covered.">            return pSecond instanceof ThemisClassInstance ? 0 : 1;</span>
+<span class="fc bfc" id="L430" title="All 2 branches covered.">        if (pFirst instanceof ThemisClassInstance) {</span>
+<span class="fc bfc" id="L431" title="All 2 branches covered.">            return pSecond instanceof ThemisClassInstance ? 0 : 1;</span>
         }
-<span class="fc bfc" id="L429" title="All 2 branches covered.">        return pSecond instanceof ThemisClassInstance ? -1 : 0;</span>
+<span class="fc bfc" id="L433" title="All 2 branches covered.">        return pSecond instanceof ThemisClassInstance ? -1 : 0;</span>
     }
 
     @Override
     public void close() {
-<span class="fc" id="L434">        theProject.close();</span>
-<span class="fc" id="L435">    }</span>
+<span class="fc" id="L438">        theProject.close();</span>
+<span class="fc" id="L439">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -16,11 +16,11 @@
  */
 package io.github.tonywasher.joceanus.prometheus.maps;
 
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 
 import java.util.LinkedHashMap;
@@ -31,7 +31,7 @@ import java.util.function.Function;
  * InstanceMaps for DataSet.
  */
 public class PrometheusMapsDataSetInstance
-        implements MetisFieldItem {
+        implements MetisFieldItem, PrometheusMapsListHolder {
     /**
      * Report fields.
      */
@@ -91,14 +91,9 @@ public class PrometheusMapsDataSetInstance
 <span class="nc" id="L91">        return theMap;</span>
     }
 
-    /**
-     * Obtain the list map for listKey.
-     *
-     * @param pKey the listKey
-     * @return the map
-     */
-    PrometheusMapsListInstance getList(final MetisListKey pKey) {
-<span class="nc" id="L101">        return theMap.get(pKey);</span>
+    @Override
+    public PrometheusMapsListInstance getList(final MetisListKey pKey) {
+<span class="nc" id="L96">        return theMap.get(pKey);</span>
     }
 
     /**
@@ -109,9 +104,9 @@ public class PrometheusMapsDataSetInstance
      */
     void declareFieldIdMap(final MetisListKey pListKey,
                            final MetisDataFieldId pFieldId) {
-<span class="nc" id="L112">        final PrometheusMapsListInstance myMap = theMap.computeIfAbsent(pListKey, PrometheusMapsListInstance::new);</span>
-<span class="nc" id="L113">        myMap.declareFieldIdMap(pFieldId);</span>
-<span class="nc" id="L114">    }</span>
+<span class="nc" id="L107">        final PrometheusMapsListInstance myMap = theMap.computeIfAbsent(pListKey, PrometheusMapsListInstance::new);</span>
+<span class="nc" id="L108">        myMap.declareFieldIdMap(pFieldId);</span>
+<span class="nc" id="L109">    }</span>
 
     /**
      * Declare fieldId map.
@@ -123,9 +118,9 @@ public class PrometheusMapsDataSetInstance
     void declareFieldIdMap(final MetisListKey pListKey,
                            final MetisDataFieldId pFieldId,
                            final Function&lt;PrometheusDataItem, Boolean&gt; pFilter) {
-<span class="nc" id="L126">        final PrometheusMapsListInstance myMap = theMap.computeIfAbsent(pListKey, PrometheusMapsListInstance::new);</span>
-<span class="nc" id="L127">        myMap.declareFieldIdMap(pFieldId, pFilter);</span>
-<span class="nc" id="L128">    }</span>
+<span class="nc" id="L121">        final PrometheusMapsListInstance myMap = theMap.computeIfAbsent(pListKey, PrometheusMapsListInstance::new);</span>
+<span class="nc" id="L122">        myMap.declareFieldIdMap(pFieldId, pFilter);</span>
+<span class="nc" id="L123">    }</span>
 
     /**
      * Declare shared fieldId map.
@@ -137,10 +132,10 @@ public class PrometheusMapsDataSetInstance
     void declareFieldIdMap(final MetisListKey pListKey,
                            final MetisDataFieldId pFieldId,
                            final MetisListKey pSharedKey) {
-<span class="nc" id="L140">        final PrometheusMapsListInstance myMap = theMap.computeIfAbsent(pListKey, PrometheusMapsListInstance::new);</span>
-<span class="nc" id="L141">        final PrometheusMapsListInstance mySharedMap = theMap.get(pSharedKey);</span>
-<span class="nc" id="L142">        myMap.declareFieldIdMap(pFieldId, mySharedMap);</span>
-<span class="nc" id="L143">    }</span>
+<span class="nc" id="L135">        final PrometheusMapsListInstance myMap = theMap.computeIfAbsent(pListKey, PrometheusMapsListInstance::new);</span>
+<span class="nc" id="L136">        final PrometheusMapsListInstance mySharedMap = theMap.get(pSharedKey);</span>
+<span class="nc" id="L137">        myMap.declareFieldIdMap(pFieldId, mySharedMap);</span>
+<span class="nc" id="L138">    }</span>
 
     /**
      * Declare dateId map.
@@ -154,9 +149,9 @@ public class PrometheusMapsDataSetInstance
                           final MetisDataFieldId pOwnerId,
                           final MetisDataFieldId pDateId,
                           final boolean pAllowNull) {
-<span class="nc" id="L157">        final PrometheusMapsListInstance myMap = theMap.computeIfAbsent(pListKey, PrometheusMapsListInstance::new);</span>
-<span class="nc" id="L158">        myMap.declareDateIdMap(pOwnerId, pDateId, pAllowNull);</span>
-<span class="nc" id="L159">    }</span>
+<span class="nc" id="L152">        final PrometheusMapsListInstance myMap = theMap.computeIfAbsent(pListKey, PrometheusMapsListInstance::new);</span>
+<span class="nc" id="L153">        myMap.declareDateIdMap(pOwnerId, pDateId, pAllowNull);</span>
+<span class="nc" id="L154">    }</span>
 
     /**
      * add item to map.
@@ -164,11 +159,11 @@ public class PrometheusMapsDataSetInstance
      * @param pItem the item
      */
     void addItemToMaps(final PrometheusDataItem pItem) {
-<span class="nc" id="L167">        final PrometheusMapsListInstance myMap = theMap.get(pItem.getItemType());</span>
-<span class="nc bnc" id="L168" title="All 2 branches missed.">        if (myMap != null) {</span>
-<span class="nc" id="L169">            myMap.addItemToMaps(pItem);</span>
+<span class="nc" id="L162">        final PrometheusMapsListInstance myMap = theMap.get(pItem.getItemType());</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (myMap != null) {</span>
+<span class="nc" id="L164">            myMap.addItemToMaps(pItem);</span>
         }
-<span class="nc" id="L171">    }</span>
+<span class="nc" id="L166">    }</span>
 
     /**
      * Is the key duplicate?
@@ -179,8 +174,8 @@ public class PrometheusMapsDataSetInstance
      */
     boolean isKeyDuplicate(final MetisDataFieldId pFieldId,
                            final PrometheusDataItem pItem) {
-<span class="nc" id="L182">        final PrometheusMapsListInstance myMap = theMap.get(pItem.getItemType());</span>
-<span class="nc bnc" id="L183" title="All 4 branches missed.">        return myMap != null &amp;&amp; myMap.isKeyDuplicate(pFieldId, pItem);</span>
+<span class="nc" id="L177">        final PrometheusMapsListInstance myMap = theMap.get(pItem.getItemType());</span>
+<span class="nc bnc" id="L178" title="All 4 branches missed.">        return myMap != null &amp;&amp; myMap.isKeyDuplicate(pFieldId, pItem);</span>
     }
 
     /**
@@ -194,8 +189,8 @@ public class PrometheusMapsDataSetInstance
     boolean isKeyAvailable(final MetisListKey pListKey,
                            final MetisDataFieldId pFieldId,
                            final Object pKey) {
-<span class="nc" id="L197">        final PrometheusMapsListInstance myMap = theMap.get(pListKey);</span>
-<span class="nc bnc" id="L198" title="All 4 branches missed.">        return myMap == null || myMap.isKeyAvailable(pFieldId, pKey);</span>
+<span class="nc" id="L192">        final PrometheusMapsListInstance myMap = theMap.get(pListKey);</span>
+<span class="nc bnc" id="L193" title="All 4 branches missed.">        return myMap == null || myMap.isKeyAvailable(pFieldId, pKey);</span>
     }
 
     /**
@@ -209,8 +204,8 @@ public class PrometheusMapsDataSetInstance
     PrometheusDataItem getItemForKey(final MetisListKey pListKey,
                                      final MetisDataFieldId pFieldId,
                                      final Object pKey) {
-<span class="nc" id="L212">        final PrometheusMapsListInstance myMap = theMap.get(pListKey);</span>
-<span class="nc bnc" id="L213" title="All 2 branches missed.">        return myMap == null ? null : myMap.getItemForKey(pFieldId, pKey);</span>
+<span class="nc" id="L207">        final PrometheusMapsListInstance myMap = theMap.get(pListKey);</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">        return myMap == null ? null : myMap.getItemForKey(pFieldId, pKey);</span>
     }
 
     /**
@@ -218,9 +213,9 @@ public class PrometheusMapsDataSetInstance
      */
     void resetMaps() {
         /* Reset each map */
-<span class="nc bnc" id="L221" title="All 2 branches missed.">        for (PrometheusMapsListInstance myMap : theMap.values()) {</span>
-<span class="nc" id="L222">            myMap.resetMaps();</span>
-<span class="nc" id="L223">        }</span>
-<span class="nc" id="L224">    }</span>
+<span class="nc bnc" id="L216" title="All 2 branches missed.">        for (PrometheusMapsListInstance myMap : theMap.values()) {</span>
+<span class="nc" id="L217">            myMap.resetMaps();</span>
+<span class="nc" id="L218">        }</span>
+<span class="nc" id="L219">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

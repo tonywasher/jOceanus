@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.builder;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
@@ -26,6 +24,9 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * Cash Builder.
@@ -35,6 +36,11 @@ public class MoneyWiseCashBuilder {
      * DataSet.
      */
     private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * Parser.
+     */
+    private final OceanusDecimalParser theParser;
 
     /**
      * The Cash Name.
@@ -71,11 +77,12 @@ public class MoneyWiseCashBuilder {
      *
      * @param pDataSet the dataSet
      */
-<span class="fc" id="L74">    public MoneyWiseCashBuilder(final MoneyWiseDataSet pDataSet) {</span>
-<span class="fc" id="L75">        theDataSet = pDataSet;</span>
-<span class="fc" id="L76">        theDataSet.getCash().ensureMap();</span>
-<span class="fc" id="L77">        reportingCurrency();</span>
-<span class="fc" id="L78">    }</span>
+<span class="fc" id="L80">    public MoneyWiseCashBuilder(final MoneyWiseDataSet pDataSet) {</span>
+<span class="fc" id="L81">        theDataSet = pDataSet;</span>
+<span class="fc" id="L82">        theDataSet.getCash().ensureMap();</span>
+<span class="fc" id="L83">        theParser = theDataSet.getDataFormatter().getDecimalParser();</span>
+<span class="fc" id="L84">        reportingCurrency();</span>
+<span class="fc" id="L85">    }</span>
 
     /**
      * Set Name.
@@ -84,8 +91,8 @@ public class MoneyWiseCashBuilder {
      * @return the builder
      */
     public MoneyWiseCashBuilder name(final String pName) {
-<span class="fc" id="L87">        theName = pName;</span>
-<span class="fc" id="L88">        return this;</span>
+<span class="fc" id="L94">        theName = pName;</span>
+<span class="fc" id="L95">        return this;</span>
     }
 
     /**
@@ -95,8 +102,8 @@ public class MoneyWiseCashBuilder {
      * @return the builder
      */
     public MoneyWiseCashBuilder category(final MoneyWiseCashCategory pCategory) {
-<span class="fc" id="L98">        theCategory = pCategory;</span>
-<span class="fc" id="L99">        return this;</span>
+<span class="fc" id="L105">        theCategory = pCategory;</span>
+<span class="fc" id="L106">        return this;</span>
     }
 
     /**
@@ -106,7 +113,7 @@ public class MoneyWiseCashBuilder {
      * @return the builder
      */
     public MoneyWiseCashBuilder category(final String pCategory) {
-<span class="fc" id="L109">        return category(theDataSet.getCashCategories().findItemByName(pCategory));</span>
+<span class="fc" id="L116">        return category(theDataSet.getCashCategories().findItemByName(pCategory));</span>
     }
 
     /**
@@ -118,9 +125,9 @@ public class MoneyWiseCashBuilder {
      */
     public MoneyWiseCashBuilder autoExpense(final MoneyWiseTransCategory pCategory,
                                             final MoneyWisePayee pPayee) {
-<span class="fc" id="L121">        theAutoExpense = pCategory;</span>
-<span class="fc" id="L122">        theAutoPayee = pPayee;</span>
-<span class="fc" id="L123">        return this;</span>
+<span class="fc" id="L128">        theAutoExpense = pCategory;</span>
+<span class="fc" id="L129">        theAutoPayee = pPayee;</span>
+<span class="fc" id="L130">        return this;</span>
     }
 
     /**
@@ -132,9 +139,9 @@ public class MoneyWiseCashBuilder {
      */
     public MoneyWiseCashBuilder autoExpense(final String pCategory,
                                             final String pPayee) {
-<span class="fc" id="L135">        final MoneyWiseTransCategory myCat = theDataSet.getTransCategories().findItemByName(pCategory);</span>
-<span class="fc" id="L136">        final MoneyWisePayee myPayee = theDataSet.getPayees().findItemByName(pPayee);</span>
-<span class="fc" id="L137">        return autoExpense(myCat, myPayee);</span>
+<span class="fc" id="L142">        final MoneyWiseTransCategory myCat = theDataSet.getTransCategories().findItemByName(pCategory);</span>
+<span class="fc" id="L143">        final MoneyWisePayee myPayee = theDataSet.getPayees().findItemByName(pPayee);</span>
+<span class="fc" id="L144">        return autoExpense(myCat, myPayee);</span>
     }
 
     /**
@@ -144,8 +151,8 @@ public class MoneyWiseCashBuilder {
      * @return the builder
      */
     public MoneyWiseCashBuilder currency(final MoneyWiseCurrency pCurrency) {
-<span class="fc" id="L147">        theCurrency = pCurrency;</span>
-<span class="fc" id="L148">        return this;</span>
+<span class="fc" id="L154">        theCurrency = pCurrency;</span>
+<span class="fc" id="L155">        return this;</span>
     }
 
     /**
@@ -155,15 +162,15 @@ public class MoneyWiseCashBuilder {
      * @return the builder
      */
     public MoneyWiseCashBuilder currency(final MoneyWiseCurrencyClass pCurrency) {
-<span class="fc" id="L158">        return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));</span>
+<span class="fc" id="L165">        return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));</span>
     }
 
     /**
      * Set the reporting currency.
      */
     private void reportingCurrency() {
-<span class="fc" id="L165">        currency(lookupReportingCurrency());</span>
-<span class="fc" id="L166">    }</span>
+<span class="fc" id="L172">        currency(lookupReportingCurrency());</span>
+<span class="fc" id="L173">    }</span>
 
     /**
      * Obtain the reporting currency.
@@ -171,7 +178,7 @@ public class MoneyWiseCashBuilder {
      * @return the currency
      */
     private MoneyWiseCurrency lookupReportingCurrency() {
-<span class="fc" id="L174">        return theDataSet.getReportingCurrency();</span>
+<span class="fc" id="L181">        return theDataSet.getReportingCurrency();</span>
     }
 
     /**
@@ -181,8 +188,8 @@ public class MoneyWiseCashBuilder {
      * @return the builder
      */
     public MoneyWiseCashBuilder openingBalance(final OceanusMoney pOpening) {
-<span class="fc" id="L184">        theOpeningBalance = pOpening;</span>
-<span class="fc" id="L185">        return this;</span>
+<span class="fc" id="L191">        theOpeningBalance = pOpening;</span>
+<span class="fc" id="L192">        return this;</span>
     }
 
     /**
@@ -192,7 +199,7 @@ public class MoneyWiseCashBuilder {
      * @return the builder
      */
     public MoneyWiseCashBuilder openingBalance(final String pOpening) {
-<span class="fc" id="L195">        return openingBalance(new OceanusMoney(pOpening, theCurrency.getCurrency()));</span>
+<span class="fc" id="L202">        return openingBalance(theParser.parseMoneyValue(pOpening, theCurrency.getCurrency()));</span>
     }
 
     /**
@@ -203,28 +210,28 @@ public class MoneyWiseCashBuilder {
      */
     public MoneyWiseCash build() throws OceanusException {
         /* Create the cash */
-<span class="fc" id="L206">        final MoneyWiseCash myCash = theDataSet.getCash().addNewItem();</span>
-<span class="fc" id="L207">        myCash.setName(theName);</span>
-<span class="fc" id="L208">        myCash.setCategory(theCategory);</span>
-<span class="fc" id="L209">        myCash.setAssetCurrency(theCurrency);</span>
-<span class="fc" id="L210">        myCash.setOpeningBalance(theOpeningBalance);</span>
-<span class="fc" id="L211">        myCash.setAutoExpense(theAutoExpense);</span>
-<span class="fc" id="L212">        myCash.setAutoPayee(theAutoPayee);</span>
-<span class="fc" id="L213">        myCash.setClosed(Boolean.FALSE);</span>
+<span class="fc" id="L213">        final MoneyWiseCash myCash = theDataSet.getCash().addNewItem();</span>
+<span class="fc" id="L214">        myCash.setName(theName);</span>
+<span class="fc" id="L215">        myCash.setCategory(theCategory);</span>
+<span class="fc" id="L216">        myCash.setAssetCurrency(theCurrency);</span>
+<span class="fc" id="L217">        myCash.setOpeningBalance(theOpeningBalance);</span>
+<span class="fc" id="L218">        myCash.setAutoExpense(theAutoExpense);</span>
+<span class="fc" id="L219">        myCash.setAutoPayee(theAutoPayee);</span>
+<span class="fc" id="L220">        myCash.setClosed(Boolean.FALSE);</span>
 
         /* Reset the values */
-<span class="fc" id="L216">        reset();</span>
+<span class="fc" id="L223">        reset();</span>
 
         /* Check for errors */
-<span class="fc" id="L219">        myCash.adjustMapForItem();</span>
-<span class="fc" id="L220">        myCash.validate();</span>
-<span class="pc bpc" id="L221" title="1 of 2 branches missed.">        if (myCash.hasErrors()) {</span>
-<span class="nc" id="L222">            myCash.removeItem();</span>
-<span class="nc" id="L223">            throw new MoneyWiseDataException(myCash, &quot;Failed validation&quot;);</span>
+<span class="fc" id="L226">        myCash.adjustMapForItem();</span>
+<span class="fc" id="L227">        myCash.validate();</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">        if (myCash.hasErrors()) {</span>
+<span class="nc" id="L229">            myCash.removeItem();</span>
+<span class="nc" id="L230">            throw new MoneyWiseDataException(myCash, &quot;Failed validation&quot;);</span>
         }
 
         /* Return the cash */
-<span class="fc" id="L227">        return myCash;</span>
+<span class="fc" id="L234">        return myCash;</span>
     }
 
     /**
@@ -232,12 +239,12 @@ public class MoneyWiseCashBuilder {
      */
     public void reset() {
         /* Reset values */
-<span class="fc" id="L235">        theName = null;</span>
-<span class="fc" id="L236">        theCategory = null;</span>
-<span class="fc" id="L237">        theOpeningBalance = null;</span>
-<span class="fc" id="L238">        theAutoExpense = null;</span>
-<span class="fc" id="L239">        theAutoPayee = null;</span>
-<span class="fc" id="L240">        reportingCurrency();</span>
-<span class="fc" id="L241">    }</span>
+<span class="fc" id="L242">        theName = null;</span>
+<span class="fc" id="L243">        theCategory = null;</span>
+<span class="fc" id="L244">        theOpeningBalance = null;</span>
+<span class="fc" id="L245">        theAutoExpense = null;</span>
+<span class="fc" id="L246">        theAutoPayee = null;</span>
+<span class="fc" id="L247">        reportingCurrency();</span>
+<span class="fc" id="L248">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

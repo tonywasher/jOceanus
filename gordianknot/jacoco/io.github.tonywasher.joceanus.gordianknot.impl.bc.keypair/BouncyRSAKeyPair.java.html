@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyRSAKeyPair.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair</a> &gt; <span class="el_source">BouncyRSAKeyPair.java</span></div><h1>BouncyRSAKeyPair.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import org.bouncycastle.crypto.generators.RSAKeyPairGenerator;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.RSAKeyGenerationParameters;
+import org.bouncycastle.crypto.params.RSAKeyParameters;
+import org.bouncycastle.crypto.params.RSAPrivateCrtKeyParameters;
+
+import java.math.BigInteger;
+
+/**
+ * RSA KeyPair classes.
+ */
+public final class BouncyRSAKeyPair {
+    /**
+     * Private constructor.
+     */
+    private BouncyRSAKeyPair() {
+    }
+
+    /**
+     * Bouncy RSA PublicKey.
+     */
+    public static class BouncyRSAPublicKey
+            extends BouncyPublicKey&lt;RSAKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec   the keySpec
+         * @param pPublicKey the public key
+         */
+        BouncyRSAPublicKey(final GordianKeyPairSpec pKeySpec,
+                           final RSAKeyParameters pPublicKey) {
+<span class="fc" id="L55">            super(pKeySpec, pPublicKey);</span>
+<span class="fc" id="L56">        }</span>
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L61">            final RSAKeyParameters myThis = getPublicKey();</span>
+<span class="fc" id="L62">            final RSAKeyParameters myThat = (RSAKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="fc" id="L65">            return compareKeys(myThis, myThat);</span>
+        }
+
+        /**
+         * CompareKeys.
+         *
+         * @param pFirst  the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final RSAKeyParameters pFirst,
+                                           final RSAKeyParameters pSecond) {
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">            return pFirst.getExponent().equals(pSecond.getExponent())</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">                    &amp;&amp; pFirst.getModulus().equals(pSecond.getModulus());</span>
+        }
+    }
+
+    /**
+     * Bouncy RSA PrivateKey.
+     */
+    public static class BouncyRSAPrivateKey
+            extends BouncyPrivateKey&lt;RSAPrivateCrtKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec    the keySpec
+         * @param pPrivateKey the private key
+         */
+        BouncyRSAPrivateKey(final GordianKeyPairSpec pKeySpec,
+                            final RSAPrivateCrtKeyParameters pPrivateKey) {
+<span class="fc" id="L95">            super(pKeySpec, pPrivateKey);</span>
+<span class="fc" id="L96">        }</span>
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L101">            final RSAPrivateCrtKeyParameters myThis = getPrivateKey();</span>
+<span class="fc" id="L102">            final RSAPrivateCrtKeyParameters myThat = (RSAPrivateCrtKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="fc" id="L105">            return compareKeys(myThis, myThat);</span>
+        }
+
+        /**
+         * CompareKeys.
+         *
+         * @param pFirst  the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final RSAPrivateCrtKeyParameters pFirst,
+                                           final RSAPrivateCrtKeyParameters pSecond) {
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">            if (!pFirst.getExponent().equals(pSecond.getExponent())</span>
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">                    || !pFirst.getModulus().equals(pSecond.getModulus())) {</span>
+<span class="nc" id="L119">                return false;</span>
+            }
+
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">            if (!pFirst.getP().equals(pSecond.getP())</span>
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">                    || !pFirst.getQ().equals(pSecond.getQ())) {</span>
+<span class="nc" id="L124">                return false;</span>
+            }
+
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">            if (!pFirst.getDP().equals(pSecond.getDP())</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">                    || !pFirst.getDQ().equals(pSecond.getDQ())) {</span>
+<span class="nc" id="L129">                return false;</span>
+            }
+
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">            return pFirst.getPublicExponent().equals(pSecond.getPublicExponent())</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">                    &amp;&amp; pFirst.getQInv().equals(pSecond.getQInv());</span>
+        }
+    }
+
+    /**
+     * BouncyCastle RSA KeyPair generator.
+     */
+    public static class BouncyRSAKeyPairGenerator
+            extends BouncyKeyPairGenerator&lt;RSAPrivateCrtKeyParameters, RSAKeyParameters&gt; {
+        /**
+         * RSA exponent.
+         */
+<span class="fc" id="L145">        private static final BigInteger RSA_EXPONENT = new BigInteger(&quot;10001&quot;, 16);</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         */
+        BouncyRSAKeyPairGenerator(final GordianBaseFactory pFactory,
+                                  final GordianKeyPairSpec pKeySpec) {
+            /* Initialise underlying class */
+<span class="fc" id="L156">            super(pFactory, pKeySpec);</span>
+
+            /* Create and initialise the generator */
+<span class="fc" id="L159">            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;</span>
+<span class="fc" id="L160">            final RSAKeyGenerationParameters myParams</span>
+<span class="fc" id="L161">                    = new RSAKeyGenerationParameters(RSA_EXPONENT, getRandom(), myKeySpec.getRSASpec().getLength(), PRIME_CERTAINTY);</span>
+
+            /* Create and initialise the generator */
+<span class="fc" id="L164">            setGenerator(new RSAKeyPairGenerator(), myParams);</span>
+<span class="fc" id="L165">            setFactorySet(BouncyStdKeyFactorySet.INSTANCE);</span>
+<span class="fc" id="L166">        }</span>
+
+        @Override
+        BouncyRSAPrivateKey newPrivateKey(final AsymmetricKeyParameter pThat) {
+<span class="fc" id="L170">            return new BouncyRSAPrivateKey(getKeySpec(), (RSAPrivateCrtKeyParameters) pThat);</span>
+        }
+
+        @Override
+        BouncyRSAPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
+<span class="fc" id="L175">            return new BouncyRSAPublicKey(getKeySpec(), (RSAKeyParameters) pThat);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

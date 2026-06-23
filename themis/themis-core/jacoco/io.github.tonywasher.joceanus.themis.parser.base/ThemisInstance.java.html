@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.themis.parser.base;
 
 import com.github.javaparser.ast.Node;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,7 +70,7 @@ public interface ThemisInstance {
      * @return the list of selected children
      */
     default List&lt;ThemisInstance&gt; discoverChildren(final ThemisId pId) {
-<span class="nc" id="L72">        return discoverChildren(n -&gt; n.getId().equals(pId));</span>
+<span class="nc" id="L73">        return discoverChildren(n -&gt; n.getId().equals(pId));</span>
     }
 
     /**
@@ -96,7 +97,7 @@ public interface ThemisInstance {
      * @return the list of selected nodes
      */
     default List&lt;ThemisInstance&gt; discoverNodes(final ThemisId pId) {
-<span class="nc" id="L99">        return discoverNodes(n -&gt; n.getId().equals(pId));</span>
+<span class="nc" id="L100">        return discoverNodes(n -&gt; n.getId().equals(pId));</span>
     }
 
     /**
@@ -106,9 +107,9 @@ public interface ThemisInstance {
      * @return the list of selected nodes
      */
     default List&lt;ThemisInstance&gt; discoverNodes(final Predicate&lt;ThemisInstance&gt; pTest) {
-<span class="nc" id="L109">        final List&lt;ThemisInstance&gt; myList = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L110">        discoverNodes(myList, pTest);</span>
-<span class="nc" id="L111">        return myList;</span>
+<span class="nc" id="L110">        final List&lt;ThemisInstance&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L111">        discoverNodes(myList, pTest);</span>
+<span class="nc" id="L112">        return myList;</span>
     }
 
     /**
@@ -162,7 +163,8 @@ public interface ThemisInstance {
     /**
      * The base class interface.
      */
-    interface ThemisClassInstance {
+    interface ThemisClassInstance
+            extends MetisFieldItem {
         /**
          * Obtain the name.
          *
@@ -190,7 +192,7 @@ public interface ThemisInstance {
          * @return the body
          */
         default List&lt;ThemisDeclarationInstance&gt; getBody() {
-<span class="nc" id="L193">            return Collections.emptyList();</span>
+<span class="nc" id="L195">            return Collections.emptyList();</span>
         }
 
         /**
@@ -199,7 +201,7 @@ public interface ThemisInstance {
          * @return the extends
          */
         default List&lt;ThemisTypeInstance&gt; getExtends() {
-<span class="fc" id="L202">            return Collections.emptyList();</span>
+<span class="fc" id="L204">            return Collections.emptyList();</span>
         }
 
         /**
@@ -208,7 +210,7 @@ public interface ThemisInstance {
          * @return the implements
          */
         default List&lt;ThemisTypeInstance&gt; getImplements() {
-<span class="fc" id="L211">            return Collections.emptyList();</span>
+<span class="fc" id="L213">            return Collections.emptyList();</span>
         }
 
         /**
@@ -217,7 +219,7 @@ public interface ThemisInstance {
          * @return the parameters
          */
         default List&lt;ThemisTypeInstance&gt; getTypeParameters() {
-<span class="nc" id="L220">            return Collections.emptyList();</span>
+<span class="nc" id="L222">            return Collections.emptyList();</span>
         }
 
         /**
@@ -226,7 +228,7 @@ public interface ThemisInstance {
          * @return the annotations
          */
         default List&lt;ThemisExpressionInstance&gt; getAnnotations() {
-<span class="nc" id="L229">            return Collections.emptyList();</span>
+<span class="nc" id="L231">            return Collections.emptyList();</span>
         }
 
         /**
@@ -235,7 +237,7 @@ public interface ThemisInstance {
          * @return true/false
          */
         default boolean isTopLevel() {
-<span class="nc" id="L238">            return false;</span>
+<span class="nc" id="L240">            return false;</span>
         }
 
         /**
@@ -244,7 +246,7 @@ public interface ThemisInstance {
          * @return true/false
          */
         default boolean isInterface() {
-<span class="nc" id="L247">            return false;</span>
+<span class="nc" id="L249">            return false;</span>
         }
 
         /**
@@ -253,7 +255,7 @@ public interface ThemisInstance {
          * @return true/false
          */
         default boolean isInner() {
-<span class="nc" id="L256">            return false;</span>
+<span class="nc" id="L258">            return false;</span>
         }
 
         /**
@@ -262,7 +264,7 @@ public interface ThemisInstance {
          * @return true/false
          */
         default boolean isLocalDeclaration() {
-<span class="nc" id="L265">            return false;</span>
+<span class="nc" id="L267">            return false;</span>
         }
 
         /**
@@ -271,14 +273,15 @@ public interface ThemisInstance {
          * @return true/false
          */
         default boolean isAnonClass() {
-<span class="fc" id="L274">            return false;</span>
+<span class="fc" id="L276">            return false;</span>
         }
     }
 
     /**
      * The base method interface.
      */
-    interface ThemisMethodInstance {
+    interface ThemisMethodInstance
+            extends MetisFieldItem {
         /**
          * Obtain the name.
          *
@@ -299,7 +302,7 @@ public interface ThemisInstance {
          * @return the parameters
          */
         default List&lt;ThemisNodeInstance&gt; getParameters() {
-<span class="nc" id="L302">            return Collections.emptyList();</span>
+<span class="nc" id="L305">            return Collections.emptyList();</span>
         }
 
         /**
@@ -308,7 +311,7 @@ public interface ThemisInstance {
          * @return the thrown exceptions
          */
         default List&lt;ThemisTypeInstance&gt; getThrown() {
-<span class="nc" id="L311">            return Collections.emptyList();</span>
+<span class="nc" id="L314">            return Collections.emptyList();</span>
         }
 
         /**
@@ -317,7 +320,7 @@ public interface ThemisInstance {
          * @return the parameters
          */
         default List&lt;ThemisTypeInstance&gt; getTypeParameters() {
-<span class="nc" id="L320">            return Collections.emptyList();</span>
+<span class="nc" id="L323">            return Collections.emptyList();</span>
         }
 
         /**
@@ -333,8 +336,8 @@ public interface ThemisInstance {
          * @return the annotations
          */
         default List&lt;ThemisExpressionInstance&gt; getAnnotations() {
-<span class="nc" id="L336">            return Collections.emptyList();</span>
+<span class="nc" id="L339">            return Collections.emptyList();</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

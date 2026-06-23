@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyKeyPairFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair</a> &gt; <span class="el_source">BouncyKeyPairFactory.java</span></div><h1>BouncyKeyPairFactory.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyBIKEKeyPair.BouncyBIKEKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyCMCEKeyPair.BouncyCMCEKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyDHKeyPair.BouncyDHKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyDSAKeyPair.BouncyDSAKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyDSTUKeyPair.BouncyDSTUKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyEdDSAKeyPair.BouncyEd25519KeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyEdDSAKeyPair.BouncyEd448KeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyElGamalKeyPair.BouncyElGamalKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyEllipticKeyPair.BouncyECKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyFalconKeyPair.BouncyFalconKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyFrodoKeyPair.BouncyFrodoKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyGOSTKeyPair.BouncyGOSTKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyHQCKeyPair.BouncyHQCKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyLMSKeyPair.BouncyHSSKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyMLDSAKeyPair.BouncyMLDSAKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyMLKEMKeyPair.BouncyMLKEMKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyMayoKeyPair.BouncyMayoKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyNTRUKeyPair.BouncyNTRUKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyNTRUPlusKeyPair.BouncyNTRUPlusKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyNewHopeKeyPair.BouncyNewHopeKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyPicnicKeyPair.BouncyPicnicKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyRSAKeyPair.BouncyRSAKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySABERKeyPair.BouncySABERKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySLHDSAKeyPair.BouncySLHDSAKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySNTRUPrimeKeyPair.BouncySNTRUPrimeKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySnovaKeyPair.BouncySnovaKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXDHKeyPair.BouncyX25519KeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXDHKeyPair.BouncyX448KeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXMSSKeyPair.BouncyXMSSKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXMSSKeyPair.BouncyXMSSMTKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * BouncyCastle KeyPair Factory.
+ */
+public class BouncyKeyPairFactory
+        extends GordianCoreKeyPairFactory {
+    /**
+     * Factory.
+     */
+    private final GordianBaseFactory theFactory;
+
+    /**
+     * KeyPairGenerator Cache.
+     */
+    private final Map&lt;GordianKeyPairSpec, GordianKeyPairGenerator&gt; theCache;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+    public BouncyKeyPairFactory(final GordianBaseFactory pFactory) {
+        /* Initialise underlying class */
+<span class="fc" id="L86">        super(pFactory);</span>
+<span class="fc" id="L87">        theFactory = pFactory;</span>
+
+        /* Create the cache */
+<span class="fc" id="L90">        theCache = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L91">    }</span>
+
+    @Override
+    public GordianKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
+        /* Handle composite keyPairGenerator */
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (GordianKeyPairType.COMPOSITE.equals(pKeySpec.getKeyPairType())) {</span>
+<span class="fc" id="L97">            return super.getKeyPairGenerator(pKeySpec);</span>
+        }
+
+        /* Look up in the cache */
+<span class="fc" id="L101">        GordianKeyPairGenerator myGenerator = theCache.get(pKeySpec);</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        if (myGenerator == null) {</span>
+            /* Check the keySpec */
+<span class="fc" id="L104">            checkAsymKeySpec(pKeySpec);</span>
+
+            /* Create the new generator */
+<span class="fc" id="L107">            myGenerator = getBCKeyPairGenerator(pKeySpec);</span>
+
+            /* Add to cache */
+<span class="fc" id="L110">            theCache.put(pKeySpec, myGenerator);</span>
+        }
+<span class="fc" id="L112">        return myGenerator;</span>
+    }
+
+    /**
+     * Create the BouncyCastle KeyPairGenerator.
+     *
+     * @param pKeySpec the keySpec
+     * @return the KeyGenerator
+     * @throws GordianException on error
+     */
+    private GordianKeyPairGenerator getBCKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
+<span class="fc" id="L123">        final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;</span>
+<span class="pc bpc" id="L124" title="1 of 28 branches missed.">        return switch (pKeySpec.getKeyPairType()) {</span>
+<span class="fc" id="L125">            case RSA -&gt; new BouncyRSAKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L126">            case ELGAMAL -&gt; new BouncyElGamalKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L127">            case EC, SM2 -&gt; new BouncyECKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L128">            case DSTU -&gt; new BouncyDSTUKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L129">            case GOST -&gt; new BouncyGOSTKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">            case XDH -&gt; myKeySpec.getEdwardsSpec().is25519()</span>
+<span class="fc" id="L131">                    ? new BouncyX25519KeyPairGenerator(theFactory, pKeySpec)</span>
+<span class="fc" id="L132">                    : new BouncyX448KeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">            case EDDSA -&gt; myKeySpec.getEdwardsSpec().is25519()</span>
+<span class="fc" id="L134">                    ? new BouncyEd25519KeyPairGenerator(theFactory, pKeySpec)</span>
+<span class="fc" id="L135">                    : new BouncyEd448KeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L136">            case DSA -&gt; new BouncyDSAKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L137">            case DH -&gt; new BouncyDHKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L138">            case SLHDSA -&gt; new BouncySLHDSAKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L139">            case CMCE -&gt; new BouncyCMCEKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L140">            case FRODO -&gt; new BouncyFrodoKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L141">            case SABER -&gt; new BouncySABERKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L142">            case MLKEM -&gt; new BouncyMLKEMKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L143">            case MLDSA -&gt; new BouncyMLDSAKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L144">            case HQC -&gt; new BouncyHQCKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L145">            case BIKE -&gt; new BouncyBIKEKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L146">            case NTRU -&gt; new BouncyNTRUKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L147">            case NTRUPLUS -&gt; new BouncyNTRUPlusKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">            case NTRUPRIME -&gt; myKeySpec.getNTRUPrimeSpec().getType() == GordianNTRUPrimeType.NTRUL</span>
+<span class="fc" id="L149">                    ? new BouncyNTRULPrimeKeyPairGenerator(theFactory, pKeySpec)</span>
+<span class="nc" id="L150">                    : new BouncySNTRUPrimeKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L151">            case FALCON -&gt; new BouncyFalconKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L152">            case MAYO -&gt; new BouncyMayoKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L153">            case SNOVA -&gt; new BouncySnovaKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L154">            case PICNIC -&gt; new BouncyPicnicKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L155">            case NEWHOPE -&gt; new BouncyNewHopeKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">            case XMSS -&gt; myKeySpec.getXMSSSpec().isMT()</span>
+<span class="nc" id="L157">                    ? new BouncyXMSSMTKeyPairGenerator(theFactory, pKeySpec)</span>
+<span class="fc" id="L158">                    : new BouncyXMSSKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="fc" id="L159">            case LMS -&gt; new BouncyHSSKeyPairGenerator(theFactory, pKeySpec);</span>
+<span class="nc" id="L160">            default -&gt; throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec.getKeyPairType()));</span>
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -57,8 +57,8 @@ public class OceanusMoney
      * Constructor for money of value zero in the default currency.
      */
     public OceanusMoney() {
-<span class="fc" id="L60">        this(DEFAULT_CURRENCY);</span>
-<span class="fc" id="L61">    }</span>
+<span class="nc" id="L60">        this(DEFAULT_CURRENCY);</span>
+<span class="nc" id="L61">    }</span>
 
     /**
      * Constructor for money of value zero.
@@ -78,51 +78,8 @@ public class OceanusMoney
     public OceanusMoney(final OceanusMoney pMoney) {
 <span class="nc" id="L79">        super(pMoney.unscaledValue(), pMoney.scale());</span>
 <span class="nc" id="L80">        theCurrency = pMoney.getCurrency();</span>
-<span class="nc" id="L81">    }</span>
-
-    /**
-     * Constructor for money from a decimal string.
-     *
-     * @param pSource The source decimal string
-     * @throws IllegalArgumentException on invalidly formatted argument
-     */
-    public OceanusMoney(final String pSource) {
-        /* Use default constructor */
-<span class="fc" id="L91">        this();</span>
-
-        /* Parse the string and correct the scale */
-<span class="fc" id="L94">        OceanusDecimalParser.parseDecimalValue(pSource, this);</span>
-<span class="fc" id="L95">        adjustToScale(theCurrency.getDefaultFractionDigits());</span>
-<span class="fc" id="L96">    }</span>
-
-    /**
-     * Constructor for money from a decimal string.
-     *
-     * @param pSource   The source decimal string
-     * @param pCurrency the currency
-     * @throws IllegalArgumentException on invalidly formatted argument
-     */
-    public OceanusMoney(final String pSource,
-                        final Currency pCurrency) {
-        /* Use currency constructor */
-<span class="nc" id="L108">        this(pCurrency);</span>
-
-        /* Parse the string and correct the scale */
-<span class="nc" id="L111">        OceanusDecimalParser.parseDecimalValue(pSource, this);</span>
-<span class="nc" id="L112">        adjustToScale(theCurrency.getDefaultFractionDigits());</span>
-<span class="nc" id="L113">    }</span>
-
-    /**
-     * Construct a new OceanusMoney by combining units and price.
-     *
-     * @param pUnits the number of units
-     * @param pPrice the price of each unit
-     */
-    protected OceanusMoney(final OceanusUnits pUnits,
-                           final OceanusPrice pPrice) {
-<span class="nc" id="L123">        this(pPrice.getCurrency());</span>
-<span class="nc" id="L124">        calculateProduct(pUnits, pPrice);</span>
-<span class="nc" id="L125">    }</span>
+<span class="nc" id="L81">        adjustToScale(theCurrency.getDefaultFractionDigits());</span>
+<span class="nc" id="L82">    }</span>
 
     /**
      * Construct a new OceanusMoney by combining money and rate.
@@ -132,9 +89,9 @@ public class OceanusMoney
      */
     private OceanusMoney(final OceanusMoney pMoney,
                          final OceanusRate pRate) {
-<span class="nc" id="L135">        this(pMoney.getCurrency());</span>
-<span class="nc" id="L136">        calculateProduct(pMoney, pRate);</span>
-<span class="nc" id="L137">    }</span>
+<span class="nc" id="L92">        this(pMoney.getCurrency());</span>
+<span class="nc" id="L93">        calculateProduct(pMoney, pRate);</span>
+<span class="nc" id="L94">    }</span>
 
     /**
      * Construct a new Money by combining money and ratio.
@@ -144,9 +101,9 @@ public class OceanusMoney
      */
     private OceanusMoney(final OceanusMoney pMoney,
                          final OceanusRatio pRatio) {
-<span class="nc" id="L147">        this(pMoney.getCurrency());</span>
-<span class="nc" id="L148">        calculateProduct(pMoney, pRatio);</span>
-<span class="nc" id="L149">    }</span>
+<span class="nc" id="L104">        this(pMoney.getCurrency());</span>
+<span class="nc" id="L105">        calculateProduct(pMoney, pRatio);</span>
+<span class="nc" id="L106">    }</span>
 
     /**
      * Create the decimal from a byte array.
@@ -154,14 +111,14 @@ public class OceanusMoney
      * @param pBuffer the buffer
      */
     public OceanusMoney(final byte[] pBuffer) {
-<span class="fc" id="L157">        super(pBuffer);</span>
-<span class="pc bpc" id="L158" title="1 of 2 branches missed.">        if (pBuffer.length &lt; Long.BYTES + 1 + CURRCODE_LEN) {</span>
-<span class="nc" id="L159">            throw new IllegalArgumentException();</span>
+<span class="fc" id="L114">        super(pBuffer);</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if (pBuffer.length &lt; Long.BYTES + 1 + CURRCODE_LEN) {</span>
+<span class="nc" id="L116">            throw new IllegalArgumentException();</span>
         }
-<span class="fc" id="L161">        final byte[] myCurr = Arrays.copyOfRange(pBuffer, Long.BYTES + 1, pBuffer.length);</span>
-<span class="fc" id="L162">        final String myCurrCode = new String(myCurr);</span>
-<span class="fc" id="L163">        theCurrency = Currency.getInstance(myCurrCode);</span>
-<span class="fc" id="L164">    }</span>
+<span class="fc" id="L118">        final byte[] myCurr = Arrays.copyOfRange(pBuffer, Long.BYTES + 1, pBuffer.length);</span>
+<span class="fc" id="L119">        final String myCurrCode = new String(myCurr);</span>
+<span class="fc" id="L120">        theCurrency = Currency.getInstance(myCurrCode);</span>
+<span class="fc" id="L121">    }</span>
 
     /**
      * Access the currency.
@@ -169,7 +126,7 @@ public class OceanusMoney
      * @return the currency
      */
     public Currency getCurrency() {
-<span class="fc" id="L172">        return theCurrency;</span>
+<span class="fc" id="L129">        return theCurrency;</span>
     }
 
     /**
@@ -182,10 +139,10 @@ public class OceanusMoney
     public static OceanusMoney getWholeUnits(final long pUnits,
                                              final Currency pCurrency) {
         /* Allocate the money */
-<span class="nc" id="L185">        final OceanusMoney myResult = new OceanusMoney(pCurrency);</span>
-<span class="nc" id="L186">        final int myScale = myResult.scale();</span>
-<span class="nc" id="L187">        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);</span>
-<span class="nc" id="L188">        return myResult;</span>
+<span class="nc" id="L142">        final OceanusMoney myResult = new OceanusMoney(pCurrency);</span>
+<span class="nc" id="L143">        final int myScale = myResult.scale();</span>
+<span class="nc" id="L144">        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);</span>
+<span class="nc" id="L145">        return myResult;</span>
     }
 
     /**
@@ -196,10 +153,10 @@ public class OceanusMoney
      */
     public static OceanusMoney getWholeUnits(final long pUnits) {
         /* Allocate the money */
-<span class="nc" id="L199">        final OceanusMoney myResult = new OceanusMoney();</span>
-<span class="nc" id="L200">        final int myScale = myResult.scale();</span>
-<span class="nc" id="L201">        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);</span>
-<span class="nc" id="L202">        return myResult;</span>
+<span class="nc" id="L156">        final OceanusMoney myResult = new OceanusMoney();</span>
+<span class="nc" id="L157">        final int myScale = myResult.scale();</span>
+<span class="nc" id="L158">        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);</span>
+<span class="nc" id="L159">        return myResult;</span>
     }
 
     /**
@@ -209,13 +166,13 @@ public class OceanusMoney
      */
     public void addAmount(final OceanusMoney pValue) {
         /* Currency must be identical */
-<span class="nc bnc" id="L212" title="All 2 branches missed.">        if (!theCurrency.equals(pValue.getCurrency())) {</span>
-<span class="nc" id="L213">            throw new IllegalArgumentException(ERROR_DIFFER);</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        if (!theCurrency.equals(pValue.getCurrency())) {</span>
+<span class="nc" id="L170">            throw new IllegalArgumentException(ERROR_DIFFER);</span>
         }
 
         /* Add the value */
-<span class="nc" id="L217">        super.addValue(pValue);</span>
-<span class="nc" id="L218">    }</span>
+<span class="nc" id="L174">        super.addValue(pValue);</span>
+<span class="nc" id="L175">    }</span>
 
     /**
      * Subtract a monetary amount from the value.
@@ -224,22 +181,22 @@ public class OceanusMoney
      */
     public void subtractAmount(final OceanusMoney pValue) {
         /* Currency must be identical */
-<span class="nc bnc" id="L227" title="All 2 branches missed.">        if (!theCurrency.equals(pValue.getCurrency())) {</span>
-<span class="nc" id="L228">            throw new IllegalArgumentException(ERROR_DIFFER);</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        if (!theCurrency.equals(pValue.getCurrency())) {</span>
+<span class="nc" id="L185">            throw new IllegalArgumentException(ERROR_DIFFER);</span>
         }
 
         /* Subtract the value */
-<span class="nc" id="L232">        super.subtractValue(pValue);</span>
-<span class="nc" id="L233">    }</span>
+<span class="nc" id="L189">        super.subtractValue(pValue);</span>
+<span class="nc" id="L190">    }</span>
 
     @Override
     public void addValue(final OceanusDecimal pValue) {
-<span class="nc" id="L237">        throw new UnsupportedOperationException();</span>
+<span class="nc" id="L194">        throw new UnsupportedOperationException();</span>
     }
 
     @Override
     public void subtractValue(final OceanusDecimal pValue) {
-<span class="nc" id="L242">        throw new UnsupportedOperationException();</span>
+<span class="nc" id="L199">        throw new UnsupportedOperationException();</span>
     }
 
     /**
@@ -250,7 +207,7 @@ public class OceanusMoney
      */
     public OceanusMoney changeCurrency(final Currency pCurrency) {
         /* Convert currency with an exchange rate of one */
-<span class="nc" id="L253">        return convertCurrency(pCurrency, OceanusRatio.ONE);</span>
+<span class="nc" id="L210">        return convertCurrency(pCurrency, OceanusRatio.ONE);</span>
     }
 
     /**
@@ -263,14 +220,14 @@ public class OceanusMoney
     public OceanusMoney convertCurrency(final Currency pCurrency,
                                         final OceanusRatio pRate) {
         /* If this is the same currency then no conversion */
-<span class="nc bnc" id="L266" title="All 2 branches missed.">        if (theCurrency.equals(pCurrency)) {</span>
-<span class="nc" id="L267">            return new OceanusMoney(this);</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">        if (theCurrency.equals(pCurrency)) {</span>
+<span class="nc" id="L224">            return new OceanusMoney(this);</span>
         }
 
         /* Create the new Money */
-<span class="nc" id="L271">        final OceanusMoney myResult = new OceanusMoney(pCurrency);</span>
-<span class="nc" id="L272">        myResult.calculateProduct(this, pRate);</span>
-<span class="nc" id="L273">        return myResult;</span>
+<span class="nc" id="L228">        final OceanusMoney myResult = new OceanusMoney(pCurrency);</span>
+<span class="nc" id="L229">        myResult.calculateProduct(this, pRate);</span>
+<span class="nc" id="L230">        return myResult;</span>
     }
 
     /**
@@ -281,7 +238,7 @@ public class OceanusMoney
      */
     public OceanusMoney getDilutedMoney(final OceanusRatio pDilution) {
         /* Calculate diluted value */
-<span class="nc" id="L284">        return new OceanusMoney(this, pDilution);</span>
+<span class="nc" id="L241">        return new OceanusMoney(this, pDilution);</span>
     }
 
     /**
@@ -292,7 +249,7 @@ public class OceanusMoney
      */
     public OceanusMoney valueAtRate(final OceanusRate pRate) {
         /* Calculate the money at this rate */
-<span class="nc" id="L295">        return new OceanusMoney(this, pRate);</span>
+<span class="nc" id="L252">        return new OceanusMoney(this, pRate);</span>
     }
 
     /**
@@ -303,7 +260,7 @@ public class OceanusMoney
      */
     public OceanusMoney valueAtRatio(final OceanusRatio pRatio) {
         /* Calculate the money at this rate */
-<span class="nc" id="L306">        return new OceanusMoney(this, pRatio);</span>
+<span class="nc" id="L263">        return new OceanusMoney(this, pRatio);</span>
     }
 
     /**
@@ -315,8 +272,8 @@ public class OceanusMoney
      */
     public OceanusMoney grossValueAtRate(final OceanusRate pRate) {
         /* Calculate the Gross corresponding to this net value at the rate */
-<span class="nc" id="L318">        final OceanusRatio myRatio = pRate.getRemainingRate().getInverseRatio();</span>
-<span class="nc" id="L319">        return new OceanusMoney(this, myRatio);</span>
+<span class="nc" id="L275">        final OceanusRatio myRatio = pRate.getRemainingRate().getInverseRatio();</span>
+<span class="nc" id="L276">        return new OceanusMoney(this, myRatio);</span>
     }
 
     /**
@@ -328,8 +285,8 @@ public class OceanusMoney
      */
     public OceanusMoney taxCreditAtRate(final OceanusRate pRate) {
         /* Calculate the Tax Credit corresponding to this net value at the rate */
-<span class="nc" id="L331">        final OceanusRatio myRatio = new OceanusRatio(pRate, pRate.getRemainingRate());</span>
-<span class="nc" id="L332">        return new OceanusMoney(this, myRatio);</span>
+<span class="nc" id="L288">        final OceanusRatio myRatio = new OceanusRatio(pRate, pRate.getRemainingRate());</span>
+<span class="nc" id="L289">        return new OceanusMoney(this, myRatio);</span>
     }
 
     /**
@@ -342,13 +299,13 @@ public class OceanusMoney
     public OceanusMoney valueAtWeight(final OceanusMoney pWeight,
                                       final OceanusMoney pTotal) {
         /* Handle zero total */
-<span class="nc bnc" id="L345" title="All 2 branches missed.">        if (!pTotal.isNonZero()) {</span>
-<span class="nc" id="L346">            return new OceanusMoney(theCurrency);</span>
+<span class="nc bnc" id="L302" title="All 2 branches missed.">        if (!pTotal.isNonZero()) {</span>
+<span class="nc" id="L303">            return new OceanusMoney(theCurrency);</span>
         }
 
         /* Calculate the defined ratio of this value */
-<span class="nc" id="L350">        final OceanusRatio myRatio = new OceanusRatio(pWeight, pTotal);</span>
-<span class="nc" id="L351">        return new OceanusMoney(this, myRatio);</span>
+<span class="nc" id="L307">        final OceanusRatio myRatio = new OceanusRatio(pWeight, pTotal);</span>
+<span class="nc" id="L308">        return new OceanusMoney(this, myRatio);</span>
     }
 
     /**
@@ -361,13 +318,13 @@ public class OceanusMoney
     public OceanusMoney valueAtWeight(final OceanusUnits pWeight,
                                       final OceanusUnits pTotal) {
         /* Handle zero total */
-<span class="nc bnc" id="L364" title="All 2 branches missed.">        if (!pTotal.isNonZero()) {</span>
-<span class="nc" id="L365">            return new OceanusMoney(theCurrency);</span>
+<span class="nc bnc" id="L321" title="All 2 branches missed.">        if (!pTotal.isNonZero()) {</span>
+<span class="nc" id="L322">            return new OceanusMoney(theCurrency);</span>
         }
 
         /* Calculate the defined ratio of this value */
-<span class="nc" id="L369">        final OceanusRatio myRatio = new OceanusRatio(pWeight, pTotal);</span>
-<span class="nc" id="L370">        return new OceanusMoney(this, myRatio);</span>
+<span class="nc" id="L326">        final OceanusRatio myRatio = new OceanusRatio(pWeight, pTotal);</span>
+<span class="nc" id="L327">        return new OceanusMoney(this, myRatio);</span>
     }
 
     /**
@@ -377,12 +334,12 @@ public class OceanusMoney
      */
     private static Currency determineDefaultCurrency() {
         /* Obtain the default currency */
-<span class="fc" id="L380">        final Currency myCurrency = DecimalFormatSymbols.getInstance().getCurrency();</span>
+<span class="fc" id="L337">        final Currency myCurrency = DecimalFormatSymbols.getInstance().getCurrency();</span>
 
         /* If the default is a pseudo-currency then default to GBP */
-<span class="pc bpc" id="L383" title="1 of 2 branches missed.">        return myCurrency.getDefaultFractionDigits() &lt; 0</span>
-<span class="nc" id="L384">                ? Currency.getInstance(Locale.UK)</span>
-<span class="fc" id="L385">                : myCurrency;</span>
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">        return myCurrency.getDefaultFractionDigits() &lt; 0</span>
+<span class="nc" id="L341">                ? Currency.getInstance(Locale.UK)</span>
+<span class="fc" id="L342">                : myCurrency;</span>
     }
 
     /**
@@ -391,48 +348,48 @@ public class OceanusMoney
      * @return the default currency
      */
     public static Currency getDefaultCurrency() {
-<span class="nc" id="L394">        return DEFAULT_CURRENCY;</span>
+<span class="nc" id="L351">        return DEFAULT_CURRENCY;</span>
     }
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle trivial cases */
-<span class="pc bpc" id="L400" title="1 of 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L401">            return true;</span>
+<span class="pc bpc" id="L357" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L358">            return true;</span>
         }
-<span class="pc bpc" id="L403" title="1 of 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L404">            return false;</span>
+<span class="pc bpc" id="L360" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L361">            return false;</span>
         }
 
         /* Make sure that the object is the same class */
-<span class="pc bpc" id="L408" title="1 of 2 branches missed.">        if (getClass() != pThat.getClass()) {</span>
-<span class="nc" id="L409">            return false;</span>
+<span class="pc bpc" id="L365" title="1 of 2 branches missed.">        if (getClass() != pThat.getClass()) {</span>
+<span class="nc" id="L366">            return false;</span>
         }
 
         /* Cast as money */
-<span class="fc" id="L413">        final OceanusMoney myThat = (OceanusMoney) pThat;</span>
+<span class="fc" id="L370">        final OceanusMoney myThat = (OceanusMoney) pThat;</span>
 
         /* Check currency */
-<span class="pc bpc" id="L416" title="1 of 2 branches missed.">        if (!theCurrency.equals(myThat.getCurrency())) {</span>
-<span class="nc" id="L417">            return false;</span>
+<span class="pc bpc" id="L373" title="1 of 2 branches missed.">        if (!theCurrency.equals(myThat.getCurrency())) {</span>
+<span class="nc" id="L374">            return false;</span>
         }
 
         /* Check value and scale */
-<span class="fc" id="L421">        return super.equals(pThat);</span>
+<span class="fc" id="L378">        return super.equals(pThat);</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L426">        return Objects.hash(theCurrency, super.hashCode());</span>
+<span class="nc" id="L383">        return Objects.hash(theCurrency, super.hashCode());</span>
     }
 
     @Override
     public byte[] toBytes() {
-<span class="fc" id="L431">        final byte[] myBase = super.toBytes();</span>
-<span class="fc" id="L432">        final byte[] myCurr = theCurrency.getCurrencyCode().getBytes(StandardCharsets.UTF_8);</span>
-<span class="fc" id="L433">        final byte[] myResult = Arrays.copyOf(myBase, myBase.length + myCurr.length);</span>
-<span class="fc" id="L434">        System.arraycopy(myCurr, 0, myResult, myBase.length, myCurr.length);</span>
-<span class="fc" id="L435">        return myResult;</span>
+<span class="fc" id="L388">        final byte[] myBase = super.toBytes();</span>
+<span class="fc" id="L389">        final byte[] myCurr = theCurrency.getCurrencyCode().getBytes(StandardCharsets.UTF_8);</span>
+<span class="fc" id="L390">        final byte[] myResult = Arrays.copyOf(myBase, myBase.length + myCurr.length);</span>
+<span class="fc" id="L391">        System.arraycopy(myCurr, 0, myResult, myBase.length, myCurr.length);</span>
+<span class="fc" id="L392">        return myResult;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

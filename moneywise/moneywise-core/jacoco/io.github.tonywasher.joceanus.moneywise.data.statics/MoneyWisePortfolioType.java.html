@@ -16,13 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 
@@ -35,17 +36,17 @@ public class MoneyWisePortfolioType
     /**
      * Object name.
      */
-<span class="fc" id="L38">    public static final String OBJECT_NAME = MoneyWiseStaticDataType.PORTFOLIOTYPE.getItemName();</span>
+<span class="fc" id="L39">    public static final String OBJECT_NAME = MoneyWiseStaticDataType.PORTFOLIOTYPE.getItemName();</span>
 
     /**
      * List name.
      */
-<span class="fc" id="L43">    public static final String LIST_NAME = MoneyWiseStaticDataType.PORTFOLIOTYPE.getListName();</span>
+<span class="fc" id="L44">    public static final String LIST_NAME = MoneyWiseStaticDataType.PORTFOLIOTYPE.getListName();</span>
 
     /**
      * Report fields.
      */
-<span class="fc" id="L48">    private static final MetisFieldSet&lt;MoneyWisePortfolioType&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePortfolioType.class);</span>
+<span class="fc" id="L49">    private static final MetisFieldSet&lt;MoneyWisePortfolioType&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePortfolioType.class);</span>
 
     /**
      * Copy Constructor.
@@ -55,8 +56,8 @@ public class MoneyWisePortfolioType
      */
     protected MoneyWisePortfolioType(final MoneyWisePortfolioTypeList pList,
                                      final MoneyWisePortfolioType pPortType) {
-<span class="fc" id="L58">        super(pList, pPortType);</span>
-<span class="fc" id="L59">    }</span>
+<span class="fc" id="L59">        super(pList, pPortType);</span>
+<span class="fc" id="L60">    }</span>
 
     /**
      * Basic constructor.
@@ -67,8 +68,8 @@ public class MoneyWisePortfolioType
      */
     private MoneyWisePortfolioType(final MoneyWisePortfolioTypeList pList,
                                    final String pName) throws OceanusException {
-<span class="fc" id="L70">        super(pList, pName);</span>
-<span class="fc" id="L71">    }</span>
+<span class="fc" id="L71">        super(pList, pName);</span>
+<span class="fc" id="L72">    }</span>
 
     /**
      * Basic constructor.
@@ -79,8 +80,8 @@ public class MoneyWisePortfolioType
      */
     private MoneyWisePortfolioType(final MoneyWisePortfolioTypeList pList,
                                    final MoneyWisePortfolioClass pClass) throws OceanusException {
-<span class="nc" id="L82">        super(pList, pClass);</span>
-<span class="nc" id="L83">    }</span>
+<span class="nc" id="L83">        super(pList, pClass);</span>
+<span class="nc" id="L84">    }</span>
 
     /**
      * Values constructor.
@@ -91,12 +92,12 @@ public class MoneyWisePortfolioType
      */
     private MoneyWisePortfolioType(final MoneyWisePortfolioTypeList pList,
                                    final PrometheusDataValues pValues) throws OceanusException {
-<span class="fc" id="L94">        super(pList, pValues);</span>
-<span class="fc" id="L95">    }</span>
+<span class="fc" id="L95">        super(pList, pValues);</span>
+<span class="fc" id="L96">    }</span>
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
-<span class="fc" id="L99">        return FIELD_DEFS;</span>
+<span class="fc" id="L100">        return FIELD_DEFS;</span>
     }
 
     /**
@@ -105,17 +106,17 @@ public class MoneyWisePortfolioType
      * @return the class
      */
     public MoneyWisePortfolioClass getPortfolioClass() {
-<span class="fc" id="L108">        return (MoneyWisePortfolioClass) super.getStaticClass();</span>
+<span class="fc" id="L109">        return (MoneyWisePortfolioClass) super.getStaticClass();</span>
     }
 
     @Override
     public MoneyWisePortfolioType getBase() {
-<span class="fc" id="L113">        return (MoneyWisePortfolioType) super.getBase();</span>
+<span class="fc" id="L114">        return (MoneyWisePortfolioType) super.getBase();</span>
     }
 
     @Override
     public MoneyWisePortfolioTypeList getList() {
-<span class="fc" id="L118">        return (MoneyWisePortfolioTypeList) super.getList();</span>
+<span class="fc" id="L119">        return (MoneyWisePortfolioTypeList) super.getList();</span>
     }
 
     /**
@@ -126,7 +127,7 @@ public class MoneyWisePortfolioType
         /**
          * Report fields.
          */
-<span class="fc" id="L129">        private static final MetisFieldSet&lt;MoneyWisePortfolioTypeList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePortfolioTypeList.class);</span>
+<span class="fc" id="L130">        private static final MetisFieldSet&lt;MoneyWisePortfolioTypeList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePortfolioTypeList.class);</span>
 
         /**
          * Construct an empty CORE portfolioType list.
@@ -134,8 +135,8 @@ public class MoneyWisePortfolioType
          * @param pData the DataSet for the list
          */
         public MoneyWisePortfolioTypeList(final PrometheusDataSet pData) {
-<span class="fc" id="L137">            super(MoneyWisePortfolioType.class, pData, MoneyWiseStaticDataType.PORTFOLIOTYPE, PrometheusListStyle.CORE);</span>
-<span class="fc" id="L138">        }</span>
+<span class="fc" id="L138">            super(MoneyWisePortfolioType.class, pData, MoneyWiseStaticDataType.PORTFOLIOTYPE, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L139">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -143,51 +144,51 @@ public class MoneyWisePortfolioType
          * @param pSource the source List
          */
         private MoneyWisePortfolioTypeList(final MoneyWisePortfolioTypeList pSource) {
-<span class="fc" id="L146">            super(pSource);</span>
-<span class="fc" id="L147">        }</span>
+<span class="fc" id="L147">            super(pSource);</span>
+<span class="fc" id="L148">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWisePortfolioTypeList&gt; getDataFieldSet() {
-<span class="nc" id="L151">            return FIELD_DEFS;</span>
+<span class="nc" id="L152">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String listName() {
-<span class="fc" id="L156">            return LIST_NAME;</span>
+<span class="fc" id="L157">            return LIST_NAME;</span>
         }
 
         @Override
         public MetisFieldSetDef getItemFields() {
-<span class="fc" id="L161">            return MoneyWisePortfolioType.FIELD_DEFS;</span>
+<span class="fc" id="L162">            return MoneyWisePortfolioType.FIELD_DEFS;</span>
         }
 
         @Override
         protected Class&lt;MoneyWisePortfolioClass&gt; getEnumClass() {
-<span class="fc" id="L166">            return MoneyWisePortfolioClass.class;</span>
+<span class="fc" id="L167">            return MoneyWisePortfolioClass.class;</span>
         }
 
         @Override
         protected MoneyWisePortfolioTypeList getEmptyList(final PrometheusListStyle pStyle) {
-<span class="fc" id="L171">            final MoneyWisePortfolioTypeList myList = new MoneyWisePortfolioTypeList(this);</span>
-<span class="fc" id="L172">            myList.setStyle(pStyle);</span>
-<span class="fc" id="L173">            return myList;</span>
+<span class="fc" id="L172">            final MoneyWisePortfolioTypeList myList = new MoneyWisePortfolioTypeList(this);</span>
+<span class="fc" id="L173">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L174">            return myList;</span>
         }
 
         @Override
         public MoneyWisePortfolioType addCopyItem(final PrometheusDataItem pItem) {
             /* Can only clone a PortfolioType */
-<span class="pc bpc" id="L179" title="1 of 2 branches missed.">            if (!(pItem instanceof MoneyWisePortfolioType)) {</span>
-<span class="nc" id="L180">                throw new UnsupportedOperationException();</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">            if (!(pItem instanceof MoneyWisePortfolioType)) {</span>
+<span class="nc" id="L181">                throw new UnsupportedOperationException();</span>
             }
 
-<span class="fc" id="L183">            final MoneyWisePortfolioType myType = new MoneyWisePortfolioType(this, (MoneyWisePortfolioType) pItem);</span>
-<span class="fc" id="L184">            add(myType);</span>
-<span class="fc" id="L185">            return myType;</span>
+<span class="fc" id="L184">            final MoneyWisePortfolioType myType = new MoneyWisePortfolioType(this, (MoneyWisePortfolioType) pItem);</span>
+<span class="fc" id="L185">            add(myType);</span>
+<span class="fc" id="L186">            return myType;</span>
         }
 
         @Override
         public MoneyWisePortfolioType addNewItem() {
-<span class="nc" id="L190">            throw new UnsupportedOperationException();</span>
+<span class="nc" id="L191">            throw new UnsupportedOperationException();</span>
         }
 
         /**
@@ -196,7 +197,7 @@ public class MoneyWisePortfolioType
          * @return the type of the item
          */
         public String itemType() {
-<span class="nc" id="L199">            return LIST_NAME;</span>
+<span class="nc" id="L200">            return LIST_NAME;</span>
         }
 
         /**
@@ -208,54 +209,54 @@ public class MoneyWisePortfolioType
          */
         public MoneyWisePortfolioType addBasicItem(final String pPortType) throws OceanusException {
             /* Create a new Portfolio Type */
-<span class="fc" id="L211">            final MoneyWisePortfolioType myPortType = new MoneyWisePortfolioType(this, pPortType);</span>
+<span class="fc" id="L212">            final MoneyWisePortfolioType myPortType = new MoneyWisePortfolioType(this, pPortType);</span>
 
             /* Check that this PortTypeId has not been previously added */
-<span class="pc bpc" id="L214" title="1 of 2 branches missed.">            if (!isIdUnique(myPortType.getIndexedId())) {</span>
-<span class="nc" id="L215">                myPortType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L216">                throw new MoneyWiseDataException(myPortType, ERROR_VALIDATION);</span>
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">            if (!isIdUnique(myPortType.getIndexedId())) {</span>
+<span class="nc" id="L216">                myPortType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L217">                throw new MoneyWiseDataException(myPortType, ERROR_VALIDATION);</span>
             }
 
             /* Add the PortfolioType to the list */
-<span class="fc" id="L220">            add(myPortType);</span>
-<span class="fc" id="L221">            return myPortType;</span>
+<span class="fc" id="L221">            add(myPortType);</span>
+<span class="fc" id="L222">            return myPortType;</span>
         }
 
         @Override
         public MoneyWisePortfolioType addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
             /* Create the type */
-<span class="fc" id="L227">            final MoneyWisePortfolioType myType = new MoneyWisePortfolioType(this, pValues);</span>
+<span class="fc" id="L228">            final MoneyWisePortfolioType myType = new MoneyWisePortfolioType(this, pValues);</span>
 
             /* Check that this TypeId has not been previously added */
-<span class="pc bpc" id="L230" title="1 of 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
-<span class="nc" id="L231">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L232">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L232">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L233">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="fc" id="L236">            add(myType);</span>
+<span class="fc" id="L237">            add(myType);</span>
 
             /* Return it */
-<span class="fc" id="L239">            return myType;</span>
+<span class="fc" id="L240">            return myType;</span>
         }
 
         @Override
         protected MoneyWisePortfolioType newItem(final PrometheusStaticDataClass pClass) throws OceanusException {
             /* Create the type */
-<span class="nc" id="L245">            final MoneyWisePortfolioType myType = new MoneyWisePortfolioType(this, (MoneyWisePortfolioClass) pClass);</span>
+<span class="nc" id="L246">            final MoneyWisePortfolioType myType = new MoneyWisePortfolioType(this, (MoneyWisePortfolioClass) pClass);</span>
 
             /* Check that this TypeId has not been previously added */
-<span class="nc bnc" id="L248" title="All 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
-<span class="nc" id="L249">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L250">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+<span class="nc bnc" id="L249" title="All 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L250">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L251">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="nc" id="L254">            add(myType);</span>
+<span class="nc" id="L255">            add(myType);</span>
 
             /* Return it */
-<span class="nc" id="L257">            return myType;</span>
+<span class="nc" id="L258">            return myType;</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -16,11 +16,9 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseDataSetCtl;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashCategory.MoneyWiseCashCategoryList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashInfo.MoneyWiseCashInfoList;
@@ -40,6 +38,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.Mon
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolioInfo.MoneyWisePortfolioInfoList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMapCtl.MoneyWiseSecurityHoldingMapGenerator;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityInfo.MoneyWiseSecurityInfoList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
@@ -62,9 +61,14 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResou
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxBasis.MoneyWiseTaxBasisList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType.MoneyWiseTransCategoryTypeList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyDataType;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.util.Iterator;
@@ -74,20 +78,21 @@ import java.util.Map.Entry;
  * MoneyWise dataSet.
  */
 public class MoneyWiseDataSet
-        extends PrometheusDataSet {
+        extends PrometheusDataSet
+        implements MoneyWiseDataSetCtl, MoneyWiseSecurityHoldingMapGenerator {
     /**
      * Local Report fields.
      */
-<span class="fc" id="L81">    private static final MetisFieldSet&lt;MoneyWiseDataSet&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseDataSet.class);</span>
+<span class="fc" id="L86">    private static final MetisFieldSet&lt;MoneyWiseDataSet&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseDataSet.class);</span>
 
     /*
      * Declare Fields.
      */
     static {
-<span class="fc" id="L87">        FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseStaticDataType.class, MoneyWiseDataSet::getFieldListValue);</span>
-<span class="fc" id="L88">        FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseBasicDataType.class, MoneyWiseDataSet::getFieldListValue);</span>
-<span class="fc" id="L89">        FIELD_DEFS.declareLocalField(MoneyWiseStaticResource.CURRENCY_REPORTING, MoneyWiseDataSet::getReportingCurrency);</span>
-<span class="fc" id="L90">    }</span>
+<span class="fc" id="L92">        FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseStaticDataType.class, MoneyWiseDataSet::getFieldListValue);</span>
+<span class="fc" id="L93">        FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseBasicDataType.class, MoneyWiseDataSet::getFieldListValue);</span>
+<span class="fc" id="L94">        FIELD_DEFS.declareLocalField(MoneyWiseStaticResource.CURRENCY_REPORTING, MoneyWiseDataSet::getReportingCurrency);</span>
+<span class="fc" id="L95">    }</span>
 
     /**
      * TaxFactory.
@@ -118,23 +123,23 @@ public class MoneyWiseDataSet
     public MoneyWiseDataSet(final PrometheusToolkit pUtilitySet,
                             final MoneyWiseTaxFactory pTaxFactory) {
         /* Call Super-constructor */
-<span class="fc" id="L121">        super(pUtilitySet);</span>
+<span class="fc" id="L126">        super(pUtilitySet);</span>
 
         /* Record the tax factory */
-<span class="fc" id="L124">        theTaxFactory = pTaxFactory;</span>
+<span class="fc" id="L129">        theTaxFactory = pTaxFactory;</span>
 
         /* Loop through the list types */
-<span class="fc bfc" id="L127" title="All 2 branches covered.">        for (MoneyWiseStaticDataType myType : MoneyWiseStaticDataType.values()) {</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        for (MoneyWiseStaticDataType myType : MoneyWiseStaticDataType.values()) {</span>
             /* Create the empty list */
-<span class="fc" id="L129">            addList(myType, newList(myType));</span>
+<span class="fc" id="L134">            addList(myType, newList(myType));</span>
         }
 
         /* Loop through the list types */
-<span class="fc bfc" id="L133" title="All 2 branches covered.">        for (MoneyWiseBasicDataType myType : MoneyWiseBasicDataType.values()) {</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        for (MoneyWiseBasicDataType myType : MoneyWiseBasicDataType.values()) {</span>
             /* Create the empty list */
-<span class="fc" id="L135">            addList(myType, newList(myType));</span>
+<span class="fc" id="L140">            addList(myType, newList(myType));</span>
         }
-<span class="fc" id="L137">    }</span>
+<span class="fc" id="L142">    }</span>
 
     /**
      * Constructor for a cloned DataSet.
@@ -142,18 +147,18 @@ public class MoneyWiseDataSet
      * @param pSource the source DataSet
      */
     private MoneyWiseDataSet(final MoneyWiseDataSet pSource) {
-<span class="fc" id="L145">        super(pSource);</span>
-<span class="fc" id="L146">        theTaxFactory = pSource.getTaxFactory();</span>
-<span class="fc" id="L147">    }</span>
+<span class="fc" id="L150">        super(pSource);</span>
+<span class="fc" id="L151">        theTaxFactory = pSource.getTaxFactory();</span>
+<span class="fc" id="L152">    }</span>
 
     @Override
     public MetisFieldSet&lt;MoneyWiseDataSet&gt; getDataFieldSet() {
-<span class="fc" id="L151">        return FIELD_DEFS;</span>
+<span class="fc" id="L156">        return FIELD_DEFS;</span>
     }
 
     @Override
     public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L156">        return MoneyWiseDataSet.class.getSimpleName();</span>
+<span class="nc" id="L161">        return MoneyWiseDataSet.class.getSimpleName();</span>
     }
 
     /**
@@ -162,7 +167,7 @@ public class MoneyWiseDataSet
      * @return the Deposit category types
      */
     public MoneyWiseDepositCategoryTypeList getDepositCategoryTypes() {
-<span class="fc" id="L165">        return getDataList(MoneyWiseStaticDataType.DEPOSITTYPE, MoneyWiseDepositCategoryTypeList.class);</span>
+<span class="fc" id="L170">        return getDataList(MoneyWiseStaticDataType.DEPOSITTYPE, MoneyWiseDepositCategoryTypeList.class);</span>
     }
 
     /**
@@ -171,7 +176,7 @@ public class MoneyWiseDataSet
      * @return the Cash category types
      */
     public MoneyWiseCashCategoryTypeList getCashCategoryTypes() {
-<span class="fc" id="L174">        return getDataList(MoneyWiseStaticDataType.CASHTYPE, MoneyWiseCashCategoryTypeList.class);</span>
+<span class="fc" id="L179">        return getDataList(MoneyWiseStaticDataType.CASHTYPE, MoneyWiseCashCategoryTypeList.class);</span>
     }
 
     /**
@@ -180,7 +185,7 @@ public class MoneyWiseDataSet
      * @return the Loan category types
      */
     public MoneyWiseLoanCategoryTypeList getLoanCategoryTypes() {
-<span class="fc" id="L183">        return getDataList(MoneyWiseStaticDataType.LOANTYPE, MoneyWiseLoanCategoryTypeList.class);</span>
+<span class="fc" id="L188">        return getDataList(MoneyWiseStaticDataType.LOANTYPE, MoneyWiseLoanCategoryTypeList.class);</span>
     }
 
     /**
@@ -189,7 +194,7 @@ public class MoneyWiseDataSet
      * @return the Payee types
      */
     public MoneyWisePayeeTypeList getPayeeTypes() {
-<span class="fc" id="L192">        return getDataList(MoneyWiseStaticDataType.PAYEETYPE, MoneyWisePayeeTypeList.class);</span>
+<span class="fc" id="L197">        return getDataList(MoneyWiseStaticDataType.PAYEETYPE, MoneyWisePayeeTypeList.class);</span>
     }
 
     /**
@@ -198,7 +203,7 @@ public class MoneyWiseDataSet
      * @return the Portfolio types
      */
     public MoneyWisePortfolioTypeList getPortfolioTypes() {
-<span class="fc" id="L201">        return getDataList(MoneyWiseStaticDataType.PORTFOLIOTYPE, MoneyWisePortfolioTypeList.class);</span>
+<span class="fc" id="L206">        return getDataList(MoneyWiseStaticDataType.PORTFOLIOTYPE, MoneyWisePortfolioTypeList.class);</span>
     }
 
     /**
@@ -207,7 +212,7 @@ public class MoneyWiseDataSet
      * @return the Security types
      */
     public MoneyWiseSecurityTypeList getSecurityTypes() {
-<span class="fc" id="L210">        return getDataList(MoneyWiseStaticDataType.SECURITYTYPE, MoneyWiseSecurityTypeList.class);</span>
+<span class="fc" id="L215">        return getDataList(MoneyWiseStaticDataType.SECURITYTYPE, MoneyWiseSecurityTypeList.class);</span>
     }
 
     /**
@@ -216,7 +221,7 @@ public class MoneyWiseDataSet
      * @return the Transaction Category types
      */
     public MoneyWiseTransCategoryTypeList getTransCategoryTypes() {
-<span class="fc" id="L219">        return getDataList(MoneyWiseStaticDataType.TRANSTYPE, MoneyWiseTransCategoryTypeList.class);</span>
+<span class="fc" id="L224">        return getDataList(MoneyWiseStaticDataType.TRANSTYPE, MoneyWiseTransCategoryTypeList.class);</span>
     }
 
     /**
@@ -225,7 +230,7 @@ public class MoneyWiseDataSet
      * @return the Tax bases
      */
     public MoneyWiseTaxBasisList getTaxBases() {
-<span class="fc" id="L228">        return getDataList(MoneyWiseStaticDataType.TAXBASIS, MoneyWiseTaxBasisList.class);</span>
+<span class="fc" id="L233">        return getDataList(MoneyWiseStaticDataType.TAXBASIS, MoneyWiseTaxBasisList.class);</span>
     }
 
     /**
@@ -234,7 +239,7 @@ public class MoneyWiseDataSet
      * @return the Asset Currencies
      */
     public MoneyWiseCurrencyList getAccountCurrencies() {
-<span class="fc" id="L237">        return getDataList(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrencyList.class);</span>
+<span class="fc" id="L242">        return getDataList(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrencyList.class);</span>
     }
 
     /**
@@ -243,7 +248,7 @@ public class MoneyWiseDataSet
      * @return the Account Info types
      */
     public MoneyWiseAccountInfoTypeList getActInfoTypes() {
-<span class="fc" id="L246">        return getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);</span>
+<span class="fc" id="L251">        return getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);</span>
     }
 
     /**
@@ -252,7 +257,7 @@ public class MoneyWiseDataSet
      * @return the Transaction Info types
      */
     public MoneyWiseTransInfoTypeList getTransInfoTypes() {
-<span class="fc" id="L255">        return getDataList(MoneyWiseStaticDataType.TRANSINFOTYPE, MoneyWiseTransInfoTypeList.class);</span>
+<span class="fc" id="L260">        return getDataList(MoneyWiseStaticDataType.TRANSINFOTYPE, MoneyWiseTransInfoTypeList.class);</span>
     }
 
     /**
@@ -261,7 +266,7 @@ public class MoneyWiseDataSet
      * @return the Transaction Tags
      */
     public MoneyWiseTransTagList getTransactionTags() {
-<span class="fc" id="L264">        return getDataList(MoneyWiseBasicDataType.TRANSTAG, MoneyWiseTransTagList.class);</span>
+<span class="fc" id="L269">        return getDataList(MoneyWiseBasicDataType.TRANSTAG, MoneyWiseTransTagList.class);</span>
     }
 
     /**
@@ -270,7 +275,7 @@ public class MoneyWiseDataSet
      * @return the regions
      */
     public MoneyWiseRegionList getRegions() {
-<span class="fc" id="L273">        return getDataList(MoneyWiseBasicDataType.REGION, MoneyWiseRegionList.class);</span>
+<span class="fc" id="L278">        return getDataList(MoneyWiseBasicDataType.REGION, MoneyWiseRegionList.class);</span>
     }
 
     /**
@@ -279,7 +284,7 @@ public class MoneyWiseDataSet
      * @return the Deposit categories
      */
     public MoneyWiseDepositCategoryList getDepositCategories() {
-<span class="fc" id="L282">        return getDataList(MoneyWiseBasicDataType.DEPOSITCATEGORY, MoneyWiseDepositCategoryList.class);</span>
+<span class="fc" id="L287">        return getDataList(MoneyWiseBasicDataType.DEPOSITCATEGORY, MoneyWiseDepositCategoryList.class);</span>
     }
 
     /**
@@ -288,7 +293,7 @@ public class MoneyWiseDataSet
      * @return the Cash categories
      */
     public MoneyWiseCashCategoryList getCashCategories() {
-<span class="fc" id="L291">        return getDataList(MoneyWiseBasicDataType.CASHCATEGORY, MoneyWiseCashCategoryList.class);</span>
+<span class="fc" id="L296">        return getDataList(MoneyWiseBasicDataType.CASHCATEGORY, MoneyWiseCashCategoryList.class);</span>
     }
 
     /**
@@ -297,7 +302,7 @@ public class MoneyWiseDataSet
      * @return the Loan categories
      */
     public MoneyWiseLoanCategoryList getLoanCategories() {
-<span class="fc" id="L300">        return getDataList(MoneyWiseBasicDataType.LOANCATEGORY, MoneyWiseLoanCategoryList.class);</span>
+<span class="fc" id="L305">        return getDataList(MoneyWiseBasicDataType.LOANCATEGORY, MoneyWiseLoanCategoryList.class);</span>
     }
 
     /**
@@ -306,7 +311,7 @@ public class MoneyWiseDataSet
      * @return the Transaction categories
      */
     public MoneyWiseTransCategoryList getTransCategories() {
-<span class="fc" id="L309">        return getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);</span>
+<span class="fc" id="L314">        return getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);</span>
     }
 
     /**
@@ -315,7 +320,7 @@ public class MoneyWiseDataSet
      * @return the ExchangeRates
      */
     public MoneyWiseExchangeRateList getExchangeRates() {
-<span class="fc" id="L318">        return getDataList(MoneyWiseBasicDataType.EXCHANGERATE, MoneyWiseExchangeRateList.class);</span>
+<span class="fc" id="L323">        return getDataList(MoneyWiseBasicDataType.EXCHANGERATE, MoneyWiseExchangeRateList.class);</span>
     }
 
     /**
@@ -324,7 +329,7 @@ public class MoneyWiseDataSet
      * @return the Payees
      */
     public MoneyWisePayeeList getPayees() {
-<span class="fc" id="L327">        return getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);</span>
+<span class="fc" id="L332">        return getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);</span>
     }
 
     /**
@@ -333,7 +338,7 @@ public class MoneyWiseDataSet
      * @return the Payee Info
      */
     public MoneyWisePayeeInfoList getPayeeInfo() {
-<span class="fc" id="L336">        return getDataList(MoneyWiseBasicDataType.PAYEEINFO, MoneyWisePayeeInfoList.class);</span>
+<span class="fc" id="L341">        return getDataList(MoneyWiseBasicDataType.PAYEEINFO, MoneyWisePayeeInfoList.class);</span>
     }
 
     /**
@@ -342,7 +347,7 @@ public class MoneyWiseDataSet
      * @return the Securities
      */
     public MoneyWiseSecurityList getSecurities() {
-<span class="fc" id="L345">        return getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class);</span>
+<span class="fc" id="L350">        return getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class);</span>
     }
 
     /**
@@ -351,7 +356,7 @@ public class MoneyWiseDataSet
      * @return the Security prices
      */
     public MoneyWiseSecurityPriceList getSecurityPrices() {
-<span class="fc" id="L354">        return getDataList(MoneyWiseBasicDataType.SECURITYPRICE, MoneyWiseSecurityPriceList.class);</span>
+<span class="fc" id="L359">        return getDataList(MoneyWiseBasicDataType.SECURITYPRICE, MoneyWiseSecurityPriceList.class);</span>
     }
 
     /**
@@ -360,7 +365,7 @@ public class MoneyWiseDataSet
      * @return the Security Info
      */
     public MoneyWiseSecurityInfoList getSecurityInfo() {
-<span class="fc" id="L363">        return getDataList(MoneyWiseBasicDataType.SECURITYINFO, MoneyWiseSecurityInfoList.class);</span>
+<span class="fc" id="L368">        return getDataList(MoneyWiseBasicDataType.SECURITYINFO, MoneyWiseSecurityInfoList.class);</span>
     }
 
     /**
@@ -369,7 +374,7 @@ public class MoneyWiseDataSet
      * @return the Deposits
      */
     public MoneyWiseDepositList getDeposits() {
-<span class="fc" id="L372">        return getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class);</span>
+<span class="fc" id="L377">        return getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class);</span>
     }
 
     /**
@@ -378,7 +383,7 @@ public class MoneyWiseDataSet
      * @return the Deposit rates
      */
     public MoneyWiseDepositRateList getDepositRates() {
-<span class="fc" id="L381">        return getDataList(MoneyWiseBasicDataType.DEPOSITRATE, MoneyWiseDepositRateList.class);</span>
+<span class="fc" id="L386">        return getDataList(MoneyWiseBasicDataType.DEPOSITRATE, MoneyWiseDepositRateList.class);</span>
     }
 
     /**
@@ -387,7 +392,7 @@ public class MoneyWiseDataSet
      * @return the Deposit Info
      */
     public MoneyWiseDepositInfoList getDepositInfo() {
-<span class="fc" id="L390">        return getDataList(MoneyWiseBasicDataType.DEPOSITINFO, MoneyWiseDepositInfoList.class);</span>
+<span class="fc" id="L395">        return getDataList(MoneyWiseBasicDataType.DEPOSITINFO, MoneyWiseDepositInfoList.class);</span>
     }
 
     /**
@@ -396,7 +401,7 @@ public class MoneyWiseDataSet
      * @return the Cash
      */
     public MoneyWiseCashList getCash() {
-<span class="fc" id="L399">        return getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class);</span>
+<span class="fc" id="L404">        return getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class);</span>
     }
 
     /**
@@ -405,7 +410,7 @@ public class MoneyWiseDataSet
      * @return the Cash Info
      */
     public MoneyWiseCashInfoList getCashInfo() {
-<span class="fc" id="L408">        return getDataList(MoneyWiseBasicDataType.CASHINFO, MoneyWiseCashInfoList.class);</span>
+<span class="fc" id="L413">        return getDataList(MoneyWiseBasicDataType.CASHINFO, MoneyWiseCashInfoList.class);</span>
     }
 
     /**
@@ -414,7 +419,7 @@ public class MoneyWiseDataSet
      * @return the Loans
      */
     public MoneyWiseLoanList getLoans() {
-<span class="fc" id="L417">        return getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class);</span>
+<span class="fc" id="L422">        return getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class);</span>
     }
 
     /**
@@ -423,7 +428,7 @@ public class MoneyWiseDataSet
      * @return the Loan Info
      */
     public MoneyWiseLoanInfoList getLoanInfo() {
-<span class="fc" id="L426">        return getDataList(MoneyWiseBasicDataType.LOANINFO, MoneyWiseLoanInfoList.class);</span>
+<span class="fc" id="L431">        return getDataList(MoneyWiseBasicDataType.LOANINFO, MoneyWiseLoanInfoList.class);</span>
     }
 
     /**
@@ -432,7 +437,7 @@ public class MoneyWiseDataSet
      * @return the Portfolios
      */
     public MoneyWisePortfolioList getPortfolios() {
-<span class="fc" id="L435">        return getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);</span>
+<span class="fc" id="L440">        return getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);</span>
     }
 
     /**
@@ -441,7 +446,7 @@ public class MoneyWiseDataSet
      * @return the Portfolio Info
      */
     public MoneyWisePortfolioInfoList getPortfolioInfo() {
-<span class="fc" id="L444">        return getDataList(MoneyWiseBasicDataType.PORTFOLIOINFO, MoneyWisePortfolioInfoList.class);</span>
+<span class="fc" id="L449">        return getDataList(MoneyWiseBasicDataType.PORTFOLIOINFO, MoneyWisePortfolioInfoList.class);</span>
     }
 
     /**
@@ -450,7 +455,7 @@ public class MoneyWiseDataSet
      * @return the Transactions
      */
     public MoneyWiseTransactionList getTransactions() {
-<span class="fc" id="L453">        return getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class);</span>
+<span class="fc" id="L458">        return getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class);</span>
     }
 
     /**
@@ -459,39 +464,38 @@ public class MoneyWiseDataSet
      * @return the Transaction Info
      */
     public MoneyWiseTransInfoList getTransactionInfo() {
-<span class="fc" id="L462">        return getDataList(MoneyWiseBasicDataType.TRANSACTIONINFO, MoneyWiseTransInfoList.class);</span>
+<span class="fc" id="L467">        return getDataList(MoneyWiseBasicDataType.TRANSACTIONINFO, MoneyWiseTransInfoList.class);</span>
     }
 
-    /**
-     * Obtain Tax Factory.
-     *
-     * @return the taxFactory
-     */
+    @Override
     public MoneyWiseTaxFactory getTaxFactory() {
-<span class="fc" id="L471">        return theTaxFactory;</span>
+<span class="fc" id="L472">        return theTaxFactory;</span>
     }
 
-    /**
-     * Obtain Date range.
-     *
-     * @return the Date Range
-     */
+    @Override
     public OceanusDateRange getDateRange() {
-<span class="fc" id="L480">        return theTaxFactory.getDateRange();</span>
+<span class="fc" id="L477">        return theTaxFactory.getDateRange();</span>
     }
 
-    /**
-     * Obtain default currency.
-     *
-     * @return the default currency
-     */
+    @Override
     public MoneyWiseCurrency getReportingCurrency() {
         /* If we have note yet determined the reporting currency */
-<span class="fc bfc" id="L490" title="All 2 branches covered.">        if (theReportingCurrency == null) {</span>
+<span class="fc bfc" id="L483" title="All 2 branches covered.">        if (theReportingCurrency == null) {</span>
             /* Determine the default currency */
-<span class="fc" id="L492">            theReportingCurrency = getAccountCurrencies().findReporting();</span>
+<span class="fc" id="L485">            theReportingCurrency = getAccountCurrencies().findReporting();</span>
         }
-<span class="fc" id="L494">        return theReportingCurrency;</span>
+<span class="fc" id="L487">        return theReportingCurrency;</span>
+    }
+
+    @Override
+    public MoneyWiseSecurityHoldingMap newSecurityHoldingMap() {
+<span class="fc" id="L492">        return new MoneyWiseSecurityHoldingMap(this);</span>
+    }
+
+
+    @Override
+    public MoneyWiseSecurityHoldingMap newSecurityHoldingMap(final PrometheusEditSet pEditSet) {
+<span class="fc" id="L498">        return new MoneyWiseSecurityHoldingMap(pEditSet);</span>
     }
 
     /**
@@ -500,7 +504,7 @@ public class MoneyWiseDataSet
      * @return the prices map
      */
     public MoneyWiseSecurityPriceDataMap getSecurityPriceDataMap() {
-<span class="fc" id="L503">        return getSecurityPrices().getDataMap();</span>
+<span class="fc" id="L507">        return getSecurityPrices().getDataMap();</span>
     }
 
     /**
@@ -509,7 +513,7 @@ public class MoneyWiseDataSet
      * @return the rates map
      */
     public MoneyWiseDepositRateDataMap getDepositRateDataMap() {
-<span class="nc" id="L512">        return getDepositRates().getDataMap();</span>
+<span class="nc" id="L516">        return getDepositRates().getDataMap();</span>
     }
 
     /**
@@ -518,7 +522,7 @@ public class MoneyWiseDataSet
      * @return the rates map
      */
     public MoneyWiseExchangeRateDataMap getExchangeRateDataMap() {
-<span class="nc" id="L521">        return getExchangeRates().getDataMap();</span>
+<span class="nc" id="L525">        return getExchangeRates().getDataMap();</span>
     }
 
     /**
@@ -527,22 +531,22 @@ public class MoneyWiseDataSet
      * @return true/false
      */
     public boolean checkClosedAccounts() {
-<span class="nc bnc" id="L530" title="All 2 branches missed.">        return !ignoreCheckClosedAccounts;</span>
+<span class="nc bnc" id="L534" title="All 2 branches missed.">        return !ignoreCheckClosedAccounts;</span>
     }
 
     /**
      * Note that we hit the last event limit.
      */
     public void hitEventLimit() {
-<span class="nc" id="L537">        ignoreCheckClosedAccounts = true;</span>
-<span class="nc" id="L538">    }</span>
+<span class="nc" id="L541">        ignoreCheckClosedAccounts = true;</span>
+<span class="nc" id="L542">    }</span>
 
     /**
      * Set new Validity checks.
      */
     public void doNewValidityChecks() {
-<span class="fc" id="L544">        newValidityChecks = true;</span>
-<span class="fc" id="L545">    }</span>
+<span class="fc" id="L548">        newValidityChecks = true;</span>
+<span class="fc" id="L549">    }</span>
 
     /**
      * Should we perform new validity checks?
@@ -550,7 +554,7 @@ public class MoneyWiseDataSet
      * @return true/false
      */
     public boolean newValidityChecks() {
-<span class="fc" id="L553">        return newValidityChecks;</span>
+<span class="fc" id="L557">        return newValidityChecks;</span>
     }
 
     /**
@@ -561,31 +565,31 @@ public class MoneyWiseDataSet
      */
     private PrometheusDataList&lt;?&gt; newList(final MoneyWiseStaticDataType pListType) {
         /* Switch on list Type */
-<span class="pc bpc" id="L564" title="1 of 12 branches missed.">        switch (pListType) {</span>
+<span class="pc bpc" id="L568" title="1 of 12 branches missed.">        switch (pListType) {</span>
             case DEPOSITTYPE:
-<span class="fc" id="L566">                return new MoneyWiseDepositCategoryTypeList(this);</span>
+<span class="fc" id="L570">                return new MoneyWiseDepositCategoryTypeList(this);</span>
             case CASHTYPE:
-<span class="fc" id="L568">                return new MoneyWiseCashCategoryTypeList(this);</span>
+<span class="fc" id="L572">                return new MoneyWiseCashCategoryTypeList(this);</span>
             case LOANTYPE:
-<span class="fc" id="L570">                return new MoneyWiseLoanCategoryTypeList(this);</span>
+<span class="fc" id="L574">                return new MoneyWiseLoanCategoryTypeList(this);</span>
             case PAYEETYPE:
-<span class="fc" id="L572">                return new MoneyWisePayeeTypeList(this);</span>
+<span class="fc" id="L576">                return new MoneyWisePayeeTypeList(this);</span>
             case PORTFOLIOTYPE:
-<span class="fc" id="L574">                return new MoneyWisePortfolioTypeList(this);</span>
+<span class="fc" id="L578">                return new MoneyWisePortfolioTypeList(this);</span>
             case SECURITYTYPE:
-<span class="fc" id="L576">                return new MoneyWiseSecurityTypeList(this);</span>
+<span class="fc" id="L580">                return new MoneyWiseSecurityTypeList(this);</span>
             case TRANSTYPE:
-<span class="fc" id="L578">                return new MoneyWiseTransCategoryTypeList(this);</span>
+<span class="fc" id="L582">                return new MoneyWiseTransCategoryTypeList(this);</span>
             case TAXBASIS:
-<span class="fc" id="L580">                return new MoneyWiseTaxBasisList(this);</span>
+<span class="fc" id="L584">                return new MoneyWiseTaxBasisList(this);</span>
             case CURRENCY:
-<span class="fc" id="L582">                return new MoneyWiseCurrencyList(this);</span>
+<span class="fc" id="L586">                return new MoneyWiseCurrencyList(this);</span>
             case ACCOUNTINFOTYPE:
-<span class="fc" id="L584">                return new MoneyWiseAccountInfoTypeList(this);</span>
+<span class="fc" id="L588">                return new MoneyWiseAccountInfoTypeList(this);</span>
             case TRANSINFOTYPE:
-<span class="fc" id="L586">                return new MoneyWiseTransInfoTypeList(this);</span>
+<span class="fc" id="L590">                return new MoneyWiseTransInfoTypeList(this);</span>
             default:
-<span class="nc" id="L588">                throw new IllegalArgumentException(pListType.toString());</span>
+<span class="nc" id="L592">                throw new IllegalArgumentException(pListType.toString());</span>
         }
     }
 
@@ -597,83 +601,83 @@ public class MoneyWiseDataSet
      */
     private PrometheusDataList&lt;?&gt; newList(final MoneyWiseBasicDataType pListType) {
         /* Switch on list Type */
-<span class="pc bpc" id="L600" title="1 of 24 branches missed.">        switch (pListType) {</span>
+<span class="pc bpc" id="L604" title="1 of 24 branches missed.">        switch (pListType) {</span>
             case TRANSTAG:
-<span class="fc" id="L602">                return new MoneyWiseTransTagList(this);</span>
+<span class="fc" id="L606">                return new MoneyWiseTransTagList(this);</span>
             case REGION:
-<span class="fc" id="L604">                return new MoneyWiseRegionList(this);</span>
+<span class="fc" id="L608">                return new MoneyWiseRegionList(this);</span>
             case DEPOSITCATEGORY:
-<span class="fc" id="L606">                return new MoneyWiseDepositCategoryList(this);</span>
+<span class="fc" id="L610">                return new MoneyWiseDepositCategoryList(this);</span>
             case CASHCATEGORY:
-<span class="fc" id="L608">                return new MoneyWiseCashCategoryList(this);</span>
+<span class="fc" id="L612">                return new MoneyWiseCashCategoryList(this);</span>
             case LOANCATEGORY:
-<span class="fc" id="L610">                return new MoneyWiseLoanCategoryList(this);</span>
+<span class="fc" id="L614">                return new MoneyWiseLoanCategoryList(this);</span>
             case TRANSCATEGORY:
-<span class="fc" id="L612">                return new MoneyWiseTransCategoryList(this);</span>
+<span class="fc" id="L616">                return new MoneyWiseTransCategoryList(this);</span>
             case EXCHANGERATE:
-<span class="fc" id="L614">                return new MoneyWiseExchangeRateList(this);</span>
+<span class="fc" id="L618">                return new MoneyWiseExchangeRateList(this);</span>
             case PAYEE:
-<span class="fc" id="L616">                return new MoneyWisePayeeList(this);</span>
+<span class="fc" id="L620">                return new MoneyWisePayeeList(this);</span>
             case PAYEEINFO:
-<span class="fc" id="L618">                return new MoneyWisePayeeInfoList(this);</span>
+<span class="fc" id="L622">                return new MoneyWisePayeeInfoList(this);</span>
             case SECURITY:
-<span class="fc" id="L620">                return new MoneyWiseSecurityList(this);</span>
+<span class="fc" id="L624">                return new MoneyWiseSecurityList(this);</span>
             case SECURITYPRICE:
-<span class="fc" id="L622">                return new MoneyWiseSecurityPriceList(this);</span>
+<span class="fc" id="L626">                return new MoneyWiseSecurityPriceList(this);</span>
             case SECURITYINFO:
-<span class="fc" id="L624">                return new MoneyWiseSecurityInfoList(this);</span>
+<span class="fc" id="L628">                return new MoneyWiseSecurityInfoList(this);</span>
             case DEPOSIT:
-<span class="fc" id="L626">                return new MoneyWiseDepositList(this);</span>
+<span class="fc" id="L630">                return new MoneyWiseDepositList(this);</span>
             case DEPOSITRATE:
-<span class="fc" id="L628">                return new MoneyWiseDepositRateList(this);</span>
+<span class="fc" id="L632">                return new MoneyWiseDepositRateList(this);</span>
             case DEPOSITINFO:
-<span class="fc" id="L630">                return new MoneyWiseDepositInfoList(this);</span>
+<span class="fc" id="L634">                return new MoneyWiseDepositInfoList(this);</span>
             case CASH:
-<span class="fc" id="L632">                return new MoneyWiseCashList(this);</span>
+<span class="fc" id="L636">                return new MoneyWiseCashList(this);</span>
             case CASHINFO:
-<span class="fc" id="L634">                return new MoneyWiseCashInfoList(this);</span>
+<span class="fc" id="L638">                return new MoneyWiseCashInfoList(this);</span>
             case LOAN:
-<span class="fc" id="L636">                return new MoneyWiseLoanList(this);</span>
+<span class="fc" id="L640">                return new MoneyWiseLoanList(this);</span>
             case LOANINFO:
-<span class="fc" id="L638">                return new MoneyWiseLoanInfoList(this);</span>
+<span class="fc" id="L642">                return new MoneyWiseLoanInfoList(this);</span>
             case PORTFOLIO:
-<span class="fc" id="L640">                return new MoneyWisePortfolioList(this);</span>
+<span class="fc" id="L644">                return new MoneyWisePortfolioList(this);</span>
             case PORTFOLIOINFO:
-<span class="fc" id="L642">                return new MoneyWisePortfolioInfoList(this);</span>
+<span class="fc" id="L646">                return new MoneyWisePortfolioInfoList(this);</span>
             case TRANSACTION:
-<span class="fc" id="L644">                return new MoneyWiseTransactionList(this);</span>
+<span class="fc" id="L648">                return new MoneyWiseTransactionList(this);</span>
             case TRANSACTIONINFO:
-<span class="fc" id="L646">                return new MoneyWiseTransInfoList(this);</span>
+<span class="fc" id="L650">                return new MoneyWiseTransInfoList(this);</span>
             default:
-<span class="nc" id="L648">                throw new IllegalArgumentException(pListType.toString());</span>
+<span class="nc" id="L652">                throw new IllegalArgumentException(pListType.toString());</span>
         }
     }
 
     @Override
     public MoneyWiseDataSet deriveUpdateSet() throws OceanusException {
         /* Build an empty DataSet */
-<span class="fc" id="L655">        final MoneyWiseDataSet myExtract = new MoneyWiseDataSet(this);</span>
+<span class="fc" id="L659">        final MoneyWiseDataSet myExtract = new MoneyWiseDataSet(this);</span>
 
         /* Obtain underlying updates */
-<span class="fc" id="L658">        myExtract.deriveUpdateSet(this);</span>
+<span class="fc" id="L662">        myExtract.deriveUpdateSet(this);</span>
 
         /* Return the extract */
-<span class="fc" id="L661">        return myExtract;</span>
+<span class="fc" id="L665">        return myExtract;</span>
     }
 
     @Override
     public MoneyWiseDataSet deriveCloneSet() throws OceanusException {
         /* Build an empty DataSet */
-<span class="nc" id="L667">        final MoneyWiseDataSet myExtract = new MoneyWiseDataSet(this);</span>
+<span class="nc" id="L671">        final MoneyWiseDataSet myExtract = new MoneyWiseDataSet(this);</span>
 
         /* Create empty clone lists */
-<span class="nc" id="L670">        myExtract.buildEmptyCloneSet(this);</span>
+<span class="nc" id="L674">        myExtract.buildEmptyCloneSet(this);</span>
 
         /* Obtain underlying updates */
-<span class="nc" id="L673">        myExtract.deriveCloneSet(this);</span>
+<span class="nc" id="L677">        myExtract.deriveCloneSet(this);</span>
 
         /* Return the extract */
-<span class="nc" id="L676">        return myExtract;</span>
+<span class="nc" id="L680">        return myExtract;</span>
     }
 
     /**
@@ -691,13 +695,13 @@ public class MoneyWiseDataSet
     public MoneyWiseDataSet getDifferenceSet(final TethysUIThreadStatusReport pReport,
                                              final PrometheusDataSet pOld) throws OceanusException {
         /* Build an empty DataSet */
-<span class="fc" id="L694">        final MoneyWiseDataSet myDiffers = new MoneyWiseDataSet(this);</span>
+<span class="fc" id="L698">        final MoneyWiseDataSet myDiffers = new MoneyWiseDataSet(this);</span>
 
         /* Obtain underlying differences */
-<span class="fc" id="L697">        myDiffers.deriveDifferences(pReport, this, pOld);</span>
+<span class="fc" id="L701">        myDiffers.deriveDifferences(pReport, this, pOld);</span>
 
         /* Return the differences */
-<span class="fc" id="L700">        return myDiffers;</span>
+<span class="fc" id="L704">        return myDiffers;</span>
     }
 
     /**
@@ -705,16 +709,16 @@ public class MoneyWiseDataSet
      */
     public void updateMaps() {
         /* Loop through the list types */
-<span class="fc" id="L708">        final Iterator&lt;Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt;&gt; myIterator = entryIterator();</span>
-<span class="fc bfc" id="L709" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
-<span class="fc" id="L710">            final Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt; myEntry = myIterator.next();</span>
+<span class="fc" id="L712">        final Iterator&lt;Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt;&gt; myIterator = entryIterator();</span>
+<span class="fc bfc" id="L713" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+<span class="fc" id="L714">            final Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt; myEntry = myIterator.next();</span>
 
             /* Prepare list for analysis (ignoring cryptography tables) */
-<span class="fc bfc" id="L713" title="All 2 branches covered.">            if (!(myEntry.getKey() instanceof PrometheusCryptographyDataType)) {</span>
-<span class="fc" id="L714">                final PrometheusDataList&lt;?&gt; myList = myEntry.getValue();</span>
-<span class="fc" id="L715">                myList.updateMaps();</span>
+<span class="fc bfc" id="L717" title="All 2 branches covered.">            if (!(myEntry.getKey() instanceof PrometheusCryptographyDataType)) {</span>
+<span class="fc" id="L718">                final PrometheusDataList&lt;?&gt; myList = myEntry.getValue();</span>
+<span class="fc" id="L719">                myList.updateMaps();</span>
             }
-<span class="fc" id="L717">        }</span>
-<span class="fc" id="L718">    }</span>
+<span class="fc" id="L721">        }</span>
+<span class="fc" id="L722">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

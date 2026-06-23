@@ -160,24 +160,28 @@ public class ThemisUIRefDocument
         /* If this is a list link */
 <span class="nc bnc" id="L161" title="All 2 branches missed.">        if (pLink.startsWith(ThemisUIRefConstants.LINKLIST)) {</span>
             /* Strip off the header and locate the packages */
-<span class="nc" id="L163">            final String myNames = pLink.substring(ThemisUIRefConstants.LINKLIST.length());</span>
-<span class="nc" id="L164">            final int myIndex = myNames.indexOf(ThemisUIRefConstants.SEPCHAR);</span>
-<span class="nc" id="L165">            final String mySourceName = myNames.substring(0, myIndex);</span>
-<span class="nc" id="L166">            final String myTargetName = myNames.substring(myIndex + 1);</span>
-<span class="nc" id="L167">            final ThemisSolverPackage mySource = thePackageMap.get(mySourceName);</span>
-<span class="nc" id="L168">            final ThemisSolverPackage myTarget = thePackageMap.get(myTargetName);</span>
+<span class="nc" id="L163">            String myNames = pLink.substring(ThemisUIRefConstants.LINKLIST.length());</span>
+<span class="nc" id="L164">            int myIndex = myNames.indexOf(ThemisUIRefConstants.SEPCHAR);</span>
+<span class="nc" id="L165">            final String myParentName = myNames.substring(0, myIndex);</span>
+<span class="nc" id="L166">            myNames = myNames.substring(myIndex + 1);</span>
+<span class="nc" id="L167">            myIndex = myNames.indexOf(ThemisUIRefConstants.SEPCHAR);</span>
+<span class="nc" id="L168">            final String mySourceName = myNames.substring(0, myIndex);</span>
+<span class="nc" id="L169">            final String myTargetName = myNames.substring(myIndex + 1);</span>
+<span class="nc" id="L170">            final ThemisSolverPackage myParent = thePackageMap.get(myParentName);</span>
+<span class="nc" id="L171">            final ThemisSolverPackage mySource = thePackageMap.get(mySourceName);</span>
+<span class="nc" id="L172">            final ThemisSolverPackage myTarget = thePackageMap.get(myTargetName);</span>
 
             /* Handle unknown packages */
-<span class="nc bnc" id="L171" title="All 4 branches missed.">            if (mySource == null || myTarget == null) {</span>
-<span class="nc" id="L172">                throw new IllegalArgumentException(&quot;Unknown package&quot;);</span>
+<span class="nc bnc" id="L175" title="All 6 branches missed.">            if (myParent == null || mySource == null || myTarget == null) {</span>
+<span class="nc" id="L176">                throw new IllegalArgumentException(&quot;Unknown package&quot;);</span>
             }
 
             /* Format the listHTML */
-<span class="nc" id="L176">            return formatLinkList(mySource, myTarget);</span>
+<span class="nc" id="L180">            return formatLinkList(myParent, mySource, myTarget);</span>
         }
 
         /* Unrecognised link */
-<span class="nc" id="L180">        throw new IllegalArgumentException(&quot;Invalid Link header&quot;);</span>
+<span class="nc" id="L184">        throw new IllegalArgumentException(&quot;Invalid Link header&quot;);</span>
     }
 
     /**
@@ -190,67 +194,82 @@ public class ThemisUIRefDocument
     private String formatPackage(final ThemisSolverPackage pPackage,
                                  final boolean pLocal) {
         /* Create new document and obtain the body */
-<span class="nc" id="L193">        final Element myBody = newDocument();</span>
+<span class="nc" id="L197">        final Element myBody = newDocument();</span>
 
         /* Determine whether to do local classes */
-<span class="nc bnc" id="L196" title="All 4 branches missed.">        final boolean doLocal = pPackage.getChildren().isEmpty() || pLocal;</span>
-<span class="nc bnc" id="L197" title="All 2 branches missed.">        final ThemisUIResource myTitle = doLocal</span>
-<span class="nc" id="L198">                ? ThemisUIResource.HEADER_CLASS : ThemisUIResource.HEADER_PACKAGE;</span>
+<span class="nc bnc" id="L200" title="All 4 branches missed.">        final boolean doLocal = pPackage.getChildren().isEmpty() || pLocal;</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">        final ThemisUIResource myTitle = doLocal</span>
+<span class="nc" id="L202">                ? ThemisUIResource.HEADER_CLASS : ThemisUIResource.HEADER_PACKAGE;</span>
 
         /* Create the header */
-<span class="nc" id="L201">        final Element myHeader = createElement(ThemisUIHTMLTag.H1);</span>
-<span class="nc" id="L202">        myBody.appendChild(myHeader);</span>
-<span class="nc" id="L203">        myHeader.setTextContent(myTitle.getValue());</span>
+<span class="nc" id="L205">        final Element myHeader = createElement(ThemisUIHTMLTag.H1);</span>
+<span class="nc" id="L206">        myBody.appendChild(myHeader);</span>
+<span class="nc" id="L207">        myHeader.setTextContent(myTitle.getValue());</span>
 
         /* Create the title */
-<span class="nc" id="L206">        buildPackageTitle(myBody, pPackage);</span>
+<span class="nc" id="L210">        buildPackageTitle(myBody, pPackage);</span>
 
         /* Create the links */
-<span class="nc" id="L209">        buildPackageLinks(myBody, pPackage, pLocal);</span>
+<span class="nc" id="L213">        buildPackageLinks(myBody, pPackage, pLocal);</span>
 
         /* Create new table */
-<span class="nc" id="L212">        final Element myTable = createElement(ThemisUIHTMLTag.TABLE);</span>
-<span class="nc" id="L213">        myBody.appendChild(myTable);</span>
+<span class="nc" id="L216">        final Element myTable = createElement(ThemisUIHTMLTag.TABLE);</span>
+<span class="nc" id="L217">        myBody.appendChild(myTable);</span>
 
         /* Format appropriate table */
-<span class="nc bnc" id="L216" title="All 2 branches missed.">        if (doLocal) {</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">        if (doLocal) {</span>
             /* Format local classes */
-<span class="nc" id="L218">            theLocal.formatLocal(pPackage, myTable);</span>
+<span class="nc" id="L222">            theLocal.formatLocal(pPackage, myTable);</span>
         } else {
             /* Format family links */
-<span class="nc" id="L221">            theFamily.formatFamily(pPackage, myTable);</span>
+<span class="nc" id="L225">            theFamily.formatFamily(pPackage, myTable);</span>
         }
 
         /* Return the formatted HTML */
-<span class="nc" id="L225">        return formatXML();</span>
+<span class="nc" id="L229">        return formatXML();</span>
     }
 
     /**
      * Create document for linkList.
      *
+     * @param pParent the parent package
      * @param pSource the source package
      * @param pTarget the target package
      * @return the formatted document
      */
-    private String formatLinkList(final ThemisSolverPackage pSource,
+    private String formatLinkList(final ThemisSolverPackage pParent,
+                                  final ThemisSolverPackage pSource,
                                   final ThemisSolverPackage pTarget) {
         /* Create new document and obtain the body */
-<span class="nc" id="L238">        final Element myBody = newDocument();</span>
+<span class="nc" id="L244">        final Element myBody = newDocument();</span>
 
         /* format the package Links */
-<span class="nc" id="L241">        final Element myHeader = createElement(ThemisUIHTMLTag.H1);</span>
-<span class="nc" id="L242">        myBody.appendChild(myHeader);</span>
-<span class="nc" id="L243">        myHeader.setTextContent(ThemisUIResource.REF_LINKS.getValue());</span>
+<span class="nc" id="L247">        final Element myHeader = createElement(ThemisUIHTMLTag.H1);</span>
+<span class="nc" id="L248">        myBody.appendChild(myHeader);</span>
+<span class="nc" id="L249">        myHeader.setTextContent(ThemisUIResource.REF_LINKS.getValue());</span>
+
+        /* Create the link */
+<span class="nc" id="L252">        final Element myLinkHeader = createElement(ThemisUIHTMLTag.H3);</span>
+<span class="nc" id="L253">        myBody.appendChild(myLinkHeader);</span>
+<span class="nc" id="L254">        final Element myLink = createElement(ThemisUIHTMLTag.A);</span>
+<span class="nc" id="L255">        myLinkHeader.appendChild(myLink);</span>
+
+        /* Set link details */
+<span class="nc" id="L258">        final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + pParent.getPackageName();</span>
+<span class="nc" id="L259">        setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);</span>
+
+        /* Set name of package */
+<span class="nc" id="L262">        myLink.setTextContent(ThemisUIResource.REF_PARENT.getValue());</span>
 
         /* Create new table */
-<span class="nc" id="L246">        final Element myTable = createElement(ThemisUIHTMLTag.TABLE);</span>
-<span class="nc" id="L247">        myBody.appendChild(myTable);</span>
+<span class="nc" id="L265">        final Element myTable = createElement(ThemisUIHTMLTag.TABLE);</span>
+<span class="nc" id="L266">        myBody.appendChild(myTable);</span>
 
         /* Format link list */
-<span class="nc" id="L250">        theLinks.formatLinks(pSource, pTarget, myTable);</span>
+<span class="nc" id="L269">        theLinks.formatLinks(pSource, pTarget, myTable);</span>
 
         /* Return the formatted HTML */
-<span class="nc" id="L253">        return formatXML();</span>
+<span class="nc" id="L272">        return formatXML();</span>
     }
 
     /**
@@ -262,15 +281,15 @@ public class ThemisUIRefDocument
     private void buildPackageTitle(final Element pBody,
                                    final ThemisSolverPackage pPackage) {
         /* Create the header */
-<span class="nc" id="L265">        final Element myHeader = createElement(ThemisUIHTMLTag.H3);</span>
-<span class="nc" id="L266">        pBody.appendChild(myHeader);</span>
+<span class="nc" id="L284">        final Element myHeader = createElement(ThemisUIHTMLTag.H3);</span>
+<span class="nc" id="L285">        pBody.appendChild(myHeader);</span>
 
         /* Set name of package */
-<span class="nc bnc" id="L269" title="All 2 branches missed.">        final String myName = pPackage.getPackageName().isEmpty()</span>
-<span class="nc" id="L270">                ? ThemisUIResource.REF_ROOT.getValue()</span>
-<span class="nc" id="L271">                : pPackage.getPackageName();</span>
-<span class="nc" id="L272">        myHeader.setTextContent(myName);</span>
-<span class="nc" id="L273">    }</span>
+<span class="nc bnc" id="L288" title="All 2 branches missed.">        final String myName = pPackage.getPackageName().isEmpty()</span>
+<span class="nc" id="L289">                ? ThemisUIResource.REF_ROOT.getValue()</span>
+<span class="nc" id="L290">                : pPackage.getPackageName();</span>
+<span class="nc" id="L291">        myHeader.setTextContent(myName);</span>
+<span class="nc" id="L292">    }</span>
 
     /**
      * Build package links.
@@ -283,24 +302,24 @@ public class ThemisUIRefDocument
                                    final ThemisSolverPackage pPackage,
                                    final boolean pLocal) {
         /* Create the links */
-<span class="nc" id="L286">        final Element myLinks = createElement(ThemisUIHTMLTag.TR);</span>
+<span class="nc" id="L305">        final Element myLinks = createElement(ThemisUIHTMLTag.TR);</span>
 
         /* Create links */
-<span class="nc" id="L289">        createHomeLink(myLinks, pPackage);</span>
-<span class="nc" id="L290">        createParentLink(myLinks, pPackage);</span>
-<span class="nc bnc" id="L291" title="All 2 branches missed.">        if (pLocal) {</span>
-<span class="nc" id="L292">            createFamilyLink(myLinks, pPackage);</span>
+<span class="nc" id="L308">        createHomeLink(myLinks, pPackage);</span>
+<span class="nc" id="L309">        createParentLink(myLinks, pPackage);</span>
+<span class="nc bnc" id="L310" title="All 2 branches missed.">        if (pLocal) {</span>
+<span class="nc" id="L311">            createFamilyLink(myLinks, pPackage);</span>
         }
 
         /* If we have links, then add to body */
-<span class="nc bnc" id="L296" title="All 2 branches missed.">        if (myLinks.hasChildNodes()) {</span>
+<span class="nc bnc" id="L315" title="All 2 branches missed.">        if (myLinks.hasChildNodes()) {</span>
             /* Create the table */
-<span class="nc" id="L298">            final Element myTable = createElement(ThemisUIHTMLTag.TABLE);</span>
-<span class="nc" id="L299">            pBody.appendChild(myTable);</span>
-<span class="nc" id="L300">            myTable.appendChild(myLinks);</span>
-<span class="nc" id="L301">            addClassToElement(myTable, ThemisUIRefConstants.CLASSNAVTABLE);</span>
+<span class="nc" id="L317">            final Element myTable = createElement(ThemisUIHTMLTag.TABLE);</span>
+<span class="nc" id="L318">            pBody.appendChild(myTable);</span>
+<span class="nc" id="L319">            myTable.appendChild(myLinks);</span>
+<span class="nc" id="L320">            addClassToElement(myTable, ThemisUIRefConstants.CLASSNAVTABLE);</span>
         }
-<span class="nc" id="L303">    }</span>
+<span class="nc" id="L322">    }</span>
 
     /**
      * Create home link.
@@ -311,23 +330,23 @@ public class ThemisUIRefDocument
     private void createHomeLink(final Element pLinks,
                                 final ThemisSolverPackage pPackage) {
         /* If we are not the default package */
-<span class="nc bnc" id="L314" title="All 2 branches missed.">        if (!pPackage.equals(theDefault)) {</span>
+<span class="nc bnc" id="L333" title="All 2 branches missed.">        if (!pPackage.equals(theDefault)) {</span>
             /* Create the cell */
-<span class="nc" id="L316">            final Element myCell = createElement(ThemisUIHTMLTag.TD);</span>
-<span class="nc" id="L317">            pLinks.appendChild(myCell);</span>
+<span class="nc" id="L335">            final Element myCell = createElement(ThemisUIHTMLTag.TD);</span>
+<span class="nc" id="L336">            pLinks.appendChild(myCell);</span>
 
             /* Create the link */
-<span class="nc" id="L320">            final Element myLink = createElement(ThemisUIHTMLTag.A);</span>
-<span class="nc" id="L321">            myCell.appendChild(myLink);</span>
+<span class="nc" id="L339">            final Element myLink = createElement(ThemisUIHTMLTag.A);</span>
+<span class="nc" id="L340">            myCell.appendChild(myLink);</span>
 
             /* Set link details */
-<span class="nc" id="L324">            final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + theDefault.getPackageName();</span>
-<span class="nc" id="L325">            setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);</span>
+<span class="nc" id="L343">            final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + theDefault.getPackageName();</span>
+<span class="nc" id="L344">            setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);</span>
 
             /* Set name of package */
-<span class="nc" id="L328">            myLink.setTextContent(ThemisUIResource.REF_HOME.getValue());</span>
+<span class="nc" id="L347">            myLink.setTextContent(ThemisUIResource.REF_HOME.getValue());</span>
         }
-<span class="nc" id="L330">    }</span>
+<span class="nc" id="L349">    }</span>
 
     /**
      * Create parent link.
@@ -338,25 +357,25 @@ public class ThemisUIRefDocument
     private void createParentLink(final Element pLinks,
                                   final ThemisSolverPackage pPackage) {
         /* If we are not the default package */
-<span class="nc" id="L341">        final ThemisSolverPackage myParent = getParentForLink(pPackage);</span>
-<span class="nc bnc" id="L342" title="All 2 branches missed.">        if (!pPackage.equals(theDefault)</span>
-<span class="nc bnc" id="L343" title="All 2 branches missed.">                &amp;&amp; !theDefault.equals(myParent)) {</span>
+<span class="nc" id="L360">        final ThemisSolverPackage myParent = getParentForLink(pPackage);</span>
+<span class="nc bnc" id="L361" title="All 2 branches missed.">        if (!pPackage.equals(theDefault)</span>
+<span class="nc bnc" id="L362" title="All 2 branches missed.">                &amp;&amp; !theDefault.equals(myParent)) {</span>
             /* Create the cell */
-<span class="nc" id="L345">            final Element myCell = createElement(ThemisUIHTMLTag.TD);</span>
-<span class="nc" id="L346">            pLinks.appendChild(myCell);</span>
+<span class="nc" id="L364">            final Element myCell = createElement(ThemisUIHTMLTag.TD);</span>
+<span class="nc" id="L365">            pLinks.appendChild(myCell);</span>
 
             /* Create the link */
-<span class="nc" id="L349">            final Element myLink = createElement(ThemisUIHTMLTag.A);</span>
-<span class="nc" id="L350">            myCell.appendChild(myLink);</span>
+<span class="nc" id="L368">            final Element myLink = createElement(ThemisUIHTMLTag.A);</span>
+<span class="nc" id="L369">            myCell.appendChild(myLink);</span>
 
             /* Set link details */
-<span class="nc" id="L353">            final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + myParent.getPackageName();</span>
-<span class="nc" id="L354">            setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);</span>
+<span class="nc" id="L372">            final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + myParent.getPackageName();</span>
+<span class="nc" id="L373">            setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);</span>
 
             /* Set name of package */
-<span class="nc" id="L357">            myLink.setTextContent(ThemisUIResource.REF_PARENT.getValue());</span>
+<span class="nc" id="L376">            myLink.setTextContent(ThemisUIResource.REF_PARENT.getValue());</span>
         }
-<span class="nc" id="L359">    }</span>
+<span class="nc" id="L378">    }</span>
 
     /**
      * Obtain parent for link.
@@ -366,13 +385,13 @@ public class ThemisUIRefDocument
      */
     private ThemisSolverPackage getParentForLink(final ThemisSolverPackage pPackage) {
         /* Handle default package */
-<span class="nc bnc" id="L369" title="All 2 branches missed.">        if (pPackage.equals(theDefault)) {</span>
-<span class="nc" id="L370">            return theDefault;</span>
+<span class="nc bnc" id="L388" title="All 2 branches missed.">        if (pPackage.equals(theDefault)) {</span>
+<span class="nc" id="L389">            return theDefault;</span>
         }
 
         /* Skip to non-placeholder */
-<span class="nc" id="L374">        final ThemisSolverPackage myParent = pPackage.getParent();</span>
-<span class="nc bnc" id="L375" title="All 2 branches missed.">        return isPlaceHolder(myParent) ? getParentForLink(myParent) : myParent;</span>
+<span class="nc" id="L393">        final ThemisSolverPackage myParent = pPackage.getParent();</span>
+<span class="nc bnc" id="L394" title="All 2 branches missed.">        return isPlaceHolder(myParent) ? getParentForLink(myParent) : myParent;</span>
     }
 
     /**
@@ -383,20 +402,20 @@ public class ThemisUIRefDocument
      */
     private ThemisSolverPackage resolvePackage(final String pName) {
         /* Resolve the package */
-<span class="nc" id="L386">        ThemisSolverPackage myPackage = thePackageMap.get(pName);</span>
+<span class="nc" id="L405">        ThemisSolverPackage myPackage = thePackageMap.get(pName);</span>
 
         /* Handle unknown package */
-<span class="nc bnc" id="L389" title="All 2 branches missed.">        if (myPackage == null) {</span>
-<span class="nc" id="L390">            throw new IllegalArgumentException(&quot;Unknown package: &quot; + pName);</span>
+<span class="nc bnc" id="L408" title="All 2 branches missed.">        if (myPackage == null) {</span>
+<span class="nc" id="L409">            throw new IllegalArgumentException(&quot;Unknown package: &quot; + pName);</span>
         }
 
         /* Skip over placeHolders */
-<span class="nc bnc" id="L394" title="All 2 branches missed.">        while (isPlaceHolder(myPackage)) {</span>
-<span class="nc" id="L395">            myPackage = myPackage.getChildren().getFirst();</span>
+<span class="nc bnc" id="L413" title="All 2 branches missed.">        while (isPlaceHolder(myPackage)) {</span>
+<span class="nc" id="L414">            myPackage = myPackage.getChildren().getFirst();</span>
         }
 
         /* Return the package */
-<span class="nc" id="L399">        return myPackage;</span>
+<span class="nc" id="L418">        return myPackage;</span>
     }
 
     /**
@@ -406,8 +425,8 @@ public class ThemisUIRefDocument
      * @return the parent
      */
     private boolean isPlaceHolder(final ThemisSolverPackage pPackage) {
-<span class="nc bnc" id="L409" title="All 2 branches missed.">        return pPackage.getFiles().isEmpty()</span>
-<span class="nc bnc" id="L410" title="All 2 branches missed.">                &amp;&amp; pPackage.getChildren().size() == 1;</span>
+<span class="nc bnc" id="L428" title="All 2 branches missed.">        return pPackage.getFiles().isEmpty()</span>
+<span class="nc bnc" id="L429" title="All 2 branches missed.">                &amp;&amp; pPackage.getChildren().size() == 1;</span>
     }
 
     /**
@@ -419,23 +438,23 @@ public class ThemisUIRefDocument
     private void createFamilyLink(final Element pLinks,
                                   final ThemisSolverPackage pPackage) {
         /* If we are not the default package */
-<span class="nc bnc" id="L422" title="All 2 branches missed.">        if (!pPackage.getChildren().isEmpty()) {</span>
+<span class="nc bnc" id="L441" title="All 2 branches missed.">        if (!pPackage.getChildren().isEmpty()) {</span>
             /* Create the cell */
-<span class="nc" id="L424">            final Element myCell = createElement(ThemisUIHTMLTag.TD);</span>
-<span class="nc" id="L425">            pLinks.appendChild(myCell);</span>
+<span class="nc" id="L443">            final Element myCell = createElement(ThemisUIHTMLTag.TD);</span>
+<span class="nc" id="L444">            pLinks.appendChild(myCell);</span>
 
             /* Create the link */
-<span class="nc" id="L428">            final Element myLink = createElement(ThemisUIHTMLTag.A);</span>
-<span class="nc" id="L429">            myCell.appendChild(myLink);</span>
+<span class="nc" id="L447">            final Element myLink = createElement(ThemisUIHTMLTag.A);</span>
+<span class="nc" id="L448">            myCell.appendChild(myLink);</span>
 
             /* Set link details */
-<span class="nc" id="L432">            final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + pPackage.getPackageName();</span>
-<span class="nc" id="L433">            setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);</span>
+<span class="nc" id="L451">            final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + pPackage.getPackageName();</span>
+<span class="nc" id="L452">            setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);</span>
 
             /* Set name of package */
-<span class="nc" id="L436">            myLink.setTextContent(ThemisUIResource.REF_FAMILY.getValue());</span>
+<span class="nc" id="L455">            myLink.setTextContent(ThemisUIResource.REF_FAMILY.getValue());</span>
         }
-<span class="nc" id="L438">    }</span>
+<span class="nc" id="L457">    }</span>
 
     /**
      * Determine the default package.
@@ -444,17 +463,17 @@ public class ThemisUIRefDocument
      */
     private void determineDefault(final ThemisSolverModule pModule) {
         /* Initialise the default */
-<span class="nc" id="L447">        theDefault = null;</span>
+<span class="nc" id="L466">        theDefault = null;</span>
 
         /* If we have a non-null modules */
-<span class="nc bnc" id="L450" title="All 2 branches missed.">        if (pModule != null) {</span>
+<span class="nc bnc" id="L469" title="All 2 branches missed.">        if (pModule != null) {</span>
             /* Loop through the available packages */
-<span class="nc bnc" id="L452" title="All 2 branches missed.">            for (ThemisSolverPackage myPackage : pModule.getPackages().values()) {</span>
+<span class="nc bnc" id="L471" title="All 2 branches missed.">            for (ThemisSolverPackage myPackage : pModule.getPackages().values()) {</span>
                 /* Adjust the default */
-<span class="nc" id="L454">                adjustDefault(myPackage);</span>
-<span class="nc" id="L455">            }</span>
+<span class="nc" id="L473">                adjustDefault(myPackage);</span>
+<span class="nc" id="L474">            }</span>
         }
-<span class="nc" id="L457">    }</span>
+<span class="nc" id="L476">    }</span>
 
     /**
      * Adjust default.
@@ -463,19 +482,19 @@ public class ThemisUIRefDocument
      */
     private void adjustDefault(final ThemisSolverPackage pPackage) {
         /* Ignore placeHolder */
-<span class="nc bnc" id="L466" title="All 2 branches missed.">        if (skipPackage(pPackage)) {</span>
-<span class="nc" id="L467">            return;</span>
+<span class="nc bnc" id="L485" title="All 2 branches missed.">        if (skipPackage(pPackage)) {</span>
+<span class="nc" id="L486">            return;</span>
         }
 
         /* Store first package as default */
-<span class="nc bnc" id="L471" title="All 2 branches missed.">        if (theDefault == null) {</span>
-<span class="nc" id="L472">            theDefault = pPackage;</span>
+<span class="nc bnc" id="L490" title="All 2 branches missed.">        if (theDefault == null) {</span>
+<span class="nc" id="L491">            theDefault = pPackage;</span>
 
             /* else we need to find a common parent */
         } else {
-<span class="nc" id="L476">            theDefault = getCommonParent(theDefault, pPackage);</span>
+<span class="nc" id="L495">            theDefault = getCommonParent(theDefault, pPackage);</span>
         }
-<span class="nc" id="L478">    }</span>
+<span class="nc" id="L497">    }</span>
 
     /**
      * Obtain common parent.
@@ -486,14 +505,14 @@ public class ThemisUIRefDocument
      */
     private ThemisSolverPackage getCommonParent(final ThemisSolverPackage pFirst,
                                                 final ThemisSolverPackage pSecond) {
-<span class="nc bnc" id="L489" title="All 2 branches missed.">        if (pFirst.equals(pSecond)) {</span>
-<span class="nc" id="L490">            return pFirst;</span>
+<span class="nc bnc" id="L508" title="All 2 branches missed.">        if (pFirst.equals(pSecond)) {</span>
+<span class="nc" id="L509">            return pFirst;</span>
         }
-<span class="nc" id="L492">        final String myFirst = pFirst.getPackageName();</span>
-<span class="nc" id="L493">        final String mySecond = pSecond.getPackageName();</span>
-<span class="nc bnc" id="L494" title="All 2 branches missed.">        return myFirst.length() &gt;= mySecond.length()</span>
-<span class="nc" id="L495">                ? getCommonParent(pFirst.getParent(), pSecond)</span>
-<span class="nc" id="L496">                : getCommonParent(pFirst, pSecond.getParent());</span>
+<span class="nc" id="L511">        final String myFirst = pFirst.getPackageName();</span>
+<span class="nc" id="L512">        final String mySecond = pSecond.getPackageName();</span>
+<span class="nc bnc" id="L513" title="All 2 branches missed.">        return myFirst.length() &gt;= mySecond.length()</span>
+<span class="nc" id="L514">                ? getCommonParent(pFirst.getParent(), pSecond)</span>
+<span class="nc" id="L515">                : getCommonParent(pFirst, pSecond.getParent());</span>
     }
 
     /**
@@ -504,7 +523,7 @@ public class ThemisUIRefDocument
      */
     private boolean skipPackage(final ThemisSolverPackage pPackage) {
         /* Skip placeholders */
-<span class="nc" id="L507">        return pPackage.isPlaceHolder();</span>
+<span class="nc" id="L526">        return pPackage.isPlaceHolder();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

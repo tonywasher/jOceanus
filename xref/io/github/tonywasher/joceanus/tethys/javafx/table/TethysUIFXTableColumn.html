@@ -32,15 +32,15 @@
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> javafx.beans.property.SimpleObjectProperty;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> javafx.scene.control.TableCell;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> javafx.scene.control.TableColumn;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> javafx.util.Callback;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldType;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.core.field.TethysUICoreDataEditConverter.TethysUICoreRawDecimalEditConverter;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.core.table.TethysUICoreTableColumn;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldType;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.core.field.TethysUICoreDataEditConverter.TethysUICoreRawDecimalEditConverter;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.core.table.TethysUICoreTableColumn;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> javafx.beans.property.SimpleObjectProperty;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> javafx.scene.control.TableCell;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> javafx.scene.control.TableColumn;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> javafx.util.Callback;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> java.util.Collections;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> java.util.Currency;
@@ -630,110 +630,106 @@
 <a class="jxr_linenumber" name="L622" href="#L622">622</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
 <a class="jxr_linenumber" name="L623" href="#L623">623</a>         }
 <a class="jxr_linenumber" name="L624" href="#L624">624</a> 
-<a class="jxr_linenumber" name="L625" href="#L625">625</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L626" href="#L626">626</a> <em class="jxr_javadoccomment">         * Obtain the menu configurator.</em>
-<a class="jxr_linenumber" name="L627" href="#L627">627</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L628" href="#L628">628</a> <em class="jxr_javadoccomment">         * @return the configurator</em>
-<a class="jxr_linenumber" name="L629" href="#L629">629</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L630" href="#L630">630</a>         BiConsumer&lt;R, TethysUIScrollMenu&lt;T&gt;&gt; getMenuConfigurator() {
-<a class="jxr_linenumber" name="L631" href="#L631">631</a>             <strong class="jxr_keyword">return</strong> theConfigurator;
-<a class="jxr_linenumber" name="L632" href="#L632">632</a>         }
-<a class="jxr_linenumber" name="L633" href="#L633">633</a>     }
-<a class="jxr_linenumber" name="L634" href="#L634">634</a> 
-<a class="jxr_linenumber" name="L635" href="#L635">635</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L636" href="#L636">636</a> <em class="jxr_javadoccomment">     * List Column.</em>
-<a class="jxr_linenumber" name="L637" href="#L637">637</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L638" href="#L638">638</a> <em class="jxr_javadoccomment">     * @param &lt;T&gt; the column type</em>
-<a class="jxr_linenumber" name="L639" href="#L639">639</a> <em class="jxr_javadoccomment">     * @param &lt;C&gt; the column identity</em>
-<a class="jxr_linenumber" name="L640" href="#L640">640</a> <em class="jxr_javadoccomment">     * @param &lt;R&gt; the table item class</em>
-<a class="jxr_linenumber" name="L641" href="#L641">641</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L642" href="#L642">642</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> TethysUIFXTableListColumn&lt;T <strong class="jxr_keyword">extends</strong> Comparable&lt;? <strong class="jxr_keyword">super</strong> T&gt;, C, R&gt;
-<a class="jxr_linenumber" name="L643" href="#L643">643</a>             <strong class="jxr_keyword">extends</strong> TethysUIFXTableColumn&lt;List&lt;T&gt;, C, R&gt;
-<a class="jxr_linenumber" name="L644" href="#L644">644</a>             <strong class="jxr_keyword">implements</strong> TethysUITableListColumn&lt;T, C, R&gt; {
-<a class="jxr_linenumber" name="L645" href="#L645">645</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L646" href="#L646">646</a> <em class="jxr_javadoccomment">         * Selectable supplier.</em>
-<a class="jxr_linenumber" name="L647" href="#L647">647</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L648" href="#L648">648</a>         <strong class="jxr_keyword">private</strong> Function&lt;R, Iterator&lt;T&gt;&gt; theSelectables;
-<a class="jxr_linenumber" name="L649" href="#L649">649</a> 
-<a class="jxr_linenumber" name="L650" href="#L650">650</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L651" href="#L651">651</a> <em class="jxr_javadoccomment">         * Constructor.</em>
-<a class="jxr_linenumber" name="L652" href="#L652">652</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L653" href="#L653">653</a> <em class="jxr_javadoccomment">         * @param pTable the table</em>
-<a class="jxr_linenumber" name="L654" href="#L654">654</a> <em class="jxr_javadoccomment">         * @param pId    the id</em>
-<a class="jxr_linenumber" name="L655" href="#L655">655</a> <em class="jxr_javadoccomment">         * @param pClazz the data class</em>
-<a class="jxr_linenumber" name="L656" href="#L656">656</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L657" href="#L657">657</a>         TethysUIFXTableListColumn(<strong class="jxr_keyword">final</strong> TethysUIFXTableManager&lt;C, R&gt; pTable,
-<a class="jxr_linenumber" name="L658" href="#L658">658</a>                                   <strong class="jxr_keyword">final</strong> C pId,
-<a class="jxr_linenumber" name="L659" href="#L659">659</a>                                   <strong class="jxr_keyword">final</strong> Class&lt;T&gt; pClazz) {
-<a class="jxr_linenumber" name="L660" href="#L660">660</a>             <strong class="jxr_keyword">super</strong>(pTable, pId, TethysUIFieldType.LIST);
-<a class="jxr_linenumber" name="L661" href="#L661">661</a>             declareCellFactory(<strong class="jxr_keyword">super</strong>.getCellFactory().listCellFactory(<strong class="jxr_keyword">this</strong>));
-<a class="jxr_linenumber" name="L662" href="#L662">662</a>             theSelectables = r -&gt; Collections.emptyIterator();
-<a class="jxr_linenumber" name="L663" href="#L663">663</a>         }
-<a class="jxr_linenumber" name="L664" href="#L664">664</a> 
-<a class="jxr_linenumber" name="L665" href="#L665">665</a>         @Override
-<a class="jxr_linenumber" name="L666" href="#L666">666</a>         <strong class="jxr_keyword">public</strong> TethysUIFXTableListColumn&lt;T, C, R&gt; setSelectables(<strong class="jxr_keyword">final</strong> Function&lt;R, Iterator&lt;T&gt;&gt; pSelectables) {
-<a class="jxr_linenumber" name="L667" href="#L667">667</a>             theSelectables = pSelectables;
-<a class="jxr_linenumber" name="L668" href="#L668">668</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
-<a class="jxr_linenumber" name="L669" href="#L669">669</a>         }
-<a class="jxr_linenumber" name="L670" href="#L670">670</a> 
-<a class="jxr_linenumber" name="L671" href="#L671">671</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L672" href="#L672">672</a> <em class="jxr_javadoccomment">         * Obtain the selectable supplier.</em>
-<a class="jxr_linenumber" name="L673" href="#L673">673</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L674" href="#L674">674</a> <em class="jxr_javadoccomment">         * @return the supplier</em>
-<a class="jxr_linenumber" name="L675" href="#L675">675</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L676" href="#L676">676</a>         Function&lt;R, Iterator&lt;T&gt;&gt; getSelectables() {
-<a class="jxr_linenumber" name="L677" href="#L677">677</a>             <strong class="jxr_keyword">return</strong> theSelectables;
-<a class="jxr_linenumber" name="L678" href="#L678">678</a>         }
-<a class="jxr_linenumber" name="L679" href="#L679">679</a>     }
-<a class="jxr_linenumber" name="L680" href="#L680">680</a> 
-<a class="jxr_linenumber" name="L681" href="#L681">681</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L682" href="#L682">682</a> <em class="jxr_javadoccomment">     * Icon Column.</em>
-<a class="jxr_linenumber" name="L683" href="#L683">683</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L684" href="#L684">684</a> <em class="jxr_javadoccomment">     * @param &lt;T&gt; the column type</em>
-<a class="jxr_linenumber" name="L685" href="#L685">685</a> <em class="jxr_javadoccomment">     * @param &lt;C&gt; the column identity</em>
-<a class="jxr_linenumber" name="L686" href="#L686">686</a> <em class="jxr_javadoccomment">     * @param &lt;R&gt; the table item class</em>
-<a class="jxr_linenumber" name="L687" href="#L687">687</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L688" href="#L688">688</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> TethysUIFXTableIconColumn&lt;T, C, R&gt;
-<a class="jxr_linenumber" name="L689" href="#L689">689</a>             <strong class="jxr_keyword">extends</strong> TethysUIFXTableColumn&lt;T, C, R&gt;
-<a class="jxr_linenumber" name="L690" href="#L690">690</a>             <strong class="jxr_keyword">implements</strong> TethysUITableIconColumn&lt;T, C, R&gt; {
-<a class="jxr_linenumber" name="L691" href="#L691">691</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L692" href="#L692">692</a> <em class="jxr_javadoccomment">         * IconMapSet supplier.</em>
-<a class="jxr_linenumber" name="L693" href="#L693">693</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L694" href="#L694">694</a>         <strong class="jxr_keyword">private</strong> Function&lt;R, TethysUIIconMapSet&lt;T&gt;&gt; theSupplier;
-<a class="jxr_linenumber" name="L695" href="#L695">695</a> 
-<a class="jxr_linenumber" name="L696" href="#L696">696</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L697" href="#L697">697</a> <em class="jxr_javadoccomment">         * Constructor.</em>
-<a class="jxr_linenumber" name="L698" href="#L698">698</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L699" href="#L699">699</a> <em class="jxr_javadoccomment">         * @param pTable the table</em>
-<a class="jxr_linenumber" name="L700" href="#L700">700</a> <em class="jxr_javadoccomment">         * @param pId    the id</em>
-<a class="jxr_linenumber" name="L701" href="#L701">701</a> <em class="jxr_javadoccomment">         * @param pClazz the item class</em>
-<a class="jxr_linenumber" name="L702" href="#L702">702</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L703" href="#L703">703</a>         TethysUIFXTableIconColumn(<strong class="jxr_keyword">final</strong> TethysUIFXTableManager&lt;C, R&gt; pTable,
-<a class="jxr_linenumber" name="L704" href="#L704">704</a>                                   <strong class="jxr_keyword">final</strong> C pId,
-<a class="jxr_linenumber" name="L705" href="#L705">705</a>                                   <strong class="jxr_keyword">final</strong> Class&lt;T&gt; pClazz) {
-<a class="jxr_linenumber" name="L706" href="#L706">706</a>             <strong class="jxr_keyword">super</strong>(pTable, pId, TethysUIFieldType.ICON);
-<a class="jxr_linenumber" name="L707" href="#L707">707</a>             declareCellFactory(<strong class="jxr_keyword">super</strong>.getCellFactory().iconCellFactory(<strong class="jxr_keyword">this</strong>, pClazz));
-<a class="jxr_linenumber" name="L708" href="#L708">708</a>             theSupplier = p -&gt; <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L709" href="#L709">709</a>         }
-<a class="jxr_linenumber" name="L710" href="#L710">710</a> 
-<a class="jxr_linenumber" name="L711" href="#L711">711</a>         @Override
-<a class="jxr_linenumber" name="L712" href="#L712">712</a>         <strong class="jxr_keyword">public</strong> TethysUIFXTableIconColumn&lt;T, C, R&gt; setIconMapSet(<strong class="jxr_keyword">final</strong> Function&lt;R, TethysUIIconMapSet&lt;T&gt;&gt; pSupplier) {
-<a class="jxr_linenumber" name="L713" href="#L713">713</a>             theSupplier = pSupplier;
-<a class="jxr_linenumber" name="L714" href="#L714">714</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
-<a class="jxr_linenumber" name="L715" href="#L715">715</a>         }
-<a class="jxr_linenumber" name="L716" href="#L716">716</a> 
-<a class="jxr_linenumber" name="L717" href="#L717">717</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L718" href="#L718">718</a> <em class="jxr_javadoccomment">         * Obtain the mapSet supplier.</em>
-<a class="jxr_linenumber" name="L719" href="#L719">719</a> <em class="jxr_javadoccomment">         *</em>
-<a class="jxr_linenumber" name="L720" href="#L720">720</a> <em class="jxr_javadoccomment">         * @return the supplier</em>
-<a class="jxr_linenumber" name="L721" href="#L721">721</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L722" href="#L722">722</a>         Function&lt;R, TethysUIIconMapSet&lt;T&gt;&gt; getIconMapSet() {
-<a class="jxr_linenumber" name="L723" href="#L723">723</a>             <strong class="jxr_keyword">return</strong> theSupplier;
-<a class="jxr_linenumber" name="L724" href="#L724">724</a>         }
-<a class="jxr_linenumber" name="L725" href="#L725">725</a>     }
-<a class="jxr_linenumber" name="L726" href="#L726">726</a> }
+<a class="jxr_linenumber" name="L625" href="#L625">625</a>         @Override
+<a class="jxr_linenumber" name="L626" href="#L626">626</a>         <strong class="jxr_keyword">public</strong> BiConsumer&lt;R, TethysUIScrollMenu&lt;T&gt;&gt; getMenuConfigurator() {
+<a class="jxr_linenumber" name="L627" href="#L627">627</a>             <strong class="jxr_keyword">return</strong> theConfigurator;
+<a class="jxr_linenumber" name="L628" href="#L628">628</a>         }
+<a class="jxr_linenumber" name="L629" href="#L629">629</a>     }
+<a class="jxr_linenumber" name="L630" href="#L630">630</a> 
+<a class="jxr_linenumber" name="L631" href="#L631">631</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L632" href="#L632">632</a> <em class="jxr_javadoccomment">     * List Column.</em>
+<a class="jxr_linenumber" name="L633" href="#L633">633</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L634" href="#L634">634</a> <em class="jxr_javadoccomment">     * @param &lt;T&gt; the column type</em>
+<a class="jxr_linenumber" name="L635" href="#L635">635</a> <em class="jxr_javadoccomment">     * @param &lt;C&gt; the column identity</em>
+<a class="jxr_linenumber" name="L636" href="#L636">636</a> <em class="jxr_javadoccomment">     * @param &lt;R&gt; the table item class</em>
+<a class="jxr_linenumber" name="L637" href="#L637">637</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L638" href="#L638">638</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> TethysUIFXTableListColumn&lt;T <strong class="jxr_keyword">extends</strong> Comparable&lt;? <strong class="jxr_keyword">super</strong> T&gt;, C, R&gt;
+<a class="jxr_linenumber" name="L639" href="#L639">639</a>             <strong class="jxr_keyword">extends</strong> TethysUIFXTableColumn&lt;List&lt;T&gt;, C, R&gt;
+<a class="jxr_linenumber" name="L640" href="#L640">640</a>             <strong class="jxr_keyword">implements</strong> TethysUITableListColumn&lt;T, C, R&gt; {
+<a class="jxr_linenumber" name="L641" href="#L641">641</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L642" href="#L642">642</a> <em class="jxr_javadoccomment">         * Selectable supplier.</em>
+<a class="jxr_linenumber" name="L643" href="#L643">643</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L644" href="#L644">644</a>         <strong class="jxr_keyword">private</strong> Function&lt;R, Iterator&lt;T&gt;&gt; theSelectables;
+<a class="jxr_linenumber" name="L645" href="#L645">645</a> 
+<a class="jxr_linenumber" name="L646" href="#L646">646</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L647" href="#L647">647</a> <em class="jxr_javadoccomment">         * Constructor.</em>
+<a class="jxr_linenumber" name="L648" href="#L648">648</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="L649" href="#L649">649</a> <em class="jxr_javadoccomment">         * @param pTable the table</em>
+<a class="jxr_linenumber" name="L650" href="#L650">650</a> <em class="jxr_javadoccomment">         * @param pId    the id</em>
+<a class="jxr_linenumber" name="L651" href="#L651">651</a> <em class="jxr_javadoccomment">         * @param pClazz the data class</em>
+<a class="jxr_linenumber" name="L652" href="#L652">652</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L653" href="#L653">653</a>         TethysUIFXTableListColumn(<strong class="jxr_keyword">final</strong> TethysUIFXTableManager&lt;C, R&gt; pTable,
+<a class="jxr_linenumber" name="L654" href="#L654">654</a>                                   <strong class="jxr_keyword">final</strong> C pId,
+<a class="jxr_linenumber" name="L655" href="#L655">655</a>                                   <strong class="jxr_keyword">final</strong> Class&lt;T&gt; pClazz) {
+<a class="jxr_linenumber" name="L656" href="#L656">656</a>             <strong class="jxr_keyword">super</strong>(pTable, pId, TethysUIFieldType.LIST);
+<a class="jxr_linenumber" name="L657" href="#L657">657</a>             declareCellFactory(<strong class="jxr_keyword">super</strong>.getCellFactory().listCellFactory(<strong class="jxr_keyword">this</strong>));
+<a class="jxr_linenumber" name="L658" href="#L658">658</a>             theSelectables = r -&gt; Collections.emptyIterator();
+<a class="jxr_linenumber" name="L659" href="#L659">659</a>         }
+<a class="jxr_linenumber" name="L660" href="#L660">660</a> 
+<a class="jxr_linenumber" name="L661" href="#L661">661</a>         @Override
+<a class="jxr_linenumber" name="L662" href="#L662">662</a>         <strong class="jxr_keyword">public</strong> TethysUIFXTableListColumn&lt;T, C, R&gt; setSelectables(<strong class="jxr_keyword">final</strong> Function&lt;R, Iterator&lt;T&gt;&gt; pSelectables) {
+<a class="jxr_linenumber" name="L663" href="#L663">663</a>             theSelectables = pSelectables;
+<a class="jxr_linenumber" name="L664" href="#L664">664</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
+<a class="jxr_linenumber" name="L665" href="#L665">665</a>         }
+<a class="jxr_linenumber" name="L666" href="#L666">666</a> 
+<a class="jxr_linenumber" name="L667" href="#L667">667</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L668" href="#L668">668</a> <em class="jxr_javadoccomment">         * Obtain the selectable supplier.</em>
+<a class="jxr_linenumber" name="L669" href="#L669">669</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="L670" href="#L670">670</a> <em class="jxr_javadoccomment">         * @return the supplier</em>
+<a class="jxr_linenumber" name="L671" href="#L671">671</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L672" href="#L672">672</a>         Function&lt;R, Iterator&lt;T&gt;&gt; getSelectables() {
+<a class="jxr_linenumber" name="L673" href="#L673">673</a>             <strong class="jxr_keyword">return</strong> theSelectables;
+<a class="jxr_linenumber" name="L674" href="#L674">674</a>         }
+<a class="jxr_linenumber" name="L675" href="#L675">675</a>     }
+<a class="jxr_linenumber" name="L676" href="#L676">676</a> 
+<a class="jxr_linenumber" name="L677" href="#L677">677</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L678" href="#L678">678</a> <em class="jxr_javadoccomment">     * Icon Column.</em>
+<a class="jxr_linenumber" name="L679" href="#L679">679</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L680" href="#L680">680</a> <em class="jxr_javadoccomment">     * @param &lt;T&gt; the column type</em>
+<a class="jxr_linenumber" name="L681" href="#L681">681</a> <em class="jxr_javadoccomment">     * @param &lt;C&gt; the column identity</em>
+<a class="jxr_linenumber" name="L682" href="#L682">682</a> <em class="jxr_javadoccomment">     * @param &lt;R&gt; the table item class</em>
+<a class="jxr_linenumber" name="L683" href="#L683">683</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L684" href="#L684">684</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> TethysUIFXTableIconColumn&lt;T, C, R&gt;
+<a class="jxr_linenumber" name="L685" href="#L685">685</a>             <strong class="jxr_keyword">extends</strong> TethysUIFXTableColumn&lt;T, C, R&gt;
+<a class="jxr_linenumber" name="L686" href="#L686">686</a>             <strong class="jxr_keyword">implements</strong> TethysUITableIconColumn&lt;T, C, R&gt; {
+<a class="jxr_linenumber" name="L687" href="#L687">687</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L688" href="#L688">688</a> <em class="jxr_javadoccomment">         * IconMapSet supplier.</em>
+<a class="jxr_linenumber" name="L689" href="#L689">689</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L690" href="#L690">690</a>         <strong class="jxr_keyword">private</strong> Function&lt;R, TethysUIIconMapSet&lt;T&gt;&gt; theSupplier;
+<a class="jxr_linenumber" name="L691" href="#L691">691</a> 
+<a class="jxr_linenumber" name="L692" href="#L692">692</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L693" href="#L693">693</a> <em class="jxr_javadoccomment">         * Constructor.</em>
+<a class="jxr_linenumber" name="L694" href="#L694">694</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="L695" href="#L695">695</a> <em class="jxr_javadoccomment">         * @param pTable the table</em>
+<a class="jxr_linenumber" name="L696" href="#L696">696</a> <em class="jxr_javadoccomment">         * @param pId    the id</em>
+<a class="jxr_linenumber" name="L697" href="#L697">697</a> <em class="jxr_javadoccomment">         * @param pClazz the item class</em>
+<a class="jxr_linenumber" name="L698" href="#L698">698</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L699" href="#L699">699</a>         TethysUIFXTableIconColumn(<strong class="jxr_keyword">final</strong> TethysUIFXTableManager&lt;C, R&gt; pTable,
+<a class="jxr_linenumber" name="L700" href="#L700">700</a>                                   <strong class="jxr_keyword">final</strong> C pId,
+<a class="jxr_linenumber" name="L701" href="#L701">701</a>                                   <strong class="jxr_keyword">final</strong> Class&lt;T&gt; pClazz) {
+<a class="jxr_linenumber" name="L702" href="#L702">702</a>             <strong class="jxr_keyword">super</strong>(pTable, pId, TethysUIFieldType.ICON);
+<a class="jxr_linenumber" name="L703" href="#L703">703</a>             declareCellFactory(<strong class="jxr_keyword">super</strong>.getCellFactory().iconCellFactory(<strong class="jxr_keyword">this</strong>, pClazz));
+<a class="jxr_linenumber" name="L704" href="#L704">704</a>             theSupplier = p -&gt; <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L705" href="#L705">705</a>         }
+<a class="jxr_linenumber" name="L706" href="#L706">706</a> 
+<a class="jxr_linenumber" name="L707" href="#L707">707</a>         @Override
+<a class="jxr_linenumber" name="L708" href="#L708">708</a>         <strong class="jxr_keyword">public</strong> TethysUIFXTableIconColumn&lt;T, C, R&gt; setIconMapSet(<strong class="jxr_keyword">final</strong> Function&lt;R, TethysUIIconMapSet&lt;T&gt;&gt; pSupplier) {
+<a class="jxr_linenumber" name="L709" href="#L709">709</a>             theSupplier = pSupplier;
+<a class="jxr_linenumber" name="L710" href="#L710">710</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
+<a class="jxr_linenumber" name="L711" href="#L711">711</a>         }
+<a class="jxr_linenumber" name="L712" href="#L712">712</a> 
+<a class="jxr_linenumber" name="L713" href="#L713">713</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L714" href="#L714">714</a> <em class="jxr_javadoccomment">         * Obtain the mapSet supplier.</em>
+<a class="jxr_linenumber" name="L715" href="#L715">715</a> <em class="jxr_javadoccomment">         *</em>
+<a class="jxr_linenumber" name="L716" href="#L716">716</a> <em class="jxr_javadoccomment">         * @return the supplier</em>
+<a class="jxr_linenumber" name="L717" href="#L717">717</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L718" href="#L718">718</a>         Function&lt;R, TethysUIIconMapSet&lt;T&gt;&gt; getIconMapSet() {
+<a class="jxr_linenumber" name="L719" href="#L719">719</a>             <strong class="jxr_keyword">return</strong> theSupplier;
+<a class="jxr_linenumber" name="L720" href="#L720">720</a>         }
+<a class="jxr_linenumber" name="L721" href="#L721">721</a>     }
+<a class="jxr_linenumber" name="L722" href="#L722">722</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JcaBlockEncryptor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.jca.encrypt</a> &gt; <span class="el_source">JcaBlockEncryptor.java</span></div><h1>JcaBlockEncryptor.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.encrypt;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPublicKey;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import java.security.InvalidKeyException;
+import java.util.Arrays;
+
+/**
+ * Block Encryptor.
+ */
+public class JcaBlockEncryptor
+        extends GordianCoreEncryptor {
+    /**
+     * Error string.
+     */
+    private static final String ERROR_INIT = &quot;Failed to initialise&quot;;
+
+    /**
+     * The underlying encryptor.
+     */
+    private final Cipher theEncryptor;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pSpec    the encryptorSpec
+     * @throws GordianException on error
+     */
+    JcaBlockEncryptor(final GordianBaseFactory pFactory,
+                      final GordianCoreEncryptorSpec pSpec) throws GordianException {
+        /* Initialise underlying cipher */
+<span class="fc" id="L61">        super(pFactory, pSpec);</span>
+<span class="fc" id="L62">        theEncryptor = JcaEncryptor.getJavaEncryptor(getAlgorithmName(pSpec));</span>
+<span class="fc" id="L63">    }</span>
+
+    @Override
+    protected JcaPublicKey getPublicKey() {
+<span class="fc" id="L67">        return (JcaPublicKey) super.getPublicKey();</span>
+    }
+
+    @Override
+    protected JcaPrivateKey getPrivateKey() {
+<span class="fc" id="L72">        return (JcaPrivateKey) super.getPrivateKey();</span>
+    }
+
+    @Override
+    public void initForEncrypt(final GordianKeyPair pKeyPair) throws GordianException {
+        try {
+            /* Initialise underlying cipher */
+<span class="fc" id="L79">            JcaKeyPair.checkKeyPair(pKeyPair);</span>
+<span class="fc" id="L80">            super.initForEncrypt(pKeyPair);</span>
+
+            /* Initialise for encryption */
+<span class="fc" id="L83">            theEncryptor.init(Cipher.ENCRYPT_MODE, getPublicKey().getPublicKey(), getRandom());</span>
+<span class="nc" id="L84">        } catch (InvalidKeyException e) {</span>
+<span class="nc" id="L85">            throw new GordianCryptoException(ERROR_INIT, e);</span>
+<span class="fc" id="L86">        }</span>
+<span class="fc" id="L87">    }</span>
+
+    @Override
+    public void initForDecrypt(final GordianKeyPair pKeyPair) throws GordianException {
+        try {
+            /* Initialise underlying cipher */
+<span class="fc" id="L93">            JcaKeyPair.checkKeyPair(pKeyPair);</span>
+<span class="fc" id="L94">            super.initForDecrypt(pKeyPair);</span>
+
+            /* Initialise for decryption */
+<span class="fc" id="L97">            theEncryptor.init(Cipher.DECRYPT_MODE, getPrivateKey().getPrivateKey());</span>
+<span class="nc" id="L98">        } catch (InvalidKeyException e) {</span>
+<span class="nc" id="L99">            throw new GordianCryptoException(ERROR_INIT, e);</span>
+<span class="fc" id="L100">        }</span>
+<span class="fc" id="L101">    }</span>
+
+    @Override
+    public byte[] encrypt(final byte[] pBytes) throws GordianException {
+        /* Check that we are in encryption mode */
+<span class="fc" id="L106">        checkMode(GordianEncryptMode.ENCRYPT);</span>
+
+        /* Encrypt the message */
+<span class="fc" id="L109">        return processData(pBytes);</span>
+    }
+
+    @Override
+    public byte[] decrypt(final byte[] pBytes) throws GordianException {
+        /* Check that we are in decryption mode */
+<span class="fc" id="L115">        checkMode(GordianEncryptMode.DECRYPT);</span>
+
+        /* Decrypt the message */
+<span class="fc" id="L118">        return processData(pBytes);</span>
+    }
+
+    /**
+     * Process a data buffer.
+     *
+     * @param pData the buffer to process
+     * @return the processed buffer
+     * @throws GordianException on error
+     */
+    private byte[] processData(final byte[] pData) throws GordianException {
+        try {
+            /* Access input block length */
+<span class="fc" id="L131">            int myInLen = pData.length;</span>
+<span class="fc" id="L132">            final int myInBlockLength = theEncryptor.getBlockSize();</span>
+<span class="fc" id="L133">            final int myNumBlocks = getNumBlocks(myInLen, myInBlockLength);</span>
+<span class="fc" id="L134">            final int myOutBlockLength = theEncryptor.getOutputSize(myInBlockLength);</span>
+
+            /* Create the output buffer */
+<span class="fc" id="L137">            final byte[] myOutput = new byte[myOutBlockLength * myNumBlocks];</span>
+
+            /* Loop encrypting the blocks */
+<span class="fc" id="L140">            int myInOff = 0;</span>
+<span class="fc" id="L141">            int myOutOff = 0;</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">            while (myInLen &gt; 0) {</span>
+                /* Process the data */
+<span class="fc" id="L144">                final int myLen = Math.min(myInLen, myInBlockLength);</span>
+<span class="fc" id="L145">                final byte[] myBlock = theEncryptor.doFinal(pData, myInOff, myLen);</span>
+
+                /* Copy to the output buffer */
+<span class="fc" id="L148">                final int myOutLen = myBlock.length;</span>
+<span class="fc" id="L149">                System.arraycopy(myBlock, 0, myOutput, myOutOff, myOutLen);</span>
+<span class="fc" id="L150">                myOutOff += myOutLen;</span>
+
+                /* Move to next block */
+<span class="fc" id="L153">                myInOff += myInBlockLength;</span>
+<span class="fc" id="L154">                myInLen -= myInBlockLength;</span>
+<span class="fc" id="L155">            }</span>
+
+            /* Return full buffer if possible */
+<span class="fc bfc" id="L158" title="All 2 branches covered.">            if (myOutOff == myOutput.length) {</span>
+<span class="fc" id="L159">                return myOutput;</span>
+            }
+
+            /* Cut down buffer */
+<span class="fc" id="L163">            final byte[] myReturn = Arrays.copyOf(myOutput, myOutOff);</span>
+<span class="fc" id="L164">            Arrays.fill(myOutput, (byte) 0);</span>
+<span class="fc" id="L165">            return myReturn;</span>
+
+<span class="nc" id="L167">        } catch (IllegalBlockSizeException</span>
+                 | BadPaddingException e) {
+<span class="nc" id="L169">            throw new GordianCryptoException(&quot;Failed to process data&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Obtain the number of blocks required for the length in terms of blocks.
+     *
+     * @param pLength      the length of clear data
+     * @param pBlockLength the blockLength
+     * @return the number of blocks.
+     */
+    private static int getNumBlocks(final int pLength, final int pBlockLength) {
+<span class="fc" id="L181">        return (pLength + pBlockLength - 1) / pBlockLength;</span>
+    }
+
+    /**
+     * Obtain the algorithmName.
+     *
+     * @param pSpec the Spec
+     * @return the algorithm name
+     */
+    private static String getAlgorithmName(final GordianCoreEncryptorSpec pSpec) {
+        /* Determine the base algorithm */
+<span class="fc" id="L192">        final String myBase = pSpec.getKeyPairType().name();</span>
+
+        /* Switch on encryptor type */
+<span class="fc bfc" id="L195" title="All 4 branches covered.">        return switch (pSpec.getDigestSpec().getDigestLength()) {</span>
+<span class="fc" id="L196">            case LEN_224 -&gt; myBase + &quot;/ECB/OAEPWITHSHA224ANDMGF1PADDING&quot;;</span>
+<span class="fc" id="L197">            case LEN_256 -&gt; myBase + &quot;/ECB/OAEPWITHSHA256ANDMGF1PADDING&quot;;</span>
+<span class="fc" id="L198">            case LEN_384 -&gt; myBase + &quot;/ECB/OAEPWITHSHA384ANDMGF1PADDING&quot;;</span>
+<span class="fc" id="L199">            default -&gt; myBase + &quot;/ECB/OAEPWITHSHA512ANDMGF1PADDING&quot;;</span>
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

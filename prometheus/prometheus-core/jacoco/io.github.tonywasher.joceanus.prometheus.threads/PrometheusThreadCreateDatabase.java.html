@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Thread to create tables in a database to represent a data set. Existing tables will be dropped
@@ -49,9 +49,9 @@ public class PrometheusThreadCreateDatabase
     }
 
     @Override
-    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public Void performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Initialise the status window */
-<span class="nc" id="L54">        pManager.initTask(getTaskName());</span>
+<span class="nc" id="L54">        pReport.initTask(getTaskName());</span>
 
         /* Access Database */
 <span class="nc" id="L57">        final PrometheusDataStore myNullDatabase = theControl.getNullDatabase();</span>
@@ -59,10 +59,10 @@ public class PrometheusThreadCreateDatabase
         /* Protect against failures */
         try {
             /* Create database */
-<span class="nc" id="L62">            myNullDatabase.createDatabase(pManager, theControl.getDatabaseName());</span>
+<span class="nc" id="L62">            myNullDatabase.createDatabase(pReport, theControl.getDatabaseName());</span>
 
             /* State that we have completed */
-<span class="nc" id="L65">            pManager.setCompletion();</span>
+<span class="nc" id="L65">            pReport.setCompletion();</span>
 
             /* Return null value */
 <span class="nc" id="L68">            return null;</span>
@@ -74,4 +74,4 @@ public class PrometheusThreadCreateDatabase
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

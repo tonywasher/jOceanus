@@ -16,14 +16,15 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataMapItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
@@ -34,7 +35,7 @@ public class MoneyWiseXAnalysisEventList
     /**
      * Report fields.
      */
-<span class="fc" id="L37">    private static final MetisFieldSet&lt;MoneyWiseXAnalysisEventList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisEventList.class);</span>
+<span class="fc" id="L38">    private static final MetisFieldSet&lt;MoneyWiseXAnalysisEventList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisEventList.class);</span>
 
     /**
      * Constructor.
@@ -42,47 +43,47 @@ public class MoneyWiseXAnalysisEventList
      * @param pEditSet the editSet
      */
     public MoneyWiseXAnalysisEventList(final PrometheusEditSet pEditSet) {
-<span class="fc" id="L45">        super(MoneyWiseXAnalysisEvent.class, pEditSet.getDataSet(), MoneyWiseXAnalysisDataType.EVENT, PrometheusListStyle.EDIT);</span>
-<span class="fc" id="L46">    }</span>
+<span class="fc" id="L46">        super(MoneyWiseXAnalysisEvent.class, pEditSet.getDataSet(), MoneyWiseXAnalysisDataType.EVENT, PrometheusListStyle.EDIT);</span>
+<span class="fc" id="L47">    }</span>
 
     @Override
     public MetisFieldSetDef getItemFields() {
-<span class="nc" id="L50">        return FIELD_DEFS;</span>
+<span class="nc" id="L51">        return FIELD_DEFS;</span>
     }
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
-<span class="nc" id="L55">        return MoneyWiseXAnalysisEvent.FIELD_DEFS;</span>
+<span class="nc" id="L56">        return MoneyWiseXAnalysisEvent.FIELD_DEFS;</span>
     }
 
     @Override
     public String listName() {
-<span class="nc" id="L60">        return MoneyWiseXAnalysisDataType.EVENT.getListName();</span>
+<span class="nc" id="L61">        return MoneyWiseXAnalysisDataType.EVENT.getListName();</span>
     }
 
     @Override
     protected PrometheusDataList&lt;MoneyWiseXAnalysisEvent&gt; getEmptyList(final PrometheusListStyle pStyle) {
-<span class="nc" id="L65">        throw new UnsupportedOperationException();</span>
+<span class="nc" id="L66">        throw new UnsupportedOperationException();</span>
     }
 
     @Override
     protected PrometheusDataMapItem allocateDataMap() {
-<span class="nc" id="L70">        throw new UnsupportedOperationException();</span>
+<span class="nc" id="L71">        throw new UnsupportedOperationException();</span>
     }
 
     @Override
     public MoneyWiseXAnalysisEvent addCopyItem(final PrometheusDataItem pElement) {
-<span class="nc" id="L75">        throw new UnsupportedOperationException();</span>
+<span class="nc" id="L76">        throw new UnsupportedOperationException();</span>
     }
 
     @Override
     public MoneyWiseXAnalysisEvent addNewItem() {
-<span class="nc" id="L80">        throw new UnsupportedOperationException();</span>
+<span class="nc" id="L81">        throw new UnsupportedOperationException();</span>
     }
 
     @Override
     public MoneyWiseXAnalysisEvent addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
-<span class="nc" id="L85">        throw new UnsupportedOperationException();</span>
+<span class="nc" id="L86">        throw new UnsupportedOperationException();</span>
     }
 
     /**
@@ -92,9 +93,9 @@ public class MoneyWiseXAnalysisEventList
      * @return the event
      */
     public MoneyWiseXAnalysisEvent newTransaction(final MoneyWiseTransaction pTrans) {
-<span class="fc" id="L95">        final MoneyWiseXAnalysisEvent myEvent = new MoneyWiseXAnalysisEvent(this, pTrans);</span>
-<span class="fc" id="L96">        add(myEvent);</span>
-<span class="fc" id="L97">        return myEvent;</span>
+<span class="fc" id="L96">        final MoneyWiseXAnalysisEvent myEvent = new MoneyWiseXAnalysisEvent(this, pTrans);</span>
+<span class="fc" id="L97">        add(myEvent);</span>
+<span class="fc" id="L98">        return myEvent;</span>
     }
 
     /**
@@ -104,9 +105,9 @@ public class MoneyWiseXAnalysisEventList
      * @return the event
      */
     public MoneyWiseXAnalysisEvent newSecurityPrice(final OceanusDate pDate) {
-<span class="fc" id="L107">        final MoneyWiseXAnalysisEvent myEvent = new MoneyWiseXAnalysisEvent(this, MoneyWiseXAnalysisEventType.SECURITYPRICE, pDate);</span>
-<span class="fc" id="L108">        add(myEvent);</span>
-<span class="fc" id="L109">        return myEvent;</span>
+<span class="fc" id="L108">        final MoneyWiseXAnalysisEvent myEvent = new MoneyWiseXAnalysisEvent(this, MoneyWiseXAnalysisEventType.SECURITYPRICE, pDate);</span>
+<span class="fc" id="L109">        add(myEvent);</span>
+<span class="fc" id="L110">        return myEvent;</span>
     }
 
     /**
@@ -116,9 +117,9 @@ public class MoneyWiseXAnalysisEventList
      * @return the event
      */
     public MoneyWiseXAnalysisEvent newXchangeRate(final OceanusDate pDate) {
-<span class="fc" id="L119">        final MoneyWiseXAnalysisEvent myEvent = new MoneyWiseXAnalysisEvent(this, MoneyWiseXAnalysisEventType.XCHANGERATE, pDate);</span>
-<span class="fc" id="L120">        add(myEvent);</span>
-<span class="fc" id="L121">        return myEvent;</span>
+<span class="fc" id="L120">        final MoneyWiseXAnalysisEvent myEvent = new MoneyWiseXAnalysisEvent(this, MoneyWiseXAnalysisEventType.XCHANGERATE, pDate);</span>
+<span class="fc" id="L121">        add(myEvent);</span>
+<span class="fc" id="L122">        return myEvent;</span>
     }
 
     /**
@@ -128,9 +129,9 @@ public class MoneyWiseXAnalysisEventList
      * @return the event
      */
     public MoneyWiseXAnalysisEvent newDepositRate(final OceanusDate pDate) {
-<span class="nc" id="L131">        final MoneyWiseXAnalysisEvent myEvent = new MoneyWiseXAnalysisEvent(this, MoneyWiseXAnalysisEventType.DEPOSITRATE, pDate);</span>
-<span class="nc" id="L132">        add(myEvent);</span>
-<span class="nc" id="L133">        return myEvent;</span>
+<span class="nc" id="L132">        final MoneyWiseXAnalysisEvent myEvent = new MoneyWiseXAnalysisEvent(this, MoneyWiseXAnalysisEventType.DEPOSITRATE, pDate);</span>
+<span class="nc" id="L133">        add(myEvent);</span>
+<span class="nc" id="L134">        return myEvent;</span>
     }
 
     /**
@@ -140,9 +141,9 @@ public class MoneyWiseXAnalysisEventList
      * @return the event
      */
     public MoneyWiseXAnalysisEvent newOpeningBalance(final OceanusDate pDate) {
-<span class="fc" id="L143">        final MoneyWiseXAnalysisEvent myEvent = new MoneyWiseXAnalysisEvent(this, MoneyWiseXAnalysisEventType.OPENINGBALANCE, pDate);</span>
-<span class="fc" id="L144">        add(myEvent);</span>
-<span class="fc" id="L145">        return myEvent;</span>
+<span class="fc" id="L144">        final MoneyWiseXAnalysisEvent myEvent = new MoneyWiseXAnalysisEvent(this, MoneyWiseXAnalysisEventType.OPENINGBALANCE, pDate);</span>
+<span class="fc" id="L145">        add(myEvent);</span>
+<span class="fc" id="L146">        return myEvent;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

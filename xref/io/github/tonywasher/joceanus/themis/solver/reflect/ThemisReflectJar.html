@@ -31,11 +31,11 @@
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisTypeInstance;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.proj.ThemisMavenId;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.type.ThemisTypeClassInterface;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> java.io.File;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenId;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenLocation;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.type.ThemisTypeClassInterface;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> java.net.MalformedURLException;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> java.net.URI;
@@ -272,101 +272,100 @@
 <a class="jxr_linenumber" name="L264" href="#L264">264</a> <em class="jxr_javadoccomment">     * @return the URL List</em>
 <a class="jxr_linenumber" name="L265" href="#L265">265</a> <em class="jxr_javadoccomment">     * @throws OceanusException on error</em>
 <a class="jxr_linenumber" name="L266" href="#L266">266</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L267" href="#L267">267</a>     <strong class="jxr_keyword">private</strong> URL[] determineURLList(<strong class="jxr_keyword">final</strong> <a name="ThemisProject" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisProject.html#ThemisProject">ThemisProject</a> pProject) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>     <strong class="jxr_keyword">private</strong> URL[] determineURLList(<strong class="jxr_keyword">final</strong> <a name="ThemisProject" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisProject.html#ThemisProject">ThemisProject</a> pProject) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
 <a class="jxr_linenumber" name="L268" href="#L268">268</a>         <em class="jxr_comment">/* Create list of URLs for the dependencies */</em>
 <a class="jxr_linenumber" name="L269" href="#L269">269</a>         <strong class="jxr_keyword">final</strong> List&lt;URL&gt; myList = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
-<a class="jxr_linenumber" name="L270" href="#L270">270</a>         <strong class="jxr_keyword">for</strong> (<a name="ThemisMavenId" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisMavenId.html#ThemisMavenId">ThemisMavenId</a> myId : pProject.getDependencies()) {
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>         <strong class="jxr_keyword">for</strong> (<a name="ThemisMavenId" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/maven/ThemisMavenId.html#ThemisMavenId">ThemisMavenId</a> myId : pProject.getDependencies()) {
 <a class="jxr_linenumber" name="L271" href="#L271">271</a>             <em class="jxr_comment">/* Protect against exceptions */</em>
 <a class="jxr_linenumber" name="L272" href="#L272">272</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L273" href="#L273">273</a>                 <strong class="jxr_keyword">final</strong> File myJar = myId.getMavenJarPath();
-<a class="jxr_linenumber" name="L274" href="#L274">274</a>                 <strong class="jxr_keyword">final</strong> String myName = myJar.toString().replace(<span class="jxr_string">"&#92;&#92;"</span>, <span class="jxr_string">"/"</span>);
-<a class="jxr_linenumber" name="L275" href="#L275">275</a>                 <strong class="jxr_keyword">final</strong> String myPrefix = myName.startsWith(<span class="jxr_string">"/"</span>) ? URLJAR_PREFIX + ThemisChar.COMMENT : URLJAR_PREFIX;
-<a class="jxr_linenumber" name="L276" href="#L276">276</a>                 <strong class="jxr_keyword">final</strong> URL myUrl = (<strong class="jxr_keyword">new</strong> URI(myPrefix + myName + URLJAR_SUFFIX)).toURL();
-<a class="jxr_linenumber" name="L277" href="#L277">277</a>                 myList.add(myUrl);
-<a class="jxr_linenumber" name="L278" href="#L278">278</a> 
-<a class="jxr_linenumber" name="L279" href="#L279">279</a>                 <em class="jxr_comment">/* Handle exceptions */</em>
-<a class="jxr_linenumber" name="L280" href="#L280">280</a>             } <strong class="jxr_keyword">catch</strong> (URISyntaxException
-<a class="jxr_linenumber" name="L281" href="#L281">281</a>                      | MalformedURLException e) {
-<a class="jxr_linenumber" name="L282" href="#L282">282</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisDataException" href="../../../../../../../io/github/tonywasher/joceanus/themis/exc/ThemisDataException.html#ThemisDataException">ThemisDataException</a>(<span class="jxr_string">"Failed to build URL"</span>, e);
-<a class="jxr_linenumber" name="L283" href="#L283">283</a>             }
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>         }
-<a class="jxr_linenumber" name="L285" href="#L285">285</a> 
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>         <em class="jxr_comment">/* Convert list to array */</em>
-<a class="jxr_linenumber" name="L287" href="#L287">287</a>         <strong class="jxr_keyword">return</strong> myList.toArray(<strong class="jxr_keyword">new</strong> URL[0]);
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>     }
-<a class="jxr_linenumber" name="L289" href="#L289">289</a> 
-<a class="jxr_linenumber" name="L290" href="#L290">290</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L291" href="#L291">291</a> <em class="jxr_javadoccomment">     * Load a class.</em>
-<a class="jxr_linenumber" name="L292" href="#L292">292</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L293" href="#L293">293</a> <em class="jxr_javadoccomment">     * @param pClassName the class name.</em>
-<a class="jxr_linenumber" name="L294" href="#L294">294</a> <em class="jxr_javadoccomment">     * @return the loaded class</em>
-<a class="jxr_linenumber" name="L295" href="#L295">295</a> <em class="jxr_javadoccomment">     * @throws OceanusException on error</em>
-<a class="jxr_linenumber" name="L296" href="#L296">296</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L297" href="#L297">297</a>     <strong class="jxr_keyword">private</strong> Class&lt;?&gt; loadClass(<strong class="jxr_keyword">final</strong> String pClassName) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
-<a class="jxr_linenumber" name="L298" href="#L298">298</a>         <em class="jxr_comment">/* Protect against exceptions */</em>
-<a class="jxr_linenumber" name="L299" href="#L299">299</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>             <strong class="jxr_keyword">return</strong> theClassLoader.loadClass(pClassName);
-<a class="jxr_linenumber" name="L301" href="#L301">301</a> 
-<a class="jxr_linenumber" name="L302" href="#L302">302</a>             <em class="jxr_comment">/* If we failed to find the class */</em>
-<a class="jxr_linenumber" name="L303" href="#L303">303</a>         } <strong class="jxr_keyword">catch</strong> (ClassNotFoundException e) {
-<a class="jxr_linenumber" name="L304" href="#L304">304</a>             <em class="jxr_comment">/* Try again with the canonical name converted to a subClass */</em>
-<a class="jxr_linenumber" name="L305" href="#L305">305</a>             <strong class="jxr_keyword">final</strong> String mySubClass = trySubClass(pClassName);
-<a class="jxr_linenumber" name="L306" href="#L306">306</a>             <strong class="jxr_keyword">if</strong> (mySubClass != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L307" href="#L307">307</a>                 <strong class="jxr_keyword">return</strong> loadClass(mySubClass);
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>             }
-<a class="jxr_linenumber" name="L309" href="#L309">309</a> 
-<a class="jxr_linenumber" name="L310" href="#L310">310</a>             <em class="jxr_comment">/* Failed to find the class */</em>
-<a class="jxr_linenumber" name="L311" href="#L311">311</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisDataException" href="../../../../../../../io/github/tonywasher/joceanus/themis/exc/ThemisDataException.html#ThemisDataException">ThemisDataException</a>(<span class="jxr_string">"Failed to find class "</span> + pClassName, e);
-<a class="jxr_linenumber" name="L312" href="#L312">312</a>         }
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>     }
-<a class="jxr_linenumber" name="L314" href="#L314">314</a> 
-<a class="jxr_linenumber" name="L315" href="#L315">315</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L316" href="#L316">316</a> <em class="jxr_javadoccomment">     * Change class name to make last class subClass.</em>
-<a class="jxr_linenumber" name="L317" href="#L317">317</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L318" href="#L318">318</a> <em class="jxr_javadoccomment">     * @param pClassName the class name</em>
-<a class="jxr_linenumber" name="L319" href="#L319">319</a> <em class="jxr_javadoccomment">     * @return the subClass name or null</em>
-<a class="jxr_linenumber" name="L320" href="#L320">320</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L321" href="#L321">321</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String trySubClass(<strong class="jxr_keyword">final</strong> String pClassName) {
-<a class="jxr_linenumber" name="L322" href="#L322">322</a>         <em class="jxr_comment">/* Swap last period for dollar */</em>
-<a class="jxr_linenumber" name="L323" href="#L323">323</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> myLastIndex = pClassName.lastIndexOf(ThemisChar.PERIOD);
-<a class="jxr_linenumber" name="L324" href="#L324">324</a>         <strong class="jxr_keyword">return</strong> myLastIndex != -1
-<a class="jxr_linenumber" name="L325" href="#L325">325</a>                 ? pClassName.substring(0, myLastIndex) + ThemisChar.DOLLAR + pClassName.substring(myLastIndex + 1)
-<a class="jxr_linenumber" name="L326" href="#L326">326</a>                 : <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L327" href="#L327">327</a>     }
-<a class="jxr_linenumber" name="L328" href="#L328">328</a> 
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L330" href="#L330">330</a> <em class="jxr_javadoccomment">     * build class.</em>
-<a class="jxr_linenumber" name="L331" href="#L331">331</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L332" href="#L332">332</a> <em class="jxr_javadoccomment">     * @param pSource the source class</em>
-<a class="jxr_linenumber" name="L333" href="#L333">333</a> <em class="jxr_javadoccomment">     * @return the parsed class</em>
-<a class="jxr_linenumber" name="L334" href="#L334">334</a> <em class="jxr_javadoccomment">     * @throws OceanusException on error</em>
-<a class="jxr_linenumber" name="L335" href="#L335">335</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L336" href="#L336">336</a>     <strong class="jxr_keyword">private</strong> BodyDeclaration&lt;?&gt; buildClass(<strong class="jxr_keyword">final</strong> Class&lt;?&gt; pSource) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
-<a class="jxr_linenumber" name="L337" href="#L337">337</a>         <em class="jxr_comment">/* Build the relevant class type */</em>
-<a class="jxr_linenumber" name="L338" href="#L338">338</a>         <strong class="jxr_keyword">if</strong> (pSource.isAnnotation()) {
-<a class="jxr_linenumber" name="L339" href="#L339">339</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisReflectAnnotation" href="../../../../../../../io/github/tonywasher/joceanus/themis/solver/reflect/ThemisReflectAnnotation.html#ThemisReflectAnnotation">ThemisReflectAnnotation</a>(pSource);
-<a class="jxr_linenumber" name="L340" href="#L340">340</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (pSource.isEnum()) {
-<a class="jxr_linenumber" name="L341" href="#L341">341</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisReflectEnum" href="../../../../../../../io/github/tonywasher/joceanus/themis/solver/reflect/ThemisReflectEnum.html#ThemisReflectEnum">ThemisReflectEnum</a>(pSource);
-<a class="jxr_linenumber" name="L342" href="#L342">342</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (pSource.isRecord()) {
-<a class="jxr_linenumber" name="L343" href="#L343">343</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisReflectRecord" href="../../../../../../../io/github/tonywasher/joceanus/themis/solver/reflect/ThemisReflectRecord.html#ThemisReflectRecord">ThemisReflectRecord</a>(pSource);
-<a class="jxr_linenumber" name="L344" href="#L344">344</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L345" href="#L345">345</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisReflectClass" href="../../../../../../../io/github/tonywasher/joceanus/themis/solver/reflect/ThemisReflectClass.html#ThemisReflectClass">ThemisReflectClass</a>(pSource);
-<a class="jxr_linenumber" name="L346" href="#L346">346</a>         }
-<a class="jxr_linenumber" name="L347" href="#L347">347</a>     }
-<a class="jxr_linenumber" name="L348" href="#L348">348</a> 
-<a class="jxr_linenumber" name="L349" href="#L349">349</a>     @Override
-<a class="jxr_linenumber" name="L350" href="#L350">350</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> close() {
-<a class="jxr_linenumber" name="L351" href="#L351">351</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L352" href="#L352">352</a>             <strong class="jxr_keyword">if</strong> (theClassLoader != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L353" href="#L353">353</a>                 theClassLoader.close();
-<a class="jxr_linenumber" name="L354" href="#L354">354</a>             }
-<a class="jxr_linenumber" name="L355" href="#L355">355</a>         } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L356" href="#L356">356</a>             <em class="jxr_comment">/* Do nothing */</em>
-<a class="jxr_linenumber" name="L357" href="#L357">357</a>         }
-<a class="jxr_linenumber" name="L358" href="#L358">358</a>     }
-<a class="jxr_linenumber" name="L359" href="#L359">359</a> }
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>                 <strong class="jxr_keyword">final</strong> String myName = ThemisMavenLocation.getLocalJarFileName(myId);
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>                 <strong class="jxr_keyword">final</strong> String myPrefix = myName.startsWith(<span class="jxr_string">"/"</span>) ? URLJAR_PREFIX + ThemisChar.COMMENT : URLJAR_PREFIX;
+<a class="jxr_linenumber" name="L275" href="#L275">275</a>                 <strong class="jxr_keyword">final</strong> URL myUrl = (<strong class="jxr_keyword">new</strong> URI(myPrefix + myName + URLJAR_SUFFIX)).toURL();
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>                 myList.add(myUrl);
+<a class="jxr_linenumber" name="L277" href="#L277">277</a> 
+<a class="jxr_linenumber" name="L278" href="#L278">278</a>                 <em class="jxr_comment">/* Handle exceptions */</em>
+<a class="jxr_linenumber" name="L279" href="#L279">279</a>             } <strong class="jxr_keyword">catch</strong> (URISyntaxException
+<a class="jxr_linenumber" name="L280" href="#L280">280</a>                      | MalformedURLException e) {
+<a class="jxr_linenumber" name="L281" href="#L281">281</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisDataException" href="../../../../../../../io/github/tonywasher/joceanus/themis/exc/ThemisDataException.html#ThemisDataException">ThemisDataException</a>(<span class="jxr_string">"Failed to build URL"</span>, e);
+<a class="jxr_linenumber" name="L282" href="#L282">282</a>             }
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>         }
+<a class="jxr_linenumber" name="L284" href="#L284">284</a> 
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>         <em class="jxr_comment">/* Convert list to array */</em>
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>         <strong class="jxr_keyword">return</strong> myList.toArray(<strong class="jxr_keyword">new</strong> URL[0]);
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>     }
+<a class="jxr_linenumber" name="L288" href="#L288">288</a> 
+<a class="jxr_linenumber" name="L289" href="#L289">289</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L290" href="#L290">290</a> <em class="jxr_javadoccomment">     * Load a class.</em>
+<a class="jxr_linenumber" name="L291" href="#L291">291</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L292" href="#L292">292</a> <em class="jxr_javadoccomment">     * @param pClassName the class name.</em>
+<a class="jxr_linenumber" name="L293" href="#L293">293</a> <em class="jxr_javadoccomment">     * @return the loaded class</em>
+<a class="jxr_linenumber" name="L294" href="#L294">294</a> <em class="jxr_javadoccomment">     * @throws OceanusException on error</em>
+<a class="jxr_linenumber" name="L295" href="#L295">295</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L296" href="#L296">296</a>     <strong class="jxr_keyword">private</strong> Class&lt;?&gt; loadClass(<strong class="jxr_keyword">final</strong> String pClassName) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>         <em class="jxr_comment">/* Protect against exceptions */</em>
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>             <strong class="jxr_keyword">return</strong> theClassLoader.loadClass(pClassName);
+<a class="jxr_linenumber" name="L300" href="#L300">300</a> 
+<a class="jxr_linenumber" name="L301" href="#L301">301</a>             <em class="jxr_comment">/* If we failed to find the class */</em>
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>         } <strong class="jxr_keyword">catch</strong> (ClassNotFoundException e) {
+<a class="jxr_linenumber" name="L303" href="#L303">303</a>             <em class="jxr_comment">/* Try again with the canonical name converted to a subClass */</em>
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>             <strong class="jxr_keyword">final</strong> String mySubClass = trySubClass(pClassName);
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>             <strong class="jxr_keyword">if</strong> (mySubClass != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L306" href="#L306">306</a>                 <strong class="jxr_keyword">return</strong> loadClass(mySubClass);
+<a class="jxr_linenumber" name="L307" href="#L307">307</a>             }
+<a class="jxr_linenumber" name="L308" href="#L308">308</a> 
+<a class="jxr_linenumber" name="L309" href="#L309">309</a>             <em class="jxr_comment">/* Failed to find the class */</em>
+<a class="jxr_linenumber" name="L310" href="#L310">310</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisDataException" href="../../../../../../../io/github/tonywasher/joceanus/themis/exc/ThemisDataException.html#ThemisDataException">ThemisDataException</a>(<span class="jxr_string">"Failed to find class "</span> + pClassName, e);
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>         }
+<a class="jxr_linenumber" name="L312" href="#L312">312</a>     }
+<a class="jxr_linenumber" name="L313" href="#L313">313</a> 
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L315" href="#L315">315</a> <em class="jxr_javadoccomment">     * Change class name to make last class subClass.</em>
+<a class="jxr_linenumber" name="L316" href="#L316">316</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L317" href="#L317">317</a> <em class="jxr_javadoccomment">     * @param pClassName the class name</em>
+<a class="jxr_linenumber" name="L318" href="#L318">318</a> <em class="jxr_javadoccomment">     * @return the subClass name or null</em>
+<a class="jxr_linenumber" name="L319" href="#L319">319</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> String trySubClass(<strong class="jxr_keyword">final</strong> String pClassName) {
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>         <em class="jxr_comment">/* Swap last period for dollar */</em>
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> myLastIndex = pClassName.lastIndexOf(ThemisChar.PERIOD);
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>         <strong class="jxr_keyword">return</strong> myLastIndex != -1
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>                 ? pClassName.substring(0, myLastIndex) + ThemisChar.DOLLAR + pClassName.substring(myLastIndex + 1)
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>                 : <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L326" href="#L326">326</a>     }
+<a class="jxr_linenumber" name="L327" href="#L327">327</a> 
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L329" href="#L329">329</a> <em class="jxr_javadoccomment">     * build class.</em>
+<a class="jxr_linenumber" name="L330" href="#L330">330</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L331" href="#L331">331</a> <em class="jxr_javadoccomment">     * @param pSource the source class</em>
+<a class="jxr_linenumber" name="L332" href="#L332">332</a> <em class="jxr_javadoccomment">     * @return the parsed class</em>
+<a class="jxr_linenumber" name="L333" href="#L333">333</a> <em class="jxr_javadoccomment">     * @throws OceanusException on error</em>
+<a class="jxr_linenumber" name="L334" href="#L334">334</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L335" href="#L335">335</a>     <strong class="jxr_keyword">private</strong> BodyDeclaration&lt;?&gt; buildClass(<strong class="jxr_keyword">final</strong> Class&lt;?&gt; pSource) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
+<a class="jxr_linenumber" name="L336" href="#L336">336</a>         <em class="jxr_comment">/* Build the relevant class type */</em>
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>         <strong class="jxr_keyword">if</strong> (pSource.isAnnotation()) {
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisReflectAnnotation" href="../../../../../../../io/github/tonywasher/joceanus/themis/solver/reflect/ThemisReflectAnnotation.html#ThemisReflectAnnotation">ThemisReflectAnnotation</a>(pSource);
+<a class="jxr_linenumber" name="L339" href="#L339">339</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (pSource.isEnum()) {
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisReflectEnum" href="../../../../../../../io/github/tonywasher/joceanus/themis/solver/reflect/ThemisReflectEnum.html#ThemisReflectEnum">ThemisReflectEnum</a>(pSource);
+<a class="jxr_linenumber" name="L341" href="#L341">341</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (pSource.isRecord()) {
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisReflectRecord" href="../../../../../../../io/github/tonywasher/joceanus/themis/solver/reflect/ThemisReflectRecord.html#ThemisReflectRecord">ThemisReflectRecord</a>(pSource);
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L344" href="#L344">344</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisReflectClass" href="../../../../../../../io/github/tonywasher/joceanus/themis/solver/reflect/ThemisReflectClass.html#ThemisReflectClass">ThemisReflectClass</a>(pSource);
+<a class="jxr_linenumber" name="L345" href="#L345">345</a>         }
+<a class="jxr_linenumber" name="L346" href="#L346">346</a>     }
+<a class="jxr_linenumber" name="L347" href="#L347">347</a> 
+<a class="jxr_linenumber" name="L348" href="#L348">348</a>     @Override
+<a class="jxr_linenumber" name="L349" href="#L349">349</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> close() {
+<a class="jxr_linenumber" name="L350" href="#L350">350</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>             <strong class="jxr_keyword">if</strong> (theClassLoader != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>                 theClassLoader.close();
+<a class="jxr_linenumber" name="L353" href="#L353">353</a>             }
+<a class="jxr_linenumber" name="L354" href="#L354">354</a>         } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L355" href="#L355">355</a>             <em class="jxr_comment">/* Do nothing */</em>
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>         }
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>     }
+<a class="jxr_linenumber" name="L358" href="#L358">358</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

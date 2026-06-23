@@ -42,10 +42,10 @@
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment">     * prepare task.</em>
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment">     * @param pManager the thread manager</em>
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment">     * @param pReport the thread manager</em>
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">     * @throws OceanusException on error</em>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">default</strong> <strong class="jxr_keyword">void</strong> prepareTask(<strong class="jxr_keyword">final</strong> <a name="TethysUIThreadManager" href="../../../../../../../io/github/tonywasher/joceanus/tethys/api/thread/TethysUIThreadManager.html#TethysUIThreadManager">TethysUIThreadManager</a> pManager) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">default</strong> <strong class="jxr_keyword">void</strong> prepareTask(<strong class="jxr_keyword">final</strong> <a name="TethysUIThreadStatusReport" href="../../../../../../../io/github/tonywasher/joceanus/tethys/api/thread/TethysUIThreadStatusReport.html#TethysUIThreadStatusReport">TethysUIThreadStatusReport</a> pReport) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>          <em class="jxr_comment">/*</em>
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_comment">         * Overridden as needed</em>
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_comment">         */</em>
@@ -54,11 +54,11 @@
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">     * Perform the task.</em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment">     * @param pManager the thread manager</em>
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment">     * @param pReport the thread manager</em>
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  <em class="jxr_javadoccomment">     * @return the result</em>
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  <em class="jxr_javadoccomment">     * @throws OceanusException on error</em>
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>      T performTask(<a name="TethysUIThreadManager" href="../../../../../../../io/github/tonywasher/joceanus/tethys/api/thread/TethysUIThreadManager.html#TethysUIThreadManager">TethysUIThreadManager</a> pManager) <strong class="jxr_keyword">throws</strong> OceanusException;
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      T performTask(<a name="TethysUIThreadStatusReport" href="../../../../../../../io/github/tonywasher/joceanus/tethys/api/thread/TethysUIThreadStatusReport.html#TethysUIThreadStatusReport">TethysUIThreadStatusReport</a> pReport) <strong class="jxr_keyword">throws</strong> OceanusException;
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment">     * process result.</em>
@@ -86,6 +86,6 @@
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>  
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

@@ -21,7 +21,6 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataT
 import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetDataItem;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
-import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
@@ -34,16 +33,14 @@ public class MoneyWiseReader
     /**
      * Constructor.
      *
-     * @param pFactory     the gui factory
      * @param pReport      the report
      * @param pPasswordMgr the password manager
      */
-    public MoneyWiseReader(final TethysUIFactory&lt;?&gt; pFactory,
-                           final TethysUIThreadStatusReport pReport,
+    public MoneyWiseReader(final TethysUIThreadStatusReport pReport,
                            final PrometheusSecurityPasswordManager pPasswordMgr) {
         /* Call super-constructor */
-<span class="fc" id="L45">        super(pFactory, pReport, pPasswordMgr);</span>
-<span class="fc" id="L46">    }</span>
+<span class="fc" id="L42">        super(pReport, pPasswordMgr);</span>
+<span class="fc" id="L43">    }</span>
 
     /**
      * Register sheets.
@@ -51,17 +48,17 @@ public class MoneyWiseReader
     @Override
     protected void registerSheets() {
         /* Loop through the static types */
-<span class="fc bfc" id="L54" title="All 2 branches covered.">        for (MoneyWiseStaticDataType myType : MoneyWiseStaticDataType.values()) {</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        for (MoneyWiseStaticDataType myType : MoneyWiseStaticDataType.values()) {</span>
             /* Create the sheet */
-<span class="fc" id="L56">            addSheet(newSheet(myType));</span>
+<span class="fc" id="L53">            addSheet(newSheet(myType));</span>
         }
 
         /* Loop through the basic types */
-<span class="fc bfc" id="L60" title="All 2 branches covered.">        for (MoneyWiseBasicDataType myType : MoneyWiseBasicDataType.values()) {</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        for (MoneyWiseBasicDataType myType : MoneyWiseBasicDataType.values()) {</span>
             /* Create the sheet */
-<span class="fc" id="L62">            addSheet(newSheet(myType));</span>
+<span class="fc" id="L59">            addSheet(newSheet(myType));</span>
         }
-<span class="fc" id="L64">    }</span>
+<span class="fc" id="L61">    }</span>
 
     /**
      * Create new sheet of required type.
@@ -71,32 +68,20 @@ public class MoneyWiseReader
      */
     private PrometheusSheetDataItem&lt;?&gt; newSheet(final MoneyWiseStaticDataType pDataType) {
         /* Switch on data Type */
-<span class="pc bpc" id="L74" title="1 of 12 branches missed.">        switch (pDataType) {</span>
-            case DEPOSITTYPE:
-<span class="fc" id="L76">                return new MoneyWiseSheetDepositCategoryType(this);</span>
-            case CASHTYPE:
-<span class="fc" id="L78">                return new MoneyWiseSheetCashCategoryType(this);</span>
-            case LOANTYPE:
-<span class="fc" id="L80">                return new MoneyWiseSheetLoanCategoryType(this);</span>
-            case PORTFOLIOTYPE:
-<span class="fc" id="L82">                return new MoneyWiseSheetPortfolioType(this);</span>
-            case PAYEETYPE:
-<span class="fc" id="L84">                return new MoneyWiseSheetPayeeType(this);</span>
-            case SECURITYTYPE:
-<span class="fc" id="L86">                return new MoneyWiseSheetSecurityType(this);</span>
-            case TRANSTYPE:
-<span class="fc" id="L88">                return new MoneyWiseSheetTransCategoryType(this);</span>
-            case ACCOUNTINFOTYPE:
-<span class="fc" id="L90">                return new MoneyWiseSheetAccountInfoType(this);</span>
-            case TRANSINFOTYPE:
-<span class="fc" id="L92">                return new MoneyWiseSheetTransInfoType(this);</span>
-            case CURRENCY:
-<span class="fc" id="L94">                return new MoneyWiseSheetCurrency(this);</span>
-            case TAXBASIS:
-<span class="fc" id="L96">                return new MoneyWiseSheetTaxBasis(this);</span>
-            default:
-<span class="nc" id="L98">                throw new IllegalArgumentException(pDataType.toString());</span>
-        }
+<span class="pc bpc" id="L71" title="1 of 12 branches missed.">        return switch (pDataType) {</span>
+<span class="fc" id="L72">            case DEPOSITTYPE -&gt; new MoneyWiseSheetDepositCategoryType(this);</span>
+<span class="fc" id="L73">            case CASHTYPE -&gt; new MoneyWiseSheetCashCategoryType(this);</span>
+<span class="fc" id="L74">            case LOANTYPE -&gt; new MoneyWiseSheetLoanCategoryType(this);</span>
+<span class="fc" id="L75">            case PORTFOLIOTYPE -&gt; new MoneyWiseSheetPortfolioType(this);</span>
+<span class="fc" id="L76">            case PAYEETYPE -&gt; new MoneyWiseSheetPayeeType(this);</span>
+<span class="fc" id="L77">            case SECURITYTYPE -&gt; new MoneyWiseSheetSecurityType(this);</span>
+<span class="fc" id="L78">            case TRANSTYPE -&gt; new MoneyWiseSheetTransCategoryType(this);</span>
+<span class="fc" id="L79">            case ACCOUNTINFOTYPE -&gt; new MoneyWiseSheetAccountInfoType(this);</span>
+<span class="fc" id="L80">            case TRANSINFOTYPE -&gt; new MoneyWiseSheetTransInfoType(this);</span>
+<span class="fc" id="L81">            case CURRENCY -&gt; new MoneyWiseSheetCurrency(this);</span>
+<span class="fc" id="L82">            case TAXBASIS -&gt; new MoneyWiseSheetTaxBasis(this);</span>
+<span class="nc" id="L83">            default -&gt; throw new IllegalArgumentException(pDataType.toString());</span>
+        };
     }
 
     /**
@@ -107,56 +92,32 @@ public class MoneyWiseReader
      */
     private PrometheusSheetDataItem&lt;?&gt; newSheet(final MoneyWiseBasicDataType pDataType) {
         /* Switch on data Type */
-<span class="pc bpc" id="L110" title="1 of 24 branches missed.">        switch (pDataType) {</span>
-            case TRANSTAG:
-<span class="fc" id="L112">                return new MoneyWiseSheetTransTag(this);</span>
-            case REGION:
-<span class="fc" id="L114">                return new MoneyWiseSheetRegion(this);</span>
-            case DEPOSITCATEGORY:
-<span class="fc" id="L116">                return new MoneyWiseSheetDepositCategory(this);</span>
-            case CASHCATEGORY:
-<span class="fc" id="L118">                return new MoneyWiseSheetCashCategory(this);</span>
-            case LOANCATEGORY:
-<span class="fc" id="L120">                return new MoneyWiseSheetLoanCategory(this);</span>
-            case TRANSCATEGORY:
-<span class="fc" id="L122">                return new MoneyWiseSheetTransCategory(this);</span>
-            case EXCHANGERATE:
-<span class="fc" id="L124">                return new MoneyWiseSheetExchangeRate(this);</span>
-            case PAYEE:
-<span class="fc" id="L126">                return new MoneyWiseSheetPayee(this);</span>
-            case PAYEEINFO:
-<span class="fc" id="L128">                return new MoneyWiseSheetPayeeInfo(this);</span>
-            case SECURITY:
-<span class="fc" id="L130">                return new MoneyWiseSheetSecurity(this);</span>
-            case SECURITYPRICE:
-<span class="fc" id="L132">                return new MoneyWiseSheetSecurityPrice(this);</span>
-            case SECURITYINFO:
-<span class="fc" id="L134">                return new MoneyWiseSheetSecurityInfo(this);</span>
-            case DEPOSIT:
-<span class="fc" id="L136">                return new MoneyWiseSheetDeposit(this);</span>
-            case DEPOSITRATE:
-<span class="fc" id="L138">                return new MoneyWiseSheetDepositRate(this);</span>
-            case DEPOSITINFO:
-<span class="fc" id="L140">                return new MoneyWiseSheetDepositInfo(this);</span>
-            case CASH:
-<span class="fc" id="L142">                return new MoneyWiseSheetCash(this);</span>
-            case CASHINFO:
-<span class="fc" id="L144">                return new MoneyWiseSheetCashInfo(this);</span>
-            case LOAN:
-<span class="fc" id="L146">                return new MoneyWiseSheetLoan(this);</span>
-            case LOANINFO:
-<span class="fc" id="L148">                return new MoneyWiseSheetLoanInfo(this);</span>
-            case PORTFOLIO:
-<span class="fc" id="L150">                return new MoneyWiseSheetPortfolio(this);</span>
-            case PORTFOLIOINFO:
-<span class="fc" id="L152">                return new MoneyWiseSheetPortfolioInfo(this);</span>
-            case TRANSACTION:
-<span class="fc" id="L154">                return new MoneyWiseSheetTransaction(this);</span>
-            case TRANSACTIONINFO:
-<span class="fc" id="L156">                return new MoneyWiseSheetTransInfo(this);</span>
-            default:
-<span class="nc" id="L158">                throw new IllegalArgumentException(pDataType.toString());</span>
-        }
+<span class="pc bpc" id="L95" title="1 of 24 branches missed.">        return switch (pDataType) {</span>
+<span class="fc" id="L96">            case TRANSTAG -&gt; new MoneyWiseSheetTransTag(this);</span>
+<span class="fc" id="L97">            case REGION -&gt; new MoneyWiseSheetRegion(this);</span>
+<span class="fc" id="L98">            case DEPOSITCATEGORY -&gt; new MoneyWiseSheetDepositCategory(this);</span>
+<span class="fc" id="L99">            case CASHCATEGORY -&gt; new MoneyWiseSheetCashCategory(this);</span>
+<span class="fc" id="L100">            case LOANCATEGORY -&gt; new MoneyWiseSheetLoanCategory(this);</span>
+<span class="fc" id="L101">            case TRANSCATEGORY -&gt; new MoneyWiseSheetTransCategory(this);</span>
+<span class="fc" id="L102">            case EXCHANGERATE -&gt; new MoneyWiseSheetExchangeRate(this);</span>
+<span class="fc" id="L103">            case PAYEE -&gt; new MoneyWiseSheetPayee(this);</span>
+<span class="fc" id="L104">            case PAYEEINFO -&gt; new MoneyWiseSheetPayeeInfo(this);</span>
+<span class="fc" id="L105">            case SECURITY -&gt; new MoneyWiseSheetSecurity(this);</span>
+<span class="fc" id="L106">            case SECURITYPRICE -&gt; new MoneyWiseSheetSecurityPrice(this);</span>
+<span class="fc" id="L107">            case SECURITYINFO -&gt; new MoneyWiseSheetSecurityInfo(this);</span>
+<span class="fc" id="L108">            case DEPOSIT -&gt; new MoneyWiseSheetDeposit(this);</span>
+<span class="fc" id="L109">            case DEPOSITRATE -&gt; new MoneyWiseSheetDepositRate(this);</span>
+<span class="fc" id="L110">            case DEPOSITINFO -&gt; new MoneyWiseSheetDepositInfo(this);</span>
+<span class="fc" id="L111">            case CASH -&gt; new MoneyWiseSheetCash(this);</span>
+<span class="fc" id="L112">            case CASHINFO -&gt; new MoneyWiseSheetCashInfo(this);</span>
+<span class="fc" id="L113">            case LOAN -&gt; new MoneyWiseSheetLoan(this);</span>
+<span class="fc" id="L114">            case LOANINFO -&gt; new MoneyWiseSheetLoanInfo(this);</span>
+<span class="fc" id="L115">            case PORTFOLIO -&gt; new MoneyWiseSheetPortfolio(this);</span>
+<span class="fc" id="L116">            case PORTFOLIOINFO -&gt; new MoneyWiseSheetPortfolioInfo(this);</span>
+<span class="fc" id="L117">            case TRANSACTION -&gt; new MoneyWiseSheetTransaction(this);</span>
+<span class="fc" id="L118">            case TRANSACTIONINFO -&gt; new MoneyWiseSheetTransInfo(this);</span>
+<span class="nc" id="L119">            default -&gt; throw new IllegalArgumentException(pDataType.toString());</span>
+        };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

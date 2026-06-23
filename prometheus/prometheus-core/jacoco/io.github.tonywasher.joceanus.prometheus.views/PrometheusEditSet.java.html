@@ -16,6 +16,12 @@
  */
 package io.github.tonywasher.joceanus.prometheus.views;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerErrorList;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
@@ -24,15 +30,10 @@ import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
-import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
-import io.github.tonywasher.joceanus.metis.list.MetisListKey;
-import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
-import io.github.tonywasher.joceanus.metis.viewer.MetisViewerErrorList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataListCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetListCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 
@@ -44,24 +45,24 @@ import java.util.Map;
  * Provides control of a set of update-able DataLists.
  */
 public class PrometheusEditSet
-        implements MetisFieldItem, OceanusEventProvider&lt;PrometheusDataEvent&gt;, PrometheusDataListSet {
+        implements MetisFieldItem, OceanusEventProvider&lt;PrometheusDataEvent&gt;, PrometheusDataSetListCtl {
     /**
      * Report fields.
      */
     @SuppressWarnings(&quot;rawtypes&quot;)
-<span class="nc" id="L52">    private static final MetisFieldSet&lt;PrometheusEditSet&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusEditSet.class);</span>
+<span class="nc" id="L53">    private static final MetisFieldSet&lt;PrometheusEditSet&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusEditSet.class);</span>
 
     /*
      * Declare Fields.
      */
     static {
-<span class="nc" id="L58">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION, PrometheusEditSet::getVersion);</span>
+<span class="nc" id="L59">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION, PrometheusEditSet::getVersion);</span>
     }
 
     /**
      * Logger.
      */
-<span class="nc" id="L64">    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(PrometheusEditSet.class);</span>
+<span class="nc" id="L65">    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(PrometheusEditSet.class);</span>
 
     /**
      * The Event Manager.
@@ -97,7 +98,7 @@ public class PrometheusEditSet
     /**
      * Are we editing?
      */
-<span class="nc" id="L100">    private Boolean itemEditing = Boolean.FALSE;</span>
+<span class="nc" id="L101">    private Boolean itemEditing = Boolean.FALSE;</span>
 
     /**
      * Constructor for an update list.
@@ -105,8 +106,8 @@ public class PrometheusEditSet
      * @param pControl the Data Control
      */
     public PrometheusEditSet(final PrometheusDataControl pControl) {
-<span class="nc" id="L108">        this(pControl, pControl.getData());</span>
-<span class="nc" id="L109">    }</span>
+<span class="nc" id="L109">        this(pControl, pControl.getData());</span>
+<span class="nc" id="L110">    }</span>
 
     /**
      * Constructor for an update list.
@@ -115,35 +116,35 @@ public class PrometheusEditSet
      * @param pDataSet the DataSet
      */
     public PrometheusEditSet(final PrometheusDataControl pControl,
-<span class="nc" id="L118">                             final PrometheusDataSet pDataSet) {</span>
+<span class="nc" id="L119">                             final PrometheusDataSet pDataSet) {</span>
         /* Store the Control */
-<span class="nc" id="L120">        theControl = pControl;</span>
-<span class="nc" id="L121">        theDataSet = pDataSet;</span>
+<span class="nc" id="L121">        theControl = pControl;</span>
+<span class="nc" id="L122">        theDataSet = pDataSet;</span>
 
         /* Create event manager */
-<span class="nc" id="L124">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+<span class="nc" id="L125">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
 
         /* Create local fields */
-<span class="nc" id="L127">        theLocalFields = MetisFieldSet.newFieldSet(this);</span>
+<span class="nc" id="L128">        theLocalFields = MetisFieldSet.newFieldSet(this);</span>
 
         /* Create the map */
-<span class="nc" id="L130">        theMap = new LinkedHashMap&lt;&gt;();</span>
-<span class="nc" id="L131">    }</span>
+<span class="nc" id="L131">        theMap = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L132">    }</span>
 
     @SuppressWarnings(&quot;rawtypes&quot;)
     @Override
     public MetisFieldSet&lt;PrometheusEditSet&gt; getDataFieldSet() {
-<span class="nc" id="L136">        return theLocalFields;</span>
+<span class="nc" id="L137">        return theLocalFields;</span>
     }
 
     @Override
     public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L141">        return getDataFieldSet().getName();</span>
+<span class="nc" id="L142">        return getDataFieldSet().getName();</span>
     }
 
     @Override
     public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
-<span class="nc" id="L146">        return theEventManager.getEventRegistrar();</span>
+<span class="nc" id="L147">        return theEventManager.getEventRegistrar();</span>
     }
 
     /**
@@ -152,8 +153,8 @@ public class PrometheusEditSet
      * @param pFlag the editing flag
      */
     public void setEditing(final Boolean pFlag) {
-<span class="nc" id="L155">        itemEditing = pFlag;</span>
-<span class="nc" id="L156">    }</span>
+<span class="nc" id="L156">        itemEditing = pFlag;</span>
+<span class="nc" id="L157">    }</span>
 
     /**
      * Is the item editing?
@@ -161,7 +162,7 @@ public class PrometheusEditSet
      * @return true/false
      */
     public Boolean isEditing() {
-<span class="nc" id="L164">        return itemEditing;</span>
+<span class="nc" id="L165">        return itemEditing;</span>
     }
 
     /**
@@ -170,7 +171,7 @@ public class PrometheusEditSet
      * @return the version
      */
     public int getVersion() {
-<span class="nc" id="L173">        return theVersion;</span>
+<span class="nc" id="L174">        return theVersion;</span>
     }
 
     /**
@@ -179,7 +180,7 @@ public class PrometheusEditSet
      * @return the dataSet
      */
     public PrometheusDataSet getDataSet() {
-<span class="nc" id="L182">        return theDataSet;</span>
+<span class="nc" id="L183">        return theDataSet;</span>
     }
 
     /**
@@ -188,8 +189,8 @@ public class PrometheusEditSet
      * @param pDataSet the dataSet
      */
     public void setDataSet(final PrometheusDataSet pDataSet) {
-<span class="nc" id="L191">        theDataSet = pDataSet;</span>
-<span class="nc" id="L192">    }</span>
+<span class="nc" id="L192">        theDataSet = pDataSet;</span>
+<span class="nc" id="L193">    }</span>
 
     /**
      * Register an entry for a class.
@@ -200,16 +201,16 @@ public class PrometheusEditSet
      */
     public &lt;T extends PrometheusDataItem&gt; PrometheusEditEntry&lt;T&gt; registerType(final MetisListKey pDataType) {
         /* Locate any existing entry */
-<span class="nc" id="L203">        @SuppressWarnings(&quot;unchecked&quot;) final PrometheusEditEntry&lt;T&gt; myEntry = (PrometheusEditEntry&lt;T&gt;) theMap.computeIfAbsent(pDataType, t -&gt; {</span>
+<span class="nc" id="L204">        @SuppressWarnings(&quot;unchecked&quot;) final PrometheusEditEntry&lt;T&gt; myEntry = (PrometheusEditEntry&lt;T&gt;) theMap.computeIfAbsent(pDataType, t -&gt; {</span>
             /* Not found , so add it */
-<span class="nc" id="L205">            final PrometheusEditEntry&lt;T&gt; myNewEntry = new PrometheusEditEntry&lt;&gt;(t);</span>
-<span class="nc" id="L206">            theLocalFields.declareLocalField(myNewEntry.getName(), n -&gt; myNewEntry);</span>
-<span class="nc" id="L207">            return myNewEntry;</span>
+<span class="nc" id="L206">            final PrometheusEditEntry&lt;T&gt; myNewEntry = new PrometheusEditEntry&lt;&gt;(t);</span>
+<span class="nc" id="L207">            theLocalFields.declareLocalField(myNewEntry.getName(), n -&gt; myNewEntry);</span>
+<span class="nc" id="L208">            return myNewEntry;</span>
         });
 
         /* Update list to null and return */
-<span class="nc" id="L211">        myEntry.setDataList(null);</span>
-<span class="nc" id="L212">        return myEntry;</span>
+<span class="nc" id="L212">        myEntry.setDataList(null);</span>
+<span class="nc" id="L213">        return myEntry;</span>
     }
 
     /**
@@ -223,20 +224,20 @@ public class PrometheusEditSet
      * @return the list
      */
     @Override
-    public &lt;L extends PrometheusDataList&lt;?&gt;&gt; L getDataList(final MetisListKey pDataType,
-                                                           final Class&lt;L&gt; pClass) {
+    public &lt;L extends PrometheusDataListCtl&lt;?&gt;&gt; L getDataList(final MetisListKey pDataType,
+                                                              final Class&lt;L&gt; pClass) {
         /* Locate an existing entry */
-<span class="nc" id="L229">        final PrometheusEditEntry&lt;?&gt; myEntry = theMap.get(pDataType);</span>
+<span class="nc" id="L230">        final PrometheusEditEntry&lt;?&gt; myEntry = theMap.get(pDataType);</span>
 
         /* Cast correctly */
-<span class="nc bnc" id="L232" title="All 2 branches missed.">        return myEntry != null</span>
-<span class="nc" id="L233">                ? pClass.cast(myEntry.getDataList())</span>
-<span class="nc" id="L234">                : theDataSet.getDataList(pDataType, pClass);</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">        return myEntry != null</span>
+<span class="nc" id="L234">                ? pClass.cast(myEntry.getDataList())</span>
+<span class="nc" id="L235">                : theDataSet.getDataList(pDataType, pClass);</span>
     }
 
     @Override
     public boolean hasDataType(final MetisListKey pDataType) {
-<span class="nc" id="L239">        return theMap.containsKey(pDataType);</span>
+<span class="nc" id="L240">        return theMap.containsKey(pDataType);</span>
     }
 
     /**
@@ -248,9 +249,9 @@ public class PrometheusEditSet
      */
     public &lt;T extends PrometheusDataItem&gt; void setEditEntryList(final MetisListKey pDataType,
                                                                 final PrometheusDataList&lt;T&gt; pList) {
-<span class="nc" id="L251">        @SuppressWarnings(&quot;unchecked&quot;) final PrometheusEditEntry&lt;T&gt; myEntry = (PrometheusEditEntry&lt;T&gt;) theMap.get(pDataType);</span>
-<span class="nc" id="L252">        myEntry.setDataList(pList);</span>
-<span class="nc" id="L253">    }</span>
+<span class="nc" id="L252">        @SuppressWarnings(&quot;unchecked&quot;) final PrometheusEditEntry&lt;T&gt; myEntry = (PrometheusEditEntry&lt;T&gt;) theMap.get(pDataType);</span>
+<span class="nc" id="L253">        myEntry.setDataList(pList);</span>
+<span class="nc" id="L254">    }</span>
 
     /**
      * Obtain an iterator over the listKeys.
@@ -258,7 +259,7 @@ public class PrometheusEditSet
      * @return the iterator
      */
     public Iterator&lt;MetisListKey&gt; keyIterator() {
-<span class="nc" id="L261">        return theMap.keySet().iterator();</span>
+<span class="nc" id="L262">        return theMap.keySet().iterator();</span>
     }
 
     /**
@@ -267,7 +268,7 @@ public class PrometheusEditSet
      * @return the iterator
      */
     public Iterator&lt;PrometheusEditEntry&lt;?&gt;&gt; listIterator() {
-<span class="nc" id="L270">        return theMap.values().iterator();</span>
+<span class="nc" id="L271">        return theMap.values().iterator();</span>
     }
 
     /**
@@ -275,37 +276,37 @@ public class PrometheusEditSet
      */
     public void incrementVersion() {
         /* Obtain the active profile */
-<span class="nc" id="L278">        final OceanusProfile myTask = theControl.getActiveTask();</span>
-<span class="nc bnc" id="L279" title="All 2 branches missed.">        final OceanusProfile mySubTask = myTask == null</span>
-<span class="nc" id="L280">                ? theControl.getNewProfile(&quot;incrementVersion&quot;)</span>
-<span class="nc" id="L281">                : myTask.startTask(&quot;incrementVersion&quot;);</span>
+<span class="nc" id="L279">        final OceanusProfile myTask = theControl.getActiveTask();</span>
+<span class="nc bnc" id="L280" title="All 2 branches missed.">        final OceanusProfile mySubTask = myTask == null</span>
+<span class="nc" id="L281">                ? theControl.getNewProfile(&quot;incrementVersion&quot;)</span>
+<span class="nc" id="L282">                : myTask.startTask(&quot;incrementVersion&quot;);</span>
 
         /* Increment the version */
-<span class="nc" id="L284">        theVersion++;</span>
+<span class="nc" id="L285">        theVersion++;</span>
 
         /* Loop through the items in the list */
-<span class="nc bnc" id="L287" title="All 2 branches missed.">        for (PrometheusEditEntry&lt;?&gt; myEntry : theMap.values()) {</span>
+<span class="nc bnc" id="L288" title="All 2 branches missed.">        for (PrometheusEditEntry&lt;?&gt; myEntry : theMap.values()) {</span>
             /* Access list */
-<span class="nc" id="L289">            final PrometheusDataList&lt;?&gt; myDataList = myEntry.getDataList();</span>
+<span class="nc" id="L290">            final PrometheusDataList&lt;?&gt; myDataList = myEntry.getDataList();</span>
 
             /* Increment the version if the list exists */
-<span class="nc bnc" id="L292" title="All 2 branches missed.">            if (myDataList != null) {</span>
+<span class="nc bnc" id="L293" title="All 2 branches missed.">            if (myDataList != null) {</span>
                 /* Note the new step */
-<span class="nc" id="L294">                mySubTask.startTask(myDataList.listName());</span>
+<span class="nc" id="L295">                mySubTask.startTask(myDataList.listName());</span>
 
                 /* Set the new version */
-<span class="nc" id="L297">                myDataList.setVersion(theVersion);</span>
+<span class="nc" id="L298">                myDataList.setVersion(theVersion);</span>
 
                 /* postProcess */
-<span class="nc bnc" id="L300" title="All 2 branches missed.">                if (Boolean.FALSE.equals(itemEditing)) {</span>
-<span class="nc" id="L301">                    myDataList.postProcessOnUpdate();</span>
+<span class="nc bnc" id="L301" title="All 2 branches missed.">                if (Boolean.FALSE.equals(itemEditing)) {</span>
+<span class="nc" id="L302">                    myDataList.postProcessOnUpdate();</span>
                 }
             }
-<span class="nc" id="L304">        }</span>
+<span class="nc" id="L305">        }</span>
 
         /* Complete the task */
-<span class="nc" id="L307">        mySubTask.end();</span>
-<span class="nc" id="L308">    }</span>
+<span class="nc" id="L308">        mySubTask.end();</span>
+<span class="nc" id="L309">    }</span>
 
     /**
      * Rewind items to the required version.
@@ -314,144 +315,144 @@ public class PrometheusEditSet
      */
     private void rewindToVersion(final int pVersion) {
         /* Obtain the active profile */
-<span class="nc" id="L317">        final OceanusProfile myTask = theControl.getActiveTask();</span>
-<span class="nc" id="L318">        OceanusProfile mySubTask = myTask.startTask(&quot;reWindToVersion&quot;);</span>
+<span class="nc" id="L318">        final OceanusProfile myTask = theControl.getActiveTask();</span>
+<span class="nc" id="L319">        OceanusProfile mySubTask = myTask.startTask(&quot;reWindToVersion&quot;);</span>
 
         /* Record the version */
-<span class="nc" id="L321">        theVersion = pVersion;</span>
+<span class="nc" id="L322">        theVersion = pVersion;</span>
 
         /* Loop through the items in the list */
-<span class="nc" id="L324">        Iterator&lt;PrometheusEditEntry&lt;?&gt;&gt; myIterator = theMap.values().iterator();</span>
-<span class="nc bnc" id="L325" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L325">        Iterator&lt;PrometheusEditEntry&lt;?&gt;&gt; myIterator = theMap.values().iterator();</span>
+<span class="nc bnc" id="L326" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
             /* Access list */
-<span class="nc" id="L327">            final PrometheusEditEntry&lt;?&gt; myEntry = myIterator.next();</span>
-<span class="nc" id="L328">            final PrometheusDataList&lt;?&gt; myDataList = myEntry.getDataList();</span>
+<span class="nc" id="L328">            final PrometheusEditEntry&lt;?&gt; myEntry = myIterator.next();</span>
+<span class="nc" id="L329">            final PrometheusDataList&lt;?&gt; myDataList = myEntry.getDataList();</span>
 
             /* If the list exists */
-<span class="nc bnc" id="L331" title="All 2 branches missed.">            if (myDataList != null) {</span>
+<span class="nc bnc" id="L332" title="All 2 branches missed.">            if (myDataList != null) {</span>
                 /* Note the new step */
-<span class="nc" id="L333">                mySubTask.startTask(myDataList.listName());</span>
+<span class="nc" id="L334">                mySubTask.startTask(myDataList.listName());</span>
 
                 /* Rewind the version */
-<span class="nc" id="L336">                myDataList.rewindToVersion(theVersion);</span>
+<span class="nc" id="L337">                myDataList.rewindToVersion(theVersion);</span>
             }
-<span class="nc" id="L338">        }</span>
+<span class="nc" id="L339">        }</span>
 
         /* Need to validate after full reWind to avoid false errors */
-<span class="nc" id="L341">        mySubTask = myTask.startTask(&quot;postProcess&quot;);</span>
-<span class="nc" id="L342">        myIterator = theMap.values().iterator();</span>
-<span class="nc bnc" id="L343" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L342">        mySubTask = myTask.startTask(&quot;postProcess&quot;);</span>
+<span class="nc" id="L343">        myIterator = theMap.values().iterator();</span>
+<span class="nc bnc" id="L344" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
             /* Access list */
-<span class="nc" id="L345">            final PrometheusEditEntry&lt;?&gt; myEntry = myIterator.next();</span>
-<span class="nc" id="L346">            final PrometheusDataList&lt;?&gt; myDataList = myEntry.getDataList();</span>
+<span class="nc" id="L346">            final PrometheusEditEntry&lt;?&gt; myEntry = myIterator.next();</span>
+<span class="nc" id="L347">            final PrometheusDataList&lt;?&gt; myDataList = myEntry.getDataList();</span>
 
             /* If the list exists */
-<span class="nc bnc" id="L349" title="All 2 branches missed.">            if (myDataList != null) {</span>
+<span class="nc bnc" id="L350" title="All 2 branches missed.">            if (myDataList != null) {</span>
                 /* Note the new step */
-<span class="nc" id="L351">                mySubTask.startTask(myDataList.listName());</span>
+<span class="nc" id="L352">                mySubTask.startTask(myDataList.listName());</span>
 
                 /* postProcess */
-<span class="nc bnc" id="L354" title="All 2 branches missed.">                if (Boolean.FALSE.equals(itemEditing)) {</span>
-<span class="nc" id="L355">                    myDataList.postProcessOnUpdate();</span>
+<span class="nc bnc" id="L355" title="All 2 branches missed.">                if (Boolean.FALSE.equals(itemEditing)) {</span>
+<span class="nc" id="L356">                    myDataList.postProcessOnUpdate();</span>
                 }
             }
-<span class="nc" id="L358">        }</span>
+<span class="nc" id="L359">        }</span>
 
         /* Note the new step */
-<span class="nc" id="L361">        mySubTask = myTask.startTask(&quot;Notify&quot;);</span>
+<span class="nc" id="L362">        mySubTask = myTask.startTask(&quot;Notify&quot;);</span>
 
         /* Fire that we have rewound the updateSet */
-<span class="nc" id="L364">        theEventManager.fireEvent(PrometheusDataEvent.DATACHANGED);</span>
+<span class="nc" id="L365">        theEventManager.fireEvent(PrometheusDataEvent.DATACHANGED);</span>
 
         /* Complete the task */
-<span class="nc" id="L367">        mySubTask.end();</span>
-<span class="nc" id="L368">    }</span>
+<span class="nc" id="L368">        mySubTask.end();</span>
+<span class="nc" id="L369">    }</span>
 
     /**
      * Undo changes in a viewSet.
      */
     private void undoLastChange() {
         /* Ignore if we have no changes */
-<span class="nc bnc" id="L375" title="All 2 branches missed.">        if (theVersion == 0) {</span>
-<span class="nc" id="L376">            return;</span>
+<span class="nc bnc" id="L376" title="All 2 branches missed.">        if (theVersion == 0) {</span>
+<span class="nc" id="L377">            return;</span>
         }
 
         /* Decrement version */
-<span class="nc" id="L380">        theVersion--;</span>
+<span class="nc" id="L381">        theVersion--;</span>
 
         /* Rewind to the version */
-<span class="nc" id="L383">        rewindToVersion(theVersion);</span>
-<span class="nc" id="L384">    }</span>
+<span class="nc" id="L384">        rewindToVersion(theVersion);</span>
+<span class="nc" id="L385">    }</span>
 
     /**
      * Reset changes in a viewSet.
      */
     private void resetChanges() {
         /* Ignore if we have no changes */
-<span class="nc bnc" id="L391" title="All 2 branches missed.">        if (theVersion == 0) {</span>
-<span class="nc" id="L392">            return;</span>
+<span class="nc bnc" id="L392" title="All 2 branches missed.">        if (theVersion == 0) {</span>
+<span class="nc" id="L393">            return;</span>
         }
 
         /* Decrement version */
-<span class="nc" id="L396">        theVersion = 0;</span>
+<span class="nc" id="L397">        theVersion = 0;</span>
 
         /* Rewind to the version */
-<span class="nc" id="L399">        rewindToVersion(theVersion);</span>
-<span class="nc" id="L400">    }</span>
+<span class="nc" id="L400">        rewindToVersion(theVersion);</span>
+<span class="nc" id="L401">    }</span>
 
     /**
      * Apply changes in a ViewSet into the core data.
      */
     private void applyChanges() {
         /* Obtain the active profile */
-<span class="nc" id="L407">        final OceanusProfile myTask = theControl.getActiveTask();</span>
-<span class="nc" id="L408">        final OceanusProfile mySubTask = myTask.startTask(&quot;applyChanges&quot;);</span>
+<span class="nc" id="L408">        final OceanusProfile myTask = theControl.getActiveTask();</span>
+<span class="nc" id="L409">        final OceanusProfile mySubTask = myTask.startTask(&quot;applyChanges&quot;);</span>
 
         /* Validate the changes */
-<span class="nc" id="L411">        validate();</span>
+<span class="nc" id="L412">        validate();</span>
 
         /* Reject request if there are errors */
-<span class="nc bnc" id="L414" title="All 2 branches missed.">        if (hasErrors()) {</span>
+<span class="nc bnc" id="L415" title="All 2 branches missed.">        if (hasErrors()) {</span>
             /* We have finished */
-<span class="nc" id="L416">            mySubTask.startTask(&quot;Notify&quot;);</span>
+<span class="nc" id="L417">            mySubTask.startTask(&quot;Notify&quot;);</span>
 
             /* Fire that we have rewound the updateSet */
-<span class="nc" id="L419">            theEventManager.fireEvent(PrometheusDataEvent.DATACHANGED);</span>
+<span class="nc" id="L420">            theEventManager.fireEvent(PrometheusDataEvent.DATACHANGED);</span>
 
             /* Complete the task */
-<span class="nc" id="L422">            mySubTask.end();</span>
-<span class="nc" id="L423">            return;</span>
+<span class="nc" id="L423">            mySubTask.end();</span>
+<span class="nc" id="L424">            return;</span>
         }
 
         /* Apply the changes */
-<span class="nc" id="L427">        boolean bSuccess = prepareChanges();</span>
+<span class="nc" id="L428">        boolean bSuccess = prepareChanges();</span>
 
         /* analyse the data */
-<span class="nc bnc" id="L430" title="All 2 branches missed.">        if (bSuccess) {</span>
+<span class="nc bnc" id="L431" title="All 2 branches missed.">        if (bSuccess) {</span>
             /* Analyse the applied changes */
-<span class="nc" id="L432">            bSuccess = theControl.analyseData(false);</span>
+<span class="nc" id="L433">            bSuccess = theControl.analyseData(false);</span>
         }
 
         /* If we were successful */
-<span class="nc bnc" id="L436" title="All 2 branches missed.">        if (bSuccess) {</span>
+<span class="nc bnc" id="L437" title="All 2 branches missed.">        if (bSuccess) {</span>
             /* Commit the changes */
-<span class="nc" id="L438">            commitChanges();</span>
+<span class="nc" id="L439">            commitChanges();</span>
 
             /* Refresh views */
-<span class="nc" id="L441">            theControl.refreshViews();</span>
+<span class="nc" id="L442">            theControl.refreshViews();</span>
 
             /* else we failed */
         } else {
             /* RollBack the changes */
-<span class="nc" id="L446">            rollBackChanges();</span>
+<span class="nc" id="L447">            rollBackChanges();</span>
 
             /* Re-analyse the data */
-<span class="nc" id="L449">            theControl.analyseData(true);</span>
+<span class="nc" id="L450">            theControl.analyseData(true);</span>
         }
 
         /* Complete the task */
-<span class="nc" id="L453">        mySubTask.end();</span>
-<span class="nc" id="L454">    }</span>
+<span class="nc" id="L454">        mySubTask.end();</span>
+<span class="nc" id="L455">    }</span>
 
     /**
      * Prepare changes in a ViewSet back into the core data.
@@ -460,29 +461,29 @@ public class PrometheusEditSet
      */
     private boolean prepareChanges() {
         /* Obtain the active profile */
-<span class="nc" id="L463">        final OceanusProfile myTask = theControl.getActiveTask();</span>
-<span class="nc" id="L464">        final OceanusProfile mySubTask = myTask.startTask(&quot;prepareChanges&quot;);</span>
-<span class="nc" id="L465">        boolean bSuccess = true;</span>
+<span class="nc" id="L464">        final OceanusProfile myTask = theControl.getActiveTask();</span>
+<span class="nc" id="L465">        final OceanusProfile mySubTask = myTask.startTask(&quot;prepareChanges&quot;);</span>
+<span class="nc" id="L466">        boolean bSuccess = true;</span>
 
         /* Protect against exceptions */
         try {
             /* Loop through the items in the list */
-<span class="nc bnc" id="L470" title="All 2 branches missed.">            for (PrometheusEditEntry&lt;?&gt; myEntry : theMap.values()) {</span>
+<span class="nc bnc" id="L471" title="All 2 branches missed.">            for (PrometheusEditEntry&lt;?&gt; myEntry : theMap.values()) {</span>
                 /* Note the new step */
-<span class="nc" id="L472">                mySubTask.startTask(myEntry.getName());</span>
+<span class="nc" id="L473">                mySubTask.startTask(myEntry.getName());</span>
 
                 /* Prepare changes for the entry */
-<span class="nc" id="L475">                myEntry.prepareChanges();</span>
-<span class="nc" id="L476">            }</span>
+<span class="nc" id="L476">                myEntry.prepareChanges();</span>
+<span class="nc" id="L477">            }</span>
 
-<span class="nc" id="L478">        } catch (OceanusException e) {</span>
-<span class="nc" id="L479">            LOGGER.error(&quot;Failed to prepare changes&quot;, e);</span>
-<span class="nc" id="L480">            bSuccess = false;</span>
-<span class="nc" id="L481">        }</span>
+<span class="nc" id="L479">        } catch (OceanusException e) {</span>
+<span class="nc" id="L480">            LOGGER.error(&quot;Failed to prepare changes&quot;, e);</span>
+<span class="nc" id="L481">            bSuccess = false;</span>
+<span class="nc" id="L482">        }</span>
 
         /* Complete the task */
-<span class="nc" id="L484">        mySubTask.end();</span>
-<span class="nc" id="L485">        return bSuccess;</span>
+<span class="nc" id="L485">        mySubTask.end();</span>
+<span class="nc" id="L486">        return bSuccess;</span>
     }
 
     /**
@@ -490,46 +491,46 @@ public class PrometheusEditSet
      */
     private void commitChanges() {
         /* Obtain the active profile */
-<span class="nc" id="L493">        final OceanusProfile myTask = theControl.getActiveTask();</span>
-<span class="nc" id="L494">        final OceanusProfile mySubTask = myTask.startTask(&quot;commitChanges&quot;);</span>
+<span class="nc" id="L494">        final OceanusProfile myTask = theControl.getActiveTask();</span>
+<span class="nc" id="L495">        final OceanusProfile mySubTask = myTask.startTask(&quot;commitChanges&quot;);</span>
 
         /* Loop through the items in the list */
-<span class="nc bnc" id="L497" title="All 2 branches missed.">        for (PrometheusEditEntry&lt;?&gt; myEntry : theMap.values()) {</span>
+<span class="nc bnc" id="L498" title="All 2 branches missed.">        for (PrometheusEditEntry&lt;?&gt; myEntry : theMap.values()) {</span>
             /* Note the new step */
-<span class="nc" id="L499">            mySubTask.startTask(myEntry.getName());</span>
+<span class="nc" id="L500">            mySubTask.startTask(myEntry.getName());</span>
 
             /* Commit changes for the entry */
-<span class="nc" id="L502">            myEntry.commitChanges();</span>
-<span class="nc" id="L503">        }</span>
+<span class="nc" id="L503">            myEntry.commitChanges();</span>
+<span class="nc" id="L504">        }</span>
 
         /* Increment the version and notify listeners */
-<span class="nc" id="L506">        theControl.incrementVersion();</span>
-<span class="nc" id="L507">        theVersion = 0;</span>
+<span class="nc" id="L507">        theControl.incrementVersion();</span>
+<span class="nc" id="L508">        theVersion = 0;</span>
 
         /* Complete the task */
-<span class="nc" id="L510">        mySubTask.end();</span>
-<span class="nc" id="L511">    }</span>
+<span class="nc" id="L511">        mySubTask.end();</span>
+<span class="nc" id="L512">    }</span>
 
     /**
      * RollBack changes in a ViewSet back into the core data.
      */
     private void rollBackChanges() {
         /* Obtain the active profile */
-<span class="nc" id="L518">        final OceanusProfile myTask = theControl.getActiveTask();</span>
-<span class="nc" id="L519">        final OceanusProfile mySubTask = myTask.startTask(&quot;rollBackChanges&quot;);</span>
+<span class="nc" id="L519">        final OceanusProfile myTask = theControl.getActiveTask();</span>
+<span class="nc" id="L520">        final OceanusProfile mySubTask = myTask.startTask(&quot;rollBackChanges&quot;);</span>
 
         /* Loop through the items in the list */
-<span class="nc bnc" id="L522" title="All 2 branches missed.">        for (PrometheusEditEntry&lt;?&gt; myEntry : theMap.values()) {</span>
+<span class="nc bnc" id="L523" title="All 2 branches missed.">        for (PrometheusEditEntry&lt;?&gt; myEntry : theMap.values()) {</span>
             /* Note the new step */
-<span class="nc" id="L524">            mySubTask.startTask(myEntry.getName());</span>
+<span class="nc" id="L525">            mySubTask.startTask(myEntry.getName());</span>
 
             /* RollBack changes for the entry */
-<span class="nc" id="L527">            myEntry.rollBackChanges();</span>
-<span class="nc" id="L528">        }</span>
+<span class="nc" id="L528">            myEntry.rollBackChanges();</span>
+<span class="nc" id="L529">        }</span>
 
         /* Complete the task */
-<span class="nc" id="L531">        mySubTask.end();</span>
-<span class="nc" id="L532">    }</span>
+<span class="nc" id="L532">        mySubTask.end();</span>
+<span class="nc" id="L533">    }</span>
 
     /**
      * Has this UpdateSet got updates?
@@ -538,7 +539,7 @@ public class PrometheusEditSet
      */
     public boolean hasUpdates() {
         /* We have changes if version is non-zero */
-<span class="nc bnc" id="L541" title="All 2 branches missed.">        return theVersion != 0;</span>
+<span class="nc bnc" id="L542" title="All 2 branches missed.">        return theVersion != 0;</span>
     }
 
     /**
@@ -548,18 +549,18 @@ public class PrometheusEditSet
      */
     public boolean hasErrors() {
         /* Loop through the items in the list */
-<span class="nc bnc" id="L551" title="All 2 branches missed.">        for (PrometheusEditEntry&lt;?&gt; myEntry : theMap.values()) {</span>
+<span class="nc bnc" id="L552" title="All 2 branches missed.">        for (PrometheusEditEntry&lt;?&gt; myEntry : theMap.values()) {</span>
             /* Access entry */
-<span class="nc" id="L553">            final PrometheusDataList&lt;?&gt; myDataList = myEntry.getDataList();</span>
+<span class="nc" id="L554">            final PrometheusDataList&lt;?&gt; myDataList = myEntry.getDataList();</span>
 
             /* Determine whether there are errors */
-<span class="nc bnc" id="L556" title="All 4 branches missed.">            if (myDataList != null &amp;&amp; myDataList.hasErrors()) {</span>
-<span class="nc" id="L557">                return true;</span>
+<span class="nc bnc" id="L557" title="All 4 branches missed.">            if (myDataList != null &amp;&amp; myDataList.hasErrors()) {</span>
+<span class="nc" id="L558">                return true;</span>
             }
-<span class="nc" id="L559">        }</span>
+<span class="nc" id="L560">        }</span>
 
         /* Return to caller */
-<span class="nc" id="L562">        return false;</span>
+<span class="nc" id="L563">        return false;</span>
     }
 
     /**
@@ -567,27 +568,27 @@ public class PrometheusEditSet
      */
     public void validate() {
         /* Obtain the active profile */
-<span class="nc" id="L570">        final OceanusProfile myTask = theControl.getActiveTask();</span>
-<span class="nc" id="L571">        final OceanusProfile mySubTask = myTask.startTask(&quot;validate&quot;);</span>
+<span class="nc" id="L571">        final OceanusProfile myTask = theControl.getActiveTask();</span>
+<span class="nc" id="L572">        final OceanusProfile mySubTask = myTask.startTask(&quot;validate&quot;);</span>
 
         /* Loop through the items in the list */
-<span class="nc bnc" id="L574" title="All 2 branches missed.">        for (PrometheusEditEntry&lt;?&gt; myEntry : theMap.values()) {</span>
+<span class="nc bnc" id="L575" title="All 2 branches missed.">        for (PrometheusEditEntry&lt;?&gt; myEntry : theMap.values()) {</span>
             /* Access list */
-<span class="nc" id="L576">            final PrometheusDataList&lt;?&gt; myDataList = myEntry.getDataList();</span>
+<span class="nc" id="L577">            final PrometheusDataList&lt;?&gt; myDataList = myEntry.getDataList();</span>
 
             /* if list exists */
-<span class="nc bnc" id="L579" title="All 2 branches missed.">            if (myDataList != null) {</span>
+<span class="nc bnc" id="L580" title="All 2 branches missed.">            if (myDataList != null) {</span>
                 /* Note the new step */
-<span class="nc" id="L581">                mySubTask.startTask(myDataList.listName());</span>
+<span class="nc" id="L582">                mySubTask.startTask(myDataList.listName());</span>
 
                 /* Validate */
-<span class="nc" id="L584">                myDataList.validate();</span>
+<span class="nc" id="L585">                myDataList.validate();</span>
             }
-<span class="nc" id="L586">        }</span>
+<span class="nc" id="L587">        }</span>
 
         /* Complete the task */
-<span class="nc" id="L589">        mySubTask.end();</span>
-<span class="nc" id="L590">    }</span>
+<span class="nc" id="L590">        mySubTask.end();</span>
+<span class="nc" id="L591">    }</span>
 
     /**
      * Get the edit state of this set of tables.
@@ -596,21 +597,21 @@ public class PrometheusEditSet
      */
     public MetisDataEditState getEditState() {
         /* Loop through the items in the list */
-<span class="nc" id="L599">        final Iterator&lt;PrometheusEditEntry&lt;?&gt;&gt; myIterator = theMap.values().iterator();</span>
-<span class="nc" id="L600">        MetisDataEditState myState = MetisDataEditState.CLEAN;</span>
-<span class="nc bnc" id="L601" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L600">        final Iterator&lt;PrometheusEditEntry&lt;?&gt;&gt; myIterator = theMap.values().iterator();</span>
+<span class="nc" id="L601">        MetisDataEditState myState = MetisDataEditState.CLEAN;</span>
+<span class="nc bnc" id="L602" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
             /* Access list */
-<span class="nc" id="L603">            final PrometheusEditEntry&lt;?&gt; myEntry = myIterator.next();</span>
-<span class="nc" id="L604">            final PrometheusDataList&lt;?&gt; myDataList = myEntry.getDataList();</span>
+<span class="nc" id="L604">            final PrometheusEditEntry&lt;?&gt; myEntry = myIterator.next();</span>
+<span class="nc" id="L605">            final PrometheusDataList&lt;?&gt; myDataList = myEntry.getDataList();</span>
 
             /* Combine states if list exists */
-<span class="nc bnc" id="L607" title="All 2 branches missed.">            if (myDataList != null) {</span>
-<span class="nc" id="L608">                myState = myState.combineState(myDataList.getEditState());</span>
+<span class="nc bnc" id="L608" title="All 2 branches missed.">            if (myDataList != null) {</span>
+<span class="nc" id="L609">                myState = myState.combineState(myDataList.getEditState());</span>
             }
-<span class="nc" id="L610">        }</span>
+<span class="nc" id="L611">        }</span>
 
         /* Return the state */
-<span class="nc" id="L613">        return myState;</span>
+<span class="nc" id="L614">        return myState;</span>
     }
 
     /**
@@ -622,34 +623,34 @@ public class PrometheusEditSet
     public void processCommand(final PrometheusUIEvent pCmd,
                                final MetisErrorPanel pError) {
         /* Create a new profile */
-<span class="nc" id="L625">        final OceanusProfile myTask = theControl.getNewProfile(&quot;EditCommand&quot;);</span>
+<span class="nc" id="L626">        final OceanusProfile myTask = theControl.getNewProfile(&quot;EditCommand&quot;);</span>
 
         /* Switch on command */
-<span class="nc bnc" id="L628" title="All 4 branches missed.">        switch (pCmd) {</span>
+<span class="nc bnc" id="L629" title="All 4 branches missed.">        switch (pCmd) {</span>
             case OK:
-<span class="nc" id="L630">                applyChanges();</span>
-<span class="nc" id="L631">                break;</span>
+<span class="nc" id="L631">                applyChanges();</span>
+<span class="nc" id="L632">                break;</span>
             case UNDO:
-<span class="nc" id="L633">                undoLastChange();</span>
-<span class="nc" id="L634">                break;</span>
+<span class="nc" id="L634">                undoLastChange();</span>
+<span class="nc" id="L635">                break;</span>
             case RESET:
-<span class="nc" id="L636">                resetChanges();</span>
-<span class="nc" id="L637">                break;</span>
+<span class="nc" id="L637">                resetChanges();</span>
+<span class="nc" id="L638">                break;</span>
             default:
                 break;
         }
 
         /* Access any error */
-<span class="nc" id="L643">        final MetisViewerErrorList myErrors = theControl.getErrors();</span>
+<span class="nc" id="L644">        final MetisViewerErrorList myErrors = theControl.getErrors();</span>
 
         /* Show the error */
-<span class="nc bnc" id="L646" title="All 2 branches missed.">        if (!myErrors.isEmpty()) {</span>
-<span class="nc" id="L647">            pError.setErrors(myErrors);</span>
+<span class="nc bnc" id="L647" title="All 2 branches missed.">        if (!myErrors.isEmpty()) {</span>
+<span class="nc" id="L648">            pError.setErrors(myErrors);</span>
         }
 
         /* Complete the task */
-<span class="nc" id="L651">        myTask.end();</span>
-<span class="nc" id="L652">    }</span>
+<span class="nc" id="L652">        myTask.end();</span>
+<span class="nc" id="L653">    }</span>
 
     /**
      * Process Edit command.
@@ -662,34 +663,34 @@ public class PrometheusEditSet
                                    final int pVersion,
                                    final MetisErrorPanel pError) {
         /* Create a new profile */
-<span class="nc" id="L665">        final OceanusProfile myTask = theControl.getNewProfile(&quot;ItemCommand&quot;);</span>
+<span class="nc" id="L666">        final OceanusProfile myTask = theControl.getNewProfile(&quot;ItemCommand&quot;);</span>
 
         /* Switch on command */
-<span class="nc bnc" id="L668" title="All 4 branches missed.">        switch (pCmd) {</span>
+<span class="nc bnc" id="L669" title="All 4 branches missed.">        switch (pCmd) {</span>
             case OK:
-<span class="nc" id="L670">                condenseHistory(pVersion);</span>
-<span class="nc" id="L671">                break;</span>
+<span class="nc" id="L671">                condenseHistory(pVersion);</span>
+<span class="nc" id="L672">                break;</span>
             case UNDO:
-<span class="nc" id="L673">                undoLastChange();</span>
-<span class="nc" id="L674">                break;</span>
+<span class="nc" id="L674">                undoLastChange();</span>
+<span class="nc" id="L675">                break;</span>
             case REWIND:
-<span class="nc" id="L676">                rewindToVersion(pVersion);</span>
-<span class="nc" id="L677">                break;</span>
+<span class="nc" id="L677">                rewindToVersion(pVersion);</span>
+<span class="nc" id="L678">                break;</span>
             default:
                 break;
         }
 
         /* Access any error */
-<span class="nc" id="L683">        final MetisViewerErrorList myErrors = theControl.getErrors();</span>
+<span class="nc" id="L684">        final MetisViewerErrorList myErrors = theControl.getErrors();</span>
 
         /* Show the error */
-<span class="nc bnc" id="L686" title="All 2 branches missed.">        if (!myErrors.isEmpty()) {</span>
-<span class="nc" id="L687">            pError.setErrors(myErrors);</span>
+<span class="nc bnc" id="L687" title="All 2 branches missed.">        if (!myErrors.isEmpty()) {</span>
+<span class="nc" id="L688">            pError.setErrors(myErrors);</span>
         }
 
         /* Complete the task */
-<span class="nc" id="L691">        myTask.end();</span>
-<span class="nc" id="L692">    }</span>
+<span class="nc" id="L692">        myTask.end();</span>
+<span class="nc" id="L693">    }</span>
 
     /**
      * Condense history.
@@ -698,39 +699,39 @@ public class PrometheusEditSet
      */
     private void condenseHistory(final int pNewVersion) {
         /* Obtain the active profile */
-<span class="nc" id="L701">        final OceanusProfile myTask = theControl.getActiveTask();</span>
-<span class="nc" id="L702">        final OceanusProfile mySubTask = myTask.startTask(&quot;condenseHistory&quot;);</span>
+<span class="nc" id="L702">        final OceanusProfile myTask = theControl.getActiveTask();</span>
+<span class="nc" id="L703">        final OceanusProfile mySubTask = myTask.startTask(&quot;condenseHistory&quot;);</span>
 
         /* Loop through the items in the list */
-<span class="nc bnc" id="L705" title="All 2 branches missed.">        for (PrometheusEditEntry&lt;?&gt; myEntry : theMap.values()) {</span>
+<span class="nc bnc" id="L706" title="All 2 branches missed.">        for (PrometheusEditEntry&lt;?&gt; myEntry : theMap.values()) {</span>
             /* Access list */
-<span class="nc" id="L707">            final PrometheusDataList&lt;?&gt; myDataList = myEntry.getDataList();</span>
+<span class="nc" id="L708">            final PrometheusDataList&lt;?&gt; myDataList = myEntry.getDataList();</span>
 
             /* Condense history in the list */
-<span class="nc bnc" id="L710" title="All 2 branches missed.">            if (myDataList != null) {</span>
+<span class="nc bnc" id="L711" title="All 2 branches missed.">            if (myDataList != null) {</span>
                 /* Note the new step */
-<span class="nc" id="L712">                final OceanusProfile myListTask = mySubTask.startTask(myDataList.listName());</span>
-<span class="nc" id="L713">                myListTask.startTask(&quot;Condense&quot;);</span>
+<span class="nc" id="L713">                final OceanusProfile myListTask = mySubTask.startTask(myDataList.listName());</span>
+<span class="nc" id="L714">                myListTask.startTask(&quot;Condense&quot;);</span>
 
                 /* Condense history */
-<span class="nc" id="L716">                myDataList.condenseHistory(pNewVersion);</span>
+<span class="nc" id="L717">                myDataList.condenseHistory(pNewVersion);</span>
 
                 /* postProcess */
-<span class="nc bnc" id="L719" title="All 2 branches missed.">                if (Boolean.FALSE.equals(itemEditing)) {</span>
-<span class="nc" id="L720">                    myListTask.startTask(&quot;postProcess&quot;);</span>
-<span class="nc" id="L721">                    myDataList.postProcessOnUpdate();</span>
+<span class="nc bnc" id="L720" title="All 2 branches missed.">                if (Boolean.FALSE.equals(itemEditing)) {</span>
+<span class="nc" id="L721">                    myListTask.startTask(&quot;postProcess&quot;);</span>
+<span class="nc" id="L722">                    myDataList.postProcessOnUpdate();</span>
                 }
             }
-<span class="nc" id="L724">        }</span>
+<span class="nc" id="L725">        }</span>
 
         /* Store version */
-<span class="nc" id="L727">        theVersion = pNewVersion;</span>
+<span class="nc" id="L728">        theVersion = pNewVersion;</span>
 
         /* Fire that we have added to updateSet */
-<span class="nc" id="L730">        theEventManager.fireEvent(PrometheusDataEvent.DATACHANGED);</span>
+<span class="nc" id="L731">        theEventManager.fireEvent(PrometheusDataEvent.DATACHANGED);</span>
 
         /* Complete the task */
-<span class="nc" id="L733">        mySubTask.end();</span>
-<span class="nc" id="L734">    }</span>
+<span class="nc" id="L734">        mySubTask.end();</span>
+<span class="nc" id="L735">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

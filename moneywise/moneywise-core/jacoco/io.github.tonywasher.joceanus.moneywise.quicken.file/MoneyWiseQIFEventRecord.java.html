@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 
 /**
  * Class representing a QIF Event record.
@@ -30,14 +30,12 @@ public abstract class MoneyWiseQIFEventRecord&lt;T extends Enum&lt;T&gt; &amp; M
     /**
      * Constructor.
      *
-     * @param pFile  the QIF File
      * @param pClass the line type class
      */
-    protected MoneyWiseQIFEventRecord(final MoneyWiseQIFFile pFile,
-                                      final Class&lt;T&gt; pClass) {
+    protected MoneyWiseQIFEventRecord(final Class&lt;T&gt; pClass) {
         /* Call super-constructor */
-<span class="nc" id="L39">        super(pFile, pClass);</span>
-<span class="nc" id="L40">    }</span>
+<span class="nc" id="L37">        super(pClass);</span>
+<span class="nc" id="L38">    }</span>
 
     /**
      * Obtain the date.
@@ -55,7 +53,7 @@ public abstract class MoneyWiseQIFEventRecord&lt;T extends Enum&lt;T&gt; &amp; M
 
     @Override
     public int compareTo(final MoneyWiseQIFEventRecord&lt;?&gt; pThat) {
-<span class="nc" id="L58">        return getDate().compareTo(pThat.getDate());</span>
+<span class="nc" id="L56">        return getDate().compareTo(pThat.getDate());</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

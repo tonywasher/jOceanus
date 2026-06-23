@@ -18,102 +18,103 @@ package io.github.tonywasher.joceanus.moneywise.data.statics;
 
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 
 /**
  * Enumeration of Tax Basis Classes.
  */
-<span class="fc" id="L26">public enum MoneyWiseTaxClass</span>
+<span class="fc" id="L27">public enum MoneyWiseTaxClass</span>
         implements PrometheusStaticDataClass {
     /**
      * Salary Income.
      */
-<span class="fc" id="L31">    SALARY(1, 0),</span>
+<span class="fc" id="L32">    SALARY(1, 0),</span>
 
     /**
      * RoomRental.
      */
-<span class="fc" id="L36">    ROOMRENTAL(2, 1),</span>
+<span class="fc" id="L37">    ROOMRENTAL(2, 1),</span>
 
     /**
      * Rental Income.
      */
-<span class="fc" id="L41">    RENTALINCOME(3, 2),</span>
+<span class="fc" id="L42">    RENTALINCOME(3, 2),</span>
 
     /**
      * Other Income.
      */
-<span class="fc" id="L46">    OTHERINCOME(4, 3),</span>
+<span class="fc" id="L47">    OTHERINCOME(4, 3),</span>
 
     /**
      * Taxed Interest Income.
      */
-<span class="fc" id="L51">    TAXEDINTEREST(5, 4),</span>
+<span class="fc" id="L52">    TAXEDINTEREST(5, 4),</span>
 
     /**
      * UnTaxed Interest Income.
      */
-<span class="fc" id="L56">    UNTAXEDINTEREST(6, 5),</span>
+<span class="fc" id="L57">    UNTAXEDINTEREST(6, 5),</span>
 
     /**
      * Peer2PeerInterest.
      */
-<span class="fc" id="L61">    PEER2PEERINTEREST(7, 6),</span>
+<span class="fc" id="L62">    PEER2PEERINTEREST(7, 6),</span>
 
     /**
      * Dividend Income.
      */
-<span class="fc" id="L66">    DIVIDEND(8, 7),</span>
+<span class="fc" id="L67">    DIVIDEND(8, 7),</span>
 
     /**
      * Unit Trust Dividend Income.
      */
-<span class="fc" id="L71">    UNITTRUSTDIVIDEND(9, 8),</span>
+<span class="fc" id="L72">    UNITTRUSTDIVIDEND(9, 8),</span>
 
     /**
      * Foreign Dividend Income.
      */
-<span class="fc" id="L76">    FOREIGNDIVIDEND(10, 9),</span>
+<span class="fc" id="L77">    FOREIGNDIVIDEND(10, 9),</span>
 
     /**
      * Chargeable gains.
      */
-<span class="fc" id="L81">    CHARGEABLEGAINS(11, 10),</span>
+<span class="fc" id="L82">    CHARGEABLEGAINS(11, 10),</span>
 
     /**
      * Residential gains.
      */
-<span class="fc" id="L86">    RESIDENTIALGAINS(12, 11),</span>
+<span class="fc" id="L87">    RESIDENTIALGAINS(12, 11),</span>
 
     /**
      * Capital gains.
      */
-<span class="fc" id="L91">    CAPITALGAINS(13, 12),</span>
+<span class="fc" id="L92">    CAPITALGAINS(13, 12),</span>
 
     /**
      * Tax Free Income.
      */
-<span class="fc" id="L96">    TAXFREE(14, 13),</span>
+<span class="fc" id="L97">    TAXFREE(14, 13),</span>
 
     /**
      * Market Growth.
      */
-<span class="fc" id="L101">    MARKET(15, 14),</span>
+<span class="fc" id="L102">    MARKET(15, 14),</span>
 
     /**
      * Total Tax Paid.
      */
-<span class="fc" id="L106">    TAXPAID(16, 15),</span>
+<span class="fc" id="L107">    TAXPAID(16, 15),</span>
 
     /**
      * Gross Expense.
      */
-<span class="fc" id="L111">    EXPENSE(17, 16),</span>
+<span class="fc" id="L112">    EXPENSE(17, 16),</span>
 
     /**
      * Virtual Income.
      */
-<span class="fc" id="L116">    VIRTUAL(18, 17);</span>
+<span class="fc" id="L117">    VIRTUAL(18, 17);</span>
 
     /**
      * The String name.
@@ -137,32 +138,32 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @param uOrder the order
      */
     MoneyWiseTaxClass(final int uId,
-<span class="fc" id="L140">                      final int uOrder) {</span>
+<span class="fc" id="L141">                      final int uOrder) {</span>
         /* Set values */
-<span class="fc" id="L142">        theId = uId;</span>
-<span class="fc" id="L143">        theOrder = uOrder;</span>
-<span class="fc" id="L144">    }</span>
+<span class="fc" id="L143">        theId = uId;</span>
+<span class="fc" id="L144">        theOrder = uOrder;</span>
+<span class="fc" id="L145">    }</span>
 
     @Override
     public int getClassId() {
-<span class="fc" id="L148">        return theId;</span>
+<span class="fc" id="L149">        return theId;</span>
     }
 
     @Override
     public int getOrder() {
-<span class="fc" id="L153">        return theOrder;</span>
+<span class="fc" id="L154">        return theOrder;</span>
     }
 
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="fc bfc" id="L159" title="All 2 branches covered.">        if (theName == null) {</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        if (theName == null) {</span>
             /* Load the name */
-<span class="fc" id="L161">            theName = MoneyWiseStaticResource.getKeyForTaxBasis(this).getValue();</span>
+<span class="fc" id="L162">            theName = bundleIdForTaxClass(this).getValue();</span>
         }
 
         /* return the name */
-<span class="fc" id="L165">        return theName;</span>
+<span class="fc" id="L166">        return theName;</span>
     }
 
     /**
@@ -173,12 +174,12 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @throws OceanusException on error
      */
     public static MoneyWiseTaxClass fromId(final int id) throws OceanusException {
-<span class="nc bnc" id="L176" title="All 2 branches missed.">        for (MoneyWiseTaxClass myClass : values()) {</span>
-<span class="nc bnc" id="L177" title="All 2 branches missed.">            if (myClass.getClassId() == id) {</span>
-<span class="nc" id="L178">                return myClass;</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        for (MoneyWiseTaxClass myClass : values()) {</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">            if (myClass.getClassId() == id) {</span>
+<span class="nc" id="L179">                return myClass;</span>
             }
         }
-<span class="nc" id="L181">        throw new MoneyWiseDataException(&quot;Invalid ClassId for &quot; + MoneyWiseStaticDataType.TAXBASIS.toString() + &quot;:&quot; + id);</span>
+<span class="nc" id="L182">        throw new MoneyWiseDataException(&quot;Invalid ClassId for &quot; + MoneyWiseStaticDataType.TAXBASIS.toString() + &quot;:&quot; + id);</span>
     }
 
     /**
@@ -187,11 +188,11 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return true/false
      */
     public boolean analyseAccounts() {
-<span class="fc bfc" id="L190" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">        return switch (this) {</span>
             case SALARY, ROOMRENTAL, RENTALINCOME, OTHERINCOME, TAXEDINTEREST, UNTAXEDINTEREST, DIVIDEND,
                  UNITTRUSTDIVIDEND, FOREIGNDIVIDEND, CHARGEABLEGAINS, CAPITALGAINS, RESIDENTIALGAINS, TAXFREE,
-<span class="fc" id="L193">                 PEER2PEERINTEREST -&gt; true;</span>
-<span class="fc" id="L194">            default -&gt; false;</span>
+<span class="fc" id="L194">                 PEER2PEERINTEREST -&gt; true;</span>
+<span class="fc" id="L195">            default -&gt; false;</span>
         };
     }
 
@@ -201,10 +202,41 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return true/false
      */
     public boolean isExpense() {
-<span class="fc bfc" id="L204" title="All 2 branches covered.">        return switch (this) {</span>
-<span class="fc" id="L205">            case EXPENSE, TAXPAID, VIRTUAL -&gt; true;</span>
-<span class="fc" id="L206">            default -&gt; false;</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc" id="L206">            case EXPENSE, TAXPAID, VIRTUAL -&gt; true;</span>
+<span class="fc" id="L207">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the tax class.
+     *
+     * @param pClass the tax class
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForTaxClass(final MoneyWiseTaxClass pClass) {
+        /* Create the map and return it */
+<span class="pc bpc" id="L219" title="1 of 19 branches missed.">        return switch (pClass) {</span>
+<span class="fc" id="L220">            case SALARY -&gt; MoneyWiseStaticResource.TAXBASIS_SALARY;</span>
+<span class="fc" id="L221">            case ROOMRENTAL -&gt; MoneyWiseStaticResource.TAXBASIS_ROOMRENTAL;</span>
+<span class="fc" id="L222">            case RENTALINCOME -&gt; MoneyWiseStaticResource.TAXBASIS_RENTALINCOME;</span>
+<span class="fc" id="L223">            case OTHERINCOME -&gt; MoneyWiseStaticResource.TAXBASIS_OTHERINCOME;</span>
+<span class="fc" id="L224">            case TAXEDINTEREST -&gt; MoneyWiseStaticResource.TAXBASIS_TAXEDINTEREST;</span>
+<span class="fc" id="L225">            case UNTAXEDINTEREST -&gt; MoneyWiseStaticResource.TAXBASIS_UNTAXEDINTEREST;</span>
+<span class="fc" id="L226">            case DIVIDEND -&gt; MoneyWiseStaticResource.TAXBASIS_DIVIDEND;</span>
+<span class="fc" id="L227">            case UNITTRUSTDIVIDEND -&gt; MoneyWiseStaticResource.TAXBASIS_UTDIVIDEND;</span>
+<span class="fc" id="L228">            case FOREIGNDIVIDEND -&gt; MoneyWiseStaticResource.TAXBASIS_FOREIGNDIVIDEND;</span>
+<span class="fc" id="L229">            case CHARGEABLEGAINS -&gt; MoneyWiseStaticResource.TAXBASIS_CHARGEABLEGAINS;</span>
+<span class="fc" id="L230">            case RESIDENTIALGAINS -&gt; MoneyWiseStaticResource.TAXBASIS_RESIDENTIALGAINS;</span>
+<span class="fc" id="L231">            case CAPITALGAINS -&gt; MoneyWiseStaticResource.TAXBASIS_CAPITALGAINS;</span>
+<span class="fc" id="L232">            case PEER2PEERINTEREST -&gt; MoneyWiseStaticResource.TRANSTYPE_PEER2PEERINTEREST;</span>
+<span class="fc" id="L233">            case TAXPAID -&gt; MoneyWiseStaticResource.TAXBASIS_TAXPAID;</span>
+<span class="fc" id="L234">            case MARKET -&gt; MoneyWiseStaticResource.TAXBASIS_MARKET;</span>
+<span class="fc" id="L235">            case TAXFREE -&gt; MoneyWiseStaticResource.TAXBASIS_TAXFREE;</span>
+<span class="fc" id="L236">            case EXPENSE -&gt; MoneyWiseStaticResource.TAXBASIS_EXPENSE;</span>
+<span class="fc" id="L237">            case VIRTUAL -&gt; MoneyWiseStaticResource.TAXBASIS_VIRTUAL;</span>
+<span class="nc" id="L238">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

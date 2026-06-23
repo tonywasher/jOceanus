@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
@@ -31,6 +26,11 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 
 import java.util.Currency;
 
@@ -543,11 +543,11 @@ public class MoneyWiseAnalysisTransactionHelper {
 <span class="nc" id="L543">            final OceanusMoney myReturnedCash = theCurrent.getReturnedCash();</span>
 
             /* Determine account prices */
-<span class="nc bnc" id="L546" title="All 2 branches missed.">            theAccountPrice = theAccount instanceof MoneyWiseSecurityHolding</span>
-<span class="nc" id="L547">                    ? thePriceCursor.getSecurityPrice(((MoneyWiseSecurityHolding) theAccount).getSecurity(), theDate)</span>
+<span class="nc bnc" id="L546" title="All 2 branches missed.">            theAccountPrice = theAccount instanceof MoneyWiseSecurityHolding myHolding</span>
+<span class="nc" id="L547">                    ? thePriceCursor.getSecurityPrice(myHolding.getSecurity(), theDate)</span>
 <span class="nc" id="L548">                    : null;</span>
-<span class="nc bnc" id="L549" title="All 2 branches missed.">            thePartnerPrice = thePartner instanceof MoneyWiseSecurityHolding</span>
-<span class="nc" id="L550">                    ? thePriceCursor.getSecurityPrice(((MoneyWiseSecurityHolding) thePartner).getSecurity(), theDate)</span>
+<span class="nc bnc" id="L549" title="All 2 branches missed.">            thePartnerPrice = thePartner instanceof MoneyWiseSecurityHolding myHolding</span>
+<span class="nc" id="L550">                    ? thePriceCursor.getSecurityPrice(myHolding.getSecurity(), theDate)</span>
 <span class="nc" id="L551">                    : null;</span>
 
             /* Determine foreign account detail */
@@ -578,8 +578,8 @@ public class MoneyWiseAnalysisTransactionHelper {
 <span class="nc bnc" id="L578" title="All 2 branches missed.">            theAmount = theForeignAccount == null</span>
 <span class="nc" id="L579">                    ? myAmount</span>
 <span class="nc bnc" id="L580" title="All 2 branches missed.">                    : theForeignPartner == null</span>
-<span class="nc" id="L581">                    ? myPartnerAmount</span>
-<span class="nc" id="L582">                    : theForeignAccount.theAmount;</span>
+<span class="nc" id="L581">                      ? myPartnerAmount</span>
+<span class="nc" id="L582">                      : theForeignAccount.theAmount;</span>
 <span class="nc bnc" id="L583" title="All 2 branches missed.">            theReturnedCash = theForeignReturnedCash == null</span>
 <span class="nc" id="L584">                    ? myReturnedCash</span>
 <span class="nc" id="L585">                    : theForeignReturnedCash.theAmount;</span>
@@ -679,11 +679,11 @@ public class MoneyWiseAnalysisTransactionHelper {
         private OceanusMoney getDebitAmount() {
 <span class="nc bnc" id="L680" title="All 2 branches missed.">            return theDirection.isFrom()</span>
 <span class="nc bnc" id="L681" title="All 2 branches missed.">                    ? theForeignPartner == null</span>
-<span class="nc" id="L682">                    ? theAmount</span>
-<span class="nc" id="L683">                    : theForeignPartner.theBase</span>
+<span class="nc" id="L682">                      ? theAmount</span>
+<span class="nc" id="L683">                      : theForeignPartner.theBase</span>
 <span class="nc bnc" id="L684" title="All 2 branches missed.">                    : theForeignAccount == null</span>
-<span class="nc" id="L685">                    ? theAmount</span>
-<span class="nc" id="L686">                    : theForeignAccount.theBase;</span>
+<span class="nc" id="L685">                      ? theAmount</span>
+<span class="nc" id="L686">                      : theForeignAccount.theBase;</span>
         }
 
         /**
@@ -703,11 +703,11 @@ public class MoneyWiseAnalysisTransactionHelper {
         private OceanusMoney getCreditAmount() {
 <span class="nc bnc" id="L704" title="All 2 branches missed.">            return theDirection.isTo()</span>
 <span class="nc bnc" id="L705" title="All 2 branches missed.">                    ? theForeignPartner == null</span>
-<span class="nc" id="L706">                    ? theAmount</span>
-<span class="nc" id="L707">                    : theForeignPartner.theBase</span>
+<span class="nc" id="L706">                      ? theAmount</span>
+<span class="nc" id="L707">                      : theForeignPartner.theBase</span>
 <span class="nc bnc" id="L708" title="All 2 branches missed.">                    : theForeignAccount == null</span>
-<span class="nc" id="L709">                    ? theAmount</span>
-<span class="nc" id="L710">                    : theForeignAccount.theBase;</span>
+<span class="nc" id="L709">                      ? theAmount</span>
+<span class="nc" id="L710">                      : theForeignAccount.theBase;</span>
         }
 
         /**
@@ -760,11 +760,11 @@ public class MoneyWiseAnalysisTransactionHelper {
         private OceanusRatio getDebitExchangeRate() {
 <span class="nc bnc" id="L761" title="All 2 branches missed.">            return theDirection.isTo()</span>
 <span class="nc bnc" id="L762" title="All 2 branches missed.">                    ? theForeignAccount == null</span>
-<span class="nc" id="L763">                    ? null</span>
-<span class="nc" id="L764">                    : theForeignAccount.theExchangeRate</span>
+<span class="nc" id="L763">                      ? null</span>
+<span class="nc" id="L764">                      : theForeignAccount.theExchangeRate</span>
 <span class="nc bnc" id="L765" title="All 2 branches missed.">                    : theForeignPartner == null</span>
-<span class="nc" id="L766">                    ? null</span>
-<span class="nc" id="L767">                    : theForeignPartner.theExchangeRate;</span>
+<span class="nc" id="L766">                      ? null</span>
+<span class="nc" id="L767">                      : theForeignPartner.theExchangeRate;</span>
         }
 
         /**
@@ -775,11 +775,11 @@ public class MoneyWiseAnalysisTransactionHelper {
         private OceanusRatio getCreditExchangeRate() {
 <span class="nc bnc" id="L776" title="All 2 branches missed.">            return theDirection.isTo()</span>
 <span class="nc bnc" id="L777" title="All 2 branches missed.">                    ? theForeignPartner == null</span>
-<span class="nc" id="L778">                    ? null</span>
-<span class="nc" id="L779">                    : theForeignPartner.theExchangeRate</span>
+<span class="nc" id="L778">                      ? null</span>
+<span class="nc" id="L779">                      : theForeignPartner.theExchangeRate</span>
 <span class="nc bnc" id="L780" title="All 2 branches missed.">                    : theForeignAccount == null</span>
-<span class="nc" id="L781">                    ? null</span>
-<span class="nc" id="L782">                    : theForeignAccount.theExchangeRate;</span>
+<span class="nc" id="L781">                      ? null</span>
+<span class="nc" id="L782">                      : theForeignAccount.theExchangeRate;</span>
         }
 
         /**
@@ -1015,4 +1015,4 @@ public class MoneyWiseAnalysisTransactionHelper {
 <span class="nc" id="L1015">        }</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

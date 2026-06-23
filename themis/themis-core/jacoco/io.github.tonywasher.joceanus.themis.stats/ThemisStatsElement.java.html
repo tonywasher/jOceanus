@@ -17,10 +17,13 @@
 
 package io.github.tonywasher.joceanus.themis.stats;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+
 /**
  * Basis Stats element interface.
  */
-public interface ThemisStatsElement {
+public interface ThemisStatsElement
+        extends MetisFieldItem {
     /**
      * Obtain the name.
      *
@@ -41,7 +44,7 @@ public interface ThemisStatsElement {
      * @param pMethod the method element
      */
     default void addMethod(final ThemisStatsElement pMethod) {
-<span class="nc" id="L44">        throw new IllegalStateException();</span>
+<span class="nc" id="L47">        throw new IllegalStateException();</span>
     }
 
     /**
@@ -50,7 +53,7 @@ public interface ThemisStatsElement {
      * @param pClazz the class element
      */
     default void addClass(final ThemisStatsElement pClazz) {
-<span class="nc" id="L53">        throw new IllegalStateException();</span>
+<span class="nc" id="L56">        throw new IllegalStateException();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

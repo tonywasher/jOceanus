@@ -16,10 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
@@ -49,6 +45,10 @@ import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxAnalysis;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxYear;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxYearCache;
 import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Iterator;
@@ -59,7 +59,7 @@ import java.util.Iterator;
  * @author Tony Washer
  */
 public class MoneyWiseAnalysis
-        implements MetisFieldItem {
+        implements MetisFieldItem, MoneyWiseAnalysisHolder {
     /**
      * Local Report fields.
      */
@@ -196,7 +196,7 @@ public class MoneyWiseAnalysis
 <span class="fc" id="L196">        thePortfolios = new MoneyWiseAnalysisPortfolioBucketList(this);</span>
 <span class="fc" id="L197">        thePayees = new MoneyWiseAnalysisPayeeBucketList(this);</span>
 <span class="fc" id="L198">        theTaxBasis = new MoneyWiseAnalysisTaxBasisBucketList(this);</span>
-<span class="fc" id="L199">        theTransCategories = new MoneyWiseAnalysisTransCategoryBucketList(this);</span>
+<span class="fc" id="L199">        theTransCategories = new MoneyWiseAnalysisTransCategoryBucketList(this, theTaxBasis);</span>
 <span class="fc" id="L200">        theTransTags = new MoneyWiseAnalysisTransTagBucketList(this);</span>
 
         /* Create totalling buckets */
@@ -228,7 +228,7 @@ public class MoneyWiseAnalysis
 <span class="nc" id="L228">        thePortfolios = new MoneyWiseAnalysisPortfolioBucketList(this, pSource.getPortfolios());</span>
 <span class="nc" id="L229">        thePayees = new MoneyWiseAnalysisPayeeBucketList(this);</span>
 <span class="nc" id="L230">        theTaxBasis = new MoneyWiseAnalysisTaxBasisBucketList(this);</span>
-<span class="nc" id="L231">        theTransCategories = new MoneyWiseAnalysisTransCategoryBucketList(this);</span>
+<span class="nc" id="L231">        theTransCategories = new MoneyWiseAnalysisTransCategoryBucketList(this, theTaxBasis);</span>
 <span class="nc" id="L232">        theTransTags = new MoneyWiseAnalysisTransTagBucketList(this);</span>
 
         /* Create totalling buckets */
@@ -241,79 +241,77 @@ public class MoneyWiseAnalysis
     /**
      * Constructor for a dated analysis.
      *
-     * @param pManager the analysis manager
-     * @param pDate    the date for the analysis
+     * @param pBase the base analysis
+     * @param pDate the date for the analysis
      */
-    public MoneyWiseAnalysis(final MoneyWiseAnalysisManager pManager,
+    public MoneyWiseAnalysis(final MoneyWiseAnalysis pBase,
 <span class="nc" id="L248">                             final OceanusDate pDate) {</span>
         /* Store the data */
-<span class="nc" id="L250">        final MoneyWiseAnalysis myBase = pManager.getAnalysis();</span>
-<span class="nc" id="L251">        theEditSet = myBase.getEditSet();</span>
-<span class="nc" id="L252">        final MoneyWiseDataSet myDataSet = getData();</span>
-<span class="nc" id="L253">        theCurrency = myBase.getCurrency();</span>
-<span class="nc" id="L254">        thePreferences = myBase.getPreferenceMgr();</span>
-<span class="nc" id="L255">        theDateRange = new OceanusDateRange(myDataSet.getDateRange().getStart(), pDate);</span>
+<span class="nc" id="L250">        theEditSet = pBase.getEditSet();</span>
+<span class="nc" id="L251">        final MoneyWiseDataSet myDataSet = getData();</span>
+<span class="nc" id="L252">        theCurrency = pBase.getCurrency();</span>
+<span class="nc" id="L253">        thePreferences = pBase.getPreferenceMgr();</span>
+<span class="nc" id="L254">        theDateRange = new OceanusDateRange(myDataSet.getDateRange().getStart(), pDate);</span>
 
         /* Access the TaxYearCache */
-<span class="nc" id="L258">        theTaxYearCache = (MoneyWiseUKTaxYearCache) myDataSet.getTaxFactory();</span>
+<span class="nc" id="L257">        theTaxYearCache = (MoneyWiseUKTaxYearCache) myDataSet.getTaxFactory();</span>
 
         /* Create a new set of buckets */
-<span class="nc" id="L261">        theDeposits = new MoneyWiseAnalysisDepositBucketList(this, myBase.getDeposits(), pDate);</span>
-<span class="nc" id="L262">        theCash = new MoneyWiseAnalysisCashBucketList(this, myBase.getCash(), pDate);</span>
-<span class="nc" id="L263">        theLoans = new MoneyWiseAnalysisLoanBucketList(this, myBase.getLoans(), pDate);</span>
-<span class="nc" id="L264">        thePortfolios = new MoneyWiseAnalysisPortfolioBucketList(this, myBase.getPortfolios(), pDate);</span>
-<span class="nc" id="L265">        thePayees = new MoneyWiseAnalysisPayeeBucketList(this, myBase.getPayees(), pDate);</span>
-<span class="nc" id="L266">        theTaxBasis = new MoneyWiseAnalysisTaxBasisBucketList(this, myBase.getTaxBasis(), pDate);</span>
-<span class="nc" id="L267">        theTransCategories = new MoneyWiseAnalysisTransCategoryBucketList(this, myBase.getTransCategories(), pDate);</span>
-<span class="nc" id="L268">        theTransTags = new MoneyWiseAnalysisTransTagBucketList(this, myBase.getTransactionTags(), pDate);</span>
+<span class="nc" id="L260">        theDeposits = new MoneyWiseAnalysisDepositBucketList(this, pBase.getDeposits(), pDate);</span>
+<span class="nc" id="L261">        theCash = new MoneyWiseAnalysisCashBucketList(this, pBase.getCash(), pDate);</span>
+<span class="nc" id="L262">        theLoans = new MoneyWiseAnalysisLoanBucketList(this, pBase.getLoans(), pDate);</span>
+<span class="nc" id="L263">        thePortfolios = new MoneyWiseAnalysisPortfolioBucketList(this, pBase.getPortfolios(), pDate);</span>
+<span class="nc" id="L264">        thePayees = new MoneyWiseAnalysisPayeeBucketList(this, pBase.getPayees(), pDate);</span>
+<span class="nc" id="L265">        theTaxBasis = new MoneyWiseAnalysisTaxBasisBucketList(this, pBase.getTaxBasis(), pDate);</span>
+<span class="nc" id="L266">        theTransCategories = new MoneyWiseAnalysisTransCategoryBucketList(this, pBase.getTransCategories(), pDate);</span>
+<span class="nc" id="L267">        theTransTags = new MoneyWiseAnalysisTransTagBucketList(this, pBase.getTransactionTags(), pDate);</span>
 
         /* Create totalling buckets */
-<span class="nc" id="L271">        theDepositCategories = new MoneyWiseAnalysisDepositCategoryBucketList(this);</span>
-<span class="nc" id="L272">        theCashCategories = new MoneyWiseAnalysisCashCategoryBucketList(this);</span>
-<span class="nc" id="L273">        theLoanCategories = new MoneyWiseAnalysisLoanCategoryBucketList(this);</span>
-<span class="nc" id="L274">        theTaxAnalysis = null;</span>
-<span class="nc" id="L275">    }</span>
+<span class="nc" id="L270">        theDepositCategories = new MoneyWiseAnalysisDepositCategoryBucketList(this);</span>
+<span class="nc" id="L271">        theCashCategories = new MoneyWiseAnalysisCashCategoryBucketList(this);</span>
+<span class="nc" id="L272">        theLoanCategories = new MoneyWiseAnalysisLoanCategoryBucketList(this);</span>
+<span class="nc" id="L273">        theTaxAnalysis = null;</span>
+<span class="nc" id="L274">    }</span>
 
     /**
      * Constructor for a ranged analysis.
      *
-     * @param pManager the analysis manager
-     * @param pRange   the range for the analysis
+     * @param pBase  the base analysis
+     * @param pRange the range for the analysis
      */
-    public MoneyWiseAnalysis(final MoneyWiseAnalysisManager pManager,
-<span class="nc" id="L284">                             final OceanusDateRange pRange) {</span>
+    public MoneyWiseAnalysis(final MoneyWiseAnalysis pBase,
+<span class="nc" id="L283">                             final OceanusDateRange pRange) {</span>
         /* Store the data */
-<span class="nc" id="L286">        final MoneyWiseAnalysis myBase = pManager.getAnalysis();</span>
-<span class="nc" id="L287">        theEditSet = myBase.getEditSet();</span>
-<span class="nc" id="L288">        final MoneyWiseDataSet myDataSet = getData();</span>
-<span class="nc" id="L289">        theCurrency = myBase.getCurrency();</span>
-<span class="nc" id="L290">        thePreferences = myBase.getPreferenceMgr();</span>
-<span class="nc" id="L291">        theDateRange = pRange;</span>
+<span class="nc" id="L285">        theEditSet = pBase.getEditSet();</span>
+<span class="nc" id="L286">        final MoneyWiseDataSet myDataSet = getData();</span>
+<span class="nc" id="L287">        theCurrency = pBase.getCurrency();</span>
+<span class="nc" id="L288">        thePreferences = pBase.getPreferenceMgr();</span>
+<span class="nc" id="L289">        theDateRange = pRange;</span>
 
         /* Access the TaxYearCache */
-<span class="nc" id="L294">        theTaxYearCache = (MoneyWiseUKTaxYearCache) myDataSet.getTaxFactory();</span>
+<span class="nc" id="L292">        theTaxYearCache = (MoneyWiseUKTaxYearCache) myDataSet.getTaxFactory();</span>
 
         /* Create a new set of buckets */
-<span class="nc" id="L297">        theDeposits = new MoneyWiseAnalysisDepositBucketList(this, myBase.getDeposits(), pRange);</span>
-<span class="nc" id="L298">        theCash = new MoneyWiseAnalysisCashBucketList(this, myBase.getCash(), pRange);</span>
-<span class="nc" id="L299">        theLoans = new MoneyWiseAnalysisLoanBucketList(this, myBase.getLoans(), pRange);</span>
-<span class="nc" id="L300">        thePortfolios = new MoneyWiseAnalysisPortfolioBucketList(this, myBase.getPortfolios(), pRange);</span>
-<span class="nc" id="L301">        thePayees = new MoneyWiseAnalysisPayeeBucketList(this, myBase.getPayees(), pRange);</span>
-<span class="nc" id="L302">        theTaxBasis = new MoneyWiseAnalysisTaxBasisBucketList(this, myBase.getTaxBasis(), pRange);</span>
-<span class="nc" id="L303">        theTransCategories = new MoneyWiseAnalysisTransCategoryBucketList(this, myBase.getTransCategories(), pRange);</span>
-<span class="nc" id="L304">        theTransTags = new MoneyWiseAnalysisTransTagBucketList(this, myBase.getTransactionTags(), pRange);</span>
+<span class="nc" id="L295">        theDeposits = new MoneyWiseAnalysisDepositBucketList(this, pBase.getDeposits(), pRange);</span>
+<span class="nc" id="L296">        theCash = new MoneyWiseAnalysisCashBucketList(this, pBase.getCash(), pRange);</span>
+<span class="nc" id="L297">        theLoans = new MoneyWiseAnalysisLoanBucketList(this, pBase.getLoans(), pRange);</span>
+<span class="nc" id="L298">        thePortfolios = new MoneyWiseAnalysisPortfolioBucketList(this, pBase.getPortfolios(), pRange);</span>
+<span class="nc" id="L299">        thePayees = new MoneyWiseAnalysisPayeeBucketList(this, pBase.getPayees(), pRange);</span>
+<span class="nc" id="L300">        theTaxBasis = new MoneyWiseAnalysisTaxBasisBucketList(this, pBase.getTaxBasis(), pRange);</span>
+<span class="nc" id="L301">        theTransCategories = new MoneyWiseAnalysisTransCategoryBucketList(this, pBase.getTransCategories(), pRange);</span>
+<span class="nc" id="L302">        theTransTags = new MoneyWiseAnalysisTransTagBucketList(this, pBase.getTransactionTags(), pRange);</span>
 
         /* Create totalling buckets */
-<span class="nc" id="L307">        theDepositCategories = new MoneyWiseAnalysisDepositCategoryBucketList(this);</span>
-<span class="nc" id="L308">        theCashCategories = new MoneyWiseAnalysisCashCategoryBucketList(this);</span>
-<span class="nc" id="L309">        theLoanCategories = new MoneyWiseAnalysisLoanCategoryBucketList(this);</span>
+<span class="nc" id="L305">        theDepositCategories = new MoneyWiseAnalysisDepositCategoryBucketList(this);</span>
+<span class="nc" id="L306">        theCashCategories = new MoneyWiseAnalysisCashCategoryBucketList(this);</span>
+<span class="nc" id="L307">        theLoanCategories = new MoneyWiseAnalysisLoanCategoryBucketList(this);</span>
 
         /* Handle new tax calculations */
-<span class="nc" id="L312">        final MoneyWiseTaxYear myYear = (MoneyWiseTaxYear) theTaxYearCache.findTaxYearForRange(theDateRange);</span>
-<span class="nc bnc" id="L313" title="All 2 branches missed.">        theTaxAnalysis = myYear != null</span>
-<span class="nc" id="L314">                ? myYear.analyseTaxYear(thePreferences, theTaxBasis)</span>
-<span class="nc" id="L315">                : null;</span>
-<span class="nc" id="L316">    }</span>
+<span class="nc" id="L310">        final MoneyWiseTaxYear myYear = (MoneyWiseTaxYear) theTaxYearCache.findTaxYearForRange(theDateRange);</span>
+<span class="nc bnc" id="L311" title="All 2 branches missed.">        theTaxAnalysis = myYear != null</span>
+<span class="nc" id="L312">                ? myYear.analyseTaxYear(thePreferences, theTaxBasis)</span>
+<span class="nc" id="L313">                : null;</span>
+<span class="nc" id="L314">    }</span>
 
     /**
      * Is the analysis manager idle?
@@ -321,35 +319,27 @@ public class MoneyWiseAnalysis
      * @return true/false
      */
     public boolean isIdle() {
-<span class="nc bnc" id="L324" title="All 2 branches missed.">        return theCurrency == null;</span>
+<span class="nc bnc" id="L322" title="All 2 branches missed.">        return theCurrency == null;</span>
     }
 
     @Override
     public MetisFieldSet&lt;MoneyWiseAnalysis&gt; getDataFieldSet() {
-<span class="nc" id="L329">        return FIELD_DEFS;</span>
+<span class="nc" id="L327">        return FIELD_DEFS;</span>
     }
 
     @Override
     public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L334">        return FIELD_DEFS.getName();</span>
+<span class="nc" id="L332">        return FIELD_DEFS.getName();</span>
     }
 
-    /**
-     * Obtain the editSet.
-     *
-     * @return the editSet
-     */
+    @Override
     public PrometheusEditSet getEditSet() {
-<span class="fc" id="L343">        return theEditSet;</span>
+<span class="fc" id="L337">        return theEditSet;</span>
     }
 
-    /**
-     * Obtain the data.
-     *
-     * @return the data
-     */
+    @Override
     public MoneyWiseDataSet getData() {
-<span class="fc" id="L352">        return (MoneyWiseDataSet) theEditSet.getDataSet();</span>
+<span class="fc" id="L342">        return (MoneyWiseDataSet) theEditSet.getDataSet();</span>
     }
 
     /**
@@ -358,16 +348,12 @@ public class MoneyWiseAnalysis
      * @return the currency
      */
     private MoneyWiseTaxYearCache getTaxYearCache() {
-<span class="nc" id="L361">        return theTaxYearCache;</span>
+<span class="nc" id="L351">        return theTaxYearCache;</span>
     }
 
-    /**
-     * Obtain the currency.
-     *
-     * @return the currency
-     */
+    @Override
     public MoneyWiseCurrency getCurrency() {
-<span class="fc" id="L370">        return theCurrency;</span>
+<span class="fc" id="L356">        return theCurrency;</span>
     }
 
     /**
@@ -376,16 +362,12 @@ public class MoneyWiseAnalysis
      * @return the data
      */
     public MetisPreferenceManager getPreferenceMgr() {
-<span class="nc" id="L379">        return thePreferences;</span>
+<span class="nc" id="L365">        return thePreferences;</span>
     }
 
-    /**
-     * Obtain the date range.
-     *
-     * @return the date range
-     */
+    @Override
     public OceanusDateRange getDateRange() {
-<span class="fc" id="L388">        return theDateRange;</span>
+<span class="fc" id="L370">        return theDateRange;</span>
     }
 
     /**
@@ -394,7 +376,7 @@ public class MoneyWiseAnalysis
      * @return true/false
      */
     public boolean isRangedAnalysis() {
-<span class="nc bnc" id="L397" title="All 2 branches missed.">        return theDateRange.getStart() == null;</span>
+<span class="nc bnc" id="L379" title="All 2 branches missed.">        return theDateRange.getStart() == null;</span>
     }
 
     /**
@@ -403,7 +385,7 @@ public class MoneyWiseAnalysis
      * @return the list
      */
     public MoneyWiseAnalysisDepositBucketList getDeposits() {
-<span class="fc" id="L406">        return theDeposits;</span>
+<span class="fc" id="L388">        return theDeposits;</span>
     }
 
     /**
@@ -412,7 +394,7 @@ public class MoneyWiseAnalysis
      * @return the list
      */
     public MoneyWiseAnalysisCashBucketList getCash() {
-<span class="fc" id="L415">        return theCash;</span>
+<span class="fc" id="L397">        return theCash;</span>
     }
 
     /**
@@ -421,7 +403,7 @@ public class MoneyWiseAnalysis
      * @return the list
      */
     public MoneyWiseAnalysisLoanBucketList getLoans() {
-<span class="fc" id="L424">        return theLoans;</span>
+<span class="fc" id="L406">        return theLoans;</span>
     }
 
     /**
@@ -430,16 +412,12 @@ public class MoneyWiseAnalysis
      * @return the list
      */
     public MoneyWiseAnalysisPortfolioBucketList getPortfolios() {
-<span class="fc" id="L433">        return thePortfolios;</span>
+<span class="fc" id="L415">        return thePortfolios;</span>
     }
 
-    /**
-     * Obtain the payee buckets list.
-     *
-     * @return the list
-     */
+    @Override
     public MoneyWiseAnalysisPayeeBucketList getPayees() {
-<span class="fc" id="L442">        return thePayees;</span>
+<span class="fc" id="L420">        return thePayees;</span>
     }
 
     /**
@@ -448,7 +426,7 @@ public class MoneyWiseAnalysis
      * @return the list
      */
     public MoneyWiseAnalysisDepositCategoryBucketList getDepositCategories() {
-<span class="fc" id="L451">        return theDepositCategories;</span>
+<span class="fc" id="L429">        return theDepositCategories;</span>
     }
 
     /**
@@ -457,7 +435,7 @@ public class MoneyWiseAnalysis
      * @return the list
      */
     public MoneyWiseAnalysisCashCategoryBucketList getCashCategories() {
-<span class="fc" id="L460">        return theCashCategories;</span>
+<span class="fc" id="L438">        return theCashCategories;</span>
     }
 
     /**
@@ -466,16 +444,12 @@ public class MoneyWiseAnalysis
      * @return the list
      */
     public MoneyWiseAnalysisLoanCategoryBucketList getLoanCategories() {
-<span class="fc" id="L469">        return theLoanCategories;</span>
+<span class="fc" id="L447">        return theLoanCategories;</span>
     }
 
-    /**
-     * Obtain the transaction categories list.
-     *
-     * @return the list
-     */
+    @Override
     public MoneyWiseAnalysisTransCategoryBucketList getTransCategories() {
-<span class="fc" id="L478">        return theTransCategories;</span>
+<span class="fc" id="L452">        return theTransCategories;</span>
     }
 
     /**
@@ -484,7 +458,7 @@ public class MoneyWiseAnalysis
      * @return the list
      */
     public MoneyWiseAnalysisTransTagBucketList getTransactionTags() {
-<span class="fc" id="L487">        return theTransTags;</span>
+<span class="fc" id="L461">        return theTransTags;</span>
     }
 
     /**
@@ -493,7 +467,7 @@ public class MoneyWiseAnalysis
      * @return the list
      */
     public MoneyWiseAnalysisTaxBasisBucketList getTaxBasis() {
-<span class="fc" id="L496">        return theTaxBasis;</span>
+<span class="fc" id="L470">        return theTaxBasis;</span>
     }
 
     /**
@@ -502,7 +476,7 @@ public class MoneyWiseAnalysis
      * @return the analysis
      */
     public MoneyWiseTaxAnalysis getTaxAnalysis() {
-<span class="nc" id="L505">        return theTaxAnalysis;</span>
+<span class="nc" id="L479">        return theTaxAnalysis;</span>
     }
 
     /**
@@ -512,46 +486,46 @@ public class MoneyWiseAnalysis
      */
     public void addOpeningBalances(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* Iterate through the deposits */
-<span class="fc" id="L515">        final Iterator&lt;MoneyWiseDeposit&gt; myDepIterator = theEditSet.getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class).iterator();</span>
-<span class="pc bpc" id="L516" title="1 of 2 branches missed.">        while (myDepIterator.hasNext()) {</span>
-<span class="nc" id="L517">            final MoneyWiseDeposit myDeposit = myDepIterator.next();</span>
+<span class="fc" id="L489">        final Iterator&lt;MoneyWiseDeposit&gt; myDepIterator = theEditSet.getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class).iterator();</span>
+<span class="pc bpc" id="L490" title="1 of 2 branches missed.">        while (myDepIterator.hasNext()) {</span>
+<span class="nc" id="L491">            final MoneyWiseDeposit myDeposit = myDepIterator.next();</span>
 
             /* If the deposit has an opening balance */
-<span class="nc" id="L520">            final OceanusMoney myBalance = myDeposit.getOpeningBalance();</span>
-<span class="nc bnc" id="L521" title="All 2 branches missed.">            if (myBalance != null) {</span>
+<span class="nc" id="L494">            final OceanusMoney myBalance = myDeposit.getOpeningBalance();</span>
+<span class="nc bnc" id="L495" title="All 2 branches missed.">            if (myBalance != null) {</span>
                 /* Obtain the actual deposit bucket */
-<span class="nc" id="L523">                final MoneyWiseAnalysisDepositBucket myBucket = theDeposits.getBucket(myDeposit);</span>
-<span class="nc" id="L524">                myBucket.setOpeningBalance(pHelper, myBalance);</span>
+<span class="nc" id="L497">                final MoneyWiseAnalysisDepositBucket myBucket = theDeposits.getBucket(myDeposit);</span>
+<span class="nc" id="L498">                myBucket.setOpeningBalance(pHelper, myBalance);</span>
             }
-<span class="nc" id="L526">        }</span>
+<span class="nc" id="L500">        }</span>
 
         /* Iterate through the cash */
-<span class="fc" id="L529">        final Iterator&lt;MoneyWiseCash&gt; myCashIterator = theEditSet.getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class).iterator();</span>
-<span class="pc bpc" id="L530" title="1 of 2 branches missed.">        while (myCashIterator.hasNext()) {</span>
-<span class="nc" id="L531">            final MoneyWiseCash myCash = myCashIterator.next();</span>
+<span class="fc" id="L503">        final Iterator&lt;MoneyWiseCash&gt; myCashIterator = theEditSet.getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class).iterator();</span>
+<span class="pc bpc" id="L504" title="1 of 2 branches missed.">        while (myCashIterator.hasNext()) {</span>
+<span class="nc" id="L505">            final MoneyWiseCash myCash = myCashIterator.next();</span>
 
             /* If the cash has an opening balance */
-<span class="nc" id="L534">            final OceanusMoney myBalance = myCash.getOpeningBalance();</span>
-<span class="nc bnc" id="L535" title="All 2 branches missed.">            if (myBalance != null) {</span>
+<span class="nc" id="L508">            final OceanusMoney myBalance = myCash.getOpeningBalance();</span>
+<span class="nc bnc" id="L509" title="All 2 branches missed.">            if (myBalance != null) {</span>
                 /* Obtain the actual cash bucket */
-<span class="nc" id="L537">                final MoneyWiseAnalysisCashBucket myBucket = theCash.getBucket(myCash);</span>
-<span class="nc" id="L538">                myBucket.setOpeningBalance(pHelper, myBalance);</span>
+<span class="nc" id="L511">                final MoneyWiseAnalysisCashBucket myBucket = theCash.getBucket(myCash);</span>
+<span class="nc" id="L512">                myBucket.setOpeningBalance(pHelper, myBalance);</span>
             }
-<span class="nc" id="L540">        }</span>
+<span class="nc" id="L514">        }</span>
 
         /* Iterate through the loans */
-<span class="fc" id="L543">        final Iterator&lt;MoneyWiseLoan&gt; myLoanIterator = theEditSet.getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class).iterator();</span>
-<span class="pc bpc" id="L544" title="1 of 2 branches missed.">        while (myLoanIterator.hasNext()) {</span>
-<span class="nc" id="L545">            final MoneyWiseLoan myLoan = myLoanIterator.next();</span>
+<span class="fc" id="L517">        final Iterator&lt;MoneyWiseLoan&gt; myLoanIterator = theEditSet.getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class).iterator();</span>
+<span class="pc bpc" id="L518" title="1 of 2 branches missed.">        while (myLoanIterator.hasNext()) {</span>
+<span class="nc" id="L519">            final MoneyWiseLoan myLoan = myLoanIterator.next();</span>
 
             /* If the loan has an opening balance */
-<span class="nc" id="L548">            final OceanusMoney myBalance = myLoan.getOpeningBalance();</span>
-<span class="nc bnc" id="L549" title="All 2 branches missed.">            if (myBalance != null) {</span>
+<span class="nc" id="L522">            final OceanusMoney myBalance = myLoan.getOpeningBalance();</span>
+<span class="nc bnc" id="L523" title="All 2 branches missed.">            if (myBalance != null) {</span>
                 /* Obtain the actual loan bucket */
-<span class="nc" id="L551">                final MoneyWiseAnalysisLoanBucket myBucket = theLoans.getBucket(myLoan);</span>
-<span class="nc" id="L552">                myBucket.setOpeningBalance(pHelper, myBalance);</span>
+<span class="nc" id="L525">                final MoneyWiseAnalysisLoanBucket myBucket = theLoans.getBucket(myLoan);</span>
+<span class="nc" id="L526">                myBucket.setOpeningBalance(pHelper, myBalance);</span>
             }
-<span class="nc" id="L554">        }</span>
-<span class="fc" id="L555">    }</span>
+<span class="nc" id="L528">        }</span>
+<span class="fc" id="L529">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

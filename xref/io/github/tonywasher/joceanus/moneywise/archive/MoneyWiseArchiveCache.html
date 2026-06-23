@@ -35,7 +35,7 @@
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMap;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
@@ -643,7 +643,7 @@
 <a class="jxr_linenumber" name="L635" href="#L635">635</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L636" href="#L636">636</a>     <strong class="jxr_keyword">void</strong> resolveSecurityHoldings(<strong class="jxr_keyword">final</strong> <a name="MoneyWiseDataSet" href="../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseDataSet.html#MoneyWiseDataSet">MoneyWiseDataSet</a> pData) {
 <a class="jxr_linenumber" name="L637" href="#L637">637</a>         <em class="jxr_comment">/* Access securityHoldingsMap and Portfolio list */</em>
-<a class="jxr_linenumber" name="L638" href="#L638">638</a>         <strong class="jxr_keyword">final</strong> MoneyWiseSecurityHoldingMap myMap = pData.getPortfolios().getSecurityHoldingsMap();
+<a class="jxr_linenumber" name="L638" href="#L638">638</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseSecurityHoldingMap" href="../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHoldingMap.html#MoneyWiseSecurityHoldingMap">MoneyWiseSecurityHoldingMap</a> myMap = (<a name="MoneyWiseSecurityHoldingMap" href="../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHoldingMap.html#MoneyWiseSecurityHoldingMap">MoneyWiseSecurityHoldingMap</a>) pData.getPortfolios().getSecurityHoldingsMap();
 <a class="jxr_linenumber" name="L639" href="#L639">639</a>         <strong class="jxr_keyword">final</strong> MoneyWisePortfolioList myPortfolios = pData.getPortfolios();
 <a class="jxr_linenumber" name="L640" href="#L640">640</a> 
 <a class="jxr_linenumber" name="L641" href="#L641">641</a>         <em class="jxr_comment">/* Loop through the name map */</em>
@@ -678,7 +678,7 @@
 <a class="jxr_linenumber" name="L670" href="#L670">670</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="MoneyWiseDataException" href="../../../../../../io/github/tonywasher/joceanus/moneywise/exc/MoneyWiseDataException.html#MoneyWiseDataException">MoneyWiseDataException</a>(pTarget, <span class="jxr_string">"Inconsistent portfolios"</span>);
 <a class="jxr_linenumber" name="L671" href="#L671">671</a>         }
 <a class="jxr_linenumber" name="L672" href="#L672">672</a> 
-<a class="jxr_linenumber" name="L673" href="#L673">673</a>         <strong class="jxr_keyword">final</strong> MoneyWiseSecurityHoldingMap myMap = pData.getPortfolios().getSecurityHoldingsMap();
+<a class="jxr_linenumber" name="L673" href="#L673">673</a>         <strong class="jxr_keyword">final</strong> <a name="MoneyWiseSecurityHoldingMap" href="../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHoldingMap.html#MoneyWiseSecurityHoldingMap">MoneyWiseSecurityHoldingMap</a> myMap = (<a name="MoneyWiseSecurityHoldingMap" href="../../../../../../io/github/tonywasher/joceanus/moneywise/data/basic/MoneyWiseSecurityHoldingMap.html#MoneyWiseSecurityHoldingMap">MoneyWiseSecurityHoldingMap</a>) pData.getPortfolios().getSecurityHoldingsMap();
 <a class="jxr_linenumber" name="L674" href="#L674">674</a> 
 <a class="jxr_linenumber" name="L675" href="#L675">675</a>         <em class="jxr_comment">/* Loop through the name map */</em>
 <a class="jxr_linenumber" name="L676" href="#L676">676</a>         <strong class="jxr_keyword">for</strong> (Entry&lt;String, Object&gt; myEntry : theNameMap.entrySet()) {
@@ -743,6 +743,6 @@
 <a class="jxr_linenumber" name="L735" href="#L735">735</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

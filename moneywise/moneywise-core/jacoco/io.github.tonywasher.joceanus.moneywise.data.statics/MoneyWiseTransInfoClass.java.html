@@ -20,102 +20,113 @@ import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 
 /**
  * Enumeration of TransactionInfo Classes..
  */
-<span class="fc" id="L28">public enum MoneyWiseTransInfoClass</span>
+<span class="fc" id="L29">public enum MoneyWiseTransInfoClass</span>
         implements PrometheusDataInfoClass, MetisDataFieldId {
     /**
      * Tax Credit.
      */
-<span class="fc" id="L33">    TAXCREDIT(1, 0, MetisDataType.MONEY),</span>
+<span class="fc" id="L34">    TAXCREDIT(1, 0, MetisDataType.MONEY),</span>
 
     /**
      * Employer National Insurance.
      */
-<span class="fc" id="L38">    EMPLOYERNATINS(2, 1, MetisDataType.MONEY),</span>
+<span class="fc" id="L39">    EMPLOYERNATINS(2, 1, MetisDataType.MONEY),</span>
 
     /**
      * Employee National Insurance.
      */
-<span class="fc" id="L43">    EMPLOYEENATINS(3, 2, MetisDataType.MONEY),</span>
+<span class="fc" id="L44">    EMPLOYEENATINS(3, 2, MetisDataType.MONEY),</span>
 
     /**
      * Deemed Benefit.
      */
-<span class="fc" id="L48">    DEEMEDBENEFIT(4, 3, MetisDataType.MONEY),</span>
+<span class="fc" id="L49">    DEEMEDBENEFIT(4, 3, MetisDataType.MONEY),</span>
 
     /**
      * QualifyingYears.
      */
-<span class="fc" id="L53">    QUALIFYYEARS(5, 4, MetisDataType.INTEGER),</span>
+<span class="fc" id="L54">    QUALIFYYEARS(5, 4, MetisDataType.INTEGER),</span>
 
     /**
      * Account Delta Units.
      */
-<span class="fc" id="L58">    ACCOUNTDELTAUNITS(6, 5, MetisDataType.UNITS),</span>
+<span class="fc" id="L59">    ACCOUNTDELTAUNITS(6, 5, MetisDataType.UNITS),</span>
 
     /**
      * Partner Delta Units.
      */
-<span class="fc" id="L63">    PARTNERDELTAUNITS(7, 6, MetisDataType.UNITS),</span>
+<span class="fc" id="L64">    PARTNERDELTAUNITS(7, 6, MetisDataType.UNITS),</span>
 
     /**
      * Dilution.
      */
-<span class="fc" id="L68">    DILUTION(8, 7, MetisDataType.RATIO),</span>
+<span class="fc" id="L69">    DILUTION(8, 7, MetisDataType.RATIO),</span>
 
     /**
      * Reference.
      */
-<span class="fc" id="L73">    REFERENCE(9, 8, MetisDataType.STRING),</span>
+<span class="fc" id="L74">    REFERENCE(9, 8, MetisDataType.STRING),</span>
 
     /**
      * Withheld.
      */
-<span class="fc" id="L78">    WITHHELD(10, 9, MetisDataType.MONEY),</span>
+<span class="fc" id="L79">    WITHHELD(10, 9, MetisDataType.MONEY),</span>
 
     /**
      * Partner Amount.
      */
-<span class="fc" id="L83">    PARTNERAMOUNT(11, 10, MetisDataType.MONEY),</span>
+<span class="fc" id="L84">    PARTNERAMOUNT(11, 10, MetisDataType.MONEY),</span>
 
     /**
      * ThirdParty Amount.
      */
-<span class="fc" id="L88">    RETURNEDCASH(12, 11, MetisDataType.MONEY),</span>
+<span class="fc" id="L89">    RETURNEDCASH(12, 11, MetisDataType.MONEY),</span>
 
     /**
      * ReturnedCashAccount.
      */
-<span class="fc" id="L93">    RETURNEDCASHACCOUNT(13, 12, MetisDataType.LINKPAIR),</span>
+<span class="fc" id="L94">    RETURNEDCASHACCOUNT(13, 12, MetisDataType.LINKPAIR),</span>
 
     /**
      * Comments.
      */
-<span class="fc" id="L98">    COMMENTS(14, 13, MetisDataType.STRING),</span>
+<span class="fc" id="L99">    COMMENTS(14, 13, MetisDataType.STRING),</span>
 
     /**
      * Price.
      */
-<span class="fc" id="L103">    PRICE(15, 14, MetisDataType.PRICE),</span>
+<span class="fc" id="L104">    PRICE(15, 14, MetisDataType.PRICE),</span>
 
     /**
      * XchangeRate.
      */
-<span class="fc" id="L108">    XCHANGERATE(16, 15, MetisDataType.RATIO),</span>
+<span class="fc" id="L109">    XCHANGERATE(16, 15, MetisDataType.RATIO),</span>
 
     /**
      * Commission.
      */
-<span class="fc" id="L113">    COMMISSION(17, 16, MetisDataType.MONEY),</span>
+<span class="fc" id="L114">    COMMISSION(17, 16, MetisDataType.MONEY),</span>
 
     /**
      * TransactionTag.
      */
-<span class="fc" id="L118">    TRANSTAG(18, 17, MetisDataType.LINKSET);</span>
+<span class="fc" id="L119">    TRANSTAG(18, 17, MetisDataType.LINKSET);</span>
+
+    /**
+     * Data length.
+     */
+    private static final int DATA_LEN = 20;
+
+    /**
+     * Comment length.
+     */
+    private static final int COMMENT_LEN = 50;
 
     /**
      * The String name.
@@ -146,50 +157,50 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
      */
     MoneyWiseTransInfoClass(final int uId,
                             final int uOrder,
-<span class="fc" id="L149">                            final MetisDataType pDataType) {</span>
-<span class="fc" id="L150">        theId = uId;</span>
-<span class="fc" id="L151">        theOrder = uOrder;</span>
-<span class="fc" id="L152">        theDataType = pDataType;</span>
-<span class="fc" id="L153">    }</span>
+<span class="fc" id="L160">                            final MetisDataType pDataType) {</span>
+<span class="fc" id="L161">        theId = uId;</span>
+<span class="fc" id="L162">        theOrder = uOrder;</span>
+<span class="fc" id="L163">        theDataType = pDataType;</span>
+<span class="fc" id="L164">    }</span>
 
     @Override
     public int getClassId() {
-<span class="fc" id="L157">        return theId;</span>
+<span class="fc" id="L168">        return theId;</span>
     }
 
     @Override
     public int getOrder() {
-<span class="fc" id="L162">        return theOrder;</span>
+<span class="fc" id="L173">        return theOrder;</span>
     }
 
     @Override
     public MetisDataType getDataType() {
-<span class="fc" id="L167">        return theDataType;</span>
+<span class="fc" id="L178">        return theDataType;</span>
     }
 
     @Override
     public boolean isLink() {
-<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        return switch (theDataType) {</span>
-<span class="nc" id="L173">            case LINK, LINKPAIR, LINKSET -&gt; true;</span>
-<span class="fc" id="L174">            default -&gt; false;</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">        return switch (theDataType) {</span>
+<span class="nc" id="L184">            case LINK, LINKPAIR, LINKSET -&gt; true;</span>
+<span class="fc" id="L185">            default -&gt; false;</span>
         };
     }
 
     @Override
     public boolean isLinkSet() {
-<span class="fc bfc" id="L180" title="All 2 branches covered.">        return theDataType == MetisDataType.LINKSET;</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">        return theDataType == MetisDataType.LINKSET;</span>
     }
 
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="fc bfc" id="L186" title="All 2 branches covered.">        if (theName == null) {</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">        if (theName == null) {</span>
             /* Load the name */
-<span class="fc" id="L188">            theName = MoneyWiseStaticResource.getKeyForTransInfo(this).getValue();</span>
+<span class="fc" id="L199">            theName = bundleIdForInfoClass(this).getValue();</span>
         }
 
         /* return the name */
-<span class="fc" id="L192">        return theName;</span>
+<span class="fc" id="L203">        return theName;</span>
     }
 
     /**
@@ -200,12 +211,12 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
      * @throws OceanusException on error
      */
     public static MoneyWiseTransInfoClass fromId(final int id) throws OceanusException {
-<span class="nc bnc" id="L203" title="All 2 branches missed.">        for (MoneyWiseTransInfoClass myClass : values()) {</span>
-<span class="nc bnc" id="L204" title="All 2 branches missed.">            if (myClass.getClassId() == id) {</span>
-<span class="nc" id="L205">                return myClass;</span>
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        for (MoneyWiseTransInfoClass myClass : values()) {</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">            if (myClass.getClassId() == id) {</span>
+<span class="nc" id="L216">                return myClass;</span>
             }
         }
-<span class="nc" id="L208">        throw new MoneyWiseDataException(&quot;Invalid ClassId for &quot; + MoneyWiseStaticDataType.TRANSINFOTYPE.toString() + &quot;:&quot; + id);</span>
+<span class="nc" id="L219">        throw new MoneyWiseDataException(&quot;Invalid ClassId for &quot; + MoneyWiseStaticDataType.TRANSINFOTYPE.toString() + &quot;:&quot; + id);</span>
     }
 
     /**
@@ -214,16 +225,47 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
      * @return the maximum length
      */
     public int getMaximumLength() {
-<span class="nc bnc" id="L217" title="All 3 branches missed.">        return switch (this) {</span>
-<span class="nc" id="L218">            case REFERENCE -&gt; MoneyWiseTransInfoType.DATA_LEN;</span>
-<span class="nc" id="L219">            case COMMENTS -&gt; MoneyWiseTransInfoType.COMMENT_LEN;</span>
-<span class="nc" id="L220">            default -&gt; 0;</span>
+<span class="nc bnc" id="L228" title="All 3 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L229">            case REFERENCE -&gt; DATA_LEN;</span>
+<span class="nc" id="L230">            case COMMENTS -&gt; COMMENT_LEN;</span>
+<span class="nc" id="L231">            default -&gt; 0;</span>
         };
     }
 
     @Override
     public String getId() {
-<span class="fc" id="L226">        return toString();</span>
+<span class="fc" id="L237">        return toString();</span>
+    }
+
+    /**
+     * Obtain the resource bundleId for the info class.
+     *
+     * @param pClass the info class
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForInfoClass(final MoneyWiseTransInfoClass pClass) {
+        /* Create the map and return it */
+<span class="pc bpc" id="L248" title="1 of 19 branches missed.">        return switch (pClass) {</span>
+<span class="fc" id="L249">            case TAXCREDIT -&gt; MoneyWiseStaticResource.TRANSINFO_TAXCREDIT;</span>
+<span class="fc" id="L250">            case EMPLOYERNATINS -&gt; MoneyWiseStaticResource.TRANSTYPE_EMPLOYERNATINS;</span>
+<span class="fc" id="L251">            case EMPLOYEENATINS -&gt; MoneyWiseStaticResource.TRANSTYPE_EMPLOYEENATINS;</span>
+<span class="fc" id="L252">            case DEEMEDBENEFIT -&gt; MoneyWiseStaticResource.TRANSINFO_BENEFIT;</span>
+<span class="fc" id="L253">            case WITHHELD -&gt; MoneyWiseStaticResource.TRANSTYPE_WITHHELD;</span>
+<span class="fc" id="L254">            case ACCOUNTDELTAUNITS -&gt; MoneyWiseStaticResource.TRANSINFO_ACCOUNTDELTAUNITS;</span>
+<span class="fc" id="L255">            case PARTNERDELTAUNITS -&gt; MoneyWiseStaticResource.TRANSINFO_PARTNERDELTAUNITS;</span>
+<span class="fc" id="L256">            case PARTNERAMOUNT -&gt; MoneyWiseStaticResource.TRANSINFO_PARTNERAMOUNT;</span>
+<span class="fc" id="L257">            case RETURNEDCASH -&gt; MoneyWiseStaticResource.TRANSINFO_RETURNEDCASH;</span>
+<span class="fc" id="L258">            case DILUTION -&gt; MoneyWiseStaticResource.TRANSINFO_DILUTION;</span>
+<span class="fc" id="L259">            case QUALIFYYEARS -&gt; MoneyWiseStaticResource.TRANSINFO_QUALYEARS;</span>
+<span class="fc" id="L260">            case REFERENCE -&gt; MoneyWiseStaticResource.TRANSINFO_REFERENCE;</span>
+<span class="fc" id="L261">            case COMMENTS -&gt; MoneyWiseStaticResource.TRANSINFO_COMMENTS;</span>
+<span class="fc" id="L262">            case RETURNEDCASHACCOUNT -&gt; MoneyWiseStaticResource.TRANSINFO_RETURNEDCASHACCOUNT;</span>
+<span class="fc" id="L263">            case PRICE -&gt; MoneyWiseStaticResource.TRANSINFO_PRICE;</span>
+<span class="fc" id="L264">            case XCHANGERATE -&gt; MoneyWiseStaticResource.TRANSINFO_XCHANGERATE;</span>
+<span class="fc" id="L265">            case COMMISSION -&gt; MoneyWiseStaticResource.TRANSINFO_COMMISSION;</span>
+<span class="fc" id="L266">            case TRANSTAG -&gt; MoneyWiseStaticResource.TRANSINFO_TRANSTAG;</span>
+<span class="nc" id="L267">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

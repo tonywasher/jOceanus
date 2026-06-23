@@ -20,92 +20,108 @@ import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 
 /**
  * Enumeration of Account Info Classes.
  */
-<span class="fc" id="L28">public enum MoneyWiseAccountInfoClass</span>
+<span class="fc" id="L29">public enum MoneyWiseAccountInfoClass</span>
         implements PrometheusDataInfoClass, MetisDataFieldId {
     /**
      * Maturity Date.
      */
-<span class="fc" id="L33">    MATURITY(1, 0, MetisDataType.DATE),</span>
+<span class="fc" id="L34">    MATURITY(1, 0, MetisDataType.DATE),</span>
 
     /**
      * Opening Balance.
      */
-<span class="fc" id="L38">    OPENINGBALANCE(2, 1, MetisDataType.MONEY),</span>
+<span class="fc" id="L39">    OPENINGBALANCE(2, 1, MetisDataType.MONEY),</span>
 
     /**
      * AutoExpense Category.
      */
-<span class="fc" id="L43">    AUTOEXPENSE(3, 2, MetisDataType.LINK),</span>
+<span class="fc" id="L44">    AUTOEXPENSE(3, 2, MetisDataType.LINK),</span>
 
     /**
      * AutoExpense Payee.
      */
-<span class="fc" id="L48">    AUTOPAYEE(4, 3, MetisDataType.LINK),</span>
+<span class="fc" id="L49">    AUTOPAYEE(4, 3, MetisDataType.LINK),</span>
 
     /**
      * WebSite.
      */
-<span class="fc" id="L53">    WEBSITE(5, 4, MetisDataType.CHARARRAY),</span>
+<span class="fc" id="L54">    WEBSITE(5, 4, MetisDataType.CHARARRAY),</span>
 
     /**
      * Customer #.
      */
-<span class="fc" id="L58">    CUSTOMERNO(6, 5, MetisDataType.CHARARRAY),</span>
+<span class="fc" id="L59">    CUSTOMERNO(6, 5, MetisDataType.CHARARRAY),</span>
 
     /**
      * User Id.
      */
-<span class="fc" id="L63">    USERID(7, 6, MetisDataType.CHARARRAY),</span>
+<span class="fc" id="L64">    USERID(7, 6, MetisDataType.CHARARRAY),</span>
 
     /**
      * Password.
      */
-<span class="fc" id="L68">    PASSWORD(8, 7, MetisDataType.CHARARRAY),</span>
+<span class="fc" id="L69">    PASSWORD(8, 7, MetisDataType.CHARARRAY),</span>
 
     /**
      * SortCode.
      */
-<span class="fc" id="L73">    SORTCODE(9, 8, MetisDataType.CHARARRAY),</span>
+<span class="fc" id="L74">    SORTCODE(9, 8, MetisDataType.CHARARRAY),</span>
 
     /**
      * Account.
      */
-<span class="fc" id="L78">    ACCOUNT(10, 9, MetisDataType.CHARARRAY),</span>
+<span class="fc" id="L79">    ACCOUNT(10, 9, MetisDataType.CHARARRAY),</span>
 
     /**
      * Reference.
      */
-<span class="fc" id="L83">    REFERENCE(11, 10, MetisDataType.CHARARRAY),</span>
+<span class="fc" id="L84">    REFERENCE(11, 10, MetisDataType.CHARARRAY),</span>
 
     /**
      * Notes.
      */
-<span class="fc" id="L88">    NOTES(12, 11, MetisDataType.CHARARRAY),</span>
+<span class="fc" id="L89">    NOTES(12, 11, MetisDataType.CHARARRAY),</span>
 
     /**
      * Symbol.
      */
-<span class="fc" id="L93">    SYMBOL(13, 12, MetisDataType.STRING),</span>
+<span class="fc" id="L94">    SYMBOL(13, 12, MetisDataType.STRING),</span>
 
     /**
      * Region.
      */
-<span class="fc" id="L98">    REGION(14, 13, MetisDataType.LINK),</span>
+<span class="fc" id="L99">    REGION(14, 13, MetisDataType.LINK),</span>
 
     /**
      * UnderlyingStock.
      */
-<span class="fc" id="L103">    UNDERLYINGSTOCK(15, 14, MetisDataType.LINK),</span>
+<span class="fc" id="L104">    UNDERLYINGSTOCK(15, 14, MetisDataType.LINK),</span>
 
     /**
      * OptionPrice.
      */
-<span class="fc" id="L108">    OPTIONPRICE(16, 15, MetisDataType.PRICE);</span>
+<span class="fc" id="L109">    OPTIONPRICE(16, 15, MetisDataType.PRICE);</span>
+
+    /**
+     * WebSite length.
+     */
+    private static final int WEBSITE_LEN = 50;
+
+    /**
+     * Data length.
+     */
+    private static final int DATA_LEN = 20;
+
+    /**
+     * Notes length.
+     */
+    private static final int NOTES_LEN = 500;
 
     /**
      * The String name.
@@ -136,47 +152,47 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
      */
     MoneyWiseAccountInfoClass(final int uId,
                               final int uOrder,
-<span class="fc" id="L139">                              final MetisDataType pDataType) {</span>
-<span class="fc" id="L140">        theId = uId;</span>
-<span class="fc" id="L141">        theOrder = uOrder;</span>
-<span class="fc" id="L142">        theDataType = pDataType;</span>
-<span class="fc" id="L143">    }</span>
+<span class="fc" id="L155">                              final MetisDataType pDataType) {</span>
+<span class="fc" id="L156">        theId = uId;</span>
+<span class="fc" id="L157">        theOrder = uOrder;</span>
+<span class="fc" id="L158">        theDataType = pDataType;</span>
+<span class="fc" id="L159">    }</span>
 
     @Override
     public int getClassId() {
-<span class="fc" id="L147">        return theId;</span>
+<span class="fc" id="L163">        return theId;</span>
     }
 
     @Override
     public int getOrder() {
-<span class="fc" id="L152">        return theOrder;</span>
+<span class="fc" id="L168">        return theOrder;</span>
     }
 
     @Override
     public MetisDataType getDataType() {
-<span class="fc" id="L157">        return theDataType;</span>
+<span class="fc" id="L173">        return theDataType;</span>
     }
 
     @Override
     public boolean isLink() {
-<span class="fc bfc" id="L162" title="All 2 branches covered.">        return theDataType == MetisDataType.LINK;</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        return theDataType == MetisDataType.LINK;</span>
     }
 
     @Override
     public boolean isLinkSet() {
-<span class="fc" id="L167">        return false;</span>
+<span class="fc" id="L183">        return false;</span>
     }
 
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="fc bfc" id="L173" title="All 2 branches covered.">        if (theName == null) {</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">        if (theName == null) {</span>
             /* Load the name */
-<span class="fc" id="L175">            theName = MoneyWiseStaticResource.getKeyForAccountInfo(this).getValue();</span>
+<span class="fc" id="L191">            theName = bundleIdForInfoClass(this).getValue();</span>
         }
 
         /* return the name */
-<span class="fc" id="L179">        return theName;</span>
+<span class="fc" id="L195">        return theName;</span>
     }
 
     /**
@@ -187,12 +203,12 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
      * @throws OceanusException on error
      */
     public static MoneyWiseAccountInfoClass fromId(final int id) throws OceanusException {
-<span class="nc bnc" id="L190" title="All 2 branches missed.">        for (MoneyWiseAccountInfoClass myClass : values()) {</span>
-<span class="nc bnc" id="L191" title="All 2 branches missed.">            if (myClass.getClassId() == id) {</span>
-<span class="nc" id="L192">                return myClass;</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">        for (MoneyWiseAccountInfoClass myClass : values()) {</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">            if (myClass.getClassId() == id) {</span>
+<span class="nc" id="L208">                return myClass;</span>
             }
         }
-<span class="nc" id="L195">        throw new MoneyWiseDataException(&quot;Invalid ClassId for &quot; + MoneyWiseStaticDataType.ACCOUNTINFOTYPE.toString() + &quot;:&quot; + id);</span>
+<span class="nc" id="L211">        throw new MoneyWiseDataException(&quot;Invalid ClassId for &quot; + MoneyWiseStaticDataType.ACCOUNTINFOTYPE.toString() + &quot;:&quot; + id);</span>
     }
 
     /**
@@ -201,18 +217,47 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
      * @return the maximum length
      */
     public int getMaximumLength() {
-<span class="pc bpc" id="L204" title="4 of 5 branches missed.">        return switch (this) {</span>
-<span class="nc" id="L205">            case WEBSITE -&gt; MoneyWiseAccountInfoType.WEBSITE_LEN;</span>
-<span class="nc" id="L206">            case CUSTOMERNO, USERID, PASSWORD, SORTCODE, ACCOUNT, REFERENCE -&gt; MoneyWiseAccountInfoType.DATA_LEN;</span>
-<span class="nc" id="L207">            case NOTES -&gt; MoneyWiseAccountInfoType.NOTES_LEN;</span>
-<span class="fc" id="L208">            case SYMBOL -&gt; MoneyWiseSecurityType.SYMBOL_LEN;</span>
-<span class="nc" id="L209">            default -&gt; 0;</span>
+<span class="pc bpc" id="L220" title="4 of 5 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L221">            case WEBSITE -&gt; WEBSITE_LEN;</span>
+<span class="nc" id="L222">            case CUSTOMERNO, USERID, PASSWORD, SORTCODE, ACCOUNT, REFERENCE -&gt; DATA_LEN;</span>
+<span class="nc" id="L223">            case NOTES -&gt; NOTES_LEN;</span>
+<span class="fc" id="L224">            case SYMBOL -&gt; MoneyWiseSecurityType.SYMBOL_LEN;</span>
+<span class="nc" id="L225">            default -&gt; 0;</span>
         };
     }
 
     @Override
     public String getId() {
-<span class="fc" id="L215">        return toString();</span>
+<span class="fc" id="L231">        return toString();</span>
+    }
+
+    /**
+     * Obtain the resource bundleId for the info class.
+     *
+     * @param pClass the info class
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForInfoClass(final MoneyWiseAccountInfoClass pClass) {
+        /* Create the map and return it */
+<span class="pc bpc" id="L242" title="1 of 17 branches missed.">        return switch (pClass) {</span>
+<span class="fc" id="L243">            case MATURITY -&gt; MoneyWiseStaticResource.ACCOUNTINFO_MATURITY;</span>
+<span class="fc" id="L244">            case OPENINGBALANCE -&gt; MoneyWiseStaticResource.ACCOUNTINFO_OPENING;</span>
+<span class="fc" id="L245">            case AUTOEXPENSE -&gt; MoneyWiseStaticResource.ACCOUNTINFO_AUTOEXPENSE;</span>
+<span class="fc" id="L246">            case AUTOPAYEE -&gt; MoneyWiseStaticResource.ACCOUNTINFO_AUTOPAYEE;</span>
+<span class="fc" id="L247">            case WEBSITE -&gt; MoneyWiseStaticResource.ACCOUNTINFO_WEBSITE;</span>
+<span class="fc" id="L248">            case CUSTOMERNO -&gt; MoneyWiseStaticResource.ACCOUNTINFO_CUSTNO;</span>
+<span class="fc" id="L249">            case USERID -&gt; MoneyWiseStaticResource.ACCOUNTINFO_USERID;</span>
+<span class="fc" id="L250">            case PASSWORD -&gt; MoneyWiseStaticResource.ACCOUNTINFO_PASSWORD;</span>
+<span class="fc" id="L251">            case SORTCODE -&gt; MoneyWiseStaticResource.ACCOUNTINFO_SORTCODE;</span>
+<span class="fc" id="L252">            case ACCOUNT -&gt; MoneyWiseStaticResource.ACCOUNTINFO_ACCOUNT;</span>
+<span class="fc" id="L253">            case REFERENCE -&gt; MoneyWiseStaticResource.ACCOUNTINFO_REFERENCE;</span>
+<span class="fc" id="L254">            case NOTES -&gt; MoneyWiseStaticResource.ACCOUNTINFO_NOTES;</span>
+<span class="fc" id="L255">            case REGION -&gt; MoneyWiseStaticResource.ACCOUNTINFO_REGION;</span>
+<span class="fc" id="L256">            case SYMBOL -&gt; MoneyWiseStaticResource.ACCOUNTINFO_SYMBOL;</span>
+<span class="fc" id="L257">            case UNDERLYINGSTOCK -&gt; MoneyWiseStaticResource.ACCOUNTINFO_UNDERLYINGSTOCK;</span>
+<span class="fc" id="L258">            case OPTIONPRICE -&gt; MoneyWiseStaticResource.ACCOUNTINFO_OPTIONPRICE;</span>
+<span class="nc" id="L259">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -41,7 +41,8 @@ import java.util.Map;
 /**
  * Encryptor/Decryptor.
  */
-public class PrometheusEncryptor {
+public class PrometheusEncryptor
+        implements PrometheusEncryptorCtl {
     /**
      * Encrypted data conversion failure message.
      */
@@ -60,7 +61,7 @@ public class PrometheusEncryptor {
     /**
      * The Encryptor map.
      */
-<span class="nc" id="L63">    private static final Map&lt;MetisDataType, PrometheusDataEncryptor&gt; ENCRYPTORS = buildEncryptorMap();</span>
+<span class="nc" id="L64">    private static final Map&lt;MetisDataType, PrometheusDataEncryptor&gt; ENCRYPTORS = buildEncryptorMap();</span>
 
     /**
      * The KeySet.
@@ -79,38 +80,28 @@ public class PrometheusEncryptor {
      * @param pKeySet    the keySet
      */
     public PrometheusEncryptor(final OceanusDataFormatter pFormatter,
-<span class="nc" id="L82">                               final GordianKeySet pKeySet) {</span>
-<span class="nc" id="L83">        theFormatter = pFormatter;</span>
-<span class="nc" id="L84">        theKeySet = pKeySet;</span>
-<span class="nc" id="L85">    }</span>
+<span class="nc" id="L83">                               final GordianKeySet pKeySet) {</span>
+<span class="nc" id="L84">        theFormatter = pFormatter;</span>
+<span class="nc" id="L85">        theKeySet = pKeySet;</span>
+<span class="nc" id="L86">    }</span>
 
-    /**
-     * Obtain the keySet.
-     *
-     * @return the keySet
-     */
+    @Override
     public GordianKeySet getKeySet() {
-<span class="nc" id="L93">        return theKeySet;</span>
+<span class="nc" id="L90">        return theKeySet;</span>
     }
 
-    /**
-     * Encrypt a value.
-     *
-     * @param pValue the value to encrypt.
-     * @return the encryptedBytes
-     * @throws OceanusException on error
-     */
+    @Override
     public byte[] encryptValue(final Object pValue) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the encryptor */
-<span class="nc" id="L107">            final MetisDataType myDataType = getDataTypeForValue(pValue);</span>
-<span class="nc" id="L108">            final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(myDataType);</span>
+<span class="nc" id="L98">            final MetisDataType myDataType = getDataTypeForValue(pValue);</span>
+<span class="nc" id="L99">            final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(myDataType);</span>
 
-<span class="nc" id="L110">            final byte[] myBytes = myEncryptor.convertValue(theFormatter, pValue);</span>
-<span class="nc bnc" id="L111" title="All 2 branches missed.">            return theKeySet == null ? null : theKeySet.encryptBytes(myBytes);</span>
-<span class="nc" id="L112">        } catch (GordianException e) {</span>
-<span class="nc" id="L113">            throw new PrometheusSecurityException(e);</span>
+<span class="nc" id="L101">            final byte[] myBytes = myEncryptor.convertValue(theFormatter, pValue);</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">            return theKeySet == null ? null : theKeySet.encryptBytes(myBytes);</span>
+<span class="nc" id="L103">        } catch (GordianException e) {</span>
+<span class="nc" id="L104">            throw new PrometheusSecurityException(e);</span>
         }
     }
 
@@ -125,26 +116,26 @@ public class PrometheusEncryptor {
     public PrometheusEncryptedPair encryptValue(final PrometheusEncryptedPair pCurrent,
                                                 final Object pValue) throws OceanusException {
         /* If we are passed a null value just return null */
-<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (pValue == null) {</span>
-<span class="nc" id="L129">            return null;</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L120">            return null;</span>
         }
 
         /* If we have no keySet or else a different keySet, ignore the current value */
-<span class="nc" id="L133">        PrometheusEncryptedPair myCurrent = pCurrent;</span>
-<span class="nc bnc" id="L134" title="All 4 branches missed.">        if (myCurrent != null</span>
-<span class="nc bnc" id="L135" title="All 2 branches missed.">                &amp;&amp; (theKeySet == null || !theKeySet.equals(myCurrent.getKeySet()))) {</span>
-<span class="nc" id="L136">            myCurrent = null;</span>
+<span class="nc" id="L124">        PrometheusEncryptedPair myCurrent = pCurrent;</span>
+<span class="nc bnc" id="L125" title="All 4 branches missed.">        if (myCurrent != null</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">                &amp;&amp; (theKeySet == null || !theKeySet.equals(myCurrent.getKeySet()))) {</span>
+<span class="nc" id="L127">            myCurrent = null;</span>
         }
 
         /* If the value is not changed return the current value */
-<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (myCurrent != null</span>
-<span class="nc bnc" id="L141" title="All 2 branches missed.">                &amp;&amp; MetisDataDifference.isEqual(myCurrent.getValue(), pValue)) {</span>
-<span class="nc" id="L142">            return pCurrent;</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        if (myCurrent != null</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">                &amp;&amp; MetisDataDifference.isEqual(myCurrent.getValue(), pValue)) {</span>
+<span class="nc" id="L133">            return pCurrent;</span>
         }
 
         /* Encrypt the data */
-<span class="nc" id="L146">        final byte[] myEncrypted = encryptValue(pValue);</span>
-<span class="nc" id="L147">        return new PrometheusEncryptedPair(theKeySet, pValue, myEncrypted);</span>
+<span class="nc" id="L137">        final byte[] myEncrypted = encryptValue(pValue);</span>
+<span class="nc" id="L138">        return new PrometheusEncryptedPair(theKeySet, pValue, myEncrypted);</span>
     }
 
     /**
@@ -160,28 +151,28 @@ public class PrometheusEncryptor {
         /* Protect against exceptions */
         try {
             /* If we are passed a null value just return null */
-<span class="nc bnc" id="L163" title="All 2 branches missed.">            if (pValue == null) {</span>
-<span class="nc" id="L164">                return null;</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">            if (pValue == null) {</span>
+<span class="nc" id="L155">                return null;</span>
             }
 
             /* Handle Context dataType */
-<span class="nc" id="L168">            MetisDataType myDataType = pField.getDataType();</span>
-<span class="nc bnc" id="L169" title="All 2 branches missed.">            if (myDataType == MetisDataType.CONTEXT) {</span>
-<span class="nc" id="L170">                myDataType = getDataTypeForValue(pValue);</span>
+<span class="nc" id="L159">            MetisDataType myDataType = pField.getDataType();</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">            if (myDataType == MetisDataType.CONTEXT) {</span>
+<span class="nc" id="L161">                myDataType = getDataTypeForValue(pValue);</span>
             }
 
             /* Access the encryptor */
-<span class="nc" id="L174">            final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(myDataType);</span>
-<span class="nc bnc" id="L175" title="All 2 branches missed.">            if (myEncryptor == null) {</span>
-<span class="nc" id="L176">                throw new PrometheusLogicException(ERROR_DATATYPE);</span>
+<span class="nc" id="L165">            final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(myDataType);</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">            if (myEncryptor == null) {</span>
+<span class="nc" id="L167">                throw new PrometheusLogicException(ERROR_DATATYPE);</span>
             }
 
             /* Encrypt the data */
-<span class="nc" id="L180">            final byte[] myBytes = myEncryptor.convertValue(theFormatter, pValue);</span>
-<span class="nc" id="L181">            final byte[] myEncrypted = theKeySet.encryptBytes(myBytes);</span>
-<span class="nc" id="L182">            return new PrometheusEncryptedPair(theKeySet, pValue, myEncrypted);</span>
-<span class="nc" id="L183">        } catch (GordianException e) {</span>
-<span class="nc" id="L184">            throw new PrometheusSecurityException(e);</span>
+<span class="nc" id="L171">            final byte[] myBytes = myEncryptor.convertValue(theFormatter, pValue);</span>
+<span class="nc" id="L172">            final byte[] myEncrypted = theKeySet.encryptBytes(myBytes);</span>
+<span class="nc" id="L173">            return new PrometheusEncryptedPair(theKeySet, pValue, myEncrypted);</span>
+<span class="nc" id="L174">        } catch (GordianException e) {</span>
+<span class="nc" id="L175">            throw new PrometheusSecurityException(e);</span>
         }
     }
 
@@ -198,17 +189,17 @@ public class PrometheusEncryptor {
         /* Protect agains exceptions */
         try {
             /* Access the encryptor */
-<span class="nc" id="L201">            final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(pField.getDataType());</span>
-<span class="nc bnc" id="L202" title="All 2 branches missed.">            if (myEncryptor == null) {</span>
-<span class="nc" id="L203">                throw new PrometheusLogicException(ERROR_DATATYPE);</span>
+<span class="nc" id="L192">            final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(pField.getDataType());</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">            if (myEncryptor == null) {</span>
+<span class="nc" id="L194">                throw new PrometheusLogicException(ERROR_DATATYPE);</span>
             }
 
             /* Decrypt the data */
-<span class="nc" id="L207">            final byte[] myDecrypted = theKeySet.decryptBytes(pBytes);</span>
-<span class="nc" id="L208">            final Object myValue = myEncryptor.parseValue(theFormatter, myDecrypted);</span>
-<span class="nc" id="L209">            return new PrometheusEncryptedPair(theKeySet, myValue, pBytes);</span>
-<span class="nc" id="L210">        } catch (GordianException e) {</span>
-<span class="nc" id="L211">            throw new PrometheusSecurityException(e);</span>
+<span class="nc" id="L198">            final byte[] myDecrypted = theKeySet.decryptBytes(pBytes);</span>
+<span class="nc" id="L199">            final Object myValue = myEncryptor.parseValue(theFormatter, myDecrypted);</span>
+<span class="nc" id="L200">            return new PrometheusEncryptedPair(theKeySet, myValue, pBytes);</span>
+<span class="nc" id="L201">        } catch (GordianException e) {</span>
+<span class="nc" id="L202">            throw new PrometheusSecurityException(e);</span>
         }
     }
 
@@ -225,18 +216,18 @@ public class PrometheusEncryptor {
         /* Protect agains exceptions */
         try {
             /* Access the encryptor */
-<span class="nc" id="L228">            final MetisDataType myDataType = getDataTypeForClass(pClazz);</span>
-<span class="nc" id="L229">            final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(myDataType);</span>
-<span class="nc bnc" id="L230" title="All 2 branches missed.">            if (myEncryptor == null) {</span>
-<span class="nc" id="L231">                throw new PrometheusLogicException(ERROR_DATATYPE);</span>
+<span class="nc" id="L219">            final MetisDataType myDataType = getDataTypeForClass(pClazz);</span>
+<span class="nc" id="L220">            final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(myDataType);</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">            if (myEncryptor == null) {</span>
+<span class="nc" id="L222">                throw new PrometheusLogicException(ERROR_DATATYPE);</span>
             }
 
             /* Decrypt the data */
-<span class="nc" id="L235">            final byte[] myDecrypted = theKeySet.decryptBytes(pBytes);</span>
-<span class="nc" id="L236">            final Object myValue = myEncryptor.parseValue(theFormatter, myDecrypted);</span>
-<span class="nc" id="L237">            return new PrometheusEncryptedPair(theKeySet, myValue, pBytes);</span>
-<span class="nc" id="L238">        } catch (GordianException e) {</span>
-<span class="nc" id="L239">            throw new PrometheusSecurityException(e);</span>
+<span class="nc" id="L226">            final byte[] myDecrypted = theKeySet.decryptBytes(pBytes);</span>
+<span class="nc" id="L227">            final Object myValue = myEncryptor.parseValue(theFormatter, myDecrypted);</span>
+<span class="nc" id="L228">            return new PrometheusEncryptedPair(theKeySet, myValue, pBytes);</span>
+<span class="nc" id="L229">        } catch (GordianException e) {</span>
+<span class="nc" id="L230">            throw new PrometheusSecurityException(e);</span>
         }
     }
 
@@ -248,48 +239,48 @@ public class PrometheusEncryptor {
      * @throws OceanusException on error
      */
     public static MetisDataType getDataTypeForValue(final Object pValue) throws OceanusException {
-<span class="nc bnc" id="L251" title="All 2 branches missed.">        if (pValue instanceof String) {</span>
-<span class="nc" id="L252">            return MetisDataType.STRING;</span>
+<span class="nc bnc" id="L242" title="All 2 branches missed.">        if (pValue instanceof String) {</span>
+<span class="nc" id="L243">            return MetisDataType.STRING;</span>
         }
-<span class="nc bnc" id="L254" title="All 2 branches missed.">        if (pValue instanceof Short) {</span>
-<span class="nc" id="L255">            return MetisDataType.SHORT;</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">        if (pValue instanceof Short) {</span>
+<span class="nc" id="L246">            return MetisDataType.SHORT;</span>
         }
-<span class="nc bnc" id="L257" title="All 2 branches missed.">        if (pValue instanceof Integer) {</span>
-<span class="nc" id="L258">            return MetisDataType.INTEGER;</span>
+<span class="nc bnc" id="L248" title="All 2 branches missed.">        if (pValue instanceof Integer) {</span>
+<span class="nc" id="L249">            return MetisDataType.INTEGER;</span>
         }
-<span class="nc bnc" id="L260" title="All 2 branches missed.">        if (pValue instanceof Long) {</span>
-<span class="nc" id="L261">            return MetisDataType.LONG;</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">        if (pValue instanceof Long) {</span>
+<span class="nc" id="L252">            return MetisDataType.LONG;</span>
         }
-<span class="nc bnc" id="L263" title="All 2 branches missed.">        if (pValue instanceof Boolean) {</span>
-<span class="nc" id="L264">            return MetisDataType.BOOLEAN;</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">        if (pValue instanceof Boolean) {</span>
+<span class="nc" id="L255">            return MetisDataType.BOOLEAN;</span>
         }
-<span class="nc bnc" id="L266" title="All 2 branches missed.">        if (pValue instanceof char[]) {</span>
-<span class="nc" id="L267">            return MetisDataType.CHARARRAY;</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">        if (pValue instanceof char[]) {</span>
+<span class="nc" id="L258">            return MetisDataType.CHARARRAY;</span>
         }
 
         /* Handle decimal instances */
-<span class="nc bnc" id="L271" title="All 2 branches missed.">        if (pValue instanceof OceanusDate) {</span>
-<span class="nc" id="L272">            return MetisDataType.DATE;</span>
+<span class="nc bnc" id="L262" title="All 2 branches missed.">        if (pValue instanceof OceanusDate) {</span>
+<span class="nc" id="L263">            return MetisDataType.DATE;</span>
         }
-<span class="nc bnc" id="L274" title="All 2 branches missed.">        if (pValue instanceof OceanusUnits) {</span>
-<span class="nc" id="L275">            return MetisDataType.UNITS;</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">        if (pValue instanceof OceanusUnits) {</span>
+<span class="nc" id="L266">            return MetisDataType.UNITS;</span>
         }
-<span class="nc bnc" id="L277" title="All 2 branches missed.">        if (pValue instanceof OceanusRate) {</span>
-<span class="nc" id="L278">            return MetisDataType.RATE;</span>
+<span class="nc bnc" id="L268" title="All 2 branches missed.">        if (pValue instanceof OceanusRate) {</span>
+<span class="nc" id="L269">            return MetisDataType.RATE;</span>
         }
-<span class="nc bnc" id="L280" title="All 2 branches missed.">        if (pValue instanceof OceanusPrice) {</span>
-<span class="nc" id="L281">            return MetisDataType.PRICE;</span>
+<span class="nc bnc" id="L271" title="All 2 branches missed.">        if (pValue instanceof OceanusPrice) {</span>
+<span class="nc" id="L272">            return MetisDataType.PRICE;</span>
         }
-<span class="nc bnc" id="L283" title="All 2 branches missed.">        if (pValue instanceof OceanusMoney) {</span>
-<span class="nc" id="L284">            return MetisDataType.MONEY;</span>
+<span class="nc bnc" id="L274" title="All 2 branches missed.">        if (pValue instanceof OceanusMoney) {</span>
+<span class="nc" id="L275">            return MetisDataType.MONEY;</span>
         }
-<span class="nc bnc" id="L286" title="All 2 branches missed.">        if (pValue instanceof OceanusRatio) {</span>
-<span class="nc" id="L287">            return MetisDataType.RATIO;</span>
+<span class="nc bnc" id="L277" title="All 2 branches missed.">        if (pValue instanceof OceanusRatio) {</span>
+<span class="nc" id="L278">            return MetisDataType.RATIO;</span>
         }
 
         /* Unsupported so reject */
-<span class="nc" id="L291">        throw new PrometheusLogicException(ERROR_CLASS</span>
-<span class="nc" id="L292">                + pValue.getClass().getCanonicalName());</span>
+<span class="nc" id="L282">        throw new PrometheusLogicException(ERROR_CLASS</span>
+<span class="nc" id="L283">                + pValue.getClass().getCanonicalName());</span>
     }
 
     /**
@@ -300,48 +291,48 @@ public class PrometheusEncryptor {
      * @throws OceanusException on error
      */
     static MetisDataType getDataTypeForClass(final Class&lt;?&gt; pClazz) throws OceanusException {
-<span class="nc bnc" id="L303" title="All 2 branches missed.">        if (String.class.equals(pClazz)) {</span>
-<span class="nc" id="L304">            return MetisDataType.STRING;</span>
+<span class="nc bnc" id="L294" title="All 2 branches missed.">        if (String.class.equals(pClazz)) {</span>
+<span class="nc" id="L295">            return MetisDataType.STRING;</span>
         }
-<span class="nc bnc" id="L306" title="All 2 branches missed.">        if (Short.class.equals(pClazz)) {</span>
-<span class="nc" id="L307">            return MetisDataType.SHORT;</span>
+<span class="nc bnc" id="L297" title="All 2 branches missed.">        if (Short.class.equals(pClazz)) {</span>
+<span class="nc" id="L298">            return MetisDataType.SHORT;</span>
         }
-<span class="nc bnc" id="L309" title="All 2 branches missed.">        if (Integer.class.equals(pClazz)) {</span>
-<span class="nc" id="L310">            return MetisDataType.INTEGER;</span>
+<span class="nc bnc" id="L300" title="All 2 branches missed.">        if (Integer.class.equals(pClazz)) {</span>
+<span class="nc" id="L301">            return MetisDataType.INTEGER;</span>
         }
-<span class="nc bnc" id="L312" title="All 2 branches missed.">        if (Long.class.equals(pClazz)) {</span>
-<span class="nc" id="L313">            return MetisDataType.LONG;</span>
+<span class="nc bnc" id="L303" title="All 2 branches missed.">        if (Long.class.equals(pClazz)) {</span>
+<span class="nc" id="L304">            return MetisDataType.LONG;</span>
         }
-<span class="nc bnc" id="L315" title="All 2 branches missed.">        if (Boolean.class.equals(pClazz)) {</span>
-<span class="nc" id="L316">            return MetisDataType.BOOLEAN;</span>
+<span class="nc bnc" id="L306" title="All 2 branches missed.">        if (Boolean.class.equals(pClazz)) {</span>
+<span class="nc" id="L307">            return MetisDataType.BOOLEAN;</span>
         }
-<span class="nc bnc" id="L318" title="All 2 branches missed.">        if (char[].class.equals(pClazz)) {</span>
-<span class="nc" id="L319">            return MetisDataType.CHARARRAY;</span>
+<span class="nc bnc" id="L309" title="All 2 branches missed.">        if (char[].class.equals(pClazz)) {</span>
+<span class="nc" id="L310">            return MetisDataType.CHARARRAY;</span>
         }
 
         /* Handle decimal instances */
-<span class="nc bnc" id="L323" title="All 2 branches missed.">        if (OceanusDate.class.equals(pClazz)) {</span>
-<span class="nc" id="L324">            return MetisDataType.DATE;</span>
+<span class="nc bnc" id="L314" title="All 2 branches missed.">        if (OceanusDate.class.equals(pClazz)) {</span>
+<span class="nc" id="L315">            return MetisDataType.DATE;</span>
         }
-<span class="nc bnc" id="L326" title="All 2 branches missed.">        if (OceanusUnits.class.equals(pClazz)) {</span>
-<span class="nc" id="L327">            return MetisDataType.UNITS;</span>
+<span class="nc bnc" id="L317" title="All 2 branches missed.">        if (OceanusUnits.class.equals(pClazz)) {</span>
+<span class="nc" id="L318">            return MetisDataType.UNITS;</span>
         }
-<span class="nc bnc" id="L329" title="All 2 branches missed.">        if (OceanusRate.class.equals(pClazz)) {</span>
-<span class="nc" id="L330">            return MetisDataType.RATE;</span>
+<span class="nc bnc" id="L320" title="All 2 branches missed.">        if (OceanusRate.class.equals(pClazz)) {</span>
+<span class="nc" id="L321">            return MetisDataType.RATE;</span>
         }
-<span class="nc bnc" id="L332" title="All 2 branches missed.">        if (OceanusPrice.class.equals(pClazz)) {</span>
-<span class="nc" id="L333">            return MetisDataType.PRICE;</span>
+<span class="nc bnc" id="L323" title="All 2 branches missed.">        if (OceanusPrice.class.equals(pClazz)) {</span>
+<span class="nc" id="L324">            return MetisDataType.PRICE;</span>
         }
-<span class="nc bnc" id="L335" title="All 2 branches missed.">        if (OceanusMoney.class.equals(pClazz)) {</span>
-<span class="nc" id="L336">            return MetisDataType.MONEY;</span>
+<span class="nc bnc" id="L326" title="All 2 branches missed.">        if (OceanusMoney.class.equals(pClazz)) {</span>
+<span class="nc" id="L327">            return MetisDataType.MONEY;</span>
         }
-<span class="nc bnc" id="L338" title="All 2 branches missed.">        if (OceanusRatio.class.equals(pClazz)) {</span>
-<span class="nc" id="L339">            return MetisDataType.RATIO;</span>
+<span class="nc bnc" id="L329" title="All 2 branches missed.">        if (OceanusRatio.class.equals(pClazz)) {</span>
+<span class="nc" id="L330">            return MetisDataType.RATIO;</span>
         }
 
         /* Unsupported so reject */
-<span class="nc" id="L343">        throw new PrometheusLogicException(ERROR_CLASS</span>
-<span class="nc" id="L344">                + pClazz.getCanonicalName());</span>
+<span class="nc" id="L334">        throw new PrometheusLogicException(ERROR_CLASS</span>
+<span class="nc" id="L335">                + pClazz.getCanonicalName());</span>
     }
 
     /**
@@ -350,20 +341,20 @@ public class PrometheusEncryptor {
      * @return the map
      */
     private static Map&lt;MetisDataType, PrometheusDataEncryptor&gt; buildEncryptorMap() {
-<span class="nc" id="L353">        final Map&lt;MetisDataType, PrometheusDataEncryptor&gt; myMap = new EnumMap&lt;&gt;(MetisDataType.class);</span>
-<span class="nc" id="L354">        myMap.put(MetisDataType.DATE, new PrometheusDateEncryptor());</span>
-<span class="nc" id="L355">        myMap.put(MetisDataType.SHORT, new PrometheusShortEncryptor());</span>
-<span class="nc" id="L356">        myMap.put(MetisDataType.INTEGER, new PrometheusIntegerEncryptor());</span>
-<span class="nc" id="L357">        myMap.put(MetisDataType.LONG, new PrometheusLongEncryptor());</span>
-<span class="nc" id="L358">        myMap.put(MetisDataType.STRING, new PrometheusStringEncryptor());</span>
-<span class="nc" id="L359">        myMap.put(MetisDataType.CHARARRAY, new PrometheusCharArrayEncryptor());</span>
-<span class="nc" id="L360">        myMap.put(MetisDataType.BOOLEAN, new PrometheusBooleanEncryptor());</span>
-<span class="nc" id="L361">        myMap.put(MetisDataType.MONEY, new PrometheusMoneyEncryptor());</span>
-<span class="nc" id="L362">        myMap.put(MetisDataType.PRICE, new PrometheusPriceEncryptor());</span>
-<span class="nc" id="L363">        myMap.put(MetisDataType.RATE, new PrometheusRateEncryptor());</span>
-<span class="nc" id="L364">        myMap.put(MetisDataType.UNITS, new PrometheusUnitsEncryptor());</span>
-<span class="nc" id="L365">        myMap.put(MetisDataType.RATIO, new PrometheusRatioEncryptor());</span>
-<span class="nc" id="L366">        return myMap;</span>
+<span class="nc" id="L344">        final Map&lt;MetisDataType, PrometheusDataEncryptor&gt; myMap = new EnumMap&lt;&gt;(MetisDataType.class);</span>
+<span class="nc" id="L345">        myMap.put(MetisDataType.DATE, new PrometheusDateEncryptor());</span>
+<span class="nc" id="L346">        myMap.put(MetisDataType.SHORT, new PrometheusShortEncryptor());</span>
+<span class="nc" id="L347">        myMap.put(MetisDataType.INTEGER, new PrometheusIntegerEncryptor());</span>
+<span class="nc" id="L348">        myMap.put(MetisDataType.LONG, new PrometheusLongEncryptor());</span>
+<span class="nc" id="L349">        myMap.put(MetisDataType.STRING, new PrometheusStringEncryptor());</span>
+<span class="nc" id="L350">        myMap.put(MetisDataType.CHARARRAY, new PrometheusCharArrayEncryptor());</span>
+<span class="nc" id="L351">        myMap.put(MetisDataType.BOOLEAN, new PrometheusBooleanEncryptor());</span>
+<span class="nc" id="L352">        myMap.put(MetisDataType.MONEY, new PrometheusMoneyEncryptor());</span>
+<span class="nc" id="L353">        myMap.put(MetisDataType.PRICE, new PrometheusPriceEncryptor());</span>
+<span class="nc" id="L354">        myMap.put(MetisDataType.RATE, new PrometheusRateEncryptor());</span>
+<span class="nc" id="L355">        myMap.put(MetisDataType.UNITS, new PrometheusUnitsEncryptor());</span>
+<span class="nc" id="L356">        myMap.put(MetisDataType.RATIO, new PrometheusRatioEncryptor());</span>
+<span class="nc" id="L357">        return myMap;</span>
     }
 
     /**
@@ -376,8 +367,8 @@ public class PrometheusEncryptor {
     public void adoptEncryption(final PrometheusEncryptedPair pTarget,
                                 final PrometheusEncryptedPair pSource) throws OceanusException {
         /* Adopt the encryption */
-<span class="nc" id="L379">        pTarget.adoptEncryption(this, pSource);</span>
-<span class="nc" id="L380">    }</span>
+<span class="nc" id="L370">        pTarget.adoptEncryption(this, pSource);</span>
+<span class="nc" id="L371">    }</span>
 
     /**
      * Encryptor Base.
@@ -414,16 +405,16 @@ public class PrometheusEncryptor {
         @Override
         public byte[] convertValue(final OceanusDataFormatter pFormatter,
                                    final Object pValue) {
-<span class="nc" id="L417">            return pFormatter.getDateFormatter().toBytes((OceanusDate) pValue);</span>
+<span class="nc" id="L408">            return pFormatter.getDateFormatter().toBytes((OceanusDate) pValue);</span>
         }
 
         @Override
         public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             try {
-<span class="nc" id="L424">                return pFormatter.getDateFormatter().fromBytes(pBytes);</span>
-<span class="nc" id="L425">            } catch (IllegalArgumentException e) {</span>
-<span class="nc" id="L426">                throw new PrometheusDataException(ERROR_BYTES_CONVERT, e);</span>
+<span class="nc" id="L415">                return pFormatter.getDateFormatter().fromBytes(pBytes);</span>
+<span class="nc" id="L416">            } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L417">                throw new PrometheusDataException(ERROR_BYTES_CONVERT, e);</span>
             }
         }
     }
@@ -436,13 +427,13 @@ public class PrometheusEncryptor {
         @Override
         public byte[] convertValue(final OceanusDataFormatter pFormatter,
                                    final Object pValue) {
-<span class="nc" id="L439">            return OceanusDataConverter.shortToByteArray((short) pValue);</span>
+<span class="nc" id="L430">            return OceanusDataConverter.shortToByteArray((short) pValue);</span>
         }
 
         @Override
         public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-<span class="nc" id="L445">            return OceanusDataConverter.byteArrayToShort(pBytes);</span>
+<span class="nc" id="L436">            return OceanusDataConverter.byteArrayToShort(pBytes);</span>
         }
     }
 
@@ -454,13 +445,13 @@ public class PrometheusEncryptor {
         @Override
         public byte[] convertValue(final OceanusDataFormatter pFormatter,
                                    final Object pValue) {
-<span class="nc" id="L457">            return OceanusDataConverter.integerToByteArray((int) pValue);</span>
+<span class="nc" id="L448">            return OceanusDataConverter.integerToByteArray((int) pValue);</span>
         }
 
         @Override
         public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-<span class="nc" id="L463">            return OceanusDataConverter.byteArrayToInteger(pBytes);</span>
+<span class="nc" id="L454">            return OceanusDataConverter.byteArrayToInteger(pBytes);</span>
         }
     }
 
@@ -472,13 +463,13 @@ public class PrometheusEncryptor {
         @Override
         public byte[] convertValue(final OceanusDataFormatter pFormatter,
                                    final Object pValue) {
-<span class="nc" id="L475">            return OceanusDataConverter.longToByteArray((long) pValue);</span>
+<span class="nc" id="L466">            return OceanusDataConverter.longToByteArray((long) pValue);</span>
         }
 
         @Override
         public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-<span class="nc" id="L481">            return OceanusDataConverter.byteArrayToLong(pBytes);</span>
+<span class="nc" id="L472">            return OceanusDataConverter.byteArrayToLong(pBytes);</span>
         }
     }
 
@@ -490,14 +481,14 @@ public class PrometheusEncryptor {
         @Override
         public byte[] convertValue(final OceanusDataFormatter pFormatter,
                                    final Object pValue) {
-<span class="nc" id="L493">            return OceanusDataConverter.stringToByteArray(pValue.toString());</span>
+<span class="nc" id="L484">            return OceanusDataConverter.stringToByteArray(pValue.toString());</span>
         }
 
         @Override
         public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) {
-<span class="nc" id="L499">            final String myBoolString = OceanusDataConverter.byteArrayToString(pBytes);</span>
-<span class="nc" id="L500">            return Boolean.parseBoolean(myBoolString);</span>
+<span class="nc" id="L490">            final String myBoolString = OceanusDataConverter.byteArrayToString(pBytes);</span>
+<span class="nc" id="L491">            return Boolean.parseBoolean(myBoolString);</span>
         }
     }
 
@@ -509,13 +500,13 @@ public class PrometheusEncryptor {
         @Override
         public byte[] convertValue(final OceanusDataFormatter pFormatter,
                                    final Object pValue) {
-<span class="nc" id="L512">            return OceanusDataConverter.stringToByteArray((String) pValue);</span>
+<span class="nc" id="L503">            return OceanusDataConverter.stringToByteArray((String) pValue);</span>
         }
 
         @Override
         public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) {
-<span class="nc" id="L518">            return OceanusDataConverter.byteArrayToString(pBytes);</span>
+<span class="nc" id="L509">            return OceanusDataConverter.byteArrayToString(pBytes);</span>
         }
     }
 
@@ -527,13 +518,13 @@ public class PrometheusEncryptor {
         @Override
         public byte[] convertValue(final OceanusDataFormatter pFormatter,
                                    final Object pValue) throws OceanusException {
-<span class="nc" id="L530">            return OceanusDataConverter.charsToByteArray((char[]) pValue);</span>
+<span class="nc" id="L521">            return OceanusDataConverter.charsToByteArray((char[]) pValue);</span>
         }
 
         @Override
         public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-<span class="nc" id="L536">            return OceanusDataConverter.bytesToCharArray(pBytes);</span>
+<span class="nc" id="L527">            return OceanusDataConverter.bytesToCharArray(pBytes);</span>
         }
     }
 
@@ -545,7 +536,7 @@ public class PrometheusEncryptor {
         @Override
         public byte[] convertValue(final OceanusDataFormatter pFormatter,
                                    final Object pValue) {
-<span class="nc" id="L548">            return ((OceanusDecimal) pValue).toBytes();</span>
+<span class="nc" id="L539">            return ((OceanusDecimal) pValue).toBytes();</span>
         }
     }
 
@@ -557,7 +548,7 @@ public class PrometheusEncryptor {
         @Override
         public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-<span class="nc" id="L560">            return new OceanusMoney(pBytes);</span>
+<span class="nc" id="L551">            return new OceanusMoney(pBytes);</span>
         }
     }
 
@@ -569,7 +560,7 @@ public class PrometheusEncryptor {
         @Override
         public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-<span class="nc" id="L572">            return new OceanusPrice(pBytes);</span>
+<span class="nc" id="L563">            return new OceanusPrice(pBytes);</span>
         }
     }
 
@@ -581,7 +572,7 @@ public class PrometheusEncryptor {
         @Override
         public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-<span class="nc" id="L584">            return new OceanusRatio(pBytes);</span>
+<span class="nc" id="L575">            return new OceanusRatio(pBytes);</span>
         }
     }
 
@@ -593,7 +584,7 @@ public class PrometheusEncryptor {
         @Override
         public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-<span class="nc" id="L596">            return new OceanusUnits(pBytes);</span>
+<span class="nc" id="L587">            return new OceanusUnits(pBytes);</span>
         }
     }
 
@@ -605,8 +596,8 @@ public class PrometheusEncryptor {
         @Override
         public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-<span class="nc" id="L608">            return new OceanusRate(pBytes);</span>
+<span class="nc" id="L599">            return new OceanusRate(pBytes);</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisMavenParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.parser.maven</a> &gt; <span class="el_source">ThemisMavenParser.java</span></div><h1>ThemisMavenParser.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.parser.maven;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
+import io.github.tonywasher.joceanus.themis.exc.ThemisLogicException;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenPom.ThemisXMavenControl;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Maven Parser.
+ */
+public class ThemisMavenParser
+        implements ThemisXMavenControl {
+    /**
+     * The POM file name.
+     */
+    private static final String POM_NAME = &quot;pom.xml&quot;;
+
+    /**
+     * The map of maven artifacts.
+     */
+    private final Map&lt;ThemisMavenId, ThemisMavenPom&gt; thePoms;
+
+    /**
+     * The list of local modules.
+     */
+    private final List&lt;ThemisMavenPom&gt; theModules;
+
+    /**
+     * The dependencies.
+     */
+    private final List&lt;ThemisMavenId&gt; theDependencies;
+
+    /**
+     * The pom.
+     */
+    private final ThemisMavenPom thePom;
+
+    /**
+     * Have we processed local definitions?
+     */
+    private boolean processedLocal;
+
+    /**
+     * Constructor.
+     *
+     * @param pReport   the reporter
+     * @param pLocation the location of the project
+     * @throws OceanusException on error
+     */
+    public ThemisMavenParser(final TethysUIThreadStatusReport pReport,
+<span class="fc" id="L77">                             final File pLocation) throws OceanusException {</span>
+        /* Obtain the active profile */
+<span class="fc" id="L79">        OceanusProfile myTask = pReport.getActiveTask();</span>
+<span class="fc" id="L80">        myTask = myTask.startTask(ThemisDataResource.TASK_DISCOVER);</span>
+<span class="fc" id="L81">        pReport.initTask(ThemisDataResource.TASK_DISCOVER);</span>
+<span class="fc" id="L82">        pReport.setNumStages(2);</span>
+
+        /* Create the map */
+<span class="fc" id="L85">        thePoms = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L86">        processedLocal = false;</span>
+
+        /* Parse the local project */
+<span class="fc" id="L89">        thePom = loadPomAtLocation(pLocation);</span>
+<span class="fc" id="L90">        processedLocal = true;</span>
+
+        /* Loop through the local modules */
+<span class="fc" id="L93">        OceanusProfile mySubTask = myTask.startTask(ThemisDataResource.TASK_DISCOVERLOCAL);</span>
+<span class="fc" id="L94">        final List&lt;ThemisMavenPom&gt; myModules = new ArrayList&lt;&gt;(thePoms.values());</span>
+<span class="fc" id="L95">        pReport.setNewStage(ThemisDataResource.TASK_DISCOVERLOCAL);</span>
+<span class="fc" id="L96">        pReport.setNumSteps(myModules.size());</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        for (ThemisMavenPom myModule : myModules) {</span>
+            /* Process the module */
+<span class="fc" id="L99">            final String myName = myModule.getId().toString();</span>
+<span class="fc" id="L100">            mySubTask.startTask(myName);</span>
+<span class="fc" id="L101">            pReport.setNextStep();</span>
+<span class="fc" id="L102">            myModule.getVersions();</span>
+<span class="fc" id="L103">            myModule.getDirectDependencies();</span>
+<span class="fc" id="L104">        }</span>
+
+        /* Loop through the local modules */
+<span class="fc" id="L107">        mySubTask = myTask.startTask(ThemisDataResource.TASK_DISCOVERDEPENDENCY);</span>
+<span class="fc" id="L108">        pReport.setNewStage(ThemisDataResource.TASK_DISCOVERDEPENDENCY);</span>
+<span class="fc" id="L109">        pReport.setNumSteps(myModules.size());</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        for (ThemisMavenPom myModule : myModules) {</span>
+            /* Process the module */
+<span class="fc" id="L112">            final String myName = myModule.getId().toString();</span>
+<span class="fc" id="L113">            mySubTask.startTask(myName);</span>
+<span class="fc" id="L114">            pReport.setNextStep();</span>
+<span class="fc" id="L115">            myModule.getDependencies();</span>
+<span class="fc" id="L116">        }</span>
+
+        /* Create list of local modules */
+<span class="fc" id="L119">        theModules = getModuleList(myModules);</span>
+<span class="fc" id="L120">        theDependencies = thePom.getDependencies();</span>
+<span class="fc" id="L121">        myTask.end();</span>
+<span class="fc" id="L122">    }</span>
+
+    /**
+     * Obtain the name.
+     *
+     * @return the name
+     */
+    public String getName() {
+<span class="fc" id="L130">        return thePom.getArtifactId();</span>
+    }
+
+    /**
+     * Obtain the local modules.
+     *
+     * @return the local modules
+     */
+    public List&lt;ThemisMavenId&gt; getModules() {
+<span class="nc" id="L139">        return theModules.stream().map(ThemisMavenPom::getId).toList();</span>
+    }
+
+    /**
+     * Obtain the parsed modules.
+     *
+     * @return the parsed modules
+     */
+    public List&lt;ThemisMavenPom&gt; getParsedModules() {
+<span class="fc" id="L148">        return theModules;</span>
+    }
+
+    /**
+     * Obtain the dependencies.
+     *
+     * @return the dependencies
+     */
+    public List&lt;ThemisMavenId&gt; getDependencies() {
+<span class="nc" id="L157">        return theDependencies;</span>
+    }
+
+    @Override
+    public ThemisMavenPom loadPomViaId(final ThemisMavenId pId) throws OceanusException {
+        /* Look for already known Pom */
+<span class="fc" id="L163">        final ThemisMavenPom myExisting = thePoms.get(pId);</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        if (myExisting != null) {</span>
+<span class="fc" id="L165">            return myExisting;</span>
+        }
+
+        /* Reject if we have not fully processed local poms */
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        if (!processedLocal) {</span>
+<span class="nc" id="L170">            throw new ThemisLogicException(&quot;Processed pom via id before finished local processing&quot;);</span>
+        }
+
+        /* Load the pom file and store into cache */
+<span class="fc" id="L174">        final ThemisMavenPom myPom = doLoadPomViaId(pId);</span>
+<span class="fc" id="L175">        thePoms.put(pId, myPom);</span>
+
+        /* If the pom has an associated jar */
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        if (myPom.isJarPackaging()) {</span>
+            /* Make sure that the pom has been downloaded */
+<span class="fc" id="L180">            ThemisMavenLocation.ensureJarArtifact(pId);</span>
+        }
+
+        /* Process dependencies */
+<span class="fc" id="L184">        myPom.getVersions();</span>
+<span class="fc" id="L185">        myPom.getDirectDependencies();</span>
+<span class="fc" id="L186">        myPom.getDependencies();</span>
+
+        /* Return the pom */
+<span class="fc" id="L189">        return myPom;</span>
+    }
+
+    /**
+     * Do load pom via Id.
+     *
+     * @param pId the id of the pom
+     * @return the loaded pom
+     * @throws OceanusException on error
+     */
+    private ThemisMavenPom doLoadPomViaId(final ThemisMavenId pId) throws OceanusException {
+        /* If the id has a classifier */
+<span class="fc bfc" id="L201" title="All 2 branches covered.">        if (pId.getClassifier() != null) {</span>
+            /* There is no pom , so just fake it */
+<span class="fc" id="L203">            return new ThemisMavenPom(pId);</span>
+        }
+
+        /* Make sure that the pom has been downloaded */
+<span class="fc" id="L207">        ThemisMavenLocation.ensurePomArtifact(pId);</span>
+
+        /* Just do a normal load */
+<span class="fc" id="L210">        return new ThemisMavenPom(this, new File(ThemisMavenLocation.getLocalPomFileName(pId)));</span>
+    }
+
+    @Override
+    public ThemisMavenPom loadPomAtLocation(final File pLocation) throws OceanusException {
+        /* Parse the pom and obtain the id */
+<span class="fc" id="L216">        final ThemisMavenPom myPom = new ThemisMavenPom(this, new File(pLocation, POM_NAME));</span>
+<span class="fc" id="L217">        final ThemisMavenId myId = myPom.getId();</span>
+
+        /* Make sure that the pom has not been seen before */
+<span class="fc" id="L220">        final ThemisMavenPom myExisting = thePoms.get(myId);</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">        if (myExisting != null) {</span>
+<span class="nc" id="L222">            throw new ThemisDataException(&quot;Duplicate POM - &quot; + myId);</span>
+        }
+
+        /* Store into map */
+<span class="fc" id="L226">        thePoms.put(myId, myPom);</span>
+
+        /* Process local details */
+<span class="fc" id="L229">        myPom.processLocalDetails();</span>
+
+        /* Return the Pom */
+<span class="fc" id="L232">        return myPom;</span>
+    }
+
+    /**
+     * Create list of local jar modules.
+     *
+     * @param pLocal the list of local modules
+     * @return the list.
+     * @throws OceanusException on error
+     */
+    private List&lt;ThemisMavenPom&gt; getModuleList(final List&lt;ThemisMavenPom&gt; pLocal) throws OceanusException {
+        /* Loop through the local modules */
+<span class="fc" id="L244">        final List&lt;ThemisMavenPom&gt; myModules = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">        for (ThemisMavenPom myModule : pLocal) {</span>
+<span class="fc bfc" id="L246" title="All 2 branches covered.">            if (myModule.isJarPackaging()) {</span>
+<span class="fc" id="L247">                myModules.add(myModule);</span>
+            }
+<span class="fc" id="L249">        }</span>
+<span class="fc" id="L250">        return myModules;</span>
+    }
+
+    /**
+     * Combine module dependencies.
+     *
+     * @return the dependencies
+     * @throws OceanusException on error
+     */
+    public List&lt;ThemisMavenId&gt; getProjectDependencies() throws OceanusException {
+        /* Allocate the dependencies */
+<span class="fc" id="L261">        final List&lt;ThemisMavenId&gt; myIds = new ArrayList&lt;&gt;();</span>
+
+        /* Loop through the modules */
+<span class="fc bfc" id="L264" title="All 2 branches covered.">        for (ThemisMavenPom myModule : theModules) {</span>
+            /* Loop through direct dependencies */
+<span class="fc bfc" id="L266" title="All 2 branches covered.">            for (ThemisMavenId myDependency : myModule.getDependencies()) {</span>
+                /* Check the dependency and add if required */
+<span class="fc" id="L268">                ThemisMavenPom.checkDependencyId(myIds, myDependency);</span>
+<span class="fc" id="L269">            }</span>
+<span class="fc" id="L270">        }</span>
+
+        /* Return the id */
+<span class="fc" id="L273">        return myIds;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

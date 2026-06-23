@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyStdKeyFactorySet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair</a> &gt; <span class="el_source">BouncyStdKeyFactorySet.java</span></div><h1>BouncyStdKeyFactorySet.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPairGenerator.BouncyKeyFactorySet;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
+import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
+
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+
+/**
+ * Standard KeyFactorySet.
+ */
+<span class="fc" id="L38">public enum BouncyStdKeyFactorySet</span>
+        implements BouncyKeyFactorySet {
+    /**
+     * Instance.
+     */
+<span class="fc" id="L43">    INSTANCE;</span>
+
+    @Override
+    public AsymmetricKeyParameter parsePKCS8EncodedKeySpec(final PKCS8EncodedKeySpec pEncodedKey) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Parse the encoded keySpec */
+<span class="fc" id="L50">            final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pEncodedKey.getEncoded());</span>
+<span class="fc" id="L51">            return PrivateKeyFactory.createKey(myInfo);</span>
+
+<span class="nc" id="L53">        } catch (IOException e) {</span>
+<span class="nc" id="L54">            throw new GordianCryptoException(BouncyKeyPairGenerator.ERROR_PARSE, e);</span>
+        }
+    }
+
+    @Override
+    public PKCS8EncodedKeySpec createPKCS8EncodedKeySpec(final AsymmetricKeyParameter pParams) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* build and return the encoding */
+<span class="fc" id="L63">            final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(pParams, null);</span>
+<span class="fc" id="L64">            return new PKCS8EncodedKeySpec(myInfo.getEncoded());</span>
+
+<span class="nc" id="L66">        } catch (IOException e) {</span>
+<span class="nc" id="L67">            throw new GordianCryptoException(BouncyKeyPairGenerator.ERROR_PARSE, e);</span>
+        }
+    }
+
+    @Override
+    public AsymmetricKeyParameter parseX509EncodedKeySpec(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Parse the encoded keySpec */
+<span class="fc" id="L76">            final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());</span>
+<span class="fc" id="L77">            return PublicKeyFactory.createKey(myInfo);</span>
+
+<span class="nc" id="L79">        } catch (IOException e) {</span>
+<span class="nc" id="L80">            throw new GordianCryptoException(BouncyKeyPairGenerator.ERROR_PARSE, e);</span>
+        }
+    }
+
+    @Override
+    public X509EncodedKeySpec createX509EncodedKeySpec(final AsymmetricKeyParameter pParams) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* build and return the encoding */
+<span class="fc" id="L89">            final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(pParams);</span>
+<span class="fc" id="L90">            return new X509EncodedKeySpec(myInfo.getEncoded());</span>
+
+<span class="nc" id="L92">        } catch (IOException e) {</span>
+<span class="nc" id="L93">            throw new GordianCryptoException(BouncyKeyPairGenerator.ERROR_PARSE, e);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

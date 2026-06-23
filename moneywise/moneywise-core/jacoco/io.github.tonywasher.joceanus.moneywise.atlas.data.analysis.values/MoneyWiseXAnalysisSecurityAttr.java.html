@@ -18,141 +18,142 @@ package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisAttribute;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * SecurityAttribute enumeration.
  */
-<span class="fc" id="L25">public enum MoneyWiseXAnalysisSecurityAttr</span>
+<span class="fc" id="L26">public enum MoneyWiseXAnalysisSecurityAttr</span>
         implements MoneyWiseXAnalysisAttribute {
     /**
      * Units.
      */
-<span class="fc" id="L30">    UNITS,</span>
+<span class="fc" id="L31">    UNITS,</span>
 
     /**
      * Price in local currency.
      */
-<span class="fc" id="L35">    PRICE,</span>
+<span class="fc" id="L36">    PRICE,</span>
 
     /**
      * Value in local currency.
      */
-<span class="fc" id="L40">    VALUE,</span>
+<span class="fc" id="L41">    VALUE,</span>
 
     /**
      * Exchange Rate.
      */
-<span class="fc" id="L45">    EXCHANGERATE,</span>
+<span class="fc" id="L46">    EXCHANGERATE,</span>
 
     /**
      * Reporting Valuation.
      */
-<span class="fc" id="L50">    VALUATION,</span>
+<span class="fc" id="L51">    VALUATION,</span>
 
     /**
      * Valuation Delta.
      */
-<span class="fc" id="L55">    VALUEDELTA,</span>
+<span class="fc" id="L56">    VALUEDELTA,</span>
 
     /**
      * Residual Cost.
      */
-<span class="fc" id="L60">    RESIDUALCOST,</span>
+<span class="fc" id="L61">    RESIDUALCOST,</span>
 
     /**
      * RealisedGains.
      */
-<span class="fc" id="L65">    REALISEDGAINS,</span>
+<span class="fc" id="L66">    REALISEDGAINS,</span>
 
     /**
      * UnrealisedGains.
      */
-<span class="fc" id="L70">    UNREALISEDGAINS,</span>
+<span class="fc" id="L71">    UNREALISEDGAINS,</span>
 
     /**
      * UnrealisedGainsAdjust.
      */
-<span class="fc" id="L75">    GAINSADJUST,</span>
+<span class="fc" id="L76">    GAINSADJUST,</span>
 
     /**
      * Dividend.
      */
-<span class="fc" id="L80">    DIVIDEND,</span>
+<span class="fc" id="L81">    DIVIDEND,</span>
 
     /**
      * Profit.
      */
-<span class="fc" id="L85">    PROFIT,</span>
+<span class="fc" id="L86">    PROFIT,</span>
 
     /**
      * Profit.
      */
-<span class="fc" id="L90">    MARKETPROFIT,</span>
+<span class="fc" id="L91">    MARKETPROFIT,</span>
 
     /**
      * CashInvested.
      */
-<span class="fc" id="L95">    CASHINVESTED,</span>
+<span class="fc" id="L96">    CASHINVESTED,</span>
 
     /**
      * CashConsideration (returned cash).
      */
-<span class="fc" id="L100">    RETURNEDCASH,</span>
+<span class="fc" id="L101">    RETURNEDCASH,</span>
 
     /**
      * StockConsideration (transferred value).
      */
-<span class="fc" id="L105">    XFERREDVALUE,</span>
+<span class="fc" id="L106">    XFERREDVALUE,</span>
 
     /**
      * Capital Gain.
      */
-<span class="fc" id="L110">    CAPITALGAIN,</span>
+<span class="fc" id="L111">    CAPITALGAIN,</span>
 
     /**
      * AllowedCost.
      */
-<span class="fc" id="L115">    ALLOWEDCOST,</span>
+<span class="fc" id="L116">    ALLOWEDCOST,</span>
 
     /**
      * XferredCost.
      */
-<span class="fc" id="L120">    XFERREDCOST,</span>
+<span class="fc" id="L121">    XFERREDCOST,</span>
 
     /**
      * Funded.
      */
-<span class="fc" id="L125">    FUNDED,</span>
+<span class="fc" id="L126">    FUNDED,</span>
 
     /**
      * StartDate.
      */
-<span class="fc" id="L130">    STARTDATE,</span>
+<span class="fc" id="L131">    STARTDATE,</span>
 
     /**
      * SliceYears.
      */
-<span class="fc" id="L135">    SLICEYEARS,</span>
+<span class="fc" id="L136">    SLICEYEARS,</span>
 
     /**
      * SliceGain.
      */
-<span class="fc" id="L140">    SLICEGAIN,</span>
+<span class="fc" id="L141">    SLICEGAIN,</span>
 
     /**
      * Consideration.
      */
-<span class="fc" id="L145">    CONSIDERATION,</span>
+<span class="fc" id="L146">    CONSIDERATION,</span>
 
     /**
      * CostDilution.
      */
-<span class="fc" id="L150">    COSTDILUTION,</span>
+<span class="fc" id="L151">    COSTDILUTION,</span>
 
     /**
      * CashType.
      */
-<span class="fc" id="L155">    CASHTYPE;</span>
+<span class="fc" id="L156">    CASHTYPE;</span>
 
     /**
      * The String name.
@@ -162,34 +163,72 @@ import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWis
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="fc bfc" id="L165" title="All 2 branches covered.">        if (theName == null) {</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        if (theName == null) {</span>
             /* Load the name */
-<span class="fc" id="L167">            theName = MoneyWiseXAnalysisValuesResource.getKeyForSecurityAttr(this).getValue();</span>
+<span class="fc" id="L168">            theName = bundleIdForAttribute(this).getValue();</span>
         }
 
         /* return the name */
-<span class="fc" id="L171">        return theName;</span>
+<span class="fc" id="L172">        return theName;</span>
     }
 
     @Override
     public boolean isPreserved() {
-<span class="fc bfc" id="L176" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        return switch (this) {</span>
             case UNITS, DIVIDEND, RESIDUALCOST, VALUATION, EXCHANGERATE, VALUE, PRICE, REALISEDGAINS, UNREALISEDGAINS,
-<span class="fc" id="L178">                 GAINSADJUST, FUNDED, STARTDATE -&gt; true;</span>
-<span class="fc" id="L179">            default -&gt; false;</span>
+<span class="fc" id="L179">                 GAINSADJUST, FUNDED, STARTDATE -&gt; true;</span>
+<span class="fc" id="L180">            default -&gt; false;</span>
         };
     }
 
     @Override
     public MetisDataType getDataType() {
-<span class="nc bnc" id="L185" title="All 6 branches missed.">        return switch (this) {</span>
-<span class="nc" id="L186">            case UNITS -&gt; MetisDataType.UNITS;</span>
-<span class="nc" id="L187">            case PRICE -&gt; MetisDataType.PRICE;</span>
-<span class="nc" id="L188">            case EXCHANGERATE, COSTDILUTION -&gt; MetisDataType.RATIO;</span>
-<span class="nc" id="L189">            case CASHTYPE -&gt; MetisDataType.ENUM;</span>
-<span class="nc" id="L190">            case STARTDATE -&gt; MetisDataType.DATE;</span>
-<span class="nc" id="L191">            default -&gt; MetisDataType.MONEY;</span>
+<span class="nc bnc" id="L186" title="All 6 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L187">            case UNITS -&gt; MetisDataType.UNITS;</span>
+<span class="nc" id="L188">            case PRICE -&gt; MetisDataType.PRICE;</span>
+<span class="nc" id="L189">            case EXCHANGERATE, COSTDILUTION -&gt; MetisDataType.RATIO;</span>
+<span class="nc" id="L190">            case CASHTYPE -&gt; MetisDataType.ENUM;</span>
+<span class="nc" id="L191">            case STARTDATE -&gt; MetisDataType.DATE;</span>
+<span class="nc" id="L192">            default -&gt; MetisDataType.MONEY;</span>
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the attribute.
+     *
+     * @param pAttr the attribute
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForAttribute(final MoneyWiseXAnalysisSecurityAttr pAttr) {
+<span class="pc bpc" id="L203" title="1 of 27 branches missed.">        return switch (pAttr) {</span>
+<span class="fc" id="L204">            case VALUE -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_VALUE;</span>
+<span class="fc" id="L205">            case VALUATION -&gt; MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_VALUATION;</span>
+<span class="fc" id="L206">            case VALUEDELTA -&gt; MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_VALUEDELTA;</span>
+<span class="fc" id="L207">            case EXCHANGERATE -&gt; MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_EXCHANGERATE;</span>
+<span class="fc" id="L208">            case UNITS -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_UNITS;</span>
+<span class="fc" id="L209">            case RESIDUALCOST -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_RESIDUALCOST;</span>
+<span class="fc" id="L210">            case DIVIDEND -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_DIVIDEND;</span>
+<span class="fc" id="L211">            case REALISEDGAINS -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_REALISEDGAINS;</span>
+<span class="fc" id="L212">            case UNREALISEDGAINS -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_UNREALISEDGAINS;</span>
+<span class="fc" id="L213">            case GAINSADJUST -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_GAINSADJUST;</span>
+<span class="fc" id="L214">            case MARKETPROFIT -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_MARKETPROFIT;</span>
+<span class="fc" id="L215">            case PROFIT -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_PROFIT;</span>
+<span class="fc" id="L216">            case RETURNEDCASH -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_RETURNEDCASH;</span>
+<span class="fc" id="L217">            case XFERREDVALUE -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_XFERREDVALUE;</span>
+<span class="fc" id="L218">            case XFERREDCOST -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_XFERREDCOST;</span>
+<span class="fc" id="L219">            case CASHINVESTED -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_CASHINVESTED;</span>
+<span class="fc" id="L220">            case CAPITALGAIN -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_CAPITALGAIN;</span>
+<span class="fc" id="L221">            case ALLOWEDCOST -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_ALLOWEDCOST;</span>
+<span class="fc" id="L222">            case PRICE -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_PRICE;</span>
+<span class="fc" id="L223">            case STARTDATE -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_STARTDATE;</span>
+<span class="fc" id="L224">            case FUNDED -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_FUNDED;</span>
+<span class="fc" id="L225">            case SLICEGAIN -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_SLICEGAIN;</span>
+<span class="fc" id="L226">            case SLICEYEARS -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_SLICEYEARS;</span>
+<span class="fc" id="L227">            case CONSIDERATION -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_CONSIDERATION;</span>
+<span class="fc" id="L228">            case COSTDILUTION -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_COSTDILUTION;</span>
+<span class="fc" id="L229">            case CASHTYPE -&gt; MoneyWiseXAnalysisValuesResource.SECURITYATTR_CASHTYPE;</span>
+<span class="nc" id="L230">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

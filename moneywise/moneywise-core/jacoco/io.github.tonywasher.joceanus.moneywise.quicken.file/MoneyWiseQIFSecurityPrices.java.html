@@ -16,13 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Security Price List.
@@ -32,9 +33,9 @@ import java.util.List;
 public class MoneyWiseQIFSecurityPrices
         implements Comparable&lt;MoneyWiseQIFSecurityPrices&gt; {
     /**
-     * The QIF File.
+     * The QIF Register.
      */
-    private final MoneyWiseQIFFile theFile;
+    private final MoneyWiseQIFRegister theRegister;
 
     /**
      * The Security.
@@ -49,29 +50,29 @@ public class MoneyWiseQIFSecurityPrices
     /**
      * Constructor.
      *
-     * @param pFile     the QIF File
+     * @param pRegister the QIF Register
      * @param pSecurity the security.
      */
-    protected MoneyWiseQIFSecurityPrices(final MoneyWiseQIFFile pFile,
+    protected MoneyWiseQIFSecurityPrices(final MoneyWiseQIFRegister pRegister,
                                          final MoneyWiseSecurity pSecurity) {
-<span class="nc" id="L57">        this(pFile, new MoneyWiseQIFSecurity(pFile, pSecurity));</span>
-<span class="nc" id="L58">    }</span>
+<span class="nc" id="L58">        this(pRegister, new MoneyWiseQIFSecurity(pSecurity));</span>
+<span class="nc" id="L59">    }</span>
 
     /**
      * Constructor.
      *
-     * @param pFile     the QIF File
+     * @param pRegister the QIF Register
      * @param pSecurity the security.
      */
-    protected MoneyWiseQIFSecurityPrices(final MoneyWiseQIFFile pFile,
-<span class="nc" id="L67">                                         final MoneyWiseQIFSecurity pSecurity) {</span>
+    protected MoneyWiseQIFSecurityPrices(final MoneyWiseQIFRegister pRegister,
+<span class="nc" id="L68">                                         final MoneyWiseQIFSecurity pSecurity) {</span>
         /* Store parameters */
-<span class="nc" id="L69">        theFile = pFile;</span>
-<span class="nc" id="L70">        theSecurity = pSecurity;</span>
+<span class="nc" id="L70">        theRegister = pRegister;</span>
+<span class="nc" id="L71">        theSecurity = pSecurity;</span>
 
         /* Create the list */
-<span class="nc" id="L73">        thePrices = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L74">    }</span>
+<span class="nc" id="L74">        thePrices = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L75">    }</span>
 
     /**
      * Obtain the security.
@@ -79,7 +80,7 @@ public class MoneyWiseQIFSecurityPrices
      * @return the security
      */
     public MoneyWiseQIFSecurity getSecurity() {
-<span class="nc" id="L82">        return theSecurity;</span>
+<span class="nc" id="L83">        return theSecurity;</span>
     }
 
     /**
@@ -88,7 +89,7 @@ public class MoneyWiseQIFSecurityPrices
      * @return the prices
      */
     public List&lt;MoneyWiseQIFPrice&gt; getPrices() {
-<span class="nc" id="L91">        return thePrices;</span>
+<span class="nc" id="L92">        return thePrices;</span>
     }
 
     /**
@@ -98,11 +99,11 @@ public class MoneyWiseQIFSecurityPrices
      */
     protected void addPrice(final MoneyWiseSecurityPrice pPrice) {
         /* Allocate price */
-<span class="nc" id="L101">        final MoneyWiseQIFPrice myPrice = new MoneyWiseQIFPrice(theFile, theSecurity, pPrice);</span>
+<span class="nc" id="L102">        final MoneyWiseQIFPrice myPrice = new MoneyWiseQIFPrice(theRegister, theSecurity, pPrice);</span>
 
         /* Add to the list */
-<span class="nc" id="L104">        thePrices.add(myPrice);</span>
-<span class="nc" id="L105">    }</span>
+<span class="nc" id="L105">        thePrices.add(myPrice);</span>
+<span class="nc" id="L106">    }</span>
 
     /**
      * Add price.
@@ -111,15 +112,15 @@ public class MoneyWiseQIFSecurityPrices
      */
     protected void addPrice(final MoneyWiseQIFPrice pPrice) {
         /* Add to the list */
-<span class="nc" id="L114">        thePrices.add(pPrice);</span>
-<span class="nc" id="L115">    }</span>
+<span class="nc" id="L115">        thePrices.add(pPrice);</span>
+<span class="nc" id="L116">    }</span>
 
     /**
      * Sort the prices.
      */
     protected void sortPrices() {
-<span class="nc" id="L121">        Collections.sort(thePrices);</span>
-<span class="nc" id="L122">    }</span>
+<span class="nc" id="L122">        Collections.sort(thePrices);</span>
+<span class="nc" id="L123">    }</span>
 
     /**
      * Format prices.
@@ -130,46 +131,45 @@ public class MoneyWiseQIFSecurityPrices
     protected void formatPrices(final OceanusDataFormatter pFormatter,
                                 final StringBuilder pBuilder) {
         /* Loop through the prices */
-<span class="nc bnc" id="L133" title="All 2 branches missed.">        for (MoneyWiseQIFPrice myPrice : thePrices) {</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        for (MoneyWiseQIFPrice myPrice : thePrices) {</span>
             /* Format Item Type header */
-<span class="nc" id="L135">            MoneyWiseQIFRecord.formatItemType(MoneyWiseQIFPrice.QIF_ITEM, pBuilder);</span>
+<span class="nc" id="L136">            MoneyWiseQIFRecord.formatItemType(MoneyWiseQIFPrice.QIF_ITEM, pBuilder);</span>
 
             /* Format the record */
-<span class="nc" id="L138">            myPrice.formatRecord(pFormatter, pBuilder);</span>
-<span class="nc" id="L139">        }</span>
-<span class="nc" id="L140">    }</span>
+<span class="nc" id="L139">            myPrice.formatRecord(pFormatter, pBuilder);</span>
+<span class="nc" id="L140">        }</span>
+<span class="nc" id="L141">    }</span>
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle trivial cases */
-<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L146">            return true;</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L147">            return true;</span>
         }
-<span class="nc bnc" id="L148" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L149">            return false;</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L150">            return false;</span>
         }
 
         /* Check class */
-<span class="nc bnc" id="L153" title="All 2 branches missed.">        if (!getClass().equals(pThat.getClass())) {</span>
-<span class="nc" id="L154">            return false;</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">        if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L155">            return false;</span>
         }
 
         /* Cast correctly */
-<span class="nc" id="L158">        final MoneyWiseQIFSecurityPrices myPrices = (MoneyWiseQIFSecurityPrices) pThat;</span>
+<span class="nc" id="L159">        final MoneyWiseQIFSecurityPrices myPrices = (MoneyWiseQIFSecurityPrices) pThat;</span>
 
         /* Check security */
-<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (!theSecurity.equals(myPrices.getSecurity())) {</span>
-<span class="nc" id="L162">            return false;</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        if (!theSecurity.equals(myPrices.getSecurity())) {</span>
+<span class="nc" id="L163">            return false;</span>
         }
 
         /* Check prices */
-<span class="nc" id="L166">        return thePrices.equals(myPrices.getPrices());</span>
+<span class="nc" id="L167">        return thePrices.equals(myPrices.getPrices());</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L171">        final int myResult = MoneyWiseQIFFile.HASH_BASE * theSecurity.hashCode();</span>
-<span class="nc" id="L172">        return myResult + thePrices.hashCode();</span>
+<span class="nc" id="L172">        return Objects.hash(theSecurity, thePrices);</span>
     }
 
     @Override
@@ -177,4 +177,4 @@ public class MoneyWiseQIFSecurityPrices
 <span class="nc" id="L177">        return theSecurity.compareTo(pThat.getSecurity());</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -31,6 +31,7 @@ import com.github.javaparser.ast.modules.ModuleDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
 import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
@@ -50,7 +51,7 @@ import io.github.tonywasher.joceanus.themis.parser.mod.ThemisModModule;
 import io.github.tonywasher.joceanus.themis.parser.mod.ThemisModParser;
 import io.github.tonywasher.joceanus.themis.parser.node.ThemisNodeCompilationUnit;
 import io.github.tonywasher.joceanus.themis.parser.node.ThemisNodeParser;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
 import io.github.tonywasher.joceanus.themis.parser.stmt.ThemisStmtParser;
 import io.github.tonywasher.joceanus.themis.parser.type.ThemisTypeParser;
 
@@ -70,9 +71,19 @@ import java.util.List;
 public class ThemisParser
         implements ThemisParserDef {
     /**
+     * The reporter.
+     */
+    private final TethysUIThreadStatusReport theReporter;
+
+    /**
      * The underlying parser.
      */
     private final JavaParser theParser;
+
+    /**
+     * The project.
+     */
+    private final ThemisProject theProject;
 
     /**
      * The stack of the nodes that are being parsed.
@@ -105,44 +116,30 @@ public class ThemisParser
     private int theClassIndex;
 
     /**
-     * The project.
-     */
-    private ThemisProject theProject;
-
-    /**
-     * The Error.
-     */
-    private OceanusException theError;
-
-    /**
      * Constructor.
      *
+     * @param pReport   the reporter
      * @param pLocation the project location
+     * @throws OceanusException on error
      */
-<span class="fc" id="L122">    public ThemisParser(final File pLocation) {</span>
-        /* Initialise the parser */
-<span class="fc" id="L124">        theParser = new JavaParser();</span>
-<span class="fc" id="L125">        theNodes = new ArrayDeque&lt;&gt;();</span>
-<span class="fc" id="L126">        theClassStack = new ArrayDeque&lt;&gt;();</span>
-<span class="fc" id="L127">        theClasses = new ArrayList&lt;&gt;();</span>
+    public ThemisParser(final TethysUIThreadStatusReport pReport,
+<span class="fc" id="L126">                        final File pLocation) throws OceanusException {</span>
+        /* Initialise fields */
+<span class="fc" id="L128">        theReporter = pReport;</span>
+<span class="fc" id="L129">        theParser = new JavaParser();</span>
+<span class="fc" id="L130">        theNodes = new ArrayDeque&lt;&gt;();</span>
+<span class="fc" id="L131">        theClassStack = new ArrayDeque&lt;&gt;();</span>
+<span class="fc" id="L132">        theClasses = new ArrayList&lt;&gt;();</span>
 
-        /* Protect against exceptions */
-        try {
-            /* Prepare the project */
-<span class="fc" id="L132">            theProject = new ThemisProject(pLocation);</span>
+        /* Prepare the project */
+<span class="fc" id="L135">        theProject = new ThemisProject(this, pLocation);</span>
 
-            /* Configure the parser */
-<span class="fc" id="L135">            configureParser();</span>
+        /* Configure the parser */
+<span class="fc" id="L138">        configureParser();</span>
 
-            /* Parse the javaCode */
-<span class="fc" id="L138">            theProject.parseJavaCode(this);</span>
-
-            /* Store any exception */
-<span class="nc" id="L141">        } catch (OceanusException e) {</span>
-<span class="nc" id="L142">            theError = e;</span>
-<span class="nc" id="L143">            theProject = null;</span>
-<span class="fc" id="L144">        }</span>
-<span class="fc" id="L145">    }</span>
+        /* Parse the javaCode */
+<span class="fc" id="L141">        theProject.parseJavaCode();</span>
+<span class="fc" id="L142">    }</span>
 
     /**
      * Obtain the project.
@@ -150,21 +147,17 @@ public class ThemisParser
      * @return the project
      */
     public ThemisProject getProject() {
-<span class="fc" id="L153">        return theProject;</span>
+<span class="fc" id="L150">        return theProject;</span>
     }
 
-    /**
-     * Obtain the error.
-     *
-     * @return the error
-     */
-    public OceanusException getError() {
-<span class="fc" id="L162">        return theError;</span>
+    @Override
+    public TethysUIThreadStatusReport getReporter() {
+<span class="fc" id="L155">        return theReporter;</span>
     }
 
     @Override
     public List&lt;ThemisClassInstance&gt; getClasses() {
-<span class="fc" id="L167">        return theClasses;</span>
+<span class="fc" id="L160">        return theClasses;</span>
     }
 
     /**
@@ -172,34 +165,34 @@ public class ThemisParser
      */
     private void configureParser() {
         /* Access the parser */
-<span class="fc" id="L175">        final ParserConfiguration myConfig = theParser.getParserConfiguration();</span>
-<span class="fc" id="L176">        myConfig.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);</span>
-<span class="fc" id="L177">    }</span>
+<span class="fc" id="L168">        final ParserConfiguration myConfig = theParser.getParserConfiguration();</span>
+<span class="fc" id="L169">        myConfig.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);</span>
+<span class="fc" id="L170">    }</span>
 
     @Override
     public void setCurrentPackage(final String pPackage) {
-<span class="fc" id="L181">        thePackage = pPackage;</span>
-<span class="fc" id="L182">    }</span>
+<span class="fc" id="L174">        thePackage = pPackage;</span>
+<span class="fc" id="L175">    }</span>
 
     @Override
     public void setCurrentFile(final File pFile) {
-<span class="fc" id="L186">        theCurrentFile = pFile;</span>
-<span class="fc" id="L187">        theClasses.clear();</span>
-<span class="fc" id="L188">        theClassStack.clear();</span>
-<span class="fc" id="L189">        theClassIndex = 0;</span>
-<span class="fc" id="L190">    }</span>
+<span class="fc" id="L179">        theCurrentFile = pFile;</span>
+<span class="fc" id="L180">        theClasses.clear();</span>
+<span class="fc" id="L181">        theClassStack.clear();</span>
+<span class="fc" id="L182">        theClassIndex = 0;</span>
+<span class="fc" id="L183">    }</span>
 
     @Override
     public ThemisInstance registerInstance(final ThemisInstance pInstance) {
         /* Register with parent unless top-level node */
-<span class="fc" id="L195">        final ThemisInstance myParent = theNodes.peekLast();</span>
-<span class="fc bfc" id="L196" title="All 2 branches covered.">        if (myParent != null) {</span>
-<span class="fc" id="L197">            myParent.registerChild(pInstance);</span>
+<span class="fc" id="L188">        final ThemisInstance myParent = theNodes.peekLast();</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">        if (myParent != null) {</span>
+<span class="fc" id="L190">            myParent.registerChild(pInstance);</span>
         }
 
         /* Add to end of queue */
-<span class="fc" id="L201">        theNodes.addLast(pInstance);</span>
-<span class="fc" id="L202">        return myParent;</span>
+<span class="fc" id="L194">        theNodes.addLast(pInstance);</span>
+<span class="fc" id="L195">        return myParent;</span>
     }
 
     /**
@@ -209,83 +202,83 @@ public class ThemisParser
      */
     private void deRegisterInstance(final ThemisInstance pInstance) {
         /* If the instance is non-null */
-<span class="fc bfc" id="L212" title="All 2 branches covered.">        if (pInstance != null) {</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">        if (pInstance != null) {</span>
             /* If it matches the current node */
-<span class="fc" id="L214">            final ThemisInstance myCurrent = theNodes.peekLast();</span>
-<span class="pc bpc" id="L215" title="1 of 2 branches missed.">            if (pInstance.equals(myCurrent)) {</span>
+<span class="fc" id="L207">            final ThemisInstance myCurrent = theNodes.peekLast();</span>
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">            if (pInstance.equals(myCurrent)) {</span>
                 /* Remove from queue */
-<span class="fc" id="L217">                theNodes.removeLast();</span>
+<span class="fc" id="L210">                theNodes.removeLast();</span>
             }
-<span class="fc bfc" id="L219" title="All 2 branches covered.">            if (pInstance instanceof ThemisClassInstance) {</span>
-<span class="fc" id="L220">                theClassStack.removeLast();</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">            if (pInstance instanceof ThemisClassInstance) {</span>
+<span class="fc" id="L213">                theClassStack.removeLast();</span>
             }
         }
-<span class="fc" id="L223">    }</span>
+<span class="fc" id="L216">    }</span>
 
     @Override
     public String registerClass(final ThemisClassInstance pClass) {
         /* Add the class to the list */
-<span class="fc" id="L228">        theClasses.add(pClass);</span>
+<span class="fc" id="L221">        theClasses.add(pClass);</span>
 
         /* Determine the name of the class */
-<span class="fc" id="L231">        String myFullName = pClass.getFullName();</span>
-<span class="fc bfc" id="L232" title="All 2 branches covered.">        if (myFullName == null) {</span>
-<span class="fc" id="L233">            final String myCurrentName = theClassStack.peekLast();</span>
-<span class="fc" id="L234">            myFullName = myCurrentName</span>
+<span class="fc" id="L224">        String myFullName = pClass.getFullName();</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">        if (myFullName == null) {</span>
+<span class="fc" id="L226">            final String myCurrentName = theClassStack.peekLast();</span>
+<span class="fc" id="L227">            myFullName = myCurrentName</span>
                     + ThemisChar.PERIOD
                     + ThemisChar.DOLLAR
                     + ++theClassIndex;
-<span class="pc bpc" id="L238" title="1 of 2 branches missed.">            if (pClass.isLocalDeclaration()) {</span>
-<span class="nc" id="L239">                myFullName += pClass.getName();</span>
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">            if (pClass.isLocalDeclaration()) {</span>
+<span class="nc" id="L232">                myFullName += pClass.getName();</span>
             }
         }
 
         /* Add to the class stack */
-<span class="fc" id="L244">        theClassStack.addLast(myFullName);</span>
+<span class="fc" id="L237">        theClassStack.addLast(myFullName);</span>
 
         /* Return the fullName */
-<span class="fc" id="L247">        return myFullName;</span>
+<span class="fc" id="L240">        return myFullName;</span>
     }
 
     @Override
     public ThemisNodeCompilationUnit parseJavaFile() throws OceanusException {
         /* Protect against exceptions */
-<span class="fc" id="L253">        try (InputStream myStream = new FileInputStream(theCurrentFile)) {</span>
+<span class="fc" id="L246">        try (InputStream myStream = new FileInputStream(theCurrentFile)) {</span>
             /* Parse the contents */
-<span class="fc" id="L255">            final ParseResult&lt;CompilationUnit&gt; myUnit = theParser.parse(myStream);</span>
-<span class="pc bpc" id="L256" title="1 of 2 branches missed.">            if (!myUnit.isSuccessful()) {</span>
-<span class="nc" id="L257">                final Problem myProblem = myUnit.getProblem(0);</span>
-<span class="nc" id="L258">                throw new ThemisDataException(myProblem.getVerboseMessage());</span>
+<span class="fc" id="L248">            final ParseResult&lt;CompilationUnit&gt; myUnit = theParser.parse(myStream);</span>
+<span class="pc bpc" id="L249" title="1 of 2 branches missed.">            if (!myUnit.isSuccessful()) {</span>
+<span class="nc" id="L250">                final Problem myProblem = myUnit.getProblem(0);</span>
+<span class="nc" id="L251">                throw new ThemisDataException(myProblem.getVerboseMessage());</span>
             }
-<span class="fc" id="L260">            return (ThemisNodeCompilationUnit) parseNode(myUnit.getResult().orElse(null));</span>
+<span class="fc" id="L253">            return (ThemisNodeCompilationUnit) parseNode(myUnit.getResult().orElse(null));</span>
 
             /* Catch exceptions */
-<span class="nc" id="L263">        } catch (IOException e) {</span>
+<span class="nc" id="L256">        } catch (IOException e) {</span>
             /* Throw an exception */
-<span class="nc" id="L265">            throw new ThemisIOException(&quot;Failed to load file &quot;</span>
-<span class="nc" id="L266">                    + theCurrentFile.getAbsolutePath(), e);</span>
+<span class="nc" id="L258">            throw new ThemisIOException(&quot;Failed to load file &quot;</span>
+<span class="nc" id="L259">                    + theCurrentFile.getAbsolutePath(), e);</span>
         }
     }
 
     @Override
     public ThemisModModule parseModuleInfo(final File pInfoFile) throws OceanusException {
         /* Protect against exceptions */
-<span class="fc" id="L273">        setCurrentFile(pInfoFile);</span>
-<span class="fc" id="L274">        try (InputStream myStream = new FileInputStream(theCurrentFile)) {</span>
+<span class="fc" id="L266">        setCurrentFile(pInfoFile);</span>
+<span class="fc" id="L267">        try (InputStream myStream = new FileInputStream(theCurrentFile)) {</span>
             /* Parse the contents */
-<span class="fc" id="L276">            final String myText = new String(myStream.readAllBytes(), StandardCharsets.UTF_8);</span>
-<span class="fc" id="L277">            final ParseResult&lt;ModuleDeclaration&gt; myDecl = theParser.parseModuleDeclaration(myText);</span>
-<span class="pc bpc" id="L278" title="1 of 2 branches missed.">            if (!myDecl.isSuccessful()) {</span>
-<span class="nc" id="L279">                final Problem myProblem = myDecl.getProblem(0);</span>
-<span class="nc" id="L280">                throw new ThemisDataException(myProblem.getVerboseMessage());</span>
+<span class="fc" id="L269">            final String myText = new String(myStream.readAllBytes(), StandardCharsets.UTF_8);</span>
+<span class="fc" id="L270">            final ParseResult&lt;ModuleDeclaration&gt; myDecl = theParser.parseModuleDeclaration(myText);</span>
+<span class="pc bpc" id="L271" title="1 of 2 branches missed.">            if (!myDecl.isSuccessful()) {</span>
+<span class="nc" id="L272">                final Problem myProblem = myDecl.getProblem(0);</span>
+<span class="nc" id="L273">                throw new ThemisDataException(myProblem.getVerboseMessage());</span>
             }
-<span class="fc" id="L282">            return (ThemisModModule) parseModule(myDecl.getResult().orElse(null));</span>
+<span class="fc" id="L275">            return (ThemisModModule) parseModule(myDecl.getResult().orElse(null));</span>
 
             /* Catch exceptions */
-<span class="nc" id="L285">        } catch (IOException e) {</span>
+<span class="nc" id="L278">        } catch (IOException e) {</span>
             /* Throw an exception */
-<span class="nc" id="L287">            throw new ThemisIOException(&quot;Failed to load file &quot;</span>
-<span class="nc" id="L288">                    + theCurrentFile.getAbsolutePath(), e);</span>
+<span class="nc" id="L280">            throw new ThemisIOException(&quot;Failed to load file &quot;</span>
+<span class="nc" id="L281">                    + theCurrentFile.getAbsolutePath(), e);</span>
         }
     }
 
@@ -293,23 +286,23 @@ public class ThemisParser
     public OceanusException buildException(final String pMessage,
                                            final Node pNode) {
         /* Determine location of error */
-<span class="nc" id="L296">        final Position myPos = pNode.getBegin().orElse(null);</span>
-<span class="nc" id="L297">        final String myLocation = pNode.getClass().getCanonicalName()</span>
-<span class="nc bnc" id="L298" title="All 2 branches missed.">                + (myPos == null ? &quot;&quot; : ThemisChar.PARENTHESIS_OPEN</span>
+<span class="nc" id="L289">        final Position myPos = pNode.getBegin().orElse(null);</span>
+<span class="nc" id="L290">        final String myLocation = pNode.getClass().getCanonicalName()</span>
+<span class="nc bnc" id="L291" title="All 2 branches missed.">                + (myPos == null ? &quot;&quot; : ThemisChar.PARENTHESIS_OPEN</span>
                                         + myPos.line
                                         + ThemisChar.COLON
                                         + myPos.column
                                         + ThemisChar.PARENTHESIS_CLOSE);
 
         /* Build full error message */
-<span class="nc" id="L305">        final String myMsg = pMessage</span>
+<span class="nc" id="L298">        final String myMsg = pMessage</span>
                 + ThemisChar.LF
                 + myLocation
                 + ThemisChar.LF
-<span class="nc" id="L309">                + theCurrentFile.getAbsolutePath();</span>
+<span class="nc" id="L302">                + theCurrentFile.getAbsolutePath();</span>
 
         /* Create exception */
-<span class="nc" id="L312">        return new ThemisDataException(myMsg);</span>
+<span class="nc" id="L305">        return new ThemisDataException(myMsg);</span>
     }
 
     /**
@@ -320,56 +313,56 @@ public class ThemisParser
      */
     public void checkPackage(final PackageDeclaration pPackage) throws OceanusException {
         /* Check that package matches */
-<span class="pc bpc" id="L323" title="1 of 2 branches missed.">        if (!thePackage.equals(pPackage.getNameAsString())) {</span>
-<span class="nc" id="L324">            throw buildException(&quot;Mismatch on package&quot;, pPackage);</span>
+<span class="pc bpc" id="L316" title="1 of 2 branches missed.">        if (!thePackage.equals(pPackage.getNameAsString())) {</span>
+<span class="nc" id="L317">            throw buildException(&quot;Mismatch on package&quot;, pPackage);</span>
         }
-<span class="fc" id="L326">    }</span>
+<span class="fc" id="L319">    }</span>
 
     @Override
     public ThemisDeclarationInstance parseDeclaration(final BodyDeclaration&lt;?&gt; pDecl) throws OceanusException {
-<span class="fc" id="L330">        final ThemisDeclarationInstance myInstance = ThemisDeclParser.parseDeclaration(this, pDecl);</span>
+<span class="fc" id="L323">        final ThemisDeclarationInstance myInstance = ThemisDeclParser.parseDeclaration(this, pDecl);</span>
+<span class="fc" id="L324">        deRegisterInstance(myInstance);</span>
+<span class="fc" id="L325">        return myInstance;</span>
+    }
+
+    @Override
+    public ThemisNodeInstance parseNode(final Node pNode) throws OceanusException {
+<span class="fc" id="L330">        final ThemisNodeInstance myInstance = ThemisNodeParser.parseNode(this, pNode);</span>
 <span class="fc" id="L331">        deRegisterInstance(myInstance);</span>
 <span class="fc" id="L332">        return myInstance;</span>
     }
 
     @Override
-    public ThemisNodeInstance parseNode(final Node pNode) throws OceanusException {
-<span class="fc" id="L337">        final ThemisNodeInstance myInstance = ThemisNodeParser.parseNode(this, pNode);</span>
+    public ThemisTypeInstance parseType(final Type pType) throws OceanusException {
+<span class="fc" id="L337">        final ThemisTypeInstance myInstance = ThemisTypeParser.parseType(this, pType);</span>
 <span class="fc" id="L338">        deRegisterInstance(myInstance);</span>
 <span class="fc" id="L339">        return myInstance;</span>
     }
 
     @Override
-    public ThemisTypeInstance parseType(final Type pType) throws OceanusException {
-<span class="fc" id="L344">        final ThemisTypeInstance myInstance = ThemisTypeParser.parseType(this, pType);</span>
+    public ThemisStatementInstance parseStatement(final Statement pStatement) throws OceanusException {
+<span class="fc" id="L344">        final ThemisStatementInstance myInstance = ThemisStmtParser.parseStatement(this, pStatement);</span>
 <span class="fc" id="L345">        deRegisterInstance(myInstance);</span>
 <span class="fc" id="L346">        return myInstance;</span>
     }
 
     @Override
-    public ThemisStatementInstance parseStatement(final Statement pStatement) throws OceanusException {
-<span class="fc" id="L351">        final ThemisStatementInstance myInstance = ThemisStmtParser.parseStatement(this, pStatement);</span>
+    public ThemisExpressionInstance parseExpression(final Expression pExpr) throws OceanusException {
+<span class="fc" id="L351">        final ThemisExpressionInstance myInstance = ThemisExprParser.parseExpression(this, pExpr);</span>
 <span class="fc" id="L352">        deRegisterInstance(myInstance);</span>
 <span class="fc" id="L353">        return myInstance;</span>
     }
 
     @Override
-    public ThemisExpressionInstance parseExpression(final Expression pExpr) throws OceanusException {
-<span class="fc" id="L358">        final ThemisExpressionInstance myInstance = ThemisExprParser.parseExpression(this, pExpr);</span>
+    public ThemisModuleInstance parseModule(final Node pMod) throws OceanusException {
+<span class="fc" id="L358">        final ThemisModuleInstance myInstance = ThemisModParser.parseModule(this, pMod);</span>
 <span class="fc" id="L359">        deRegisterInstance(myInstance);</span>
 <span class="fc" id="L360">        return myInstance;</span>
     }
 
     @Override
-    public ThemisModuleInstance parseModule(final Node pMod) throws OceanusException {
-<span class="fc" id="L365">        final ThemisModuleInstance myInstance = ThemisModParser.parseModule(this, pMod);</span>
-<span class="fc" id="L366">        deRegisterInstance(myInstance);</span>
-<span class="fc" id="L367">        return myInstance;</span>
-    }
-
-    @Override
     public ThemisModifierList parseModifierList(final NodeList&lt;? extends Node&gt; pNodeList) throws OceanusException {
-<span class="fc" id="L372">        return ThemisNodeParser.parseModifierList(this, pNodeList);</span>
+<span class="fc" id="L365">        return ThemisNodeParser.parseModifierList(this, pNodeList);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

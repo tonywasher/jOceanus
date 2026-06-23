@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
@@ -26,73 +24,76 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceBaseList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValidator;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator;
 
 /**
  * Validator for SecurityPrice.
  */
-<span class="fc" id="L35">public class MoneyWiseValidateSecurityPrice</span>
+<span class="fc" id="L36">public class MoneyWiseValidateSecurityPrice</span>
         implements PrometheusDataValidator {
 
     @Override
-    public void validate(final PrometheusDataItem pPrice) {
-<span class="fc" id="L40">        final MoneyWiseSecurityPrice myPrice = (MoneyWiseSecurityPrice) pPrice;</span>
-<span class="fc" id="L41">        final MoneyWiseSecurity mySecurity = myPrice.getSecurity();</span>
-<span class="fc" id="L42">        final OceanusDate myDate = myPrice.getDate();</span>
-<span class="fc" id="L43">        final OceanusPrice mySecPrice = myPrice.getPrice();</span>
-<span class="fc" id="L44">        final MoneyWiseSecurityPriceBaseList&lt;? extends MoneyWiseSecurityPrice&gt; myList = myPrice.getList();</span>
-<span class="fc" id="L45">        final MoneyWiseDataSet mySet = myPrice.getDataSet();</span>
+    public void validate(final PrometheusDataItemCtl pPrice) {
+<span class="fc" id="L41">        final MoneyWiseSecurityPrice myPrice = (MoneyWiseSecurityPrice) pPrice;</span>
+<span class="fc" id="L42">        final MoneyWiseSecurity mySecurity = myPrice.getSecurity();</span>
+<span class="fc" id="L43">        final OceanusDate myDate = myPrice.getDate();</span>
+<span class="fc" id="L44">        final OceanusPrice mySecPrice = myPrice.getPrice();</span>
+<span class="fc" id="L45">        final MoneyWiseSecurityPriceBaseList&lt;? extends MoneyWiseSecurityPrice&gt; myList = myPrice.getList();</span>
+<span class="fc" id="L46">        final MoneyWiseDataSet mySet = (MoneyWiseDataSet) myPrice.getDataSet();</span>
 
         /* The security must be non-null */
-<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        if (mySecurity == null) {</span>
-<span class="nc" id="L49">            pPrice.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicDataType.SECURITY);</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">        if (mySecurity == null) {</span>
+<span class="nc" id="L50">            myPrice.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicDataType.SECURITY);</span>
 
             /* The security must not be an option */
-<span class="pc bpc" id="L52" title="1 of 2 branches missed.">        } else if (mySecurity.getCategoryClass().isOption()) {</span>
-<span class="nc" id="L53">            pPrice.addError(&quot;Options are priced by the underlying stock&quot;, MoneyWiseBasicDataType.SECURITY);</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        } else if (mySecurity.getCategoryClass().isOption()) {</span>
+<span class="nc" id="L54">            myPrice.addError(&quot;Options are priced by the underlying stock&quot;, MoneyWiseBasicDataType.SECURITY);</span>
         }
 
         /* The date must be non-null */
-<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        if (myDate == null) {</span>
-<span class="nc" id="L58">            pPrice.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        if (myDate == null) {</span>
+<span class="nc" id="L59">            myPrice.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);</span>
 
             /* else date is non-null */
         } else {
             /* Date must be unique for this security */
-<span class="fc" id="L63">            final MoneyWiseSecurityPriceDataMap myMap = myList.getDataMap();</span>
-<span class="pc bpc" id="L64" title="1 of 2 branches missed.">            if (!myMap.validPriceCount(myPrice)) {</span>
-<span class="nc" id="L65">                pPrice.addError(PrometheusDataItem.ERROR_DUPLICATE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);</span>
+<span class="fc" id="L64">            final MoneyWiseSecurityPriceDataMap myMap = myList.getDataMap();</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">            if (!myMap.validPriceCount(myPrice)) {</span>
+<span class="nc" id="L66">                myPrice.addError(PrometheusDataItem.ERROR_DUPLICATE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);</span>
             }
 
             /* The date must be in-range */
-<span class="pc bpc" id="L69" title="1 of 2 branches missed.">            if (mySet.getDateRange().compareToDate(myDate) != 0) {</span>
-<span class="nc" id="L70">                pPrice.addError(PrometheusDataItem.ERROR_RANGE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">            if (mySet.getDateRange().compareToDate(myDate) != 0) {</span>
+<span class="nc" id="L71">                myPrice.addError(PrometheusDataItem.ERROR_RANGE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);</span>
             }
         }
 
         /* The Price must be non-zero and greater than zero */
-<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        if (mySecPrice == null) {</span>
-<span class="nc" id="L76">            pPrice.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);</span>
-<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        } else if (mySecPrice.isZero()) {</span>
-<span class="nc" id="L78">            pPrice.addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);</span>
-<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        } else if (!mySecPrice.isPositive()) {</span>
-<span class="nc" id="L80">            pPrice.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);</span>
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">        if (mySecPrice == null) {</span>
+<span class="nc" id="L77">            myPrice.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        } else if (mySecPrice.isZero()) {</span>
+<span class="nc" id="L79">            myPrice.addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        } else if (!mySecPrice.isPositive()) {</span>
+<span class="nc" id="L81">            myPrice.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);</span>
         } else {
             /* Ensure that currency is correct */
-<span class="pc bpc" id="L83" title="1 of 2 branches missed.">            final MoneyWiseCurrency myCurrency = mySecurity == null</span>
-<span class="nc" id="L84">                    ? null</span>
-<span class="fc" id="L85">                    : mySecurity.getAssetCurrency();</span>
-<span class="pc bpc" id="L86" title="1 of 2 branches missed.">            if (myCurrency != null</span>
-<span class="pc bpc" id="L87" title="1 of 2 branches missed.">                    &amp;&amp; !mySecPrice.getCurrency().equals(myCurrency.getCurrency())) {</span>
-<span class="nc" id="L88">                pPrice.addError(MoneyWiseSecurityPrice.ERROR_CURRENCY, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">            final MoneyWiseCurrency myCurrency = mySecurity == null</span>
+<span class="nc" id="L85">                    ? null</span>
+<span class="fc" id="L86">                    : mySecurity.getAssetCurrency();</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">            if (myCurrency != null</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">                    &amp;&amp; !mySecPrice.getCurrency().equals(myCurrency.getCurrency())) {</span>
+<span class="nc" id="L89">                myPrice.addError(MoneyWiseSecurityPrice.ERROR_CURRENCY, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);</span>
             }
         }
 
         /* Set validation flag */
-<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        if (!pPrice.hasErrors()) {</span>
-<span class="fc" id="L94">            pPrice.setValidEdit();</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if (!myPrice.hasErrors()) {</span>
+<span class="fc" id="L95">            myPrice.setValidEdit();</span>
         }
-<span class="fc" id="L96">    }</span>
+<span class="fc" id="L97">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

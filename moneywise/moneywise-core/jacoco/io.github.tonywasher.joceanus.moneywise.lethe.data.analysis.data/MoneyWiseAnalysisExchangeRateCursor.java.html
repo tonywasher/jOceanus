@@ -16,12 +16,12 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate.MoneyWiseExchangeRateDataMap;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 
 import java.util.HashMap;
 import java.util.ListIterator;
@@ -75,18 +75,7 @@ public class MoneyWiseAnalysisExchangeRateCursor {
      * @return the cursor
      */
     private CurrencyCursor getCursor(final MoneyWiseCurrency pCurrency) {
-        /* Look for existing cursor */
-<span class="nc" id="L79">        CurrencyCursor myCursor = theCursorMap.get(pCurrency);</span>
-
-        /* If we do not have a cursor */
-<span class="nc bnc" id="L82" title="All 2 branches missed.">        if (myCursor == null) {</span>
-            /* Allocate new cursor */
-<span class="nc" id="L84">            myCursor = new CurrencyCursor(pCurrency);</span>
-<span class="nc" id="L85">            theCursorMap.put(pCurrency, myCursor);</span>
-        }
-
-        /* return the cursor */
-<span class="nc" id="L89">        return myCursor;</span>
+<span class="nc" id="L78">        return theCursorMap.computeIfAbsent(pCurrency, c -&gt; new CurrencyCursor(pCurrency));</span>
     }
 
     /**
@@ -101,7 +90,7 @@ public class MoneyWiseAnalysisExchangeRateCursor {
         /**
          * The current exchange rate.
          */
-<span class="nc" id="L104">        private OceanusRatio theCurrent = OceanusRatio.ONE;</span>
+<span class="nc" id="L93">        private OceanusRatio theCurrent = OceanusRatio.ONE;</span>
 
         /**
          * The next date.
@@ -118,32 +107,32 @@ public class MoneyWiseAnalysisExchangeRateCursor {
          *
          * @param pCurrency the currency
          */
-<span class="nc" id="L121">        private CurrencyCursor(final MoneyWiseCurrency pCurrency) {</span>
+<span class="nc" id="L110">        private CurrencyCursor(final MoneyWiseCurrency pCurrency) {</span>
             /* Access the Rate list */
-<span class="nc" id="L123">            theIterator = theDataMap.rateIterator(pCurrency);</span>
+<span class="nc" id="L112">            theIterator = theDataMap.rateIterator(pCurrency);</span>
 
             /* If we have an iterator */
-<span class="nc bnc" id="L126" title="All 2 branches missed.">            if (theIterator != null) {</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">            if (theIterator != null) {</span>
                 /* move the cursor */
-<span class="nc" id="L128">                moveCursor();</span>
+<span class="nc" id="L117">                moveCursor();</span>
             }
-<span class="nc" id="L130">        }</span>
+<span class="nc" id="L119">        }</span>
 
         /**
          * Move the cursor.
          */
         private void moveCursor() {
             /* If we have an iterator */
-<span class="nc bnc" id="L137" title="All 2 branches missed.">            if (theIterator.hasPrevious()) {</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">            if (theIterator.hasPrevious()) {</span>
                 /* access next rate and record */
-<span class="nc" id="L139">                final MoneyWiseExchangeRate myRate = theIterator.previous();</span>
-<span class="nc" id="L140">                theNextRate = myRate.getExchangeRate();</span>
-<span class="nc" id="L141">                theNextDate = myRate.getDate();</span>
-<span class="nc" id="L142">            } else {</span>
-<span class="nc" id="L143">                theNextDate = null;</span>
-<span class="nc" id="L144">                theNextRate = null;</span>
+<span class="nc" id="L128">                final MoneyWiseExchangeRate myRate = theIterator.previous();</span>
+<span class="nc" id="L129">                theNextRate = myRate.getExchangeRate();</span>
+<span class="nc" id="L130">                theNextDate = myRate.getDate();</span>
+<span class="nc" id="L131">            } else {</span>
+<span class="nc" id="L132">                theNextDate = null;</span>
+<span class="nc" id="L133">                theNextRate = null;</span>
             }
-<span class="nc" id="L146">        }</span>
+<span class="nc" id="L135">        }</span>
 
         /**
          * Obtain exchange rate for date.
@@ -153,20 +142,20 @@ public class MoneyWiseAnalysisExchangeRateCursor {
          */
         private OceanusRatio getExchangeRate(final OceanusDate pDate) {
             /* if we have a later rate */
-<span class="nc bnc" id="L156" title="All 2 branches missed.">            if (theNextDate != null) {</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">            if (theNextDate != null) {</span>
                 /* while we need to move the cursor */
-<span class="nc bnc" id="L158" title="All 2 branches missed.">                while (pDate.compareTo(theNextDate) &gt;= 0) {</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">                while (pDate.compareTo(theNextDate) &gt;= 0) {</span>
                     /* store rate */
-<span class="nc" id="L160">                    theCurrent = theNextRate;</span>
+<span class="nc" id="L149">                    theCurrent = theNextRate;</span>
 
                     /* move the cursor */
-<span class="nc" id="L163">                    moveCursor();</span>
+<span class="nc" id="L152">                    moveCursor();</span>
                 }
             }
 
             /* Return the rate */
-<span class="nc" id="L168">            return theCurrent;</span>
+<span class="nc" id="L157">            return theCurrent;</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

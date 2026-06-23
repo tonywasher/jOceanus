@@ -62,7 +62,7 @@ public class MoneyWiseTransInfoSet
      * @param pTypeList the infoTypeList for the set
      * @param pInfoList source InfoSet
      */
-    protected MoneyWiseTransInfoSet(final MoneyWiseTransaction pOwner,
+    protected MoneyWiseTransInfoSet(final MoneyWiseTransBase pOwner,
                                     final MoneyWiseTransInfoTypeList pTypeList,
                                     final MoneyWiseTransInfoList pInfoList) {
         /* Store the Owner and Info List */
@@ -75,8 +75,8 @@ public class MoneyWiseTransInfoSet
     }
 
     @Override
-    public MoneyWiseTransaction getOwner() {
-<span class="fc" id="L79">        return (MoneyWiseTransaction) super.getOwner();</span>
+    public MoneyWiseTransBase getOwner() {
+<span class="fc" id="L79">        return (MoneyWiseTransBase) super.getOwner();</span>
     }
 
     /**
@@ -250,4 +250,4 @@ public class MoneyWiseTransInfoSet
         };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

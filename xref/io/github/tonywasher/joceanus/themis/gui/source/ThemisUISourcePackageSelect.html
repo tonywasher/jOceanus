@@ -40,8 +40,8 @@
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.gui.base.ThemisUIResource;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.proj.ThemisModule;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.proj.ThemisPackage;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.project.ThemisModule;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.parser.project.ThemisPackage;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment"> * Button to select package from module.</em>
@@ -81,12 +81,12 @@
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">     * The current module.</em>
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">private</strong> <a name="ThemisModule" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisModule.html#ThemisModule">ThemisModule</a> theModule;
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">private</strong> <a name="ThemisModule" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisModule.html#ThemisModule">ThemisModule</a> theModule;
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">     * The current package.</em>
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>      <strong class="jxr_keyword">private</strong> <a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisPackage.html#ThemisPackage">ThemisPackage</a> thePackage;
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>      <strong class="jxr_keyword">private</strong> <a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisPackage.html#ThemisPackage">ThemisPackage</a> thePackage;
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_javadoccomment">     * The current prefix.</em>
@@ -144,7 +144,7 @@
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L137" href="#L137">137</a> <em class="jxr_javadoccomment">     * @return the current package</em>
 <a class="jxr_linenumber" name="L138" href="#L138">138</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>     <a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisPackage.html#ThemisPackage">ThemisPackage</a> getCurrentPackage() {
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>     <a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisPackage.html#ThemisPackage">ThemisPackage</a> getCurrentPackage() {
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">return</strong> thePackage;
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>     }
 <a class="jxr_linenumber" name="L142" href="#L142">142</a> 
@@ -153,7 +153,7 @@
 <a class="jxr_linenumber" name="L145" href="#L145">145</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L146" href="#L146">146</a> <em class="jxr_javadoccomment">     * @param pModule the current module</em>
 <a class="jxr_linenumber" name="L147" href="#L147">147</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>     <strong class="jxr_keyword">void</strong> setCurrentModule(<strong class="jxr_keyword">final</strong> <a name="ThemisModule" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisModule.html#ThemisModule">ThemisModule</a> pModule) {
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>     <strong class="jxr_keyword">void</strong> setCurrentModule(<strong class="jxr_keyword">final</strong> <a name="ThemisModule" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisModule.html#ThemisModule">ThemisModule</a> pModule) {
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>         <em class="jxr_comment">/* Store the module */</em>
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>         theModule = pModule;
 <a class="jxr_linenumber" name="L151" href="#L151">151</a> 
@@ -161,7 +161,7 @@
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>         determinePrefix();
 <a class="jxr_linenumber" name="L154" href="#L154">154</a> 
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>         <em class="jxr_comment">/* Set the default package */</em>
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">final</strong> <a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisPackage.html#ThemisPackage">ThemisPackage</a> myPackage = getDefaultPackage();
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">final</strong> <a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisPackage.html#ThemisPackage">ThemisPackage</a> myPackage = getDefaultPackage();
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>         theButton.setValue(myPackage, getDisplayName(myPackage));
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>         handleNewPackage();
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>     }
@@ -171,11 +171,11 @@
 <a class="jxr_linenumber" name="L163" href="#L163">163</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L164" href="#L164">164</a> <em class="jxr_javadoccomment">     * @return the default package</em>
 <a class="jxr_linenumber" name="L165" href="#L165">165</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>     <strong class="jxr_keyword">private</strong> <a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisPackage.html#ThemisPackage">ThemisPackage</a> getDefaultPackage() {
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>     <strong class="jxr_keyword">private</strong> <a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisPackage.html#ThemisPackage">ThemisPackage</a> getDefaultPackage() {
 <a class="jxr_linenumber" name="L167" href="#L167">167</a>         <em class="jxr_comment">/* If we have a non-null module */</em>
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>         <strong class="jxr_keyword">if</strong> (theModule != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>             <em class="jxr_comment">/* Loop through the available packages */</em>
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>             <strong class="jxr_keyword">for</strong> (<a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisPackage.html#ThemisPackage">ThemisPackage</a> myPackage : theModule.getPackages()) {
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>             <strong class="jxr_keyword">for</strong> (<a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisPackage.html#ThemisPackage">ThemisPackage</a> myPackage : theModule.getPackages()) {
 <a class="jxr_linenumber" name="L171" href="#L171">171</a>                 <em class="jxr_comment">/* Skip package if necessary */</em>
 <a class="jxr_linenumber" name="L172" href="#L172">172</a>                 <strong class="jxr_keyword">if</strong> (skipPackage(myPackage)) {
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>                     <strong class="jxr_keyword">continue</strong>;
@@ -201,7 +201,7 @@
 <a class="jxr_linenumber" name="L193" href="#L193">193</a>         <em class="jxr_comment">/* If we have a non-null modules */</em>
 <a class="jxr_linenumber" name="L194" href="#L194">194</a>         <strong class="jxr_keyword">if</strong> (theModule != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L195" href="#L195">195</a>             <em class="jxr_comment">/* Loop through the available packages */</em>
-<a class="jxr_linenumber" name="L196" href="#L196">196</a>             <strong class="jxr_keyword">for</strong> (<a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisPackage.html#ThemisPackage">ThemisPackage</a> myPackage : theModule.getPackages()) {
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>             <strong class="jxr_keyword">for</strong> (<a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisPackage.html#ThemisPackage">ThemisPackage</a> myPackage : theModule.getPackages()) {
 <a class="jxr_linenumber" name="L197" href="#L197">197</a>                 <em class="jxr_comment">/* Adjust the prefix */</em>
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>                 adjustPrefix(myPackage);
 <a class="jxr_linenumber" name="L199" href="#L199">199</a>             }
@@ -217,7 +217,7 @@
 <a class="jxr_linenumber" name="L209" href="#L209">209</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L210" href="#L210">210</a> <em class="jxr_javadoccomment">     * @param pPackage the package</em>
 <a class="jxr_linenumber" name="L211" href="#L211">211</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L212" href="#L212">212</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> adjustPrefix(<strong class="jxr_keyword">final</strong> <a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisPackage.html#ThemisPackage">ThemisPackage</a> pPackage) {
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> adjustPrefix(<strong class="jxr_keyword">final</strong> <a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisPackage.html#ThemisPackage">ThemisPackage</a> pPackage) {
 <a class="jxr_linenumber" name="L213" href="#L213">213</a>         <em class="jxr_comment">/* Ignore placeHolder */</em>
 <a class="jxr_linenumber" name="L214" href="#L214">214</a>         <strong class="jxr_keyword">if</strong> (skipPackage(pPackage)) {
 <a class="jxr_linenumber" name="L215" href="#L215">215</a>             <strong class="jxr_keyword">return</strong>;
@@ -273,7 +273,7 @@
 <a class="jxr_linenumber" name="L265" href="#L265">265</a> <em class="jxr_javadoccomment">     * @param pPackage the package</em>
 <a class="jxr_linenumber" name="L266" href="#L266">266</a> <em class="jxr_javadoccomment">     * @return the displayName</em>
 <a class="jxr_linenumber" name="L267" href="#L267">267</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L268" href="#L268">268</a>     <strong class="jxr_keyword">private</strong> String getDisplayName(<strong class="jxr_keyword">final</strong> <a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisPackage.html#ThemisPackage">ThemisPackage</a> pPackage) {
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>     <strong class="jxr_keyword">private</strong> String getDisplayName(<strong class="jxr_keyword">final</strong> <a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisPackage.html#ThemisPackage">ThemisPackage</a> pPackage) {
 <a class="jxr_linenumber" name="L269" href="#L269">269</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> myPrefixLen = thePrefix == <strong class="jxr_keyword">null</strong> ? 0 : thePrefix.length();
 <a class="jxr_linenumber" name="L270" href="#L270">270</a>         <strong class="jxr_keyword">return</strong> pPackage == <strong class="jxr_keyword">null</strong> ? <span class="jxr_string">""</span> : pPackage.getPackage().substring(myPrefixLen);
 <a class="jxr_linenumber" name="L271" href="#L271">271</a>     }
@@ -287,10 +287,10 @@
 <a class="jxr_linenumber" name="L279" href="#L279">279</a> 
 <a class="jxr_linenumber" name="L280" href="#L280">280</a>         <em class="jxr_comment">/* Record active item */</em>
 <a class="jxr_linenumber" name="L281" href="#L281">281</a>         TethysUIScrollItem&lt;ThemisPackage&gt; myActive = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L282" href="#L282">282</a>         <strong class="jxr_keyword">final</strong> <a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisPackage.html#ThemisPackage">ThemisPackage</a> myCurr = theButton.getValue();
+<a class="jxr_linenumber" name="L282" href="#L282">282</a>         <strong class="jxr_keyword">final</strong> <a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisPackage.html#ThemisPackage">ThemisPackage</a> myCurr = theButton.getValue();
 <a class="jxr_linenumber" name="L283" href="#L283">283</a> 
 <a class="jxr_linenumber" name="L284" href="#L284">284</a>         <em class="jxr_comment">/* Loop through the available packages */</em>
-<a class="jxr_linenumber" name="L285" href="#L285">285</a>         <strong class="jxr_keyword">for</strong> (<a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisPackage.html#ThemisPackage">ThemisPackage</a> myPackage : theModule.getPackages()) {
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>         <strong class="jxr_keyword">for</strong> (<a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisPackage.html#ThemisPackage">ThemisPackage</a> myPackage : theModule.getPackages()) {
 <a class="jxr_linenumber" name="L286" href="#L286">286</a>             <em class="jxr_comment">/* skip package if required */</em>
 <a class="jxr_linenumber" name="L287" href="#L287">287</a>             <strong class="jxr_keyword">if</strong> (skipPackage(myPackage)) {
 <a class="jxr_linenumber" name="L288" href="#L288">288</a>                 <strong class="jxr_keyword">continue</strong>;
@@ -318,7 +318,7 @@
 <a class="jxr_linenumber" name="L310" href="#L310">310</a> <em class="jxr_javadoccomment">     * @param pPackage the package</em>
 <a class="jxr_linenumber" name="L311" href="#L311">311</a> <em class="jxr_javadoccomment">     * @return true/false</em>
 <a class="jxr_linenumber" name="L312" href="#L312">312</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> skipPackage(<strong class="jxr_keyword">final</strong> <a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/proj/ThemisPackage.html#ThemisPackage">ThemisPackage</a> pPackage) {
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> skipPackage(<strong class="jxr_keyword">final</strong> <a name="ThemisPackage" href="../../../../../../../io/github/tonywasher/joceanus/themis/parser/project/ThemisPackage.html#ThemisPackage">ThemisPackage</a> pPackage) {
 <a class="jxr_linenumber" name="L314" href="#L314">314</a>         <em class="jxr_comment">/* Skip placeholders */</em>
 <a class="jxr_linenumber" name="L315" href="#L315">315</a>         <strong class="jxr_keyword">return</strong> pPackage.isPlaceHolder();
 <a class="jxr_linenumber" name="L316" href="#L316">316</a>     }
@@ -335,6 +335,6 @@
 <a class="jxr_linenumber" name="L327" href="#L327">327</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

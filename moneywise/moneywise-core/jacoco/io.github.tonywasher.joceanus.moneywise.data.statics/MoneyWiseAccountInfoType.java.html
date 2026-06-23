@@ -16,14 +16,15 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 
@@ -37,32 +38,17 @@ public class MoneyWiseAccountInfoType
     /**
      * Object name.
      */
-<span class="fc" id="L40">    public static final String OBJECT_NAME = MoneyWiseStaticDataType.ACCOUNTINFOTYPE.getItemName();</span>
+<span class="fc" id="L41">    public static final String OBJECT_NAME = MoneyWiseStaticDataType.ACCOUNTINFOTYPE.getItemName();</span>
 
     /**
      * List name.
      */
-<span class="fc" id="L45">    public static final String LIST_NAME = MoneyWiseStaticDataType.ACCOUNTINFOTYPE.getListName();</span>
+<span class="fc" id="L46">    public static final String LIST_NAME = MoneyWiseStaticDataType.ACCOUNTINFOTYPE.getListName();</span>
 
     /**
      * Report fields.
      */
-<span class="fc" id="L50">    private static final MetisFieldSet&lt;MoneyWiseAccountInfoType&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAccountInfoType.class);</span>
-
-    /**
-     * WebSite length.
-     */
-    public static final int WEBSITE_LEN = 50;
-
-    /**
-     * Data length.
-     */
-    public static final int DATA_LEN = 20;
-
-    /**
-     * Notes length.
-     */
-    public static final int NOTES_LEN = 500;
+<span class="fc" id="L51">    private static final MetisFieldSet&lt;MoneyWiseAccountInfoType&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAccountInfoType.class);</span>
 
     /**
      * Copy Constructor.
@@ -72,8 +58,8 @@ public class MoneyWiseAccountInfoType
      */
     protected MoneyWiseAccountInfoType(final MoneyWiseAccountInfoTypeList pList,
                                        final MoneyWiseAccountInfoType pInfoType) {
-<span class="fc" id="L75">        super(pList, pInfoType);</span>
-<span class="fc" id="L76">    }</span>
+<span class="fc" id="L61">        super(pList, pInfoType);</span>
+<span class="fc" id="L62">    }</span>
 
     /**
      * Basic Constructor.
@@ -84,8 +70,8 @@ public class MoneyWiseAccountInfoType
      */
     private MoneyWiseAccountInfoType(final MoneyWiseAccountInfoTypeList pList,
                                      final String pName) throws OceanusException {
-<span class="fc" id="L87">        super(pList, pName);</span>
-<span class="fc" id="L88">    }</span>
+<span class="fc" id="L73">        super(pList, pName);</span>
+<span class="fc" id="L74">    }</span>
 
     /**
      * Basic constructor.
@@ -96,8 +82,8 @@ public class MoneyWiseAccountInfoType
      */
     private MoneyWiseAccountInfoType(final MoneyWiseAccountInfoTypeList pList,
                                      final MoneyWiseAccountInfoClass pClass) throws OceanusException {
-<span class="nc" id="L99">        super(pList, pClass);</span>
-<span class="nc" id="L100">    }</span>
+<span class="nc" id="L85">        super(pList, pClass);</span>
+<span class="nc" id="L86">    }</span>
 
     /**
      * Values constructor.
@@ -108,12 +94,12 @@ public class MoneyWiseAccountInfoType
      */
     private MoneyWiseAccountInfoType(final MoneyWiseAccountInfoTypeList pList,
                                      final PrometheusDataValues pValues) throws OceanusException {
-<span class="fc" id="L111">        super(pList, pValues);</span>
-<span class="fc" id="L112">    }</span>
+<span class="fc" id="L97">        super(pList, pValues);</span>
+<span class="fc" id="L98">    }</span>
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
-<span class="fc" id="L116">        return FIELD_DEFS;</span>
+<span class="fc" id="L102">        return FIELD_DEFS;</span>
     }
 
     /**
@@ -122,7 +108,7 @@ public class MoneyWiseAccountInfoType
      * @return the class
      */
     public MoneyWiseAccountInfoClass getInfoClass() {
-<span class="fc" id="L125">        return (MoneyWiseAccountInfoClass) super.getStaticClass();</span>
+<span class="fc" id="L111">        return (MoneyWiseAccountInfoClass) super.getStaticClass();</span>
     }
 
     /**
@@ -131,7 +117,7 @@ public class MoneyWiseAccountInfoType
      * @return the data type
      */
     public MetisDataType getDataType() {
-<span class="nc" id="L134">        return getInfoClass().getDataType();</span>
+<span class="nc" id="L120">        return getInfoClass().getDataType();</span>
     }
 
     /**
@@ -140,17 +126,17 @@ public class MoneyWiseAccountInfoType
      * @return true/false
      */
     public boolean isLink() {
-<span class="fc" id="L143">        return getInfoClass().isLink();</span>
+<span class="fc" id="L129">        return getInfoClass().isLink();</span>
     }
 
     @Override
     public MoneyWiseAccountInfoType getBase() {
-<span class="fc" id="L148">        return (MoneyWiseAccountInfoType) super.getBase();</span>
+<span class="fc" id="L134">        return (MoneyWiseAccountInfoType) super.getBase();</span>
     }
 
     @Override
     public MoneyWiseAccountInfoTypeList getList() {
-<span class="fc" id="L153">        return (MoneyWiseAccountInfoTypeList) super.getList();</span>
+<span class="fc" id="L139">        return (MoneyWiseAccountInfoTypeList) super.getList();</span>
     }
 
     /**
@@ -161,7 +147,7 @@ public class MoneyWiseAccountInfoType
         /**
          * Report fields.
          */
-<span class="fc" id="L164">        private static final MetisFieldSet&lt;MoneyWiseAccountInfoTypeList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAccountInfoTypeList.class);</span>
+<span class="fc" id="L150">        private static final MetisFieldSet&lt;MoneyWiseAccountInfoTypeList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAccountInfoTypeList.class);</span>
 
         /**
          * Construct an empty CORE account type list.
@@ -169,8 +155,8 @@ public class MoneyWiseAccountInfoType
          * @param pData the DataSet for the list
          */
         public MoneyWiseAccountInfoTypeList(final PrometheusDataSet pData) {
-<span class="fc" id="L172">            super(MoneyWiseAccountInfoType.class, pData, MoneyWiseStaticDataType.ACCOUNTINFOTYPE, PrometheusListStyle.CORE);</span>
-<span class="fc" id="L173">        }</span>
+<span class="fc" id="L158">            super(MoneyWiseAccountInfoType.class, pData, MoneyWiseStaticDataType.ACCOUNTINFOTYPE, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L159">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -178,51 +164,51 @@ public class MoneyWiseAccountInfoType
          * @param pSource the source List
          */
         private MoneyWiseAccountInfoTypeList(final MoneyWiseAccountInfoTypeList pSource) {
-<span class="fc" id="L181">            super(pSource);</span>
-<span class="fc" id="L182">        }</span>
+<span class="fc" id="L167">            super(pSource);</span>
+<span class="fc" id="L168">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWiseAccountInfoTypeList&gt; getDataFieldSet() {
-<span class="nc" id="L186">            return FIELD_DEFS;</span>
+<span class="nc" id="L172">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String listName() {
-<span class="fc" id="L191">            return LIST_NAME;</span>
+<span class="fc" id="L177">            return LIST_NAME;</span>
         }
 
         @Override
         public MetisFieldSetDef getItemFields() {
-<span class="fc" id="L196">            return MoneyWiseAccountInfoType.FIELD_DEFS;</span>
+<span class="fc" id="L182">            return MoneyWiseAccountInfoType.FIELD_DEFS;</span>
         }
 
         @Override
         protected Class&lt;MoneyWiseAccountInfoClass&gt; getEnumClass() {
-<span class="fc" id="L201">            return MoneyWiseAccountInfoClass.class;</span>
+<span class="fc" id="L187">            return MoneyWiseAccountInfoClass.class;</span>
         }
 
         @Override
         protected MoneyWiseAccountInfoTypeList getEmptyList(final PrometheusListStyle pStyle) {
-<span class="fc" id="L206">            final MoneyWiseAccountInfoTypeList myList = new MoneyWiseAccountInfoTypeList(this);</span>
-<span class="fc" id="L207">            myList.setStyle(pStyle);</span>
-<span class="fc" id="L208">            return myList;</span>
+<span class="fc" id="L192">            final MoneyWiseAccountInfoTypeList myList = new MoneyWiseAccountInfoTypeList(this);</span>
+<span class="fc" id="L193">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L194">            return myList;</span>
         }
 
         @Override
         public MoneyWiseAccountInfoType addCopyItem(final PrometheusDataItem pItem) {
             /* Can only clone an AccountInfoType */
-<span class="pc bpc" id="L214" title="1 of 2 branches missed.">            if (!(pItem instanceof MoneyWiseAccountInfoType)) {</span>
-<span class="nc" id="L215">                throw new UnsupportedOperationException();</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">            if (!(pItem instanceof MoneyWiseAccountInfoType)) {</span>
+<span class="nc" id="L201">                throw new UnsupportedOperationException();</span>
             }
 
-<span class="fc" id="L218">            final MoneyWiseAccountInfoType myType = new MoneyWiseAccountInfoType(this, (MoneyWiseAccountInfoType) pItem);</span>
-<span class="fc" id="L219">            add(myType);</span>
-<span class="fc" id="L220">            return myType;</span>
+<span class="fc" id="L204">            final MoneyWiseAccountInfoType myType = new MoneyWiseAccountInfoType(this, (MoneyWiseAccountInfoType) pItem);</span>
+<span class="fc" id="L205">            add(myType);</span>
+<span class="fc" id="L206">            return myType;</span>
         }
 
         @Override
         public MoneyWiseAccountInfoType addNewItem() {
-<span class="nc" id="L225">            throw new UnsupportedOperationException();</span>
+<span class="nc" id="L211">            throw new UnsupportedOperationException();</span>
         }
 
         /**
@@ -231,7 +217,7 @@ public class MoneyWiseAccountInfoType
          * @return the type of the item
          */
         public String itemType() {
-<span class="nc" id="L234">            return LIST_NAME;</span>
+<span class="nc" id="L220">            return LIST_NAME;</span>
         }
 
         /**
@@ -243,54 +229,54 @@ public class MoneyWiseAccountInfoType
          */
         public MoneyWiseAccountInfoType addBasicItem(final String pInfoType) throws OceanusException {
             /* Create a new Account Info Type */
-<span class="fc" id="L246">            final MoneyWiseAccountInfoType myInfoType = new MoneyWiseAccountInfoType(this, pInfoType);</span>
+<span class="fc" id="L232">            final MoneyWiseAccountInfoType myInfoType = new MoneyWiseAccountInfoType(this, pInfoType);</span>
 
             /* Check that this InfoTypeId has not been previously added */
-<span class="pc bpc" id="L249" title="1 of 2 branches missed.">            if (!isIdUnique(myInfoType.getIndexedId())) {</span>
-<span class="nc" id="L250">                myInfoType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L251">                throw new MoneyWiseDataException(myInfoType, ERROR_VALIDATION);</span>
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">            if (!isIdUnique(myInfoType.getIndexedId())) {</span>
+<span class="nc" id="L236">                myInfoType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L237">                throw new MoneyWiseDataException(myInfoType, ERROR_VALIDATION);</span>
             }
 
             /* Add the Account Info Type to the list */
-<span class="fc" id="L255">            add(myInfoType);</span>
-<span class="fc" id="L256">            return myInfoType;</span>
+<span class="fc" id="L241">            add(myInfoType);</span>
+<span class="fc" id="L242">            return myInfoType;</span>
         }
 
         @Override
         public MoneyWiseAccountInfoType addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
             /* Create the type */
-<span class="fc" id="L262">            final MoneyWiseAccountInfoType myType = new MoneyWiseAccountInfoType(this, pValues);</span>
+<span class="fc" id="L248">            final MoneyWiseAccountInfoType myType = new MoneyWiseAccountInfoType(this, pValues);</span>
 
             /* Check that this TypeId has not been previously added */
-<span class="pc bpc" id="L265" title="1 of 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
-<span class="nc" id="L266">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L267">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+<span class="pc bpc" id="L251" title="1 of 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L252">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L253">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="fc" id="L271">            add(myType);</span>
+<span class="fc" id="L257">            add(myType);</span>
 
             /* Return it */
-<span class="fc" id="L274">            return myType;</span>
+<span class="fc" id="L260">            return myType;</span>
         }
 
         @Override
         protected MoneyWiseAccountInfoType newItem(final PrometheusStaticDataClass pClass) throws OceanusException {
             /* Create the type */
-<span class="nc" id="L280">            final MoneyWiseAccountInfoType myType = new MoneyWiseAccountInfoType(this, (MoneyWiseAccountInfoClass) pClass);</span>
+<span class="nc" id="L266">            final MoneyWiseAccountInfoType myType = new MoneyWiseAccountInfoType(this, (MoneyWiseAccountInfoClass) pClass);</span>
 
             /* Check that this TypeId has not been previously added */
-<span class="nc bnc" id="L283" title="All 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
-<span class="nc" id="L284">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L285">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+<span class="nc bnc" id="L269" title="All 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L270">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L271">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="nc" id="L289">            add(myType);</span>
+<span class="nc" id="L275">            add(myType);</span>
 
             /* Return it */
-<span class="nc" id="L292">            return myType;</span>
+<span class="nc" id="L278">            return myType;</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCompositeEncodedParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser</a> &gt; <span class="el_source">GordianCompositeEncodedParser.java</span></div><h1>GordianCompositeEncodedParser.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.misc.MiscObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+
+/**
+ * Composite Encoded parser.
+ */
+public class GordianCompositeEncodedParser implements GordianEncodedParser {
+    /**
+     * The KeyPairFactory.
+     */
+    private final GordianKeyPairParserRegistrar theIdManager;
+
+    /**
+     * Constructor.
+     *
+     * @param pIdManager the idManager
+     */
+<span class="fc" id="L51">    GordianCompositeEncodedParser(final GordianKeyPairParserRegistrar pIdManager) {</span>
+<span class="fc" id="L52">        theIdManager = pIdManager;</span>
+<span class="fc" id="L53">    }</span>
+
+    /**
+     * Registrar.
+     *
+     * @param pIdManager the idManager
+     */
+    public static void register(final GordianKeyPairParserRegistrar pIdManager) {
+<span class="fc" id="L61">        pIdManager.registerParser(MiscObjectIdentifiers.id_alg_composite, new GordianCompositeEncodedParser(pIdManager));</span>
+<span class="fc" id="L62">    }</span>
+
+    @Override
+    public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        /* Protect against exceptions */
+        try {
+<span class="fc" id="L68">            final ASN1Sequence myKeys = ASN1Sequence.getInstance(pInfo.getPublicKeyData().getBytes());</span>
+<span class="fc" id="L69">            final List&lt;GordianKeyPairSpec&gt; mySpecs = new ArrayList&lt;&gt;();</span>
+
+            /* Build the list from the keys sequence */
+<span class="fc" id="L72">            final Enumeration&lt;?&gt; en = myKeys.getObjects();</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            while (en.hasMoreElements()) {</span>
+<span class="fc" id="L74">                final SubjectPublicKeyInfo myPKInfo = SubjectPublicKeyInfo.getInstance(en.nextElement());</span>
+<span class="fc" id="L75">                mySpecs.add(theIdManager.determineKeyPairSpec(new X509EncodedKeySpec(myPKInfo.getEncoded())));</span>
+<span class="fc" id="L76">            }</span>
+<span class="fc" id="L77">            final GordianKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();</span>
+<span class="fc" id="L78">            return myBuilder.composite(mySpecs);</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L81">        } catch (IOException e) {</span>
+<span class="nc" id="L82">            throw new GordianIOException(ERROR_PARSE, e);</span>
+        }
+    }
+
+    @Override
+    public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        /* Protect against exceptions */
+        try {
+<span class="fc" id="L90">            final ASN1Sequence myKeys = ASN1Sequence.getInstance(pInfo.getPrivateKey().getOctets());</span>
+<span class="fc" id="L91">            final List&lt;GordianKeyPairSpec&gt; mySpecs = new ArrayList&lt;&gt;();</span>
+
+            /* Build the list from the keys sequence */
+<span class="fc" id="L94">            final Enumeration&lt;?&gt; en = myKeys.getObjects();</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">            while (en.hasMoreElements()) {</span>
+<span class="fc" id="L96">                final PrivateKeyInfo myPKInfo = PrivateKeyInfo.getInstance(en.nextElement());</span>
+<span class="fc" id="L97">                mySpecs.add(theIdManager.determineKeyPairSpec(new PKCS8EncodedKeySpec(myPKInfo.getEncoded())));</span>
+<span class="fc" id="L98">            }</span>
+<span class="fc" id="L99">            final GordianKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();</span>
+<span class="fc" id="L100">            return myBuilder.composite(mySpecs);</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L103">        } catch (IOException e) {</span>
+<span class="nc" id="L104">            throw new GordianIOException(ERROR_PARSE, e);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

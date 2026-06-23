@@ -16,12 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
@@ -41,6 +35,12 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -165,7 +165,7 @@ public class MoneyWiseAnalysisManager
 <span class="nc" id="L165">        MoneyWiseAnalysis myAnalysis = theAnalysisMap.get(myRange);</span>
 <span class="nc bnc" id="L166" title="All 2 branches missed.">        if (myAnalysis == null) {</span>
             /* Create the new event analysis */
-<span class="nc" id="L168">            myAnalysis = new MoneyWiseAnalysis(this, pDate);</span>
+<span class="nc" id="L168">            myAnalysis = new MoneyWiseAnalysis(theAnalysis, pDate);</span>
 <span class="nc" id="L169">            produceTotals(myAnalysis);</span>
 
             /* Check the totals */
@@ -190,7 +190,7 @@ public class MoneyWiseAnalysisManager
 <span class="nc" id="L190">        MoneyWiseAnalysis myAnalysis = theAnalysisMap.get(pRange);</span>
 <span class="nc bnc" id="L191" title="All 2 branches missed.">        if (myAnalysis == null) {</span>
             /* Create the new event analysis */
-<span class="nc" id="L193">            myAnalysis = new MoneyWiseAnalysis(this, pRange);</span>
+<span class="nc" id="L193">            myAnalysis = new MoneyWiseAnalysis(theAnalysis, pRange);</span>
 <span class="nc" id="L194">            produceTotals(myAnalysis);</span>
 
             /* Check the totals */
@@ -317,4 +317,4 @@ public class MoneyWiseAnalysisManager
         }
 <span class="nc" id="L318">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

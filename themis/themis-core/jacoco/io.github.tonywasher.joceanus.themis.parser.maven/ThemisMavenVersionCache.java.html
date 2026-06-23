@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisMavenVersionCache.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.parser.maven</a> &gt; <span class="el_source">ThemisMavenVersionCache.java</span></div><h1>ThemisMavenVersionCache.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.parser.maven;
+
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Maven dependency cache.
+ */
+public class ThemisMavenVersionCache
+        implements MetisDataMap&lt;String, String&gt;, MetisFieldItem {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L40">    private static final MetisFieldSet&lt;ThemisMavenVersionCache&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisMavenVersionCache.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L46">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PARENT, ThemisMavenVersionCache::getParent);</span>
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * The map of prefix to version.
+     */
+    private final Map&lt;String, String&gt; theMap;
+
+    /**
+     * The parent cache.
+     */
+    private ThemisMavenVersionCache theParent;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L62">    ThemisMavenVersionCache() {</span>
+<span class="fc" id="L63">        theMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L64">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisMavenVersionCache&gt; getDataFieldSet() {
+<span class="nc" id="L68">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L73">        return getClass().getSimpleName();</span>
+    }
+
+    @Override
+    public Map&lt;String, String&gt; getUnderlyingMap() {
+<span class="fc" id="L78">        return theMap;</span>
+    }
+
+    /**
+     * Obtain the Parent.
+     *
+     * @return the parent
+     */
+    private ThemisMavenVersionCache getParent() {
+<span class="nc" id="L87">        return theParent;</span>
+    }
+
+    /**
+     * Set the parent cache.
+     *
+     * @param pParent the parent cache
+     */
+    void setParent(final ThemisMavenVersionCache pParent) {
+<span class="fc" id="L96">        theParent = pParent;</span>
+<span class="fc" id="L97">    }</span>
+
+    /**
+     * Add dependency to cache.
+     *
+     * @param pId the id to add to the cache
+     * @throws OceanusException on error
+     */
+    public void addToCache(final ThemisMavenId pId) throws OceanusException {
+        /* Determine the prefix and the proposed version */
+<span class="fc" id="L107">        final String myPrefix = buildPrefix(pId);</span>
+<span class="fc" id="L108">        final String myProposed = pId.getVersion();</span>
+
+        /* Reject null version */
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">        if (myProposed == null) {</span>
+<span class="nc" id="L112">            throw new ThemisDataException(&quot;Proposed version for &quot; + myPrefix + &quot; is null&quot;);</span>
+        }
+
+        /* Update the dependency */
+<span class="fc" id="L116">        theMap.put(myPrefix, myProposed);</span>
+<span class="fc" id="L117">    }</span>
+
+    /**
+     * Validate version against cache.
+     *
+     * @param pId the version to check against cache
+     * @return the autoCorrected id.
+     * @throws OceanusException on error
+     */
+    public ThemisMavenId lookUpVersion(final ThemisMavenId pId) throws OceanusException {
+        /* Determine the prefix and the proposed version */
+<span class="fc" id="L128">        final String myPrefix = buildPrefix(pId);</span>
+<span class="fc" id="L129">        final String myProposed = pId.getVersion();</span>
+
+        /* Look for existing entry */
+<span class="fc" id="L132">        final String myVersion = lookUpVersionInCache(myPrefix);</span>
+
+        /* If the prefix is in the cache */
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if (myVersion != null) {</span>
+            /* Handle no proposed version */
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">            if (myProposed == null) {</span>
+<span class="fc" id="L138">                return new ThemisMavenId(pId, myVersion);</span>
+
+                /* Check proposed version is valid */
+<span class="nc bnc" id="L141" title="All 2 branches missed.">            } else if (myProposed.equals(myVersion)) {</span>
+<span class="nc" id="L142">                return pId;</span>
+
+                /* Reject conflict */
+            } else {
+<span class="nc" id="L146">                throw new ThemisDataException(&quot;Conflicting explicit dependency version for &quot; + myPrefix</span>
+                        + &quot; Required=&quot; + myVersion
+                        + &quot; Proposed=&quot; + myProposed);
+            }
+
+            /* else prefix is not in cache */
+        } else {
+            /* Reject if version is unknown */
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">            if (myProposed == null) {</span>
+<span class="nc" id="L155">                throw new ThemisDataException(&quot;Proposed version for &quot; + myPrefix + &quot; is null&quot;);</span>
+            }
+
+            /* Add new dependency and return id */
+<span class="fc" id="L159">            theMap.put(myPrefix, pId.getVersion());</span>
+<span class="fc" id="L160">            return pId;</span>
+        }
+    }
+
+    /**
+     * Import dependencies.
+     *
+     * @param pChild the child dependency cache
+     * @throws OceanusException on error
+     */
+    void importDependencies(final ThemisMavenVersionCache pChild) throws OceanusException {
+        /* Loop through the child entries */
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        for (Map.Entry&lt;String, String&gt; myEntry : pChild.getUnderlyingMap().entrySet()) {</span>
+            /* Access details */
+<span class="fc" id="L174">            final String myPrefix = myEntry.getKey();</span>
+<span class="fc" id="L175">            final String myProposed = myEntry.getValue();</span>
+
+            /* Look for existing entry */
+<span class="fc" id="L178">            final String myVersion = lookUpVersionInCache(myPrefix);</span>
+
+            /* Check for mismatch */
+<span class="pc bpc" id="L181" title="3 of 4 branches missed.">            if (myVersion != null &amp;&amp; !myVersion.equals(myProposed)) {</span>
+<span class="nc" id="L182">                throw new ThemisDataException(&quot;Conflicting imported version for &quot; + myPrefix</span>
+                        + &quot; Required=&quot; + myVersion
+                        + &quot; Proposed=&quot; + myProposed);
+            }
+
+            /* Store the entry */
+<span class="fc" id="L188">            theMap.put(myPrefix, myProposed);</span>
+<span class="fc" id="L189">        }</span>
+<span class="fc" id="L190">    }</span>
+
+    /**
+     * Look up prefix in chain of caches.
+     *
+     * @param pPrefix the prefix
+     * @return the version (or null)
+     */
+    private String lookUpVersionInCache(final String pPrefix) {
+        /* Look for existing entry */
+<span class="fc" id="L200">        final String myVersion = theMap.get(pPrefix);</span>
+<span class="pc bpc" id="L201" title="1 of 4 branches missed.">        return (theParent == null || myVersion != null) ? myVersion : theParent.lookUpVersionInCache(pPrefix);</span>
+    }
+
+    /**
+     * Build prefix.
+     *
+     * @param pId the id
+     * @return the prefix
+     */
+    private String buildPrefix(final ThemisMavenId pId) {
+<span class="fc" id="L211">        return pId.getGroupId() + ThemisChar.COLON + pId.getArtifactId();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

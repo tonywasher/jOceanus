@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyDigestFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc.digest</a> &gt; <span class="el_source">BouncyDigestFactory.java</span></div><h1>BouncyDigestFactory.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.bc.digest;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSubSpec.GordianCoreDigestState;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2Xof;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2bDigest;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2sDigest;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianCubeHashDigest;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianGroestlDigest;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianJHDigest;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianKangarooBase;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianKangarooTwelve;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianMarsupilamiFourteen;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianSkeinDigest;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianSkeinXof;
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.Xof;
+import org.bouncycastle.crypto.digests.AsconHash256;
+import org.bouncycastle.crypto.digests.AsconXof128;
+import org.bouncycastle.crypto.digests.DSTU7564Digest;
+import org.bouncycastle.crypto.digests.GOST3411Digest;
+import org.bouncycastle.crypto.digests.GOST3411_2012_256Digest;
+import org.bouncycastle.crypto.digests.GOST3411_2012_512Digest;
+import org.bouncycastle.crypto.digests.Haraka256Digest;
+import org.bouncycastle.crypto.digests.Haraka512Digest;
+import org.bouncycastle.crypto.digests.ISAPDigest;
+import org.bouncycastle.crypto.digests.MD2Digest;
+import org.bouncycastle.crypto.digests.MD4Digest;
+import org.bouncycastle.crypto.digests.MD5Digest;
+import org.bouncycastle.crypto.digests.PhotonBeetleDigest;
+import org.bouncycastle.crypto.digests.RIPEMD128Digest;
+import org.bouncycastle.crypto.digests.RIPEMD160Digest;
+import org.bouncycastle.crypto.digests.RIPEMD256Digest;
+import org.bouncycastle.crypto.digests.RIPEMD320Digest;
+import org.bouncycastle.crypto.digests.RomulusDigest;
+import org.bouncycastle.crypto.digests.SHA1Digest;
+import org.bouncycastle.crypto.digests.SHA224Digest;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.digests.SHA384Digest;
+import org.bouncycastle.crypto.digests.SHA3Digest;
+import org.bouncycastle.crypto.digests.SHA512Digest;
+import org.bouncycastle.crypto.digests.SHA512tDigest;
+import org.bouncycastle.crypto.digests.SHAKEDigest;
+import org.bouncycastle.crypto.digests.SM3Digest;
+import org.bouncycastle.crypto.digests.SparkleDigest;
+import org.bouncycastle.crypto.digests.SparkleDigest.SparkleParameters;
+import org.bouncycastle.crypto.digests.TigerDigest;
+import org.bouncycastle.crypto.digests.WhirlpoolDigest;
+import org.bouncycastle.crypto.digests.XoodyakDigest;
+
+/**
+ * BouncyCastle Digest Factory.
+ */
+public class BouncyDigestFactory
+        extends GordianCoreDigestFactory {
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+    public BouncyDigestFactory(final GordianBaseFactory pFactory) {
+        /* Initialize underlying class */
+<span class="fc" id="L90">        super(pFactory);</span>
+<span class="fc" id="L91">    }</span>
+
+    @Override
+    public BouncyDigest createDigest(final GordianDigestSpec pDigestSpec) throws GordianException {
+        /* Check validity of DigestSpec */
+<span class="fc" id="L96">        checkDigestSpec(pDigestSpec);</span>
+<span class="fc" id="L97">        final GordianCoreDigestSpec mySpec = (GordianCoreDigestSpec) pDigestSpec;</span>
+
+        /* Create digest */
+<span class="fc" id="L100">        final Digest myBCDigest = getBCDigest(mySpec);</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        return myBCDigest instanceof Xof myXof</span>
+<span class="fc" id="L102">                ? new BouncyDigestXof(mySpec, myXof)</span>
+<span class="fc" id="L103">                : new BouncyDigest(mySpec, myBCDigest);</span>
+    }
+
+    /**
+     * Create the BouncyCastle digest.
+     *
+     * @param pDigestSpec the digestSpec
+     * @return the digest
+     * @throws GordianException on error
+     */
+    private static Digest getBCDigest(final GordianCoreDigestSpec pDigestSpec) throws GordianException {
+        /* Access digest details */
+<span class="fc" id="L115">        final GordianDigestType myType = pDigestSpec.getDigestType();</span>
+<span class="fc" id="L116">        final GordianLength myLen = pDigestSpec.getDigestLength();</span>
+
+        /* Switch on digest type */
+<span class="pc bpc" id="L119" title="1 of 29 branches missed.">        return switch (myType) {</span>
+<span class="fc" id="L120">            case SHA2 -&gt; getSHA2Digest(pDigestSpec);</span>
+<span class="fc" id="L121">            case RIPEMD -&gt; getRIPEMDDigest(myLen);</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">            case SKEIN -&gt; pDigestSpec.isXofMode()</span>
+<span class="fc" id="L123">                    ? getSkeinXof(pDigestSpec.getCoreDigestState())</span>
+<span class="fc" id="L124">                    : getSkeinDigest(pDigestSpec.getCoreDigestState(), myLen);</span>
+<span class="fc" id="L125">            case SHA3 -&gt; getSHA3Digest(myLen);</span>
+<span class="fc" id="L126">            case SHAKE -&gt; new SHAKEDigest(pDigestSpec.getCoreDigestState().getLength().getLength());</span>
+<span class="fc" id="L127">            case KANGAROO -&gt; getKangarooDigest(pDigestSpec);</span>
+<span class="fc" id="L128">            case HARAKA -&gt; getHarakaDigest(pDigestSpec);</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">            case BLAKE2 -&gt; pDigestSpec.isXofMode()</span>
+<span class="fc" id="L130">                    ? getBlake2Xof(pDigestSpec)</span>
+<span class="fc" id="L131">                    : getBlake2Digest(pDigestSpec);</span>
+<span class="fc" id="L132">            case BLAKE3 -&gt; new GordianBlake3Digest(myLen.getByteLength());</span>
+<span class="fc" id="L133">            case STREEBOG -&gt; getStreebogDigest(myLen);</span>
+<span class="fc" id="L134">            case KUPYNA -&gt; getKupynaDigest(myLen);</span>
+<span class="fc" id="L135">            case GROESTL -&gt; new GordianGroestlDigest(myLen.getLength());</span>
+<span class="fc" id="L136">            case JH -&gt; new GordianJHDigest(myLen.getLength());</span>
+<span class="fc" id="L137">            case CUBEHASH -&gt; new GordianCubeHashDigest(myLen.getLength());</span>
+<span class="fc" id="L138">            case GOST -&gt; new GOST3411Digest();</span>
+<span class="fc" id="L139">            case TIGER -&gt; new TigerDigest();</span>
+<span class="fc" id="L140">            case WHIRLPOOL -&gt; new WhirlpoolDigest();</span>
+<span class="fc" id="L141">            case SM3 -&gt; new SM3Digest();</span>
+<span class="fc" id="L142">            case SHA1 -&gt; new SHA1Digest();</span>
+<span class="fc" id="L143">            case MD5 -&gt; new MD5Digest();</span>
+<span class="fc" id="L144">            case MD4 -&gt; new MD4Digest();</span>
+<span class="fc" id="L145">            case MD2 -&gt; new MD2Digest();</span>
+<span class="fc" id="L146">            case ASCON -&gt; getAsconDigest(pDigestSpec);</span>
+<span class="fc" id="L147">            case ISAP -&gt; new ISAPDigest();</span>
+<span class="fc" id="L148">            case PHOTONBEETLE -&gt; new PhotonBeetleDigest();</span>
+<span class="fc" id="L149">            case ROMULUS -&gt; new RomulusDigest();</span>
+<span class="fc" id="L150">            case SPARKLE -&gt; getSparkleDigest(pDigestSpec);</span>
+<span class="fc" id="L151">            case XOODYAK -&gt; new XoodyakDigest();</span>
+<span class="nc" id="L152">            default -&gt; throw new GordianDataException(GordianBaseData.getInvalidText(pDigestSpec.toString()));</span>
+        };
+    }
+
+    /**
+     * Create the BouncyCastle RIPEMD digest.
+     *
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static Digest getRIPEMDDigest(final GordianLength pLength) {
+<span class="fc bfc" id="L163" title="All 4 branches covered.">        return switch (pLength) {</span>
+<span class="fc" id="L164">            case LEN_128 -&gt; new RIPEMD128Digest();</span>
+<span class="fc" id="L165">            case LEN_160 -&gt; new RIPEMD160Digest();</span>
+<span class="fc" id="L166">            case LEN_256 -&gt; new RIPEMD256Digest();</span>
+<span class="fc" id="L167">            default -&gt; new RIPEMD320Digest();</span>
+        };
+    }
+
+    /**
+     * Create the BouncyCastle Blake2 digest.
+     *
+     * @param pSpec the digest spec
+     * @return the digest
+     */
+    public static GordianBlake2Base getBlake2Digest(final GordianCoreDigestSpec pSpec) {
+<span class="fc" id="L178">        final int myLength = pSpec.getDigestLength().getLength();</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        return pSpec.getCoreDigestState().isBlake2bState()</span>
+<span class="fc" id="L180">                ? new GordianBlake2bDigest(myLength)</span>
+<span class="fc" id="L181">                : new GordianBlake2sDigest(myLength);</span>
+    }
+
+    /**
+     * Create the BouncyCastle Blake2Xof digest.
+     *
+     * @param pSpec the digest spec
+     * @return the digest
+     */
+    public static GordianBlake2Xof getBlake2Xof(final GordianCoreDigestSpec pSpec) {
+<span class="fc" id="L191">        final GordianCoreDigestState myState = pSpec.getCoreDigestState();</span>
+<span class="fc" id="L192">        final int myLength = pSpec.getDigestLength().getLength();</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">        return myState.isBlake2bState()</span>
+<span class="fc" id="L194">                ? new GordianBlake2Xof(new GordianBlake2bDigest(myLength))</span>
+<span class="fc" id="L195">                : new GordianBlake2Xof(new GordianBlake2sDigest(myLength));</span>
+    }
+
+    /**
+     * Create the BouncyCastle Kangaroo digest.
+     *
+     * @param pSpec the digest spec
+     * @return the digest
+     */
+    private static GordianKangarooBase getKangarooDigest(final GordianCoreDigestSpec pSpec) {
+<span class="fc" id="L205">        final int myLength = pSpec.getDigestLength().getByteLength();</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">        return GordianDigestState.STATE128.equals(pSpec.getDigestState())</span>
+<span class="fc" id="L207">                ? new GordianKangarooTwelve(myLength)</span>
+<span class="fc" id="L208">                : new GordianMarsupilamiFourteen(myLength);</span>
+    }
+
+    /**
+     * Create the BouncyCastle Haraka digest.
+     *
+     * @param pSpec the digest spec
+     * @return the digest
+     */
+    private static Digest getHarakaDigest(final GordianCoreDigestSpec pSpec) {
+<span class="fc bfc" id="L218" title="All 2 branches covered.">        return GordianDigestState.STATE256.equals(pSpec.getDigestState())</span>
+<span class="fc" id="L219">                ? new Haraka256Digest()</span>
+<span class="fc" id="L220">                : new Haraka512Digest();</span>
+    }
+
+    /**
+     * Create the BouncyCastle Ascon digest.
+     *
+     * @param pSpec the digest spec
+     * @return the digest
+     */
+    private static Digest getAsconDigest(final GordianCoreDigestSpec pSpec) {
+<span class="fc bfc" id="L230" title="All 2 branches covered.">        return pSpec.isXofMode() ? new AsconXof128()</span>
+<span class="fc" id="L231">                : new AsconHash256();</span>
+    }
+
+    /**
+     * Create the BouncyCastle Sparkle digest.
+     *
+     * @param pSpec the digest spec
+     * @return the digest
+     */
+    private static Digest getSparkleDigest(final GordianCoreDigestSpec pSpec) {
+<span class="fc bfc" id="L241" title="All 2 branches covered.">        return GordianLength.LEN_256 == pSpec.getDigestLength()</span>
+<span class="fc" id="L242">                ? new SparkleDigest(SparkleParameters.ESCH256)</span>
+<span class="fc" id="L243">                : new SparkleDigest(SparkleParameters.ESCH384);</span>
+    }
+
+    /**
+     * Create the BouncyCastle SHA2 digest.
+     *
+     * @param pSpec the digestSpec
+     * @return the digest
+     */
+    private static Digest getSHA2Digest(final GordianCoreDigestSpec pSpec) {
+<span class="fc" id="L253">        final GordianLength myLen = pSpec.getDigestLength();</span>
+<span class="fc" id="L254">        final GordianDigestState myState = pSpec.getDigestState();</span>
+<span class="fc bfc" id="L255" title="All 4 branches covered.">        return switch (myLen) {</span>
+<span class="fc bfc" id="L256" title="All 2 branches covered.">            case LEN_224 -&gt; GordianDigestState.STATE256.equals(myState)</span>
+<span class="fc" id="L257">                    ? new SHA224Digest()</span>
+<span class="fc" id="L258">                    : new SHA512tDigest(myLen.getLength());</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">            case LEN_256 -&gt; GordianDigestState.STATE256.equals(myState)</span>
+<span class="fc" id="L260">                    ? new SHA256Digest()</span>
+<span class="fc" id="L261">                    : new SHA512tDigest(myLen.getLength());</span>
+<span class="fc" id="L262">            case LEN_384 -&gt; new SHA384Digest();</span>
+<span class="fc" id="L263">            default -&gt; new SHA512Digest();</span>
+        };
+    }
+
+    /**
+     * Create the BouncyCastle SHA3 digest.
+     *
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static Digest getSHA3Digest(final GordianLength pLength) {
+<span class="fc" id="L274">        return new SHA3Digest(pLength.getLength());</span>
+    }
+
+    /**
+     * Create the BouncyCastle Kupyna digest.
+     *
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static Digest getKupynaDigest(final GordianLength pLength) {
+<span class="fc" id="L284">        return new DSTU7564Digest(pLength.getLength());</span>
+    }
+
+    /**
+     * Create the BouncyCastle skeinDigest.
+     *
+     * @param pState  the state
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static Digest getSkeinDigest(final GordianCoreDigestState pState,
+                                         final GordianLength pLength) {
+<span class="fc" id="L296">        return new GordianSkeinDigest(pState.getLength().getLength(), pLength.getLength());</span>
+    }
+
+    /**
+     * Create the BouncyCastle skeinXof.
+     *
+     * @param pState the state
+     * @return the digest
+     */
+    private static Digest getSkeinXof(final GordianCoreDigestState pState) {
+<span class="fc" id="L306">        final int myLength = pState.getLength().getLength();</span>
+<span class="fc" id="L307">        return new GordianSkeinXof(new GordianSkeinDigest(myLength, myLength));</span>
+    }
+
+    /**
+     * Create the BouncyCastle Streebog digest.
+     *
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static Digest getStreebogDigest(final GordianLength pLength) {
+<span class="fc bfc" id="L317" title="All 2 branches covered.">        return GordianLength.LEN_256.equals(pLength)</span>
+<span class="fc" id="L318">                ? new GOST3411_2012_256Digest()</span>
+<span class="fc" id="L319">                : new GOST3411_2012_512Digest();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

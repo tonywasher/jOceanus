@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalyseMarket.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse</a> &gt; <span class="el_source">MoneyWiseXAnalyseMarket.java</span></div><h1>MoneyWiseXAnalyseMarket.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
+
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseMarketCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket.MoneyWiseXAnalysisTransCategoryBucketList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+
+import java.util.Currency;
+
+/**
+ * Process NatInsurance.
+ */
+public class MoneyWiseXAnalyseMarket
+        implements MoneyWiseXAnalyseMarketCtl {
+    /**
+     * The analysis state.
+     */
+    private final MoneyWiseXAnalyseState theState;
+
+    /**
+     * The market payee bucket.
+     */
+    private final MoneyWiseXAnalysisPayeeBucket theMarketBucket;
+
+    /**
+     * The market growth category bucket.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theMarketGrowthBucket;
+
+    /**
+     * The currency fluctuation category bucket.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theCurrencyFluctuationBucket;
+
+    /**
+     * The market tax basis bucket.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucket theTaxBasisBucket;
+
+    /**
+     * The market income.
+     */
+    private final OceanusMoney theMarketIncome;
+
+    /**
+     * The market expense.
+     */
+    private final OceanusMoney theMarketExpense;
+
+    /**
+     * Is there currency fluctuation?
+     */
+    private boolean isFluctuation;
+
+    /**
+     * Is there growth?
+     */
+    private boolean isGrowth;
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalyser the analyser
+     */
+<span class="fc" id="L89">    MoneyWiseXAnalyseMarket(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser) {</span>
+        /* Store the state */
+<span class="fc" id="L91">        theState = pAnalyser.getState();</span>
+
+        /* Obtain the market bucket */
+<span class="fc" id="L94">        final MoneyWiseXAnalysis myAnalysis = pAnalyser.getAnalysis();</span>
+<span class="fc" id="L95">        theMarketBucket = myAnalysis.getPayees().getBucket(MoneyWisePayeeClass.MARKET);</span>
+
+        /* Obtain the category buckets */
+<span class="fc" id="L98">        final MoneyWiseXAnalysisTransCategoryBucketList myCategories = myAnalysis.getTransCategories();</span>
+<span class="fc" id="L99">        theCurrencyFluctuationBucket = myCategories.getBucket(MoneyWiseTransCategoryClass.CURRENCYFLUCTUATION);</span>
+<span class="fc" id="L100">        theMarketGrowthBucket = myCategories.getBucket(MoneyWiseTransCategoryClass.MARKETGROWTH);</span>
+
+        /* Obtain the tax basis bucket */
+<span class="fc" id="L103">        theTaxBasisBucket = myAnalysis.getTaxBasis().getBucket(MoneyWiseTaxClass.MARKET);</span>
+
+        /* Allocate the market counters */
+<span class="fc" id="L106">        final Currency myCurrency = myAnalysis.getCurrency().getCurrency();</span>
+<span class="fc" id="L107">        theMarketIncome = new OceanusMoney(myCurrency);</span>
+<span class="fc" id="L108">        theMarketExpense = new OceanusMoney(myCurrency);</span>
+<span class="fc" id="L109">    }</span>
+
+    @Override
+    public void adjustTotalsForMarketGrowth(final MoneyWiseXAnalysisEvent pEvent,
+                                            final OceanusMoney pDelta) {
+        /* Adjust marketGrowth for delta */
+<span class="fc" id="L115">        theMarketGrowthBucket.adjustForDelta(pDelta);</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        if (!isGrowth) {</span>
+<span class="fc" id="L117">            theState.registerBucketInterest(theMarketGrowthBucket);</span>
+<span class="fc" id="L118">            isGrowth = true;</span>
+        }
+
+        /* Adjust income expense */
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if (pDelta.isPositive()) {</span>
+<span class="fc" id="L123">            theMarketIncome.addAmount(pDelta);</span>
+        } else {
+<span class="fc" id="L125">            theMarketExpense.subtractAmount(pDelta);</span>
+        }
+<span class="fc" id="L127">    }</span>
+
+    @Override
+    public void adjustTotalsForCurrencyFluctuation(final MoneyWiseXAnalysisEvent pEvent,
+                                                   final OceanusMoney pDelta) {
+        /* Adjust currencyFluctuation for delta */
+<span class="fc" id="L133">        theCurrencyFluctuationBucket.adjustForDelta(pDelta);</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        if (!isFluctuation) {</span>
+<span class="fc" id="L135">            theState.registerBucketInterest(theCurrencyFluctuationBucket);</span>
+<span class="fc" id="L136">            isFluctuation = true;</span>
+        }
+
+        /* Adjust income expense */
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        if (pDelta.isPositive()) {</span>
+<span class="fc" id="L141">            theMarketIncome.addAmount(pDelta);</span>
+        } else {
+<span class="fc" id="L143">            theMarketExpense.subtractAmount(pDelta);</span>
+        }
+<span class="fc" id="L145">    }</span>
+
+    @Override
+    public void adjustMarketTotals(final MoneyWiseXAnalysisEvent pEvent) {
+        /* If we are active */
+<span class="fc bfc" id="L150" title="All 4 branches covered.">        if (isGrowth || isFluctuation) {</span>
+            /* Adjust marketTotals */
+<span class="fc" id="L152">            theMarketBucket.addIncome(theMarketIncome);</span>
+<span class="fc" id="L153">            theMarketBucket.addExpense(theMarketExpense);</span>
+<span class="fc" id="L154">            theState.registerBucketInterest(theMarketBucket);</span>
+
+            /* Adjust taxBasisTotals */
+<span class="fc" id="L157">            theMarketIncome.subtractAmount(theMarketExpense);</span>
+<span class="fc" id="L158">            theTaxBasisBucket.adjustGrossAndNett(theMarketIncome);</span>
+<span class="fc" id="L159">            theState.registerBucketInterest(theTaxBasisBucket);</span>
+
+            /* Reset totals */
+<span class="fc" id="L162">            theMarketIncome.setZero();</span>
+<span class="fc" id="L163">            theMarketExpense.setZero();</span>
+<span class="fc" id="L164">            isGrowth = false;</span>
+<span class="fc" id="L165">            isFluctuation = false;</span>
+        }
+<span class="fc" id="L167">    }</span>
+
+    @Override
+    public void adjustForGains(final OceanusMoney pGains) {
+<span class="fc bfc" id="L171" title="All 2 branches covered.">        if (pGains.isPositive()) {</span>
+<span class="fc" id="L172">            theMarketBucket.addIncome(pGains);</span>
+        } else {
+<span class="fc" id="L174">            theMarketBucket.subtractExpense(pGains);</span>
+        }
+<span class="fc" id="L176">        theState.registerBucketInterest(theMarketBucket);</span>
+<span class="fc" id="L177">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

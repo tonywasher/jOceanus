@@ -25,7 +25,7 @@
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.prometheus.service.sheet.odf;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalConstants;
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
@@ -472,7 +472,7 @@
 <a class="jxr_linenumber" name="L464" href="#L464">464</a>         <em class="jxr_comment">/* Define the number properties */</em>
 <a class="jxr_linenumber" name="L465" href="#L465">465</a>         <strong class="jxr_keyword">final</strong> Element myNumber = theParser.newElement(PrometheusOdfNumberItem.NUMBER);
 <a class="jxr_linenumber" name="L466" href="#L466">466</a>         myStyle.appendChild(myNumber);
-<a class="jxr_linenumber" name="L467" href="#L467">467</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> myDecimals = pValue.scale() - OceanusDecimalParser.ADJUST_PERCENT;
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> myDecimals = pValue.scale() - OceanusDecimalConstants.ADJUST_PERCENT;
 <a class="jxr_linenumber" name="L468" href="#L468">468</a>         theParser.setAttribute(myNumber, PrometheusOdfNumberItem.DECPLACES, myDecimals);
 <a class="jxr_linenumber" name="L469" href="#L469">469</a>         theParser.setAttribute(myNumber, PrometheusOdfNumberItem.MININTDIGITS, 1);
 <a class="jxr_linenumber" name="L470" href="#L470">470</a> 
@@ -719,6 +719,6 @@
 <a class="jxr_linenumber" name="L711" href="#L711">711</a> }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

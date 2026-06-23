@@ -16,15 +16,18 @@
  */
 package io.github.tonywasher.joceanus.prometheus.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlDataCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusCryptographicDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusEncryptedDataItemCtl;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.util.Iterator;
@@ -35,23 +38,24 @@ import java.util.Iterator;
  * @author Tony Washer
  */
 public abstract class PrometheusEncryptedDataItem
-        extends PrometheusDataItem {
+        extends PrometheusDataItem
+        implements PrometheusEncryptedDataItemCtl {
     /**
      * Null Encryptor.
      */
-<span class="nc" id="L42">    private static final PrometheusEncryptor NULL_ENCRYPTOR = new PrometheusEncryptor(new OceanusDataFormatter(), null);</span>
+<span class="nc" id="L46">    private static final PrometheusEncryptor NULL_ENCRYPTOR = new PrometheusEncryptor(new OceanusDataFormatter(), null);</span>
 
     /**
      * Report fields.
      */
-<span class="nc" id="L47">    private static final MetisFieldVersionedSet&lt;PrometheusEncryptedDataItem&gt; FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(PrometheusEncryptedDataItem.class);</span>
+<span class="nc" id="L51">    private static final MetisFieldVersionedSet&lt;PrometheusEncryptedDataItem&gt; FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(PrometheusEncryptedDataItem.class);</span>
 
     /*
      * FieldIds.
      */
     static {
-<span class="nc" id="L53">        FIELD_DEFS.declareLinkField(PrometheusCryptographyDataType.DATAKEYSET);</span>
-<span class="nc" id="L54">    }</span>
+<span class="nc" id="L57">        FIELD_DEFS.declareLinkField(PrometheusCryptographyDataType.DATAKEYSET);</span>
+<span class="nc" id="L58">    }</span>
 
     /**
      * Standard Constructor. This creates a null encryption generator. This will be overridden when
@@ -62,8 +66,8 @@ public abstract class PrometheusEncryptedDataItem
      */
     protected PrometheusEncryptedDataItem(final PrometheusEncryptedList&lt;?&gt; pList,
                                           final Integer pId) {
-<span class="nc" id="L65">        super(pList, pId);</span>
-<span class="nc" id="L66">    }</span>
+<span class="nc" id="L69">        super(pList, pId);</span>
+<span class="nc" id="L70">    }</span>
 
     /**
      * Copy Constructor. This picks up the generator from the source item.
@@ -73,8 +77,8 @@ public abstract class PrometheusEncryptedDataItem
      */
     protected PrometheusEncryptedDataItem(final PrometheusEncryptedList&lt;?&gt; pList,
                                           final PrometheusEncryptedDataItem pSource) {
-<span class="nc" id="L76">        super(pList, pSource);</span>
-<span class="nc" id="L77">    }</span>
+<span class="nc" id="L80">        super(pList, pSource);</span>
+<span class="nc" id="L81">    }</span>
 
     /**
      * Values Constructor. This creates a null encryption generator. This will be overridden when a
@@ -86,28 +90,28 @@ public abstract class PrometheusEncryptedDataItem
      */
     protected PrometheusEncryptedDataItem(final PrometheusEncryptedList&lt;?&gt; pList,
                                           final PrometheusDataValues pValues) throws OceanusException {
-<span class="nc" id="L89">        super(pList, pValues);</span>
+<span class="nc" id="L93">        super(pList, pValues);</span>
 
         /* Access dataKeySet id */
-<span class="nc" id="L92">        final Integer myId = pValues.getValue(PrometheusCryptographyDataType.DATAKEYSET, Integer.class);</span>
-<span class="nc bnc" id="L93" title="All 2 branches missed.">        if (myId != null) {</span>
-<span class="nc" id="L94">            setDataKeySet(myId);</span>
+<span class="nc" id="L96">        final Integer myId = pValues.getValue(PrometheusCryptographyDataType.DATAKEYSET, Integer.class);</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (myId != null) {</span>
+<span class="nc" id="L98">            setDataKeySet(myId);</span>
         }
-<span class="nc" id="L96">    }</span>
+<span class="nc" id="L100">    }</span>
 
     @Override
     protected PrometheusEncryptedValues newVersionValues() {
-<span class="nc" id="L100">        return new PrometheusEncryptedValues(this);</span>
+<span class="nc" id="L104">        return new PrometheusEncryptedValues(this);</span>
     }
 
     @Override
     public PrometheusEncryptedValues getValues() {
-<span class="nc" id="L105">        return (PrometheusEncryptedValues) super.getValues();</span>
+<span class="nc" id="L109">        return (PrometheusEncryptedValues) super.getValues();</span>
     }
 
     @Override
     public PrometheusEncryptedValues getOriginalValues() {
-<span class="nc" id="L110">        return (PrometheusEncryptedValues) super.getOriginalValues();</span>
+<span class="nc" id="L114">        return (PrometheusEncryptedValues) super.getOriginalValues();</span>
     }
 
     /**
@@ -116,7 +120,7 @@ public abstract class PrometheusEncryptedDataItem
      * @return the DataKeySet
      */
     public final PrometheusDataKeySet getDataKeySet() {
-<span class="nc" id="L119">        return getValues().getValue(PrometheusCryptographyDataType.DATAKEYSET, PrometheusDataKeySet.class);</span>
+<span class="nc" id="L123">        return getValues().getValue(PrometheusCryptographyDataType.DATAKEYSET, PrometheusDataKeySet.class);</span>
     }
 
     /**
@@ -125,10 +129,10 @@ public abstract class PrometheusEncryptedDataItem
      * @return the DataKeySetId
      */
     public final Integer getDataKeySetId() {
-<span class="nc" id="L128">        final PrometheusDataKeySet mySet = getDataKeySet();</span>
-<span class="nc bnc" id="L129" title="All 2 branches missed.">        return (mySet == null)</span>
-<span class="nc" id="L130">                ? null</span>
-<span class="nc" id="L131">                : mySet.getIndexedId();</span>
+<span class="nc" id="L132">        final PrometheusDataKeySet mySet = getDataKeySet();</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        return (mySet == null)</span>
+<span class="nc" id="L134">                ? null</span>
+<span class="nc" id="L135">                : mySet.getIndexedId();</span>
     }
 
     /**
@@ -137,8 +141,8 @@ public abstract class PrometheusEncryptedDataItem
      * @param pSet the dataKeySet
      */
     private void setValueDataKeySet(final PrometheusDataKeySet pSet) {
-<span class="nc" id="L140">        getValues().setUncheckedValue(PrometheusCryptographyDataType.DATAKEYSET, pSet);</span>
-<span class="nc" id="L141">    }</span>
+<span class="nc" id="L144">        getValues().setUncheckedValue(PrometheusCryptographyDataType.DATAKEYSET, pSet);</span>
+<span class="nc" id="L145">    }</span>
 
     /**
      * Set the KeySet id for this item.
@@ -146,14 +150,10 @@ public abstract class PrometheusEncryptedDataItem
      * @param pId the keySet id
      */
     private void setValueDataKeySet(final Integer pId) {
-<span class="nc" id="L149">        getValues().setUncheckedValue(PrometheusCryptographyDataType.DATAKEYSET, pId);</span>
-<span class="nc" id="L150">    }</span>
+<span class="nc" id="L153">        getValues().setUncheckedValue(PrometheusCryptographyDataType.DATAKEYSET, pId);</span>
+<span class="nc" id="L154">    }</span>
 
-    /**
-     * Get the Encryptor.
-     *
-     * @return the encryptor
-     */
+    @Override
     public PrometheusEncryptor getEncryptor() {
 <span class="nc" id="L158">        final PrometheusDataKeySet myKeySet = getDataKeySet();</span>
 <span class="nc bnc" id="L159" title="All 2 branches missed.">        return myKeySet == null ? NULL_ENCRYPTOR : myKeySet.getEncryptor();</span>
@@ -191,8 +191,8 @@ public abstract class PrometheusEncryptedDataItem
 <span class="nc" id="L191">        setValueDataKeySet(pKeySetId);</span>
 
         /* Resolve the ControlKey */
-<span class="nc" id="L194">        final PrometheusDataSet myData = getDataSet();</span>
-<span class="nc" id="L195">        resolveDataLink(PrometheusCryptographyDataType.DATAKEYSET, myData.getDataKeySets());</span>
+<span class="nc" id="L194">        final PrometheusDataSetCtl myData = getDataSet();</span>
+<span class="nc" id="L195">        resolveDataLink(PrometheusCryptographyDataType.DATAKEYSET, PrometheusCryptographyDataType.DATAKEYSET);</span>
 <span class="nc" id="L196">    }</span>
 
     /**
@@ -286,8 +286,8 @@ public abstract class PrometheusEncryptedDataItem
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
-<span class="nc" id="L289">        final PrometheusDataSet myData = getDataSet();</span>
-<span class="nc" id="L290">        resolveDataLink(PrometheusCryptographyDataType.DATAKEYSET, myData.getDataKeySets());</span>
+<span class="nc" id="L289">        final PrometheusDataSetCtl myData = getDataSet();</span>
+<span class="nc" id="L290">        resolveDataLink(PrometheusCryptographyDataType.DATAKEYSET, PrometheusCryptographyDataType.DATAKEYSET);</span>
 <span class="nc" id="L291">    }</span>
 
     /**
@@ -367,7 +367,7 @@ public abstract class PrometheusEncryptedDataItem
          * @param pItemType  the item type
          */
         protected PrometheusEncryptedList(final Class&lt;T&gt; pBaseClass,
-                                          final PrometheusDataSet pData,
+                                          final PrometheusCryptographicDataSet pData,
                                           final MetisListKey pItemType) {
 <span class="nc" id="L372">            this(pBaseClass, pData, pItemType, PrometheusListStyle.CORE);</span>
 <span class="nc" id="L373">        }</span>
@@ -381,7 +381,7 @@ public abstract class PrometheusEncryptedDataItem
          * @param pStyle     the style of the list
          */
         protected PrometheusEncryptedList(final Class&lt;T&gt; pBaseClass,
-                                          final PrometheusDataSet pData,
+                                          final PrometheusCryptographicDataSet pData,
                                           final MetisListKey pItemType,
                                           final PrometheusListStyle pStyle) {
 <span class="nc" id="L387">            super(pBaseClass, pData, pItemType, pStyle);</span>
@@ -396,16 +396,21 @@ public abstract class PrometheusEncryptedDataItem
 <span class="nc" id="L396">            super(pSource);</span>
 <span class="nc" id="L397">        }</span>
 
+        @Override
+        public PrometheusCryptographicDataSet getDataSet() {
+<span class="nc" id="L401">            return (PrometheusCryptographicDataSet) super.getDataSet();</span>
+        }
+
         /**
          * Get the active controlKey.
          *
          * @return the active controlKey
          */
         private PrometheusControlKey getControlKey() {
-<span class="nc" id="L405">            final PrometheusControlData myControl = getDataSet().getControl();</span>
-<span class="nc bnc" id="L406" title="All 2 branches missed.">            return (myControl == null)</span>
-<span class="nc" id="L407">                    ? null</span>
-<span class="nc" id="L408">                    : myControl.getControlKey();</span>
+<span class="nc" id="L410">            final PrometheusControlDataCtl myControl = getDataSet().getControl();</span>
+<span class="nc bnc" id="L411" title="All 2 branches missed.">            return myControl == null</span>
+<span class="nc" id="L412">                    ? null</span>
+<span class="nc" id="L413">                    : (PrometheusControlKey) myControl.getControlKey();</span>
         }
 
         /**
@@ -414,10 +419,10 @@ public abstract class PrometheusEncryptedDataItem
          * @return the DataKeySet
          */
         private PrometheusDataKeySet getNextDataKeySet() {
-<span class="nc" id="L417">            final PrometheusControlKey myKey = getControlKey();</span>
-<span class="nc bnc" id="L418" title="All 2 branches missed.">            return (myKey == null)</span>
-<span class="nc" id="L419">                    ? null</span>
-<span class="nc" id="L420">                    : myKey.getNextDataKeySet();</span>
+<span class="nc" id="L422">            final PrometheusControlKey myKey = getControlKey();</span>
+<span class="nc bnc" id="L423" title="All 2 branches missed.">            return (myKey == null)</span>
+<span class="nc" id="L424">                    ? null</span>
+<span class="nc" id="L425">                    : myKey.getNextDataKeySet();</span>
         }
 
         /**
@@ -430,26 +435,26 @@ public abstract class PrometheusEncryptedDataItem
         public void updateSecurity(final TethysUIThreadStatusReport pReport,
                                    final PrometheusControlKey pControl) throws OceanusException {
             /* Declare the new stage */
-<span class="nc" id="L433">            pReport.setNewStage(listName());</span>
+<span class="nc" id="L438">            pReport.setNewStage(listName());</span>
 
             /* Count the Number of items */
-<span class="nc" id="L436">            pReport.setNumSteps(size());</span>
+<span class="nc" id="L441">            pReport.setNumSteps(size());</span>
 
             /* Loop through the items */
-<span class="nc" id="L439">            final Iterator&lt;T&gt; myIterator = iterator();</span>
-<span class="nc bnc" id="L440" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
-<span class="nc" id="L441">                final T myCurr = myIterator.next();</span>
+<span class="nc" id="L444">            final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L445" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L446">                final T myCurr = myIterator.next();</span>
 
                 /* Only update if we are using the wrong controlKey */
-<span class="nc bnc" id="L444" title="All 2 branches missed.">                if (!pControl.equals(myCurr.getDataKeySet().getControlKey())) {</span>
+<span class="nc bnc" id="L449" title="All 2 branches missed.">                if (!pControl.equals(myCurr.getDataKeySet().getControlKey())) {</span>
                     /* Update the security */
-<span class="nc" id="L446">                    myCurr.updateSecurity(pControl.getNextDataKeySet());</span>
+<span class="nc" id="L451">                    myCurr.updateSecurity(pControl.getNextDataKeySet());</span>
                 }
 
                 /* Report the progress */
-<span class="nc" id="L450">                pReport.setNextStep();</span>
-<span class="nc" id="L451">            }</span>
-<span class="nc" id="L452">        }</span>
+<span class="nc" id="L455">                pReport.setNextStep();</span>
+<span class="nc" id="L456">            }</span>
+<span class="nc" id="L457">        }</span>
 
         /**
          * Adopt security from underlying list. If a match for the item is found in the underlying
@@ -462,48 +467,49 @@ public abstract class PrometheusEncryptedDataItem
         protected void adoptSecurity(final TethysUIThreadStatusReport pReport,
                                      final PrometheusEncryptedList&lt;?&gt; pBase) throws OceanusException {
             /* Declare the new stage */
-<span class="nc" id="L465">            pReport.setNewStage(listName());</span>
+<span class="nc" id="L470">            pReport.setNewStage(listName());</span>
 
             /* Count the Number of items */
-<span class="nc" id="L468">            pReport.setNumSteps(size());</span>
+<span class="nc" id="L473">            pReport.setNumSteps(size());</span>
 
             /* Obtain DataKeySet list */
-<span class="nc" id="L471">            final PrometheusDataSet myData = getDataSet();</span>
-<span class="nc" id="L472">            final PrometheusDataKeySetList mySets = myData.getDataKeySets();</span>
+<span class="nc" id="L476">            final PrometheusDataSetCtl myData = getDataSet();</span>
+<span class="nc" id="L477">            final PrometheusDataKeySetList mySets</span>
+<span class="nc" id="L478">                    = myData.getDataList(PrometheusCryptographyDataType.DATAKEYSET, PrometheusDataKeySetList.class);</span>
 
             /* Create an iterator for our new list */
-<span class="nc" id="L475">            final Iterator&lt;T&gt; myIterator = iterator();</span>
-<span class="nc" id="L476">            final Class&lt;T&gt; myClass = getBaseClass();</span>
+<span class="nc" id="L481">            final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="nc" id="L482">            final Class&lt;T&gt; myClass = getBaseClass();</span>
 
             /* Loop through this list */
-<span class="nc bnc" id="L479" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc bnc" id="L485" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
                 /* Locate the item in the base list */
-<span class="nc" id="L481">                final PrometheusEncryptedDataItem myCurr = myIterator.next();</span>
-<span class="nc" id="L482">                final PrometheusEncryptedDataItem myBase = pBase.findItemById(myCurr.getIndexedId());</span>
+<span class="nc" id="L487">                final PrometheusEncryptedDataItem myCurr = myIterator.next();</span>
+<span class="nc" id="L488">                final PrometheusEncryptedDataItem myBase = pBase.findItemById(myCurr.getIndexedId());</span>
 
                 /* Access target correctly */
-<span class="nc" id="L485">                final T myTarget = myClass.cast(myCurr);</span>
+<span class="nc" id="L491">                final T myTarget = myClass.cast(myCurr);</span>
 
                 /* If we have a base */
-<span class="nc bnc" id="L488" title="All 2 branches missed.">                if (myBase != null) {</span>
+<span class="nc bnc" id="L494" title="All 2 branches missed.">                if (myBase != null) {</span>
                     /* Access base correctly */
-<span class="nc" id="L490">                    final T mySource = myClass.cast(myBase);</span>
+<span class="nc" id="L496">                    final T mySource = myClass.cast(myBase);</span>
 
                     /* Obtain required KeySet */
-<span class="nc" id="L493">                    PrometheusDataKeySet mySet = myBase.getDataKeySet();</span>
-<span class="nc" id="L494">                    mySet = mySets.findItemById(mySet.getIndexedId());</span>
+<span class="nc" id="L499">                    PrometheusDataKeySet mySet = myBase.getDataKeySet();</span>
+<span class="nc" id="L500">                    mySet = mySets.findItemById(mySet.getIndexedId());</span>
 
                     /* Adopt the security */
-<span class="nc" id="L497">                    myTarget.adoptSecurity(mySet, mySource);</span>
-<span class="nc" id="L498">                } else {</span>
+<span class="nc" id="L503">                    myTarget.adoptSecurity(mySet, mySource);</span>
+<span class="nc" id="L504">                } else {</span>
                     /* Initialise the security */
-<span class="nc" id="L500">                    myTarget.initialiseSecurity(getNextDataKeySet());</span>
+<span class="nc" id="L506">                    myTarget.initialiseSecurity(getNextDataKeySet());</span>
                 }
 
                 /* Report the progress */
-<span class="nc" id="L504">                pReport.setNextStep();</span>
-<span class="nc" id="L505">            }</span>
-<span class="nc" id="L506">        }</span>
+<span class="nc" id="L510">                pReport.setNextStep();</span>
+<span class="nc" id="L511">            }</span>
+<span class="nc" id="L512">        }</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

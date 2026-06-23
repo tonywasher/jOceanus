@@ -19,9 +19,7 @@ package io.github.tonywasher.joceanus.moneywise.atlas.reports;
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
-import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
-import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisValuesResource;
 import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import org.w3c.dom.Document;
 
@@ -34,26 +32,6 @@ import java.util.Map;
  * @author Tony Washer
  */
 public class MoneyWiseXReportBuilder {
-    /**
-     * The Total text.
-     */
-<span class="nc" id="L40">    protected static final String TEXT_TOTAL = MoneyWiseXAnalysisBucketResource.ANALYSIS_TOTALS.getValue();</span>
-
-    /**
-     * The Profit text.
-     */
-<span class="nc" id="L45">    protected static final String TEXT_PROFIT = MoneyWiseXAnalysisValuesResource.SECURITYATTR_PROFIT.getValue();</span>
-
-    /**
-     * The Income text.
-     */
-<span class="nc" id="L50">    protected static final String TEXT_INCOME = MoneyWiseXAnalysisValuesResource.PAYEEATTR_INCOME.getValue();</span>
-
-    /**
-     * The Expense text.
-     */
-<span class="nc" id="L55">    protected static final String TEXT_EXPENSE = MoneyWiseXAnalysisValuesResource.PAYEEATTR_EXPENSE.getValue();</span>
-
     /**
      * The Report Manager.
      */
@@ -69,13 +47,13 @@ public class MoneyWiseXReportBuilder {
      *
      * @param pManager the report manager
      */
-<span class="nc" id="L72">    public MoneyWiseXReportBuilder(final MetisReportManager&lt;MoneyWiseXAnalysisFilter&lt;?, ?&gt;&gt; pManager) {</span>
+<span class="nc" id="L50">    public MoneyWiseXReportBuilder(final MetisReportManager&lt;MoneyWiseXAnalysisFilter&lt;?, ?&gt;&gt; pManager) {</span>
         /* Record the details */
-<span class="nc" id="L74">        theManager = pManager;</span>
+<span class="nc" id="L52">        theManager = pManager;</span>
 
         /* Allocate map */
-<span class="nc" id="L77">        theReportMap = new EnumMap&lt;&gt;(MoneyWiseXReportType.class);</span>
-<span class="nc" id="L78">    }</span>
+<span class="nc" id="L55">        theReportMap = new EnumMap&lt;&gt;(MoneyWiseXReportType.class);</span>
+<span class="nc" id="L56">    }</span>
 
     /**
      * Build a report of the appropriate type.
@@ -89,60 +67,44 @@ public class MoneyWiseXReportBuilder {
                                  final MoneyWiseXReportType pType,
                                  final MoneyWiseXAnalysisSecurityBucket pSecurity) {
         /* Access existing report */
-<span class="nc" id="L92">        MetisReportBase&lt;MoneyWiseXAnalysis, MoneyWiseXAnalysisFilter&lt;?, ?&gt;&gt; myReport = theReportMap.get(pType);</span>
+<span class="nc" id="L70">        MetisReportBase&lt;MoneyWiseXAnalysis, MoneyWiseXAnalysisFilter&lt;?, ?&gt;&gt; myReport = theReportMap.get(pType);</span>
 
         /* If we have not previously allocated this report */
-<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (myReport == null) {</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (myReport == null) {</span>
             /* Switch on the report type */
-<span class="nc bnc" id="L97" title="All 11 branches missed.">            switch (pType) {</span>
-                case NETWORTH:
-<span class="nc" id="L99">                    myReport = new MoneyWiseXReportNetWorth(theManager);</span>
-<span class="nc" id="L100">                    break;</span>
-                case BALANCESHEET:
-<span class="nc" id="L102">                    myReport = new MoneyWiseXReportBalanceSheet(theManager);</span>
-<span class="nc" id="L103">                    break;</span>
-                case CASHFLOW:
-<span class="nc" id="L105">                    myReport = new MoneyWiseXReportCashFlow(theManager);</span>
-<span class="nc" id="L106">                    break;</span>
-                case INCOMEEXPENSE:
-<span class="nc" id="L108">                    myReport = new MoneyWiseXReportIncomeExpense(theManager);</span>
-<span class="nc" id="L109">                    break;</span>
-                case PORTFOLIO:
-<span class="nc" id="L111">                    myReport = new MoneyWiseXReportPortfolioView(theManager);</span>
-<span class="nc" id="L112">                    break;</span>
-                case MARKETGROWTH:
-<span class="nc" id="L114">                    myReport = new MoneyWiseXReportMarketGrowth(theManager);</span>
-<span class="nc" id="L115">                    break;</span>
-                case TAXBASIS:
-<span class="nc" id="L117">                    myReport = new MoneyWiseXReportTaxationBasis(theManager);</span>
-<span class="nc" id="L118">                    break;</span>
-                case TAXCALC:
-<span class="nc" id="L120">                    myReport = new MoneyWiseXReportTaxCalculation(theManager);</span>
-<span class="nc" id="L121">                    break;</span>
-                case ASSETGAINS:
-<span class="nc" id="L123">                    myReport = new MoneyWiseXReportAssetGains(theManager);</span>
-<span class="nc" id="L124">                    break;</span>
-                case CAPITALGAINS:
-<span class="nc" id="L126">                    myReport = new MoneyWiseXReportCapitalGains(theManager);</span>
-<span class="nc" id="L127">                    break;</span>
-                default:
-<span class="nc" id="L129">                    return null;</span>
+<span class="nc bnc" id="L75" title="All 11 branches missed.">            myReport = switch (pType) {</span>
+<span class="nc" id="L76">                case NETWORTH -&gt; new MoneyWiseXReportNetWorth(theManager);</span>
+<span class="nc" id="L77">                case BALANCESHEET -&gt; new MoneyWiseXReportBalanceSheet(theManager);</span>
+<span class="nc" id="L78">                case CASHFLOW -&gt; new MoneyWiseXReportCashFlow(theManager);</span>
+<span class="nc" id="L79">                case INCOMEEXPENSE -&gt; new MoneyWiseXReportIncomeExpense(theManager);</span>
+<span class="nc" id="L80">                case PORTFOLIO -&gt; new MoneyWiseXReportPortfolioView(theManager);</span>
+<span class="nc" id="L81">                case MARKETGROWTH -&gt; new MoneyWiseXReportMarketGrowth(theManager);</span>
+<span class="nc" id="L82">                case TAXBASIS -&gt; new MoneyWiseXReportTaxationBasis(theManager);</span>
+<span class="nc" id="L83">                case TAXCALC -&gt; new MoneyWiseXReportTaxCalculation(theManager);</span>
+<span class="nc" id="L84">                case ASSETGAINS -&gt; new MoneyWiseXReportAssetGains(theManager);</span>
+<span class="nc" id="L85">                case CAPITALGAINS -&gt; new MoneyWiseXReportCapitalGains(theManager);</span>
+<span class="nc" id="L86">                default -&gt; null;</span>
+            };
+
+            /* Return null if no report found */
+<span class="nc bnc" id="L90" title="All 2 branches missed.">            if (myReport == null) {</span>
+<span class="nc" id="L91">                return null;</span>
             }
 
             /* Store allocated report */
-<span class="nc" id="L133">            theReportMap.put(pType, myReport);</span>
+<span class="nc" id="L95">            theReportMap.put(pType, myReport);</span>
         }
 
         /* If the report requires the security */
-<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (myReport instanceof MoneyWiseXReportCapitalGains myCapGains) {</span>
-<span class="nc" id="L138">            myCapGains.setSecurity(pSecurity);</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        if (myReport instanceof MoneyWiseXReportCapitalGains myCapGains) {</span>
+<span class="nc" id="L100">            myCapGains.setSecurity(pSecurity);</span>
         }
 
         /* Set up the report */
-<span class="nc" id="L142">        theManager.setReport(myReport);</span>
+<span class="nc" id="L104">        theManager.setReport(myReport);</span>
 
         /* Create the report */
-<span class="nc" id="L145">        return myReport.createReport(pAnalysis);</span>
+<span class="nc" id="L107">        return myReport.createReport(pAnalysis);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

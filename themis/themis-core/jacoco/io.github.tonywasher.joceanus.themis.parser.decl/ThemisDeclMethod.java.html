@@ -17,7 +17,10 @@
 package io.github.tonywasher.joceanus.themis.parser.decl;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisDeclarationInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisMethodInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisModifierList;
@@ -32,6 +35,18 @@ import java.util.List;
 public class ThemisDeclMethod
         extends ThemisBaseDeclaration&lt;MethodDeclaration&gt;
         implements ThemisDeclarationInstance, ThemisMethodInstance {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L41">    private static final MetisFieldSet&lt;ThemisDeclMethod&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisDeclMethod.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L47">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_NAME, ThemisDeclMethod::getName);</span>
+<span class="fc" id="L48">    }</span>
+
     /**
      * The override annotation.
      */
@@ -86,25 +101,35 @@ public class ThemisDeclMethod
      */
     ThemisDeclMethod(final ThemisParserDef pParser,
                      final MethodDeclaration pDeclaration) throws OceanusException {
-<span class="fc" id="L89">        super(pParser, pDeclaration);</span>
-<span class="fc" id="L90">        theName = ((ThemisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();</span>
-<span class="fc" id="L91">        theType = pParser.parseType(pDeclaration.getType());</span>
-<span class="fc" id="L92">        theModifiers = pParser.parseModifierList(pDeclaration.getModifiers());</span>
-<span class="fc" id="L93">        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());</span>
-<span class="fc" id="L94">        theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());</span>
-<span class="fc" id="L95">        theParameters = pParser.parseNodeList(pDeclaration.getParameters());</span>
-<span class="fc" id="L96">        theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());</span>
-<span class="fc" id="L97">        theBody = pParser.parseStatement(pDeclaration.getBody().orElse(null));</span>
-<span class="fc" id="L98">    }</span>
+<span class="fc" id="L104">        super(pParser, pDeclaration);</span>
+<span class="fc" id="L105">        theName = ((ThemisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();</span>
+<span class="fc" id="L106">        theType = pParser.parseType(pDeclaration.getType());</span>
+<span class="fc" id="L107">        theModifiers = pParser.parseModifierList(pDeclaration.getModifiers());</span>
+<span class="fc" id="L108">        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());</span>
+<span class="fc" id="L109">        theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());</span>
+<span class="fc" id="L110">        theParameters = pParser.parseNodeList(pDeclaration.getParameters());</span>
+<span class="fc" id="L111">        theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());</span>
+<span class="fc" id="L112">        theBody = pParser.parseStatement(pDeclaration.getBody().orElse(null));</span>
+<span class="fc" id="L113">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisDeclMethod&gt; getDataFieldSet() {
+<span class="nc" id="L117">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L122">        return getName();</span>
+    }
 
     @Override
     public String getName() {
-<span class="nc" id="L102">        return theName;</span>
+<span class="nc" id="L127">        return theName;</span>
     }
 
     @Override
     public ThemisModifierList getModifiers() {
-<span class="fc" id="L107">        return theModifiers;</span>
+<span class="fc" id="L132">        return theModifiers;</span>
     }
 
     /**
@@ -113,7 +138,7 @@ public class ThemisDeclMethod
      * @return the type
      */
     public ThemisTypeInstance getType() {
-<span class="nc" id="L116">        return theType;</span>
+<span class="nc" id="L141">        return theType;</span>
     }
 
     /**
@@ -122,32 +147,32 @@ public class ThemisDeclMethod
      * @return true/false
      */
     public boolean isOverride() {
-<span class="nc" id="L125">        return getNode().isAnnotationPresent(OVERRIDE_ANNOTATION);</span>
+<span class="nc" id="L150">        return getNode().isAnnotationPresent(OVERRIDE_ANNOTATION);</span>
     }
 
     @Override
     public List&lt;ThemisNodeInstance&gt; getParameters() {
-<span class="nc" id="L130">        return theParameters;</span>
+<span class="nc" id="L155">        return theParameters;</span>
     }
 
     @Override
     public ThemisStatementInstance getBody() {
-<span class="nc" id="L135">        return theBody;</span>
+<span class="nc" id="L160">        return theBody;</span>
     }
 
     @Override
     public List&lt;ThemisTypeInstance&gt; getTypeParameters() {
-<span class="fc" id="L140">        return theTypeParameters;</span>
+<span class="fc" id="L165">        return theTypeParameters;</span>
     }
 
     @Override
     public List&lt;ThemisTypeInstance&gt; getThrown() {
-<span class="nc" id="L145">        return theThrown;</span>
+<span class="nc" id="L170">        return theThrown;</span>
     }
 
     @Override
     public List&lt;ThemisExpressionInstance&gt; getAnnotations() {
-<span class="nc" id="L150">        return theAnnotations;</span>
+<span class="nc" id="L175">        return theAnnotations;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

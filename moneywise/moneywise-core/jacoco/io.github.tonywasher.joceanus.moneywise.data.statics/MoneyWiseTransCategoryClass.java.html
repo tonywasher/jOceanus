@@ -18,296 +18,297 @@ package io.github.tonywasher.joceanus.moneywise.data.statics;
 
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * Enumeration of TransactionCategory Classes.
  */
-<span class="fc" id="L25">public enum MoneyWiseTransCategoryClass</span>
+<span class="fc" id="L26">public enum MoneyWiseTransCategoryClass</span>
         implements MoneyWiseCategoryInterface {
     /**
      * Taxed Salary Income.
      */
-<span class="fc" id="L30">    TAXEDINCOME(1, 4),</span>
+<span class="fc" id="L31">    TAXEDINCOME(1, 4),</span>
 
     /**
      * Rental Income.
      */
-<span class="fc" id="L35">    RENTALINCOME(2, 5),</span>
+<span class="fc" id="L36">    RENTALINCOME(2, 5),</span>
 
     /**
      * RoomRental Income.
      */
-<span class="fc" id="L40">    ROOMRENTALINCOME(3, 6),</span>
+<span class="fc" id="L41">    ROOMRENTALINCOME(3, 6),</span>
 
     /**
      * Interest Income.
      */
-<span class="fc" id="L45">    INTEREST(4, 7),</span>
+<span class="fc" id="L46">    INTEREST(4, 7),</span>
 
     /**
      * Dividend Income.
      */
-<span class="fc" id="L50">    DIVIDEND(5, 8),</span>
+<span class="fc" id="L51">    DIVIDEND(5, 8),</span>
 
     /**
      * Virtual Income.
      */
-<span class="fc" id="L55">    VIRTUALINCOME(6, 9),</span>
+<span class="fc" id="L56">    VIRTUALINCOME(6, 9),</span>
 
     /**
      * GrossIncome.
      */
-<span class="fc" id="L60">    GROSSINCOME(7, 10),</span>
+<span class="fc" id="L61">    GROSSINCOME(7, 10),</span>
 
     /**
      * PensionContribution.
      */
-<span class="fc" id="L65">    PENSIONCONTRIB(8, 11),</span>
+<span class="fc" id="L66">    PENSIONCONTRIB(8, 11),</span>
 
     /**
      * Gifted Income.
      */
-<span class="fc" id="L70">    GIFTEDINCOME(9, 12),</span>
+<span class="fc" id="L71">    GIFTEDINCOME(9, 12),</span>
 
     /**
      * Inheritance.
      */
-<span class="fc" id="L75">    INHERITED(10, 13),</span>
+<span class="fc" id="L76">    INHERITED(10, 13),</span>
 
     /**
      * Interest earned on Loans.
      */
-<span class="fc" id="L80">    LOANINTERESTEARNED(11, 14),</span>
+<span class="fc" id="L81">    LOANINTERESTEARNED(11, 14),</span>
 
     /**
      * Loyalty Bonus.
      */
-<span class="fc" id="L85">    LOYALTYBONUS(12, 15),</span>
+<span class="fc" id="L86">    LOYALTYBONUS(12, 15),</span>
 
     /**
      * CashBack.
      */
-<span class="fc" id="L90">    CASHBACK(13, 16),</span>
+<span class="fc" id="L91">    CASHBACK(13, 16),</span>
 
     /**
      * Recovered Expenses.
      */
-<span class="fc" id="L95">    RECOVEREDEXPENSES(14, 17),</span>
+<span class="fc" id="L96">    RECOVEREDEXPENSES(14, 17),</span>
 
     /**
      * Other Income.
      */
-<span class="fc" id="L100">    OTHERINCOME(15, 18),</span>
+<span class="fc" id="L101">    OTHERINCOME(15, 18),</span>
 
     /**
      * Stock Options Exercised.
      */
-<span class="fc" id="L105">    OPTIONSEXERCISE(16, 19),</span>
+<span class="fc" id="L106">    OPTIONSEXERCISE(16, 19),</span>
 
     /**
      * Stock Units Adjustment.
      */
-<span class="fc" id="L110">    UNITSADJUST(17, 20),</span>
+<span class="fc" id="L111">    UNITSADJUST(17, 20),</span>
 
     /**
      * Stock Split.
      */
-<span class="fc" id="L115">    STOCKSPLIT(18, 21),</span>
+<span class="fc" id="L116">    STOCKSPLIT(18, 21),</span>
 
     /**
      * Stock DeMerger.
      */
-<span class="fc" id="L120">    STOCKDEMERGER(19, 22),</span>
+<span class="fc" id="L121">    STOCKDEMERGER(19, 22),</span>
 
     /**
      * Security Replacement.
      */
-<span class="fc" id="L125">    SECURITYREPLACE(20, 23),</span>
+<span class="fc" id="L126">    SECURITYREPLACE(20, 23),</span>
 
     /**
      * Security Closure.
      */
-<span class="fc" id="L130">    SECURITYCLOSURE(21, 24),</span>
+<span class="fc" id="L131">    SECURITYCLOSURE(21, 24),</span>
 
     /**
      * Stock TakeOver.
      */
-<span class="fc" id="L135">    STOCKTAKEOVER(22, 25),</span>
+<span class="fc" id="L136">    STOCKTAKEOVER(22, 25),</span>
 
     /**
      * Stock Rights Issue.
      */
-<span class="fc" id="L140">    STOCKRIGHTSISSUE(23, 26),</span>
+<span class="fc" id="L141">    STOCKRIGHTSISSUE(23, 26),</span>
 
     /**
      * PortfolioXfer.
      */
-<span class="fc" id="L145">    PORTFOLIOXFER(24, 27),</span>
+<span class="fc" id="L146">    PORTFOLIOXFER(24, 27),</span>
 
     /**
      * Stock Options Granted.
      */
-<span class="fc" id="L150">    OPTIONSGRANT(25, 28),</span>
+<span class="fc" id="L151">    OPTIONSGRANT(25, 28),</span>
 
     /**
      * Stock Options Vested.
      */
-<span class="fc" id="L155">    OPTIONSVEST(26, 29),</span>
+<span class="fc" id="L156">    OPTIONSVEST(26, 29),</span>
 
     /**
      * Stock Options Expired.
      */
-<span class="fc" id="L160">    OPTIONSEXPIRE(27, 30),</span>
+<span class="fc" id="L161">    OPTIONSEXPIRE(27, 30),</span>
 
     /**
      * Pension Drawdown.
      */
-<span class="fc" id="L165">    PENSIONDRAWDOWN(28, 31),</span>
+<span class="fc" id="L166">    PENSIONDRAWDOWN(28, 31),</span>
 
     /**
      * Pension TaxFree.
      */
-<span class="fc" id="L170">    PENSIONTAXFREE(29, 32),</span>
+<span class="fc" id="L171">    PENSIONTAXFREE(29, 32),</span>
 
     /**
      * Transfer.
      */
-<span class="fc" id="L175">    TRANSFER(30, 33),</span>
+<span class="fc" id="L176">    TRANSFER(30, 33),</span>
 
     /**
      * Expense.
      */
-<span class="fc" id="L180">    EXPENSE(31, 34),</span>
+<span class="fc" id="L181">    EXPENSE(31, 34),</span>
 
     /**
      * BadDebtCapital.
      */
-<span class="fc" id="L185">    BADDEBTCAPITAL(32, 35),</span>
+<span class="fc" id="L186">    BADDEBTCAPITAL(32, 35),</span>
 
     /**
      * BadDebtInterest.
      */
-<span class="fc" id="L190">    BADDEBTINTEREST(33, 36),</span>
+<span class="fc" id="L191">    BADDEBTINTEREST(33, 36),</span>
 
     /**
      * LocalTaxes.
      */
-<span class="fc" id="L195">    LOCALTAXES(34, 37),</span>
+<span class="fc" id="L196">    LOCALTAXES(34, 37),</span>
 
     /**
      * Write Off.
      */
-<span class="fc" id="L200">    WRITEOFF(35, 38),</span>
+<span class="fc" id="L201">    WRITEOFF(35, 38),</span>
 
     /**
      * Interest charged on Loans.
      */
-<span class="fc" id="L205">    LOANINTERESTCHARGED(36, 39),</span>
+<span class="fc" id="L206">    LOANINTERESTCHARGED(36, 39),</span>
 
     /**
      * Rental Expense.
      */
-<span class="fc" id="L210">    RENTALEXPENSE(37, 40),</span>
+<span class="fc" id="L211">    RENTALEXPENSE(37, 40),</span>
 
     /**
      * AnnuityPurchase.
      */
-<span class="fc" id="L215">    ANNUITYPURCHASE(38, 41),</span>
+<span class="fc" id="L216">    ANNUITYPURCHASE(38, 41),</span>
 
     /**
      * Tax Relief.
      */
-<span class="fc" id="L220">    TAXRELIEF(39, 42),</span>
+<span class="fc" id="L221">    TAXRELIEF(39, 42),</span>
 
     /**
      * IncomeTax.
      */
-<span class="fc" id="L225">    INCOMETAX(40, 43),</span>
+<span class="fc" id="L226">    INCOMETAX(40, 43),</span>
 
     /**
      * Taxed Interest.
      */
-<span class="fc" id="L230">    TAXEDINTEREST(41, 44),</span>
+<span class="fc" id="L231">    TAXEDINTEREST(41, 44),</span>
 
     /**
      * Gross Interest.
      */
-<span class="fc" id="L235">    GROSSINTEREST(42, 45),</span>
+<span class="fc" id="L236">    GROSSINTEREST(42, 45),</span>
 
     /**
      * Tax Free Interest.
      */
-<span class="fc" id="L240">    TAXFREEINTEREST(43, 46),</span>
+<span class="fc" id="L241">    TAXFREEINTEREST(43, 46),</span>
 
     /**
      * Peer2Peer Interest.
      */
-<span class="fc" id="L245">    PEER2PEERINTEREST(44, 47),</span>
+<span class="fc" id="L246">    PEER2PEERINTEREST(44, 47),</span>
 
     /**
      * Share Dividend Income.
      */
-<span class="fc" id="L250">    SHAREDIVIDEND(45, 48),</span>
+<span class="fc" id="L251">    SHAREDIVIDEND(45, 48),</span>
 
     /**
      * Unit Trust Dividend Income.
      */
-<span class="fc" id="L255">    UNITTRUSTDIVIDEND(46, 49),</span>
+<span class="fc" id="L256">    UNITTRUSTDIVIDEND(46, 49),</span>
 
     /**
      * Foreign Dividend.
      */
-<span class="fc" id="L260">    FOREIGNDIVIDEND(47, 50),</span>
+<span class="fc" id="L261">    FOREIGNDIVIDEND(47, 50),</span>
 
     /**
      * Tax Free Dividend.
      */
-<span class="fc" id="L265">    TAXFREEDIVIDEND(48, 51),</span>
+<span class="fc" id="L266">    TAXFREEDIVIDEND(48, 51),</span>
 
     /**
      * Taxed Loyalty Bonus.
      */
-<span class="fc" id="L270">    TAXEDLOYALTYBONUS(49, 52),</span>
+<span class="fc" id="L271">    TAXEDLOYALTYBONUS(49, 52),</span>
 
     /**
      * Gross LoyaltyBonus.
      */
-<span class="fc" id="L275">    GROSSLOYALTYBONUS(50, 53),</span>
+<span class="fc" id="L276">    GROSSLOYALTYBONUS(50, 53),</span>
 
     /**
      * Tax Free LoyaltyBonus.
      */
-<span class="fc" id="L280">    TAXFREELOYALTYBONUS(51, 54),</span>
+<span class="fc" id="L281">    TAXFREELOYALTYBONUS(51, 54),</span>
 
     /**
      * Chargeable Gain.
      */
-<span class="fc" id="L285">    CHARGEABLEGAIN(52, 55),</span>
+<span class="fc" id="L286">    CHARGEABLEGAIN(52, 55),</span>
 
     /**
      * Residential Gain.
      */
-<span class="fc" id="L290">    RESIDENTIALGAIN(53, 56),</span>
+<span class="fc" id="L291">    RESIDENTIALGAIN(53, 56),</span>
 
     /**
      * Capital Gain.
      */
-<span class="fc" id="L295">    CAPITALGAIN(54, 57),</span>
+<span class="fc" id="L296">    CAPITALGAIN(54, 57),</span>
 
     /**
      * TaxFreeCapital Gain.
      */
-<span class="fc" id="L300">    TAXFREEGAIN(55, 58),</span>
+<span class="fc" id="L301">    TAXFREEGAIN(55, 58),</span>
 
     /**
      * Market Growth.
      */
-<span class="fc" id="L305">    MARKETGROWTH(56, 59),</span>
+<span class="fc" id="L306">    MARKETGROWTH(56, 59),</span>
 
     /**
      * CurrencyFluctuation.
      */
-<span class="fc" id="L310">    CURRENCYFLUCTUATION(57, 60),</span>
+<span class="fc" id="L311">    CURRENCYFLUCTUATION(57, 60),</span>
 
     /**
      * Withheld.
@@ -315,28 +316,28 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * This is a singular category catching withheld items such as charity donations associated with
      * interest.
      */
-<span class="fc" id="L318">    WITHHELD(58, 61),</span>
+<span class="fc" id="L319">    WITHHELD(58, 61),</span>
 
     /**
      * OpeningBalance.
      * &lt;p&gt;
      * This is a singular category catching opening balances.
      */
-<span class="fc" id="L325">    OPENINGBALANCE(59, 62),</span>
+<span class="fc" id="L326">    OPENINGBALANCE(59, 62),</span>
 
     /**
      * EmployeeNatInsurance.
      * &lt;p&gt;
      * This is a singular category catching opening balances.
      */
-<span class="fc" id="L332">    EMPLOYEENATINS(60, 63),</span>
+<span class="fc" id="L333">    EMPLOYEENATINS(60, 63),</span>
 
     /**
      * EmployeeNatInsurance.
      * &lt;p&gt;
      * This is a singular category catching opening balances.
      */
-<span class="fc" id="L339">    EMPLOYERNATINS(61, 64),</span>
+<span class="fc" id="L340">    EMPLOYERNATINS(61, 64),</span>
 
     /**
      * Income Totals.
@@ -344,7 +345,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * This is used for categories which simply own a set of income sub-categories and is used
      * purely for reporting purposes.
      */
-<span class="fc" id="L347">    INCOMETOTALS(62, 1),</span>
+<span class="fc" id="L348">    INCOMETOTALS(62, 1),</span>
 
     /**
      * Expense Totals.
@@ -352,7 +353,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * This is used for categories which simply own a set of expense sub-categories and is used
      * purely for reporting purposes.
      */
-<span class="fc" id="L355">    EXPENSETOTALS(63, 2),</span>
+<span class="fc" id="L356">    EXPENSETOTALS(63, 2),</span>
 
     /**
      * Security Parent.
@@ -360,7 +361,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * This is used for categories which simply own a set of security transfer sub-categories and is
      * used purely for holding purposes.
      */
-<span class="fc" id="L363">    SECURITYPARENT(64, 3),</span>
+<span class="fc" id="L364">    SECURITYPARENT(64, 3),</span>
 
     /**
      * Totals.
@@ -368,7 +369,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * This is used for the total of all non-transfer categories and is used purely for reporting
      * purposes.
      */
-<span class="fc" id="L371">    TOTALS(65, 0);</span>
+<span class="fc" id="L372">    TOTALS(65, 0);</span>
 
     /**
      * The String name.
@@ -392,31 +393,31 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @param uOrder the default order.
      */
     MoneyWiseTransCategoryClass(final int uId,
-<span class="fc" id="L395">                                final int uOrder) {</span>
-<span class="fc" id="L396">        theId = uId;</span>
-<span class="fc" id="L397">        theOrder = uOrder;</span>
-<span class="fc" id="L398">    }</span>
+<span class="fc" id="L396">                                final int uOrder) {</span>
+<span class="fc" id="L397">        theId = uId;</span>
+<span class="fc" id="L398">        theOrder = uOrder;</span>
+<span class="fc" id="L399">    }</span>
 
     @Override
     public int getClassId() {
-<span class="fc" id="L402">        return theId;</span>
+<span class="fc" id="L403">        return theId;</span>
     }
 
     @Override
     public int getOrder() {
-<span class="fc" id="L407">        return theOrder;</span>
+<span class="fc" id="L408">        return theOrder;</span>
     }
 
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="fc bfc" id="L413" title="All 2 branches covered.">        if (theName == null) {</span>
+<span class="fc bfc" id="L414" title="All 2 branches covered.">        if (theName == null) {</span>
             /* Load the name */
-<span class="fc" id="L415">            theName = MoneyWiseStaticResource.getKeyForTransType(this).getValue();</span>
+<span class="fc" id="L416">            theName = bundleIdForCategoryClass(this).getValue();</span>
         }
 
         /* return the name */
-<span class="fc" id="L419">        return theName;</span>
+<span class="fc" id="L420">        return theName;</span>
     }
 
     /**
@@ -427,12 +428,12 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @throws OceanusException on error
      */
     public static MoneyWiseTransCategoryClass fromId(final int id) throws OceanusException {
-<span class="nc bnc" id="L430" title="All 2 branches missed.">        for (MoneyWiseTransCategoryClass myClass : values()) {</span>
-<span class="nc bnc" id="L431" title="All 2 branches missed.">            if (myClass.getClassId() == id) {</span>
-<span class="nc" id="L432">                return myClass;</span>
+<span class="nc bnc" id="L431" title="All 2 branches missed.">        for (MoneyWiseTransCategoryClass myClass : values()) {</span>
+<span class="nc bnc" id="L432" title="All 2 branches missed.">            if (myClass.getClassId() == id) {</span>
+<span class="nc" id="L433">                return myClass;</span>
             }
         }
-<span class="nc" id="L435">        throw new MoneyWiseDataException(&quot;Invalid ClassId for &quot; + MoneyWiseStaticDataType.TRANSTYPE.toString() + &quot;:&quot; + id);</span>
+<span class="nc" id="L436">        throw new MoneyWiseDataException(&quot;Invalid ClassId for &quot; + MoneyWiseStaticDataType.TRANSTYPE.toString() + &quot;:&quot; + id);</span>
     }
 
     /**
@@ -441,12 +442,12 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category is hidden, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isHiddenType() {
-<span class="fc bfc" id="L444" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc bfc" id="L445" title="All 2 branches covered.">        return switch (this) {</span>
             case SHAREDIVIDEND, UNITTRUSTDIVIDEND, FOREIGNDIVIDEND, TAXFREEDIVIDEND, TAXEDINTEREST, GROSSINTEREST,
                  TAXFREEINTEREST, PEER2PEERINTEREST, TAXEDLOYALTYBONUS, GROSSLOYALTYBONUS, TAXFREELOYALTYBONUS,
                  MARKETGROWTH, CURRENCYFLUCTUATION, WITHHELD, TAXRELIEF, CHARGEABLEGAIN, RESIDENTIALGAIN, CAPITALGAIN,
-<span class="fc" id="L448">                 TAXFREEGAIN, VIRTUALINCOME, EMPLOYEENATINS, EMPLOYERNATINS, OPENINGBALANCE, TOTALS -&gt; true;</span>
-<span class="fc" id="L449">            default -&gt; false;</span>
+<span class="fc" id="L449">                 TAXFREEGAIN, VIRTUALINCOME, EMPLOYEENATINS, EMPLOYERNATINS, OPENINGBALANCE, TOTALS -&gt; true;</span>
+<span class="fc" id="L450">            default -&gt; false;</span>
         };
     }
 
@@ -456,10 +457,10 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category uses parent payee, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isSecretPayee() {
-<span class="nc bnc" id="L459" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc bnc" id="L460" title="All 2 branches missed.">        return switch (this) {</span>
             case INTEREST, DIVIDEND, CASHBACK, LOYALTYBONUS, LOANINTERESTEARNED, RENTALINCOME, ROOMRENTALINCOME,
-<span class="nc" id="L461">                 WRITEOFF, LOANINTERESTCHARGED, OPTIONSEXERCISE -&gt; true;</span>
-<span class="nc" id="L462">            default -&gt; false;</span>
+<span class="nc" id="L462">                 WRITEOFF, LOANINTERESTCHARGED, OPTIONSEXERCISE -&gt; true;</span>
+<span class="nc" id="L463">            default -&gt; false;</span>
         };
     }
 
@@ -469,10 +470,10 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category uses parent payee, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isSwitchDirection() {
-<span class="nc bnc" id="L472" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc bnc" id="L473" title="All 2 branches missed.">        return switch (this) {</span>
             case INTEREST, DIVIDEND, CASHBACK, LOYALTYBONUS, RENTALINCOME, ROOMRENTALINCOME, WRITEOFF,
-<span class="nc" id="L474">                 LOANINTERESTCHARGED, TRANSFER -&gt; true;</span>
-<span class="nc" id="L475">            default -&gt; false;</span>
+<span class="nc" id="L475">                 LOANINTERESTCHARGED, TRANSFER -&gt; true;</span>
+<span class="nc" id="L476">            default -&gt; false;</span>
         };
     }
 
@@ -483,7 +484,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * otherwise.
      */
     public boolean isSingular() {
-<span class="fc bfc" id="L486" title="All 4 branches covered.">        return INCOMETAX.equals(this) || isHiddenType();</span>
+<span class="fc bfc" id="L487" title="All 4 branches covered.">        return INCOMETAX.equals(this) || isHiddenType();</span>
     }
 
     /**
@@ -492,14 +493,14 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category is income, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isIncome() {
-<span class="fc bfc" id="L495" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc bfc" id="L496" title="All 2 branches covered.">        return switch (this) {</span>
             case TAXEDINCOME, VIRTUALINCOME, GROSSINCOME, PENSIONCONTRIB, LOYALTYBONUS, CASHBACK, OTHERINCOME,
                  RECOVEREDEXPENSES, GIFTEDINCOME, INTEREST, TAXEDINTEREST, GROSSINTEREST, TAXFREEINTEREST,
                  PEER2PEERINTEREST, DIVIDEND, SHAREDIVIDEND, UNITTRUSTDIVIDEND, FOREIGNDIVIDEND, TAXFREEDIVIDEND,
                  TAXEDLOYALTYBONUS, GROSSLOYALTYBONUS, TAXFREELOYALTYBONUS, INHERITED, LOANINTERESTEARNED, RENTALINCOME,
                  ROOMRENTALINCOME, OPTIONSEXERCISE, EMPLOYEENATINS, EMPLOYERNATINS, OPENINGBALANCE, INCOMETOTALS -&gt;
-<span class="fc" id="L501">                    true;</span>
-<span class="fc" id="L502">            default -&gt; false;</span>
+<span class="fc" id="L502">                    true;</span>
+<span class="fc" id="L503">            default -&gt; false;</span>
         };
     }
 
@@ -509,7 +510,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category is expense, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isExpense() {
-<span class="pc bpc" id="L512" title="1 of 4 branches missed.">        return !isIncome() &amp;&amp; !isTransfer();</span>
+<span class="pc bpc" id="L513" title="1 of 4 branches missed.">        return !isIncome() &amp;&amp; !isTransfer();</span>
     }
 
     /**
@@ -518,9 +519,9 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category is dilutable, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isDilutable() {
-<span class="nc bnc" id="L521" title="All 2 branches missed.">        return switch (this) {</span>
-<span class="nc" id="L522">            case STOCKSPLIT, STOCKDEMERGER -&gt; true;</span>
-<span class="nc" id="L523">            default -&gt; false;</span>
+<span class="nc bnc" id="L522" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L523">            case STOCKSPLIT, STOCKDEMERGER -&gt; true;</span>
+<span class="nc" id="L524">            default -&gt; false;</span>
         };
     }
 
@@ -530,9 +531,9 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category is dividend, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isDividend() {
-<span class="nc bnc" id="L533" title="All 2 branches missed.">        return switch (this) {</span>
-<span class="nc" id="L534">            case DIVIDEND, SHAREDIVIDEND, UNITTRUSTDIVIDEND, FOREIGNDIVIDEND, TAXFREEDIVIDEND -&gt; true;</span>
-<span class="nc" id="L535">            default -&gt; false;</span>
+<span class="nc bnc" id="L534" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L535">            case DIVIDEND, SHAREDIVIDEND, UNITTRUSTDIVIDEND, FOREIGNDIVIDEND, TAXFREEDIVIDEND -&gt; true;</span>
+<span class="nc" id="L536">            default -&gt; false;</span>
         };
     }
 
@@ -542,9 +543,9 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category is interest, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isInterest() {
-<span class="nc bnc" id="L545" title="All 2 branches missed.">        return switch (this) {</span>
-<span class="nc" id="L546">            case INTEREST, TAXEDINTEREST, GROSSINTEREST, TAXFREEINTEREST, PEER2PEERINTEREST -&gt; true;</span>
-<span class="nc" id="L547">            default -&gt; false;</span>
+<span class="nc bnc" id="L546" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L547">            case INTEREST, TAXEDINTEREST, GROSSINTEREST, TAXFREEINTEREST, PEER2PEERINTEREST -&gt; true;</span>
+<span class="nc" id="L548">            default -&gt; false;</span>
         };
     }
 
@@ -554,10 +555,10 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category needs dual units, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isStockAdjustment() {
-<span class="nc bnc" id="L557" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc bnc" id="L558" title="All 2 branches missed.">        return switch (this) {</span>
             case STOCKSPLIT, UNITSADJUST, STOCKDEMERGER, SECURITYREPLACE, STOCKTAKEOVER, PORTFOLIOXFER, OPTIONSGRANT,
-<span class="nc" id="L559">                 OPTIONSVEST, OPTIONSEXPIRE -&gt; true;</span>
-<span class="nc" id="L560">            default -&gt; false;</span>
+<span class="nc" id="L560">                 OPTIONSVEST, OPTIONSEXPIRE -&gt; true;</span>
+<span class="nc" id="L561">            default -&gt; false;</span>
         };
     }
 
@@ -567,10 +568,10 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @return &lt;code&gt;true&lt;/code&gt; if the category needs null amount, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean needsNullAmount() {
-<span class="fc bfc" id="L570" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc bfc" id="L571" title="All 2 branches covered.">        return switch (this) {</span>
             case STOCKSPLIT, UNITSADJUST, STOCKDEMERGER, STOCKTAKEOVER, PORTFOLIOXFER, OPTIONSGRANT, OPTIONSVEST,
-<span class="fc" id="L572">                 OPTIONSEXPIRE, SECURITYREPLACE -&gt; true;</span>
-<span class="fc" id="L573">            default -&gt; false;</span>
+<span class="fc" id="L573">                 OPTIONSEXPIRE, SECURITYREPLACE -&gt; true;</span>
+<span class="fc" id="L574">            default -&gt; false;</span>
         };
     }
 
@@ -581,9 +582,9 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean canParentCategory() {
-<span class="fc bfc" id="L584" title="All 2 branches covered.">        return switch (this) {</span>
-<span class="fc" id="L585">            case INCOMETOTALS, EXPENSETOTALS, SECURITYPARENT, TOTALS -&gt; true;</span>
-<span class="fc" id="L586">            default -&gt; false;</span>
+<span class="fc bfc" id="L585" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc" id="L586">            case INCOMETOTALS, EXPENSETOTALS, SECURITYPARENT, TOTALS -&gt; true;</span>
+<span class="fc" id="L587">            default -&gt; false;</span>
         };
     }
 
@@ -594,9 +595,9 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * otherwise.
      */
     public boolean isSubTotal() {
-<span class="nc bnc" id="L597" title="All 2 branches missed.">        return switch (this) {</span>
-<span class="nc" id="L598">            case INCOMETOTALS, EXPENSETOTALS, SECURITYPARENT -&gt; true;</span>
-<span class="nc" id="L599">            default -&gt; false;</span>
+<span class="nc bnc" id="L598" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L599">            case INCOMETOTALS, EXPENSETOTALS, SECURITYPARENT -&gt; true;</span>
+<span class="nc" id="L600">            default -&gt; false;</span>
         };
     }
 
@@ -606,7 +607,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @return true/false
      */
     public boolean isTransfer() {
-<span class="fc bfc" id="L609" title="All 4 branches covered.">        return this == TRANSFER || isSecurityTransfer();</span>
+<span class="fc bfc" id="L610" title="All 4 branches covered.">        return this == TRANSFER || isSecurityTransfer();</span>
     }
 
     /**
@@ -615,9 +616,9 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @return true/false
      */
     public boolean isNatInsurance() {
-<span class="fc bfc" id="L618" title="All 2 branches covered.">        return switch (this) {</span>
-<span class="fc" id="L619">            case TAXEDINCOME, PENSIONCONTRIB -&gt; true;</span>
-<span class="fc" id="L620">            default -&gt; false;</span>
+<span class="fc bfc" id="L619" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc" id="L620">            case TAXEDINCOME, PENSIONCONTRIB -&gt; true;</span>
+<span class="fc" id="L621">            default -&gt; false;</span>
         };
     }
 
@@ -627,11 +628,11 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @return true/false
      */
     public boolean isSecurityTransfer() {
-<span class="fc bfc" id="L630" title="All 2 branches covered.">        return switch (this) {</span>
+<span class="fc bfc" id="L631" title="All 2 branches covered.">        return switch (this) {</span>
             case UNITSADJUST, STOCKSPLIT, STOCKDEMERGER, SECURITYREPLACE, STOCKTAKEOVER, STOCKRIGHTSISSUE,
                  PORTFOLIOXFER, OPTIONSGRANT, OPTIONSVEST, OPTIONSEXPIRE, SECURITYCLOSURE, SECURITYPARENT,
-<span class="fc" id="L633">                 PENSIONDRAWDOWN, PENSIONTAXFREE -&gt; true;</span>
-<span class="fc" id="L634">            default -&gt; false;</span>
+<span class="fc" id="L634">                 PENSIONDRAWDOWN, PENSIONTAXFREE -&gt; true;</span>
+<span class="fc" id="L635">            default -&gt; false;</span>
         };
     }
 
@@ -641,12 +642,90 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
      * @return true/false
      */
     public boolean isSecurityClosure() {
-<span class="fc bfc" id="L644" title="All 2 branches covered.">        return this == SECURITYCLOSURE;</span>
+<span class="fc bfc" id="L645" title="All 2 branches covered.">        return this == SECURITYCLOSURE;</span>
     }
 
     @Override
     public boolean isTotals() {
-<span class="fc bfc" id="L649" title="All 2 branches covered.">        return this == TOTALS;</span>
+<span class="fc bfc" id="L650" title="All 2 branches covered.">        return this == TOTALS;</span>
+    }
+
+    /**
+     * Obtain the resource bundleId for the category class.
+     *
+     * @param pClass the category class
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForCategoryClass(final MoneyWiseTransCategoryClass pClass) {
+        /* Create the map and return it */
+<span class="pc bpc" id="L661" title="1 of 66 branches missed.">        return switch (pClass) {</span>
+<span class="fc" id="L662">            case TAXEDINCOME -&gt; MoneyWiseStaticResource.TRANSTYPE_TAXEDINCOME;</span>
+<span class="fc" id="L663">            case RENTALINCOME -&gt; MoneyWiseStaticResource.TRANSTYPE_RENTALINCOME;</span>
+<span class="fc" id="L664">            case ROOMRENTALINCOME -&gt; MoneyWiseStaticResource.TRANSTYPE_ROOMRENTINCOME;</span>
+<span class="fc" id="L665">            case INTEREST -&gt; MoneyWiseStaticResource.TRANSTYPE_INTEREST;</span>
+<span class="fc" id="L666">            case DIVIDEND -&gt; MoneyWiseStaticResource.TRANSTYPE_DIVIDEND;</span>
+<span class="fc" id="L667">            case VIRTUALINCOME -&gt; MoneyWiseStaticResource.TRANSTYPE_VIRTUALINCOME;</span>
+<span class="fc" id="L668">            case GROSSINCOME -&gt; MoneyWiseStaticResource.TRANSTYPE_GROSSINCOME;</span>
+<span class="fc" id="L669">            case PENSIONCONTRIB -&gt; MoneyWiseStaticResource.TRANSTYPE_PENSIONCONTRIB;</span>
+<span class="fc" id="L670">            case GIFTEDINCOME -&gt; MoneyWiseStaticResource.TRANSTYPE_GIFTEDINCOME;</span>
+<span class="fc" id="L671">            case INHERITED -&gt; MoneyWiseStaticResource.TRANSTYPE_INHERITED;</span>
+<span class="fc" id="L672">            case LOANINTERESTEARNED -&gt; MoneyWiseStaticResource.TRANSTYPE_LOANINTEARNED;</span>
+<span class="fc" id="L673">            case CASHBACK -&gt; MoneyWiseStaticResource.TRANSTYPE_CASHBACK;</span>
+<span class="fc" id="L674">            case LOYALTYBONUS -&gt; MoneyWiseStaticResource.TRANSTYPE_LOYALTYBONUS;</span>
+<span class="fc" id="L675">            case RECOVEREDEXPENSES -&gt; MoneyWiseStaticResource.TRANSTYPE_RECOVEREDEXPENSES;</span>
+<span class="fc" id="L676">            case OTHERINCOME -&gt; MoneyWiseStaticResource.TRANSTYPE_OTHERINCOME;</span>
+<span class="fc" id="L677">            case TRANSFER -&gt; MoneyWiseStaticResource.TRANSTYPE_TRANSFER;</span>
+<span class="fc" id="L678">            case UNITSADJUST -&gt; MoneyWiseStaticResource.TRANSTYPE_UNITSADJUST;</span>
+<span class="fc" id="L679">            case STOCKSPLIT -&gt; MoneyWiseStaticResource.TRANSTYPE_STOCKSPLIT;</span>
+<span class="fc" id="L680">            case STOCKDEMERGER -&gt; MoneyWiseStaticResource.TRANSTYPE_STOCKDEMERGER;</span>
+<span class="fc" id="L681">            case STOCKTAKEOVER -&gt; MoneyWiseStaticResource.TRANSTYPE_STOCKTAKEOVER;</span>
+<span class="fc" id="L682">            case SECURITYREPLACE -&gt; MoneyWiseStaticResource.TRANSTYPE_SECURITYREPLACE;</span>
+<span class="fc" id="L683">            case SECURITYCLOSURE -&gt; MoneyWiseStaticResource.TRANSTYPE_SECURITYCLOSURE;</span>
+<span class="fc" id="L684">            case STOCKRIGHTSISSUE -&gt; MoneyWiseStaticResource.TRANSTYPE_STOCKRIGHTSISSUE;</span>
+<span class="fc" id="L685">            case PORTFOLIOXFER -&gt; MoneyWiseStaticResource.TRANSTYPE_PORTFOLIOXFER;</span>
+<span class="fc" id="L686">            case OPTIONSGRANT -&gt; MoneyWiseStaticResource.TRANSTYPE_OPTIONSGRANT;</span>
+<span class="fc" id="L687">            case OPTIONSVEST -&gt; MoneyWiseStaticResource.TRANSTYPE_OPTIONSVEST;</span>
+<span class="fc" id="L688">            case OPTIONSEXPIRE -&gt; MoneyWiseStaticResource.TRANSTYPE_OPTIONSEXPIRE;</span>
+<span class="fc" id="L689">            case OPTIONSEXERCISE -&gt; MoneyWiseStaticResource.TRANSTYPE_OPTIONSEXERCISE;</span>
+<span class="fc" id="L690">            case PENSIONDRAWDOWN -&gt; MoneyWiseStaticResource.TRANSTYPE_PENSIONDRAWDOWN;</span>
+<span class="fc" id="L691">            case PENSIONTAXFREE -&gt; MoneyWiseStaticResource.TRANSTYPE_PENSIONTAXFREE;</span>
+<span class="fc" id="L692">            case EXPENSE -&gt; MoneyWiseStaticResource.TRANSTYPE_EXPENSE;</span>
+<span class="fc" id="L693">            case BADDEBTCAPITAL -&gt; MoneyWiseStaticResource.TRANSTYPE_BADDEBTCAPITAL;</span>
+<span class="fc" id="L694">            case BADDEBTINTEREST -&gt; MoneyWiseStaticResource.TRANSTYPE_BADDEBTINTEREST;</span>
+<span class="fc" id="L695">            case LOCALTAXES -&gt; MoneyWiseStaticResource.TRANSTYPE_LOCALTAXES;</span>
+<span class="fc" id="L696">            case WRITEOFF -&gt; MoneyWiseStaticResource.TRANSTYPE_WRITEOFF;</span>
+<span class="fc" id="L697">            case RENTALEXPENSE -&gt; MoneyWiseStaticResource.TRANSTYPE_RENTALEXPENSE;</span>
+<span class="fc" id="L698">            case ANNUITYPURCHASE -&gt; MoneyWiseStaticResource.TRANSTYPE_ANNUITYPURCHASE;</span>
+<span class="fc" id="L699">            case LOANINTERESTCHARGED -&gt; MoneyWiseStaticResource.TRANSTYPE_LOANINTCHARGE;</span>
+<span class="fc" id="L700">            case TAXRELIEF -&gt; MoneyWiseStaticResource.TRANSTYPE_TAXRELIEF;</span>
+<span class="fc" id="L701">            case INCOMETAX -&gt; MoneyWiseStaticResource.TRANSTYPE_INCOMETAX;</span>
+<span class="fc" id="L702">            case TAXEDINTEREST -&gt; MoneyWiseStaticResource.TRANSTYPE_TAXEDINTEREST;</span>
+<span class="fc" id="L703">            case TAXFREEINTEREST -&gt; MoneyWiseStaticResource.TRANSTYPE_TAXFREEINTEREST;</span>
+<span class="fc" id="L704">            case PEER2PEERINTEREST -&gt; MoneyWiseStaticResource.TRANSTYPE_PEER2PEERINTEREST;</span>
+<span class="fc" id="L705">            case GROSSINTEREST -&gt; MoneyWiseStaticResource.TRANSTYPE_GROSSINTEREST;</span>
+<span class="fc" id="L706">            case SHAREDIVIDEND -&gt; MoneyWiseStaticResource.TRANSTYPE_SHAREDIVIDEND;</span>
+<span class="fc" id="L707">            case UNITTRUSTDIVIDEND -&gt; MoneyWiseStaticResource.TRANSTYPE_UTDIVIDEND;</span>
+<span class="fc" id="L708">            case FOREIGNDIVIDEND -&gt; MoneyWiseStaticResource.TRANSTYPE_FOREIGNDIVIDEND;</span>
+<span class="fc" id="L709">            case TAXFREEDIVIDEND -&gt; MoneyWiseStaticResource.TRANSTYPE_TAXFREEDIVIDEND;</span>
+<span class="fc" id="L710">            case TAXEDLOYALTYBONUS -&gt; MoneyWiseStaticResource.TRANSTYPE_TAXEDLOYALTYBONUS;</span>
+<span class="fc" id="L711">            case GROSSLOYALTYBONUS -&gt; MoneyWiseStaticResource.TRANSTYPE_GROSSLOYALTYBONUS;</span>
+<span class="fc" id="L712">            case TAXFREELOYALTYBONUS -&gt; MoneyWiseStaticResource.TRANSTYPE_TAXFREELOYALTYBONUS;</span>
+<span class="fc" id="L713">            case CHARGEABLEGAIN -&gt; MoneyWiseStaticResource.TRANSTYPE_CHARGEABLEGAIN;</span>
+<span class="fc" id="L714">            case TAXFREEGAIN -&gt; MoneyWiseStaticResource.TRANSTYPE_TAXFREEGAIN;</span>
+<span class="fc" id="L715">            case RESIDENTIALGAIN -&gt; MoneyWiseStaticResource.TRANSTYPE_RESIDENTIALGAIN;</span>
+<span class="fc" id="L716">            case CAPITALGAIN -&gt; MoneyWiseStaticResource.TRANSTYPE_CAPITALGAIN;</span>
+<span class="fc" id="L717">            case MARKETGROWTH -&gt; MoneyWiseStaticResource.TRANSTYPE_MARKETGROWTH;</span>
+<span class="fc" id="L718">            case CURRENCYFLUCTUATION -&gt; MoneyWiseStaticResource.TRANSTYPE_CURRFLUCT;</span>
+<span class="fc" id="L719">            case WITHHELD -&gt; MoneyWiseStaticResource.TRANSTYPE_WITHHELD;</span>
+<span class="fc" id="L720">            case EMPLOYERNATINS -&gt; MoneyWiseStaticResource.TRANSTYPE_EMPLOYERNATINS;</span>
+<span class="fc" id="L721">            case EMPLOYEENATINS -&gt; MoneyWiseStaticResource.TRANSTYPE_EMPLOYEENATINS;</span>
+<span class="fc" id="L722">            case OPENINGBALANCE -&gt; MoneyWiseStaticResource.TRANSTYPE_OPENINGBALANCE;</span>
+<span class="fc" id="L723">            case INCOMETOTALS -&gt; MoneyWiseStaticResource.TRANSTYPE_INCOMETOTALS;</span>
+<span class="fc" id="L724">            case EXPENSETOTALS -&gt; MoneyWiseStaticResource.TRANSTYPE_EXPENSETOTALS;</span>
+<span class="fc" id="L725">            case SECURITYPARENT -&gt; MoneyWiseStaticResource.TRANSTYPE_SECURITYPARENT;</span>
+<span class="fc" id="L726">            case TOTALS -&gt; MoneyWiseStaticResource.TRANSTYPE_TOTALS;</span>
+<span class="nc" id="L727">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

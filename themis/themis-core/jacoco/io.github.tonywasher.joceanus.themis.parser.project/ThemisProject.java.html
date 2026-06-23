@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisProject.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.parser.project</a> &gt; <span class="el_source">ThemisProject.java</span></div><h1>ThemisProject.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.parser.project;
+
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisParserDef;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenId;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenParser;
+import io.github.tonywasher.joceanus.themis.parser.maven.ThemisMavenPom;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Project.
+ */
+public class ThemisProject
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L45">    private static final MetisFieldSet&lt;ThemisProject&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisProject.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L51">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_NAME, ThemisProject::getName);</span>
+<span class="fc" id="L52">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_MODULES, ThemisProject::getModules);</span>
+<span class="fc" id="L53">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PARSEDMODULES, ThemisProject::getParsedModules);</span>
+<span class="fc" id="L54">    }</span>
+
+    /**
+     * The project name.
+     */
+    private final String theName;
+
+    /**
+     * The location.
+     */
+    private final File theLocation;
+
+    /**
+     * The parser.
+     */
+    private final ThemisParserDef theParser;
+
+    /**
+     * The module map.
+     */
+    private final Map&lt;ThemisMavenId, ThemisModule&gt; theModules;
+
+    /**
+     * The dependencies.
+     */
+    private final List&lt;ThemisMavenId&gt; theDependencies;
+
+    /**
+     * The list of local modules.
+     */
+    private final List&lt;ThemisMavenPom&gt; theParsedModules;
+
+    /**
+     * Constructor.
+     *
+     * @param pParser   the parser
+     * @param pLocation the project location
+     * @throws OceanusException on error
+     */
+    public ThemisProject(final ThemisParserDef pParser,
+<span class="fc" id="L94">                         final File pLocation) throws OceanusException {</span>
+        /* Store the parser and location */
+<span class="fc" id="L96">        theParser = pParser;</span>
+<span class="fc" id="L97">        theLocation = pLocation;</span>
+
+        /* Create the list */
+<span class="fc" id="L100">        theModules = new LinkedHashMap&lt;&gt;();</span>
+
+        /* Build new Maven Map */
+<span class="fc" id="L103">        final ThemisMavenParser myParser = new ThemisMavenParser(theParser.getReporter(), theLocation);</span>
+<span class="fc" id="L104">        theName = myParser.getName();</span>
+<span class="fc" id="L105">        theParsedModules = myParser.getParsedModules();</span>
+<span class="fc" id="L106">        theDependencies = myParser.getProjectDependencies();</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        for (ThemisMavenPom myModule : theParsedModules) {</span>
+<span class="fc" id="L108">            theModules.put(myModule.getId(), new ThemisModule(myModule));</span>
+<span class="fc" id="L109">        }</span>
+
+        /* Remove own mavenIds from dependency list */
+<span class="fc" id="L112">        theDependencies.removeIf(theModules::containsKey);</span>
+<span class="fc" id="L113">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisProject&gt; getDataFieldSet() {
+<span class="nc" id="L117">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L122">        return toString();</span>
+    }
+
+    /**
+     * Obtain the name.
+     *
+     * @return the name
+     */
+    public String getName() {
+<span class="nc" id="L131">        return theName;</span>
+    }
+
+    /**
+     * Obtain the location.
+     *
+     * @return the location
+     */
+    File getLocation() {
+<span class="nc" id="L140">        return theLocation;</span>
+    }
+
+    /**
+     * Obtain the modules.
+     *
+     * @return the modules
+     */
+    public List&lt;ThemisModule&gt; getModules() {
+<span class="fc" id="L149">        return new ArrayList&lt;&gt;(theModules.values());</span>
+    }
+
+    /**
+     * Obtain the modules.
+     *
+     * @return the modules
+     */
+    private List&lt;ThemisMavenPom&gt; getParsedModules() {
+<span class="nc" id="L158">        return theParsedModules;</span>
+    }
+
+    /**
+     * Obtain the dependencies.
+     *
+     * @return the dependencies
+     */
+    public List&lt;ThemisMavenId&gt; getDependencies() {
+<span class="fc" id="L167">        return theDependencies;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L172">        return theName;</span>
+    }
+
+    /**
+     * parse the java code.
+     *
+     * @throws OceanusException on error
+     */
+    public void parseJavaCode() throws OceanusException {
+        /* Obtain the reporter */
+<span class="fc" id="L182">        final TethysUIThreadStatusReport myReport = theParser.getReporter();</span>
+<span class="fc" id="L183">        myReport.initTask(ThemisDataResource.TASK_PARSECODE);</span>
+<span class="fc" id="L184">        myReport.setNumStages(theModules.size());</span>
+
+        /* Obtain the active profile */
+<span class="fc" id="L187">        OceanusProfile myTask = myReport.getActiveTask();</span>
+<span class="fc" id="L188">        myTask = myTask.startTask(ThemisDataResource.TASK_PARSECODE);</span>
+
+        /* Loop through the modules */
+<span class="fc bfc" id="L191" title="All 2 branches covered.">        for (ThemisModule myModule : theModules.values()) {</span>
+            /* Process the module */
+<span class="fc" id="L193">            final String myName = myModule.getName();</span>
+<span class="fc" id="L194">            myTask.startTask(myName);</span>
+<span class="fc" id="L195">            myReport.setNewStage(myName);</span>
+<span class="fc" id="L196">            myReport.setNumSteps(1);</span>
+<span class="fc" id="L197">            myReport.setNextStep();</span>
+<span class="fc" id="L198">            myModule.parseJavaCode(theParser);</span>
+<span class="fc" id="L199">        }</span>
+
+        /* End the task */
+<span class="fc" id="L202">        myTask.end();</span>
+<span class="fc" id="L203">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

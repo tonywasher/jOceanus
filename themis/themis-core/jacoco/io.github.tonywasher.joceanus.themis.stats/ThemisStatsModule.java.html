@@ -16,9 +16,12 @@
  */
 package io.github.tonywasher.joceanus.themis.stats;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisModule;
-import io.github.tonywasher.joceanus.themis.parser.proj.ThemisPackage;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisModule;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisPackage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,20 @@ import java.util.List;
  */
 public class ThemisStatsModule
         implements ThemisStatsElement {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L37">    private static final MetisFieldSet&lt;ThemisStatsModule&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisStatsModule.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L43">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_PACKAGES, ThemisStatsModule::getPackages);</span>
+<span class="fc" id="L44">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_UNDERLYING, ThemisStatsModule::getUnderlying);</span>
+<span class="fc" id="L45">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_STATS, ThemisStatsModule::getStats);</span>
+<span class="fc" id="L46">    }</span>
+
     /**
      * The underlying module.
      */
@@ -49,29 +66,39 @@ public class ThemisStatsModule
      * @param pModule the parsed module
      * @throws OceanusException on error
      */
-<span class="fc" id="L52">    ThemisStatsModule(final ThemisModule pModule) throws OceanusException {</span>
+<span class="fc" id="L69">    ThemisStatsModule(final ThemisModule pModule) throws OceanusException {</span>
         /* Store the parameters */
-<span class="fc" id="L54">        theModule = pModule;</span>
+<span class="fc" id="L71">        theModule = pModule;</span>
 
         /* Create the stats */
-<span class="fc" id="L57">        theStats = new ThemisStats();</span>
+<span class="fc" id="L74">        theStats = new ThemisStats();</span>
 
         /* Create the list and map */
-<span class="fc" id="L60">        thePackages = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L77">        thePackages = new ArrayList&lt;&gt;();</span>
 
         /* Initialise the packages */
-<span class="fc bfc" id="L63" title="All 2 branches covered.">        for (ThemisPackage myPackage : theModule.getPackages()) {</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        for (ThemisPackage myPackage : theModule.getPackages()) {</span>
             /* Only deal with non-placeholders */
-<span class="pc bpc" id="L65" title="1 of 2 branches missed.">            if (!myPackage.isPlaceHolder()) {</span>
-<span class="fc" id="L66">                final ThemisStatsPackage myStatsPackage = new ThemisStatsPackage(myPackage);</span>
-<span class="fc" id="L67">                thePackages.add(myStatsPackage);</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">            if (!myPackage.isPlaceHolder()) {</span>
+<span class="fc" id="L83">                final ThemisStatsPackage myStatsPackage = new ThemisStatsPackage(myPackage);</span>
+<span class="fc" id="L84">                thePackages.add(myStatsPackage);</span>
             }
-<span class="fc" id="L69">        }</span>
-<span class="fc" id="L70">    }</span>
+<span class="fc" id="L86">        }</span>
+<span class="fc" id="L87">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisStatsModule&gt; getDataFieldSet() {
+<span class="nc" id="L91">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L96">        return toString();</span>
+    }
 
     @Override
     public String getName() {
-<span class="nc" id="L74">        return theModule.getName();</span>
+<span class="nc" id="L101">        return theModule.getName();</span>
     }
 
     /**
@@ -80,12 +107,12 @@ public class ThemisStatsModule
      * @return the module
      */
     public ThemisModule getUnderlying() {
-<span class="nc" id="L83">        return theModule;</span>
+<span class="nc" id="L110">        return theModule;</span>
     }
 
     @Override
     public ThemisStats getStats() {
-<span class="nc" id="L88">        return theStats;</span>
+<span class="nc" id="L115">        return theStats;</span>
     }
 
     /**
@@ -94,12 +121,12 @@ public class ThemisStatsModule
      * @return the packages
      */
     public List&lt;ThemisStatsPackage&gt; getPackages() {
-<span class="nc" id="L97">        return thePackages;</span>
+<span class="nc" id="L124">        return thePackages;</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L102">        return theModule.toString();</span>
+<span class="nc" id="L129">        return theModule.toString();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

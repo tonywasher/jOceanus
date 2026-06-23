@@ -29,7 +29,7 @@ import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
 import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIFileSelector;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
-import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.io.File;
 
@@ -63,13 +63,13 @@ public class PrometheusThreadLoadXMLFile
     }
 
     @Override
-    public PrometheusDataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
+    public PrometheusDataSet performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Access the thread manager */
-<span class="nc" id="L68">        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();</span>
+<span class="nc" id="L68">        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pReport.getThreadData();</span>
 <span class="nc" id="L69">        final PrometheusSecurityPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();</span>
 
         /* Initialise the status window */
-<span class="nc" id="L72">        pManager.initTask(getTaskName());</span>
+<span class="nc" id="L72">        pReport.initTask(getTaskName());</span>
 
         /* Access the Sheet preferences */
 <span class="nc" id="L75">        final MetisPreferenceManager myMgr = theControl.getPreferenceManager();</span>
@@ -82,52 +82,53 @@ public class PrometheusThreadLoadXMLFile
 <span class="nc" id="L82">        final TethysUIFileSelector myDialog = myPromToolkit.getToolkit().getGuiFactory().dialogFactory().newFileSelector();</span>
 <span class="nc" id="L83">        myDialog.setTitle(TASK_SELECTFILE);</span>
 <span class="nc" id="L84">        myDialog.setInitialDirectory(myBackupDir);</span>
-<span class="nc" id="L85">        myDialog.setExtension(GordianUtilities.SECUREZIPFILE_EXT);</span>
-<span class="nc" id="L86">        final File myFile = myDialog.selectFile();</span>
+<span class="nc" id="L85">        myDialog.addExtension(GordianUtilities.SECUREZIPFILE_EXT);</span>
+<span class="nc" id="L86">        myDialog.addExtension(GordianUtilities.ZIPFILE_EXT);</span>
+<span class="nc" id="L87">        final File myFile = myDialog.selectFile();</span>
 
         /* If we did not select a file */
-<span class="nc bnc" id="L89" title="All 2 branches missed.">        if (myFile == null) {</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if (myFile == null) {</span>
             /* Throw cancelled exception */
-<span class="nc" id="L91">            pManager.throwCancelException();</span>
+<span class="nc" id="L92">            pReport.throwCancelException();</span>
         }
 
         /* Create a new formatter */
-<span class="nc" id="L95">        final PrometheusDataValuesFormatter myFormatter = new PrometheusDataValuesFormatter(pManager, myPasswordMgr);</span>
+<span class="nc" id="L96">        final PrometheusDataValuesFormatter myFormatter = new PrometheusDataValuesFormatter(pReport, myPasswordMgr);</span>
 
         /* Load data */
-<span class="nc" id="L98">        final PrometheusDataSet myNewData = theControl.getNewData();</span>
-<span class="nc" id="L99">        myFormatter.loadZipFile(myNewData, myFile);</span>
+<span class="nc" id="L99">        final PrometheusDataSet myNewData = theControl.getNewData();</span>
+<span class="nc" id="L100">        myFormatter.loadZipFile(myNewData, myFile);</span>
 
         /* Create interface */
-<span class="nc" id="L102">        final PrometheusDataStore myDatabase = theControl.getDatabase();</span>
+<span class="nc" id="L103">        final PrometheusDataStore myDatabase = theControl.getDatabase();</span>
 
         /* Load underlying database */
-<span class="nc" id="L105">        final PrometheusDataSet myStore = theControl.getNewData();</span>
-<span class="nc" id="L106">        myDatabase.loadDatabase(pManager, myStore);</span>
+<span class="nc" id="L106">        final PrometheusDataSet myStore = theControl.getNewData();</span>
+<span class="nc" id="L107">        myDatabase.loadDatabase(pReport, myStore);</span>
 
         /* Check security on the database */
-<span class="nc" id="L109">        myStore.checkSecurity(pManager);</span>
-<span class="nc bnc" id="L110" title="All 2 branches missed.">        if (myStore.hasUpdates()) {</span>
+<span class="nc" id="L110">        myStore.checkSecurity(pReport);</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        if (myStore.hasUpdates()) {</span>
             /* Store any updates */
-<span class="nc" id="L112">            myDatabase.updateDatabase(pManager, myStore);</span>
+<span class="nc" id="L113">            myDatabase.updateDatabase(pReport, myStore);</span>
         }
 
         /* Initialise the security, either from database or with a new security control */
-<span class="nc" id="L116">        myNewData.initialiseSecurity(pManager, myStore);</span>
+<span class="nc" id="L117">        myNewData.initialiseSecurity(pReport, myStore);</span>
 
         /* Re-base the loaded backup onto the database image */
-<span class="nc" id="L119">        myNewData.reBase(pManager, myStore);</span>
+<span class="nc" id="L120">        myNewData.reBase(pReport, myStore);</span>
 
         /* State that we have completed */
-<span class="nc" id="L122">        pManager.setCompletion();</span>
+<span class="nc" id="L123">        pReport.setCompletion();</span>
 
         /* Return the Data */
-<span class="nc" id="L125">        return myNewData;</span>
+<span class="nc" id="L126">        return myNewData;</span>
     }
 
     @Override
     public void processResult(final PrometheusDataSet pResult) {
-<span class="nc" id="L130">        theControl.setData(pResult);</span>
-<span class="nc" id="L131">    }</span>
+<span class="nc" id="L131">        theControl.setData(pResult);</span>
+<span class="nc" id="L132">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

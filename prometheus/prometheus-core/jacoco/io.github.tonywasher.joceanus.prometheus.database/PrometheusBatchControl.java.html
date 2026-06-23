@@ -16,14 +16,15 @@
  */
 package io.github.tonywasher.joceanus.prometheus.database;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataState;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-
-import io.github.tonywasher.joceanus.metis.data.MetisDataState;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
+import java.util.Objects;
 
 /**
  * Batch control class. This controls updating data lists after the commit of the batch.
@@ -42,12 +43,12 @@ public class PrometheusBatchControl {
     /**
      * The List of tables associated with this batch.
      */
-    private List&lt;PrometheusBatchTable&gt; theList;
+    private final List&lt;PrometheusBatchTable&gt; theList;
 
     /**
      * The Currently active Database table.
      */
-    private PrometheusTableDataItem&lt;?&gt; theCurrTable;
+    private PrometheusTableInstance&lt;?&gt; theCurrTable;
 
     /**
      * The Currently active Mode.
@@ -64,13 +65,13 @@ public class PrometheusBatchControl {
      *
      * @param pBatchSize the batch size
      */
-<span class="nc" id="L67">    protected PrometheusBatchControl(final Integer pBatchSize) {</span>
+<span class="nc" id="L68">    protected PrometheusBatchControl(final Integer pBatchSize) {</span>
         /* Create the batch table list */
-<span class="nc" id="L69">        theList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L70">        theList = new ArrayList&lt;&gt;();</span>
 
         /* Store capacity and capacity */
-<span class="nc" id="L72">        theCapacity = pBatchSize;</span>
-<span class="nc" id="L73">    }</span>
+<span class="nc" id="L73">        theCapacity = pBatchSize;</span>
+<span class="nc" id="L74">    }</span>
 
     /**
      * Is the batch full.
@@ -78,7 +79,7 @@ public class PrometheusBatchControl {
      * @return true/false is the batch full
      */
     protected boolean isFull() {
-<span class="nc bnc" id="L81" title="All 4 branches missed.">        return theCapacity != 0</span>
+<span class="nc bnc" id="L82" title="All 4 branches missed.">        return theCapacity != 0</span>
                 &amp;&amp; theItems &gt;= theCapacity;
     }
 
@@ -88,7 +89,7 @@ public class PrometheusBatchControl {
      * @return true/false is the batch active
      */
     protected boolean isActive() {
-<span class="nc bnc" id="L91" title="All 2 branches missed.">        return theItems &gt;= 0;</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        return theItems &gt;= 0;</span>
     }
 
     /**
@@ -97,60 +98,54 @@ public class PrometheusBatchControl {
      * @param pTable the Table being operated on
      * @param pMode  the Mode that is in operation
      */
-    protected void setCurrentTable(final PrometheusTableDataItem&lt;?&gt; pTable,
+    protected void setCurrentTable(final PrometheusTableInstance&lt;?&gt; pTable,
                                    final MetisDataState pMode) {
         /* Store details */
-<span class="nc" id="L103">        theCurrTable = pTable;</span>
-<span class="nc" id="L104">        theCurrMode = pMode;</span>
-<span class="nc" id="L105">        isTableActive = false;</span>
-<span class="nc" id="L106">    }</span>
+<span class="nc" id="L104">        theCurrTable = pTable;</span>
+<span class="nc" id="L105">        theCurrMode = pMode;</span>
+<span class="nc" id="L106">        isTableActive = false;</span>
+<span class="nc" id="L107">    }</span>
 
     /**
      * Add item to the batch.
      */
     protected void addBatchItem() {
         /* Increment batch count */
-<span class="nc" id="L113">        theItems++;</span>
+<span class="nc" id="L114">        theItems++;</span>
 
         /* If the current table is not active */
-<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (!isTableActive) {</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        if (!isTableActive) {</span>
             /* Create the batch entry */
-<span class="nc" id="L118">            final PrometheusBatchTable myTable = new PrometheusBatchTable();</span>
+<span class="nc" id="L119">            final PrometheusBatchTable myTable = new PrometheusBatchTable();</span>
 
             /* Add to the batch list */
-<span class="nc" id="L121">            theList.add(myTable);</span>
-<span class="nc" id="L122">            isTableActive = true;</span>
+<span class="nc" id="L122">            theList.add(myTable);</span>
+<span class="nc" id="L123">            isTableActive = true;</span>
         }
-<span class="nc" id="L124">    }</span>
+<span class="nc" id="L125">    }</span>
 
     /**
      * Commit the batch.
      */
     protected void commitItems() {
         /* Access iterator for the list */
-<span class="nc" id="L131">        final Iterator&lt;PrometheusBatchTable&gt; myIterator = theList.iterator();</span>
 
         /* Loop through the items */
-<span class="nc bnc" id="L134" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        for (PrometheusBatchTable myTable : theList) {</span>
             /* Access the next entry */
-<span class="nc" id="L136">            final PrometheusBatchTable myTable = myIterator.next();</span>
-
             /* Commit batch items in the table */
-<span class="nc bnc" id="L139" title="All 2 branches missed.">            switch (myTable.theState) {</span>
-                case DELETED:
-<span class="nc" id="L141">                    myTable.commitDeleteBatch();</span>
-<span class="nc" id="L142">                    break;</span>
-                default:
-<span class="nc" id="L144">                    myTable.commitBatch();</span>
-                    break;
+<span class="nc bnc" id="L137" title="All 2 branches missed.">            if (Objects.requireNonNull(myTable.theState) == MetisDataState.DELETED) {</span>
+<span class="nc" id="L138">                myTable.commitDeleteBatch();</span>
+            } else {
+<span class="nc" id="L140">                myTable.commitBatch();</span>
             }
-<span class="nc" id="L147">        }</span>
+<span class="nc" id="L142">        }</span>
 
         /* Clear the list */
-<span class="nc" id="L150">        theList.clear();</span>
-<span class="nc" id="L151">        isTableActive = false;</span>
-<span class="nc" id="L152">        theItems = 0;</span>
-<span class="nc" id="L153">    }</span>
+<span class="nc" id="L145">        theList.clear();</span>
+<span class="nc" id="L146">        isTableActive = false;</span>
+<span class="nc" id="L147">        theItems = 0;</span>
+<span class="nc" id="L148">    }</span>
 
     /**
      * Table step.
@@ -159,7 +154,7 @@ public class PrometheusBatchControl {
         /**
          * The table that is being controlled.
          */
-        private final PrometheusTableDataItem&lt;?&gt; theTable;
+        private final PrometheusTableInstance&lt;?&gt; theTable;
 
         /**
          * The State of the table.
@@ -169,60 +164,52 @@ public class PrometheusBatchControl {
         /**
          * Constructor.
          */
-<span class="nc" id="L172">        private PrometheusBatchTable() {</span>
+<span class="nc" id="L167">        private PrometheusBatchTable() {</span>
             /* Store the details */
-<span class="nc" id="L174">            theTable = theCurrTable;</span>
-<span class="nc" id="L175">            theState = theCurrMode;</span>
-<span class="nc" id="L176">        }</span>
+<span class="nc" id="L169">            theTable = theCurrTable;</span>
+<span class="nc" id="L170">            theState = theCurrMode;</span>
+<span class="nc" id="L171">        }</span>
 
         /**
          * Mark updates in the table as committed for insert/change.
          */
         private void commitBatch() {
             /* Access the iterator */
-<span class="nc" id="L183">            final Iterator&lt;?&gt; myIterator = theTable.getList().iterator();</span>
+<span class="nc" id="L178">            final Iterator&lt;?&gt; myIterator = theTable.getList().iterator();</span>
 
             /* Loop through the list */
-<span class="nc bnc" id="L186" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
-<span class="nc" id="L187">                final PrometheusDataItem myCurr = (PrometheusDataItem) myIterator.next();</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L182">                final PrometheusDataItem myCurr = (PrometheusDataItem) myIterator.next();</span>
 
-                /* Ignore items that are not this type */
-<span class="nc bnc" id="L190" title="All 2 branches missed.">                if (myCurr.getState() != theState) {</span>
-<span class="nc" id="L191">                    continue;</span>
+                /* Ignore items that are not this type, otherwise commit and break if required */
+<span class="nc bnc" id="L185" title="All 2 branches missed.">                if (myCurr.getState() == theState</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">                        &amp;&amp; commitItem(myCurr)) {</span>
+<span class="nc" id="L187">                    break;</span>
                 }
-
-                /* Commit the item and break loop if required */
-<span class="nc bnc" id="L195" title="All 2 branches missed.">                if (commitItem(myCurr)) {</span>
-<span class="nc" id="L196">                    break;</span>
-                }
-<span class="nc" id="L198">            }</span>
-<span class="nc" id="L199">        }</span>
+<span class="nc" id="L189">            }</span>
+<span class="nc" id="L190">        }</span>
 
         /**
          * Mark updates in the table as committed for delete.
          */
         private void commitDeleteBatch() {
             /* Access the iterator */
-<span class="nc" id="L206">            final PrometheusDataList&lt;?&gt; myList = theTable.getList();</span>
-<span class="nc" id="L207">            final ListIterator&lt;?&gt; myIterator = myList.listIterator(myList.size());</span>
+<span class="nc" id="L197">            final PrometheusDataList&lt;?&gt; myList = theTable.getList();</span>
+<span class="nc" id="L198">            final ListIterator&lt;?&gt; myIterator = myList.listIterator(myList.size());</span>
 
             /* Loop through the list */
-<span class="nc bnc" id="L210" title="All 2 branches missed.">            while (myIterator.hasPrevious()) {</span>
-<span class="nc" id="L211">                final PrometheusDataItem myCurr = (PrometheusDataItem) myIterator.previous();</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">            while (myIterator.hasPrevious()) {</span>
+<span class="nc" id="L202">                final PrometheusDataItem myCurr = (PrometheusDataItem) myIterator.previous();</span>
 
-                /* Ignore items that are not this type */
-<span class="nc" id="L214">                final MetisDataState myState = myCurr.getState();</span>
-<span class="nc bnc" id="L215" title="All 4 branches missed.">                if ((myState != MetisDataState.DELETED)</span>
-                        &amp;&amp; (myState != MetisDataState.DELNEW)) {
-<span class="nc" id="L217">                    continue;</span>
+                /* Ignore items that are not this type, otherwise commit and break if necessary */
+<span class="nc" id="L205">                final MetisDataState myState = myCurr.getState();</span>
+<span class="nc bnc" id="L206" title="All 4 branches missed.">                if ((myState == MetisDataState.DELETED</span>
+                        || myState == MetisDataState.DELNEW)
+<span class="nc bnc" id="L208" title="All 2 branches missed.">                        &amp;&amp; commitItem(myCurr)) {</span>
+<span class="nc" id="L209">                    break;</span>
                 }
-
-                /* Commit the item and break loop if required */
-<span class="nc bnc" id="L221" title="All 2 branches missed.">                if (commitItem(myCurr)) {</span>
-<span class="nc" id="L222">                    break;</span>
-                }
-<span class="nc" id="L224">            }</span>
-<span class="nc" id="L225">        }</span>
+<span class="nc" id="L211">            }</span>
+<span class="nc" id="L212">        }</span>
 
         /**
          * Mark an item in the table as committed.
@@ -232,30 +219,30 @@ public class PrometheusBatchControl {
          */
         private boolean commitItem(final PrometheusDataItem pItem) {
             /* Access the underlying element */
-<span class="nc" id="L235">            final PrometheusDataItem myBase = pItem.getBase();</span>
+<span class="nc" id="L222">            final PrometheusDataItem myBase = pItem.getBase();</span>
 
             /* If we are handling deletions */
-<span class="nc bnc" id="L238" title="All 2 branches missed.">            if (theState == MetisDataState.DELETED) {</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">            if (theState == MetisDataState.DELETED) {</span>
                 /* Unlink the underlying item */
-<span class="nc" id="L240">                myBase.unLink();</span>
+<span class="nc" id="L227">                myBase.unLink();</span>
 
                 /* Remove any registration */
-<span class="nc" id="L243">                myBase.deRegister();</span>
+<span class="nc" id="L230">                myBase.deRegister();</span>
 
                 /* else we are handling new/changed items */
             } else {
                 /* Clear the history */
-<span class="nc" id="L248">                myBase.clearHistory();</span>
+<span class="nc" id="L235">                myBase.clearHistory();</span>
             }
 
             /* Mark this item as clean */
-<span class="nc" id="L252">            pItem.clearHistory();</span>
+<span class="nc" id="L239">            pItem.clearHistory();</span>
 
             /* If we have to worry about batch space */
             /* Adjust batch and note if we are finished */
-<span class="nc bnc" id="L256" title="All 4 branches missed.">            return theCapacity &gt; 0</span>
+<span class="nc bnc" id="L243" title="All 4 branches missed.">            return theCapacity &gt; 0</span>
                     &amp;&amp; --theItems == 0;
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

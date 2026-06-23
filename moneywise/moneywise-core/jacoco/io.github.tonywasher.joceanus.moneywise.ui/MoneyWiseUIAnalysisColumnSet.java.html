@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseUIAnalysisColumnSet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.ui</a> &gt; <span class="el_source">MoneyWiseUIAnalysisColumnSet.java</span></div><h1>MoneyWiseUIAnalysisColumnSet.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.ui;
+
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+
+/**
+ * Analysis Column Sets.
+ */
+<span class="nc" id="L24">public enum MoneyWiseUIAnalysisColumnSet {</span>
+    /**
+     * Balance.
+     */
+<span class="nc" id="L28">    BALANCE,</span>
+
+    /**
+     * Standard.
+     */
+<span class="nc" id="L33">    STANDARD,</span>
+
+    /**
+     * Salary.
+     */
+<span class="nc" id="L38">    SALARY,</span>
+
+    /**
+     * Interest.
+     */
+<span class="nc" id="L43">    INTEREST,</span>
+
+    /**
+     * Dividend.
+     */
+<span class="nc" id="L48">    DIVIDEND,</span>
+
+    /**
+     * Security.
+     */
+<span class="nc" id="L53">    SECURITY,</span>
+
+    /**
+     * All.
+     */
+<span class="nc" id="L58">    ALL;</span>
+
+    /**
+     * Report Name.
+     */
+    private String theName;
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (theName == null) {</span>
+            /* Load the name */
+<span class="nc" id="L70">            theName = bundleIdForColumnSet(this).getValue();</span>
+        }
+
+        /* return the name */
+<span class="nc" id="L74">        return theName;</span>
+    }
+
+    /**
+     * Is this the balance set?
+     *
+     * @return true/false
+     */
+    public boolean isBalance() {
+<span class="nc" id="L83">        return BALANCE.equals(this);</span>
+    }
+
+    /**
+     * Obtain the resource bundleId for the set.
+     *
+     * @param pSet the set
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForColumnSet(final MoneyWiseUIAnalysisColumnSet pSet) {
+<span class="nc bnc" id="L93" title="All 8 branches missed.">        return switch (pSet) {</span>
+<span class="nc" id="L94">            case BALANCE -&gt; MoneyWiseUIResource.COLUMNSET_BALANCE;</span>
+<span class="nc" id="L95">            case STANDARD -&gt; MoneyWiseUIResource.COLUMNSET_STANDARD;</span>
+<span class="nc" id="L96">            case SALARY -&gt; MoneyWiseUIResource.COLUMNSET_SALARY;</span>
+<span class="nc" id="L97">            case INTEREST -&gt; MoneyWiseUIResource.COLUMNSET_INTEREST;</span>
+<span class="nc" id="L98">            case DIVIDEND -&gt; MoneyWiseUIResource.COLUMNSET_DIVIDEND;</span>
+<span class="nc" id="L99">            case SECURITY -&gt; MoneyWiseUIResource.COLUMNSET_SECURITY;</span>
+<span class="nc" id="L100">            case ALL -&gt; MoneyWiseUIResource.COLUMNSET_ALL;</span>
+<span class="nc" id="L101">            default -&gt; throw new IllegalArgumentException();</span>
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

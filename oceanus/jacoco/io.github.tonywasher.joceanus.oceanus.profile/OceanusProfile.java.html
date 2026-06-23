@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.oceanus.profile;
 
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,12 +73,12 @@ public class OceanusProfile {
      *
      * @param pName the name of the step
      */
-<span class="nc" id="L75">    public OceanusProfile(final String pName) {</span>
+<span class="nc" id="L76">    public OceanusProfile(final String pName) {</span>
         /* Record the name and start the timer */
-<span class="nc" id="L77">        theName = pName;</span>
-<span class="nc" id="L78">        theStart = System.nanoTime();</span>
-<span class="nc" id="L79">        theStatus = OceanusProfileStatus.RUNNING;</span>
-<span class="nc" id="L80">    }</span>
+<span class="nc" id="L78">        theName = pName;</span>
+<span class="nc" id="L79">        theStart = System.nanoTime();</span>
+<span class="nc" id="L80">        theStatus = OceanusProfileStatus.RUNNING;</span>
+<span class="nc" id="L81">    }</span>
 
     /**
      * Obtain the name of the profile.
@@ -85,7 +86,7 @@ public class OceanusProfile {
      * @return the name
      */
     public String getName() {
-<span class="nc" id="L88">        return theName;</span>
+<span class="nc" id="L89">        return theName;</span>
     }
 
     /**
@@ -94,9 +95,9 @@ public class OceanusProfile {
      * @return the status
      */
     public OceanusProfileStatus getStatus() {
-<span class="nc bnc" id="L97" title="All 2 branches missed.">        return theStatus.isRunning()</span>
-<span class="nc" id="L98">                ? theStatus</span>
-<span class="nc" id="L99">                : null;</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        return theStatus.isRunning()</span>
+<span class="nc" id="L99">                ? theStatus</span>
+<span class="nc" id="L100">                : null;</span>
     }
 
     /**
@@ -105,9 +106,9 @@ public class OceanusProfile {
      * @return the elapsedTime
      */
     public OceanusDecimal getElapsed() {
-<span class="nc bnc" id="L108" title="All 2 branches missed.">        return theStatus.isRunning()</span>
-<span class="nc" id="L109">                ? null</span>
-<span class="nc" id="L110">                : theElapsed;</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        return theStatus.isRunning()</span>
+<span class="nc" id="L110">                ? null</span>
+<span class="nc" id="L111">                : theElapsed;</span>
     }
 
     /**
@@ -116,7 +117,7 @@ public class OceanusProfile {
      * @return the hiddenTime
      */
     public OceanusDecimal getHidden() {
-<span class="nc" id="L119">        return theHidden;</span>
+<span class="nc" id="L120">        return theHidden;</span>
     }
 
     /**
@@ -125,7 +126,17 @@ public class OceanusProfile {
      * @return the iterator
      */
     public Iterator&lt;OceanusProfile&gt; subTaskIterator() {
-<span class="nc bnc" id="L128" title="All 2 branches missed.">        return theSubTasks == null ? Collections.emptyIterator() : theSubTasks.iterator();</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">        return theSubTasks == null ? Collections.emptyIterator() : theSubTasks.iterator();</span>
+    }
+
+    /**
+     * Start a new subTask.
+     *
+     * @param pId the id of the subTask
+     * @return the new task
+     */
+    public OceanusProfile startTask(final OceanusBundleId pId) {
+<span class="nc" id="L139">        return startTask(pId.getValue());</span>
     }
 
     /**
@@ -136,26 +147,26 @@ public class OceanusProfile {
      */
     public OceanusProfile startTask(final String pName) {
         /* If we are currently running */
-<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (theStatus.isRunning()) {</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        if (theStatus.isRunning()) {</span>
             /* Prepare for the task */
-<span class="nc" id="L141">            prepareForTask();</span>
+<span class="nc" id="L152">            prepareForTask();</span>
 
             /* Loop through the subTasks */
-<span class="nc bnc" id="L144" title="All 2 branches missed.">            for (OceanusProfile myProfile : theSubTasks) {</span>
+<span class="nc bnc" id="L155" title="All 2 branches missed.">            for (OceanusProfile myProfile : theSubTasks) {</span>
                 /* Check for duplicate name */
-<span class="nc bnc" id="L146" title="All 2 branches missed.">                if (pName.equals(myProfile.getName())) {</span>
-<span class="nc" id="L147">                    throw new IllegalArgumentException(&quot;Duplicate Task - &quot; + pName);</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">                if (pName.equals(myProfile.getName())) {</span>
+<span class="nc" id="L158">                    throw new IllegalArgumentException(&quot;Duplicate Task - &quot; + pName);</span>
                 }
-<span class="nc" id="L149">            }</span>
+<span class="nc" id="L160">            }</span>
 
             /* Create the new task */
-<span class="nc" id="L152">            final OceanusProfile myTask = new OceanusProfile(pName);</span>
-<span class="nc" id="L153">            theSubTasks.add(myTask);</span>
-<span class="nc" id="L154">            theCurrentTask = myTask;</span>
+<span class="nc" id="L163">            final OceanusProfile myTask = new OceanusProfile(pName);</span>
+<span class="nc" id="L164">            theSubTasks.add(myTask);</span>
+<span class="nc" id="L165">            theCurrentTask = myTask;</span>
         }
 
         /* Return the current task */
-<span class="nc" id="L158">        return theCurrentTask;</span>
+<span class="nc" id="L169">        return theCurrentTask;</span>
     }
 
     /**
@@ -163,47 +174,47 @@ public class OceanusProfile {
      */
     private void prepareForTask() {
         /* End any subTask */
-<span class="nc" id="L166">        endSubTask();</span>
+<span class="nc" id="L177">        endSubTask();</span>
 
         /* If we do not currently have a subTask list */
-<span class="nc bnc" id="L169" title="All 2 branches missed.">        if (theSubTasks == null) {</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        if (theSubTasks == null) {</span>
             /* Create the list */
-<span class="nc" id="L171">            theSubTasks = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L182">            theSubTasks = new ArrayList&lt;&gt;();</span>
         }
-<span class="nc" id="L173">    }</span>
+<span class="nc" id="L184">    }</span>
 
     /**
      * End any subTask.
      */
     private void endSubTask() {
         /* If we have a subTask */
-<span class="nc bnc" id="L180" title="All 2 branches missed.">        if (theCurrentTask != null) {</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">        if (theCurrentTask != null) {</span>
             /* End the current task */
-<span class="nc" id="L182">            theCurrentTask.end();</span>
-<span class="nc" id="L183">            theCurrentTask = null;</span>
+<span class="nc" id="L193">            theCurrentTask.end();</span>
+<span class="nc" id="L194">            theCurrentTask = null;</span>
         }
-<span class="nc" id="L185">    }</span>
+<span class="nc" id="L196">    }</span>
 
     /**
      * End the task.
      */
     public void end() {
         /* If we are currently running */
-<span class="nc bnc" id="L192" title="All 2 branches missed.">        if (theStatus.isRunning()) {</span>
+<span class="nc bnc" id="L203" title="All 2 branches missed.">        if (theStatus.isRunning()) {</span>
             /* End any subTasks */
-<span class="nc" id="L194">            endSubTask();</span>
+<span class="nc" id="L205">            endSubTask();</span>
 
             /* Stop the task and calculate the elapsed time */
-<span class="nc" id="L197">            final long myEnd = System.nanoTime();</span>
-<span class="nc" id="L198">            theElapsed = new OceanusDecimal(myEnd - theStart, NUM_DECIMALS);</span>
-<span class="nc bnc" id="L199" title="All 2 branches missed.">            theHidden = theSubTasks == null</span>
-<span class="nc" id="L200">                    ? null</span>
-<span class="nc" id="L201">                    : calculateHidden();</span>
+<span class="nc" id="L208">            final long myEnd = System.nanoTime();</span>
+<span class="nc" id="L209">            theElapsed = new OceanusDecimal(myEnd - theStart, NUM_DECIMALS);</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">            theHidden = theSubTasks == null</span>
+<span class="nc" id="L211">                    ? null</span>
+<span class="nc" id="L212">                    : calculateHidden();</span>
 
             /* Mark time as stopped */
-<span class="nc" id="L204">            theStatus = OceanusProfileStatus.STOPPED;</span>
+<span class="nc" id="L215">            theStatus = OceanusProfileStatus.STOPPED;</span>
         }
-<span class="nc" id="L206">    }</span>
+<span class="nc" id="L217">    }</span>
 
     /**
      * Calculate the hidden time.
@@ -212,16 +223,16 @@ public class OceanusProfile {
      */
     private OceanusDecimal calculateHidden() {
         /* Initialise hidden value */
-<span class="nc" id="L215">        final OceanusDecimal myHidden = new OceanusDecimal(theElapsed);</span>
+<span class="nc" id="L226">        final OceanusDecimal myHidden = new OceanusDecimal(theElapsed);</span>
 
         /* Loop through the subTasks */
-<span class="nc bnc" id="L218" title="All 2 branches missed.">        for (OceanusProfile myProfile : theSubTasks) {</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">        for (OceanusProfile myProfile : theSubTasks) {</span>
             /* Subtract child time */
-<span class="nc" id="L220">            myHidden.subtractValue(myProfile.theElapsed);</span>
-<span class="nc" id="L221">        }</span>
+<span class="nc" id="L231">            myHidden.subtractValue(myProfile.theElapsed);</span>
+<span class="nc" id="L232">        }</span>
 
         /* Return calculated value */
-<span class="nc" id="L224">        return myHidden;</span>
+<span class="nc" id="L235">        return myHidden;</span>
     }
 
     /**
@@ -231,7 +242,7 @@ public class OceanusProfile {
      */
     public boolean isRunning() {
         /* return status */
-<span class="nc" id="L234">        return theStatus.isRunning();</span>
+<span class="nc" id="L245">        return theStatus.isRunning();</span>
     }
 
     /**
@@ -241,30 +252,30 @@ public class OceanusProfile {
      */
     public OceanusProfile getActiveTask() {
         /* If we are not currently running */
-<span class="nc bnc" id="L244" title="All 2 branches missed.">        if (!isRunning()) {</span>
-<span class="nc" id="L245">            return null;</span>
+<span class="nc bnc" id="L255" title="All 2 branches missed.">        if (!isRunning()) {</span>
+<span class="nc" id="L256">            return null;</span>
         }
 
         /* Return self is no active and running subTask else ask subTask */
-<span class="nc" id="L249">        return theCurrentTask == null</span>
-<span class="nc bnc" id="L250" title="All 4 branches missed.">                || !theCurrentTask.isRunning()</span>
-<span class="nc" id="L251">                ? this</span>
-<span class="nc" id="L252">                : theCurrentTask.getActiveTask();</span>
+<span class="nc" id="L260">        return theCurrentTask == null</span>
+<span class="nc bnc" id="L261" title="All 4 branches missed.">                || !theCurrentTask.isRunning()</span>
+<span class="nc" id="L262">                ? this</span>
+<span class="nc" id="L263">                : theCurrentTask.getActiveTask();</span>
     }
 
     /**
      * Status of timer.
      */
-<span class="nc" id="L258">    public enum OceanusProfileStatus {</span>
+<span class="nc" id="L269">    public enum OceanusProfileStatus {</span>
         /**
          * Running.
          */
-<span class="nc" id="L262">        RUNNING,</span>
+<span class="nc" id="L273">        RUNNING,</span>
 
         /**
          * Stopped.
          */
-<span class="nc" id="L267">        STOPPED;</span>
+<span class="nc" id="L278">        STOPPED;</span>
 
         /**
          * is the timer running?
@@ -272,9 +283,9 @@ public class OceanusProfile {
          * @return true/false
          */
         private boolean isRunning() {
-<span class="nc bnc" id="L275" title="All 2 branches missed.">            return this == RUNNING;</span>
+<span class="nc bnc" id="L286" title="All 2 branches missed.">            return this == RUNNING;</span>
         }
     }
 }
 
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

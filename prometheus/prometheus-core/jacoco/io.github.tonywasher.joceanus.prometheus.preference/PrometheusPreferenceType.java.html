@@ -16,22 +16,23 @@
  */
 package io.github.tonywasher.joceanus.prometheus.preference;
 
-import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet.MetisPreferenceId;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey.MetisPreferenceId;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * Enum class for preference types.
  */
-<span class="nc" id="L24">public enum PrometheusPreferenceType</span>
+<span class="nc" id="L25">public enum PrometheusPreferenceType</span>
         implements MetisPreferenceId {
     /**
      * ByteArray.
      */
-<span class="nc" id="L29">    BYTEARRAY,</span>
+<span class="nc" id="L30">    BYTEARRAY,</span>
 
     /**
      * CharArray.
      */
-<span class="nc" id="L34">    CHARARRAY;</span>
+<span class="nc" id="L35">    CHARARRAY;</span>
 
     /**
      * The String name.
@@ -41,13 +42,27 @@ import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet.MetisPr
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="nc bnc" id="L44" title="All 2 branches missed.">        if (theName == null) {</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (theName == null) {</span>
             /* Load the name */
-<span class="nc" id="L46">            theName = PrometheusPreferenceResource.getKeyForPrefType(this).getValue();</span>
+<span class="nc" id="L47">            theName = bundleIdForPreferenceType(this).getValue();</span>
         }
 
         /* return the name */
-<span class="nc" id="L50">        return theName;</span>
+<span class="nc" id="L51">        return theName;</span>
+    }
+
+    /**
+     * Obtain the resource bundleId for the preferenceType.
+     *
+     * @param pType the type
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForPreferenceType(final PrometheusPreferenceType pType) {
+<span class="nc bnc" id="L61" title="All 3 branches missed.">        return switch (pType) {</span>
+<span class="nc" id="L62">            case BYTEARRAY -&gt; PrometheusPreferenceResource.TYPE_BYTEARRAY;</span>
+<span class="nc" id="L63">            case CHARARRAY -&gt; PrometheusPreferenceResource.TYPE_CHARARRAY;</span>
+<span class="nc" id="L64">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

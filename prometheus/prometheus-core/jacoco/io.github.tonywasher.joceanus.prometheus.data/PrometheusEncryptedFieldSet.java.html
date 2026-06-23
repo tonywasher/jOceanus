@@ -18,17 +18,21 @@ package io.github.tonywasher.joceanus.prometheus.data;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
+import io.github.tonywasher.joceanus.metis.field.MetisField;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusEncryptedDataItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusEncryptedFieldSetCtl;
 
 /**
  * Prometheus Data fieldSet.
  *
  * @param &lt;T&gt; the data type
  */
-public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataItem&gt;
-        extends MetisFieldVersionedSet&lt;T&gt; {
+public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataItemCtl&gt;
+        extends MetisFieldVersionedSet&lt;T&gt;
+        implements PrometheusEncryptedFieldSetCtl&lt;T&gt; {
     /**
      * Constructor.
      *
@@ -40,8 +44,8 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
                                 final MetisFieldSetDef pParent,
                                 final boolean pStatic) {
         /* Pass call on */
-<span class="nc" id="L43">        super(pClazz, pParent, pStatic);</span>
-<span class="nc" id="L44">    }</span>
+<span class="nc" id="L47">        super(pClazz, pParent, pStatic);</span>
+<span class="nc" id="L48">    }</span>
 
     /**
      * Declare a static fieldSet.
@@ -50,18 +54,18 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
      * @param pClazz the class of the fieldSet
      * @return the fieldSet.
      */
-    public static &lt;T extends PrometheusEncryptedDataItem&gt; PrometheusEncryptedFieldSet&lt;T&gt; newEncryptedFieldSet(final Class&lt;T&gt; pClazz) {
+    public static &lt;T extends PrometheusEncryptedDataItemCtl&gt; PrometheusEncryptedFieldSet&lt;T&gt; newEncryptedFieldSet(final Class&lt;T&gt; pClazz) {
         /* Synchronise on class */
-<span class="nc" id="L55">        synchronized (MetisFieldSet.class) {</span>
+<span class="nc" id="L59">        synchronized (MetisFieldSet.class) {</span>
             /* Locate the parent fieldSet if it exists */
-<span class="nc" id="L57">            final MetisFieldSetDef myParent = lookUpParentFieldSet(pClazz);</span>
+<span class="nc" id="L61">            final MetisFieldSetDef myParent = lookUpParentFieldSet(pClazz);</span>
 
             /* Create the new fieldSet and store into map */
-<span class="nc" id="L60">            final PrometheusEncryptedFieldSet&lt;T&gt; myFieldSet = new PrometheusEncryptedFieldSet&lt;&gt;(pClazz, myParent, true);</span>
-<span class="nc" id="L61">            registerFieldSet(pClazz, myFieldSet);</span>
+<span class="nc" id="L64">            final PrometheusEncryptedFieldSet&lt;T&gt; myFieldSet = new PrometheusEncryptedFieldSet&lt;&gt;(pClazz, myParent, true);</span>
+<span class="nc" id="L65">            registerFieldSet(pClazz, myFieldSet);</span>
 
             /* Return the new fieldSet */
-<span class="nc" id="L64">            return myFieldSet;</span>
+<span class="nc" id="L68">            return myFieldSet;</span>
         }
     }
 
@@ -74,7 +78,7 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
      */
     public PrometheusEncryptedField&lt;T&gt; declareEncryptedStringField(final MetisDataFieldId pId,
                                                                    final int pMaxLength) {
-<span class="nc" id="L77">        return declareEncryptedField(pId, MetisDataType.STRING, pMaxLength);</span>
+<span class="nc" id="L81">        return declareEncryptedField(pId, MetisDataType.STRING, pMaxLength);</span>
     }
 
     /**
@@ -86,7 +90,7 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
      */
     public PrometheusEncryptedField&lt;T&gt; declareEncryptedCharArrayField(final MetisDataFieldId pId,
                                                                       final int pMaxLength) {
-<span class="nc" id="L89">        return declareEncryptedField(pId, MetisDataType.CHARARRAY, pMaxLength);</span>
+<span class="nc" id="L93">        return declareEncryptedField(pId, MetisDataType.CHARARRAY, pMaxLength);</span>
     }
 
     /**
@@ -96,7 +100,7 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
      * @return the field
      */
     public PrometheusEncryptedField&lt;T&gt; declareEncryptedShortField(final MetisDataFieldId pId) {
-<span class="nc" id="L99">        return declareEncryptedField(pId, MetisDataType.SHORT, FIELD_NO_MAXLENGTH);</span>
+<span class="nc" id="L103">        return declareEncryptedField(pId, MetisDataType.SHORT, MetisField.FIELD_NO_MAXLENGTH);</span>
     }
 
     /**
@@ -106,7 +110,7 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
      * @return the field
      */
     public PrometheusEncryptedField&lt;T&gt; declareEncryptedIntegerField(final MetisDataFieldId pId) {
-<span class="nc" id="L109">        return declareEncryptedField(pId, MetisDataType.INTEGER, FIELD_NO_MAXLENGTH);</span>
+<span class="nc" id="L113">        return declareEncryptedField(pId, MetisDataType.INTEGER, MetisField.FIELD_NO_MAXLENGTH);</span>
     }
 
     /**
@@ -116,7 +120,7 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
      * @return the field
      */
     public PrometheusEncryptedField&lt;T&gt; declareEncryptedLongField(final MetisDataFieldId pId) {
-<span class="nc" id="L119">        return declareEncryptedField(pId, MetisDataType.LONG, FIELD_NO_MAXLENGTH);</span>
+<span class="nc" id="L123">        return declareEncryptedField(pId, MetisDataType.LONG, MetisField.FIELD_NO_MAXLENGTH);</span>
     }
 
     /**
@@ -126,7 +130,7 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
      * @return the field
      */
     public PrometheusEncryptedField&lt;T&gt; declareEncryptedBooleanField(final MetisDataFieldId pId) {
-<span class="nc" id="L129">        return declareEncryptedField(pId, MetisDataType.BOOLEAN, FIELD_NO_MAXLENGTH);</span>
+<span class="nc" id="L133">        return declareEncryptedField(pId, MetisDataType.BOOLEAN, MetisField.FIELD_NO_MAXLENGTH);</span>
     }
 
     /**
@@ -136,7 +140,7 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
      * @return the field
      */
     public PrometheusEncryptedField&lt;T&gt; declareEncryptedDateField(final MetisDataFieldId pId) {
-<span class="nc" id="L139">        return declareEncryptedField(pId, MetisDataType.DATE, FIELD_NO_MAXLENGTH);</span>
+<span class="nc" id="L143">        return declareEncryptedField(pId, MetisDataType.DATE, MetisField.FIELD_NO_MAXLENGTH);</span>
     }
 
     /**
@@ -146,7 +150,7 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
      * @return the field
      */
     public PrometheusEncryptedField&lt;T&gt; declareEncryptedMoneyField(final MetisDataFieldId pId) {
-<span class="nc" id="L149">        return declareEncryptedField(pId, MetisDataType.MONEY, FIELD_NO_MAXLENGTH);</span>
+<span class="nc" id="L153">        return declareEncryptedField(pId, MetisDataType.MONEY, MetisField.FIELD_NO_MAXLENGTH);</span>
     }
 
     /**
@@ -156,7 +160,7 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
      * @return the field
      */
     public PrometheusEncryptedField&lt;T&gt; declareEncryptedPriceField(final MetisDataFieldId pId) {
-<span class="nc" id="L159">        return declareEncryptedField(pId, MetisDataType.PRICE, FIELD_NO_MAXLENGTH);</span>
+<span class="nc" id="L163">        return declareEncryptedField(pId, MetisDataType.PRICE, MetisField.FIELD_NO_MAXLENGTH);</span>
     }
 
     /**
@@ -166,7 +170,7 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
      * @return the field
      */
     public PrometheusEncryptedField&lt;T&gt; declareEncryptedUnitsField(final MetisDataFieldId pId) {
-<span class="nc" id="L169">        return declareEncryptedField(pId, MetisDataType.UNITS, FIELD_NO_MAXLENGTH);</span>
+<span class="nc" id="L173">        return declareEncryptedField(pId, MetisDataType.UNITS, MetisField.FIELD_NO_MAXLENGTH);</span>
     }
 
     /**
@@ -176,7 +180,7 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
      * @return the field
      */
     public PrometheusEncryptedField&lt;T&gt; declareEncryptedRateField(final MetisDataFieldId pId) {
-<span class="nc" id="L179">        return declareEncryptedField(pId, MetisDataType.RATE, FIELD_NO_MAXLENGTH);</span>
+<span class="nc" id="L183">        return declareEncryptedField(pId, MetisDataType.RATE, MetisField.FIELD_NO_MAXLENGTH);</span>
     }
 
     /**
@@ -186,7 +190,7 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
      * @return the field
      */
     public PrometheusEncryptedField&lt;T&gt; declareEncryptedRatioField(final MetisDataFieldId pId) {
-<span class="nc" id="L189">        return declareEncryptedField(pId, MetisDataType.RATIO, FIELD_NO_MAXLENGTH);</span>
+<span class="nc" id="L193">        return declareEncryptedField(pId, MetisDataType.RATIO, MetisField.FIELD_NO_MAXLENGTH);</span>
     }
 
     /**
@@ -196,7 +200,7 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
      * @return the field
      */
     public PrometheusEncryptedField&lt;T&gt; declareEncryptedContextField(final MetisDataFieldId pId) {
-<span class="nc" id="L199">        return declareEncryptedField(pId, MetisDataType.CONTEXT, FIELD_NO_MAXLENGTH);</span>
+<span class="nc" id="L203">        return declareEncryptedField(pId, MetisDataType.CONTEXT, MetisField.FIELD_NO_MAXLENGTH);</span>
     }
 
     /**
@@ -210,7 +214,7 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
     private PrometheusEncryptedField&lt;T&gt; declareEncryptedField(final MetisDataFieldId pId,
                                                               final MetisDataType pDataType,
                                                               final Integer pMaxLength) {
-<span class="nc" id="L213">        return declareDataField(pId, pDataType, pMaxLength);</span>
+<span class="nc" id="L217">        return declareDataField(pId, pDataType, pMaxLength);</span>
     }
 
     /**
@@ -225,13 +229,13 @@ public class PrometheusEncryptedFieldSet&lt;T extends PrometheusEncryptedDataIte
                                                          final MetisDataType pDataType,
                                                          final Integer pMaxLength) {
         /* Create the field */
-<span class="nc" id="L228">        final PrometheusEncryptedField&lt;T&gt; myField = new PrometheusEncryptedField&lt;&gt;(this, pId, pDataType, pMaxLength);</span>
+<span class="nc" id="L232">        final PrometheusEncryptedField&lt;T&gt; myField = new PrometheusEncryptedField&lt;&gt;(this, pId, pDataType, pMaxLength);</span>
 
         /* Register the field */
-<span class="nc" id="L231">        registerField(myField);</span>
+<span class="nc" id="L235">        registerField(myField);</span>
 
         /* Return the index */
-<span class="nc" id="L234">        return myField;</span>
+<span class="nc" id="L238">        return myField;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

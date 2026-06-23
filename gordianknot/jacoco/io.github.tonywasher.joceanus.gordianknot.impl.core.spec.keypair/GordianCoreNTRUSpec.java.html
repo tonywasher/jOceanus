@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
@@ -29,16 +30,17 @@ import java.util.Map;
 /**
  * NTRU KeySpec.
  */
-public final class GordianCoreNTRUSpec {
+public final class GordianCoreNTRUSpec
+        implements GordianCoreKeyPairIdSpec&lt;GordianNTRUSpec&gt; {
     /**
      * The specMap.
      */
-<span class="fc" id="L36">    private static final Map&lt;GordianNTRUSpec, GordianCoreNTRUSpec&gt; SPECMAP = newSpecMap();</span>
+<span class="fc" id="L38">    private static final Map&lt;GordianNTRUSpec, GordianCoreNTRUSpec&gt; SPECMAP = newSpecMap();</span>
 
     /**
      * The specArray.
      */
-<span class="fc" id="L41">    private static final GordianCoreNTRUSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreNTRUSpec[0]);</span>
+<span class="fc" id="L43">    private static final GordianCoreNTRUSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreNTRUSpec[0]);</span>
 
     /**
      * The Spec.
@@ -50,17 +52,18 @@ public final class GordianCoreNTRUSpec {
      *
      * @param pSpec the spec
      */
-<span class="fc" id="L53">    private GordianCoreNTRUSpec(final GordianNTRUSpec pSpec) {</span>
-<span class="fc" id="L54">        theSpec = pSpec;</span>
-<span class="fc" id="L55">    }</span>
+<span class="fc" id="L55">    private GordianCoreNTRUSpec(final GordianNTRUSpec pSpec) {</span>
+<span class="fc" id="L56">        theSpec = pSpec;</span>
+<span class="fc" id="L57">    }</span>
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+<span class="fc" id="L61">        return GordianKeyPairType.NTRU;</span>
+    }
+
+    @Override
     public GordianNTRUSpec getSpec() {
-<span class="fc" id="L63">        return theSpec;</span>
+<span class="fc" id="L66">        return theSpec;</span>
     }
 
     /**
@@ -69,14 +72,14 @@ public final class GordianCoreNTRUSpec {
      * @return the parameters.
      */
     public NTRUParameters getParameters() {
-<span class="pc bpc" id="L72" title="5 of 7 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L73">            case HPS509 -&gt; NTRUParameters.ntruhps2048509;</span>
-<span class="nc" id="L74">            case HPS677 -&gt; NTRUParameters.ntruhps2048677;</span>
-<span class="fc" id="L75">            case HPS821 -&gt; NTRUParameters.ntruhps4096821;</span>
-<span class="nc" id="L76">            case HPS1229 -&gt; NTRUParameters.ntruhps40961229;</span>
-<span class="nc" id="L77">            case HRSS701 -&gt; NTRUParameters.ntruhrss701;</span>
-<span class="nc" id="L78">            case HRSS1373 -&gt; NTRUParameters.ntruhrss1373;</span>
-<span class="nc" id="L79">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L75" title="5 of 7 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L76">            case HPS509 -&gt; NTRUParameters.ntruhps2048509;</span>
+<span class="nc" id="L77">            case HPS677 -&gt; NTRUParameters.ntruhps2048677;</span>
+<span class="fc" id="L78">            case HPS821 -&gt; NTRUParameters.ntruhps4096821;</span>
+<span class="nc" id="L79">            case HPS1229 -&gt; NTRUParameters.ntruhps40961229;</span>
+<span class="nc" id="L80">            case HRSS701 -&gt; NTRUParameters.ntruhrss701;</span>
+<span class="nc" id="L81">            case HRSS1373 -&gt; NTRUParameters.ntruhrss1373;</span>
+<span class="nc" id="L82">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
@@ -86,57 +89,53 @@ public final class GordianCoreNTRUSpec {
      * @return the parameters.
      */
     public NTRUParameterSpec getParameterSpec() {
-<span class="pc bpc" id="L89" title="5 of 7 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L90">            case HPS509 -&gt; NTRUParameterSpec.ntruhps2048509;</span>
-<span class="nc" id="L91">            case HPS677 -&gt; NTRUParameterSpec.ntruhps2048677;</span>
-<span class="fc" id="L92">            case HPS821 -&gt; NTRUParameterSpec.ntruhps4096821;</span>
-<span class="nc" id="L93">            case HPS1229 -&gt; NTRUParameterSpec.ntruhps40961229;</span>
-<span class="nc" id="L94">            case HRSS701 -&gt; NTRUParameterSpec.ntruhrss701;</span>
-<span class="nc" id="L95">            case HRSS1373 -&gt; NTRUParameterSpec.ntruhrss1373;</span>
-<span class="nc" id="L96">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L92" title="5 of 7 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L93">            case HPS509 -&gt; NTRUParameterSpec.ntruhps2048509;</span>
+<span class="nc" id="L94">            case HPS677 -&gt; NTRUParameterSpec.ntruhps2048677;</span>
+<span class="fc" id="L95">            case HPS821 -&gt; NTRUParameterSpec.ntruhps4096821;</span>
+<span class="nc" id="L96">            case HPS1229 -&gt; NTRUParameterSpec.ntruhps40961229;</span>
+<span class="nc" id="L97">            case HRSS701 -&gt; NTRUParameterSpec.ntruhrss701;</span>
+<span class="nc" id="L98">            case HRSS1373 -&gt; NTRUParameterSpec.ntruhrss1373;</span>
+<span class="nc" id="L99">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
-    /**
-     * Obtain NTRU algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
-<span class="pc bpc" id="L106" title="1 of 7 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L107">            case HPS509 -&gt; BCObjectIdentifiers.ntruhps2048509;</span>
-<span class="fc" id="L108">            case HPS677 -&gt; BCObjectIdentifiers.ntruhps2048677;</span>
-<span class="fc" id="L109">            case HPS821 -&gt; BCObjectIdentifiers.ntruhps4096821;</span>
-<span class="fc" id="L110">            case HPS1229 -&gt; BCObjectIdentifiers.ntruhps40961229;</span>
-<span class="fc" id="L111">            case HRSS701 -&gt; BCObjectIdentifiers.ntruhrss701;</span>
-<span class="fc" id="L112">            case HRSS1373 -&gt; BCObjectIdentifiers.ntruhrss1373;</span>
-<span class="nc" id="L113">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L105" title="1 of 7 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L106">            case HPS509 -&gt; BCObjectIdentifiers.ntruhps2048509;</span>
+<span class="fc" id="L107">            case HPS677 -&gt; BCObjectIdentifiers.ntruhps2048677;</span>
+<span class="fc" id="L108">            case HPS821 -&gt; BCObjectIdentifiers.ntruhps4096821;</span>
+<span class="fc" id="L109">            case HPS1229 -&gt; BCObjectIdentifiers.ntruhps40961229;</span>
+<span class="fc" id="L110">            case HRSS701 -&gt; BCObjectIdentifiers.ntruhrss701;</span>
+<span class="fc" id="L111">            case HRSS1373 -&gt; BCObjectIdentifiers.ntruhrss1373;</span>
+<span class="nc" id="L112">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L119">        return theSpec.toString();</span>
+<span class="fc" id="L118">        return theSpec.toString();</span>
     }
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L126">            return true;</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L125">            return true;</span>
         }
-<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L129">            return false;</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L128">            return false;</span>
         }
 
         /* Check subFields */
-<span class="nc" id="L133">        return pThat instanceof GordianCoreNTRUSpec myThat</span>
-<span class="nc bnc" id="L134" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
+<span class="nc" id="L132">        return pThat instanceof GordianCoreNTRUSpec myThat</span>
+<span class="nc bnc" id="L133" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
     }
 
     @Override
     public int hashCode() {
-<span class="fc" id="L139">        return theSpec.hashCode();</span>
+<span class="fc" id="L138">        return theSpec.hashCode();</span>
     }
 
     /**
@@ -146,7 +145,7 @@ public final class GordianCoreNTRUSpec {
      * @return the core spec
      */
     public static GordianCoreNTRUSpec mapCoreSpec(final Object pSpec) {
-<span class="pc bpc" id="L149" title="1 of 2 branches missed.">        return pSpec instanceof GordianNTRUSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">        return pSpec instanceof GordianNTRUSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
     }
 
     /**
@@ -155,11 +154,11 @@ public final class GordianCoreNTRUSpec {
      * @return the type map
      */
     private static Map&lt;GordianNTRUSpec, GordianCoreNTRUSpec&gt; newSpecMap() {
-<span class="fc" id="L158">        final Map&lt;GordianNTRUSpec, GordianCoreNTRUSpec&gt; myMap = new EnumMap&lt;&gt;(GordianNTRUSpec.class);</span>
-<span class="fc bfc" id="L159" title="All 2 branches covered.">        for (GordianNTRUSpec mySpec : GordianNTRUSpec.values()) {</span>
-<span class="fc" id="L160">            myMap.put(mySpec, new GordianCoreNTRUSpec(mySpec));</span>
+<span class="fc" id="L157">        final Map&lt;GordianNTRUSpec, GordianCoreNTRUSpec&gt; myMap = new EnumMap&lt;&gt;(GordianNTRUSpec.class);</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">        for (GordianNTRUSpec mySpec : GordianNTRUSpec.values()) {</span>
+<span class="fc" id="L159">            myMap.put(mySpec, new GordianCoreNTRUSpec(mySpec));</span>
         }
-<span class="fc" id="L162">        return myMap;</span>
+<span class="fc" id="L161">        return myMap;</span>
     }
 
     /**
@@ -168,7 +167,7 @@ public final class GordianCoreNTRUSpec {
      * @return the values
      */
     public static GordianCoreNTRUSpec[] values() {
-<span class="fc" id="L171">        return VALUES;</span>
+<span class="fc" id="L170">        return VALUES;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -392,211 +392,205 @@ public class OceanusDateRangeState {
             case DATESUPTO:
 <span class="nc" id="L393">                buildUpToRange();</span>
 <span class="nc" id="L394">                break;</span>
-            case CALENDARMONTH:
-            case CALENDARQUARTER:
-            case CALENDARYEAR:
-            case FISCALYEAR:
-<span class="nc" id="L399">                buildContainingRange();</span>
-<span class="nc" id="L400">                break;</span>
+            case CALENDARMONTH, CALENDARQUARTER, CALENDARYEAR, FISCALYEAR:
+<span class="nc" id="L396">                buildContainingRange();</span>
+<span class="nc" id="L397">                break;</span>
             default:
-<span class="nc" id="L402">                buildStandardRange();</span>
+<span class="nc" id="L399">                buildStandardRange();</span>
                 break;
         }
-<span class="nc" id="L405">    }</span>
+<span class="nc" id="L402">    }</span>
 
     /**
      * Build the standard range.
      */
     private void buildStandardRange() {
-<span class="nc bnc" id="L411" title="All 2 branches missed.">        if (isBaseStartOfPeriod) {</span>
-<span class="nc" id="L412">            buildStartingRange();</span>
+<span class="nc bnc" id="L408" title="All 2 branches missed.">        if (isBaseStartOfPeriod) {</span>
+<span class="nc" id="L409">            buildStartingRange();</span>
         } else {
-<span class="nc" id="L414">            buildEndingRange();</span>
+<span class="nc" id="L411">            buildEndingRange();</span>
         }
-<span class="nc" id="L416">    }</span>
+<span class="nc" id="L413">    }</span>
 
     /**
      * Build the full range.
      */
     private void buildFullRange() {
         /* Previous and next are not allowed */
-<span class="nc" id="L423">        isPrevOK = false;</span>
-<span class="nc" id="L424">        isNextOK = false;</span>
+<span class="nc" id="L420">        isPrevOK = false;</span>
+<span class="nc" id="L421">        isNextOK = false;</span>
 
         /* Create the range */
-<span class="nc" id="L427">        theRange = new OceanusDateRange(theOverallRange);</span>
-<span class="nc" id="L428">    }</span>
+<span class="nc" id="L424">        theRange = new OceanusDateRange(theOverallRange);</span>
+<span class="nc" id="L425">    }</span>
 
     /**
      * Build the custom range.
      */
     private void buildCustomRange() {
         /* Previous and next are disallowed */
-<span class="nc" id="L435">        isPrevOK = false;</span>
-<span class="nc" id="L436">        isNextOK = false;</span>
+<span class="nc" id="L432">        isPrevOK = false;</span>
+<span class="nc" id="L433">        isNextOK = false;</span>
 
         /* Reset anomalies */
-<span class="nc bnc" id="L439" title="All 2 branches missed.">        if (theEndDate.compareTo(theStartDate) &lt; 0) {</span>
-<span class="nc" id="L440">            theEndDate = theStartDate;</span>
+<span class="nc bnc" id="L436" title="All 2 branches missed.">        if (theEndDate.compareTo(theStartDate) &lt; 0) {</span>
+<span class="nc" id="L437">            theEndDate = theStartDate;</span>
         }
-<span class="nc bnc" id="L442" title="All 2 branches missed.">        if (theBaseDate.compareTo(theStartDate) &lt; 0) {</span>
-<span class="nc" id="L443">            theBaseDate = theStartDate;</span>
+<span class="nc bnc" id="L439" title="All 2 branches missed.">        if (theBaseDate.compareTo(theStartDate) &lt; 0) {</span>
+<span class="nc" id="L440">            theBaseDate = theStartDate;</span>
         }
-<span class="nc bnc" id="L445" title="All 2 branches missed.">        if (theBaseDate.compareTo(theEndDate) &lt; 0) {</span>
-<span class="nc" id="L446">            theBaseDate = theEndDate;</span>
+<span class="nc bnc" id="L442" title="All 2 branches missed.">        if (theBaseDate.compareTo(theEndDate) &lt; 0) {</span>
+<span class="nc" id="L443">            theBaseDate = theEndDate;</span>
         }
 
         /* Create the range */
-<span class="nc" id="L450">        theRange = new OceanusDateRange(theStartDate, theEndDate);</span>
-<span class="nc" id="L451">    }</span>
+<span class="nc" id="L447">        theRange = new OceanusDateRange(theStartDate, theEndDate);</span>
+<span class="nc" id="L448">    }</span>
 
     /**
      * Build the upTo range.
      */
     private void buildUpToRange() {
         /* Previous and next are disallowed */
-<span class="nc" id="L458">        isPrevOK = false;</span>
-<span class="nc" id="L459">        isNextOK = false;</span>
+<span class="nc" id="L455">        isPrevOK = false;</span>
+<span class="nc" id="L456">        isNextOK = false;</span>
 
         /* Record start and end dates */
-<span class="nc" id="L462">        theStartDate = theOverallRange.getStart();</span>
-<span class="nc" id="L463">        theEndDate = theBaseDate;</span>
+<span class="nc" id="L459">        theStartDate = theOverallRange.getStart();</span>
+<span class="nc" id="L460">        theEndDate = theBaseDate;</span>
 
         /* Create the range */
-<span class="nc" id="L466">        theRange = new OceanusDateRange(theStartDate, theEndDate);</span>
-<span class="nc" id="L467">    }</span>
+<span class="nc" id="L463">        theRange = new OceanusDateRange(theStartDate, theEndDate);</span>
+<span class="nc" id="L464">    }</span>
 
     /**
      * Build the containing range.
      */
     private void buildContainingRange() {
-        /* Initialise the start date */
-<span class="nc" id="L474">        theStartDate = new OceanusDate(theBaseDate);</span>
-
         /* Adjust the date to the start of the relevant period */
-<span class="nc" id="L477">        theStartDate.startPeriod(thePeriod);</span>
+<span class="nc" id="L471">        theStartDate = OceanusDateUtils.startPeriod(theBaseDate, thePeriod);</span>
 
         /* Initialise the end date */
-<span class="nc" id="L480">        theEndDate = new OceanusDate(theStartDate);</span>
+<span class="nc" id="L474">        theEndDate = new OceanusDate(theStartDate);</span>
 
         /* Adjust the date to cover the relevant period */
-<span class="nc" id="L483">        theEndDate.adjustForwardByPeriod(thePeriod);</span>
-<span class="nc" id="L484">        theEndDate.adjustDay(-1);</span>
+<span class="nc" id="L477">        theEndDate.adjustForwardByPeriod(thePeriod);</span>
+<span class="nc" id="L478">        theEndDate.adjustDay(-1);</span>
 
         /* Reset anomalies */
-<span class="nc" id="L487">        resetBaseAnomalies();</span>
+<span class="nc" id="L481">        resetBaseAnomalies();</span>
 
         /* Create the range */
-<span class="nc" id="L490">        theRange = new OceanusDateRange(theStartDate, theEndDate);</span>
-<span class="nc" id="L491">    }</span>
+<span class="nc" id="L484">        theRange = new OceanusDateRange(theStartDate, theEndDate);</span>
+<span class="nc" id="L485">    }</span>
 
     /**
      * Reset anomalies.
      */
     private void resetBaseAnomalies() {
         /* Reset anomalies */
-<span class="nc" id="L498">        final OceanusDate myFirstDate = theOverallRange.getStart();</span>
-<span class="nc bnc" id="L499" title="All 2 branches missed.">        if (myFirstDate != null</span>
-<span class="nc bnc" id="L500" title="All 2 branches missed.">                &amp;&amp; theStartDate.compareTo(myFirstDate) &lt; 0) {</span>
-<span class="nc" id="L501">            theStartDate = myFirstDate;</span>
+<span class="nc" id="L492">        final OceanusDate myFirstDate = theOverallRange.getStart();</span>
+<span class="nc bnc" id="L493" title="All 2 branches missed.">        if (myFirstDate != null</span>
+<span class="nc bnc" id="L494" title="All 2 branches missed.">                &amp;&amp; theStartDate.compareTo(myFirstDate) &lt; 0) {</span>
+<span class="nc" id="L495">            theStartDate = myFirstDate;</span>
         }
-<span class="nc" id="L503">        final OceanusDate myLastDate = theOverallRange.getEnd();</span>
-<span class="nc bnc" id="L504" title="All 2 branches missed.">        if (myLastDate != null</span>
-<span class="nc bnc" id="L505" title="All 2 branches missed.">                &amp;&amp; theEndDate.compareTo(myLastDate) &gt; 0) {</span>
-<span class="nc" id="L506">            theEndDate = myLastDate;</span>
+<span class="nc" id="L497">        final OceanusDate myLastDate = theOverallRange.getEnd();</span>
+<span class="nc bnc" id="L498" title="All 2 branches missed.">        if (myLastDate != null</span>
+<span class="nc bnc" id="L499" title="All 2 branches missed.">                &amp;&amp; theEndDate.compareTo(myLastDate) &gt; 0) {</span>
+<span class="nc" id="L500">            theEndDate = myLastDate;</span>
         }
 
         /* Previous is only allowed if we have not hit the first date */
-<span class="nc bnc" id="L510" title="All 2 branches missed.">        isPrevOK = (myFirstDate == null)</span>
-<span class="nc bnc" id="L511" title="All 2 branches missed.">                || (myFirstDate.compareTo(theStartDate) != 0);</span>
+<span class="nc bnc" id="L504" title="All 2 branches missed.">        isPrevOK = (myFirstDate == null)</span>
+<span class="nc bnc" id="L505" title="All 2 branches missed.">                || (myFirstDate.compareTo(theStartDate) != 0);</span>
 
         /* Next is only allowed if we have not hit the last date */
-<span class="nc bnc" id="L514" title="All 2 branches missed.">        isNextOK = (myLastDate == null)</span>
-<span class="nc bnc" id="L515" title="All 2 branches missed.">                || (myLastDate.compareTo(theEndDate) != 0);</span>
-<span class="nc" id="L516">    }</span>
+<span class="nc bnc" id="L508" title="All 2 branches missed.">        isNextOK = (myLastDate == null)</span>
+<span class="nc bnc" id="L509" title="All 2 branches missed.">                || (myLastDate.compareTo(theEndDate) != 0);</span>
+<span class="nc" id="L510">    }</span>
 
     /**
      * Build the starting range.
      */
     private void buildStartingRange() {
         /* Initialise the start date */
-<span class="nc" id="L523">        theStartDate = theBaseDate;</span>
+<span class="nc" id="L517">        theStartDate = theBaseDate;</span>
 
         /* Initialise the end date */
-<span class="nc" id="L526">        theEndDate = new OceanusDate(theBaseDate);</span>
+<span class="nc" id="L520">        theEndDate = new OceanusDate(theBaseDate);</span>
 
         /* Adjust the date to cover the relevant period */
-<span class="nc" id="L529">        theEndDate.adjustForwardByPeriod(thePeriod);</span>
-<span class="nc" id="L530">        theEndDate.adjustDay(-1);</span>
+<span class="nc" id="L523">        theEndDate.adjustForwardByPeriod(thePeriod);</span>
+<span class="nc" id="L524">        theEndDate.adjustDay(-1);</span>
 
         /* Reset anomalies */
-<span class="nc" id="L533">        resetBaseAnomalies();</span>
+<span class="nc" id="L527">        resetBaseAnomalies();</span>
 
         /* Create the range */
-<span class="nc" id="L536">        theRange = new OceanusDateRange(theStartDate, theEndDate);</span>
-<span class="nc" id="L537">    }</span>
+<span class="nc" id="L530">        theRange = new OceanusDateRange(theStartDate, theEndDate);</span>
+<span class="nc" id="L531">    }</span>
 
     /**
      * Build the ending range.
      */
     private void buildEndingRange() {
         /* Initialise the end date */
-<span class="nc" id="L544">        theEndDate = theBaseDate;</span>
+<span class="nc" id="L538">        theEndDate = theBaseDate;</span>
 
         /* Initialise the start date */
-<span class="nc" id="L547">        theStartDate = new OceanusDate(theBaseDate);</span>
+<span class="nc" id="L541">        theStartDate = new OceanusDate(theBaseDate);</span>
 
         /* Adjust the date to cover the relevant period */
-<span class="nc" id="L550">        theStartDate.adjustBackwardByPeriod(thePeriod);</span>
-<span class="nc" id="L551">        theStartDate.adjustDay(1);</span>
+<span class="nc" id="L544">        theStartDate.adjustBackwardByPeriod(thePeriod);</span>
+<span class="nc" id="L545">        theStartDate.adjustDay(1);</span>
 
         /* Reset anomalies */
-<span class="nc" id="L554">        resetBaseAnomalies();</span>
+<span class="nc" id="L548">        resetBaseAnomalies();</span>
 
         /* Create the range */
-<span class="nc" id="L557">        theRange = new OceanusDateRange(theStartDate, theEndDate);</span>
-<span class="nc" id="L558">    }</span>
+<span class="nc" id="L551">        theRange = new OceanusDateRange(theStartDate, theEndDate);</span>
+<span class="nc" id="L552">    }</span>
 
     /**
      * Adjust forwards to the next period.
      */
     private void nextPeriod() {
         /* Initialise the date */
-<span class="nc" id="L565">        OceanusDate myDate = new OceanusDate(theBaseDate);</span>
+<span class="nc" id="L559">        OceanusDate myDate = new OceanusDate(theBaseDate);</span>
 
         /* Adjust the date appropriately */
-<span class="nc" id="L568">        myDate.adjustForwardByPeriod(thePeriod);</span>
+<span class="nc" id="L562">        myDate.adjustForwardByPeriod(thePeriod);</span>
 
         /* Make sure that we do not go beyond the date range */
-<span class="nc" id="L571">        final OceanusDate myLastDate = theOverallRange.getEnd();</span>
-<span class="nc bnc" id="L572" title="All 2 branches missed.">        if (myLastDate != null</span>
-<span class="nc bnc" id="L573" title="All 2 branches missed.">                &amp;&amp; myDate.compareTo(myLastDate) &gt; 0) {</span>
-<span class="nc" id="L574">            myDate = myLastDate;</span>
+<span class="nc" id="L565">        final OceanusDate myLastDate = theOverallRange.getEnd();</span>
+<span class="nc bnc" id="L566" title="All 2 branches missed.">        if (myLastDate != null</span>
+<span class="nc bnc" id="L567" title="All 2 branches missed.">                &amp;&amp; myDate.compareTo(myLastDate) &gt; 0) {</span>
+<span class="nc" id="L568">            myDate = myLastDate;</span>
         }
 
         /* Store the date */
-<span class="nc" id="L578">        theBaseDate = myDate;</span>
-<span class="nc" id="L579">    }</span>
+<span class="nc" id="L572">        theBaseDate = myDate;</span>
+<span class="nc" id="L573">    }</span>
 
     /**
      * Adjust backwards to the previous period.
      */
     private void previousPeriod() {
         /* Initialise the date */
-<span class="nc" id="L586">        OceanusDate myDate = new OceanusDate(theBaseDate);</span>
+<span class="nc" id="L580">        OceanusDate myDate = new OceanusDate(theBaseDate);</span>
 
         /* Adjust the date appropriately */
-<span class="nc" id="L589">        myDate.adjustBackwardByPeriod(thePeriod);</span>
+<span class="nc" id="L583">        myDate.adjustBackwardByPeriod(thePeriod);</span>
 
         /* Make sure that we do not go beyond the date range */
-<span class="nc" id="L592">        final OceanusDate myFirstDate = theOverallRange.getStart();</span>
-<span class="nc bnc" id="L593" title="All 2 branches missed.">        if (myFirstDate != null</span>
-<span class="nc bnc" id="L594" title="All 2 branches missed.">                &amp;&amp; myDate.compareTo(myFirstDate) &lt; 0) {</span>
-<span class="nc" id="L595">            myDate = myFirstDate;</span>
+<span class="nc" id="L586">        final OceanusDate myFirstDate = theOverallRange.getStart();</span>
+<span class="nc bnc" id="L587" title="All 2 branches missed.">        if (myFirstDate != null</span>
+<span class="nc bnc" id="L588" title="All 2 branches missed.">                &amp;&amp; myDate.compareTo(myFirstDate) &lt; 0) {</span>
+<span class="nc" id="L589">            myDate = myFirstDate;</span>
         }
 
         /* Store the date */
-<span class="nc" id="L599">        theBaseDate = myDate;</span>
-<span class="nc" id="L600">    }</span>
+<span class="nc" id="L593">        theBaseDate = myDate;</span>
+<span class="nc" id="L594">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

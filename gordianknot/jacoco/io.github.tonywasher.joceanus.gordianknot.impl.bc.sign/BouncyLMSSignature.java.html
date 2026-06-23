@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyLMSSignature.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc.sign</a> &gt; <span class="el_source">BouncyLMSSignature.java</span></div><h1>BouncyLMSSignature.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyLMSKeyPair.BouncyHSSPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyLMSKeyPair.BouncyHSSPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import org.bouncycastle.pqc.crypto.lms.HSSSigner;
+
+/**
+ * LMS signature.
+ */
+public class BouncyLMSSignature
+        extends BouncyDigestSignature {
+    /**
+     * The HSS Signer.
+     */
+    private final HSSSigner theHSSSigner;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pSpec    the signatureSpec.
+     * @throws GordianException on error
+     */
+    BouncyLMSSignature(final GordianBaseFactory pFactory,
+                       final GordianSignatureSpec pSpec) throws GordianException {
+        /* Initialise underlying class */
+<span class="fc" id="L49">        super(pFactory, pSpec);</span>
+
+        /* Create the signer */
+<span class="fc" id="L52">        theHSSSigner = new HSSSigner();</span>
+<span class="fc" id="L53">    }</span>
+
+
+    @Override
+    public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
+        /* Initialise detail */
+<span class="fc" id="L59">        super.initForSigning(pParams);</span>
+<span class="fc" id="L60">        final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L61">        BouncyKeyPair.checkKeyPair(myPair);</span>
+
+        /* Initialise and set the signer */
+<span class="fc" id="L64">        final BouncyHSSPrivateKey myPrivate = (BouncyHSSPrivateKey) myPair.getPrivateKey();</span>
+<span class="fc" id="L65">        theHSSSigner.init(true, myPrivate.getPrivateKey());</span>
+<span class="fc" id="L66">    }</span>
+
+    @Override
+    public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
+        /* Initialise detail */
+<span class="fc" id="L71">        super.initForVerify(pParams);</span>
+<span class="fc" id="L72">        final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L73">        BouncyKeyPair.checkKeyPair(myPair);</span>
+
+        /* Initialise and set the signer */
+<span class="fc" id="L76">        final BouncyHSSPublicKey myPublic = (BouncyHSSPublicKey) myPair.getPublicKey();</span>
+<span class="fc" id="L77">        theHSSSigner.init(false, myPublic.getPublicKey());</span>
+<span class="fc" id="L78">    }</span>
+
+    @Override
+    public byte[] sign() throws GordianException {
+        /* Check that we are in signing mode */
+<span class="fc" id="L83">        checkMode(GordianSignatureMode.SIGN);</span>
+
+        /* Sign the message */
+<span class="fc" id="L86">        return theHSSSigner.generateSignature(getDigest());</span>
+    }
+
+    @Override
+    public boolean verify(final byte[] pSignature) throws GordianException {
+        /* Check that we are in verify mode */
+<span class="fc" id="L92">        checkMode(GordianSignatureMode.VERIFY);</span>
+
+        /* Verify the message */
+<span class="fc" id="L95">        return theHSSSigner.verifySignature(getDigest(), pSignature);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

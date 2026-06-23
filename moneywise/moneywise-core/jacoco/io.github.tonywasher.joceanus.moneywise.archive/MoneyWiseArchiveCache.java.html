@@ -27,7 +27,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldingMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
@@ -635,7 +635,7 @@ public final class MoneyWiseArchiveCache {
      */
     void resolveSecurityHoldings(final MoneyWiseDataSet pData) {
         /* Access securityHoldingsMap and Portfolio list */
-<span class="nc" id="L638">        final MoneyWiseSecurityHoldingMap myMap = pData.getPortfolios().getSecurityHoldingsMap();</span>
+<span class="nc" id="L638">        final MoneyWiseSecurityHoldingMap myMap = (MoneyWiseSecurityHoldingMap) pData.getPortfolios().getSecurityHoldingsMap();</span>
 <span class="nc" id="L639">        final MoneyWisePortfolioList myPortfolios = pData.getPortfolios();</span>
 
         /* Loop through the name map */
@@ -670,7 +670,7 @@ public final class MoneyWiseArchiveCache {
 <span class="nc" id="L670">            throw new MoneyWiseDataException(pTarget, &quot;Inconsistent portfolios&quot;);</span>
         }
 
-<span class="nc" id="L673">        final MoneyWiseSecurityHoldingMap myMap = pData.getPortfolios().getSecurityHoldingsMap();</span>
+<span class="nc" id="L673">        final MoneyWiseSecurityHoldingMap myMap = (MoneyWiseSecurityHoldingMap) pData.getPortfolios().getSecurityHoldingsMap();</span>
 
         /* Loop through the name map */
 <span class="nc bnc" id="L676" title="All 2 branches missed.">        for (Entry&lt;String, Object&gt; myEntry : theNameMap.entrySet()) {</span>
@@ -733,4 +733,4 @@ public final class MoneyWiseArchiveCache {
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

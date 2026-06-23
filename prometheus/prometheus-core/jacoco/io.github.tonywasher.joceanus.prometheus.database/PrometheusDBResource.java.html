@@ -20,93 +20,86 @@ import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceResource;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
  * Resource IDs for jPrometheus Preference Fields.
  */
-<span class="nc" id="L30">public enum PrometheusDBResource implements OceanusBundleId {</span>
+<span class="nc" id="L28">public enum PrometheusDBResource implements OceanusBundleId {</span>
     /**
      * DBDriver SQLServer.
      */
-<span class="nc" id="L34">    DRIVER_SQLSERVER(&quot;DBDriver.SQLSERVER&quot;),</span>
+<span class="nc" id="L32">    DRIVER_SQLSERVER(&quot;DBDriver.SQLSERVER&quot;),</span>
 
     /**
      * DBDriver PostgreSQL.
      */
-<span class="nc" id="L39">    DRIVER_POSTGRESQL(&quot;DBDriver.POSTGRESQL&quot;),</span>
+<span class="nc" id="L37">    DRIVER_POSTGRESQL(&quot;DBDriver.POSTGRESQL&quot;),</span>
 
     /**
      * DBDriver SQLServer.
      */
-<span class="nc" id="L44">    DRIVER_MYSQL(&quot;DBDriver.MYSQL&quot;),</span>
+<span class="nc" id="L42">    DRIVER_MYSQL(&quot;DBDriver.MYSQL&quot;),</span>
 
     /**
      * DBDriver MAriaDB.
      */
-<span class="nc" id="L49">    DRIVER_MARIADB(&quot;DBDriver.MariaDB&quot;),</span>
+<span class="nc" id="L47">    DRIVER_MARIADB(&quot;DBDriver.MariaDB&quot;),</span>
 
     /**
      * DBDriver H2.
      */
-<span class="nc" id="L54">    DRIVER_H2(&quot;DBDriver.H2&quot;),</span>
+<span class="nc" id="L52">    DRIVER_H2(&quot;DBDriver.H2&quot;),</span>
 
     /**
      * DatabasePreference Display Name.
      */
-<span class="nc" id="L59">    DBPREF_PREFNAME(&quot;dbpref.prefname&quot;),</span>
+<span class="nc" id="L57">    DBPREF_PREFNAME(&quot;dbpref.prefname&quot;),</span>
 
     /**
      * DatabasePreference Driver.
      */
-<span class="nc" id="L64">    DBPREF_DRIVER(&quot;dbpref.driver&quot;),</span>
+<span class="nc" id="L62">    DBPREF_DRIVER(&quot;dbpref.driver&quot;),</span>
 
     /**
      * DatabasePreference Server.
      */
-<span class="nc" id="L69">    DBPREF_SERVER(&quot;dbpref.server&quot;),</span>
+<span class="nc" id="L67">    DBPREF_SERVER(&quot;dbpref.server&quot;),</span>
 
     /**
      * DatabasePreference Instance.
      */
-<span class="nc" id="L74">    DBPREF_INSTANCE(&quot;dbpref.instance&quot;),</span>
+<span class="nc" id="L72">    DBPREF_INSTANCE(&quot;dbpref.instance&quot;),</span>
 
     /**
      * DatabasePreference Port.
      */
-<span class="nc" id="L79">    DBPREF_PORT(&quot;dbpref.port&quot;),</span>
+<span class="nc" id="L77">    DBPREF_PORT(&quot;dbpref.port&quot;),</span>
 
     /**
      * DatabasePreference Name.
      */
-<span class="nc" id="L84">    DBPREF_NAME(&quot;dbpref.name&quot;),</span>
+<span class="nc" id="L82">    DBPREF_NAME(&quot;dbpref.name&quot;),</span>
 
     /**
      * DatabasePreference Batch.
      */
-<span class="nc" id="L89">    DBPREF_BATCH(&quot;dbpref.batch&quot;),</span>
+<span class="nc" id="L87">    DBPREF_BATCH(&quot;dbpref.batch&quot;),</span>
 
     /**
      * DatabasePreference User.
      */
-<span class="nc" id="L94">    DBPREF_USER(&quot;dbpref.user&quot;),</span>
+<span class="nc" id="L92">    DBPREF_USER(&quot;dbpref.user&quot;),</span>
 
     /**
      * DatabasePreference Password.
      */
-<span class="nc" id="L99">    DBPREF_PASS(&quot;dbpref.password&quot;);</span>
-
-    /**
-     * The Driver Map.
-     */
-<span class="nc" id="L104">    private static final Map&lt;PrometheusJDBCDriver, OceanusBundleId&gt; DRIVER_MAP = buildDriverMap();</span>
+<span class="nc" id="L97">    DBPREF_PASS(&quot;dbpref.password&quot;);</span>
 
     /**
      * The Resource Loader.
      */
-<span class="nc" id="L109">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusPreferenceResource.class.getCanonicalName(),</span>
+<span class="nc" id="L102">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusPreferenceResource.class.getCanonicalName(),</span>
             ResourceBundle::getBundle);
 
     /**
@@ -124,56 +117,30 @@ import java.util.ResourceBundle;
      *
      * @param pKeyName the key name
      */
-<span class="nc" id="L127">    PrometheusDBResource(final String pKeyName) {</span>
-<span class="nc" id="L128">        theKeyName = pKeyName;</span>
-<span class="nc" id="L129">    }</span>
+<span class="nc" id="L120">    PrometheusDBResource(final String pKeyName) {</span>
+<span class="nc" id="L121">        theKeyName = pKeyName;</span>
+<span class="nc" id="L122">    }</span>
 
     @Override
     public String getKeyName() {
-<span class="nc" id="L133">        return theKeyName;</span>
+<span class="nc" id="L126">        return theKeyName;</span>
     }
 
     @Override
     public String getNameSpace() {
-<span class="nc" id="L138">        return &quot;Prometheus&quot;;</span>
+<span class="nc" id="L131">        return &quot;Prometheus&quot;;</span>
     }
 
     @Override
     public String getValue() {
         /* If we have not initialised the value */
-<span class="nc bnc" id="L144" title="All 2 branches missed.">        if (theValue == null) {</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (theValue == null) {</span>
             /* Derive the value */
-<span class="nc" id="L146">            theValue = LOADER.getValue(this);</span>
+<span class="nc" id="L139">            theValue = LOADER.getValue(this);</span>
         }
 
         /* return the value */
-<span class="nc" id="L150">        return theValue;</span>
-    }
-
-    /**
-     * Build driver map.
-     *
-     * @return the map
-     */
-    private static Map&lt;PrometheusJDBCDriver, OceanusBundleId&gt; buildDriverMap() {
-        /* Create the map and return it */
-<span class="nc" id="L160">        final Map&lt;PrometheusJDBCDriver, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(PrometheusJDBCDriver.class);</span>
-<span class="nc" id="L161">        myMap.put(PrometheusJDBCDriver.SQLSERVER, DRIVER_SQLSERVER);</span>
-<span class="nc" id="L162">        myMap.put(PrometheusJDBCDriver.POSTGRESQL, DRIVER_POSTGRESQL);</span>
-<span class="nc" id="L163">        myMap.put(PrometheusJDBCDriver.MYSQL, DRIVER_MYSQL);</span>
-<span class="nc" id="L164">        myMap.put(PrometheusJDBCDriver.MARIADB, DRIVER_MARIADB);</span>
-<span class="nc" id="L165">        myMap.put(PrometheusJDBCDriver.H2, DRIVER_H2);</span>
-<span class="nc" id="L166">        return myMap;</span>
-    }
-
-    /**
-     * Obtain key for DBDriver.
-     *
-     * @param pValue the Value
-     * @return the resource key
-     */
-    static OceanusBundleId getKeyForDriver(final PrometheusJDBCDriver pValue) {
-<span class="nc" id="L176">        return OceanusBundleLoader.getKeyForEnum(DRIVER_MAP, pValue);</span>
+<span class="nc" id="L143">        return theValue;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

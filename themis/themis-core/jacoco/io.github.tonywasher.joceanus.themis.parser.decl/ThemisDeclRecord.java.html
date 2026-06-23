@@ -17,7 +17,10 @@
 package io.github.tonywasher.joceanus.themis.parser.decl;
 
 import com.github.javaparser.ast.body.RecordDeclaration;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisClassInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisDeclarationInstance;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisModifierList;
@@ -32,6 +35,18 @@ import java.util.List;
 public class ThemisDeclRecord
         extends ThemisBaseDeclaration&lt;RecordDeclaration&gt;
         implements ThemisDeclarationInstance, ThemisClassInstance {
+    /**
+     * Report fields.
+     */
+<span class="nc" id="L41">    private static final MetisFieldSet&lt;ThemisDeclRecord&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisDeclRecord.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="nc" id="L47">        FIELD_DEFS.declareLocalField(ThemisDataResource.DATA_NAME, ThemisDeclRecord::getName);</span>
+<span class="nc" id="L48">    }</span>
+
     /**
      * The Name.
      */
@@ -82,45 +97,55 @@ public class ThemisDeclRecord
     ThemisDeclRecord(final ThemisParserDef pParser,
                      final RecordDeclaration pDeclaration) throws OceanusException {
         /* Store values */
-<span class="nc" id="L85">        super(pParser, pDeclaration);</span>
-<span class="nc" id="L86">        theName = ((ThemisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();</span>
-<span class="nc" id="L87">        theModifiers = pParser.parseModifierList(pDeclaration.getModifiers());</span>
-<span class="nc" id="L88">        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());</span>
-<span class="nc" id="L89">        theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());</span>
-<span class="nc" id="L90">        theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());</span>
-<span class="nc" id="L91">        theParameters = pParser.parseNodeList(pDeclaration.getParameters());</span>
+<span class="nc" id="L100">        super(pParser, pDeclaration);</span>
+<span class="nc" id="L101">        theName = ((ThemisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();</span>
+<span class="nc" id="L102">        theModifiers = pParser.parseModifierList(pDeclaration.getModifiers());</span>
+<span class="nc" id="L103">        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());</span>
+<span class="nc" id="L104">        theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());</span>
+<span class="nc" id="L105">        theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());</span>
+<span class="nc" id="L106">        theParameters = pParser.parseNodeList(pDeclaration.getParameters());</span>
 
         /* Access the intended full name and overwrite it with the correct name */
-<span class="nc" id="L94">        theFullName = pDeclaration.getFullyQualifiedName().orElse(null);</span>
-<span class="nc" id="L95">        theFullName = pParser.registerClass(this);</span>
+<span class="nc" id="L109">        theFullName = pDeclaration.getFullyQualifiedName().orElse(null);</span>
+<span class="nc" id="L110">        theFullName = pParser.registerClass(this);</span>
 
         /* Finally parse the underlying declarations */
-<span class="nc" id="L98">        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());</span>
-<span class="nc" id="L99">    }</span>
+<span class="nc" id="L113">        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());</span>
+<span class="nc" id="L114">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;ThemisDeclRecord&gt; getDataFieldSet() {
+<span class="nc" id="L118">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L123">        return getName();</span>
+    }
 
     @Override
     public String getName() {
-<span class="nc" id="L103">        return theName;</span>
+<span class="nc" id="L128">        return theName;</span>
     }
 
     @Override
     public String getFullName() {
-<span class="nc" id="L108">        return theFullName;</span>
+<span class="nc" id="L133">        return theFullName;</span>
     }
 
     @Override
     public boolean isTopLevel() {
-<span class="nc" id="L113">        return getNode().isTopLevelType();</span>
+<span class="nc" id="L138">        return getNode().isTopLevelType();</span>
     }
 
     @Override
     public boolean isLocalDeclaration() {
-<span class="nc" id="L118">        return getNode().isLocalRecordDeclaration();</span>
+<span class="nc" id="L143">        return getNode().isLocalRecordDeclaration();</span>
     }
 
     @Override
     public ThemisModifierList getModifiers() {
-<span class="nc" id="L123">        return theModifiers;</span>
+<span class="nc" id="L148">        return theModifiers;</span>
     }
 
     /**
@@ -129,27 +154,27 @@ public class ThemisDeclRecord
      * @return the parameters
      */
     public List&lt;ThemisNodeInstance&gt; getParameters() {
-<span class="nc" id="L132">        return theParameters;</span>
+<span class="nc" id="L157">        return theParameters;</span>
     }
 
     @Override
     public List&lt;ThemisDeclarationInstance&gt; getBody() {
-<span class="nc" id="L137">        return theBody;</span>
+<span class="nc" id="L162">        return theBody;</span>
     }
 
     @Override
     public List&lt;ThemisTypeInstance&gt; getImplements() {
-<span class="nc" id="L142">        return theImplements;</span>
+<span class="nc" id="L167">        return theImplements;</span>
     }
 
     @Override
     public List&lt;ThemisTypeInstance&gt; getTypeParameters() {
-<span class="nc" id="L147">        return theTypeParameters;</span>
+<span class="nc" id="L172">        return theTypeParameters;</span>
     }
 
     @Override
     public List&lt;ThemisExpressionInstance&gt; getAnnotations() {
-<span class="nc" id="L152">        return theAnnotations;</span>
+<span class="nc" id="L177">        return theAnnotations;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

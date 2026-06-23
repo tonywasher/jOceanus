@@ -28,9 +28,11 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlKeyCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusControlKeySetCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyData.PrometheusDataKeySetCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataSetCtl;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusSecurityException;
 
@@ -45,41 +47,42 @@ import java.util.Objects;
  * @author Tony Washer
  */
 public class PrometheusControlKeySet
-        extends PrometheusDataItem {
+        extends PrometheusDataItem
+        implements PrometheusControlKeySetCtl {
     /**
      * Object name.
      */
-<span class="nc" id="L52">    public static final String OBJECT_NAME = PrometheusCryptographyDataType.CONTROLKEYSET.getItemName();</span>
+<span class="nc" id="L55">    public static final String OBJECT_NAME = PrometheusCryptographyDataType.CONTROLKEYSET.getItemName();</span>
 
     /**
      * List name.
      */
-<span class="nc" id="L57">    public static final String LIST_NAME = PrometheusCryptographyDataType.CONTROLKEYSET.getListName();</span>
+<span class="nc" id="L60">    public static final String LIST_NAME = PrometheusCryptographyDataType.CONTROLKEYSET.getListName();</span>
 
     /**
      * KeySetWrapLength.
      */
-<span class="nc" id="L62">    public static final int WRAPLEN = GordianUtilities.getMaximumKeySetWrapLength();</span>
+<span class="nc" id="L65">    public static final int WRAPLEN = GordianUtilities.getMaximumKeySetWrapLength();</span>
 
     /**
      * Report fields.
      */
-<span class="nc" id="L67">    private static final MetisFieldVersionedSet&lt;PrometheusControlKeySet&gt; FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(PrometheusControlKeySet.class);</span>
+<span class="nc" id="L70">    private static final MetisFieldVersionedSet&lt;PrometheusControlKeySet&gt; FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(PrometheusControlKeySet.class);</span>
 
     /*
      * FieldIds.
      */
     static {
-<span class="nc" id="L73">        FIELD_DEFS.declareLinkField(PrometheusCryptographyDataType.CONTROLKEY);</span>
-<span class="nc" id="L74">        FIELD_DEFS.declareByteArrayField(PrometheusDataResource.KEYSET_KEYSETDEF, WRAPLEN);</span>
-<span class="nc" id="L75">        FIELD_DEFS.declareDerivedVersionedField(PrometheusDataResource.KEYSET_KEYSET);</span>
-<span class="nc" id="L76">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_LIST, PrometheusControlKeySet::getDataKeySets);</span>
-<span class="nc" id="L77">    }</span>
+<span class="nc" id="L76">        FIELD_DEFS.declareLinkField(PrometheusCryptographyDataType.CONTROLKEY);</span>
+<span class="nc" id="L77">        FIELD_DEFS.declareByteArrayField(PrometheusDataResource.KEYSET_KEYSETDEF, WRAPLEN);</span>
+<span class="nc" id="L78">        FIELD_DEFS.declareDerivedVersionedField(PrometheusDataResource.KEYSET_KEYSET);</span>
+<span class="nc" id="L79">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_LIST, PrometheusControlKeySet::getDataKeySets);</span>
+<span class="nc" id="L80">    }</span>
 
     /**
      * The DataKeySetCache.
      */
-<span class="nc" id="L82">    private DataKeySetCache theKeySetCache = new DataKeySetCache();</span>
+<span class="nc" id="L85">    private DataKeySetCache theKeySetCache = new DataKeySetCache();</span>
 
     /**
      * Copy Constructor.
@@ -90,14 +93,14 @@ public class PrometheusControlKeySet
     protected PrometheusControlKeySet(final PrometheusControlKeySetList pList,
                                       final PrometheusControlKeySet pSource) {
         /* Set standard values */
-<span class="nc" id="L93">        super(pList, pSource);</span>
+<span class="nc" id="L96">        super(pList, pSource);</span>
 
         /* Switch on the LinkStyle */
-<span class="nc bnc" id="L96" title="All 2 branches missed.">        if (Objects.requireNonNull(getStyle()) == PrometheusListStyle.CLONE) {</span>
-<span class="nc" id="L97">            final GordianKeySet myKeySet = pSource.getKeySet();</span>
-<span class="nc" id="L98">            setValueKeySet(myKeySet);</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        if (Objects.requireNonNull(getStyle()) == PrometheusListStyle.CLONE) {</span>
+<span class="nc" id="L100">            final GordianKeySet myKeySet = pSource.getKeySet();</span>
+<span class="nc" id="L101">            setValueKeySet(myKeySet);</span>
         }
-<span class="nc" id="L100">    }</span>
+<span class="nc" id="L103">    }</span>
 
     /**
      * Values constructor.
@@ -109,50 +112,50 @@ public class PrometheusControlKeySet
     private PrometheusControlKeySet(final PrometheusControlKeySetList pList,
                                     final PrometheusDataValues pValues) throws OceanusException {
         /* Initialise the item */
-<span class="nc" id="L112">        super(pList, pValues);</span>
+<span class="nc" id="L115">        super(pList, pValues);</span>
 
         /* Access the DataSet */
-<span class="nc" id="L115">        final PrometheusDataSet myData = getDataSet();</span>
+<span class="nc" id="L118">        final PrometheusDataSetCtl myData = getDataSet();</span>
 
         /* Store the ControlKey */
-<span class="nc" id="L118">        Object myValue = pValues.getValue(PrometheusCryptographyDataType.CONTROLKEY);</span>
-<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (myValue instanceof Integer i) {</span>
+<span class="nc" id="L121">        Object myValue = pValues.getValue(PrometheusCryptographyDataType.CONTROLKEY);</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        if (myValue instanceof Integer i) {</span>
             /* Store the integer */
-<span class="nc" id="L121">            setValueControlKey(i);</span>
+<span class="nc" id="L124">            setValueControlKey(i);</span>
 
             /* Resolve the ControlKey */
-<span class="nc" id="L124">            resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());</span>
-<span class="nc bnc" id="L125" title="All 2 branches missed.">        } else if (myValue instanceof PrometheusControlKey k) {</span>
+<span class="nc" id="L127">            resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, PrometheusCryptographyDataType.CONTROLKEY);</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        } else if (myValue instanceof PrometheusControlKeyCtl k) {</span>
             /* Store the controlKey */
-<span class="nc" id="L127">            setValueControlKey(k);</span>
+<span class="nc" id="L130">            setValueControlKey(k);</span>
         }
 
         /* Access the controlKey */
-<span class="nc" id="L131">        final PrometheusControlKey myControl = getControlKey();</span>
+<span class="nc" id="L134">        final PrometheusControlKeyCtl myControl = getControlKey();</span>
 
         /* Store the WrappedKeySetDef */
-<span class="nc" id="L134">        myValue = pValues.getValue(PrometheusDataResource.KEYSET_KEYSETDEF);</span>
-<span class="nc bnc" id="L135" title="All 2 branches missed.">        if (myValue instanceof byte[] ba) {</span>
-<span class="nc" id="L136">            setValueSecuredKeySetDef(ba);</span>
+<span class="nc" id="L137">        myValue = pValues.getValue(PrometheusDataResource.KEYSET_KEYSETDEF);</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">        if (myValue instanceof byte[] ba) {</span>
+<span class="nc" id="L139">            setValueSecuredKeySetDef(ba);</span>
         }
 
         /* Store/Resolve the keySet */
-<span class="nc" id="L140">        myValue = pValues.getValue(PrometheusDataResource.KEYSET_KEYSET);</span>
-<span class="nc bnc" id="L141" title="All 2 branches missed.">        if (myValue instanceof GordianKeySet ks) {</span>
-<span class="nc" id="L142">            setValueKeySet(ks);</span>
-<span class="nc bnc" id="L143" title="All 2 branches missed.">        } else if (getSecuredKeySetDef() != null) {</span>
+<span class="nc" id="L143">        myValue = pValues.getValue(PrometheusDataResource.KEYSET_KEYSET);</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">        if (myValue instanceof GordianKeySet ks) {</span>
+<span class="nc" id="L145">            setValueKeySet(ks);</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        } else if (getSecuredKeySetDef() != null) {</span>
             /* Protect against exceptions */
             try {
-<span class="nc" id="L146">                final GordianKeySet myKeySet = getSecurityFactory().getEmbeddedKeySet().deriveKeySet(getSecuredKeySetDef());</span>
-<span class="nc" id="L147">                setValueKeySet(myKeySet);</span>
-<span class="nc" id="L148">            } catch (GordianException e) {</span>
-<span class="nc" id="L149">                throw new PrometheusSecurityException(e);</span>
-<span class="nc" id="L150">            }</span>
+<span class="nc" id="L149">                final GordianKeySet myKeySet = getSecurityFactory().getEmbeddedKeySet().deriveKeySet(getSecuredKeySetDef());</span>
+<span class="nc" id="L150">                setValueKeySet(myKeySet);</span>
+<span class="nc" id="L151">            } catch (GordianException e) {</span>
+<span class="nc" id="L152">                throw new PrometheusSecurityException(e);</span>
+<span class="nc" id="L153">            }</span>
         }
 
         /* Register the DataKeySet */
-<span class="nc" id="L154">        myControl.registerControlKeySet(this);</span>
-<span class="nc" id="L155">    }</span>
+<span class="nc" id="L157">        myControl.registerControlKeySet(this);</span>
+<span class="nc" id="L158">    }</span>
 
     /**
      * Constructor for a new DataKeySet.
@@ -162,51 +165,47 @@ public class PrometheusControlKeySet
      * @throws OceanusException on error
      */
     protected PrometheusControlKeySet(final PrometheusControlKeySetList pList,
-                                      final PrometheusControlKey pControlKey) throws OceanusException {
+                                      final PrometheusControlKeyCtl pControlKey) throws OceanusException {
         /* Initialise the item */
-<span class="nc" id="L167">        super(pList, 0);</span>
+<span class="nc" id="L170">        super(pList, 0);</span>
 
         /* Protect against exceptions */
         try {
             /* Store the Details */
-<span class="nc" id="L172">            setValueControlKey(pControlKey);</span>
+<span class="nc" id="L175">            setValueControlKey(pControlKey);</span>
 
             /* Access the Security manager */
-<span class="nc" id="L175">            final PrometheusDataSet myData = getDataSet();</span>
+<span class="nc" id="L178">            final PrometheusDataSetCtl myData = getDataSet();</span>
 
             /* Create the KeySet */
-<span class="nc" id="L178">            final GordianFactory myFactory = getSecurityFactory();</span>
-<span class="nc" id="L179">            final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();</span>
-<span class="nc" id="L180">            final GordianKeySet myKeySet = myKeySets.generateKeySet(getDataSet().getKeySetSpec());</span>
-<span class="nc" id="L181">            setValueKeySet(myKeySet);</span>
+<span class="nc" id="L181">            final GordianFactory myFactory = getSecurityFactory();</span>
+<span class="nc" id="L182">            final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();</span>
+<span class="nc" id="L183">            final GordianKeySet myKeySet = myKeySets.generateKeySet(getDataSet().getKeySetSpec());</span>
+<span class="nc" id="L184">            setValueKeySet(myKeySet);</span>
 
             /* Set the wrappedKeySetDef */
-<span class="nc" id="L184">            setValueSecuredKeySetDef(myFactory.getEmbeddedKeySet().secureKeySet(myKeySet));</span>
+<span class="nc" id="L187">            setValueSecuredKeySetDef(myFactory.getEmbeddedKeySet().secureKeySet(myKeySet));</span>
 
             /* Allocate the DataKeySets */
-<span class="nc" id="L187">            allocateDataKeySets(myData);</span>
+<span class="nc" id="L190">            allocateDataKeySets(myData);</span>
 
             /* Catch Exceptions */
-<span class="nc" id="L190">        } catch (GordianException</span>
+<span class="nc" id="L193">        } catch (GordianException</span>
                  | OceanusException e) {
             /* Pass on exception */
-<span class="nc" id="L193">            throw new PrometheusDataException(this, ERROR_CREATEITEM, e);</span>
-<span class="nc" id="L194">        }</span>
-<span class="nc" id="L195">    }</span>
+<span class="nc" id="L196">            throw new PrometheusDataException(this, ERROR_CREATEITEM, e);</span>
+<span class="nc" id="L197">        }</span>
+<span class="nc" id="L198">    }</span>
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
-<span class="nc" id="L199">        return FIELD_DEFS;</span>
+<span class="nc" id="L202">        return FIELD_DEFS;</span>
     }
 
-    /**
-     * Obtain the security factory.
-     *
-     * @return the security factory
-     */
-    GordianFactory getSecurityFactory() {
-<span class="nc" id="L208">        final PrometheusControlKey myControl = getControlKey();</span>
-<span class="nc bnc" id="L209" title="All 2 branches missed.">        return myControl == null ? null : myControl.getSecurityFactory();</span>
+    @Override
+    public GordianFactory getSecurityFactory() {
+<span class="nc" id="L207">        final PrometheusControlKeyCtl myControl = getControlKey();</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">        return myControl == null ? null : myControl.getSecurityFactory();</span>
     }
 
     /**
@@ -215,7 +214,7 @@ public class PrometheusControlKeySet
      * @return the dataKeySets
      */
     private DataKeySetCache getDataKeySets() {
-<span class="nc" id="L218">        return theKeySetCache;</span>
+<span class="nc" id="L217">        return theKeySetCache;</span>
     }
 
     /**
@@ -224,7 +223,7 @@ public class PrometheusControlKeySet
      * @return the next dataKeySet
      */
     PrometheusDataKeySet getNextDataKeySet() {
-<span class="nc" id="L227">        return theKeySetCache.getNextDataKeySet();</span>
+<span class="nc" id="L226">        return theKeySetCache.getNextDataKeySet();</span>
     }
 
     /**
@@ -232,8 +231,8 @@ public class PrometheusControlKeySet
      *
      * @return the controlKey
      */
-    public final PrometheusControlKey getControlKey() {
-<span class="nc" id="L236">        return getValues().getValue(PrometheusCryptographyDataType.CONTROLKEY, PrometheusControlKey.class);</span>
+    public final PrometheusControlKeyCtl getControlKey() {
+<span class="nc" id="L235">        return getValues().getValue(PrometheusCryptographyDataType.CONTROLKEY, PrometheusControlKeyCtl.class);</span>
     }
 
     /**
@@ -242,10 +241,10 @@ public class PrometheusControlKeySet
      * @return the ControlKeyId
      */
     public Integer getControlKeyId() {
-<span class="nc" id="L245">        final PrometheusControlKey myKey = getControlKey();</span>
-<span class="nc bnc" id="L246" title="All 2 branches missed.">        return myKey == null</span>
-<span class="nc" id="L247">                ? null</span>
-<span class="nc" id="L248">                : myKey.getIndexedId();</span>
+<span class="nc" id="L244">        final PrometheusControlKeyCtl myKey = getControlKey();</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">        return myKey == null</span>
+<span class="nc" id="L246">                ? null</span>
+<span class="nc" id="L247">                : myKey.getIndexedId();</span>
     }
 
     /**
@@ -254,16 +253,12 @@ public class PrometheusControlKeySet
      * @return the securedKeySetDef
      */
     public final byte[] getSecuredKeySetDef() {
-<span class="nc" id="L257">        return getValues().getValue(PrometheusDataResource.KEYSET_KEYSETDEF, byte[].class);</span>
+<span class="nc" id="L256">        return getValues().getValue(PrometheusDataResource.KEYSET_KEYSETDEF, byte[].class);</span>
     }
 
-    /**
-     * Get the KeySet.
-     *
-     * @return the keySet
-     */
+    @Override
     public GordianKeySet getKeySet() {
-<span class="nc" id="L266">        return getValues().getValue(PrometheusDataResource.KEYSET_KEYSET, GordianKeySet.class);</span>
+<span class="nc" id="L261">        return getValues().getValue(PrometheusDataResource.KEYSET_KEYSET, GordianKeySet.class);</span>
     }
 
     /**
@@ -273,8 +268,8 @@ public class PrometheusControlKeySet
      * @throws OceanusException on error
      */
     private void setValueControlKey(final Integer pId) throws OceanusException {
-<span class="nc" id="L276">        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pId);</span>
-<span class="nc" id="L277">    }</span>
+<span class="nc" id="L271">        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pId);</span>
+<span class="nc" id="L272">    }</span>
 
     /**
      * Set the ControlKey.
@@ -282,9 +277,9 @@ public class PrometheusControlKeySet
      * @param pKey the controlKey
      * @throws OceanusException on error
      */
-    private void setValueControlKey(final PrometheusControlKey pKey) throws OceanusException {
-<span class="nc" id="L286">        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pKey);</span>
-<span class="nc" id="L287">    }</span>
+    private void setValueControlKey(final PrometheusControlKeyCtl pKey) throws OceanusException {
+<span class="nc" id="L281">        getValues().setValue(PrometheusCryptographyDataType.CONTROLKEY, pKey);</span>
+<span class="nc" id="L282">    }</span>
 
     /**
      * Set the securedKeySetDef.
@@ -292,8 +287,8 @@ public class PrometheusControlKeySet
      * @param pValue the securedKeySetDef
      */
     private void setValueSecuredKeySetDef(final byte[] pValue) {
-<span class="nc" id="L295">        getValues().setUncheckedValue(PrometheusDataResource.KEYSET_KEYSETDEF, pValue);</span>
-<span class="nc" id="L296">    }</span>
+<span class="nc" id="L290">        getValues().setUncheckedValue(PrometheusDataResource.KEYSET_KEYSETDEF, pValue);</span>
+<span class="nc" id="L291">    }</span>
 
     /**
      * Set the keySet.
@@ -301,35 +296,35 @@ public class PrometheusControlKeySet
      * @param pValue the keySet
      */
     private void setValueKeySet(final GordianKeySet pValue) {
-<span class="nc" id="L304">        getValues().setUncheckedValue(PrometheusDataResource.KEYSET_KEYSET, pValue);</span>
-<span class="nc" id="L305">    }</span>
+<span class="nc" id="L299">        getValues().setUncheckedValue(PrometheusDataResource.KEYSET_KEYSET, pValue);</span>
+<span class="nc" id="L300">    }</span>
 
     @Override
     public PrometheusControlKeySet getBase() {
-<span class="nc" id="L309">        return (PrometheusControlKeySet) super.getBase();</span>
+<span class="nc" id="L304">        return (PrometheusControlKeySet) super.getBase();</span>
     }
 
     @Override
     public PrometheusControlKeySetList getList() {
-<span class="nc" id="L314">        return (PrometheusControlKeySetList) super.getList();</span>
+<span class="nc" id="L309">        return (PrometheusControlKeySetList) super.getList();</span>
     }
 
     @Override
     public int compareValues(final PrometheusDataItem pThat) {
         /* Only sort on id */
-<span class="nc" id="L320">        return 0;</span>
+<span class="nc" id="L315">        return 0;</span>
     }
 
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
-<span class="nc" id="L326">        final PrometheusDataSet myData = getDataSet();</span>
-<span class="nc" id="L327">        resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());</span>
-<span class="nc" id="L328">        final PrometheusControlKey myControlKey = getControlKey();</span>
+<span class="nc" id="L321">        final PrometheusDataSetCtl myData = getDataSet();</span>
+<span class="nc" id="L322">        resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, PrometheusCryptographyDataType.CONTROLKEY);</span>
+<span class="nc" id="L323">        final PrometheusControlKeyCtl myControlKey = getControlKey();</span>
 
         /* Register the KeySet */
-<span class="nc" id="L331">        myControlKey.registerControlKeySet(this);</span>
-<span class="nc" id="L332">    }</span>
+<span class="nc" id="L326">        myControlKey.registerControlKeySet(this);</span>
+<span class="nc" id="L327">    }</span>
 
     /**
      * Allocate a new DataKeySet.
@@ -337,44 +332,41 @@ public class PrometheusControlKeySet
      * @param pData the DataSet
      * @throws OceanusException on error
      */
-    private void allocateDataKeySets(final PrometheusDataSet pData) throws OceanusException {
+    private void allocateDataKeySets(final PrometheusDataSetCtl pData) throws OceanusException {
         /* Access the DataKeySet List */
-<span class="nc" id="L342">        final PrometheusDataKeySetList mySets = pData.getDataKeySets();</span>
-<span class="nc" id="L343">        setNewVersion();</span>
+<span class="nc" id="L337">        final PrometheusDataKeySetList mySets</span>
+<span class="nc" id="L338">                = pData.getDataList(PrometheusCryptographyDataType.DATAKEYSET, PrometheusDataKeySetList.class);</span>
+<span class="nc" id="L339">        setNewVersion();</span>
 
         /* Loop to create sufficient DataKeySets */
-<span class="nc" id="L346">        final int myNumKeySets = pData.getNumActiveKeySets();</span>
-<span class="nc bnc" id="L347" title="All 2 branches missed.">        for (int i = 0; i &lt; myNumKeySets; i++) {</span>
+<span class="nc" id="L342">        final int myNumKeySets = pData.getNumActiveKeySets();</span>
+<span class="nc bnc" id="L343" title="All 2 branches missed.">        for (int i = 0; i &lt; myNumKeySets; i++) {</span>
             /* Allocate the DataKeySet */
-<span class="nc" id="L349">            final PrometheusDataKeySet mySet = new PrometheusDataKeySet(mySets, this);</span>
-<span class="nc" id="L350">            mySet.setNewVersion();</span>
-<span class="nc" id="L351">            mySets.add(mySet);</span>
+<span class="nc" id="L345">            final PrometheusDataKeySet mySet = new PrometheusDataKeySet(mySets, this);</span>
+<span class="nc" id="L346">            mySet.setNewVersion();</span>
+<span class="nc" id="L347">            mySets.add(mySet);</span>
 
             /* Register the DataKeySet */
-<span class="nc" id="L354">            theKeySetCache.registerDataKeySet(mySet);</span>
+<span class="nc" id="L350">            theKeySetCache.registerDataKeySet(mySet);</span>
         }
-<span class="nc" id="L356">    }</span>
+<span class="nc" id="L352">    }</span>
 
     /**
      * Delete the old ControlKeySet and DataKeySets.
      */
     protected void deleteControlKeySet() {
         /* Mark this dataKeySet as deleted */
-<span class="nc" id="L363">        setDeleted(true);</span>
+<span class="nc" id="L359">        setDeleted(true);</span>
 
         /* Delete the dataKeySets */
-<span class="nc" id="L366">        theKeySetCache.deleteDataKeySets();</span>
-<span class="nc" id="L367">    }</span>
+<span class="nc" id="L362">        theKeySetCache.deleteDataKeySets();</span>
+<span class="nc" id="L363">    }</span>
 
-    /**
-     * Register DataKeySet.
-     *
-     * @param pKeySet the DataKeySet to register
-     */
-    void registerDataKeySet(final PrometheusDataKeySet pKeySet) {
+    @Override
+    public void registerDataKeySet(final PrometheusDataKeySetCtl pKeySet) {
         /* Store the DataKey into the map */
-<span class="nc" id="L376">        theKeySetCache.registerDataKeySet(pKeySet);</span>
-<span class="nc" id="L377">    }</span>
+<span class="nc" id="L368">        theKeySetCache.registerDataKeySet((PrometheusDataKeySet) pKeySet);</span>
+<span class="nc" id="L369">    }</span>
 
     /**
      * DataKeySet List.
@@ -384,16 +376,16 @@ public class PrometheusControlKeySet
         /**
          * Report fields.
          */
-<span class="nc" id="L387">        private static final MetisFieldSet&lt;PrometheusControlKeySetList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusControlKeySetList.class);</span>
+<span class="nc" id="L379">        private static final MetisFieldSet&lt;PrometheusControlKeySetList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusControlKeySetList.class);</span>
 
         /**
          * Construct an empty CORE list.
          *
          * @param pData the DataSet for the list
          */
-        protected PrometheusControlKeySetList(final PrometheusDataSet pData) {
-<span class="nc" id="L395">            this(pData, PrometheusListStyle.CORE);</span>
-<span class="nc" id="L396">        }</span>
+        protected PrometheusControlKeySetList(final PrometheusDataSetCtl pData) {
+<span class="nc" id="L387">            this(pData, PrometheusListStyle.CORE);</span>
+<span class="nc" id="L388">        }</span>
 
         /**
          * Construct an empty generic ControlKey list.
@@ -401,10 +393,10 @@ public class PrometheusControlKeySet
          * @param pData  the DataSet for the list
          * @param pStyle the style of the list
          */
-        protected PrometheusControlKeySetList(final PrometheusDataSet pData,
+        protected PrometheusControlKeySetList(final PrometheusDataSetCtl pData,
                                               final PrometheusListStyle pStyle) {
-<span class="nc" id="L406">            super(PrometheusControlKeySet.class, pData, PrometheusCryptographyDataType.CONTROLKEYSET, pStyle);</span>
-<span class="nc" id="L407">        }</span>
+<span class="nc" id="L398">            super(PrometheusControlKeySet.class, pData, PrometheusCryptographyDataType.CONTROLKEYSET, pStyle);</span>
+<span class="nc" id="L399">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -412,81 +404,81 @@ public class PrometheusControlKeySet
          * @param pSource the source List
          */
         private PrometheusControlKeySetList(final PrometheusControlKeySetList pSource) {
-<span class="nc" id="L415">            super(pSource);</span>
-<span class="nc" id="L416">        }</span>
+<span class="nc" id="L407">            super(pSource);</span>
+<span class="nc" id="L408">        }</span>
 
         @Override
         public MetisFieldSet&lt;PrometheusControlKeySetList&gt; getDataFieldSet() {
-<span class="nc" id="L420">            return FIELD_DEFS;</span>
+<span class="nc" id="L412">            return FIELD_DEFS;</span>
         }
 
         @Override
         public String listName() {
-<span class="nc" id="L425">            return LIST_NAME;</span>
+<span class="nc" id="L417">            return LIST_NAME;</span>
         }
 
         @Override
         public MetisFieldSet&lt;PrometheusControlKeySet&gt; getItemFields() {
-<span class="nc" id="L430">            return PrometheusControlKeySet.FIELD_DEFS;</span>
+<span class="nc" id="L422">            return PrometheusControlKeySet.FIELD_DEFS;</span>
         }
 
         @Override
         public boolean includeDataXML() {
-<span class="nc" id="L435">            return false;</span>
+<span class="nc" id="L427">            return false;</span>
         }
 
         @Override
         protected PrometheusControlKeySetList getEmptyList(final PrometheusListStyle pStyle) {
-<span class="nc" id="L440">            final PrometheusControlKeySetList myList = new PrometheusControlKeySetList(this);</span>
-<span class="nc" id="L441">            myList.setStyle(pStyle);</span>
-<span class="nc" id="L442">            return myList;</span>
+<span class="nc" id="L432">            final PrometheusControlKeySetList myList = new PrometheusControlKeySetList(this);</span>
+<span class="nc" id="L433">            myList.setStyle(pStyle);</span>
+<span class="nc" id="L434">            return myList;</span>
         }
 
         @Override
         public PrometheusControlKeySetList deriveList(final PrometheusListStyle pStyle) throws OceanusException {
-<span class="nc" id="L447">            return (PrometheusControlKeySetList) super.deriveList(pStyle);</span>
+<span class="nc" id="L439">            return (PrometheusControlKeySetList) super.deriveList(pStyle);</span>
         }
 
         @Override
-        public PrometheusControlKeySetList deriveDifferences(final PrometheusDataSet pDataSet,
+        public PrometheusControlKeySetList deriveDifferences(final PrometheusDataSetCtl pDataSet,
                                                              final PrometheusDataList&lt;?&gt; pOld) {
-<span class="nc" id="L453">            return (PrometheusControlKeySetList) super.deriveDifferences(pDataSet, pOld);</span>
+<span class="nc" id="L445">            return (PrometheusControlKeySetList) super.deriveDifferences(pDataSet, pOld);</span>
         }
 
         @Override
         public PrometheusControlKeySet addCopyItem(final PrometheusDataItem pItem) {
             /* Can only clone a DataKeySet */
-<span class="nc bnc" id="L459" title="All 2 branches missed.">            if (!(pItem instanceof PrometheusControlKeySet)) {</span>
-<span class="nc" id="L460">                return null;</span>
+<span class="nc bnc" id="L451" title="All 2 branches missed.">            if (!(pItem instanceof PrometheusControlKeySet)) {</span>
+<span class="nc" id="L452">                return null;</span>
             }
 
             /* Clone the control key set */
-<span class="nc" id="L464">            final PrometheusControlKeySet mySet = new PrometheusControlKeySet(this, (PrometheusControlKeySet) pItem);</span>
-<span class="nc" id="L465">            add(mySet);</span>
-<span class="nc" id="L466">            return mySet;</span>
+<span class="nc" id="L456">            final PrometheusControlKeySet mySet = new PrometheusControlKeySet(this, (PrometheusControlKeySet) pItem);</span>
+<span class="nc" id="L457">            add(mySet);</span>
+<span class="nc" id="L458">            return mySet;</span>
         }
 
         @Override
         public PrometheusControlKeySet addNewItem() {
-<span class="nc" id="L471">            throw new UnsupportedOperationException();</span>
+<span class="nc" id="L463">            throw new UnsupportedOperationException();</span>
         }
 
         @Override
         public PrometheusControlKeySet addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
             /* Create the dataKeySet */
-<span class="nc" id="L477">            final PrometheusControlKeySet mySet = new PrometheusControlKeySet(this, pValues);</span>
+<span class="nc" id="L469">            final PrometheusControlKeySet mySet = new PrometheusControlKeySet(this, pValues);</span>
 
             /* Check that this keyId has not been previously added */
-<span class="nc bnc" id="L480" title="All 2 branches missed.">            if (!isIdUnique(mySet.getIndexedId())) {</span>
-<span class="nc" id="L481">                mySet.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
-<span class="nc" id="L482">                throw new PrometheusDataException(mySet, ERROR_VALIDATION);</span>
+<span class="nc bnc" id="L472" title="All 2 branches missed.">            if (!isIdUnique(mySet.getIndexedId())) {</span>
+<span class="nc" id="L473">                mySet.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L474">                throw new PrometheusDataException(mySet, ERROR_VALIDATION);</span>
             }
 
             /* Add to the list */
-<span class="nc" id="L486">            add(mySet);</span>
+<span class="nc" id="L478">            add(mySet);</span>
 
             /* Return it */
-<span class="nc" id="L489">            return mySet;</span>
+<span class="nc" id="L481">            return mySet;</span>
         }
 
         /**
@@ -497,39 +489,40 @@ public class PrometheusControlKeySet
          * @return the new DataKeySet
          * @throws OceanusException on error
          */
-        protected PrometheusControlKeySet cloneControlKeySet(final PrometheusControlKey pControlKey,
+        protected PrometheusControlKeySet cloneControlKeySet(final PrometheusControlKeyCtl pControlKey,
                                                              final PrometheusControlKeySet pKeySet) throws OceanusException {
             /* Build data values */
-<span class="nc" id="L503">            final PrometheusDataValues myValues = new PrometheusDataValues(OBJECT_NAME);</span>
-<span class="nc" id="L504">            myValues.addValue(MetisDataResource.DATA_ID, pKeySet.getIndexedId());</span>
-<span class="nc" id="L505">            myValues.addValue(PrometheusCryptographyDataType.CONTROLKEY, pControlKey);</span>
-<span class="nc" id="L506">            myValues.addValue(PrometheusDataResource.KEYSET_KEYSETDEF, pKeySet.getSecuredKeySetDef());</span>
-<span class="nc" id="L507">            myValues.addValue(PrometheusDataResource.KEYSET_KEYSET, pKeySet.getKeySet());</span>
+<span class="nc" id="L495">            final PrometheusDataValues myValues = new PrometheusDataValues(OBJECT_NAME);</span>
+<span class="nc" id="L496">            myValues.addValue(MetisDataResource.DATA_ID, pKeySet.getIndexedId());</span>
+<span class="nc" id="L497">            myValues.addValue(PrometheusCryptographyDataType.CONTROLKEY, pControlKey);</span>
+<span class="nc" id="L498">            myValues.addValue(PrometheusDataResource.KEYSET_KEYSETDEF, pKeySet.getSecuredKeySetDef());</span>
+<span class="nc" id="L499">            myValues.addValue(PrometheusDataResource.KEYSET_KEYSET, pKeySet.getKeySet());</span>
 
             /* Clone the controlKeySet */
-<span class="nc" id="L510">            final PrometheusControlKeySet mySet = addValuesItem(myValues);</span>
+<span class="nc" id="L502">            final PrometheusControlKeySet mySet = addValuesItem(myValues);</span>
 
             /* Access the ControlKeySet List */
-<span class="nc" id="L513">            final PrometheusDataSet myData = getDataSet();</span>
-<span class="nc" id="L514">            final PrometheusDataKeySetList myKeySets = myData.getDataKeySets();</span>
+<span class="nc" id="L505">            final PrometheusDataSetCtl myData = getDataSet();</span>
+<span class="nc" id="L506">            final PrometheusDataKeySetList myKeySets</span>
+<span class="nc" id="L507">                    = myData.getDataList(PrometheusCryptographyDataType.DATAKEYSET, PrometheusDataKeySetList.class);</span>
 
             /* Create a new DataKeySetCache for this ControlKeySet */
-<span class="nc" id="L517">            final DataKeySetCache mySource = pKeySet.getDataKeySets();</span>
-<span class="nc" id="L518">            mySet.theKeySetCache = mySource.cloneDataKeySetCache(mySet, myKeySets);</span>
+<span class="nc" id="L510">            final DataKeySetCache mySource = pKeySet.getDataKeySets();</span>
+<span class="nc" id="L511">            mySet.theKeySetCache = mySource.cloneDataKeySetCache(mySet, myKeySets);</span>
 
-<span class="nc" id="L520">            return mySet;</span>
+<span class="nc" id="L513">            return mySet;</span>
         }
 
         @Override
         public void postProcessOnLoad() throws OceanusException {
             /* Just sort the list */
-<span class="nc" id="L526">            reSort();</span>
-<span class="nc" id="L527">        }</span>
+<span class="nc" id="L519">            reSort();</span>
+<span class="nc" id="L520">        }</span>
 
         @Override
         protected PrometheusDataMapItem allocateDataMap() {
             /* Unused */
-<span class="nc" id="L532">            throw new UnsupportedOperationException();</span>
+<span class="nc" id="L525">            throw new UnsupportedOperationException();</span>
         }
     }
 
@@ -541,14 +534,14 @@ public class PrometheusControlKeySet
         /**
          * Report fields.
          */
-<span class="nc" id="L544">        private static final MetisFieldSet&lt;DataKeySetCache&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(DataKeySetCache.class);</span>
+<span class="nc" id="L537">        private static final MetisFieldSet&lt;DataKeySetCache&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(DataKeySetCache.class);</span>
 
         /*
          * Size Field Id.
          */
         static {
-<span class="nc" id="L550">            FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, DataKeySetCache::size);</span>
-<span class="nc" id="L551">        }</span>
+<span class="nc" id="L543">            FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, DataKeySetCache::size);</span>
+<span class="nc" id="L544">        }</span>
 
         /**
          * The list.
@@ -563,23 +556,23 @@ public class PrometheusControlKeySet
         /**
          * Constructor.
          */
-<span class="nc" id="L566">        DataKeySetCache() {</span>
-<span class="nc" id="L567">            theList = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L568">        }</span>
+<span class="nc" id="L559">        DataKeySetCache() {</span>
+<span class="nc" id="L560">            theList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L561">        }</span>
 
         @Override
         public MetisFieldSet&lt;DataKeySetCache&gt; getDataFieldSet() {
-<span class="nc" id="L572">            return FIELD_DEFS;</span>
+<span class="nc" id="L565">            return FIELD_DEFS;</span>
         }
 
         @Override
         public List&lt;PrometheusDataKeySet&gt; getUnderlyingList() {
-<span class="nc" id="L577">            return theList;</span>
+<span class="nc" id="L570">            return theList;</span>
         }
 
         @Override
         public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="nc" id="L582">            return getDataFieldSet().getName();</span>
+<span class="nc" id="L575">            return getDataFieldSet().getName();</span>
         }
 
         /**
@@ -589,16 +582,16 @@ public class PrometheusControlKeySet
          */
         private void registerDataKeySet(final PrometheusDataKeySet pKeySet) {
             /* If this is first registration */
-<span class="nc bnc" id="L592" title="All 2 branches missed.">            if (!theList.contains(pKeySet)) {</span>
+<span class="nc bnc" id="L585" title="All 2 branches missed.">            if (!theList.contains(pKeySet)) {</span>
                 /* Add the KeySet */
-<span class="nc" id="L594">                theList.add(pKeySet);</span>
+<span class="nc" id="L587">                theList.add(pKeySet);</span>
 
                 /* Reset any iterator */
-<span class="nc bnc" id="L597" title="All 2 branches missed.">                if (theIterator != null) {</span>
-<span class="nc" id="L598">                    theIterator = iterator();</span>
+<span class="nc bnc" id="L590" title="All 2 branches missed.">                if (theIterator != null) {</span>
+<span class="nc" id="L591">                    theIterator = iterator();</span>
                 }
             }
-<span class="nc" id="L601">        }</span>
+<span class="nc" id="L594">        }</span>
 
         /**
          * Get next DataKeySet.
@@ -607,18 +600,18 @@ public class PrometheusControlKeySet
          */
         private PrometheusDataKeySet getNextDataKeySet() {
             /* Handle empty list */
-<span class="nc bnc" id="L610" title="All 2 branches missed.">            if (isEmpty()) {</span>
-<span class="nc" id="L611">                return null;</span>
+<span class="nc bnc" id="L603" title="All 2 branches missed.">            if (isEmpty()) {</span>
+<span class="nc" id="L604">                return null;</span>
             }
 
             /* Handle initialisation and wrapping */
-<span class="nc bnc" id="L615" title="All 2 branches missed.">            if (theIterator == null</span>
-<span class="nc bnc" id="L616" title="All 2 branches missed.">                    || !theIterator.hasNext()) {</span>
-<span class="nc" id="L617">                theIterator = iterator();</span>
+<span class="nc bnc" id="L608" title="All 2 branches missed.">            if (theIterator == null</span>
+<span class="nc bnc" id="L609" title="All 2 branches missed.">                    || !theIterator.hasNext()) {</span>
+<span class="nc" id="L610">                theIterator = iterator();</span>
             }
 
             /* Return the next KeySet */
-<span class="nc" id="L621">            return theIterator.next();</span>
+<span class="nc" id="L614">            return theIterator.next();</span>
         }
 
         /**
@@ -626,14 +619,14 @@ public class PrometheusControlKeySet
          */
         private void deleteDataKeySets() {
             /* Loop through the KeySets */
-<span class="nc" id="L629">            final Iterator&lt;PrometheusDataKeySet&gt; myIterator = iterator();</span>
-<span class="nc bnc" id="L630" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
-<span class="nc" id="L631">                final PrometheusDataKeySet mySet = myIterator.next();</span>
+<span class="nc" id="L622">            final Iterator&lt;PrometheusDataKeySet&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L623" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L624">                final PrometheusDataKeySet mySet = myIterator.next();</span>
 
                 /* Delete the KeySet */
-<span class="nc" id="L634">                mySet.deleteDataKeySet();</span>
-<span class="nc" id="L635">            }</span>
-<span class="nc" id="L636">        }</span>
+<span class="nc" id="L627">                mySet.deleteDataKeySet();</span>
+<span class="nc" id="L628">            }</span>
+<span class="nc" id="L629">        }</span>
 
         /**
          * Clone dataKeySet Cache from a DataBase.
@@ -646,21 +639,21 @@ public class PrometheusControlKeySet
         private DataKeySetCache cloneDataKeySetCache(final PrometheusControlKeySet pControlKeySet,
                                                      final PrometheusDataKeySetList pKeySets) throws OceanusException {
             /* Create a new cache */
-<span class="nc" id="L649">            final DataKeySetCache myCache = new DataKeySetCache();</span>
+<span class="nc" id="L642">            final DataKeySetCache myCache = new DataKeySetCache();</span>
 
             /* Loop through the KeySets */
-<span class="nc" id="L652">            final Iterator&lt;PrometheusDataKeySet&gt; myIterator = iterator();</span>
-<span class="nc bnc" id="L653" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
-<span class="nc" id="L654">                final PrometheusDataKeySet mySet = myIterator.next();</span>
+<span class="nc" id="L645">            final Iterator&lt;PrometheusDataKeySet&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L646" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L647">                final PrometheusDataKeySet mySet = myIterator.next();</span>
 
                 /* Create a new DataKeySet for this ControlKeySet */
-<span class="nc" id="L657">                final PrometheusDataKeySet myNewSet = pKeySets.cloneDataKeySet(pControlKeySet, mySet);</span>
-<span class="nc" id="L658">                myCache.registerDataKeySet(myNewSet);</span>
-<span class="nc" id="L659">            }</span>
+<span class="nc" id="L650">                final PrometheusDataKeySet myNewSet = pKeySets.cloneDataKeySet(pControlKeySet, mySet);</span>
+<span class="nc" id="L651">                myCache.registerDataKeySet(myNewSet);</span>
+<span class="nc" id="L652">            }</span>
 
             /* Return the cache */
-<span class="nc" id="L662">            return myCache;</span>
+<span class="nc" id="L655">            return myCache;</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

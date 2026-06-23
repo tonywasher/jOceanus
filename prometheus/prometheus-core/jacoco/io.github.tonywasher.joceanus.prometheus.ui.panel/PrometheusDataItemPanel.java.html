@@ -16,14 +16,14 @@
  */
 package io.github.tonywasher.joceanus.prometheus.ui.panel;
 
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionValues;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionValues;
-import io.github.tonywasher.joceanus.metis.list.MetisListKey;
-import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusTableItem;
@@ -31,7 +31,7 @@ import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.ui.PrometheusGoToEvent;
 import io.github.tonywasher.joceanus.prometheus.ui.PrometheusItemActions;
 import io.github.tonywasher.joceanus.prometheus.ui.PrometheusItemEditActions;
-import io.github.tonywasher.joceanus.prometheus.ui.PrometheusItemEditActions.PrometheusItemEditParent;
+import io.github.tonywasher.joceanus.prometheus.ui.PrometheusItemEditParent;
 import io.github.tonywasher.joceanus.prometheus.ui.PrometheusUIResource;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
@@ -328,7 +328,7 @@ public abstract class PrometheusDataItemPanel&lt;T extends PrometheusTableItem &
 <span class="nc bnc" id="L328" title="All 2 branches missed.">            if (isEditable) {</span>
 <span class="nc bnc" id="L329" title="All 2 branches missed.">                if (!isEditing()) {</span>
 <span class="nc" id="L330">                    theEditVersion = theEditSet.getVersion();</span>
-<span class="nc" id="L331">                    theBaseValues = theItem.getValues();</span>
+<span class="nc" id="L331">                    theBaseValues = (MetisFieldVersionValues) theItem.getValues();</span>
                 }
             } else {
 <span class="nc" id="L334">                theEditVersion = VERSION_READONLY;</span>
@@ -648,4 +648,4 @@ public abstract class PrometheusDataItemPanel&lt;T extends PrometheusTableItem &
         }
 <span class="nc" id="L649">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

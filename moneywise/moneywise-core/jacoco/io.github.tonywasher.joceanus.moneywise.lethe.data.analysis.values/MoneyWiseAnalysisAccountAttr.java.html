@@ -18,65 +18,66 @@ package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisAttribute;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * AccountAttribute enumeration.
  */
-<span class="fc" id="L25">public enum MoneyWiseAnalysisAccountAttr implements MoneyWiseAnalysisAttribute {</span>
+<span class="fc" id="L26">public enum MoneyWiseAnalysisAccountAttr implements MoneyWiseAnalysisAttribute {</span>
     /**
      * Valuation.
      */
-<span class="fc" id="L29">    VALUATION,</span>
+<span class="fc" id="L30">    VALUATION,</span>
 
     /**
      * Foreign Valuation.
      */
-<span class="fc" id="L34">    FOREIGNVALUE,</span>
+<span class="fc" id="L35">    FOREIGNVALUE,</span>
 
     /**
      * Local Valuation.
      */
-<span class="fc" id="L39">    LOCALVALUE,</span>
+<span class="fc" id="L40">    LOCALVALUE,</span>
 
     /**
      * Currency Fluctuation.
      */
-<span class="fc" id="L44">    CURRENCYFLUCT,</span>
+<span class="fc" id="L45">    CURRENCYFLUCT,</span>
 
     /**
      * Deposit Rate.
      */
-<span class="fc" id="L49">    DEPOSITRATE,</span>
+<span class="fc" id="L50">    DEPOSITRATE,</span>
 
     /**
      * Exchange Rate.
      */
-<span class="fc" id="L54">    EXCHANGERATE,</span>
+<span class="fc" id="L55">    EXCHANGERATE,</span>
 
     /**
      * Valuation Delta.
      */
-<span class="fc" id="L59">    VALUEDELTA,</span>
+<span class="fc" id="L60">    VALUEDELTA,</span>
 
     /**
      * Maturity.
      */
-<span class="fc" id="L64">    MATURITY,</span>
+<span class="fc" id="L65">    MATURITY,</span>
 
     /**
      * Spend.
      */
-<span class="fc" id="L69">    SPEND,</span>
+<span class="fc" id="L70">    SPEND,</span>
 
     /**
      * BadDebtCapital.
      */
-<span class="fc" id="L74">    BADDEBTCAPITAL,</span>
+<span class="fc" id="L75">    BADDEBTCAPITAL,</span>
 
     /**
      * BadDebtInterest.
      */
-<span class="fc" id="L79">    BADDEBTINTEREST;</span>
+<span class="fc" id="L80">    BADDEBTINTEREST;</span>
 
     /**
      * The String name.
@@ -86,55 +87,55 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWis
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="fc bfc" id="L89" title="All 2 branches covered.">        if (theName == null) {</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (theName == null) {</span>
             /* Load the name */
-<span class="fc" id="L91">            theName = MoneyWiseAnalysisValuesResource.getKeyForAccountAttr(this).getValue();</span>
+<span class="fc" id="L92">            theName = bundleIdForAccountAttr(this).getValue();</span>
         }
 
         /* return the name */
-<span class="fc" id="L95">        return theName;</span>
+<span class="fc" id="L96">        return theName;</span>
     }
 
     @Override
     public boolean isCounter() {
-<span class="nc bnc" id="L100" title="All 2 branches missed.">        switch (this) {</span>
-            case VALUATION:
-            case FOREIGNVALUE:
-            case LOCALVALUE:
-            case CURRENCYFLUCT:
-            case SPEND:
-            case BADDEBTCAPITAL:
-            case BADDEBTINTEREST:
-<span class="nc" id="L108">                return true;</span>
-            case DEPOSITRATE:
-            case EXCHANGERATE:
-            case MATURITY:
-            case VALUEDELTA:
-            default:
-<span class="nc" id="L114">                return false;</span>
-        }
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L102">            case VALUATION, FOREIGNVALUE, LOCALVALUE, CURRENCYFLUCT, SPEND, BADDEBTCAPITAL, BADDEBTINTEREST -&gt; true;</span>
+<span class="nc" id="L103">            default -&gt; false;</span>
+        };
     }
 
     @Override
     public MetisDataType getDataType() {
-<span class="nc bnc" id="L120" title="All 4 branches missed.">        switch (this) {</span>
-            case DEPOSITRATE:
-<span class="nc" id="L122">                return MetisDataType.RATE;</span>
-            case EXCHANGERATE:
-<span class="nc" id="L124">                return MetisDataType.RATIO;</span>
-            case MATURITY:
-<span class="nc" id="L126">                return MetisDataType.DATE;</span>
-            case VALUATION:
-            case FOREIGNVALUE:
-            case LOCALVALUE:
-            case VALUEDELTA:
-            case CURRENCYFLUCT:
-            case SPEND:
-            case BADDEBTCAPITAL:
-            case BADDEBTINTEREST:
-            default:
-<span class="nc" id="L136">                return MetisDataType.MONEY;</span>
-        }
+<span class="nc bnc" id="L109" title="All 4 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L110">            case DEPOSITRATE -&gt; MetisDataType.RATE;</span>
+<span class="nc" id="L111">            case EXCHANGERATE -&gt; MetisDataType.RATIO;</span>
+<span class="nc" id="L112">            case MATURITY -&gt; MetisDataType.DATE;</span>
+<span class="nc" id="L113">            default -&gt; MetisDataType.MONEY;</span>
+        };
+    }
+
+    /**
+     * Obtain the resource bundleId for the attribute.
+     *
+     * @param pAttr the attribute
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForAccountAttr(final MoneyWiseAnalysisAccountAttr pAttr) {
+        /* Create the map and return it */
+<span class="pc bpc" id="L125" title="1 of 12 branches missed.">        return switch (pAttr) {</span>
+<span class="fc" id="L126">            case VALUATION -&gt; MoneyWiseAnalysisValuesResource.ACCOUNTATTR_VALUATION;</span>
+<span class="fc" id="L127">            case FOREIGNVALUE -&gt; MoneyWiseAnalysisValuesResource.ACCOUNTATTR_FOREIGNVALUE;</span>
+<span class="fc" id="L128">            case LOCALVALUE -&gt; MoneyWiseAnalysisValuesResource.ACCOUNTATTR_LOCALVALUE;</span>
+<span class="fc" id="L129">            case CURRENCYFLUCT -&gt; MoneyWiseAnalysisValuesResource.ACCOUNTATTR_CURRENCYFLUCT;</span>
+<span class="fc" id="L130">            case DEPOSITRATE -&gt; MoneyWiseAnalysisValuesResource.ACCOUNTATTR_DEPOSITRATE;</span>
+<span class="fc" id="L131">            case EXCHANGERATE -&gt; MoneyWiseAnalysisValuesResource.ACCOUNTATTR_EXCHANGERATE;</span>
+<span class="fc" id="L132">            case VALUEDELTA -&gt; MoneyWiseAnalysisValuesResource.ACCOUNTATTR_VALUEDELTA;</span>
+<span class="fc" id="L133">            case MATURITY -&gt; MoneyWiseAnalysisValuesResource.ACCOUNTATTR_MATURITY;</span>
+<span class="fc" id="L134">            case SPEND -&gt; MoneyWiseAnalysisValuesResource.ACCOUNTATTR_SPEND;</span>
+<span class="fc" id="L135">            case BADDEBTCAPITAL -&gt; MoneyWiseAnalysisValuesResource.ACCOUNTATTR_BADDEBTCAPITAL;</span>
+<span class="fc" id="L136">            case BADDEBTINTEREST -&gt; MoneyWiseAnalysisValuesResource.ACCOUNTATTR_BADDEBTINTEREST;</span>
+<span class="nc" id="L137">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

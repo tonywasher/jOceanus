@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -42,6 +37,11 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataT
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Comparator;
@@ -79,7 +79,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
     /**
      * The analysis.
      */
-    private final MoneyWiseXAnalysis theAnalysis;
+    private final MoneyWiseXAnalysisHolder theAnalysis;
 
     /**
      * The transaction category.
@@ -112,7 +112,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
      * @param pAnalysis the analysis
      * @param pCategory the transaction category
      */
-    private MoneyWiseXAnalysisTransCategoryBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisTransCategoryBucket(final MoneyWiseXAnalysisHolder pAnalysis,
 <span class="fc" id="L116">                                                  final MoneyWiseTransCategory pCategory) {</span>
         /* Store the parameters */
 <span class="fc" id="L118">        theAnalysis = pAnalysis;</span>
@@ -141,7 +141,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
      * @param pBase     the underlying bucket
      * @param pDate     the date for the bucket
      */
-    private MoneyWiseXAnalysisTransCategoryBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisTransCategoryBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                                   final MoneyWiseXAnalysisTransCategoryBucket pBase,
 <span class="nc" id="L146">                                                  final OceanusDate pDate) {</span>
         /* Copy details from base */
@@ -164,7 +164,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
      * @param pBase     the underlying bucket
      * @param pRange    the range for the bucket
      */
-    private MoneyWiseXAnalysisTransCategoryBucket(final MoneyWiseXAnalysis pAnalysis,
+    private MoneyWiseXAnalysisTransCategoryBucket(final MoneyWiseXAnalysisHolder pAnalysis,
                                                   final MoneyWiseXAnalysisTransCategoryBucket pBase,
 <span class="nc" id="L169">                                                  final OceanusDateRange pRange) {</span>
         /* Copy details from base */
@@ -309,7 +309,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
      *
      * @return the analysis
      */
-    MoneyWiseXAnalysis getAnalysis() {
+    MoneyWiseXAnalysisHolder getAnalysis() {
 <span class="nc" id="L313">        return theAnalysis;</span>
     }
 
@@ -504,7 +504,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
         /**
          * The analysis.
          */
-        private final MoneyWiseXAnalysis theAnalysis;
+        private final MoneyWiseXAnalysisHolder theAnalysis;
 
         /**
          * The list.
@@ -526,7 +526,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
          *
          * @param pAnalysis the analysis
          */
-<span class="fc" id="L529">        MoneyWiseXAnalysisTransCategoryBucketList(final MoneyWiseXAnalysis pAnalysis) {</span>
+<span class="fc" id="L529">        MoneyWiseXAnalysisTransCategoryBucketList(final MoneyWiseXAnalysisHolder pAnalysis) {</span>
             /* Initialise class */
 <span class="fc" id="L531">            theAnalysis = pAnalysis;</span>
 <span class="fc" id="L532">            theEditSet = theAnalysis.getEditSet();</span>
@@ -541,7 +541,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
          * @param pBase     the base list
          * @param pDate     the Date
          */
-        MoneyWiseXAnalysisTransCategoryBucketList(final MoneyWiseXAnalysis pAnalysis,
+        MoneyWiseXAnalysisTransCategoryBucketList(final MoneyWiseXAnalysisHolder pAnalysis,
                                                   final MoneyWiseXAnalysisTransCategoryBucketList pBase,
 <span class="nc" id="L546">                                                  final OceanusDate pDate) {</span>
             /* Initialise class */
@@ -573,7 +573,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
          * @param pBase     the base list
          * @param pRange    the Date Range
          */
-        MoneyWiseXAnalysisTransCategoryBucketList(final MoneyWiseXAnalysis pAnalysis,
+        MoneyWiseXAnalysisTransCategoryBucketList(final MoneyWiseXAnalysisHolder pAnalysis,
                                                   final MoneyWiseXAnalysisTransCategoryBucketList pBase,
 <span class="nc" id="L578">                                                  final OceanusDateRange pRange) {</span>
             /* Initialise class */
@@ -619,7 +619,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
          *
          * @return the analysis
          */
-        MoneyWiseXAnalysis getAnalysis() {
+        MoneyWiseXAnalysisHolder getAnalysis() {
 <span class="nc" id="L623">            return theAnalysis;</span>
         }
 
@@ -753,7 +753,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
             /* Return the first category in the list if it exists */
 <span class="nc bnc" id="L754" title="All 2 branches missed.">            return isEmpty()</span>
 <span class="nc" id="L755">                    ? null</span>
-<span class="nc" id="L756">                    : theList.getUnderlyingList().get(0);</span>
+<span class="nc" id="L756">                    : theList.getUnderlyingList().getFirst();</span>
         }
 
         /**
@@ -824,4 +824,4 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 <span class="fc" id="L824">        }</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

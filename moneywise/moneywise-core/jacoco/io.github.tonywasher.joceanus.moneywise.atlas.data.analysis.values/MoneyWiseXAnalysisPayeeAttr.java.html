@@ -18,26 +18,27 @@ package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisAttribute;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * PayeeAttribute enumeration.
  */
-<span class="fc" id="L25">public enum MoneyWiseXAnalysisPayeeAttr</span>
+<span class="fc" id="L26">public enum MoneyWiseXAnalysisPayeeAttr</span>
         implements MoneyWiseXAnalysisAttribute {
     /**
      * Income.
      */
-<span class="fc" id="L30">    INCOME,</span>
+<span class="fc" id="L31">    INCOME,</span>
 
     /**
      * Expense.
      */
-<span class="fc" id="L35">    EXPENSE,</span>
+<span class="fc" id="L36">    EXPENSE,</span>
 
     /**
      * Profit (NetIncome).
      */
-<span class="fc" id="L40">    PROFIT;</span>
+<span class="fc" id="L41">    PROFIT;</span>
 
     /**
      * The String name.
@@ -47,23 +48,38 @@ import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWis
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        if (theName == null) {</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        if (theName == null) {</span>
             /* Load the name */
-<span class="fc" id="L52">            theName = MoneyWiseXAnalysisValuesResource.getKeyForPayeeAttr(this).getValue();</span>
+<span class="fc" id="L53">            theName = bundleIdForAttribute(this).getValue();</span>
         }
 
         /* return the name */
-<span class="fc" id="L56">        return theName;</span>
+<span class="fc" id="L57">        return theName;</span>
     }
 
     @Override
     public boolean isPreserved() {
-<span class="fc" id="L61">        return true;</span>
+<span class="fc" id="L62">        return true;</span>
     }
 
     @Override
     public MetisDataType getDataType() {
-<span class="nc" id="L66">        return MetisDataType.MONEY;</span>
+<span class="nc" id="L67">        return MetisDataType.MONEY;</span>
+    }
+
+    /**
+     * Obtain the resource bundleId for the attribute.
+     *
+     * @param pAttr the attribute
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForAttribute(final MoneyWiseXAnalysisPayeeAttr pAttr) {
+<span class="pc bpc" id="L77" title="1 of 4 branches missed.">        return switch (pAttr) {</span>
+<span class="fc" id="L78">            case INCOME -&gt; MoneyWiseXAnalysisValuesResource.PAYEEATTR_INCOME;</span>
+<span class="fc" id="L79">            case EXPENSE -&gt; MoneyWiseXAnalysisValuesResource.PAYEEATTR_EXPENSE;</span>
+<span class="fc" id="L80">            case PROFIT -&gt; MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_PROFIT;</span>
+<span class="nc" id="L81">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

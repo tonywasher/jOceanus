@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
@@ -27,6 +26,7 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.Currency;
 
@@ -37,7 +37,7 @@ public class MoneyWiseAnalysisMarket {
     /**
      * Analysis.
      */
-    private final MoneyWiseAnalysis theAnalysis;
+    private final MoneyWiseAnalysisHolder theAnalysis;
 
     /**
      * Market Payee Income.
@@ -74,7 +74,7 @@ public class MoneyWiseAnalysisMarket {
      *
      * @param pAnalysis the analysis.
      */
-<span class="fc" id="L77">    protected MoneyWiseAnalysisMarket(final MoneyWiseAnalysis pAnalysis) {</span>
+<span class="fc" id="L77">    protected MoneyWiseAnalysisMarket(final MoneyWiseAnalysisHolder pAnalysis) {</span>
         /* Store parameters */
 <span class="fc" id="L79">        theAnalysis = pAnalysis;</span>
 
@@ -222,4 +222,4 @@ public class MoneyWiseAnalysisMarket {
         }
 <span class="fc" id="L223">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

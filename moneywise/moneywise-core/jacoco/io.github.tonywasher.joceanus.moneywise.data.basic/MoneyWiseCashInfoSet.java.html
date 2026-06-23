@@ -16,15 +16,16 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashInfo.MoneyWiseCashInfoList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Arrays;
@@ -41,22 +42,22 @@ public class MoneyWiseCashInfoSet
     /**
      * Report fields.
      */
-<span class="fc" id="L44">    private static final MetisFieldSet&lt;MoneyWiseCashInfoSet&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseCashInfoSet.class);</span>
+<span class="fc" id="L45">    private static final MetisFieldSet&lt;MoneyWiseCashInfoSet&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseCashInfoSet.class);</span>
 
     /**
      * FieldSet map.
      */
-<span class="fc" id="L49">    private static final Map&lt;MetisDataFieldId, MoneyWiseAccountInfoClass&gt; FIELDSET_MAP = FIELD_DEFS.buildFieldMap(MoneyWiseAccountInfoClass.class, MoneyWiseCashInfoSet::getFieldValue);</span>
+<span class="fc" id="L50">    private static final Map&lt;MetisDataFieldId, MoneyWiseAccountInfoClass&gt; FIELDSET_MAP = FIELD_DEFS.buildFieldMap(MoneyWiseAccountInfoClass.class, MoneyWiseCashInfoSet::getFieldValue);</span>
 
     /**
      * Reverse FieldSet map.
      */
-<span class="fc" id="L54">    private static final Map&lt;MoneyWiseAccountInfoClass, MetisDataFieldId&gt; REVERSE_FIELDMAP = MetisFieldSet.reverseFieldMap(FIELDSET_MAP, MoneyWiseAccountInfoClass.class);</span>
+<span class="fc" id="L55">    private static final Map&lt;MoneyWiseAccountInfoClass, MetisDataFieldId&gt; REVERSE_FIELDMAP = MetisFieldSet.reverseFieldMap(FIELDSET_MAP, MoneyWiseAccountInfoClass.class);</span>
 
     /**
      * AutoExpense Not Expense Error Text.
      */
-<span class="fc" id="L59">    public static final String ERROR_AUTOEXP = MoneyWiseBasicResource.CASH_ERROR_AUTOEXPENSE.getValue();</span>
+<span class="fc" id="L60">    public static final String ERROR_AUTOEXP = MoneyWiseBasicResource.CASH_ERROR_AUTOEXPENSE.getValue();</span>
 
     /**
      * Constructor.
@@ -65,21 +66,16 @@ public class MoneyWiseCashInfoSet
      * @param pTypeList the infoTypeList for the set
      * @param pInfoList the InfoList for the set
      */
-    protected MoneyWiseCashInfoSet(final MoneyWiseCash pOwner,
+    protected MoneyWiseCashInfoSet(final PrometheusDataItem pOwner,
                                    final MoneyWiseAccountInfoTypeList pTypeList,
                                    final MoneyWiseCashInfoList pInfoList) {
         /* Store the Owner and Info List */
-<span class="fc" id="L72">        super(pOwner, pTypeList, pInfoList);</span>
-<span class="fc" id="L73">    }</span>
+<span class="fc" id="L73">        super(pOwner, pTypeList, pInfoList);</span>
+<span class="fc" id="L74">    }</span>
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
-<span class="nc" id="L77">        return FIELD_DEFS;</span>
-    }
-
-    @Override
-    public MoneyWiseCash getOwner() {
-<span class="fc" id="L82">        return (MoneyWiseCash) super.getOwner();</span>
+<span class="nc" id="L78">        return FIELD_DEFS;</span>
     }
 
     /**
@@ -90,13 +86,13 @@ public class MoneyWiseCashInfoSet
      */
     public Object getFieldValue(final MetisDataFieldId pFieldId) {
         /* Handle InfoSet fields */
-<span class="fc" id="L93">        final MoneyWiseAccountInfoClass myClass = getClassForField(pFieldId);</span>
-<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if (myClass != null) {</span>
-<span class="fc" id="L95">            return getInfoSetValue(myClass);</span>
+<span class="fc" id="L89">        final MoneyWiseAccountInfoClass myClass = getClassForField(pFieldId);</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        if (myClass != null) {</span>
+<span class="fc" id="L91">            return getInfoSetValue(myClass);</span>
         }
 
         /* Pass onwards */
-<span class="nc" id="L99">        return null;</span>
+<span class="nc" id="L95">        return null;</span>
     }
 
     /**
@@ -108,25 +104,25 @@ public class MoneyWiseCashInfoSet
     private Object getInfoSetValue(final MoneyWiseAccountInfoClass pInfoClass) {
         final Object myValue;
 
-<span class="fc bfc" id="L111" title="All 3 branches covered.">        switch (pInfoClass) {</span>
+<span class="fc bfc" id="L107" title="All 3 branches covered.">        switch (pInfoClass) {</span>
             case AUTOPAYEE:
                 /* Access payee of object */
-<span class="fc" id="L114">                myValue = getPayee(pInfoClass);</span>
-<span class="fc" id="L115">                break;</span>
+<span class="fc" id="L110">                myValue = getPayee(pInfoClass);</span>
+<span class="fc" id="L111">                break;</span>
             case AUTOEXPENSE:
                 /* Access event category of object */
-<span class="fc" id="L118">                myValue = getEventCategory(pInfoClass);</span>
-<span class="fc" id="L119">                break;</span>
+<span class="fc" id="L114">                myValue = getEventCategory(pInfoClass);</span>
+<span class="fc" id="L115">                break;</span>
             default:
                 /* Access value of object */
-<span class="fc" id="L122">                myValue = getField(pInfoClass);</span>
+<span class="fc" id="L118">                myValue = getField(pInfoClass);</span>
                 break;
         }
 
         /* Return the value */
-<span class="fc bfc" id="L127" title="All 2 branches covered.">        return myValue != null</span>
-<span class="fc" id="L128">                ? myValue</span>
-<span class="fc" id="L129">                : MetisDataFieldValue.SKIP;</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">        return myValue != null</span>
+<span class="fc" id="L124">                ? myValue</span>
+<span class="fc" id="L125">                : MetisDataFieldValue.SKIP;</span>
     }
 
     /**
@@ -137,7 +133,7 @@ public class MoneyWiseCashInfoSet
      */
     public static MoneyWiseAccountInfoClass getClassForField(final MetisDataFieldId pField) {
         /* Look up field in map */
-<span class="fc" id="L140">        return FIELDSET_MAP.get(pField);</span>
+<span class="fc" id="L136">        return FIELDSET_MAP.get(pField);</span>
     }
 
     /**
@@ -148,12 +144,12 @@ public class MoneyWiseCashInfoSet
      */
     public static MetisDataFieldId getFieldForClass(final MoneyWiseAccountInfoClass pClass) {
         /* Look up field in map */
-<span class="nc" id="L151">        return REVERSE_FIELDMAP.get(pClass);</span>
+<span class="nc" id="L147">        return REVERSE_FIELDMAP.get(pClass);</span>
     }
 
     @Override
     public MetisDataFieldId getFieldForClass(final PrometheusDataInfoClass pClass) {
-<span class="nc" id="L156">        return getFieldForClass((MoneyWiseAccountInfoClass) pClass);</span>
+<span class="nc" id="L152">        return getFieldForClass((MoneyWiseAccountInfoClass) pClass);</span>
     }
 
     /**
@@ -164,15 +160,15 @@ public class MoneyWiseCashInfoSet
      */
     public MoneyWisePayee getPayee(final MoneyWiseAccountInfoClass pInfoClass) {
         /* Access existing entry */
-<span class="fc" id="L167">        final MoneyWiseCashInfo myValue = getInfo(pInfoClass);</span>
+<span class="fc" id="L163">        final MoneyWiseCashInfo myValue = getInfo(pInfoClass);</span>
 
         /* If we have no entry, return null */
-<span class="fc bfc" id="L170" title="All 2 branches covered.">        if (myValue == null) {</span>
-<span class="fc" id="L171">            return null;</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        if (myValue == null) {</span>
+<span class="fc" id="L167">            return null;</span>
         }
 
         /* Return the payee */
-<span class="fc" id="L175">        return myValue.getPayee();</span>
+<span class="fc" id="L171">        return myValue.getPayee();</span>
     }
 
     /**
@@ -183,21 +179,21 @@ public class MoneyWiseCashInfoSet
      */
     public MoneyWiseTransCategory getEventCategory(final MoneyWiseAccountInfoClass pInfoClass) {
         /* Access existing entry */
-<span class="fc" id="L186">        final MoneyWiseCashInfo myValue = getInfo(pInfoClass);</span>
+<span class="fc" id="L182">        final MoneyWiseCashInfo myValue = getInfo(pInfoClass);</span>
 
         /* If we have no entry, return null */
-<span class="fc bfc" id="L189" title="All 2 branches covered.">        if (myValue == null) {</span>
-<span class="fc" id="L190">            return null;</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        if (myValue == null) {</span>
+<span class="fc" id="L186">            return null;</span>
         }
 
         /* Return the event category */
-<span class="fc" id="L194">        return myValue.getEventCategory();</span>
+<span class="fc" id="L190">        return myValue.getEventCategory();</span>
     }
 
     @Override
     public Iterator&lt;PrometheusDataInfoClass&gt; classIterator() {
-<span class="fc" id="L199">        final PrometheusDataInfoClass[] myValues = MoneyWiseAccountInfoClass.values();</span>
-<span class="fc" id="L200">        return Arrays.stream(myValues).iterator();</span>
+<span class="fc" id="L195">        final PrometheusDataInfoClass[] myValues = MoneyWiseAccountInfoClass.values();</span>
+<span class="fc" id="L196">        return Arrays.stream(myValues).iterator();</span>
     }
 
     /**
@@ -207,8 +203,8 @@ public class MoneyWiseCashInfoSet
      */
     protected void cloneDataInfoSet(final MoneyWiseCashInfoSet pSource) {
         /* Clone the dataInfoSet */
-<span class="fc" id="L210">        cloneTheDataInfoSet(pSource);</span>
-<span class="fc" id="L211">    }</span>
+<span class="fc" id="L206">        cloneTheDataInfoSet(pSource);</span>
+<span class="fc" id="L207">    }</span>
 
     /**
      * Resolve editSetLinks.
@@ -218,9 +214,9 @@ public class MoneyWiseCashInfoSet
      */
     void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Loop through the items */
-<span class="fc bfc" id="L221" title="All 2 branches covered.">        for (MoneyWiseCashInfo myInfo : this) {</span>
-<span class="fc" id="L222">            myInfo.resolveEditSetLinks(pEditSet);</span>
-<span class="fc" id="L223">        }</span>
-<span class="fc" id="L224">    }</span>
+<span class="fc bfc" id="L217" title="All 2 branches covered.">        for (MoneyWiseCashInfo myInfo : this) {</span>
+<span class="fc" id="L218">            myInfo.resolveEditSetLinks(pEditSet);</span>
+<span class="fc" id="L219">        }</span>
+<span class="fc" id="L220">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

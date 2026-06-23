@@ -16,13 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * QIF File record representation.
@@ -61,11 +62,6 @@ public abstract class MoneyWiseQIFRecord&lt;T extends Enum&lt;T&gt; &amp; MoneyW
     protected static final char QIF_EOL = '\n';
 
     /**
-     * The QIF File.
-     */
-    private final MoneyWiseQIFFile theFile;
-
-    /**
      * Class of lines.
      */
     private final Class&lt;T&gt; theClass;
@@ -83,27 +79,15 @@ public abstract class MoneyWiseQIFRecord&lt;T extends Enum&lt;T&gt; &amp; MoneyW
     /**
      * Constructor.
      *
-     * @param pFile  the QIF File
      * @param pClass the class of the lines
      */
-    protected MoneyWiseQIFRecord(final MoneyWiseQIFFile pFile,
-<span class="nc" id="L90">                                 final Class&lt;T&gt; pClass) {</span>
+<span class="nc" id="L84">    protected MoneyWiseQIFRecord(final Class&lt;T&gt; pClass) {</span>
         /* Record the class and file */
-<span class="nc" id="L92">        theClass = pClass;</span>
-<span class="nc" id="L93">        theFile = pFile;</span>
+<span class="nc" id="L86">        theClass = pClass;</span>
 
         /* Create the map */
-<span class="nc" id="L96">        theMap = new EnumMap&lt;&gt;(pClass);</span>
-<span class="nc" id="L97">    }</span>
-
-    /**
-     * Obtain file.
-     *
-     * @return the file
-     */
-    protected MoneyWiseQIFFile getFile() {
-<span class="nc" id="L105">        return theFile;</span>
-    }
+<span class="nc" id="L89">        theMap = new EnumMap&lt;&gt;(pClass);</span>
+<span class="nc" id="L90">    }</span>
 
     /**
      * Obtain line class.
@@ -111,7 +95,7 @@ public abstract class MoneyWiseQIFRecord&lt;T extends Enum&lt;T&gt; &amp; MoneyW
      * @return the line class
      */
     protected Class&lt;T&gt; getLineClass() {
-<span class="nc" id="L114">        return theClass;</span>
+<span class="nc" id="L98">        return theClass;</span>
     }
 
     /**
@@ -120,7 +104,7 @@ public abstract class MoneyWiseQIFRecord&lt;T extends Enum&lt;T&gt; &amp; MoneyW
      * @return the line map
      */
     protected Map&lt;T, MoneyWiseQIFLine&lt;T&gt;&gt; getLineMap() {
-<span class="nc" id="L123">        return theMap;</span>
+<span class="nc" id="L107">        return theMap;</span>
     }
 
     /**
@@ -129,7 +113,7 @@ public abstract class MoneyWiseQIFRecord&lt;T extends Enum&lt;T&gt; &amp; MoneyW
      * @return the subList
      */
     protected List&lt;MoneyWiseQIFRecord&lt;T&gt;&gt; getSubList() {
-<span class="nc" id="L132">        return theSubList;</span>
+<span class="nc" id="L116">        return theSubList;</span>
     }
 
     /**
@@ -139,7 +123,7 @@ public abstract class MoneyWiseQIFRecord&lt;T extends Enum&lt;T&gt; &amp; MoneyW
      * @return the record
      */
     protected MoneyWiseQIFLine&lt;T&gt; getLine(final T pLineType) {
-<span class="nc" id="L142">        return theMap.get(pLineType);</span>
+<span class="nc" id="L126">        return theMap.get(pLineType);</span>
     }
 
     /**
@@ -149,8 +133,8 @@ public abstract class MoneyWiseQIFRecord&lt;T extends Enum&lt;T&gt; &amp; MoneyW
      */
     protected void addLine(final MoneyWiseQIFLine&lt;T&gt; pLine) {
         /* Add to the map */
-<span class="nc" id="L152">        theMap.put(pLine.getLineType(), pLine);</span>
-<span class="nc" id="L153">    }</span>
+<span class="nc" id="L136">        theMap.put(pLine.getLineType(), pLine);</span>
+<span class="nc" id="L137">    }</span>
 
     /**
      * Add subRecord to list.
@@ -159,13 +143,13 @@ public abstract class MoneyWiseQIFRecord&lt;T extends Enum&lt;T&gt; &amp; MoneyW
      */
     protected void addRecord(final MoneyWiseQIFRecord&lt;T&gt; pRecord) {
         /* Allocate list if required */
-<span class="nc bnc" id="L162" title="All 2 branches missed.">        if (theSubList == null) {</span>
-<span class="nc" id="L163">            theSubList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        if (theSubList == null) {</span>
+<span class="nc" id="L147">            theSubList = new ArrayList&lt;&gt;();</span>
         }
 
         /* Add to the list */
-<span class="nc" id="L167">        theSubList.add(pRecord);</span>
-<span class="nc" id="L168">    }</span>
+<span class="nc" id="L151">        theSubList.add(pRecord);</span>
+<span class="nc" id="L152">    }</span>
 
     /**
      * Format record.
@@ -176,21 +160,21 @@ public abstract class MoneyWiseQIFRecord&lt;T extends Enum&lt;T&gt; &amp; MoneyW
     public void formatRecord(final OceanusDataFormatter pFormatter,
                              final StringBuilder pBuilder) {
         /* Format the standard lines */
-<span class="nc" id="L179">        formatLines(pFormatter, pBuilder);</span>
+<span class="nc" id="L163">        formatLines(pFormatter, pBuilder);</span>
 
         /* If we have subLists */
-<span class="nc bnc" id="L182" title="All 2 branches missed.">        if (theSubList != null) {</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">        if (theSubList != null) {</span>
             /* Loop through the subList */
-<span class="nc bnc" id="L184" title="All 2 branches missed.">            for (MoneyWiseQIFRecord&lt;T&gt; myRecord : theSubList) {</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">            for (MoneyWiseQIFRecord&lt;T&gt; myRecord : theSubList) {</span>
                 /* Format the lines of the subRecord */
-<span class="nc" id="L186">                myRecord.formatLines(pFormatter, pBuilder);</span>
-<span class="nc" id="L187">            }</span>
+<span class="nc" id="L170">                myRecord.formatLines(pFormatter, pBuilder);</span>
+<span class="nc" id="L171">            }</span>
         }
 
         /* Add the end of record indicator */
-<span class="nc" id="L191">        pBuilder.append(QIF_EOI);</span>
-<span class="nc" id="L192">        pBuilder.append(QIF_EOL);</span>
-<span class="nc" id="L193">    }</span>
+<span class="nc" id="L175">        pBuilder.append(QIF_EOI);</span>
+<span class="nc" id="L176">        pBuilder.append(QIF_EOL);</span>
+<span class="nc" id="L177">    }</span>
 
     /**
      * Format lines.
@@ -201,16 +185,16 @@ public abstract class MoneyWiseQIFRecord&lt;T extends Enum&lt;T&gt; &amp; MoneyW
     private void formatLines(final OceanusDataFormatter pFormatter,
                              final StringBuilder pBuilder) {
         /* Loop through the map in ordinal order */
-<span class="nc bnc" id="L204" title="All 2 branches missed.">        for (T myType : theClass.getEnumConstants()) {</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        for (T myType : theClass.getEnumConstants()) {</span>
             /* Look up value in the map */
-<span class="nc" id="L206">            final MoneyWiseQIFLine&lt;T&gt; myLine = theMap.get(myType);</span>
-<span class="nc bnc" id="L207" title="All 2 branches missed.">            if (myLine != null) {</span>
+<span class="nc" id="L190">            final MoneyWiseQIFLine&lt;T&gt; myLine = theMap.get(myType);</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">            if (myLine != null) {</span>
                 /* Format the line */
-<span class="nc" id="L209">                myLine.formatLine(pFormatter, pBuilder);</span>
-<span class="nc" id="L210">                pBuilder.append(QIF_EOL);</span>
+<span class="nc" id="L193">                myLine.formatLine(pFormatter, pBuilder);</span>
+<span class="nc" id="L194">                pBuilder.append(QIF_EOL);</span>
             }
         }
-<span class="nc" id="L213">    }</span>
+<span class="nc" id="L197">    }</span>
 
     /**
      * Format item type.
@@ -221,10 +205,10 @@ public abstract class MoneyWiseQIFRecord&lt;T extends Enum&lt;T&gt; &amp; MoneyW
     protected static void formatItemType(final String pItemType,
                                          final StringBuilder pBuilder) {
         /* Format the item type */
-<span class="nc" id="L224">        pBuilder.append(QIF_ITEMTYPE);</span>
-<span class="nc" id="L225">        pBuilder.append(pItemType);</span>
-<span class="nc" id="L226">        pBuilder.append(QIF_EOL);</span>
-<span class="nc" id="L227">    }</span>
+<span class="nc" id="L208">        pBuilder.append(QIF_ITEMTYPE);</span>
+<span class="nc" id="L209">        pBuilder.append(pItemType);</span>
+<span class="nc" id="L210">        pBuilder.append(QIF_EOL);</span>
+<span class="nc" id="L211">    }</span>
 
     /**
      * Format Header.
@@ -235,9 +219,9 @@ public abstract class MoneyWiseQIFRecord&lt;T extends Enum&lt;T&gt; &amp; MoneyW
     protected static void formatHeader(final String pHdr,
                                        final StringBuilder pBuilder) {
         /* Format the header */
-<span class="nc" id="L238">        pBuilder.append(pHdr);</span>
-<span class="nc" id="L239">        pBuilder.append(QIF_EOL);</span>
-<span class="nc" id="L240">    }</span>
+<span class="nc" id="L222">        pBuilder.append(pHdr);</span>
+<span class="nc" id="L223">        pBuilder.append(QIF_EOL);</span>
+<span class="nc" id="L224">    }</span>
 
     /**
      * Format set switch.
@@ -248,10 +232,10 @@ public abstract class MoneyWiseQIFRecord&lt;T extends Enum&lt;T&gt; &amp; MoneyW
     protected static void setSwitch(final String pSwitch,
                                     final StringBuilder pBuilder) {
         /* Format the item type */
-<span class="nc" id="L251">        pBuilder.append(QIF_SETOPT);</span>
-<span class="nc" id="L252">        pBuilder.append(pSwitch);</span>
-<span class="nc" id="L253">        pBuilder.append(QIF_EOL);</span>
-<span class="nc" id="L254">    }</span>
+<span class="nc" id="L235">        pBuilder.append(QIF_SETOPT);</span>
+<span class="nc" id="L236">        pBuilder.append(pSwitch);</span>
+<span class="nc" id="L237">        pBuilder.append(QIF_EOL);</span>
+<span class="nc" id="L238">    }</span>
 
     /**
      * Format clear switch.
@@ -262,59 +246,53 @@ public abstract class MoneyWiseQIFRecord&lt;T extends Enum&lt;T&gt; &amp; MoneyW
     protected static void clearSwitch(final String pSwitch,
                                       final StringBuilder pBuilder) {
         /* Format the item type */
-<span class="nc" id="L265">        pBuilder.append(QIF_CLROPT);</span>
-<span class="nc" id="L266">        pBuilder.append(pSwitch);</span>
-<span class="nc" id="L267">        pBuilder.append(QIF_EOL);</span>
-<span class="nc" id="L268">    }</span>
+<span class="nc" id="L249">        pBuilder.append(QIF_CLROPT);</span>
+<span class="nc" id="L250">        pBuilder.append(pSwitch);</span>
+<span class="nc" id="L251">        pBuilder.append(QIF_EOL);</span>
+<span class="nc" id="L252">    }</span>
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle trivial case */
-<span class="nc bnc" id="L273" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L274">            return true;</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L258">            return true;</span>
         }
-<span class="nc bnc" id="L276" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L277">            return false;</span>
+<span class="nc bnc" id="L260" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L261">            return false;</span>
         }
 
         /* Check class */
-<span class="nc bnc" id="L281" title="All 2 branches missed.">        if (!getClass().equals(pThat.getClass())) {</span>
-<span class="nc" id="L282">            return false;</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">        if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L266">            return false;</span>
         }
 
         /* Cast correctly */
-<span class="nc" id="L286">        @SuppressWarnings(&quot;unchecked&quot;) final MoneyWiseQIFRecord&lt;T&gt; myThat = (MoneyWiseQIFRecord&lt;T&gt;) pThat;</span>
+<span class="nc" id="L270">        @SuppressWarnings(&quot;unchecked&quot;) final MoneyWiseQIFRecord&lt;T&gt; myThat = (MoneyWiseQIFRecord&lt;T&gt;) pThat;</span>
 
         /* Check class */
-<span class="nc bnc" id="L289" title="All 2 branches missed.">        if (!theClass.equals(myThat.getLineClass())) {</span>
-<span class="nc" id="L290">            return false;</span>
+<span class="nc bnc" id="L273" title="All 2 branches missed.">        if (!theClass.equals(myThat.getLineClass())) {</span>
+<span class="nc" id="L274">            return false;</span>
         }
 
         /* Check map */
-<span class="nc bnc" id="L294" title="All 2 branches missed.">        if (!theMap.equals(myThat.getLineMap())) {</span>
-<span class="nc" id="L295">            return false;</span>
+<span class="nc bnc" id="L278" title="All 2 branches missed.">        if (!theMap.equals(myThat.getLineMap())) {</span>
+<span class="nc" id="L279">            return false;</span>
         }
 
         /* Check SubLists */
-<span class="nc" id="L299">        final List&lt;MoneyWiseQIFRecord&lt;T&gt;&gt; mySubThat = myThat.getSubList();</span>
-<span class="nc bnc" id="L300" title="All 2 branches missed.">        if (theSubList == null) {</span>
-<span class="nc bnc" id="L301" title="All 2 branches missed.">            return mySubThat == null;</span>
+<span class="nc" id="L283">        final List&lt;MoneyWiseQIFRecord&lt;T&gt;&gt; mySubThat = myThat.getSubList();</span>
+<span class="nc bnc" id="L284" title="All 2 branches missed.">        if (theSubList == null) {</span>
+<span class="nc bnc" id="L285" title="All 2 branches missed.">            return mySubThat == null;</span>
         }
-<span class="nc bnc" id="L303" title="All 2 branches missed.">        if (mySubThat == null) {</span>
-<span class="nc" id="L304">            return false;</span>
+<span class="nc bnc" id="L287" title="All 2 branches missed.">        if (mySubThat == null) {</span>
+<span class="nc" id="L288">            return false;</span>
         }
-<span class="nc" id="L306">        return theSubList.equals(mySubThat);</span>
+<span class="nc" id="L290">        return theSubList.equals(mySubThat);</span>
     }
 
     @Override
     public int hashCode() {
-<span class="nc" id="L311">        int myResult = MoneyWiseQIFFile.HASH_BASE * theClass.hashCode();</span>
-<span class="nc" id="L312">        myResult += theMap.hashCode();</span>
-<span class="nc bnc" id="L313" title="All 2 branches missed.">        if (theSubList != null) {</span>
-<span class="nc" id="L314">            myResult *= MoneyWiseQIFFile.HASH_BASE;</span>
-<span class="nc" id="L315">            myResult += theSubList.hashCode();</span>
-        }
-<span class="nc" id="L317">        return myResult;</span>
+<span class="nc" id="L295">        return Objects.hash(theClass, theMap, theSubList);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

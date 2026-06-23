@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.prometheus.sheets;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyDataType;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 
@@ -35,43 +35,31 @@ public abstract class PrometheusSheetEncrypted&lt;T extends PrometheusEncryptedD
     protected static final int COL_KEYSETID = COL_ID + 1;
 
     /**
-     * Constructor for a load operation.
+     * Constructor.
      *
-     * @param pReader the spreadsheet reader
-     * @param pRange  the range to load
+     * @param pControl the spreadsheet control
+     * @param pRange   the range to load/create
      */
-    protected PrometheusSheetEncrypted(final PrometheusSheetReader pReader,
+    protected PrometheusSheetEncrypted(final PrometheusSheetControl pControl,
                                        final String pRange) {
         /* Pass call on */
-<span class="nc" id="L46">        super(pReader, pRange);</span>
+<span class="nc" id="L46">        super(pControl, pRange);</span>
 <span class="nc" id="L47">    }</span>
-
-    /**
-     * Constructor for a write operation.
-     *
-     * @param pWriter the spreadsheet writer
-     * @param pRange  the range to create
-     */
-    protected PrometheusSheetEncrypted(final PrometheusSheetWriter pWriter,
-                                       final String pRange) {
-        /* Pass call on */
-<span class="nc" id="L58">        super(pWriter, pRange);</span>
-<span class="nc" id="L59">    }</span>
 
     @Override
     protected void insertSecureItem(final T pItem) throws OceanusException {
-<span class="nc" id="L63">        super.insertSecureItem(pItem);</span>
-<span class="nc" id="L64">        writeInteger(COL_KEYSETID, pItem.getDataKeySetId());</span>
-<span class="nc" id="L65">    }</span>
+<span class="nc" id="L51">        super.insertSecureItem(pItem);</span>
+<span class="nc" id="L52">        writeInteger(COL_KEYSETID, pItem.getDataKeySetId());</span>
+<span class="nc" id="L53">    }</span>
 
     @Override
     protected PrometheusDataValues getRowValues(final String pName) throws OceanusException {
         /* Allocate the values */
-<span class="nc" id="L70">        final PrometheusDataValues myValues = super.getRowValues(pName);</span>
+<span class="nc" id="L58">        final PrometheusDataValues myValues = super.getRowValues(pName);</span>
 
         /* Add the control id and return the new values */
-<span class="nc" id="L73">        myValues.addValue(PrometheusCryptographyDataType.DATAKEYSET, loadInteger(COL_KEYSETID));</span>
-<span class="nc" id="L74">        return myValues;</span>
+<span class="nc" id="L61">        myValues.addValue(PrometheusCryptographyDataType.DATAKEYSET, loadInteger(COL_KEYSETID));</span>
+<span class="nc" id="L62">        return myValues;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

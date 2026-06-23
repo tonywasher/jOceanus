@@ -22,6 +22,10 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFacto
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.factory.GordianCoreAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreementFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.encrypt.JcaEncryptorFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignatureFactory;
 
 /**
  * Jca Async Factory.
@@ -35,27 +39,27 @@ public class JcaAsyncFactory
      */
     JcaAsyncFactory(final GordianBaseFactory pFactory) {
         /* Initialize underlying class */
-<span class="fc" id="L38">        super(pFactory);</span>
-<span class="fc" id="L39">    }</span>
+<span class="fc" id="L42">        super(pFactory);</span>
+<span class="fc" id="L43">    }</span>
 
     @Override
     public GordianKeyPairFactory newKeyPairFactory(final GordianBaseFactory pFactory) {
-<span class="fc" id="L43">        return new JcaKeyPairFactory(pFactory);</span>
+<span class="fc" id="L47">        return new JcaKeyPairFactory(pFactory);</span>
     }
 
     @Override
     public GordianSignatureFactory newSignatureFactory(final GordianBaseFactory pFactory) {
-<span class="fc" id="L48">        return new JcaSignatureFactory(pFactory);</span>
+<span class="fc" id="L52">        return new JcaSignatureFactory(pFactory);</span>
     }
 
     @Override
     public GordianAgreementFactory newAgreementFactory(final GordianBaseFactory pFactory) {
-<span class="fc" id="L53">        return new JcaAgreementFactory(pFactory);</span>
+<span class="fc" id="L57">        return new JcaAgreementFactory(pFactory);</span>
     }
 
     @Override
     public GordianEncryptorFactory newEncryptorFactory(final GordianBaseFactory pFactory) {
-<span class="fc" id="L58">        return new JcaEncryptorFactory(pFactory);</span>
+<span class="fc" id="L62">        return new JcaEncryptorFactory(pFactory);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

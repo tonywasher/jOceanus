@@ -18,9 +18,9 @@ package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base;
 
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSimpleId;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedItem;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * MoneyWise Analysis Item Types.
@@ -71,7 +71,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType
         /* If we have not yet loaded the id */
 <span class="nc bnc" id="L72" title="All 2 branches missed.">        if (theNameId == null) {</span>
             /* Load the id */
-<span class="nc" id="L74">            theNameId = MetisFieldSimpleId.convertResource(MoneyWiseXAnalysisBaseResource.getKeyForDataType(this));</span>
+<span class="nc" id="L74">            theNameId = MetisFieldSimpleId.convertResource(bundleIdForDataType(this));</span>
         }
 
         /* Return the name id */
@@ -97,7 +97,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType
         /* If we have not yet loaded the id */
 <span class="nc bnc" id="L98" title="All 2 branches missed.">        if (theListId == null) {</span>
             /* Load the id */
-<span class="nc" id="L100">            theListId = MetisFieldSimpleId.convertResource(MoneyWiseXAnalysisBaseResource.getKeyForDataList(this));</span>
+<span class="nc" id="L100">            theListId = MetisFieldSimpleId.convertResource(bundleIdForDataList(this));</span>
         }
 
         /* return the list id */
@@ -119,18 +119,39 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType
     }
 
     @Override
-    public Class&lt;? extends MetisFieldVersionedItem&gt; getClazz() {
-<span class="nc" id="L123">        return MoneyWiseXAnalysisEvent.class;</span>
-    }
-
-    @Override
     public String getId() {
-<span class="nc" id="L128">        return getItemName();</span>
+<span class="nc" id="L123">        return getItemName();</span>
     }
 
     @Override
     public Integer getItemKey() {
-<span class="nc" id="L133">        return theKey;</span>
+<span class="nc" id="L128">        return theKey;</span>
+    }
+
+    /**
+     * Obtain the resource bundleId for the dataTypeList.
+     *
+     * @param pType the dataType
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForDataType(final MoneyWiseXAnalysisDataType pType) {
+<span class="nc bnc" id="L138" title="All 2 branches missed.">        if (pType == EVENT) {</span>
+<span class="nc" id="L139">            return MoneyWiseXAnalysisBaseResource.EVENT;</span>
+        }
+<span class="nc" id="L141">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the resource bundleId for the dataTypeList.
+     *
+     * @param pType the dataType
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForDataList(final MoneyWiseXAnalysisDataType pType) {
+<span class="nc bnc" id="L151" title="All 2 branches missed.">        if (pType == EVENT) {</span>
+<span class="nc" id="L152">            return MoneyWiseXAnalysisBaseResource.EVENTLIST;</span>
+        }
+<span class="nc" id="L154">        throw new IllegalArgumentException();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -24,54 +24,55 @@
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.prometheus.validate;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem;
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <em class="jxr_javadoccomment"> * Validator for infoItem.</em>
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="PrometheusValidateInfo" href="../../../../../../io/github/tonywasher/joceanus/prometheus/validate/PrometheusValidateInfo.html#PrometheusValidateInfo">PrometheusValidateInfo</a>
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>          <strong class="jxr_keyword">implements</strong> <a name="PrometheusDataValidator" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataValidator.html#PrometheusDataValidator">PrometheusDataValidator</a> {
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment">     * Default constructor.</em>
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>      <strong class="jxr_keyword">public</strong> <a name="PrometheusValidateInfo" href="../../../../../../io/github/tonywasher/joceanus/prometheus/validate/PrometheusValidateInfo.html#PrometheusValidateInfo">PrometheusValidateInfo</a>() {
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>          <em class="jxr_comment">/* NoOp */</em>
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>      }
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>      @Override
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> validate(<strong class="jxr_keyword">final</strong> <a name="PrometheusDataItem" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataItem.html#PrometheusDataItem">PrometheusDataItem</a> pInfo) {
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>          <strong class="jxr_keyword">final</strong> <a name="PrometheusDataInfoItem" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataInfoItem.html#PrometheusDataInfoItem">PrometheusDataInfoItem</a> myInfo = (<a name="PrometheusDataInfoItem" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataInfoItem.html#PrometheusDataInfoItem">PrometheusDataInfoItem</a>) pInfo;
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>          <strong class="jxr_keyword">final</strong> <a name="PrometheusStaticDataItem" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusStaticDataItem.html#PrometheusStaticDataItem">PrometheusStaticDataItem</a> myType = myInfo.getInfoType();
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>          <strong class="jxr_keyword">final</strong> <a name="PrometheusDataItem" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataItem.html#PrometheusDataItem">PrometheusDataItem</a> myOwner = myInfo.getOwner();
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>          <strong class="jxr_keyword">final</strong> Object myValue = myInfo.getValue(Object.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>          <em class="jxr_comment">/* InfoType must be non-null */</em>
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>          <strong class="jxr_keyword">if</strong> (myType == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>              pInfo.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAINFO_TYPE);
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>          }
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>  
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>          <em class="jxr_comment">/* Owner must be non-null */</em>
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>          <strong class="jxr_keyword">if</strong> (myOwner == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>              pInfo.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAINFO_OWNER);
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>          }
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>  
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>          <em class="jxr_comment">/* Value must be non-null */</em>
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>          <strong class="jxr_keyword">if</strong> (myValue == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>              pInfo.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAINFO_VALUE);
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>          }
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>  
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>          <em class="jxr_comment">/* Set validation flag */</em>
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">if</strong> (!pInfo.hasErrors()) {
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>              pInfo.setValidEdit();
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>          }
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>      }
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>  }
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValidator;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <em class="jxr_javadoccomment"> * Validator for infoItem.</em>
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="PrometheusValidateInfo" href="../../../../../../io/github/tonywasher/joceanus/prometheus/validate/PrometheusValidateInfo.html#PrometheusValidateInfo">PrometheusValidateInfo</a>
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>          <strong class="jxr_keyword">implements</strong> PrometheusDataValidator {
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment">     * Default constructor.</em>
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>      <strong class="jxr_keyword">public</strong> <a name="PrometheusValidateInfo" href="../../../../../../io/github/tonywasher/joceanus/prometheus/validate/PrometheusValidateInfo.html#PrometheusValidateInfo">PrometheusValidateInfo</a>() {
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>          <em class="jxr_comment">/* NoOp */</em>
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>      }
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>      @Override
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> validate(<strong class="jxr_keyword">final</strong> PrometheusDataItemCtl pInfo) {
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>          <strong class="jxr_keyword">final</strong> <a name="PrometheusDataInfoItem" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataInfoItem.html#PrometheusDataInfoItem">PrometheusDataInfoItem</a> myInfo = (<a name="PrometheusDataInfoItem" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataInfoItem.html#PrometheusDataInfoItem">PrometheusDataInfoItem</a>) pInfo;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>          <strong class="jxr_keyword">final</strong> <a name="PrometheusStaticDataItem" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusStaticDataItem.html#PrometheusStaticDataItem">PrometheusStaticDataItem</a> myType = myInfo.getInfoType();
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>          <strong class="jxr_keyword">final</strong> <a name="PrometheusDataItem" href="../../../../../../io/github/tonywasher/joceanus/prometheus/data/PrometheusDataItem.html#PrometheusDataItem">PrometheusDataItem</a> myOwner = myInfo.getOwner();
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>          <strong class="jxr_keyword">final</strong> Object myValue = myInfo.getValue(Object.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>          <em class="jxr_comment">/* InfoType must be non-null */</em>
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>          <strong class="jxr_keyword">if</strong> (myType == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>              myInfo.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAINFO_TYPE);
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>          }
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>          <em class="jxr_comment">/* Owner must be non-null */</em>
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>          <strong class="jxr_keyword">if</strong> (myOwner == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>              myInfo.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAINFO_OWNER);
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>          }
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>          <em class="jxr_comment">/* Value must be non-null */</em>
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>          <strong class="jxr_keyword">if</strong> (myValue == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>              myInfo.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAINFO_VALUE);
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>          }
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>          <em class="jxr_comment">/* Set validation flag */</em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>          <strong class="jxr_keyword">if</strong> (!myInfo.hasErrors()) {
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>              myInfo.setValidEdit();
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>          }
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      }
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  }
 </pre>
 <hr/>
-<div id="footer">© 2012–2026</div>
+<div id="footer">© 2012–2026 <a href="https://tonywasher.github.io/">Tony Washer</a></div>
 </body>
 </html>

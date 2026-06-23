@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianGOSTEncodedParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser</a> &gt; <span class="el_source">GordianGOSTEncodedParser.java</span></div><h1>GordianGOSTEncodedParser.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreGOSTSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
+import org.bouncycastle.asn1.cryptopro.GOST3410PublicKeyAlgParameters;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+
+/**
+ * GOST Encoded parser.
+ */
+<span class="fc" id="L36">public final class GordianGOSTEncodedParser implements GordianEncodedParser {</span>
+    /**
+     * Registrar.
+     *
+     * @param pIdManager the idManager
+     */
+    public static void register(final GordianKeyPairParserRegistrar pIdManager) {
+<span class="fc" id="L43">        final GordianGOSTEncodedParser myParser = new GordianGOSTEncodedParser();</span>
+<span class="fc" id="L44">        pIdManager.registerParser(RosstandartObjectIdentifiers.id_tc26_gost_3410_12_256, myParser);</span>
+<span class="fc" id="L45">        pIdManager.registerParser(RosstandartObjectIdentifiers.id_tc26_gost_3410_12_512, myParser);</span>
+<span class="fc" id="L46">    }</span>
+
+    @Override
+    public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L50">        return determineKeyPairSpec(pInfo.getAlgorithm());</span>
+    }
+
+    @Override
+    public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L55">        return determineKeyPairSpec(pInfo.getPrivateKeyAlgorithm());</span>
+    }
+
+    /**
+     * Obtain keySpec from Parameters.
+     *
+     * @param pId the algorithmId
+     * @return the keySpec
+     * @throws GordianException on error
+     */
+    private static GordianKeyPairSpec determineKeyPairSpec(final AlgorithmIdentifier pId) throws GordianException {
+        /* Determine the curve name */
+<span class="fc" id="L67">        final GOST3410PublicKeyAlgParameters myParms = GOST3410PublicKeyAlgParameters.getInstance(pId.getParameters());</span>
+<span class="fc" id="L68">        final ASN1ObjectIdentifier myId = myParms.getPublicKeyParamSet();</span>
+<span class="fc" id="L69">        final String myName = ECGOST3410NamedCurves.getName(myId);</span>
+
+        /* Determine curve */
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        if (myName != null) {</span>
+<span class="fc" id="L73">            final GordianCoreGOSTSpec myCurve = GordianCoreGOSTSpec.getCurveForName(myName);</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">            if (myCurve == null) {</span>
+<span class="nc" id="L75">                throw new GordianDataException(GordianECEncodedParser.ERROR_UNSUPCURVE + myName);</span>
+            }
+<span class="fc" id="L77">            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();</span>
+<span class="fc" id="L78">            return myBuilder.gost2012(myCurve.getSpec());</span>
+        }
+
+        /* Curve is not supported */
+<span class="nc" id="L82">        throw new GordianDataException(GordianECEncodedParser.ERROR_UNSUPCURVE + myParms);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

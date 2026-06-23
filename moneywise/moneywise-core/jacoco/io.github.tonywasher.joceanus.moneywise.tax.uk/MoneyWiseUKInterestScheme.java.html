@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKTax.MoneyWiseUKTaxYearCtl;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 
@@ -36,14 +37,14 @@ public abstract class MoneyWiseUKInterestScheme
      * Local Report fields.
      */
     static {
-<span class="fc" id="L39">        MetisFieldSet.newFieldSet(MoneyWiseUKInterestScheme.class);</span>
-<span class="fc" id="L40">    }</span>
+<span class="fc" id="L40">        MetisFieldSet.newFieldSet(MoneyWiseUKInterestScheme.class);</span>
+<span class="fc" id="L41">    }</span>
 
     /**
      * Constructor.
      */
-<span class="fc" id="L45">    protected MoneyWiseUKInterestScheme() {</span>
-<span class="fc" id="L46">    }</span>
+<span class="fc" id="L46">    protected MoneyWiseUKInterestScheme() {</span>
+<span class="fc" id="L47">    }</span>
 
     /**
      * Obtain theTaxCredit rate for interest.
@@ -51,49 +52,49 @@ public abstract class MoneyWiseUKInterestScheme
      * @param pTaxYear the taxYear
      * @return the taxCredit rate
      */
-    protected abstract OceanusRate getTaxCreditRate(MoneyWiseUKTaxYear pTaxYear);
+    protected abstract OceanusRate getTaxCreditRate(MoneyWiseUKTaxYearCtl pTaxYear);
 
     @Override
     protected OceanusMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
                                             final OceanusMoney pAmount) {
         /* Adjust against the basic allowance */
-<span class="nc" id="L60">        final OceanusMoney myRemaining = super.adjustAllowances(pConfig, pAmount);</span>
+<span class="nc" id="L61">        final OceanusMoney myRemaining = super.adjustAllowances(pConfig, pAmount);</span>
 
         /* If we have any interest left */
-<span class="nc bnc" id="L63" title="All 2 branches missed.">        if (myRemaining.isNonZero()) {</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if (myRemaining.isNonZero()) {</span>
             /* Adjust the savings allowance noting that it still counts against the taxBand */
-<span class="nc" id="L65">            final OceanusMoney myInterest = adjustForAllowance(pConfig.getSavingsAllowance(), myRemaining);</span>
+<span class="nc" id="L66">            final OceanusMoney myInterest = adjustForAllowance(pConfig.getSavingsAllowance(), myRemaining);</span>
 
             /* Adjust any loSavings band noting that it still counts against the taxBand */
-<span class="nc" id="L68">            adjustForAllowance(pConfig.getLoSavingsBand().getAmount(), myInterest);</span>
+<span class="nc" id="L69">            adjustForAllowance(pConfig.getLoSavingsBand().getAmount(), myInterest);</span>
         }
 
         /* Return unallocated income */
-<span class="nc" id="L72">        return myRemaining;</span>
+<span class="nc" id="L73">        return myRemaining;</span>
     }
 
     @Override
     protected OceanusMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
                                                 final OceanusMoney pAmount) {
         /* Obtain the amount covered by the basic allowance */
-<span class="nc" id="L79">        OceanusMoney myAmount = super.getAmountInAllowance(pConfig, pAmount);</span>
+<span class="nc" id="L80">        OceanusMoney myAmount = super.getAmountInAllowance(pConfig, pAmount);</span>
 
         /* If we have income left over */
-<span class="nc bnc" id="L82" title="All 2 branches missed.">        if (myAmount.compareTo(pAmount) &lt; 0) {</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        if (myAmount.compareTo(pAmount) &lt; 0) {</span>
             /* Calculate remaining amount */
-<span class="nc" id="L84">            final OceanusMoney myRemaining = new OceanusMoney(pAmount);</span>
-<span class="nc" id="L85">            myRemaining.subtractAmount(myAmount);</span>
+<span class="nc" id="L85">            final OceanusMoney myRemaining = new OceanusMoney(pAmount);</span>
+<span class="nc" id="L86">            myRemaining.subtractAmount(myAmount);</span>
 
             /* Calculate the amount covered by savings allowance */
-<span class="nc" id="L88">            final OceanusMoney myXtra = getAmountInBand(pConfig.getSavingsAllowance(), myRemaining);</span>
+<span class="nc" id="L89">            final OceanusMoney myXtra = getAmountInBand(pConfig.getSavingsAllowance(), myRemaining);</span>
 
             /* Determine the total amount covered by the allowance */
-<span class="nc" id="L91">            myAmount = new OceanusMoney(myAmount);</span>
-<span class="nc" id="L92">            myAmount.addAmount(myXtra);</span>
+<span class="nc" id="L92">            myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L93">            myAmount.addAmount(myXtra);</span>
         }
 
         /* return the amount */
-<span class="nc" id="L96">        return myAmount;</span>
+<span class="nc" id="L97">        return myAmount;</span>
     }
 
     /**
@@ -102,55 +103,55 @@ public abstract class MoneyWiseUKInterestScheme
      * @return the base rate
      */
     protected OceanusRate getBaseRate() {
-<span class="nc" id="L105">        return null;</span>
+<span class="nc" id="L106">        return null;</span>
     }
 
     @Override
     protected Iterator&lt;MoneyWiseTaxBand&gt; taxBandIterator(final MoneyWiseUKTaxConfig pConfig,
                                                          final MoneyWiseTaxClass pBasis) {
         /* Obtain the loSavingsBand and the basicRate */
-<span class="nc" id="L112">        final MoneyWiseTaxBand myLoBand = pConfig.getLoSavingsBand();</span>
-<span class="nc" id="L113">        final OceanusMoney myLoAmount = myLoBand.getAmount();</span>
-<span class="nc" id="L114">        OceanusRate myRate = getBaseRate();</span>
+<span class="nc" id="L113">        final MoneyWiseTaxBand myLoBand = pConfig.getLoSavingsBand();</span>
+<span class="nc" id="L114">        final OceanusMoney myLoAmount = myLoBand.getAmount();</span>
+<span class="nc" id="L115">        OceanusRate myRate = getBaseRate();</span>
 
         /* Create a new List */
-<span class="nc" id="L117">        final List&lt;MoneyWiseTaxBand&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L118">        final List&lt;MoneyWiseTaxBand&gt; myList = new ArrayList&lt;&gt;();</span>
 
         /* Access underlying iterator and obtain first band */
-<span class="nc" id="L120">        final Iterator&lt;MoneyWiseTaxBand&gt; myIterator = super.taxBandIterator(pConfig, pBasis);</span>
-<span class="nc" id="L121">        MoneyWiseTaxBand myBasicBand = myIterator.next();</span>
-<span class="nc" id="L122">        OceanusMoney myAmount = myBasicBand.getAmount();</span>
+<span class="nc" id="L121">        final Iterator&lt;MoneyWiseTaxBand&gt; myIterator = super.taxBandIterator(pConfig, pBasis);</span>
+<span class="nc" id="L122">        MoneyWiseTaxBand myBasicBand = myIterator.next();</span>
+<span class="nc" id="L123">        OceanusMoney myAmount = myBasicBand.getAmount();</span>
 
         /* If we are a LoBase instance */
-<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (this instanceof MoneyWiseUKInterestLoBaseRateScheme) {</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (this instanceof MoneyWiseUKInterestLoBaseRateScheme) {</span>
             /* Add the first band as is */
-<span class="nc" id="L127">            myList.add(myBasicBand);</span>
+<span class="nc" id="L128">            myList.add(myBasicBand);</span>
 
             /* Access the true basic band */
-<span class="nc" id="L130">            myBasicBand = myIterator.next();</span>
-<span class="nc" id="L131">            myAmount = myBasicBand.getAmount();</span>
+<span class="nc" id="L131">            myBasicBand = myIterator.next();</span>
+<span class="nc" id="L132">            myAmount = myBasicBand.getAmount();</span>
 
             /* Add low band if required */
-<span class="nc bnc" id="L134" title="All 2 branches missed.">        } else if (myLoAmount.isNonZero()) {</span>
-<span class="nc" id="L135">            myList.add(myLoBand);</span>
-<span class="nc" id="L136">            myAmount = new OceanusMoney(myAmount);</span>
-<span class="nc" id="L137">            myAmount.subtract(myLoAmount);</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        } else if (myLoAmount.isNonZero()) {</span>
+<span class="nc" id="L136">            myList.add(myLoBand);</span>
+<span class="nc" id="L137">            myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L138">            myAmount.subtract(myLoAmount);</span>
         }
 
         /* Add the basic band */
-<span class="nc bnc" id="L141" title="All 2 branches missed.">        if (myRate == null) {</span>
-<span class="nc" id="L142">            myRate = myBasicBand.getRate();</span>
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        if (myRate == null) {</span>
+<span class="nc" id="L143">            myRate = myBasicBand.getRate();</span>
         }
-<span class="nc" id="L144">        myList.add(new MoneyWiseTaxBand(myAmount, myRate));</span>
+<span class="nc" id="L145">        myList.add(new MoneyWiseTaxBand(myAmount, myRate));</span>
 
         /* Loop through remaining tax bands */
-<span class="nc bnc" id="L147" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L148">            final MoneyWiseTaxBand myBand = myIterator.next();</span>
-<span class="nc" id="L149">            myList.add(myBand);</span>
-<span class="nc" id="L150">        }</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L149">            final MoneyWiseTaxBand myBand = myIterator.next();</span>
+<span class="nc" id="L150">            myList.add(myBand);</span>
+<span class="nc" id="L151">        }</span>
 
         /* Return the iterator */
-<span class="nc" id="L153">        return myList.iterator();</span>
+<span class="nc" id="L154">        return myList.iterator();</span>
     }
 
     /**
@@ -161,23 +162,23 @@ public abstract class MoneyWiseUKInterestScheme
         /**
          * Local Report fields.
          */
-<span class="fc" id="L164">        private static final MetisFieldSet&lt;MoneyWiseUKInterestAsIncomeScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKInterestAsIncomeScheme.class);</span>
+<span class="fc" id="L165">        private static final MetisFieldSet&lt;MoneyWiseUKInterestAsIncomeScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKInterestAsIncomeScheme.class);</span>
 
         /**
          * Default constructor.
          */
-<span class="fc" id="L169">        MoneyWiseUKInterestAsIncomeScheme() {</span>
+<span class="fc" id="L170">        MoneyWiseUKInterestAsIncomeScheme() {</span>
             /* NoOp */
-<span class="fc" id="L171">        }</span>
+<span class="fc" id="L172">        }</span>
 
         @Override
-        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
-<span class="nc" id="L175">            return pTaxYear.getTaxBands().getBasicTaxRate();</span>
+        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYearCtl pTaxYear) {
+<span class="nc" id="L176">            return pTaxYear.getTaxBands().getBasicTaxRate();</span>
         }
 
         @Override
         public MetisFieldSet&lt;MoneyWiseUKInterestAsIncomeScheme&gt; getDataFieldSet() {
-<span class="nc" id="L180">            return FIELD_DEFS;</span>
+<span class="nc" id="L181">            return FIELD_DEFS;</span>
         }
     }
 
@@ -189,14 +190,14 @@ public abstract class MoneyWiseUKInterestScheme
         /**
          * Local Report fields.
          */
-<span class="fc" id="L192">        private static final MetisFieldSet&lt;MoneyWiseUKInterestBaseRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKInterestBaseRateScheme.class);</span>
+<span class="fc" id="L193">        private static final MetisFieldSet&lt;MoneyWiseUKInterestBaseRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKInterestBaseRateScheme.class);</span>
 
         /*
          * Declare Fields.
          */
         static {
-<span class="fc" id="L198">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE, MoneyWiseUKInterestBaseRateScheme::getBaseRate);</span>
-<span class="fc" id="L199">        }</span>
+<span class="fc" id="L199">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE, MoneyWiseUKInterestBaseRateScheme::getBaseRate);</span>
+<span class="fc" id="L200">        }</span>
 
         /**
          * The Base Rate.
@@ -208,23 +209,23 @@ public abstract class MoneyWiseUKInterestScheme
          *
          * @param pRate the base rate
          */
-<span class="fc" id="L211">        protected MoneyWiseUKInterestBaseRateScheme(final OceanusRate pRate) {</span>
-<span class="fc" id="L212">            theBaseRate = pRate;</span>
-<span class="fc" id="L213">        }</span>
+<span class="fc" id="L212">        protected MoneyWiseUKInterestBaseRateScheme(final OceanusRate pRate) {</span>
+<span class="fc" id="L213">            theBaseRate = pRate;</span>
+<span class="fc" id="L214">        }</span>
 
         @Override
         protected OceanusRate getBaseRate() {
-<span class="nc" id="L217">            return theBaseRate;</span>
+<span class="nc" id="L218">            return theBaseRate;</span>
         }
 
         @Override
-        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
-<span class="nc" id="L222">            return theBaseRate;</span>
+        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYearCtl pTaxYear) {
+<span class="nc" id="L223">            return theBaseRate;</span>
         }
 
         @Override
         public MetisFieldSet&lt;? extends MoneyWiseUKInterestBaseRateScheme&gt; getDataFieldSet() {
-<span class="nc" id="L227">            return FIELD_DEFS;</span>
+<span class="nc" id="L228">            return FIELD_DEFS;</span>
         }
     }
 
@@ -236,7 +237,7 @@ public abstract class MoneyWiseUKInterestScheme
         /**
          * Local Report fields.
          */
-<span class="fc" id="L239">        private static final MetisFieldSet&lt;MoneyWiseUKInterestLoBaseRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKInterestLoBaseRateScheme.class);</span>
+<span class="fc" id="L240">        private static final MetisFieldSet&lt;MoneyWiseUKInterestLoBaseRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKInterestLoBaseRateScheme.class);</span>
 
         /**
          * Constructor.
@@ -244,13 +245,13 @@ public abstract class MoneyWiseUKInterestScheme
          * @param pRate the base rate
          */
         protected MoneyWiseUKInterestLoBaseRateScheme(final OceanusRate pRate) {
-<span class="fc" id="L247">            super(pRate);</span>
-<span class="fc" id="L248">        }</span>
+<span class="fc" id="L248">            super(pRate);</span>
+<span class="fc" id="L249">        }</span>
 
         @Override
         public MetisFieldSet&lt;MoneyWiseUKInterestLoBaseRateScheme&gt; getDataFieldSet() {
-<span class="nc" id="L252">            return FIELD_DEFS;</span>
+<span class="nc" id="L253">            return FIELD_DEFS;</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

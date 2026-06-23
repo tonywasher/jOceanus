@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyXDHUnifiedAgreementEngine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc.agree</a> &gt; <span class="el_source">BouncyXDHUnifiedAgreementEngine.java</span></div><h1>BouncyXDHUnifiedAgreementEngine.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.bc.agree;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
+import org.bouncycastle.crypto.agreement.XDHUnifiedAgreement;
+import org.bouncycastle.crypto.params.XDHUPrivateParameters;
+import org.bouncycastle.crypto.params.XDHUPublicParameters;
+
+/**
+ * XDH Unified Agreement Engine.
+ */
+public class BouncyXDHUnifiedAgreementEngine
+        extends BouncyAgreementBase {
+    /**
+     * The agreement.
+     */
+    private final XDHUnifiedAgreement theAgreement;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the security factory
+     * @param pSpec    the agreementSpec
+     * @throws GordianException on error
+     */
+    BouncyXDHUnifiedAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                    final GordianCoreAgreementSpec pSpec) throws GordianException {
+        /* Initialize underlying class */
+<span class="fc" id="L49">        super(pFactory, pSpec);</span>
+
+        /* Create the agreement */
+<span class="fc" id="L52">        theAgreement = new XDHUnifiedAgreement(BouncyXDHAnonAgreementEngine.establishAgreement(pSpec.getKeyPairSpec()));</span>
+<span class="fc" id="L53">    }</span>
+
+    @Override
+    public void processClientHello() throws GordianException {
+        /* Access keys */
+<span class="fc" id="L58">        final BouncyPublicKey&lt;?&gt; myClientPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getClientKeyPair());</span>
+<span class="fc" id="L59">        final BouncyPublicKey&lt;?&gt; myClientEphPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getClientEphemeral());</span>
+<span class="fc" id="L60">        final BouncyPrivateKey&lt;?&gt; myPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getServerKeyPair());</span>
+<span class="fc" id="L61">        final BouncyPublicKey&lt;?&gt; myEphPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getServerEphemeral());</span>
+<span class="fc" id="L62">        final BouncyPrivateKey&lt;?&gt; myEphPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getServerEphemeral());</span>
+
+        /* Derive the secret */
+<span class="fc" id="L65">        final XDHUPrivateParameters myPrivParams</span>
+<span class="fc" id="L66">                = new XDHUPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
+<span class="fc" id="L67">        theAgreement.init(myPrivParams);</span>
+<span class="fc" id="L68">        final byte[] mySecret = new byte[theAgreement.getAgreementSize()];</span>
+<span class="fc" id="L69">        final XDHUPublicParameters myPubParams</span>
+<span class="fc" id="L70">                = new XDHUPublicParameters(myClientPublic.getPublicKey(), myClientEphPublic.getPublicKey());</span>
+<span class="fc" id="L71">        theAgreement.calculateAgreement(myPubParams, mySecret, 0);</span>
+
+        /* Store secret */
+<span class="fc" id="L74">        storeSecret(mySecret);</span>
+<span class="fc" id="L75">    }</span>
+
+    @Override
+    public void processServerHello() throws GordianException {
+        /* Access keys */
+<span class="fc" id="L80">        final BouncyPublicKey&lt;?&gt; myServerPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getServerKeyPair());</span>
+<span class="fc" id="L81">        final BouncyPublicKey&lt;?&gt; myServerEphPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getServerEphemeral());</span>
+<span class="fc" id="L82">        final BouncyPrivateKey&lt;?&gt; myPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getClientKeyPair());</span>
+<span class="fc" id="L83">        final BouncyPublicKey&lt;?&gt; myEphPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getClientEphemeral());</span>
+<span class="fc" id="L84">        final BouncyPrivateKey&lt;?&gt; myEphPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getClientEphemeral());</span>
+
+        /* Derive the secret */
+<span class="fc" id="L87">        final XDHUPrivateParameters myPrivParams</span>
+<span class="fc" id="L88">                = new XDHUPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
+<span class="fc" id="L89">        theAgreement.init(myPrivParams);</span>
+<span class="fc" id="L90">        final byte[] mySecret = new byte[theAgreement.getAgreementSize()];</span>
+<span class="fc" id="L91">        final XDHUPublicParameters myPubParams</span>
+<span class="fc" id="L92">                = new XDHUPublicParameters(myServerPublic.getPublicKey(), myServerEphPublic.getPublicKey());</span>
+<span class="fc" id="L93">        theAgreement.calculateAgreement(myPubParams, mySecret, 0);</span>
+
+        /* Store secret */
+<span class="fc" id="L96">        storeSecret(mySecret);</span>
+<span class="fc" id="L97">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

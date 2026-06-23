@@ -31,7 +31,7 @@ import io.github.tonywasher.joceanus.metis.toolkit.MetisToolkit;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusGroupedItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusGroupedItemCtl;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusIOException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusSecurityException;
@@ -170,7 +170,7 @@ public class PrometheusDataValuesFormatter {
 <span class="nc" id="L170">        final OceanusProfile myTask = theReport.getActiveTask();</span>
 <span class="nc" id="L171">        final OceanusProfile myStage = myTask.startTask(&quot;Writing&quot;);</span>
 
-        /* Protect agains exceptions */
+        /* Protect against exceptions */
         try {
             /* Create a similar security control */
 <span class="nc" id="L176">            final PrometheusSecurityPasswordManager myPasswordMgr = pData.getPasswordMgr();</span>
@@ -356,7 +356,7 @@ public class PrometheusDataValuesFormatter {
             }
 
             /* Skip over child items */
-<span class="nc bnc" id="L359" title="All 2 branches missed.">            if (myItem instanceof PrometheusGroupedItem myGrouped</span>
+<span class="nc bnc" id="L359" title="All 2 branches missed.">            if (myItem instanceof PrometheusGroupedItemCtl myGrouped</span>
 <span class="nc bnc" id="L360" title="All 2 branches missed.">                    &amp;&amp; myGrouped.isChild()) {</span>
 <span class="nc" id="L361">                continue;</span>
             }
@@ -589,4 +589,4 @@ public class PrometheusDataValuesFormatter {
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

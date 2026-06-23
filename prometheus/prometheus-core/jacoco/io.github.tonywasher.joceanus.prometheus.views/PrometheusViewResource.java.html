@@ -18,56 +18,48 @@ package io.github.tonywasher.joceanus.prometheus.views;
 
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
-import io.github.tonywasher.joceanus.metis.viewer.MetisViewerResource;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
  * Resource IDs for jPrometheus View Fields.
  */
-<span class="nc" id="L31">public enum PrometheusViewResource implements OceanusBundleId {</span>
+<span class="nc" id="L28">public enum PrometheusViewResource implements OceanusBundleId {</span>
     /**
      * ViewerEntry DataSet.
      */
-<span class="nc" id="L35">    VIEWERENTRY_DATASET(&quot;ViewerEntry.DataSet&quot;),</span>
+<span class="nc" id="L32">    VIEWERENTRY_DATASET(&quot;ViewerEntry.DataSet&quot;),</span>
 
     /**
      * ViewerEntry Updates.
      */
-<span class="nc" id="L40">    VIEWERENTRY_UPDATES(&quot;ViewerEntry.Updates&quot;),</span>
+<span class="nc" id="L37">    VIEWERENTRY_UPDATES(&quot;ViewerEntry.Updates&quot;),</span>
 
     /**
      * ViewerEntry Analysis.
      */
-<span class="nc" id="L45">    VIEWERENTRY_ANALYSIS(&quot;ViewerEntry.Analysis&quot;),</span>
+<span class="nc" id="L42">    VIEWERENTRY_ANALYSIS(&quot;ViewerEntry.Analysis&quot;),</span>
 
     /**
      * ViewerEntry Maintenance.
      */
-<span class="nc" id="L50">    VIEWERENTRY_MAINT(&quot;ViewerEntry.Maint&quot;),</span>
+<span class="nc" id="L47">    VIEWERENTRY_MAINT(&quot;ViewerEntry.Maint&quot;),</span>
 
     /**
      * ViewerEntry StaticData.
      */
-<span class="nc" id="L55">    VIEWERENTRY_STATIC(&quot;ViewerEntry.Static&quot;),</span>
+<span class="nc" id="L52">    VIEWERENTRY_STATIC(&quot;ViewerEntry.Static&quot;),</span>
 
     /**
      * UpdateSet Name.
      */
-<span class="nc" id="L60">    UPDATESET_NAME(&quot;UpdateSet.Name&quot;);</span>
-
-    /**
-     * The Entry Map.
-     */
-<span class="nc" id="L65">    private static final Map&lt;PrometheusViewerEntryId, OceanusBundleId&gt; ENTRY_MAP = buildEntryMap();</span>
+<span class="nc" id="L57">    UPDATESET_NAME(&quot;UpdateSet.Name&quot;);</span>
 
     /**
      * The Resource Loader.
      */
-<span class="nc" id="L70">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusDataSet.class.getCanonicalName(),</span>
+<span class="nc" id="L62">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusDataResource.class.getCanonicalName(),</span>
             ResourceBundle::getBundle);
 
     /**
@@ -85,60 +77,30 @@ import java.util.ResourceBundle;
      *
      * @param pKeyName the key name
      */
-<span class="nc" id="L88">    PrometheusViewResource(final String pKeyName) {</span>
-<span class="nc" id="L89">        theKeyName = pKeyName;</span>
-<span class="nc" id="L90">    }</span>
+<span class="nc" id="L80">    PrometheusViewResource(final String pKeyName) {</span>
+<span class="nc" id="L81">        theKeyName = pKeyName;</span>
+<span class="nc" id="L82">    }</span>
 
     @Override
     public String getKeyName() {
-<span class="nc" id="L94">        return theKeyName;</span>
+<span class="nc" id="L86">        return theKeyName;</span>
     }
 
     @Override
     public String getNameSpace() {
-<span class="nc" id="L99">        return &quot;Prometheus.views&quot;;</span>
+<span class="nc" id="L91">        return &quot;Prometheus.views&quot;;</span>
     }
 
     @Override
     public String getValue() {
         /* If we have not initialised the value */
-<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (theValue == null) {</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (theValue == null) {</span>
             /* Derive the value */
-<span class="nc" id="L107">            theValue = LOADER.getValue(this);</span>
+<span class="nc" id="L99">            theValue = LOADER.getValue(this);</span>
         }
 
         /* return the value */
-<span class="nc" id="L111">        return theValue;</span>
-    }
-
-    /**
-     * Build entry map.
-     *
-     * @return the map
-     */
-    private static Map&lt;PrometheusViewerEntryId, OceanusBundleId&gt; buildEntryMap() {
-        /* Create the map and return it */
-<span class="nc" id="L121">        final Map&lt;PrometheusViewerEntryId, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(PrometheusViewerEntryId.class);</span>
-<span class="nc" id="L122">        myMap.put(PrometheusViewerEntryId.ERROR, MetisViewerResource.VIEWER_ENTRY_ERROR);</span>
-<span class="nc" id="L123">        myMap.put(PrometheusViewerEntryId.PROFILE, MetisViewerResource.VIEWER_ENTRY_PROFILE);</span>
-<span class="nc" id="L124">        myMap.put(PrometheusViewerEntryId.DATA, MetisViewerResource.VIEWER_ENTRY_DATA);</span>
-<span class="nc" id="L125">        myMap.put(PrometheusViewerEntryId.VIEW, MetisViewerResource.VIEWER_ENTRY_VIEW);</span>
-<span class="nc" id="L126">        myMap.put(PrometheusViewerEntryId.DATASET, VIEWERENTRY_DATASET);</span>
-<span class="nc" id="L127">        myMap.put(PrometheusViewerEntryId.UPDATES, VIEWERENTRY_UPDATES);</span>
-<span class="nc" id="L128">        myMap.put(PrometheusViewerEntryId.ANALYSIS, VIEWERENTRY_ANALYSIS);</span>
-<span class="nc" id="L129">        myMap.put(PrometheusViewerEntryId.MAINTENANCE, VIEWERENTRY_MAINT);</span>
-<span class="nc" id="L130">        myMap.put(PrometheusViewerEntryId.STATIC, VIEWERENTRY_STATIC);</span>
-<span class="nc" id="L131">        return myMap;</span>
-    }
-
-    /**
-     * Obtain key for stdEntry.
-     *
-     * @param pEntry the entry
-     * @return the resource key
-     */
-    protected static OceanusBundleId getKeyForViewerEntry(final PrometheusViewerEntryId pEntry) {
-<span class="nc" id="L141">        return OceanusBundleLoader.getKeyForEnum(ENTRY_MAP, pEntry);</span>
+<span class="nc" id="L103">        return theValue;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

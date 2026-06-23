@@ -16,16 +16,11 @@
  */
 package io.github.tonywasher.joceanus.moneywise.lethe.reports;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportDelayedTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
-import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
 import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
-import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
@@ -36,6 +31,11 @@ import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyW
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisValuesResource;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -137,7 +137,7 @@ public class MoneyWiseReportMarketGrowth
 <span class="nc" id="L137">        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));</span>
 
         /* Initialise the table */
-<span class="nc" id="L140">        final MetisHTMLTable myTable = theBuilder.startTable(myBody);</span>
+<span class="nc" id="L140">        final MetisReportHTMLTable myTable = theBuilder.startTable(myBody);</span>
 <span class="nc" id="L141">        theBuilder.startHdrRow(myTable);</span>
 <span class="nc" id="L142">        theBuilder.makeTitleCell(myTable);</span>
 <span class="nc" id="L143">        theBuilder.makeTitleCell(myTable, TEXT_VALUE);</span>
@@ -189,7 +189,7 @@ public class MoneyWiseReportMarketGrowth
 
         /* Create the total row */
 <span class="nc" id="L191">        theBuilder.startTotalRow(myTable);</span>
-<span class="nc" id="L192">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);</span>
+<span class="nc" id="L192">        theBuilder.makeTitleCell(myTable, MoneyWiseReportConstants.TEXT_TOTAL);</span>
 <span class="nc" id="L193">        theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(false));</span>
 <span class="nc" id="L194">        theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(true));</span>
 <span class="nc" id="L195">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED));</span>
@@ -207,7 +207,7 @@ public class MoneyWiseReportMarketGrowth
     }
 
     @Override
-    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+    public MetisReportHTMLTable createDelayedTable(final MetisReportDelayedTable pTable) {
         /* Access the source */
 <span class="nc" id="L212">        final Object mySource = pTable.getSource();</span>
 <span class="nc bnc" id="L213" title="All 2 branches missed.">        if (mySource instanceof MoneyWiseAnalysisPortfolioBucket mySourceBucket) {</span>
@@ -225,13 +225,13 @@ public class MoneyWiseReportMarketGrowth
      * @param pSource the source bucket
      * @return the new document fragment
      */
-    private MetisHTMLTable createDelayedPortfolio(final MetisHTMLTable pParent,
-                                                  final MoneyWiseAnalysisPortfolioBucket pSource) {
+    private MetisReportHTMLTable createDelayedPortfolio(final MetisReportHTMLTable pParent,
+                                                        final MoneyWiseAnalysisPortfolioBucket pSource) {
         /* Access the securities */
 <span class="nc" id="L231">        final MoneyWiseAnalysisSecurityBucketList mySecurities = pSource.getSecurities();</span>
 
         /* Create a new table */
-<span class="nc" id="L234">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+<span class="nc" id="L234">        final MetisReportHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
 
         /* Loop through the Security Buckets */
 <span class="nc" id="L237">        final Iterator&lt;MoneyWiseAnalysisSecurityBucket&gt; myIterator = mySecurities.iterator();</span>
@@ -340,4 +340,4 @@ public class MoneyWiseReportMarketGrowth
 <span class="nc" id="L340">        return null;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

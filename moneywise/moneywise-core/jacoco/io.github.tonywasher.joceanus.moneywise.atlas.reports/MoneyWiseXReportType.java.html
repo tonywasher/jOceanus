@@ -16,59 +16,61 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.reports;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+
 /**
  * Report Types.
  */
-<span class="nc" id="L22">public enum MoneyWiseXReportType {</span>
+<span class="nc" id="L24">public enum MoneyWiseXReportType {</span>
     /**
      * Net Worth Report.
      */
-<span class="nc" id="L26">    NETWORTH,</span>
+<span class="nc" id="L28">    NETWORTH,</span>
 
     /**
      * BalanceSheet Report.
      */
-<span class="nc" id="L31">    BALANCESHEET,</span>
+<span class="nc" id="L33">    BALANCESHEET,</span>
 
     /**
      * CashFlow Report.
      */
-<span class="nc" id="L36">    CASHFLOW,</span>
+<span class="nc" id="L38">    CASHFLOW,</span>
 
     /**
      * Income/Expense Report.
      */
-<span class="nc" id="L41">    INCOMEEXPENSE,</span>
+<span class="nc" id="L43">    INCOMEEXPENSE,</span>
 
     /**
      * Taxation Basis Report.
      */
-<span class="nc" id="L46">    TAXBASIS,</span>
+<span class="nc" id="L48">    TAXBASIS,</span>
 
     /**
      * Tax Calculation Report.
      */
-<span class="nc" id="L51">    TAXCALC,</span>
+<span class="nc" id="L53">    TAXCALC,</span>
 
     /**
      * Market Growth.
      */
-<span class="nc" id="L56">    MARKETGROWTH,</span>
+<span class="nc" id="L58">    MARKETGROWTH,</span>
 
     /**
      * Portfolio Report.
      */
-<span class="nc" id="L61">    PORTFOLIO,</span>
+<span class="nc" id="L63">    PORTFOLIO,</span>
 
     /**
      * Asset Gains.
      */
-<span class="nc" id="L66">    ASSETGAINS,</span>
+<span class="nc" id="L68">    ASSETGAINS,</span>
 
     /**
      * Capital Gains.
      */
-<span class="nc" id="L71">    CAPITALGAINS;</span>
+<span class="nc" id="L73">    CAPITALGAINS;</span>
 
     /**
      * Report Name.
@@ -78,13 +80,13 @@ package io.github.tonywasher.joceanus.moneywise.atlas.reports;
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (theName == null) {</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        if (theName == null) {</span>
             /* Load the name */
-<span class="nc" id="L83">            theName = MoneyWiseXReportResource.getKeyForReportType(this).getValue();</span>
+<span class="nc" id="L85">            theName = bundleIdForReportType(this).getValue();</span>
         }
 
         /* return the name */
-<span class="nc" id="L87">        return theName;</span>
+<span class="nc" id="L89">        return theName;</span>
     }
 
     /**
@@ -93,9 +95,9 @@ package io.github.tonywasher.joceanus.moneywise.atlas.reports;
      * @return true/false
      */
     public boolean isPointInTime() {
-<span class="nc bnc" id="L96" title="All 2 branches missed.">        return switch (this) {</span>
-<span class="nc" id="L97">            case NETWORTH, PORTFOLIO, ASSETGAINS, CAPITALGAINS -&gt; true;</span>
-<span class="nc" id="L98">            default -&gt; false;</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L99">            case NETWORTH, PORTFOLIO, ASSETGAINS, CAPITALGAINS -&gt; true;</span>
+<span class="nc" id="L100">            default -&gt; false;</span>
         };
     }
 
@@ -105,9 +107,9 @@ package io.github.tonywasher.joceanus.moneywise.atlas.reports;
      * @return true/false
      */
     public boolean needSecurities() {
-<span class="nc bnc" id="L108" title="All 2 branches missed.">        return switch (this) {</span>
-<span class="nc" id="L109">            case MARKETGROWTH, PORTFOLIO, ASSETGAINS, CAPITALGAINS -&gt; true;</span>
-<span class="nc" id="L110">            default -&gt; false;</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L111">            case MARKETGROWTH, PORTFOLIO, ASSETGAINS, CAPITALGAINS -&gt; true;</span>
+<span class="nc" id="L112">            default -&gt; false;</span>
         };
     }
 
@@ -117,7 +119,29 @@ package io.github.tonywasher.joceanus.moneywise.atlas.reports;
      * @return the default
      */
     public static MoneyWiseXReportType getDefault() {
-<span class="nc" id="L120">        return NETWORTH;</span>
+<span class="nc" id="L122">        return NETWORTH;</span>
+    }
+
+    /**
+     * Obtain the resource bundleId for the reportType.
+     *
+     * @param pType the reportType
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForReportType(final MoneyWiseXReportType pType) {
+<span class="nc bnc" id="L132" title="All 11 branches missed.">        return switch (pType) {</span>
+<span class="nc" id="L133">            case NETWORTH -&gt; MoneyWiseXReportResource.TYPE_NETWORTH;</span>
+<span class="nc" id="L134">            case BALANCESHEET -&gt; MoneyWiseXReportResource.TYPE_BALANCESHEET;</span>
+<span class="nc" id="L135">            case CASHFLOW -&gt; MoneyWiseXReportResource.TYPE_CASHFLOW;</span>
+<span class="nc" id="L136">            case INCOMEEXPENSE -&gt; MoneyWiseXReportResource.TYPE_INCEXP;</span>
+<span class="nc" id="L137">            case PORTFOLIO -&gt; MoneyWiseXReportResource.TYPE_PORTFOLIO;</span>
+<span class="nc" id="L138">            case MARKETGROWTH -&gt; MoneyWiseXReportResource.TYPE_MARKET;</span>
+<span class="nc" id="L139">            case TAXBASIS -&gt; MoneyWiseXReportResource.TYPE_TAXBASIS;</span>
+<span class="nc" id="L140">            case TAXCALC -&gt; MoneyWiseXReportResource.TYPE_TAXCALC;</span>
+<span class="nc" id="L141">            case ASSETGAINS -&gt; MoneyWiseXReportResource.TYPE_ASSETGAINS;</span>
+<span class="nc" id="L142">            case CAPITALGAINS -&gt; MoneyWiseXReportResource.TYPE_CAPITALGAINS;</span>
+<span class="nc" id="L143">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

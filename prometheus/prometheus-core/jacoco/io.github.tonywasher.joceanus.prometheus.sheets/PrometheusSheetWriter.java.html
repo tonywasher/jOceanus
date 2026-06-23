@@ -24,15 +24,14 @@ import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipWriteFile;
 import io.github.tonywasher.joceanus.metis.toolkit.MetisToolkit;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusCryptographyDataType;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusIOException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusSecurityException;
 import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetProvider;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
-import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.io.File;
@@ -47,12 +46,8 @@ import java.util.List;
  *
  * @author Tony Washer
  */
-public abstract class PrometheusSheetWriter {
-    /**
-     * Gui Factory.
-     */
-    private final TethysUIFactory&lt;?&gt; theGuiFactory;
-
+public abstract class PrometheusSheetWriter
+        implements PrometheusSheetControl {
     /**
      * Report.
      */
@@ -69,6 +64,11 @@ public abstract class PrometheusSheetWriter {
     private PrometheusDataSet theData;
 
     /**
+     * The Sheet Type.
+     */
+    private PrometheusSheetWorkBookType theType;
+
+    /**
      * The WorkSheets.
      */
     private List&lt;PrometheusSheetDataItem&lt;?&gt;&gt; theSheets;
@@ -76,40 +76,25 @@ public abstract class PrometheusSheetWriter {
     /**
      * Constructor.
      *
-     * @param pFactory the gui factory
-     * @param pReport  the report
+     * @param pReport the report
      */
-    protected PrometheusSheetWriter(final TethysUIFactory&lt;?&gt; pFactory,
-<span class="nc" id="L83">                                    final TethysUIThreadStatusReport pReport) {</span>
-<span class="nc" id="L84">        theGuiFactory = pFactory;</span>
-<span class="nc" id="L85">        theReport = pReport;</span>
-<span class="nc" id="L86">    }</span>
+<span class="nc" id="L81">    protected PrometheusSheetWriter(final TethysUIThreadStatusReport pReport) {</span>
+<span class="nc" id="L82">        theReport = pReport;</span>
+<span class="nc" id="L83">    }</span>
 
-    /**
-     * get report.
-     *
-     * @return the report
-     */
-    protected TethysUIThreadStatusReport getReport() {
-<span class="nc" id="L94">        return theReport;</span>
+    @Override
+    public TethysUIThreadStatusReport getReport() {
+<span class="nc" id="L87">        return theReport;</span>
     }
 
-    /**
-     * get workbook.
-     *
-     * @return the workbook
-     */
-    protected PrometheusSheetWorkBook getWorkBook() {
-<span class="nc" id="L103">        return theWorkBook;</span>
+    @Override
+    public PrometheusSheetWorkBook getWorkBook() {
+<span class="nc" id="L92">        return theWorkBook;</span>
     }
 
-    /**
-     * get dataSet.
-     *
-     * @return the dataSet
-     */
+    @Override
     public PrometheusDataSet getData() {
-<span class="nc" id="L112">        return theData;</span>
+<span class="nc" id="L97">        return theData;</span>
     }
 
     /**
@@ -118,8 +103,8 @@ public abstract class PrometheusSheetWriter {
      * @param pSheet the sheet
      */
     protected void addSheet(final PrometheusSheetDataItem&lt;?&gt; pSheet) {
-<span class="nc" id="L121">        theSheets.add(pSheet);</span>
-<span class="nc" id="L122">    }</span>
+<span class="nc" id="L106">        theSheets.add(pSheet);</span>
+<span class="nc" id="L107">    }</span>
 
     /**
      * Create a Backup Workbook.
@@ -132,72 +117,111 @@ public abstract class PrometheusSheetWriter {
     public void createBackup(final PrometheusDataSet pData,
                              final File pFile,
                              final PrometheusSheetWorkBookType pType) throws OceanusException {
-<span class="nc" id="L135">        boolean writeFailed = false;</span>
-        try {
-<span class="nc" id="L137">            createBackup(pData, new FileOutputStream(pFile), pType);</span>
-<span class="nc" id="L138">        } catch (IOException</span>
+        /* Protect against exceptions */
+<span class="nc" id="L121">        boolean writeFailed = false;</span>
+<span class="nc" id="L122">        try (FileOutputStream myOutputStream = new FileOutputStream(pFile)) {</span>
+            /* Create the backup */
+<span class="nc" id="L124">            createBackup(pData, myOutputStream, pType);</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L127">        } catch (IOException</span>
                  | OceanusException e) {
-<span class="nc" id="L140">            writeFailed = true;</span>
-<span class="nc" id="L141">            throw new PrometheusIOException(&quot;Failed to create backup Workbook&quot;, e);</span>
+<span class="nc" id="L129">            writeFailed = true;</span>
+<span class="nc" id="L130">            throw new PrometheusIOException(&quot;Failed to create backup Workbook&quot;, e);</span>
+
+            /* Handle cleanup */
         } finally {
             /* Try to delete the file if required */
-<span class="nc bnc" id="L144" title="All 2 branches missed.">            if (writeFailed) {</span>
-<span class="nc" id="L145">                MetisToolkit.cleanUpFile(pFile);</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">            if (writeFailed) {</span>
+<span class="nc" id="L136">                MetisToolkit.cleanUpFile(pFile);</span>
             }
         }
-<span class="nc" id="L148">    }</span>
+<span class="nc" id="L139">    }</span>
 
     /**
      * Create a Backup Workbook.
      *
      * @param pData      Data to write out
-     * @param pZipStream the backup file to write to
+     * @param pZipStream the output stream
      * @param pType      the workBookType
      * @throws OceanusException on error
      */
     public void createBackup(final PrometheusDataSet pData,
                              final OutputStream pZipStream,
                              final PrometheusSheetWorkBookType pType) throws OceanusException {
+        /* Record details */
+<span class="nc" id="L153">        theData = pData;</span>
+<span class="nc" id="L154">        theType = pType;</span>
+
+        /* Create the backup */
+<span class="nc" id="L157">        createBackup(pZipStream);</span>
+<span class="nc" id="L158">    }</span>
+
+    /**
+     * Create a Backup Workbook.
+     *
+     * @param pZipStream the backup file to write to
+     * @throws OceanusException on error
+     */
+    public void createBackup(final OutputStream pZipStream) throws OceanusException {
         /* Obtain the active profile */
-<span class="nc" id="L162">        OceanusProfile myTask = theReport.getActiveTask();</span>
-<span class="nc" id="L163">        myTask = myTask.startTask(&quot;Writing&quot;);</span>
+<span class="nc" id="L168">        OceanusProfile myTask = theReport.getActiveTask();</span>
+<span class="nc" id="L169">        myTask = myTask.startTask(&quot;Writing&quot;);</span>
 
         /* Protect against exceptions */
         try {
             /* Create a similar security control */
-<span class="nc" id="L168">            final PrometheusSecurityPasswordManager myPasswordMgr = pData.getPasswordMgr();</span>
-<span class="nc" id="L169">            final GordianFactoryLock myBase = pData.getFactoryLock();</span>
-<span class="nc" id="L170">            final GordianFactoryLock myLock = myPasswordMgr.similarFactoryLock(myBase);</span>
-<span class="nc" id="L171">            final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();</span>
-<span class="nc" id="L172">            final GordianZipLock myZipLock = myZips.zipLock(myLock);</span>
+<span class="nc" id="L174">            final PrometheusSecurityPasswordManager myPasswordMgr = theData.getPasswordMgr();</span>
+<span class="nc" id="L175">            final GordianFactoryLock myBase = theData.getFactoryLock();</span>
+<span class="nc" id="L176">            final GordianFactoryLock myLock = myPasswordMgr.similarFactoryLock(myBase);</span>
+<span class="nc" id="L177">            final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();</span>
+<span class="nc" id="L178">            final GordianZipLock myZipLock = myZips.zipLock(myLock);</span>
 
-            /* Assume failure */
-<span class="nc" id="L175">            final String myName = PrometheusSpreadSheet.FILE_NAME + pType.getExtension();</span>
+            /* Create the backup */
+<span class="nc" id="L181">            createBackup(myZipLock, pZipStream);</span>
 
-            /* Protect the workbook access */
-<span class="nc" id="L178">            try (GordianZipWriteFile myZipFile = myZips.createZipFile(myZipLock, pZipStream);</span>
-<span class="nc" id="L179">                 OutputStream myStream = myZipFile.createOutputStream(new File(myName), false)) {</span>
-                /* Record the DataSet */
-<span class="nc" id="L181">                theData = pData;</span>
-
-                /* Initialise the WorkBook */
-<span class="nc" id="L184">                initialiseWorkBook(pType);</span>
-
-                /* Write the data to the work book */
-<span class="nc" id="L187">                writeWorkBook(myStream);</span>
-
-<span class="nc" id="L189">            } catch (IOException</span>
-                     | OceanusException e) {
-                /* Report the error */
-<span class="nc" id="L192">                throw new PrometheusIOException(&quot;Failed to create Backup Workbook&quot;, e);</span>
-<span class="nc" id="L193">            }</span>
-<span class="nc" id="L194">        } catch (GordianException e) {</span>
-<span class="nc" id="L195">            throw new PrometheusSecurityException(e);</span>
-<span class="nc" id="L196">        }</span>
+            /* Handle exceptions */
+<span class="nc" id="L184">        } catch (GordianException e) {</span>
+<span class="nc" id="L185">            throw new PrometheusSecurityException(e);</span>
+<span class="nc" id="L186">        }</span>
 
         /* Complete task */
-<span class="nc" id="L199">        myTask.end();</span>
-<span class="nc" id="L200">    }</span>
+<span class="nc" id="L189">        myTask.end();</span>
+<span class="nc" id="L190">    }</span>
+
+    /**
+     * Create a Backup Workbook.
+     *
+     * @param pZipLock   the zipLock
+     * @param pZipStream the backup file to write to
+     * @throws OceanusException on error
+     */
+    public void createBackup(final GordianZipLock pZipLock,
+                             final OutputStream pZipStream) throws OceanusException {
+        /* Access Zip factory */
+<span class="nc" id="L202">        final PrometheusSecurityPasswordManager myPasswordMgr = theData.getPasswordMgr();</span>
+<span class="nc" id="L203">        final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();</span>
+
+        /* Assume failure */
+<span class="nc" id="L206">        final String myName = PrometheusSheetConstants.FILE_NAME + theType.getExtension();</span>
+
+        /* Protect the workbook access */
+<span class="nc" id="L209">        try (GordianZipWriteFile myZipFile = myZips.createZipFile(pZipLock, pZipStream);</span>
+<span class="nc" id="L210">             OutputStream myStream = myZipFile.createOutputStream(new File(myName), false)) {</span>
+            /* Initialise the WorkBook */
+<span class="nc" id="L212">            initialiseWorkBook(theType);</span>
+
+            /* Write the data to the work book */
+<span class="nc" id="L215">            writeWorkBook(myStream);</span>
+
+<span class="nc" id="L217">        } catch (IOException</span>
+                 | OceanusException e) {
+            /* Report the error */
+<span class="nc" id="L220">            throw new PrometheusIOException(&quot;Failed to create Backup Workbook&quot;, e);</span>
+<span class="nc" id="L221">        } catch (GordianException e) {</span>
+<span class="nc" id="L222">            throw new PrometheusSecurityException(e);</span>
+<span class="nc" id="L223">        }</span>
+<span class="nc" id="L224">    }</span>
 
     /**
      * Register sheets.
@@ -212,20 +236,20 @@ public abstract class PrometheusSheetWriter {
      */
     private void initialiseWorkBook(final PrometheusSheetWorkBookType pType) throws OceanusException {
         /* Create the workbook attached to the output stream */
-<span class="nc" id="L215">        theWorkBook = PrometheusSheetProvider.newWorkBook(pType);</span>
+<span class="nc" id="L239">        theWorkBook = PrometheusSheetProvider.newWorkBook(pType);</span>
 
         /* Initialise the list */
-<span class="nc" id="L218">        theSheets = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L242">        theSheets = new ArrayList&lt;&gt;();</span>
 
         /* Loop through the list types */
-<span class="nc bnc" id="L221" title="All 2 branches missed.">        for (PrometheusCryptographyDataType myType : PrometheusCryptographyDataType.values()) {</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">        for (PrometheusCryptographyDataType myType : PrometheusCryptographyDataType.values()) {</span>
             /* Create the sheet */
-<span class="nc" id="L223">            theSheets.add(newSheet(myType));</span>
+<span class="nc" id="L247">            theSheets.add(newSheet(myType));</span>
         }
 
         /* register additional sheets */
-<span class="nc" id="L227">        registerSheets();</span>
-<span class="nc" id="L228">    }</span>
+<span class="nc" id="L251">        registerSheets();</span>
+<span class="nc" id="L252">    }</span>
 
     /**
      * Create new sheet of required type.
@@ -235,18 +259,13 @@ public abstract class PrometheusSheetWriter {
      */
     private PrometheusSheetDataItem&lt;?&gt; newSheet(final PrometheusCryptographyDataType pListType) {
         /* Switch on list Type */
-<span class="nc bnc" id="L238" title="All 5 branches missed.">        switch (pListType) {</span>
-            case CONTROLDATA:
-<span class="nc" id="L240">                return new PrometheusSheetControlData(this);</span>
-            case CONTROLKEY:
-<span class="nc" id="L242">                return new PrometheusSheetControlKey(this);</span>
-            case CONTROLKEYSET:
-<span class="nc" id="L244">                return new PrometheusSheetControlKeySet(this);</span>
-            case DATAKEYSET:
-<span class="nc" id="L246">                return new PrometheusSheetDataKeySet(this);</span>
-            default:
-<span class="nc" id="L248">                throw new IllegalArgumentException(pListType.toString());</span>
-        }
+<span class="nc bnc" id="L262" title="All 5 branches missed.">        return switch (pListType) {</span>
+<span class="nc" id="L263">            case CONTROLDATA -&gt; new PrometheusSheetControlData(this);</span>
+<span class="nc" id="L264">            case CONTROLKEY -&gt; new PrometheusSheetControlKey(this);</span>
+<span class="nc" id="L265">            case CONTROLKEYSET -&gt; new PrometheusSheetControlKeySet(this);</span>
+<span class="nc" id="L266">            case DATAKEYSET -&gt; new PrometheusSheetDataKeySet(this);</span>
+<span class="nc" id="L267">            default -&gt; throw new IllegalArgumentException(pListType.toString());</span>
+        };
     }
 
     /**
@@ -257,26 +276,26 @@ public abstract class PrometheusSheetWriter {
      */
     private void writeWorkBook(final OutputStream pStream) throws OceanusException {
         /* Obtain the active profile */
-<span class="nc" id="L260">        final OceanusProfile myTask = theReport.getActiveTask();</span>
+<span class="nc" id="L279">        final OceanusProfile myTask = theReport.getActiveTask();</span>
 
         /* Declare the number of stages */
-<span class="nc" id="L263">        theReport.setNumStages(theSheets.size() + 1);</span>
+<span class="nc" id="L282">        theReport.setNumStages(theSheets.size() + 1);</span>
 
         /* Loop through the sheets */
-<span class="nc bnc" id="L266" title="All 2 branches missed.">        for (PrometheusSheetDataItem&lt;?&gt; mySheet : theSheets) {</span>
+<span class="nc bnc" id="L285" title="All 2 branches missed.">        for (PrometheusSheetDataItem&lt;?&gt; mySheet : theSheets) {</span>
             /* Access the next sheet */
             /* Write data for the sheet */
-<span class="nc" id="L269">            myTask.startTask(mySheet.toString());</span>
-<span class="nc" id="L270">            mySheet.writeSpreadSheet();</span>
-<span class="nc" id="L271">        }</span>
+<span class="nc" id="L288">            myTask.startTask(mySheet.toString());</span>
+<span class="nc" id="L289">            mySheet.writeSpreadSheet();</span>
+<span class="nc" id="L290">        }</span>
 
         /* If we have built all the sheets */
-<span class="nc" id="L274">        theReport.setNewStage(&quot;Writing&quot;);</span>
+<span class="nc" id="L293">        theReport.setNewStage(&quot;Writing&quot;);</span>
 
         /* If we have created the workbook OK */
         /* Write it out to disk and close the stream */
-<span class="nc" id="L278">        myTask.startTask(&quot;Saving&quot;);</span>
-<span class="nc" id="L279">        theWorkBook.saveToStream(pStream);</span>
-<span class="nc" id="L280">    }</span>
+<span class="nc" id="L297">        myTask.startTask(&quot;Saving&quot;);</span>
+<span class="nc" id="L298">        theWorkBook.saveToStream(pStream);</span>
+<span class="nc" id="L299">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

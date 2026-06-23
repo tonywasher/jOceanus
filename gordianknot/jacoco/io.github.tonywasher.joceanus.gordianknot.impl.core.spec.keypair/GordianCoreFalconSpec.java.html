@@ -18,6 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianFalconSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.falcon.FalconParameters;
@@ -29,16 +30,17 @@ import java.util.Map;
 /**
  * FALCON KeySpec.
  */
-public final class GordianCoreFalconSpec {
+public final class GordianCoreFalconSpec
+        implements GordianCoreKeyPairIdSpec&lt;GordianFalconSpec&gt; {
     /**
      * The specMap.
      */
-<span class="fc" id="L36">    private static final Map&lt;GordianFalconSpec, GordianCoreFalconSpec&gt; SPECMAP = newSpecMap();</span>
+<span class="fc" id="L38">    private static final Map&lt;GordianFalconSpec, GordianCoreFalconSpec&gt; SPECMAP = newSpecMap();</span>
 
     /**
      * The specArray.
      */
-<span class="fc" id="L41">    private static final GordianCoreFalconSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreFalconSpec[0]);</span>
+<span class="fc" id="L43">    private static final GordianCoreFalconSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreFalconSpec[0]);</span>
 
     /**
      * The Spec.
@@ -50,17 +52,18 @@ public final class GordianCoreFalconSpec {
      *
      * @param pSpec the spec
      */
-<span class="fc" id="L53">    private GordianCoreFalconSpec(final GordianFalconSpec pSpec) {</span>
-<span class="fc" id="L54">        theSpec = pSpec;</span>
-<span class="fc" id="L55">    }</span>
+<span class="fc" id="L55">    private GordianCoreFalconSpec(final GordianFalconSpec pSpec) {</span>
+<span class="fc" id="L56">        theSpec = pSpec;</span>
+<span class="fc" id="L57">    }</span>
 
-    /**
-     * Obtain the spec.
-     *
-     * @return the spec
-     */
+    @Override
+    public GordianKeyPairType getKeyPairType() {
+<span class="fc" id="L61">        return GordianKeyPairType.FALCON;</span>
+    }
+
+    @Override
     public GordianFalconSpec getSpec() {
-<span class="fc" id="L63">        return theSpec;</span>
+<span class="fc" id="L66">        return theSpec;</span>
     }
 
     /**
@@ -69,10 +72,10 @@ public final class GordianCoreFalconSpec {
      * @return the parameters.
      */
     public FalconParameters getParameters() {
-<span class="pc bpc" id="L72" title="2 of 3 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L73">            case FALCON512 -&gt; FalconParameters.falcon_512;</span>
-<span class="nc" id="L74">            case FALCON1024 -&gt; FalconParameters.falcon_1024;</span>
-<span class="nc" id="L75">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L75" title="2 of 3 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L76">            case FALCON512 -&gt; FalconParameters.falcon_512;</span>
+<span class="nc" id="L77">            case FALCON1024 -&gt; FalconParameters.falcon_1024;</span>
+<span class="nc" id="L78">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
@@ -82,52 +85,45 @@ public final class GordianCoreFalconSpec {
      * @return the parameters.
      */
     public FalconParameterSpec getParameterSpec() {
-<span class="pc bpc" id="L85" title="2 of 3 branches missed.">        return switch (theSpec) {</span>
-<span class="fc" id="L86">            case FALCON512 -&gt; FalconParameterSpec.falcon_512;</span>
-<span class="nc" id="L87">            case FALCON1024 -&gt; FalconParameterSpec.falcon_1024;</span>
-<span class="nc" id="L88">            default -&gt; throw new IllegalArgumentException();</span>
+<span class="pc bpc" id="L88" title="2 of 3 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L89">            case FALCON512 -&gt; FalconParameterSpec.falcon_512;</span>
+<span class="nc" id="L90">            case FALCON1024 -&gt; FalconParameterSpec.falcon_1024;</span>
+<span class="nc" id="L91">            default -&gt; throw new IllegalArgumentException();</span>
         };
     }
 
-    /**
-     * Obtain Falcon algorithm Identifier.
-     *
-     * @return the identifier.
-     */
+    @Override
     public ASN1ObjectIdentifier getIdentifier() {
-<span class="pc bpc" id="L98" title="1 of 3 branches missed.">        switch (theSpec) {</span>
-            case FALCON512:
-<span class="fc" id="L100">                return BCObjectIdentifiers.falcon_512;</span>
-            case FALCON1024:
-<span class="fc" id="L102">                return BCObjectIdentifiers.falcon_1024;</span>
-            default:
-<span class="nc" id="L104">                throw new IllegalArgumentException();</span>
-        }
+<span class="pc bpc" id="L97" title="1 of 3 branches missed.">        return switch (theSpec) {</span>
+<span class="fc" id="L98">            case FALCON512 -&gt; BCObjectIdentifiers.falcon_512;</span>
+<span class="fc" id="L99">            case FALCON1024 -&gt; BCObjectIdentifiers.falcon_1024;</span>
+<span class="nc" id="L100">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L110">        return theSpec.toString();</span>
+<span class="fc" id="L106">        return theSpec.toString();</span>
     }
 
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
-<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (this == pThat) {</span>
-<span class="nc" id="L117">            return true;</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L113">            return true;</span>
         }
-<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (pThat == null) {</span>
-<span class="nc" id="L120">            return false;</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L116">            return false;</span>
         }
 
         /* Check subFields */
-<span class="nc" id="L124">        return pThat instanceof GordianCoreFalconSpec myThat</span>
-<span class="nc bnc" id="L125" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
+<span class="nc" id="L120">        return pThat instanceof GordianCoreFalconSpec myThat</span>
+<span class="nc bnc" id="L121" title="All 4 branches missed.">                &amp;&amp; theSpec == myThat.getSpec();</span>
     }
 
     @Override
     public int hashCode() {
-<span class="fc" id="L130">        return theSpec.hashCode();</span>
+<span class="fc" id="L126">        return theSpec.hashCode();</span>
     }
 
     /**
@@ -137,7 +133,7 @@ public final class GordianCoreFalconSpec {
      * @return the core spec
      */
     public static GordianCoreFalconSpec mapCoreSpec(final Object pSpec) {
-<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        return pSpec instanceof GordianFalconSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        return pSpec instanceof GordianFalconSpec mySpec ? SPECMAP.get(mySpec) : null;</span>
     }
 
     /**
@@ -146,11 +142,11 @@ public final class GordianCoreFalconSpec {
      * @return the type map
      */
     private static Map&lt;GordianFalconSpec, GordianCoreFalconSpec&gt; newSpecMap() {
-<span class="fc" id="L149">        final Map&lt;GordianFalconSpec, GordianCoreFalconSpec&gt; myMap = new EnumMap&lt;&gt;(GordianFalconSpec.class);</span>
-<span class="fc bfc" id="L150" title="All 2 branches covered.">        for (GordianFalconSpec mySpec : GordianFalconSpec.values()) {</span>
-<span class="fc" id="L151">            myMap.put(mySpec, new GordianCoreFalconSpec(mySpec));</span>
+<span class="fc" id="L145">        final Map&lt;GordianFalconSpec, GordianCoreFalconSpec&gt; myMap = new EnumMap&lt;&gt;(GordianFalconSpec.class);</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        for (GordianFalconSpec mySpec : GordianFalconSpec.values()) {</span>
+<span class="fc" id="L147">            myMap.put(mySpec, new GordianCoreFalconSpec(mySpec));</span>
         }
-<span class="fc" id="L153">        return myMap;</span>
+<span class="fc" id="L149">        return myMap;</span>
     }
 
     /**
@@ -159,7 +155,7 @@ public final class GordianCoreFalconSpec {
      * @return the values
      */
     public static GordianCoreFalconSpec[] values() {
-<span class="fc" id="L162">        return VALUES;</span>
+<span class="fc" id="L158">        return VALUES;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

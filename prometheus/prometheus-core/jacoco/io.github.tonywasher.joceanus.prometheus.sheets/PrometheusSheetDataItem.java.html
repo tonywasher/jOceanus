@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.prometheus.sheets;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
@@ -24,7 +25,6 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
@@ -32,6 +32,7 @@ import io.github.tonywasher.joceanus.prometheus.exc.PrometheusIOException;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetColumn;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetView;
@@ -58,9 +59,9 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
     private final TethysUIThreadStatusReport theReport;
 
     /**
-     * The input sheet.
+     * The control.
      */
-    private PrometheusSheetReader theReader;
+    private PrometheusSheetControl theControl;
 
     /**
      * The workbook.
@@ -108,32 +109,18 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
     private int theBaseRow;
 
     /**
-     * Constructor for a load operation.
+     * Constructor.
      *
-     * @param pReader the spreadsheet reader
-     * @param pRange  the range to load
+     * @param pControl the spreadsheet control
+     * @param pRange   the range to load/create
      */
-    protected PrometheusSheetDataItem(final PrometheusSheetReader pReader,
-<span class="nc" id="L117">                                      final String pRange) {</span>
+    protected PrometheusSheetDataItem(final PrometheusSheetControl pControl,
+<span class="nc" id="L118">                                      final String pRange) {</span>
         /* Store parameters */
-<span class="nc" id="L119">        theReport = pReader.getReport();</span>
-<span class="nc" id="L120">        theReader = pReader;</span>
-<span class="nc" id="L121">        theRangeName = pRange;</span>
-<span class="nc" id="L122">    }</span>
-
-    /**
-     * Constructor for a write operation.
-     *
-     * @param pWriter the spreadsheet writer
-     * @param pRange  the range to create
-     */
-    protected PrometheusSheetDataItem(final PrometheusSheetWriter pWriter,
-<span class="nc" id="L131">                                      final String pRange) {</span>
-        /* Store parameters */
-<span class="nc" id="L133">        theReport = pWriter.getReport();</span>
-<span class="nc" id="L134">        theWorkBook = pWriter.getWorkBook();</span>
-<span class="nc" id="L135">        theRangeName = pRange;</span>
-<span class="nc" id="L136">    }</span>
+<span class="nc" id="L120">        theReport = pControl.getReport();</span>
+<span class="nc" id="L121">        theControl = pControl;</span>
+<span class="nc" id="L122">        theRangeName = pRange;</span>
+<span class="nc" id="L123">    }</span>
 
     /**
      * Obtain the last loaded item.
@@ -141,12 +128,12 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      * @return the item
      */
     protected T getLastItem() {
-<span class="nc" id="L144">        return theLastItem;</span>
+<span class="nc" id="L131">        return theLastItem;</span>
     }
 
     @Override
     public String toString() {
-<span class="nc" id="L149">        return theRangeName;</span>
+<span class="nc" id="L136">        return theRangeName;</span>
     }
 
     /**
@@ -156,8 +143,8 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      */
     protected void setDataList(final PrometheusDataList&lt;T&gt; pList) {
         /* Store parameters */
-<span class="nc" id="L159">        theList = pList;</span>
-<span class="nc" id="L160">    }</span>
+<span class="nc" id="L146">        theList = pList;</span>
+<span class="nc" id="L147">    }</span>
 
     /**
      * Load the DataItems from a spreadsheet.
@@ -168,46 +155,46 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
         /* Protect against exceptions */
         try {
             /* Access the workbook */
-<span class="nc" id="L171">            theWorkBook = theReader.getWorkBook();</span>
+<span class="nc" id="L158">            theWorkBook = theControl.getWorkBook();</span>
+
+            /* Declare the new stage */
+<span class="nc" id="L161">            theReport.setNewStage(theRangeName);</span>
 
             /* Access the view of the range */
-<span class="nc" id="L174">            theActiveView = theWorkBook.getRangeView(theRangeName);</span>
-<span class="nc bnc" id="L175" title="All 2 branches missed.">            if (theActiveView != null) {</span>
-<span class="nc" id="L176">                final Iterator&lt;PrometheusSheetRow&gt; myIterator = theActiveView.rowIterator();</span>
-
-                /* Declare the new stage */
-<span class="nc" id="L179">                theReport.setNewStage(theRangeName);</span>
+<span class="nc" id="L164">            theActiveView = theWorkBook.getRangeView(theRangeName);</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">            if (theActiveView != null) {</span>
+<span class="nc" id="L166">                final Iterator&lt;PrometheusSheetRow&gt; myIterator = theActiveView.rowIterator();</span>
 
                 /* Determine count of rows */
-<span class="nc" id="L182">                final int myTotal = theActiveView.getRowCount();</span>
+<span class="nc" id="L169">                final int myTotal = theActiveView.getRowCount();</span>
 
                 /* Declare the number of steps */
-<span class="nc" id="L185">                theReport.setNumSteps(myTotal);</span>
+<span class="nc" id="L172">                theReport.setNumSteps(myTotal);</span>
 
                 /* Loop through the rows of the range */
-<span class="nc" id="L188">                theCurrRow = 0;</span>
-<span class="nc bnc" id="L189" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
+<span class="nc" id="L175">                theCurrRow = 0;</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
                     /* Access the row */
-<span class="nc" id="L191">                    theActiveRow = myIterator.next();</span>
+<span class="nc" id="L178">                    theActiveRow = myIterator.next();</span>
 
                     /* load the item */
-<span class="nc" id="L194">                    final PrometheusDataValues myValues = loadSecureValues();</span>
-<span class="nc" id="L195">                    theLastItem = theList.addValuesItem(myValues);</span>
+<span class="nc" id="L181">                    final PrometheusDataValues myValues = loadSecureValues();</span>
+<span class="nc" id="L182">                    theLastItem = theList.addValuesItem(myValues);</span>
 
                     /* Report the progress */
-<span class="nc" id="L198">                    theReport.setNextStep();</span>
-<span class="nc" id="L199">                    theCurrRow++;</span>
-<span class="nc" id="L200">                }</span>
+<span class="nc" id="L185">                    theReport.setNextStep();</span>
+<span class="nc" id="L186">                    theCurrRow++;</span>
+<span class="nc" id="L187">                }</span>
             }
 
             /* Post process the load */
-<span class="nc" id="L204">            postProcessOnLoad();</span>
+<span class="nc" id="L191">            postProcessOnLoad();</span>
 
             /* Handle exceptions */
-<span class="nc" id="L207">        } catch (OceanusException e) {</span>
-<span class="nc" id="L208">            throw new PrometheusIOException(&quot;Failed to Load &quot; + theRangeName, e);</span>
-<span class="nc" id="L209">        }</span>
-<span class="nc" id="L210">    }</span>
+<span class="nc" id="L194">        } catch (OceanusException e) {</span>
+<span class="nc" id="L195">            throw new PrometheusIOException(&quot;Failed to Load &quot; + theRangeName, e);</span>
+<span class="nc" id="L196">        }</span>
+<span class="nc" id="L197">    }</span>
 
     /**
      * Write the DataItems to a spreadsheet.
@@ -217,52 +204,54 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
     protected void writeSpreadSheet() throws OceanusException {
         /* Protect against exceptions */
         try {
+            /* Access the workbook */
+<span class="nc" id="L208">            theWorkBook = theControl.getWorkBook();</span>
+
             /* Declare the new stage */
-<span class="nc" id="L221">            theReport.setNewStage(theRangeName);</span>
+<span class="nc" id="L211">            theReport.setNewStage(theRangeName);</span>
 
             /* Count the number of items */
-<span class="nc" id="L224">            final int myTotal = theList.size();</span>
+<span class="nc" id="L214">            final int myNumRows = theList.size();</span>
 
             /* Declare the number of steps */
-<span class="nc" id="L227">            theReport.setNumSteps(myTotal);</span>
+<span class="nc" id="L217">            theReport.setNumSteps(myNumRows);</span>
 
             /* Determine size of sheet */
-<span class="nc" id="L230">            final int myNumRows = myTotal;</span>
-<span class="nc" id="L231">            final int myNumCols = getLastColumn() + 1;</span>
+<span class="nc" id="L220">            final int myNumCols = getLastColumn() + 1;</span>
 
             /* Create the sheet */
-<span class="nc" id="L234">            theWorkSheet = theWorkBook.newSheet(theRangeName, myNumRows, myNumCols);</span>
+<span class="nc" id="L223">            theWorkSheet = theWorkBook.newSheet(theRangeName, myNumRows, myNumCols);</span>
 
             /* Initialise counts */
-<span class="nc" id="L237">            theBaseRow = 0;</span>
-<span class="nc" id="L238">            theCurrRow = theBaseRow;</span>
+<span class="nc" id="L226">            theBaseRow = 0;</span>
+<span class="nc" id="L227">            theCurrRow = theBaseRow;</span>
 
             /* Access the iterator */
-<span class="nc" id="L241">            final Iterator&lt;T&gt; myItemIterator = theList.iterator();</span>
+<span class="nc" id="L230">            final Iterator&lt;T&gt; myItemIterator = theList.iterator();</span>
 
             /* Loop through the data items */
-<span class="nc bnc" id="L244" title="All 2 branches missed.">            while (myItemIterator.hasNext()) {</span>
-<span class="nc" id="L245">                final T myCurr = myItemIterator.next();</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">            while (myItemIterator.hasNext()) {</span>
+<span class="nc" id="L234">                final T myCurr = myItemIterator.next();</span>
 
                 /* Create the new row */
-<span class="nc" id="L248">                newRow();</span>
+<span class="nc" id="L237">                newRow();</span>
 
                 /* insert the item */
-<span class="nc" id="L251">                insertSecureItem(myCurr);</span>
+<span class="nc" id="L240">                insertSecureItem(myCurr);</span>
 
                 /* Report the progress */
-<span class="nc" id="L254">                theCurrRow++;</span>
-<span class="nc" id="L255">                theReport.setNextStep();</span>
-<span class="nc" id="L256">            }</span>
+<span class="nc" id="L243">                theCurrRow++;</span>
+<span class="nc" id="L244">                theReport.setNextStep();</span>
+<span class="nc" id="L245">            }</span>
 
             /* If data was written then name the range */
-<span class="nc bnc" id="L259" title="All 2 branches missed.">            if (theCurrRow &gt; theBaseRow) {</span>
-<span class="nc" id="L260">                nameRange();</span>
+<span class="nc bnc" id="L248" title="All 2 branches missed.">            if (theCurrRow &gt; theBaseRow) {</span>
+<span class="nc" id="L249">                nameRange();</span>
             }
-<span class="nc" id="L262">        } catch (OceanusException e) {</span>
-<span class="nc" id="L263">            throw new PrometheusIOException(&quot;Failed to create &quot; + theRangeName, e);</span>
-<span class="nc" id="L264">        }</span>
-<span class="nc" id="L265">    }</span>
+<span class="nc" id="L251">        } catch (OceanusException e) {</span>
+<span class="nc" id="L252">            throw new PrometheusIOException(&quot;Failed to create &quot; + theRangeName, e);</span>
+<span class="nc" id="L253">        }</span>
+<span class="nc" id="L254">    }</span>
 
     /**
      * Load secure item from spreadsheet.
@@ -280,8 +269,8 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      */
     protected void insertSecureItem(final T pItem) throws OceanusException {
         /* Write the id */
-<span class="nc" id="L283">        writeInteger(COL_ID, pItem.getIndexedId());</span>
-<span class="nc" id="L284">    }</span>
+<span class="nc" id="L272">        writeInteger(COL_ID, pItem.getIndexedId());</span>
+<span class="nc" id="L273">    }</span>
 
     /**
      * PostProcess on load.
@@ -290,8 +279,8 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      */
     protected void postProcessOnLoad() throws OceanusException {
         /* postProcess the list */
-<span class="nc" id="L293">        theList.postProcessOnLoad();</span>
-<span class="nc" id="L294">    }</span>
+<span class="nc" id="L282">        theList.postProcessOnLoad();</span>
+<span class="nc" id="L283">    }</span>
 
     /**
      * Determine last active column.
@@ -305,8 +294,8 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      */
     protected void newRow() {
         /* Create the new row */
-<span class="nc" id="L308">        theActiveRow = theWorkSheet.getMutableRowByIndex(theCurrRow);</span>
-<span class="nc" id="L309">    }</span>
+<span class="nc" id="L297">        theActiveRow = (PrometheusSheetRow) theWorkSheet.getMutableRowByIndex(theCurrRow);</span>
+<span class="nc" id="L298">    }</span>
 
     /**
      * Name the basic range.
@@ -315,13 +304,13 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      */
     protected void nameRange() throws OceanusException {
         /* Adjust column if necessary */
-<span class="nc" id="L318">        final int myCol = getLastColumn();</span>
+<span class="nc" id="L307">        final int myCol = getLastColumn();</span>
 
         /* Name the range */
-<span class="nc" id="L321">        final PrometheusSheetCellPosition myFirst = new PrometheusSheetCellPosition(0, theBaseRow);</span>
-<span class="nc" id="L322">        final PrometheusSheetCellPosition myLast = new PrometheusSheetCellPosition(myCol, theCurrRow - 1);</span>
-<span class="nc" id="L323">        theWorkSheet.declareRange(theRangeName, myFirst, myLast);</span>
-<span class="nc" id="L324">    }</span>
+<span class="nc" id="L310">        final PrometheusSheetCellPosition myFirst = new PrometheusSheetCellPosition(0, theBaseRow);</span>
+<span class="nc" id="L311">        final PrometheusSheetCellPosition myLast = new PrometheusSheetCellPosition(myCol, theCurrRow - 1);</span>
+<span class="nc" id="L312">        theWorkSheet.declareRange(theRangeName, myFirst, myLast);</span>
+<span class="nc" id="L313">    }</span>
 
     /**
      * Name the column range.
@@ -333,10 +322,10 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
     protected void nameColumnRange(final int pOffset,
                                    final String pName) throws OceanusException {
         /* Name the range */
-<span class="nc" id="L336">        final PrometheusSheetCellPosition myFirst = new PrometheusSheetCellPosition(pOffset, theBaseRow);</span>
-<span class="nc" id="L337">        final PrometheusSheetCellPosition myLast = new PrometheusSheetCellPosition(pOffset, theCurrRow - 1);</span>
-<span class="nc" id="L338">        theWorkSheet.declareRange(pName, myFirst, myLast);</span>
-<span class="nc" id="L339">    }</span>
+<span class="nc" id="L325">        final PrometheusSheetCellPosition myFirst = new PrometheusSheetCellPosition(pOffset, theBaseRow);</span>
+<span class="nc" id="L326">        final PrometheusSheetCellPosition myLast = new PrometheusSheetCellPosition(pOffset, theCurrRow - 1);</span>
+<span class="nc" id="L327">        theWorkSheet.declareRange(pName, myFirst, myLast);</span>
+<span class="nc" id="L328">    }</span>
 
     /**
      * Apply Data Validation.
@@ -348,19 +337,19 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
     public void applyDataValidation(final int pOffset,
                                     final String pList) throws OceanusException {
         /* Name the range */
-<span class="nc" id="L351">        final PrometheusSheetCellPosition myFirst = new PrometheusSheetCellPosition(pOffset, theBaseRow);</span>
-<span class="nc" id="L352">        final PrometheusSheetCellPosition myLast = new PrometheusSheetCellPosition(pOffset, theCurrRow - 1);</span>
-<span class="nc" id="L353">        theWorkSheet.applyDataValidation(myFirst, myLast, pList);</span>
-<span class="nc" id="L354">    }</span>
+<span class="nc" id="L340">        final PrometheusSheetCellPosition myFirst = new PrometheusSheetCellPosition(pOffset, theBaseRow);</span>
+<span class="nc" id="L341">        final PrometheusSheetCellPosition myLast = new PrometheusSheetCellPosition(pOffset, theCurrRow - 1);</span>
+<span class="nc" id="L342">        theWorkSheet.applyDataValidation(myFirst, myLast, pList);</span>
+<span class="nc" id="L343">    }</span>
 
     /**
      * Freeze titles.
      */
     protected void freezeTitles() {
         /* Freeze the top row */
-<span class="nc" id="L361">        final PrometheusSheetCellPosition myPoint = new PrometheusSheetCellPosition(2, theBaseRow);</span>
-<span class="nc" id="L362">        theWorkSheet.createFreezePane(myPoint);</span>
-<span class="nc" id="L363">    }</span>
+<span class="nc" id="L350">        final PrometheusSheetCellPosition myPoint = new PrometheusSheetCellPosition(2, theBaseRow);</span>
+<span class="nc" id="L351">        theWorkSheet.createFreezePane(myPoint);</span>
+<span class="nc" id="L352">    }</span>
 
     /**
      * Freeze titles.
@@ -370,9 +359,20 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      */
     protected void applyDataFilter(final int pOffset) throws OceanusException {
         /* Freeze the top row */
-<span class="nc" id="L373">        final PrometheusSheetCellPosition myPoint = new PrometheusSheetCellPosition(pOffset, 0);</span>
-<span class="nc" id="L374">        theWorkSheet.applyDataFilter(myPoint, theCurrRow);</span>
-<span class="nc" id="L375">    }</span>
+<span class="nc" id="L362">        final PrometheusSheetCellPosition myPoint = new PrometheusSheetCellPosition(pOffset, 0);</span>
+<span class="nc" id="L363">        theWorkSheet.applyDataFilter(myPoint, theCurrRow);</span>
+<span class="nc" id="L364">    }</span>
+
+    /**
+     * Obtain the column.
+     *
+     * @param pOffset the offset of the column
+     * @return the column
+     */
+    private PrometheusSheetColumn getMutableColumnByIndex(final int pOffset) {
+        /* Apply to the sheet */
+<span class="nc" id="L374">        return (PrometheusSheetColumn) theWorkSheet.getMutableColumnByIndex(pOffset);</span>
+    }
 
     /**
      * Set Hidden column.
@@ -381,7 +381,7 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      */
     protected void setHiddenColumn(final int pOffset) {
         /* Apply to the sheet */
-<span class="nc" id="L384">        theWorkSheet.getMutableColumnByIndex(pOffset).setHidden(true);</span>
+<span class="nc" id="L384">        getMutableColumnByIndex(pOffset).setHidden(true);</span>
 <span class="nc" id="L385">    }</span>
 
     /**
@@ -391,7 +391,7 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      */
     protected void setDateColumn(final int pOffset) {
         /* Apply the style to the sheet */
-<span class="nc" id="L394">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.DATE);</span>
+<span class="nc" id="L394">        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.DATE);</span>
 <span class="nc" id="L395">    }</span>
 
     /**
@@ -401,7 +401,7 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      */
     protected void setStringColumn(final int pOffset) {
         /* Apply the style to the sheet */
-<span class="nc" id="L404">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.STRING);</span>
+<span class="nc" id="L404">        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.STRING);</span>
 <span class="nc" id="L405">    }</span>
 
     /**
@@ -411,7 +411,7 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      */
     protected void setMoneyColumn(final int pOffset) {
         /* Apply the style to the sheet */
-<span class="nc" id="L414">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.MONEY);</span>
+<span class="nc" id="L414">        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.MONEY);</span>
 <span class="nc" id="L415">    }</span>
 
     /**
@@ -421,7 +421,7 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      */
     protected void setPriceColumn(final int pOffset) {
         /* Apply the style to the sheet */
-<span class="nc" id="L424">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.PRICE);</span>
+<span class="nc" id="L424">        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.PRICE);</span>
 <span class="nc" id="L425">    }</span>
 
     /**
@@ -431,7 +431,7 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      */
     protected void setUnitsColumn(final int pOffset) {
         /* Apply the style to the sheet */
-<span class="nc" id="L434">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.UNITS);</span>
+<span class="nc" id="L434">        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.UNITS);</span>
 <span class="nc" id="L435">    }</span>
 
     /**
@@ -441,7 +441,7 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      */
     protected void setRateColumn(final int pOffset) {
         /* Apply the style to the sheet */
-<span class="nc" id="L444">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.RATE);</span>
+<span class="nc" id="L444">        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.RATE);</span>
 <span class="nc" id="L445">    }</span>
 
     /**
@@ -451,7 +451,7 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      */
     protected void setRatioColumn(final int pOffset) {
         /* Apply the style to the sheet */
-<span class="nc" id="L454">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.RATIO);</span>
+<span class="nc" id="L454">        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.RATIO);</span>
 <span class="nc" id="L455">    }</span>
 
     /**
@@ -461,7 +461,7 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      */
     protected void setBooleanColumn(final int pOffset) {
         /* Apply the style to the sheet */
-<span class="nc" id="L464">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.BOOLEAN);</span>
+<span class="nc" id="L464">        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.BOOLEAN);</span>
 <span class="nc" id="L465">    }</span>
 
     /**
@@ -471,7 +471,7 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
      */
     protected void setIntegerColumn(final int pOffset) {
         /* Apply the style to the sheet */
-<span class="nc" id="L474">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.INTEGER);</span>
+<span class="nc" id="L474">        getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.INTEGER);</span>
 <span class="nc" id="L475">    }</span>
 
     /**
@@ -844,4 +844,4 @@ public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt
 <span class="nc" id="L844">        return myValues;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

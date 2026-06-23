@@ -30,27 +30,17 @@ public class MoneyWiseQIFWriter {
     /**
      * Quicken Date Format.
      */
-    protected static final String QIF_DATEFORMAT = &quot;dd/MM/yy&quot;;
-
-    /**
-     * Quicken BaseYear.
-     */
-    protected static final int QIF_BASEYEAR = 1970;
+    static final String QIF_DATEFORMAT = &quot;dd/MM/yy&quot;;
 
     /**
      * AutoSwitch option.
      */
-    protected static final String QIF_AUTOSWITCH = &quot;AutoSwitch&quot;;
-
-    /**
-     * Item type.
-     */
-    protected static final String QIF_ITEM = &quot;!Account&quot;;
+    private static final String QIF_AUTOSWITCH = &quot;AutoSwitch&quot;;
 
     /**
      * Number of stages.
      */
-    protected static final int NUM_STAGES = 6;
+    private static final int NUM_STAGES = 6;
 
     /**
      * Thread Status.
@@ -76,15 +66,15 @@ public class MoneyWiseQIFWriter {
      */
     public MoneyWiseQIFWriter(final TethysUIFactory&lt;?&gt; pFactory,
                               final TethysUIThreadStatusReport pReport,
-<span class="nc" id="L79">                              final MoneyWiseQIFFile pFile) {</span>
+<span class="nc" id="L69">                              final MoneyWiseQIFFile pFile) {</span>
         /* Store parameters */
-<span class="nc" id="L81">        theReport = pReport;</span>
-<span class="nc" id="L82">        theFile = pFile;</span>
+<span class="nc" id="L71">        theReport = pReport;</span>
+<span class="nc" id="L72">        theFile = pFile;</span>
 
         /* Allocate the formatter and set date format */
-<span class="nc" id="L85">        theFormatter = pFactory.newDataFormatter();</span>
-<span class="nc" id="L86">        theFormatter.setFormat(QIF_DATEFORMAT);</span>
-<span class="nc" id="L87">    }</span>
+<span class="nc" id="L75">        theFormatter = pFactory.newDataFormatter();</span>
+<span class="nc" id="L76">        theFormatter.setFormat(QIF_DATEFORMAT);</span>
+<span class="nc" id="L77">    }</span>
 
     /**
      * Write to Stream.
@@ -94,26 +84,26 @@ public class MoneyWiseQIFWriter {
      */
     public void writeFile(final MoneyWiseQIFStreamWriter pStream) throws OceanusException {
         /* Declare the stages */
-<span class="nc" id="L97">        theReport.setNumStages(NUM_STAGES);</span>
+<span class="nc" id="L87">        theReport.setNumStages(NUM_STAGES);</span>
 
         /* Write the classes */
-<span class="nc" id="L100">        writeClasses(pStream);</span>
+<span class="nc" id="L90">        writeClasses(pStream);</span>
 
         /* Write the categories */
-<span class="nc" id="L103">        writeCategories(pStream);</span>
+<span class="nc" id="L93">        writeCategories(pStream);</span>
 
         /* Write the accounts */
-<span class="nc" id="L106">        writeAccounts(pStream);</span>
+<span class="nc" id="L96">        writeAccounts(pStream);</span>
 
         /* Write the securities */
-<span class="nc" id="L109">        writeSecurities(pStream);</span>
+<span class="nc" id="L99">        writeSecurities(pStream);</span>
 
         /* Write the events */
-<span class="nc" id="L112">        writeEvents(pStream);</span>
+<span class="nc" id="L102">        writeEvents(pStream);</span>
 
         /* Write the prices */
-<span class="nc" id="L115">        writePrices(pStream);</span>
-<span class="nc" id="L116">    }</span>
+<span class="nc" id="L105">        writePrices(pStream);</span>
+<span class="nc" id="L106">    }</span>
 
     /**
      * Write Classes.
@@ -123,40 +113,40 @@ public class MoneyWiseQIFWriter {
      */
     private void writeClasses(final MoneyWiseQIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
-<span class="nc" id="L126">        final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="nc" id="L116">        final StringBuilder myBuilder = new StringBuilder();</span>
 
         /* Update status bar */
-<span class="nc" id="L129">        theReport.setNewStage(&quot;Writing classes&quot;);</span>
-<span class="nc" id="L130">        theReport.setNumSteps(theFile.numClasses());</span>
+<span class="nc" id="L119">        theReport.setNewStage(&quot;Writing classes&quot;);</span>
+<span class="nc" id="L120">        theReport.setNumSteps(theFile.numClasses());</span>
 
         /* Skip stage if we have no classes */
-<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (!theFile.hasClasses()) {</span>
-<span class="nc" id="L134">            return;</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">        if (!theFile.hasClasses()) {</span>
+<span class="nc" id="L124">            return;</span>
         }
 
         /* Format Item Type header */
-<span class="nc" id="L138">        MoneyWiseQIFRecord.formatItemType(MoneyWiseQIFClass.QIF_ITEM, myBuilder);</span>
+<span class="nc" id="L128">        MoneyWiseQIFRecord.formatItemType(MoneyWiseQIFClass.QIF_ITEM, myBuilder);</span>
 
         /* Write Class header */
-<span class="nc" id="L141">        pStream.write(myBuilder.toString());</span>
-<span class="nc" id="L142">        myBuilder.setLength(0);</span>
+<span class="nc" id="L131">        pStream.write(myBuilder.toString());</span>
+<span class="nc" id="L132">        myBuilder.setLength(0);</span>
 
         /* Loop through the categories */
-<span class="nc" id="L145">        final Iterator&lt;MoneyWiseQIFClass&gt; myIterator = theFile.classIterator();</span>
-<span class="nc bnc" id="L146" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L147">            final MoneyWiseQIFClass myClass = myIterator.next();</span>
+<span class="nc" id="L135">        final Iterator&lt;MoneyWiseQIFClass&gt; myIterator = theFile.classIterator();</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L137">            final MoneyWiseQIFClass myClass = myIterator.next();</span>
 
             /* Format the record */
-<span class="nc" id="L150">            myClass.formatRecord(theFormatter, myBuilder);</span>
+<span class="nc" id="L140">            myClass.formatRecord(theFormatter, myBuilder);</span>
 
             /* Write Category record */
-<span class="nc" id="L153">            pStream.write(myBuilder.toString());</span>
-<span class="nc" id="L154">            myBuilder.setLength(0);</span>
+<span class="nc" id="L143">            pStream.write(myBuilder.toString());</span>
+<span class="nc" id="L144">            myBuilder.setLength(0);</span>
 
             /* Report the progress */
-<span class="nc" id="L157">            theReport.setNextStep();</span>
-<span class="nc" id="L158">        }</span>
-<span class="nc" id="L159">    }</span>
+<span class="nc" id="L147">            theReport.setNextStep();</span>
+<span class="nc" id="L148">        }</span>
+<span class="nc" id="L149">    }</span>
 
     /**
      * Write Categories.
@@ -166,35 +156,35 @@ public class MoneyWiseQIFWriter {
      */
     private void writeCategories(final MoneyWiseQIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
-<span class="nc" id="L169">        final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="nc" id="L159">        final StringBuilder myBuilder = new StringBuilder();</span>
 
         /* Update status bar */
-<span class="nc" id="L172">        theReport.setNewStage(&quot;Writing categories&quot;);</span>
-<span class="nc" id="L173">        theReport.setNumSteps(theFile.numCategories());</span>
+<span class="nc" id="L162">        theReport.setNewStage(&quot;Writing categories&quot;);</span>
+<span class="nc" id="L163">        theReport.setNumSteps(theFile.numCategories());</span>
 
         /* Format Item Type header */
-<span class="nc" id="L176">        MoneyWiseQIFRecord.formatItemType(MoneyWiseQIFEventCategory.QIF_ITEM, myBuilder);</span>
+<span class="nc" id="L166">        MoneyWiseQIFRecord.formatItemType(MoneyWiseQIFEventCategory.QIF_ITEM, myBuilder);</span>
 
         /* Write Category header */
-<span class="nc" id="L179">        pStream.write(myBuilder.toString());</span>
-<span class="nc" id="L180">        myBuilder.setLength(0);</span>
+<span class="nc" id="L169">        pStream.write(myBuilder.toString());</span>
+<span class="nc" id="L170">        myBuilder.setLength(0);</span>
 
         /* Loop through the parent categories */
-<span class="nc" id="L183">        final Iterator&lt;MoneyWiseQIFParentCategory&gt; myIterator = theFile.categoryIterator();</span>
-<span class="nc bnc" id="L184" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L185">            final MoneyWiseQIFParentCategory myCategory = myIterator.next();</span>
+<span class="nc" id="L173">        final Iterator&lt;MoneyWiseQIFParentCategory&gt; myIterator = theFile.categoryIterator();</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L175">            final MoneyWiseQIFParentCategory myCategory = myIterator.next();</span>
 
             /* Format the record */
-<span class="nc" id="L188">            myCategory.formatRecord(theFormatter, myBuilder);</span>
+<span class="nc" id="L178">            myCategory.formatRecord(theFormatter, myBuilder);</span>
 
             /* Write Category records */
-<span class="nc" id="L191">            pStream.write(myBuilder.toString());</span>
-<span class="nc" id="L192">            myBuilder.setLength(0);</span>
+<span class="nc" id="L181">            pStream.write(myBuilder.toString());</span>
+<span class="nc" id="L182">            myBuilder.setLength(0);</span>
 
             /* Report the progress */
-<span class="nc" id="L195">            theReport.setStepsDone(myCategory.numChildren());</span>
-<span class="nc" id="L196">        }</span>
-<span class="nc" id="L197">    }</span>
+<span class="nc" id="L185">            theReport.setStepsDone(myCategory.numChildren());</span>
+<span class="nc" id="L186">        }</span>
+<span class="nc" id="L187">    }</span>
 
     /**
      * Write Accounts.
@@ -204,37 +194,37 @@ public class MoneyWiseQIFWriter {
      */
     private void writeAccounts(final MoneyWiseQIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
-<span class="nc" id="L207">        final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="nc" id="L197">        final StringBuilder myBuilder = new StringBuilder();</span>
 
         /* Update status bar */
-<span class="nc" id="L210">        theReport.setNewStage(&quot;Writing accounts&quot;);</span>
-<span class="nc" id="L211">        theReport.setNumSteps(theFile.numAccounts());</span>
+<span class="nc" id="L200">        theReport.setNewStage(&quot;Writing accounts&quot;);</span>
+<span class="nc" id="L201">        theReport.setNumSteps(theFile.numAccounts());</span>
 
         /* Set AutoSwitch and header */
-<span class="nc" id="L214">        MoneyWiseQIFRecord.setSwitch(QIF_AUTOSWITCH, myBuilder);</span>
-<span class="nc" id="L215">        MoneyWiseQIFRecord.formatHeader(MoneyWiseQIFAccount.QIF_HDR, myBuilder);</span>
+<span class="nc" id="L204">        MoneyWiseQIFRecord.setSwitch(QIF_AUTOSWITCH, myBuilder);</span>
+<span class="nc" id="L205">        MoneyWiseQIFRecord.formatHeader(MoneyWiseQIFAccount.QIF_HDR, myBuilder);</span>
 
         /* Write Accounts header */
-<span class="nc" id="L218">        pStream.write(myBuilder.toString());</span>
-<span class="nc" id="L219">        myBuilder.setLength(0);</span>
+<span class="nc" id="L208">        pStream.write(myBuilder.toString());</span>
+<span class="nc" id="L209">        myBuilder.setLength(0);</span>
 
         /* Loop through the accounts */
-<span class="nc" id="L222">        final Iterator&lt;MoneyWiseQIFAccountEvents&gt; myIterator = theFile.accountIterator();</span>
-<span class="nc bnc" id="L223" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L224">            final MoneyWiseQIFAccountEvents myEvents = myIterator.next();</span>
-<span class="nc" id="L225">            final MoneyWiseQIFAccount myAccount = myEvents.getAccount();</span>
+<span class="nc" id="L212">        final Iterator&lt;MoneyWiseQIFAccountEvents&gt; myIterator = theFile.accountIterator();</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L214">            final MoneyWiseQIFAccountEvents myEvents = myIterator.next();</span>
+<span class="nc" id="L215">            final MoneyWiseQIFAccount myAccount = myEvents.getAccount();</span>
 
             /* Format the record */
-<span class="nc" id="L228">            myAccount.formatRecord(theFormatter, myBuilder);</span>
+<span class="nc" id="L218">            myAccount.formatRecord(theFormatter, myBuilder);</span>
 
             /* Write Account record */
-<span class="nc" id="L231">            pStream.write(myBuilder.toString());</span>
-<span class="nc" id="L232">            myBuilder.setLength(0);</span>
+<span class="nc" id="L221">            pStream.write(myBuilder.toString());</span>
+<span class="nc" id="L222">            myBuilder.setLength(0);</span>
 
             /* Report the progress */
-<span class="nc" id="L235">            theReport.setNextStep();</span>
-<span class="nc" id="L236">        }</span>
-<span class="nc" id="L237">    }</span>
+<span class="nc" id="L225">            theReport.setNextStep();</span>
+<span class="nc" id="L226">        }</span>
+<span class="nc" id="L227">    }</span>
 
     /**
      * Write Securities.
@@ -244,51 +234,51 @@ public class MoneyWiseQIFWriter {
      */
     private void writeSecurities(final MoneyWiseQIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
-<span class="nc" id="L247">        final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="nc" id="L237">        final StringBuilder myBuilder = new StringBuilder();</span>
 
         /* Update status bar */
-<span class="nc" id="L250">        theReport.setNewStage(&quot;Writing securities&quot;);</span>
-<span class="nc" id="L251">        theReport.setNumSteps(theFile.numSecurities());</span>
+<span class="nc" id="L240">        theReport.setNewStage(&quot;Writing securities&quot;);</span>
+<span class="nc" id="L241">        theReport.setNumSteps(theFile.numSecurities());</span>
 
         /* Skip step if we have no securities */
-<span class="nc bnc" id="L254" title="All 2 branches missed.">        if (!theFile.hasSecurities()) {</span>
-<span class="nc" id="L255">            return;</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">        if (!theFile.hasSecurities()) {</span>
+<span class="nc" id="L245">            return;</span>
         }
 
         /* Clear AutoSwitch */
-<span class="nc" id="L259">        MoneyWiseQIFRecord.clearSwitch(QIF_AUTOSWITCH, myBuilder);</span>
+<span class="nc" id="L249">        MoneyWiseQIFRecord.clearSwitch(QIF_AUTOSWITCH, myBuilder);</span>
 
         /* Write Securities header */
-<span class="nc" id="L262">        pStream.write(myBuilder.toString());</span>
-<span class="nc" id="L263">        myBuilder.setLength(0);</span>
+<span class="nc" id="L252">        pStream.write(myBuilder.toString());</span>
+<span class="nc" id="L253">        myBuilder.setLength(0);</span>
 
         /* Loop through the securities */
-<span class="nc" id="L266">        final Iterator&lt;MoneyWiseQIFSecurityPrices&gt; myIterator = theFile.securityIterator();</span>
-<span class="nc bnc" id="L267" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L268">            final MoneyWiseQIFSecurityPrices myList = myIterator.next();</span>
-<span class="nc" id="L269">            final MoneyWiseQIFSecurity mySecurity = myList.getSecurity();</span>
+<span class="nc" id="L256">        final Iterator&lt;MoneyWiseQIFSecurityPrices&gt; myIterator = theFile.securityIterator();</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L258">            final MoneyWiseQIFSecurityPrices myList = myIterator.next();</span>
+<span class="nc" id="L259">            final MoneyWiseQIFSecurity mySecurity = myList.getSecurity();</span>
 
             /* Format Item Type header */
-<span class="nc" id="L272">            MoneyWiseQIFRecord.formatItemType(MoneyWiseQIFSecurity.QIF_ITEM, myBuilder);</span>
+<span class="nc" id="L262">            MoneyWiseQIFRecord.formatItemType(MoneyWiseQIFSecurity.QIF_ITEM, myBuilder);</span>
 
             /* Format the record */
-<span class="nc" id="L275">            mySecurity.formatRecord(theFormatter, myBuilder);</span>
+<span class="nc" id="L265">            mySecurity.formatRecord(theFormatter, myBuilder);</span>
 
             /* Write Security record */
-<span class="nc" id="L278">            pStream.write(myBuilder.toString());</span>
-<span class="nc" id="L279">            myBuilder.setLength(0);</span>
+<span class="nc" id="L268">            pStream.write(myBuilder.toString());</span>
+<span class="nc" id="L269">            myBuilder.setLength(0);</span>
 
             /* Report the progress */
-<span class="nc" id="L282">            theReport.setNextStep();</span>
-<span class="nc" id="L283">        }</span>
+<span class="nc" id="L272">            theReport.setNextStep();</span>
+<span class="nc" id="L273">        }</span>
 
         /* Set AutoSwitch */
-<span class="nc" id="L286">        MoneyWiseQIFRecord.setSwitch(QIF_AUTOSWITCH, myBuilder);</span>
+<span class="nc" id="L276">        MoneyWiseQIFRecord.setSwitch(QIF_AUTOSWITCH, myBuilder);</span>
 
         /* Write Securities header */
-<span class="nc" id="L289">        pStream.write(myBuilder.toString());</span>
-<span class="nc" id="L290">        myBuilder.setLength(0);</span>
-<span class="nc" id="L291">    }</span>
+<span class="nc" id="L279">        pStream.write(myBuilder.toString());</span>
+<span class="nc" id="L280">        myBuilder.setLength(0);</span>
+<span class="nc" id="L281">    }</span>
 
     /**
      * Write Prices.
@@ -298,48 +288,48 @@ public class MoneyWiseQIFWriter {
      */
     private void writeEvents(final MoneyWiseQIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
-<span class="nc" id="L301">        final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="nc" id="L291">        final StringBuilder myBuilder = new StringBuilder();</span>
 
         /* Update status bar */
-<span class="nc" id="L304">        theReport.setNewStage(&quot;Writing account events&quot;);</span>
-<span class="nc" id="L305">        theReport.setNumSteps(theFile.numAccounts());</span>
+<span class="nc" id="L294">        theReport.setNewStage(&quot;Writing account events&quot;);</span>
+<span class="nc" id="L295">        theReport.setNumSteps(theFile.numAccounts());</span>
 
         /* Loop through the accounts */
-<span class="nc" id="L308">        final Iterator&lt;MoneyWiseQIFAccountEvents&gt; myIterator = theFile.accountIterator();</span>
-<span class="nc bnc" id="L309" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L310">            final MoneyWiseQIFAccountEvents myEvents = myIterator.next();</span>
-<span class="nc" id="L311">            final MoneyWiseQIFAccount myAccount = myEvents.getAccount();</span>
+<span class="nc" id="L298">        final Iterator&lt;MoneyWiseQIFAccountEvents&gt; myIterator = theFile.accountIterator();</span>
+<span class="nc bnc" id="L299" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L300">            final MoneyWiseQIFAccountEvents myEvents = myIterator.next();</span>
+<span class="nc" id="L301">            final MoneyWiseQIFAccount myAccount = myEvents.getAccount();</span>
 
             /* Format Item Type header */
-<span class="nc" id="L314">            MoneyWiseQIFRecord.formatHeader(MoneyWiseQIFAccount.QIF_HDR, myBuilder);</span>
+<span class="nc" id="L304">            MoneyWiseQIFRecord.formatHeader(MoneyWiseQIFAccount.QIF_HDR, myBuilder);</span>
 
             /* Format the record */
-<span class="nc" id="L317">            myAccount.formatRecord(theFormatter, myBuilder);</span>
+<span class="nc" id="L307">            myAccount.formatRecord(theFormatter, myBuilder);</span>
 
             /* Format Item Type */
-<span class="nc" id="L320">            MoneyWiseQIFRecord.formatItemType(myAccount.getType(), myBuilder);</span>
+<span class="nc" id="L310">            MoneyWiseQIFRecord.formatItemType(myAccount.getType(), myBuilder);</span>
 
             /* Write Account record */
-<span class="nc" id="L323">            pStream.write(myBuilder.toString());</span>
-<span class="nc" id="L324">            myBuilder.setLength(0);</span>
+<span class="nc" id="L313">            pStream.write(myBuilder.toString());</span>
+<span class="nc" id="L314">            myBuilder.setLength(0);</span>
 
             /* Loop through the events */
-<span class="nc" id="L327">            final Iterator&lt;MoneyWiseQIFEventRecord&lt;?&gt;&gt; myEvtIterator = myEvents.eventIterator();</span>
-<span class="nc bnc" id="L328" title="All 2 branches missed.">            while (myEvtIterator.hasNext()) {</span>
-<span class="nc" id="L329">                final MoneyWiseQIFEventRecord&lt;?&gt; myEvent = myEvtIterator.next();</span>
+<span class="nc" id="L317">            final Iterator&lt;MoneyWiseQIFEventRecord&lt;?&gt;&gt; myEvtIterator = myEvents.eventIterator();</span>
+<span class="nc bnc" id="L318" title="All 2 branches missed.">            while (myEvtIterator.hasNext()) {</span>
+<span class="nc" id="L319">                final MoneyWiseQIFEventRecord&lt;?&gt; myEvent = myEvtIterator.next();</span>
 
                 /* Format the record */
-<span class="nc" id="L332">                myEvent.formatRecord(theFormatter, myBuilder);</span>
+<span class="nc" id="L322">                myEvent.formatRecord(theFormatter, myBuilder);</span>
 
                 /* Write Event record */
-<span class="nc" id="L335">                pStream.write(myBuilder.toString());</span>
-<span class="nc" id="L336">                myBuilder.setLength(0);</span>
-<span class="nc" id="L337">            }</span>
+<span class="nc" id="L325">                pStream.write(myBuilder.toString());</span>
+<span class="nc" id="L326">                myBuilder.setLength(0);</span>
+<span class="nc" id="L327">            }</span>
 
             /* Report the progress */
-<span class="nc" id="L340">            theReport.setNextStep();</span>
-<span class="nc" id="L341">        }</span>
-<span class="nc" id="L342">    }</span>
+<span class="nc" id="L330">            theReport.setNextStep();</span>
+<span class="nc" id="L331">        }</span>
+<span class="nc" id="L332">    }</span>
 
     /**
      * Write Prices.
@@ -349,32 +339,32 @@ public class MoneyWiseQIFWriter {
      */
     private void writePrices(final MoneyWiseQIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
-<span class="nc" id="L352">        final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="nc" id="L342">        final StringBuilder myBuilder = new StringBuilder();</span>
 
         /* Update status bar */
-<span class="nc" id="L355">        theReport.setNewStage(&quot;Writing prices&quot;);</span>
-<span class="nc" id="L356">        theReport.setNumSteps(theFile.numSecurities());</span>
+<span class="nc" id="L345">        theReport.setNewStage(&quot;Writing prices&quot;);</span>
+<span class="nc" id="L346">        theReport.setNumSteps(theFile.numSecurities());</span>
 
         /* Skip step if we have no prices */
-<span class="nc bnc" id="L359" title="All 2 branches missed.">        if (!theFile.hasSecurities()) {</span>
-<span class="nc" id="L360">            return;</span>
+<span class="nc bnc" id="L349" title="All 2 branches missed.">        if (!theFile.hasSecurities()) {</span>
+<span class="nc" id="L350">            return;</span>
         }
 
         /* Loop through the prices */
-<span class="nc" id="L364">        final Iterator&lt;MoneyWiseQIFSecurityPrices&gt; myIterator = theFile.securityIterator();</span>
-<span class="nc bnc" id="L365" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
-<span class="nc" id="L366">            final MoneyWiseQIFSecurityPrices myPriceList = myIterator.next();</span>
+<span class="nc" id="L354">        final Iterator&lt;MoneyWiseQIFSecurityPrices&gt; myIterator = theFile.securityIterator();</span>
+<span class="nc bnc" id="L355" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L356">            final MoneyWiseQIFSecurityPrices myPriceList = myIterator.next();</span>
 
             /* Format Prices */
-<span class="nc" id="L369">            myPriceList.formatPrices(theFormatter, myBuilder);</span>
+<span class="nc" id="L359">            myPriceList.formatPrices(theFormatter, myBuilder);</span>
 
             /* Write Price record */
-<span class="nc" id="L372">            pStream.write(myBuilder.toString());</span>
-<span class="nc" id="L373">            myBuilder.setLength(0);</span>
+<span class="nc" id="L362">            pStream.write(myBuilder.toString());</span>
+<span class="nc" id="L363">            myBuilder.setLength(0);</span>
 
             /* Report the progress */
-<span class="nc" id="L376">            theReport.setNextStep();</span>
-<span class="nc" id="L377">        }</span>
-<span class="nc" id="L378">    }</span>
+<span class="nc" id="L366">            theReport.setNextStep();</span>
+<span class="nc" id="L367">        }</span>
+<span class="nc" id="L368">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

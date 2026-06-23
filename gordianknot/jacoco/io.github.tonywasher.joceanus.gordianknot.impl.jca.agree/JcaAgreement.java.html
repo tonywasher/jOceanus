@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JcaAgreement.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.jca.agree</a> &gt; <span class="el_source">JcaAgreement.java</span></div><h1>JcaAgreement.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.jca.agree;
+
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreNTRUPrimeSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.base.JcaProvider;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPrivateKey;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
+import org.bouncycastle.jcajce.spec.UserKeyingMaterialSpec;
+
+import javax.crypto.KeyAgreement;
+import javax.crypto.KeyGenerator;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
+
+/**
+ * Agreement classes.
+ */
+public final class JcaAgreement {
+    /**
+     * Failed agreement message.
+     */
+    static final String ERR_AGREEMENT = &quot;Failed Agreement&quot;;
+
+    /**
+     * Private constructor.
+     */
+    private JcaAgreement() {
+    }
+
+    /**
+     * Base Agreement Engine class.
+     */
+    public abstract static class JcaAgreementBase
+            extends GordianCoreAgreementEngine {
+        /**
+         * Empty byteArray.
+         */
+<span class="fc" id="L74">        static final byte[] EMPTY = new byte[0];</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the security factory
+         * @param pSpec    the agreementSpec
+         * @throws GordianException on error
+         */
+        JcaAgreementBase(final GordianCoreAgreementFactory pFactory,
+                         final GordianCoreAgreementSpec pSpec) throws GordianException {
+            /* Invoke underlying constructor */
+<span class="fc" id="L86">            super(pFactory, pSpec);</span>
+<span class="fc" id="L87">        }</span>
+
+        @Override
+        protected GordianPublicKey getPublicKey(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Validate the keyPair */
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">            if (!(pKeyPair instanceof JcaKeyPair)) {</span>
+                /* Reject keyPair */
+<span class="nc" id="L94">                throw new GordianDataException(&quot;Invalid KeyPair&quot;);</span>
+            }
+
+            /* Access private key */
+<span class="fc" id="L98">            return super.getPublicKey(pKeyPair);</span>
+        }
+
+        @Override
+        protected GordianPrivateKey getPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Validate the keyPair */
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">            if (!(pKeyPair instanceof JcaKeyPair)) {</span>
+                /* Reject keyPair */
+<span class="nc" id="L106">                throw new GordianDataException(&quot;Invalid KeyPair&quot;);</span>
+            }
+
+            /* Access private key */
+<span class="fc" id="L110">            return super.getPrivateKey(pKeyPair);</span>
+        }
+
+        /**
+         * Initialise agreement.
+         *
+         * @param pAgreement the agreement
+         * @param pPrivate   the private key
+         */
+        void initAgreement(final KeyAgreement pAgreement,
+                           final JcaPrivateKey pPrivate) throws GordianException {
+            /* Protect against exceptions */
+            try {
+<span class="fc bfc" id="L123" title="All 2 branches covered.">                if (getSpec().getKDFType() == GordianAgreementKDF.NONE) {</span>
+<span class="fc" id="L124">                    pAgreement.init(pPrivate.getPrivateKey(), getRandom());</span>
+                } else {
+<span class="fc" id="L126">                    pAgreement.init(pPrivate.getPrivateKey(), new UserKeyingMaterialSpec(getAdditional()), getRandom());</span>
+                }
+<span class="nc" id="L128">            } catch (InvalidKeyException</span>
+                     | InvalidAlgorithmParameterException e) {
+<span class="nc" id="L130">                throw new GordianCryptoException(ERR_AGREEMENT, e);</span>
+<span class="fc" id="L131">            }</span>
+<span class="fc" id="L132">        }</span>
+
+        /**
+         * Obtain the additionalInfo.
+         *
+         * @return the additionalData
+         */
+        byte[] getAdditional() {
+<span class="fc" id="L140">            final byte[] myAdditional = this.getBuilder().getState().getAdditionalData();</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">            return myAdditional == null ? EMPTY : myAdditional;</span>
+        }
+
+        /**
+         * adjust agreement if necessary.
+         *
+         * @param pCurrent the current agreement
+         * @param pKeyPair the keyPair
+         * @return the adjusted agreement
+         * @throws GordianException on error
+         */
+        KeyAgreement adjustAgreement(final KeyAgreement pCurrent,
+                                     final GordianKeyPair pKeyPair) throws GordianException {
+            /* If we need to change agreement based on keySpec */
+<span class="fc bfc" id="L155" title="All 2 branches covered.">            if (getSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {</span>
+<span class="fc" id="L156">                final String myBase = pKeyPair.getKeyPairSpec().toString();</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">                final String myXtra = GordianAgreementType.UNIFIED.equals(getSpec().getAgreementType())</span>
+<span class="fc" id="L158">                        ? &quot;U&quot; : &quot;&quot;;</span>
+<span class="fc" id="L159">                final String myName = getFullAgreementName(myBase + myXtra, getSpec());</span>
+<span class="fc" id="L160">                return getJavaKeyAgreement(myName, false);</span>
+            }
+
+            /* Just return the current agreement */
+<span class="fc" id="L164">            return pCurrent;</span>
+        }
+
+        /**
+         * Obtain the required derivation id.
+         *
+         * @return the derivation id
+         */
+        AlgorithmIdentifier derivationAlgorithmId() {
+<span class="fc" id="L173">            final GordianCoreAgreementSpec mySpec = getSpec();</span>
+<span class="fc bfc" id="L174" title="All 10 branches covered.">            return switch (mySpec.getKDFType()) {</span>
+                case SHA256KDF -&gt;
+<span class="fc" id="L176">                        new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf2, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256));</span>
+                case SHA512KDF -&gt;
+<span class="fc" id="L178">                        new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf2, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512));</span>
+                case SHA256CKDF -&gt;
+<span class="fc" id="L180">                        new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf3, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256));</span>
+                case SHA512CKDF -&gt;
+<span class="fc" id="L182">                        new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf3, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512));</span>
+<span class="fc" id="L183">                case SHA256HKDF -&gt; new AlgorithmIdentifier(PKCSObjectIdentifiers.id_alg_hkdf_with_sha256, null);</span>
+<span class="fc" id="L184">                case SHA512HKDF -&gt; new AlgorithmIdentifier(PKCSObjectIdentifiers.id_alg_hkdf_with_sha512, null);</span>
+<span class="fc" id="L185">                case KMAC128 -&gt; new AlgorithmIdentifier(NISTObjectIdentifiers.id_Kmac128, null);</span>
+<span class="fc" id="L186">                case KMAC256 -&gt; new AlgorithmIdentifier(NISTObjectIdentifiers.id_Kmac256, null);</span>
+<span class="fc" id="L187">                case SHAKE256 -&gt; new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake256, null);</span>
+<span class="fc" id="L188">                default -&gt; null;</span>
+            };
+        }
+    }
+
+    /**
+     * Create the BouncyCastle KeyGenerator via JCA.
+     *
+     * @param pSpec the KeySpec
+     * @return the KeyFactory
+     * @throws GordianException on error
+     */
+    static KeyGenerator getJavaKeyGenerator(final GordianKeyPairSpec pSpec) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Determine the algorithm name */
+<span class="fc" id="L204">            String myName = pSpec.getKeyPairType().toString();</span>
+<span class="fc" id="L205">            final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pSpec;</span>
+<span class="fc bfc" id="L206" title="All 3 branches covered.">            switch (pSpec.getKeyPairType()) {</span>
+                case NTRUPRIME:
+<span class="fc" id="L208">                    final GordianCoreNTRUPrimeSpec myNTRUSpec = mySpec.getNTRUPrimeSpec();</span>
+<span class="fc" id="L209">                    myName = myNTRUSpec.getType() + &quot;PRIME&quot;;</span>
+<span class="fc" id="L210">                    break;</span>
+                case MLKEM:
+<span class="fc" id="L212">                    myName = &quot;ML-KEM&quot;;</span>
+<span class="fc" id="L213">                    break;</span>
+                default:
+                    break;
+            }
+
+            /* Determine source of keyGenerator */
+<span class="fc bfc" id="L219" title="All 2 branches covered.">            final Provider myProvider = mySpec.getCoreKeyPairType().isStandardJca() ? JcaProvider.BCPROV : JcaProvider.BCPQPROV;</span>
+
+            /* Return a KeyAgreement for the algorithm */
+<span class="fc" id="L222">            return KeyGenerator.getInstance(myName, myProvider);</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L225">        } catch (NoSuchAlgorithmException e) {</span>
+            /* Throw the exception */
+<span class="nc" id="L227">            throw new GordianCryptoException(&quot;Failed to create KeyGenerator&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Create the BouncyCastle KeyFactory via JCA.
+     *
+     * @param pAlgorithm  the Algorithm
+     * @param postQuantum is this a postQuantum algorithm?
+     * @return the KeyFactory
+     * @throws GordianException on error
+     */
+    static KeyAgreement getJavaKeyAgreement(final String pAlgorithm,
+                                            final boolean postQuantum) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Return a KeyAgreement for the algorithm */
+<span class="fc bfc" id="L244" title="All 2 branches covered.">            return KeyAgreement.getInstance(pAlgorithm, postQuantum</span>
+<span class="fc" id="L245">                    ? JcaProvider.BCPQPROV</span>
+<span class="fc" id="L246">                    : JcaProvider.BCPROV);</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L249">        } catch (NoSuchAlgorithmException e) {</span>
+            /* Throw the exception */
+<span class="nc" id="L251">            throw new GordianCryptoException(&quot;Failed to create KeyAgreement&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Obtain the agreement name.
+     *
+     * @param pBase          the base agreement
+     * @param pAgreementSpec the agreementSpec
+     * @return the full agreement name
+     * @throws GordianException on error
+     */
+    static String getFullAgreementName(final String pBase,
+                                       final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
+<span class="pc bpc" id="L265" title="2 of 8 branches missed.">        return switch (pAgreementSpec.getKDFType()) {</span>
+<span class="fc" id="L266">            case NONE -&gt; pBase;</span>
+<span class="fc" id="L267">            case SHA256KDF -&gt; pBase + &quot;withSHA256KDF&quot;;</span>
+<span class="fc" id="L268">            case SHA512KDF -&gt; pBase + &quot;withSHA512KDF&quot;;</span>
+<span class="fc" id="L269">            case SHA256CKDF -&gt; pBase + &quot;withSHA256CKDF&quot;;</span>
+<span class="fc" id="L270">            case SHA512CKDF -&gt; pBase + &quot;withSHA512CKDF&quot;;</span>
+<span class="nc" id="L271">            case SHA256HKDF -&gt; pBase + &quot;withSHA256HKDF&quot;;</span>
+<span class="fc" id="L272">            case SHA512HKDF -&gt; pBase + &quot;withSHA512HKDF&quot;;</span>
+<span class="nc" id="L273">            default -&gt; throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));</span>
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

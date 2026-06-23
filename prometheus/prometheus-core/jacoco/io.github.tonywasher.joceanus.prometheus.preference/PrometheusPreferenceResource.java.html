@@ -19,78 +19,71 @@ package io.github.tonywasher.joceanus.prometheus.preference;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
  * Resource IDs for jPrometheus Preference Fields.
  */
-<span class="nc" id="L29">public enum PrometheusPreferenceResource implements OceanusBundleId {</span>
+<span class="nc" id="L27">public enum PrometheusPreferenceResource implements OceanusBundleId {</span>
     /**
      * Preference type BYTEARRAY.
      */
-<span class="nc" id="L33">    TYPE_BYTEARRAY(&quot;preference.type.BYTEARRAY&quot;),</span>
+<span class="nc" id="L31">    TYPE_BYTEARRAY(&quot;preference.type.BYTEARRAY&quot;),</span>
 
     /**
      * Preference type CHARARRAY.
      */
-<span class="nc" id="L38">    TYPE_CHARARRAY(&quot;preference.type.CHARARRAY&quot;),</span>
+<span class="nc" id="L36">    TYPE_CHARARRAY(&quot;preference.type.CHARARRAY&quot;),</span>
 
     /**
      * BackUpPreference Display Name.
      */
-<span class="nc" id="L43">    BUPREF_PREFNAME(&quot;bupref.prefname&quot;),</span>
+<span class="nc" id="L41">    BUPREF_PREFNAME(&quot;bupref.prefname&quot;),</span>
 
     /**
      * BackUpPreference Directory.
      */
-<span class="nc" id="L48">    BUPREF_DIR(&quot;bupref.directory&quot;),</span>
+<span class="nc" id="L46">    BUPREF_DIR(&quot;bupref.directory&quot;),</span>
 
     /**
      * BackUpPreference Prefix.
      */
-<span class="nc" id="L53">    BUPREF_PFIX(&quot;bupref.prefix&quot;),</span>
+<span class="nc" id="L51">    BUPREF_PFIX(&quot;bupref.prefix&quot;),</span>
 
     /**
      * BackUpPreference Type.
      */
-<span class="nc" id="L58">    BUPREF_TYPE(&quot;bupref.type&quot;),</span>
+<span class="nc" id="L56">    BUPREF_TYPE(&quot;bupref.type&quot;),</span>
 
     /**
      * BackUpPreference Archive File.
      */
-<span class="nc" id="L63">    BUPREF_ARCHIVE(&quot;bupref.archive&quot;),</span>
+<span class="nc" id="L61">    BUPREF_ARCHIVE(&quot;bupref.archive&quot;),</span>
 
     /**
      * BackUpPreference LastEvent.
      */
-<span class="nc" id="L68">    BUPREF_EVENT(&quot;bupref.lastevent&quot;),</span>
+<span class="nc" id="L66">    BUPREF_EVENT(&quot;bupref.lastevent&quot;),</span>
 
     /**
      * BackUpPreference TimeStamps.
      */
-<span class="nc" id="L73">    BUPREF_TIMESTAMP(&quot;bupref.timestamps&quot;),</span>
+<span class="nc" id="L71">    BUPREF_TIMESTAMP(&quot;bupref.timestamps&quot;),</span>
 
     /**
      * DataListPreference Display Name.
      */
-<span class="nc" id="L78">    DLPREF_PREFNAME(&quot;dlpref.prefname&quot;),</span>
+<span class="nc" id="L76">    DLPREF_PREFNAME(&quot;dlpref.prefname&quot;),</span>
 
     /**
      * DataListPreference Granularity.
      */
-<span class="nc" id="L83">    DLPREF_GRANULARITY(&quot;dlpref.granularity&quot;);</span>
-
-    /**
-     * The PreferenceType Map.
-     */
-<span class="nc" id="L88">    private static final Map&lt;PrometheusPreferenceType, OceanusBundleId&gt; PREF_MAP = buildPreferenceMap();</span>
+<span class="nc" id="L81">    DLPREF_GRANULARITY(&quot;dlpref.granularity&quot;);</span>
 
     /**
      * The Resource Loader.
      */
-<span class="nc" id="L93">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusPreferenceResource.class.getCanonicalName(),</span>
+<span class="nc" id="L86">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusPreferenceResource.class.getCanonicalName(),</span>
             ResourceBundle::getBundle);
 
     /**
@@ -108,53 +101,30 @@ import java.util.ResourceBundle;
      *
      * @param pKeyName the key name
      */
-<span class="nc" id="L111">    PrometheusPreferenceResource(final String pKeyName) {</span>
-<span class="nc" id="L112">        theKeyName = pKeyName;</span>
-<span class="nc" id="L113">    }</span>
+<span class="nc" id="L104">    PrometheusPreferenceResource(final String pKeyName) {</span>
+<span class="nc" id="L105">        theKeyName = pKeyName;</span>
+<span class="nc" id="L106">    }</span>
 
     @Override
     public String getKeyName() {
-<span class="nc" id="L117">        return theKeyName;</span>
+<span class="nc" id="L110">        return theKeyName;</span>
     }
 
     @Override
     public String getNameSpace() {
-<span class="nc" id="L122">        return &quot;Prometheus&quot;;</span>
+<span class="nc" id="L115">        return &quot;Prometheus&quot;;</span>
     }
 
     @Override
     public String getValue() {
         /* If we have not initialised the value */
-<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (theValue == null) {</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (theValue == null) {</span>
             /* Derive the value */
-<span class="nc" id="L130">            theValue = LOADER.getValue(this);</span>
+<span class="nc" id="L123">            theValue = LOADER.getValue(this);</span>
         }
 
         /* return the value */
-<span class="nc" id="L134">        return theValue;</span>
-    }
-
-    /**
-     * Build preference map.
-     *
-     * @return the map
-     */
-    private static Map&lt;PrometheusPreferenceType, OceanusBundleId&gt; buildPreferenceMap() {
-        /* Create the map and return it */
-<span class="nc" id="L144">        final Map&lt;PrometheusPreferenceType, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(PrometheusPreferenceType.class);</span>
-<span class="nc" id="L145">        myMap.put(PrometheusPreferenceType.BYTEARRAY, TYPE_BYTEARRAY);</span>
-<span class="nc" id="L146">        myMap.put(PrometheusPreferenceType.CHARARRAY, TYPE_CHARARRAY);</span>
-<span class="nc" id="L147">        return myMap;</span>
-    }
-
-    /**
-     * Obtain key for prefType.
-     *
-     * @param pType the type
-     * @return the resource key
-     */
-    public static OceanusBundleId getKeyForPrefType(final PrometheusPreferenceType pType) {
-<span class="nc" id="L157">        return OceanusBundleLoader.getKeyForEnum(PREF_MAP, pType);</span>
+<span class="nc" id="L127">        return theValue;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -16,11 +16,11 @@
  */
 package io.github.tonywasher.joceanus.moneywise.archive;
 
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseIOException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseIOException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlData.PrometheusControlDataList;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
@@ -136,10 +136,10 @@ public final class MoneyWiseArchiveLoader {
         }
 
         /* Access the static */
-<span class="nc" id="L139">        final PrometheusControlDataList myStatic = theData.getControlData();</span>
+<span class="nc" id="L139">        final PrometheusControlDataList myControl = theData.getControlData();</span>
 
         /* Add the value into the finance tables (with no security as yet) */
-<span class="nc" id="L142">        myStatic.addNewControl(0);</span>
+<span class="nc" id="L142">        myControl.addNewControl(0);</span>
 
         /* Calculate the number of stages */
 <span class="nc" id="L145">        final int myStages = NUM_ARCHIVE_AREAS + theCache.getNumYears();</span>
@@ -225,4 +225,4 @@ public final class MoneyWiseArchiveLoader {
 <span class="nc" id="L225">        }</span>
 <span class="nc" id="L226">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

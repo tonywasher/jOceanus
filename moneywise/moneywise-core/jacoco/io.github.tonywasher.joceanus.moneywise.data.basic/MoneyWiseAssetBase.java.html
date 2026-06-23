@@ -16,29 +16,33 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAccount;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorDefaults;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedPair;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusListStyle;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Currency;
@@ -51,30 +55,65 @@ public abstract class MoneyWiseAssetBase
         extends PrometheusEncryptedDataItem
         implements MoneyWiseTransAsset {
     /**
+     * Validator for accounts.
+     *
+     * @param &lt;T&gt; the item type
+     */
+    public interface MoneyWiseDataValidatorAccount&lt;T extends MoneyWiseAssetBase&gt;
+            extends MoneyWiseDataValidatorDefaults&lt;T&gt;, MoneyWiseDataValidatorAutoCorrect&lt;T&gt; {
+    }
+
+    /**
+     * dataSet Control interface.
+     */
+    public interface MoneyWiseDataSetCtl {
+        /**
+         * Obtain default currency.
+         *
+         * @return the default currency
+         */
+        MoneyWiseCurrency getReportingCurrency();
+
+        /**
+         * Obtain Date range.
+         *
+         * @return the Date Range
+         */
+        OceanusDateRange getDateRange();
+
+        /**
+         * Obtain Tax Factory.
+         *
+         * @return the taxFactory
+         */
+        MoneyWiseTaxFactory getTaxFactory();
+    }
+
+    /**
      * Report fields.
      */
-<span class="fc" id="L56">    private static final PrometheusEncryptedFieldSet&lt;MoneyWiseAssetBase&gt; FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(MoneyWiseAssetBase.class);</span>
+<span class="fc" id="L95">    private static final PrometheusEncryptedFieldSet&lt;MoneyWiseAssetBase&gt; FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(MoneyWiseAssetBase.class);</span>
 
     /*
      * FieldIds.
      */
     static {
-<span class="fc" id="L62">        FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_NAME, NAMELEN);</span>
-<span class="fc" id="L63">        FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_DESC, DESCLEN);</span>
-<span class="fc" id="L64">        FIELD_DEFS.declareLinkField(MoneyWiseBasicResource.CATEGORY_NAME);</span>
-<span class="fc" id="L65">        FIELD_DEFS.declareLinkField(MoneyWiseBasicResource.ASSET_PARENT);</span>
-<span class="fc" id="L66">        FIELD_DEFS.declareLinkField(MoneyWiseStaticDataType.CURRENCY);</span>
-<span class="fc" id="L67">        FIELD_DEFS.declareBooleanField(MoneyWiseBasicResource.ASSET_CLOSED);</span>
-<span class="fc" id="L68">        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.ASSET_CLOSEDATE, MoneyWiseAssetBase::getCloseDate);</span>
-<span class="fc" id="L69">        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.ASSET_FIRSTEVENT, MoneyWiseAssetBase::getEarliest);</span>
-<span class="fc" id="L70">        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.ASSET_LASTEVENT, MoneyWiseAssetBase::getLatest);</span>
-<span class="fc" id="L71">        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.ASSET_RELEVANT, MoneyWiseAssetBase::isRelevant);</span>
+<span class="fc" id="L101">        FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_NAME, NAMELEN);</span>
+<span class="fc" id="L102">        FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_DESC, DESCLEN);</span>
+<span class="fc" id="L103">        FIELD_DEFS.declareLinkField(MoneyWiseBasicResource.CATEGORY_NAME);</span>
+<span class="fc" id="L104">        FIELD_DEFS.declareLinkField(MoneyWiseBasicResource.ASSET_PARENT);</span>
+<span class="fc" id="L105">        FIELD_DEFS.declareLinkField(MoneyWiseStaticDataType.CURRENCY);</span>
+<span class="fc" id="L106">        FIELD_DEFS.declareBooleanField(MoneyWiseBasicResource.ASSET_CLOSED);</span>
+<span class="fc" id="L107">        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.ASSET_CLOSEDATE, MoneyWiseAssetBase::getCloseDate);</span>
+<span class="fc" id="L108">        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.ASSET_FIRSTEVENT, MoneyWiseAssetBase::getEarliest);</span>
+<span class="fc" id="L109">        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.ASSET_LASTEVENT, MoneyWiseAssetBase::getLatest);</span>
+<span class="fc" id="L110">        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.ASSET_RELEVANT, MoneyWiseAssetBase::isRelevant);</span>
     }
 
     /**
      * Bad InfoSet Error Text.
      */
-<span class="fc" id="L77">    protected static final String ERROR_BADINFOSET = PrometheusDataResource.DATAINFOSET_ERROR_BADSET.getValue();</span>
+<span class="fc" id="L116">    protected static final String ERROR_BADINFOSET = PrometheusDataResource.DATAINFOSET_ERROR_BADSET.getValue();</span>
 
     /**
      * Close Date.
@@ -84,12 +123,12 @@ public abstract class MoneyWiseAssetBase
     /**
      * Earliest Transaction.
      */
-    private MoneyWiseTransaction theEarliest;
+    private MoneyWiseAssetTouch theEarliest;
 
     /**
      * Latest Transaction.
      */
-    private MoneyWiseTransaction theLatest;
+    private MoneyWiseAssetTouch theLatest;
 
     /**
      * Is this relevant?
@@ -105,19 +144,19 @@ public abstract class MoneyWiseAssetBase
     protected MoneyWiseAssetBase(final MoneyWiseAssetBaseList&lt;?&gt; pList,
                                  final MoneyWiseAssetBase pAsset) {
         /* Set standard values */
-<span class="fc" id="L108">        super(pList, pAsset);</span>
+<span class="fc" id="L147">        super(pList, pAsset);</span>
 
         /* If we are creating an edit copy from core */
-<span class="fc" id="L111">        final PrometheusListStyle myBaseStyle = pAsset.getList().getStyle();</span>
-<span class="pc bpc" id="L112" title="1 of 4 branches missed.">        if (pList.getStyle() == PrometheusListStyle.EDIT</span>
+<span class="fc" id="L150">        final PrometheusListStyle myBaseStyle = pAsset.getList().getStyle();</span>
+<span class="pc bpc" id="L151" title="1 of 4 branches missed.">        if (pList.getStyle() == PrometheusListStyle.EDIT</span>
                 &amp;&amp; myBaseStyle == PrometheusListStyle.CORE) {
             /* Update underlying flags */
-<span class="fc" id="L115">            theCloseDate = pAsset.getCloseDate();</span>
-<span class="fc" id="L116">            theEarliest = pAsset.getEarliest();</span>
-<span class="fc" id="L117">            theLatest = pAsset.getLatest();</span>
-<span class="fc" id="L118">            isRelevant = pAsset.isRelevant();</span>
+<span class="fc" id="L154">            theCloseDate = pAsset.getCloseDate();</span>
+<span class="fc" id="L155">            theEarliest = pAsset.getEarliest();</span>
+<span class="fc" id="L156">            theLatest = pAsset.getLatest();</span>
+<span class="fc" id="L157">            isRelevant = pAsset.isRelevant();</span>
         }
-<span class="fc" id="L120">    }</span>
+<span class="fc" id="L159">    }</span>
 
     /**
      * Values constructor.
@@ -129,69 +168,69 @@ public abstract class MoneyWiseAssetBase
     protected MoneyWiseAssetBase(final MoneyWiseAssetBaseList&lt;?&gt; pList,
                                  final PrometheusDataValues pValues) throws OceanusException {
         /* Initialise the item */
-<span class="fc" id="L132">        super(pList, pValues);</span>
+<span class="fc" id="L171">        super(pList, pValues);</span>
 
         /* Access formatter */
-<span class="fc" id="L135">        final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();</span>
+<span class="fc" id="L174">        final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();</span>
 
         /* Protect against exceptions */
         try {
             /* Store the name */
-<span class="fc" id="L140">            Object myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
-<span class="fc bfc" id="L141" title="All 2 branches covered.">            if (myValue instanceof String s) {</span>
-<span class="fc" id="L142">                setValueName(s);</span>
-<span class="pc bpc" id="L143" title="1 of 2 branches missed.">            } else if (myValue instanceof byte[] ba) {</span>
-<span class="fc" id="L144">                setValueName(ba);</span>
+<span class="fc" id="L179">            Object myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">            if (myValue instanceof String s) {</span>
+<span class="fc" id="L181">                setValueName(s);</span>
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">            } else if (myValue instanceof byte[] ba) {</span>
+<span class="fc" id="L183">                setValueName(ba);</span>
             }
 
             /* Store the Description */
-<span class="fc" id="L148">            myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
-<span class="pc bpc" id="L149" title="1 of 2 branches missed.">            if (myValue instanceof String s) {</span>
-<span class="nc" id="L150">                setValueDesc(s);</span>
-<span class="pc bpc" id="L151" title="1 of 2 branches missed.">            } else if (myValue instanceof byte[] ba) {</span>
-<span class="nc" id="L152">                setValueDesc(ba);</span>
+<span class="fc" id="L187">            myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">            if (myValue instanceof String s) {</span>
+<span class="nc" id="L189">                setValueDesc(s);</span>
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">            } else if (myValue instanceof byte[] ba) {</span>
+<span class="nc" id="L191">                setValueDesc(ba);</span>
             }
 
             /* Store the Category */
-<span class="fc" id="L156">            myValue = pValues.getValue(MoneyWiseBasicResource.CATEGORY_NAME);</span>
-<span class="fc bfc" id="L157" title="All 2 branches covered.">            if (myValue instanceof Integer i) {</span>
-<span class="fc" id="L158">                setValueCategory(i);</span>
-<span class="pc bpc" id="L159" title="1 of 2 branches missed.">            } else if (myValue instanceof String s) {</span>
-<span class="fc" id="L160">                setValueCategory(s);</span>
+<span class="fc" id="L195">            myValue = pValues.getValue(MoneyWiseBasicResource.CATEGORY_NAME);</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">            if (myValue instanceof Integer i) {</span>
+<span class="fc" id="L197">                setValueCategory(i);</span>
+<span class="pc bpc" id="L198" title="1 of 2 branches missed.">            } else if (myValue instanceof String s) {</span>
+<span class="fc" id="L199">                setValueCategory(s);</span>
             }
 
             /* Store the Parent */
-<span class="fc" id="L164">            myValue = pValues.getValue(MoneyWiseBasicResource.ASSET_PARENT);</span>
-<span class="fc bfc" id="L165" title="All 2 branches covered.">            if (myValue instanceof Integer i) {</span>
-<span class="fc" id="L166">                setValueParent(i);</span>
-<span class="fc bfc" id="L167" title="All 2 branches covered.">            } else if (myValue instanceof String s) {</span>
-<span class="fc" id="L168">                setValueParent(s);</span>
+<span class="fc" id="L203">            myValue = pValues.getValue(MoneyWiseBasicResource.ASSET_PARENT);</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">            if (myValue instanceof Integer i) {</span>
+<span class="fc" id="L205">                setValueParent(i);</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">            } else if (myValue instanceof String s) {</span>
+<span class="fc" id="L207">                setValueParent(s);</span>
             }
 
             /* Store the Currency */
-<span class="fc" id="L172">            myValue = pValues.getValue(MoneyWiseStaticDataType.CURRENCY);</span>
-<span class="fc bfc" id="L173" title="All 2 branches covered.">            if (myValue instanceof Integer i) {</span>
-<span class="fc" id="L174">                setValueCurrency(i);</span>
-<span class="fc bfc" id="L175" title="All 2 branches covered.">            } else if (myValue instanceof String s) {</span>
-<span class="fc" id="L176">                setValueCurrency(s);</span>
-<span class="pc bpc" id="L177" title="1 of 2 branches missed.">            } else if (myValue instanceof MoneyWiseCurrency c) {</span>
-<span class="nc" id="L178">                setValueCurrency(c);</span>
+<span class="fc" id="L211">            myValue = pValues.getValue(MoneyWiseStaticDataType.CURRENCY);</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">            if (myValue instanceof Integer i) {</span>
+<span class="fc" id="L213">                setValueCurrency(i);</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">            } else if (myValue instanceof String s) {</span>
+<span class="fc" id="L215">                setValueCurrency(s);</span>
+<span class="pc bpc" id="L216" title="1 of 2 branches missed.">            } else if (myValue instanceof MoneyWiseCurrency c) {</span>
+<span class="nc" id="L217">                setValueCurrency(c);</span>
             }
 
             /* Store the closed flag */
-<span class="fc" id="L182">            myValue = pValues.getValue(MoneyWiseBasicResource.ASSET_CLOSED);</span>
-<span class="fc bfc" id="L183" title="All 2 branches covered.">            if (myValue instanceof Boolean b) {</span>
-<span class="fc" id="L184">                setValueClosed(b);</span>
-<span class="pc bpc" id="L185" title="1 of 2 branches missed.">            } else if (myValue instanceof String s) {</span>
-<span class="nc" id="L186">                setValueClosed(myFormatter.parseValue(s, Boolean.class));</span>
+<span class="fc" id="L221">            myValue = pValues.getValue(MoneyWiseBasicResource.ASSET_CLOSED);</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">            if (myValue instanceof Boolean b) {</span>
+<span class="fc" id="L223">                setValueClosed(b);</span>
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">            } else if (myValue instanceof String s) {</span>
+<span class="nc" id="L225">                setValueClosed(myFormatter.parseValue(s, Boolean.class));</span>
             }
 
             /* Catch Exceptions */
-<span class="nc" id="L190">        } catch (OceanusException e) {</span>
+<span class="nc" id="L229">        } catch (OceanusException e) {</span>
             /* Pass on exception */
-<span class="nc" id="L192">            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);</span>
-<span class="fc" id="L193">        }</span>
-<span class="fc" id="L194">    }</span>
+<span class="nc" id="L231">            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);</span>
+<span class="fc" id="L232">        }</span>
+<span class="fc" id="L233">    }</span>
 
     /**
      * Edit Constructor.
@@ -199,35 +238,35 @@ public abstract class MoneyWiseAssetBase
      * @param pList the list
      */
     protected MoneyWiseAssetBase(final MoneyWiseAssetBaseList&lt;?&gt; pList) {
-<span class="fc" id="L202">        super(pList, 0);</span>
-<span class="fc" id="L203">        setNextDataKeySet();</span>
-<span class="fc" id="L204">    }</span>
+<span class="fc" id="L241">        super(pList, 0);</span>
+<span class="fc" id="L242">        setNextDataKeySet();</span>
+<span class="fc" id="L243">    }</span>
 
     @Override
     public String formatObject(final OceanusDataFormatter pFormatter) {
-<span class="fc" id="L208">        return toString();</span>
+<span class="fc" id="L247">        return toString();</span>
     }
 
     @Override
     public String toString() {
-<span class="fc" id="L213">        return getName();</span>
+<span class="fc" id="L252">        return getName();</span>
     }
 
     @Override
     public boolean includeXmlField(final MetisDataFieldId pField) {
         /* Determine whether fields should be included */
-<span class="fc bfc" id="L219" title="All 2 branches covered.">        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(pField)) {</span>
-<span class="fc" id="L220">            return true;</span>
+<span class="fc bfc" id="L258" title="All 2 branches covered.">        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(pField)) {</span>
+<span class="fc" id="L259">            return true;</span>
         }
-<span class="fc bfc" id="L222" title="All 2 branches covered.">        if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(pField)) {</span>
-<span class="pc bpc" id="L223" title="1 of 2 branches missed.">            return getDesc() != null;</span>
+<span class="fc bfc" id="L261" title="All 2 branches covered.">        if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(pField)) {</span>
+<span class="pc bpc" id="L262" title="1 of 2 branches missed.">            return getDesc() != null;</span>
         }
-<span class="fc bfc" id="L225" title="All 2 branches covered.">        if (MoneyWiseBasicResource.ASSET_CLOSED.equals(pField)) {</span>
-<span class="fc" id="L226">            return isClosed();</span>
+<span class="fc bfc" id="L264" title="All 2 branches covered.">        if (MoneyWiseBasicResource.ASSET_CLOSED.equals(pField)) {</span>
+<span class="fc" id="L265">            return isClosed();</span>
         }
 
         /* Pass call on */
-<span class="fc" id="L230">        return super.includeXmlField(pField);</span>
+<span class="fc" id="L269">        return super.includeXmlField(pField);</span>
     }
 
     /**
@@ -238,8 +277,8 @@ public abstract class MoneyWiseAssetBase
     public abstract MoneyWiseAssetCategory getCategory();
 
     @Override
-    public MoneyWisePayee getParent() {
-<span class="fc" id="L242">        return getValues().getValue(MoneyWiseBasicResource.ASSET_PARENT, MoneyWisePayee.class);</span>
+    public MoneyWiseAssetBase getParent() {
+<span class="fc" id="L281">        return getValues().getValue(MoneyWiseBasicResource.ASSET_PARENT, MoneyWiseAssetBase.class);</span>
     }
 
     /**
@@ -248,10 +287,10 @@ public abstract class MoneyWiseAssetBase
      * @return the parentId
      */
     public Integer getParentId() {
-<span class="fc" id="L251">        final MoneyWisePayee myParent = getParent();</span>
-<span class="pc bpc" id="L252" title="1 of 2 branches missed.">        return myParent == null</span>
-<span class="nc" id="L253">                ? null</span>
-<span class="fc" id="L254">                : myParent.getIndexedId();</span>
+<span class="fc" id="L290">        final MoneyWiseAssetBase myParent = getParent();</span>
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">        return myParent == null</span>
+<span class="nc" id="L292">                ? null</span>
+<span class="fc" id="L293">                : myParent.getIndexedId();</span>
     }
 
     /**
@@ -260,15 +299,15 @@ public abstract class MoneyWiseAssetBase
      * @return the parentName
      */
     public String getParentName() {
-<span class="nc" id="L263">        final MoneyWisePayee myParent = getParent();</span>
-<span class="nc bnc" id="L264" title="All 2 branches missed.">        return myParent == null</span>
-<span class="nc" id="L265">                ? null</span>
-<span class="nc" id="L266">                : myParent.getName();</span>
+<span class="nc" id="L302">        final MoneyWiseAssetBase myParent = getParent();</span>
+<span class="nc bnc" id="L303" title="All 2 branches missed.">        return myParent == null</span>
+<span class="nc" id="L304">                ? null</span>
+<span class="nc" id="L305">                : myParent.getName();</span>
     }
 
     @Override
     public MoneyWiseCurrency getAssetCurrency() {
-<span class="fc" id="L271">        return getValues().getValue(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrency.class);</span>
+<span class="fc" id="L310">        return getValues().getValue(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrency.class);</span>
     }
 
     /**
@@ -277,8 +316,8 @@ public abstract class MoneyWiseAssetBase
      * @return the currencyId
      */
     public Integer getAssetCurrencyId() {
-<span class="fc" id="L280">        final MoneyWiseCurrency myCurrency = getAssetCurrency();</span>
-<span class="pc bpc" id="L281" title="1 of 2 branches missed.">        return myCurrency == null ? null : myCurrency.getIndexedId();</span>
+<span class="fc" id="L319">        final MoneyWiseCurrency myCurrency = getAssetCurrency();</span>
+<span class="pc bpc" id="L320" title="1 of 2 branches missed.">        return myCurrency == null ? null : myCurrency.getIndexedId();</span>
     }
 
     /**
@@ -287,17 +326,27 @@ public abstract class MoneyWiseAssetBase
      * @return the currencyName
      */
     public String getAssetCurrencyName() {
-<span class="nc" id="L290">        final MoneyWiseCurrency myCurrency = getAssetCurrency();</span>
-<span class="nc bnc" id="L291" title="All 2 branches missed.">        return myCurrency == null ? null : myCurrency.getName();</span>
+<span class="nc" id="L329">        final MoneyWiseCurrency myCurrency = getAssetCurrency();</span>
+<span class="nc bnc" id="L330" title="All 2 branches missed.">        return myCurrency == null ? null : myCurrency.getName();</span>
+    }
+
+    /**
+     * Get default Currency.
+     *
+     * @return the default currency.
+     */
+    public MoneyWiseCurrency getDefaultCurrency() {
+<span class="pc bpc" id="L339" title="1 of 2 branches missed.">        return getDataSet() instanceof MoneyWiseDataSetCtl myReport</span>
+<span class="pc" id="L340">                ? myReport.getReportingCurrency() : null;</span>
     }
 
     @Override
     public Currency getCurrency() {
-<span class="fc" id="L296">        MoneyWiseCurrency myCurrency = getAssetCurrency();</span>
-<span class="pc bpc" id="L297" title="1 of 2 branches missed.">        myCurrency = myCurrency == null</span>
-<span class="nc" id="L298">                ? getDataSet().getReportingCurrency()</span>
-<span class="fc" id="L299">                : myCurrency;</span>
-<span class="pc bpc" id="L300" title="1 of 2 branches missed.">        return myCurrency == null ? null : myCurrency.getCurrency();</span>
+<span class="fc" id="L345">        MoneyWiseCurrency myCurrency = getAssetCurrency();</span>
+<span class="pc bpc" id="L346" title="1 of 2 branches missed.">        if (myCurrency == null) {</span>
+<span class="nc" id="L347">            myCurrency = getDefaultCurrency();</span>
+        }
+<span class="pc bpc" id="L349" title="1 of 2 branches missed.">        return myCurrency == null ? null : myCurrency.getCurrency();</span>
     }
 
     /**
@@ -306,22 +355,22 @@ public abstract class MoneyWiseAssetBase
      * @return the Opening balance
      */
     public OceanusMoney getOpeningBalance() {
-<span class="fc" id="L309">        return null;</span>
+<span class="fc" id="L358">        return null;</span>
     }
 
     @Override
     public boolean isTaxFree() {
-<span class="nc" id="L314">        return false;</span>
+<span class="nc" id="L363">        return false;</span>
     }
 
     @Override
     public boolean isGross() {
-<span class="nc" id="L319">        return false;</span>
+<span class="nc" id="L368">        return false;</span>
     }
 
     @Override
     public boolean isForeign() {
-<span class="nc" id="L324">        return false;</span>
+<span class="nc" id="L373">        return false;</span>
     }
 
     /**
@@ -330,7 +379,7 @@ public abstract class MoneyWiseAssetBase
      * @return the closeDate
      */
     public OceanusDate getCloseDate() {
-<span class="fc" id="L333">        return theCloseDate;</span>
+<span class="fc" id="L382">        return theCloseDate;</span>
     }
 
     /**
@@ -338,8 +387,8 @@ public abstract class MoneyWiseAssetBase
      *
      * @return the event
      */
-    public MoneyWiseTransaction getEarliest() {
-<span class="fc" id="L342">        return theEarliest;</span>
+    public MoneyWiseAssetTouch getEarliest() {
+<span class="fc" id="L391">        return theEarliest;</span>
     }
 
     /**
@@ -347,8 +396,8 @@ public abstract class MoneyWiseAssetBase
      *
      * @return the event
      */
-    public MoneyWiseTransaction getLatest() {
-<span class="fc" id="L351">        return theLatest;</span>
+    public MoneyWiseAssetTouch getLatest() {
+<span class="fc" id="L400">        return theLatest;</span>
     }
 
     /**
@@ -357,52 +406,45 @@ public abstract class MoneyWiseAssetBase
      * @return true/false
      */
     public boolean isRelevant() {
-<span class="fc" id="L360">        return isRelevant;</span>
+<span class="fc" id="L409">        return isRelevant;</span>
     }
 
     @Override
     public boolean isAutoExpense() {
-<span class="fc" id="L365">        return false;</span>
+<span class="fc" id="L414">        return false;</span>
     }
 
     @Override
     public boolean isShares() {
-<span class="nc" id="L370">        return false;</span>
+<span class="nc" id="L419">        return false;</span>
     }
 
     @Override
     public boolean isCapital() {
-<span class="nc" id="L375">        return false;</span>
+<span class="nc" id="L424">        return false;</span>
     }
 
     @Override
     public boolean isHidden() {
-<span class="fc" id="L380">        return false;</span>
+<span class="fc" id="L429">        return false;</span>
     }
 
     @Override
     public MoneyWiseAssetType getAssetType() {
-<span class="pc bpc" id="L385" title="4 of 7 branches missed.">        switch ((MoneyWiseBasicDataType) getItemType()) {</span>
-            case DEPOSIT:
-<span class="fc" id="L387">                return MoneyWiseAssetType.DEPOSIT;</span>
-            case CASH:
-<span class="nc" id="L389">                return MoneyWiseAssetType.CASH;</span>
-            case LOAN:
-<span class="fc" id="L391">                return MoneyWiseAssetType.LOAN;</span>
-            case PORTFOLIO:
-<span class="nc" id="L393">                return MoneyWiseAssetType.PORTFOLIO;</span>
-            case SECURITY:
-<span class="nc" id="L395">                return MoneyWiseAssetType.SECURITY;</span>
-            case PAYEE:
-<span class="fc" id="L397">                return MoneyWiseAssetType.PAYEE;</span>
-            default:
-<span class="nc" id="L399">                throw new IllegalStateException();</span>
-        }
+<span class="pc bpc" id="L434" title="4 of 7 branches missed.">        return switch ((MoneyWiseBasicDataType) getItemType()) {</span>
+<span class="fc" id="L435">            case DEPOSIT -&gt; MoneyWiseAssetType.DEPOSIT;</span>
+<span class="nc" id="L436">            case CASH -&gt; MoneyWiseAssetType.CASH;</span>
+<span class="fc" id="L437">            case LOAN -&gt; MoneyWiseAssetType.LOAN;</span>
+<span class="nc" id="L438">            case PORTFOLIO -&gt; MoneyWiseAssetType.PORTFOLIO;</span>
+<span class="nc" id="L439">            case SECURITY -&gt; MoneyWiseAssetType.SECURITY;</span>
+<span class="fc" id="L440">            case PAYEE -&gt; MoneyWiseAssetType.PAYEE;</span>
+<span class="nc" id="L441">            default -&gt; throw new IllegalStateException();</span>
+        };
     }
 
     @Override
     public String getName() {
-<span class="fc" id="L405">        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_NAME, String.class);</span>
+<span class="fc" id="L447">        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_NAME, String.class);</span>
     }
 
     /**
@@ -411,7 +453,7 @@ public abstract class MoneyWiseAssetBase
      * @return the bytes
      */
     public byte[] getNameBytes() {
-<span class="fc" id="L414">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="fc" id="L456">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
     }
 
     /**
@@ -420,7 +462,7 @@ public abstract class MoneyWiseAssetBase
      * @return the Field
      */
     private PrometheusEncryptedPair getNameField() {
-<span class="nc" id="L423">        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="nc" id="L465">        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
     }
 
     /**
@@ -429,7 +471,7 @@ public abstract class MoneyWiseAssetBase
      * @return the description
      */
     public String getDesc() {
-<span class="fc" id="L432">        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_DESC, String.class);</span>
+<span class="fc" id="L474">        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_DESC, String.class);</span>
     }
 
     /**
@@ -438,7 +480,7 @@ public abstract class MoneyWiseAssetBase
      * @return the bytes
      */
     public byte[] getDescBytes() {
-<span class="fc" id="L441">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
+<span class="fc" id="L483">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
     }
 
     /**
@@ -447,17 +489,17 @@ public abstract class MoneyWiseAssetBase
      * @return the Field
      */
     private PrometheusEncryptedPair getDescField() {
-<span class="nc" id="L450">        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
+<span class="nc" id="L492">        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
     }
 
     @Override
     public Boolean isClosed() {
-<span class="fc" id="L455">        return getValues().getValue(MoneyWiseBasicResource.ASSET_CLOSED, Boolean.class);</span>
+<span class="fc" id="L497">        return getValues().getValue(MoneyWiseBasicResource.ASSET_CLOSED, Boolean.class);</span>
     }
 
     @Override
     public boolean isDisabled() {
-<span class="nc" id="L460">        return isClosed();</span>
+<span class="nc" id="L502">        return isClosed();</span>
     }
 
     /**
@@ -467,8 +509,8 @@ public abstract class MoneyWiseAssetBase
      * @throws OceanusException on error
      */
     private void setValueName(final String pValue) throws OceanusException {
-<span class="fc" id="L470">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);</span>
-<span class="fc" id="L471">    }</span>
+<span class="fc" id="L512">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);</span>
+<span class="fc" id="L513">    }</span>
 
     /**
      * Set name value.
@@ -477,8 +519,8 @@ public abstract class MoneyWiseAssetBase
      * @throws OceanusException on error
      */
     private void setValueName(final byte[] pBytes) throws OceanusException {
-<span class="fc" id="L480">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pBytes, String.class);</span>
-<span class="fc" id="L481">    }</span>
+<span class="fc" id="L522">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pBytes, String.class);</span>
+<span class="fc" id="L523">    }</span>
 
     /**
      * Set name value.
@@ -486,8 +528,8 @@ public abstract class MoneyWiseAssetBase
      * @param pValue the value
      */
     private void setValueName(final PrometheusEncryptedPair pValue) {
-<span class="nc" id="L489">        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);</span>
-<span class="nc" id="L490">    }</span>
+<span class="nc" id="L531">        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);</span>
+<span class="nc" id="L532">    }</span>
 
     /**
      * Set description value.
@@ -496,8 +538,8 @@ public abstract class MoneyWiseAssetBase
      * @throws OceanusException on error
      */
     private void setValueDesc(final String pValue) throws OceanusException {
-<span class="nc" id="L499">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);</span>
-<span class="nc" id="L500">    }</span>
+<span class="nc" id="L541">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);</span>
+<span class="nc" id="L542">    }</span>
 
     /**
      * Set description value.
@@ -506,8 +548,8 @@ public abstract class MoneyWiseAssetBase
      * @throws OceanusException on error
      */
     private void setValueDesc(final byte[] pBytes) throws OceanusException {
-<span class="nc" id="L509">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pBytes, String.class);</span>
-<span class="nc" id="L510">    }</span>
+<span class="nc" id="L551">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pBytes, String.class);</span>
+<span class="nc" id="L552">    }</span>
 
     /**
      * Set description value.
@@ -515,8 +557,8 @@ public abstract class MoneyWiseAssetBase
      * @param pValue the value
      */
     private void setValueDesc(final PrometheusEncryptedPair pValue) {
-<span class="nc" id="L518">        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);</span>
-<span class="nc" id="L519">    }</span>
+<span class="nc" id="L560">        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);</span>
+<span class="nc" id="L561">    }</span>
 
     /**
      * Set category value.
@@ -524,8 +566,8 @@ public abstract class MoneyWiseAssetBase
      * @param pValue the value
      */
     private void setValueCategory(final MoneyWiseAssetCategory pValue) {
-<span class="fc" id="L527">        getValues().setUncheckedValue(MoneyWiseBasicResource.CATEGORY_NAME, pValue);</span>
-<span class="fc" id="L528">    }</span>
+<span class="fc" id="L569">        getValues().setUncheckedValue(MoneyWiseBasicResource.CATEGORY_NAME, pValue);</span>
+<span class="fc" id="L570">    }</span>
 
     /**
      * Set category id.
@@ -533,8 +575,8 @@ public abstract class MoneyWiseAssetBase
      * @param pValue the value
      */
     private void setValueCategory(final Integer pValue) {
-<span class="fc" id="L536">        getValues().setUncheckedValue(MoneyWiseBasicResource.CATEGORY_NAME, pValue);</span>
-<span class="fc" id="L537">    }</span>
+<span class="fc" id="L578">        getValues().setUncheckedValue(MoneyWiseBasicResource.CATEGORY_NAME, pValue);</span>
+<span class="fc" id="L579">    }</span>
 
     /**
      * Set category name.
@@ -542,17 +584,17 @@ public abstract class MoneyWiseAssetBase
      * @param pValue the value
      */
     private void setValueCategory(final String pValue) {
-<span class="fc" id="L545">        getValues().setUncheckedValue(MoneyWiseBasicResource.CATEGORY_NAME, pValue);</span>
-<span class="fc" id="L546">    }</span>
+<span class="fc" id="L587">        getValues().setUncheckedValue(MoneyWiseBasicResource.CATEGORY_NAME, pValue);</span>
+<span class="fc" id="L588">    }</span>
 
     /**
      * Set parent value.
      *
      * @param pValue the value
      */
-    private void setValueParent(final MoneyWisePayee pValue) {
-<span class="fc" id="L554">        getValues().setUncheckedValue(MoneyWiseBasicResource.ASSET_PARENT, pValue);</span>
-<span class="fc" id="L555">    }</span>
+    private void setValueParent(final MoneyWiseAssetBase pValue) {
+<span class="fc" id="L596">        getValues().setUncheckedValue(MoneyWiseBasicResource.ASSET_PARENT, pValue);</span>
+<span class="fc" id="L597">    }</span>
 
     /**
      * Set parent id.
@@ -560,8 +602,8 @@ public abstract class MoneyWiseAssetBase
      * @param pValue the value
      */
     private void setValueParent(final Integer pValue) {
-<span class="fc" id="L563">        getValues().setUncheckedValue(MoneyWiseBasicResource.ASSET_PARENT, pValue);</span>
-<span class="fc" id="L564">    }</span>
+<span class="fc" id="L605">        getValues().setUncheckedValue(MoneyWiseBasicResource.ASSET_PARENT, pValue);</span>
+<span class="fc" id="L606">    }</span>
 
     /**
      * Set parent name.
@@ -569,8 +611,8 @@ public abstract class MoneyWiseAssetBase
      * @param pValue the value
      */
     private void setValueParent(final String pValue) {
-<span class="fc" id="L572">        getValues().setUncheckedValue(MoneyWiseBasicResource.ASSET_PARENT, pValue);</span>
-<span class="fc" id="L573">    }</span>
+<span class="fc" id="L614">        getValues().setUncheckedValue(MoneyWiseBasicResource.ASSET_PARENT, pValue);</span>
+<span class="fc" id="L615">    }</span>
 
     /**
      * Set currency value.
@@ -578,8 +620,8 @@ public abstract class MoneyWiseAssetBase
      * @param pValue the value
      */
     private void setValueCurrency(final MoneyWiseCurrency pValue) {
-<span class="fc" id="L581">        getValues().setUncheckedValue(MoneyWiseStaticDataType.CURRENCY, pValue);</span>
-<span class="fc" id="L582">    }</span>
+<span class="fc" id="L623">        getValues().setUncheckedValue(MoneyWiseStaticDataType.CURRENCY, pValue);</span>
+<span class="fc" id="L624">    }</span>
 
     /**
      * Set currency id.
@@ -587,8 +629,8 @@ public abstract class MoneyWiseAssetBase
      * @param pValue the value
      */
     private void setValueCurrency(final Integer pValue) {
-<span class="fc" id="L590">        getValues().setUncheckedValue(MoneyWiseStaticDataType.CURRENCY, pValue);</span>
-<span class="fc" id="L591">    }</span>
+<span class="fc" id="L632">        getValues().setUncheckedValue(MoneyWiseStaticDataType.CURRENCY, pValue);</span>
+<span class="fc" id="L633">    }</span>
 
     /**
      * Set currency name.
@@ -596,8 +638,8 @@ public abstract class MoneyWiseAssetBase
      * @param pValue the value
      */
     private void setValueCurrency(final String pValue) {
-<span class="fc" id="L599">        getValues().setUncheckedValue(MoneyWiseStaticDataType.CURRENCY, pValue);</span>
-<span class="fc" id="L600">    }</span>
+<span class="fc" id="L641">        getValues().setUncheckedValue(MoneyWiseStaticDataType.CURRENCY, pValue);</span>
+<span class="fc" id="L642">    }</span>
 
     /**
      * Set closed indication.
@@ -605,30 +647,25 @@ public abstract class MoneyWiseAssetBase
      * @param pValue the value
      */
     private void setValueClosed(final Boolean pValue) {
-<span class="fc" id="L608">        getValues().setUncheckedValue(MoneyWiseBasicResource.ASSET_CLOSED, pValue);</span>
-<span class="fc" id="L609">    }</span>
-
-    @Override
-    public MoneyWiseDataSet getDataSet() {
-<span class="fc" id="L613">        return (MoneyWiseDataSet) super.getDataSet();</span>
-    }
+<span class="fc" id="L650">        getValues().setUncheckedValue(MoneyWiseBasicResource.ASSET_CLOSED, pValue);</span>
+<span class="fc" id="L651">    }</span>
 
     @Override
     public MoneyWiseAssetBaseList&lt;?&gt; getList() {
-<span class="fc" id="L618">        return (MoneyWiseAssetBaseList&lt;?&gt;) super.getList();</span>
+<span class="fc" id="L655">        return (MoneyWiseAssetBaseList&lt;?&gt;) super.getList();</span>
     }
 
     @Override
     public boolean isLocked() {
-<span class="nc" id="L623">        return isClosed();</span>
+<span class="nc" id="L660">        return isClosed();</span>
     }
 
     /**
      * Set relevant.
      */
     public void setRelevant() {
-<span class="fc" id="L630">        isRelevant = true;</span>
-<span class="fc" id="L631">    }</span>
+<span class="fc" id="L667">        isRelevant = true;</span>
+<span class="fc" id="L668">    }</span>
 
     /**
      * Obtain detailed category.
@@ -640,7 +677,7 @@ public abstract class MoneyWiseAssetBase
     public MoneyWiseTransCategory getDetailedCategory(final MoneyWiseTransCategory pCategory,
                                                       final MoneyWiseTaxCredit pYear) {
         /* return the unchanged category */
-<span class="nc" id="L643">        return pCategory;</span>
+<span class="nc" id="L680">        return pCategory;</span>
     }
 
     /**
@@ -650,70 +687,69 @@ public abstract class MoneyWiseAssetBase
      */
     public void adjustClosed() throws OceanusException {
         /* Access latest activity date */
-<span class="nc bnc" id="L653" title="All 2 branches missed.">        theCloseDate = theLatest == null ? null : theLatest.getDate();</span>
-<span class="nc" id="L654">    }</span>
+<span class="nc bnc" id="L690" title="All 2 branches missed.">        theCloseDate = theLatest == null ? null : theLatest.getDate();</span>
+<span class="nc" id="L691">    }</span>
 
     @Override
     public void clearActive() {
         /* Reset flags */
-<span class="fc" id="L659">        theCloseDate = null;</span>
-<span class="fc" id="L660">        theEarliest = null;</span>
-<span class="fc" id="L661">        theLatest = null;</span>
-<span class="fc" id="L662">        isRelevant = false;</span>
+<span class="fc" id="L696">        theCloseDate = null;</span>
+<span class="fc" id="L697">        theEarliest = null;</span>
+<span class="fc" id="L698">        theLatest = null;</span>
+<span class="fc" id="L699">        isRelevant = false;</span>
 
         /* Pass call onwards */
-<span class="fc" id="L665">        super.clearActive();</span>
-<span class="fc" id="L666">    }</span>
+<span class="fc" id="L702">        super.clearActive();</span>
+<span class="fc" id="L703">    }</span>
 
     @Override
     public void touchItem(final PrometheusDataItem pSource) {
         /* If we are being touched by a transaction */
-<span class="fc bfc" id="L671" title="All 2 branches covered.">        if (pSource instanceof MoneyWiseTransaction myTrans) {</span>
+<span class="fc bfc" id="L708" title="All 2 branches covered.">        if (pSource instanceof MoneyWiseAssetTouch myTrans) {</span>
             /* Record the transaction */
-<span class="fc bfc" id="L673" title="All 2 branches covered.">            if (theEarliest == null) {</span>
-<span class="fc" id="L674">                theEarliest = myTrans;</span>
+<span class="fc bfc" id="L710" title="All 2 branches covered.">            if (theEarliest == null) {</span>
+<span class="fc" id="L711">                theEarliest = myTrans;</span>
             }
-<span class="fc" id="L676">            theLatest = myTrans;</span>
+<span class="fc" id="L713">            theLatest = myTrans;</span>
 
             /* if this transaction is not reconciled */
-<span class="pc bpc" id="L679" title="1 of 2 branches missed.">            if (!myTrans.isReconciled()) {</span>
+<span class="pc bpc" id="L716" title="1 of 2 branches missed.">            if (Boolean.FALSE.equals(myTrans.isReconciled())) {</span>
                 /* Mark account as relevant */
-<span class="fc" id="L681">                setRelevant();</span>
+<span class="fc" id="L718">                setRelevant();</span>
             }
 
             /* Touch parent if it exists */
-<span class="fc" id="L685">            final MoneyWiseAssetBase myParent = getParent();</span>
-<span class="fc bfc" id="L686" title="All 2 branches covered.">            if (myParent != null) {</span>
-<span class="fc" id="L687">                myParent.touchItem(pSource);</span>
+<span class="fc" id="L722">            final MoneyWiseAssetBase myParent = getParent();</span>
+<span class="fc bfc" id="L723" title="All 2 branches covered.">            if (myParent != null) {</span>
+<span class="fc" id="L724">                myParent.touchItem(pSource);</span>
             }
         }
 
         /* If we are being touched by an asset */
-<span class="fc bfc" id="L692" title="All 2 branches covered.">        if (pSource instanceof MoneyWiseAssetBase myAsset) {</span>
-            /* Mark as relevant if child is open */
-<span class="pc bpc" id="L694" title="1 of 2 branches missed.">            if (!myAsset.isClosed()) {</span>
-<span class="fc" id="L695">                setRelevant();</span>
-            }
+<span class="fc bfc" id="L729" title="All 2 branches covered.">        if (pSource instanceof MoneyWiseAssetBase myAsset</span>
+<span class="pc bpc" id="L730" title="1 of 2 branches missed.">                &amp;&amp; Boolean.FALSE.equals(myAsset.isClosed())) {</span>
+<span class="fc" id="L731">            setRelevant();</span>
         }
 
+
         /* Pass call onwards */
-<span class="fc" id="L700">        super.touchItem(pSource);</span>
-<span class="fc" id="L701">    }</span>
+<span class="fc" id="L736">        super.touchItem(pSource);</span>
+<span class="fc" id="L737">    }</span>
 
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Update the Encryption details */
-<span class="fc" id="L706">        super.resolveDataSetLinks();</span>
+<span class="fc" id="L742">        super.resolveDataSetLinks();</span>
 
         /* Resolve data links */
-<span class="fc" id="L709">        final PrometheusEncryptedValues myValues = getValues();</span>
+<span class="fc" id="L745">        final PrometheusEncryptedValues myValues = getValues();</span>
 
         /* Adjust Closed */
-<span class="fc" id="L712">        final Object myClosed = myValues.getValue(MoneyWiseBasicResource.ASSET_CLOSED);</span>
-<span class="fc bfc" id="L713" title="All 2 branches covered.">        if (myClosed == null) {</span>
-<span class="fc" id="L714">            setValueClosed(Boolean.FALSE);</span>
+<span class="fc" id="L748">        final Object myClosed = myValues.getValue(MoneyWiseBasicResource.ASSET_CLOSED);</span>
+<span class="fc bfc" id="L749" title="All 2 branches covered.">        if (myClosed == null) {</span>
+<span class="fc" id="L750">            setValueClosed(Boolean.FALSE);</span>
         }
-<span class="fc" id="L716">    }</span>
+<span class="fc" id="L752">    }</span>
 
     /**
      * resolve EditSet links.
@@ -724,22 +760,20 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Resolve late edit Set links.
-     *
-     * @throws OceanusException on error
      */
-    public void resolveLateEditSetLinks() throws OceanusException {
+    public void resolveLateEditSetLinks() {
         /* Access the editSet */
-<span class="fc" id="L732">        final PrometheusEditSet myEditSet = getList().getEditSet();</span>
+<span class="fc" id="L766">        final PrometheusEditSet myEditSet = getList().getEditSet();</span>
 
         /* Resolve First/LastEvent if required */
-<span class="fc" id="L735">        final MoneyWiseTransactionList myTransList = myEditSet.getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class);</span>
-<span class="pc bpc" id="L736" title="1 of 2 branches missed.">        if (theEarliest != null) {</span>
-<span class="nc" id="L737">            theEarliest = myTransList.findItemById(theEarliest.getIndexedId());</span>
+<span class="fc" id="L769">        final PrometheusDataList&lt;?&gt; myTransList = myEditSet.getDataList(MoneyWiseBasicDataType.TRANSACTION, PrometheusDataList.class);</span>
+<span class="pc bpc" id="L770" title="1 of 2 branches missed.">        if (theEarliest != null) {</span>
+<span class="nc" id="L771">            theEarliest = (MoneyWiseAssetTouch) myTransList.findItemById(theEarliest.getIndexedId());</span>
         }
-<span class="pc bpc" id="L739" title="1 of 2 branches missed.">        if (theLatest != null) {</span>
-<span class="nc" id="L740">            theLatest = myTransList.findItemById(theLatest.getIndexedId());</span>
+<span class="pc bpc" id="L773" title="1 of 2 branches missed.">        if (theLatest != null) {</span>
+<span class="nc" id="L774">            theLatest = (MoneyWiseAssetTouch) myTransList.findItemById(theLatest.getIndexedId());</span>
         }
-<span class="fc" id="L742">    }</span>
+<span class="fc" id="L776">    }</span>
 
     /**
      * Set a new name.
@@ -748,8 +782,8 @@ public abstract class MoneyWiseAssetBase
      * @throws OceanusException on error
      */
     public void setName(final String pName) throws OceanusException {
-<span class="fc" id="L751">        setValueName(pName);</span>
-<span class="fc" id="L752">    }</span>
+<span class="fc" id="L785">        setValueName(pName);</span>
+<span class="fc" id="L786">    }</span>
 
     /**
      * Set a new description.
@@ -758,8 +792,8 @@ public abstract class MoneyWiseAssetBase
      * @throws OceanusException on error
      */
     public void setDescription(final String pDesc) throws OceanusException {
-<span class="nc" id="L761">        setValueDesc(pDesc);</span>
-<span class="nc" id="L762">    }</span>
+<span class="nc" id="L795">        setValueDesc(pDesc);</span>
+<span class="nc" id="L796">    }</span>
 
     /**
      * Set a new category.
@@ -767,8 +801,8 @@ public abstract class MoneyWiseAssetBase
      * @param pCategory the new category
      */
     public void setCategory(final MoneyWiseAssetCategory pCategory) {
-<span class="fc" id="L770">        setValueCategory(pCategory);</span>
-<span class="fc" id="L771">    }</span>
+<span class="fc" id="L804">        setValueCategory(pCategory);</span>
+<span class="fc" id="L805">    }</span>
 
     /**
      * Set a new currency.
@@ -776,17 +810,17 @@ public abstract class MoneyWiseAssetBase
      * @param pCurrency the new currency
      */
     public void setAssetCurrency(final MoneyWiseCurrency pCurrency) {
-<span class="fc" id="L779">        setValueCurrency(pCurrency);</span>
-<span class="fc" id="L780">    }</span>
+<span class="fc" id="L813">        setValueCurrency(pCurrency);</span>
+<span class="fc" id="L814">    }</span>
 
     /**
      * Set a new parent.
      *
      * @param pParent the parent
      */
-    public void setParent(final MoneyWisePayee pParent) {
-<span class="fc" id="L788">        setValueParent(pParent);</span>
-<span class="fc" id="L789">    }</span>
+    public void setParent(final MoneyWiseAssetBase pParent) {
+<span class="fc" id="L822">        setValueParent(pParent);</span>
+<span class="fc" id="L823">    }</span>
 
     /**
      * Set a new closed indication.
@@ -794,8 +828,8 @@ public abstract class MoneyWiseAssetBase
      * @param isClosed the new closed indication
      */
     public void setClosed(final Boolean isClosed) {
-<span class="fc" id="L797">        setValueClosed(isClosed);</span>
-<span class="fc" id="L798">    }</span>
+<span class="fc" id="L831">        setValueClosed(isClosed);</span>
+<span class="fc" id="L832">    }</span>
 
     /**
      * Update base asset from an edited asset.
@@ -804,35 +838,35 @@ public abstract class MoneyWiseAssetBase
      */
     protected void applyBasicChanges(final MoneyWiseAssetBase pAsset) {
         /* Update the name if required */
-<span class="nc bnc" id="L807" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getName(), pAsset.getName())) {</span>
-<span class="nc" id="L808">            setValueName(pAsset.getNameField());</span>
+<span class="nc bnc" id="L841" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getName(), pAsset.getName())) {</span>
+<span class="nc" id="L842">            setValueName(pAsset.getNameField());</span>
         }
 
         /* Update the description if required */
-<span class="nc bnc" id="L812" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDesc(), pAsset.getDesc())) {</span>
-<span class="nc" id="L813">            setValueDesc(pAsset.getDescField());</span>
+<span class="nc bnc" id="L846" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDesc(), pAsset.getDesc())) {</span>
+<span class="nc" id="L847">            setValueDesc(pAsset.getDescField());</span>
         }
 
         /* Update the category if required */
-<span class="nc bnc" id="L817" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getCategory(), pAsset.getCategory())) {</span>
-<span class="nc" id="L818">            setValueCategory(pAsset.getCategory());</span>
+<span class="nc bnc" id="L851" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getCategory(), pAsset.getCategory())) {</span>
+<span class="nc" id="L852">            setValueCategory(pAsset.getCategory());</span>
         }
 
         /* Update the parent if required */
-<span class="nc bnc" id="L822" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getParent(), pAsset.getParent())) {</span>
-<span class="nc" id="L823">            setValueParent(pAsset.getParent());</span>
+<span class="nc bnc" id="L856" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getParent(), pAsset.getParent())) {</span>
+<span class="nc" id="L857">            setValueParent(pAsset.getParent());</span>
         }
 
         /* Update the currency if required */
-<span class="nc bnc" id="L827" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getAssetCurrency(), pAsset.getAssetCurrency())) {</span>
-<span class="nc" id="L828">            setValueCurrency(pAsset.getAssetCurrency());</span>
+<span class="nc bnc" id="L861" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getAssetCurrency(), pAsset.getAssetCurrency())) {</span>
+<span class="nc" id="L862">            setValueCurrency(pAsset.getAssetCurrency());</span>
         }
 
         /* Update the closed indication if required */
-<span class="nc bnc" id="L832" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(isClosed(), pAsset.isClosed())) {</span>
-<span class="nc" id="L833">            setValueClosed(pAsset.isClosed());</span>
+<span class="nc bnc" id="L866" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(isClosed(), pAsset.isClosed())) {</span>
+<span class="nc" id="L867">            setValueClosed(pAsset.isClosed());</span>
         }
-<span class="nc" id="L835">    }</span>
+<span class="nc" id="L869">    }</span>
 
     /**
      * The Asset List class.
@@ -845,8 +879,8 @@ public abstract class MoneyWiseAssetBase
          * Report fields.
          */
         static {
-<span class="fc" id="L848">            MetisFieldSet.newFieldSet(MoneyWiseAssetBaseList.class);</span>
-<span class="fc" id="L849">        }</span>
+<span class="fc" id="L882">            MetisFieldSet.newFieldSet(MoneyWiseAssetBaseList.class);</span>
+<span class="fc" id="L883">        }</span>
 
         /**
          * The EditSet.
@@ -860,11 +894,11 @@ public abstract class MoneyWiseAssetBase
          * @param pClass    the class of the item
          * @param pItemType the item type
          */
-        protected MoneyWiseAssetBaseList(final MoneyWiseDataSet pData,
+        protected MoneyWiseAssetBaseList(final PrometheusDataSet pData,
                                          final Class&lt;T&gt; pClass,
                                          final MoneyWiseBasicDataType pItemType) {
-<span class="fc" id="L866">            super(pClass, pData, pItemType, PrometheusListStyle.CORE);</span>
-<span class="fc" id="L867">        }</span>
+<span class="fc" id="L900">            super(pClass, pData, pItemType, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L901">        }</span>
 
         /**
          * Constructor for a cloned List.
@@ -872,18 +906,13 @@ public abstract class MoneyWiseAssetBase
          * @param pSource the source List
          */
         protected MoneyWiseAssetBaseList(final MoneyWiseAssetBaseList&lt;T&gt; pSource) {
-<span class="fc" id="L875">            super(pSource);</span>
-<span class="fc" id="L876">        }</span>
-
-        @Override
-        public MoneyWiseDataSet getDataSet() {
-<span class="fc" id="L880">            return (MoneyWiseDataSet) super.getDataSet();</span>
-        }
+<span class="fc" id="L909">            super(pSource);</span>
+<span class="fc" id="L910">        }</span>
 
         @Override
         @SuppressWarnings(&quot;unchecked&quot;)
         public MoneyWiseDataValidatorAccount&lt;T&gt; getValidator() {
-<span class="fc" id="L886">            return (MoneyWiseDataValidatorAccount&lt;T&gt;) super.getValidator();</span>
+<span class="fc" id="L915">            return (MoneyWiseDataValidatorAccount&lt;T&gt;) super.getValidator();</span>
         }
 
         /**
@@ -892,7 +921,7 @@ public abstract class MoneyWiseAssetBase
          * @return the editSet
          */
         public PrometheusEditSet getEditSet() {
-<span class="fc" id="L895">            return theEditSet;</span>
+<span class="fc" id="L924">            return theEditSet;</span>
         }
 
         /**
@@ -901,8 +930,8 @@ public abstract class MoneyWiseAssetBase
          * @param pEditSet the editSet
          */
         protected void setEditSet(final PrometheusEditSet pEditSet) {
-<span class="fc" id="L904">            theEditSet = pEditSet;</span>
-<span class="fc" id="L905">        }</span>
+<span class="fc" id="L933">            theEditSet = pEditSet;</span>
+<span class="fc" id="L934">        }</span>
 
         @Override
         public abstract T findItemByName(String pName);
@@ -926,12 +955,12 @@ public abstract class MoneyWiseAssetBase
         @Override
         public void postProcessOnLoad() throws OceanusException {
             /* Resolve links and sort the data */
-<span class="nc" id="L929">            super.resolveDataSetLinks();</span>
-<span class="nc" id="L930">            reSort();</span>
+<span class="nc" id="L958">            super.resolveDataSetLinks();</span>
+<span class="nc" id="L959">            reSort();</span>
 
             /* Map the data */
-<span class="nc" id="L933">            mapData();</span>
-<span class="nc" id="L934">        }</span>
+<span class="nc" id="L962">            mapData();</span>
+<span class="nc" id="L963">        }</span>
 
         /**
          * Resolve late edit Set links.
@@ -939,27 +968,27 @@ public abstract class MoneyWiseAssetBase
          * @throws OceanusException on error
          */
         public void resolveLateEditSetLinks() throws OceanusException {
-<span class="fc" id="L942">            final Iterator&lt;T&gt; myIterator = iterator();</span>
-<span class="fc bfc" id="L943" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
-<span class="fc" id="L944">                final T myItem = myIterator.next();</span>
-<span class="fc" id="L945">                myItem.resolveLateEditSetLinks();</span>
-<span class="fc" id="L946">            }</span>
-<span class="fc" id="L947">        }</span>
+<span class="fc" id="L971">            final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="fc bfc" id="L972" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L973">                final T myItem = myIterator.next();</span>
+<span class="fc" id="L974">                myItem.resolveLateEditSetLinks();</span>
+<span class="fc" id="L975">            }</span>
+<span class="fc" id="L976">        }</span>
     }
 
     /**
      * The dataMap class.
      */
-<span class="fc" id="L953">    protected static class MoneyWiseAssetDataMap</span>
+<span class="fc" id="L982">    protected static class MoneyWiseAssetDataMap</span>
             extends PrometheusDataInstanceMap&lt;MoneyWiseAssetBase, String&gt; {
         @Override
         public void adjustForItem(final PrometheusDataItem pItem) {
             /* Access item */
-<span class="fc" id="L958">            final MoneyWiseAssetBase myItem = (MoneyWiseAssetBase) pItem;</span>
+<span class="fc" id="L987">            final MoneyWiseAssetBase myItem = (MoneyWiseAssetBase) pItem;</span>
 
             /* Adjust name count */
-<span class="fc" id="L961">            adjustForItem(myItem, myItem.getName());</span>
-<span class="fc" id="L962">        }</span>
+<span class="fc" id="L990">            adjustForItem(myItem, myItem.getName());</span>
+<span class="fc" id="L991">        }</span>
 
         /**
          * find item by name.
@@ -968,7 +997,7 @@ public abstract class MoneyWiseAssetBase
          * @return the matching item
          */
         public MoneyWiseAssetBase findAssetByName(final String pName) {
-<span class="fc" id="L971">            return findItemByKey(pName);</span>
+<span class="fc" id="L1000">            return findItemByKey(pName);</span>
         }
 
         /**
@@ -978,8 +1007,8 @@ public abstract class MoneyWiseAssetBase
          * @return true/false
          */
         public boolean validNameCount(final String pName) {
-<span class="fc" id="L981">            return validKeyCount(pName);</span>
+<span class="fc" id="L1010">            return validKeyCount(pName);</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

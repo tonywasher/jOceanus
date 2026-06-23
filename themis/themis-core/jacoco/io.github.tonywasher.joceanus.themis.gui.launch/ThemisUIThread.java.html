@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisUIThread.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.gui.launch</a> &gt; <span class="el_source">ThemisUIThread.java</span></div><h1>ThemisUIThread.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.gui.launch;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+import io.github.tonywasher.joceanus.themis.parser.ThemisParser;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisDataResource;
+import io.github.tonywasher.joceanus.themis.parser.project.ThemisProject;
+import io.github.tonywasher.joceanus.themis.solver.ThemisSolver;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverProject;
+import io.github.tonywasher.joceanus.themis.stats.ThemisStatsProject;
+
+import java.io.File;
+
+/**
+ * Themis Loader Thread.
+ */
+public class ThemisUIThread
+        implements TethysUIThread&lt;ThemisUIData&gt; {
+    /**
+     * The new data interface.
+     */
+    interface ThemisUIThreadData {
+        /**
+         * Set new Data.
+         *
+         * @param pData the data
+         */
+        void setNewData(ThemisUIData pData);
+    }
+
+    /**
+     * The parent.
+     */
+    private final ThemisUIThreadData theParent;
+
+    /**
+     * The Data.
+     */
+    private final ThemisUIData theData;
+
+    /**
+     * Constructor (Event Thread).
+     *
+     * @param pParent   the parent
+     * @param pLocation the project location
+     */
+    ThemisUIThread(final ThemisUIThreadData pParent,
+<span class="nc" id="L66">                   final File pLocation) {</span>
+<span class="nc" id="L67">        theParent = pParent;</span>
+<span class="nc" id="L68">        theData = new ThemisUIData(pLocation);</span>
+<span class="nc" id="L69">    }</span>
+
+    @Override
+    public String getTaskName() {
+<span class="nc" id="L73">        return ThemisDataResource.TASK_DATALOAD.getValue();</span>
+    }
+
+    @Override
+    public ThemisUIData performTask(final TethysUIThreadStatusReport pReport) throws OceanusException {
+        /* Initialise the status window */
+<span class="nc" id="L79">        pReport.initTask(getTaskName());</span>
+
+        /* Parse the project */
+<span class="nc" id="L82">        final ThemisParser myParser = new ThemisParser(pReport, theData.getProjectDir());</span>
+<span class="nc" id="L83">        final ThemisProject myProject = myParser.getProject();</span>
+<span class="nc" id="L84">        theData.setParsedProject(myProject);</span>
+
+        /* Resolve references */
+<span class="nc" id="L87">        final ThemisSolver mySolver = new ThemisSolver(myParser);</span>
+<span class="nc" id="L88">        final ThemisSolverProject mySolved = mySolver.getProject();</span>
+<span class="nc" id="L89">        theData.setSolvedProject(mySolved);</span>
+
+        /* Calculate statistics */
+<span class="nc" id="L92">        final ThemisStatsProject myStats = new ThemisStatsProject(myParser);</span>
+<span class="nc" id="L93">        theData.setProjectStats(myStats);</span>
+
+        /* State that we have completed */
+<span class="nc" id="L96">        pReport.setCompletion();</span>
+
+        /* Return the data */
+<span class="nc" id="L99">        return theData;</span>
+    }
+
+    @Override
+    public void processResult(final ThemisUIData pResult) {
+<span class="nc" id="L104">        theParent.setNewData(pResult);</span>
+<span class="nc" id="L105">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

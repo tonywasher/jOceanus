@@ -16,54 +16,57 @@
  */
 package io.github.tonywasher.joceanus.prometheus.views;
 
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerResource;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+
 /**
  * Standard Viewer Entries.
  */
-<span class="nc" id="L22">public enum PrometheusViewerEntryId {</span>
+<span class="nc" id="L25">public enum PrometheusViewerEntryId {</span>
     /**
      * Error.
      */
-<span class="nc" id="L26">    ERROR,</span>
+<span class="nc" id="L29">    ERROR,</span>
 
     /**
      * Profile.
      */
-<span class="nc" id="L31">    PROFILE,</span>
+<span class="nc" id="L34">    PROFILE,</span>
 
     /**
      * Data.
      */
-<span class="nc" id="L36">    DATA,</span>
+<span class="nc" id="L39">    DATA,</span>
 
     /**
      * View.
      */
-<span class="nc" id="L41">    VIEW,</span>
+<span class="nc" id="L44">    VIEW,</span>
 
     /**
      * DataSet.
      */
-<span class="nc" id="L46">    DATASET,</span>
+<span class="nc" id="L49">    DATASET,</span>
 
     /**
      * Updates.
      */
-<span class="nc" id="L51">    UPDATES,</span>
+<span class="nc" id="L54">    UPDATES,</span>
 
     /**
      * Analysis.
      */
-<span class="nc" id="L56">    ANALYSIS,</span>
+<span class="nc" id="L59">    ANALYSIS,</span>
 
     /**
      * Maintenance.
      */
-<span class="nc" id="L61">    MAINTENANCE,</span>
+<span class="nc" id="L64">    MAINTENANCE,</span>
 
     /**
      * StaticData.
      */
-<span class="nc" id="L66">    STATIC;</span>
+<span class="nc" id="L69">    STATIC;</span>
 
     /**
      * The String name.
@@ -73,13 +76,34 @@ package io.github.tonywasher.joceanus.prometheus.views;
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="nc bnc" id="L76" title="All 2 branches missed.">        if (theName == null) {</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        if (theName == null) {</span>
             /* Load the name */
-<span class="nc" id="L78">            theName = PrometheusViewResource.getKeyForViewerEntry(this).getValue();</span>
+<span class="nc" id="L81">            theName = bundleIdForEntryId(this).getValue();</span>
         }
 
         /* return the name */
-<span class="nc" id="L82">        return theName;</span>
+<span class="nc" id="L85">        return theName;</span>
+    }
+
+    /**
+     * Obtain the resource bundleId for the entryId.
+     *
+     * @param pId the id
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForEntryId(final PrometheusViewerEntryId pId) {
+<span class="nc bnc" id="L95" title="All 10 branches missed.">        return switch (pId) {</span>
+<span class="nc" id="L96">            case ERROR -&gt; MetisViewerResource.VIEWER_ENTRY_ERROR;</span>
+<span class="nc" id="L97">            case PROFILE -&gt; MetisViewerResource.VIEWER_ENTRY_PROFILE;</span>
+<span class="nc" id="L98">            case DATA -&gt; MetisViewerResource.VIEWER_ENTRY_DATA;</span>
+<span class="nc" id="L99">            case VIEW -&gt; MetisViewerResource.VIEWER_ENTRY_VIEW;</span>
+<span class="nc" id="L100">            case DATASET -&gt; PrometheusViewResource.VIEWERENTRY_DATASET;</span>
+<span class="nc" id="L101">            case UPDATES -&gt; PrometheusViewResource.VIEWERENTRY_UPDATES;</span>
+<span class="nc" id="L102">            case ANALYSIS -&gt; PrometheusViewResource.VIEWERENTRY_ANALYSIS;</span>
+<span class="nc" id="L103">            case MAINTENANCE -&gt; PrometheusViewResource.VIEWERENTRY_MAINT;</span>
+<span class="nc" id="L104">            case STATIC -&gt; PrometheusViewResource.VIEWERENTRY_STATIC;</span>
+<span class="nc" id="L105">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

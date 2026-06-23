@@ -16,9 +16,10 @@
  */
 package io.github.tonywasher.joceanus.prometheus.validate;
 
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusData.PrometheusDataValidator;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
-import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem.PrometheusStaticDataMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem.PrometheusStaticList;
@@ -31,60 +32,60 @@ public class PrometheusValidateStatic
     /**
      * Default constructor.
      */
-<span class="nc" id="L34">    public PrometheusValidateStatic() {</span>
+<span class="nc" id="L35">    public PrometheusValidateStatic() {</span>
         /* NoOp */
-<span class="nc" id="L36">    }</span>
+<span class="nc" id="L37">    }</span>
 
     @Override
-    public void validate(final PrometheusDataItem pStatic) {
-<span class="nc" id="L40">        final PrometheusStaticDataItem myStatic = (PrometheusStaticDataItem) pStatic;</span>
-<span class="nc" id="L41">        final PrometheusStaticList&lt;?&gt; myList = myStatic.getList();</span>
-<span class="nc" id="L42">        final String myName = myStatic.getName();</span>
-<span class="nc" id="L43">        final String myDesc = myStatic.getDesc();</span>
-<span class="nc" id="L44">        final PrometheusStaticDataMap&lt;?&gt; myMap = myList.getDataMap();</span>
+    public void validate(final PrometheusDataItemCtl pStatic) {
+<span class="nc" id="L41">        final PrometheusStaticDataItem myStatic = (PrometheusStaticDataItem) pStatic;</span>
+<span class="nc" id="L42">        final PrometheusStaticList&lt;?&gt; myList = myStatic.getList();</span>
+<span class="nc" id="L43">        final String myName = myStatic.getName();</span>
+<span class="nc" id="L44">        final String myDesc = myStatic.getDesc();</span>
+<span class="nc" id="L45">        final PrometheusStaticDataMap&lt;?&gt; myMap = myList.getDataMap();</span>
 
         /* Name must be non-null */
-<span class="nc bnc" id="L47" title="All 2 branches missed.">        if (myName == null) {</span>
-<span class="nc" id="L48">            pStatic.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        if (myName == null) {</span>
+<span class="nc" id="L49">            myStatic.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
 
             /* Else check the name */
         } else {
             /* The name must not be too long */
-<span class="nc bnc" id="L53" title="All 2 branches missed.">            if (PrometheusDataItem.byteLength(myName) &gt; PrometheusDataItem.NAMELEN) {</span>
-<span class="nc" id="L54">                pStatic.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">            if (PrometheusDataItem.byteLength(myName) &gt; PrometheusDataItem.NAMELEN) {</span>
+<span class="nc" id="L55">                myStatic.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
             }
 
             /* The name must only contain valid characters */
-<span class="nc bnc" id="L58" title="All 2 branches missed.">            if (!PrometheusDataItem.validString(myName, null)) {</span>
-<span class="nc" id="L59">                pStatic.addError(PrometheusStaticDataItem.ERROR_BADNAME, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">            if (!PrometheusDataItem.validString(myName, null)) {</span>
+<span class="nc" id="L60">                myStatic.addError(PrometheusStaticDataItem.ERROR_BADNAME, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
             }
 
             /* Check that the name is unique */
-<span class="nc bnc" id="L63" title="All 2 branches missed.">            if (!myMap.validNameCount(myName)) {</span>
-<span class="nc" id="L64">                pStatic.addError(PrometheusDataItem.ERROR_DUPLICATE, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">            if (!myMap.validNameCount(myName)) {</span>
+<span class="nc" id="L65">                myStatic.addError(PrometheusDataItem.ERROR_DUPLICATE, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
             }
         }
 
         /* Check description length */
-<span class="nc bnc" id="L69" title="All 2 branches missed.">        if (myDesc != null</span>
-<span class="nc bnc" id="L70" title="All 2 branches missed.">                &amp;&amp; PrometheusDataItem.byteLength(myDesc) &gt; PrometheusDataItem.DESCLEN) {</span>
-<span class="nc" id="L71">            pStatic.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        if (myDesc != null</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">                &amp;&amp; PrometheusDataItem.byteLength(myDesc) &gt; PrometheusDataItem.DESCLEN) {</span>
+<span class="nc" id="L72">            myStatic.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
         }
 
         /* The order must not be negative */
-<span class="nc bnc" id="L75" title="All 2 branches missed.">        if (myStatic.getOrder() &lt; 0) {</span>
-<span class="nc" id="L76">            pStatic.addError(PrometheusDataItem.ERROR_NEGATIVE, PrometheusDataResource.STATICDATA_SORT);</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        if (myStatic.getOrder() &lt; 0) {</span>
+<span class="nc" id="L77">            myStatic.addError(PrometheusDataItem.ERROR_NEGATIVE, PrometheusDataResource.STATICDATA_SORT);</span>
         }
 
         /* Cannot have duplicate order */
-<span class="nc bnc" id="L80" title="All 2 branches missed.">        if (!myMap.validOrderCount(myStatic.getOrder())) {</span>
-<span class="nc" id="L81">            pStatic.addError(PrometheusDataItem.ERROR_DUPLICATE, PrometheusDataResource.STATICDATA_SORT);</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (!myMap.validOrderCount(myStatic.getOrder())) {</span>
+<span class="nc" id="L82">            myStatic.addError(PrometheusDataItem.ERROR_DUPLICATE, PrometheusDataResource.STATICDATA_SORT);</span>
         }
 
         /* Set validation flag */
-<span class="nc bnc" id="L85" title="All 2 branches missed.">        if (!pStatic.hasErrors()) {</span>
-<span class="nc" id="L86">            pStatic.setValidEdit();</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        if (!myStatic.hasErrors()) {</span>
+<span class="nc" id="L87">            myStatic.setValidEdit();</span>
         }
-<span class="nc" id="L88">    }</span>
+<span class="nc" id="L89">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

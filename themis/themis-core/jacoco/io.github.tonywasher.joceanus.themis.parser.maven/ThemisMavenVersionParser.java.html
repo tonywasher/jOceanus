@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisMavenVersionParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.parser.maven</a> &gt; <span class="el_source">ThemisMavenVersionParser.java</span></div><h1>ThemisMavenVersionParser.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.parser.maven;
+
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Maven version parser.
+ */
+public class ThemisMavenVersionParser {
+    /**
+     * The components.
+     */
+    private final List&lt;Object&gt; theComponents;
+
+    /**
+     * The version.
+     */
+    private String theVersion;
+
+    /**
+     * The version length.
+     */
+    private int theVersLen;
+
+    /**
+     * The current version index.
+     */
+    private int theIndex;
+
+    /**
+     * Constructor.
+     */
+<span class="nc" id="L52">    public ThemisMavenVersionParser() {</span>
+<span class="nc" id="L53">        theComponents = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L54">    }</span>
+
+    /**
+     * Parse the version.
+     *
+     * @param pVersion the version
+     * @return the parsed version
+     */
+    public ThemisMavenVersion parseVersion(final String pVersion) {
+        /* Initialise state */
+<span class="nc" id="L64">        theComponents.clear();</span>
+<span class="nc" id="L65">        theVersion = pVersion;</span>
+<span class="nc" id="L66">        theVersLen = pVersion.length();</span>
+<span class="nc" id="L67">        theIndex = 0;</span>
+
+        /* While we have more data */
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        while (theIndex &lt; theVersLen) {</span>
+            /* Parse the components */
+<span class="nc" id="L72">            final char myChar = theVersion.charAt(theIndex);</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            if (Character.isDigit(myChar)) {</span>
+<span class="nc" id="L74">                theComponents.add(parseLong());</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">            } else if (isSeparator(myChar)) {</span>
+<span class="nc" id="L76">                theIndex++;</span>
+            } else {
+<span class="nc" id="L78">                theComponents.add(parseString());</span>
+            }
+<span class="nc" id="L80">        }</span>
+
+        /* Prune the components */
+<span class="nc" id="L83">        pruneComponents();</span>
+
+        /* Return the parsed version */
+<span class="nc" id="L86">        return new ThemisMavenVersion(theVersion, theComponents.toArray());</span>
+    }
+
+    /**
+     * Parse a long component.
+     *
+     * @return the component
+     */
+    private Long parseLong() {
+<span class="nc" id="L95">        final StringBuilder myBuffer = new StringBuilder();</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        while (theIndex &lt; theVersLen) {</span>
+            /* Access character and break loop if non-numeric */
+<span class="nc" id="L98">            final char myChar = theVersion.charAt(theIndex);</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">            if (!Character.isDigit(myChar)) {</span>
+<span class="nc" id="L100">                break;</span>
+            }
+<span class="nc" id="L102">            myBuffer.append(myChar);</span>
+<span class="nc" id="L103">            theIndex++;</span>
+<span class="nc" id="L104">        }</span>
+<span class="nc" id="L105">        return Long.parseLong(myBuffer.toString());</span>
+    }
+
+    /**
+     * Parse a string component.
+     *
+     * @return the component
+     */
+    private String parseString() {
+<span class="nc" id="L114">        final StringBuilder myBuffer = new StringBuilder();</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        while (theIndex &lt; theVersLen) {</span>
+            /* Access character and break loop if numeric or separator */
+<span class="nc" id="L117">            final char myChar = theVersion.charAt(theIndex);</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            if (Character.isDigit(myChar)</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">                    || isSeparator(myChar)) {</span>
+<span class="nc" id="L120">                break;</span>
+            }
+<span class="nc" id="L122">            myBuffer.append(myChar);</span>
+<span class="nc" id="L123">            theIndex++;</span>
+<span class="nc" id="L124">        }</span>
+<span class="nc" id="L125">        return normalise(myBuffer.toString());</span>
+    }
+
+    /**
+     * Is the character a separator.
+     *
+     * @param pChar the character
+     * @return true/false
+     */
+    private boolean isSeparator(final char pChar) {
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        return switch (pChar) {</span>
+<span class="nc" id="L136">            case ThemisChar.PERIOD, ThemisChar.HYPHEN -&gt; true;</span>
+<span class="nc" id="L137">            default -&gt; false;</span>
+        };
+    }
+
+    /**
+     * Normalise the string component.
+     *
+     * @param pValue the component
+     * @return the normalised component
+     */
+    private String normalise(final String pValue) {
+<span class="nc bnc" id="L148" title="All 6 branches missed.">        return switch (pValue.toLowerCase()) {</span>
+<span class="nc" id="L149">            case &quot;alpha&quot; -&gt; ThemisMavenConstants.ALPHA;</span>
+<span class="nc" id="L150">            case &quot;beta&quot; -&gt; ThemisMavenConstants.BETA;</span>
+<span class="nc" id="L151">            case &quot;milestone&quot; -&gt; ThemisMavenConstants.MILESTONE;</span>
+<span class="nc" id="L152">            case &quot;final&quot; -&gt; ThemisMavenConstants.GA;</span>
+<span class="nc" id="L153">            case &quot;cr&quot; -&gt; ThemisMavenConstants.RC;</span>
+<span class="nc" id="L154">            default -&gt; pValue;</span>
+        };
+    }
+
+    /**
+     * Prune components.
+     */
+    private void pruneComponents() {
+        /* If we have components */
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (!theComponents.isEmpty()) {</span>
+            /* Access last component */
+<span class="nc" id="L165">            final Object myLast = theComponents.getLast();</span>
+
+            /* If the component is empty */
+<span class="nc bnc" id="L168" title="All 2 branches missed.">            if (myLast.equals(ThemisMavenConstants.ZERO)</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">                    || ThemisMavenConstants.GA.equalsIgnoreCase(myLast.toString())) {</span>
+                /* Remove and reprune */
+<span class="nc" id="L171">                theComponents.removeLast();</span>
+<span class="nc" id="L172">                pruneComponents();</span>
+            }
+        }
+<span class="nc" id="L175">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

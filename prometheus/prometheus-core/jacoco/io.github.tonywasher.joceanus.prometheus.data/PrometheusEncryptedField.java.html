@@ -19,13 +19,15 @@ package io.github.tonywasher.joceanus.prometheus.data;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersioned;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusEncryptedDataItemCtl;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncrypted.PrometheusEncryptedFieldSetCtl;
 
 /**
  * Prometheus Data fields.
  *
  * @param &lt;T&gt; the data type
  */
-public class PrometheusEncryptedField&lt;T extends PrometheusEncryptedDataItem&gt;
+public class PrometheusEncryptedField&lt;T extends PrometheusEncryptedDataItemCtl&gt;
         extends MetisFieldVersioned&lt;T&gt; {
     /**
      * Constructor.
@@ -35,29 +37,26 @@ public class PrometheusEncryptedField&lt;T extends PrometheusEncryptedDataItem&g
      * @param pDataType  the dataType of the field
      * @param pMaxLength the maximum length of the field
      */
-    PrometheusEncryptedField(final PrometheusEncryptedFieldSet&lt;T&gt; pAnchor,
+    PrometheusEncryptedField(final PrometheusEncryptedFieldSetCtl&lt;T&gt; pAnchor,
                              final MetisDataFieldId pId,
                              final MetisDataType pDataType,
                              final Integer pMaxLength) {
         /* Initialise underlying class */
-<span class="nc" id="L43">        super(pAnchor, pId, pDataType, pMaxLength, true);</span>
-<span class="nc" id="L44">    }</span>
+<span class="nc" id="L45">        super(pAnchor, pId, pDataType, pMaxLength, true);</span>
+<span class="nc" id="L46">    }</span>
 
     @Override
     protected void checkValidity() {
         /* Check underlying options */
-<span class="nc" id="L49">        super.checkValidity();</span>
+<span class="nc" id="L51">        super.checkValidity();</span>
 
         /* Object/ByteArray/Links are not valid for Encryption */
-<span class="nc bnc" id="L52" title="All 2 branches missed.">        switch (getDataType()) {</span>
-            case OBJECT:
-            case BYTEARRAY:
-            case LINK:
-            case LINKSET:
-<span class="nc" id="L57">                throw new IllegalArgumentException(&quot;Invalid encrypted object&quot;);</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        switch (getDataType()) {</span>
+            case OBJECT, BYTEARRAY, LINK, LINKSET:
+<span class="nc" id="L56">                throw new IllegalArgumentException(&quot;Invalid encrypted object&quot;);</span>
             default:
                 break;
         }
-<span class="nc" id="L61">    }</span>
+<span class="nc" id="L60">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

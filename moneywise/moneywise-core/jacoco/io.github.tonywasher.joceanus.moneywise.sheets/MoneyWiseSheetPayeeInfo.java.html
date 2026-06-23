@@ -16,11 +16,13 @@
  */
 package io.github.tonywasher.joceanus.moneywise.sheets;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayeeInfo;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetDataInfo;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
 
 /**
  * SheetDataInfo extension for PayeeInfo.
@@ -32,40 +34,40 @@ public final class MoneyWiseSheetPayeeInfo
     /**
      * NamedArea for PayeeInfo.
      */
-<span class="fc" id="L35">    private static final String AREA_PAYEEINFO = MoneyWisePayeeInfo.LIST_NAME;</span>
+<span class="fc" id="L37">    private static final String AREA_PAYEEINFO = MoneyWisePayeeInfo.LIST_NAME;</span>
 
     /**
      * Constructor for loading a spreadsheet.
      *
      * @param pReader the spreadsheet reader
      */
-    MoneyWiseSheetPayeeInfo(final MoneyWiseReader pReader) {
+    MoneyWiseSheetPayeeInfo(final PrometheusSheetReader pReader) {
         /* Call super-constructor */
-<span class="fc" id="L44">        super(pReader, AREA_PAYEEINFO);</span>
+<span class="fc" id="L46">        super(pReader, AREA_PAYEEINFO);</span>
 
         /* Access the InfoType list */
-<span class="fc" id="L47">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pReader.getData();</span>
-<span class="fc" id="L48">        setDataList(myData.getPayeeInfo());</span>
-<span class="fc" id="L49">    }</span>
+<span class="fc" id="L49">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pReader.getData();</span>
+<span class="fc" id="L50">        setDataList(myData.getPayeeInfo());</span>
+<span class="fc" id="L51">    }</span>
 
     /**
      * Constructor for creating a spreadsheet.
      *
      * @param pWriter the spreadsheet writer
      */
-    MoneyWiseSheetPayeeInfo(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetPayeeInfo(final PrometheusSheetWriter pWriter) {
         /* Call super-constructor */
-<span class="fc" id="L58">        super(pWriter, AREA_PAYEEINFO);</span>
+<span class="fc" id="L60">        super(pWriter, AREA_PAYEEINFO);</span>
 
         /* Access the InfoType list */
-<span class="fc" id="L61">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pWriter.getData();</span>
-<span class="fc" id="L62">        setDataList(myData.getPayeeInfo());</span>
-<span class="fc" id="L63">    }</span>
+<span class="fc" id="L63">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pWriter.getData();</span>
+<span class="fc" id="L64">        setDataList(myData.getPayeeInfo());</span>
+<span class="fc" id="L65">    }</span>
 
     @Override
     public PrometheusDataValues loadSecureValues() throws OceanusException {
         /* Build data values */
-<span class="nc" id="L68">        return getRowValues(MoneyWisePayeeInfo.OBJECT_NAME);</span>
+<span class="nc" id="L70">        return getRowValues(MoneyWisePayeeInfo.OBJECT_NAME);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

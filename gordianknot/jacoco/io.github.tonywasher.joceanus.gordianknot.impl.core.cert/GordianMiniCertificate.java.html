@@ -25,10 +25,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import org.bouncycastle.asn1.x500.X500Name;
 
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Mini Certificate implementation.
@@ -72,21 +73,21 @@ public class GordianMiniCertificate
     public GordianMiniCertificate(final GordianFactory pFactory,
                                   final X500Name pSubject,
                                   final GordianKeyPair pKeyPair,
-<span class="fc" id="L75">                                  final GordianKeyPairUsage pUsage) throws GordianException {</span>
+<span class="fc" id="L76">                                  final GordianKeyPairUsage pUsage) throws GordianException {</span>
         /* Store parameters */
-<span class="fc" id="L77">        theKeyPair = pKeyPair;</span>
-<span class="fc" id="L78">        theUsage = pUsage;</span>
+<span class="fc" id="L78">        theKeyPair = pKeyPair;</span>
+<span class="fc" id="L79">        theUsage = pUsage;</span>
 
         /* Access the keyPairFactory */
-<span class="fc" id="L81">        final GordianKeyPairFactory myFactory = pFactory.getAsyncFactory().getKeyPairFactory();</span>
-<span class="fc" id="L82">        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeyPair.getKeyPairSpec());</span>
-<span class="fc" id="L83">        final X509EncodedKeySpec myX509Spec = myGenerator.getX509Encoding(pKeyPair);</span>
-<span class="fc" id="L84">        theSubject = new GordianCoreCertificateId(pSubject, null);</span>
+<span class="fc" id="L82">        final GordianKeyPairFactory myFactory = pFactory.getAsyncFactory().getKeyPairFactory();</span>
+<span class="fc" id="L83">        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeyPair.getKeyPairSpec());</span>
+<span class="fc" id="L84">        final X509EncodedKeySpec myX509Spec = myGenerator.getX509Encoding(pKeyPair);</span>
+<span class="fc" id="L85">        theSubject = new GordianCoreCertificateId(pSubject, null);</span>
 
         /* Create the encoded */
-<span class="fc" id="L87">        theASN1 = new GordianMiniCertificateASN1(pSubject, myX509Spec, pUsage);</span>
-<span class="fc" id="L88">        theEncoded = theASN1.getEncodedBytes();</span>
-<span class="fc" id="L89">    }</span>
+<span class="fc" id="L88">        theASN1 = new GordianMiniCertificateASN1(pSubject, myX509Spec, pUsage);</span>
+<span class="fc" id="L89">        theEncoded = theASN1.getEncodedBytes();</span>
+<span class="fc" id="L90">    }</span>
 
     /**
      * Constructor.
@@ -98,8 +99,8 @@ public class GordianMiniCertificate
     public GordianMiniCertificate(final GordianFactory pFactory,
                                   final byte[] pEncoded) throws GordianException {
         /* Parse the bytes */
-<span class="nc" id="L101">        this(pFactory, GordianMiniCertificateASN1.getInstance(pEncoded));</span>
-<span class="nc" id="L102">    }</span>
+<span class="nc" id="L102">        this(pFactory, GordianMiniCertificateASN1.getInstance(pEncoded));</span>
+<span class="nc" id="L103">    }</span>
 
     /**
      * Constructor.
@@ -109,61 +110,66 @@ public class GordianMiniCertificate
      * @throws GordianException on error
      */
     public GordianMiniCertificate(final GordianFactory pFactory,
-<span class="fc" id="L112">                                  final GordianMiniCertificateASN1 pASN1) throws GordianException {</span>
+<span class="fc" id="L113">                                  final GordianMiniCertificateASN1 pASN1) throws GordianException {</span>
         /* Parse the bytes */
-<span class="fc" id="L114">        theASN1 = pASN1;</span>
-<span class="fc" id="L115">        theEncoded = theASN1.getEncodedBytes();</span>
+<span class="fc" id="L115">        theASN1 = pASN1;</span>
+<span class="fc" id="L116">        theEncoded = theASN1.getEncodedBytes();</span>
 
         /* Derive the keyPair */
-<span class="fc" id="L118">        final GordianKeyPairFactory myFactory = pFactory.getAsyncFactory().getKeyPairFactory();</span>
-<span class="fc" id="L119">        final X509EncodedKeySpec myX509Spec = theASN1.getPublicKey();</span>
-<span class="fc" id="L120">        final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);</span>
-<span class="fc" id="L121">        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);</span>
-<span class="fc" id="L122">        theKeyPair = myGenerator.derivePublicOnlyKeyPair(myX509Spec);</span>
+<span class="fc" id="L119">        final GordianKeyPairFactory myFactory = pFactory.getAsyncFactory().getKeyPairFactory();</span>
+<span class="fc" id="L120">        final X509EncodedKeySpec myX509Spec = theASN1.getPublicKey();</span>
+<span class="fc" id="L121">        final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);</span>
+<span class="fc" id="L122">        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);</span>
+<span class="fc" id="L123">        theKeyPair = myGenerator.derivePublicOnlyKeyPair(myX509Spec);</span>
 
         /* Store subject and usage */
-<span class="fc" id="L125">        theSubject = new GordianCoreCertificateId(theASN1.getSubject(), null);</span>
-<span class="fc" id="L126">        theUsage = theASN1.getUsage();</span>
-<span class="fc" id="L127">    }</span>
+<span class="fc" id="L126">        theSubject = new GordianCoreCertificateId(theASN1.getSubject(), null);</span>
+<span class="fc" id="L127">        theUsage = theASN1.getUsage();</span>
+<span class="fc" id="L128">    }</span>
 
     @Override
     public GordianCertificateId getSubject() {
-<span class="nc" id="L131">        return theSubject;</span>
+<span class="nc" id="L132">        return theSubject;</span>
     }
 
     @Override
     public GordianCertificateId getIssuer() {
-<span class="nc" id="L136">        return null;</span>
+<span class="nc" id="L137">        return null;</span>
     }
 
     @Override
     public GordianKeyPair getKeyPair() {
-<span class="fc" id="L141">        return theKeyPair;</span>
+<span class="fc" id="L142">        return theKeyPair;</span>
     }
 
     @Override
     public byte[] getEncoded() {
-<span class="fc" id="L146">        return theEncoded.clone();</span>
+<span class="fc" id="L147">        return theEncoded.clone();</span>
     }
 
     @Override
-    public boolean isValidOnDate(final Date pDate) {
-<span class="nc" id="L151">        return true;</span>
+    public boolean isValidNow() {
+<span class="nc" id="L152">        return isValidOnDate(LocalDate.now(GordianBaseData.CLOCK));</span>
+    }
+
+    @Override
+    public boolean isValidOnDate(final LocalDate pDate) {
+<span class="nc" id="L157">        return true;</span>
     }
 
     @Override
     public boolean isSelfSigned() {
-<span class="nc" id="L156">        return false;</span>
+<span class="nc" id="L162">        return false;</span>
     }
 
     @Override
     public GordianKeyPairUsage getUsage() {
-<span class="fc" id="L161">        return theUsage;</span>
+<span class="fc" id="L167">        return theUsage;</span>
     }
 
     @Override
     public boolean validateCertificate(final GordianCertificate pSigner) {
-<span class="nc" id="L166">        return true;</span>
+<span class="nc" id="L172">        return true;</span>
     }
 
     /**
@@ -172,7 +178,7 @@ public class GordianMiniCertificate
      * @return the ASN1
      */
     public GordianMiniCertificateASN1 getASN1() {
-<span class="fc" id="L175">        return theASN1;</span>
+<span class="fc" id="L181">        return theASN1;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

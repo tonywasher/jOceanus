@@ -18,40 +18,41 @@ package io.github.tonywasher.joceanus.moneywise.data.statics;
 
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 
 /**
  * Enumeration of Portfolio Type Classes.
  */
-<span class="fc" id="L26">public enum MoneyWisePortfolioClass</span>
+<span class="fc" id="L27">public enum MoneyWisePortfolioClass</span>
         implements PrometheusStaticDataClass {
     /**
      * Standard.
      * &lt;p&gt;
      * This is a standard portfolio.
      */
-<span class="fc" id="L33">    STANDARD(1, 0),</span>
+<span class="fc" id="L34">    STANDARD(1, 0),</span>
 
     /**
      * ISA.
      * &lt;p&gt;
      * This is a TaxFree portfolio.
      */
-<span class="fc" id="L40">    TAXFREE(2, 1),</span>
+<span class="fc" id="L41">    TAXFREE(2, 1),</span>
 
     /**
      * Pension.
      * &lt;p&gt;
      * This is a Pension. and is singular
      */
-<span class="fc" id="L47">    PENSION(3, 2),</span>
+<span class="fc" id="L48">    PENSION(3, 2),</span>
 
     /**
      * SIPP.
      * &lt;p&gt;
      * This is a SIPP Portfolio.
      */
-<span class="fc" id="L54">    SIPP(4, 3);</span>
+<span class="fc" id="L55">    SIPP(4, 3);</span>
 
     /**
      * The String name.
@@ -75,31 +76,31 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @param uOrder the default order.
      */
     MoneyWisePortfolioClass(final int uId,
-<span class="fc" id="L78">                            final int uOrder) {</span>
-<span class="fc" id="L79">        theId = uId;</span>
-<span class="fc" id="L80">        theOrder = uOrder;</span>
-<span class="fc" id="L81">    }</span>
+<span class="fc" id="L79">                            final int uOrder) {</span>
+<span class="fc" id="L80">        theId = uId;</span>
+<span class="fc" id="L81">        theOrder = uOrder;</span>
+<span class="fc" id="L82">    }</span>
 
     @Override
     public int getClassId() {
-<span class="fc" id="L85">        return theId;</span>
+<span class="fc" id="L86">        return theId;</span>
     }
 
     @Override
     public int getOrder() {
-<span class="fc" id="L90">        return theOrder;</span>
+<span class="fc" id="L91">        return theOrder;</span>
     }
 
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
-<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (theName == null) {</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (theName == null) {</span>
             /* Load the name */
-<span class="fc" id="L98">            theName = MoneyWiseStaticResource.getKeyForPortfolioType(this).getValue();</span>
+<span class="fc" id="L99">            theName = bundleIdForPortfolioClass(this).getValue();</span>
         }
 
         /* return the name */
-<span class="fc" id="L102">        return theName;</span>
+<span class="fc" id="L103">        return theName;</span>
     }
 
     /**
@@ -110,12 +111,12 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @throws OceanusException on error
      */
     public static MoneyWisePortfolioClass fromId(final int id) throws OceanusException {
-<span class="nc bnc" id="L113" title="All 2 branches missed.">        for (MoneyWisePortfolioClass myClass : values()) {</span>
-<span class="nc bnc" id="L114" title="All 2 branches missed.">            if (myClass.getClassId() == id) {</span>
-<span class="nc" id="L115">                return myClass;</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        for (MoneyWisePortfolioClass myClass : values()) {</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">            if (myClass.getClassId() == id) {</span>
+<span class="nc" id="L116">                return myClass;</span>
             }
         }
-<span class="nc" id="L118">        throw new MoneyWiseDataException(&quot;Invalid ClassId for &quot; + MoneyWiseStaticDataType.PORTFOLIOTYPE.toString() + &quot;:&quot; + id);</span>
+<span class="nc" id="L119">        throw new MoneyWiseDataException(&quot;Invalid ClassId for &quot; + MoneyWiseStaticDataType.PORTFOLIOTYPE.toString() + &quot;:&quot; + id);</span>
     }
 
     /**
@@ -124,7 +125,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the PortfolioTtype is tax free, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isTaxFree() {
-<span class="fc bfc" id="L127" title="All 2 branches covered.">        return this != STANDARD;</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        return this != STANDARD;</span>
     }
 
     /**
@@ -133,9 +134,9 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the PortfolioType is pension, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isPension() {
-<span class="nc bnc" id="L136" title="All 2 branches missed.">        return switch (this) {</span>
-<span class="nc" id="L137">            case PENSION, SIPP -&gt; true;</span>
-<span class="nc" id="L138">            default -&gt; false;</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L138">            case PENSION, SIPP -&gt; true;</span>
+<span class="nc" id="L139">            default -&gt; false;</span>
         };
     }
 
@@ -145,9 +146,9 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the PortfolioType owns securities, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean holdsSecurities() {
-<span class="nc bnc" id="L148" title="All 2 branches missed.">        return switch (this) {</span>
-<span class="nc" id="L149">            case STANDARD, TAXFREE, SIPP -&gt; true;</span>
-<span class="nc" id="L150">            default -&gt; false;</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">        return switch (this) {</span>
+<span class="nc" id="L150">            case STANDARD, TAXFREE, SIPP -&gt; true;</span>
+<span class="nc" id="L151">            default -&gt; false;</span>
         };
     }
 
@@ -157,7 +158,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the PortfolioType owns pensions, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean holdsPensions() {
-<span class="fc bfc" id="L160" title="All 2 branches covered.">        return this == PENSION;</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        return this == PENSION;</span>
     }
 
     /**
@@ -166,7 +167,24 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
      * @return &lt;code&gt;true&lt;/code&gt; if the PortfolioType is singular, &lt;code&gt;false&lt;/code&gt; otherwise.
      */
     public boolean isSingular() {
-<span class="fc" id="L169">        return holdsPensions();</span>
+<span class="fc" id="L170">        return holdsPensions();</span>
+    }
+
+    /**
+     * Obtain the resource bundleId for the portfolio class.
+     *
+     * @param pClass the category class
+     * @return the resource bundleId
+     */
+    private static OceanusBundleId bundleIdForPortfolioClass(final MoneyWisePortfolioClass pClass) {
+        /* Create the map and return it */
+<span class="pc bpc" id="L181" title="1 of 5 branches missed.">        return switch (pClass) {</span>
+<span class="fc" id="L182">            case STANDARD -&gt; MoneyWiseStaticResource.PORTFOLIOTYPE_STANDARD;</span>
+<span class="fc" id="L183">            case TAXFREE -&gt; MoneyWiseStaticResource.PORTFOLIOTYPE_TAXFREE;</span>
+<span class="fc" id="L184">            case PENSION -&gt; MoneyWiseStaticResource.PORTFOLIOTYPE_PENSION;</span>
+<span class="fc" id="L185">            case SIPP -&gt; MoneyWiseStaticResource.PORTFOLIOTYPE_SIPP;</span>
+<span class="nc" id="L186">            default -&gt; throw new IllegalArgumentException();</span>
+        };
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
