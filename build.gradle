@@ -33,7 +33,7 @@ project.ext {
 /* project-wise setup */
 allprojects {
     /* general identity */
-    version = '1.6.4-b2'
+    version = '1.6.4-SNAPSHOT'
 }
 
 /* Store calculated properties in the root project */
