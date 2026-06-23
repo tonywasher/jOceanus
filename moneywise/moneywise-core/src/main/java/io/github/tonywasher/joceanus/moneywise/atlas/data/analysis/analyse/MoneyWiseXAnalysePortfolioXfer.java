@@ -16,6 +16,9 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseSecurityCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransCtl;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioCashBucket;
@@ -37,7 +40,7 @@ import java.util.Iterator;
 /**
  * Portfolio Xfer support.
  */
-public class MoneyWiseXAnalysisPortfolioXfer {
+public class MoneyWiseXAnalysePortfolioXfer {
     /**
      * The portfolioBuckets.
      */
@@ -46,12 +49,12 @@ public class MoneyWiseXAnalysisPortfolioXfer {
     /**
      * The analysis state.
      */
-    private final MoneyWiseXAnalysisState theState;
+    private final MoneyWiseXAnalyseState theState;
 
     /**
      * The securityAnalyser.
      */
-    private final MoneyWiseXAnalysisSecurity theSecurity;
+    private final MoneyWiseXAnalyseSecurityCtl theSecurity;
 
     /**
      * The security holding map.
@@ -61,7 +64,7 @@ public class MoneyWiseXAnalysisPortfolioXfer {
     /**
      * The current transaction.
      */
-    private MoneyWiseXAnalysisTransaction theTransaction;
+    private MoneyWiseXAnalyseTransCtl theTransaction;
 
     /**
      * Constructor.
@@ -69,8 +72,8 @@ public class MoneyWiseXAnalysisPortfolioXfer {
      * @param pAnalyser the analyser
      * @param pSecurity the securityAnalyser
      */
-    MoneyWiseXAnalysisPortfolioXfer(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
-                                    final MoneyWiseXAnalysisSecurity pSecurity) {
+    MoneyWiseXAnalysePortfolioXfer(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser,
+                                   final MoneyWiseXAnalyseSecurityCtl pSecurity) {
         /* Access details */
         thePortfolios = pAnalyser.getAnalysis().getPortfolios();
         theState = pAnalyser.getState();
@@ -84,21 +87,21 @@ public class MoneyWiseXAnalysisPortfolioXfer {
      * @param pTrans the transaction
      * @throws OceanusException on error
      */
-    void processPortfolioXfer(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
+    void processPortfolioXfer(final MoneyWiseXAnalyseTransaction pTrans) throws OceanusException {
         /* Store the transaction */
         theTransaction = pTrans;
 
         /* Target must be portfolio */
         final MoneyWiseTransAsset myCredit = theTransaction.getCreditAccount();
-        if (!MoneyWiseXAnalysisTransAnalyser.isPortfolio(myCredit)) {
+        if (!MoneyWiseXAnalyseTransaction.isPortfolio(myCredit)) {
             throw new MoneyWiseLogicException("Credit account is no portfolio");
         }
 
         /* If this is a transfer from a portfolio */
         final MoneyWiseTransAsset myDebit = theTransaction.getDebitAccount();
-        if (MoneyWiseXAnalysisTransAnalyser.isPortfolio(myDebit)) {
+        if (MoneyWiseXAnalyseTransaction.isPortfolio(myDebit)) {
             processPortfolio2Portfolio();
-        } else if (MoneyWiseXAnalysisTransAnalyser.isSecurityHolding(myDebit)) {
+        } else if (MoneyWiseXAnalyseTransaction.isSecurityHolding(myDebit)) {
             processHolding2Portfolio();
         } else {
             throw new MoneyWiseLogicException("Debit account is neither portfolio or securityHolding");

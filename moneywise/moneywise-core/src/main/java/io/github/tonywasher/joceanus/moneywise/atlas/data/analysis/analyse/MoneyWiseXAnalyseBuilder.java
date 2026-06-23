@@ -35,7 +35,7 @@ import java.util.Map.Entry;
 /**
  * Analysis Builder.
  */
-public class MoneyWiseXAnalysisBuilder {
+public class MoneyWiseXAnalyseBuilder {
     /**
      * The dataControl.
      */
@@ -46,7 +46,7 @@ public class MoneyWiseXAnalysisBuilder {
      *
      * @param pControl the dataControl
      */
-    public MoneyWiseXAnalysisBuilder(final PrometheusDataControl pControl) {
+    public MoneyWiseXAnalyseBuilder(final PrometheusDataControl pControl) {
         theControl = pControl;
     }
 
@@ -71,7 +71,7 @@ public class MoneyWiseXAnalysisBuilder {
         final PrometheusEditSet myEditSet = new PrometheusEditSet(theControl, pData);
 
         /* Create a new analysis on the editSet */
-        final MoneyWiseXAnalysisEventAnalyser myAnalyser = new MoneyWiseXAnalysisEventAnalyser(myTask, myEditSet, theControl.getPreferenceManager());
+        final MoneyWiseXAnalyseEventAnalyser myAnalyser = new MoneyWiseXAnalyseEventAnalyser(myTask, myEditSet, theControl.getPreferenceManager());
 
         /* post-process analysis */
         myAnalyser.postProcessAnalysis();
@@ -128,7 +128,7 @@ public class MoneyWiseXAnalysisBuilder {
         updateEditSetMaps(pEditSet);
 
         /* Create a new analysis on the editSet */
-        final MoneyWiseXAnalysisEventAnalyser myAnalyser = new MoneyWiseXAnalysisEventAnalyser(myTask, pEditSet, theControl.getPreferenceManager());
+        final MoneyWiseXAnalyseEventAnalyser myAnalyser = new MoneyWiseXAnalyseEventAnalyser(myTask, pEditSet, theControl.getPreferenceManager());
 
         /* post-process analysis */
         myAnalyser.postProcessAnalysis();

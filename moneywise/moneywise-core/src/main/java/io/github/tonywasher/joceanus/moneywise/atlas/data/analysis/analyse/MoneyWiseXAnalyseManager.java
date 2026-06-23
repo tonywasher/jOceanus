@@ -16,17 +16,17 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
-import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
-import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
-import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
 
 import java.util.HashMap;
@@ -35,18 +35,18 @@ import java.util.Map;
 /**
  * Analysis manager.
  */
-public class MoneyWiseXAnalysisManager
+public class MoneyWiseXAnalyseManager
         implements OceanusEventProvider<PrometheusDataEvent>, MetisFieldItem, MetisDataMap<OceanusDateRange, MoneyWiseXAnalysis> {
     /**
      * Local Report fields.
      */
-    private static final MetisFieldSet<MoneyWiseXAnalysisManager> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisManager.class);
+    private static final MetisFieldSet<MoneyWiseXAnalyseManager> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalyseManager.class);
 
     /*
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.ANALYSIS_NAME, MoneyWiseXAnalysisManager::getAnalysis);
+        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.ANALYSIS_NAME, MoneyWiseXAnalyseManager::getAnalysis);
     }
 
     /**
@@ -69,7 +69,7 @@ public class MoneyWiseXAnalysisManager
      *
      * @param pAnalysis the new analysis
      */
-    public MoneyWiseXAnalysisManager(final MoneyWiseXAnalysis pAnalysis) {
+    public MoneyWiseXAnalyseManager(final MoneyWiseXAnalysis pAnalysis) {
         /* Store the parameters */
         theAnalysis = pAnalysis;
 
@@ -81,7 +81,7 @@ public class MoneyWiseXAnalysisManager
     }
 
     @Override
-    public MetisFieldSet<MoneyWiseXAnalysisManager> getDataFieldSet() {
+    public MetisFieldSet<MoneyWiseXAnalyseManager> getDataFieldSet() {
         return FIELD_DEFS;
     }
 

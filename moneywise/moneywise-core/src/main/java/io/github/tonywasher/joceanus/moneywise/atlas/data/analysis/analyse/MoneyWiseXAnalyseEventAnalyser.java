@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseNewDepositRate;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventList;
@@ -41,7 +42,8 @@ import java.util.Iterator;
 /**
  * Evebt Analyser.
  */
-public class MoneyWiseXAnalysisEventAnalyser {
+public class MoneyWiseXAnalyseEventAnalyser
+        implements MoneyWiseXAnalyseEventAnalyserCtl {
     /**
      * The profile.
      */
@@ -60,22 +62,22 @@ public class MoneyWiseXAnalysisEventAnalyser {
     /**
      * The State.
      */
-    private final MoneyWiseXAnalysisState theState;
+    private final MoneyWiseXAnalyseState theState;
 
     /**
      * The market.
      */
-    private final MoneyWiseXAnalysisMarket theMarket;
+    private final MoneyWiseXAnalyseMarket theMarket;
 
     /**
      * The tax.
      */
-    private final MoneyWiseXAnalysisTax theTax;
+    private final MoneyWiseXAnalyseTax theTax;
 
     /**
      * The basic trans analyser.
      */
-    private final MoneyWiseXAnalysisTransAnalyser theTrans;
+    private final MoneyWiseXAnalyseTransAnalyser theTrans;
 
     /**
      * The list of events.
@@ -90,24 +92,24 @@ public class MoneyWiseXAnalysisEventAnalyser {
      * @param pPreferenceMgr the preference manager
      * @throws OceanusException on error
      */
-    public MoneyWiseXAnalysisEventAnalyser(final OceanusProfile pTask,
-                                           final PrometheusEditSet pEditSet,
-                                           final MetisPreferenceManager pPreferenceMgr) throws OceanusException {
+    public MoneyWiseXAnalyseEventAnalyser(final OceanusProfile pTask,
+                                          final PrometheusEditSet pEditSet,
+                                          final MetisPreferenceManager pPreferenceMgr) throws OceanusException {
         /* Initialise the task */
         theProfile = pTask;
         final OceanusProfile myTask = theProfile.startTask("analyseEvents");
 
         /* Create the new Analysis */
         myTask.startTask("Initialise");
-        theState = new MoneyWiseXAnalysisState(pEditSet);
+        theState = new MoneyWiseXAnalyseState(pEditSet);
         theAnalysis = new MoneyWiseXAnalysis(pEditSet, theState, pPreferenceMgr);
         theHoldingMap = (MoneyWiseSecurityHoldingMap) pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class)
                 .getSecurityHoldingsMap();
 
         /* Create the analysers */
-        theMarket = new MoneyWiseXAnalysisMarket(this);
-        theTax = new MoneyWiseXAnalysisTax(this);
-        theTrans = new MoneyWiseXAnalysisTransAnalyser(this);
+        theMarket = new MoneyWiseXAnalyseMarket(this);
+        theTax = new MoneyWiseXAnalyseTax(this);
+        theTrans = new MoneyWiseXAnalyseTransAnalyser(this);
 
         /* Loop through the Events */
         while (true) {
@@ -145,48 +147,28 @@ public class MoneyWiseXAnalysisEventAnalyser {
         myTask.end();
     }
 
-    /**
-     * Obtain the analysis.
-     *
-     * @return the analysis
-     */
-    MoneyWiseXAnalysis getAnalysis() {
+    @Override
+    public MoneyWiseXAnalysis getAnalysis() {
         return theAnalysis;
     }
 
-    /**
-     * Obtain the securityHoldingMap.
-     *
-     * @return the map
-     */
-    MoneyWiseSecurityHoldingMap getSecurityHoldingMap() {
+    @Override
+    public MoneyWiseSecurityHoldingMap getSecurityHoldingMap() {
         return theHoldingMap;
     }
 
-    /**
-     * Obtain the state.
-     *
-     * @return the state
-     */
-    MoneyWiseXAnalysisState getState() {
+    @Override
+    public MoneyWiseXAnalyseState getState() {
         return theState;
     }
 
-    /**
-     * Obtain the market analysis.
-     *
-     * @return the market
-     */
-    MoneyWiseXAnalysisMarket getMarket() {
+    @Override
+    public MoneyWiseXAnalyseMarket getMarket() {
         return theMarket;
     }
 
-    /**
-     * Obtain the tax analysis.
-     *
-     * @return the tax
-     */
-    MoneyWiseXAnalysisTax getTax() {
+    @Override
+    public MoneyWiseXAnalyseTax getTax() {
         return theTax;
     }
 
@@ -195,7 +177,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
      *
      * @return the analyser
      */
-    MoneyWiseXAnalysisTransAnalyser getTransAnalyser() {
+    MoneyWiseXAnalyseTransAnalyser getTransAnalyser() {
         return theTrans;
     }
 

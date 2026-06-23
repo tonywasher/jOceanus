@@ -22,7 +22,7 @@ import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
 import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
-import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisManager;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyseManager;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
 import io.github.tonywasher.joceanus.moneywise.atlas.reports.MoneyWiseXReportBuilder;
@@ -79,7 +79,7 @@ public class MoneyWiseUIXReportTab
     /**
      * The AnalysisManager.
      */
-    private final MoneyWiseXAnalysisManager theAnalysisMgr;
+    private final MoneyWiseXAnalyseManager theAnalysisMgr;
 
     /**
      * The Panel.
@@ -124,7 +124,7 @@ public class MoneyWiseUIXReportTab
      * @throws OceanusException on error
      */
     public MoneyWiseUIXReportTab(final MoneyWiseView pView,
-                                 final MoneyWiseXAnalysisManager pAnalysisMgr) throws OceanusException {
+                                 final MoneyWiseXAnalyseManager pAnalysisMgr) throws OceanusException {
         /* Store the view */
         theView = pView;
         theAnalysisMgr = pAnalysisMgr;

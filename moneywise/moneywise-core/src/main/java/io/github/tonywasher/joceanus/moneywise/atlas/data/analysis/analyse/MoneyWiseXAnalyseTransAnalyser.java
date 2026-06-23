@@ -16,6 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseMarketCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTaxCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransAnalyserCtl;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisAccountBucket;
@@ -29,7 +33,6 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
@@ -46,7 +49,8 @@ import java.util.List;
 /**
  * Transaction analyser.
  */
-public class MoneyWiseXAnalysisTransAnalyser {
+public class MoneyWiseXAnalyseTransAnalyser
+        implements MoneyWiseXAnalyseTransAnalyserCtl {
     /**
      * The analysis.
      */
@@ -55,27 +59,27 @@ public class MoneyWiseXAnalysisTransAnalyser {
     /**
      * The analysis state.
      */
-    private final MoneyWiseXAnalysisState theState;
+    private final MoneyWiseXAnalyseState theState;
 
     /**
      * The market analysis.
      */
-    private final MoneyWiseXAnalysisMarket theMarket;
+    private final MoneyWiseXAnalyseMarketCtl theMarket;
 
     /**
      * The tax analysis.
      */
-    private final MoneyWiseXAnalysisTax theTax;
+    private final MoneyWiseXAnalyseTaxCtl theTax;
 
     /**
      * The security analysis.
      */
-    private final MoneyWiseXAnalysisSecurity theSecurity;
+    private final MoneyWiseXAnalyseSecurity theSecurity;
 
     /**
      * The portfolioXfer analyser.
      */
-    private final MoneyWiseXAnalysisPortfolioXfer thePortfolioXfer;
+    private final MoneyWiseXAnalysePortfolioXfer thePortfolioXfer;
 
     /**
      * The reporting currency.
@@ -85,7 +89,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
     /**
      * The current transaction.
      */
-    private MoneyWiseXAnalysisTransaction theTransaction;
+    private MoneyWiseXAnalyseTransaction theTransaction;
 
     /**
      * Constructor.
@@ -93,7 +97,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @param pAnalyser the analyser
      * @throws OceanusException on error
      */
-    MoneyWiseXAnalysisTransAnalyser(final MoneyWiseXAnalysisEventAnalyser pAnalyser) throws OceanusException {
+    MoneyWiseXAnalyseTransAnalyser(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser) throws OceanusException {
         /* Store details */
         theAnalysis = pAnalyser.getAnalysis();
         theState = pAnalyser.getState();
@@ -102,17 +106,13 @@ public class MoneyWiseXAnalysisTransAnalyser {
         theCurrency = theAnalysis.getCurrency();
 
         /* Create the security analyser */
-        theSecurity = new MoneyWiseXAnalysisSecurity(pAnalyser, this);
-        thePortfolioXfer = new MoneyWiseXAnalysisPortfolioXfer(pAnalyser, theSecurity);
+        theSecurity = new MoneyWiseXAnalyseSecurity(pAnalyser, this);
+        thePortfolioXfer = new MoneyWiseXAnalysePortfolioXfer(pAnalyser, theSecurity);
         theTax.declareSecurityAnalyser(theSecurity);
     }
 
-    /**
-     * Obtain the currency.
-     *
-     * @return the currency
-     */
-    MoneyWiseCurrency getCurrency() {
+    @Override
+    public MoneyWiseCurrency getCurrency() {
         return theCurrency;
     }
 
@@ -124,7 +124,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
      */
     public void processTransaction(final MoneyWiseXAnalysisEvent pEvent) throws OceanusException {
         /* Parse the event */
-        theTransaction = new MoneyWiseXAnalysisTransaction(pEvent);
+        theTransaction = new MoneyWiseXAnalyseTransaction(pEvent);
         final MoneyWiseTransaction myTrans = theTransaction.getTransaction();
 
         /* Ignore header transactions */
@@ -156,12 +156,12 @@ public class MoneyWiseXAnalysisTransAnalyser {
         final MoneyWiseTransAsset myCredit = theTransaction.getCreditAccount();
 
         /* If the event relates to a security holding account, split out the workings */
-        if (isSecurityHolding(myDebit)) {
+        if (MoneyWiseXAnalyseTransaction.isSecurityHolding(myDebit)) {
             /* Process as a Security transaction */
             theSecurity.processDebitSecurity(theTransaction);
 
             /* If the event relates to a security holding partner, split out the workings */
-        } else if (isSecurityHolding(myCredit)) {
+        } else if (MoneyWiseXAnalyseTransaction.isSecurityHolding(myCredit)) {
             /* Process as a Security transaction */
             theSecurity.processCreditSecurity(theTransaction);
 
@@ -247,13 +247,8 @@ public class MoneyWiseXAnalysisTransAnalyser {
         }
     }
 
-    /**
-     * process debit Asset.
-     *
-     * @param pDebit the debit asset
-     * @return the debitAmount in reporting currency
-     */
-    OceanusMoney processDebitAsset(final MoneyWiseAssetBase pDebit) {
+    @Override
+    public OceanusMoney processDebitAsset(final MoneyWiseAssetBase pDebit) {
         /* Adjust the debit asset bucket */
         final MoneyWiseXAnalysisAccountBucket<?> myBucket = getAccountBucket(pDebit);
         OceanusMoney myDebitAmount = theTransaction.getDebitAmount();
@@ -272,14 +267,8 @@ public class MoneyWiseXAnalysisTransAnalyser {
         return myDebitAmount;
     }
 
-
-    /**
-     * process credit Asset.
-     *
-     * @param pCredit the credit asset
-     * @return the creditAmount in reporting currency
-     */
-    OceanusMoney processCreditAsset(final MoneyWiseAssetBase pCredit) {
+    @Override
+    public OceanusMoney processCreditAsset(final MoneyWiseAssetBase pCredit) {
         /* Adjust the credit asset bucket */
         final MoneyWiseXAnalysisAccountBucket<?> myBucket = getAccountBucket(pCredit);
         OceanusMoney myCreditAmount = theTransaction.getCreditAmount();
@@ -415,12 +404,8 @@ public class MoneyWiseXAnalysisTransAnalyser {
         }
     }
 
-    /**
-     * process debit payee asset.
-     *
-     * @param pDebit the debit asset
-     */
-    void processDebitPayee(final MoneyWisePayee pDebit) {
+    @Override
+    public void processDebitPayee(final MoneyWisePayee pDebit) {
         /* Determine income/expense */
         final boolean isExpense = theTransaction.isExpenseCategory();
 
@@ -486,13 +471,8 @@ public class MoneyWiseXAnalysisTransAnalyser {
         theState.registerBucketInterest(myCatBucket);
     }
 
-    /**
-     * adjustForeignDebit.
-     *
-     * @param pExchangeRate the exchangeRate
-     * @return the adjusted debitAmount
-     */
-    OceanusMoney adjustForeignAssetDebit(final OceanusRatio pExchangeRate) {
+    @Override
+    public OceanusMoney adjustForeignAssetDebit(final OceanusRatio pExchangeRate) {
         /* Calculate the value in the local currency */
         OceanusMoney myAmount = theTransaction.getDebitAmount();
         myAmount = myAmount.convertCurrency(theCurrency.getCurrency(), pExchangeRate);
@@ -510,13 +490,8 @@ public class MoneyWiseXAnalysisTransAnalyser {
         return myAmount;
     }
 
-    /**
-     * adjustForeignCredit.
-     *
-     * @param pExchangeRate the exchangeRate
-     * @return the adjusted creditAmount
-     */
-    OceanusMoney adjustForeignAssetCredit(final OceanusRatio pExchangeRate) {
+    @Override
+    public OceanusMoney adjustForeignAssetCredit(final OceanusRatio pExchangeRate) {
         /* Calculate the value in the local currency */
         OceanusMoney myAmount = theTransaction.getCreditAmount();
         myAmount = myAmount.convertCurrency(theCurrency.getCurrency(), pExchangeRate);
@@ -534,13 +509,8 @@ public class MoneyWiseXAnalysisTransAnalyser {
         return myAmount;
     }
 
-    /**
-     * Obtain Account bucket for asset.
-     *
-     * @param pAsset the asset
-     * @return the bucket
-     */
-    MoneyWiseXAnalysisAccountBucket<?> getAccountBucket(final MoneyWiseAssetBase pAsset) {
+    @Override
+    public MoneyWiseXAnalysisAccountBucket<?> getAccountBucket(final MoneyWiseAssetBase pAsset) {
         return switch (pAsset.getAssetType()) {
             case DEPOSIT -> theAnalysis.getDeposits().getBucket((MoneyWiseDeposit) pAsset);
             case CASH -> theAnalysis.getCash().getBucket((MoneyWiseCash) pAsset);
@@ -563,13 +533,8 @@ public class MoneyWiseXAnalysisTransAnalyser {
         };
     }
 
-    /**
-     * is the account a payee?
-     *
-     * @param pAccount the account
-     * @return true/false
-     */
-    boolean isPayee(final MoneyWiseAssetBase pAccount) {
+    @Override
+    public boolean isPayee(final MoneyWiseAssetBase pAccount) {
         return pAccount.getAssetType() == MoneyWiseAssetType.PAYEE;
     }
 
@@ -581,26 +546,6 @@ public class MoneyWiseXAnalysisTransAnalyser {
      */
     private boolean isAutoExpense(final MoneyWiseAssetBase pAccount) {
         return pAccount.getAssetType() == MoneyWiseAssetType.AUTOEXPENSE;
-    }
-
-    /**
-     * is the account a securityHolding?
-     *
-     * @param pAccount the account
-     * @return true/false
-     */
-    static boolean isSecurityHolding(final MoneyWiseTransAsset pAccount) {
-        return pAccount instanceof MoneyWiseSecurityHolding;
-    }
-
-    /**
-     * is the account a securityHolding?
-     *
-     * @param pAccount the account
-     * @return true/false
-     */
-    static boolean isPortfolio(final MoneyWiseTransAsset pAccount) {
-        return pAccount instanceof MoneyWisePortfolio;
     }
 
     /**

@@ -16,7 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseMarketCtl;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
@@ -26,17 +27,19 @@ import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.Money
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.Currency;
 
 /**
  * Process NatInsurance.
  */
-public class MoneyWiseXAnalysisMarket {
+public class MoneyWiseXAnalyseMarket
+        implements MoneyWiseXAnalyseMarketCtl {
     /**
      * The analysis state.
      */
-    private final MoneyWiseXAnalysisState theState;
+    private final MoneyWiseXAnalyseState theState;
 
     /**
      * The market payee bucket.
@@ -83,7 +86,7 @@ public class MoneyWiseXAnalysisMarket {
      *
      * @param pAnalyser the analyser
      */
-    MoneyWiseXAnalysisMarket(final MoneyWiseXAnalysisEventAnalyser pAnalyser) {
+    MoneyWiseXAnalyseMarket(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser) {
         /* Store the state */
         theState = pAnalyser.getState();
 
@@ -105,14 +108,9 @@ public class MoneyWiseXAnalysisMarket {
         theMarketExpense = new OceanusMoney(myCurrency);
     }
 
-    /**
-     * Adjust totals for a marketGrowth Event.
-     *
-     * @param pEvent the event
-     * @param pDelta the delta
-     */
-    void adjustTotalsForMarketGrowth(final MoneyWiseXAnalysisEvent pEvent,
-                                     final OceanusMoney pDelta) {
+    @Override
+    public void adjustTotalsForMarketGrowth(final MoneyWiseXAnalysisEvent pEvent,
+                                            final OceanusMoney pDelta) {
         /* Adjust marketGrowth for delta */
         theMarketGrowthBucket.adjustForDelta(pDelta);
         if (!isGrowth) {
@@ -128,14 +126,9 @@ public class MoneyWiseXAnalysisMarket {
         }
     }
 
-    /**
-     * Adjust totals for a currencyFluctuation Event.
-     *
-     * @param pEvent the event
-     * @param pDelta the delta
-     */
-    void adjustTotalsForCurrencyFluctuation(final MoneyWiseXAnalysisEvent pEvent,
-                                            final OceanusMoney pDelta) {
+    @Override
+    public void adjustTotalsForCurrencyFluctuation(final MoneyWiseXAnalysisEvent pEvent,
+                                                   final OceanusMoney pDelta) {
         /* Adjust currencyFluctuation for delta */
         theCurrencyFluctuationBucket.adjustForDelta(pDelta);
         if (!isFluctuation) {
@@ -151,12 +144,8 @@ public class MoneyWiseXAnalysisMarket {
         }
     }
 
-    /**
-     * Adjust market totals.
-     *
-     * @param pEvent the event
-     */
-    void adjustMarketTotals(final MoneyWiseXAnalysisEvent pEvent) {
+    @Override
+    public void adjustMarketTotals(final MoneyWiseXAnalysisEvent pEvent) {
         /* If we are active */
         if (isGrowth || isFluctuation) {
             /* Adjust marketTotals */
@@ -177,12 +166,8 @@ public class MoneyWiseXAnalysisMarket {
         }
     }
 
-    /**
-     * Adjust for standard gains.
-     *
-     * @param pGains the gains amount
-     */
-    void adjustForGains(final OceanusMoney pGains) {
+    @Override
+    public void adjustForGains(final OceanusMoney pGains) {
         if (pGains.isPositive()) {
             theMarketBucket.addIncome(pGains);
         } else {

@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseNewDepositRate;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseNewDepositRate.MoneyWiseNewDepositRateList;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
@@ -43,6 +38,11 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ import java.util.Map;
 /**
  * Analysis Cursor.
  */
-public class MoneyWiseXAnalysisState
+public class MoneyWiseXAnalyseState
         implements MoneyWiseXAnalysisCursor {
     /**
      * The securityPrice iterator.
@@ -157,7 +157,7 @@ public class MoneyWiseXAnalysisState
      *
      * @param pEditSet the editSet
      */
-    public MoneyWiseXAnalysisState(final PrometheusEditSet pEditSet) {
+    public MoneyWiseXAnalyseState(final PrometheusEditSet pEditSet) {
         /* Store parameters */
         theEditSet = pEditSet;
         theEvents = new MoneyWiseXAnalysisEventList(theEditSet);

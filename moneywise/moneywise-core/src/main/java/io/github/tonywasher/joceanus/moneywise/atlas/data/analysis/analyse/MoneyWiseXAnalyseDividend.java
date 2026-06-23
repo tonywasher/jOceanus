@@ -16,6 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseSecurityCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransCtl;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -33,7 +37,7 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 /**
  * Dividend Analysis.
  */
-public class MoneyWiseXAnalysisDividend {
+public class MoneyWiseXAnalyseDividend {
     /**
      * The portfolioBuckets.
      */
@@ -42,17 +46,17 @@ public class MoneyWiseXAnalysisDividend {
     /**
      * The analysis state.
      */
-    private final MoneyWiseXAnalysisState theState;
+    private final MoneyWiseXAnalyseState theState;
 
     /**
      * The transAnalyser.
      */
-    private final MoneyWiseXAnalysisTransAnalyser theTransAnalyser;
+    private final MoneyWiseXAnalyseTransAnalyserCtl theTransAnalyser;
 
     /**
      * The securityAnalyser.
      */
-    private final MoneyWiseXAnalysisSecurity theSecurity;
+    private final MoneyWiseXAnalyseSecurityCtl theSecurity;
 
     /**
      * Constructor.
@@ -60,8 +64,8 @@ public class MoneyWiseXAnalysisDividend {
      * @param pAnalyser the event analyser
      * @param pSecurity the securityAnalyser
      */
-    MoneyWiseXAnalysisDividend(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
-                               final MoneyWiseXAnalysisSecurity pSecurity) {
+    MoneyWiseXAnalyseDividend(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser,
+                              final MoneyWiseXAnalyseSecurityCtl pSecurity) {
         final MoneyWiseXAnalysis myAnalysis = pAnalyser.getAnalysis();
         thePortfolios = myAnalysis.getPortfolios();
         theState = pAnalyser.getState();
@@ -74,7 +78,7 @@ public class MoneyWiseXAnalysisDividend {
      *
      * @param pTrans the transaction
      */
-    void processDividend(final MoneyWiseXAnalysisTransaction pTrans) {
+    void processDividend(final MoneyWiseXAnalyseTransCtl pTrans) {
         /* Adjust the parent for the transaction */
         pTrans.adjustParent();
 

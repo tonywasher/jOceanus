@@ -16,15 +16,15 @@
  */
 package io.github.tonywasher.joceanus.moneywise.test.data.storage;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.moneywise.archive.MoneyWiseArchiveLoader;
-import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisBuilder;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyseBuilder;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.analyse.MoneyWiseAnalysisBuilder;
 import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
@@ -127,7 +127,7 @@ public class MoneyWiseDataTestArchiveFile {
         myDataSet.reBase(theManager, myNullData);
 
         /* Create the analysis builder */
-        final MoneyWiseXAnalysisBuilder myBuilder = new MoneyWiseXAnalysisBuilder(pView);
+        final MoneyWiseXAnalyseBuilder myBuilder = new MoneyWiseXAnalyseBuilder(pView);
         return myBuilder.analyseNewData(myDataSet);
     }
 }

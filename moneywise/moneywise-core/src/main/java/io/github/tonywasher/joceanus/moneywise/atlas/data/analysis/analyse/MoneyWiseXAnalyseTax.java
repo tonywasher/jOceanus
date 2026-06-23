@@ -16,6 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseSecurityCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTaxCtl;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransCtl;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisCursor;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
@@ -38,7 +42,8 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 /**
  * Tax Analysis.
  */
-public class MoneyWiseXAnalysisTax {
+public class MoneyWiseXAnalyseTax
+        implements MoneyWiseXAnalyseTaxCtl {
     /**
      * The analysis.
      */
@@ -47,7 +52,7 @@ public class MoneyWiseXAnalysisTax {
     /**
      * The analysis state.
      */
-    private final MoneyWiseXAnalysisState theState;
+    private final MoneyWiseXAnalyseState theState;
 
     /**
      * The taxMan account.
@@ -107,12 +112,12 @@ public class MoneyWiseXAnalysisTax {
     /**
      * The XferIn analyser.
      */
-    private MoneyWiseXAnalysisXferIn theXferIn;
+    private MoneyWiseXAnalyseXferIn theXferIn;
 
     /**
      * Currently active Transaction.
      */
-    private MoneyWiseXAnalysisTransaction theTransaction;
+    private MoneyWiseXAnalyseTransaction theTransaction;
 
     /**
      * Currently active Payee Bucket.
@@ -139,7 +144,7 @@ public class MoneyWiseXAnalysisTax {
      *
      * @param pAnalyser the analyser
      */
-    MoneyWiseXAnalysisTax(final MoneyWiseXAnalysisEventAnalyser pAnalyser) {
+    MoneyWiseXAnalyseTax(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser) {
         /* Store the state */
         theAnalysis = pAnalyser.getAnalysis();
         theState = pAnalyser.getState();
@@ -164,23 +169,16 @@ public class MoneyWiseXAnalysisTax {
         theVirtualTax = myBases.getBucket(MoneyWiseTaxClass.VIRTUAL);
     }
 
-    /**
-     * Declare the Security analyser.
-     *
-     * @param pSecurity the securityAnalyser
-     */
-    void declareSecurityAnalyser(final MoneyWiseXAnalysisSecurity pSecurity) {
-        theXferIn = pSecurity.getXferInAnalyser();
+    @Override
+    public void declareSecurityAnalyser(final MoneyWiseXAnalyseSecurityCtl pSecurity) {
+        theXferIn = ((MoneyWiseXAnalyseSecurity) pSecurity).getXferInAnalyser();
     }
 
-    /**
-     * Adjust basis buckets.
-     *
-     * @param pTrans the transaction
-     */
-    void adjustTaxBasis(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
+    @Override
+    public void adjustTaxBasis(final MoneyWiseXAnalyseTransCtl pTrans) throws OceanusException {
         /* Record the transaction */
-        recordTransaction(pTrans);
+        final MoneyWiseXAnalyseTransaction myTrans = (MoneyWiseXAnalyseTransaction) pTrans;
+        recordTransaction(myTrans);
 
         /* If this is not a transfer */
         if (theTaxBucket != null) {
@@ -188,7 +186,7 @@ public class MoneyWiseXAnalysisTax {
             adjustForAdditionalTax();
 
             /* Adjust the Gross and Nett values */
-            final MoneyWiseXAnalysisTaxBasisBaseBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, pTrans.getTransactionValue());
+            final MoneyWiseXAnalysisTaxBasisBaseBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myTrans.getTransactionValue());
             theState.registerBucketInterest(theTaxBucket);
             if (myAccBucket != null) {
                 theState.registerBucketInterest(myAccBucket);
@@ -199,21 +197,13 @@ public class MoneyWiseXAnalysisTax {
         thePayeeBucket = null;
     }
 
-    /**
-     * Record active payee bucket.
-     *
-     * @param pPayee the payee bucket
-     */
-    void recordPayeeBucket(final MoneyWiseXAnalysisPayeeBucket pPayee) {
+    @Override
+    public void recordPayeeBucket(final MoneyWiseXAnalysisPayeeBucket pPayee) {
         thePayeeBucket = pPayee;
     }
 
-    /**
-     * Process an autoExpense amount.
-     *
-     * @param pAmount the amount
-     */
-    void processAutoExpense(final OceanusMoney pAmount) {
+    @Override
+    public void processAutoExpense(final OceanusMoney pAmount) {
         /* Adjust the expense taxBasis by amount */
         theExpenseTax.adjustGrossAndNett(pAmount);
         theState.registerBucketInterest(theExpenseTax);
@@ -661,7 +651,7 @@ public class MoneyWiseXAnalysisTax {
      * @param pTrans the transaction
      * @throws OceanusException on error
      */
-    private void recordTransaction(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
+    private void recordTransaction(final MoneyWiseXAnalyseTransaction pTrans) throws OceanusException {
         /* Determine the taxBucket */
         theTaxBucket = determineTaxBasicBucket(pTrans);
 
@@ -681,7 +671,7 @@ public class MoneyWiseXAnalysisTax {
      * @return the taxBasis bucket
      * @throws OceanusException on error
      */
-    private MoneyWiseXAnalysisTaxBasisBucket determineTaxBasicBucket(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
+    private MoneyWiseXAnalysisTaxBasisBucket determineTaxBasicBucket(final MoneyWiseXAnalyseTransaction pTrans) throws OceanusException {
         final MoneyWiseTaxClass myClass = determineTaxClass(pTrans);
         return myClass == null ? null : theAnalysis.getTaxBasis().getBucket(myClass);
     }
@@ -693,7 +683,7 @@ public class MoneyWiseXAnalysisTax {
      * @return the taxClass
      * @throws OceanusException on error
      */
-    private MoneyWiseTaxClass determineTaxClass(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
+    private MoneyWiseTaxClass determineTaxClass(final MoneyWiseXAnalyseTransaction pTrans) throws OceanusException {
         /* Switch on the category type */
         return switch (pTrans.getCategoryClass()) {
             case TAXEDINCOME, GROSSINCOME -> MoneyWiseTaxClass.SALARY;
