@@ -1,0 +1,178 @@
+/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.analysis.atlas.analyse;
+
+import io.github.tonywasher.joceanus.moneywise.analysis.atlas.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseEventAnalyserCtl;
+import io.github.tonywasher.joceanus.moneywise.analysis.atlas.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseMarketCtl;
+import io.github.tonywasher.joceanus.moneywise.analysis.atlas.base.MoneyWiseXAnalysisEvent;
+import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysis;
+import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysisPayeeBucket;
+import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysisTaxBasisBucket;
+import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysisTransCategoryBucket;
+import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysisTransCategoryBucket.MoneyWiseXAnalysisTransCategoryBucketList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+
+import java.util.Currency;
+
+/**
+ * Process NatInsurance.
+ */
+public class MoneyWiseXAnalyseMarket
+        implements MoneyWiseXAnalyseMarketCtl {
+    /**
+     * The analysis state.
+     */
+    private final MoneyWiseXAnalyseState theState;
+
+    /**
+     * The market payee bucket.
+     */
+    private final MoneyWiseXAnalysisPayeeBucket theMarketBucket;
+
+    /**
+     * The market growth category bucket.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theMarketGrowthBucket;
+
+    /**
+     * The currency fluctuation category bucket.
+     */
+    private final MoneyWiseXAnalysisTransCategoryBucket theCurrencyFluctuationBucket;
+
+    /**
+     * The market tax basis bucket.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucket theTaxBasisBucket;
+
+    /**
+     * The market income.
+     */
+    private final OceanusMoney theMarketIncome;
+
+    /**
+     * The market expense.
+     */
+    private final OceanusMoney theMarketExpense;
+
+    /**
+     * Is there currency fluctuation?
+     */
+    private boolean isFluctuation;
+
+    /**
+     * Is there growth?
+     */
+    private boolean isGrowth;
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalyser the analyser
+     */
+    MoneyWiseXAnalyseMarket(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser) {
+        /* Store the state */
+        theState = pAnalyser.getState();
+
+        /* Obtain the market bucket */
+        final MoneyWiseXAnalysis myAnalysis = pAnalyser.getAnalysis();
+        theMarketBucket = myAnalysis.getPayees().getBucket(MoneyWisePayeeClass.MARKET);
+
+        /* Obtain the category buckets */
+        final MoneyWiseXAnalysisTransCategoryBucketList myCategories = myAnalysis.getTransCategories();
+        theCurrencyFluctuationBucket = myCategories.getBucket(MoneyWiseTransCategoryClass.CURRENCYFLUCTUATION);
+        theMarketGrowthBucket = myCategories.getBucket(MoneyWiseTransCategoryClass.MARKETGROWTH);
+
+        /* Obtain the tax basis bucket */
+        theTaxBasisBucket = myAnalysis.getTaxBasis().getBucket(MoneyWiseTaxClass.MARKET);
+
+        /* Allocate the market counters */
+        final Currency myCurrency = myAnalysis.getCurrency().getCurrency();
+        theMarketIncome = new OceanusMoney(myCurrency);
+        theMarketExpense = new OceanusMoney(myCurrency);
+    }
+
+    @Override
+    public void adjustTotalsForMarketGrowth(final MoneyWiseXAnalysisEvent pEvent,
+                                            final OceanusMoney pDelta) {
+        /* Adjust marketGrowth for delta */
+        theMarketGrowthBucket.adjustForDelta(pDelta);
+        if (!isGrowth) {
+            theState.registerBucketInterest(theMarketGrowthBucket);
+            isGrowth = true;
+        }
+
+        /* Adjust income expense */
+        if (pDelta.isPositive()) {
+            theMarketIncome.addAmount(pDelta);
+        } else {
+            theMarketExpense.subtractAmount(pDelta);
+        }
+    }
+
+    @Override
+    public void adjustTotalsForCurrencyFluctuation(final MoneyWiseXAnalysisEvent pEvent,
+                                                   final OceanusMoney pDelta) {
+        /* Adjust currencyFluctuation for delta */
+        theCurrencyFluctuationBucket.adjustForDelta(pDelta);
+        if (!isFluctuation) {
+            theState.registerBucketInterest(theCurrencyFluctuationBucket);
+            isFluctuation = true;
+        }
+
+        /* Adjust income expense */
+        if (pDelta.isPositive()) {
+            theMarketIncome.addAmount(pDelta);
+        } else {
+            theMarketExpense.subtractAmount(pDelta);
+        }
+    }
+
+    @Override
+    public void adjustMarketTotals(final MoneyWiseXAnalysisEvent pEvent) {
+        /* If we are active */
+        if (isGrowth || isFluctuation) {
+            /* Adjust marketTotals */
+            theMarketBucket.addIncome(theMarketIncome);
+            theMarketBucket.addExpense(theMarketExpense);
+            theState.registerBucketInterest(theMarketBucket);
+
+            /* Adjust taxBasisTotals */
+            theMarketIncome.subtractAmount(theMarketExpense);
+            theTaxBasisBucket.adjustGrossAndNett(theMarketIncome);
+            theState.registerBucketInterest(theTaxBasisBucket);
+
+            /* Reset totals */
+            theMarketIncome.setZero();
+            theMarketExpense.setZero();
+            isGrowth = false;
+            isFluctuation = false;
+        }
+    }
+
+    @Override
+    public void adjustForGains(final OceanusMoney pGains) {
+        if (pGains.isPositive()) {
+            theMarketBucket.addIncome(pGains);
+        } else {
+            theMarketBucket.subtractExpense(pGains);
+        }
+        theState.registerBucketInterest(theMarketBucket);
+    }
+}

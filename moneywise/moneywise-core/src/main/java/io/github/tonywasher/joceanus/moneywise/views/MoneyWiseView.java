@@ -17,14 +17,14 @@
 package io.github.tonywasher.joceanus.moneywise.views;
 
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
+import io.github.tonywasher.joceanus.moneywise.analysis.lethe.analyse.MoneyWiseAnalysisTransAnalyser;
+import io.github.tonywasher.joceanus.moneywise.analysis.lethe.data.MoneyWiseAnalysis;
+import io.github.tonywasher.joceanus.moneywise.analysis.lethe.data.MoneyWiseAnalysisManager;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.validate.MoneyWiseValidatorFactory;
 import io.github.tonywasher.joceanus.moneywise.database.MoneyWiseDataStore;
-import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.analyse.MoneyWiseAnalysisTransAnalyser;
-import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
-import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
 import io.github.tonywasher.joceanus.moneywise.sheets.MoneyWiseSheet;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
