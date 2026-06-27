@@ -22,52 +22,82 @@ package io.github.tonywasher.joceanus.gordianknot.api.keypair.spec;
  */
 public enum GordianCMCESpec {
     /**
-     * Base 3488.
-     */
-    BASE3488,
-
-    /**
-     * Pivot 3488.
-     */
-    PIVOT3488,
-
-    /**
      * Base 4608.
      */
-    BASE4608,
+    CMCE4608,
 
     /**
-     * Pivot 4608.
+     * F 4608.
      */
-    PIVOT4608,
+    CMCE4608F,
+
+    /**
+     * PC 4608.
+     */
+    CMCE4608PC,
+
+    /**
+     * PCF 4608.
+     */
+    CMCE4608PCF,
 
     /**
      * Base 6688.
      */
-    BASE6688,
+    CMCE6688,
 
     /**
-     * Pivot 6688.
+     * F 6688.
      */
-    PIVOT6688,
+    CMCE6688F,
+
+    /**
+     * PC 6688.
+     */
+    CMCE6688PC,
+
+    /**
+     * PCF 6688.
+     */
+    CMCE6688PCF,
 
     /**
      * Base 6960.
      */
-    BASE6960,
+    CMCE6960,
 
     /**
-     * Pivot 6960.
+     * F 6960.
      */
-    PIVOT6960,
+    CMCE6960F,
+
+    /**
+     * PC 6960.
+     */
+    CMCE6960PC,
+
+    /**
+     * PCF 6960.
+     */
+    CMCE6960PCF,
 
     /**
      * Base 8192.
      */
-    BASE8192,
+    CMCE8192,
 
     /**
-     * Pivot 8192.
+     * F 8192.
      */
-    PIVOT8192;
+    CMCE8192F,
+
+    /**
+     * PC 8192.
+     */
+    CMCE8192PC,
+
+    /**
+     * PCF 8192.
+     */
+    CMCE8192PCF;
 }

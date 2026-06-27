@@ -22,7 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPair
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
-import org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec;
+import org.bouncycastle.jcajce.spec.CMCEParameterSpec;
 
 import java.security.InvalidAlgorithmParameterException;
 
@@ -51,7 +51,7 @@ public class JcaCMCEKeyPairGenerator
         /* Protect against exceptions */
         try {
             /* Create and initialize the generator */
-            createFactories(CMCE_ALGO, true);
+            createFactories(CMCE_ALGO, false);
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
             final CMCEParameterSpec myParms = myKeySpec.getCMCESpec().getParameterSpec();
             getGenerator().initialize(myParms, getRandom());
