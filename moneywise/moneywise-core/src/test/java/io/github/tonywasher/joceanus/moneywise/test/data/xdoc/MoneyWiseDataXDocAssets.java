@@ -16,15 +16,14 @@
  */
 package io.github.tonywasher.joceanus.moneywise.test.data.xdoc;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.base.MoneyWiseXAnalysisEventList;
-import io.github.tonywasher.joceanus.moneywise.analysis.atlas.base.MoneyWiseXAnalysisEventType;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.values.MoneyWiseXAnalysisAccountAttr;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.values.MoneyWiseXAnalysisSecurityAttr;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
 import io.github.tonywasher.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -129,12 +128,8 @@ public class MoneyWiseDataXDocAssets {
             final MoneyWiseXAnalysisEvent myEvent = myEvtIterator.next();
 
             /* Only process events/prices/XchgRates/openingBalance */
-            final MoneyWiseXAnalysisEventType myType = myEvent.getEventType();
             switch (myEvent.getEventType()) {
-                case SECURITYPRICE:
-                case XCHANGERATE:
-                case TRANSACTION:
-                case OPENINGBALANCE:
+                case SECURITYPRICE, XCHANGERATE, TRANSACTION, OPENINGBALANCE:
                     break;
                 default:
                     continue;

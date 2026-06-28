@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.moneywise.views;
 
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
+import io.github.tonywasher.joceanus.moneywise.analysis.atlas.analyse.MoneyWiseXAnalyseManager;
 import io.github.tonywasher.joceanus.moneywise.analysis.lethe.analyse.MoneyWiseAnalysisTransAnalyser;
 import io.github.tonywasher.joceanus.moneywise.analysis.lethe.data.MoneyWiseAnalysis;
 import io.github.tonywasher.joceanus.moneywise.analysis.lethe.data.MoneyWiseAnalysisManager;
@@ -64,6 +65,11 @@ public class MoneyWiseView
      * The analysis manager.
      */
     private MoneyWiseAnalysisManager theAnalysisMgr;
+
+    /**
+     * The new Analysis manager.
+     */
+    private MoneyWiseXAnalyseManager theNewAnalysisMgr;
 
     /**
      * Do we have security buckets?.
@@ -259,6 +265,15 @@ public class MoneyWiseView
             /* Derive the update Set */
             myTask.startTask("deriveUpdates");
             deriveUpdates();
+
+            /* If we have non-empty data */
+            if (!theData.isEmpty()) {
+                /* Create the new Analysis */
+                myTask.startTask("analyseNewData");
+                //final MoneyWiseXAnalyseBuilder myBuilder = new MoneyWiseXAnalyseBuilder(this);
+                // final MoneyWiseXAnalysis myNewAnalysis = myBuilder.analyseNewData(theData);
+                // theNewAnalysisMgr = new MoneyWiseXAnalyseManager(myNewAnalysis);
+            }
 
             /* Catch any exceptions */
         } catch (OceanusException e) {

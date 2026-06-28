@@ -33,7 +33,6 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
-import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferenceKey;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferences;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
@@ -305,8 +304,8 @@ public class MoneyWiseXQIFFile
                                                  final MoneyWiseXAnalysis pAnalysis,
                                                  final MoneyWiseQIFPreferences pPreferences) {
         /* Access preference details */
-        final MoneyWiseQIFType myType = pPreferences.getEnumValue(MoneyWiseQIFPreferenceKey.QIFTYPE, MoneyWiseQIFType.class);
-        final OceanusDate myLastDate = pPreferences.getDateValue(MoneyWiseQIFPreferenceKey.LASTEVENT);
+        final MoneyWiseQIFType myType = MoneyWiseQIFType.MONEYDANCE; //.getEnumValue(MoneyWiseQIFPreferenceKey.QIFTYPE, MoneyWiseQIFType.class);
+        final OceanusDate myLastDate = null; //pPreferences.getDateValue(MoneyWiseQIFPreferenceKey.LASTEVENT);
 
         /* Create new QIF File */
         final MoneyWiseXQIFFile myFile = new MoneyWiseXQIFFile(myType);
@@ -625,7 +624,7 @@ public class MoneyWiseXQIFFile
 
             /* Break loop if the event is too late */
             final OceanusDate myDate = myEvent.getDate();
-            if (myDate.compareTo(pLastDate) > 0) {
+            if (pLastDate != null && myDate.compareTo(pLastDate) > 0) {
                 break;
             }
 

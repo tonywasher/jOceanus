@@ -82,15 +82,10 @@ public enum MoneyWiseQIFType {
      * @return true/false
      */
     public boolean useConsolidatedFile() {
-        switch (this) {
-            case ACEMONEY:
-            case GNUCASH:
-            case MONEYDANCE:
-            case QUICKEN:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case ACEMONEY, GNUCASH, MONEYDANCE, QUICKEN -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -102,15 +97,25 @@ public enum MoneyWiseQIFType {
      * @return true/false
      */
     public boolean useSimpleTransfer() {
-        switch (this) {
-            case GNUCASH:
-            case MONEYDANCE:
-            case QUICKEN:
-                return true;
-            case ACEMONEY:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case GNUCASH, MONEYDANCE, QUICKEN -> true;
+            default -> false;
+        };
+    }
+
+    /**
+     * Should we hide balancing split transfers?
+     * <p>
+     * This is required for those programs who fail to recognise balancing transfers when one side
+     * forms a split transaction.
+     *
+     * @return true/false
+     */
+    public boolean hideCurrencyDebitTransfer() {
+        return switch (this) {
+            case QUICKEN, MONEYDANCE -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -122,15 +127,10 @@ public enum MoneyWiseQIFType {
      * @return true/false
      */
     public boolean hideBalancingSplitTransfer() {
-        switch (this) {
-            case ACEMONEY:
-            case GNUCASH:
-            case MONEYDANCE:
-                return true;
-            case QUICKEN:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case ACEMONEY, GNUCASH, MONEYDANCE -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -142,15 +142,7 @@ public enum MoneyWiseQIFType {
      * @return true/false
      */
     public boolean selfOpeningBalance() {
-        switch (this) {
-            case ACEMONEY:
-                return false;
-            case GNUCASH:
-            case MONEYDANCE:
-            case QUICKEN:
-            default:
-                return true;
-        }
+        return this == ACEMONEY;
     }
 
     /**
@@ -163,15 +155,7 @@ public enum MoneyWiseQIFType {
      * @return true/false
      */
     public boolean useInvestmentHolding4Category() {
-        switch (this) {
-            case ACEMONEY:
-                return true;
-            case GNUCASH:
-            case MONEYDANCE:
-            case QUICKEN:
-            default:
-                return false;
-        }
+        return this == ACEMONEY;
     }
 
     /**
@@ -179,20 +163,12 @@ public enum MoneyWiseQIFType {
      * <p>
      * The Tax Credit for a re-invested dividend must be extracted from the security using MiscInc.
      * Ideally we use MiscIncX to directly assign the value to the TaxCredit category. This is not
-     * always available and instead we must use MiscInc and then either Cash or the holding account
+     * always available so instead we must use MiscInc and then either Cash or the holding account
      *
      * @return true/false
      */
     public boolean useMiscIncX4TaxCredit() {
-        switch (this) {
-            case QUICKEN:
-                return true;
-            case GNUCASH:
-            case MONEYDANCE:
-            case ACEMONEY:
-            default:
-                return false;
-        }
+        return this == QUICKEN;
     }
 
     /**
@@ -204,15 +180,7 @@ public enum MoneyWiseQIFType {
      * @return true/false
      */
     public boolean useStockSplit() {
-        switch (this) {
-            case ACEMONEY:
-                return false;
-            case GNUCASH:
-            case MONEYDANCE:
-            case QUICKEN:
-            default:
-                return true;
-        }
+        return this != ACEMONEY;
     }
 
     /**
@@ -224,15 +192,7 @@ public enum MoneyWiseQIFType {
      * @return true/false
      */
     public boolean canTradeZeroShares() {
-        switch (this) {
-            case ACEMONEY:
-                return false;
-            case GNUCASH:
-            case MONEYDANCE:
-            case QUICKEN:
-            default:
-                return true;
-        }
+        return this != ACEMONEY;
     }
 
     /**
@@ -244,15 +204,7 @@ public enum MoneyWiseQIFType {
      * @return true/false
      */
     public boolean canReturnCapital() {
-        switch (this) {
-            case ACEMONEY:
-            case GNUCASH:
-            case MONEYDANCE:
-                return false;
-            case QUICKEN:
-            default:
-                return true;
-        }
+        return this == QUICKEN;
     }
 
     /**
@@ -265,15 +217,7 @@ public enum MoneyWiseQIFType {
      * @return true/false
      */
     public boolean canXferPortfolio() {
-        switch (this) {
-            case ACEMONEY:
-                return false;
-            case GNUCASH:
-            case MONEYDANCE:
-            case QUICKEN:
-            default:
-                return true;
-        }
+        return this != ACEMONEY;
     }
 
     /**
@@ -285,15 +229,10 @@ public enum MoneyWiseQIFType {
      * @return true/false
      */
     public boolean escapePrices() {
-        switch (this) {
-            case GNUCASH:
-            case QUICKEN:
-                return false;
-            case MONEYDANCE:
-            case ACEMONEY:
-            default:
-                return true;
-        }
+        return switch (this) {
+            case GNUCASH, QUICKEN -> false;
+            default -> true;
+        };
     }
 
     /**
@@ -302,14 +241,7 @@ public enum MoneyWiseQIFType {
      * @return the date string
      */
     public String getDateFormat() {
-        switch (this) {
-            case QUICKEN:
-            case GNUCASH:
-            case ACEMONEY:
-            case MONEYDANCE:
-            default:
-                return QIF_DATEFORMAT;
-        }
+        return QIF_DATEFORMAT;
     }
 
     /**
@@ -318,17 +250,9 @@ public enum MoneyWiseQIFType {
      * @return the file name
      */
     public String getFileName() {
-        switch (this) {
-            case ACEMONEY:
-                return "all accounts"
-                        + QIF_SUFFIX;
-            case GNUCASH:
-            case MONEYDANCE:
-            case QUICKEN:
-            default:
-                return toString()
-                        + QIF_SUFFIX;
-        }
+        return this == ACEMONEY
+                ? "all accounts" + QIF_SUFFIX
+                : this + QIF_SUFFIX;
     }
 
     /**
@@ -337,14 +261,9 @@ public enum MoneyWiseQIFType {
      * @return true/false
      */
     public boolean useStandardAssets() {
-        switch (this) {
-            case ACEMONEY:
-            case MONEYDANCE:
-                return true;
-            case GNUCASH:
-            case QUICKEN:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case ACEMONEY, MONEYDANCE -> true;
+            default -> false;
+        };
     }
 }

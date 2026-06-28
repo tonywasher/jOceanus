@@ -651,8 +651,25 @@ public class MoneyWiseXQIFBuilder
     protected void processStandardTransfer(final MoneyWiseTransAsset pDebit,
                                            final MoneyWiseTransAsset pCredit,
                                            final MoneyWiseXAnalysisEvent pTrans) {
-        /* Access details */
-        final OceanusMoney myAmount = pTrans.getAmount();
+        /* Determine credit and debit amounts allowing for differing currencies */
+        final boolean isFrom = pTrans.getDirection().isFrom();
+        boolean isCurrencyXfer = false;
+        OceanusMoney myDebitAmount = pTrans.getAmount();
+        OceanusMoney myCreditAmount = pTrans.getPartnerAmount();
+        if (myCreditAmount != null) {
+            /* If we have a transfer between currencies */
+            isCurrencyXfer = true;
+
+            /* Ensure correct credit/debit amounts */
+            if (isFrom) {
+                myDebitAmount = myCreditAmount;
+                myCreditAmount = pTrans.getAmount();
+            }
+
+            /* else credit amount is same as debit amount */
+        } else {
+            myCreditAmount = myDebitAmount;
+        }
 
         /* Access the Account details */
         final MoneyWiseXQIFAccountEvents myDebitAccount = theRegister.registerAccount(pDebit);
@@ -661,31 +678,44 @@ public class MoneyWiseXQIFBuilder
         /* Obtain classes */
         final List<MoneyWiseXQIFClass> myList = getTransactionClasses(pTrans);
 
-        /* Create a new event */
+        /* Deteremine whether we hide the debit transfer */
+        final boolean hideDebitXfer = isCurrencyXfer && theFileType.hideCurrencyDebitTransfer();
+
+        /* Determine the transactionID */
+        final String myTranID = hideDebitXfer
+                ? "AMT=" + myDebitAmount
+                : "TRN" + pTrans.getIndexedId();
+
+        /* Negate the debit amount */
+        myDebitAmount = new OceanusMoney(myDebitAmount);
+        myDebitAmount.negate();
+
+        /* Create a new credit event */
         MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-        myEvent.recordAmount(myAmount);
+        myEvent.recordAmount(myCreditAmount);
         myEvent.recordAccount(myDebitAccount.getAccount(), myList);
 
         /* Build payee description */
         myEvent.recordPayee(buildXferFromPayee(pDebit));
+        myEvent.recordComment(myTranID);
 
         /* Add event to event list */
         myCreditAccount.addEvent(myEvent);
 
-        /* Build out amount */
-        final OceanusMoney myOutAmount = new OceanusMoney(myAmount);
-        myOutAmount.negate();
+        /* If we are not changing currencies or can handle matching transfers */
+        if (!isCurrencyXfer || !theFileType.hideCurrencyDebitTransfer()) {
+            /* Create a new event */
+            myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
+            myEvent.recordAmount(myDebitAmount);
+            myEvent.recordAccount(myCreditAccount.getAccount(), myList);
 
-        /* Create a new event */
-        myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-        myEvent.recordAmount(myOutAmount);
-        myEvent.recordAccount(myCreditAccount.getAccount(), myList);
+            /* Build payee description */
+            myEvent.recordPayee(buildXferToPayee(pCredit));
+            myEvent.recordComment(myTranID);
 
-        /* Build payee description */
-        myEvent.recordPayee(buildXferToPayee(pCredit));
-
-        /* Add event to event list */
-        myDebitAccount.addEvent(myEvent);
+            /* Add event to event list */
+            myDebitAccount.addEvent(myEvent);
+        }
     }
 
     @Override

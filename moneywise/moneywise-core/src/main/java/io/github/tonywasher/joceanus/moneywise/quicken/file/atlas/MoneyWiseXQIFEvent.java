@@ -408,7 +408,7 @@ public class MoneyWiseXQIFEvent
      *
      * @param pComment the comment
      */
-    private void recordComment(final String pComment) {
+    void recordComment(final String pComment) {
         /* Add comment line */
         addLine(new MoneyWiseXQIFEventCommentLine(pComment));
     }
