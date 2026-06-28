@@ -152,6 +152,11 @@ public enum GordianKeyPairType {
     NEWHOPE,
 
     /**
+     * AIMer.
+     */
+    AIMER,
+
+    /**
      * Faest.
      */
     FAEST,

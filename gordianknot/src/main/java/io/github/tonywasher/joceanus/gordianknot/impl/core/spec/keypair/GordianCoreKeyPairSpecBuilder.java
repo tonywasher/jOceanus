@@ -18,6 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianAIMerSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianBIKESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianCMCESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDHSpec;
@@ -254,6 +255,7 @@ public final class GordianCoreKeyPairSpecBuilder
         EnumSet.allOf(GordianNTRUSpec.class).forEach(t -> mySpecs.add(myBuilder.ntru(t)));
         EnumSet.allOf(GordianNTRUPlusSpec.class).forEach(t -> mySpecs.add(myBuilder.ntruPlus(t)));
         EnumSet.allOf(GordianFalconSpec.class).forEach(t -> mySpecs.add(myBuilder.falcon(t)));
+        EnumSet.allOf(GordianAIMerSpec.class).forEach(t -> mySpecs.add(myBuilder.aimer(t)));
         EnumSet.allOf(GordianFaestSpec.class).forEach(t -> mySpecs.add(myBuilder.faest(t)));
         EnumSet.allOf(GordianHAETAESpec.class).forEach(t -> mySpecs.add(myBuilder.haetae(t)));
         EnumSet.allOf(GordianHawkSpec.class).forEach(t -> mySpecs.add(myBuilder.hawk(t)));

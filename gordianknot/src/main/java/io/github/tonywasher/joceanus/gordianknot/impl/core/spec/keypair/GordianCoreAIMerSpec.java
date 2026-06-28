@@ -17,52 +17,52 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianBIKESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianAIMerSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
-import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
-import org.bouncycastle.pqc.legacy.bike.BIKEParameters;
+import org.bouncycastle.pqc.crypto.aimer.AIMerParameters;
+import org.bouncycastle.pqc.jcajce.spec.AIMerParameterSpec;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * BIKE Core Spec.
+ * AIMer Core Spec.
  */
-public final class GordianCoreBIKESpec
-        implements GordianCoreKeyPairIdSpec<GordianBIKESpec> {
+public final class GordianCoreAIMerSpec
+        implements GordianCoreKeyPairIdSpec<GordianAIMerSpec> {
     /**
      * The specMap.
      */
-    private static final Map<GordianBIKESpec, GordianCoreBIKESpec> SPECMAP = newSpecMap();
+    private static final Map<GordianAIMerSpec, GordianCoreAIMerSpec> SPECMAP = newSpecMap();
 
     /**
      * The specArray.
      */
-    private static final GordianCoreBIKESpec[] VALUES = SPECMAP.values().toArray(new GordianCoreBIKESpec[0]);
+    private static final GordianCoreAIMerSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreAIMerSpec[0]);
 
     /**
      * The Spec.
      */
-    private final GordianBIKESpec theSpec;
+    private final GordianAIMerSpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreBIKESpec(final GordianBIKESpec pSpec) {
+    private GordianCoreAIMerSpec(final GordianAIMerSpec pSpec) {
         theSpec = pSpec;
     }
 
     @Override
     public GordianKeyPairType getKeyPairType() {
-        return GordianKeyPairType.BIKE;
+        return GordianKeyPairType.AIMER;
     }
 
     @Override
-    public GordianBIKESpec getSpec() {
+    public GordianAIMerSpec getSpec() {
         return theSpec;
     }
 
@@ -71,11 +71,14 @@ public final class GordianCoreBIKESpec
      *
      * @return the parameters.
      */
-    public BIKEParameters getParameters() {
+    public AIMerParameters getParameters() {
         return switch (theSpec) {
-            case BIKE128 -> BIKEParameters.bike128;
-            case BIKE192 -> BIKEParameters.bike192;
-            case BIKE256 -> BIKEParameters.bike256;
+            case AIMER128F -> AIMerParameters.aimer128f;
+            case AIMER128S -> AIMerParameters.aimer128s;
+            case AIMER192F -> AIMerParameters.aimer192f;
+            case AIMER192S -> AIMerParameters.aimer192s;
+            case AIMER256F -> AIMerParameters.aimer256f;
+            case AIMER256S -> AIMerParameters.aimer256s;
             default -> throw new IllegalArgumentException();
         };
     }
@@ -85,11 +88,14 @@ public final class GordianCoreBIKESpec
      *
      * @return the parameters.
      */
-    public BIKEParameterSpec getParameterSpec() {
+    public AIMerParameterSpec getParameterSpec() {
         return switch (theSpec) {
-            case BIKE128 -> BIKEParameterSpec.bike128;
-            case BIKE192 -> BIKEParameterSpec.bike192;
-            case BIKE256 -> BIKEParameterSpec.bike256;
+            case AIMER128F -> AIMerParameterSpec.aimer128f;
+            case AIMER128S -> AIMerParameterSpec.aimer128s;
+            case AIMER192F -> AIMerParameterSpec.aimer192f;
+            case AIMER192S -> AIMerParameterSpec.aimer192s;
+            case AIMER256F -> AIMerParameterSpec.aimer256f;
+            case AIMER256S -> AIMerParameterSpec.aimer256s;
             default -> throw new IllegalArgumentException();
         };
     }
@@ -97,9 +103,12 @@ public final class GordianCoreBIKESpec
     @Override
     public ASN1ObjectIdentifier getIdentifier() {
         return switch (theSpec) {
-            case BIKE128 -> BCObjectIdentifiers.bike128;
-            case BIKE192 -> BCObjectIdentifiers.bike192;
-            case BIKE256 -> BCObjectIdentifiers.bike256;
+            case AIMER128F -> BCObjectIdentifiers.aimer_128f;
+            case AIMER128S -> BCObjectIdentifiers.aimer_128s;
+            case AIMER192F -> BCObjectIdentifiers.aimer_192f;
+            case AIMER192S -> BCObjectIdentifiers.aimer_192s;
+            case AIMER256F -> BCObjectIdentifiers.aimer_256f;
+            case AIMER256S -> BCObjectIdentifiers.aimer_256s;
             default -> throw new IllegalArgumentException();
         };
     }
@@ -120,7 +129,7 @@ public final class GordianCoreBIKESpec
         }
 
         /* Check subFields */
-        return pThat instanceof GordianCoreBIKESpec myThat
+        return pThat instanceof GordianCoreAIMerSpec myThat
                 && theSpec == myThat.getSpec();
     }
 
@@ -135,8 +144,8 @@ public final class GordianCoreBIKESpec
      * @param pSpec the base spec
      * @return the core spec
      */
-    public static GordianCoreBIKESpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianBIKESpec mySpec ? SPECMAP.get(mySpec) : null;
+    public static GordianCoreAIMerSpec mapCoreSpec(final Object pSpec) {
+        return pSpec instanceof GordianAIMerSpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -144,10 +153,10 @@ public final class GordianCoreBIKESpec
      *
      * @return the type map
      */
-    private static Map<GordianBIKESpec, GordianCoreBIKESpec> newSpecMap() {
-        final Map<GordianBIKESpec, GordianCoreBIKESpec> myMap = new EnumMap<>(GordianBIKESpec.class);
-        for (GordianBIKESpec mySpec : GordianBIKESpec.values()) {
-            myMap.put(mySpec, new GordianCoreBIKESpec(mySpec));
+    private static Map<GordianAIMerSpec, GordianCoreAIMerSpec> newSpecMap() {
+        final Map<GordianAIMerSpec, GordianCoreAIMerSpec> myMap = new EnumMap<>(GordianAIMerSpec.class);
+        for (GordianAIMerSpec mySpec : GordianAIMerSpec.values()) {
+            myMap.put(mySpec, new GordianCoreAIMerSpec(mySpec));
         }
         return myMap;
     }
@@ -157,7 +166,7 @@ public final class GordianCoreBIKESpec
      *
      * @return the values
      */
-    public static GordianCoreBIKESpec[] values() {
+    public static GordianCoreAIMerSpec[] values() {
         return VALUES;
     }
 }

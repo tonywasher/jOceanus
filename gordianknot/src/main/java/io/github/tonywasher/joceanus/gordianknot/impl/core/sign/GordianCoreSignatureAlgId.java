@@ -33,6 +33,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreAIMerSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreFaestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreFalconSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreHAETAESpec;
@@ -450,6 +451,7 @@ public class GordianCoreSignatureAlgId {
         addKeyPairIdSignatures(GordianCoreMLDSASpec.values());
         addKeyPairIdSignatures(GordianCoreSLHDSASpec.values());
         addKeyPairIdSignatures(GordianCoreFalconSpec.values());
+        addKeyPairIdSignatures(GordianCoreAIMerSpec.values());
         addKeyPairIdSignatures(GordianCoreFaestSpec.values());
         addKeyPairIdSignatures(GordianCoreHAETAESpec.values());
         addKeyPairIdSignatures(GordianCoreHawkSpec.values());

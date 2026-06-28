@@ -71,6 +71,7 @@ public class JcaSignatureFactory
             case SLHDSA -> new JcaSLHDSASignature(getFactory(), pSignatureSpec);
             case MLDSA -> new JcaMLDSASignature(getFactory(), pSignatureSpec);
             case FALCON -> new JcaFalconSignature(getFactory(), pSignatureSpec);
+            case AIMER -> new JcaAIMerSignature(getFactory(), pSignatureSpec);
             case FAEST -> new JcaFaestSignature(getFactory(), pSignatureSpec);
             case HAETAE -> new JcaHAETAESignature(getFactory(), pSignatureSpec);
             case HAWK -> new JcaHawkSignature(getFactory(), pSignatureSpec);
@@ -101,7 +102,7 @@ public class JcaSignatureFactory
             case RSA -> validRSASignature(mySpec);
             case EC -> validECSignature(mySpec);
             case DSA -> validDSASignature(mySpec);
-            case DSTU, GOST, SM2, XMSS, SLHDSA, MLDSA, FALCON, FAEST, HAETAE, HAWK, MAYO,
+            case DSTU, GOST, SM2, XMSS, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE, HAWK, MAYO,
                  MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, PICNIC, EDDSA, LMS, COMPOSITE -> true;
             default -> false;
         };

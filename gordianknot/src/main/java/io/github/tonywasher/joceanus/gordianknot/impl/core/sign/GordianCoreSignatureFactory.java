@@ -368,6 +368,7 @@ public abstract class GordianCoreSignatureFactory
             case SLHDSA -> myBuilder.slhdsa();
             case MLDSA -> myBuilder.mldsa();
             case FALCON -> myBuilder.falcon();
+            case AIMER -> myBuilder.aimer();
             case FAEST -> myBuilder.faest();
             case HAETAE -> myBuilder.haetae();
             case HAWK -> myBuilder.hawk();

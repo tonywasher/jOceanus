@@ -205,6 +205,15 @@ public interface GordianSignatureSpecBuilder {
     }
 
     /**
+     * Create AIMerSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec aimer() {
+        return withKeyPairType(GordianKeyPairType.AIMER).build();
+    }
+
+    /**
      * Create faestSpec.
      *
      * @return the SignatureSpec

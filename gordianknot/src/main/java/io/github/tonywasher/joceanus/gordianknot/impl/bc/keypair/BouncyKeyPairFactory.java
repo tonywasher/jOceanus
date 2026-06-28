@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGener
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyAIMerKeyPair.BouncyAIMerKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyBIKEKeyPair.BouncyBIKEKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyCMCEKeyPair.BouncyCMCEKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyDHKeyPair.BouncyDHKeyPairGenerator;
@@ -157,6 +158,7 @@ public class BouncyKeyPairFactory
                     ? new BouncyNTRULPrimeKeyPairGenerator(theFactory, pKeySpec)
                     : new BouncySNTRUPrimeKeyPairGenerator(theFactory, pKeySpec);
             case FALCON -> new BouncyFalconKeyPairGenerator(theFactory, pKeySpec);
+            case AIMER -> new BouncyAIMerKeyPairGenerator(theFactory, pKeySpec);
             case FAEST -> new BouncyFaestKeyPairGenerator(theFactory, pKeySpec);
             case HAETAE -> new BouncyHAETAEKeyPairGenerator(theFactory, pKeySpec);
             case HAWK -> new BouncyHawkKeyPairGenerator(theFactory, pKeySpec);

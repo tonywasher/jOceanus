@@ -113,6 +113,7 @@ public class JcaKeyPairFactory
                     : new JcaSNTRUPrimeKeyPairGenerator(theFactory, pKeySpec);
             case FALCON -> new JcaFalconKeyPairGenerator(theFactory, pKeySpec);
             case FAEST -> new JcaFaestKeyPairGenerator(theFactory, pKeySpec);
+            case AIMER -> new JcaAIMerKeyPairGenerator(theFactory, pKeySpec);
             case HAETAE -> new JcaHAETAEKeyPairGenerator(theFactory, pKeySpec);
             case HAWK -> new JcaHawkKeyPairGenerator(theFactory, pKeySpec);
             case MAYO -> new JcaMayoKeyPairGenerator(theFactory, pKeySpec);

@@ -319,6 +319,15 @@ public class GordianCoreKeyPairSpec
     }
 
     /**
+     * Obtain the AIMer keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreAIMerSpec getAIMerSpec() {
+        return castValue(GordianCoreAIMerSpec.class);
+    }
+
+    /**
      * Obtain the Faest keySpec.
      *
      * @return the keySpec.
@@ -534,6 +543,7 @@ public class GordianCoreKeyPairSpec
             case NTRUPLUS -> theSubSpec instanceof GordianCoreNTRUPlusSpec;
             case NTRUPRIME -> theSubSpec instanceof GordianCoreNTRUPrimeSpec s && s.isValid();
             case FALCON -> theSubSpec instanceof GordianCoreFalconSpec;
+            case AIMER -> theSubSpec instanceof GordianCoreAIMerSpec;
             case FAEST -> theSubSpec instanceof GordianCoreFaestSpec;
             case HAETAE -> theSubSpec instanceof GordianCoreHAETAESpec;
             case HAWK -> theSubSpec instanceof GordianCoreHawkSpec;
@@ -635,6 +645,7 @@ public class GordianCoreKeyPairSpec
             case NTRU -> GordianCoreNTRUSpec.mapCoreSpec(pSubSpec);
             case NTRUPLUS -> GordianCoreNTRUPlusSpec.mapCoreSpec(pSubSpec);
             case FALCON -> GordianCoreFalconSpec.mapCoreSpec(pSubSpec);
+            case AIMER -> GordianCoreAIMerSpec.mapCoreSpec(pSubSpec);
             case FAEST -> GordianCoreFaestSpec.mapCoreSpec(pSubSpec);
             case HAETAE -> GordianCoreHAETAESpec.mapCoreSpec(pSubSpec);
             case HAWK -> GordianCoreHawkSpec.mapCoreSpec(pSubSpec);
@@ -677,6 +688,7 @@ public class GordianCoreKeyPairSpec
             case NTRU -> getNTRUSpec().getSpec();
             case NTRUPLUS -> getNTRUPlusSpec().getSpec();
             case FALCON -> getFalconSpec().getSpec();
+            case AIMER -> getAIMerSpec().getSpec();
             case FAEST -> getFaestSpec().getSpec();
             case HAETAE -> getHAETAESpec().getSpec();
             case HAWK -> getHawkSpec().getSpec();

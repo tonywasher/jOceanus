@@ -75,6 +75,7 @@ public class BouncySignatureFactory
             case SLHDSA -> new BouncySLHDSASignature(getFactory(), pSignatureSpec);
             case MLDSA -> new BouncyMLDSASignature(getFactory(), pSignatureSpec);
             case FALCON -> new BouncyFalconSignature(getFactory(), pSignatureSpec);
+            case AIMER -> new BouncyAIMerSignature(getFactory(), pSignatureSpec);
             case FAEST -> new BouncyFaestSignature(getFactory(), pSignatureSpec);
             case HAETAE -> new BouncyHAETAESignature(getFactory(), pSignatureSpec);
             case HAWK -> new BouncyHawkSignature(getFactory(), pSignatureSpec);

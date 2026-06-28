@@ -431,6 +431,16 @@ public interface GordianKeyPairSpecBuilder {
     }
 
     /**
+     * Create AIMerKey.
+     *
+     * @param pSpec the AIMer Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec aimer(final GordianAIMerSpec pSpec) {
+        return withKeyPairType(GordianKeyPairType.AIMER).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
      * Create FaestKey.
      *
      * @param pSpec the Faest Spec

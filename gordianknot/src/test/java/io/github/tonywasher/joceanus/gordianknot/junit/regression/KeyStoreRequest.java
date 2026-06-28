@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianAIMerSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianBIKESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianCMCESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDHSpec;
@@ -122,6 +123,7 @@ public final class KeyStoreRequest {
                 signedKeyPairRequestTest(myBuilder.mldsa(GordianMLDSASpec.MLDSA44)),
                 signedKeyPairRequestTest(myBuilder.picnic(GordianPicnicSpec.L1FS)),
                 signedKeyPairRequestTest(myBuilder.slhdsa(GordianSLHDSASpec.SHA128F)),
+                signedKeyPairRequestTest(myBuilder.aimer(GordianAIMerSpec.AIMER128F)),
                 signedKeyPairRequestTest(myBuilder.faest(GordianFaestSpec.FAEST128F)),
                 signedKeyPairRequestTest(myBuilder.haetae(GordianHAETAESpec.HAETAE2)),
                 signedKeyPairRequestTest(myBuilder.hawk(GordianHawkSpec.HAWK256)),
