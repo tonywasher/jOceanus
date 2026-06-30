@@ -16,8 +16,8 @@
         <module name="themis-core" />
         <module name="tethys-swing" />
         <module name="moneywise-swing" />
-        <module name="themis-javafx" />
         <module name="tethys-javafx" />
+        <module name="themis-javafx" />
         <module name="prometheus-sheet-api" />
         <module name="astraeus" />
         <module name="moneywise-core" />

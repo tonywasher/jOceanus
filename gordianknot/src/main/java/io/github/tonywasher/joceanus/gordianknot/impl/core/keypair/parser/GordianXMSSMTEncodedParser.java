@@ -23,11 +23,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPair
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSHeight;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSMTLayers;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.isara.IsaraObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -36,7 +33,6 @@ import org.bouncycastle.pqc.asn1.XMSSMTKeyParams;
 import org.bouncycastle.pqc.crypto.xmss.XMSSMTParameters;
 import org.bouncycastle.util.Pack;
 
-import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -44,13 +40,18 @@ import java.util.Objects;
  */
 public final class GordianXMSSMTEncodedParser implements GordianEncodedParser {
     /**
+     * IANA OID.
+     */
+    private static final ASN1ObjectIdentifier IANA_OID = new ASN1ObjectIdentifier("1.3.6.1.5.5.7.6.35");
+
+    /**
      * Registrar.
      *
      * @param pIdManager the idManager
      */
     public static void register(final GordianKeyPairParserRegistrar pIdManager) {
         pIdManager.registerParser(PQCObjectIdentifiers.xmss_mt, new GordianXMSSMTEncodedParser());
-        pIdManager.registerParser(IsaraObjectIdentifiers.id_alg_xmssmt, new GordianXMSSMTEncodedParser());
+        pIdManager.registerParser(IANA_OID, new GordianXMSSMTEncodedParser());
     }
 
     @Override
@@ -61,17 +62,13 @@ public final class GordianXMSSMTEncodedParser implements GordianEncodedParser {
             return determineKeyPairSpec(myParms);
         }
 
-        /* Protect against exceptions */
-        try {
-            final byte[] keyEnc = Objects.requireNonNull(ASN1OctetString.getInstance(pInfo.parsePublicKey())).getOctets();
-            final int myOID = Pack.bigEndianToInt(keyEnc, 0);
-            final XMSSMTParameters myParams = XMSSMTParameters.lookupByOID(myOID);
-            final GordianKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
-            return myBuilder.xmssmt(GordianXMSSEncodedParser.determineKeyType(myParams.getTreeDigestOID()),
-                    GordianXMSSEncodedParser.determineHeight(myParams.getHeight()), determineLayers(myParams.getLayers()));
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to resolve key", e);
-        }
+        /* Parse data */
+        final byte[] keyEnc = Objects.requireNonNull(pInfo.getPublicKeyData()).getOctets();
+        final int myOID = Pack.bigEndianToInt(keyEnc, 0);
+        final XMSSMTParameters myParams = XMSSMTParameters.lookupByOID(myOID);
+        final GordianKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+        return myBuilder.xmssmt(GordianXMSSEncodedParser.determineKeyType(myParams.getTreeDigestOID()),
+                GordianXMSSEncodedParser.determineHeight(myParams.getHeight()), determineLayers(myParams.getLayers()));
     }
 
     @Override

@@ -60,9 +60,10 @@ final GordianKeyPair myDerived = myGenerator.deriveKeyPair(myX509, myPKCS8);
                         <tr><td>EdDSA</td><td>Curve25519, Curve448</td></tr>
                         <tr><td>XDH</td><td>Curve25519, Curve448</td></tr>
                         <tr><td>SLHDSA</td><td>(SHA2, SHAKE) * (128, 192, 256) * (F, S) * (pure, hash)</td></tr>
-                        <tr><td>XMSS</td><td>(SHA256, SHA512, SHAKE128, SHAKE256) * XMSS(H12, H16, H20) or XMSS^MT(H20, H40, H60)</td></tr>
+                        <tr><td rowspan="2">XMSS</td><td>XMSS((SHA256, SHA512, SHAKE128, SHAKE256) * HEIGHT(H12, H16, H20)) or XMSS^MT(H20, H40, H60)</td></tr>
+                        <tr><td>XMSS^MT((SHA256, SHA512, SHAKE128, SHAKE256) * HEIGHT(H20, H20, H60) * LAYERS(2, 3, 4, 6, 8, 12))</td></tr>
                         <tr><td rowspan="2">LMS</td><td>SIG(H5,H10,H25,H20,H25) * OTS(W1,W2,W4,W8)</td></tr>
-                        <tr><td>HSS(LMS * DEPTH(2..8)</td></tr>
+                        <tr><td>HSS(LMS * DEPTH(2..8))</td></tr>
                         <tr><td>CMCE</td><td>(BASE, F, PC, PCF) * (4608, 6688, 6960, 8192)</td></tr>
                         <tr><td>FRODO</td><td>(AES, SHAKE) * (19888, 31296, 43088) * (BASE, E)</td></tr>
                         <tr><td>SABER</td><td>(LIGHT, BASE, FIRE) * (128, 192, 256)</td></tr>
@@ -75,6 +76,7 @@ final GordianKeyPair myDerived = myGenerator.deriveKeyPair(myX509, myPKCS8);
                         <tr><td>FALCON</td><td>512, 1024</td></tr>
                         <tr><td>HQC</td><td>128, 192, 256</td></tr>
                         <tr><td>PICNIC</td><td>(L1, L3, L5) * (FS, UR, FULL, 3)</td></tr>
+                        <tr><td>AIMER</td><td>(128, 192, 256) * (s, f)</td></tr>
                         <tr><td>FAEST</td><td>(128, 192, 256) * (std, em) * (s, f)</td></tr>
                         <tr><td>HAETAE</td><td>(2, 3, 5)</td></tr>
                         <tr><td>HAWK</td><td>(56, 512, 1024)</td></tr>
