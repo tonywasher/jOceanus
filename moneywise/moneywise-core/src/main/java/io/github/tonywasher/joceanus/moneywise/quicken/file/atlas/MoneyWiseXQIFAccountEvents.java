@@ -44,7 +44,7 @@ public class MoneyWiseXQIFAccountEvents
      *
      * @param pAccount the account.
      */
-    protected MoneyWiseXQIFAccountEvents(final MoneyWiseTransAsset pAccount) {
+    public MoneyWiseXQIFAccountEvents(final MoneyWiseTransAsset pAccount) {
         /* Store parameters */
         theAccount = new MoneyWiseXQIFAccount(pAccount);
 
@@ -57,7 +57,7 @@ public class MoneyWiseXQIFAccountEvents
      *
      * @param pAccount the account name.
      */
-    protected MoneyWiseXQIFAccountEvents(final String pAccount) {
+    public MoneyWiseXQIFAccountEvents(final String pAccount) {
         /* Store parameters */
         theAccount = new MoneyWiseXQIFAccount(pAccount);
 
@@ -70,7 +70,7 @@ public class MoneyWiseXQIFAccountEvents
      *
      * @param pAccount the account.
      */
-    protected MoneyWiseXQIFAccountEvents(final MoneyWiseXQIFAccount pAccount) {
+    public MoneyWiseXQIFAccountEvents(final MoneyWiseXQIFAccount pAccount) {
         /* Store parameters */
         theAccount = pAccount;
 
@@ -110,7 +110,7 @@ public class MoneyWiseXQIFAccountEvents
      *
      * @param pEvent the event record set
      */
-    protected void addEvent(final MoneyWiseXQIFEventRecord<?> pEvent) {
+    public void addEvent(final MoneyWiseXQIFEventRecord<?> pEvent) {
         /* Add the event */
         theEvents.add(pEvent);
     }
@@ -118,7 +118,7 @@ public class MoneyWiseXQIFAccountEvents
     /**
      * Sort the events.
      */
-    protected void sortEvents() {
+    public void sortEvents() {
         Collections.sort(theEvents);
     }
 

@@ -32,7 +32,7 @@ public class MoneyWiseXQIFClass
     /**
      * Item type.
      */
-    protected static final String XQIF_ITEM = "Class";
+    public static final String XQIF_ITEM = "Class";
 
     /**
      * The Class Name.
@@ -69,7 +69,7 @@ public class MoneyWiseXQIFClass
      *
      * @param pLines the data lines
      */
-    protected MoneyWiseXQIFClass(final List<String> pLines) {
+    public MoneyWiseXQIFClass(final List<String> pLines) {
         /* Call super-constructor */
         super(MoneyWiseQClassLineType.class);
 

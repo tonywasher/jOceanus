@@ -74,9 +74,9 @@ public class MoneyWiseXQIFPortfolioEvent
      * @param pTrans    the transaction
      * @param pAction   the action
      */
-    protected MoneyWiseXQIFPortfolioEvent(final MoneyWiseXQIFRegister pRegister,
-                                          final MoneyWiseXAnalysisEvent pTrans,
-                                          final MoneyWiseQActionType pAction) {
+    public MoneyWiseXQIFPortfolioEvent(final MoneyWiseXQIFRegister pRegister,
+                                       final MoneyWiseXAnalysisEvent pTrans,
+                                       final MoneyWiseQActionType pAction) {
         /* Call super-constructor */
         super(MoneyWiseQPortfolioLineType.class);
 
@@ -105,9 +105,9 @@ public class MoneyWiseXQIFPortfolioEvent
      * @param pFormatter the Data Formatter
      * @param pLines     the data lines
      */
-    protected MoneyWiseXQIFPortfolioEvent(final MoneyWiseXQIFRegister pRegister,
-                                          final OceanusDataFormatter pFormatter,
-                                          final List<String> pLines) {
+    public MoneyWiseXQIFPortfolioEvent(final MoneyWiseXQIFRegister pRegister,
+                                       final OceanusDataFormatter pFormatter,
+                                       final List<String> pLines) {
         /* Call super-constructor */
         super(MoneyWiseQPortfolioLineType.class);
 
@@ -231,7 +231,7 @@ public class MoneyWiseXQIFPortfolioEvent
      *
      * @param pSecurity the security
      */
-    protected void recordSecurity(final MoneyWiseXQIFSecurity pSecurity) {
+    public void recordSecurity(final MoneyWiseXQIFSecurity pSecurity) {
         /* Add security line */
         addLine(new MoneyWiseXQIFPortfolioSecurityLine(pSecurity));
     }
@@ -241,7 +241,7 @@ public class MoneyWiseXQIFPortfolioEvent
      *
      * @param pCategory the category
      */
-    protected void recordCategory(final MoneyWiseXQIFEventCategory pCategory) {
+    public void recordCategory(final MoneyWiseXQIFEventCategory pCategory) {
         /* Add category line */
         addLine(new MoneyWiseXQIFPortfolioCategoryLine(pCategory));
     }
@@ -252,8 +252,8 @@ public class MoneyWiseXQIFPortfolioEvent
      * @param pCategory the category
      * @param pClasses  the classes
      */
-    protected void recordCategory(final MoneyWiseXQIFEventCategory pCategory,
-                                  final List<MoneyWiseXQIFClass> pClasses) {
+    public void recordCategory(final MoneyWiseXQIFEventCategory pCategory,
+                               final List<MoneyWiseXQIFClass> pClasses) {
         /* Add category line */
         addLine(new MoneyWiseXQIFPortfolioCategoryLine(pCategory, pClasses));
     }
@@ -263,7 +263,7 @@ public class MoneyWiseXQIFPortfolioEvent
      *
      * @param pAmount the amount
      */
-    protected void recordAmount(final OceanusMoney pAmount) {
+    public void recordAmount(final OceanusMoney pAmount) {
         /* Add amount line */
         addLine(new MoneyWiseXQIFPortfolioAmountLine(pAmount));
     }
@@ -273,7 +273,7 @@ public class MoneyWiseXQIFPortfolioEvent
      *
      * @param pPayee the payee
      */
-    protected void recordPayee(final String pPayee) {
+    public void recordPayee(final String pPayee) {
         /* Add payee line */
         addLine(new MoneyWiseXQIFPortfolioPayeeDescLine(pPayee));
     }
@@ -283,7 +283,7 @@ public class MoneyWiseXQIFPortfolioEvent
      *
      * @param pPayee the payee
      */
-    protected void recordPayee(final MoneyWiseXQIFPayee pPayee) {
+    public void recordPayee(final MoneyWiseXQIFPayee pPayee) {
         /* Add payee line */
         addLine(new MoneyWiseXQIFPortfolioPayeeLine(pPayee));
     }
@@ -294,8 +294,8 @@ public class MoneyWiseXQIFPortfolioEvent
      * @param pAccount the transfer account
      * @param pAmount  the transfer amount
      */
-    protected void recordXfer(final MoneyWiseXQIFAccount pAccount,
-                              final OceanusMoney pAmount) {
+    public void recordXfer(final MoneyWiseXQIFAccount pAccount,
+                           final OceanusMoney pAmount) {
         /* Add transfer lines */
         addLine(new MoneyWiseXQIFPortfolioAccountLine(pAccount));
         addLine(new MoneyWiseXQIFPortfolioXferAmountLine(pAmount));
@@ -308,9 +308,9 @@ public class MoneyWiseXQIFPortfolioEvent
      * @param pClasses the classes
      * @param pAmount  the transfer amount
      */
-    protected void recordXfer(final MoneyWiseXQIFAccount pAccount,
-                              final List<MoneyWiseXQIFClass> pClasses,
-                              final OceanusMoney pAmount) {
+    public void recordXfer(final MoneyWiseXQIFAccount pAccount,
+                           final List<MoneyWiseXQIFClass> pClasses,
+                           final OceanusMoney pAmount) {
         /* Add transfer lines */
         addLine(new MoneyWiseXQIFPortfolioAccountLine(pAccount, pClasses));
         addLine(new MoneyWiseXQIFPortfolioXferAmountLine(pAmount));
@@ -334,7 +334,7 @@ public class MoneyWiseXQIFPortfolioEvent
      *
      * @param pQuantity the units quantity
      */
-    protected void recordQuantity(final OceanusUnits pQuantity) {
+    public void recordQuantity(final OceanusUnits pQuantity) {
         /* Add quantity line */
         addLine(new MoneyWiseXQIFPortfolioQuantityLine(pQuantity));
     }
@@ -344,7 +344,7 @@ public class MoneyWiseXQIFPortfolioEvent
      *
      * @param pRatio the split ratio
      */
-    protected void recordQuantity(final OceanusRatio pRatio) {
+    public void recordQuantity(final OceanusRatio pRatio) {
         /* Add quantity line */
         addLine(new MoneyWiseXQIFPortfolioSplitRatioLine(pRatio));
     }
@@ -354,7 +354,7 @@ public class MoneyWiseXQIFPortfolioEvent
      *
      * @param pPrice the price
      */
-    protected void recordPrice(final OceanusPrice pPrice) {
+    public void recordPrice(final OceanusPrice pPrice) {
         /* Add price line */
         addLine(new MoneyWiseXQIFPortfolioPriceLine(pPrice));
     }
@@ -364,7 +364,7 @@ public class MoneyWiseXQIFPortfolioEvent
      *
      * @param pCommission the commission
      */
-    protected void recordCommission(final OceanusMoney pCommission) {
+    public void recordCommission(final OceanusMoney pCommission) {
         /* Add commission line */
         addLine(new MoneyWiseXQIFPortfolioCommissionLine(pCommission));
     }

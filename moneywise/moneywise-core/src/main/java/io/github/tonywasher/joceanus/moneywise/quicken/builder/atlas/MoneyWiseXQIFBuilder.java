@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.moneywise.quicken.file.atlas;
+package io.github.tonywasher.joceanus.moneywise.quicken.builder.atlas;
 
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysis;
@@ -34,6 +34,13 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFAccountEvents;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFClass;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFEvent;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFEventCategory;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFHelper;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFPayee;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFRegister;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
@@ -107,6 +114,11 @@ public class MoneyWiseXQIFBuilder
     private final MoneyWiseTransCategory theOpeningCategory;
 
     /**
+     * The Build Transfer engine.
+     */
+    private final MoneyWiseXQIFBuildXfer theBuildXfer;
+
+    /**
      * Constructor.
      *
      * @param pRegister the QIF Register
@@ -134,6 +146,9 @@ public class MoneyWiseXQIFBuilder
         theBenefitCategory = myCategories.getEventInfoCategory(MoneyWiseTransInfoClass.DEEMEDBENEFIT);
         theWithheldCategory = myCategories.getEventInfoCategory(MoneyWiseTransInfoClass.WITHHELD);
         theOpeningCategory = myCategories.getSingularClass(MoneyWiseTransCategoryClass.OPENINGBALANCE);
+
+        /* Create subBuilders */
+        theBuildXfer = new MoneyWiseXQIFBuildXfer(this);
     }
 
     @Override
@@ -365,7 +380,7 @@ public class MoneyWiseXQIFBuilder
                     break;
                 default:
                     /* Process as standard transfer */
-                    processStandardTransfer(pDebit, pCredit, pTrans);
+                    theBuildXfer.processStandardTransfer(pDebit, pCredit, pTrans);
                     break;
             }
         }
@@ -639,83 +654,6 @@ public class MoneyWiseXQIFBuilder
 
         /* Add event to event list */
         myAccount.addEvent(myEvent);
-    }
-
-    /**
-     * Process standard transfer.
-     *
-     * @param pDebit  the debit account
-     * @param pCredit the credit account
-     * @param pTrans  the transaction
-     */
-    protected void processStandardTransfer(final MoneyWiseTransAsset pDebit,
-                                           final MoneyWiseTransAsset pCredit,
-                                           final MoneyWiseXAnalysisEvent pTrans) {
-        /* Determine credit and debit amounts allowing for differing currencies */
-        final boolean isFrom = pTrans.getDirection().isFrom();
-        boolean isCurrencyXfer = false;
-        OceanusMoney myDebitAmount = pTrans.getAmount();
-        OceanusMoney myCreditAmount = pTrans.getPartnerAmount();
-        if (myCreditAmount != null) {
-            /* If we have a transfer between currencies */
-            isCurrencyXfer = true;
-
-            /* Ensure correct credit/debit amounts */
-            if (isFrom) {
-                myDebitAmount = myCreditAmount;
-                myCreditAmount = pTrans.getAmount();
-            }
-
-            /* else credit amount is same as debit amount */
-        } else {
-            myCreditAmount = myDebitAmount;
-        }
-
-        /* Access the Account details */
-        final MoneyWiseXQIFAccountEvents myDebitAccount = theRegister.registerAccount(pDebit);
-        final MoneyWiseXQIFAccountEvents myCreditAccount = theRegister.registerAccount(pCredit);
-
-        /* Obtain classes */
-        final List<MoneyWiseXQIFClass> myList = getTransactionClasses(pTrans);
-
-        /* Deteremine whether we hide the debit transfer */
-        final boolean hideDebitXfer = isCurrencyXfer && theFileType.hideCurrencyDebitTransfer();
-
-        /* Determine the transactionID */
-        final String myTranID = hideDebitXfer
-                ? "AMT=" + myDebitAmount
-                : "TRN" + pTrans.getIndexedId();
-
-        /* Negate the debit amount */
-        myDebitAmount = new OceanusMoney(myDebitAmount);
-        myDebitAmount.negate();
-
-        /* Create a new credit event */
-        MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-        myEvent.recordAmount(myCreditAmount);
-        myEvent.recordAccount(myDebitAccount.getAccount(), myList);
-
-        /* Build payee description */
-        myEvent.recordPayee(buildXferFromPayee(pDebit));
-        myEvent.recordComment(myTranID);
-
-        /* Add event to event list */
-        myCreditAccount.addEvent(myEvent);
-
-        /* If we are not changing currencies or can handle matching transfers */
-        if (!isCurrencyXfer || !theFileType.hideCurrencyDebitTransfer()) {
-            /* Create a new event */
-            myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-            myEvent.recordAmount(myDebitAmount);
-            myEvent.recordAccount(myCreditAccount.getAccount(), myList);
-
-            /* Build payee description */
-            myEvent.recordPayee(buildXferToPayee(pCredit));
-            myEvent.recordComment(myTranID);
-
-            /* Add event to event list */
-            myDebitAccount.addEvent(myEvent);
-        }
     }
 
     @Override

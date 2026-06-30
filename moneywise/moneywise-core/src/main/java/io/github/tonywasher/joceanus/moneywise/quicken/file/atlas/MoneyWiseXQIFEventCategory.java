@@ -36,7 +36,7 @@ public class MoneyWiseXQIFEventCategory
     /**
      * Item type.
      */
-    protected static final String XQIF_ITEM = "Cat";
+    public static final String XQIF_ITEM = "Cat";
 
     /**
      * The Category Name.
@@ -87,7 +87,7 @@ public class MoneyWiseXQIFEventCategory
      *
      * @param pLines the data lines
      */
-    protected MoneyWiseXQIFEventCategory(final List<String> pLines) {
+    public MoneyWiseXQIFEventCategory(final List<String> pLines) {
         /* Call super-constructor */
         super(MoneyWiseQCategoryLineType.class);
 

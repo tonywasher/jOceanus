@@ -79,9 +79,9 @@ public class MoneyWiseXQIFPrice
      * @param pSecurity the security
      * @param pPrice    the price
      */
-    protected MoneyWiseXQIFPrice(final MoneyWiseXQIFRegister pRegister,
-                                 final MoneyWiseXQIFSecurity pSecurity,
-                                 final MoneyWiseSecurityPrice pPrice) {
+    public MoneyWiseXQIFPrice(final MoneyWiseXQIFRegister pRegister,
+                              final MoneyWiseXQIFSecurity pSecurity,
+                              final MoneyWiseSecurityPrice pPrice) {
         /* Store data */
         theFileType = pRegister.getFileType();
         theSecurity = pSecurity;
@@ -127,9 +127,9 @@ public class MoneyWiseXQIFPrice
      * @param pFormatter the Data Formatter
      * @param pLines     the lines
      */
-    protected MoneyWiseXQIFPrice(final MoneyWiseXQIFRegister pRegister,
-                                 final OceanusDataFormatter pFormatter,
-                                 final List<String> pLines) {
+    public MoneyWiseXQIFPrice(final MoneyWiseXQIFRegister pRegister,
+                              final OceanusDataFormatter pFormatter,
+                              final List<String> pLines) {
         /* Build the price list */
         thePrices = new ArrayList<>();
 

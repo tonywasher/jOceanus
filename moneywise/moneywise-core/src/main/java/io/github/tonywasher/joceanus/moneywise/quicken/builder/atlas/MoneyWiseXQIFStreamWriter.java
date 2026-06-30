@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.moneywise.quicken.file.atlas;
+package io.github.tonywasher.joceanus.moneywise.quicken.builder.atlas;
 
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseIOException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;

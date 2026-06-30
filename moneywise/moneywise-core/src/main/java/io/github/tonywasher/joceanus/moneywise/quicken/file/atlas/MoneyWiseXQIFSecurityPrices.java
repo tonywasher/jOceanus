@@ -53,8 +53,8 @@ public class MoneyWiseXQIFSecurityPrices
      * @param pRegister the XQIF Register
      * @param pSecurity the security.
      */
-    protected MoneyWiseXQIFSecurityPrices(final MoneyWiseXQIFRegister pRegister,
-                                          final MoneyWiseSecurity pSecurity) {
+    public MoneyWiseXQIFSecurityPrices(final MoneyWiseXQIFRegister pRegister,
+                                       final MoneyWiseSecurity pSecurity) {
         this(pRegister, new MoneyWiseXQIFSecurity(pSecurity));
     }
 
@@ -64,8 +64,8 @@ public class MoneyWiseXQIFSecurityPrices
      * @param pRegister the XQIF Register
      * @param pSecurity the security.
      */
-    protected MoneyWiseXQIFSecurityPrices(final MoneyWiseXQIFRegister pRegister,
-                                          final MoneyWiseXQIFSecurity pSecurity) {
+    public MoneyWiseXQIFSecurityPrices(final MoneyWiseXQIFRegister pRegister,
+                                       final MoneyWiseXQIFSecurity pSecurity) {
         /* Store parameters */
         theRegister = pRegister;
         theSecurity = pSecurity;
@@ -97,7 +97,7 @@ public class MoneyWiseXQIFSecurityPrices
      *
      * @param pPrice the price to add
      */
-    protected void addPrice(final MoneyWiseSecurityPrice pPrice) {
+    public void addPrice(final MoneyWiseSecurityPrice pPrice) {
         /* Allocate price */
         final MoneyWiseXQIFPrice myPrice = new MoneyWiseXQIFPrice(theRegister, theSecurity, pPrice);
 
@@ -110,7 +110,7 @@ public class MoneyWiseXQIFSecurityPrices
      *
      * @param pPrice the price to add
      */
-    protected void addPrice(final MoneyWiseXQIFPrice pPrice) {
+    public void addPrice(final MoneyWiseXQIFPrice pPrice) {
         /* Add to the list */
         thePrices.add(pPrice);
     }
@@ -118,7 +118,7 @@ public class MoneyWiseXQIFSecurityPrices
     /**
      * Sort the prices.
      */
-    protected void sortPrices() {
+    public void sortPrices() {
         Collections.sort(thePrices);
     }
 
@@ -128,8 +128,8 @@ public class MoneyWiseXQIFSecurityPrices
      * @param pFormatter the formatter
      * @param pBuilder   the string builder
      */
-    protected void formatPrices(final OceanusDataFormatter pFormatter,
-                                final StringBuilder pBuilder) {
+    public void formatPrices(final OceanusDataFormatter pFormatter,
+                             final StringBuilder pBuilder) {
         /* Loop through the prices */
         for (MoneyWiseXQIFPrice myPrice : thePrices) {
             /* Format Item Type header */

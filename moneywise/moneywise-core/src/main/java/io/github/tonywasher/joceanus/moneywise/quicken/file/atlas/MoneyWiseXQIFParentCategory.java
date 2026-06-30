@@ -47,7 +47,7 @@ public class MoneyWiseXQIFParentCategory
      *
      * @param pParent the parent category
      */
-    protected MoneyWiseXQIFParentCategory(final MoneyWiseTransCategory pParent) {
+    public MoneyWiseXQIFParentCategory(final MoneyWiseTransCategory pParent) {
         this(new MoneyWiseXQIFEventCategory(pParent));
     }
 
@@ -56,7 +56,7 @@ public class MoneyWiseXQIFParentCategory
      *
      * @param pParent the parent category
      */
-    protected MoneyWiseXQIFParentCategory(final MoneyWiseXQIFEventCategory pParent) {
+    public MoneyWiseXQIFParentCategory(final MoneyWiseXQIFEventCategory pParent) {
         /* Record self definition */
         theSelf = pParent;
 
@@ -74,7 +74,7 @@ public class MoneyWiseXQIFParentCategory
      *
      * @return the number of children
      */
-    protected int numChildren() {
+    public int numChildren() {
         return theChildren.size();
     }
 
@@ -101,7 +101,7 @@ public class MoneyWiseXQIFParentCategory
      *
      * @param pChild the child
      */
-    protected void registerChild(final MoneyWiseXQIFEventCategory pChild) {
+    public void registerChild(final MoneyWiseXQIFEventCategory pChild) {
         /* Add the child */
         theChildren.add(pChild);
     }
@@ -109,7 +109,7 @@ public class MoneyWiseXQIFParentCategory
     /**
      * Sort the children.
      */
-    protected void sortChildren() {
+    public void sortChildren() {
         Collections.sort(theChildren);
     }
 

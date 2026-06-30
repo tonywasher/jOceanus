@@ -14,8 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.moneywise.quicken.file.atlas;
+package io.github.tonywasher.joceanus.moneywise.quicken.builder.atlas;
 
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFAccount;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFAccountEvents;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFClass;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFEventCategory;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFEventRecord;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFParentCategory;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFRecord;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFSecurity;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFSecurityPrices;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;

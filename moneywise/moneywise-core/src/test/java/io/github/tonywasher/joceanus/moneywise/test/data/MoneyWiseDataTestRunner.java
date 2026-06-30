@@ -20,9 +20,9 @@ import io.github.tonywasher.joceanus.moneywise.analysis.atlas.analyse.MoneyWiseX
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseIOException;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFFile;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFStreamWriter;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFWriter;
+import io.github.tonywasher.joceanus.moneywise.quicken.builder.atlas.MoneyWiseXQIFFile;
+import io.github.tonywasher.joceanus.moneywise.quicken.builder.atlas.MoneyWiseXQIFStreamWriter;
+import io.github.tonywasher.joceanus.moneywise.quicken.builder.atlas.MoneyWiseXQIFWriter;
 import io.github.tonywasher.joceanus.moneywise.test.data.storage.MoneyWiseDataTestSecurity;
 import io.github.tonywasher.joceanus.moneywise.test.data.storage.MoneyWiseNullThreadMgr;
 import io.github.tonywasher.joceanus.moneywise.test.data.trans.MoneyWiseDataTestAccounts;

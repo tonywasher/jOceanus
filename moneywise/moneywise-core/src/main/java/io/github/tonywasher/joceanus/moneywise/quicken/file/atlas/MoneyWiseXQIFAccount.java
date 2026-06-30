@@ -48,37 +48,37 @@ public class MoneyWiseXQIFAccount
     /**
      * Item type.
      */
-    protected static final String XQIF_HDR = "!Account";
+    public static final String XQIF_HDR = "!Account";
 
     /**
      * Bank Account Type.
      */
-    protected static final String XQIFACT_BANK = "Bank";
+    public static final String XQIFACT_BANK = "Bank";
 
     /**
      * Cash Account Type.
      */
-    protected static final String XQIFACT_CASH = "Cash";
+    public static final String XQIFACT_CASH = "Cash";
 
     /**
      * Investment Account Type.
      */
-    protected static final String XQIFACT_INVST = "Invst";
+    public static final String XQIFACT_INVST = "Invst";
 
     /**
      * Credit Card Account Type.
      */
-    protected static final String XQIFACT_CCARD = "CCard";
+    public static final String XQIFACT_CCARD = "CCard";
 
     /**
      * Asset Account Type.
      */
-    protected static final String XQIFACT_ASSET = "Oth A";
+    public static final String XQIFACT_ASSET = "Oth A";
 
     /**
      * Loan Account Type.
      */
-    protected static final String XQIFACT_LOAN = "Oth L";
+    public static final String XQIFACT_LOAN = "Oth L";
 
     /**
      * Category Map.
@@ -146,7 +146,7 @@ public class MoneyWiseXQIFAccount
      *
      * @param pName the Portfolio Name
      */
-    protected MoneyWiseXQIFAccount(final String pName) {
+    public MoneyWiseXQIFAccount(final String pName) {
         /* Call super-constructor */
         super(MoneyWiseQAccountLineType.class);
 
@@ -166,8 +166,8 @@ public class MoneyWiseXQIFAccount
      * @param pFormatter the formatter
      * @param pLines     the data lines
      */
-    protected MoneyWiseXQIFAccount(final OceanusDataFormatter pFormatter,
-                                   final List<String> pLines) {
+    public MoneyWiseXQIFAccount(final OceanusDataFormatter pFormatter,
+                                final List<String> pLines) {
         /* Call super-constructor */
         super(MoneyWiseQAccountLineType.class);
 

@@ -62,8 +62,8 @@ public class MoneyWiseXQIFEvent
      * @param pRegister the XQIF register
      * @param pTrans    the transaction
      */
-    protected MoneyWiseXQIFEvent(final MoneyWiseXQIFRegister pRegister,
-                                 final MoneyWiseXAnalysisEvent pTrans) {
+    public MoneyWiseXQIFEvent(final MoneyWiseXQIFRegister pRegister,
+                              final MoneyWiseXAnalysisEvent pTrans) {
         /* Call super-constructor */
         super(MoneyWiseQEventLineType.class);
 
@@ -95,8 +95,8 @@ public class MoneyWiseXQIFEvent
      * @param pRegister  the XQIF Register
      * @param pStartDate the start date
      */
-    protected MoneyWiseXQIFEvent(final MoneyWiseXQIFRegister pRegister,
-                                 final OceanusDate pStartDate) {
+    public MoneyWiseXQIFEvent(final MoneyWiseXQIFRegister pRegister,
+                              final OceanusDate pStartDate) {
         /* Call super-constructor */
         super(MoneyWiseQEventLineType.class);
 
@@ -118,9 +118,9 @@ public class MoneyWiseXQIFEvent
      * @param pFormatter the Data Formatter
      * @param pLines     the data lines
      */
-    protected MoneyWiseXQIFEvent(final MoneyWiseXQIFRegister pRegister,
-                                 final OceanusDataFormatter pFormatter,
-                                 final List<String> pLines) {
+    public MoneyWiseXQIFEvent(final MoneyWiseXQIFRegister pRegister,
+                              final OceanusDataFormatter pFormatter,
+                              final List<String> pLines) {
         /* Call super-constructor */
         super(MoneyWiseQEventLineType.class);
 
@@ -408,7 +408,7 @@ public class MoneyWiseXQIFEvent
      *
      * @param pComment the comment
      */
-    void recordComment(final String pComment) {
+    public void recordComment(final String pComment) {
         /* Add comment line */
         addLine(new MoneyWiseXQIFEventCommentLine(pComment));
     }
@@ -418,7 +418,7 @@ public class MoneyWiseXQIFEvent
      *
      * @param pPayee the payee
      */
-    protected void recordPayee(final MoneyWiseXQIFPayee pPayee) {
+    public void recordPayee(final MoneyWiseXQIFPayee pPayee) {
         /* Add payee line */
         addLine(new MoneyWiseXQIFEventPayeeLine(pPayee));
     }
@@ -428,7 +428,7 @@ public class MoneyWiseXQIFEvent
      *
      * @param pPayeeDesc the payee description
      */
-    protected void recordPayee(final String pPayeeDesc) {
+    public void recordPayee(final String pPayeeDesc) {
         /* Add payee line */
         addLine(new MoneyWiseXQIFEventPayeeDescLine(pPayeeDesc));
     }
@@ -438,7 +438,7 @@ public class MoneyWiseXQIFEvent
      *
      * @param pAmount the amount
      */
-    protected void recordAmount(final OceanusMoney pAmount) {
+    public void recordAmount(final OceanusMoney pAmount) {
         /* Add amount line */
         addLine(new MoneyWiseXQIFEventAmountLine(pAmount));
     }
@@ -448,7 +448,7 @@ public class MoneyWiseXQIFEvent
      *
      * @param pAccount the account
      */
-    protected void recordAccount(final MoneyWiseXQIFAccount pAccount) {
+    public void recordAccount(final MoneyWiseXQIFAccount pAccount) {
         /* Add account line */
         addLine(new MoneyWiseXQIFEventAccountLine(pAccount));
     }
@@ -459,8 +459,8 @@ public class MoneyWiseXQIFEvent
      * @param pAccount the account
      * @param pClasses the classes
      */
-    protected void recordAccount(final MoneyWiseXQIFAccount pAccount,
-                                 final List<MoneyWiseXQIFClass> pClasses) {
+    public void recordAccount(final MoneyWiseXQIFAccount pAccount,
+                              final List<MoneyWiseXQIFClass> pClasses) {
         /* Add account line */
         addLine(new MoneyWiseXQIFEventAccountLine(pAccount, pClasses));
     }
@@ -470,7 +470,7 @@ public class MoneyWiseXQIFEvent
      *
      * @param pCategory the category
      */
-    protected void recordCategory(final MoneyWiseXQIFEventCategory pCategory) {
+    public void recordCategory(final MoneyWiseXQIFEventCategory pCategory) {
         /* Add category line */
         addLine(new MoneyWiseXQIFEventCategoryLine(pCategory));
     }
@@ -481,8 +481,8 @@ public class MoneyWiseXQIFEvent
      * @param pCategory the category
      * @param pClasses  the classes
      */
-    protected void recordCategory(final MoneyWiseXQIFEventCategory pCategory,
-                                  final List<MoneyWiseXQIFClass> pClasses) {
+    public void recordCategory(final MoneyWiseXQIFEventCategory pCategory,
+                               final List<MoneyWiseXQIFClass> pClasses) {
         /* Add category line */
         addLine(new MoneyWiseXQIFEventCategoryLine(pCategory, pClasses));
     }
@@ -494,9 +494,9 @@ public class MoneyWiseXQIFEvent
      * @param pAmount  the amount
      * @param pComment the comment
      */
-    protected void recordSplitRecord(final MoneyWiseXQIFAccount pAccount,
-                                     final OceanusMoney pAmount,
-                                     final String pComment) {
+    public void recordSplitRecord(final MoneyWiseXQIFAccount pAccount,
+                                  final OceanusMoney pAmount,
+                                  final String pComment) {
         /* Create new split and add it */
         final MoneyWiseXQIFSplitEvent mySplit = new MoneyWiseXQIFSplitEvent(pAccount);
         mySplit.setSplitAmount(pAmount);
@@ -514,10 +514,10 @@ public class MoneyWiseXQIFEvent
      * @param pAmount  the amount
      * @param pComment the comment
      */
-    protected void recordSplitRecord(final MoneyWiseXQIFAccount pAccount,
-                                     final List<MoneyWiseXQIFClass> pClasses,
-                                     final OceanusMoney pAmount,
-                                     final String pComment) {
+    public void recordSplitRecord(final MoneyWiseXQIFAccount pAccount,
+                                  final List<MoneyWiseXQIFClass> pClasses,
+                                  final OceanusMoney pAmount,
+                                  final String pComment) {
         /* Create new split and add it */
         final MoneyWiseXQIFSplitEvent mySplit = new MoneyWiseXQIFSplitEvent(pAccount, pClasses);
         mySplit.setSplitAmount(pAmount);
@@ -534,9 +534,9 @@ public class MoneyWiseXQIFEvent
      * @param pAmount   the amount
      * @param pComment  the comment
      */
-    protected void recordSplitRecord(final MoneyWiseXQIFEventCategory pCategory,
-                                     final OceanusMoney pAmount,
-                                     final String pComment) {
+    public void recordSplitRecord(final MoneyWiseXQIFEventCategory pCategory,
+                                  final OceanusMoney pAmount,
+                                  final String pComment) {
         /* Create new split and add it */
         final MoneyWiseXQIFSplitEvent mySplit = new MoneyWiseXQIFSplitEvent(pCategory);
         mySplit.setSplitAmount(pAmount);
@@ -554,10 +554,10 @@ public class MoneyWiseXQIFEvent
      * @param pAmount   the amount
      * @param pComment  the comment
      */
-    protected void recordSplitRecord(final MoneyWiseXQIFEventCategory pCategory,
-                                     final List<MoneyWiseXQIFClass> pClasses,
-                                     final OceanusMoney pAmount,
-                                     final String pComment) {
+    public void recordSplitRecord(final MoneyWiseXQIFEventCategory pCategory,
+                                  final List<MoneyWiseXQIFClass> pClasses,
+                                  final OceanusMoney pAmount,
+                                  final String pComment) {
         /* Create new split and add it */
         final MoneyWiseXQIFSplitEvent mySplit = new MoneyWiseXQIFSplitEvent(pCategory, pClasses);
         mySplit.setSplitAmount(pAmount);

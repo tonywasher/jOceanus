@@ -34,32 +34,32 @@ public abstract class MoneyWiseXQIFRecord<T extends Enum<T> & MoneyWiseQLineType
     /**
      * Quicken Command.
      */
-    protected static final String XQIF_CMD = "!";
+    public static final String XQIF_CMD = "!";
 
     /**
      * Quicken Item type.
      */
-    protected static final String XQIF_ITEMTYPE = XQIF_CMD + "Type:";
+    public static final String XQIF_ITEMTYPE = XQIF_CMD + "Type:";
 
     /**
      * Set option.
      */
-    protected static final String XQIF_SETOPT = XQIF_CMD + "Option:";
+    public static final String XQIF_SETOPT = XQIF_CMD + "Option:";
 
     /**
      * Clear option.
      */
-    protected static final String XQIF_CLROPT = XQIF_CMD + "Clear:";
+    public static final String XQIF_CLROPT = XQIF_CMD + "Clear:";
 
     /**
      * Quicken End of Item indicator.
      */
-    protected static final String XQIF_EOI = "^";
+    public static final String XQIF_EOI = "^";
 
     /**
      * Quicken New line.
      */
-    protected static final char XQIF_EOL = '\n';
+    public static final char XQIF_EOL = '\n';
 
     /**
      * Class of lines.
@@ -202,8 +202,8 @@ public abstract class MoneyWiseXQIFRecord<T extends Enum<T> & MoneyWiseQLineType
      * @param pItemType the item type
      * @param pBuilder  the string builder
      */
-    protected static void formatItemType(final String pItemType,
-                                         final StringBuilder pBuilder) {
+    public static void formatItemType(final String pItemType,
+                                      final StringBuilder pBuilder) {
         /* Format the item type */
         pBuilder.append(XQIF_ITEMTYPE);
         pBuilder.append(pItemType);
@@ -216,8 +216,8 @@ public abstract class MoneyWiseXQIFRecord<T extends Enum<T> & MoneyWiseQLineType
      * @param pHdr     the header
      * @param pBuilder the string builder
      */
-    protected static void formatHeader(final String pHdr,
-                                       final StringBuilder pBuilder) {
+    public static void formatHeader(final String pHdr,
+                                    final StringBuilder pBuilder) {
         /* Format the header */
         pBuilder.append(pHdr);
         pBuilder.append(XQIF_EOL);
@@ -229,8 +229,8 @@ public abstract class MoneyWiseXQIFRecord<T extends Enum<T> & MoneyWiseQLineType
      * @param pSwitch  the switch to set
      * @param pBuilder the string builder
      */
-    protected static void setSwitch(final String pSwitch,
-                                    final StringBuilder pBuilder) {
+    public static void setSwitch(final String pSwitch,
+                                 final StringBuilder pBuilder) {
         /* Format the item type */
         pBuilder.append(XQIF_SETOPT);
         pBuilder.append(pSwitch);
@@ -243,8 +243,8 @@ public abstract class MoneyWiseXQIFRecord<T extends Enum<T> & MoneyWiseQLineType
      * @param pSwitch  the switch to clear
      * @param pBuilder the string builder
      */
-    protected static void clearSwitch(final String pSwitch,
-                                      final StringBuilder pBuilder) {
+    public static void clearSwitch(final String pSwitch,
+                                   final StringBuilder pBuilder) {
         /* Format the item type */
         pBuilder.append(XQIF_CLROPT);
         pBuilder.append(pSwitch);

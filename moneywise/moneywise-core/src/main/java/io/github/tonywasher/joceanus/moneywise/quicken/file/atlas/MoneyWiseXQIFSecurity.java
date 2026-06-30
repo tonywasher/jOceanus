@@ -39,7 +39,7 @@ public class MoneyWiseXQIFSecurity
     /**
      * Item type.
      */
-    protected static final String XQIF_ITEM = "Security";
+    public static final String XQIF_ITEM = "Security";
 
     /**
      * Category Map.
@@ -86,7 +86,7 @@ public class MoneyWiseXQIFSecurity
      *
      * @param pLines the data lines
      */
-    protected MoneyWiseXQIFSecurity(final List<String> pLines) {
+    public MoneyWiseXQIFSecurity(final List<String> pLines) {
         /* Call super-constructor */
         super(MoneyWiseQSecurityLineType.class);
 

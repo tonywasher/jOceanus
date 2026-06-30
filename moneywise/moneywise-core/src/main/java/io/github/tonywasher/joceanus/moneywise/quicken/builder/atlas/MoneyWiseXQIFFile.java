@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.moneywise.quicken.file.atlas;
+package io.github.tonywasher.joceanus.moneywise.quicken.builder.atlas;
 
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.base.MoneyWiseXAnalysisEventList;
@@ -35,6 +35,16 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferences;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFAccount;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFAccountEvents;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFClass;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFEventCategory;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFParentCategory;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFPayee;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFPrice;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFRegister;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFSecurity;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFSecurityPrices;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 

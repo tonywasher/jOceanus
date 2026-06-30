@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.moneywise.quicken.file.atlas;
+package io.github.tonywasher.joceanus.moneywise.quicken.builder.atlas;
 
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysis;
@@ -37,6 +37,15 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQActionType;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFAccountEvents;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFClass;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFEvent;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFEventCategory;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFHelper;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFPayee;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFPortfolioEvent;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFRegister;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFSecurity;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
@@ -285,9 +294,9 @@ public class MoneyWiseXQIFPortfolioBuilder {
      * @param pHolding the security holding
      * @param pTrans   the transaction
      */
-    protected void processExpenseFromSecurity(final MoneyWisePayee pPayee,
-                                              final MoneyWiseSecurityHolding pHolding,
-                                              final MoneyWiseXAnalysisEvent pTrans) {
+    public void processExpenseFromSecurity(final MoneyWisePayee pPayee,
+                                           final MoneyWiseSecurityHolding pHolding,
+                                           final MoneyWiseXAnalysisEvent pTrans) {
         /* Access Portfolio Account */
         final MoneyWisePortfolio myPort = pHolding.getPortfolio();
         final MoneyWiseSecurity mySecurity = pHolding.getSecurity();
