@@ -24,7 +24,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuild
 /**
  * Core Signature parameters builder.
  */
-public class GordianCoreSignParamsBuilder
+public final class GordianCoreSignParamsBuilder
         implements GordianSignParamsBuilder {
     /**
      * The keyPair.

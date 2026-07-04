@@ -509,6 +509,27 @@ public class GordianCoreSignatureAlgId {
                 BCObjectIdentifiers.xmss_SHAKE256ph,
                 BCObjectIdentifiers.xmss_mt_SHAKE256,
                 BCObjectIdentifiers.xmss_mt_SHAKE256ph);
+
+        /* Process XMSS Sha256_192 signatures */
+        addXMSSSignatures(GordianXMSSDigestType.SHA256_192,
+                BCObjectIdentifiers.xmss_SHA256,
+                BCObjectIdentifiers.xmss_SHA256ph,
+                BCObjectIdentifiers.xmss_mt_SHA256,
+                BCObjectIdentifiers.xmss_mt_SHA256ph);
+
+        /* Process XMSS Shake256_192 signatures */
+        addXMSSSignatures(GordianXMSSDigestType.SHAKE256_192,
+                BCObjectIdentifiers.xmss_SHAKE256,
+                BCObjectIdentifiers.xmss_SHAKE256ph,
+                BCObjectIdentifiers.xmss_mt_SHAKE256,
+                BCObjectIdentifiers.xmss_mt_SHAKE256ph);
+
+        /* Process XMSS Shake256_256 signatures */
+        addXMSSSignatures(GordianXMSSDigestType.SHAKE256_256,
+                BCObjectIdentifiers.xmss_SHAKE256,
+                BCObjectIdentifiers.xmss_SHAKE256ph,
+                BCObjectIdentifiers.xmss_mt_SHAKE256,
+                BCObjectIdentifiers.xmss_mt_SHAKE256ph);
     }
 
     /**

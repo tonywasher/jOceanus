@@ -19,37 +19,24 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSDigestType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSHeight;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreXMSSSpec;
+import org.bouncycastle.asn1.iana.IANAObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
-import org.bouncycastle.pqc.asn1.XMSSKeyParams;
-import org.bouncycastle.pqc.crypto.xmss.XMSSParameters;
-import org.bouncycastle.util.Pack;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
+import org.bouncycastle.pqc.crypto.xmss.XMSSPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.xmss.XMSSPublicKeyParameters;
 
-import java.util.Objects;
+import java.io.IOException;
 
 /**
  * XMSS Encoded parser.
  */
 public final class GordianXMSSEncodedParser implements GordianEncodedParser {
-    /**
-     * The treeDigest error.
-     */
-    private static final String ERROR_TREEDIGEST = "Unsupported treeDigest: ";
-
-    /**
-     * IANA OID.
-     */
-    private static final ASN1ObjectIdentifier IANA_OID = new ASN1ObjectIdentifier("1.3.6.1.5.5.7.6.34");
-
     /**
      * Registrar.
      *
@@ -57,87 +44,36 @@ public final class GordianXMSSEncodedParser implements GordianEncodedParser {
      */
     public static void register(final GordianKeyPairParserRegistrar pIdManager) {
         pIdManager.registerParser(PQCObjectIdentifiers.xmss, new GordianXMSSEncodedParser());
-        pIdManager.registerParser(IANA_OID, new GordianXMSSEncodedParser());
+        pIdManager.registerParser(IANAObjectIdentifiers.id_alg_xmss_hashsig, new GordianXMSSEncodedParser());
     }
 
     @Override
     public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
-        final AlgorithmIdentifier myId = pInfo.getAlgorithm();
-        final XMSSKeyParams myParms = XMSSKeyParams.getInstance(myId.getParameters());
-        if (myParms != null) {
-            return determineKeyPairSpec(myParms);
-        }
+        /* Protect against exceptions */
+        try {
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            final XMSSPublicKeyParameters myParams = (XMSSPublicKeyParameters) PublicKeyFactory.createKey(pInfo);
+            final GordianCoreXMSSSpec mySpec = GordianCoreXMSSSpec.determineSpecFromParameters(myParams.getParameters());
+            return myBuilder.xmss(mySpec);
 
-        /* Parse data */
-        final byte[] keyEnc = Objects.requireNonNull(pInfo.getPublicKeyData()).getOctets();
-        final int myOID = Pack.bigEndianToInt(keyEnc, 0);
-        final XMSSParameters myParams = XMSSParameters.lookupByOID(myOID);
-        final GordianKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
-        return myBuilder.xmss(determineKeyType(myParams.getTreeDigestOID()), determineHeight(myParams.getHeight()));
+            /* Handle exceptions */
+        } catch (IOException e) {
+            throw new GordianIOException(ERROR_PARSE, e);
+        }
     }
 
     @Override
     public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
-        final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
-        final XMSSKeyParams myParms = XMSSKeyParams.getInstance(myId.getParameters());
-        return determineKeyPairSpec(myParms);
-    }
+        /* Protect against exceptions */
+        try {
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            final XMSSPrivateKeyParameters myParams = (XMSSPrivateKeyParameters) PrivateKeyFactory.createKey(pInfo);
+            final GordianCoreXMSSSpec mySpec = GordianCoreXMSSSpec.determineSpecFromParameters(myParams.getParameters());
+            return myBuilder.xmss(mySpec);
 
-    /**
-     * Obtain keySpec from Parameters.
-     *
-     * @param pParms the parameters
-     * @return the keySpec
-     * @throws GordianException on error
-     */
-    private static GordianKeyPairSpec determineKeyPairSpec(final XMSSKeyParams pParms) throws GordianException {
-        final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();
-        final GordianXMSSHeight myHeight = determineHeight(pParms.getHeight());
-        final GordianKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
-        return myBuilder.xmss(determineKeyType(myDigest), myHeight);
-    }
-
-    /**
-     * Obtain keyType from digest.
-     *
-     * @param pDigest the treeDigest
-     * @return the keyType
-     * @throws GordianException on error
-     */
-    static GordianXMSSDigestType determineKeyType(final ASN1ObjectIdentifier pDigest) throws GordianException {
-        if (pDigest.equals(NISTObjectIdentifiers.id_sha256)) {
-            return GordianXMSSDigestType.SHA256;
+            /* Handle exceptions */
+        } catch (IOException e) {
+            throw new GordianIOException(ERROR_PARSE, e);
         }
-        if (pDigest.equals(NISTObjectIdentifiers.id_sha512)) {
-            return GordianXMSSDigestType.SHA512;
-        }
-        if (pDigest.equals(NISTObjectIdentifiers.id_shake128)) {
-            return GordianXMSSDigestType.SHAKE128;
-        }
-        if (pDigest.equals(NISTObjectIdentifiers.id_shake256)) {
-            return GordianXMSSDigestType.SHAKE256;
-        }
-
-        /* Tree Digest is not supported */
-        throw new GordianDataException(ERROR_TREEDIGEST + pDigest);
-    }
-
-    /**
-     * Obtain height.
-     *
-     * @param pHeight the height
-     * @return the xmssHeight
-     * @throws GordianException on error
-     */
-    static GordianXMSSHeight determineHeight(final int pHeight) throws GordianException {
-        /* Loo through the heights */
-        for (GordianXMSSHeight myHeight : GordianXMSSHeight.values()) {
-            if (myHeight.getHeight() == pHeight) {
-                return myHeight;
-            }
-        }
-
-        /* Height is not supported */
-        throw new GordianDataException("Inavlid height: " + pHeight);
     }
 }

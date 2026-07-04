@@ -86,6 +86,7 @@ public class JcaEdDSASignature
      * Set parameters.
      *
      * @param pSignName the signature algorithm
+     * @param pContext  the context
      * @throws GordianException on error
      */
     private void setParameters(final String pSignName,

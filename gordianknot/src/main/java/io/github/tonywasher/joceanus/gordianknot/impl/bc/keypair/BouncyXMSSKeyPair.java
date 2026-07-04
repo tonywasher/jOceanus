@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
@@ -24,20 +23,14 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.B
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreXMSSSpec;
-import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.KeyGenerationParameters;
-import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.crypto.digests.SHA512Digest;
-import org.bouncycastle.crypto.digests.SHAKEDigest;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.pqc.crypto.xmss.XMSSKeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.xmss.XMSSKeyPairGenerator;
 import org.bouncycastle.pqc.crypto.xmss.XMSSMTKeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.xmss.XMSSMTKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.xmss.XMSSMTParameters;
 import org.bouncycastle.pqc.crypto.xmss.XMSSMTPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.xmss.XMSSMTPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.xmss.XMSSParameters;
 import org.bouncycastle.pqc.crypto.xmss.XMSSPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.xmss.XMSSPublicKeyParameters;
 
@@ -169,22 +162,12 @@ public final class BouncyXMSSKeyPair {
             /* Create and initialise the generator */
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
             final GordianCoreXMSSSpec mySpec = myKeySpec.getXMSSSpec();
-            final KeyGenerationParameters myParams = new XMSSKeyGenerationParameters(
-                    new XMSSParameters(mySpec.getHeight().getHeight(), createDigest(getKeyType())), getRandom());
+            final KeyGenerationParameters myParams =
+                    new XMSSKeyGenerationParameters(mySpec.getXMSSParameters(), getRandom());
 
             /* Create and initialise the generator */
             setGenerator(new XMSSKeyPairGenerator(), myParams);
             setFactorySet(BouncyPqKeyFactorySet.INSTANCE);
-        }
-
-        /**
-         * Obtain the keyTypeType.
-         *
-         * @return the keyTypeType
-         */
-        private GordianXMSSDigestType getKeyType() {
-            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) getKeySpec();
-            return myKeySpec.getXMSSSpec().getDigestType();
         }
 
         @Override
@@ -196,21 +179,6 @@ public final class BouncyXMSSKeyPair {
         BouncyXMSSPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
             return new BouncyXMSSPublicKey(getKeySpec(), (XMSSPublicKeyParameters) pThat);
         }
-    }
-
-    /**
-     * Create digest for XMSSKeyType.
-     *
-     * @param pKeyType the key type
-     * @return the digest
-     */
-    static Digest createDigest(final GordianXMSSDigestType pKeyType) {
-        return switch (pKeyType) {
-            case SHAKE128 -> new SHAKEDigest(GordianLength.LEN_128.getLength());
-            case SHAKE256 -> new SHAKEDigest(GordianLength.LEN_256.getLength());
-            case SHA256 -> new SHA256Digest();
-            default -> new SHA512Digest();
-        };
     }
 
     /**
@@ -329,9 +297,8 @@ public final class BouncyXMSSKeyPair {
             /* Create and initialise the generator */
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
             final GordianCoreXMSSSpec mySpec = myKeySpec.getXMSSSpec();
-            final KeyGenerationParameters myParams = new XMSSMTKeyGenerationParameters(
-                    new XMSSMTParameters(mySpec.getHeight().getHeight(), mySpec.getLayers().getLayers(),
-                            createDigest(getKeyType())), getRandom());
+            final KeyGenerationParameters myParams =
+                    new XMSSMTKeyGenerationParameters(mySpec.getXMSSMTParameters(), getRandom());
 
             /* Create and initialise the generator */
             setGenerator(new XMSSMTKeyPairGenerator(), myParams);

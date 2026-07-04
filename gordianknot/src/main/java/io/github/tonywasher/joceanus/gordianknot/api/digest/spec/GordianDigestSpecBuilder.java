@@ -337,7 +337,17 @@ public interface GordianDigestSpecBuilder {
      * @return the digestSpec
      */
     default GordianDigestSpec shake128() {
-        return withType(GordianDigestType.SHAKE).withState(GordianDigestState.STATE128).withLength(GordianLength.LEN_256).build();
+        return shake128(GordianLength.LEN_256);
+    }
+
+    /**
+     * Create shake128.
+     *
+     * @param pLength the length
+     * @return the digestSpec
+     */
+    default GordianDigestSpec shake128(final GordianLength pLength) {
+        return withType(GordianDigestType.SHAKE).withState(GordianDigestState.STATE128).withLength(pLength).build();
     }
 
     /**
@@ -346,7 +356,17 @@ public interface GordianDigestSpecBuilder {
      * @return the digestSpec
      */
     default GordianDigestSpec shake256() {
-        return withType(GordianDigestType.SHAKE).withState(GordianDigestState.STATE256).withLength(GordianLength.LEN_512).build();
+        return shake256(GordianLength.LEN_512);
+    }
+
+    /**
+     * Create shake256.
+     *
+     * @param pLength the length
+     * @return the digestSpec
+     */
+    default GordianDigestSpec shake256(final GordianLength pLength) {
+        return withType(GordianDigestType.SHAKE).withState(GordianDigestState.STATE256).withLength(pLength).build();
     }
 
     /**
