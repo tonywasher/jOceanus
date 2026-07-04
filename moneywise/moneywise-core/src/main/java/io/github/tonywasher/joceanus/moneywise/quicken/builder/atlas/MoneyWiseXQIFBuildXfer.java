@@ -23,7 +23,6 @@ import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFT
 import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFAccountEvents;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFClass;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFEvent;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFHelper;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFRegister;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 

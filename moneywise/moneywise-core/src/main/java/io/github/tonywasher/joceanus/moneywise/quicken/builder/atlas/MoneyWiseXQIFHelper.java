@@ -15,10 +15,14 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.moneywise.quicken.file.atlas;
+package io.github.tonywasher.joceanus.moneywise.quicken.builder.atlas;
 
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFClass;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFEventCategory;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFPayee;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFRegister;
 
 import java.util.List;
 
@@ -70,4 +74,12 @@ public interface MoneyWiseXQIFHelper {
      * @return the line
      */
     String buildXferToPayee(MoneyWiseTransAsset pPartner);
+
+    /**
+     * Does the transaction have extra detail.
+     *
+     * @param pTrans the transaction
+     * @return true/false
+     */
+    boolean hasXtraDetail(MoneyWiseXAnalysisEvent pTrans);
 }

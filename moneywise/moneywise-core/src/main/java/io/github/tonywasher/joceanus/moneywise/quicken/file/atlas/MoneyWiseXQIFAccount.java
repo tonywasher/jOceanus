@@ -261,12 +261,14 @@ public class MoneyWiseXQIFAccount
         myMap.put(MoneyWiseDepositCategoryClass.SAVINGS, XQIFACT_BANK);
         myMap.put(MoneyWiseDepositCategoryClass.PEER2PEER, XQIFACT_BANK);
         myMap.put(MoneyWiseDepositCategoryClass.BOND, XQIFACT_BANK);
+        myMap.put(MoneyWiseDepositCategoryClass.TAXFREEBOND, XQIFACT_BANK);
+        myMap.put(MoneyWiseDepositCategoryClass.TAXFREESAVINGS, XQIFACT_BANK);
         myMap.put(MoneyWiseCashCategoryClass.CASH, XQIFACT_CASH);
         myMap.put(MoneyWiseCashCategoryClass.AUTOEXPENSE, XQIFACT_CASH);
         myMap.put(MoneyWiseLoanCategoryClass.CREDITCARD, XQIFACT_CCARD);
-        myMap.put(MoneyWiseBasicDataType.PORTFOLIO, XQIFACT_INVST);
         myMap.put(MoneyWiseLoanCategoryClass.PRIVATELOAN, XQIFACT_ASSET);
         myMap.put(MoneyWiseLoanCategoryClass.LOAN, XQIFACT_LOAN);
+        myMap.put(MoneyWiseBasicDataType.PORTFOLIO, XQIFACT_INVST);
 
         /* Return the map */
         return myMap;

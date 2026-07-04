@@ -21,7 +21,6 @@ import io.github.tonywasher.joceanus.moneywise.analysis.atlas.base.MoneyWiseXAna
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
@@ -38,7 +37,6 @@ import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFA
 import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFClass;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFEvent;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFEventCategory;
-import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFHelper;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFPayee;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFRegister;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
@@ -94,21 +92,6 @@ public class MoneyWiseXQIFBuilder
     private final MoneyWiseTransCategory theTaxCategory;
 
     /**
-     * The NatInsurance category.
-     */
-    private final MoneyWiseTransCategory theNatInsCategory;
-
-    /**
-     * The DeemedBenefit category.
-     */
-    private final MoneyWiseTransCategory theBenefitCategory;
-
-    /**
-     * The Withheld category.
-     */
-    private final MoneyWiseTransCategory theWithheldCategory;
-
-    /**
      * The Opening category.
      */
     private final MoneyWiseTransCategory theOpeningCategory;
@@ -117,6 +100,21 @@ public class MoneyWiseXQIFBuilder
      * The Build Transfer engine.
      */
     private final MoneyWiseXQIFBuildXfer theBuildXfer;
+
+    /**
+     * The Build Cash engine.
+     */
+    private final MoneyWiseXQIFBuildCash theBuildCash;
+
+    /**
+     * The Build Income engine.
+     */
+    private final MoneyWiseXQIFBuildIncome theBuildIncome;
+
+    /**
+     * The Build Expense engine.
+     */
+    private final MoneyWiseXQIFBuildExpense theBuildExpense;
 
     /**
      * Constructor.
@@ -142,13 +140,13 @@ public class MoneyWiseXQIFBuilder
         /* Store categories */
         final MoneyWiseTransCategoryList myCategories = pData.getTransCategories();
         theTaxCategory = myCategories.getEventInfoCategory(MoneyWiseTransInfoClass.TAXCREDIT);
-        theNatInsCategory = myCategories.getEventInfoCategory(MoneyWiseTransInfoClass.EMPLOYEENATINS);
-        theBenefitCategory = myCategories.getEventInfoCategory(MoneyWiseTransInfoClass.DEEMEDBENEFIT);
-        theWithheldCategory = myCategories.getEventInfoCategory(MoneyWiseTransInfoClass.WITHHELD);
         theOpeningCategory = myCategories.getSingularClass(MoneyWiseTransCategoryClass.OPENINGBALANCE);
 
         /* Create subBuilders */
         theBuildXfer = new MoneyWiseXQIFBuildXfer(this);
+        theBuildCash = new MoneyWiseXQIFBuildCash(this);
+        theBuildIncome = new MoneyWiseXQIFBuildIncome(pData, this);
+        theBuildExpense = new MoneyWiseXQIFBuildExpense(pData, this);
     }
 
     @Override
@@ -200,15 +198,15 @@ public class MoneyWiseXQIFBuilder
     /**
      * Process opening balance.
      *
-     * @param pDeposit   the deposit
+     * @param pAccount   the account
      * @param pStartDate the start date
      * @param pBalance   the opening balance
      */
-    protected void processBalance(final MoneyWiseDeposit pDeposit,
+    protected void processBalance(final MoneyWiseTransAsset pAccount,
                                   final OceanusDate pStartDate,
                                   final OceanusMoney pBalance) {
         /* Access the Account details */
-        final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pDeposit);
+        final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pAccount);
 
         /* Create the event */
         final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pStartDate);
@@ -237,14 +235,14 @@ public class MoneyWiseXQIFBuilder
      * @param pCredit the credit account
      * @param pTrans  the transaction
      */
-    protected void processDebitPayee(final MoneyWisePayee pPayee,
-                                     final MoneyWiseTransAsset pCredit,
-                                     final MoneyWiseXAnalysisEvent pTrans) {
+    private void processDebitPayee(final MoneyWisePayee pPayee,
+                                   final MoneyWiseTransAsset pCredit,
+                                   final MoneyWiseXAnalysisEvent pTrans) {
         /* If this is a cash recovery */
         if (pCredit instanceof MoneyWiseCash myCash
                 && myCash.isAutoExpense()) {
             /* process as cash recovery */
-            processCashRecovery(pPayee, myCash, pTrans);
+            theBuildCash.processCashRecovery(pPayee, myCash, pTrans);
 
             /* If this is an income to a security */
         } else if (pCredit instanceof MoneyWiseSecurityHolding myHolding) {
@@ -259,11 +257,11 @@ public class MoneyWiseXQIFBuilder
             /* else if we have additional detail */
         } else if (hasXtraDetail(pTrans)) {
             /* process as detailed income */
-            processDetailedIncome(pPayee, pCredit, pTrans);
+            theBuildIncome.processDetailedIncome(pPayee, pCredit, pTrans);
 
         } else {
             /* process as standard income */
-            processStandardIncome(pPayee, pCredit, pTrans);
+            theBuildIncome.processStandardIncome(pPayee, pCredit, pTrans);
         }
     }
 
@@ -274,14 +272,14 @@ public class MoneyWiseXQIFBuilder
      * @param pDebit the debit account
      * @param pTrans the transaction
      */
-    protected void processCreditPayee(final MoneyWisePayee pPayee,
-                                      final MoneyWiseTransAsset pDebit,
-                                      final MoneyWiseXAnalysisEvent pTrans) {
+    private void processCreditPayee(final MoneyWisePayee pPayee,
+                                    final MoneyWiseTransAsset pDebit,
+                                    final MoneyWiseXAnalysisEvent pTrans) {
         /* If this is a cash payment */
         if (pDebit instanceof MoneyWiseCash myCash
                 && myCash.isAutoExpense()) {
             /* process as cash payment */
-            processCashPayment(pPayee, myCash, pTrans);
+            theBuildCash.processCashPayment(pPayee, myCash, pTrans);
 
             /* If this is an expense from a security */
         } else if (pDebit instanceof MoneyWiseSecurityHolding myHolding) {
@@ -296,11 +294,11 @@ public class MoneyWiseXQIFBuilder
             /* else if we have additional detail */
         } else if (hasXtraDetail(pTrans)) {
             /* process as detailed income */
-            processDetailedExpense(pPayee, pDebit, pTrans);
+            theBuildExpense.processDetailedExpense(pPayee, pDebit, pTrans);
 
         } else {
             /* process as standard expense */
-            processStandardExpense(pPayee, pDebit, pTrans);
+            theBuildExpense.processStandardExpense(pPayee, pDebit, pTrans);
         }
     }
 
@@ -311,20 +309,20 @@ public class MoneyWiseXQIFBuilder
      * @param pCredit the credit account
      * @param pTrans  the transaction
      */
-    protected void processTransfer(final MoneyWiseTransAsset pDebit,
-                                   final MoneyWiseTransAsset pCredit,
-                                   final MoneyWiseXAnalysisEvent pTrans) {
+    private void processTransfer(final MoneyWiseTransAsset pDebit,
+                                 final MoneyWiseTransAsset pCredit,
+                                 final MoneyWiseXAnalysisEvent pTrans) {
         /* If this is a cash AutoExpense */
         if (pCredit instanceof MoneyWiseCash myCash
                 && myCash.isAutoExpense()) {
             /* Process as standard expense */
-            processCashExpense(myCash, pDebit, pTrans);
+            theBuildCash.processCashExpense(myCash, pDebit, pTrans);
 
             /* If this is a cash AutoReceipt */
         } else if (pDebit instanceof MoneyWiseCash myCash
                 && myCash.isAutoExpense()) {
             /* Process as standard expense */
-            processCashReceipt(myCash, pCredit, pTrans);
+            theBuildCash.processCashReceipt(myCash, pCredit, pTrans);
 
             /* If this is a transfer from a security */
         } else if (pDebit instanceof MoneyWiseSecurityHolding myDebitHolding) {
@@ -364,19 +362,19 @@ public class MoneyWiseXQIFBuilder
             switch (myCat) {
                 case CASHBACK:
                     /* Process as cashBack payment */
-                    processCashBack(pDebit, pCredit, pTrans);
+                    theBuildIncome.processCashBack(pDebit, pCredit, pTrans);
                     break;
                 case INTEREST, LOYALTYBONUS:
                     /* Process as interest payment */
-                    processInterest(pDebit, pCredit, pTrans);
+                    theBuildIncome.processInterest(pDebit, pCredit, pTrans);
                     break;
                 case LOANINTERESTEARNED, RENTALINCOME, ROOMRENTALINCOME:
                     /* Process as income from parent of the credit */
-                    processStandardIncome((MoneyWisePayee) pCredit.getParent(), pCredit, pTrans);
+                    theBuildIncome.processStandardIncome((MoneyWisePayee) pCredit.getParent(), pCredit, pTrans);
                     break;
                 case WRITEOFF, LOANINTERESTCHARGED:
                     /* Process as expense to parent of the credit (recursive) */
-                    processStandardExpense((MoneyWisePayee) pCredit.getParent(), pDebit, pTrans);
+                    theBuildExpense.processStandardExpense((MoneyWisePayee) pCredit.getParent(), pDebit, pTrans);
                     break;
                 default:
                     /* Process as standard transfer */
@@ -386,13 +384,8 @@ public class MoneyWiseXQIFBuilder
         }
     }
 
-    /**
-     * Does the transaction have extra detail.
-     *
-     * @param pTrans the transaction
-     * @return true/false
-     */
-    protected static boolean hasXtraDetail(final MoneyWiseXAnalysisEvent pTrans) {
+    @Override
+    public boolean hasXtraDetail(final MoneyWiseXAnalysisEvent pTrans) {
         if (pTrans.getTaxCredit() != null) {
             return true;
         }
@@ -403,257 +396,6 @@ public class MoneyWiseXQIFBuilder
             return true;
         }
         return pTrans.getWithheld() != null;
-    }
-
-    /**
-     * Process standard income.
-     *
-     * @param pPayee  the payee
-     * @param pCredit the credit account
-     * @param pTrans  the transaction
-     */
-    protected void processStandardIncome(final MoneyWisePayee pPayee,
-                                         final MoneyWiseTransAsset pCredit,
-                                         final MoneyWiseXAnalysisEvent pTrans) {
-        /* Access the Payee details */
-        final MoneyWiseXQIFPayee myPayee = theRegister.registerPayee(pPayee);
-
-        /* Access the Category details */
-        final MoneyWiseXQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
-
-        /* Access the Account details */
-        final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pCredit);
-
-        /* Obtain classes */
-        final List<MoneyWiseXQIFClass> myList = getTransactionClasses(pTrans);
-
-        /* Create a new event */
-        final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-        myEvent.recordAmount(pTrans.getAmount());
-        myEvent.recordPayee(myPayee);
-        myEvent.recordCategory(myCategory, myList);
-
-        /* Add event to event list */
-        myAccount.addEvent(myEvent);
-    }
-
-    /**
-     * Process detailed income.
-     *
-     * @param pPayee  the payee
-     * @param pCredit the credit account
-     * @param pTrans  the transaction
-     */
-    protected void processDetailedIncome(final MoneyWisePayee pPayee,
-                                         final MoneyWiseTransAsset pCredit,
-                                         final MoneyWiseXAnalysisEvent pTrans) {
-        /* Access the Payee details */
-        final MoneyWiseXQIFPayee myPayee = theRegister.registerPayee(pPayee);
-        final MoneyWiseXQIFPayee myTaxPayee = theRegister.registerPayee(theTaxMan);
-
-        /* Access the Category details */
-        final MoneyWiseXQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
-
-        /* Access the Account details */
-        final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pCredit);
-
-        /* Obtain classes */
-        final List<MoneyWiseXQIFClass> myList = getTransactionClasses(pTrans);
-
-        /* Obtain basic amount */
-        OceanusMoney myAmount = pTrans.getAmount();
-
-        /* Create a new event */
-        final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-        myEvent.recordPayee(myPayee);
-        myEvent.recordAmount(myAmount);
-
-        /* Add Split event */
-        myAmount = new OceanusMoney(myAmount);
-        myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
-
-        /* Handle Tax Credit */
-        OceanusMoney myTaxCredit = pTrans.getTaxCredit();
-        if (myTaxCredit != null) {
-            /* Add to amount */
-            myAmount.addAmount(myTaxCredit);
-            myTaxCredit = new OceanusMoney(myTaxCredit);
-            myTaxCredit.negate();
-
-            /* Access the Category details */
-            final MoneyWiseXQIFEventCategory myTaxCategory = theRegister.registerCategory(theTaxCategory);
-
-            /* Add Split event */
-            myEvent.recordSplitRecord(myTaxCategory, myTaxCredit, myTaxPayee.getName());
-        }
-
-        /* Handle National Insurance */
-        OceanusMoney myNatIns = pTrans.getEmployeeNatIns();
-        if (myNatIns != null) {
-            /* Add to amount */
-            myAmount.addAmount(myNatIns);
-            myNatIns = new OceanusMoney(myNatIns);
-            myNatIns.negate();
-
-            /* Access the Category details */
-            final MoneyWiseXQIFEventCategory myInsCategory = theRegister.registerCategory(theNatInsCategory);
-
-            /* Add Split event */
-            myEvent.recordSplitRecord(myInsCategory, myNatIns, myTaxPayee.getName());
-        }
-
-        /* Handle Deemed Benefit */
-        OceanusMoney myBenefit = pTrans.getDeemedBenefit();
-        if (myBenefit != null) {
-            /* Access the Category details */
-            final MoneyWiseXQIFEventCategory myBenCategory = theRegister.registerCategory(theBenefitCategory);
-
-            /* Add Split event */
-            myEvent.recordSplitRecord(myBenCategory, myBenefit, myPayee.getName());
-
-            /* Add to amount */
-            myBenefit = new OceanusMoney(myBenefit);
-            myBenefit.negate();
-
-            /* Access the Category details */
-            final MoneyWiseXQIFEventCategory myWithCategory = theRegister.registerCategory(theBenefitCategory);
-
-            /* Add Split event */
-            myEvent.recordSplitRecord(myWithCategory, myBenefit, myPayee.getName());
-        }
-
-        /* Handle Withheld */
-        OceanusMoney myWithheld = pTrans.getWithheld();
-        if (myWithheld != null) {
-            /* Add to amount */
-            myAmount.addAmount(myWithheld);
-            myWithheld = new OceanusMoney(myWithheld);
-            myWithheld.negate();
-
-            /* Access the Category details */
-            final MoneyWiseXQIFEventCategory myWithCategory = theRegister.registerCategory(theWithheldCategory);
-
-            /* Add Split event */
-            myEvent.recordSplitRecord(myWithCategory, myWithheld, myPayee.getName());
-        }
-
-        /* Add event to event list */
-        myAccount.addEvent(myEvent);
-    }
-
-    /**
-     * Process standard expense.
-     *
-     * @param pPayee the payee
-     * @param pDebit the debit account
-     * @param pTrans the transaction
-     */
-    protected void processStandardExpense(final MoneyWisePayee pPayee,
-                                          final MoneyWiseTransAsset pDebit,
-                                          final MoneyWiseXAnalysisEvent pTrans) {
-        /* Access the Payee details */
-        final MoneyWiseXQIFPayee myPayee = theRegister.registerPayee(pPayee);
-
-        /* Access the Category details */
-        final MoneyWiseXQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
-
-        /* Access the Account details */
-        final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pDebit);
-
-        /* Obtain classes */
-        final List<MoneyWiseXQIFClass> myList = getTransactionClasses(pTrans);
-
-        /* Access the amount */
-        final OceanusMoney myAmount = new OceanusMoney(pTrans.getAmount());
-        myAmount.negate();
-
-        /* Create a new event */
-        final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-        myEvent.recordAmount(myAmount);
-        myEvent.recordPayee(myPayee);
-        myEvent.recordCategory(myCategory, myList);
-
-        /* Add event to event list */
-        myAccount.addEvent(myEvent);
-    }
-
-    /**
-     * Process detailed expense.
-     *
-     * @param pPayee the payee
-     * @param pDebit the debit account
-     * @param pTrans the expense
-     */
-    protected void processDetailedExpense(final MoneyWisePayee pPayee,
-                                          final MoneyWiseTransAsset pDebit,
-                                          final MoneyWiseXAnalysisEvent pTrans) {
-        /* Access the Payee details */
-        final MoneyWiseXQIFPayee myPayee = theRegister.registerPayee(pPayee);
-        final MoneyWiseXQIFPayee myTaxPayee = theRegister.registerPayee(theTaxMan);
-
-        /* Access the Category details */
-        final MoneyWiseXQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
-
-        /* Access the Account details */
-        final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pDebit);
-
-        /* Obtain classes */
-        final List<MoneyWiseXQIFClass> myList = getTransactionClasses(pTrans);
-
-        /* Obtain basic amount */
-        OceanusMoney myAmount = new OceanusMoney(pTrans.getAmount());
-        myAmount.negate();
-
-        /* Create a new event */
-        final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-        myEvent.recordPayee(myPayee);
-        myEvent.recordAmount(myAmount);
-
-        /* Add Split event */
-        myAmount = new OceanusMoney(myAmount);
-        myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
-
-        /* Handle Tax Credit */
-        final OceanusMoney myTaxCredit = pTrans.getTaxCredit();
-        if (myTaxCredit != null) {
-            /* Subtract from amount */
-            myAmount.subtractAmount(myTaxCredit);
-
-            /* Access the Category details */
-            final MoneyWiseXQIFEventCategory myTaxCategory = theRegister.registerCategory(theTaxCategory);
-
-            /* Add Split event */
-            myEvent.recordSplitRecord(myTaxCategory, myTaxCredit, myTaxPayee.getName());
-        }
-
-        /* Handle National Insurance */
-        final OceanusMoney myNatIns = pTrans.getEmployeeNatIns();
-        if (myNatIns != null) {
-            /* Subtract from amount */
-            myAmount.subtractAmount(myNatIns);
-
-            /* Access the Category details */
-            final MoneyWiseXQIFEventCategory myInsCategory = theRegister.registerCategory(theNatInsCategory);
-
-            /* Add Split event */
-            myEvent.recordSplitRecord(myInsCategory, myNatIns, myTaxPayee.getName());
-        }
-
-        /* Handle Deemed Benefit */
-        final OceanusMoney myBenefit = pTrans.getDeemedBenefit();
-        if (myBenefit != null) {
-            /* Subtract from amount */
-            myAmount.subtractAmount(myBenefit);
-
-            /* Access the Category details */
-            final MoneyWiseXQIFEventCategory myBenCategory = theRegister.registerCategory(theBenefitCategory);
-
-            /* Add Split event */
-            myEvent.recordSplitRecord(myBenCategory, myBenefit, myPayee.getName());
-        }
-
-        /* Add event to event list */
-        myAccount.addEvent(myEvent);
     }
 
     @Override
@@ -688,369 +430,6 @@ public class MoneyWiseXQIFBuilder
 
         /* Return the payee */
         return myBuilder.toString();
-    }
-
-    /**
-     * Process interest.
-     *
-     * @param pDebit  the debit account
-     * @param pCredit the credit account
-     * @param pTrans  the transaction
-     */
-    protected void processInterest(final MoneyWiseTransAsset pDebit,
-                                   final MoneyWiseTransAsset pCredit,
-                                   final MoneyWiseXAnalysisEvent pTrans) {
-        /* Access details */
-        OceanusMoney myAmount = pTrans.getAmount();
-
-        /* Determine mode */
-        final boolean isRecursive = pDebit.equals(pCredit);
-        final boolean hideBalancingTransfer = theFileType.hideBalancingSplitTransfer();
-        final boolean hasXtraDetail = hasXtraDetail(pTrans);
-
-        /* Access the Account details */
-        final MoneyWiseXQIFAccountEvents myIntAccount = theRegister.registerAccount(pDebit);
-
-        /* Access the payee */
-        final MoneyWiseXQIFPayee myPayee = theRegister.registerPayee((MoneyWisePayee) pDebit.getParent());
-
-        /* Access the category */
-        final MoneyWiseXQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
-
-        /* Obtain classes */
-        final List<MoneyWiseXQIFClass> myList = getTransactionClasses(pTrans);
-
-        /* If this is a simple interest */
-        if (isRecursive && !hasXtraDetail) {
-            /* Create a new event */
-            final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-
-            /* Build simple event and add it */
-            myEvent.recordAmount(myAmount);
-            myEvent.recordPayee(myPayee);
-            myEvent.recordCategory(myCategory, myList);
-
-            /* Add event to event list */
-            myIntAccount.addEvent(myEvent);
-
-            /* Else we need splits */
-        } else {
-            /* Create a new event */
-            final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-
-            /* Record basic details */
-            myEvent.recordAmount(isRecursive
-                    ? myAmount
-                    : new OceanusMoney());
-            myEvent.recordPayee(myPayee);
-
-            /* Add Split event */
-            myAmount = new OceanusMoney(myAmount);
-            myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
-
-            /* Handle Tax Credit */
-            OceanusMoney myTaxCredit = pTrans.getTaxCredit();
-            if (myTaxCredit != null) {
-                /* Access tax payee */
-                final MoneyWiseXQIFPayee myTaxPayee = theRegister.registerPayee(theTaxMan);
-
-                /* Add to amount */
-                myAmount.addAmount(myTaxCredit);
-                myTaxCredit = new OceanusMoney(myTaxCredit);
-                myTaxCredit.negate();
-
-                /* Access the Category details */
-                final MoneyWiseXQIFEventCategory myTaxCategory = theRegister.registerCategory(theTaxCategory);
-
-                /* Add Split event */
-                myEvent.recordSplitRecord(myTaxCategory, myTaxCredit, myTaxPayee.getName());
-            }
-
-            /* Handle Withheld */
-            OceanusMoney myWithheld = pTrans.getWithheld();
-            if (myWithheld != null) {
-                /* Add to amount */
-                myAmount.addAmount(myWithheld);
-                myWithheld = new OceanusMoney(myWithheld);
-                myWithheld.negate();
-
-                /* Access the Category details */
-                final MoneyWiseXQIFEventCategory myWithCategory = theRegister.registerCategory(theWithheldCategory);
-
-                /* Add Split event */
-                myEvent.recordSplitRecord(myWithCategory, myWithheld, myPayee.getName());
-            }
-
-            /* Handle Non-Recursion */
-            if (!isRecursive) {
-                /* Add to amount */
-                final OceanusMoney myOutAmount = new OceanusMoney(pTrans.getAmount());
-                myOutAmount.negate();
-
-                /* Access the Account details */
-                final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pCredit);
-
-                /* Add Split event */
-                myEvent.recordSplitRecord(myAccount.getAccount(), myOutAmount, null);
-            }
-
-            /* Add event to event list */
-            myIntAccount.addEvent(myEvent);
-        }
-
-        /* If we need a balancing transfer */
-        if (!isRecursive && !hideBalancingTransfer) {
-            /* Access the Account details */
-            final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pCredit);
-
-            /* Create a new event */
-            final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-
-            /* Build simple event and add it */
-            myEvent.recordAmount(pTrans.getAmount());
-            myEvent.recordAccount(myIntAccount.getAccount(), myList);
-
-            /* Build payee description */
-            myEvent.recordPayee(buildXferFromPayee(pDebit));
-
-            /* Add event to event list */
-            myAccount.addEvent(myEvent);
-        }
-    }
-
-    /**
-     * Process cashBack.
-     *
-     * @param pDebit  the debit account
-     * @param pCredit the credit account
-     * @param pTrans  the transaction
-     */
-    protected void processCashBack(final MoneyWiseTransAsset pDebit,
-                                   final MoneyWiseTransAsset pCredit,
-                                   final MoneyWiseXAnalysisEvent pTrans) {
-        /* Access details */
-        OceanusMoney myAmount = pTrans.getAmount();
-
-        /* Determine mode */
-        final boolean isRecursive = pDebit.equals(pCredit);
-        final boolean hideBalancingTransfer = theFileType.hideBalancingSplitTransfer();
-
-        /* Access the Account details */
-        final MoneyWiseXQIFAccountEvents myBaseAccount = theRegister.registerAccount(pDebit);
-
-        /* Access the payee */
-        final MoneyWiseXQIFPayee myPayee = theRegister.registerPayee((MoneyWisePayee) pDebit.getParent());
-
-        /* Access the category */
-        final MoneyWiseXQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
-
-        /* Obtain classes */
-        final List<MoneyWiseXQIFClass> myList = getTransactionClasses(pTrans);
-
-        /* If this is a simple cashBack */
-        if (isRecursive) {
-            /* Create a new event */
-            final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-
-            /* Build simple event and add it */
-            myEvent.recordAmount(myAmount);
-            myEvent.recordPayee(myPayee);
-            myEvent.recordCategory(myCategory, myList);
-
-            /* Add event to event list */
-            myBaseAccount.addEvent(myEvent);
-
-            /* Else we need splits */
-        } else {
-            /* Create a new event */
-            final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-
-            /* Record basic details */
-            myEvent.recordAmount(new OceanusMoney());
-            myEvent.recordPayee(myPayee);
-
-            /* Add Split event */
-            myAmount = new OceanusMoney(myAmount);
-            myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
-
-            /* Add to amount */
-            final OceanusMoney myOutAmount = new OceanusMoney(pTrans.getAmount());
-            myOutAmount.negate();
-
-            /* Access the Account details */
-            final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pCredit);
-
-            /* Add Split event */
-            myEvent.recordSplitRecord(myAccount.getAccount(), myOutAmount, null);
-
-            /* Add event to event list */
-            myBaseAccount.addEvent(myEvent);
-        }
-
-        /* If we need a balancing transfer */
-        if (!isRecursive && !hideBalancingTransfer) {
-            /* Access the Account details */
-            final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pCredit);
-
-            /* Create a new event */
-            final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-
-            /* Build simple event and add it */
-            myEvent.recordAmount(pTrans.getAmount());
-            myEvent.recordAccount(myBaseAccount.getAccount(), myList);
-
-            /* Build payee description */
-            myEvent.recordPayee(buildXferFromPayee(pDebit));
-
-            /* Add event to event list */
-            myAccount.addEvent(myEvent);
-        }
-    }
-
-    /**
-     * Process cash recovery.
-     *
-     * @param pPayee the payee
-     * @param pCash  the cash account
-     * @param pTrans the transaction
-     */
-    protected void processCashRecovery(final MoneyWisePayee pPayee,
-                                       final MoneyWiseCash pCash,
-                                       final MoneyWiseXAnalysisEvent pTrans) {
-        /* Access the Payee details */
-        final MoneyWiseXQIFPayee myPayee = theRegister.registerPayee(pPayee);
-
-        /* Access the Category details */
-        final MoneyWiseXQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
-        final MoneyWiseXQIFEventCategory myAutoCategory = theRegister.registerCategory(pCash.getAutoExpense());
-
-        /* Access the Account details */
-        final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pCash);
-
-        /* Obtain classes */
-        final List<MoneyWiseXQIFClass> myList = getTransactionClasses(pTrans);
-
-        /* Access the amount */
-        final OceanusMoney myInAmount = pTrans.getAmount();
-        final OceanusMoney myOutAmount = new OceanusMoney(myInAmount);
-        myOutAmount.negate();
-
-        /* Create a new event */
-        final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-        myEvent.recordAmount(new OceanusMoney());
-        myEvent.recordPayee(myPayee);
-        myEvent.recordSplitRecord(myCategory, myList, myInAmount, myPayee.getName());
-        myEvent.recordSplitRecord(myAutoCategory, myList, myOutAmount, pCash.getAutoPayee().getName());
-
-        /* Add event to event list */
-        myAccount.addEvent(myEvent);
-    }
-
-    /**
-     * Process cash payment.
-     *
-     * @param pPayee the payee
-     * @param pCash  the cash account
-     * @param pTrans the transaction
-     */
-    protected void processCashPayment(final MoneyWisePayee pPayee,
-                                      final MoneyWiseCash pCash,
-                                      final MoneyWiseXAnalysisEvent pTrans) {
-        /* Access the Payee details */
-        final MoneyWiseXQIFPayee myPayee = theRegister.registerPayee(pPayee);
-
-        /* Access the Category details */
-        final MoneyWiseXQIFEventCategory myCategory = theRegister.registerCategory(pTrans.getCategory());
-        final MoneyWiseXQIFEventCategory myAutoCategory = theRegister.registerCategory(pCash.getAutoExpense());
-
-        /* Access the Account details */
-        final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pCash);
-
-        /* Obtain classes */
-        final List<MoneyWiseXQIFClass> myList = getTransactionClasses(pTrans);
-
-        /* Access the amount */
-        final OceanusMoney myInAmount = pTrans.getAmount();
-        final OceanusMoney myOutAmount = new OceanusMoney(myInAmount);
-        myOutAmount.negate();
-
-        /* Create a new event */
-        final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-        myEvent.recordAmount(new OceanusMoney());
-        myEvent.recordPayee(myPayee);
-        myEvent.recordSplitRecord(myAutoCategory, myList, myInAmount, pCash.getAutoPayee().getName());
-        myEvent.recordSplitRecord(myCategory, myList, myOutAmount, myPayee.getName());
-
-        /* Add event to event list */
-        myAccount.addEvent(myEvent);
-    }
-
-    /**
-     * Process cash expense.
-     *
-     * @param pCash  the cash account
-     * @param pDebit the debit account
-     * @param pTrans the transaction
-     */
-    protected void processCashExpense(final MoneyWiseCash pCash,
-                                      final MoneyWiseTransAsset pDebit,
-                                      final MoneyWiseXAnalysisEvent pTrans) {
-        /* Access the Payee details */
-        final MoneyWiseXQIFPayee myPayee = theRegister.registerPayee(pCash.getAutoPayee());
-
-        /* Access the Category details */
-        final MoneyWiseXQIFEventCategory myCategory = theRegister.registerCategory(pCash.getAutoExpense());
-
-        /* Obtain classes */
-        final List<MoneyWiseXQIFClass> myList = getTransactionClasses(pTrans);
-
-        /* Access the Account details */
-        final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pDebit);
-
-        /* Access the amount */
-        final OceanusMoney myAmount = new OceanusMoney(pTrans.getAmount());
-        myAmount.negate();
-
-        /* Create a new event */
-        final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-        myEvent.recordAmount(myAmount);
-        myEvent.recordPayee(myPayee);
-        myEvent.recordCategory(myCategory, myList);
-
-        /* Add event to event list */
-        myAccount.addEvent(myEvent);
-    }
-
-    /**
-     * Process cash receipt.
-     *
-     * @param pCash   the cash account
-     * @param pCredit the credit account
-     * @param pTrans  the transaction
-     */
-    protected void processCashReceipt(final MoneyWiseCash pCash,
-                                      final MoneyWiseTransAsset pCredit,
-                                      final MoneyWiseXAnalysisEvent pTrans) {
-        /* Access the Payee details */
-        final MoneyWiseXQIFPayee myPayee = theRegister.registerPayee(pCash.getAutoPayee());
-
-        /* Access the Category details */
-        final MoneyWiseXQIFEventCategory myCategory = theRegister.registerCategory(pCash.getAutoExpense());
-
-        /* Access the Account details */
-        final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pCredit);
-
-        /* Obtain classes */
-        final List<MoneyWiseXQIFClass> myList = getTransactionClasses(pTrans);
-
-        /* Create a new event */
-        final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-        myEvent.recordAmount(pTrans.getAmount());
-        myEvent.recordPayee(myPayee);
-        myEvent.recordCategory(myCategory, myList);
-
-        /* Add event to event list */
-        myAccount.addEvent(myEvent);
     }
 
     @Override

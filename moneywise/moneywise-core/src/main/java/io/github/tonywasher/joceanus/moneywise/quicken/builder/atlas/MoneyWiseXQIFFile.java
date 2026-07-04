@@ -21,12 +21,17 @@ import io.github.tonywasher.joceanus.moneywise.analysis.atlas.base.MoneyWiseXAna
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.base.MoneyWiseXAnalysisEventList;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.base.MoneyWiseXAnalysisEventType;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysis;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
@@ -625,6 +630,9 @@ public class MoneyWiseXQIFFile
 
         /* Build opening balances */
         buildOpeningBalances(myBuilder, pData.getDeposits());
+        buildOpeningBalances(myBuilder, pData.getCash());
+        buildOpeningBalances(myBuilder, pData.getLoans());
+        buildOpeningBalances(myBuilder, pData.getPortfolios());
 
         /* Loop through the events */
         final MoneyWiseXAnalysisEventList myEvents = pAnalysis.getEvents();
@@ -656,7 +664,7 @@ public class MoneyWiseXQIFFile
      */
     private void buildOpeningBalances(final MoneyWiseXQIFBuilder pBuilder,
                                       final MoneyWiseDepositList pDepositList) {
-        /* Loop through the prices */
+        /* Loop through the deposits */
         final Iterator<MoneyWiseDeposit> myIterator = pDepositList.iterator();
         while (myIterator.hasNext()) {
             final MoneyWiseDeposit myDeposit = myIterator.next();
@@ -669,6 +677,78 @@ public class MoneyWiseXQIFFile
 
             /* Process the balance */
             pBuilder.processBalance(myDeposit, theStartDate, myBalance);
+        }
+    }
+
+    /**
+     * Build opening cash balances.
+     *
+     * @param pBuilder  the builder
+     * @param pCashList the cash list
+     */
+    private void buildOpeningBalances(final MoneyWiseXQIFBuilder pBuilder,
+                                      final MoneyWiseCashList pCashList) {
+        /* Loop through the cash */
+        final Iterator<MoneyWiseCash> myIterator = pCashList.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWiseCash myCash = myIterator.next();
+
+            /* Ignore if no opening balance */
+            final OceanusMoney myBalance = myCash.getOpeningBalance();
+            if (myBalance == null) {
+                continue;
+            }
+
+            /* Process the balance */
+            pBuilder.processBalance(myCash, theStartDate, myBalance);
+        }
+    }
+
+    /**
+     * Build opening loan balances.
+     *
+     * @param pBuilder  the builder
+     * @param pLoanList the loan list
+     */
+    private void buildOpeningBalances(final MoneyWiseXQIFBuilder pBuilder,
+                                      final MoneyWiseLoanList pLoanList) {
+        /* Loop through the loans */
+        final Iterator<MoneyWiseLoan> myIterator = pLoanList.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWiseLoan myLoan = myIterator.next();
+
+            /* Ignore if no opening balance */
+            final OceanusMoney myBalance = myLoan.getOpeningBalance();
+            if (myBalance == null) {
+                continue;
+            }
+
+            /* Process the balance */
+            pBuilder.processBalance(myLoan, theStartDate, myBalance);
+        }
+    }
+
+    /**
+     * Build opening loan balances.
+     *
+     * @param pBuilder       the builder
+     * @param pPortfolioList the portfolio list
+     */
+    private void buildOpeningBalances(final MoneyWiseXQIFBuilder pBuilder,
+                                      final MoneyWisePortfolioList pPortfolioList) {
+        /* Loop through the portfolios */
+        final Iterator<MoneyWisePortfolio> myIterator = pPortfolioList.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWisePortfolio myPortfolio = myIterator.next();
+
+            /* Ignore if no opening balance */
+            final OceanusMoney myBalance = myPortfolio.getOpeningBalance();
+            if (myBalance == null) {
+                continue;
+            }
+
+            /* Process the balance */
+            pBuilder.processBalance(myPortfolio, theStartDate, myBalance);
         }
     }
 

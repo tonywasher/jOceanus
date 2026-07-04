@@ -6,7 +6,7 @@ MoneyWise is a Personal Finance project that provides a single view of personal 
 and transactions relating to those assets. Reports are provided including point in time valuations, income/expense over a period and taxation calculations.
 All taxation is UK tax-based.
 
-Mechanisms are provided to export to Quicken, MoneyDance and AceMoney and it is intended to provide the functionality
+Mechanisms are provided to export to Quicken, MoneyDance and GnuCash, and it is intended to provide the functionality
 to import from those applications
 
 The following account types are provided
@@ -18,7 +18,7 @@ The following account types are provided
 5. [Loans](accounts/Loans.html)
 6. [Portfolios](accounts/Portfolios.html)
 
-Transactions
+Basic Transactions
 
 1. [Transfers](transactions/Transfers.html)
 2. [Expenses](transactions/Expenses.html)
@@ -28,4 +28,7 @@ Transactions
 6. [CreditCard](transactions/CreditCard.html)
 7. [Mortgage](transactions/Mortgage.html)
 8. [PrivateLoan](transactions/PrivateLoan.html)
-9. [ShareBuySell](transactions/ShareBuySell.html)
+
+Investment Transactions
+
+1.  [ShareBuySell](transactions/ShareBuySell.html)

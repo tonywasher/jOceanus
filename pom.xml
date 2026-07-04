@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.tonywasher</groupId>
@@ -74,12 +74,12 @@
         <appDir>${session.executionRootDirectory}/dist</appDir>
         <appBinDir>bin/</appBinDir>
         <appLibDir>lib/</appLibDir>
-        <JUnitVersion>6.1.0</JUnitVersion>
+        <JUnitVersion>6.1.1</JUnitVersion>
         <ApacheMavenVersion>3.9.16</ApacheMavenVersion>
         <JavaVersion>21</JavaVersion>
         <JavaLanguageVersion>21</JavaLanguageVersion>
-        <CheckStyleVersion>13.6.0</CheckStyleVersion>
-        <PMDVersion>7.25.0</PMDVersion>
+        <CheckStyleVersion>13.7.0</CheckStyleVersion>
+        <PMDVersion>7.26.0</PMDVersion>
         <CleanPluginVersion>3.5.0</CleanPluginVersion>
         <ResourcesPluginVersion>3.5.0</ResourcesPluginVersion>
         <InstallPluginVersion>3.1.4</InstallPluginVersion>
