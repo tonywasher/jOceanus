@@ -297,17 +297,9 @@ public class MoneyWiseDataTestAccounts {
 
             /* Create the payee */
             switch (myPayee) {
-                case IDPY_BARCLAYS:
-                case IDPY_NATIONWIDE:
-                case IDPY_STARLING:
-                case IDPY_LLOYDS:
-                case IDPY_HALIFAX:
-                case IDPY_TSB:
-                case IDPY_INTERACTIVE_INVESTOR:
-                case IDPY_FUNDING_CIRCLE:
-                case IDPY_AJ_BELL:
-                case IDPY_STANDARD_LIFE:
-                case IDPY_ASSET_HOLDER:
+                case IDPY_BARCLAYS, IDPY_NATIONWIDE, IDPY_STARLING, IDPY_LLOYDS, IDPY_HALIFAX, IDPY_TSB,
+                     IDPY_INTERACTIVE_INVESTOR, IDPY_FUNDING_CIRCLE, IDPY_AJ_BELL, IDPY_STANDARD_LIFE,
+                     IDPY_ASSET_HOLDER:
                     thePayeeBuilder.name(myPayee).type(MoneyWisePayeeClass.INSTITUTION).build();
                     break;
                 case IDPY_IBM:
@@ -322,15 +314,10 @@ public class MoneyWiseDataTestAccounts {
                 case IDPY_MARKET:
                     thePayeeBuilder.name(myPayee).type(MoneyWisePayeeClass.MARKET).build();
                     break;
-                case IDPY_DAMAGE:
-                case IDPY_PARENTS:
+                case IDPY_DAMAGE, IDPY_PARENTS:
                     thePayeeBuilder.name(myPayee).type(MoneyWisePayeeClass.INDIVIDUAL).build();
                     break;
-                case IDPY_ASDA:
-                case IDPY_PETROL:
-                case IDPY_PARKING:
-                case IDPY_POTTERS:
-                case IDPY_CASH_EXPENSE:
+                case IDPY_ASDA, IDPY_PETROL, IDPY_PARKING, IDPY_POTTERS, IDPY_CASH_EXPENSE:
                     thePayeeBuilder.name(myPayee).type(MoneyWisePayeeClass.PAYEE).build();
                     break;
                 default:

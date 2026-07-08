@@ -35,7 +35,7 @@
         <ApacheMavenVersion>3.9.16</ApacheMavenVersion>
         <MySQLVersion>9.7.0</MySQLVersion>
         <MariaDBVersion>3.5.9</MariaDBVersion>
-        <PostGreSQLVersion>42.7.12</PostGreSQLVersion>
+        <PostGreSQLVersion>42.7.13</PostGreSQLVersion>
         <MSSQLVersion>13.4.0.jre11</MSSQLVersion>
         <H2Version>2.4.240</H2Version>
         <ApachePOIVersion>5.5.1</ApachePOIVersion>

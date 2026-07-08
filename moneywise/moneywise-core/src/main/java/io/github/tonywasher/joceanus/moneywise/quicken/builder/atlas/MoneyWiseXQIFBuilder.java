@@ -143,7 +143,7 @@ public class MoneyWiseXQIFBuilder
         theOpeningCategory = myCategories.getSingularClass(MoneyWiseTransCategoryClass.OPENINGBALANCE);
 
         /* Create subBuilders */
-        theBuildXfer = new MoneyWiseXQIFBuildXfer(this);
+        theBuildXfer = new MoneyWiseXQIFBuildXfer(pData, this);
         theBuildCash = new MoneyWiseXQIFBuildCash(this);
         theBuildIncome = new MoneyWiseXQIFBuildIncome(pData, this);
         theBuildExpense = new MoneyWiseXQIFBuildExpense(pData, this);
@@ -355,32 +355,35 @@ public class MoneyWiseXQIFBuilder
             thePortBuilder.processTransferToPortfolio(myCreditPortfolio, pDebit, pTrans);
 
         } else {
-            /* Access details */
-            final MoneyWiseTransCategoryClass myCat = Objects.requireNonNull(pTrans.getCategory().getCategoryTypeClass());
+            /* process basic transfer */
+            processBasicTransfer(pDebit, pCredit, pTrans);
+        }
+    }
 
-            /* Switch on category class */
-            switch (myCat) {
-                case CASHBACK:
-                    /* Process as cashBack payment */
-                    theBuildIncome.processCashBack(pDebit, pCredit, pTrans);
-                    break;
-                case INTEREST, LOYALTYBONUS:
-                    /* Process as interest payment */
-                    theBuildIncome.processInterest(pDebit, pCredit, pTrans);
-                    break;
-                case LOANINTERESTEARNED, RENTALINCOME, ROOMRENTALINCOME:
-                    /* Process as income from parent of the credit */
-                    theBuildIncome.processStandardIncome((MoneyWisePayee) pCredit.getParent(), pCredit, pTrans);
-                    break;
-                case WRITEOFF, LOANINTERESTCHARGED:
-                    /* Process as expense to parent of the credit (recursive) */
-                    theBuildExpense.processStandardExpense((MoneyWisePayee) pCredit.getParent(), pDebit, pTrans);
-                    break;
-                default:
-                    /* Process as standard transfer */
-                    theBuildXfer.processStandardTransfer(pDebit, pCredit, pTrans);
-                    break;
-            }
+    /**
+     * Process transfer event.
+     *
+     * @param pDebit  the debit account
+     * @param pCredit the credit account
+     * @param pTrans  the transaction
+     */
+    private void processBasicTransfer(final MoneyWiseTransAsset pDebit,
+                                      final MoneyWiseTransAsset pCredit,
+                                      final MoneyWiseXAnalysisEvent pTrans) {
+        /* Access details */
+        final MoneyWiseTransCategoryClass myCat = Objects.requireNonNull(pTrans.getCategory().getCategoryTypeClass());
+
+        /* Switch on category class */
+        switch (myCat) {
+            case CASHBACK, INTEREST, LOYALTYBONUS, WRITEOFF, LOANINTERESTCHARGED,
+                 LOANINTERESTEARNED, RENTALINCOME, ROOMRENTALINCOME:
+                /* Process as interest payment */
+                theBuildXfer.processPayeeTransfer(pTrans);
+                break;
+            default:
+                /* Process as standard transfer */
+                theBuildXfer.processStandardTransfer(pDebit, pCredit, pTrans);
+                break;
         }
     }
 

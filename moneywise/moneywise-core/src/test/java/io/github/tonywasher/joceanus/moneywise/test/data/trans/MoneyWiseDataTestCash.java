@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.test.data.trans;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.builder.MoneyWiseTransactionBuilder;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Test AutoCash.
