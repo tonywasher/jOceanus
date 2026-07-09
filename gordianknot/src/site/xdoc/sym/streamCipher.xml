@@ -43,10 +43,12 @@ final GordianKey&lt;GordianStreamKeySpec&gt; myKey = myGenerator.generateKey();
                         <tr><td>XSalsa20</td><td>Y</td><td/><td/><td>Y</td><td/><td/></tr>
                         <tr><td rowspan="2">HC</td><td>HC128</td><td>Y</td><td>Y</td><td/><td/><td/><td/></tr>
                         <tr><td>HC256</td><td>Y</td><td/><td/><td>Y</td><td/><td/></tr>
-                        <tr><td>VMPC</td><td>Standard KSA3</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td></tr>
+                        <tr><td rowspan="2">VMPC</td><td>Standard</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td></tr>
+                        <tr><td>KSA3</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td></tr>
                         <tr><td>ISAAC</td><td/><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td></tr>
                         <tr><td>RC4</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td></tr>
-                        <tr><td>Grain128</td><td/><td>Y</td><td>Y</td><td/><td/><td/><td/></tr>
+                        <tr><td rowspan="2">Grain128</td><td>standard</td><td>Y</td><td>Y</td><td/><td/><td/><td/></tr>
+                        <tr><td>AEAD</td><td/><td>Y</td><td/><td/><td/><td/></tr>
                         <tr><td>Rabbit</td><td/><td/><td>Y</td><td/><td/><td/><td/></tr>
                         <tr><td>Sosemanuk</td><td/><td/><td>Y</td><td/><td/><td/><td/></tr>
                         <tr><td>Snow3G</td><td/><td/><td>Y</td><td/><td/><td/><td/></tr>
@@ -67,6 +69,7 @@ final GordianKey&lt;GordianStreamKeySpec&gt; myKey = myGenerator.generateKey();
                         <tr><td>256_256</td><td/><td/><td/><td>Y</td><td/><td/></tr>
                         <tr><td>Xoodyak</td><td/><td/><td>Y</td><td/><td/><td/><td/></tr>
                         <tr><td>Romulus</td><td>M, N, T</td><td/><td>Y</td><td/><td/><td/><td/></tr>
+                        <tr><td>GiftCOFB</td><td/><td/><td>Y</td><td/><td/><td/><td/></tr>
                     </table>
                 </subsection>
             </subsection>

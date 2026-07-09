@@ -217,6 +217,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
                     case ELEPHANT160, ELEPHANT176 -> GordianLength.LEN_64.getLength();
                     default -> GordianLength.LEN_128.getLength();
                 };
+                case GRAIN -> GordianLength.LEN_64.getLength();
                 default -> GordianLength.LEN_128.getLength();
             };
         }

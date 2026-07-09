@@ -86,6 +86,8 @@ import org.bouncycastle.crypto.engines.DSTU7624Engine;
 import org.bouncycastle.crypto.engines.ElephantEngine;
 import org.bouncycastle.crypto.engines.GOST28147Engine;
 import org.bouncycastle.crypto.engines.GOST3412_2015Engine;
+import org.bouncycastle.crypto.engines.GiftCofbEngine;
+import org.bouncycastle.crypto.engines.Grain128AEADEngine;
 import org.bouncycastle.crypto.engines.Grain128Engine;
 import org.bouncycastle.crypto.engines.HC128Engine;
 import org.bouncycastle.crypto.engines.HC256Engine;
@@ -329,6 +331,8 @@ public class BouncyCipherFactory
             case SPARKLE ->
                     new SparkleEngine(GordianCoreStreamKeySubType.getParameters((GordianSparkleKey) mySpec.getSubKeyType()));
             case XOODYAK -> new XoodyakEngine();
+            case GRAIN -> new Grain128AEADEngine();
+            case GIFTCOFB -> new GiftCofbEngine();
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
         };
     }

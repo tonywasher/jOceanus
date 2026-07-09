@@ -99,7 +99,7 @@ public final class GordianCoreStreamKeyType {
 
         /* Switch on keyType */
         return switch (theType) {
-            case GRAIN, RABBIT, SNOW3G, ASCON, ELEPHANT, ISAP, PHOTONBEETLE, ROMULUS, XOODYAK ->
+            case GRAIN, RABBIT, SNOW3G, ASCON, ELEPHANT, ISAP, PHOTONBEETLE, ROMULUS, XOODYAK, GIFTCOFB ->
                     GordianLength.LEN_128 == pKeyLen;
             case HC, CHACHA20, SALSA20, SOSEMANUK, ZUC -> GordianLength.LEN_128 == pKeyLen
                     || GordianLength.LEN_256 == pKeyLen;
@@ -173,6 +173,7 @@ public final class GordianCoreStreamKeyType {
             case ROMULUS -> GordianCipherResource.STREAMKEY_ROMULUS;
             case SPARKLE -> GordianCipherResource.STREAMKEY_SPARKLE;
             case XOODYAK -> GordianCipherResource.STREAMKEY_XOODYAK;
+            case GIFTCOFB -> GordianCipherResource.STREAMKEY_GIFTCOFB;
             default -> throw new IllegalArgumentException();
         };
     }

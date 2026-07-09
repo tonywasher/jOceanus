@@ -295,7 +295,7 @@ public class GordianCoreStreamKeySpec
         return switch (theType.getType()) {
             case RABBIT -> GordianLength.LEN_64.getByteLength();
             case GRAIN, ELEPHANT -> GordianLength.LEN_96.getByteLength();
-            case SOSEMANUK, SNOW3G, BLAKE3XOF, SKEINXOF, ASCON, ISAP, PHOTONBEETLE, ROMULUS, XOODYAK ->
+            case SOSEMANUK, SNOW3G, BLAKE3XOF, SKEINXOF, ASCON, ISAP, PHOTONBEETLE, ROMULUS, XOODYAK, GIFTCOFB ->
                     GordianLength.LEN_128.getByteLength();
             case HC -> GordianLength.LEN_128 == theKeyLength
                     ? GordianLength.LEN_128.getByteLength()
@@ -322,8 +322,11 @@ public class GordianCoreStreamKeySpec
      * @return true/false
      */
     public boolean supportsAEAD() {
-        return GordianStreamKeyType.CHACHA20.equals(theType.getType())
-                && theSubKeyType != GordianChaCha20Key.STD;
+        return switch (theType.getType()) {
+            case CHACHA20 -> theSubKeyType != GordianChaCha20Key.STD;
+            case GRAIN -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -333,7 +336,7 @@ public class GordianCoreStreamKeySpec
      */
     public boolean isAEAD() {
         return switch (theType.getType()) {
-            case ASCON, ELEPHANT, ISAP, PHOTONBEETLE, ROMULUS, SPARKLE, XOODYAK -> true;
+            case ASCON, ELEPHANT, ISAP, PHOTONBEETLE, ROMULUS, SPARKLE, XOODYAK, GIFTCOFB -> true;
             default -> false;
         };
     }

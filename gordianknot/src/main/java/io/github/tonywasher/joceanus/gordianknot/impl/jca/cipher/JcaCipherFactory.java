@@ -356,11 +356,18 @@ public class JcaCipherFactory
             return false;
         }
 
-        /* Reject ChaCha7539-Poly1305 */
+        /* Only test further for AEAD */
+        if (!pCipherSpec.isAEAD()) {
+            return true;
+        }
+
+        /* Reject ChaCha7539-Poly1305 and Grain128AEAD */
         final GordianStreamKeySpec myKeySpec = pCipherSpec.getKeySpec();
-        return !pCipherSpec.isAEAD()
-                || myKeySpec.getStreamKeyType() != GordianStreamKeyType.CHACHA20
-                || myKeySpec.getSubKeyType() != GordianChaCha20Key.ISO7539;
+        return switch (myKeySpec.getStreamKeyType()) {
+            case CHACHA20 -> myKeySpec.getSubKeyType() != GordianChaCha20Key.ISO7539;
+            case GRAIN -> false;
+            default -> true;
+        };
     }
 
     @Override
