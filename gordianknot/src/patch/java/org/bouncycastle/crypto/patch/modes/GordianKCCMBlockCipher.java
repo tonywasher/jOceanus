@@ -245,9 +245,7 @@ public class GordianKCCMBlockCipher
         int assocOff = 0;
         int authLen = aadLen;
         while (authLen > 0) {
-            for (int byteIndex = 0;
-                 byteIndex < engine.getBlockSize() && byteIndex < authLen - assocOff;
-                 byteIndex++) {
+            for (int byteIndex = 0; byteIndex < engine.getBlockSize() && byteIndex < authLen; byteIndex++) {
                 macBlock[byteIndex] ^= aad[byteIndex + assocOff];
             }
 
