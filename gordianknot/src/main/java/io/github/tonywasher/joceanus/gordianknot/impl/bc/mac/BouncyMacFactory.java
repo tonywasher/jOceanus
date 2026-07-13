@@ -54,14 +54,14 @@ import org.bouncycastle.crypto.macs.CMac;
 import org.bouncycastle.crypto.macs.DSTU7564Mac;
 import org.bouncycastle.crypto.macs.GMac;
 import org.bouncycastle.crypto.macs.GOST28147Mac;
+import org.bouncycastle.crypto.macs.KGMac;
 import org.bouncycastle.crypto.macs.Poly1305;
 import org.bouncycastle.crypto.macs.SipHash;
 import org.bouncycastle.crypto.macs.SipHash128;
 import org.bouncycastle.crypto.macs.VMPCMac;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
+import org.bouncycastle.crypto.modes.KGCMBlockCipher;
 import org.bouncycastle.crypto.patch.macs.GordianDSTU7624Mac;
-import org.bouncycastle.crypto.patch.macs.GordianKGMac;
-import org.bouncycastle.crypto.patch.modes.GordianKGCMBlockCipher;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -183,7 +183,7 @@ public class BouncyMacFactory
     private static Mac getBCGMac(final GordianSymKeySpec pSymKeySpec) throws GordianException {
         final GordianCoreSymKeySpec mySpec = (GordianCoreSymKeySpec) pSymKeySpec;
         return GordianSymKeyType.KALYNA.equals(pSymKeySpec.getSymKeyType())
-                ? new GordianKGMac(new GordianKGCMBlockCipher(BouncyCipherFactory.getBCSymEngine(mySpec)))
+                ? new KGMac(new KGCMBlockCipher(BouncyCipherFactory.getBCSymEngine(mySpec)))
                 : new GMac(GCMBlockCipher.newInstance(BouncyCipherFactory.getBCSymEngine(mySpec)));
     }
 

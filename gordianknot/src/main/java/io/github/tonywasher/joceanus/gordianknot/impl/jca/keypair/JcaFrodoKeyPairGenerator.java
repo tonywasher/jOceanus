@@ -22,7 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPair
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
-import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
+import org.bouncycastle.jcajce.spec.FrodoKEMParameterSpec;
 
 import java.security.InvalidAlgorithmParameterException;
 
@@ -34,7 +34,7 @@ public class JcaFrodoKeyPairGenerator
     /**
      * FRODO algorithm.
      */
-    private static final String FRODO_ALGO = "FRODO";
+    private static final String FRODO_ALGO = "FRODOKEM";
 
     /**
      * Constructor.
@@ -51,9 +51,9 @@ public class JcaFrodoKeyPairGenerator
         /* Protect against exceptions */
         try {
             /* Create and initialize the generator */
-            createFactories(FRODO_ALGO, true);
+            createFactories(FRODO_ALGO, false);
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
-            final FrodoParameterSpec myParms = myKeySpec.getFRODOSpec().getParameterSpec();
+            final FrodoKEMParameterSpec myParms = myKeySpec.getFRODOSpec().getParameterSpec();
             getGenerator().initialize(myParms, getRandom());
 
         } catch (InvalidAlgorithmParameterException e) {

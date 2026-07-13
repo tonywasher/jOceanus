@@ -66,7 +66,7 @@ final GordianKey&lt;GordianSymKeySpec&gt; myKey = myGenerator.generateKey();
                         <tr><td>Simon</td><td>128</td><td/><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
                         <tr><td>MARS</td><td>128</td><td/><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
                         <tr><td>Anubis</td><td>128</td><td/><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
-                        <tr><td>LEA</td><td>128</td><td/><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
+                        <tr><td>LEA</td><td>128</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
                     </table>
                 </subsection>
             </subsection>
@@ -91,7 +91,8 @@ final GordianSymCipherSpec myCipherSpec = myCipherBuilder.cbc(myKeySpec, Gordian
 final GordianSymCipher myCipher = myCipherFactory.createSymKeyCipher(myCipherSpec);
 
 /* Encrypt message with random nonce */
-GordianCipherParameters myParams = GordianCipherParameters.keyWithRandomNonce(myKey);
+final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+GordianCipherParams myParams = myParamsBuilder.keyWithRandomNonce(myKey);
 myCipher.initForEncrypt(myParams);
 final byte[] myMessage = ...
 int myOutLen = myCipher.getOutputLength(myMessage.length);
@@ -100,7 +101,7 @@ int myProcessed = myCipher.update(myMessage, 0, myMessage.length, myEncrypted);
 myCipher.finish(myEncrypted, myProcessed);
 
 /* Decrypt message */
-myParams = GordianCipherParameters.keyWithNonce(myKey, myCipher.getNonce());
+myParams = myParamsBuilder.keyWithNonce(myKey, myCipher.getNonce());
 myCipher.initForDecrypt(myParams);
 myOutLen = myCipher.getOutputLength(myEncrypted.length);
 final byte[] myResult = new byte[myOutLen];
@@ -127,7 +128,7 @@ myCipher.finish(myResult, myProcessed);
                         <tr><td>CCM</td><td>Y</td><td>Jca does not support for Kalyna</td></tr>
                         <tr><td>KCCM</td><td/><td>Only available for Kalyna</td></tr>
                         <tr><td>GCM</td><td>Y</td><td>Jca does not support for Kalyna</td></tr>
-                        <tr><td>KGCM</td><td/><td>Only available for Kalyna</td></tr>
+                        <tr><td>KGCM</td><td>Y</td><td>Only available for Kalyna</td></tr>
                         <tr><td>EAX</td><td>Y</td><td/></tr>
                         <tr><td>OCB</td><td>Y</td><td>JCA does not support for Kuznyechik or Kalyna</td></tr>
                         <tr><td>GCMSIV</td><td/><td>Only available for 128-bit/256-bit keys and 128-bit blocks</td></tr>

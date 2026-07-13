@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,26 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.api.keypair.spec;
 
 /**
- * Patches to BouncyCastle Modes.
+ * HAETAE KeySpec.
  */
-package org.bouncycastle.crypto.patch.modes;
+public enum GordianHAETAESpec {
+    /**
+     * Level 2.
+     */
+    HAETAE2,
+
+    /**
+     * Level 3.
+     */
+    HAETAE3,
+
+    /**
+     * Level 5.
+     */
+    HAETAE5;
+}

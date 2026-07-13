@@ -149,10 +149,11 @@ public class JcaHybridEncryptor
         final GordianCoreSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
         final GordianDigestSpec myDigestSpec = mySpec.getDigestSpec();
         final GordianDigestType myDigestType = myDigestSpec.getDigestType();
-        return switch (myDigestType) {
+        final String myName = switch (myDigestType) {
             case SHA2 -> "SM2withSHA" + myDigestSpec.getDigestLength();
             case BLAKE2 -> "SM2withBlake2" + (GordianLength.LEN_512.equals(myDigestSpec.getDigestLength()) ? "b" : "s");
             default -> "SM2with" + myDigestType;
         };
+        return myName + "/" + mySpec.getEncryptionType() + "/NOPADDING";
     }
 }

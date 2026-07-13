@@ -17,12 +17,20 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.pqc.crypto.xmss.XMSSMTParameters;
+import org.bouncycastle.pqc.crypto.xmss.XMSSParameters;
+import org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -189,12 +197,220 @@ public class GordianCoreXMSSSpec
     public GordianDigestSpec getDigestSpec() {
         final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
         return switch (theDigestType) {
-            case SHA256 -> myBuilder.sha2(GordianLength.LEN_256);
+            case SHA256, SHA256_192 -> myBuilder.sha2(GordianLength.LEN_256);
             case SHA512 -> myBuilder.sha2(GordianLength.LEN_512);
             case SHAKE128 -> myBuilder.shake128();
-            case SHAKE256 -> myBuilder.shake256();
+            case SHAKE256, SHAKE256_192, SHAKE256_256 -> myBuilder.shake256();
             default -> throw new IllegalStateException();
         };
+    }
+
+    /**
+     * Obtain the XMSSParameters.
+     *
+     * @return the parameters.
+     */
+    public XMSSParameters getXMSSParameters() {
+        /* If we are not valid or else are XMSSMT */
+        if (!isValid || isMT()) {
+            throw new IllegalStateException();
+        }
+
+        /* Determine the parameters */
+        final int myHeight = getHeight().getHeight();
+        return switch (theDigestType) {
+            case SHA256 -> new XMSSParameters(myHeight, NISTObjectIdentifiers.id_sha256);
+            case SHA512 -> new XMSSParameters(myHeight, NISTObjectIdentifiers.id_sha512);
+            case SHAKE128 -> new XMSSParameters(myHeight, NISTObjectIdentifiers.id_shake128);
+            case SHAKE256 -> new XMSSParameters(myHeight, NISTObjectIdentifiers.id_shake256);
+            case SHA256_192 ->
+                    new XMSSParameters(myHeight, NISTObjectIdentifiers.id_sha256, GordianLength.LEN_192.getByteLength());
+            case SHAKE256_192 ->
+                    new XMSSParameters(myHeight, NISTObjectIdentifiers.id_shake256_len, GordianLength.LEN_192.getByteLength());
+            case SHAKE256_256 ->
+                    new XMSSParameters(myHeight, NISTObjectIdentifiers.id_shake256_len, GordianLength.LEN_256.getByteLength());
+            default -> throw new IllegalStateException();
+        };
+    }
+
+    /**
+     * Obtain the XMSSMTParameters.
+     *
+     * @return the parameters.
+     */
+    public XMSSMTParameters getXMSSMTParameters() {
+        /* If we are not valid or else are not XMSSMT */
+        if (!isValid || !isMT()) {
+            throw new IllegalStateException();
+        }
+
+        /* Determine the parameters */
+        final int myHeight = getHeight().getHeight();
+        final int myLayers = getLayers().getLayers();
+        return switch (theDigestType) {
+            case SHA256 -> new XMSSMTParameters(myHeight, myLayers, NISTObjectIdentifiers.id_sha256);
+            case SHA512 -> new XMSSMTParameters(myHeight, myLayers, NISTObjectIdentifiers.id_sha512);
+            case SHAKE128 -> new XMSSMTParameters(myHeight, myLayers, NISTObjectIdentifiers.id_shake128);
+            case SHAKE256 -> new XMSSMTParameters(myHeight, myLayers, NISTObjectIdentifiers.id_shake256);
+            case SHA256_192 ->
+                    new XMSSMTParameters(myHeight, myLayers, NISTObjectIdentifiers.id_sha256, GordianLength.LEN_192.getByteLength());
+            case SHAKE256_192 ->
+                    new XMSSMTParameters(myHeight, myLayers, NISTObjectIdentifiers.id_shake256_len, GordianLength.LEN_192.getByteLength());
+            case SHAKE256_256 ->
+                    new XMSSMTParameters(myHeight, myLayers, NISTObjectIdentifiers.id_shake256_len, GordianLength.LEN_256.getByteLength());
+            default -> throw new IllegalStateException();
+        };
+    }
+
+    /**
+     * Obtain the XMSSParameterSpec.
+     *
+     * @return the parameterSpec.
+     */
+    public XMSSParameterSpec getXMSSParameterSpec() {
+        /* If we are not valid or else are XMSSMT */
+        if (!isValid || isMT()) {
+            throw new IllegalStateException();
+        }
+
+        /* Determine the parameters */
+        final int myHeight = getHeight().getHeight();
+        return switch (theDigestType) {
+            case SHA256 -> new XMSSParameterSpec(myHeight, XMSSParameterSpec.SHA256);
+            case SHA512 -> new XMSSParameterSpec(myHeight, XMSSParameterSpec.SHA512);
+            case SHAKE128 -> new XMSSParameterSpec(myHeight, XMSSParameterSpec.SHAKE128);
+            case SHAKE256 -> new XMSSParameterSpec(myHeight, XMSSParameterSpec.SHAKE256);
+            case SHA256_192 -> new XMSSParameterSpec(myHeight, XMSSParameterSpec.SHA256_192);
+            case SHAKE256_192 -> new XMSSParameterSpec(myHeight, XMSSParameterSpec.SHAKE256_192);
+            case SHAKE256_256 -> new XMSSParameterSpec(myHeight, XMSSParameterSpec.SHAKE256_256);
+            default -> throw new IllegalStateException();
+        };
+    }
+
+    /**
+     * Obtain the XMSSMTParameterSpec.
+     *
+     * @return the parameterSpec.
+     */
+    public XMSSMTParameterSpec getXMSSMTParameterSpec() {
+        /* If we are not valid or else are not XMSSMT */
+        if (!isValid || !isMT()) {
+            throw new IllegalStateException();
+        }
+
+        /* Determine the parameters */
+        final int myHeight = getHeight().getHeight();
+        final int myLayers = getLayers().getLayers();
+        return switch (theDigestType) {
+            case SHA256 -> new XMSSMTParameterSpec(myHeight, myLayers, XMSSMTParameterSpec.SHA256);
+            case SHA512 -> new XMSSMTParameterSpec(myHeight, myLayers, XMSSMTParameterSpec.SHA512);
+            case SHAKE128 -> new XMSSMTParameterSpec(myHeight, myLayers, XMSSMTParameterSpec.SHAKE128);
+            case SHAKE256 -> new XMSSMTParameterSpec(myHeight, myLayers, XMSSMTParameterSpec.SHAKE256);
+            case SHA256_192 -> new XMSSMTParameterSpec(myHeight, myLayers, XMSSMTParameterSpec.SHA256_192);
+            case SHAKE256_192 -> new XMSSMTParameterSpec(myHeight, myLayers, XMSSMTParameterSpec.SHAKE256_192);
+            case SHAKE256_256 -> new XMSSMTParameterSpec(myHeight, myLayers, XMSSMTParameterSpec.SHAKE256_256);
+            default -> throw new IllegalStateException();
+        };
+    }
+
+    /**
+     * Determine spec from parameters.
+     *
+     * @param pParameters the parameters
+     * @return the spec
+     * @throws GordianException on error
+     */
+    public static GordianCoreXMSSSpec determineSpecFromParameters(final XMSSParameters pParameters) throws GordianException {
+        final GordianXMSSHeight myHeight = determineHeight(pParameters.getHeight());
+        final GordianXMSSDigestType myDigest = determineDigest(pParameters.getTreeDigestOID(), pParameters.getTreeDigestSize());
+        return new GordianCoreXMSSSpec(myDigest, myHeight);
+    }
+
+    /**
+     * Determine spec from parameters.
+     *
+     * @param pParameters the parameters
+     * @return the spec
+     * @throws GordianException on error
+     */
+    public static GordianCoreXMSSSpec determineSpecFromParameters(final XMSSMTParameters pParameters) throws GordianException {
+        final GordianXMSSHeight myHeight = determineHeight(pParameters.getHeight());
+        final GordianXMSSDigestType myDigest = determineDigest(pParameters.getTreeDigestOID(), pParameters.getTreeDigestSize());
+        final GordianXMSSMTLayers myLayers = determineLayers(pParameters.getLayers());
+        return new GordianCoreXMSSSpec(myDigest, myHeight, myLayers);
+    }
+
+    /**
+     * Determine digest.
+     *
+     * @param pOid the oid
+     * @param pLen the length
+     * @return the xmssDigest
+     * @throws GordianException on error
+     */
+    private static GordianXMSSDigestType determineDigest(final ASN1ObjectIdentifier pOid,
+                                                         final int pLen) throws GordianException {
+        /* Loo through the heights */
+        if (pOid.equals(NISTObjectIdentifiers.id_sha256)) {
+            return pLen == GordianLength.LEN_256.getByteLength()
+                    ? GordianXMSSDigestType.SHA256
+                    : GordianXMSSDigestType.SHA256_192;
+        }
+        if (pOid.equals(NISTObjectIdentifiers.id_sha512)) {
+            return GordianXMSSDigestType.SHA512;
+        }
+        if (pOid.equals(NISTObjectIdentifiers.id_shake128)) {
+            return GordianXMSSDigestType.SHAKE128;
+        }
+        if (pOid.equals(NISTObjectIdentifiers.id_shake256)) {
+            return GordianXMSSDigestType.SHAKE256;
+        }
+        if (pOid.equals(NISTObjectIdentifiers.id_shake256_len)) {
+            return pLen == GordianLength.LEN_192.getByteLength()
+                    ? GordianXMSSDigestType.SHAKE256_192
+                    : GordianXMSSDigestType.SHAKE256_256;
+        }
+
+        /* Digest is not supported */
+        throw new GordianDataException("Invalid digest: " + pOid);
+    }
+
+    /**
+     * Determine height.
+     *
+     * @param pHeight the height
+     * @return the xmssHeight
+     * @throws GordianException on error
+     */
+    private static GordianXMSSHeight determineHeight(final int pHeight) throws GordianException {
+        /* Loop through the heights */
+        for (GordianXMSSHeight myHeight : GordianXMSSHeight.values()) {
+            if (myHeight.getHeight() == pHeight) {
+                return myHeight;
+            }
+        }
+
+        /* Height is not supported */
+        throw new GordianDataException("Invalid height: " + pHeight);
+    }
+
+    /**
+     * Determine layers.
+     *
+     * @param pLayers the layers
+     * @return the xmssMTLayers
+     * @throws GordianException on error
+     */
+    private static GordianXMSSMTLayers determineLayers(final int pLayers) throws GordianException {
+        /* Loop through the heights */
+        for (GordianXMSSMTLayers myLayers : GordianXMSSMTLayers.values()) {
+            if (myLayers.getLayers() == pLayers) {
+                return myLayers;
+            }
+        }
+
+        /* Layers is not supported */
+        throw new GordianDataException("Invalid layers: " + pLayers);
     }
 
     @Override

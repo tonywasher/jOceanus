@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca.sign;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
@@ -151,11 +151,10 @@ public abstract class JcaSignature
     }
 
     @Override
-    public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
+    public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
         final JcaKeyPair myPair = getKeyPair();
-        final byte[] myContext = getContext();
         JcaKeyPair.checkKeyPair(myPair);
 
         /* Initialise for signing */
@@ -171,10 +170,10 @@ public abstract class JcaSignature
                 getSigner().initSign(myPair.getPrivateKey().getPrivateKey());
             }
 
-            /* If we support context */
-            if (getSignatureSpec().supportsContext()) {
+            /* If we should set context */
+            if (setContextParameter()) {
                 /* Declare the context to the signer */
-                final ContextParameterSpec mySpec = myContext == null ? null : new ContextParameterSpec(myContext);
+                final ContextParameterSpec mySpec = new ContextParameterSpec(getContext());
                 getSigner().setParameter(mySpec);
             }
 
@@ -185,12 +184,20 @@ public abstract class JcaSignature
         }
     }
 
+    /**
+     * Should we set ContextParameter?
+     *
+     * @return true/false
+     */
+    boolean setContextParameter() {
+        return getSignatureSpec().supportsContext() && getContext() != null;
+    }
+
     @Override
-    public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
+    public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
         final JcaKeyPair myPair = getKeyPair();
-        final byte[] myContext = getContext();
         JcaKeyPair.checkKeyPair(myPair);
 
         /* Initialise for signing */
@@ -198,10 +205,10 @@ public abstract class JcaSignature
             /* Initialise for verification */
             getSigner().initVerify(myPair.getPublicKey().getPublicKey());
 
-            /* If we support context */
-            if (getSignatureSpec().supportsContext()) {
+            /* If we should set context */
+            if (setContextParameter()) {
                 /* Declare the context to the signer */
-                final ContextParameterSpec mySpec = myContext == null ? null : new ContextParameterSpec(myContext);
+                final ContextParameterSpec mySpec = new ContextParameterSpec(getContext());
                 getSigner().setParameter(mySpec);
             }
 

@@ -51,7 +51,7 @@ public interface GordianSignatureFactory {
      *
      * @return the new SignParamsBuilder
      */
-    GordianNewSignParamsBuilder newSignParamsBuilder();
+    GordianSignParamsBuilder newSignParamsBuilder();
 
     /**
      * Obtain predicate for signatures.

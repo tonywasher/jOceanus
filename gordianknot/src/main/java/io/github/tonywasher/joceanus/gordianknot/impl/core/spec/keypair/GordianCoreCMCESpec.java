@@ -20,9 +20,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianCMCESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
-import org.bouncycastle.pqc.crypto.cmce.CMCEParameters;
-import org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec;
+import org.bouncycastle.asn1.iso.ISOIECObjectIdentifiers;
+import org.bouncycastle.crypto.params.CMCEParameters;
+import org.bouncycastle.jcajce.spec.CMCEParameterSpec;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -74,16 +74,22 @@ public final class GordianCoreCMCESpec
      */
     public CMCEParameters getParameters() {
         return switch (theSpec) {
-            case BASE3488 -> CMCEParameters.mceliece348864r3;
-            case PIVOT3488 -> CMCEParameters.mceliece348864fr3;
-            case BASE4608 -> CMCEParameters.mceliece460896r3;
-            case PIVOT4608 -> CMCEParameters.mceliece460896fr3;
-            case BASE6688 -> CMCEParameters.mceliece6688128r3;
-            case PIVOT6688 -> CMCEParameters.mceliece6688128fr3;
-            case BASE6960 -> CMCEParameters.mceliece6960119r3;
-            case PIVOT6960 -> CMCEParameters.mceliece6960119fr3;
-            case BASE8192 -> CMCEParameters.mceliece8192128r3;
-            case PIVOT8192 -> CMCEParameters.mceliece8192128fr3;
+            case CMCE4608 -> CMCEParameters.mceliece460896;
+            case CMCE4608F -> CMCEParameters.mceliece460896f;
+            case CMCE4608PC -> CMCEParameters.mceliece460896pc;
+            case CMCE4608PCF -> CMCEParameters.mceliece460896pcf;
+            case CMCE6688 -> CMCEParameters.mceliece6688128;
+            case CMCE6688F -> CMCEParameters.mceliece6688128f;
+            case CMCE6688PC -> CMCEParameters.mceliece6688128pc;
+            case CMCE6688PCF -> CMCEParameters.mceliece6688128pcf;
+            case CMCE6960 -> CMCEParameters.mceliece6960119;
+            case CMCE6960F -> CMCEParameters.mceliece6960119f;
+            case CMCE6960PC -> CMCEParameters.mceliece6960119pc;
+            case CMCE6960PCF -> CMCEParameters.mceliece6960119pcf;
+            case CMCE8192 -> CMCEParameters.mceliece8192128;
+            case CMCE8192F -> CMCEParameters.mceliece8192128f;
+            case CMCE8192PC -> CMCEParameters.mceliece8192128pc;
+            case CMCE8192PCF -> CMCEParameters.mceliece8192128pcf;
             default -> throw new IllegalArgumentException();
         };
     }
@@ -95,16 +101,22 @@ public final class GordianCoreCMCESpec
      */
     public CMCEParameterSpec getParameterSpec() {
         return switch (theSpec) {
-            case BASE3488 -> CMCEParameterSpec.mceliece348864;
-            case PIVOT3488 -> CMCEParameterSpec.mceliece348864f;
-            case BASE4608 -> CMCEParameterSpec.mceliece460896;
-            case PIVOT4608 -> CMCEParameterSpec.mceliece460896f;
-            case BASE6688 -> CMCEParameterSpec.mceliece6688128;
-            case PIVOT6688 -> CMCEParameterSpec.mceliece6688128f;
-            case BASE6960 -> CMCEParameterSpec.mceliece6960119;
-            case PIVOT6960 -> CMCEParameterSpec.mceliece6960119f;
-            case BASE8192 -> CMCEParameterSpec.mceliece8192128;
-            case PIVOT8192 -> CMCEParameterSpec.mceliece8192128f;
+            case CMCE4608 -> CMCEParameterSpec.mceliece460896;
+            case CMCE4608F -> CMCEParameterSpec.mceliece460896f;
+            case CMCE4608PC -> CMCEParameterSpec.mceliece460896pc;
+            case CMCE4608PCF -> CMCEParameterSpec.mceliece460896pcf;
+            case CMCE6688 -> CMCEParameterSpec.mceliece6688128;
+            case CMCE6688F -> CMCEParameterSpec.mceliece6688128f;
+            case CMCE6688PC -> CMCEParameterSpec.mceliece6688128pc;
+            case CMCE6688PCF -> CMCEParameterSpec.mceliece6688128pcf;
+            case CMCE6960 -> CMCEParameterSpec.mceliece6960119;
+            case CMCE6960F -> CMCEParameterSpec.mceliece6960119f;
+            case CMCE6960PC -> CMCEParameterSpec.mceliece6960119pc;
+            case CMCE6960PCF -> CMCEParameterSpec.mceliece6960119pcf;
+            case CMCE8192 -> CMCEParameterSpec.mceliece8192128;
+            case CMCE8192F -> CMCEParameterSpec.mceliece8192128f;
+            case CMCE8192PC -> CMCEParameterSpec.mceliece8192128pc;
+            case CMCE8192PCF -> CMCEParameterSpec.mceliece8192128pcf;
             default -> throw new IllegalArgumentException();
         };
     }
@@ -112,16 +124,22 @@ public final class GordianCoreCMCESpec
     @Override
     public ASN1ObjectIdentifier getIdentifier() {
         return switch (theSpec) {
-            case BASE3488 -> BCObjectIdentifiers.mceliece348864_r3;
-            case PIVOT3488 -> BCObjectIdentifiers.mceliece348864f_r3;
-            case BASE4608 -> BCObjectIdentifiers.mceliece460896_r3;
-            case PIVOT4608 -> BCObjectIdentifiers.mceliece460896f_r3;
-            case BASE6688 -> BCObjectIdentifiers.mceliece6688128_r3;
-            case PIVOT6688 -> BCObjectIdentifiers.mceliece6688128f_r3;
-            case BASE6960 -> BCObjectIdentifiers.mceliece6960119_r3;
-            case PIVOT6960 -> BCObjectIdentifiers.mceliece6960119f_r3;
-            case BASE8192 -> BCObjectIdentifiers.mceliece8192128_r3;
-            case PIVOT8192 -> BCObjectIdentifiers.mceliece8192128f_r3;
+            case CMCE4608 -> ISOIECObjectIdentifiers.mceliece460896;
+            case CMCE4608F -> ISOIECObjectIdentifiers.mceliece460896f;
+            case CMCE4608PC -> ISOIECObjectIdentifiers.mceliece460896pc;
+            case CMCE4608PCF -> ISOIECObjectIdentifiers.mceliece460896pcf;
+            case CMCE6688 -> ISOIECObjectIdentifiers.mceliece6688128;
+            case CMCE6688F -> ISOIECObjectIdentifiers.mceliece6688128f;
+            case CMCE6688PC -> ISOIECObjectIdentifiers.mceliece6688128pc;
+            case CMCE6688PCF -> ISOIECObjectIdentifiers.mceliece6688128pcf;
+            case CMCE6960 -> ISOIECObjectIdentifiers.mceliece6960119;
+            case CMCE6960F -> ISOIECObjectIdentifiers.mceliece6960119f;
+            case CMCE6960PC -> ISOIECObjectIdentifiers.mceliece6960119pc;
+            case CMCE6960PCF -> ISOIECObjectIdentifiers.mceliece6960119pcf;
+            case CMCE8192 -> ISOIECObjectIdentifiers.mceliece8192128;
+            case CMCE8192F -> ISOIECObjectIdentifiers.mceliece8192128f;
+            case CMCE8192PC -> ISOIECObjectIdentifiers.mceliece8192128pc;
+            case CMCE8192PCF -> ISOIECObjectIdentifiers.mceliece8192128pcf;
             default -> throw new IllegalArgumentException();
         };
     }

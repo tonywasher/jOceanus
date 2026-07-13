@@ -24,8 +24,8 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgre
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import org.bouncycastle.crypto.SecretWithEncapsulation;
-import org.bouncycastle.pqc.crypto.cmce.CMCEKEMExtractor;
-import org.bouncycastle.pqc.crypto.cmce.CMCEKEMGenerator;
+import org.bouncycastle.crypto.kems.CMCEKEMExtractor;
+import org.bouncycastle.crypto.kems.CMCEKEMGenerator;
 
 import javax.security.auth.DestroyFailedException;
 

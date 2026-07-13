@@ -19,25 +19,19 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSHeight;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSMTLayers;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.isara.IsaraObjectIdentifiers;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreXMSSSpec;
+import org.bouncycastle.asn1.iana.IANAObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
-import org.bouncycastle.pqc.asn1.XMSSMTKeyParams;
-import org.bouncycastle.pqc.crypto.xmss.XMSSMTParameters;
-import org.bouncycastle.util.Pack;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
+import org.bouncycastle.pqc.crypto.xmss.XMSSMTPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.xmss.XMSSMTPublicKeyParameters;
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * XMSSMT Encoded parser.
@@ -50,68 +44,36 @@ public final class GordianXMSSMTEncodedParser implements GordianEncodedParser {
      */
     public static void register(final GordianKeyPairParserRegistrar pIdManager) {
         pIdManager.registerParser(PQCObjectIdentifiers.xmss_mt, new GordianXMSSMTEncodedParser());
-        pIdManager.registerParser(IsaraObjectIdentifiers.id_alg_xmssmt, new GordianXMSSMTEncodedParser());
+        pIdManager.registerParser(IANAObjectIdentifiers.id_alg_xmssmt_hashsig, new GordianXMSSMTEncodedParser());
     }
 
     @Override
     public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
-        final AlgorithmIdentifier myId = pInfo.getAlgorithm();
-        final XMSSMTKeyParams myParms = XMSSMTKeyParams.getInstance(myId.getParameters());
-        if (myParms != null) {
-            return determineKeyPairSpec(myParms);
-        }
-
         /* Protect against exceptions */
         try {
-            final byte[] keyEnc = Objects.requireNonNull(ASN1OctetString.getInstance(pInfo.parsePublicKey())).getOctets();
-            final int myOID = Pack.bigEndianToInt(keyEnc, 0);
-            final XMSSMTParameters myParams = XMSSMTParameters.lookupByOID(myOID);
-            final GordianKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
-            return myBuilder.xmssmt(GordianXMSSEncodedParser.determineKeyType(myParams.getTreeDigestOID()),
-                    GordianXMSSEncodedParser.determineHeight(myParams.getHeight()), determineLayers(myParams.getLayers()));
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            final XMSSMTPublicKeyParameters myParams = (XMSSMTPublicKeyParameters) PublicKeyFactory.createKey(pInfo);
+            final GordianCoreXMSSSpec mySpec = GordianCoreXMSSSpec.determineSpecFromParameters(myParams.getParameters());
+            return myBuilder.xmss(mySpec);
+
+            /* Handle exceptions */
         } catch (IOException e) {
-            throw new GordianIOException("Failed to resolve key", e);
+            throw new GordianIOException(ERROR_PARSE, e);
         }
     }
 
     @Override
     public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
-        final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
-        final XMSSMTKeyParams myParms = XMSSMTKeyParams.getInstance(myId.getParameters());
-        return determineKeyPairSpec(myParms);
-    }
+        /* Protect against exceptions */
+        try {
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            final XMSSMTPrivateKeyParameters myParams = (XMSSMTPrivateKeyParameters) PrivateKeyFactory.createKey(pInfo);
+            final GordianCoreXMSSSpec mySpec = GordianCoreXMSSSpec.determineSpecFromParameters(myParams.getParameters());
+            return myBuilder.xmss(mySpec);
 
-    /**
-     * Obtain keySpec from Parameters.
-     *
-     * @param pParms the parameters
-     * @return the keySpec
-     * @throws GordianException on error
-     */
-    private static GordianKeyPairSpec determineKeyPairSpec(final XMSSMTKeyParams pParms) throws GordianException {
-        final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();
-        final GordianXMSSHeight myHeight = GordianXMSSEncodedParser.determineHeight(pParms.getHeight());
-        final GordianXMSSMTLayers myLayers = determineLayers(pParms.getLayers());
-        final GordianKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
-        return myBuilder.xmssmt(GordianXMSSEncodedParser.determineKeyType(myDigest), myHeight, myLayers);
-    }
-
-    /**
-     * Obtain layers.
-     *
-     * @param pLayers the layers
-     * @return the xmssMTLayers
-     * @throws GordianException on error
-     */
-    static GordianXMSSMTLayers determineLayers(final int pLayers) throws GordianException {
-        /* Loo through the heights */
-        for (GordianXMSSMTLayers myLayers : GordianXMSSMTLayers.values()) {
-            if (myLayers.getLayers() == pLayers) {
-                return myLayers;
-            }
+            /* Handle exceptions */
+        } catch (IOException e) {
+            throw new GordianIOException(ERROR_PARSE, e);
         }
-
-        /* Layers is not supported */
-        throw new GordianDataException("Invalid layers: " + pLayers);
     }
 }

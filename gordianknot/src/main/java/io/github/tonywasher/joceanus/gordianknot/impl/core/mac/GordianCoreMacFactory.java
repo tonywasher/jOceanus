@@ -117,7 +117,8 @@ public abstract class GordianCoreMacFactory
      */
     private Predicate<GordianSymKeySpec> supportedGMacSymKeySpecs() {
         return p -> validGMacSymKeySpec(p)
-                && p.getBlockLength() == GordianLength.LEN_128;
+                && (p.getBlockLength() == GordianLength.LEN_128
+                || p.getSymKeyType() == GordianSymKeyType.KALYNA);
     }
 
     /**

@@ -150,6 +150,15 @@ public interface GordianSignatureSpecBuilder {
     }
 
     /**
+     * Create eddsaPHSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec eddsaph() {
+        return withKeyPairType(GordianKeyPairType.EDDSA).withSignatureType(GordianSignatureType.PREHASH).build();
+    }
+
+    /**
      * Create SLHDSASpec.
      *
      * @return the SignatureSpec
@@ -177,24 +186,6 @@ public interface GordianSignatureSpecBuilder {
     }
 
     /**
-     * Create mayoSpec.
-     *
-     * @return the SignatureSpec
-     */
-    default GordianSignatureSpec mayo() {
-        return withKeyPairType(GordianKeyPairType.MAYO).build();
-    }
-
-    /**
-     * Create mayoSpec.
-     *
-     * @return the SignatureSpec
-     */
-    default GordianSignatureSpec snova() {
-        return withKeyPairType(GordianKeyPairType.SNOVA).build();
-    }
-
-    /**
      * Create picnicSpec.
      *
      * @return the SignatureSpec
@@ -211,6 +202,105 @@ public interface GordianSignatureSpecBuilder {
      */
     default GordianSignatureSpec picnic(final GordianDigestSpec pDigest) {
         return withKeyPairType(GordianKeyPairType.PICNIC).withDigestSpec(pDigest).build();
+    }
+
+    /**
+     * Create AIMerSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec aimer() {
+        return withKeyPairType(GordianKeyPairType.AIMER).build();
+    }
+
+    /**
+     * Create faestSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec faest() {
+        return withKeyPairType(GordianKeyPairType.FAEST).build();
+    }
+
+    /**
+     * Create haetaeSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec haetae() {
+        return withKeyPairType(GordianKeyPairType.HAETAE).build();
+    }
+
+    /**
+     * Create hawkSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec hawk() {
+        return withKeyPairType(GordianKeyPairType.HAWK).build();
+    }
+
+    /**
+     * Create mayoSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec mayo() {
+        return withKeyPairType(GordianKeyPairType.MAYO).build();
+    }
+
+    /**
+     * Create mqomSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec mqom() {
+        return withKeyPairType(GordianKeyPairType.MQOM).build();
+    }
+
+    /**
+     * Create qruovSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec qruov() {
+        return withKeyPairType(GordianKeyPairType.QRUOV).build();
+    }
+
+    /**
+     * Create SDitHSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec sdith() {
+        return withKeyPairType(GordianKeyPairType.SDITH).build();
+    }
+
+    /**
+     * Create snovaSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec snova() {
+        return withKeyPairType(GordianKeyPairType.SNOVA).build();
+    }
+
+    /**
+     * Create SQIsignSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec sqisign() {
+        return withKeyPairType(GordianKeyPairType.SQISIGN).build();
+    }
+
+    /**
+     * Create uovSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec uov() {
+        return withKeyPairType(GordianKeyPairType.UOV).build();
     }
 
     /**

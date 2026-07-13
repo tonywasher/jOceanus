@@ -21,12 +21,12 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.B
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import org.bouncycastle.crypto.generators.CMCEKeyPairGenerator;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.pqc.crypto.cmce.CMCEKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.cmce.CMCEKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.cmce.CMCEParameters;
-import org.bouncycastle.pqc.crypto.cmce.CMCEPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.cmce.CMCEPublicKeyParameters;
+import org.bouncycastle.crypto.params.CMCEKeyGenerationParameters;
+import org.bouncycastle.crypto.params.CMCEParameters;
+import org.bouncycastle.crypto.params.CMCEPrivateKeyParameters;
+import org.bouncycastle.crypto.params.CMCEPublicKeyParameters;
 
 import java.util.Arrays;
 
@@ -118,7 +118,7 @@ public final class BouncyCMCEKeyPair {
 
             /* Create and initialise the generator */
             setGenerator(new CMCEKeyPairGenerator(), myParams);
-            setFactorySet(BouncyPqKeyFactorySet.INSTANCE);
+            setFactorySet(BouncyStdKeyFactorySet.INSTANCE);
         }
 
         @Override

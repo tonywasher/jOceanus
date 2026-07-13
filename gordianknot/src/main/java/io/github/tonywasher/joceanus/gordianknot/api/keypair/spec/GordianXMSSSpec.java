@@ -100,7 +100,22 @@ public interface GordianXMSSSpec {
         /**
          * SHAKE256.
          */
-        SHAKE256;
+        SHAKE256,
+
+        /**
+         * SHA256_192.
+         */
+        SHA256_192,
+
+        /**
+         * SHAKE256_192.
+         */
+        SHAKE256_192,
+
+        /**
+         * SHAKE256_256.
+         */
+        SHAKE256_256;
     }
 
     /**

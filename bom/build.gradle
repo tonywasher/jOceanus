@@ -9,7 +9,7 @@ javaPlatform {
 }
 
 dependencies {
-    api(platform('org.bouncycastle:bc-jdk18on-bom:1.84'))
+    api(platform('org.bouncycastle:bc-jdk18on-bom:1.85'))
     api(platform('org.junit:junit-bom:6.1.0'))
 
     constraints {

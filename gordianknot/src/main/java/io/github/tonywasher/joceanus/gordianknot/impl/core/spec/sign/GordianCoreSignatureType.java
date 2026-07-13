@@ -82,7 +82,7 @@ public final class GordianCoreSignatureType {
      */
     public static boolean hasPreHash(final GordianKeyPairType pKeyType) {
         return switch (pKeyType) {
-            case XMSS, RSA -> true;
+            case XMSS, RSA, EDDSA -> true;
             default -> false;
         };
     }
@@ -108,7 +108,8 @@ public final class GordianCoreSignatureType {
      */
     public static boolean hasNative(final GordianKeyPairType pKeyType) {
         return switch (pKeyType) {
-            case SM2, EDDSA, DSTU, GOST, SLHDSA, MLDSA, FALCON, PICNIC, MAYO, SNOVA, XMSS, LMS, COMPOSITE -> true;
+            case SM2, EDDSA, DSTU, GOST, SLHDSA, MLDSA, FALCON, PICNIC, AIMER, FAEST, HAETAE, HAWK,
+                 MAYO, MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, XMSS, LMS, COMPOSITE -> true;
             default -> false;
         };
     }

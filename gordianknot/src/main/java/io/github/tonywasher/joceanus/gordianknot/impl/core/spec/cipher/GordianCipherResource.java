@@ -273,7 +273,12 @@ public enum GordianCipherResource
     /**
      * StreamKey Xoodyak.
      */
-    STREAMKEY_XOODYAK(GordianDigestResource.DIGEST_XOODYAK);
+    STREAMKEY_XOODYAK(GordianDigestResource.DIGEST_XOODYAK),
+
+    /**
+     * StreamKey GiftCOFB.
+     */
+    STREAMKEY_GIFTCOFB("streamKey.GiftCOFB");
 
     /**
      * The Resource Loader.

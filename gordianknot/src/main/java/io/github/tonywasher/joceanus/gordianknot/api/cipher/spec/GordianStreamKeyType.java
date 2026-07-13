@@ -124,5 +124,10 @@ public enum GordianStreamKeyType {
     /**
      * Xoodyak.
      */
-    XOODYAK;
+    XOODYAK,
+
+    /**
+     * GIFT-COFB.
+     */
+    GIFTCOFB;
 }

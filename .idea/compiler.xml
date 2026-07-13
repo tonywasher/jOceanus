@@ -31,9 +31,6 @@
         <module name="prometheus-sheet-hssf" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="tethys-core (1)" target="21" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-Xmaxerrs 1000" />

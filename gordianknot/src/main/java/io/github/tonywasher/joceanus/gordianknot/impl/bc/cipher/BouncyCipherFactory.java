@@ -86,6 +86,8 @@ import org.bouncycastle.crypto.engines.DSTU7624Engine;
 import org.bouncycastle.crypto.engines.ElephantEngine;
 import org.bouncycastle.crypto.engines.GOST28147Engine;
 import org.bouncycastle.crypto.engines.GOST3412_2015Engine;
+import org.bouncycastle.crypto.engines.GiftCofbEngine;
+import org.bouncycastle.crypto.engines.Grain128AEADEngine;
 import org.bouncycastle.crypto.engines.Grain128Engine;
 import org.bouncycastle.crypto.engines.HC128Engine;
 import org.bouncycastle.crypto.engines.HC256Engine;
@@ -131,7 +133,9 @@ import org.bouncycastle.crypto.modes.G3413OFBBlockCipher;
 import org.bouncycastle.crypto.modes.GCFBBlockCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.modes.GOFBBlockCipher;
+import org.bouncycastle.crypto.modes.KCCMBlockCipher;
 import org.bouncycastle.crypto.modes.KCTRBlockCipher;
+import org.bouncycastle.crypto.modes.KGCMBlockCipher;
 import org.bouncycastle.crypto.modes.OCBBlockCipher;
 import org.bouncycastle.crypto.modes.OFBBlockCipher;
 import org.bouncycastle.crypto.modes.SICBlockCipher;
@@ -140,8 +144,6 @@ import org.bouncycastle.crypto.paddings.PKCS7Padding;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.paddings.TBCPadding;
 import org.bouncycastle.crypto.paddings.X923Padding;
-import org.bouncycastle.crypto.patch.modes.GordianKCCMBlockCipher;
-import org.bouncycastle.crypto.patch.modes.GordianKGCMBlockCipher;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -329,6 +331,8 @@ public class BouncyCipherFactory
             case SPARKLE ->
                     new SparkleEngine(GordianCoreStreamKeySubType.getParameters((GordianSparkleKey) mySpec.getSubKeyType()));
             case XOODYAK -> new XoodyakEngine();
+            case GRAIN -> new Grain128AEADEngine();
+            case GIFTCOFB -> new GiftCofbEngine();
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
         };
     }
@@ -418,10 +422,10 @@ public class BouncyCipherFactory
         return switch (pCipherSpec.getCipherMode()) {
             case EAX -> new EAXBlockCipher(getBCSymEngine(mySpec));
             case CCM -> CCMBlockCipher.newInstance(getBCSymEngine(mySpec));
-            case KCCM -> new GordianKCCMBlockCipher(getBCSymEngine(mySpec));
+            case KCCM -> new KCCMBlockCipher(getBCSymEngine(mySpec));
             case GCM -> GCMBlockCipher.newInstance(getBCSymEngine(mySpec));
             case GCMSIV -> new GordianGCMSIVBlockCipher(getBCSymEngine(mySpec));
-            case KGCM -> new GordianKGCMBlockCipher(getBCSymEngine(mySpec));
+            case KGCM -> new KGCMBlockCipher(getBCSymEngine(mySpec));
             case OCB -> new OCBBlockCipher(getBCSymEngine(mySpec), getBCSymEngine(mySpec));
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
         };

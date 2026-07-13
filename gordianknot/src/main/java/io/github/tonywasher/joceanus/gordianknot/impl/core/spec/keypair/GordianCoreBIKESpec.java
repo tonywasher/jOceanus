@@ -27,6 +27,9 @@ import org.bouncycastle.pqc.legacy.bike.BIKEParameters;
 import java.util.EnumMap;
 import java.util.Map;
 
+/**
+ * BIKE Core Spec.
+ */
 public final class GordianCoreBIKESpec
         implements GordianCoreKeyPairIdSpec<GordianBIKESpec> {
     /**

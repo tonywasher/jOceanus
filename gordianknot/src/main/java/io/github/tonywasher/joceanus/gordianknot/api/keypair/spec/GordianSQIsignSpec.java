@@ -15,29 +15,24 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.gordianknot.api.sign;
-
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+package io.github.tonywasher.joceanus.gordianknot.api.keypair.spec;
 
 /**
- * Signature parameters.
+ * SQIsign KeySpec.
  */
-public interface GordianNewSignParamsBuilder {
+public enum GordianSQIsignSpec {
     /**
-     * Create keyPair parameters.
-     *
-     * @param pKeyPair the keyPair
-     * @return the new params
+     * Level 1.
      */
-    GordianNewSignParams keyPair(GordianKeyPair pKeyPair);
+    SQISIGN1,
 
     /**
-     * Create keyPair and context parameters.
-     *
-     * @param pKeyPair the keyPair
-     * @param pContext the context
-     * @return the new params
+     * Level 3.
      */
-    GordianNewSignParams keyPair(GordianKeyPair pKeyPair,
-                                 byte[] pContext);
+    SQISIGN3,
+
+    /**
+     * Level 5.
+     */
+    SQISIGN5;
 }

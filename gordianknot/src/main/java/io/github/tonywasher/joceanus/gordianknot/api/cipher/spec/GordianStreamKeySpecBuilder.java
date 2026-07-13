@@ -323,4 +323,13 @@ public interface GordianStreamKeySpecBuilder {
     default GordianStreamKeySpec xoodyak() {
         return withType(GordianStreamKeyType.XOODYAK).build();
     }
+
+    /**
+     * Create gift-cofb.
+     *
+     * @return the keySpec
+     */
+    default GordianStreamKeySpec giftCofb() {
+        return withType(GordianStreamKeyType.GIFTCOFB).build();
+    }
 }

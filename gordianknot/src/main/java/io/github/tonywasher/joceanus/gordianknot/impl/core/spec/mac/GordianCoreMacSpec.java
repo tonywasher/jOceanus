@@ -159,9 +159,20 @@ public class GordianCoreMacSpec
      *
      * @return the Type
      */
-    private GordianCoreSymKeyType getSymKeyType() {
+    private GordianCoreSymKeyType getCoreSymKeyType() {
         return theSubSpec instanceof GordianCoreSymKeySpec mySpec
                 ? mySpec.getCoreSymKeyType()
+                : null;
+    }
+
+    /**
+     * Obtain SymKeyType.
+     *
+     * @return the Type
+     */
+    private GordianSymKeyType getSymKeyType() {
+        return theSubSpec instanceof GordianCoreSymKeySpec mySpec
+                ? mySpec.getSymKeyType()
                 : null;
     }
 
@@ -217,7 +228,8 @@ public class GordianCoreMacSpec
     public GordianLength getMacLength() {
         return switch (theMacType.getType()) {
             case HMAC, BLAKE2, BLAKE3, SKEIN, KUPYNA, KMAC -> getDigestLength();
-            case GMAC, POLY1305 -> GordianLength.LEN_128;
+            case POLY1305 -> GordianLength.LEN_128;
+            case GMAC -> getSymKeyType() == GordianSymKeyType.KALYNA ? getSymKeyBlockLength() : GordianLength.LEN_128;
             case CMAC, KALYNA -> getSymKeyBlockLength();
             case CBCMAC, CFBMAC -> getSymKeyHalfBlockLength();
             case ZUC -> (GordianLength) theSubSpec;
@@ -443,7 +455,7 @@ public class GordianCoreMacSpec
                     theName = theSubSpec.toString();
                     break;
                 case POLY1305:
-                    theName += theSubSpec == null ? "" : GordianSpecConstants.SEP + getSymKeyType();
+                    theName += theSubSpec == null ? "" : GordianSpecConstants.SEP + getCoreSymKeyType();
                     break;
                 case GMAC, CMAC, CFBMAC, CBCMAC:
                     theName += GordianSpecConstants.SEP + theSubSpec.toString();

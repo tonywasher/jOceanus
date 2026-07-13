@@ -19,11 +19,12 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeyPairs;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactorySignature;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
 /**
@@ -82,16 +84,17 @@ public final class AsymmetricSignScripts {
         final FactoryKeyPairs myPairs = pSignature.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myMirror = myPairs.getMirrorKeyPair();
+        final byte[] myContext = getContextForSpec(mySpec);
 
         /* Check outgoing signature */
         final GordianSignatureFactory mySigns = pSignature.getOwner().getFactory().getSignatureFactory();
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
         GordianSignature mySigner = mySigns.createSigner(mySpec);
-        final GordianNewSignParamsBuilder myBuilder = mySigns.newSignParamsBuilder();
-        mySigner.initForSigning(myBuilder.keyPair(myMirror));
+        final GordianSignParamsBuilder myBuilder = mySigns.newSignParamsBuilder();
+        mySigner.initForSigning(myBuilder.keyPairAndContext(myMirror, myContext));
         mySigner.update(myMessage);
         byte[] mySignature = mySigner.sign();
-        mySigner.initForVerify(myBuilder.keyPair(myPair));
+        mySigner.initForVerify(myBuilder.keyPairAndContext(myPair, myContext));
         mySigner.update(myMessage);
         Assertions.assertTrue(mySigner.verify(mySignature), "Failed to verify own signature");
     }
@@ -108,29 +111,30 @@ public final class AsymmetricSignScripts {
         final FactoryKeyPairs myPairs = pSignature.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myPartnerSelf = myPairs.getPartnerSelfKeyPair();
+        final byte[] myContext = getContextForSpec(mySpec);
 
         /* Check outgoing signature */
         final GordianSignatureFactory mySrcSigns = pSignature.getOwner().getFactory().getSignatureFactory();
         final GordianSignatureFactory myTgtSigns = pSignature.getOwner().getPartner().getSignatureFactory();
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
         GordianSignature mySigner = mySrcSigns.createSigner(mySpec);
-        final GordianNewSignParamsBuilder myBuilder = mySrcSigns.newSignParamsBuilder();
-        mySigner.initForSigning(myBuilder.keyPair(myPair));
+        final GordianSignParamsBuilder myBuilder = mySrcSigns.newSignParamsBuilder();
+        mySigner.initForSigning(myBuilder.keyPairAndContext(myPair, myContext));
         mySigner.update(myMessage);
         byte[] mySignature = mySigner.sign();
 
         /* Check sent signature */
         mySigner = myTgtSigns.createSigner(mySpec);
-        mySigner.initForVerify(myBuilder.keyPair(myPartnerSelf));
+        mySigner.initForVerify(myBuilder.keyPairAndContext(myPartnerSelf, myContext));
         mySigner.update(myMessage);
         Assertions.assertTrue(mySigner.verify(mySignature), "Failed to verify sent signature");
 
         /* Check incoming signature */
-        mySigner.initForSigning(myBuilder.keyPair(myPartnerSelf));
+        mySigner.initForSigning(myBuilder.keyPairAndContext(myPartnerSelf, myContext));
         mySigner.update(myMessage);
         mySignature = mySigner.sign();
         mySigner = mySrcSigns.createSigner(mySpec);
-        mySigner.initForVerify(myBuilder.keyPair(myPair));
+        mySigner.initForVerify(myBuilder.keyPairAndContext(myPair, myContext));
         mySigner.update(myMessage);
         Assertions.assertTrue(mySigner.verify(mySignature), "Failed to verify returned signature");
     }
@@ -147,10 +151,22 @@ public final class AsymmetricSignScripts {
 
         /* Check that we have an id */
         final AlgorithmIdentifier myId = myFactory.getIdentifierForSpecAndKeyPair(pSignature.getSpec(), pSignature.getOwner().getKeyPairs().getKeyPair());
+        if (myId == null) {
+            int i = 0;
+        }
         Assertions.assertNotNull(myId, "Unknown AlgorithmId for " + pSignature.getSpec());
 
         /* Check unique mapping */
         final GordianSignatureSpec mySpec = myFactory.getSpecForIdentifier(myId);
         Assertions.assertEquals(pSignature.getSpec(), mySpec, "Invalid mapping for  " + pSignature.getSpec());
+    }
+
+    /**
+     * Obtain context for signature spec.
+     *
+     * @param pSpec the spec
+     */
+    private static byte[] getContextForSpec(final GordianSignatureSpec pSpec) {
+        return ((GordianCoreSignatureSpec) pSpec).supportsContext() ? "SomeContext".getBytes(StandardCharsets.UTF_8) : null;
     }
 }

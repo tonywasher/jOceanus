@@ -18,14 +18,24 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
 
 /**
  * Core Signature parameters builder.
  */
 public final class GordianCoreSignParamsBuilder
-        implements GordianNewSignParamsBuilder {
+        implements GordianSignParamsBuilder {
+    /**
+     * The keyPair.
+     */
+    private GordianKeyPair theKeyPair;
+
+    /**
+     * The context.
+     */
+    private byte[] theContext;
+
     /**
      * Constructor.
      */
@@ -37,18 +47,35 @@ public final class GordianCoreSignParamsBuilder
      *
      * @return the Builder
      */
-    public static GordianNewSignParamsBuilder newInstance() {
+    public static GordianSignParamsBuilder newInstance() {
         return new GordianCoreSignParamsBuilder();
     }
 
     @Override
-    public GordianNewSignParams keyPair(final GordianKeyPair pKeyPair) {
-        return new GordianCoreSignParams(pKeyPair, null);
+    public GordianSignParamsBuilder withKeyPair(final GordianKeyPair pPair) {
+        theKeyPair = pPair;
+        return this;
     }
 
     @Override
-    public GordianNewSignParams keyPair(final GordianKeyPair pKeyPair,
-                                        final byte[] pContext) {
-        return new GordianCoreSignParams(pKeyPair, pContext);
+    public GordianSignParamsBuilder withContext(final byte[] pContext) {
+        theContext = pContext == null ? null : pContext.clone();
+        return this;
+    }
+
+    @Override
+    public GordianSignParams build() {
+        /* Create params, reset and return */
+        final GordianCoreSignParams myParams = new GordianCoreSignParams(theKeyPair, theContext);
+        reset();
+        return myParams;
+    }
+
+    /**
+     * Reset state.
+     */
+    private void reset() {
+        theKeyPair = null;
+        theContext = null;
     }
 }

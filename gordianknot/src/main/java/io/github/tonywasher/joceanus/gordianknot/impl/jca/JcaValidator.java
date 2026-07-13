@@ -60,7 +60,7 @@ public class JcaValidator
         }
         return switch (pKeyType) {
             case ISAAC, SOSEMANUK, RABBIT, SNOW3G, SKEINXOF, BLAKE2XOF, BLAKE3XOF, ASCON, ELEPHANT, ISAP, PHOTONBEETLE,
-                 ROMULUS, SPARKLE, XOODYAK -> false;
+                 ROMULUS, SPARKLE, XOODYAK, GIFTCOFB -> false;
             default -> super.validStreamKeyType(pKeyType);
         };
     }
@@ -76,7 +76,7 @@ public class JcaValidator
             return false;
         }
         return switch (pKeyType) {
-            case SPECK, ANUBIS, SIMON, MARS, LEA -> false;
+            case SPECK, ANUBIS, SIMON, MARS -> false;
             default -> true;
         };
     }

@@ -211,6 +211,9 @@ public final class JcaAgreement {
                 case MLKEM:
                     myName = "ML-KEM";
                     break;
+                case FRODO:
+                    myName = "FrodoKEM";
+                    break;
                 default:
                     break;
             }

@@ -18,14 +18,14 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import org.bouncycastle.util.Arrays;
 
 /**
  * Core Signature parameters.
  */
 public class GordianCoreSignParams
-        implements GordianNewSignParams {
+        implements GordianSignParams {
     /**
      * KeyPair.
      */

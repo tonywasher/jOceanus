@@ -152,14 +152,59 @@ public enum GordianKeyPairType {
     NEWHOPE,
 
     /**
+     * AIMer.
+     */
+    AIMER,
+
+    /**
+     * Faest.
+     */
+    FAEST,
+
+    /**
+     * HAETAE.
+     */
+    HAETAE,
+
+    /**
+     * Hawk.
+     */
+    HAWK,
+
+    /**
      * Mayo.
      */
     MAYO,
 
     /**
+     * MQOM.
+     */
+    MQOM,
+
+    /**
+     * QRUOV.
+     */
+    QRUOV,
+
+    /**
+     * SDitH.
+     */
+    SDITH,
+
+    /**
      * Snova.
      */
     SNOVA,
+
+    /**
+     * SQIsign.
+     */
+    SQISIGN,
+
+    /**
+     * UOV.
+     */
+    UOV,
 
     /**
      * Composite.

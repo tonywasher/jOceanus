@@ -32,7 +32,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEnt
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
@@ -278,7 +278,7 @@ public class GordianCRMBuilder {
         /* Protect against exceptions */
         try {
             /* Create the signature */
-            final GordianNewSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
+            final GordianSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
             pSigner.initForSigning(myBuilder.keyPair(pKeyPair));
             pSigner.update(pCertRequest.getEncoded());
             final byte[] mySignature = pSigner.sign();

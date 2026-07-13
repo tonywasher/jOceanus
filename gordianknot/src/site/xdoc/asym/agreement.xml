@@ -358,7 +358,7 @@ final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(my
                     <tr><td>DSTU4145</td><td>KEM, ANON, BASIC, SIGNED, MQV, UNIFIED</td><td>KEM not available in JCA</td></tr>
                     <tr><td>DH</td><td>ANON, BASIC, SIGNED, MQV, UNIFIED</td><td/></tr>
                     <tr><td>XDH</td><td>ANON, BASIC, SIGNED, UNIFIED</td><td/></tr>
-                    <tr><td>BIKE, CMCE, Frodo, HQC, MLKEM, NEWHOPE, NTRU, NTRUPRIME, SABER</td><td>KEM</td><td/></tr>
+                    <tr><td>BIKE, CMCE, Frodo, HQC, MLKEM, NEWHOPE, NTRU, NTRUPLUS, NTRUPRIME, SABER</td><td>KEM</td><td/></tr>
                  </table>
             </subsection>
         </section>

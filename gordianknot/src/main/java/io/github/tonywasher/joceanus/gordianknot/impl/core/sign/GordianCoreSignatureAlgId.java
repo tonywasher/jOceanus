@@ -33,15 +33,24 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreAIMerSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreFaestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreFalconSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreHAETAESpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreHawkSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairIdSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMLDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMQOMSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMayoSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreQRUOVSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreRSASpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSDitHSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSLHDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSQIsignSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSnovaSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreUOVSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreXMSSSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpecBuilder;
@@ -442,8 +451,17 @@ public class GordianCoreSignatureAlgId {
         addKeyPairIdSignatures(GordianCoreMLDSASpec.values());
         addKeyPairIdSignatures(GordianCoreSLHDSASpec.values());
         addKeyPairIdSignatures(GordianCoreFalconSpec.values());
+        addKeyPairIdSignatures(GordianCoreAIMerSpec.values());
+        addKeyPairIdSignatures(GordianCoreFaestSpec.values());
+        addKeyPairIdSignatures(GordianCoreHAETAESpec.values());
+        addKeyPairIdSignatures(GordianCoreHawkSpec.values());
         addKeyPairIdSignatures(GordianCoreMayoSpec.values());
+        addKeyPairIdSignatures(GordianCoreMQOMSpec.values());
+        addKeyPairIdSignatures(GordianCoreQRUOVSpec.values());
+        addKeyPairIdSignatures(GordianCoreSDitHSpec.values());
         addKeyPairIdSignatures(GordianCoreSnovaSpec.values());
+        addKeyPairIdSignatures(GordianCoreSQIsignSpec.values());
+        addKeyPairIdSignatures(GordianCoreUOVSpec.values());
     }
 
     /**
@@ -487,6 +505,27 @@ public class GordianCoreSignatureAlgId {
 
         /* Process XMSS Shake256 signatures */
         addXMSSSignatures(GordianXMSSDigestType.SHAKE256,
+                BCObjectIdentifiers.xmss_SHAKE256,
+                BCObjectIdentifiers.xmss_SHAKE256ph,
+                BCObjectIdentifiers.xmss_mt_SHAKE256,
+                BCObjectIdentifiers.xmss_mt_SHAKE256ph);
+
+        /* Process XMSS Sha256_192 signatures */
+        addXMSSSignatures(GordianXMSSDigestType.SHA256_192,
+                BCObjectIdentifiers.xmss_SHA256,
+                BCObjectIdentifiers.xmss_SHA256ph,
+                BCObjectIdentifiers.xmss_mt_SHA256,
+                BCObjectIdentifiers.xmss_mt_SHA256ph);
+
+        /* Process XMSS Shake256_192 signatures */
+        addXMSSSignatures(GordianXMSSDigestType.SHAKE256_192,
+                BCObjectIdentifiers.xmss_SHAKE256,
+                BCObjectIdentifiers.xmss_SHAKE256ph,
+                BCObjectIdentifiers.xmss_mt_SHAKE256,
+                BCObjectIdentifiers.xmss_mt_SHAKE256ph);
+
+        /* Process XMSS Shake256_256 signatures */
+        addXMSSSignatures(GordianXMSSDigestType.SHAKE256_256,
                 BCObjectIdentifiers.xmss_SHAKE256,
                 BCObjectIdentifiers.xmss_SHAKE256ph,
                 BCObjectIdentifiers.xmss_mt_SHAKE256,

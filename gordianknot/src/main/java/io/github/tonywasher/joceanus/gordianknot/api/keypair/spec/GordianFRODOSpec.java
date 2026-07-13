@@ -22,16 +22,6 @@ package io.github.tonywasher.joceanus.gordianknot.api.keypair.spec;
  */
 public enum GordianFRODOSpec {
     /**
-     * AES 640.
-     */
-    AES640,
-
-    /**
-     * SHAKE 640.
-     */
-    SHAKE640,
-
-    /**
      * AES 976.
      */
     AES976,
@@ -42,6 +32,16 @@ public enum GordianFRODOSpec {
     SHAKE976,
 
     /**
+     * AES 976.
+     */
+    AES976E,
+
+    /**
+     * SHAKE 976.
+     */
+    SHAKE976E,
+
+    /**
      * AES 1344.
      */
     AES1344,
@@ -49,5 +49,15 @@ public enum GordianFRODOSpec {
     /**
      * SHAKE 1344.
      */
-    SHAKE1344;
+    SHAKE1344,
+
+    /**
+     * AES 1344.
+     */
+    AES1344E,
+
+    /**
+     * SHAKE 1344.
+     */
+    SHAKE1344E;
 }
