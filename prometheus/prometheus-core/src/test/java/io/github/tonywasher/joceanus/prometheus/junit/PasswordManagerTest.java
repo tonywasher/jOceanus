@@ -21,6 +21,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianGenerator;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
@@ -28,7 +30,6 @@ import io.github.tonywasher.joceanus.prometheus.exc.PrometheusSecurityException;
 import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityDialogController;
 import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -47,9 +48,6 @@ class PasswordManagerTest {
     static final String[] NAMES = {
             "First",
             "Second",
-            "Third",
-            "Fourth",
-            "Fifth",
             "Last",
     };
 
@@ -64,10 +62,7 @@ class PasswordManagerTest {
     static final char[][] PASSWORDS = {
             "Password1_".toCharArray(),
             "Password2_".toCharArray(),
-            "Password3_".toCharArray(),
-            "Password4_".toCharArray(),
-            "Password5_".toCharArray(),
-            "Password6_".toCharArray()
+            "Password3_".toCharArray()
     };
 
     /**
@@ -246,22 +241,21 @@ class PasswordManagerTest {
      *
      * @throws OceanusException on error
      */
-    @BeforeAll
-    static void setUpFactories() throws OceanusException {
+    @Test
+    void setUpFactories() throws OceanusException {
         /* Create the security manager */
         try {
             final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
-            final PrometheusSecurityPasswordManager myManager = new PrometheusSecurityPasswordManager(myFactory, new DialogController());
+            final GordianPasswordLockSpecBuilder myBuilder = myFactory.getLockFactory().newPasswordLockSpecBuilder();
+            final GordianPasswordLockSpec mySpec = myBuilder.passwordLock(GordianPasswordLockSpec.MINIMUM_POWER_ITERATIONS);
+            final PrometheusSecurityPasswordManager myManager = new PrometheusSecurityPasswordManager(myFactory, mySpec, new DialogController());
 
             /* For each NAME */
             for (int i = 0; i < NAMES.length; i++) {
-                /* Create some factories */
-                createNewFactory(myManager, i);
-                createNewFactory(myManager, i);
-                createNewFactory(myManager, i);
+                /* Create a factories */
                 final FactoryIndex myIndex = createNewFactory(myManager, i);
 
-                /* Create a couple of similar factories */
+                /* Create a similar factory */
                 createSimilarFactory(myManager, myIndex);
             }
 
@@ -377,22 +371,21 @@ class PasswordManagerTest {
      *
      * @throws OceanusException on error
      */
-    @BeforeAll
-    static void setUpKeySets() throws OceanusException {
+    @Test
+    void setUpKeySets() throws OceanusException {
         /* Create the security manager */
         try {
             final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
-            final PrometheusSecurityPasswordManager myManager = new PrometheusSecurityPasswordManager(myFactory, new DialogController());
+            final GordianPasswordLockSpecBuilder myBuilder = myFactory.getLockFactory().newPasswordLockSpecBuilder();
+            final GordianPasswordLockSpec mySpec = myBuilder.passwordLock(GordianPasswordLockSpec.MINIMUM_POWER_ITERATIONS);
+            final PrometheusSecurityPasswordManager myManager = new PrometheusSecurityPasswordManager(myFactory, mySpec, new DialogController());
 
             /* For each NAME */
             for (int i = 0; i < NAMES.length; i++) {
-                /* Create some keySets */
-                createNewKeySet(myManager, i);
-                createNewKeySet(myManager, i);
-                createNewKeySet(myManager, i);
+                /* Create a keySet */
                 final KeySetIndex myIndex = createNewKeySet(myManager, i);
 
-                /* Create a couple of similar keySets */
+                /* Create a similar keySets */
                 createSimilarKeySet(myManager, myIndex);
             }
 

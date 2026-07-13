@@ -361,13 +361,13 @@ public class PrometheusPreferenceSecurity
             /* Make sure that the hashIterations is specified */
             myPref = getIntegerPreference(PrometheusSecurityPreferenceKey.HASHITERATIONS);
             if (!myPref.isAvailable()) {
-                myPref.setValue(GordianPasswordLockSpec.DEFAULT_ITERATIONS);
+                myPref.setValue(GordianPasswordLockSpec.DEFAULT_POWER_ITERATIONS);
             }
 
             /* Define the range */
-            myPref.setRange(GordianPasswordLockSpec.MINIMUM_ITERATIONS, GordianPasswordLockSpec.MAXIMUM_ITERATIONS);
+            myPref.setRange(GordianPasswordLockSpec.MINIMUM_POWER_ITERATIONS, GordianPasswordLockSpec.MAXIMUM_POWER_ITERATIONS);
             if (!myPref.validate()) {
-                myPref.setValue(GordianPasswordLockSpec.DEFAULT_ITERATIONS);
+                myPref.setValue(GordianPasswordLockSpec.DEFAULT_POWER_ITERATIONS);
             }
 
             /* Make sure that the activeKeySets is specified */

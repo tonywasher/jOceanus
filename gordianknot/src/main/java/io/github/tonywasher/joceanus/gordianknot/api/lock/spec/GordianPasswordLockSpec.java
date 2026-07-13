@@ -24,19 +24,19 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSp
  */
 public interface GordianPasswordLockSpec {
     /**
-     * Minimum iterations.
+     * Minimum iterations (2<sup>3</sup>K).
      */
-    Integer MINIMUM_ITERATIONS = 1;
+    Integer MINIMUM_POWER_ITERATIONS = 3;
 
     /**
-     * Maximum iterations.
+     * Maximum iterations (2<sup>20</sup>K).
      */
-    Integer MAXIMUM_ITERATIONS = 64;
+    Integer MAXIMUM_POWER_ITERATIONS = 20;
 
     /**
-     * Default iterations.
+     * Default iterations. (2<sup>6</sup>K).
      */
-    Integer DEFAULT_ITERATIONS = 8;
+    Integer DEFAULT_POWER_ITERATIONS = 6;
 
     /**
      * Access the number of Iterations.
@@ -46,11 +46,11 @@ public interface GordianPasswordLockSpec {
     int getNumIterations();
 
     /**
-     * Access the number of Hash Iterations (x 1K).
+     * Access the power of Hash Iterations (2<sup>x</sup>K).
      *
-     * @return the number of hash iterations
+     * @return the power of hash iterations
      */
-    int getKIterations();
+    int getPowerIterations();
 
     /**
      * Access the keySetSpec.

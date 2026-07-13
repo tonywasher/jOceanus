@@ -118,7 +118,7 @@ public class GordianPasswordLockSpecASN1
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();
         v.add(new GordianKeySetSpecASN1(theLockSpec.getKeySetSpec()).toASN1Primitive());
-        v.add(new ASN1Integer(theLockSpec.getKIterations()));
+        v.add(new ASN1Integer(theLockSpec.getPowerIterations()));
         return new DERSequence(v);
     }
 

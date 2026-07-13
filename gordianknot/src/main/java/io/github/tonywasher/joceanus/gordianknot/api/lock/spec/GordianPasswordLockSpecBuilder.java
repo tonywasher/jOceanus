@@ -34,10 +34,10 @@ public interface GordianPasswordLockSpecBuilder {
     /**
      * create passwordLockSpec.
      *
-     * @param pKIterations the iterations (x 1K).
+     * @param pPowerIterations the iterations (2<sup>x</sup>K).
      * @return the passwordLockSpec
      */
-    GordianPasswordLockSpec passwordLock(int pKIterations);
+    GordianPasswordLockSpec passwordLock(int pPowerIterations);
 
     /**
      * create passwordLockSpec.
@@ -50,11 +50,11 @@ public interface GordianPasswordLockSpecBuilder {
     /**
      * create passwordLockSpec.
      *
-     * @param pKIterations the iterations (x 1K).
-     * @param pKeySetSpec  the keySetSpec
+     * @param pPowerIterations the iterations (2<sup>x</sup>K).
+     * @param pKeySetSpec      the keySetSpec
      * @return the passwordLockSpec
      */
-    GordianPasswordLockSpec passwordLock(int pKIterations,
+    GordianPasswordLockSpec passwordLock(int pPowerIterations,
                                          GordianKeySetSpec pKeySetSpec);
 
     /**

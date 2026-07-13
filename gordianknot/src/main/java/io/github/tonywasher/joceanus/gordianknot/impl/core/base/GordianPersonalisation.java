@@ -50,7 +50,7 @@ public class GordianPersonalisation {
     /**
      * Number of iterations.
      */
-    public static final Integer NUM_ITERATIONS = 128;
+    public static final Integer NUM_ITERATIONS = 256;
 
     /**
      * Phrase multiplier.
