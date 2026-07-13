@@ -159,7 +159,7 @@ public final class KeyStoreRequest {
                 agreedKeyPairRequestTest(myBuilder.saber(GordianSABERSpec.BASE128)),
                 agreedKeyPairRequestTest(myBuilder.composite(myBuilder.cmce(GordianCMCESpec.CMCE4608),
                         myBuilder.frodo(GordianFRODOSpec.AES976),
-                        myBuilder.saber(GordianSABERSpec.BASE128))),
+                        myBuilder.mlkem(GordianMLKEMSpec.MLKEM512))),
                 DynamicTest.dynamicTest("Cleanup", theState::cleanUp)
         ));
     }

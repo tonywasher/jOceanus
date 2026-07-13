@@ -64,6 +64,11 @@ public class JcaMacFactory
     private static final String ZUC256_ALGORITHM = "ZUC-256";
 
     /**
+     * DSTU7624 algorithm name.
+     */
+    private static final String DSTU7624_ALGORITHM = "DSTU7624";
+
+    /**
      * KeyGenerator Cache.
      */
     private final Map<GordianKeySpec, JcaKeyGenerator<? extends GordianKeySpec>> theCache;
@@ -181,6 +186,11 @@ public class JcaMacFactory
             /* ZUC-256 generators use the ZUC-256 key generator */
             if (myAlgorithm.startsWith(ZUC256_ALGORITHM)) {
                 myAlgorithm = ZUC256_ALGORITHM;
+            }
+
+            /* DSTU7624 generators use the DSTU7624 key generator */
+            if (myAlgorithm.startsWith(DSTU7624_ALGORITHM)) {
+                myAlgorithm = DSTU7624_ALGORITHM;
             }
 
             /* Return a KeyGenerator for the algorithm */
@@ -320,10 +330,8 @@ public class JcaMacFactory
 
     @Override
     protected boolean validGMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
-        return switch (pKeySpec.getSymKeyType()) {
-            case KUZNYECHIK, KALYNA -> false;
-            default -> super.validGMacSymKeySpec(pKeySpec);
-        };
+        return GordianSymKeyType.KUZNYECHIK != pKeySpec.getSymKeyType()
+                && super.validGMacSymKeySpec(pKeySpec);
     }
 
     @Override

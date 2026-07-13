@@ -389,7 +389,6 @@ public class JcaCipherFactory
                 /* Disallow OCB, CCM and GCM */
                     !GordianCipherMode.OCB.equals(myMode)
                             && !GordianCipherMode.KCCM.equals(myMode)
-                            && !GordianCipherMode.KGCM.equals(myMode)
                             && !GordianCipherMode.CCM.equals(myMode)
                             && !GordianCipherMode.GCM.equals(myMode);
             case GOST ->

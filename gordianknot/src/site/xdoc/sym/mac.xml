@@ -76,7 +76,7 @@ myDigest.output(myOutput, 100, 100);
                         <tr><th class="defHdr">Algorithm</th><th class="defHdr">OutputLengths</th><th class="defHdr">KeyLengths</th>
                             <th class="defHdr">JCA</th><th class="defHdr">Xof</th><th class="defHdr">Notes</th></tr>
                         <tr><td>HMac</td><td>digest length</td><td>All</td><td>Y</td><td/><td>Jca does not support SM3, BLAKE, SHAKE, JH, Groestl, CubeHash or Kupyna</td></tr>
-                        <tr><td>GMac</td><td>128</td><td>As per cipher</td><td>Y</td><td/><td>For all supported 128 bit block ciphers except Kalyna (BUG). Jca does not support Kuznyechik</td></tr>
+                        <tr><td>GMac</td><td>128</td><td>As per cipher</td><td>Y</td><td/><td>For all supported 128 bit block ciphers, plus Kalyna Ciphers. Jca does not support Kuznyechik</td></tr>
                         <tr><td>CMac</td><td>cipher block length</td><td>As per cipher</td><td>Y</td><td/><td>Jca has limited  set of supported ciphers</td></tr>
                         <tr><td>Poly1305Mac</td><td>128</td><td>256</td><td>Y</td><td/><td>For all supported 128 bit block ciphers with 128 bit keys. JCA does not support Kalyna.</td></tr>
                         <tr><td>SkeinMac</td><td>digest length</td><td>All</td><td>Y</td><td>As per Digest</td><td/></tr>
