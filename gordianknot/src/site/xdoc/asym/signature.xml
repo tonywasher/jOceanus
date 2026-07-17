@@ -104,31 +104,31 @@ final boolean verified = mySigner.verify(mySignature);
             <subsection name="Algorithms">
                 <p>The following signature algorithms are supported.</p>
                 <table class="defTable">
-                    <tr><th class="defHdr">Algorithm</th><th class="defHdr">Variants</th></tr>
-                    <tr><td>RSA</td><td>PSSMGF1, PSS128, PSS256, X931, ISO9796D2, PreHash</td></tr>
-                    <tr><td>DSA</td><td>DSA, DetDSA</td></tr>
-                    <tr><td>EC</td><td>ECDSA, ECDetDSA, ECNR</td></tr>
-                    <tr><td>DSTU4145</td><td>Native</td></tr>
-                    <tr><td>GOST2012</td><td>Native</td></tr>
-                    <tr><td>SM2</td><td>Native</td></tr>
-                    <tr><td>EdDSA</td><td>Native, PreHash</td></tr>
-                    <tr><td>SLHDSA</td><td>Native</td></tr>
-                    <tr><td>MLDSA</td><td>Native</td></tr>
-                    <tr><td>FALCON</td><td>Native</td></tr>
-                    <tr><td>PICNIC</td><td>Native</td></tr>
-                    <tr><td>AIMER</td><td>Native</td></tr>
-                    <tr><td>FAEST</td><td>Native</td></tr>
-                    <tr><td>HAETAE</td><td>Native</td></tr>
-                    <tr><td>HAWK</td><td>Native</td></tr>
-                    <tr><td>MAYO</td><td>Native</td></tr>
-                    <tr><td>MQOM</td><td>Native</td></tr>
-                    <tr><td>QRUOV</td><td>Native</td></tr>
-                    <tr><td>SDITH</td><td>Native</td></tr>
-                    <tr><td>SNOVA</td><td>Native</td></tr>
-                    <tr><td>SQISIGN</td><td>Native</td></tr>
-                    <tr><td>UOV</td><td>Native</td></tr>
-                    <tr><td>XMSS</td><td>Native, PreHash</td></tr>
-                    <tr><td>LMS</td><td>Native</td></tr>
+                    <tr><th class="defHdr">Algorithm</th><th class="defHdr">Variants</th><th>Context</th></tr>
+                    <tr><td>RSA</td><td>PSSMGF1, PSS128, PSS256, X931, ISO9796D2, PreHash</td><td/></tr>
+                    <tr><td>DSA</td><td>DSA, DetDSA</td><td/></tr>
+                    <tr><td>EC</td><td>ECDSA, ECDetDSA, ECNR</td><td/></tr>
+                    <tr><td>DSTU4145</td><td>Native</td><td/></tr>
+                    <tr><td>GOST2012</td><td>Native</td><td/></tr>
+                    <tr><td>SM2</td><td>Native</td><td/></tr>
+                    <tr><td>EdDSA</td><td>Native, PreHash</td><td>Y</td></tr>
+                    <tr><td>SLHDSA</td><td>Native</td><td>Y</td></tr>
+                    <tr><td>MLDSA</td><td>Native</td><td>Y</td></tr>
+                    <tr><td>FALCON</td><td>Native</td><td/></tr>
+                    <tr><td>PICNIC</td><td>Native</td><td/></tr>
+                    <tr><td>AIMER</td><td>Native</td><td/></tr>
+                    <tr><td>FAEST</td><td>Native</td><td/></tr>
+                    <tr><td>HAETAE</td><td>Native</td><td/></tr>
+                    <tr><td>HAWK</td><td>Native</td><td/></tr>
+                    <tr><td>MAYO</td><td>Native</td><td/></tr>
+                    <tr><td>MQOM</td><td>Native</td><td/></tr>
+                    <tr><td>QRUOV</td><td>Native</td><td/></tr>
+                    <tr><td>SDITH</td><td>Native</td><td/></tr>
+                    <tr><td>SNOVA</td><td>Native</td><td/></tr>
+                    <tr><td>SQISIGN</td><td>Native</td><td/></tr>
+                    <tr><td>UOV</td><td>Native</td><td/></tr>
+                    <tr><td>XMSS</td><td>Native, PreHash</td><td/></tr>
+                    <tr><td>LMS</td><td>Native</td><td/></tr>
                 </table>
             </subsection>
         </section>
