@@ -88,6 +88,7 @@ public class MoneyWiseDataTestDepositIncome
         theTransBuilder.date("01-Sept-1986").category(MoneyWiseDataTestCategories.IDTC_INTEREST)
                 .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("13")
                 .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).taxCredit("2.81").withheld("0.77")
+                .tag(MoneyWiseDataTestCategories.IDTG_PERSONAL)
                 .build();
 
         /* A refund of interest with tax and withheld */

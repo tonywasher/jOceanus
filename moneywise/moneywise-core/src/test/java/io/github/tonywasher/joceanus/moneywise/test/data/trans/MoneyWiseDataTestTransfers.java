@@ -16,12 +16,12 @@
  */
 package io.github.tonywasher.joceanus.moneywise.test.data.trans;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.builder.MoneyWiseTransactionBuilder;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import org.junit.jupiter.api.Assertions;
 
 /**
@@ -87,6 +87,7 @@ public class MoneyWiseDataTestTransfers
         theTransBuilder.date("01-Jun-1985").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
                 .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("2000")
                 .to().partner(MoneyWiseDataTestAccounts.IDDP_NAT_WIDE_FLEX_DIRECT)
+                .tag(MoneyWiseDataTestCategories.IDTG_PERSONAL)
                 .build();
 
         /* A simple transfer from standard currency to non-standard currency */

@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.test.data.trans;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.builder.MoneyWiseTransactionBuilder;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Test Salary.
@@ -66,13 +66,10 @@ public class MoneyWiseDataTestPayeeIncome
 
     @Override
     public boolean useInfoClass(final MoneyWiseTransInfoClass pInfoClass) {
-        switch (pInfoClass) {
-            case TAXCREDIT:
-            case DEEMEDBENEFIT:
-                return true;
-            default:
-                return false;
-        }
+        return switch (pInfoClass) {
+            case TAXCREDIT, DEEMEDBENEFIT -> true;
+            default -> false;
+        };
     }
 
     @Override
@@ -81,6 +78,7 @@ public class MoneyWiseDataTestPayeeIncome
         theTransBuilder.date("01-Aug-1986").category(MoneyWiseDataTestCategories.IDTC_INHERITANCE)
                 .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("500")
                 .from().partner(MoneyWiseDataTestAccounts.IDPY_PARENTS)
+                .tag(MoneyWiseDataTestCategories.IDTG_PERSONAL)
                 .build();
 
         /* A refund of inheritance */
@@ -93,6 +91,7 @@ public class MoneyWiseDataTestPayeeIncome
         theTransBuilder.date("03-Aug-1986").category(MoneyWiseDataTestCategories.IDTC_SALARY)
                 .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("1000")
                 .from().partner(MoneyWiseDataTestAccounts.IDPY_IBM).taxCredit("20").benefit("10")
+                .tag(MoneyWiseDataTestCategories.IDTG_PERSONAL)
                 .build();
 
         /* A refund of salary */

@@ -204,11 +204,11 @@ public class MoneyWiseXAnalyseTransAnalyser
         /* Adjust parent details */
         theTransaction.adjustParent();
 
-        /* Process Asset accounts */
-        processAssets();
-
         /* Process Auto-expense accounts */
         processAutoExpense();
+
+        /* Process Asset accounts */
+        processAssets();
 
         /* Process Payee accounts */
         processPayees();
@@ -320,14 +320,11 @@ public class MoneyWiseXAnalyseTransAnalyser
 
         /* If the debit is foreign and the credit is a payee */
         if (pDebit.isForeign()) {
-            final MoneyWiseTransAsset myCredit = theTransaction.getCreditAccount();
-            if (myCredit instanceof MoneyWisePayee) {
-                /* Convert the debit amount to reporting currency */
-                final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();
-                final OceanusRatio myRate = myCursor.getCurrentXchgRate(pDebit.getAssetCurrency());
-                final OceanusMoney myAmount = theTransaction.getDebitAmount();
-                theTransaction.setDebitAmount(myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate));
-            }
+            /* Convert the debit amount to reporting currency */
+            final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();
+            final OceanusRatio myRate = myCursor.getCurrentXchgRate(pDebit.getAssetCurrency());
+            final OceanusMoney myAmount = theTransaction.getDebitAmount();
+            theTransaction.setDebitAmount(myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate));
         }
 
         /* Adjust expense for autoPayee bucket */
@@ -358,14 +355,11 @@ public class MoneyWiseXAnalyseTransAnalyser
 
         /* If the credit is foreign and the debit is a payee */
         if (pCredit.isForeign()) {
-            final MoneyWiseTransAsset myDebit = theTransaction.getDebitAccount();
-            if (myDebit instanceof MoneyWisePayee) {
-                /* Convert the debit amount to reporting currency */
-                final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();
-                final OceanusRatio myRate = myCursor.getCurrentXchgRate(pCredit.getAssetCurrency());
-                final OceanusMoney myAmount = theTransaction.getCreditAmount();
-                theTransaction.setCreditAmount(myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate));
-            }
+            /* Convert the debit amount to reporting currency */
+            final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();
+            final OceanusRatio myRate = myCursor.getCurrentXchgRate(pCredit.getAssetCurrency());
+            final OceanusMoney myAmount = theTransaction.getCreditAmount();
+            theTransaction.setCreditAmount(myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate));
         }
 
         /* Adjust expense for autoPayee bucket */

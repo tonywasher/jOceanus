@@ -125,7 +125,6 @@ public class MoneyWiseXQIFBuildCash {
         /* Create a new event */
         final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
         myEvent.recordAmount(new OceanusMoney());
-        myEvent.recordPayee(myPayee);
         myEvent.recordSplitRecord(myAutoCategory, myList, myInAmount, pCash.getAutoPayee().getName());
         myEvent.recordSplitRecord(myCategory, myList, myOutAmount, myPayee.getName());
 
@@ -143,8 +142,23 @@ public class MoneyWiseXQIFBuildCash {
     void processCashExpense(final MoneyWiseCash pCash,
                             final MoneyWiseTransAsset pDebit,
                             final MoneyWiseXAnalysisEvent pTrans) {
-        /* Access the Payee details */
-        final MoneyWiseXQIFPayee myPayee = theRegister.registerPayee(pCash.getAutoPayee());
+        /* Determine credit and debit amounts allowing for differing currencies */
+        boolean isCurrencyXfer = false;
+        OceanusMoney myAmount = pTrans.getAmount();
+        OceanusMoney myPartnerAmount = pTrans.getPartnerAmount();
+        if (myPartnerAmount != null) {
+            /* If we have a transfer between currencies */
+            isCurrencyXfer = true;
+
+            /* Ensure that we have the correct value for the cash account */
+            myAmount = myPartnerAmount;
+            myPartnerAmount = pTrans.getAmount();
+        }
+
+        /* Determine the transactionID */
+        final String myTranID = isCurrencyXfer
+                ? "AMT=" + myAmount + "/" + myPartnerAmount
+                : "TRN" + pTrans.getIndexedId();
 
         /* Access the Category details */
         final MoneyWiseXQIFEventCategory myCategory = theRegister.registerCategory(pCash.getAutoExpense());
@@ -153,17 +167,18 @@ public class MoneyWiseXQIFBuildCash {
         final List<MoneyWiseXQIFClass> myList = theHelper.getTransactionClasses(pTrans);
 
         /* Access the Account details */
-        final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pDebit);
+        final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pCash);
+        final MoneyWiseXQIFAccountEvents myDebit = theRegister.registerAccount(pDebit);
 
         /* Access the amount */
-        final OceanusMoney myAmount = new OceanusMoney(pTrans.getAmount());
-        myAmount.negate();
+        final OceanusMoney myOutAmount = new OceanusMoney(myAmount);
+        myOutAmount.negate();
 
         /* Create a new event */
         final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-        myEvent.recordAmount(myAmount);
-        myEvent.recordPayee(myPayee);
-        myEvent.recordCategory(myCategory, myList);
+        myEvent.recordAmount(new OceanusMoney());
+        myEvent.recordSplitRecord(myDebit.getAccount(), myList, myAmount, myTranID);
+        myEvent.recordSplitRecord(myCategory, myList, myOutAmount, pCash.getAutoPayee().getName());
 
         /* Add event to event list */
         myAccount.addEvent(myEvent);
@@ -179,23 +194,39 @@ public class MoneyWiseXQIFBuildCash {
     void processCashReceipt(final MoneyWiseCash pCash,
                             final MoneyWiseTransAsset pCredit,
                             final MoneyWiseXAnalysisEvent pTrans) {
-        /* Access the Payee details */
-        final MoneyWiseXQIFPayee myPayee = theRegister.registerPayee(pCash.getAutoPayee());
+        /* Determine credit and debit amounts allowing for differing currencies */
+        boolean isCurrencyXfer = false;
+        OceanusMoney myAmount = pTrans.getAmount();
+        OceanusMoney myPartnerAmount = pTrans.getPartnerAmount();
+        if (myPartnerAmount != null) {
+            /* If we have a transfer between currencies */
+            isCurrencyXfer = true;
+        }
+
+        /* Determine the transactionID */
+        final String myTranID = isCurrencyXfer
+                ? "AMT=" + myAmount + "/" + myPartnerAmount
+                : "TRN" + pTrans.getIndexedId();
 
         /* Access the Category details */
         final MoneyWiseXQIFEventCategory myCategory = theRegister.registerCategory(pCash.getAutoExpense());
 
         /* Access the Account details */
-        final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pCredit);
+        final MoneyWiseXQIFAccountEvents myAccount = theRegister.registerAccount(pCash);
+        final MoneyWiseXQIFAccountEvents myCredit = theRegister.registerAccount(pCredit);
 
         /* Obtain classes */
         final List<MoneyWiseXQIFClass> myList = theHelper.getTransactionClasses(pTrans);
 
+        /* Access the amount */
+        final OceanusMoney myOutAmount = new OceanusMoney(myAmount);
+        myOutAmount.negate();
+
         /* Create a new event */
         final MoneyWiseXQIFEvent myEvent = new MoneyWiseXQIFEvent(theRegister, pTrans);
-        myEvent.recordAmount(pTrans.getAmount());
-        myEvent.recordPayee(myPayee);
-        myEvent.recordCategory(myCategory, myList);
+        myEvent.recordAmount(new OceanusMoney());
+        myEvent.recordSplitRecord(myCategory, myList, myAmount, pCash.getAutoPayee().getName());
+        myEvent.recordSplitRecord(myCredit.getAccount(), myList, myOutAmount, myTranID);
 
         /* Add event to event list */
         myAccount.addEvent(myEvent);

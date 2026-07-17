@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.test.data.trans;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.builder.MoneyWiseTransactionBuilder;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Test Expense.
@@ -83,6 +83,7 @@ public class MoneyWiseDataTestExpense
         theTransBuilder.date("01-Jun-1986").category(MoneyWiseDataTestCategories.IDTC_SHOP_FOOD)
                 .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("21.95")
                 .to().partner(MoneyWiseDataTestAccounts.IDPY_ASDA)
+                .tag(MoneyWiseDataTestCategories.IDTG_PERSONAL)
                 .build();
 
         /* A simple refunded expense */

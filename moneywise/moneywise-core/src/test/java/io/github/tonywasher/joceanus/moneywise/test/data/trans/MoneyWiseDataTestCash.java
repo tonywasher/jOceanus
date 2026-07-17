@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.moneywise.test.data.trans;
 import io.github.tonywasher.joceanus.moneywise.data.builder.MoneyWiseTransactionBuilder;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
@@ -76,6 +77,11 @@ public class MoneyWiseDataTestCash
         createXchgRate(MoneyWiseCurrencyClass.EUR, "01-Jan-2025", "0.95");
     }
 
+    @Override
+    public boolean useInfoClass(final MoneyWiseTransInfoClass pInfoClass) {
+        return MoneyWiseTransInfoClass.PARTNERAMOUNT.equals(pInfoClass);
+    }
+
     /**
      * Create simple transfers.
      *
@@ -87,6 +93,7 @@ public class MoneyWiseDataTestCash
         theTransBuilder.date("01-Jun-1987").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
                 .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("50")
                 .to().partner(MoneyWiseDataTestAccounts.IDCS_CASH)
+                .tag(MoneyWiseDataTestCategories.IDTG_PERSONAL)
                 .build();
 
         /* A simple refund to one account from autoCash */
@@ -99,6 +106,7 @@ public class MoneyWiseDataTestCash
         theTransBuilder.date("03-Jun-1987").category(MoneyWiseDataTestCategories.IDTC_SHOP_FOOD)
                 .account(MoneyWiseDataTestAccounts.IDCS_CASH).amount("12")
                 .to().partner(MoneyWiseDataTestAccounts.IDPY_ASDA)
+                .tag(MoneyWiseDataTestCategories.IDTG_PERSONAL)
                 .build();
 
         /* A simple refund to autoCash */
@@ -154,21 +162,33 @@ public class MoneyWiseDataTestCash
                 .account(MoneyWiseDataTestAccounts.IDCS_EUROS_WALLET).amount("8.5")
                 .to().partner(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO)
                 .build();
+
+        /* A simple transfer from one account to Cash in different currency */
+        theTransBuilder.date("13-Jun-1987").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("13")
+                .to().partner(MoneyWiseDataTestAccounts.IDCS_EUROS_WALLET).partnerAmount("15")
+                .build();
+
+        /* A simple refund to one account from Cash in different currency */
+        theTransBuilder.date("14-Jun-1987").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDCS_EUROS_WALLET).amount("8.5")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).partnerAmount("7.1")
+                .build();
     }
 
     @Override
     public void checkAnalysis() {
-        checkAccountValue(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT, "9955");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT, "9949.1");
         checkAccountValue(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO, "4697.28");
         checkAccountValue(MoneyWiseDataTestAccounts.IDCS_CASH_WALLET, "25");
-        checkAccountValue(MoneyWiseDataTestAccounts.IDCS_EUROS_WALLET, "4.28");
-        checkPayeeValue(MoneyWiseDataTestAccounts.IDPY_MARKET, "247.46", "0");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDCS_EUROS_WALLET, "10.45");
+        checkPayeeValue(MoneyWiseDataTestAccounts.IDPY_MARKET, "248.28", "0.55");
         checkPayeeValue(MoneyWiseDataTestAccounts.IDPY_ASDA, "0", "14.1");
         checkPayeeValue(MoneyWiseDataTestAccounts.IDPY_CASH_EXPENSE, "0", "61.8");
-        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_MKT_CURR_ADJUST, "247.46", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_MKT_CURR_ADJUST, "248.28", "0.55");
         checkCategoryValue(MoneyWiseDataTestCategories.IDTC_SHOP_FOOD, "0", "14.1");
         checkCategoryValue(MoneyWiseDataTestCategories.IDTC_EXP_CASH, "0", "61.8");
-        checkTaxBasisValue(MoneyWiseTaxClass.MARKET, "247.46");
+        checkTaxBasisValue(MoneyWiseTaxClass.MARKET, "247.73");
         checkTaxBasisValue(MoneyWiseTaxClass.EXPENSE, "-75.9");
     }
 }
