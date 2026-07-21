@@ -151,9 +151,6 @@ public final class AsymmetricSignScripts {
 
         /* Check that we have an id */
         final AlgorithmIdentifier myId = myFactory.getIdentifierForSpecAndKeyPair(pSignature.getSpec(), pSignature.getOwner().getKeyPairs().getKeyPair());
-        if (myId == null) {
-            int i = 0;
-        }
         Assertions.assertNotNull(myId, "Unknown AlgorithmId for " + pSignature.getSpec());
 
         /* Check unique mapping */

@@ -138,27 +138,12 @@
             </dependency>
 
             <!-- External Modules -->
-            <!--<dependency>
+            <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bc-jdk18on-bom</artifactId>
                 <version>${BouncyCastleVersion}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>-->
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcpg-jdk18on</artifactId>
-                <version>${BouncyCastleVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk18on</artifactId>
-                <version>${BouncyCastleVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcutil-jdk18on</artifactId>
-                <version>${BouncyCastleVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.json</groupId>

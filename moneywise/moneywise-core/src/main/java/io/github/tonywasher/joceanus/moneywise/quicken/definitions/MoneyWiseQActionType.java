@@ -111,6 +111,16 @@ public enum MoneyWiseQActionType implements MoneyWiseQLineType {
     MISCEXPX("MiscExpX"),
 
     /**
+     * Interest Income.
+     */
+    INTINC("IntInc"),
+
+    /**
+     * Interest IncomeX.
+     */
+    INTINCX("IntIncX"),
+
+    /**
      * Cash/Miscellaneous Expense.
      */
     CASH("Cash"),
@@ -138,22 +148,7 @@ public enum MoneyWiseQActionType implements MoneyWiseQLineType {
     /**
      * Options Expire.
      */
-    EXPIRE("Expire"),
-
-    /**
-     * Short Sell.
-     */
-    SHTSELL("ShtSell"),
-
-    /**
-     * Cover ShortSell.
-     */
-    CVRSHRT("CvrShrt"),
-
-    /**
-     * Cover ShortSellX.
-     */
-    CVRSHRTX("CvrShrtX");
+    EXPIRE("Expire");
 
     /**
      * The symbol.

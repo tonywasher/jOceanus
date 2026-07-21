@@ -196,8 +196,8 @@ public class MoneyWiseXQIFBuildCash {
                             final MoneyWiseXAnalysisEvent pTrans) {
         /* Determine credit and debit amounts allowing for differing currencies */
         boolean isCurrencyXfer = false;
-        OceanusMoney myAmount = pTrans.getAmount();
-        OceanusMoney myPartnerAmount = pTrans.getPartnerAmount();
+        final OceanusMoney myAmount = pTrans.getAmount();
+        final OceanusMoney myPartnerAmount = pTrans.getPartnerAmount();
         if (myPartnerAmount != null) {
             /* If we have a transfer between currencies */
             isCurrencyXfer = true;
