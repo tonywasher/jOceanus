@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Themis: Java Project Framework
+ * Tethys: Java Utilities
  * Copyright 2012-2026 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,30 +16,19 @@
  ******************************************************************************/
 
 /**
- * Themis code analysis.
+ * Oceanus Test.
  */
-@SuppressWarnings("module")
-module io.github.tonywasher.joceanus.themis.core {
-    /* java */
+open module io.github.tonywasher.joceanus.moneywise.core.test {
+    /* Java libraries */
     requires java.xml;
-    requires java.prefs;
-    requires java.sql;
-    requires jdk.jsobject;
-
-    /* External libraries */
-    requires com.github.javaparser.core;
-
-    /* Oceanus */
-    requires io.github.tonywasher.joceanus.metis;
-    requires io.github.tonywasher.joceanus.tethys.api;
-    requires io.github.tonywasher.joceanus.oceanus;
 
     /* Exports */
-    exports io.github.tonywasher.joceanus.themis.gui.launch;
-
-    /* Test exports */
-    exports io.github.tonywasher.joceanus.themis.parser to io.github.tonywasher.joceanus.themis.core.test;
-    exports io.github.tonywasher.joceanus.themis.solver to io.github.tonywasher.joceanus.themis.core.test;
-    exports io.github.tonywasher.joceanus.themis.solver.proj to io.github.tonywasher.joceanus.themis.core.test;
-    exports io.github.tonywasher.joceanus.themis.stats to io.github.tonywasher.joceanus.themis.core.test;
+    requires io.github.tonywasher.joceanus.moneywise.core;
+    requires io.github.tonywasher.joceanus.prometheus.core;
+    requires io.github.tonywasher.joceanus.prometheus.sheet.api;
+    requires io.github.tonywasher.joceanus.metis;
+    requires io.github.tonywasher.joceanus.tethys.api;
+    requires io.github.tonywasher.joceanus.tethys.helper;
+    requires io.github.tonywasher.joceanus.oceanus;
+    requires org.junit.jupiter.api;
 }

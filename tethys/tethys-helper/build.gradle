@@ -16,7 +16,7 @@ group = 'io.github.tonywasher.joceanus.tethys.helper'
 description = 'Tethys UI Helper'
 
 /* Register the project */
-registerProject(project)
+rootProject.registerProject(project)
 
 /* Specific Manifest details */
 jar {

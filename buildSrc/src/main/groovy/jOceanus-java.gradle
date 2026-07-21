@@ -45,7 +45,7 @@ testing {
 
 /* Add annotations */
 dependencies {
-    compileOnly "org.jetbrains:annotations:$jetBrainsAnnotationsVersion"
+    compileOnly "org.jetbrains:annotations:26.1.0"
 }
 
 /* Java options */
@@ -70,11 +70,11 @@ jacocoTestReport {
     dependsOn test
 }
 jacoco {
-    toolVersion = "$jacocoVersion"
+    toolVersion = "0.8.15"
 }
 
 /* Project properties */
-project.ext {
+ext {
     /* Manifest Attributes */
     manifestAttrs = rootProject.ext.baseManifest.clone()
 
@@ -87,6 +87,13 @@ project.ext {
 
 processResources {
     filesMatching("**/*.properties") {
-        expand myProperties
+        expand(
+            "MyName": "${rootProject.ext.MyName}",
+            "inceptionYear": "${rootProject.ext.inceptionYear}",
+            "currentYear": "${rootProject.ext.currentYear}",
+            "buildTimestamp": "${rootProject.ext.buildTimestamp}",
+            "buildNumber": "${rootProject.ext.gitRev}",
+            "projectVersion": "${rootProject.ext.projectVersion}"
+        )
     }
 }

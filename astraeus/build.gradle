@@ -18,7 +18,7 @@ group = 'io.github.tonywasher.joceanus'
 description = 'Oceanus post-processing'
 
 /* Register the project */
-registerProject(project)
+rootProject.registerProject(project)
 
 distribute.dependsOn ":moneywise-swing:jar", ":moneywise-javafx:jar", ":themis-javafx:jar", ":prometheus-sheet-odf:jar", ":prometheus-sheet-hssf:jar"
 test.dependsOn distribute

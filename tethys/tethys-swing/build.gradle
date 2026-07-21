@@ -17,7 +17,7 @@ group = 'io.github.tonywasher.joceanus.tethys'
 description = 'Tethys Java Swing Utilities'
 
 /* Register the project */
-registerProject(project)
+rootProject.registerProject(project)
 
 /* Specific Manifest details */
 jar {

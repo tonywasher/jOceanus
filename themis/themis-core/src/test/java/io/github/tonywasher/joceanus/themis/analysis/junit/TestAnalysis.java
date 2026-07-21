@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.themis.analysis;
+package io.github.tonywasher.joceanus.themis.analysis.junit;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;

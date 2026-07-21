@@ -32,6 +32,7 @@ module io.github.tonywasher.joceanus.prometheus.core {
 
     /* Exports */
     exports io.github.tonywasher.joceanus.prometheus.data;
+    exports io.github.tonywasher.joceanus.prometheus.exc;
     exports io.github.tonywasher.joceanus.prometheus.database;
     exports io.github.tonywasher.joceanus.prometheus.maps;
     exports io.github.tonywasher.joceanus.prometheus.preference;

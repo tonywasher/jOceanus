@@ -18,7 +18,7 @@ group = 'io.github.tonywasher.joceanus'
 description = 'GordianKnot Security Framework'
 
 /* Register the project */
-registerProject(project)
+rootProject.registerProject(project)
 
 /* Additional sourceSets */
 sourceSets {
