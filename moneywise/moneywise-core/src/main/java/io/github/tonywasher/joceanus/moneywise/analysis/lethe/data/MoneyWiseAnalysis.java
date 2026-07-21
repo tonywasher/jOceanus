@@ -39,6 +39,8 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxAnalysis;
@@ -524,6 +526,22 @@ public class MoneyWiseAnalysis
                 /* Obtain the actual loan bucket */
                 final MoneyWiseAnalysisLoanBucket myBucket = theLoans.getBucket(myLoan);
                 myBucket.setOpeningBalance(pHelper, myBalance);
+            }
+        }
+
+        /* Iterate through the portfolios */
+        final Iterator<MoneyWisePortfolio> myPortfolioIterator
+                = theEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).iterator();
+        while (myPortfolioIterator.hasNext()) {
+            final MoneyWisePortfolio myPortfolio = myPortfolioIterator.next();
+
+            /* If the loan has an opening balance */
+            final OceanusMoney myBalance = myPortfolio.getOpeningBalance();
+            if (myBalance != null) {
+                /* Obtain the actual loan bucket */
+                final MoneyWiseAnalysisPortfolioBucket myBucket = thePortfolios.getBucket(myPortfolio);
+                final MoneyWiseAnalysisPortfolioCashBucket myCash = myBucket.getPortfolioCash();
+                myCash.setOpeningBalance(pHelper, myBalance);
             }
         }
     }

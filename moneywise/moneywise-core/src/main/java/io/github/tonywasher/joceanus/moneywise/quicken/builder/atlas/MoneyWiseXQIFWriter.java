@@ -290,7 +290,7 @@ public class MoneyWiseXQIFWriter {
     }
 
     /**
-     * Write Prices.
+     * Write Events.
      *
      * @param pStream the output stream
      * @throws OceanusException on error

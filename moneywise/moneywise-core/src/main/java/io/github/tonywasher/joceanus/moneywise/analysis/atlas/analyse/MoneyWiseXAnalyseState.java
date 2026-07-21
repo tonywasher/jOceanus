@@ -471,6 +471,7 @@ public class MoneyWiseXAnalyseState
         buildBalances(MoneyWiseBasicDataType.DEPOSIT);
         buildBalances(MoneyWiseBasicDataType.CASH);
         buildBalances(MoneyWiseBasicDataType.LOAN);
+        buildBalances(MoneyWiseBasicDataType.PORTFOLIO);
     }
 
     /**

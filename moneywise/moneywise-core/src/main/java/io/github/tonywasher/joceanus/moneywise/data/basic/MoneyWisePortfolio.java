@@ -41,6 +41,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCatego
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
@@ -298,6 +299,13 @@ public class MoneyWisePortfolio
     public char[] getNotes() {
         return hasInfoSet
                 ? theInfoSet.getValue(MoneyWiseAccountInfoClass.NOTES, char[].class)
+                : null;
+    }
+
+    @Override
+    public OceanusMoney getOpeningBalance() {
+        return hasInfoSet
+                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.OPENINGBALANCE, OceanusMoney.class)
                 : null;
     }
 
@@ -627,6 +635,16 @@ public class MoneyWisePortfolio
      */
     public void setNotes(final char[] pNotes) throws OceanusException {
         setInfoSetValue(MoneyWiseAccountInfoClass.NOTES, pNotes);
+    }
+
+    /**
+     * Set a new opening balance.
+     *
+     * @param pBalance the new opening balance
+     * @throws OceanusException on error
+     */
+    public void setOpeningBalance(final OceanusMoney pBalance) throws OceanusException {
+        setInfoSetValue(MoneyWiseAccountInfoClass.OPENINGBALANCE, pBalance);
     }
 
     /**

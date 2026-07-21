@@ -104,6 +104,7 @@ public class MoneyWiseDataTestAccounts {
      */
     static final String IDPF_AJ_BELL_STOCK = "AJBellStock";
     static final String IDPF_INTERACTIVE_INVESTOR_STOCK = "InteractiveInvestorStock";
+    static final String IDPF_INTERACTIVE_INVESTOR_US = "InteractiveInvestorUS";
     static final String IDPF_INTERACTIVE_INVESTOR_ISA = "InteractiveInvestorISA";
     static final String IDPF_INTERACTIVE_INVESTOR_SIPP = "InteractiveInvestorSIPP";
     static final String IDPF_ASSETS = "Assets";
@@ -515,7 +516,13 @@ public class MoneyWiseDataTestAccounts {
             switch (myPortfolio) {
                 case IDPF_INTERACTIVE_INVESTOR_STOCK:
                     createPayees(IDPY_INTERACTIVE_INVESTOR);
-                    thePortfolioBuilder.name(myPortfolio).parent(IDPY_INTERACTIVE_INVESTOR).type(MoneyWisePortfolioClass.STANDARD).build();
+                    thePortfolioBuilder.name(myPortfolio).parent(IDPY_INTERACTIVE_INVESTOR)
+                            .type(MoneyWisePortfolioClass.STANDARD).openingBalance("1000.00").build();
+                    break;
+                case IDPF_INTERACTIVE_INVESTOR_US:
+                    createPayees(IDPY_INTERACTIVE_INVESTOR);
+                    thePortfolioBuilder.name(myPortfolio).parent(IDPY_INTERACTIVE_INVESTOR).type(MoneyWisePortfolioClass.STANDARD)
+                            .currency(MoneyWiseCurrencyClass.USD).openingBalance("1000.00").build();
                     break;
                 case IDPF_INTERACTIVE_INVESTOR_ISA:
                     createPayees(IDPY_INTERACTIVE_INVESTOR);

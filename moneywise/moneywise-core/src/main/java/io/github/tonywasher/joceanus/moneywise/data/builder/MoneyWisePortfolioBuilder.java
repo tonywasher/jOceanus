@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.builder;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
@@ -25,6 +24,9 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrencyCla
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePortfolioType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * Portfolio Builder.
@@ -34,6 +36,11 @@ public class MoneyWisePortfolioBuilder {
      * DataSet.
      */
     private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * Parser.
+     */
+    private final OceanusDecimalParser theParser;
 
     /**
      * The PortfolioName.
@@ -56,6 +63,11 @@ public class MoneyWisePortfolioBuilder {
     private MoneyWiseCurrency theCurrency;
 
     /**
+     * The Opening Balance.
+     */
+    private OceanusMoney theOpeningBalance;
+
+    /**
      * Constructor.
      *
      * @param pDataSet the dataSet
@@ -63,6 +75,7 @@ public class MoneyWisePortfolioBuilder {
     public MoneyWisePortfolioBuilder(final MoneyWiseDataSet pDataSet) {
         theDataSet = pDataSet;
         theDataSet.getPortfolios().ensureMap();
+        theParser = theDataSet.getDataFormatter().getDecimalParser();
         reportingCurrency();
     }
 
@@ -157,6 +170,27 @@ public class MoneyWisePortfolioBuilder {
     }
 
     /**
+     * Set the openingBalance.
+     *
+     * @param pOpening the opening Balance
+     * @return the builder
+     */
+    public MoneyWisePortfolioBuilder openingBalance(final OceanusMoney pOpening) {
+        theOpeningBalance = pOpening;
+        return this;
+    }
+
+    /**
+     * Set the openingBalance.
+     *
+     * @param pOpening the opening Balance
+     * @return the builder
+     */
+    public MoneyWisePortfolioBuilder openingBalance(final String pOpening) {
+        return openingBalance(theParser.parseMoneyValue(pOpening, theCurrency.getCurrency()));
+    }
+
+    /**
      * Build the portfolio.
      *
      * @return the new Portfolio
@@ -169,6 +203,7 @@ public class MoneyWisePortfolioBuilder {
         myPortfolio.setParent(theParent);
         myPortfolio.setCategory(theType);
         myPortfolio.setAssetCurrency(theCurrency);
+        myPortfolio.setOpeningBalance(theOpeningBalance);
         myPortfolio.setClosed(Boolean.FALSE);
 
         /* Reset the values */
@@ -194,6 +229,7 @@ public class MoneyWisePortfolioBuilder {
         theName = null;
         theParent = null;
         theType = null;
+        theOpeningBalance = null;
         reportingCurrency();
     }
 }

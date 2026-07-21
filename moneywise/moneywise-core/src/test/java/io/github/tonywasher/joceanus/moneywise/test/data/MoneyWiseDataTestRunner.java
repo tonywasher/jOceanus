@@ -31,6 +31,7 @@ import io.github.tonywasher.joceanus.moneywise.test.data.trans.MoneyWiseDataTest
 import io.github.tonywasher.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCreditCard;
 import io.github.tonywasher.joceanus.moneywise.test.data.trans.MoneyWiseDataTestDepositIncome;
 import io.github.tonywasher.joceanus.moneywise.test.data.trans.MoneyWiseDataTestExpense;
+import io.github.tonywasher.joceanus.moneywise.test.data.trans.MoneyWiseDataTestInvestXfer;
 import io.github.tonywasher.joceanus.moneywise.test.data.trans.MoneyWiseDataTestMortgage;
 import io.github.tonywasher.joceanus.moneywise.test.data.trans.MoneyWiseDataTestPayeeIncome;
 import io.github.tonywasher.joceanus.moneywise.test.data.trans.MoneyWiseDataTestPrivateLoan;
@@ -153,6 +154,7 @@ public class MoneyWiseDataTestRunner {
         myList.add(new MoneyWiseDataTestCreditCard(theAccountBuilder));
         myList.add(new MoneyWiseDataTestMortgage(theAccountBuilder));
         myList.add(new MoneyWiseDataTestPrivateLoan(theAccountBuilder));
+        myList.add(new MoneyWiseDataTestInvestXfer(theAccountBuilder));
         myList.add(new MoneyWiseDataTestShareBuySell(theAccountBuilder));
         myList.add(new MoneyWiseDataTestShareDividend(theAccountBuilder));
         return myList;

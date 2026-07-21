@@ -17,13 +17,19 @@
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
 import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositInfoSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolioInfo;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolioInfoSet;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateInfoSet;
+
+import java.util.Currency;
 
 /**
  * Validate PortfolioInfoSet.
@@ -45,7 +51,7 @@ public class MoneyWiseValidatePortfolioInfoSet
         /* Switch on class */
         return switch ((MoneyWiseAccountInfoClass) pClass) {
             /* Allowed set */
-            case NOTES, SORTCODE, ACCOUNT, REFERENCE, WEBSITE, CUSTOMERNO, USERID, PASSWORD ->
+            case NOTES, SORTCODE, ACCOUNT, REFERENCE, WEBSITE, CUSTOMERNO, USERID, PASSWORD, OPENINGBALANCE ->
                     MetisFieldRequired.CANEXIST;
 
             /* Not Allowed */
@@ -58,11 +64,27 @@ public class MoneyWiseValidatePortfolioInfoSet
                               final PrometheusDataInfoClass pClass) {
         /* Switch on class */
         switch ((MoneyWiseAccountInfoClass) pClass) {
+            case OPENINGBALANCE:
+                validateOpeningBalance(pInfo);
+                break;
             case WEBSITE, CUSTOMERNO, USERID, PASSWORD, SORTCODE, ACCOUNT, NOTES, REFERENCE:
                 validateInfoLength(pInfo);
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * Validate the opening balance.
+     *
+     * @param pInfo the info
+     */
+    private void validateOpeningBalance(final MoneyWisePortfolioInfo pInfo) {
+        final OceanusMoney myBalance = pInfo.getValue(OceanusMoney.class);
+        if (!myBalance.getCurrency().equals(getOwner().getCurrency())) {
+            getOwner().addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY,
+                    MoneyWisePortfolioInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.OPENINGBALANCE));
         }
     }
 
@@ -76,6 +98,24 @@ public class MoneyWiseValidatePortfolioInfoSet
         final MoneyWiseAccountInfoClass myClass = pInfo.getInfoClass();
         if (myArray.length > myClass.getMaximumLength()) {
             getOwner().addError(PrometheusDataItem.ERROR_LENGTH, MoneyWisePortfolioInfoSet.getFieldForClass(myClass));
+        }
+    }
+
+    @Override
+    protected void autoCorrect(final PrometheusDataInfoClass pClass) throws OceanusException {
+        /* If the info is Opening balance */
+        if (MoneyWiseAccountInfoClass.OPENINGBALANCE.equals(pClass)) {
+            /* Access the value */
+            final MoneyWisePortfolio myOwner = getOwner();
+            OceanusMoney myOpening = myOwner.getOpeningBalance();
+            final MoneyWiseCurrency myAssetCurrency = myOwner.getAssetCurrency();
+            final Currency myCurrency = myAssetCurrency.getCurrency();
+
+            /* If we need to change currency */
+            if (!myCurrency.equals(myOpening.getCurrency())) {
+                myOpening = myOpening.changeCurrency(myCurrency);
+                getInfoSet().setValue(pClass, myOpening);
+            }
         }
     }
 }

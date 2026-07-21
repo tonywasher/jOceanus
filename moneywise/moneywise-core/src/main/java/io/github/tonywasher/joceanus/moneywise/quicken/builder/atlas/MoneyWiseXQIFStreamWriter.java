@@ -46,7 +46,7 @@ public class MoneyWiseXQIFStreamWriter
         /* Open the file */
         final FileOutputStream myOutput = new FileOutputStream(pFile);
         final BufferedOutputStream myBuffer = new BufferedOutputStream(myOutput);
-        theWriter = new OutputStreamWriter(myBuffer, StandardCharsets.ISO_8859_1);
+        theWriter = new OutputStreamWriter(myBuffer, StandardCharsets.UTF_8);
     }
 
     /**
