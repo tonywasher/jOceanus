@@ -22,7 +22,6 @@ open module io.github.tonywasher.joceanus.gordianknot.test {
     /* External libraries */
     requires org.bouncycastle.provider;
     requires org.bouncycastle.util;
-    requires org.bouncycastle.pg;
 
     /* Exports */
     requires io.github.tonywasher.joceanus.gordianknot;
