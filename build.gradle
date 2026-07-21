@@ -38,16 +38,6 @@ allprojects {
 
 /* Store calculated properties in the root project */
 ext {
-    /* javaFX versions */
-    javaFXVersion = "21.0.11"
-    javaFXPluginVersion = "0.1.0"
-
-    /* Annotation versions */
-    jetBrainsAnnotationsVersion = "26.1.0"
-
-    /* jacoco config */
-    jacocoVersion = "0.8.15"
-
     /* Distribution details */
     appDir = "$rootDir/dist"
     appBinDir = "bin/"
@@ -63,7 +53,6 @@ ext {
 
     /* mappings */
     distributionMap = [:]
-    myProperties = [:]
     groupMap = [:]
 
     /* Base manifest details */
@@ -208,8 +197,6 @@ void registerProject(Project pProject) {
     if (pProject.ext.splashScreen != null) {
         pProject.ext.manifestAttrs["SplashScreen-Image"] = pProject.ext.splashScreen
     }
-
-    myProperties = pProject.properties
 }
 
 /* Build list of distributable modules */

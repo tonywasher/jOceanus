@@ -1,8 +1,8 @@
 /* JavaFX specific */
 plugins {
-    id 'org.openjfx.javafxplugin' version "$javaFXPluginVersion"
     id 'jOceanus-java'
     id 'jOceanus-javafx'
+    id 'org.openjfx.javafxplugin' version "0.1.0"
 }
 
 /* Dependencies */
@@ -22,7 +22,7 @@ moduleName = "io.github.tonywasher.joceanus.moneywise.javafx"
 preLoaderClass = "io.github.tonywasher.joceanus.moneywise.ui.javafx.MoneyWiseFXpreLoader"
 
 /* Register the project */
-registerProject(project)
+rootProject.registerProject(project)
 
 /* Specific Manifest details */
 jar {

@@ -20,7 +20,7 @@ moduleName = "io.github.tonywasher.joceanus.moneywise.swing"
 splashScreen = "io/github/tonywasher/joceanus/moneywise/ui/icons/swing/MoneyWiseSplash.png"
 
 /* Register the project */
-registerProject(project)
+rootProject.registerProject(project)
 
 /* Specific Manifest details */
 jar {

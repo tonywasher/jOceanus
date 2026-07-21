@@ -26,7 +26,7 @@ group = 'io.github.tonywasher.joceanus.prometheus'
 description = 'Prometheus Core Application Framework'
 
 /* Register the project */
-registerProject(project)
+rootProject.registerProject(project)
 
 /* Test jar details */
 tasks.register('testsJar', Jar) {

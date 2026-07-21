@@ -20,7 +20,7 @@ group = 'io.github.tonywasher.joceanus.themis'
 description = 'Themis Core Project Framework'
 
 /* Register the project */
-registerProject(project)
+rootProject.registerProject(project)
 
 /* Test jar details */
 tasks.register('testsJar', Jar) {

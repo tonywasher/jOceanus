@@ -14,7 +14,7 @@ group = 'io.github.tonywasher.joceanus.prometheus.sheet'
 description = 'Prometheus Sheet Service API'
 
 /* Register the project */
-registerProject(project)
+rootProject.registerProject(project)
 
 /* Specific Manifest details */
 jar {

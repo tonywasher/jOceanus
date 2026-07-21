@@ -1,9 +1,9 @@
 
 /* javaFX Specifics */
 plugins {
-    id 'org.openjfx.javafxplugin' version "$javaFXPluginVersion"
     id 'jOceanus-java'
     id 'jOceanus-javafx'
+    id 'org.openjfx.javafxplugin' version "0.1.0"
 }
 
 /* Dependencies */
@@ -23,7 +23,7 @@ moduleName = "io.github.tonywasher.joceanus.themis.javafx"
 preLoaderClass = "io.github.tonywasher.joceanus.themis.ui.javafx.ThemisFXpreLoader"
 
 /* Register the project */
-registerProject(project)
+rootProject.registerProject(project)
 
 /* Specific Manifest details */
 jar {

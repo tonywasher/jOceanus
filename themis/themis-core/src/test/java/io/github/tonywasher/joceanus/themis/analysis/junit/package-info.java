@@ -17,4 +17,4 @@
 /**
  * Test Analysis.
  */
-package io.github.tonywasher.joceanus.themis.analysis;
+package io.github.tonywasher.joceanus.themis.analysis.junit;
