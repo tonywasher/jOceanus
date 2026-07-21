@@ -34,9 +34,9 @@ public class GordianCorePasswordLockSpec
     private static final int K_MULTIPLIER = 1024;
 
     /**
-     * The Number of iterations (x 1K).
+     * The Number of iterations (2<sup>x</sup> x 1K).
      */
-    private final int theKIterations;
+    private final int thePowerIterations;
 
     /**
      * The KeySetSpec.
@@ -52,16 +52,16 @@ public class GordianCorePasswordLockSpec
      * Constructor.
      */
     GordianCorePasswordLockSpec() {
-        this(DEFAULT_ITERATIONS);
+        this(DEFAULT_POWER_ITERATIONS);
     }
 
     /**
      * Constructor.
      *
-     * @param pKIterations the iterations (x 1K).
+     * @param pPowerIterations the iterations (x 1K).
      */
-    GordianCorePasswordLockSpec(final int pKIterations) {
-        this(pKIterations, GordianCoreKeySetSpecBuilder.newInstance().keySet());
+    GordianCorePasswordLockSpec(final int pPowerIterations) {
+        this(pPowerIterations, GordianCoreKeySetSpecBuilder.newInstance().keySet());
     }
 
     /**
@@ -70,30 +70,30 @@ public class GordianCorePasswordLockSpec
      * @param pKeySetSpec the keySetSpec.
      */
     GordianCorePasswordLockSpec(final GordianKeySetSpec pKeySetSpec) {
-        this(DEFAULT_ITERATIONS, pKeySetSpec);
+        this(DEFAULT_POWER_ITERATIONS, pKeySetSpec);
     }
 
     /**
      * Constructor.
      *
-     * @param pKIterations the iterations (x 1K).
-     * @param pKeySetSpec  the keySetSpec
+     * @param pPowerIterations the iterations (x 1K).
+     * @param pKeySetSpec      the keySetSpec
      */
-    GordianCorePasswordLockSpec(final int pKIterations,
+    GordianCorePasswordLockSpec(final int pPowerIterations,
                                 final GordianKeySetSpec pKeySetSpec) {
-        theKIterations = pKIterations;
+        thePowerIterations = pPowerIterations;
         theKeySetSpec = pKeySetSpec;
         isValid = validateLockSpec();
     }
 
     @Override
     public int getNumIterations() {
-        return theKIterations * K_MULTIPLIER;
+        return (1 << thePowerIterations) * K_MULTIPLIER;
     }
 
     @Override
-    public int getKIterations() {
-        return theKIterations;
+    public int getPowerIterations() {
+        return thePowerIterations;
     }
 
     @Override
@@ -122,8 +122,8 @@ public class GordianCorePasswordLockSpec
         }
 
         /* Check iterations is in range */
-        return theKIterations >= MINIMUM_ITERATIONS
-                && theKIterations <= MAXIMUM_ITERATIONS;
+        return thePowerIterations >= MINIMUM_POWER_ITERATIONS
+                && thePowerIterations <= MAXIMUM_POWER_ITERATIONS;
     }
 
     @Override
@@ -138,18 +138,18 @@ public class GordianCorePasswordLockSpec
 
         /* Check keySetSpec */
         return pThat instanceof GordianCorePasswordLockSpec myThat
-                && theKIterations == myThat.getKIterations()
+                && thePowerIterations == myThat.getPowerIterations()
                 && theKeySetSpec.equals(myThat.getKeySetSpec());
     }
 
 
     @Override
     public int hashCode() {
-        return Objects.hash(theKIterations, theKeySetSpec);
+        return Objects.hash(thePowerIterations, theKeySetSpec);
     }
 
     @Override
     public String toString() {
-        return "PasswordLock" + theKIterations + "-" + theKeySetSpec.getKeyLength() + "-" + theKeySetSpec.getCipherSteps();
+        return "PasswordLock" + thePowerIterations + "-" + theKeySetSpec.getKeyLength() + "-" + theKeySetSpec.getCipherSteps();
     }
 }

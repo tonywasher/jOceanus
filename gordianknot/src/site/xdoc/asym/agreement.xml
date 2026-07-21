@@ -354,7 +354,7 @@ final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(my
                 <table class="defTable">
                     <tr><th class="defHdr">KeyPairType</th><th class="defHdr">AgreementType</th><th class="defHdr">Notes</th></tr>
                     <tr><td>RSA</td><td>KEM</td><td>Not available in JCA</td></tr>
-                    <tr><td>EC, GOST2012, SM2</td><td>KEM, ANON, BASIC, SIGNED, MQV, UNIFIED, SM2</td><td>KEM and SM2 not available in JCA</td></tr>
+                    <tr><td>EC, GOST2012, SM2</td><td>KEM, ANON, BASIC, SIGNED, MQV, UNIFIED, SM2</td><td>KEM and SM2-CONFIRM not available in JCA</td></tr>
                     <tr><td>DSTU4145</td><td>KEM, ANON, BASIC, SIGNED, MQV, UNIFIED</td><td>KEM not available in JCA</td></tr>
                     <tr><td>DH</td><td>ANON, BASIC, SIGNED, MQV, UNIFIED</td><td/></tr>
                     <tr><td>XDH</td><td>ANON, BASIC, SIGNED, UNIFIED</td><td/></tr>
