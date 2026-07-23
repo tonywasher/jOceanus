@@ -16,21 +16,21 @@
  */
 package io.github.tonywasher.joceanus.moneywise.ui.controls;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
+import io.github.tonywasher.joceanus.moneywise.analysis.lethe.data.MoneyWiseAnalysis;
+import io.github.tonywasher.joceanus.moneywise.analysis.lethe.data.MoneyWiseAnalysisManager;
+import io.github.tonywasher.joceanus.moneywise.analysis.lethe.data.MoneyWiseAnalysisPortfolioBucket;
+import io.github.tonywasher.joceanus.moneywise.analysis.lethe.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
+import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
-import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
-import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
-import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
-import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
-import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
-import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
-import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
-import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIArrowIconId;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;

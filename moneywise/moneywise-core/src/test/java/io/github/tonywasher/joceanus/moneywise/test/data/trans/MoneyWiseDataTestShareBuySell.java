@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.test.data.trans;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.builder.MoneyWiseTransactionBuilder;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Test Basic Share transactions.
@@ -85,15 +85,10 @@ public class MoneyWiseDataTestShareBuySell
 
     @Override
     public boolean useInfoClass(final MoneyWiseTransInfoClass pInfoClass) {
-        switch (pInfoClass) {
-            case ACCOUNTDELTAUNITS:
-            case PARTNERDELTAUNITS:
-            case PRICE:
-            case PARTNERAMOUNT:
-                return true;
-            default:
-                return false;
-        }
+        return switch (pInfoClass) {
+            case ACCOUNTDELTAUNITS, PARTNERDELTAUNITS, PRICE, PARTNERAMOUNT -> true;
+            default -> false;
+        };
     }
 
     @Override

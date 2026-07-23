@@ -37,19 +37,20 @@ module io.github.tonywasher.joceanus.moneywise.core {
 
     /* Test exports */
     exports io.github.tonywasher.joceanus.moneywise.archive to io.github.tonywasher.joceanus.moneywise.core.test;
-    exports io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse to io.github.tonywasher.joceanus.moneywise.core.test;
-    exports io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base to io.github.tonywasher.joceanus.moneywise.core.test;
-    exports io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets to io.github.tonywasher.joceanus.moneywise.core.test;
-    exports io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values to io.github.tonywasher.joceanus.moneywise.core.test;
+    exports io.github.tonywasher.joceanus.moneywise.analysis.atlas.analyse to io.github.tonywasher.joceanus.moneywise.core.test;
+    exports io.github.tonywasher.joceanus.moneywise.analysis.atlas.base to io.github.tonywasher.joceanus.moneywise.core.test;
+    exports io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets to io.github.tonywasher.joceanus.moneywise.core.test;
+    exports io.github.tonywasher.joceanus.moneywise.analysis.atlas.values to io.github.tonywasher.joceanus.moneywise.core.test;
+    exports io.github.tonywasher.joceanus.moneywise.analysis.lethe.analyse to io.github.tonywasher.joceanus.moneywise.core.test;
+    exports io.github.tonywasher.joceanus.moneywise.analysis.lethe.data to io.github.tonywasher.joceanus.moneywise.core.test;
+    exports io.github.tonywasher.joceanus.moneywise.analysis.lethe.values to io.github.tonywasher.joceanus.moneywise.core.test;
     exports io.github.tonywasher.joceanus.moneywise.data.basic to io.github.tonywasher.joceanus.moneywise.core.test;
     exports io.github.tonywasher.joceanus.moneywise.data.builder to io.github.tonywasher.joceanus.moneywise.core.test;
     exports io.github.tonywasher.joceanus.moneywise.data.statics to io.github.tonywasher.joceanus.moneywise.core.test;
     exports io.github.tonywasher.joceanus.moneywise.data.validate to io.github.tonywasher.joceanus.moneywise.core.test;
     exports io.github.tonywasher.joceanus.moneywise.database to io.github.tonywasher.joceanus.moneywise.core.test;
     exports io.github.tonywasher.joceanus.moneywise.exc to io.github.tonywasher.joceanus.moneywise.core.test;
-    exports io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.analyse to io.github.tonywasher.joceanus.moneywise.core.test;
-    exports io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data to io.github.tonywasher.joceanus.moneywise.core.test;
-    exports io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values to io.github.tonywasher.joceanus.moneywise.core.test;
+    exports io.github.tonywasher.joceanus.moneywise.quicken.builder.atlas to io.github.tonywasher.joceanus.moneywise.core.test;
     exports io.github.tonywasher.joceanus.moneywise.sheets to io.github.tonywasher.joceanus.moneywise.core.test;
     exports io.github.tonywasher.joceanus.moneywise.views to io.github.tonywasher.joceanus.moneywise.core.test;
 }

@@ -116,7 +116,8 @@ public class MoneyWiseValidateCashInfoSet
     private void validateOpeningBalance(final MoneyWiseCashInfo pInfo) {
         final OceanusMoney myBalance = pInfo.getValue(OceanusMoney.class);
         if (!myBalance.getCurrency().equals(getOwner().getCurrency())) {
-            getOwner().addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY, MoneyWiseCashInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.OPENINGBALANCE));
+            getOwner().addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY,
+                    MoneyWiseCashInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.OPENINGBALANCE));
         }
     }
 

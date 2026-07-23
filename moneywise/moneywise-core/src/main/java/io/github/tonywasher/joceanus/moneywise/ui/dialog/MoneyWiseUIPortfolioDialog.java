@@ -34,6 +34,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataT
 import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseIcon;
 import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseUIAssetTable;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
@@ -43,6 +44,7 @@ import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
 import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
 import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIIconButtonField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIMoneyEditField;
 import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
 import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIStringEditField;
 import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldFactory;
@@ -148,11 +150,13 @@ public class MoneyWiseUIPortfolioDialog
         final TethysUICharArrayEditField mySortCode = myFields.newCharArrayField();
         final TethysUICharArrayEditField myAccount = myFields.newCharArrayField();
         final TethysUICharArrayEditField myReference = myFields.newCharArrayField();
+        final TethysUIMoneyEditField myOpening = myFields.newMoneyField();
 
         /* Assign the fields to the panel */
         theFieldSet.addField(MoneyWiseAccountInfoClass.SORTCODE, mySortCode, MoneyWisePortfolio::getSortCode);
         theFieldSet.addField(MoneyWiseAccountInfoClass.ACCOUNT, myAccount, MoneyWisePortfolio::getAccount);
         theFieldSet.addField(MoneyWiseAccountInfoClass.REFERENCE, myReference, MoneyWisePortfolio::getReference);
+        theFieldSet.addField(MoneyWiseAccountInfoClass.OPENINGBALANCE, myOpening, MoneyWisePortfolio::getOpeningBalance);
 
         /* Configure validation checks */
         mySortCode.setValidator(this::isValidSortCode);
@@ -248,6 +252,9 @@ public class MoneyWiseUIPortfolioDialog
         theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.ACCOUNT, bShowAccount);
         final boolean bShowReference = isEditable || myPortfolio.getReference() != null;
         theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.REFERENCE, bShowReference);
+        final boolean bHasOpening = myPortfolio.getOpeningBalance() != null;
+        final boolean bShowOpening = bIsChangeable || bHasOpening;
+        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.OPENINGBALANCE, bShowOpening);
         final boolean bShowWebSite = isEditable || myPortfolio.getWebSite() != null;
         theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.WEBSITE, bShowWebSite);
         final boolean bShowCustNo = isEditable || myPortfolio.getCustNo() != null;
@@ -262,6 +269,7 @@ public class MoneyWiseUIPortfolioDialog
         /* Type, Parent and Currency status cannot be changed if the item is active */
         theFieldSet.setFieldEditable(MoneyWiseBasicResource.CATEGORY_NAME, bIsChangeable);
         theFieldSet.setFieldEditable(MoneyWiseStaticDataType.CURRENCY, bIsChangeable);
+        theFieldSet.setFieldEditable(MoneyWiseAccountInfoClass.OPENINGBALANCE, bIsChangeable);
 
         /* Set editable value for parent */
         theFieldSet.setFieldEditable(MoneyWiseBasicResource.ASSET_PARENT, bIsChangeable && !bIsClosed);
@@ -313,6 +321,9 @@ public class MoneyWiseUIPortfolioDialog
         } else if (MoneyWiseAccountInfoClass.PASSWORD.equals(myField)) {
             /* Update the Password */
             myPortfolio.setPassword(pUpdate.getValue(char[].class));
+        } else if (MoneyWiseAccountInfoClass.OPENINGBALANCE.equals(myField)) {
+            /* Update the OpeningBalance */
+            myPortfolio.setOpeningBalance(pUpdate.getValue(OceanusMoney.class));
         } else if (MoneyWiseAccountInfoClass.NOTES.equals(myField)) {
             /* Update the Notes */
             myPortfolio.setNotes(pUpdate.getValue(char[].class));

@@ -32,6 +32,7 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateInfoSet;
 
 import java.util.Currency;
+import java.util.Objects;
 
 /**
  * Validate DepositInfoSet.
@@ -58,7 +59,7 @@ public class MoneyWiseValidateDepositInfoSet
         if (myCategory == null) {
             return MetisFieldRequired.NOTALLOWED;
         }
-        final MoneyWiseDepositCategoryClass myClass = myCategory.getCategoryTypeClass();
+        final MoneyWiseDepositCategoryClass myClass = Objects.requireNonNull(myCategory.getCategoryTypeClass());
 
         /* Switch on class */
         return switch ((MoneyWiseAccountInfoClass) pClass) {
@@ -99,7 +100,8 @@ public class MoneyWiseValidateDepositInfoSet
     private void validateOpeningBalance(final MoneyWiseDepositInfo pInfo) {
         final OceanusMoney myBalance = pInfo.getValue(OceanusMoney.class);
         if (!myBalance.getCurrency().equals(getOwner().getCurrency())) {
-            getOwner().addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY, MoneyWiseDepositInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.OPENINGBALANCE));
+            getOwner().addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY,
+                    MoneyWiseDepositInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.OPENINGBALANCE));
         }
     }
 

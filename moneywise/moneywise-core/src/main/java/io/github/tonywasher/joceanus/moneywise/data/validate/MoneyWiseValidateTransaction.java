@@ -412,21 +412,10 @@ public class MoneyWiseValidateTransaction
         /* If this involves auto-expense */
         if (pAccount.isAutoExpense()
                 || pPartner.isAutoExpense()) {
-            /* Access account type */
-            final MoneyWiseAssetType myAccountType = pAccount.getAssetType();
-
             /* Special processing */
             return switch (myCatClass) {
-                case TRANSFER ->
-                    /* Transfer must be to/from deposit/cash/loan */
-                        myPartnerType.isAutoExpense()
-                                ? myAccountType.isValued()
-                                : myPartnerType.isValued();
-                case EXPENSE ->
-                    /* Transfer must be to/from payee */
-                        pPartner instanceof MoneyWisePayee;
-
-                /* Auto Expense cannot be used for other categories */
+                case TRANSFER -> checkAutoCashXfer(pAccount, pPartner);
+                case EXPENSE -> pPartner instanceof MoneyWisePayee;
                 default -> false;
             };
         }
@@ -480,6 +469,27 @@ public class MoneyWiseValidateTransaction
             case PORTFOLIOXFER -> checkPortfolioXfer(pAccount, pPartner);
             default -> false;
         };
+    }
+
+    /**
+     * Check Cash Xfer.
+     *
+     * @param pAccount the debit account
+     * @param pPartner the partner account
+     * @return valid true/false
+     */
+    private boolean checkAutoCashXfer(final MoneyWiseTransAsset pAccount,
+                                      final MoneyWiseTransAsset pPartner) {
+        /* Determine whether the partner is valued */
+        final MoneyWiseAssetType myAccountType = pAccount.getAssetType();
+        final MoneyWiseAssetType myPartnerType = pPartner.getAssetType();
+        final boolean isValued = myPartnerType.isAutoExpense()
+                ? myAccountType.isValued()
+                : myPartnerType.isValued();
+
+        /* Determine whether the two accounts are the same currency */
+        final boolean isSameCurrency = pAccount.getCurrency().equals(pPartner.getCurrency());
+        return isValued && isSameCurrency;
     }
 
     /**

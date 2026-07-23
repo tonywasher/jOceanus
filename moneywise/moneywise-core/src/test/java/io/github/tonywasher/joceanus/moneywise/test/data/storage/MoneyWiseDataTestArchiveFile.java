@@ -17,11 +17,11 @@
 package io.github.tonywasher.joceanus.moneywise.test.data.storage;
 
 import io.github.tonywasher.joceanus.moneywise.archive.MoneyWiseArchiveLoader;
-import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalyseBuilder;
-import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import io.github.tonywasher.joceanus.moneywise.analysis.atlas.analyse.MoneyWiseXAnalyseBuilder;
+import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysis;
+import io.github.tonywasher.joceanus.moneywise.analysis.lethe.analyse.MoneyWiseAnalysisBuilder;
+import io.github.tonywasher.joceanus.moneywise.analysis.lethe.data.MoneyWiseAnalysis;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.analyse.MoneyWiseAnalysisBuilder;
-import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
