@@ -16,12 +16,15 @@
  */
 package io.github.tonywasher.joceanus.moneywise.test.data.xdoc;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseIOException;
 import io.github.tonywasher.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * XDoc Report Builder.
@@ -94,6 +97,10 @@ public class MoneyWiseDataXDocBuilder {
      * @throws OceanusException on error
      */
     public MoneyWiseDataXDocBuilder(final MoneyWiseDataTestCase pTest) throws OceanusException {
+        /* Ensure the output directory */
+        final File myLocation = new File(OUTPUT_DIR, pTest.getName());
+        ensureDirectory(myLocation);
+
         /* Initialise the document */
         final MoneyWiseDataXDocReport myReport = new MoneyWiseDataXDocReport();
         myReport.startReport(pTest);
@@ -129,11 +136,27 @@ public class MoneyWiseDataXDocBuilder {
         myTax.createTaxAnalysis();
 
         /* Output the file */
-        final File myFile = new File(OUTPUT_DIR, pTest.getName() + ".xml");
+        final File myFile = new File(myLocation, pTest.getName() + ".xml");
         try (PrintWriter out = new PrintWriter(myFile)) {
             out.println(myReport.formatXML());
         } catch (Exception e) {
             throw new MoneyWiseIOException("Failed to write file", e);
+        }
+    }
+
+    /**
+     * Ensure output directory.
+     *
+     * @throws OceanusException on error
+     */
+    private static void ensureDirectory(final File pDirectory) throws OceanusException {
+        try {
+            final Path myDir = pDirectory.toPath();
+            if (!myDir.toFile().exists()) {
+                Files.createDirectories(myDir);
+            }
+        } catch (IOException e) {
+            throw new MoneyWiseIOException("Failed to create directory: " + pDirectory.getAbsolutePath(), e);
         }
     }
 }

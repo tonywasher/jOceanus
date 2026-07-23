@@ -19,9 +19,7 @@ package io.github.tonywasher.joceanus.moneywise.test.data;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.analyse.MoneyWiseXAnalyseBuilder;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseIOException;
 import io.github.tonywasher.joceanus.moneywise.quicken.builder.atlas.MoneyWiseXQIFFile;
-import io.github.tonywasher.joceanus.moneywise.quicken.builder.atlas.MoneyWiseXQIFStreamWriter;
 import io.github.tonywasher.joceanus.moneywise.quicken.builder.atlas.MoneyWiseXQIFWriter;
 import io.github.tonywasher.joceanus.moneywise.test.data.storage.MoneyWiseDataTestSecurity;
 import io.github.tonywasher.joceanus.moneywise.test.data.storage.MoneyWiseNullThreadMgr;
@@ -48,10 +46,6 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -187,7 +181,7 @@ public class MoneyWiseDataTestRunner {
      * @param pTest the testCase
      * @throws OceanusException on error
      */
-    public void reportTestCase(final MoneyWiseDataTestCase pTest) throws OceanusException {
+    private void reportTestCase(final MoneyWiseDataTestCase pTest) throws OceanusException {
         /* Run the test */
         new MoneyWiseDataXDocBuilder(pTest);
     }
@@ -201,24 +195,13 @@ public class MoneyWiseDataTestRunner {
      */
     public void runQIFTest(final MoneyWiseDataTestCase pTest,
                            final MoneyWiseXAnalysis pAnalysis) throws OceanusException {
-        /* Run the test */
         /* Create a QIF File */
         final MoneyWiseXQIFFile myQFile = MoneyWiseXQIFFile.buildQIFFile(theDataSet, pAnalysis, null);
-        final File myOutFile = new File(MoneyWiseDataXDocBuilder.OUTPUT_DIR, pTest.getName() + ".qif");
 
         /* Create the Writer */
         final TethysUIThreadManager myThreadMgr = new MoneyWiseNullThreadMgr();
         final MoneyWiseXQIFWriter myQWriter = new MoneyWiseXQIFWriter(theView.getGuiFactory(), myThreadMgr, myQFile);
-
-        /* Protect against exceptions */
-        try (MoneyWiseXQIFStreamWriter myWriter = new MoneyWiseXQIFStreamWriter(myOutFile)) {
-            /* Output the data */
-            myQWriter.writeFile(myWriter);
-
-        } catch (IOException e) {
-            /* Report the error */
-            throw new MoneyWiseIOException("Failed to write to file: " + myOutFile.getName(), e);
-        }
+        myQWriter.writeFiles(new File(MoneyWiseDataXDocBuilder.OUTPUT_DIR), pTest.getName());
     }
 
     /**
@@ -245,10 +228,8 @@ public class MoneyWiseDataTestRunner {
      * Run the storage tests.
      *
      * @return the test stream
-     * @throws OceanusException on error
      */
-    public Stream<DynamicNode> createStorageTests() throws OceanusException {
-        createOutputDirectory();
+    public Stream<DynamicNode> createStorageTests() {
         Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData", this::prepareFullData));
         myStream = Stream.concat(myStream, MoneyWiseDataTest.storageTests(theDataSet, theView));
         myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("editSet",
@@ -279,21 +260,5 @@ public class MoneyWiseDataTestRunner {
 
         /* Initialise the security */
         new MoneyWiseDataTestSecurity(theDataSet).initSecurity(theView);
-    }
-
-    /**
-     * Ensure output directory.
-     *
-     * @throws OceanusException on error
-     */
-    private static void createOutputDirectory() throws OceanusException {
-        try {
-            final Path myDir = Paths.get(MoneyWiseDataXDocBuilder.OUTPUT_DIR);
-            if (!myDir.toFile().exists()) {
-                Files.createDirectory(myDir);
-            }
-        } catch (IOException e) {
-            throw new MoneyWiseIOException("Failed to create directory", e);
-        }
     }
 }

@@ -170,7 +170,7 @@ public class MoneyWiseXQIFPrice
     /**
      * Obtain the price.
      *
-     * @return the security
+     * @return the price
      */
     public OceanusPrice getPrice() {
         return thePrice;

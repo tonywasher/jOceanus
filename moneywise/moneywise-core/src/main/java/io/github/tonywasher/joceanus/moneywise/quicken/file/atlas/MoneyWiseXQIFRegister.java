@@ -61,6 +61,14 @@ public interface MoneyWiseXQIFRegister {
     MoneyWiseXQIFClass getClass(String pName);
 
     /**
+     * Obtain currency.
+     *
+     * @param pName the name of the currency
+     * @return the currency
+     */
+    MoneyWiseXQIFCurrency getCurrency(String pName);
+
+    /**
      * Obtain security.
      *
      * @param pName the name of the security

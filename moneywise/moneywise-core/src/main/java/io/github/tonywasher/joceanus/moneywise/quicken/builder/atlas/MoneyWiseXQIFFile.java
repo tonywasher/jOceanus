@@ -27,6 +27,8 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate.MoneyWiseExchangeRateList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
@@ -38,11 +40,14 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferences;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFAccount;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFAccountEvents;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFClass;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFCurrency;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFCurrencyRates;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFEventCategory;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFParentCategory;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.atlas.MoneyWiseXQIFPayee;
@@ -116,6 +121,16 @@ public class MoneyWiseXQIFFile
     private final List<MoneyWiseXQIFSecurityPrices> theSecurities;
 
     /**
+     * Map of Currencies with Rates.
+     */
+    private final Map<String, MoneyWiseXQIFCurrencyRates> theCurrencyMap;
+
+    /**
+     * Sorted List of Currencies with Rates.
+     */
+    private final List<MoneyWiseXQIFCurrencyRates> theCurrencies;
+
+    /**
      * Map of Symbols to Securities.
      */
     private final Map<String, MoneyWiseXQIFSecurity> theSymbolMap;
@@ -158,6 +173,7 @@ public class MoneyWiseXQIFFile
         theAccountMap = new HashMap<>();
         thePayeeMap = new HashMap<>();
         theSecurityMap = new HashMap<>();
+        theCurrencyMap = new HashMap<>();
         theSymbolMap = new HashMap<>();
         theParentMap = new HashMap<>();
         theCategories = new HashMap<>();
@@ -167,6 +183,7 @@ public class MoneyWiseXQIFFile
         theAccounts = new ArrayList<>();
         thePayees = new ArrayList<>();
         theSecurities = new ArrayList<>();
+        theCurrencies = new ArrayList<>();
         theParentCategories = new ArrayList<>();
         theClasses = new ArrayList<>();
     }
@@ -181,7 +198,7 @@ public class MoneyWiseXQIFFile
      *
      * @return true/false
      */
-    protected boolean hasClasses() {
+    boolean hasClasses() {
         return !theClasses.isEmpty();
     }
 
@@ -190,7 +207,7 @@ public class MoneyWiseXQIFFile
      *
      * @return the number
      */
-    protected int numClasses() {
+    int numClasses() {
         return theClasses.size();
     }
 
@@ -199,7 +216,7 @@ public class MoneyWiseXQIFFile
      *
      * @return the iterator
      */
-    protected Iterator<MoneyWiseXQIFClass> classIterator() {
+    Iterator<MoneyWiseXQIFClass> classIterator() {
         return theClasses.iterator();
     }
 
@@ -208,7 +225,7 @@ public class MoneyWiseXQIFFile
      *
      * @return the number
      */
-    protected int numCategories() {
+    int numCategories() {
         return theCategories.size();
     }
 
@@ -217,7 +234,7 @@ public class MoneyWiseXQIFFile
      *
      * @return the iterator
      */
-    protected Iterator<MoneyWiseXQIFParentCategory> categoryIterator() {
+    Iterator<MoneyWiseXQIFParentCategory> categoryIterator() {
         return theParentCategories.iterator();
     }
 
@@ -226,7 +243,7 @@ public class MoneyWiseXQIFFile
      *
      * @return the number
      */
-    protected int numAccounts() {
+    int numAccounts() {
         return theAccounts.size();
     }
 
@@ -235,7 +252,7 @@ public class MoneyWiseXQIFFile
      *
      * @return the iterator
      */
-    protected Iterator<MoneyWiseXQIFAccountEvents> accountIterator() {
+    Iterator<MoneyWiseXQIFAccountEvents> accountIterator() {
         return theAccounts.iterator();
     }
 
@@ -244,7 +261,7 @@ public class MoneyWiseXQIFFile
      *
      * @return true/false
      */
-    protected boolean hasSecurities() {
+    boolean hasSecurities() {
         return !theSecurities.isEmpty();
     }
 
@@ -253,23 +270,41 @@ public class MoneyWiseXQIFFile
      *
      * @return the number
      */
-    protected int numSecurities() {
+    int numSecurities() {
         return theSecurities.size();
     }
 
     /**
-     * Obtain the account iterator.
+     * Obtain the security iterator.
      *
      * @return the iterator
      */
-    protected Iterator<MoneyWiseXQIFSecurityPrices> securityIterator() {
+    Iterator<MoneyWiseXQIFSecurityPrices> securityIterator() {
         return theSecurities.iterator();
+    }
+
+    /**
+     * Obtain the number of currencies.
+     *
+     * @return the number
+     */
+    int numCurrencies() {
+        return theCurrencies.size();
+    }
+
+    /**
+     * Obtain the currency iterator.
+     *
+     * @return the iterator
+     */
+    Iterator<MoneyWiseXQIFCurrencyRates> currencyIterator() {
+        return theCurrencies.iterator();
     }
 
     /**
      * Sort the lists.
      */
-    protected void sortLists() {
+    void sortLists() {
         /* Sort the classes */
         theClasses.sort(null);
 
@@ -294,6 +329,16 @@ public class MoneyWiseXQIFFile
 
             /* Sort the prices */
             mySecurity.sortPrices();
+        }
+
+        /* Sort the currencies */
+        theCurrencies.sort(null);
+        final Iterator<MoneyWiseXQIFCurrencyRates> myCurrIterator = currencyIterator();
+        while (myCurrIterator.hasNext()) {
+            final MoneyWiseXQIFCurrencyRates myCurrency = myCurrIterator.next();
+
+            /* Sort the rates */
+            myCurrency.sortRates();
         }
 
         /* Sort the accounts */
@@ -553,6 +598,22 @@ public class MoneyWiseXQIFFile
         }
     }
 
+    /**
+     * Register rate.
+     *
+     * @param pRate the rate
+     */
+    public void registerRate(final MoneyWiseExchangeRate pRate) {
+        /* Locate an existing security price list */
+        final MoneyWiseCurrency myCurrency = pRate.getToCurrency();
+        final MoneyWiseXQIFCurrencyRates myCurrencyList = theCurrencyMap.computeIfAbsent(myCurrency.getName(), n -> {
+            final MoneyWiseXQIFCurrencyRates myRates = new MoneyWiseXQIFCurrencyRates(myCurrency);
+            theCurrencies.add(myRates);
+            return myRates;
+        });
+        myCurrencyList.addRate(pRate);
+    }
+
     @Override
     public MoneyWiseXQIFEventCategory getCategory(final String pName) {
         /* Lookup the category */
@@ -606,6 +667,26 @@ public class MoneyWiseXQIFFile
     }
 
     @Override
+    public MoneyWiseXQIFCurrency getCurrency(final String pName) {
+        /* Lookup the currency */
+        final MoneyWiseXQIFCurrencyRates myList = getCurrencyRates(pName);
+        return myList == null
+                ? null
+                : myList.getCurrency();
+    }
+
+    /**
+     * Obtain security prices.
+     *
+     * @param pName the name of the security
+     * @return the security
+     */
+    protected MoneyWiseXQIFCurrencyRates getCurrencyRates(final String pName) {
+        /* Lookup the currency */
+        return theCurrencyMap.get(pName);
+    }
+
+    @Override
     public MoneyWiseXQIFClass getClass(final String pName) {
         /* Lookup the class */
         return theClassMap.get(pName);
@@ -654,6 +735,9 @@ public class MoneyWiseXQIFFile
 
         /* Build prices for securities */
         buildPrices(pData.getSecurityPrices());
+
+        /* Build rates for currencies */
+        buildRates(pData.getExchangeRates());
     }
 
     /**
@@ -771,6 +855,28 @@ public class MoneyWiseXQIFFile
 
             /* Register the price */
             registerPrice(myPrice);
+        }
+    }
+
+    /**
+     * Build rates.
+     *
+     * @param pRateList the rate list
+     */
+    private void buildRates(final MoneyWiseExchangeRateList pRateList) {
+        /* Loop through the prices */
+        final Iterator<MoneyWiseExchangeRate> myIterator = pRateList.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWiseExchangeRate myRate = myIterator.next();
+
+            /* Break loop if the rate is too late */
+            final OceanusDate myDate = myRate.getDate();
+            if (myDate.compareTo(theLastDate) > 0) {
+                break;
+            }
+
+            /* Register the rate */
+            registerRate(myRate);
         }
     }
 
