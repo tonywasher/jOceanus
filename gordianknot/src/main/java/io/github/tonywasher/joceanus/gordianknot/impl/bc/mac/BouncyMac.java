@@ -68,6 +68,9 @@ public class BouncyMac
         processParameters(pParams);
         final BouncyKey<GordianMacSpec> myKey = BouncyKey.accessKey(getKey());
 
+        /* Check for destroyed key */
+        myKey.checkForDestroyedKey();
+
         /* Initialise the cipher */
         final CipherParameters myParms = buildInitParams(myKey, getInitVector());
         theMac.init(myParms);
@@ -136,7 +139,7 @@ public class BouncyMac
     }
 
     @Override
-    public byte[] finish() {
+    public byte[] finish() throws GordianException {
         final byte[] myResult = new byte[getMacSize()];
         doFinish(myResult, 0);
         return myResult;
@@ -144,7 +147,11 @@ public class BouncyMac
 
     @Override
     public int doFinish(final byte[] pBuffer,
-                        final int pOffset) {
+                        final int pOffset) throws GordianException {
+        /* Check for destroyed key */
+        getKey().checkForDestroyedKey();
+
+        /* Finalize the mac */
         return theMac.doFinal(pBuffer, pOffset);
     }
 }

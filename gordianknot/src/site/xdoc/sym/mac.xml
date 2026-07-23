@@ -9,6 +9,8 @@
                 <p>MACs are supported via the <strong>GordianMacFactory</strong> interface.</p>
                 <p>GordianKnot supports most Macs available from BouncyCastle plus some additional algorithms.</p>
                 <p>JCA provides a subset of available algorithms as indicated</p>
+                <p>Symmetric Keys are <strong>destroyable</strong>, and destroyed keys will be rejected if passed to initialisation calls.
+                    In addition, if a key is subsequently destroyed after the MAC is initialised, <strong>finish</strong> to the MAC will be rejected.</p>
             </subsection>
             <subsection name="Macs">
                 <p>A mac is created by specifying a macSpec which comprises the macType plus additional configuration (e.g. digestSpec/symKeySpec) as appropriate.

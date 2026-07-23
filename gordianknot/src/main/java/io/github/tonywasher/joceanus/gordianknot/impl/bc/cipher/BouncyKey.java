@@ -50,6 +50,7 @@ public final class BouncyKey<T extends GordianKeySpec>
 
         /* Store parameters */
         theKey = Arrays.clone(pKeyBytes);
+        Arrays.fill(pKeyBytes, (byte) 0);
     }
 
     /**
@@ -82,6 +83,14 @@ public final class BouncyKey<T extends GordianKeySpec>
 
         /* Reject key */
         throw new GordianDataException("Invalid Key");
+    }
+
+    @Override
+    public void destroy() throws GordianException {
+        if (!isDestroyed()) {
+            Arrays.fill(theKey, (byte) 0);
+        }
+        super.destroy();
     }
 
     @Override

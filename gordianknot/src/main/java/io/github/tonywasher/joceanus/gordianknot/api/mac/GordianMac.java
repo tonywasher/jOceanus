@@ -74,8 +74,9 @@ public interface GordianMac
      * Calculate the MAC.
      *
      * @return the MAC
+     * @throws GordianException on error
      */
-    byte[] finish();
+    byte[] finish() throws GordianException;
 
     /**
      * Calculate the MAC, and return it in the buffer provided.

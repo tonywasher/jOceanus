@@ -81,6 +81,9 @@ public final class BouncySymKeyCipher
         processParameters(pParams);
         final BouncyKey<GordianSymKeySpec> myKey = BouncyKey.accessKey(getKey());
 
+        /* Check for destroyed key */
+        myKey.checkForDestroyedKey();
+
         /* Initialise the cipher */
         final CipherParameters myParms = generateParameters(myKey, getInitVector());
         theCipher.init(pEncrypt, myParms);
@@ -130,6 +133,9 @@ public final class BouncySymKeyCipher
                         final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
+            /* Check for destroyed key */
+            getKey().checkForDestroyedKey();
+
             /* Process the bytes */
             return theCipher.processBytes(pBytes, pOffset, pLength, pOutput, pOutOffset);
 
@@ -145,6 +151,9 @@ public final class BouncySymKeyCipher
                         final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
+            /* Check for destroyed key */
+            getKey().checkForDestroyedKey();
+
             /* Finish the operation */
             return theCipher.doFinal(pOutput, pOutOffset);
 

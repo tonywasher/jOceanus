@@ -134,8 +134,12 @@ public class GordianCoreWrapper
 
     @Override
     public byte[] secureKey(final GordianKey<?> pKeyToSecure) throws GordianException {
+        /* Check the key has not been destroyed */
+        final GordianCoreKey<?> myKey = (GordianCoreKey<?>) pKeyToSecure;
+        myKey.checkForDestroyedKey();
+
         /* Secure the bytes */
-        final byte[] myBytes = secureBytes(((GordianCoreKey<?>) pKeyToSecure).getKeyBytes());
+        final byte[] myBytes = secureBytes(myKey.getKeyBytes());
 
         /* Create the ASN1 */
         final AlgorithmIdentifier myAlgId = theFactory.getIdentifierForSpec(pKeyToSecure.getKeyType());

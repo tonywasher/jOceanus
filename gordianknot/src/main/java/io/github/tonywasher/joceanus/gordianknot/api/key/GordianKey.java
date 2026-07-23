@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.key;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 
 /**
@@ -30,4 +31,18 @@ public interface GordianKey<T extends GordianKeySpec> {
      * @return the keyType
      */
     T getKeyType();
+
+    /**
+     * Destroy the key.
+     *
+     * @throws GordianException on error
+     */
+    void destroy() throws GordianException;
+
+    /**
+     * Is the key destroyed?
+     *
+     * @return true/false
+     */
+    boolean isDestroyed();
 }

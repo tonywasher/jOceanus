@@ -24,6 +24,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import org.bouncycastle.util.Arrays;
 
 import javax.crypto.SecretKey;
+import javax.security.auth.DestroyFailedException;
 import java.util.Objects;
 
 /**
@@ -65,6 +66,20 @@ public final class JcaKey<T extends GordianKeySpec>
     @Override
     public byte[] getKeyBytes() {
         return theKey.getEncoded();
+    }
+
+
+    @Override
+    public void destroy() throws GordianException {
+        /* Protect against exceptions */
+        try {
+            if (!isDestroyed()) {
+                theKey.destroy();
+            }
+            super.destroy();
+        } catch (DestroyFailedException e) {
+            throw new GordianDataException("Failed to destroy key", e);
+        }
     }
 
     /**

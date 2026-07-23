@@ -68,6 +68,9 @@ public final class JcaMac
         processParameters(pParams);
         final JcaKey<GordianMacSpec> myKey = JcaKey.accessKey(getKey());
 
+        /* Check for destroyed key */
+        myKey.checkForDestroyedKey();
+
         /* Protect against exceptions */
         try {
             /* Initialise the MAC */
@@ -127,7 +130,11 @@ public final class JcaMac
     }
 
     @Override
-    public byte[] finish() {
+    public byte[] finish() throws GordianException {
+        /* Check for destroyed key */
+        getKey().checkForDestroyedKey();
+
+        /* Finalise the mac */
         return theMac.doFinal();
     }
 
@@ -135,6 +142,10 @@ public final class JcaMac
     public int doFinish(final byte[] pBuffer,
                         final int pOffset) throws GordianException {
         try {
+            /* Check for destroyed key */
+            getKey().checkForDestroyedKey();
+
+            /* Finalise the mac */
             theMac.doFinal(pBuffer, pOffset);
             return getMacSize();
         } catch (ShortBufferException e) {
