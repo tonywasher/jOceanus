@@ -86,11 +86,16 @@ public final class BouncyKey<T extends GordianKeySpec>
     }
 
     @Override
+    public boolean isClearable() {
+        return true;
+    }
+
+    @Override
     public void destroy() throws GordianException {
         if (!isDestroyed()) {
             Arrays.fill(theKey, (byte) 0);
         }
-        super.destroy();
+        setDestroyed();
     }
 
     @Override

@@ -65,6 +65,11 @@ public final class GordianMultiCipher
     private final int theNumSteps;
 
     /**
+     * The keySet.
+     */
+    private final GordianBaseKeySet theKeySet;
+
+    /**
      * The array of ciphers (in invocation order).
      */
     private final GordianSymCipher[] theCiphers;
@@ -87,6 +92,7 @@ public final class GordianMultiCipher
      */
     GordianMultiCipher(final GordianBaseKeySet pKeySet) throws GordianException {
         /* Access the factory and determine number of steps */
+        theKeySet = pKeySet;
         theFactory = pKeySet.getFactory();
         theNumSteps = pKeySet.getKeySetSpec().getCipherSteps();
         theCiphers = new GordianSymCipher[theNumSteps];
@@ -115,6 +121,9 @@ public final class GordianMultiCipher
                       final int pLength,
                       final byte[] pOutput,
                       final int pOutOffset) throws GordianException {
+        /* Check the keySet */
+        theKeySet.checkForDestroyedKeySet();
+
         /* Protect against exceptions */
         try {
             /* Initialise counters */
@@ -212,6 +221,9 @@ public final class GordianMultiCipher
     @Override
     public int finish(final byte[] pOutput,
                       final int pOutOffset) throws GordianException {
+        /* Check the keySet */
+        theKeySet.checkForDestroyedKeySet();
+
         /* Access initial buffers */
         int myDataLen = 0;
         int myBufIndex = 0;
@@ -271,6 +283,9 @@ public final class GordianMultiCipher
      */
     void initCiphers(final GordianKeySetParameters pParams,
                      final boolean pEncrypt) throws GordianException {
+        /* Check the keySet */
+        theKeySet.checkForDestroyedKeySet();
+
         /* Check the parameters */
         checkParameters(pParams);
 
@@ -488,6 +503,9 @@ public final class GordianMultiCipher
      */
     byte[] secureBytes(final GordianKeySetParameters pParams,
                        final byte[] pBytesToSecure) throws GordianException {
+        /* Check the keySet */
+        theKeySet.checkForDestroyedKeySet();
+
         /* Access the parameters */
         final GordianSymKeyType[] mySymKeyTypes = pParams.getSymKeyTypes();
         final byte[] myInitVector = pParams.getInitVector();
@@ -526,6 +544,9 @@ public final class GordianMultiCipher
     byte[] deriveBytes(final GordianKeySetParameters pParams,
                        final byte[] pSecuredBytes,
                        final int pOffset) throws GordianException {
+        /* Check the keySet */
+        theKeySet.checkForDestroyedKeySet();
+
         /* Check the parameters */
         checkParameters(pParams);
 
@@ -589,8 +610,8 @@ public final class GordianMultiCipher
     /**
      * Encrypt Mac.
      *
-     * @param pSymKeyType teh symKeyType to use
-     * @param pMac        the mac to encrypt
+     * @param pSymKeyType the symKeyType to use
+     * @param pMac        the Mac to encrypt
      * @return the encrypted Mac
      * @throws GordianException on error
      */

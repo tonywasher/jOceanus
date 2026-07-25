@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.keyset;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianDestroyable;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
@@ -28,7 +29,8 @@ import java.security.spec.X509EncodedKeySpec;
 /**
  * keySet API.
  */
-public interface GordianKeySet {
+public interface GordianKeySet
+        extends GordianDestroyable {
     /**
      * Obtain the keySetSpec.
      *

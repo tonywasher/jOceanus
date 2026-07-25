@@ -76,7 +76,7 @@ public class GordianCoreWrapper
     /**
      * Underlying key.
      */
-    private final GordianKey<GordianSymKeySpec> theKey;
+    private final GordianCoreKey<GordianSymKeySpec> theKey;
 
     /**
      * Underlying cipher.
@@ -94,12 +94,18 @@ public class GordianCoreWrapper
      * @param pFactory the Security Factory
      * @param pKey     the key
      * @param pCipher  the underlying cipher
+     * @throws GordianException on error
      */
     GordianCoreWrapper(final GordianBaseFactory pFactory,
                        final GordianKey<GordianSymKeySpec> pKey,
-                       final GordianCoreCipher<GordianSymKeySpec> pCipher) {
+                       final GordianCoreCipher<GordianSymKeySpec> pCipher) throws GordianException {
+        /* Check for destroyed key */
+        final GordianCoreKey<GordianSymKeySpec> myKey = (GordianCoreKey<GordianSymKeySpec>) pKey;
+        myKey.checkForDestroyedKey();
+
+        /* Store parameters */
         theFactory = pFactory;
-        theKey = pKey;
+        theKey = (GordianCoreKey<GordianSymKeySpec>) pKey;
         theCipher = pCipher;
         theBlockLen = getKeySpec().getBlockLength().getByteLength() >> 1;
     }
@@ -215,6 +221,9 @@ public class GordianCoreWrapper
 
     @Override
     public byte[] secureBytes(final byte[] pBytesToSecure) throws GordianException {
+        /* Check for destroyed key */
+        theKey.checkForDestroyedKey();
+
         /* Determine number of blocks */
         final int myDataLen = pBytesToSecure.length;
         int myNumBlocks = myDataLen
@@ -296,6 +305,9 @@ public class GordianCoreWrapper
     @Override
     public byte[] deriveBytes(final byte[] pSecuredBytes,
                               final int pOffset) throws GordianException {
+        /* Check for destroyed key */
+        theKey.checkForDestroyedKey();
+
         /* Determine number of blocks */
         int myDataLen = pSecuredBytes.length
                 - theBlockLen - pOffset;

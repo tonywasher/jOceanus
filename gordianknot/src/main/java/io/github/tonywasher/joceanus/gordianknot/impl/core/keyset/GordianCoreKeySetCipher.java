@@ -41,6 +41,11 @@ public class GordianCoreKeySetCipher
     private final GordianKeySetSpec theSpec;
 
     /**
+     * The keySet.
+     */
+    private final GordianBaseKeySet theKeySet;
+
+    /**
      * The Underlying cipher.
      */
     private final GordianMultiCipher theCipher;
@@ -84,6 +89,11 @@ public class GordianCoreKeySetCipher
      */
     public GordianCoreKeySetCipher(final GordianBaseKeySet pKeySet,
                                    final boolean pAead) throws GordianException {
+        /* Check for destroyed keySet */
+        pKeySet.checkForDestroyedKeySet();
+
+        /* Store details */
+        theKeySet = pKeySet;
         theFactory = pKeySet.getFactory();
         aead = pAead;
         theSpec = pKeySet.getKeySetSpec();
@@ -145,6 +155,9 @@ public class GordianCoreKeySetCipher
      * @throws GordianException on error
      */
     protected void reset() throws GordianException {
+        /* Check for destroyed keySet */
+        theKeySet.checkForDestroyedKeySet();
+
         /* Set flags */
         hdrBytes = 0;
         initialised = true;

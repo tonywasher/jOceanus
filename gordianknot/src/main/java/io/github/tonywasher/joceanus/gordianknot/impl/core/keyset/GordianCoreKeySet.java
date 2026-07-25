@@ -42,6 +42,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreWra
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpecBuilder;
@@ -82,6 +83,11 @@ public final class GordianCoreKeySet
     private final GordianMultiCipher theCipher;
 
     /**
+     * Is the keySet destroyed?
+     */
+    private boolean isDestroyed;
+
+    /**
      * Constructor.
      *
      * @param pFactory the factory
@@ -108,6 +114,9 @@ public final class GordianCoreKeySet
      * @throws GordianException on error
      */
     private GordianCoreKeySet(final GordianCoreKeySet pSource) throws GordianException {
+        /* Check source keySet */
+        pSource.checkForDestroyedKeySet();
+
         /* Copy factory */
         theFactory = pSource.getFactory();
         theSpec = pSource.getKeySetSpec();
@@ -141,6 +150,31 @@ public final class GordianCoreKeySet
     @Override
     public GordianCoreKeySet cloneIt() throws GordianException {
         return new GordianCoreKeySet(this);
+    }
+
+    @Override
+    public void destroy() throws GordianException {
+        for (GordianKey<GordianSymKeySpec> myKey : theSymKeyMap.values()) {
+            myKey.destroy();
+        }
+        isDestroyed = true;
+    }
+
+    @Override
+    public boolean isDestroyed() {
+        return isDestroyed;
+    }
+
+    @Override
+    public boolean isClearable() {
+        return true;
+    }
+
+    @Override
+    public void checkForDestroyedKeySet() throws GordianException {
+        if (isDestroyed) {
+            throw new GordianLogicException("KeySet has been destroyed");
+        }
     }
 
     /**
@@ -223,6 +257,9 @@ public final class GordianCoreKeySet
 
     @Override
     public byte[] encryptBytes(final byte[] pBytes) throws GordianException {
+        /* Check for destroyed keySet */
+        checkForDestroyedKeySet();
+
         /* Generate set of keys and initialisation vector */
         final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newRecipe(theFactory, theSpec, false);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
@@ -240,6 +277,9 @@ public final class GordianCoreKeySet
 
     @Override
     public byte[] decryptBytes(final byte[] pBytes) throws GordianException {
+        /* Check for destroyed key */
+        checkForDestroyedKeySet();
+
         /* Parse the bytes into the separate parts */
         final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseRecipe(theFactory, theSpec, pBytes, false);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
@@ -260,7 +300,7 @@ public final class GordianCoreKeySet
     @Override
     public byte[] encryptAADBytes(final byte[] pBytes,
                                   final byte[] pAAD) throws GordianException {
-        /* Creat cipher and initialise to encrypt */
+        /* Create cipher and initialise to encrypt */
         final GordianKeySetAADCipher myCipher = createAADCipher();
         myCipher.initForEncrypt(pAAD);
 
@@ -268,8 +308,8 @@ public final class GordianCoreKeySet
         final int myOutLen = myCipher.getOutputLength(pBytes.length);
         final byte[] myOutput = new byte[myOutLen];
 
-        /* build the and return the output */
-        final int myLen = theCipher.finish(pBytes, 0, pBytes.length, myOutput, 0);
+        /* build the output */
+        final int myLen = myCipher.finish(pBytes, 0, pBytes.length, myOutput, 0);
         return myLen == myOutLen
                 ? myOutput
                 : Arrays.copyOf(myOutput, myLen);
@@ -278,7 +318,7 @@ public final class GordianCoreKeySet
     @Override
     public byte[] decryptAADBytes(final byte[] pBytes,
                                   final byte[] pAAD) throws GordianException {
-        /* Creat cipher and initialise to encrypt */
+        /* Create cipher and initialise to encrypt */
         final GordianKeySetAADCipher myCipher = createAADCipher();
         myCipher.initForDecrypt(pAAD);
 
@@ -286,8 +326,8 @@ public final class GordianCoreKeySet
         final int myOutLen = myCipher.getOutputLength(pBytes.length);
         final byte[] myOutput = new byte[myOutLen];
 
-        /* build the and return the output */
-        final int myLen = theCipher.finish(pBytes, 0, pBytes.length, myOutput, 0);
+        /* build the output */
+        final int myLen = myCipher.finish(pBytes, 0, pBytes.length, myOutput, 0);
         return myLen == myOutLen
                 ? myOutput
                 : Arrays.copyOf(myOutput, myLen);
@@ -295,6 +335,9 @@ public final class GordianCoreKeySet
 
     @Override
     public byte[] secureKey(final GordianKey<?> pKeyToSecure) throws GordianException {
+        /* Check the key */
+        ((GordianCoreKey<?>) pKeyToSecure).checkForDestroyedKey();
+
         /* Generate set of keys */
         final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newRecipe(theFactory, theSpec, false);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
@@ -389,6 +432,9 @@ public final class GordianCoreKeySet
 
     @Override
     public byte[] secureKeySet(final GordianKeySet pKeySetToSecure) throws GordianException {
+        /* Check the keySet */
+        ((GordianBaseKeySet) pKeySetToSecure).checkForDestroyedKeySet();
+
         /* Protect against exceptions */
         try {
             /* Encode the keySet */

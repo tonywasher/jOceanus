@@ -1,6 +1,6 @@
 /*
  * GordianKnot: Security Suite
- * Copyright 2012-2026. Tony Washer
+ * Copyright 2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -14,22 +14,31 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.api.key;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianDestroyable;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+package io.github.tonywasher.joceanus.gordianknot.api.base;
 
 /**
- * GordianKnot Key abstraction.
- *
- * @param <T> the Key type
+ * GordianKnot interface for Destroyable keys.
  */
-public interface GordianKey<T extends GordianKeySpec>
-        extends GordianDestroyable {
+public interface GordianDestroyable {
     /**
-     * Obtain the keyType.
+     * Destroy the key.
      *
-     * @return the keyType
+     * @throws GordianException on error
      */
-    T getKeyType();
+    void destroy() throws GordianException;
+
+    /**
+     * Is the key destroyed?
+     *
+     * @return true/false
+     */
+    boolean isDestroyed();
+
+    /**
+     * Is the key clearable?
+     *
+     * @return true/false
+     */
+    boolean isClearable();
 }

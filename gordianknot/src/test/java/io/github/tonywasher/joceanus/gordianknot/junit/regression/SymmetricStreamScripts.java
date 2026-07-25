@@ -31,10 +31,12 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCi
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryStreamPBECipherSpec;
@@ -46,6 +48,7 @@ import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -135,6 +138,9 @@ public class SymmetricStreamScripts {
         /* Add algorithmId tests */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmKeyId", () -> checkStreamKeyAlgId(pKeySpec))));
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmCipherId", () -> checkStreamCipherAlgId(myCipherSpec))));
+
+        /* Add destroy test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("destroy", () -> checkDestroyStreamKey(pKeySpec))));
 
         /* Add partner test if  the partner supports this streamKeySpec */
         if (pKeySpec.getPartner() != null) {
@@ -400,6 +406,39 @@ public class SymmetricStreamScripts {
 
         /* Check that the decryption worked */
         Assertions.assertArrayEquals(myBytes, myDecrypted, "cipher misMatch");
+    }
+
+    /**
+     * Check symKey Destroy.
+     *
+     * @param pKeySpec the keySpec
+     * @throws GordianException on error
+     */
+    private static void checkDestroyStreamKey(final FactoryStreamKeySpec pKeySpec) throws GordianException {
+        /* Access details */
+        final GordianFactory myFactory = pKeySpec.getFactory();
+        final GordianCoreStreamKeySpec mySpec = pKeySpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianKey<GordianStreamKeySpec> myKey = pKeySpec.getKey();
+
+        /* Create a second key */
+        final GordianKeyGenerator<GordianStreamKeySpec> myGenerator = myCipherFactory.getKeyGenerator(mySpec);
+        final GordianKey<GordianStreamKeySpec> mySecondKey = myGenerator.generateKey();
+
+        /* Create the Cipher */
+        final GordianStreamCipherSpecBuilder myBuilder = myCipherFactory.newStreamCipherSpecBuilder();
+        final GordianStreamCipherSpec myCipherSpec = myBuilder.streamCipher(mySpec);
+        final GordianStreamCipher myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
+        final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+        final GordianCipherParams myParms = myParamsBuilder.keyWithRandomNonce(mySecondKey);
+        myCipher.initForEncrypt(myParms);
+
+        /* Destroy the second key */
+        mySecondKey.destroy();
+
+        /* Can't update/finish a cipher whose key has now been destroyed */
+        Assertions.assertThrows(GordianException.class, () -> myCipher.update("SomeBytes".getBytes(StandardCharsets.UTF_8)));
+        Assertions.assertThrows(GordianException.class, myCipher::finish);
     }
 
     /**

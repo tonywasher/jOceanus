@@ -59,8 +59,10 @@ public abstract class GordianCoreKey<T extends GordianKeySpec>
      */
     public abstract byte[] getKeyBytes();
 
-    @Override
-    public void destroy() throws GordianException {
+    /**
+     * Set the destroyed flag.
+     */
+    protected void setDestroyed() throws GordianException {
         isDestroyed = true;
     }
 

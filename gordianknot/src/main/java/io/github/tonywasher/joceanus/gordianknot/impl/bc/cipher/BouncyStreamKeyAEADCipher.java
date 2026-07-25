@@ -64,12 +64,21 @@ public class BouncyStreamKeyAEADCipher
         theCipher = pCipher;
     }
 
+
+    @Override
+    public BouncyKey<GordianStreamKeySpec> getKey() {
+        return (BouncyKey<GordianStreamKeySpec>) super.getKey();
+    }
+
     @Override
     public void init(final boolean pEncrypt,
                      final GordianCipherParams pParams) throws GordianException {
         /* Process the parameters and access the key */
         processParameters(pParams);
         final BouncyKey<GordianStreamKeySpec> myKey = BouncyKey.accessKey(getKey());
+
+        /* Check for destroyed key */
+        myKey.checkForDestroyedKey();
 
         /* Initialise the cipher */
         final KeyParameter myKeyParms = new KeyParameter(myKey.getKey());
@@ -84,7 +93,10 @@ public class BouncyStreamKeyAEADCipher
     @Override
     public void updateAAD(final byte[] in,
                           final int inOff,
-                          final int len) {
+                          final int len) throws GordianException {
+        /* Check for destroyed key */
+        getKey().checkForDestroyedKey();
+
         /* Pass call on */
         theCipher.processAADBytes(in, inOff, len);
     }
@@ -102,6 +114,9 @@ public class BouncyStreamKeyAEADCipher
                         final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
+            /* Check for destroyed key */
+            getKey().checkForDestroyedKey();
+
             /* Process the bytes */
             return theCipher.processBytes(pBytes, pOffset, pLength, pOutput, pOutOffset);
 
@@ -119,7 +134,12 @@ public class BouncyStreamKeyAEADCipher
     @Override
     public int doFinish(final byte[] out,
                         final int outOff) throws GordianException {
+        /* Protect against exceptions */
         try {
+            /* Check for destroyed key */
+            getKey().checkForDestroyedKey();
+
+            /* Finish the cipher */
             return theCipher.doFinal(out, outOff);
         } catch (InvalidCipherTextException e) {
             throw new GordianCryptoException("Mac mismatch", e);

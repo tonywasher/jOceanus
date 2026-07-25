@@ -50,4 +50,11 @@ public interface GordianBaseKeySet
      * @throws GordianException on error
      */
     void declareSymKey(GordianKey<GordianSymKeySpec> pKey) throws GordianException;
+
+    /**
+     * Check the keySet.
+     *
+     * @throws GordianException if keySet has been destroyed
+     */
+    void checkForDestroyedKeySet() throws GordianException;
 }
