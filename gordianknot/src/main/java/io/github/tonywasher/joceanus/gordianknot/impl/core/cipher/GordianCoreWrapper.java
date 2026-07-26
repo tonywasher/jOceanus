@@ -222,7 +222,9 @@ public class GordianCoreWrapper
     @Override
     public byte[] secureBytes(final byte[] pBytesToSecure) throws GordianException {
         /* Check for destroyed key */
-        theKey.checkForDestroyedKey();
+        if (theKey != null) {
+            theKey.checkForDestroyedKey();
+        }
 
         /* Determine number of blocks */
         final int myDataLen = pBytesToSecure.length;
@@ -306,7 +308,9 @@ public class GordianCoreWrapper
     public byte[] deriveBytes(final byte[] pSecuredBytes,
                               final int pOffset) throws GordianException {
         /* Check for destroyed key */
-        theKey.checkForDestroyedKey();
+        if (theKey != null) {
+            theKey.checkForDestroyedKey();
+        }
 
         /* Determine number of blocks */
         int myDataLen = pSecuredBytes.length

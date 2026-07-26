@@ -161,6 +161,9 @@ public class JcaAEADCipher<T extends GordianKeySpec>
                         final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
+            /* Check for destroyed key */
+            getKey().checkForDestroyedKey();
+
             /* Finish the operation */
             return theCipher.doFinal(pOutput, pOutOffset);
 
