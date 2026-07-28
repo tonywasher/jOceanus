@@ -23,7 +23,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSp
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
@@ -175,13 +174,4 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         final GordianCoreKey<X> mySource = (GordianCoreKey<X>) pSource;
         return buildKeyFromBytes(mySource.getKeyBytes());
     }
-
-    /**
-     * Init Mac keyBytes.
-     *
-     * @param pMac      the Mac.
-     * @param pKeyBytes the keyBytes
-     * @throws GordianException on error
-     */
-    public abstract void initMacKeyBytes(GordianMac pMac, byte[] pKeyBytes) throws GordianException;
 }

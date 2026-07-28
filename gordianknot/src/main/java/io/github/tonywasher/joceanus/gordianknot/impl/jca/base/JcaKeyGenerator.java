@@ -18,13 +18,11 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca.base;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.util.Random;
 
 /**
@@ -71,7 +69,7 @@ public final class JcaKeyGenerator<T extends GordianKeySpec>
     @Override
     public JcaKey<T> buildKeyFromBytes(final byte[] pBytes) {
         /* Build the new key */
-        final SecretKey myKey = new SecretKeySpec(pBytes, theGenerator.getAlgorithm());
+        final JcaSecretKey myKey = new JcaSecretKey(pBytes, theGenerator.getAlgorithm());
         return new JcaKey<>(getKeyType(), myKey);
     }
 
@@ -79,11 +77,5 @@ public final class JcaKeyGenerator<T extends GordianKeySpec>
     public JcaKey<T> generateKeyFromSecret(final byte[] pSecret,
                                            final Random pSeededRandom) throws GordianException {
         return (JcaKey<T>) super.generateKeyFromSecret(pSecret, pSeededRandom);
-    }
-
-    @Override
-    public void initMacKeyBytes(final GordianMac pMac,
-                                final byte[] pKeyBytes) throws GordianException {
-        pMac.initKeyBytes(pKeyBytes);
     }
 }

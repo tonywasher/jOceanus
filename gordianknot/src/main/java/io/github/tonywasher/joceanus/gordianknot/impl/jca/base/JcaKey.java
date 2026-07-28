@@ -36,7 +36,22 @@ public final class JcaKey<T extends GordianKeySpec>
     /**
      * The secret key.
      */
-    private final SecretKey theKey;
+    private final JcaSecretKey theKey;
+
+    /**
+     * Constructor.
+     *
+     * @param pKeyType the keyType
+     * @param pKey     the key
+     */
+    JcaKey(final T pKeyType,
+           final JcaSecretKey pKey) {
+        /* Initialise underlying class */
+        super(pKeyType);
+
+        /* Store parameters */
+        theKey = pKey;
+    }
 
     /**
      * Constructor.
@@ -50,7 +65,7 @@ public final class JcaKey<T extends GordianKeySpec>
         super(pKeyType);
 
         /* Store parameters */
-        theKey = pKey;
+        theKey = new JcaSecretKey(pKey.getEncoded(), pKey.getAlgorithm());
     }
 
     /**
@@ -58,7 +73,7 @@ public final class JcaKey<T extends GordianKeySpec>
      *
      * @return the key
      */
-    public SecretKey getKey() {
+    public JcaSecretKey getKey() {
         return theKey;
     }
 
@@ -69,12 +84,14 @@ public final class JcaKey<T extends GordianKeySpec>
 
     @Override
     public boolean isClearable() {
-        return false;
+        return true;
     }
 
     @Override
     public void destroy() throws GordianException {
-        /* Can't clear SecretKey */
+        if (!isDestroyed()) {
+            theKey.destroy();
+        }
         setDestroyed();
     }
 

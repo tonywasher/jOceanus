@@ -18,7 +18,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import org.bouncycastle.crypto.CipherKeyGenerator;
@@ -78,11 +77,5 @@ public final class BouncyKeyGenerator<T extends GordianKeySpec>
     public BouncyKey<T> generateKeyFromSecret(final byte[] pSecret,
                                               final Random pSeededRandom) throws GordianException {
         return (BouncyKey<T>) super.generateKeyFromSecret(pSecret, pSeededRandom);
-    }
-
-    @Override
-    public void initMacKeyBytes(final GordianMac pMac,
-                                final byte[] pKeyBytes) throws GordianException {
-        pMac.initKeyBytes(pKeyBytes);
     }
 }

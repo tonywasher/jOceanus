@@ -27,6 +27,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory.Gord
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
@@ -55,6 +60,7 @@ import org.junit.jupiter.api.TestFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.stream.Stream;
 
 /**
@@ -905,16 +911,27 @@ class KeySetTest {
         final GordianKey<GordianSymKeySpec> myKey = myGenerator.generateKey();
         final GordianKey<GordianSymKeySpec> mySecondKey = myGenerator.generateKey();
 
+        /* Create a keyPair and destroy it */
+        final GordianKeyPairFactory myKeyPairFactory = myFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairSpecBuilder myKPBuilder = myKeyPairFactory.newKeyPairSpecBuilder();
+        final GordianKeyPairSpec myKPSpec = myKPBuilder.newHope();
+        final GordianKeyPairGenerator myKPGenerator = myKeyPairFactory.getKeyPairGenerator(myKPSpec);
+        final GordianKeyPair myKeyPair = myKPGenerator.generateKeyPair();
+        final GordianKeyPair mySecondKeyPair = myKPGenerator.generateKeyPair();
+
         /* Encrypt some bytes */
         final byte[] myEncrypt = mySecondKeySet.encryptBytes("SomeBytes".getBytes(StandardCharsets.UTF_8));
         final byte[] myAEADEncrypt = mySecondKeySet.encryptAADBytes("SomeBytes".getBytes(StandardCharsets.UTF_8));
         final byte[] mySecuredBytes = mySecondKeySet.secureBytes("SomeBytes".getBytes(StandardCharsets.UTF_8));
         final byte[] mySecuredKeySet = mySecondKeySet.secureKeySet(myKeySet);
         final byte[] mySecuredKey = mySecondKeySet.secureKey(myKey);
+        final byte[] mySecuredKeyPair = mySecondKeySet.securePrivateKey(myKeyPair);
+        final X509EncodedKeySpec myX509KeySpec = myKPGenerator.getX509Encoding(myKeyPair);
 
         /* Destroy the keySet/key */
         mySecondKeySet.destroy();
         mySecondKey.destroy();
+        mySecondKeyPair.destroy();
 
         /* Can't clone a destroyed keySet */
         Assertions.assertThrows(GordianException.class, mySecondKeySet::cloneIt);
@@ -935,13 +952,20 @@ class KeySetTest {
 
         /* Can't secure/derive KeySet using a destroyed keySet */
         Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.secureKeySet(myKeySet));
-        Assertions.assertThrows(GordianException.class, () -> myKeySet.secureKeySet(mySecondKeySet));
         Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.deriveKeySet(mySecuredKeySet));
 
         /* Can't secure/derive Key using a destroyed keySet */
         Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.secureKey(myKey));
-        Assertions.assertThrows(GordianException.class, () -> myKeySet.secureKey(mySecondKey));
         Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.deriveKey(mySecuredKey, myKeySpec));
+
+        /* Can't secure/derive PrivateKey using a destroyed keySet */
+        Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.securePrivateKey(myKeyPair));
+        Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.deriveKeyPair(myX509KeySpec, mySecuredKeyPair));
+
+        /* Can't secure a destroyed key/keySet/keyPair */
+        Assertions.assertThrows(GordianException.class, () -> myKeySet.secureKey(mySecondKey));
+        Assertions.assertThrows(GordianException.class, () -> myKeySet.secureKeySet(mySecondKeySet));
+        Assertions.assertThrows(GordianException.class, () -> myKeySet.securePrivateKey(mySecondKeyPair));
     }
 
     /**

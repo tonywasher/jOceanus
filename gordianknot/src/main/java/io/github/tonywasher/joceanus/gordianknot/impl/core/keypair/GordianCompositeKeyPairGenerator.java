@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseDestroyable;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair.GordianStateAwareCompositeKeyPair;
@@ -144,6 +145,10 @@ public class GordianCompositeKeyPairGenerator
     public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
         /* Protect against exceptions */
         try {
+            /* Check the keyPair has not been destroyed */
+            final GordianBaseDestroyable myDestroyable = (GordianBaseDestroyable) pKeyPair;
+            myDestroyable.checkForDestroyedKeyPair();
+
             /* Create the new empty keyPair */
             final GordianCompositeKeyPair myPair = (GordianCompositeKeyPair) pKeyPair;
 

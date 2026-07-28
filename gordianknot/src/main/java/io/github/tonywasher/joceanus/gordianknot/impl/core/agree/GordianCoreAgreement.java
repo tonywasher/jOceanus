@@ -28,10 +28,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCiphe
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseDestroyable;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementType;
 
@@ -526,25 +525,23 @@ public class GordianCoreAgreement
      * @throws GordianException on error
      */
     private void check4DestroyedKeyPairs() throws GordianException {
-        check4DestroyedKeyPair(theParams.getClientCertificate());
-        check4DestroyedKeyPair(theParams.getServerCertificate());
-        check4DestroyedKeyPair(theParams.getSignerCertificate());
+        check4DestroyedKeyPair(theParams.getClientCertificate(), "Client");
+        check4DestroyedKeyPair(theParams.getServerCertificate(), "Server");
+        check4DestroyedKeyPair(theParams.getSignerCertificate(), "Signer");
     }
 
     /**
      * Check for destroyed keyPairs.
      *
      * @param pCertificate the certificate to check
+     * @param pName        the name of the certificate
      * @throws GordianException on error
      */
-    private void check4DestroyedKeyPair(final GordianCertificate pCertificate) throws GordianException {
+    private void check4DestroyedKeyPair(final GordianCertificate pCertificate,
+                                        final String pName) throws GordianException {
         if (pCertificate != null) {
-            switch (pCertificate.getKeyPair()) {
-                case GordianCoreKeyPair myCore -> myCore.checkForDestroyedKeyPair();
-                case GordianCompositeKeyPair myComposite -> myComposite.checkForDestroyedKeyPair();
-                default -> {
-                }
-            }
+            final GordianBaseDestroyable myDestroyable = (GordianBaseDestroyable) pCertificate.getKeyPair();
+            myDestroyable.checkForDestroyed(pName);
         }
     }
 }

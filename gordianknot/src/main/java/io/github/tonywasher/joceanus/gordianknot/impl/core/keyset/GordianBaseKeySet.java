@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseDestroyable;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 
 import java.util.Map;
@@ -28,7 +29,7 @@ import java.util.Map;
  * Base KeySet interface.
  */
 public interface GordianBaseKeySet
-        extends GordianKeySet {
+        extends GordianKeySet, GordianBaseDestroyable {
     /**
      * Obtain the factory.
      *
@@ -50,11 +51,4 @@ public interface GordianBaseKeySet
      * @throws GordianException on error
      */
     void declareSymKey(GordianKey<GordianSymKeySpec> pKey) throws GordianException;
-
-    /**
-     * Check the keySet.
-     *
-     * @throws GordianException if keySet has been destroyed
-     */
-    void checkForDestroyedKeySet() throws GordianException;
 }

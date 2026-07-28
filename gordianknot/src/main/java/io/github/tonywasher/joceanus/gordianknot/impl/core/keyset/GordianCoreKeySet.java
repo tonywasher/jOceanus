@@ -171,9 +171,9 @@ public final class GordianCoreKeySet
     }
 
     @Override
-    public void checkForDestroyedKeySet() throws GordianException {
+    public void checkForDestroyed(final String pName) throws GordianException {
         if (isDestroyed) {
-            throw new GordianLogicException("KeySet has been destroyed");
+            throw new GordianLogicException(pName + " has been destroyed");
         }
     }
 

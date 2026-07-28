@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseDestroyable;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
 import java.util.Iterator;
@@ -31,7 +32,7 @@ import java.util.Objects;
  * CompositeKeyPair.
  */
 public class GordianCompositeKeyPair
-        implements GordianKeyPair {
+        implements GordianKeyPair, GordianBaseDestroyable {
     /**
      * The KeySpec.
      */
@@ -173,14 +174,10 @@ public class GordianCompositeKeyPair
         }
     }
 
-    /**
-     * Check the keyPair.
-     *
-     * @throws GordianException if key has been destroyed
-     */
-    public void checkForDestroyedKeyPair() throws GordianException {
+    @Override
+    public void checkForDestroyed(final String pName) throws GordianException {
         if (isDestroyed) {
-            throw new GordianLogicException("KeyPair has been destroyed");
+            throw new GordianLogicException(pName + " has been destroyed");
         }
     }
 
