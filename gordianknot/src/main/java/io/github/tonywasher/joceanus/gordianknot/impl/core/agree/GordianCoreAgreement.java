@@ -30,6 +30,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSp
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementType;
 
@@ -103,15 +105,6 @@ public class GordianCoreAgreement
         return theSpec;
     }
 
-    /**
-     * Set the status.
-     *
-     * @param pStatus the status
-     */
-    void setStatus(final GordianAgreementStatus pStatus) {
-        theState.setStatus(pStatus);
-    }
-
     @Override
     public GordianAgreementStatus getStatus() {
         return theState.getStatus();
@@ -121,9 +114,8 @@ public class GordianCoreAgreement
      * Set the resultType.
      *
      * @param pResultType the resultType
-     * @throws GordianException on error
      */
-    void setResultType(final Object pResultType) throws GordianException {
+    void setResultType(final Object pResultType) {
         theBuilder.setResultType(pResultType);
     }
 
@@ -347,6 +339,9 @@ public class GordianCoreAgreement
         /* Take a snapshot of the parameters */
         theParams = new GordianCoreAgreementParams(theBuilder);
 
+        /* Check for destroyed KeyPairs */
+        check4DestroyedKeyPairs();
+
         /* Create ClientId and InitVector */
         if (!theSpec.getCoreAgreementType().isAnonymous()) {
             theBuilder.newClientId();
@@ -393,6 +388,9 @@ public class GordianCoreAgreement
      * @throws GordianException on error
      */
     void processClientHello() throws GordianException {
+        /* Check for destroyed KeyPairs */
+        check4DestroyedKeyPairs();
+
         /* Create ServerId and InitVector */
         if (!theSpec.getCoreAgreementType().isAnonymous()) {
             theBuilder.newServerId();
@@ -443,6 +441,9 @@ public class GordianCoreAgreement
         /* Check that we are expecting a serverHello */
         checkStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
 
+        /* Check for destroyed KeyPairs */
+        check4DestroyedKeyPairs();
+
         /* Parse the serverHello */
         final boolean bSuccess = theBuilder.parseServerHello(pServerHello);
         if (bSuccess) {
@@ -477,6 +478,9 @@ public class GordianCoreAgreement
     public void processClientConfirm(final GordianCoreAgreementMessageASN1 pClientConfirm) throws GordianException {
         /* Check that we are expecting a confirmation */
         checkStatus(GordianAgreementStatus.AWAITING_CLIENTCONFIRM);
+
+        /* Check for destroyed KeyPairs */
+        check4DestroyedKeyPairs();
 
         /* Parse the clientConfirm */
         if (theBuilder.parseClientConfirm(pClientConfirm)) {
@@ -514,5 +518,33 @@ public class GordianCoreAgreement
             case SIGNED, SM2, MQV, UNIFIED -> true;
             default -> false;
         };
+    }
+
+    /**
+     * Check for destroyed keyPairs.
+     *
+     * @throws GordianException on error
+     */
+    private void check4DestroyedKeyPairs() throws GordianException {
+        check4DestroyedKeyPair(theParams.getClientCertificate());
+        check4DestroyedKeyPair(theParams.getServerCertificate());
+        check4DestroyedKeyPair(theParams.getSignerCertificate());
+    }
+
+    /**
+     * Check for destroyed keyPairs.
+     *
+     * @param pCertificate the certificate to check
+     * @throws GordianException on error
+     */
+    private void check4DestroyedKeyPair(final GordianCertificate pCertificate) throws GordianException {
+        if (pCertificate != null) {
+            switch (pCertificate.getKeyPair()) {
+                case GordianCoreKeyPair myCore -> myCore.checkForDestroyedKeyPair();
+                case GordianCompositeKeyPair myComposite -> myComposite.checkForDestroyedKeyPair();
+                default -> {
+                }
+            }
+        }
     }
 }

@@ -62,7 +62,7 @@ public abstract class GordianCoreKey<T extends GordianKeySpec>
     /**
      * Set the destroyed flag.
      */
-    protected void setDestroyed() throws GordianException {
+    protected void setDestroyed() {
         isDestroyed = true;
     }
 

@@ -16,12 +16,14 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianDestroyable;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 
 /**
  * Asymmetric KeyPair.
  */
-public interface GordianKeyPair {
+public interface GordianKeyPair
+        extends GordianDestroyable {
     /**
      * Obtain the keyPairSpec.
      *

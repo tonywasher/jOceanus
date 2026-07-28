@@ -16,8 +16,10 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
 import java.util.Objects;
 
@@ -40,6 +42,11 @@ public abstract class GordianCoreKeyPair
      * The PublicKey.
      */
     private final GordianPublicKey thePublicKey;
+
+    /**
+     * Is the keyPair destroyed?
+     */
+    private boolean isDestroyed;
 
     /**
      * Constructor.
@@ -111,6 +118,39 @@ public abstract class GordianCoreKeyPair
      */
     public GordianPrivateKey getPrivateKey() {
         return thePrivateKey;
+    }
+
+    /**
+     * Set the destroyed flag.
+     */
+    protected void setDestroyed() {
+        isDestroyed = true;
+    }
+
+    @Override
+    public boolean isDestroyed() {
+        return isDestroyed;
+    }
+
+    @Override
+    public boolean isClearable() {
+        return false;
+    }
+
+    @Override
+    public void destroy() throws GordianException {
+        setDestroyed();
+    }
+
+    /**
+     * Check the keyPair.
+     *
+     * @throws GordianException if key has been destroyed
+     */
+    public void checkForDestroyedKeyPair() throws GordianException {
+        if (isDestroyed) {
+            throw new GordianLogicException("KeyPair has been destroyed");
+        }
     }
 
     @Override

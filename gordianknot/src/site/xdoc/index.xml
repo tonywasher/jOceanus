@@ -1,7 +1,7 @@
 <document>
     <properties>
         <title>GordianKnot</title>
-        <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
+        <author email="tony.washer@yahoo.co.uk">Tony Washer</author>
     </properties>
     <body>
         <section name="Overview">
@@ -25,6 +25,9 @@
             </p>
             <subsection name="Symmetric API">
                 <ol>
+                    <li>
+                        <a href="sym/keys.html">Keys</a>
+                    </li>
                     <li>
                         <a href="sym/blockCipher.html">Block Ciphers</a>
                     </li>

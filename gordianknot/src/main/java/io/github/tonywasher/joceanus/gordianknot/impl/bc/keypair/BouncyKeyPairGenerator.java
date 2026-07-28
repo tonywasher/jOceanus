@@ -25,6 +25,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.B
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyStateAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyStateAwarePrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -149,6 +150,9 @@ public abstract class BouncyKeyPairGenerator<S extends AsymmetricKeyParameter, P
     public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check the keyPair type and keySpecs */
         BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
+        if (pKeyPair.isPublicOnly()) {
+            throw new GordianDataException("Missing privateKey");
+        }
 
         /* build and return the encoding */
         final BouncyPrivateKey<?> myPrivateKey = (BouncyPrivateKey<?>) getPrivateKey(pKeyPair);

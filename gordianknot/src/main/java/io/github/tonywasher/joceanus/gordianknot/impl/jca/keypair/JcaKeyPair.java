@@ -85,10 +85,11 @@ public class JcaKeyPair
      */
     public static void checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check that it is a JcaKeyPair */
-        if (!(pKeyPair instanceof JcaKeyPair)) {
+        if (!(pKeyPair instanceof JcaKeyPair myPair)) {
             /* Reject keyPair */
             throw new GordianDataException("Invalid KeyPair");
         }
+        myPair.checkForDestroyedKeyPair();
     }
 
     /**

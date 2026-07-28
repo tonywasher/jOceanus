@@ -52,6 +52,11 @@ public class GordianCompositeEncryptor
     private final List<GordianEncryptor> theEncryptors;
 
     /**
+     * The keyPair.
+     */
+    private GordianCompositeKeyPair theCompositePair;
+
+    /**
      * Constructor.
      *
      * @param pFactory the factory
@@ -82,10 +87,11 @@ public class GordianCompositeEncryptor
     public void initForEncrypt(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check the keyPair */
         checkKeySpec(pKeyPair);
+        theCompositePair = (GordianCompositeKeyPair) pKeyPair;
+        theCompositePair.checkForDestroyedKeyPair();
 
         /* Initialise the encryptors */
-        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pKeyPair;
-        final Iterator<GordianKeyPair> myIterator = myCompositePair.iterator();
+        final Iterator<GordianKeyPair> myIterator = theCompositePair.iterator();
         for (GordianEncryptor myEncryptor : theEncryptors) {
             final GordianKeyPair myPair = myIterator.next();
             myEncryptor.initForEncrypt(myPair);
@@ -96,10 +102,11 @@ public class GordianCompositeEncryptor
     public void initForDecrypt(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check the keyPair */
         checkKeySpec(pKeyPair);
+        theCompositePair = (GordianCompositeKeyPair) pKeyPair;
+        theCompositePair.checkForDestroyedKeyPair();
 
         /* Initialise the signers */
-        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pKeyPair;
-        final Iterator<GordianKeyPair> myIterator = myCompositePair.iterator();
+        final Iterator<GordianKeyPair> myIterator = theCompositePair.iterator();
         for (GordianEncryptor myEncryptor : theEncryptors) {
             final GordianKeyPair myPair = myIterator.next();
             myEncryptor.initForDecrypt(myPair);
@@ -113,13 +120,31 @@ public class GordianCompositeEncryptor
      * @throws GordianException on error
      */
     private void checkKeySpec(final GordianKeyPair pKeyPair) throws GordianException {
+        if (pKeyPair == null) {
+            throw new GordianLogicException("Null keyPair");
+        }
         if (!theFactory.validEncryptorSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), theSpec)) {
             throw new GordianLogicException("Invalid keyPair for encryptor");
         }
     }
 
+    /**
+     * check the keyPair.
+     *
+     * @throws GordianException on error
+     */
+    private void checkKeyPair() throws GordianException {
+        if (theCompositePair == null) {
+            throw new GordianLogicException("Not initialised");
+        }
+        theCompositePair.checkForDestroyedKeyPair();
+    }
+
     @Override
     public byte[] encrypt(final byte[] pBytes) throws GordianException {
+        /* Check the keyPair */
+        checkKeyPair();
+
         /* Loop through the encryptors */
         byte[] myData = pBytes;
         for (GordianEncryptor myEncryptor : theEncryptors) {
@@ -133,6 +158,9 @@ public class GordianCompositeEncryptor
 
     @Override
     public byte[] decrypt(final byte[] pEncrypted) throws GordianException {
+        /* Check the keyPair */
+        checkKeyPair();
+
         /* Loop through the encryptors */
         byte[] myData = pEncrypted;
         final ListIterator<GordianEncryptor> myIterator = theEncryptors.listIterator(theEncryptors.size());
