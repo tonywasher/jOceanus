@@ -55,7 +55,7 @@ public class GordianPersonalisation {
     /**
      * Phrase multiplier.
      */
-    public static final Integer PHRASE_SHIFT = 4;
+    public static final Integer PHRASE_SHIFT = 2;
 
     /**
      * The hash length.

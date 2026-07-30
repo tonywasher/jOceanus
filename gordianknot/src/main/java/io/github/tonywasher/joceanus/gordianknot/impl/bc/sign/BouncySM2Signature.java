@@ -69,23 +69,21 @@ public class BouncySM2Signature
     @Override
     public void update(final byte[] pBytes,
                        final int pOffset,
-                       final int pLength) {
+                       final int pLength) throws GordianException {
+        checkInit();
         theSigner.update(pBytes, pOffset, pLength);
     }
 
     @Override
-    public void update(final byte pByte) {
+    public void update(final byte pByte) throws GordianException {
+        checkInit();
         theSigner.update(pByte);
     }
 
     @Override
-    public void update(final byte[] pBytes) {
+    public void update(final byte[] pBytes) throws GordianException {
+        checkInit();
         theSigner.update(pBytes, 0, pBytes.length);
-    }
-
-    @Override
-    public void reset() {
-        theSigner.reset();
     }
 
     @Override

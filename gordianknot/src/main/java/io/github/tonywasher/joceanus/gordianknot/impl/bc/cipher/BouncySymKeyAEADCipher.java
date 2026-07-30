@@ -76,6 +76,9 @@ public class BouncySymKeyAEADCipher
         processParameters(pParams);
         final BouncyKey<GordianSymKeySpec> myKey = BouncyKey.accessKey(getKey());
 
+        /* Check for destroyed key */
+        myKey.checkForDestroyedKey();
+
         /* Initialise the cipher */
         final KeyParameter myKeyParms = new KeyParameter(myKey.getKey());
         final byte[] myAEAD = getInitialAEAD();
@@ -99,6 +102,9 @@ public class BouncySymKeyAEADCipher
                         final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
+            /* Check for destroyed key */
+            getKey().checkForDestroyedKey();
+
             /* Process the bytes */
             return theCipher.processBytes(pBytes, pOffset, pLength, pOutput, pOutOffset);
 
@@ -115,6 +121,9 @@ public class BouncySymKeyAEADCipher
                           final int pLength) throws GordianException {
         /* Protect against exceptions */
         try {
+            /* Check for destroyed key */
+            getKey().checkForDestroyedKey();
+
             /* Process the bytes */
             theCipher.processAADBytes(pBytes, pOffset, pLength);
 
@@ -130,6 +139,9 @@ public class BouncySymKeyAEADCipher
                         final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
+            /* Check for destroyed key */
+            getKey().checkForDestroyedKey();
+
             /* Finish the operation */
             return theCipher.doFinal(pOutput, pOutOffset);
 

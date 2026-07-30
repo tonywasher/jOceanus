@@ -1,7 +1,7 @@
 <document>
     <properties>
         <title>GordianKnot Lock</title>
-        <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
+        <author email="tony.washer@yahoo.co.uk">Tony Washer</author>
     </properties>
     <body>
         <section name="GordianKnot Lock">
@@ -30,7 +30,7 @@
                             </ol>
                         </li>
                         <li>Each of the hMacs is initialised with the password as the key</li>
-                        <li>Each of the macs is updated with <strong>P</strong>, <strong>IV</strong> and the number of iterations <strong>L</strong> </li>
+                        <li>Each of the MACs is updated with <strong>P</strong>, <strong>IV</strong> and the number of iterations <strong>L</strong> </li>
                         <li>Set input <strong>D<sub>1-3</sub></strong> and <strong>D<sub>S</sub></strong> to <strong>V</strong></li>
                         <li>Repeat the following loop <strong>L</strong> times
                             <ol>

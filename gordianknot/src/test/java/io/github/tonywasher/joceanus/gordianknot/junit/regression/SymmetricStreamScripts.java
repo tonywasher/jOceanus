@@ -31,10 +31,12 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCi
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryStreamPBECipherSpec;
@@ -46,6 +48,7 @@ import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -136,6 +139,9 @@ public class SymmetricStreamScripts {
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmKeyId", () -> checkStreamKeyAlgId(pKeySpec))));
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmCipherId", () -> checkStreamCipherAlgId(myCipherSpec))));
 
+        /* Add destroy test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("destroy", () -> checkDestroyStreamKey(pKeySpec))));
+
         /* Add partner test if  the partner supports this streamKeySpec */
         if (pKeySpec.getPartner() != null) {
             myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("Partner", () -> checkPartnerStreamKey(pKeySpec))));
@@ -182,6 +188,7 @@ public class SymmetricStreamScripts {
         Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("checkCipher", () -> checkStreamAADCipher(pCipherSpec)));
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalCipherId", () -> SymmetricTest.checkExternalId(pCipherSpec))));
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmId", () -> checkStreamCipherAlgId(pCipherSpec))));
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("destroy", () -> checkDestroyStreamKey(pCipherSpec))));
 
         /* Add PBE tests */
         myTests = Stream.concat(myTests, Stream.of(DynamicContainer.dynamicContainer("PBE", streamPBECipherTests(pCipherSpec))));
@@ -400,6 +407,74 @@ public class SymmetricStreamScripts {
 
         /* Check that the decryption worked */
         Assertions.assertArrayEquals(myBytes, myDecrypted, "cipher misMatch");
+    }
+
+    /**
+     * Check streamKey Destroy.
+     *
+     * @param pKeySpec the keySpec
+     * @throws GordianException on error
+     */
+    private static void checkDestroyStreamKey(final FactoryStreamKeySpec pKeySpec) throws GordianException {
+        /* Access details */
+        final GordianFactory myFactory = pKeySpec.getFactory();
+        final GordianCoreStreamKeySpec mySpec = pKeySpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianStreamCipherSpecBuilder myBuilder = myCipherFactory.newStreamCipherSpecBuilder();
+        final GordianStreamCipherSpec myCipherSpec = myBuilder.streamCipher(mySpec);
+
+        /* Call test method */
+        checkDestroyStreamKey(myCipherFactory, mySpec, myCipherSpec);
+    }
+
+    /**
+     * Check streamKey Destroy.
+     *
+     * @param pCipherSpec the cipherSpec
+     * @throws GordianException on error
+     */
+    private static void checkDestroyStreamKey(final FactoryStreamCipherSpec pCipherSpec) throws GordianException {
+        /* Access details */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final GordianStreamKeySpec mySpec = pCipherSpec.getOwner().getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+
+        /* Call test method */
+        checkDestroyStreamKey(myCipherFactory, mySpec, pCipherSpec.getSpec());
+    }
+
+    /**
+     * Check streamKey Destroy.
+     *
+     * @param pFactory    the cipherFactory
+     * @param pKeySpec    the keySpec
+     * @param pCipherSpec the cipherSpec
+     * @throws GordianException on error
+     */
+    private static void checkDestroyStreamKey(final GordianCipherFactory pFactory,
+                                              final GordianStreamKeySpec pKeySpec,
+                                              final GordianStreamCipherSpec pCipherSpec) throws GordianException {
+        /* Create a second key */
+        final GordianKeyGenerator<GordianStreamKeySpec> myGenerator = pFactory.getKeyGenerator(pKeySpec);
+        final GordianKey<GordianStreamKeySpec> mySecondKey = myGenerator.generateKey();
+
+        /* Create the Cipher */
+        final GordianStreamCipher myCipher = pFactory.createStreamKeyCipher(pCipherSpec);
+        final GordianCipherParamsBuilder myParamsBuilder = pFactory.newCipherParamsBuilder();
+        final GordianCipherParams myParms = myParamsBuilder.keyWithRandomNonce(mySecondKey);
+        myCipher.initForEncrypt(myParms);
+
+        /* Destroy the second key */
+        mySecondKey.destroy();
+
+        /* Can't supply AEAD Data to a cipher whose key has been destroyed */
+        if (myCipher instanceof GordianStreamAEADCipher myAEAD) {
+            Assertions.assertThrows(GordianException.class, () -> myAEAD.updateAAD("AEADData".getBytes(StandardCharsets.UTF_8)));
+        }
+
+        /* Can't update/finish a cipher whose key has now been destroyed */
+        Assertions.assertThrows(GordianException.class, () -> myCipher.update("SomeBytes".getBytes(StandardCharsets.UTF_8)));
+        Assertions.assertThrows(GordianException.class, myCipher::finish);
     }
 
     /**

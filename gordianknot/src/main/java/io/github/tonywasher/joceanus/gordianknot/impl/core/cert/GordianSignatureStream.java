@@ -16,42 +16,52 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.cert;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianConsumer;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 /**
  * Class to process an outputStream to a consumer.
  */
-public class GordianStreamConsumer extends OutputStream {
+public class GordianSignatureStream extends OutputStream {
     /**
      * The consumer.
      */
-    private final GordianConsumer theConsumer;
+    private final GordianSignature theSignature;
 
     /**
      * Constructor.
      *
-     * @param pConsumer the consumer
+     * @param pSignature the signature
      */
-    public GordianStreamConsumer(final GordianConsumer pConsumer) {
-        theConsumer = pConsumer;
+    public GordianSignatureStream(final GordianSignature pSignature) {
+        theSignature = pSignature;
     }
 
     @Override
-    public void write(final byte[] pBytes) {
+    public void write(final byte[] pBytes) throws IOException {
         write(pBytes, 0, pBytes == null ? 0 : pBytes.length);
     }
 
     @Override
-    public void write(final int pByte) {
-        theConsumer.update((byte) pByte);
+    public void write(final int pByte) throws IOException {
+        try {
+            theSignature.update((byte) pByte);
+        } catch (GordianException e) {
+            throw new IOException(e);
+        }
     }
 
     @Override
     public void write(final byte[] pBytes,
                       final int pOffset,
-                      final int pLength) {
-        theConsumer.update(pBytes, pOffset, pLength);
+                      final int pLength) throws IOException {
+        try {
+            theSignature.update(pBytes, pOffset, pLength);
+        } catch (GordianException e) {
+            throw new IOException(e);
+        }
     }
 }

@@ -16,8 +16,11 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.key;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseDestroyable;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
 /**
  * GordianKnot Key abstraction.
@@ -25,11 +28,16 @@ import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
  * @param <T> the Key type
  */
 public abstract class GordianCoreKey<T extends GordianKeySpec>
-        implements GordianKey<T> {
+        implements GordianKey<T>, GordianBaseDestroyable {
     /**
      * The Key Type.
      */
     private final T theKeyType;
+
+    /**
+     * Is the key destroyed?
+     */
+    private volatile boolean isDestroyed;
 
     /**
      * Constructor.
@@ -51,4 +59,23 @@ public abstract class GordianCoreKey<T extends GordianKeySpec>
      * @return the keyBytes
      */
     public abstract byte[] getKeyBytes();
+
+    /**
+     * Set the destroyed flag.
+     */
+    protected void setDestroyed() {
+        isDestroyed = true;
+    }
+
+    @Override
+    public boolean isDestroyed() {
+        return isDestroyed;
+    }
+
+    @Override
+    public void checkForDestroyed(final String pName) throws GordianException {
+        if (isDestroyed) {
+            throw new GordianLogicException(pName + " has been destroyed");
+        }
+    }
 }

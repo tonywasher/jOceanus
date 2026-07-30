@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.stream;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 
 import java.io.IOException;
@@ -109,8 +110,12 @@ public class GordianMacOutputStream
     }
 
     @Override
-    protected void finishData() {
-        theMac.update(theDigest);
-        theResult = theMac.finish();
+    protected void finishData() throws IOException {
+        try {
+            theMac.update(theDigest);
+            theResult = theMac.finish();
+        } catch (GordianException e) {
+            throw new IOException(e);
+        }
     }
 }

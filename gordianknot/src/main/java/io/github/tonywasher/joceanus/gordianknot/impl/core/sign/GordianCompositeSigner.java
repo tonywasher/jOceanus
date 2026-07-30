@@ -61,6 +61,11 @@ public class GordianCompositeSigner
     private final List<GordianSignature> theSigners;
 
     /**
+     * The keyPair.
+     */
+    private GordianCompositeKeyPair theCompositePair;
+
+    /**
      * Constructor.
      *
      * @param pFactory       the factory
@@ -90,11 +95,12 @@ public class GordianCompositeSigner
     @Override
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Check the keyPairSet */
-        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pParams.getKeyPair();
-        checkKeySpec(myCompositePair);
+        theCompositePair = (GordianCompositeKeyPair) pParams.getKeyPair();
+        checkKeySpec(theCompositePair);
+        theCompositePair.checkForDestroyedKeyPair();
 
         /* Initialise the signers */
-        final Iterator<GordianKeyPair> myIterator = myCompositePair.iterator();
+        final Iterator<GordianKeyPair> myIterator = theCompositePair.iterator();
         final GordianSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
         for (GordianSignature mySigner : theSigners) {
             final GordianKeyPair myPair = myIterator.next();
@@ -105,11 +111,12 @@ public class GordianCompositeSigner
     @Override
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Check the keyPairSet */
-        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pParams.getKeyPair();
-        checkKeySpec(myCompositePair);
+        theCompositePair = (GordianCompositeKeyPair) pParams.getKeyPair();
+        checkKeySpec(theCompositePair);
+        theCompositePair.checkForDestroyedKeyPair();
 
         /* Initialise the signers */
-        final Iterator<GordianKeyPair> myIterator = myCompositePair.iterator();
+        final Iterator<GordianKeyPair> myIterator = theCompositePair.iterator();
         final GordianSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
         for (GordianSignature mySigner : theSigners) {
             final GordianKeyPair myPair = myIterator.next();
@@ -124,15 +131,30 @@ public class GordianCompositeSigner
      * @throws GordianException on error
      */
     private void checkKeySpec(final GordianKeyPair pKeyPair) throws GordianException {
+        if (pKeyPair == null) {
+            throw new GordianLogicException("Null keyPair");
+        }
         if (!theFactory.validSignatureSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), theSpec)) {
             throw new GordianLogicException("Invalid keyPair for signer");
         }
     }
 
+    /**
+     * check the keyPair.
+     *
+     * @throws GordianException on error
+     */
+    private void checkKeyPair() throws GordianException {
+        if (theCompositePair == null) {
+            throw new GordianLogicException("Not initialised");
+        }
+        theCompositePair.checkForDestroyedKeyPair();
+    }
+
     @Override
     public void update(final byte[] pBytes,
                        final int pOffset,
-                       final int pLength) {
+                       final int pLength) throws GordianException {
         /* Loop through the signers */
         for (GordianSignature mySigner : theSigners) {
             mySigner.update(pBytes, pOffset, pLength);
@@ -140,7 +162,7 @@ public class GordianCompositeSigner
     }
 
     @Override
-    public void update(final byte pByte) {
+    public void update(final byte pByte) throws GordianException {
         /* Loop through the signers */
         for (GordianSignature mySigner : theSigners) {
             mySigner.update(pByte);
@@ -148,15 +170,10 @@ public class GordianCompositeSigner
     }
 
     @Override
-    public void reset() {
-        /* Loop through the signers */
-        for (GordianSignature mySigner : theSigners) {
-            mySigner.reset();
-        }
-    }
-
-    @Override
     public final byte[] sign() throws GordianException {
+        /* Check the keyPair */
+        checkKeyPair();
+
         /* Protect against exceptions */
         try {
             /* Create the signature */
@@ -181,6 +198,9 @@ public class GordianCompositeSigner
 
     @Override
     public boolean verify(final byte[] pSignature) throws GordianException {
+        /* Check the keyPair */
+        checkKeyPair();
+
         /* Protect against exceptions */
         try {
             /* Parse the signature */

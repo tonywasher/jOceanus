@@ -1,6 +1,6 @@
 /*
  * GordianKnot: Security Suite
- * Copyright 2012-2026. Tony Washer
+ * Copyright 2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -14,27 +14,31 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.api.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianDestroyable;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+package io.github.tonywasher.joceanus.gordianknot.api.base;
 
 /**
- * Asymmetric KeyPair.
+ * GordianKnot interface for Destroyable keys.
  */
-public interface GordianKeyPair
-        extends GordianDestroyable {
+public interface GordianDestroyable {
     /**
-     * Obtain the keyPairSpec.
+     * Destroy the key.
      *
-     * @return the keyPairSpec
+     * @throws GordianException on error
      */
-    GordianKeyPairSpec getKeyPairSpec();
+    void destroy() throws GordianException;
 
     /**
-     * Is only the public key known?
+     * Is the key destroyed?
      *
      * @return true/false
      */
-    boolean isPublicOnly();
+    boolean isDestroyed();
+
+    /**
+     * Is the key clearable?
+     *
+     * @return true/false
+     */
+    boolean isClearable();
 }

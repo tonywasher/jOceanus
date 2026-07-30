@@ -72,6 +72,9 @@ public class BouncyStreamKeyCipher
         processParameters(pParams);
         final BouncyKey<GordianStreamKeySpec> myKey = BouncyKey.accessKey(getKey());
 
+        /* Check for destroyed key */
+        myKey.checkForDestroyedKey();
+
         /* Initialise the cipher */
         final CipherParameters myParms = generateParameters(myKey, getInitVector());
         theCipher.init(pEncrypt, myParms);
@@ -112,6 +115,9 @@ public class BouncyStreamKeyCipher
                         final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
+            /* Check for destroyed key */
+            getKey().checkForDestroyedKey();
+
             /* Process the bytes */
             return theCipher.processBytes(pBytes, pOffset, pLength, pOutput, pOutOffset);
 
@@ -124,6 +130,9 @@ public class BouncyStreamKeyCipher
     @Override
     public int doFinish(final byte[] pOutput,
                         final int pOutOffset) throws GordianException {
+        /* Check for destroyed key */
+        getKey().checkForDestroyedKey();
+
         /* Reset the cipher */
         theCipher.reset();
         return 0;

@@ -91,6 +91,7 @@ public class GordianCoreAgreementDerivation {
      * derive the key from the secret.
      *
      * @param pSecret the secret
+     * @throws GordianException on error
      */
     void deriveBytes(final byte[] pSecret) throws GordianException {
         /* Protect against failure */
@@ -237,6 +238,13 @@ public class GordianCoreAgreementDerivation {
      */
     static final class GordianCoreNullKeyDerivation
             implements DerivationFunction {
+        /**
+         * Constructor.
+         */
+        GordianCoreNullKeyDerivation() {
+            /* Empty */
+        }
+
         /**
          * The key.
          */

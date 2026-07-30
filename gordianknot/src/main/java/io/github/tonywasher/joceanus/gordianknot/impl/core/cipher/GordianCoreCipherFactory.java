@@ -164,9 +164,10 @@ public abstract class GordianCoreCipherFactory
      * @param pKey         the key
      * @param pBlockCipher the underlying block cipher
      * @return the wrapCipher
+     * @throws GordianException on error
      */
     protected GordianWrapper createKeyWrapper(final GordianKey<GordianSymKeySpec> pKey,
-                                              final GordianCoreCipher<GordianSymKeySpec> pBlockCipher) {
+                                              final GordianCoreCipher<GordianSymKeySpec> pBlockCipher) throws GordianException {
         return new GordianCoreWrapper(theFactory, pKey, pBlockCipher);
     }
 

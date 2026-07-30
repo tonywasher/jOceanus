@@ -22,6 +22,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFac
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeyPairs;
@@ -30,6 +32,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
@@ -55,6 +59,9 @@ public final class AsymmetricEncryptScripts {
 
         /* Add algorithmId test */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkEncryptorAlgId(pEncryptor))));
+
+        /* Add destroy test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("destroy", () -> checkDestroyEncryptor(pEncryptor))));
 
         /* Check that the partner supports this keySpec*/
         final GordianAsyncFactory myTgtAsym = pEncryptor.getOwner().getPartner();
@@ -162,6 +169,53 @@ public final class AsymmetricEncryptScripts {
 
         /* Check that the values match */
         Assertions.assertArrayEquals(mySrc, myResult2, "Failed received encryption");
+    }
+
+    /**
+     * Check Destroy Encryptor.
+     *
+     * @param pEncryptor the encryptor
+     * @throws GordianException on error
+     */
+    private static void checkDestroyEncryptor(final FactoryEncryptor pEncryptor) throws GordianException {
+        /* Access the KeySpec */
+        final GordianEncryptorSpec mySpec = pEncryptor.getSpec();
+        final FactoryKeyPairs myPairs = pEncryptor.getOwner().getKeyPairs();
+        final GordianKeyPair myPair = myPairs.getKeyPair();
+
+        /* Create a second copy of the keyPair */
+        final GordianAsyncFactory myFactory = pEncryptor.getOwner().getFactory();
+        final GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
+        final GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(myPair.getKeyPairSpec());
+        final PKCS8EncodedKeySpec myPKCS8 = myPairs.getPKCS8Encoding();
+        final X509EncodedKeySpec myX509 = myPairs.getX509Encoding();
+        final GordianKeyPair mySecondCopy = myGenerator.deriveKeyPair(myX509, myPKCS8);
+
+        /* Create sender and receiver */
+        final GordianEncryptorFactory myEncrypts = myFactory.getEncryptorFactory();
+        final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
+        final GordianEncryptor mySender = myEncrypts.createEncryptor(mySpec);
+        final GordianEncryptor myReceiver = myEncrypts.createEncryptor(mySpec);
+
+        /* Can't encrypt/decrypt before init */
+        Assertions.assertThrows(GordianException.class, () -> mySender.encrypt(myMessage), "encrypt preInit");
+        Assertions.assertThrows(GordianException.class, () -> myReceiver.decrypt(myMessage), "decrypt preInit");
+
+        /* Prime the sender and receiver */
+        mySender.initForEncrypt(mySecondCopy);
+        final byte[] myEncrypted = mySender.encrypt(myMessage);
+        myReceiver.initForDecrypt(mySecondCopy);
+
+        /* Destroy the second copy */
+        mySecondCopy.destroy();
+
+        /* Can't Encrypt/decrypt with a destroyed keyPair */
+        Assertions.assertThrows(GordianException.class, () -> mySender.encrypt(myMessage), "encrypt with destroyed");
+        Assertions.assertThrows(GordianException.class, () -> myReceiver.decrypt(myEncrypted), "decrypt with destroyed");
+
+        /* Can't init with a destroyed key pair */
+        Assertions.assertThrows(GordianException.class, () -> mySender.initForEncrypt(mySecondCopy));
+        Assertions.assertThrows(GordianException.class, () -> myReceiver.initForDecrypt(mySecondCopy));
     }
 
     /**

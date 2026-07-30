@@ -18,15 +18,24 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
@@ -49,7 +58,9 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.stream.Stream;
 
 /**
@@ -379,6 +390,8 @@ class KeySetTest {
                 DynamicTest.dynamicTest("encrypt", () -> checkEncrypt(myKeySet)),
                 DynamicTest.dynamicTest("encryptAAD", () -> checkEncryptAAD(myKeySet)),
                 DynamicTest.dynamicTest("wrap", () -> checkWrap(myKeySet)),
+                DynamicTest.dynamicTest("destroyKeySet", () -> checkDestroyedKeySet(myKeySet)),
+                DynamicTest.dynamicTest("destroyCipher", () -> checkDestroyedCipher(myKeySet)),
                 DynamicTest.dynamicTest("factory", () -> checkFactory(myKeySet)),
                 DynamicTest.dynamicTest("profile", () -> profileEncrypt(myKeySet))
         )));
@@ -875,5 +888,114 @@ class KeySetTest {
         final GordianFactoryLock myResolved = myFactory.resolveFactoryLock(mySecured.getLockBytes(), DEF_PASSWORD.clone());
         Assertions.assertEquals(myFactory, myResolved.getFactory(), "Failed to lock/resolve factory");
         Assertions.assertEquals(GordianUtilities.getFactoryLockLen(), mySecured.getLockBytes().length, "Incorrect factoryLockLength");
+    }
+
+    /**
+     * Check destroyedEncrypt
+     *
+     * @param pKeySet the keySet
+     * @throws GordianException on error
+     */
+    private void checkDestroyedKeySet(final FactoryKeySet pKeySet) throws GordianException {
+        /* Access details */
+        final GordianFactory myFactory = pKeySet.getFactory();
+        final GordianKeySetFactory myKeySetFactory = myFactory.getKeySetFactory();
+        final GordianKeySetSpecBuilder myBuilder = myKeySetFactory.newKeySetSpecBuilder();
+        final GordianKeySetSpec mySpec = myBuilder.keySet();
+        final GordianKeySet myKeySet = pKeySet.getKeySet();
+        final GordianKeySet mySecondKeySet = myKeySetFactory.generateKeySet(mySpec);
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianSymKeySpecBuilder mySymBuilder = myCipherFactory.newSymKeySpecBuilder();
+        final GordianSymKeySpec myKeySpec = mySymBuilder.aes(GordianLength.LEN_256);
+        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCipherFactory.getKeyGenerator(myKeySpec);
+        final GordianKey<GordianSymKeySpec> myKey = myGenerator.generateKey();
+        final GordianKey<GordianSymKeySpec> mySecondKey = myGenerator.generateKey();
+
+        /* Create a keyPair and destroy it */
+        final GordianKeyPairFactory myKeyPairFactory = myFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairSpecBuilder myKPBuilder = myKeyPairFactory.newKeyPairSpecBuilder();
+        final GordianKeyPairSpec myKPSpec = myKPBuilder.newHope();
+        final GordianKeyPairGenerator myKPGenerator = myKeyPairFactory.getKeyPairGenerator(myKPSpec);
+        final GordianKeyPair myKeyPair = myKPGenerator.generateKeyPair();
+        final GordianKeyPair mySecondKeyPair = myKPGenerator.generateKeyPair();
+
+        /* Encrypt some bytes */
+        final byte[] myEncrypt = mySecondKeySet.encryptBytes("SomeBytes".getBytes(StandardCharsets.UTF_8));
+        final byte[] myAEADEncrypt = mySecondKeySet.encryptAADBytes("SomeBytes".getBytes(StandardCharsets.UTF_8));
+        final byte[] mySecuredBytes = mySecondKeySet.secureBytes("SomeBytes".getBytes(StandardCharsets.UTF_8));
+        final byte[] mySecuredKeySet = mySecondKeySet.secureKeySet(myKeySet);
+        final byte[] mySecuredKey = mySecondKeySet.secureKey(myKey);
+        final byte[] mySecuredKeyPair = mySecondKeySet.securePrivateKey(myKeyPair);
+        final X509EncodedKeySpec myX509KeySpec = myKPGenerator.getX509Encoding(myKeyPair);
+
+        /* Destroy the keySet/key */
+        mySecondKeySet.destroy();
+        mySecondKey.destroy();
+        mySecondKeyPair.destroy();
+
+        /* Can't clone a destroyed keySet */
+        Assertions.assertThrows(GordianException.class, mySecondKeySet::cloneIt);
+
+        /* Can't encrypt/decrypt using a destroyed keySet */
+        Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.encryptBytes("SomeBytes".getBytes(StandardCharsets.UTF_8)));
+        Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.decryptBytes(myEncrypt));
+        Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.encryptAADBytes("SomeBytes".getBytes(StandardCharsets.UTF_8)));
+        Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.decryptAADBytes(myAEADEncrypt));
+
+        /* Can't create Cipher using a destroyed keySet */
+        Assertions.assertThrows(GordianException.class, mySecondKeySet::createCipher);
+        Assertions.assertThrows(GordianException.class, mySecondKeySet::createAADCipher);
+
+        /* Can't secure/derive Bytes using a destroyed keySet */
+        Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.secureBytes("SomeBytes".getBytes(StandardCharsets.UTF_8)));
+        Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.deriveBytes(mySecuredBytes));
+
+        /* Can't secure/derive KeySet using a destroyed keySet */
+        Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.secureKeySet(myKeySet));
+        Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.deriveKeySet(mySecuredKeySet));
+
+        /* Can't secure/derive Key using a destroyed keySet */
+        Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.secureKey(myKey));
+        Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.deriveKey(mySecuredKey, myKeySpec));
+
+        /* Can't secure/derive PrivateKey using a destroyed keySet */
+        Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.securePrivateKey(myKeyPair));
+        Assertions.assertThrows(GordianException.class, () -> mySecondKeySet.deriveKeyPair(myX509KeySpec, mySecuredKeyPair));
+
+        /* Can't secure a destroyed key/keySet/keyPair */
+        Assertions.assertThrows(GordianException.class, () -> myKeySet.secureKey(mySecondKey));
+        Assertions.assertThrows(GordianException.class, () -> myKeySet.secureKeySet(mySecondKeySet));
+        Assertions.assertThrows(GordianException.class, () -> myKeySet.securePrivateKey(mySecondKeyPair));
+    }
+
+    /**
+     * Check destroyedCipher
+     *
+     * @param pKeySet the keySet
+     * @throws GordianException on error
+     */
+    private void checkDestroyedCipher(final FactoryKeySet pKeySet) throws GordianException {
+        /* Access details */
+        final GordianFactory myFactory = pKeySet.getFactory();
+        final GordianKeySetFactory myKeySetFactory = myFactory.getKeySetFactory();
+        final GordianKeySetSpecBuilder myBuilder = myKeySetFactory.newKeySetSpecBuilder();
+        final GordianKeySetSpec mySpec = myBuilder.keySet();
+        final GordianKeySet mySecondKeySet = myKeySetFactory.generateKeySet(mySpec);
+        final GordianKeySetCipher myCipher = mySecondKeySet.createCipher();
+        final GordianKeySetAADCipher myAADCipher = mySecondKeySet.createAADCipher();
+
+        /* Destroy the keySet/key */
+        mySecondKeySet.destroy();
+
+        /* Can't update a cipher initialised with a keySet that has now been destroyed */
+        Assertions.assertThrows(GordianException.class, () -> myAADCipher.update("AEADBytes".getBytes(StandardCharsets.UTF_8)));
+
+        /* Can't update a cipher initialised with a keySet that has now been destroyed */
+        Assertions.assertThrows(GordianException.class, () -> myCipher.update("SomeBytes".getBytes(StandardCharsets.UTF_8)));
+        Assertions.assertThrows(GordianException.class, () -> myAADCipher.update("SomeBytes".getBytes(StandardCharsets.UTF_8)));
+
+        /* Can't finish a cipher initialised with a keySet that has now been destroyed */
+        Assertions.assertThrows(GordianException.class, myCipher::finish);
+        Assertions.assertThrows(GordianException.class, myAADCipher::finish);
     }
 }

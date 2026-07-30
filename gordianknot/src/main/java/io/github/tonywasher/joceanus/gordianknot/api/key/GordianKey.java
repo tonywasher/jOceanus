@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.key;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianDestroyable;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 
 /**
@@ -23,7 +24,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
  *
  * @param <T> the Key type
  */
-public interface GordianKey<T extends GordianKeySpec> {
+public interface GordianKey<T extends GordianKeySpec>
+        extends GordianDestroyable {
     /**
      * Obtain the keyType.
      *

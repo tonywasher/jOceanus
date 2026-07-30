@@ -77,10 +77,11 @@ public class BouncyKeyPair
      */
     public static void checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check that it is a BouncyKeyPair */
-        if (!(pKeyPair instanceof BouncyKeyPair)) {
+        if (!(pKeyPair instanceof BouncyKeyPair myPair)) {
             /* Reject keyPair */
             throw new GordianDataException("Invalid KeyPair");
         }
+        myPair.checkForDestroyedKeyPair();
     }
 
     /**

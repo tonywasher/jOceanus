@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCiphe
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseDestroyable;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
@@ -103,15 +104,6 @@ public class GordianCoreAgreement
         return theSpec;
     }
 
-    /**
-     * Set the status.
-     *
-     * @param pStatus the status
-     */
-    void setStatus(final GordianAgreementStatus pStatus) {
-        theState.setStatus(pStatus);
-    }
-
     @Override
     public GordianAgreementStatus getStatus() {
         return theState.getStatus();
@@ -121,9 +113,8 @@ public class GordianCoreAgreement
      * Set the resultType.
      *
      * @param pResultType the resultType
-     * @throws GordianException on error
      */
-    void setResultType(final Object pResultType) throws GordianException {
+    void setResultType(final Object pResultType) {
         theBuilder.setResultType(pResultType);
     }
 
@@ -347,6 +338,12 @@ public class GordianCoreAgreement
         /* Take a snapshot of the parameters */
         theParams = new GordianCoreAgreementParams(theBuilder);
 
+        /* Check for destroyed Client KeyPair */
+        final GordianCoreAgreementType myType = theSpec.getCoreAgreementType();
+        if (!myType.isSigned() && !myType.isAnonymous()) {
+            check4DestroyedKeyPair(theParams.getClientCertificate(), "Client");
+        }
+
         /* Create ClientId and InitVector */
         if (!theSpec.getCoreAgreementType().isAnonymous()) {
             theBuilder.newClientId();
@@ -393,6 +390,13 @@ public class GordianCoreAgreement
      * @throws GordianException on error
      */
     void processClientHello() throws GordianException {
+        /* Check for destroyed server/signer KeyPairs */
+        if (theSpec.getCoreAgreementType().isSigned()) {
+            check4DestroyedKeyPair(theParams.getSignerCertificate(), "Signer");
+        } else {
+            check4DestroyedKeyPair(theParams.getServerCertificate(), "Server");
+        }
+
         /* Create ServerId and InitVector */
         if (!theSpec.getCoreAgreementType().isAnonymous()) {
             theBuilder.newServerId();
@@ -442,6 +446,11 @@ public class GordianCoreAgreement
     public void processServerHello(final GordianCoreAgreementMessageASN1 pServerHello) throws GordianException {
         /* Check that we are expecting a serverHello */
         checkStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
+
+        /* Check for destroyed Client KeyPair */
+        if (!theSpec.getCoreAgreementType().isSigned()) {
+            check4DestroyedKeyPair(theParams.getClientCertificate(), "Client");
+        }
 
         /* Parse the serverHello */
         final boolean bSuccess = theBuilder.parseServerHello(pServerHello);
@@ -514,5 +523,20 @@ public class GordianCoreAgreement
             case SIGNED, SM2, MQV, UNIFIED -> true;
             default -> false;
         };
+    }
+
+    /**
+     * Check for destroyed keyPairs.
+     *
+     * @param pCertificate the certificate to check
+     * @param pName        the name of the certificate
+     * @throws GordianException on error
+     */
+    private void check4DestroyedKeyPair(final GordianCertificate pCertificate,
+                                        final String pName) throws GordianException {
+        if (pCertificate != null) {
+            final GordianBaseDestroyable myDestroyable = (GordianBaseDestroyable) pCertificate.getKeyPair();
+            myDestroyable.checkForDestroyed(pName);
+        }
     }
 }

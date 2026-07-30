@@ -181,7 +181,7 @@ public final class AsymmetricAgreeScripts {
      * @param pAgreement the agreement
      * @return the test stream or null
      */
-    static Stream<DynamicNode> xAgreementTests(final FactoryAgreement pAgreement) {
+    static Stream<DynamicNode> AgreementTests(final FactoryAgreement pAgreement) {
         /* Add self agreement test */
         Stream<DynamicNode> myTests = Stream.of(DynamicContainer.dynamicContainer("SelfAgree", Stream.of(
                 selfAgreementTest(pAgreement)
@@ -199,6 +199,9 @@ public final class AsymmetricAgreeScripts {
                 myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("PartnerAgree", () -> checkPartnerAgreement(pAgreement))));
             }
         }
+
+        /* Add destroy test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("destroy", () -> checkDestroyAgreement(pAgreement))));
 
         /* Add rejection tests for non-anonymous agreements */
         final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pAgreement.getSpec();
@@ -385,6 +388,167 @@ public final class AsymmetricAgreeScripts {
         final byte[] mySecond = (byte[]) myResponder.getResult();
         Assertions.assertInstanceOf(byte[].class, mySecond, "Unexpected Server resultType");
         Assertions.assertArrayEquals(myFirst, mySecond, "Failed to agree crossFactory bytes");
+    }
+
+    /**
+     * Test Destroyed KeyPairs.
+     *
+     * @param pAgreement the agreementSpec
+     * @throws GordianException on error
+     */
+    private static void checkDestroyAgreement(final FactoryAgreement pAgreement) throws GordianException {
+        /* Access spec */
+        final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pAgreement.getSpec();
+        final GordianCoreAgreementType myType = mySpec.getCoreAgreementType();
+
+        /* Split out test */
+        if (myType.isAnonymous()) {
+            checkDestroyAnonymous(pAgreement);
+        } else if (myType.isSigned()) {
+            checkDestroySigned(pAgreement);
+        } else {
+            checkDestroyStandard(pAgreement);
+        }
+    }
+
+    /**
+     * Check Anonymous Agreement.
+     *
+     * @param pAgreement the agreement
+     * @throws GordianException on error
+     */
+    private static void checkDestroyAnonymous(final FactoryAgreement pAgreement) throws GordianException {
+        /* Access the KeySpec */
+        final GordianAgreementSpec mySpec = pAgreement.getSpec();
+        final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
+        final GordianKeyPair myPair = myPairs.getTargetKeyPair();
+
+        /* Create a second copy of the keyPair */
+        final GordianAsyncFactory myFactory = pAgreement.getOwner().getFactory();
+        final GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
+        final GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(myPair.getKeyPairSpec());
+        final PKCS8EncodedKeySpec myPKCS8 = myGenerator.getPKCS8Encoding(myPair);
+        final X509EncodedKeySpec myX509 = myGenerator.getX509Encoding(myPair);
+        final GordianKeyPair mySecondCopy = myGenerator.deriveKeyPair(myX509, myPKCS8);
+
+        /* Create agreement */
+        final GordianAgreementFactory myAgrees = myFactory.getAgreementFactory();
+        final GordianCertificate myServerCert = myAgrees.newMiniCertificate(SERVERNAME, mySecondCopy,
+                new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+        final GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, BYTEARRAY).setServerCertificate(myServerCert);
+        final GordianAgreement myAgreement = myAgrees.createAgreement(myParams);
+        final byte[] myClientHello = myAgreement.nextMessage();
+
+        /* Destroy the second copy */
+        mySecondCopy.destroy();
+
+        /* Can't update Params wth destroyed ServerKeyPair */
+        final GordianAgreement myReceived = myAgrees.parseAgreementMessage(myClientHello);
+        final GordianAgreementParams myServerParams = myReceived.getAgreementParams()
+                .setServerCertificate(myServerCert);
+        Assertions.assertThrows(GordianException.class, () -> myReceived.updateParams(myServerParams), "update destroyed server");
+    }
+
+    /**
+     * Check Signed Agreement.
+     *
+     * @param pAgreement the agreement
+     * @throws GordianException on error
+     */
+    private static void checkDestroySigned(final FactoryAgreement pAgreement) throws GordianException {
+        /* Access the KeySpec */
+        final GordianAgreementSpec mySpec = pAgreement.getSpec();
+        final GordianKeyPair myPair = getFactorySigner(pAgreement).getKeyPair();
+
+        /* Create a second copy of the keyPair */
+        final GordianAsyncFactory myFactory = pAgreement.getOwner().getFactory();
+        final GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
+        final GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(myPair.getKeyPairSpec());
+        final PKCS8EncodedKeySpec myPKCS8 = myGenerator.getPKCS8Encoding(myPair);
+        final X509EncodedKeySpec myX509 = myGenerator.getX509Encoding(myPair);
+        final GordianKeyPair mySecondCopy = myGenerator.deriveKeyPair(myX509, myPKCS8);
+
+        /* Create agreement */
+        final GordianAgreementFactory myAgrees = myFactory.getAgreementFactory();
+        final GordianCertificate mySignerCert = myAgrees.newMiniCertificate(SIGNERNAME, mySecondCopy,
+                new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE));
+        final GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, BYTEARRAY);
+        final GordianAgreement myAgreement = myAgrees.createAgreement(myParams);
+        final byte[] myClientHello = myAgreement.nextMessage();
+
+        /* Destroy the second copy */
+        mySecondCopy.destroy();
+
+        /* Can't update Params with destroyed Signer keyPair */
+        final GordianAgreement myReceived = myAgrees.parseAgreementMessage(myClientHello);
+        final GordianAgreementParams myServerParams = myReceived.getAgreementParams()
+                .setSigner(mySignerCert);
+        Assertions.assertThrows(GordianException.class, () -> myReceived.updateParams(myServerParams), "update destroyed signer");
+    }
+
+
+    /**
+     * Check Standard Agreement.
+     *
+     * @param pAgreement the agreement
+     * @throws GordianException on error
+     */
+    private static void checkDestroyStandard(final FactoryAgreement pAgreement) throws GordianException {
+        /* Access the KeySpec */
+        final GordianAgreementSpec mySpec = pAgreement.getSpec();
+        final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
+        final GordianKeyPair myPair = myPairs.getKeyPair();
+        final GordianKeyPair myTarget = myPairs.getTargetKeyPair();
+
+        /* Create a second copy of the keyPair */
+        final GordianAsyncFactory myFactory = pAgreement.getOwner().getFactory();
+        final GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
+        final GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(myPair.getKeyPairSpec());
+        final PKCS8EncodedKeySpec myPKCS8 = myPairs.getPKCS8Encoding();
+        final X509EncodedKeySpec myX509 = myPairs.getX509Encoding();
+        final GordianKeyPair mySecondCopy = myGenerator.deriveKeyPair(myX509, myPKCS8);
+        final PKCS8EncodedKeySpec myTargetPKCS8 = myGenerator.getPKCS8Encoding(myTarget);
+        final X509EncodedKeySpec myTargetX509 = myGenerator.getX509Encoding(myTarget);
+        final GordianKeyPair mySecondTarget = myGenerator.deriveKeyPair(myTargetX509, myTargetPKCS8);
+
+        /* Create agreement */
+        final GordianAgreementFactory myAgrees = myFactory.getAgreementFactory();
+        final GordianCertificate myClientCert = myAgrees.newMiniCertificate(CLIENTNAME, mySecondCopy,
+                new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+        final GordianCertificate myServerCert = myAgrees.newMiniCertificate(SERVERNAME, mySecondTarget,
+                new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+        final GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, BYTEARRAY)
+                .setClientCertificate(myClientCert)
+                .setServerCertificate(myServerCert);
+        final GordianAgreement myFirstAgreement = myAgrees.createAgreement(myParams);
+        final byte[] myFirstClientHello = myFirstAgreement.nextMessage();
+        final GordianAgreement mySecondAgreement = myAgrees.createAgreement(myParams);
+        final byte[] mySecondClientHello = mySecondAgreement.nextMessage();
+
+        /* Process first ClientHello */
+        final GordianAgreement myFirstReceived = myAgrees.parseAgreementMessage(myFirstClientHello);
+        final GordianAgreementParams myFirstServerParams = myFirstReceived.getAgreementParams()
+                .setServerCertificate(myServerCert);
+        myFirstReceived.updateParams(myFirstServerParams);
+        final byte[] myServerHello = myFirstReceived.nextMessage();
+
+        /* Destroy the second target */
+        mySecondTarget.destroy();
+
+        /* Can't update Params with destroyed Server keyPair */
+        final GordianAgreement myReceived = myAgrees.parseAgreementMessage(mySecondClientHello);
+        final GordianAgreementParams myServerParams = myReceived.getAgreementParams()
+                .setServerCertificate(myServerCert);
+        Assertions.assertThrows(GordianException.class, () -> myReceived.updateParams(myServerParams), "update destroyed server");
+
+        /* Destroy the second copy */
+        mySecondCopy.destroy();
+
+        /* Can't receive ServerHello with destroyed Client keyPair */
+        Assertions.assertThrows(GordianException.class, () -> myAgrees.parseAgreementMessage(myServerHello), "parse ServerHello");
+
+        /* Can't Create new Agreement with destroyed Client keyPair */
+        Assertions.assertThrows(GordianException.class, () -> myAgrees.createAgreement(myParams), "Create new Agreement");
     }
 
     /**

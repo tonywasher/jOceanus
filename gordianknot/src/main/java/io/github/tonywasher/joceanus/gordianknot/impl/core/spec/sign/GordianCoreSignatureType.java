@@ -23,6 +23,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureT
 import java.util.EnumMap;
 import java.util.Map;
 
+/**
+ * Core Signature Type.
+ */
 public final class GordianCoreSignatureType {
     /**
      * The signatureTypeMap.

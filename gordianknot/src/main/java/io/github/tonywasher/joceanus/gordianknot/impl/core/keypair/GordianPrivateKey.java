@@ -16,16 +16,24 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianDestroyable;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 
 /**
  * Asymmetric PrivateKey.
  */
-public abstract class GordianPrivateKey {
+public abstract class GordianPrivateKey
+        implements GordianDestroyable {
     /**
      * The KeySpec.
      */
     private final GordianKeyPairSpec theKeySpec;
+
+    /**
+     * Is the key destroyed?
+     */
+    private volatile boolean isDestroyed;
 
     /**
      * Constructor.
@@ -43,6 +51,28 @@ public abstract class GordianPrivateKey {
      */
     public GordianKeyPairSpec getKeySpec() {
         return theKeySpec;
+    }
+
+    /**
+     * Set the destroyed flag.
+     */
+    protected void setDestroyed() {
+        isDestroyed = true;
+    }
+
+    @Override
+    public boolean isDestroyed() {
+        return isDestroyed;
+    }
+
+    @Override
+    public boolean isClearable() {
+        return false;
+    }
+
+    @Override
+    public void destroy() throws GordianException {
+        setDestroyed();
     }
 
     /**

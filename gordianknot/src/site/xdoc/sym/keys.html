@@ -1,0 +1,18 @@
+<document>
+    <properties>
+        <title>GordianKnot Symmetric Keys</title>
+        <author email="tony.washer@yahoo.co.uk">Tony Washer</author>
+    </properties>
+    <body>
+        <section name="GordianKnot Symmetric Keys">
+            <p>Many objects in the Symmetric API are <strong>keyed</strong> objects, whereby a secret key is shared by
+                both participants. These keys may be randomly generated, or else deterministically resolved from a password
+                or agreement protocol</p>
+            <p>These keys are represented by a <strong>GordianKey</strong> object which can be passed in to the various APIs</p>
+            <p>When a key is no longer needed, it can be <strong>destroyed</strong>, whereby it is marked as
+                <strong>destroyed</strong>, and its details are erased from memory. Once a key has been destroyed, it will be
+                rejected by most API and objects that have been previously initialised with the newly destroyed key will be
+                unuseable until re-initialised with a valid key.</p>
+        </section>
+    </body>
+</document>

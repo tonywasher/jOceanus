@@ -162,6 +162,7 @@ public class GordianCRMParser {
      *
      * @param pResponse the certificate response
      * @param pKeyPair  the keyPair
+     * @throws GordianException on error
      */
     public void processCertificateResponse(final GordianCertResponseASN1 pResponse,
                                            final GordianKeyStorePair pKeyPair) throws GordianException {

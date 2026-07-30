@@ -130,6 +130,7 @@ public abstract class GordianCoreEncryptor
         /* Store details */
         theMode = GordianEncryptMode.ENCRYPT;
         theKeyPair = (GordianCoreKeyPair) pKeyPair;
+        theKeyPair.checkForDestroyedKeyPair();
     }
 
     @Override
@@ -145,6 +146,7 @@ public abstract class GordianCoreEncryptor
         /* Store details */
         theMode = GordianEncryptMode.DECRYPT;
         theKeyPair = (GordianCoreKeyPair) pKeyPair;
+        theKeyPair.checkForDestroyedKeyPair();
     }
 
     /**
@@ -157,6 +159,7 @@ public abstract class GordianCoreEncryptor
         if (!pMode.equals(theMode)) {
             throw new GordianDataException("Incorrect encryption Mode");
         }
+        theKeyPair.checkForDestroyedKeyPair();
     }
 
     /**

@@ -26,7 +26,7 @@ public interface GordianPasswordLockSpec {
     /**
      * Minimum iterations (2<sup>3</sup>K).
      */
-    Integer MINIMUM_POWER_ITERATIONS = 3;
+    Integer MINIMUM_POWER_ITERATIONS = 1;
 
     /**
      * Maximum iterations (2<sup>20</sup>K).

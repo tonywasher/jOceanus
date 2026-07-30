@@ -33,6 +33,13 @@ import java.util.function.Predicate;
  */
 public class GordianValidator {
     /**
+     * Constructor.
+     */
+    public GordianValidator() {
+        /* Empty */
+    }
+
+    /**
      * Obtain predicate for supported hMac digestTypes.
      *
      * @return the predicate

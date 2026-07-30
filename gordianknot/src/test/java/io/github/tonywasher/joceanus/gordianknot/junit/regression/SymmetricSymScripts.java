@@ -34,7 +34,13 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCiphe
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreWrapper;
@@ -50,6 +56,7 @@ import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -137,6 +144,9 @@ public class SymmetricSymScripts {
         /* Add wrapCipher test */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("wrapCipher", () -> checkWrapCipher(pKeySpec))));
 
+        /* Add destroy test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("destroy", () -> checkDestroySymKey(pKeySpec))));
+
         /* Add partner test if  the partner supports this symKeySpec */
         if (pKeySpec.getPartner() != null) {
             myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("PartnerWrap", () -> checkPartnerWrapCipher(pKeySpec))));
@@ -164,6 +174,11 @@ public class SymmetricSymScripts {
 
         /* Add algorithmId test */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmId", () -> checkSymCipherAlgId(pCipherSpec))));
+
+        /* Add destroy test */
+        if (pCipherSpec.getSpec().isAAD()) {
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("destroy", () -> checkDestroySymKey(pCipherSpec))));
+        }
 
         /* Add partner test if  the partner supports this symCipherSpec */
         if (pCipherSpec.getPartner() != null) {
@@ -530,6 +545,152 @@ public class SymmetricSymScripts {
         final GordianKey<GordianSymKeySpec> myResultKey = myPartnerWrapper.deriveKey(myWrapped, mySymKey.getKeyType());
         Assertions.assertEquals(myPartnerKey, myResultKey, "Failed to wrap/unwrap key");
         Assertions.assertEquals(myWrapper.getKeyWrapLength(mySymKey), myWrapped.length, "Incorrect wrapped length");
+    }
+
+    /**
+     * Check symKey Destroy.
+     *
+     * @param pKeySpec the keySpec
+     * @throws GordianException on error
+     */
+    private static void checkDestroySymKey(final FactorySymKeySpec pKeySpec) throws GordianException {
+        /* Access details */
+        final GordianFactory myFactory = pKeySpec.getFactory();
+        final GordianCoreSymKeySpec mySpec = pKeySpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianKey<GordianSymKeySpec> myKey = pKeySpec.getKey();
+        final GordianSymCipherSpecBuilder myBuilder = myCipherFactory.newSymCipherSpecBuilder();
+        final GordianSymCipherSpec myCipherSpec = myBuilder.ecb(mySpec, GordianPadding.ISO7816D4);
+        final GordianKeyPairFactory myKeyPairFactory = myFactory.getAsyncFactory().getKeyPairFactory();
+
+        /* Call test methods */
+        checkDestroySymKey(myCipherFactory, mySpec, myCipherSpec);
+        checkDestroySymKey(myCipherFactory, myKey);
+        checkDestroyPrivateKey(myCipherFactory, myKey, myKeyPairFactory);
+    }
+
+    /**
+     * Check symKey Destroy.
+     *
+     * @param pCipherSpec the cipherSpec
+     * @throws GordianException on error
+     */
+    private static void checkDestroySymKey(final FactorySymCipherSpec pCipherSpec) throws GordianException {
+        /* Access details */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final GordianSymKeySpec mySpec = pCipherSpec.getOwner().getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+
+        /* Call test method */
+        checkDestroySymKey(myCipherFactory, mySpec, pCipherSpec.getSpec());
+    }
+
+    /**
+     * Check symKey Destroy.
+     *
+     * @param pFactory    the cipherFactory
+     * @param pKeySpec    the keySpec
+     * @param pCipherSpec the cipherSpec
+     * @throws GordianException on error
+     */
+    private static void checkDestroySymKey(final GordianCipherFactory pFactory,
+                                           final GordianSymKeySpec pKeySpec,
+                                           final GordianSymCipherSpec pCipherSpec) throws GordianException {
+        /* Create a second key */
+        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = pFactory.getKeyGenerator(pKeySpec);
+        final GordianKey<GordianSymKeySpec> mySecondKey = myGenerator.generateKey();
+
+        /* Create the Cipher */
+        final GordianSymCipher myCipher = pFactory.createSymKeyCipher(pCipherSpec);
+        final GordianCipherParamsBuilder myParamsBuilder = pFactory.newCipherParamsBuilder();
+        final GordianCipherParams myParms = myParamsBuilder.keyWithRandomNonce(mySecondKey);
+        myCipher.initForEncrypt(myParms);
+
+        /* Destroy the second key */
+        mySecondKey.destroy();
+
+        /* Can't supply AEAD Data to a cipher whose key has been destroyed */
+        if (myCipher instanceof GordianSymAEADCipher myAEAD) {
+            Assertions.assertThrows(GordianException.class, () -> myAEAD.updateAAD("AEADData".getBytes(StandardCharsets.UTF_8)));
+        }
+
+        /* Can't update/finish a cipher whose key has now been destroyed */
+        Assertions.assertThrows(GordianException.class, () -> myCipher.update("SomeBytes".getBytes(StandardCharsets.UTF_8)));
+        Assertions.assertThrows(GordianException.class, myCipher::finish);
+
+        /* Can't initialise a cipher with a destroyed key */
+        Assertions.assertThrows(GordianException.class, () -> myCipher.initForEncrypt(myParms));
+    }
+
+    /**
+     * Check symKey Destroy.
+     *
+     * @param pFactory the cipherFactory
+     * @param pKey     the key
+     * @throws GordianException on error
+     */
+    private static void checkDestroySymKey(final GordianCipherFactory pFactory,
+                                           final GordianKey<GordianSymKeySpec> pKey) throws GordianException {
+        /* Access details */
+        final GordianSymKeySpec mySpec = pKey.getKeyType();
+
+        /* Create a second key */
+        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = pFactory.getKeyGenerator(mySpec);
+        final GordianKey<GordianSymKeySpec> mySecondKey = myGenerator.generateKey();
+
+        /* Create the wrappers */
+        final GordianCoreWrapper myWrapper = (GordianCoreWrapper) pFactory.createKeyWrapper(pKey);
+        final GordianCoreWrapper mySecondWrapper = (GordianCoreWrapper) pFactory.createKeyWrapper(mySecondKey);
+        final byte[] myWrapped = mySecondWrapper.secureKey(pKey);
+
+        /* Destroy the second key */
+        mySecondKey.destroy();
+
+        /* Can't initialise a wrapper with a destroyed key */
+        Assertions.assertThrows(GordianException.class, () -> pFactory.createKeyWrapper(mySecondKey));
+
+        /* Can't wrap a destroyed key */
+        Assertions.assertThrows(GordianException.class, () -> myWrapper.secureKey(mySecondKey));
+
+        /* Can't use a wrapper whose key has been destroyed */
+        Assertions.assertThrows(GordianException.class, () -> mySecondWrapper.secureKey(pKey));
+        Assertions.assertThrows(GordianException.class, () -> mySecondWrapper.deriveKey(myWrapped, mySpec));
+    }
+
+    /**
+     * Check symKey Destroy.
+     *
+     * @param pFactory        the cipherFactory
+     * @param pKey            the key
+     * @param pKeyPairFactory the keyPairFactory
+     * @throws GordianException on error
+     */
+    private static void checkDestroyPrivateKey(final GordianCipherFactory pFactory,
+                                               final GordianKey<GordianSymKeySpec> pKey,
+                                               final GordianKeyPairFactory pKeyPairFactory) throws GordianException {
+        /* Create a second key */
+        final GordianSymKeySpec mySpec = pKey.getKeyType();
+        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = pFactory.getKeyGenerator(mySpec);
+        final GordianKey<GordianSymKeySpec> mySecondKey = myGenerator.generateKey();
+
+        /* Create a keyPair and destroy it */
+        final GordianKeyPairSpecBuilder myBuilder = pKeyPairFactory.newKeyPairSpecBuilder();
+        final GordianKeyPairSpec myKPSpec = myBuilder.newHope();
+        final GordianKeyPairGenerator myKPGenerator = pKeyPairFactory.getKeyPairGenerator(myKPSpec);
+        final GordianKeyPair myKeyPair = myKPGenerator.generateKeyPair();
+        final GordianKeyPair mySecondKeyPair = myKPGenerator.generateKeyPair();
+        mySecondKeyPair.destroy();
+
+        /* Create the wrappers */
+        final GordianCoreWrapper myWrapper = (GordianCoreWrapper) pFactory.createKeyWrapper(pKey);
+        final GordianCoreWrapper mySecondWrapper = (GordianCoreWrapper) pFactory.createKeyWrapper(mySecondKey);
+        mySecondKey.destroy();
+
+        /* Can't wrap a destroyed keyPair */
+        Assertions.assertThrows(GordianException.class, () -> myWrapper.securePrivateKey(mySecondKeyPair));
+
+        /* Can't use a wrapper whose key has been destroyed */
+        Assertions.assertThrows(GordianException.class, () -> mySecondWrapper.securePrivateKey(myKeyPair));
     }
 
     /**
