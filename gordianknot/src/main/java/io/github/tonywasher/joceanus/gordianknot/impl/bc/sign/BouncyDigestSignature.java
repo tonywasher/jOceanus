@@ -82,18 +82,15 @@ public abstract class BouncyDigestSignature
     @Override
     public void update(final byte[] pBytes,
                        final int pOffset,
-                       final int pLength) {
+                       final int pLength) throws GordianException {
+        checkInit();
         theDigest.update(pBytes, pOffset, pLength);
     }
 
     @Override
-    public void update(final byte pByte) {
+    public void update(final byte pByte) throws GordianException {
+        checkInit();
         theDigest.update(pByte);
-    }
-
-    @Override
-    public void reset() {
-        theDigest.reset();
     }
 
     /**

@@ -23,6 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
@@ -222,20 +223,22 @@ public abstract class JcaSignature
     @Override
     public void update(final byte[] pBytes,
                        final int pOffset,
-                       final int pLength) {
+                       final int pLength) throws GordianException {
         try {
+            checkInit();
             theSigner.update(pBytes, pOffset, pLength);
         } catch (SignatureException e) {
-            throw new IllegalArgumentException(e);
+            throw new GordianIOException("Failed to update", e);
         }
     }
 
     @Override
-    public void update(final byte pByte) {
+    public void update(final byte pByte) throws GordianException {
         try {
+            checkInit();
             theSigner.update(pByte);
         } catch (SignatureException e) {
-            throw new IllegalArgumentException(e);
+            throw new GordianIOException("Failed to update", e);
         }
     }
 
@@ -264,11 +267,6 @@ public abstract class JcaSignature
         } catch (SignatureException e) {
             throw new GordianCryptoException(SIG_ERROR, e);
         }
-    }
-
-    @Override
-    public void reset() {
-        /* NoOp */
     }
 
     @Override

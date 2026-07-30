@@ -16,15 +16,13 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.sign;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianConsumer;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 
 /**
  * GordianKnot base for signature.
  */
-public interface GordianSignature
-        extends GordianConsumer {
+public interface GordianSignature {
     /**
      * Obtain the signatureSpec.
      *
@@ -47,6 +45,36 @@ public interface GordianSignature
      * @throws GordianException on error
      */
     void initForVerify(GordianSignParams pParams) throws GordianException;
+
+    /**
+     * Update the signature with a portion of a byte array.
+     *
+     * @param pBytes  the bytes to update with.
+     * @param pOffset the offset of the data within the byte array
+     * @param pLength the length of the data to use
+     * @throws GordianException on error
+     */
+    void update(byte[] pBytes,
+                int pOffset,
+                int pLength) throws GordianException;
+
+    /**
+     * Update the signature with a single byte.
+     *
+     * @param pByte the byte to update with.
+     * @throws GordianException on error
+     */
+    void update(byte pByte) throws GordianException;
+
+    /**
+     * Update the signature with a byte array.
+     *
+     * @param pBytes the bytes to update with.
+     * @throws GordianException on error
+     */
+    default void update(final byte[] pBytes) throws GordianException {
+        update(pBytes, 0, pBytes == null ? 0 : pBytes.length);
+    }
 
     /**
      * Complete the signature operation and return the signature bytes.

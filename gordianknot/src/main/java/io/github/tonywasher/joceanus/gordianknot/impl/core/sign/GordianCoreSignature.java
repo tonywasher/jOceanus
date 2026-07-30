@@ -191,11 +191,20 @@ public abstract class GordianCoreSignature
      * @throws GordianException on error
      */
     protected void checkMode(final GordianSignatureMode pMode) throws GordianException {
-        if (theKeyPair == null) {
-            throw new GordianLogicException("Not initialised");
-        }
+        checkInit();
         if (!pMode.equals(theMode)) {
             throw new GordianDataException("Incorrect signature Mode");
+        }
+    }
+
+    /**
+     * Check that we are in the correct mode.
+     *
+     * @throws GordianException on error
+     */
+    protected void checkInit() throws GordianException {
+        if (theKeyPair == null) {
+            throw new GordianLogicException("Not initialised");
         }
         theKeyPair.checkForDestroyedKeyPair();
     }

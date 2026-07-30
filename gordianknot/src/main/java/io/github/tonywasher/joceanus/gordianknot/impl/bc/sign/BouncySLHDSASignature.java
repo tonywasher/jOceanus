@@ -121,8 +121,9 @@ public class BouncySLHDSASignature
     @Override
     public void update(final byte[] pBytes,
                        final int pOffset,
-                       final int pLength) {
+                       final int pLength) throws GordianException {
         if (isHash) {
+            checkInit();
             theHashSigner.update(pBytes, pOffset, pLength);
         } else {
             super.update(pBytes, pOffset, pLength);
@@ -130,8 +131,9 @@ public class BouncySLHDSASignature
     }
 
     @Override
-    public void update(final byte pByte) {
+    public void update(final byte pByte) throws GordianException {
         if (isHash) {
+            checkInit();
             theHashSigner.update(pByte);
         } else {
             super.update(pByte);
@@ -139,20 +141,12 @@ public class BouncySLHDSASignature
     }
 
     @Override
-    public void update(final byte[] pBytes) {
+    public void update(final byte[] pBytes) throws GordianException {
         if (isHash) {
+            checkInit();
             theHashSigner.update(pBytes, 0, pBytes.length);
         } else {
             super.update(pBytes);
-        }
-    }
-
-    @Override
-    public void reset() {
-        if (isHash) {
-            theHashSigner.reset();
-        } else {
-            super.reset();
         }
     }
 

@@ -134,7 +134,7 @@ public final class AsymmetricSignScripts {
         final GordianSignature myVerifier = mySigns.createSigner(mySpec);
 
         /* Can't update/sign/verify before init */
-        //Assertions.assertDoesNotThrow(() -> mySigner.update(myMessage), "update preInit");
+        Assertions.assertThrows(GordianException.class, () -> mySigner.update(myMessage), "update preInit");
         Assertions.assertThrows(GordianException.class, mySigner::sign, "sign preInit");
         Assertions.assertThrows(GordianException.class, () -> mySigner.verify(myMessage), "verify preInit");
 
@@ -150,7 +150,7 @@ public final class AsymmetricSignScripts {
         mySecondCopy.destroy();
 
         /* Can't update with a destroyed key pair */
-        Assertions.assertDoesNotThrow(() -> mySigner.update(myMessage), "update destroyed");
+        Assertions.assertThrows(GordianException.class, () -> mySigner.update(myMessage), "update destroyed");
 
         /* Can't sign/verify with a destroyed keyPair */
         Assertions.assertThrows(GordianException.class, mySigner::sign, "sign destroyed");

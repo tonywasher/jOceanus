@@ -669,7 +669,7 @@ public class GordianCoreCertificate
             final GordianSignature mySigner = createSigner();
             final GordianSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
             mySigner.initForSigning(myBuilder.keyPair(pSigner));
-            final GordianStreamConsumer myConsumer = new GordianStreamConsumer(mySigner);
+            final GordianSignatureStream myConsumer = new GordianSignatureStream(mySigner);
             final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);
             myOut.writeObject(theTbsCertificate);
             myOut.close();
@@ -712,7 +712,7 @@ public class GordianCoreCertificate
             final GordianSignature myValidator = createSigner();
             final GordianSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
             myValidator.initForVerify(myBuilder.keyPair(pSigner));
-            final GordianStreamConsumer myConsumer = new GordianStreamConsumer(myValidator);
+            final GordianSignatureStream myConsumer = new GordianSignatureStream(myValidator);
             final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);
             myOut.writeObject(theTbsCertificate);
             myOut.close();

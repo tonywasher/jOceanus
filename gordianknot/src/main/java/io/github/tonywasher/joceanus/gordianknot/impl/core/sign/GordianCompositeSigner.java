@@ -154,7 +154,7 @@ public class GordianCompositeSigner
     @Override
     public void update(final byte[] pBytes,
                        final int pOffset,
-                       final int pLength) {
+                       final int pLength) throws GordianException {
         /* Loop through the signers */
         for (GordianSignature mySigner : theSigners) {
             mySigner.update(pBytes, pOffset, pLength);
@@ -162,18 +162,10 @@ public class GordianCompositeSigner
     }
 
     @Override
-    public void update(final byte pByte) {
+    public void update(final byte pByte) throws GordianException {
         /* Loop through the signers */
         for (GordianSignature mySigner : theSigners) {
             mySigner.update(pByte);
-        }
-    }
-
-    @Override
-    public void reset() {
-        /* Loop through the signers */
-        for (GordianSignature mySigner : theSigners) {
-            mySigner.reset();
         }
     }
 
