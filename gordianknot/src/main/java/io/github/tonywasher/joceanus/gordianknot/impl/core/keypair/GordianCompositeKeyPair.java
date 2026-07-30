@@ -51,7 +51,7 @@ public class GordianCompositeKeyPair
     /**
      * Is the keyPair destroyed?
      */
-    private boolean isDestroyed;
+    private volatile boolean isDestroyed;
 
     /**
      * Constructor.
@@ -167,7 +167,7 @@ public class GordianCompositeKeyPair
     }
 
     @Override
-    public void destroy() throws GordianException {
+    public synchronized void destroy() throws GordianException {
         isDestroyed = true;
         for (GordianKeyPair myPair : theKeyPairs.values()) {
             myPair.destroy();

@@ -47,7 +47,7 @@ public abstract class GordianCoreKeyPair
     /**
      * Is the keyPair destroyed?
      */
-    private boolean isDestroyed;
+    private volatile boolean isDestroyed;
 
     /**
      * Constructor.

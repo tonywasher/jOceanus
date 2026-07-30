@@ -33,7 +33,7 @@ public abstract class GordianPrivateKey
     /**
      * Is the key destroyed?
      */
-    private boolean isDestroyed;
+    private volatile boolean isDestroyed;
 
     /**
      * Constructor.

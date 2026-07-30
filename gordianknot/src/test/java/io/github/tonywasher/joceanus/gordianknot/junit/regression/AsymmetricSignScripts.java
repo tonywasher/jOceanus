@@ -19,6 +19,9 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
@@ -33,6 +36,8 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 
 import java.nio.charset.StandardCharsets;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.stream.Stream;
 
 /**
@@ -57,6 +62,9 @@ public final class AsymmetricSignScripts {
 
         /* Add algorithmId test */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkSignatureAlgId(pSignature))));
+
+        /* Add destroy test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("destroy", () -> checkDestroySignature(pSignature))));
 
         /* Check that the partner supports this keySpec*/
         final GordianAsyncFactory myTgtAsym = pSignature.getOwner().getPartner();
@@ -97,6 +105,60 @@ public final class AsymmetricSignScripts {
         mySigner.initForVerify(myBuilder.keyPairAndContext(myPair, myContext));
         mySigner.update(myMessage);
         Assertions.assertTrue(mySigner.verify(mySignature), "Failed to verify own signature");
+    }
+
+    /**
+     * Check Destroy Signature.
+     *
+     * @param pSignature the signature
+     * @throws GordianException on error
+     */
+    private static void checkDestroySignature(final FactorySignature pSignature) throws GordianException {
+        /* Access the KeySpec */
+        final GordianSignatureSpec mySpec = pSignature.getSpec();
+        final FactoryKeyPairs myPairs = pSignature.getOwner().getKeyPairs();
+        final GordianKeyPair myPair = myPairs.getKeyPair();
+
+        /* Create a second copy of the keyPair */
+        final GordianAsyncFactory myFactory = pSignature.getOwner().getFactory();
+        final GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
+        final GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(myPair.getKeyPairSpec());
+        final PKCS8EncodedKeySpec myPKCS8 = myPairs.getPKCS8Encoding();
+        final X509EncodedKeySpec myX509 = myPairs.getX509Encoding();
+        final GordianKeyPair mySecondCopy = myGenerator.deriveKeyPair(myX509, myPKCS8);
+
+        /* Create signer and verifier */
+        final GordianSignatureFactory mySigns = myFactory.getSignatureFactory();
+        final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
+        final GordianSignature mySigner = mySigns.createSigner(mySpec);
+        final GordianSignature myVerifier = mySigns.createSigner(mySpec);
+
+        /* Can't update/sign/verify before init */
+        //Assertions.assertDoesNotThrow(() -> mySigner.update(myMessage), "update preInit");
+        Assertions.assertThrows(GordianException.class, mySigner::sign, "sign preInit");
+        Assertions.assertThrows(GordianException.class, () -> mySigner.verify(myMessage), "verify preInit");
+
+        /* Prime the signer and verifier */
+        final GordianSignParamsBuilder myBuilder = mySigns.newSignParamsBuilder();
+        final GordianSignParams myParams = myBuilder.keyPair(mySecondCopy);
+        mySigner.initForSigning(myParams);
+        mySigner.update(myMessage);
+        myVerifier.initForVerify(myParams);
+        mySigner.update(myMessage);
+
+        /* Destroy the second copy */
+        mySecondCopy.destroy();
+
+        /* Can't update with a destroyed key pair */
+        Assertions.assertDoesNotThrow(() -> mySigner.update(myMessage), "update destroyed");
+
+        /* Can't sign/verify with a destroyed keyPair */
+        Assertions.assertThrows(GordianException.class, mySigner::sign, "sign destroyed");
+        Assertions.assertThrows(GordianException.class, () -> myVerifier.verify(myMessage), "verify destroyed");
+
+        /* Can't init with a destroyed key pair */
+        Assertions.assertThrows(GordianException.class, () -> mySigner.initForSigning(myParams), "initSign destroyed");
+        Assertions.assertThrows(GordianException.class, () -> myVerifier.initForVerify(myParams), "initVerify destroyed");
     }
 
     /**

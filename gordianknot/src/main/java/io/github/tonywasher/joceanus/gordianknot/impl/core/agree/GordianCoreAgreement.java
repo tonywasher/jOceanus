@@ -338,8 +338,11 @@ public class GordianCoreAgreement
         /* Take a snapshot of the parameters */
         theParams = new GordianCoreAgreementParams(theBuilder);
 
-        /* Check for destroyed KeyPairs */
-        check4DestroyedKeyPairs();
+        /* Check for destroyed Client KeyPair */
+        final GordianCoreAgreementType myType = theSpec.getCoreAgreementType();
+        if (!myType.isSigned() && !myType.isAnonymous()) {
+            check4DestroyedKeyPair(theParams.getClientCertificate(), "Client");
+        }
 
         /* Create ClientId and InitVector */
         if (!theSpec.getCoreAgreementType().isAnonymous()) {
@@ -387,8 +390,12 @@ public class GordianCoreAgreement
      * @throws GordianException on error
      */
     void processClientHello() throws GordianException {
-        /* Check for destroyed KeyPairs */
-        check4DestroyedKeyPairs();
+        /* Check for destroyed server/signer KeyPairs */
+        if (theSpec.getCoreAgreementType().isSigned()) {
+            check4DestroyedKeyPair(theParams.getSignerCertificate(), "Signer");
+        } else {
+            check4DestroyedKeyPair(theParams.getServerCertificate(), "Server");
+        }
 
         /* Create ServerId and InitVector */
         if (!theSpec.getCoreAgreementType().isAnonymous()) {
@@ -440,8 +447,10 @@ public class GordianCoreAgreement
         /* Check that we are expecting a serverHello */
         checkStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
 
-        /* Check for destroyed KeyPairs */
-        check4DestroyedKeyPairs();
+        /* Check for destroyed Client KeyPair */
+        if (!theSpec.getCoreAgreementType().isSigned()) {
+            check4DestroyedKeyPair(theParams.getClientCertificate(), "Client");
+        }
 
         /* Parse the serverHello */
         final boolean bSuccess = theBuilder.parseServerHello(pServerHello);
@@ -477,9 +486,6 @@ public class GordianCoreAgreement
     public void processClientConfirm(final GordianCoreAgreementMessageASN1 pClientConfirm) throws GordianException {
         /* Check that we are expecting a confirmation */
         checkStatus(GordianAgreementStatus.AWAITING_CLIENTCONFIRM);
-
-        /* Check for destroyed KeyPairs */
-        check4DestroyedKeyPairs();
 
         /* Parse the clientConfirm */
         if (theBuilder.parseClientConfirm(pClientConfirm)) {
@@ -517,17 +523,6 @@ public class GordianCoreAgreement
             case SIGNED, SM2, MQV, UNIFIED -> true;
             default -> false;
         };
-    }
-
-    /**
-     * Check for destroyed keyPairs.
-     *
-     * @throws GordianException on error
-     */
-    private void check4DestroyedKeyPairs() throws GordianException {
-        check4DestroyedKeyPair(theParams.getClientCertificate(), "Client");
-        check4DestroyedKeyPair(theParams.getServerCertificate(), "Server");
-        check4DestroyedKeyPair(theParams.getSignerCertificate(), "Signer");
     }
 
     /**

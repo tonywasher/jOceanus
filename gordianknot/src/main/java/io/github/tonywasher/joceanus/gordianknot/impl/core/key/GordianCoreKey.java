@@ -37,7 +37,7 @@ public abstract class GordianCoreKey<T extends GordianKeySpec>
     /**
      * Is the key destroyed?
      */
-    private boolean isDestroyed;
+    private volatile boolean isDestroyed;
 
     /**
      * Constructor.

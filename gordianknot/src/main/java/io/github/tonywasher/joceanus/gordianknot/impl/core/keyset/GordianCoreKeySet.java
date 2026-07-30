@@ -85,7 +85,7 @@ public final class GordianCoreKeySet
     /**
      * Is the keySet destroyed?
      */
-    private boolean isDestroyed;
+    private volatile boolean isDestroyed;
 
     /**
      * Constructor.
@@ -153,7 +153,7 @@ public final class GordianCoreKeySet
     }
 
     @Override
-    public void destroy() throws GordianException {
+    public synchronized void destroy() throws GordianException {
         for (GordianKey<GordianSymKeySpec> myKey : theSymKeyMap.values()) {
             myKey.destroy();
         }

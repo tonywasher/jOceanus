@@ -88,7 +88,7 @@ public final class JcaKey<T extends GordianKeySpec>
     }
 
     @Override
-    public void destroy() throws GordianException {
+    public synchronized void destroy() throws GordianException {
         if (!isDestroyed()) {
             theKey.destroy();
         }

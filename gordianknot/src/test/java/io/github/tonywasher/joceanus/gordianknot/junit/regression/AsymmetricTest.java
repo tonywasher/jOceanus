@@ -134,7 +134,7 @@ class AsymmetricTest {
             AsymmetricStore.agreementProvider(myKeySpec);
             if (!myKeySpec.getAgreements().isEmpty()) {
                 Stream<DynamicNode> myTests = myKeySpec.getAgreements().stream()
-                        .map(x -> DynamicContainer.dynamicContainer(x.toString(), AsymmetricAgreeScripts.xAgreementTests(x)));
+                        .map(x -> DynamicContainer.dynamicContainer(x.toString(), AsymmetricAgreeScripts.AgreementTests(x)));
                 myTests = Stream.of(DynamicContainer.dynamicContainer("Agreements", myTests));
                 myKeyStream = Stream.concat(myKeyStream, myTests);
             }
