@@ -66,6 +66,13 @@ public class GordianCoreAgreementParticipant {
     private byte[] theConfirm;
 
     /**
+     * Constructor.
+     */
+    GordianCoreAgreementParticipant() {
+        /* Empty */
+    }
+
+    /**
      * Obtain the certificate.
      *
      * @return the certificate

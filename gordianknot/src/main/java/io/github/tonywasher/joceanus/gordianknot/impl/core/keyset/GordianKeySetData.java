@@ -20,6 +20,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
+/**
+ * KeySet Data.
+ */
 public final class GordianKeySetData {
     /**
      * Private constructor.

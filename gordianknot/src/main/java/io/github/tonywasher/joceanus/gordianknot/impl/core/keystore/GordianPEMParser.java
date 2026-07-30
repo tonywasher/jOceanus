@@ -68,6 +68,13 @@ public class GordianPEMParser {
     private GordianPEMObjectType theObjectType;
 
     /**
+     * Constructor.
+     */
+    GordianPEMParser() {
+        /* Empty */
+    }
+
+    /**
      * Write PEM objects to stream.
      *
      * @param pStream  the stream

@@ -144,6 +144,13 @@ public final class GordianASN1Util {
     public abstract static class GordianASN1Object
             extends ASN1Object {
         /**
+         * Default Constructor.
+         */
+        protected GordianASN1Object() {
+            /* Empty */
+        }
+
+        /**
          * Obtain encodedBytes.
          *
          * @return the bytes
