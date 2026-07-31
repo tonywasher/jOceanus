@@ -37,7 +37,8 @@ class KeyStoreTest {
     /**
      * The KeySetHashSpec.
      */
-    private static final GordianPasswordLockSpec KEYSETLOCKSPEC = GordianUtilities.newPasswordLockSpecBuilder().passwordLock(KeyStoreSymmetric.KEYSETSPEC);
+    private static final GordianPasswordLockSpec KEYSETLOCKSPEC = GordianUtilities.newPasswordLockSpecBuilder()
+            .passwordLock(GordianPasswordLockSpec.MINIMUM_POWER_ITERATIONS, KeyStoreSymmetric.KEYSETSPEC);
 
     /**
      * Create the keyStore test suite.
