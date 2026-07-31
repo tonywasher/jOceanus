@@ -70,6 +70,8 @@ public class BouncyAgreementFactory
                 return new BouncyNTRUAgreementEngine(this, mySpec);
             case NTRUPLUS:
                 return new BouncyNTRUPlusAgreementEngine(this, mySpec);
+            case SMAUGT:
+                return new BouncySmaugTAgreementEngine(this, mySpec);
             case NTRUPRIME:
                 final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pSpec.getKeyPairSpec();
                 final GordianCoreNTRUPrimeSpec myPrimeSpec = myKeySpec.getNTRUPrimeSpec();

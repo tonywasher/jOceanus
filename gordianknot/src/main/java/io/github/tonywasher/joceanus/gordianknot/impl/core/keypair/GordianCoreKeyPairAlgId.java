@@ -57,6 +57,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianC
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSDitHSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSLHDSASpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSQIsignSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSmaugTSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSnovaSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreUOVSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -123,6 +124,7 @@ public class GordianCoreKeyPairAlgId
         GordianKeyPairIdEncodedParser.register(this, GordianCoreMQOMSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreQRUOVSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreSDitHSpec.values());
+        GordianKeyPairIdEncodedParser.register(this, GordianCoreSmaugTSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreSnovaSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreSQIsignSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreUOVSpec.values());

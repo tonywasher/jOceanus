@@ -54,6 +54,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSDitHSp
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSLHDSASpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM2Spec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSQIsignSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSmaugTSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSnovaSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianUOVSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec;
@@ -260,6 +261,7 @@ public final class GordianCoreKeyPairSpecBuilder
         EnumSet.allOf(GordianMQOMSpec.class).forEach(t -> mySpecs.add(myBuilder.mqom(t)));
         EnumSet.allOf(GordianQRUOVSpec.class).forEach(t -> mySpecs.add(myBuilder.qruov(t)));
         EnumSet.allOf(GordianSDitHSpec.class).forEach(t -> mySpecs.add(myBuilder.sdith(t)));
+        EnumSet.allOf(GordianSmaugTSpec.class).forEach(t -> mySpecs.add(myBuilder.smaugT(t)));
         EnumSet.allOf(GordianSnovaSpec.class).forEach(t -> mySpecs.add(myBuilder.snova(t)));
         EnumSet.allOf(GordianSQIsignSpec.class).forEach(t -> mySpecs.add(myBuilder.sqisign(t)));
         EnumSet.allOf(GordianUOVSpec.class).forEach(t -> mySpecs.add(myBuilder.uov(t)));

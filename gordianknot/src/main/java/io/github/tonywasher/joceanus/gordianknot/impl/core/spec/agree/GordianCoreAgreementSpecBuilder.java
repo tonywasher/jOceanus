@@ -125,7 +125,7 @@ public final class GordianCoreAgreementSpecBuilder
             case RSA, MLKEM, CMCE, FRODO:
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
                 break;
-            case NEWHOPE, SABER, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME:
+            case NEWHOPE, SABER, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, SMAUGT:
                 myAgreements.add(new GordianCoreAgreementSpec(pKeyPairSpec, GordianAgreementType.KEM, GordianAgreementKDF.NONE));
                 break;
             case EC, SM2, GOST:

@@ -382,6 +382,15 @@ public class GordianCoreKeyPairSpec
     }
 
     /**
+     * Obtain the SmaugT keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreSmaugTSpec getSmaugTSpec() {
+        return castValue(GordianCoreSmaugTSpec.class);
+    }
+
+    /**
      * Obtain the Snova keySpec.
      *
      * @return the keySpec.
@@ -532,6 +541,7 @@ public class GordianCoreKeyPairSpec
             case MQOM -> theSubSpec instanceof GordianCoreMQOMSpec;
             case SDITH -> theSubSpec instanceof GordianCoreSDitHSpec;
             case QRUOV -> theSubSpec instanceof GordianCoreQRUOVSpec;
+            case SMAUGT -> theSubSpec instanceof GordianCoreSmaugTSpec;
             case SNOVA -> theSubSpec instanceof GordianCoreSnovaSpec;
             case SQISIGN -> theSubSpec instanceof GordianCoreSQIsignSpec;
             case UOV -> theSubSpec instanceof GordianCoreUOVSpec;
@@ -632,6 +642,7 @@ public class GordianCoreKeyPairSpec
             case MQOM -> GordianCoreMQOMSpec.mapCoreSpec(pSubSpec);
             case SDITH -> GordianCoreSDitHSpec.mapCoreSpec(pSubSpec);
             case QRUOV -> GordianCoreQRUOVSpec.mapCoreSpec(pSubSpec);
+            case SMAUGT -> GordianCoreSmaugTSpec.mapCoreSpec(pSubSpec);
             case SNOVA -> GordianCoreSnovaSpec.mapCoreSpec(pSubSpec);
             case SQISIGN -> GordianCoreSQIsignSpec.mapCoreSpec(pSubSpec);
             case UOV -> GordianCoreUOVSpec.mapCoreSpec(pSubSpec);
@@ -673,6 +684,7 @@ public class GordianCoreKeyPairSpec
             case MQOM -> getMQOMSpec().getSpec();
             case QRUOV -> getQRUOVSpec().getSpec();
             case SDITH -> getSDitHSpec().getSpec();
+            case SMAUGT -> getSmaugTSpec().getSpec();
             case SNOVA -> getSnovaSpec().getSpec();
             case SQISIGN -> getSQIsignSpec().getSpec();
             case UOV -> getUOVSpec().getSpec();

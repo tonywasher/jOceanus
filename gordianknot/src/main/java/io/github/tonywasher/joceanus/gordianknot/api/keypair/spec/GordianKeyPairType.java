@@ -182,6 +182,11 @@ public enum GordianKeyPairType {
     SDITH,
 
     /**
+     * Smaug.
+     */
+    SMAUGT,
+
+    /**
      * Snova.
      */
     SNOVA,

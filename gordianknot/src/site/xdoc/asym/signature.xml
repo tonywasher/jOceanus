@@ -115,11 +115,9 @@ final boolean verified = mySigner.verify(mySignature);
                     <tr><td>SLHDSA</td><td>Native</td><td>Y</td></tr>
                     <tr><td>MLDSA</td><td>Native</td><td>Y</td></tr>
                     <tr><td>FALCON</td><td>Native</td><td/></tr>
-                    <tr><td>PICNIC</td><td>Native</td><td/></tr>
                     <tr><td>AIMER</td><td>Native</td><td/></tr>
                     <tr><td>FAEST</td><td>Native</td><td/></tr>
                     <tr><td>HAETAE</td><td>Native</td><td/></tr>
-                    <tr><td>HAWK</td><td>Native</td><td/></tr>
                     <tr><td>MAYO</td><td>Native</td><td/></tr>
                     <tr><td>MQOM</td><td>Native</td><td/></tr>
                     <tr><td>QRUOV</td><td>Native</td><td/></tr>

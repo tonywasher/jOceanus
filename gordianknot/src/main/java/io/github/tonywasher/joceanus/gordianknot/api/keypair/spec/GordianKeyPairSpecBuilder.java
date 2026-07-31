@@ -491,6 +491,16 @@ public interface GordianKeyPairSpecBuilder {
     }
 
     /**
+     * Create SmaugKey.
+     *
+     * @param pSpec the Smaug Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec smaugT(final GordianSmaugTSpec pSpec) {
+        return withKeyPairType(GordianKeyPairType.SMAUGT).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
      * Create SnovaKey.
      *
      * @param pSpec the Snova Spec

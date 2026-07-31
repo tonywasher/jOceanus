@@ -53,6 +53,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySDitHKeyP
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySLHDSAKeyPair.BouncySLHDSAKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySNTRUPrimeKeyPair.BouncySNTRUPrimeKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySQIsignKeyPair.BouncySQIsignKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySmaugTKeyPair.BouncySmaugTKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySnovaKeyPair.BouncySnovaKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyUOVKeyPair.BouncyUOVKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXDHKeyPair.BouncyX25519KeyPairGenerator;
@@ -163,6 +164,7 @@ public class BouncyKeyPairFactory
             case MQOM -> new BouncyMQOMKeyPairGenerator(theFactory, pKeySpec);
             case QRUOV -> new BouncyQRUOVKeyPairGenerator(theFactory, pKeySpec);
             case SDITH -> new BouncySDitHKeyPairGenerator(theFactory, pKeySpec);
+            case SMAUGT -> new BouncySmaugTKeyPairGenerator(theFactory, pKeySpec);
             case SNOVA -> new BouncySnovaKeyPairGenerator(theFactory, pKeySpec);
             case SQISIGN -> new BouncySQIsignKeyPairGenerator(theFactory, pKeySpec);
             case UOV -> new BouncyUOVKeyPairGenerator(theFactory, pKeySpec);

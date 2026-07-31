@@ -119,6 +119,7 @@ public class JcaKeyPairFactory
             case MQOM -> new JcaMQOMKeyPairGenerator(theFactory, pKeySpec);
             case QRUOV -> new JcaQRUOVKeyPairGenerator(theFactory, pKeySpec);
             case SDITH -> new JcaSDitHKeyPairGenerator(theFactory, pKeySpec);
+            case SMAUGT -> new JcaSmaugTKeyPairGenerator(theFactory, pKeySpec);
             case SNOVA -> new JcaSnovaKeyPairGenerator(theFactory, pKeySpec);
             case SQISIGN -> new JcaSQIsignKeyPairGenerator(theFactory, pKeySpec);
             case UOV -> new JcaUOVKeyPairGenerator(theFactory, pKeySpec);

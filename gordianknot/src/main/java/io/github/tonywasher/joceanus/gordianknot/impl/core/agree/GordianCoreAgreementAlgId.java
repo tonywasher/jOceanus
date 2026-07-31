@@ -249,6 +249,9 @@ public class GordianCoreAgreementAlgId {
                 myId = myId.branch(Integer.toString(myNTRUPrime.getType().ordinal() + 1));
                 myId = myId.branch(Integer.toString(myNTRUPrime.getParams().ordinal() + 1));
                 break;
+            case SMAUGT:
+                myId = myId.branch(Integer.toString(mySpec.getSmaugTSpec().getSpec().ordinal() + 1));
+                break;
             default:
                 break;
         }

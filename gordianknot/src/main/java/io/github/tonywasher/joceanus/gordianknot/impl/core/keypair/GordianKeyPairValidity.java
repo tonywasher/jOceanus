@@ -211,7 +211,7 @@ public final class GordianKeyPairValidity {
             case XDH -> mySpec.getEdwardsSpec().is25519()
                     ? myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF)
                     : myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA512KDF);
-            case CMCE, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE ->
+            case CMCE, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE, SMAUGT ->
                     myAgreeBuilder.kem(mySpec, GordianAgreementKDF.NONE);
             case FRODO -> myAgreeBuilder.kem(mySpec, GordianAgreementKDF.KMAC128);
             default -> throw new GordianDataException("No validity check found for :" + mySpec.getKeyPairType());

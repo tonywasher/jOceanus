@@ -61,7 +61,8 @@ public class JcaAgreementFactory
                     ? getSM2Engine(mySpec) : getECEngine(mySpec);
             case DH -> getDHEngine(mySpec);
             case NEWHOPE -> getNHEngine(mySpec);
-            case CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME -> getPostQuantumEngine(mySpec);
+            case CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, SMAUGT ->
+                    getPostQuantumEngine(mySpec);
             case XDH -> getXDHEngine(mySpec);
             default -> super.createEngine(pSpec);
         };
@@ -176,7 +177,7 @@ public class JcaAgreementFactory
 
         /* Switch on KeyType */
         return switch (pSpec.getKeyPairSpec().getKeyPairType()) {
-            case NEWHOPE, CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, COMPOSITE -> true;
+            case NEWHOPE, CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, SMAUGT, COMPOSITE -> true;
             case EC, GOST, DSTU, SM2, DH -> !GordianAgreementType.KEM.equals(myType);
             case XDH -> !GordianAgreementType.KEM.equals(myType)
                     && !GordianAgreementType.MQV.equals(myType);
