@@ -33,7 +33,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianFalconS
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianGOSTSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHAETAESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHQCSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHawkSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSHash;
@@ -47,7 +46,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPlu
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianPicnicSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianQRUOVSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianRSASpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSABERSpec;
@@ -121,12 +119,10 @@ public final class KeyStoreRequest {
                 signedKeyPairRequestTest(myBuilder.sm2(GordianSM2Spec.SM2P256V1)),
                 signedKeyPairRequestTest(myBuilder.falcon(GordianFalconSpec.FALCON512)),
                 signedKeyPairRequestTest(myBuilder.mldsa(GordianMLDSASpec.MLDSA44)),
-                signedKeyPairRequestTest(myBuilder.picnic(GordianPicnicSpec.L1FS)),
                 signedKeyPairRequestTest(myBuilder.slhdsa(GordianSLHDSASpec.SHA128F)),
                 signedKeyPairRequestTest(myBuilder.aimer(GordianAIMerSpec.AIMER128F)),
                 signedKeyPairRequestTest(myBuilder.faest(GordianFaestSpec.FAEST128F)),
                 signedKeyPairRequestTest(myBuilder.haetae(GordianHAETAESpec.HAETAE2)),
-                signedKeyPairRequestTest(myBuilder.hawk(GordianHawkSpec.HAWK256)),
                 signedKeyPairRequestTest(myBuilder.mayo(GordianMayoSpec.MAYO1)),
                 signedKeyPairRequestTest(myBuilder.mqom(GordianMQOMSpec.CAT1GF2FASTR3)),
                 signedKeyPairRequestTest(myBuilder.qruov(GordianQRUOVSpec.QROUV1Q127L3V156M54SHAKE)),

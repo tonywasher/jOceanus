@@ -371,7 +371,6 @@ public abstract class GordianCoreSignatureFactory
             case AIMER -> myBuilder.aimer();
             case FAEST -> myBuilder.faest();
             case HAETAE -> myBuilder.haetae();
-            case HAWK -> myBuilder.hawk();
             case MAYO -> myBuilder.mayo();
             case MQOM -> myBuilder.mqom();
             case QRUOV -> myBuilder.qruov();
@@ -379,7 +378,6 @@ public abstract class GordianCoreSignatureFactory
             case SNOVA -> myBuilder.snova();
             case SQISIGN -> myBuilder.sqisign();
             case UOV -> myBuilder.uov();
-            case PICNIC -> myBuilder.picnic();
             case XMSS -> myBuilder.xmss();
             case LMS -> myBuilder.lms();
             case COMPOSITE -> {

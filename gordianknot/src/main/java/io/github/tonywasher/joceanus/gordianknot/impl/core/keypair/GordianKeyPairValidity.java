@@ -203,8 +203,8 @@ public final class GordianKeyPairValidity {
         final GordianAgreementSpecBuilder myAgreeBuilder = GordianCoreAgreementSpecBuilder.newInstance();
         final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
         return switch (mySpec.getKeyPairType()) {
-            case RSA, DSA, EDDSA, EC, GOST, DSTU, SM2, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE, HAWK,
-                 MAYO, MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, PICNIC, XMSS, LMS ->
+            case RSA, DSA, EDDSA, EC, GOST, DSTU, SM2, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE,
+                 MAYO, MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, XMSS, LMS ->
                     pFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);
             case ELGAMAL -> myEncBuilder.elGamal(myBuilder.sha2(GordianLength.LEN_256));
             case DH -> myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);

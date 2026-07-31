@@ -37,7 +37,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianC
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreFaestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreFalconSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreHAETAESpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreHawkSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairIdSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairType;
@@ -428,19 +427,8 @@ public class GordianCoreSignatureAlgId {
      * Add postQuantum signatures.
      */
     private void addPostQuantumSignatures() {
-        /* Add Picnic signatures */
-        final GordianSignatureSpecBuilder mySigBuilder = GordianCoreSignatureSpecBuilder.newInstance();
-        final GordianDigestSpecBuilder myDigestBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        addToMaps(mySigBuilder.picnic(),
-                new AlgorithmIdentifier(BCObjectIdentifiers.picnic_signature, DERNull.INSTANCE));
-        addToMaps(mySigBuilder.picnic(myDigestBuilder.sha2(GordianLength.LEN_512)),
-                new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_sha512, DERNull.INSTANCE));
-        addToMaps(mySigBuilder.picnic(myDigestBuilder.sha3(GordianLength.LEN_512)),
-                new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_sha3_512, DERNull.INSTANCE));
-        addToMaps(mySigBuilder.picnic(myDigestBuilder.shake256()),
-                new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_shake256, DERNull.INSTANCE));
-
         /* Add LMS signatures */
+        final GordianSignatureSpecBuilder mySigBuilder = GordianCoreSignatureSpecBuilder.newInstance();
         addToMaps(mySigBuilder.lms(),
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.id_alg_hss_lms_hashsig, DERNull.INSTANCE));
 
@@ -454,7 +442,6 @@ public class GordianCoreSignatureAlgId {
         addKeyPairIdSignatures(GordianCoreAIMerSpec.values());
         addKeyPairIdSignatures(GordianCoreFaestSpec.values());
         addKeyPairIdSignatures(GordianCoreHAETAESpec.values());
-        addKeyPairIdSignatures(GordianCoreHawkSpec.values());
         addKeyPairIdSignatures(GordianCoreMayoSpec.values());
         addKeyPairIdSignatures(GordianCoreMQOMSpec.values());
         addKeyPairIdSignatures(GordianCoreQRUOVSpec.values());

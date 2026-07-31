@@ -346,15 +346,6 @@ public class GordianCoreKeyPairSpec
     }
 
     /**
-     * Obtain the Hawk keySpec.
-     *
-     * @return the keySpec.
-     */
-    public GordianCoreHawkSpec getHawkSpec() {
-        return castValue(GordianCoreHawkSpec.class);
-    }
-
-    /**
      * Obtain the Mayo keySpec.
      *
      * @return the keySpec.
@@ -415,15 +406,6 @@ public class GordianCoreKeyPairSpec
      */
     public GordianCoreUOVSpec getUOVSpec() {
         return castValue(GordianCoreUOVSpec.class);
-    }
-
-    /**
-     * Obtain the Picnic keySpec.
-     *
-     * @return the keySpec.
-     */
-    public GordianCorePicnicSpec getPicnicSpec() {
-        return castValue(GordianCorePicnicSpec.class);
     }
 
     /**
@@ -546,7 +528,6 @@ public class GordianCoreKeyPairSpec
             case AIMER -> theSubSpec instanceof GordianCoreAIMerSpec;
             case FAEST -> theSubSpec instanceof GordianCoreFaestSpec;
             case HAETAE -> theSubSpec instanceof GordianCoreHAETAESpec;
-            case HAWK -> theSubSpec instanceof GordianCoreHawkSpec;
             case MAYO -> theSubSpec instanceof GordianCoreMayoSpec;
             case MQOM -> theSubSpec instanceof GordianCoreMQOMSpec;
             case SDITH -> theSubSpec instanceof GordianCoreSDitHSpec;
@@ -554,7 +535,6 @@ public class GordianCoreKeyPairSpec
             case SNOVA -> theSubSpec instanceof GordianCoreSnovaSpec;
             case SQISIGN -> theSubSpec instanceof GordianCoreSQIsignSpec;
             case UOV -> theSubSpec instanceof GordianCoreUOVSpec;
-            case PICNIC -> theSubSpec instanceof GordianCorePicnicSpec;
             case NEWHOPE -> theSubSpec == null;
             case LMS -> theSubSpec instanceof GordianCoreLMSSpec ls && ls.isValid();
             case EDDSA, XDH -> theSubSpec instanceof GordianCoreEdwardsSpec;
@@ -648,7 +628,6 @@ public class GordianCoreKeyPairSpec
             case AIMER -> GordianCoreAIMerSpec.mapCoreSpec(pSubSpec);
             case FAEST -> GordianCoreFaestSpec.mapCoreSpec(pSubSpec);
             case HAETAE -> GordianCoreHAETAESpec.mapCoreSpec(pSubSpec);
-            case HAWK -> GordianCoreHawkSpec.mapCoreSpec(pSubSpec);
             case MAYO -> GordianCoreMayoSpec.mapCoreSpec(pSubSpec);
             case MQOM -> GordianCoreMQOMSpec.mapCoreSpec(pSubSpec);
             case SDITH -> GordianCoreSDitHSpec.mapCoreSpec(pSubSpec);
@@ -656,7 +635,6 @@ public class GordianCoreKeyPairSpec
             case SNOVA -> GordianCoreSnovaSpec.mapCoreSpec(pSubSpec);
             case SQISIGN -> GordianCoreSQIsignSpec.mapCoreSpec(pSubSpec);
             case UOV -> GordianCoreUOVSpec.mapCoreSpec(pSubSpec);
-            case PICNIC -> GordianCorePicnicSpec.mapCoreSpec(pSubSpec);
             case EDDSA, XDH -> GordianCoreEdwardsSpec.mapCoreSpec(pSubSpec);
             default -> pSubSpec;
         };
@@ -691,7 +669,6 @@ public class GordianCoreKeyPairSpec
             case AIMER -> getAIMerSpec().getSpec();
             case FAEST -> getFaestSpec().getSpec();
             case HAETAE -> getHAETAESpec().getSpec();
-            case HAWK -> getHawkSpec().getSpec();
             case MAYO -> getMayoSpec().getSpec();
             case MQOM -> getMQOMSpec().getSpec();
             case QRUOV -> getQRUOVSpec().getSpec();
@@ -699,7 +676,6 @@ public class GordianCoreKeyPairSpec
             case SNOVA -> getSnovaSpec().getSpec();
             case SQISIGN -> getSQIsignSpec().getSpec();
             case UOV -> getUOVSpec().getSpec();
-            case PICNIC -> getPicnicSpec().getSpec();
             case EDDSA, XDH -> getEdwardsSpec().getSpec();
             default -> theSubSpec;
         };

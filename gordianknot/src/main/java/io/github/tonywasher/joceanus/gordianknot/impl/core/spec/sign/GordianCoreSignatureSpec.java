@@ -164,9 +164,8 @@ public class GordianCoreSignatureSpec
             case RSA, DSA, EC, DSTU, GOST -> theSignatureSpec instanceof GordianCoreDigestSpec mySpec
                     && mySpec.isValid()
                     && mySpec.getCoreDigestType().supportsLargeData();
-            case EDDSA, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE, HAWK, MAYO,
+            case EDDSA, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE, MAYO,
                  MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, XMSS, LMS -> theSignatureSpec == null;
-            case PICNIC -> theSignatureSpec == null || checkPICNICDigest();
             case SM2 -> checkSM2Digest();
             case COMPOSITE -> theSignatureSpec instanceof List && checkComposite();
             default -> false;
@@ -188,25 +187,6 @@ public class GordianCoreSignatureSpec
             }
         }
         return true;
-    }
-
-    /**
-     * Check picnic spec validity.
-     *
-     * @return valid true/false
-     */
-    private boolean checkPICNICDigest() {
-        /* Check that signature length is 512 */
-        if (!(theSignatureSpec instanceof GordianCoreDigestSpec mySpec)
-                || (!GordianLength.LEN_512.equals(mySpec.getDigestLength()))) {
-            return false;
-        }
-
-        /* Switch on DigestType */
-        return switch (mySpec.getDigestType()) {
-            case SHA2, SHA3, SHAKE -> true;
-            default -> false;
-        };
     }
 
     /**

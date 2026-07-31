@@ -78,7 +78,6 @@ public class BouncySignatureFactory
             case AIMER -> new BouncyAIMerSignature(getFactory(), pSignatureSpec);
             case FAEST -> new BouncyFaestSignature(getFactory(), pSignatureSpec);
             case HAETAE -> new BouncyHAETAESignature(getFactory(), pSignatureSpec);
-            case HAWK -> new BouncyHawkSignature(getFactory(), pSignatureSpec);
             case MAYO -> new BouncyMayoSignature(getFactory(), pSignatureSpec);
             case MQOM -> new BouncyMQOMSignature(getFactory(), pSignatureSpec);
             case QRUOV -> new BouncyQRUOVSignature(getFactory(), pSignatureSpec);
@@ -86,7 +85,6 @@ public class BouncySignatureFactory
             case SNOVA -> new BouncySnovaSignature(getFactory(), pSignatureSpec);
             case SQISIGN -> new BouncySQIsignSignature(getFactory(), pSignatureSpec);
             case UOV -> new BouncyUOVSignature(getFactory(), pSignatureSpec);
-            case PICNIC -> new BouncyPicnicSignature(getFactory(), pSignatureSpec);
             case XMSS -> new BouncyXMSSSignature(getFactory(), pSignatureSpec);
             case LMS -> new BouncyLMSSignature(getFactory(), pSignatureSpec);
             case COMPOSITE -> new GordianCompositeSigner(getFactory(), pSignatureSpec);

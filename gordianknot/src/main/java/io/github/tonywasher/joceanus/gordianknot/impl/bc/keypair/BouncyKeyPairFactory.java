@@ -37,7 +37,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyFrodoKeyP
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyGOSTKeyPair.BouncyGOSTKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyHAETAEKeyPair.BouncyHAETAEKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyHQCKeyPair.BouncyHQCKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyHawkKeyPair.BouncyHawkKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyLMSKeyPair.BouncyHSSKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyMLDSAKeyPair.BouncyMLDSAKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyMLKEMKeyPair.BouncyMLKEMKeyPairGenerator;
@@ -47,7 +46,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyNTRUKeyPa
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyNTRUPlusKeyPair.BouncyNTRUPlusKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyNewHopeKeyPair.BouncyNewHopeKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyPicnicKeyPair.BouncyPicnicKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyQRUOVKeyPair.BouncyQRUOVKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyRSAKeyPair.BouncyRSAKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySABERKeyPair.BouncySABERKeyPairGenerator;
@@ -161,7 +159,6 @@ public class BouncyKeyPairFactory
             case AIMER -> new BouncyAIMerKeyPairGenerator(theFactory, pKeySpec);
             case FAEST -> new BouncyFaestKeyPairGenerator(theFactory, pKeySpec);
             case HAETAE -> new BouncyHAETAEKeyPairGenerator(theFactory, pKeySpec);
-            case HAWK -> new BouncyHawkKeyPairGenerator(theFactory, pKeySpec);
             case MAYO -> new BouncyMayoKeyPairGenerator(theFactory, pKeySpec);
             case MQOM -> new BouncyMQOMKeyPairGenerator(theFactory, pKeySpec);
             case QRUOV -> new BouncyQRUOVKeyPairGenerator(theFactory, pKeySpec);
@@ -169,7 +166,6 @@ public class BouncyKeyPairFactory
             case SNOVA -> new BouncySnovaKeyPairGenerator(theFactory, pKeySpec);
             case SQISIGN -> new BouncySQIsignKeyPairGenerator(theFactory, pKeySpec);
             case UOV -> new BouncyUOVKeyPairGenerator(theFactory, pKeySpec);
-            case PICNIC -> new BouncyPicnicKeyPairGenerator(theFactory, pKeySpec);
             case NEWHOPE -> new BouncyNewHopeKeyPairGenerator(theFactory, pKeySpec);
             case XMSS -> myKeySpec.getXMSSSpec().isMT()
                     ? new BouncyXMSSMTKeyPairGenerator(theFactory, pKeySpec)

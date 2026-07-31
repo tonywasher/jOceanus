@@ -142,11 +142,6 @@ public enum GordianKeyPairType {
     FALCON,
 
     /**
-     * Picnic.
-     */
-    PICNIC,
-
-    /**
      * NewHope.
      */
     NEWHOPE,
@@ -165,11 +160,6 @@ public enum GordianKeyPairType {
      * HAETAE.
      */
     HAETAE,
-
-    /**
-     * Hawk.
-     */
-    HAWK,
 
     /**
      * Mayo.

@@ -111,7 +111,7 @@ public final class GordianCoreSignatureType {
      */
     public static boolean hasNative(final GordianKeyPairType pKeyType) {
         return switch (pKeyType) {
-            case SM2, EDDSA, DSTU, GOST, SLHDSA, MLDSA, FALCON, PICNIC, AIMER, FAEST, HAETAE, HAWK,
+            case SM2, EDDSA, DSTU, GOST, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE,
                  MAYO, MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, XMSS, LMS, COMPOSITE -> true;
             default -> false;
         };

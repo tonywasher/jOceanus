@@ -421,16 +421,6 @@ public interface GordianKeyPairSpecBuilder {
     }
 
     /**
-     * Create PicnicKey.
-     *
-     * @param pSpec the Picnic Spec
-     * @return the KeySpec
-     */
-    default GordianKeyPairSpec picnic(final GordianPicnicSpec pSpec) {
-        return withKeyPairType(GordianKeyPairType.PICNIC).withEnumSubSpec(pSpec).build();
-    }
-
-    /**
      * Create AIMerKey.
      *
      * @param pSpec the AIMer Spec
@@ -458,16 +448,6 @@ public interface GordianKeyPairSpecBuilder {
      */
     default GordianKeyPairSpec haetae(final GordianHAETAESpec pSpec) {
         return withKeyPairType(GordianKeyPairType.HAETAE).withEnumSubSpec(pSpec).build();
-    }
-
-    /**
-     * Create HawkKey.
-     *
-     * @param pSpec the Hawk Spec
-     * @return the KeySpec
-     */
-    default GordianKeyPairSpec hawk(final GordianHawkSpec pSpec) {
-        return withKeyPairType(GordianKeyPairType.HAWK).withEnumSubSpec(pSpec).build();
     }
 
     /**

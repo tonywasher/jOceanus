@@ -186,25 +186,6 @@ public interface GordianSignatureSpecBuilder {
     }
 
     /**
-     * Create picnicSpec.
-     *
-     * @return the SignatureSpec
-     */
-    default GordianSignatureSpec picnic() {
-        return withKeyPairType(GordianKeyPairType.PICNIC).build();
-    }
-
-    /**
-     * Create picnicSpec.
-     *
-     * @param pDigest the digestSpec
-     * @return the SignatureSpec
-     */
-    default GordianSignatureSpec picnic(final GordianDigestSpec pDigest) {
-        return withKeyPairType(GordianKeyPairType.PICNIC).withDigestSpec(pDigest).build();
-    }
-
-    /**
      * Create AIMerSpec.
      *
      * @return the SignatureSpec
@@ -229,15 +210,6 @@ public interface GordianSignatureSpecBuilder {
      */
     default GordianSignatureSpec haetae() {
         return withKeyPairType(GordianKeyPairType.HAETAE).build();
-    }
-
-    /**
-     * Create hawkSpec.
-     *
-     * @return the SignatureSpec
-     */
-    default GordianSignatureSpec hawk() {
-        return withKeyPairType(GordianKeyPairType.HAWK).build();
     }
 
     /**

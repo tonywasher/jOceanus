@@ -115,7 +115,6 @@ public class JcaKeyPairFactory
             case FAEST -> new JcaFaestKeyPairGenerator(theFactory, pKeySpec);
             case AIMER -> new JcaAIMerKeyPairGenerator(theFactory, pKeySpec);
             case HAETAE -> new JcaHAETAEKeyPairGenerator(theFactory, pKeySpec);
-            case HAWK -> new JcaHawkKeyPairGenerator(theFactory, pKeySpec);
             case MAYO -> new JcaMayoKeyPairGenerator(theFactory, pKeySpec);
             case MQOM -> new JcaMQOMKeyPairGenerator(theFactory, pKeySpec);
             case QRUOV -> new JcaQRUOVKeyPairGenerator(theFactory, pKeySpec);
@@ -123,7 +122,6 @@ public class JcaKeyPairFactory
             case SNOVA -> new JcaSnovaKeyPairGenerator(theFactory, pKeySpec);
             case SQISIGN -> new JcaSQIsignKeyPairGenerator(theFactory, pKeySpec);
             case UOV -> new JcaUOVKeyPairGenerator(theFactory, pKeySpec);
-            case PICNIC -> new JcaPicnicKeyPairGenerator(theFactory, pKeySpec);
             case XMSS -> new JcaXMSSKeyPairGenerator(theFactory, pKeySpec);
             case LMS -> new JcaLMSKeyPairGenerator(theFactory, pKeySpec);
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec.getKeyPairType()));
