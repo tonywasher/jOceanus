@@ -50,12 +50,12 @@ public class GordianPersonalisation {
     /**
      * Number of iterations.
      */
-    public static final Integer NUM_ITERATIONS = 256;
+    public static final Integer NUM_ITERATIONS = 64;
 
     /**
      * Phrase multiplier.
      */
-    public static final Integer PHRASE_SHIFT = 2;
+    public static final Integer PHRASE_SHIFT = 4;
 
     /**
      * The hash length.

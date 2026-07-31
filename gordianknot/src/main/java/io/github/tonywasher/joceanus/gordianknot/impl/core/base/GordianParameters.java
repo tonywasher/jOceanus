@@ -59,7 +59,7 @@ public class GordianParameters {
     private final byte[] theSecuritySeed;
 
     /**
-     * The Security phrase.
+     * The KeySet Seed.
      */
     private final byte[] theKeySetSeed;
 
