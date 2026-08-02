@@ -18,6 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianAIMerSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianBIKESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianCMCESpec;
@@ -137,6 +138,12 @@ public final class GordianCoreKeyPairSpecBuilder
     public GordianKeyPairSpecBuilder withNTRUPrimeSubSpec(final GordianNTRUPrimeType pType,
                                                           final GordianNTRUPrimeParams pParams) {
         theSubSpec = new GordianCoreNTRUPrimeSpec(pType, pParams);
+        return this;
+    }
+
+    @Override
+    public GordianKeyPairSpecBuilder withIdAwareKeyType(final GordianIdAwareKeyType pType) {
+        theSubSpec = pType;
         return this;
     }
 

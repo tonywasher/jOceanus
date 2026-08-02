@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9KeyType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 
 import java.util.ArrayList;
@@ -418,6 +419,15 @@ public class GordianCoreKeyPairSpec
     }
 
     /**
+     * Obtain the SM9 keyType.
+     *
+     * @return the keyType.
+     */
+    public GordianSM9KeyType getSM9KeyType() {
+        return castValue(GordianSM9KeyType.class);
+    }
+
+    /**
      * Obtain the composite keySpec iterator.
      *
      * @return the keySpec iterator.
@@ -545,6 +555,7 @@ public class GordianCoreKeyPairSpec
             case SNOVA -> theSubSpec instanceof GordianCoreSnovaSpec;
             case SQISIGN -> theSubSpec instanceof GordianCoreSQIsignSpec;
             case UOV -> theSubSpec instanceof GordianCoreUOVSpec;
+            case SM9 -> theSubSpec instanceof GordianSM9KeyType;
             case NEWHOPE -> theSubSpec == null;
             case LMS -> theSubSpec instanceof GordianCoreLMSSpec ls && ls.isValid();
             case EDDSA, XDH -> theSubSpec instanceof GordianCoreEdwardsSpec;

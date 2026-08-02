@@ -18,11 +18,13 @@
 package io.github.tonywasher.joceanus.gordianknot.api.keypair.spec;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSHash;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSHeight;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSWidth;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9KeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSHeight;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSMTLayers;
@@ -97,6 +99,14 @@ public interface GordianKeyPairSpecBuilder {
      */
     GordianKeyPairSpecBuilder withNTRUPrimeSubSpec(GordianNTRUPrimeType pType,
                                                    GordianNTRUPrimeParams pParams);
+
+    /**
+     * Define isAwareKeyType.
+     *
+     * @param pType the type
+     * @return the Builder
+     */
+    GordianKeyPairSpecBuilder withIdAwareKeyType(GordianIdAwareKeyType pType);
 
     /**
      * Define keyPairSpec list.
@@ -528,6 +538,16 @@ public interface GordianKeyPairSpecBuilder {
      */
     default GordianKeyPairSpec uov(final GordianUOVSpec pSpec) {
         return withKeyPairType(GordianKeyPairType.UOV).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
+     * Create SM9Key.
+     *
+     * @param pSpec the SM9 Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec sm9(final GordianSM9KeyType pSpec) {
+        return withKeyPairType(GordianKeyPairType.SM9).withIdAwareKeyType(pSpec).build();
     }
 
     /**

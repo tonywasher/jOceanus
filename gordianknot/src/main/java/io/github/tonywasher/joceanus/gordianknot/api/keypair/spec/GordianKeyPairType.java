@@ -202,6 +202,11 @@ public enum GordianKeyPairType {
     UOV,
 
     /**
+     * SM9.
+     */
+    SM9,
+
+    /**
      * Composite.
      */
     COMPOSITE;
