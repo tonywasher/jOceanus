@@ -90,11 +90,11 @@ public final class BouncyKey<T extends GordianKeySpec>
     }
 
     @Override
-    public void destroy() throws GordianException {
+    public synchronized void destroy() throws GordianException {
         if (!isDestroyed()) {
+            setDestroyed();
             Arrays.fill(theKey, (byte) 0);
         }
-        setDestroyed();
     }
 
     @Override

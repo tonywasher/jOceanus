@@ -135,12 +135,17 @@ public abstract class GordianCoreKeyPair
 
     @Override
     public boolean isClearable() {
-        return false;
+        return !isPublicOnly() && getPrivateKey().isClearable();
     }
 
     @Override
-    public void destroy() throws GordianException {
-        setDestroyed();
+    public synchronized void destroy() throws GordianException {
+        if (!isDestroyed) {
+            setDestroyed();
+            if (isClearable()) {
+                getPrivateKey().destroy();
+            }
+        }
     }
 
     @Override

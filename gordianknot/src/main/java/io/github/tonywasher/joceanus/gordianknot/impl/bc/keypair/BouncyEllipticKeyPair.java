@@ -123,6 +123,19 @@ public final class BouncyEllipticKeyPair {
             return pFirst.getD().equals(pSecond.getD())
                     && pFirst.getParameters().equals(pSecond.getParameters());
         }
+
+        @Override
+        public boolean isClearable() {
+            return true;
+        }
+
+        @Override
+        public synchronized void destroy() throws GordianException {
+            if (!isDestroyed()) {
+                setDestroyed();
+                getPrivateKey().destroy();
+            }
+        }
     }
 
     /**

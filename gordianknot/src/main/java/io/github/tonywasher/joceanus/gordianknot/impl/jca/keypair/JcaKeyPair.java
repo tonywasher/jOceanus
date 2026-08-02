@@ -33,6 +33,7 @@ import org.bouncycastle.pqc.jcajce.interfaces.XMSSMTPrivateKey;
 import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
 
 import javax.crypto.spec.DHParameterSpec;
+import javax.security.auth.DestroyFailedException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Objects;
@@ -197,6 +198,28 @@ public class JcaKeyPair
          */
         public PrivateKey getPrivateKey() {
             return theKey;
+        }
+
+        @Override
+        public boolean isClearable() {
+            return switch (getKeySpec().getKeyPairType()) {
+                case EC, RSA, SM2, MLDSA, MLKEM, SLHDSA, CMCE, FRODO, SM9 -> true;
+                default -> false;
+            };
+        }
+
+        @Override
+        public synchronized void destroy() throws GordianException {
+            try {
+                if (!isDestroyed()) {
+                    setDestroyed();
+                    if (isClearable()) {
+                        getPrivateKey().destroy();
+                    }
+                }
+            } catch (DestroyFailedException e) {
+                throw new GordianDataException("Failed to destroy private key", e);
+            }
         }
 
         @Override
