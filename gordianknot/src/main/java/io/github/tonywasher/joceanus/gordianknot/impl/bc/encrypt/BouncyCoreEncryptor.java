@@ -26,6 +26,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.B
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -120,6 +121,11 @@ public abstract class BouncyCoreEncryptor
      */
     private byte[] processData(final byte[] pData) throws GordianException {
         try {
+            /* Reject null data */
+            if (pData == null) {
+                throw new GordianDataException("Null Message");
+            }
+
             /* Create the output buffer */
             int myInLen = pData.length;
             final byte[] myOutput = new byte[getProcessedLength(myInLen)];

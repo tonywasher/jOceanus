@@ -22,7 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSp
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionType;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionMode;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
@@ -251,7 +251,7 @@ public abstract class GordianCoreEncryptorFactory
             case RSA:
                 return myEncBuilder.rsa(myDigestBuilder.sha2(GordianLength.LEN_512));
             case EC, SM2, GOST:
-                return myEncBuilder.sm2(GordianSM2EncryptionType.C1C2C3, myDigestBuilder.sm3());
+                return myEncBuilder.sm2(GordianSM2EncryptionMode.C1C2C3, myDigestBuilder.sm3());
             case ELGAMAL:
                 return myEncBuilder.elGamal(myDigestBuilder.sha2(GordianLength.LEN_512));
             case COMPOSITE:

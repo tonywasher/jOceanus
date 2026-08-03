@@ -475,7 +475,9 @@ public final class JcaSM9KeyPairGenerator {
             super(pFactory, pKeySpec);
 
             /* Create and initialize the generator */
-            createFactories("SM9-ENC", false);
+            final KeyPairGenerator myGenerator = getJavaKeyPairGenerator("SM9-ENC", false);
+            setKeyPairGenerator(myGenerator);
+            setKeyFactory(getJavaKeyFactory("SM9", false));
             getGenerator().initialize(GordianLength.LEN_256.getLength(), getRandom());
         }
 

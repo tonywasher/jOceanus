@@ -18,6 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9SignType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
@@ -28,10 +29,15 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySM9KeyPai
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
+import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.gm.SM9Signature;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.params.ParametersWithID;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.crypto.signers.SM9Signer;
+import org.bouncycastle.util.Arrays;
+
+import java.io.IOException;
 
 /**
  * SM2 signature.
@@ -126,8 +132,13 @@ public class BouncySM9Signature
 
         /* Sign the message */
         try {
-            return theSigner.generateSignature();
-        } catch (CryptoException e) {
+            final byte[] myRaw = theSigner.generateSignature();
+            return new SM9Signature(Arrays.copyOfRange(myRaw, 0, GordianLength.LEN_32.getLength()),
+                    Arrays.copyOfRange(myRaw, GordianLength.LEN_32.getLength(), myRaw.length))
+                    .getEncoded(ASN1Encoding.DER);
+
+        } catch (CryptoException
+                 | IOException e) {
             throw new GordianCryptoException(BouncySignature.ERROR_SIGGEN, e);
         }
     }
@@ -138,6 +149,8 @@ public class BouncySM9Signature
         checkMode(GordianSignatureMode.VERIFY);
 
         /* Verify the message */
-        return theSigner.verifySignature(pSignature);
+        final SM9Signature sig = SM9Signature.getInstance(pSignature);
+        final byte[] myRaw = Arrays.concatenate(sig.getH(), sig.getS());
+        return theSigner.verifySignature(myRaw);
     }
 }

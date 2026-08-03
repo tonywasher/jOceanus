@@ -51,8 +51,16 @@ public interface GordianEncryptorSpecBuilder {
      * @param pDigestSpec the digestSpec
      * @return the Builder
      */
-    GordianEncryptorSpecBuilder withSM2EncryptionSpec(GordianSM2EncryptionType pType,
+    GordianEncryptorSpecBuilder withSM2EncryptionSpec(GordianSM2EncryptionMode pType,
                                                       GordianDigestSpec pDigestSpec);
+
+    /**
+     * Define sm9EncryptionMode.
+     *
+     * @param pType the SM9 encryptionMode
+     * @return the Builder
+     */
+    GordianEncryptorSpecBuilder withSM9EncryptionMode(GordianSM9EncryptionMode pType);
 
     /**
      * Define encryptorSpec list.
@@ -130,9 +138,19 @@ public interface GordianEncryptorSpecBuilder {
      * @param pSpec the digestSpec
      * @return the encryptorSpec
      */
-    default GordianEncryptorSpec sm2(final GordianSM2EncryptionType pType,
+    default GordianEncryptorSpec sm2(final GordianSM2EncryptionMode pType,
                                      final GordianDigestSpec pSpec) {
         return withKeyPairType(GordianKeyPairType.SM2).withSM2EncryptionSpec(pType, pSpec).build();
+    }
+
+    /**
+     * Create SM9 Encryptor.
+     *
+     * @param pMode the sm9EncryptionMode
+     * @return the encryptorSpec
+     */
+    default GordianEncryptorSpec sm9(final GordianSM9EncryptionMode pMode) {
+        return withKeyPairType(GordianKeyPairType.SM9).withSM9EncryptionMode(pMode).build();
     }
 
     /**

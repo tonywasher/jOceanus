@@ -19,8 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc.encrypt;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionMode;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.digest.BouncyDigest;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
@@ -29,6 +29,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.B
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.engines.SM2Engine;
@@ -59,7 +60,7 @@ public class BouncySM2Encryptor
         final GordianDigestFactory myFactory = pFactory.getDigestFactory();
         final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
         final BouncyDigest myDigest = (BouncyDigest) myFactory.createDigest(mySpec.getDigestSpec());
-        final Mode mySM2Mode = mySpec.getEncryptionType() == GordianSM2EncryptionType.C1C2C3
+        final Mode mySM2Mode = mySpec.getEncryptionMode() == GordianSM2EncryptionMode.C1C2C3
                 ? Mode.C1C2C3 : Mode.C1C3C2;
         theEncryptor = new SM2Engine(myDigest.getDigest(), mySM2Mode);
     }
@@ -101,6 +102,11 @@ public class BouncySM2Encryptor
             /* Check that we are in encryption mode */
             checkMode(GordianEncryptMode.ENCRYPT);
 
+            /* Reject null data */
+            if (pBytes == null) {
+                throw new GordianDataException("Null Message");
+            }
+
             /* Encrypt the message */
             return theEncryptor.processBlock(pBytes, 0, pBytes.length);
         } catch (InvalidCipherTextException e) {
@@ -113,6 +119,11 @@ public class BouncySM2Encryptor
         try {
             /* Check that we are in decryption mode */
             checkMode(GordianEncryptMode.DECRYPT);
+
+            /* Reject null data */
+            if (pBytes == null) {
+                throw new GordianDataException("Null Message");
+            }
 
             /* Decrypt the message */
             return theEncryptor.processBlock(pBytes, 0, pBytes.length);

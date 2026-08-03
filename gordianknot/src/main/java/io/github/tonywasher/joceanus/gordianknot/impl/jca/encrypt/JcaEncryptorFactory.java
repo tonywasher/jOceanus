@@ -60,7 +60,7 @@ public class JcaEncryptorFactory
     private GordianEncryptor getJcaEncryptor(final GordianCoreEncryptorSpec pEncryptorSpec) throws GordianException {
         return switch (pEncryptorSpec.getKeyPairType()) {
             case RSA, ELGAMAL -> new JcaBlockEncryptor(getFactory(), pEncryptorSpec);
-            case SM2 -> new JcaHybridEncryptor(getFactory(), pEncryptorSpec);
+            case SM2, SM9 -> new JcaHybridEncryptor(getFactory(), pEncryptorSpec);
             case COMPOSITE -> new GordianCompositeEncryptor(getFactory(), pEncryptorSpec);
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pEncryptorSpec.getKeyPairType()));
         };
@@ -75,7 +75,7 @@ public class JcaEncryptorFactory
 
         /* Switch on KeyType */
         return switch (pSpec.getKeyPairType()) {
-            case RSA, ELGAMAL, SM2, COMPOSITE -> true;
+            case RSA, ELGAMAL, SM2, SM9, COMPOSITE -> true;
             default -> false;
         };
     }

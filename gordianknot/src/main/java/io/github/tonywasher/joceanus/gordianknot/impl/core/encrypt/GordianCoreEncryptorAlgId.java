@@ -22,7 +22,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSp
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionType;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionMode;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM9EncryptionMode;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -141,21 +142,21 @@ public class GordianCoreEncryptorAlgId {
     private void addWellKnownEncryptors() {
         final GordianEncryptorSpecBuilder myEncBuilder = GordianCoreEncryptorSpecBuilder.newInstance();
         final GordianDigestSpecBuilder myDigestBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        addToMaps(myEncBuilder.sm2(GordianSM2EncryptionType.C1C2C3, myDigestBuilder.sm3()),
+        addToMaps(myEncBuilder.sm2(GordianSM2EncryptionMode.C1C2C3, myDigestBuilder.sm3()),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sm3, DERNull.INSTANCE));
-        addToMaps(myEncBuilder.sm2(GordianSM2EncryptionType.C1C2C3, myDigestBuilder.sha2(GordianLength.LEN_224)),
+        addToMaps(myEncBuilder.sm2(GordianSM2EncryptionMode.C1C2C3, myDigestBuilder.sha2(GordianLength.LEN_224)),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha224, DERNull.INSTANCE));
-        addToMaps(myEncBuilder.sm2(GordianSM2EncryptionType.C1C2C3, myDigestBuilder.sha2(GordianLength.LEN_256)),
+        addToMaps(myEncBuilder.sm2(GordianSM2EncryptionMode.C1C2C3, myDigestBuilder.sha2(GordianLength.LEN_256)),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha256, DERNull.INSTANCE));
-        addToMaps(myEncBuilder.sm2(GordianSM2EncryptionType.C1C2C3, myDigestBuilder.sha2(GordianLength.LEN_384)),
+        addToMaps(myEncBuilder.sm2(GordianSM2EncryptionMode.C1C2C3, myDigestBuilder.sha2(GordianLength.LEN_384)),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha384, DERNull.INSTANCE));
-        addToMaps(myEncBuilder.sm2(GordianSM2EncryptionType.C1C2C3, myDigestBuilder.sha2(GordianLength.LEN_512)),
+        addToMaps(myEncBuilder.sm2(GordianSM2EncryptionMode.C1C2C3, myDigestBuilder.sha2(GordianLength.LEN_512)),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha512, DERNull.INSTANCE));
-        addToMaps(myEncBuilder.sm2(GordianSM2EncryptionType.C1C2C3, myDigestBuilder.whirlpool()),
+        addToMaps(myEncBuilder.sm2(GordianSM2EncryptionMode.C1C2C3, myDigestBuilder.whirlpool()),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_whirlpool, DERNull.INSTANCE));
-        addToMaps(myEncBuilder.sm2(GordianSM2EncryptionType.C1C2C3, myDigestBuilder.blake2s(GordianLength.LEN_256)),
+        addToMaps(myEncBuilder.sm2(GordianSM2EncryptionMode.C1C2C3, myDigestBuilder.blake2s(GordianLength.LEN_256)),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_blake2s256, DERNull.INSTANCE));
-        addToMaps(myEncBuilder.sm2(GordianSM2EncryptionType.C1C2C3, myDigestBuilder.blake2b(GordianLength.LEN_512)),
+        addToMaps(myEncBuilder.sm2(GordianSM2EncryptionMode.C1C2C3, myDigestBuilder.blake2b(GordianLength.LEN_512)),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_blake2b512, DERNull.INSTANCE));
     }
 
@@ -197,9 +198,10 @@ public class GordianCoreEncryptorAlgId {
         myId = switch (myEncryptor) {
             case GordianDigestSpec mySpec -> GordianCoreDigestAlgId.appendDigestOID(myId.branch("2"), mySpec);
             case GordianCoreSM2EncryptionSpec mySpec -> {
-                myId = myId.branch("4").branch(Integer.toString(mySpec.getEncryptionType().ordinal() + 1));
+                myId = myId.branch("4").branch(Integer.toString(mySpec.getEncryptionMode().ordinal() + 1));
                 yield GordianCoreDigestAlgId.appendDigestOID(myId, mySpec.getDigestSpec());
             }
+            case GordianSM9EncryptionMode myMode -> myId.branch("5").branch(Integer.toString(myMode.ordinal() + 1));
             case null, default -> myId.branch("1");
         };
 

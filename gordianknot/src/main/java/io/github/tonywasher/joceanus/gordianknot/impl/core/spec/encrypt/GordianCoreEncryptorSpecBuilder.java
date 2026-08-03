@@ -22,8 +22,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSp
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionMode;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionType;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM9EncryptionMode;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 
@@ -79,9 +80,15 @@ public final class GordianCoreEncryptorSpecBuilder
     }
 
     @Override
-    public GordianEncryptorSpecBuilder withSM2EncryptionSpec(final GordianSM2EncryptionType pType,
+    public GordianEncryptorSpecBuilder withSM2EncryptionSpec(final GordianSM2EncryptionMode pType,
                                                              final GordianDigestSpec pDigestSpec) {
         theSubSpec = new GordianCoreSM2EncryptionSpec(pType, pDigestSpec);
+        return this;
+    }
+
+    @Override
+    public GordianEncryptorSpecBuilder withSM9EncryptionMode(final GordianSM9EncryptionMode pMode) {
+        theSubSpec = pMode;
         return this;
     }
 
@@ -166,7 +173,7 @@ public final class GordianCoreEncryptorSpecBuilder
         final GordianCoreDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
 
         /* Loop through the encryptionTypes */
-        for (GordianSM2EncryptionType myType : GordianSM2EncryptionType.values()) {
+        for (GordianSM2EncryptionMode myType : GordianSM2EncryptionMode.values()) {
             mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.sm3()));
             mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.sha2(GordianLength.LEN_224)));
             mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.sha2(GordianLength.LEN_256)));

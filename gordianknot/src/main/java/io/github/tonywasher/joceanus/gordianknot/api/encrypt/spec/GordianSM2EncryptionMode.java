@@ -20,7 +20,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec;
 /**
  * SM2 EncryptionType.
  */
-public enum GordianSM2EncryptionType {
+public enum GordianSM2EncryptionMode {
     /**
      * C1C2C3.
      */

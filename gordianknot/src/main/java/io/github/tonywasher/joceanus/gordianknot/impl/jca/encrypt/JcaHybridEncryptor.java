@@ -22,10 +22,13 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM9EncryptionMode;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreSM2EncryptionSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair;
@@ -109,6 +112,11 @@ public class JcaHybridEncryptor
         /* Check that we are in encryption mode */
         checkMode(GordianEncryptMode.ENCRYPT);
 
+        /* Reject null data */
+        if (pBytes == null) {
+            throw new GordianDataException("Null Message");
+        }
+
         /* Encrypt the message */
         return processData(pBytes);
     }
@@ -117,6 +125,11 @@ public class JcaHybridEncryptor
     public byte[] decrypt(final byte[] pBytes) throws GordianException {
         /* Check that we are in decryption mode */
         checkMode(GordianEncryptMode.DECRYPT);
+
+        /* Reject null data */
+        if (pBytes == null) {
+            throw new GordianDataException("Null Message");
+        }
 
         /* Decrypt the message */
         return processData(pBytes);
@@ -145,6 +158,18 @@ public class JcaHybridEncryptor
      * @return the algorithm name
      */
     private static String getAlgorithmName(final GordianCoreEncryptorSpec pSpec) {
+        return GordianKeyPairType.SM2.equals(pSpec.getKeyPairType())
+                ? getSM2AlgorithmName(pSpec)
+                : getSM9AlgorithmName(pSpec);
+    }
+
+    /**
+     * Obtain the algorithmName.
+     *
+     * @param pSpec the Spec
+     * @return the algorithm name
+     */
+    private static String getSM2AlgorithmName(final GordianCoreEncryptorSpec pSpec) {
         /* Switch on encryptor type */
         final GordianCoreSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
         final GordianDigestSpec myDigestSpec = mySpec.getDigestSpec();
@@ -154,6 +179,18 @@ public class JcaHybridEncryptor
             case BLAKE2 -> "SM2withBlake2" + (GordianLength.LEN_512.equals(myDigestSpec.getDigestLength()) ? "b" : "s");
             default -> "SM2with" + myDigestType;
         };
-        return myName + "/" + mySpec.getEncryptionType() + "/NOPADDING";
+        return myName + "/" + mySpec.getEncryptionMode() + "/NOPADDING";
+    }
+
+    /**
+     * Obtain the algorithmName.
+     *
+     * @param pSpec the Spec
+     * @return the algorithm name
+     */
+    private static String getSM9AlgorithmName(final GordianCoreEncryptorSpec pSpec) {
+        final String myMode = pSpec.getSM9EncryptionMode() == GordianSM9EncryptionMode.SM4
+                ? "SM4" : "STREAM";
+        return "SM9/" + myMode + "/NOPADDING";
     }
 }

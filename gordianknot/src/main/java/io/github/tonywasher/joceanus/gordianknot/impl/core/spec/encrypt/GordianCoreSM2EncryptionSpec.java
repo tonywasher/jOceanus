@@ -18,8 +18,8 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt;
 
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionMode;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 
@@ -31,9 +31,9 @@ import java.util.Objects;
 public class GordianCoreSM2EncryptionSpec
         implements GordianSM2EncryptionSpec {
     /**
-     * EncryptionType.
+     * EncryptionMode.
      */
-    private final GordianSM2EncryptionType theType;
+    private final GordianSM2EncryptionMode theMode;
 
     /**
      * DigestSpec.
@@ -53,20 +53,20 @@ public class GordianCoreSM2EncryptionSpec
     /**
      * Constructor.
      *
-     * @param pType   the encryptionType
+     * @param pMode   the encryptionMode
      * @param pDigest the digestSpec
      */
-    GordianCoreSM2EncryptionSpec(final GordianSM2EncryptionType pType,
+    GordianCoreSM2EncryptionSpec(final GordianSM2EncryptionMode pMode,
                                  final GordianDigestSpec pDigest) {
         /* Store parameters */
-        theType = pType;
+        theMode = pMode;
         theDigest = (GordianCoreDigestSpec) pDigest;
         isValid = checkValidity();
     }
 
     @Override
-    public GordianSM2EncryptionType getEncryptionType() {
-        return theType;
+    public GordianSM2EncryptionMode getEncryptionMode() {
+        return theMode;
     }
 
     @Override
@@ -85,7 +85,7 @@ public class GordianCoreSM2EncryptionSpec
      * @return valid true/false
      */
     private boolean checkValidity() {
-        return theType != null
+        return theMode != null
                 && theDigest != null
                 && theDigest.isValid()
                 && isDigestSupported();
@@ -112,10 +112,10 @@ public class GordianCoreSM2EncryptionSpec
             /* If the encryptionSpec is valid */
             if (isValid) {
                 /* Load the name */
-                theName = theType.toString() + GordianSpecConstants.SEP + theDigest.toString();
+                theName = theMode.toString() + GordianSpecConstants.SEP + theDigest.toString();
             } else {
                 /* Report invalid spec */
-                theName = "InvalidEncryptorSpec: " + theType + ":" + theDigest;
+                theName = "InvalidEncryptorSpec: " + theMode + ":" + theDigest;
             }
         }
 
@@ -142,12 +142,12 @@ public class GordianCoreSM2EncryptionSpec
         final GordianCoreSM2EncryptionSpec myThat = (GordianCoreSM2EncryptionSpec) pThat;
 
         /* Match fields */
-        return theType == myThat.getEncryptionType()
+        return theMode == myThat.getEncryptionMode()
                 && Objects.equals(theDigest, myThat.getDigestSpec());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(theType, theDigest);
+        return Objects.hash(theMode, theDigest);
     }
 }

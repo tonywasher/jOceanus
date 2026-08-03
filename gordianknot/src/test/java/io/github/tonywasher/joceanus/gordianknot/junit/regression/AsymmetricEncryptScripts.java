@@ -101,6 +101,10 @@ public final class AsymmetricEncryptScripts {
         mySender.initForEncrypt(myPair);
         myReceiver.initForDecrypt(myPair);
 
+        /* Check for wrong factory */
+        Assertions.assertThrows(GordianException.class, () -> mySender.encrypt(null), "Null Message");
+        Assertions.assertThrows(GordianException.class, () -> myReceiver.decrypt(null), "Null Message");
+
         /* Perform the encryption and decryption for all zeros */
         byte[] myEncrypted = mySender.encrypt(mySrc);
         byte[] myResult = myReceiver.decrypt(myEncrypted);
@@ -169,6 +173,10 @@ public final class AsymmetricEncryptScripts {
 
         /* Check that the values match */
         Assertions.assertArrayEquals(mySrc, myResult2, "Failed received encryption");
+
+        /* Check for wrong factory */
+        Assertions.assertThrows(GordianException.class, () -> mySender.initForEncrypt(myPartnerSelf), "Wrong Factory");
+        Assertions.assertThrows(GordianException.class, () -> mySender.initForDecrypt(myPartnerSelf), "Wrong Factory");
     }
 
     /**

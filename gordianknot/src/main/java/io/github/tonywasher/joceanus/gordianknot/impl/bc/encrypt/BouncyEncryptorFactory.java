@@ -63,6 +63,7 @@ public class BouncyEncryptorFactory
             case ELGAMAL -> new BouncyElGamalEncryptor(getFactory(), pSpec);
             case EC -> new BouncyECEncryptor(getFactory(), pSpec);
             case SM2 -> new BouncySM2Encryptor(getFactory(), pSpec);
+            case SM9 -> new BouncySM9Encryptor(getFactory(), pSpec);
             case COMPOSITE -> new GordianCompositeEncryptor(getFactory(), pSpec);
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         };

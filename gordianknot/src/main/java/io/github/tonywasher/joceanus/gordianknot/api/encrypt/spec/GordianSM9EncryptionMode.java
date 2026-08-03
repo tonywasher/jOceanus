@@ -17,30 +17,17 @@
 
 package io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec;
 
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
-
 /**
- * SM2 EncryptionSpec.
+ * SM9 EncryptionType.
  */
-public interface GordianSM2EncryptionSpec {
+public enum GordianSM9EncryptionMode {
     /**
-     * Obtain the encryptionMode.
-     *
-     * @return the encryptionMode
+     * SM4.
      */
-    GordianSM2EncryptionMode getEncryptionMode();
+    SM4,
 
     /**
-     * Obtain the digestSpec.
-     *
-     * @return the digestSpec
+     * STREAM.
      */
-    GordianDigestSpec getDigestSpec();
-
-    /**
-     * Is the keySpec valid?
-     *
-     * @return true/false.
-     */
-    boolean isValid();
+    STREAM;
 }
