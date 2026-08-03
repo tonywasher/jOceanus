@@ -68,6 +68,15 @@ public abstract class BouncyDigestSignature
     }
 
     /**
+     * Check for bouncyKeyPair.
+     *
+     * @throws GordianException on error
+     */
+    BouncyKeyPair checkKeyPair() throws GordianException {
+        return BouncyKeyPair.checkKeyPair(super.getKeyPair());
+    }
+
+    /**
      * Set the digest.
      *
      * @param pSpec the digestSpec.

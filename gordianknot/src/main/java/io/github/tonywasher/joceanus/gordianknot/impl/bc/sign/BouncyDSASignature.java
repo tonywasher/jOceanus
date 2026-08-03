@@ -66,8 +66,7 @@ public class BouncyDSASignature
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        final BouncyKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
         final BouncyDSAPrivateKey myPrivate = (BouncyDSAPrivateKey) myPair.getPrivateKey();
@@ -79,8 +78,7 @@ public class BouncyDSASignature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        final BouncyKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
         final BouncyDSAPublicKey myPublic = (BouncyDSAPublicKey) myPair.getPublicKey();

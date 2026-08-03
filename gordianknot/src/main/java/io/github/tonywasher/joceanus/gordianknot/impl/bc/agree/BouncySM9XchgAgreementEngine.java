@@ -18,8 +18,9 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySM9KeyPair.BouncySM9EncMasterPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySM9KeyPair.BouncySM9EncUserPrivateKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySM9KeyPair.BouncySM9EncUserPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import org.bouncycastle.crypto.agreement.SM9KeyExchange;
@@ -57,11 +58,11 @@ public class BouncySM9XchgAgreementEngine
     @Override
     public void buildClientHello() throws GordianException {
         /* Access keys */
-        final BouncySM9EncUserPublicKey myPublic = (BouncySM9EncUserPublicKey) getPublicKey(getServerKeyPair());
-        final BouncySM9EncUserPrivateKey myPrivate = (BouncySM9EncUserPrivateKey) getPrivateKey(getClientKeyPair());
+        final BouncySM9EncMasterPrivateKey myPrivate = (BouncySM9EncMasterPrivateKey) getPrivateKey(getClientKeyPair());
+        final BouncySM9EncUserPrivateKey myUserPrivate = myPrivate.newUserPrivateKey(GordianSM9EncryptType.EXCHANGE, getClientName());
 
         /* Create the exchange */
-        theExchange = new SM9KeyExchange(myPrivate.getPrivateKey(), myPublic.getIdentity(), true);
+        theExchange = new SM9KeyExchange(myUserPrivate.getPrivateKey(), getServerName(), true);
 
         /* Generate the ephemeral key and stor as encapsulated */
         final ECPoint myEphemeral = theExchange.generateEphemeral(getRandom());
@@ -73,12 +74,12 @@ public class BouncySM9XchgAgreementEngine
         /* Access keys */
         final byte[] myEncapsulated = getEncapsulated();
         final ECPoint myClientEphemeral = SM9Curve.g1FromBytes(myEncapsulated, 0).normalize();
-        final BouncySM9EncUserPublicKey myClientPublic = (BouncySM9EncUserPublicKey) getPublicKey(getClientKeyPair());
-        final BouncySM9EncUserPrivateKey myPrivate = (BouncySM9EncUserPrivateKey) getPrivateKey(getServerKeyPair());
+        final BouncySM9EncMasterPrivateKey myPrivate = (BouncySM9EncMasterPrivateKey) getPrivateKey(getServerKeyPair());
+        final BouncySM9EncUserPrivateKey myUserPrivate = myPrivate.newUserPrivateKey(GordianSM9EncryptType.EXCHANGE, getServerName());
 
         /* Create the exchange */
-        final SM9KeyExchange myExchange = new SM9KeyExchange(myPrivate.getPrivateKey(),
-                myClientPublic.getIdentity(), false);
+        final SM9KeyExchange myExchange = new SM9KeyExchange(myUserPrivate.getPrivateKey(),
+                getClientName(), false);
 
         /* Generate the ephemeral key */
         final ECPoint myEphemeral = myExchange.generateEphemeral(getRandom());

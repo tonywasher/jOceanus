@@ -23,6 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSp
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.digest.BouncyDigest;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
@@ -55,6 +56,15 @@ abstract class BouncyPSSSignature
                        final GordianSignatureSpec pSpec) throws GordianException {
         super(pFactory, pSpec);
         theSigner = getRSASigner(pFactory, (GordianCoreSignatureSpec) pSpec);
+    }
+
+    /**
+     * Check for bouncyKeyPair.
+     *
+     * @throws GordianException on error
+     */
+    BouncyKeyPair checkKeyPair() throws GordianException {
+        return BouncyKeyPair.checkKeyPair(super.getKeyPair());
     }
 
     /**

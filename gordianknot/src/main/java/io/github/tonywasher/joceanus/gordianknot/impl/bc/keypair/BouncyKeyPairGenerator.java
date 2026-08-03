@@ -20,12 +20,14 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyStateAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyStateAwarePrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -114,9 +116,11 @@ public abstract class BouncyKeyPairGenerator<S extends AsymmetricKeyParameter, P
      */
     private BouncyKeyPair createKeyPair(final BouncyPublicKey<P> pPublicKey,
                                         final BouncyPrivateKey<S> pPrivateKey) {
-        return pPrivateKey instanceof BouncyStateAwarePrivateKey<?> myPrivate
-                ? new BouncyStateAwareKeyPair(pPublicKey, myPrivate)
-                : new BouncyKeyPair(pPublicKey, pPrivateKey);
+        return switch (pPrivateKey) {
+            case BouncyStateAwarePrivateKey<?> sa -> new BouncyStateAwareKeyPair(pPublicKey, sa);
+            case GordianIdAwarePrivateKey<?> ia -> new BouncyIdAwareKeyPair<>(pPublicKey, pPrivateKey);
+            default -> new BouncyKeyPair(pPublicKey, pPrivateKey);
+        };
     }
 
     @Override

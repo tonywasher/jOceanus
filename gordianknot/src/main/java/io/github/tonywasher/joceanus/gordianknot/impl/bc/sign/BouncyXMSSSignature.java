@@ -82,8 +82,7 @@ public class BouncyXMSSSignature
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        final BouncyKeyPair myPair = checkKeyPair();
 
         /* Set the digest */
         final GordianCoreKeyPairSpec myKeyPairSpec = (GordianCoreKeyPairSpec) myPair.getKeyPairSpec();
@@ -106,8 +105,7 @@ public class BouncyXMSSSignature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        final BouncyKeyPair myPair = checkKeyPair();
 
         /* Set the digest */
         final GordianCoreKeyPairSpec myKeyPairSpec = (GordianCoreKeyPairSpec) myPair.getKeyPairSpec();

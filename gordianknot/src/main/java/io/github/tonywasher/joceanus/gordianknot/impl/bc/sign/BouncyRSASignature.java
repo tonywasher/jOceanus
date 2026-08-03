@@ -57,8 +57,7 @@ public class BouncyRSASignature
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        final BouncyKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
         final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) myPair.getPrivateKey();
@@ -72,8 +71,7 @@ public class BouncyRSASignature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        final BouncyKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
         final BouncyRSAPublicKey myPublic = (BouncyRSAPublicKey) myPair.getPublicKey();

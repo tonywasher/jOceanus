@@ -119,8 +119,8 @@ public final class BouncySM9KeyPair {
         }
 
         @Override
-        public GordianIdAwarePublicKey<GordianSM9EncryptType> deriveUserPublicKey(final GordianSM9EncryptType pKeyType,
-                                                                                  final byte[] pIdentity) {
+        public BouncySM9EncUserPublicKey deriveUserPublicKey(final GordianSM9EncryptType pKeyType,
+                                                             final byte[] pIdentity) {
             return switch (pKeyType) {
                 case ENCRYPT -> {
                     final SM9EncPublicKeyParameters myParms = getPublicKey().getUserPublicKey(pIdentity,
@@ -300,8 +300,8 @@ public final class BouncySM9KeyPair {
         }
 
         @Override
-        public GordianIdAwarePublicKey<GordianSM9SignType> deriveUserPublicKey(final GordianSM9SignType pKeyType,
-                                                                               final byte[] pIdentity) {
+        public BouncySM9SignUserPublicKey deriveUserPublicKey(final GordianSM9SignType pKeyType,
+                                                              final byte[] pIdentity) {
             return new BouncySM9SignUserPublicKey(SIGN, getPublicKey(), pIdentity);
         }
     }
@@ -339,8 +339,8 @@ public final class BouncySM9KeyPair {
         }
 
         @Override
-        public GordianIdAwarePrivateKey<GordianSM9SignType> newUserPrivateKey(final GordianSM9SignType pKeyType,
-                                                                              final byte[] pIdentity) {
+        public BouncySM9SignUserPrivateKey newUserPrivateKey(final GordianSM9SignType pKeyType,
+                                                             final byte[] pIdentity) {
             final SM9SigPrivateKeyParameters myParms = getPrivateKey().generateUserKey(pIdentity);
             return new BouncySM9SignUserPrivateKey(SIGN, myParms, pIdentity);
         }

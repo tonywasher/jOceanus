@@ -165,7 +165,7 @@ public class GordianCoreSignatureSpec
                     && mySpec.isValid()
                     && mySpec.getCoreDigestType().supportsLargeData();
             case EDDSA, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE, MAYO,
-                 MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, XMSS, LMS -> theSignatureSpec == null;
+                 MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, XMSS, LMS, SM9 -> theSignatureSpec == null;
             case SM2 -> checkSM2Digest();
             case COMPOSITE -> theSignatureSpec instanceof List && checkComposite();
             default -> false;

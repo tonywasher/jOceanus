@@ -87,6 +87,7 @@ public class BouncySignatureFactory
             case UOV -> new BouncyUOVSignature(getFactory(), pSignatureSpec);
             case XMSS -> new BouncyXMSSSignature(getFactory(), pSignatureSpec);
             case LMS -> new BouncyLMSSignature(getFactory(), pSignatureSpec);
+            case SM9 -> new BouncySM9Signature(getFactory(), pSignatureSpec);
             case COMPOSITE -> new GordianCompositeSigner(getFactory(), pSignatureSpec);
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pSignatureSpec.getKeyPairType()));
         };

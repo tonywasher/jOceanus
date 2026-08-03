@@ -45,45 +45,32 @@ public class BouncyAgreementFactory
     @Override
     public GordianCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
         final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pSpec;
-        switch (pSpec.getKeyPairSpec().getKeyPairType()) {
-            case RSA:
-                return new BouncyRSAAgreementEngine(this, mySpec);
-            case EC, GOST, DSTU, SM2:
-                return getBCECEngine(mySpec);
-            case DH:
-                return getBCDHEngine(mySpec);
-            case NEWHOPE:
-                return new BouncyNewHopeAgreementEngine(this, mySpec);
-            case CMCE:
-                return new BouncyCMCEAgreementEngine(this, mySpec);
-            case FRODO:
-                return new BouncyFrodoAgreementEngine(this, mySpec);
-            case SABER:
-                return new BouncySABERAgreementEngine(this, mySpec);
-            case MLKEM:
-                return new BouncyMLKEMAgreementEngine(this, mySpec);
-            case HQC:
-                return new BouncyHQCAgreementEngine(this, mySpec);
-            case BIKE:
-                return new BouncyBIKEAgreementEngine(this, mySpec);
-            case NTRU:
-                return new BouncyNTRUAgreementEngine(this, mySpec);
-            case NTRUPLUS:
-                return new BouncyNTRUPlusAgreementEngine(this, mySpec);
-            case SMAUGT:
-                return new BouncySmaugTAgreementEngine(this, mySpec);
-            case NTRUPRIME:
+        return switch (pSpec.getKeyPairSpec().getKeyPairType()) {
+            case RSA -> new BouncyRSAAgreementEngine(this, mySpec);
+            case EC, GOST, DSTU, SM2 -> getBCECEngine(mySpec);
+            case DH -> getBCDHEngine(mySpec);
+            case NEWHOPE -> new BouncyNewHopeAgreementEngine(this, mySpec);
+            case CMCE -> new BouncyCMCEAgreementEngine(this, mySpec);
+            case FRODO -> new BouncyFrodoAgreementEngine(this, mySpec);
+            case SABER -> new BouncySABERAgreementEngine(this, mySpec);
+            case MLKEM -> new BouncyMLKEMAgreementEngine(this, mySpec);
+            case HQC -> new BouncyHQCAgreementEngine(this, mySpec);
+            case BIKE -> new BouncyBIKEAgreementEngine(this, mySpec);
+            case NTRU -> new BouncyNTRUAgreementEngine(this, mySpec);
+            case NTRUPLUS -> new BouncyNTRUPlusAgreementEngine(this, mySpec);
+            case SMAUGT -> new BouncySmaugTAgreementEngine(this, mySpec);
+            case NTRUPRIME -> {
                 final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pSpec.getKeyPairSpec();
                 final GordianCoreNTRUPrimeSpec myPrimeSpec = myKeySpec.getNTRUPrimeSpec();
-                return myPrimeSpec.getType() == GordianNTRUPrimeType.NTRUL
+                yield myPrimeSpec.getType() == GordianNTRUPrimeType.NTRUL
                         ? new BouncyNTRULPrimeAgreementEngine(this, mySpec)
                         : new BouncySNTRUPrimeAgreementEngine(this, mySpec);
-            case XDH:
-                return getBCXDHEngine(mySpec);
-            case COMPOSITE:
-            default:
-                return super.createEngine(pSpec);
-        }
+            }
+            case XDH -> getBCXDHEngine(mySpec);
+            case SM9 -> getBCSM9Engine(mySpec);
+            case COMPOSITE -> super.createEngine(pSpec);
+            default -> super.createEngine(pSpec);
+        };
     }
 
     /**
@@ -134,6 +121,21 @@ public class BouncyAgreementFactory
             case ANON -> new BouncyXDHAnonAgreementEngine(this, pSpec);
             case SIGNED, BASIC -> new BouncyXDHBasicAgreementEngine(this, pSpec);
             case UNIFIED -> new BouncyXDHUnifiedAgreementEngine(this, pSpec);
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
+        };
+    }
+
+    /**
+     * Create the BouncyCastle EC Agreement.
+     *
+     * @param pSpec the agreementSpec
+     * @return the Agreement
+     * @throws GordianException on error
+     */
+    private GordianCoreAgreementEngine getBCSM9Engine(final GordianCoreAgreementSpec pSpec) throws GordianException {
+        return switch (pSpec.getAgreementType()) {
+            case KEM -> new BouncySM9KEMAgreementEngine(this, pSpec);
+            case BASIC -> new BouncySM9XchgAgreementEngine(this, pSpec);
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         };
     }

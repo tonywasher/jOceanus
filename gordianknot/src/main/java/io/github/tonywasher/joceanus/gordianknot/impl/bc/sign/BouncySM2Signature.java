@@ -66,6 +66,15 @@ public class BouncySM2Signature
         }
     }
 
+    /**
+     * Check for bouncyKeyPair.
+     *
+     * @throws GordianException on error
+     */
+    BouncyKeyPair checkKeyPair() throws GordianException {
+        return BouncyKeyPair.checkKeyPair(super.getKeyPair());
+    }
+
     @Override
     public void update(final byte[] pBytes,
                        final int pOffset,
@@ -95,8 +104,7 @@ public class BouncySM2Signature
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        final BouncyKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
         final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) myPair.getPrivateKey();
@@ -108,8 +116,7 @@ public class BouncySM2Signature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        final BouncyKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
         final BouncyECPublicKey myPublic = (BouncyECPublicKey) myPair.getPublicKey();

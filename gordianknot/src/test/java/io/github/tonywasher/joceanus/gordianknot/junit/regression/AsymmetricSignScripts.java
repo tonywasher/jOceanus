@@ -179,26 +179,29 @@ public final class AsymmetricSignScripts {
         final GordianSignatureFactory mySrcSigns = pSignature.getOwner().getFactory().getSignatureFactory();
         final GordianSignatureFactory myTgtSigns = pSignature.getOwner().getPartner().getSignatureFactory();
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
-        GordianSignature mySigner = mySrcSigns.createSigner(mySpec);
+        final GordianSignature mySigner = mySrcSigns.createSigner(mySpec);
         final GordianSignParamsBuilder myBuilder = mySrcSigns.newSignParamsBuilder();
         mySigner.initForSigning(myBuilder.keyPairAndContext(myPair, myContext));
         mySigner.update(myMessage);
         byte[] mySignature = mySigner.sign();
 
         /* Check sent signature */
-        mySigner = myTgtSigns.createSigner(mySpec);
-        mySigner.initForVerify(myBuilder.keyPairAndContext(myPartnerSelf, myContext));
-        mySigner.update(myMessage);
-        Assertions.assertTrue(mySigner.verify(mySignature), "Failed to verify sent signature");
+        final GordianSignature myPartnerSigner = myTgtSigns.createSigner(mySpec);
+        myPartnerSigner.initForVerify(myBuilder.keyPairAndContext(myPartnerSelf, myContext));
+        myPartnerSigner.update(myMessage);
+        Assertions.assertTrue(myPartnerSigner.verify(mySignature), "Failed to verify sent signature");
 
         /* Check incoming signature */
-        mySigner.initForSigning(myBuilder.keyPairAndContext(myPartnerSelf, myContext));
-        mySigner.update(myMessage);
-        mySignature = mySigner.sign();
-        mySigner = mySrcSigns.createSigner(mySpec);
+        myPartnerSigner.initForSigning(myBuilder.keyPairAndContext(myPartnerSelf, myContext));
+        myPartnerSigner.update(myMessage);
+        mySignature = myPartnerSigner.sign();
         mySigner.initForVerify(myBuilder.keyPairAndContext(myPair, myContext));
         mySigner.update(myMessage);
         Assertions.assertTrue(mySigner.verify(mySignature), "Failed to verify returned signature");
+
+        /* Check for wrong factory */
+        Assertions.assertThrows(GordianException.class, () -> mySigner.initForSigning(myBuilder.keyPair(myPartnerSelf)), "Wrong Factory");
+        Assertions.assertThrows(GordianException.class, () -> mySigner.initForVerify(myBuilder.keyPair(myPartnerSelf)), "Wrong Factory");
     }
 
     /**

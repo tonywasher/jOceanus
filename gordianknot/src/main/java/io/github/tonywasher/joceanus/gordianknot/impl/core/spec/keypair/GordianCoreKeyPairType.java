@@ -80,7 +80,7 @@ public final class GordianCoreKeyPairType {
     public GordianRequired useDigestForSignatures() {
         return switch (theType) {
             case SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE, MAYO, MQOM, QRUOV,
-                 SDITH, SNOVA, SQISIGN, UOV, XMSS, EDDSA, LMS -> GordianRequired.NEVER;
+                 SDITH, SNOVA, SQISIGN, UOV, XMSS, EDDSA, LMS, SM9 -> GordianRequired.NEVER;
             default -> GordianRequired.ALWAYS;
         };
     }

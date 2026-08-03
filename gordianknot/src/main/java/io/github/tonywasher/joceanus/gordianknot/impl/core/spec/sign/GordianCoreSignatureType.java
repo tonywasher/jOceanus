@@ -112,7 +112,7 @@ public final class GordianCoreSignatureType {
     public static boolean hasNative(final GordianKeyPairType pKeyType) {
         return switch (pKeyType) {
             case SM2, EDDSA, DSTU, GOST, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE,
-                 MAYO, MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, XMSS, LMS, COMPOSITE -> true;
+                 MAYO, MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, XMSS, LMS, SM9, COMPOSITE -> true;
             default -> false;
         };
     }

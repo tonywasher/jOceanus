@@ -75,13 +75,21 @@ public class BouncyMLDSASignature
                 : new MLDSASigner();
     }
 
+    /**
+     * Check for bouncyKeyPair.
+     *
+     * @throws GordianException on error
+     */
+    BouncyKeyPair checkKeyPair() throws GordianException {
+        return BouncyKeyPair.checkKeyPair(super.getKeyPair());
+    }
+
     @Override
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
+        final BouncyKeyPair myPair = checkKeyPair();
         final byte[] myContext = getContext();
-        BouncyKeyPair.checkKeyPair(myPair);
 
         /* Initialise and set the signer */
         theSigner = createSigner(myPair);
@@ -97,9 +105,8 @@ public class BouncyMLDSASignature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
+        final BouncyKeyPair myPair = checkKeyPair();
         final byte[] myContext = getContext();
-        BouncyKeyPair.checkKeyPair(myPair);
 
         /* Initialise and set the signer */
         theSigner = createSigner(myPair);

@@ -106,12 +106,20 @@ public class BouncyEdDSASignature
                 : new Ed448Signer(myContext);
     }
 
+    /**
+     * Check for bouncyKeyPair.
+     *
+     * @throws GordianException on error
+     */
+    BouncyKeyPair checkKeyPair() throws GordianException {
+        return BouncyKeyPair.checkKeyPair(super.getKeyPair());
+    }
+
     @Override
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        final GordianKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        final GordianKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
         theSigner = createSigner(myPair);
@@ -123,8 +131,7 @@ public class BouncyEdDSASignature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        final GordianKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        final GordianKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
         theSigner = createSigner(myPair);

@@ -19,7 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.api.keypair;
 /**
  * Asymmetric StateAware KeyPair.
  */
-public interface GordianStateAwareKeyPair {
+public interface GordianStateAwareKeyPair
+        extends GordianKeyPair {
     /**
      * Obtain number of signatures remaining.
      *
@@ -33,5 +34,5 @@ public interface GordianStateAwareKeyPair {
      * @param pNumUsages the number of usage for the shard
      * @return the subKeyPair
      */
-    GordianKeyPair getKeyPairShard(int pNumUsages);
+    GordianStateAwareKeyPair getKeyPairShard(int pNumUsages);
 }

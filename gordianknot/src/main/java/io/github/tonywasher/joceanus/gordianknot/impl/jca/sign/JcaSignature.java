@@ -151,12 +151,20 @@ public abstract class JcaSignature
         return theSigner;
     }
 
+    /**
+     * Check for jcaKeyPair.
+     *
+     * @throws GordianException on error
+     */
+    private JcaKeyPair checkKeyPair() throws GordianException {
+        return JcaKeyPair.checkKeyPair(super.getKeyPair());
+    }
+
     @Override
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        final JcaKeyPair myPair = getKeyPair();
-        JcaKeyPair.checkKeyPair(myPair);
+        final JcaKeyPair myPair = checkKeyPair();
 
         /* Initialise for signing */
         try {
@@ -198,8 +206,7 @@ public abstract class JcaSignature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        final JcaKeyPair myPair = getKeyPair();
-        JcaKeyPair.checkKeyPair(myPair);
+        final JcaKeyPair myPair = checkKeyPair();
 
         /* Initialise for signing */
         try {

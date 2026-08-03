@@ -72,9 +72,8 @@ public class BouncySLHDSASignature
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
+        final BouncyKeyPair myPair = checkKeyPair();
         final byte[] myContext = getContext();
-        BouncyKeyPair.checkKeyPair(myPair);
 
         /* Determine whether this is a hashSigner */
         final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) myPair.getKeyPairSpec();
@@ -97,9 +96,8 @@ public class BouncySLHDSASignature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
+        final BouncyKeyPair myPair = checkKeyPair();
         final byte[] myContext = getContext();
-        BouncyKeyPair.checkKeyPair(myPair);
 
         /* Determine whether this is a hashSigner */
         final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) myPair.getKeyPairSpec();

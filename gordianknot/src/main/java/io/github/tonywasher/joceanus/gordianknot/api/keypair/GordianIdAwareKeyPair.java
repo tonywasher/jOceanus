@@ -24,7 +24,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
  *
  * @param <K> the keyType
  */
-public interface GordianIdAwareKeyPair<K extends GordianIdAwareKeyType> {
+public interface GordianIdAwareKeyPair<K extends GordianIdAwareKeyType>
+        extends GordianKeyPair {
     /**
      * get subKeyType.
      *

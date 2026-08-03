@@ -21,6 +21,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGener
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9KeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9SignType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyAIMerKeyPair.BouncyAIMerKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyBIKEKeyPair.BouncyBIKEKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyCMCEKeyPair.BouncyCMCEKeyPairGenerator;
@@ -51,6 +54,8 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyRSAKeyPai
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySABERKeyPair.BouncySABERKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySDitHKeyPair.BouncySDitHKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySLHDSAKeyPair.BouncySLHDSAKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySM9KeyPair.BouncySM9EncKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySM9KeyPair.BouncySM9SignKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySNTRUPrimeKeyPair.BouncySNTRUPrimeKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySQIsignKeyPair.BouncySQIsignKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySmaugTKeyPair.BouncySmaugTKeyPairGenerator;
@@ -169,11 +174,29 @@ public class BouncyKeyPairFactory
             case SQISIGN -> new BouncySQIsignKeyPairGenerator(theFactory, pKeySpec);
             case UOV -> new BouncyUOVKeyPairGenerator(theFactory, pKeySpec);
             case NEWHOPE -> new BouncyNewHopeKeyPairGenerator(theFactory, pKeySpec);
+            case SM9 -> getSM9KeyGenerator(pKeySpec);
             case XMSS -> myKeySpec.getXMSSSpec().isMT()
                     ? new BouncyXMSSMTKeyPairGenerator(theFactory, pKeySpec)
                     : new BouncyXMSSKeyPairGenerator(theFactory, pKeySpec);
             case LMS -> new BouncyHSSKeyPairGenerator(theFactory, pKeySpec);
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec.getKeyPairType()));
         };
+    }
+
+    /**
+     * Obtain SM9 KeyPair generator.
+     *
+     * @param pKeySpec the keySpec
+     * @return the generator
+     * @throws GordianException on error
+     */
+    private GordianKeyPairGenerator getSM9KeyGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
+        final GordianSM9KeyType myType = (GordianSM9KeyType) pKeySpec.getSubSpec();
+        if (myType == GordianSM9EncryptType.ENCMASTER) {
+            return new BouncySM9EncKeyPairGenerator(theFactory, pKeySpec);
+        } else if (myType == GordianSM9SignType.SIGNMASTER) {
+            return new BouncySM9SignKeyPairGenerator(theFactory, pKeySpec);
+        }
+        throw new GordianDataException("No KeyPair Generator available for userKeys: " + myType);
     }
 }

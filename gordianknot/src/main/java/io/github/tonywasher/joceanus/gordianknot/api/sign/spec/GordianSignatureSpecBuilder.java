@@ -122,6 +122,15 @@ public interface GordianSignatureSpecBuilder {
     }
 
     /**
+     * Create SM9Spec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec sm9() {
+        return withKeyPairType(GordianKeyPairType.SM9).build();
+    }
+
+    /**
      * Create DSTU4145Spec.
      *
      * @return the SignatureSpec
