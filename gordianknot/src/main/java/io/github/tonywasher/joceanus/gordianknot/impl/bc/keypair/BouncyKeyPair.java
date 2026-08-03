@@ -406,6 +406,11 @@ public class BouncyKeyPair
                 throw new GordianLogicException("Invalid keyType: " + pKeyType);
             }
 
+            /* Reject if identity is null */
+            if (pIdentity == null) {
+                throw new GordianLogicException("Null identity");
+            }
+
             /* Create new userKey */
             final GordianIdAwarePrivateKey<K> myPrivate = getIdAwarePrivateKey().newUserPrivateKey(pKeyType, pIdentity);
             final GordianIdAwarePublicKey<K> myPublic = getIdAwarePublicKey().deriveUserPublicKey(pKeyType, pIdentity);
@@ -418,6 +423,11 @@ public class BouncyKeyPair
             /* Reject if requested keyType is not user */
             if (pKeyType == null || !pKeyType.isUserKey()) {
                 throw new GordianLogicException("Invalid keyType: " + pKeyType);
+            }
+
+            /* Reject if identity is null */
+            if (pIdentity == null) {
+                throw new GordianLogicException("Null identity");
             }
 
             /* derive new publicKey */

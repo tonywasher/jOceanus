@@ -68,7 +68,7 @@ public final class BouncySM9KeyPair {
     /**
      * The Encrypt keySpec.
      */
-    private static final GordianKeyPairSpec ENCRYPYT = BUILDER.sm9(GordianSM9EncryptType.ENCRYPT);
+    private static final GordianKeyPairSpec ENCRYPT = BUILDER.sm9(GordianSM9EncryptType.ENCRYPT);
 
     /**
      * The Exchange keySpec.
@@ -125,7 +125,7 @@ public final class BouncySM9KeyPair {
                 case ENCRYPT -> {
                     final SM9EncPublicKeyParameters myParms = getPublicKey().getUserPublicKey(pIdentity,
                             SM9EncMasterPrivateKeyParameters.HID);
-                    yield new BouncySM9EncUserPublicKey(ENCRYPYT, myParms);
+                    yield new BouncySM9EncUserPublicKey(ENCRYPT, myParms);
                 }
                 case EXCHANGE -> {
                     final SM9EncPublicKeyParameters myParms = getPublicKey().getUserPublicKey(pIdentity,
@@ -176,7 +176,7 @@ public final class BouncySM9KeyPair {
                 case ENCRYPT -> {
                     final SM9EncPrivateKeyParameters myParms = getPrivateKey().generateUserKey(pIdentity,
                             SM9EncMasterPrivateKeyParameters.HID);
-                    yield new BouncySM9EncUserPrivateKey(ENCRYPYT, myParms);
+                    yield new BouncySM9EncUserPrivateKey(ENCRYPT, myParms);
                 }
                 case EXCHANGE -> {
                     final SM9EncPrivateKeyParameters myParms = getPrivateKey().generateExchangeKey(pIdentity);
@@ -367,7 +367,7 @@ public final class BouncySM9KeyPair {
                                    final SM9SigMasterPublicKeyParameters pPublicKey,
                                    final byte[] pIdentity) {
             super(pKeySpec, pPublicKey);
-            theIdentity = pIdentity;
+            theIdentity = pIdentity.clone();
         }
 
         @Override
@@ -437,7 +437,7 @@ public final class BouncySM9KeyPair {
                                     final SM9SigPrivateKeyParameters pPrivateKey,
                                     final byte[] pIdentity) {
             super(pKeySpec, pPrivateKey);
-            theIdentity = pIdentity;
+            theIdentity = pIdentity.clone();
         }
 
         @Override
@@ -574,7 +574,7 @@ public final class BouncySM9KeyPair {
             try {
                 final SM9EncMasterPublicKeyParameters myParams = (SM9EncMasterPublicKeyParameters) pParams;
                 final AlgorithmIdentifier myId = new AlgorithmIdentifier(GMObjectIdentifiers.sm9encrypt);
-                final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(myId, new DEROctetString(myParams.getEncoded()));
+                final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(myId, myParams.getEncoded());
                 return new X509EncodedKeySpec(myInfo.getEncoded(ASN1Encoding.DER));
 
             } catch (IOException e) {
@@ -670,7 +670,7 @@ public final class BouncySM9KeyPair {
             try {
                 final SM9SigMasterPublicKeyParameters myParams = (SM9SigMasterPublicKeyParameters) pParams;
                 final AlgorithmIdentifier myId = new AlgorithmIdentifier(GMObjectIdentifiers.sm9sign);
-                final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(myId, new DEROctetString(myParams.getEncoded()));
+                final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(myId, myParams.getEncoded());
                 return new X509EncodedKeySpec(myInfo.getEncoded(ASN1Encoding.DER));
 
             } catch (IOException e) {

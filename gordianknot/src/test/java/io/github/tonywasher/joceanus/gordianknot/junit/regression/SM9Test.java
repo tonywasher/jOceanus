@@ -38,15 +38,21 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureS
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianGenerator;
 
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Objects;
+
 public class SM9Test {
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
         try {
             /* Create Factory */
             final GordianFactory myFactory = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
+            final GordianFactory myJFactory = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
 
             /* Create Encrypt keyPair Generator */
             final GordianAsyncFactory myAsyncFactory = myFactory.getAsyncFactory();
+            final GordianAsyncFactory myJAsyncFactory = myJFactory.getAsyncFactory();
             final GordianKeyPairFactory myKeyPairs = myAsyncFactory.getKeyPairFactory();
             final GordianSignatureFactory mySigns = myAsyncFactory.getSignatureFactory();
             final GordianAgreementFactory myAgrees = myAsyncFactory.getAgreementFactory();
@@ -97,6 +103,7 @@ public class SM9Test {
 //
             /* Test signatures */
             testSignatures(myAsyncFactory);
+            testSignatures(myJAsyncFactory);
 
         } catch (GordianException e) {
             e.printStackTrace();
@@ -118,6 +125,12 @@ public class SM9Test {
             final GordianKeyPairGenerator mySigGenerator = myKeyPairs.getKeyPairGenerator(mySigMasterSpec);
             final GordianIdAwareKeyPair<GordianSM9SignType> mySigMasterPair = (GordianIdAwareKeyPair<GordianSM9SignType>) mySigGenerator.generateKeyPair();
             final GordianKeyPair mySigPair = mySigMasterPair.newUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
+
+            /* Obtain representations keyPair */
+            final X509EncodedKeySpec myX509 = mySigGenerator.getX509Encoding(mySigMasterPair);
+            final PKCS8EncodedKeySpec myPKCS8 = mySigGenerator.getPKCS8Encoding(mySigMasterPair);
+            final GordianKeyPair myDerived = mySigGenerator.deriveKeyPair(myX509, myPKCS8);
+            final boolean isIdentical = Objects.equals(mySigMasterPair, myDerived);
 
             /* Create a signature */
             final GordianSignatureSpecBuilder mySigBuilder = mySigns.newSignatureSpecBuilder();

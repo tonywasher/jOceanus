@@ -21,11 +21,16 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGener
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9KeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9SignType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaSM9KeyPairGenerator.JcaSM9EncKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaSM9KeyPairGenerator.JcaSM9SignKeyPairGenerator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -123,9 +128,27 @@ public class JcaKeyPairFactory
             case SNOVA -> new JcaSnovaKeyPairGenerator(theFactory, pKeySpec);
             case SQISIGN -> new JcaSQIsignKeyPairGenerator(theFactory, pKeySpec);
             case UOV -> new JcaUOVKeyPairGenerator(theFactory, pKeySpec);
+            case SM9 -> getSM9KeyGenerator(pKeySpec);
             case XMSS -> new JcaXMSSKeyPairGenerator(theFactory, pKeySpec);
             case LMS -> new JcaLMSKeyPairGenerator(theFactory, pKeySpec);
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec.getKeyPairType()));
         };
+    }
+
+    /**
+     * Obtain SM9 KeyPair generator.
+     *
+     * @param pKeySpec the keySpec
+     * @return the generator
+     * @throws GordianException on error
+     */
+    private JcaKeyPairGenerator getSM9KeyGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
+        final GordianSM9KeyType myType = (GordianSM9KeyType) pKeySpec.getSubSpec();
+        if (myType == GordianSM9EncryptType.ENCMASTER) {
+            return new JcaSM9EncKeyPairGenerator(theFactory, pKeySpec);
+        } else if (myType == GordianSM9SignType.SIGNMASTER) {
+            return new JcaSM9SignKeyPairGenerator(theFactory, pKeySpec);
+        }
+        throw new GordianDataException("No KeyPair Generator available for userKeys: " + myType);
     }
 }

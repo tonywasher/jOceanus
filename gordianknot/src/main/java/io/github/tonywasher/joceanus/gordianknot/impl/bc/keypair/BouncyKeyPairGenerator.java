@@ -119,7 +119,7 @@ public abstract class BouncyKeyPairGenerator<S extends AsymmetricKeyParameter, P
         return switch (pPrivateKey) {
             case BouncyStateAwarePrivateKey<?> sa -> new BouncyStateAwareKeyPair(pPublicKey, sa);
             case GordianIdAwarePrivateKey<?> ia -> new BouncyIdAwareKeyPair<>(pPublicKey, pPrivateKey);
-            default -> new BouncyKeyPair(pPublicKey, pPrivateKey);
+            case null, default -> new BouncyKeyPair(pPublicKey, pPrivateKey);
         };
     }
 

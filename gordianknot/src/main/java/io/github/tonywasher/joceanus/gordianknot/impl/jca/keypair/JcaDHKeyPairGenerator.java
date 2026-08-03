@@ -23,8 +23,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreDHSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaDHPrivateKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaDHPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPublicKey;
 import org.bouncycastle.crypto.params.DHParameters;
@@ -32,9 +30,11 @@ import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPublicKey;
 import org.bouncycastle.jcajce.spec.DHDomainParameterSpec;
 
+import javax.crypto.spec.DHParameterSpec;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Objects;
 
 /**
  * Jca DiffieHellman KeyPair generator.
@@ -83,5 +83,129 @@ public class JcaDHKeyPairGenerator
     @Override
     protected JcaPublicKey createPublic(final PublicKey pPublicKey) {
         return new JcaDHPublicKey(getKeySpec(), (BCDHPublicKey) pPublicKey);
+    }
+
+    /**
+     * Jca DH PublicKey.
+     */
+    public static class JcaDHPublicKey
+            extends JcaPublicKey {
+        /**
+         * Public Key details.
+         */
+        private final BCDHPublicKey theKey;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec   the keySpec
+         * @param pPublicKey the public key
+         */
+        protected JcaDHPublicKey(final GordianKeyPairSpec pKeySpec,
+                                 final BCDHPublicKey pPublicKey) {
+            super(pKeySpec, pPublicKey);
+            theKey = pPublicKey;
+        }
+
+        @Override
+        public BCDHPublicKey getPublicKey() {
+            return theKey;
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Make sure that the object is the same class */
+            if (!(pThat instanceof JcaDHPublicKey myThat)) {
+                return false;
+            }
+
+            /* Check differences */
+            return getKeySpec().equals(myThat.getKeySpec())
+                    && theKey.getY().equals(myThat.getPublicKey().getY())
+                    && dhParamsAreEqual(theKey.getParams(), myThat.getPublicKey().getParams());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getKeySpec(), theKey);
+        }
+    }
+
+    /**
+     * check DH Parameters are equal (ignoring L!!).
+     *
+     * @param pFirst  the first parameters
+     * @param pSecond the second parameters
+     * @return true/false
+     */
+    private static boolean dhParamsAreEqual(final DHParameterSpec pFirst,
+                                            final DHParameterSpec pSecond) {
+        final DHDomainParameterSpec myFirst = (DHDomainParameterSpec) pFirst;
+        final DHDomainParameterSpec mySecond = (DHDomainParameterSpec) pSecond;
+        return myFirst.getP().equals(mySecond.getP())
+                && myFirst.getG().equals(mySecond.getG())
+                && myFirst.getQ().equals(mySecond.getQ());
+    }
+
+    /**
+     * Jca DH PrivateKey.
+     */
+    public static class JcaDHPrivateKey
+            extends JcaPrivateKey {
+        /**
+         * The private key.
+         */
+        private final BCDHPrivateKey thePrivateKey;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the key spec
+         * @param pKey     the key
+         */
+        JcaDHPrivateKey(final GordianKeyPairSpec pKeySpec,
+                        final BCDHPrivateKey pKey) {
+            super(pKeySpec, pKey);
+            thePrivateKey = pKey;
+        }
+
+        @Override
+        public BCDHPrivateKey getPrivateKey() {
+            return thePrivateKey;
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (pThat == this) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Make sure that the object is the same class */
+            if (!(pThat instanceof JcaDHPrivateKey myThat)) {
+                return false;
+            }
+
+            /* Check differences */
+            return getKeySpec().equals(myThat.getKeySpec())
+                    && thePrivateKey.getX().equals(myThat.getPrivateKey().getX())
+                    && dhParamsAreEqual(thePrivateKey.getParams(), myThat.getPrivateKey().getParams());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getKeySpec(), thePrivateKey);
+        }
     }
 }

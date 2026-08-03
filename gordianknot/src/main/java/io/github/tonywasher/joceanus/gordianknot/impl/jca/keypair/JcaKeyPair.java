@@ -17,22 +17,23 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey.GordianStateAwarePrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
-import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPrivateKey;
-import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPublicKey;
-import org.bouncycastle.jcajce.spec.DHDomainParameterSpec;
 import org.bouncycastle.pqc.jcajce.interfaces.LMSPrivateKey;
 import org.bouncycastle.pqc.jcajce.interfaces.XMSSMTPrivateKey;
 import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
 
-import javax.crypto.spec.DHParameterSpec;
 import javax.security.auth.DestroyFailedException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -331,130 +332,6 @@ public class JcaKeyPair
     }
 
     /**
-     * Jca DH PublicKey.
-     */
-    public static class JcaDHPublicKey
-            extends JcaPublicKey {
-        /**
-         * Public Key details.
-         */
-        private final BCDHPublicKey theKey;
-
-        /**
-         * Constructor.
-         *
-         * @param pKeySpec   the keySpec
-         * @param pPublicKey the public key
-         */
-        protected JcaDHPublicKey(final GordianKeyPairSpec pKeySpec,
-                                 final BCDHPublicKey pPublicKey) {
-            super(pKeySpec, pPublicKey);
-            theKey = pPublicKey;
-        }
-
-        @Override
-        public BCDHPublicKey getPublicKey() {
-            return theKey;
-        }
-
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof JcaDHPublicKey myThat)) {
-                return false;
-            }
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                    && theKey.getY().equals(myThat.getPublicKey().getY())
-                    && dhParamsAreEqual(theKey.getParams(), myThat.getPublicKey().getParams());
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(getKeySpec(), theKey);
-        }
-    }
-
-    /**
-     * check DH Parameters are equal (ignoring L!!).
-     *
-     * @param pFirst  the first parameters
-     * @param pSecond the second parameters
-     * @return true/false
-     */
-    private static boolean dhParamsAreEqual(final DHParameterSpec pFirst,
-                                            final DHParameterSpec pSecond) {
-        final DHDomainParameterSpec myFirst = (DHDomainParameterSpec) pFirst;
-        final DHDomainParameterSpec mySecond = (DHDomainParameterSpec) pSecond;
-        return myFirst.getP().equals(mySecond.getP())
-                && myFirst.getG().equals(mySecond.getG())
-                && myFirst.getQ().equals(mySecond.getQ());
-    }
-
-    /**
-     * Jca DH PrivateKey.
-     */
-    public static class JcaDHPrivateKey
-            extends JcaPrivateKey {
-        /**
-         * The private key.
-         */
-        private final BCDHPrivateKey thePrivateKey;
-
-        /**
-         * Constructor.
-         *
-         * @param pKeySpec the key spec
-         * @param pKey     the key
-         */
-        JcaDHPrivateKey(final GordianKeyPairSpec pKeySpec,
-                        final BCDHPrivateKey pKey) {
-            super(pKeySpec, pKey);
-            thePrivateKey = pKey;
-        }
-
-        @Override
-        public BCDHPrivateKey getPrivateKey() {
-            return thePrivateKey;
-        }
-
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof JcaDHPrivateKey myThat)) {
-                return false;
-            }
-
-            /* Check differences */
-            return getKeySpec().equals(myThat.getKeySpec())
-                    && thePrivateKey.getX().equals(myThat.getPrivateKey().getX())
-                    && dhParamsAreEqual(thePrivateKey.getParams(), myThat.getPrivateKey().getParams());
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(getKeySpec(), thePrivateKey);
-        }
-    }
-
-    /**
      * Jca StateAware KeyPair.
      */
     public static class JcaStateAwareKeyPair
@@ -484,6 +361,106 @@ public class JcaKeyPair
         @Override
         public JcaStateAwareKeyPair getKeyPairShard(final int pNumUsages) {
             return new JcaStateAwareKeyPair(getPublicKey(), getPrivateKey().getKeyShard(pNumUsages));
+        }
+    }
+
+    /**
+     * Jca IdAware KeyPair.
+     *
+     * @param <K> the keyType
+     */
+    public static class JcaIdAwareKeyPair<K extends GordianIdAwareKeyType>
+            extends JcaKeyPair
+            implements GordianIdAwareKeyPair<K> {
+        /**
+         * Constructor.
+         *
+         * @param pPublic  the public key
+         * @param pPrivate the private key
+         */
+        JcaIdAwareKeyPair(final JcaPublicKey pPublic,
+                          final JcaPrivateKey pPrivate) {
+            super(pPublic, pPrivate);
+        }
+
+        /**
+         * Obtain idAware privateKey.
+         *
+         * @return the private key
+         */
+        @SuppressWarnings("unchecked")
+        public GordianIdAwarePublicKey<K> getIdAwarePublicKey() {
+            return (GordianIdAwarePublicKey<K>) getPublicKey();
+        }
+
+        /**
+         * Obtain idAware privateKey.
+         *
+         * @return the private key
+         */
+        @SuppressWarnings("unchecked")
+        public GordianIdAwarePrivateKey<K> getIdAwarePrivateKey() {
+            return (GordianIdAwarePrivateKey<K>) getPrivateKey();
+        }
+
+        @Override
+        public K getSubKeyType() {
+            return getIdAwarePublicKey().getSubKeyType();
+        }
+
+        @Override
+        public byte[] getIdentity() {
+            return getIdAwarePublicKey().getIdentity();
+        }
+
+        @Override
+        public JcaIdAwareKeyPair<K> newUserKeyPair(final K pKeyType,
+                                                   final byte[] pIdentity) throws GordianException {
+            /* Reject if we are not master key */
+            if (getSubKeyType().isUserKey()) {
+                throw new GordianLogicException("Can't create new userKeyPair from userKey");
+            }
+
+            /* Reject if we are public only */
+            if (isPublicOnly()) {
+                throw new GordianLogicException("Can't create new userKeyPair without privateKey");
+            }
+
+            /* Check for destroyed keyPair */
+            checkForDestroyed("keyPair");
+
+            /* Reject if requested keyType is not user */
+            if (pKeyType == null || !pKeyType.isUserKey()) {
+                throw new GordianLogicException("Invalid keyType: " + pKeyType);
+            }
+
+            /* Reject if identity is null */
+            if (pIdentity == null) {
+                throw new GordianLogicException("Null identity");
+            }
+
+            /* Create new userKey */
+            final GordianIdAwarePrivateKey<K> myPrivate = getIdAwarePrivateKey().newUserPrivateKey(pKeyType, pIdentity);
+            final GordianIdAwarePublicKey<K> myPublic = getIdAwarePublicKey().deriveUserPublicKey(pKeyType, pIdentity);
+            return new JcaIdAwareKeyPair<K>((JcaPublicKey) myPublic, (JcaPrivateKey) myPrivate);
+        }
+
+        @Override
+        public GordianIdAwareKeyPair<K> derivePublicOnlyUserKeyPair(K pKeyType,
+                                                                    byte[] pIdentity) throws GordianException {
+            /* Reject if requested keyType is not user */
+            if (pKeyType == null || !pKeyType.isUserKey()) {
+                throw new GordianLogicException("Invalid keyType: " + pKeyType);
+            }
+
+            /* Reject if identity is null */
+            if (pIdentity == null) {
+                throw new GordianLogicException("Null identity");
+            }
+
+            /* derive new publicKey */
+            final GordianIdAwarePublicKey<K> myPublic = getIdAwarePublicKey().deriveUserPublicKey(pKeyType, pIdentity);
+            return new JcaIdAwareKeyPair<K>((JcaPublicKey) myPublic, null);
         }
     }
 }

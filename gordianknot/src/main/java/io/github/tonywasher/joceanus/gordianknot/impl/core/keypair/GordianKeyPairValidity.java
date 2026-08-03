@@ -86,6 +86,8 @@ public final class GordianKeyPairValidity {
             case GordianEncryptorSpec mySpec -> checkValidity(pFactory, pKeyPair, mySpec);
 
             case GordianAgreementSpec mySpec -> checkValidity(pFactory, pKeyPair, mySpec);
+            case null -> {
+            }
             default -> throw new GordianLogicException("Unexpected keyPairType");
         }
     }
@@ -214,6 +216,7 @@ public final class GordianKeyPairValidity {
             case CMCE, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE, SMAUGT ->
                     myAgreeBuilder.kem(mySpec, GordianAgreementKDF.NONE);
             case FRODO -> myAgreeBuilder.kem(mySpec, GordianAgreementKDF.KMAC128);
+            case SM9 -> null;
             default -> throw new GordianDataException("No validity check found for :" + mySpec.getKeyPairType());
         };
     }

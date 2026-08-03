@@ -82,6 +82,7 @@ public class JcaSignatureFactory
             case SQISIGN -> new JcaSQIsignSignature(getFactory(), pSignatureSpec);
             case UOV -> new JcaUOVSignature(getFactory(), pSignatureSpec);
             case LMS -> new JcaLMSSignature(getFactory(), pSignatureSpec);
+            case SM9 -> new JcaSM9Signature(getFactory(), pSignatureSpec);
             case COMPOSITE -> new GordianCompositeSigner(getFactory(), pSignatureSpec);
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pSignatureSpec.getKeyPairType()));
         };
@@ -101,7 +102,7 @@ public class JcaSignatureFactory
             case EC -> validECSignature(mySpec);
             case DSA -> validDSASignature(mySpec);
             case DSTU, GOST, SM2, XMSS, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE, MAYO,
-                 MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, EDDSA, LMS, COMPOSITE -> true;
+                 MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, EDDSA, LMS, SM9, COMPOSITE -> true;
             default -> false;
         };
     }

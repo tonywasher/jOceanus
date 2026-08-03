@@ -32,7 +32,7 @@ import java.security.InvalidAlgorithmParameterException;
 public class JcaSmaugTKeyPairGenerator
         extends JcaKeyPairGenerator {
     /**
-     * SABER algorithm.
+     * SmaugT algorithm.
      */
     private static final String SMAUG_ALGO = "SMAUGT";
 

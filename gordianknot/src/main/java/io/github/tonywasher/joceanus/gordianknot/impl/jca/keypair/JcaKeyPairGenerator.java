@@ -22,9 +22,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPair
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.base.JcaProvider;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaStateAwareKeyPair;
@@ -141,7 +143,7 @@ public abstract class JcaKeyPairGenerator
             /* derive the keyPair */
             final JcaPublicKey myPublic = derivePublicKey(pPublicKey);
             final JcaPrivateKey myPrivate = createPrivate(theFactory.generatePrivate(pPrivateKey));
-            final JcaKeyPair myPair = new JcaKeyPair(myPublic, myPrivate);
+            final JcaKeyPair myPair = createKeyPair(myPublic, myPrivate);
 
             /* Check that we have a matching pair */
             GordianKeyPairValidity.checkValidity(getFactory(), myPair);
@@ -174,10 +176,26 @@ public abstract class JcaKeyPairGenerator
         return new JcaPublicKey(getKeySpec(), pPublicKey);
     }
 
+    /**
+     * Create keyPair.
+     *
+     * @param pPublicKey  the public key
+     * @param pPrivateKey the private key
+     * @return the keyPair
+     */
+    private JcaKeyPair createKeyPair(final JcaPublicKey pPublicKey,
+                                     final JcaPrivateKey pPrivateKey) {
+        return switch (pPrivateKey) {
+            case JcaStateAwarePrivateKey sa -> new JcaStateAwareKeyPair(pPublicKey, sa);
+            case GordianIdAwarePrivateKey<?> ia -> new JcaIdAwareKeyPair<>(pPublicKey, pPrivateKey);
+            case null, default -> new JcaKeyPair(pPublicKey, pPrivateKey);
+        };
+    }
+
     @Override
     public JcaKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pPublicKey) throws GordianException {
         final JcaPublicKey myPublic = derivePublicKey(pPublicKey);
-        return new JcaKeyPair(myPublic);
+        return createKeyPair(myPublic, null);
     }
 
     /**
@@ -207,7 +225,7 @@ public abstract class JcaKeyPairGenerator
         final KeyPair myPair = theGenerator.generateKeyPair();
         final JcaPublicKey myPublic = createPublic(myPair.getPublic());
         final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());
-        return new JcaKeyPair(myPublic, myPrivate);
+        return createKeyPair(myPublic, myPrivate);
     }
 
     /**
