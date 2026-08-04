@@ -48,6 +48,11 @@ public class BouncySM9Encryptor
     /**
      * The underlying encryptor.
      */
+    private static final byte HDR = 0x04;
+
+    /**
+     * The underlying encryptor.
+     */
     private final SM9Engine theEncryptor;
 
     /**
@@ -121,7 +126,7 @@ public class BouncySM9Encryptor
             /* Encrypt the message */
             final byte[] myRaw = theEncryptor.processBlock(pBytes, 0, pBytes.length);
             final byte[] c1 = new byte[GordianLength.LEN_64.getLength() + 1];
-            c1[0] = 0x04;
+            c1[0] = HDR;
             System.arraycopy(myRaw, 0, c1, 1, GordianLength.LEN_64.getLength());
             final byte[] c3 = Arrays.copyOfRange(myRaw, GordianLength.LEN_64.getLength(), GordianLength.LEN_96.getLength());
             final byte[] c2 = Arrays.copyOfRange(myRaw, GordianLength.LEN_96.getLength(), myRaw.length);
@@ -148,9 +153,9 @@ public class BouncySM9Encryptor
             /* Decrypt the message */
             final SM9Cipher c = SM9Cipher.getInstance(pBytes);
             final byte[] c1 = c.getC1();
-            final byte[] myRaw = Arrays.concatenate(Arrays.copyOfRange(c1, 1, GordianLength.LEN_64.getLength() + 1), c.getC3(), c.getC2());
-            final SM9Engine myEngine = new SM9Engine(
-                    (c.getEnType() == SM9Cipher.EN_TYPE_SM4) ? Mode.SM4 : Mode.STREAM);
+            final byte[] myRaw = Arrays.concatenate(Arrays.copyOfRange(c1, 1, GordianLength.LEN_64.getLength() + 1),
+                    c.getC3(), c.getC2());
+            final SM9Engine myEngine = new SM9Engine(c.getEnType() == SM9Cipher.EN_TYPE_SM4 ? Mode.SM4 : Mode.STREAM);
             myEngine.init(false, thePrivateKey);
             return myEngine.processBlock(myRaw, 0, myRaw.length);
 

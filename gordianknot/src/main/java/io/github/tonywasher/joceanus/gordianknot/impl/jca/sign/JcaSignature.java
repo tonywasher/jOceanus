@@ -154,6 +154,7 @@ public abstract class JcaSignature
     /**
      * Check for jcaKeyPair.
      *
+     * @return the keyPair
      * @throws GordianException on error
      */
     private JcaKeyPair checkKeyPair() throws GordianException {

@@ -69,6 +69,7 @@ public class BouncySM2Signature
     /**
      * Check for bouncyKeyPair.
      *
+     * @return the keyPair
      * @throws GordianException on error
      */
     BouncyKeyPair checkKeyPair() throws GordianException {

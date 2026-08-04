@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9SignType;
@@ -71,11 +72,37 @@ public final class JcaSM9KeyPairGenerator {
     }
 
     /**
+     * Derive User Encoding public key.
+     *
+     * @param pPublicKey the master public key
+     * @param pKeyType   the keyType
+     * @param pIdentity  the identity
+     * @return the public key
+     */
+    private static JcaSM9EncUserPublicKey deriveUserPublicKey(final SM9EncMasterPublicKey pPublicKey,
+                                                              final GordianIdAwareKeyType pKeyType,
+                                                              final byte[] pIdentity) {
+        return switch ((GordianSM9EncryptType) pKeyType) {
+            case ENCRYPT -> {
+                final PublicKey myUserPublic = pPublicKey.getUserPublicKey(pIdentity,
+                        SM9EncMasterPublicKey.HID);
+                yield new JcaSM9EncUserPublicKey(ENCRYPT, myUserPublic, pPublicKey, pIdentity);
+            }
+            case EXCHANGE -> {
+                final PublicKey myUserPublic = pPublicKey.getUserPublicKey(pIdentity,
+                        SM9EncMasterPublicKey.HID_EXCHANGE);
+                yield new JcaSM9EncUserPublicKey(EXCHANGE, myUserPublic, pPublicKey, pIdentity);
+            }
+            default -> null;
+        };
+    }
+
+    /**
      * Jca SM9EncMaster PublicKey.
      */
     public static class JcaSM9EncMasterPublicKey
             extends JcaPublicKey
-            implements GordianIdAwarePublicKey<GordianSM9EncryptType> {
+            implements GordianIdAwarePublicKey {
         /**
          * Constructor.
          *
@@ -93,22 +120,10 @@ public final class JcaSM9KeyPairGenerator {
         }
 
         @Override
-        public JcaSM9EncUserPublicKey deriveUserPublicKey(final GordianSM9EncryptType pKeyType,
+        public JcaSM9EncUserPublicKey deriveUserPublicKey(final GordianIdAwareKeyType pKeyType,
                                                           final byte[] pIdentity) {
             final SM9EncMasterPublicKey myPublic = (SM9EncMasterPublicKey) getPublicKey();
-            return switch (pKeyType) {
-                case ENCRYPT -> {
-                    final PublicKey myUserPublic = myPublic.getUserPublicKey(pIdentity,
-                            SM9EncMasterPublicKey.HID);
-                    yield new JcaSM9EncUserPublicKey(ENCRYPT, myUserPublic, pIdentity);
-                }
-                case EXCHANGE -> {
-                    final PublicKey myUserPublic = myPublic.getUserPublicKey(pIdentity,
-                            SM9EncMasterPublicKey.HID_EXCHANGE);
-                    yield new JcaSM9EncUserPublicKey(EXCHANGE, myUserPublic, pIdentity);
-                }
-                default -> null;
-            };
+            return JcaSM9KeyPairGenerator.deriveUserPublicKey(myPublic, pKeyType, pIdentity);
         }
     }
 
@@ -117,7 +132,7 @@ public final class JcaSM9KeyPairGenerator {
      */
     public static class JcaSM9EncMasterPrivateKey
             extends JcaPrivateKey
-            implements GordianIdAwarePrivateKey<GordianSM9EncryptType> {
+            implements GordianIdAwarePrivateKey {
         /**
          * Constructor.
          *
@@ -135,10 +150,10 @@ public final class JcaSM9KeyPairGenerator {
         }
 
         @Override
-        public JcaSM9EncUserPrivateKey newUserPrivateKey(final GordianSM9EncryptType pKeyType,
+        public JcaSM9EncUserPrivateKey newUserPrivateKey(final GordianIdAwareKeyType pKeyType,
                                                          final byte[] pIdentity) {
             final SM9EncMasterPrivateKey myPrivate = (SM9EncMasterPrivateKey) getPrivateKey();
-            return switch (pKeyType) {
+            return switch ((GordianSM9EncryptType) pKeyType) {
                 case ENCRYPT -> {
                     final PrivateKey myUserPrivate = myPrivate.generateUserKeyPair(pIdentity,
                             SM9EncUserKeyGenerator.HID).getPrivate();
@@ -158,7 +173,12 @@ public final class JcaSM9KeyPairGenerator {
      */
     public static class JcaSM9EncUserPublicKey
             extends JcaPublicKey
-            implements GordianIdAwarePublicKey<GordianSM9EncryptType> {
+            implements GordianIdAwarePublicKey {
+        /**
+         * The master publicKey.
+         */
+        private final SM9EncMasterPublicKey theMasterPublic;
+
         /**
          * The identity.
          */
@@ -167,14 +187,17 @@ public final class JcaSM9KeyPairGenerator {
         /**
          * Constructor.
          *
-         * @param pKeySpec   the keySpec
-         * @param pPublicKey the public key
-         * @param pIdentity  the identity
+         * @param pKeySpec      the keySpec
+         * @param pPublicKey    the public key
+         * @param pMasterPublic the master publicKey
+         * @param pIdentity     the identity
          */
         JcaSM9EncUserPublicKey(final GordianKeyPairSpec pKeySpec,
                                final PublicKey pPublicKey,
+                               final SM9EncMasterPublicKey pMasterPublic,
                                final byte[] pIdentity) {
             super(pKeySpec, pPublicKey);
+            theMasterPublic = pMasterPublic;
             theIdentity = pIdentity.clone();
         }
 
@@ -186,6 +209,12 @@ public final class JcaSM9KeyPairGenerator {
         @Override
         public byte[] getIdentity() {
             return Arrays.clone(theIdentity);
+        }
+
+        @Override
+        public JcaSM9EncUserPublicKey deriveUserPublicKey(final GordianIdAwareKeyType pKeyType,
+                                                          final byte[] pIdentity) {
+            return JcaSM9KeyPairGenerator.deriveUserPublicKey(theMasterPublic, pKeyType, pIdentity);
         }
 
         @Override
@@ -219,7 +248,7 @@ public final class JcaSM9KeyPairGenerator {
      */
     public static class JcaSM9EncUserPrivateKey
             extends JcaPrivateKey
-            implements GordianIdAwarePrivateKey<GordianSM9EncryptType> {
+            implements GordianIdAwarePrivateKey {
         /**
          * The identity.
          */
@@ -280,7 +309,7 @@ public final class JcaSM9KeyPairGenerator {
      */
     public static class JcaSM9SignMasterPublicKey
             extends JcaPublicKey
-            implements GordianIdAwarePublicKey<GordianSM9SignType> {
+            implements GordianIdAwarePublicKey {
         /**
          * Constructor.
          *
@@ -298,11 +327,10 @@ public final class JcaSM9KeyPairGenerator {
         }
 
         @Override
-        public JcaSM9SignUserPublicKey deriveUserPublicKey(final GordianSM9SignType pKeyType,
+        public JcaSM9SignUserPublicKey deriveUserPublicKey(final GordianIdAwareKeyType pKeyType,
                                                            final byte[] pIdentity) {
             final SM9SigMasterPublicKey myPublic = (SM9SigMasterPublicKey) getPublicKey();
-            final PublicKey myUserPublic = myPublic.getUserPublicKey(pIdentity);
-            return new JcaSM9SignUserPublicKey(SIGN, myUserPublic, pIdentity);
+            return new JcaSM9SignUserPublicKey(SIGN, myPublic, pIdentity);
         }
     }
 
@@ -311,7 +339,7 @@ public final class JcaSM9KeyPairGenerator {
      */
     public static class JcaSM9SignMasterPrivateKey
             extends JcaPrivateKey
-            implements GordianIdAwarePrivateKey<GordianSM9SignType> {
+            implements GordianIdAwarePrivateKey {
         /**
          * Constructor.
          *
@@ -329,7 +357,7 @@ public final class JcaSM9KeyPairGenerator {
         }
 
         @Override
-        public JcaSM9SignUserPrivateKey newUserPrivateKey(final GordianSM9SignType pKeyType,
+        public JcaSM9SignUserPrivateKey newUserPrivateKey(final GordianIdAwareKeyType pKeyType,
                                                           final byte[] pIdentity) {
             final SM9SigMasterPrivateKey myPrivate = (SM9SigMasterPrivateKey) getPrivateKey();
             final PrivateKey myUserPrivate = myPrivate.generateUserKeyPair(pIdentity).getPrivate();
@@ -342,7 +370,12 @@ public final class JcaSM9KeyPairGenerator {
      */
     public static class JcaSM9SignUserPublicKey
             extends JcaPublicKey
-            implements GordianIdAwarePublicKey<GordianSM9SignType> {
+            implements GordianIdAwarePublicKey {
+        /**
+         * The master publicKey.
+         */
+        private final SM9SigMasterPublicKey theMasterPublic;
+
         /**
          * The identity.
          */
@@ -352,12 +385,14 @@ public final class JcaSM9KeyPairGenerator {
          * Constructor.
          *
          * @param pKeySpec   the keySpec
-         * @param pPublicKey the public key
+         * @param pPublicKey the master public key
+         * @param pIdentity  the identity
          */
         JcaSM9SignUserPublicKey(final GordianKeyPairSpec pKeySpec,
-                                final PublicKey pPublicKey,
+                                final SM9SigMasterPublicKey pPublicKey,
                                 final byte[] pIdentity) {
-            super(pKeySpec, pPublicKey);
+            super(pKeySpec, pPublicKey.getUserPublicKey(pIdentity));
+            theMasterPublic = pPublicKey;
             theIdentity = pIdentity.clone();
         }
 
@@ -369,6 +404,12 @@ public final class JcaSM9KeyPairGenerator {
         @Override
         public byte[] getIdentity() {
             return Arrays.clone(theIdentity);
+        }
+
+        @Override
+        public JcaSM9SignUserPublicKey deriveUserPublicKey(final GordianIdAwareKeyType pKeyType,
+                                                           final byte[] pIdentity) {
+            return new JcaSM9SignUserPublicKey(SIGN, theMasterPublic, pIdentity);
         }
 
         @Override
@@ -402,7 +443,7 @@ public final class JcaSM9KeyPairGenerator {
      */
     public static class JcaSM9SignUserPrivateKey
             extends JcaPrivateKey
-            implements GordianIdAwarePrivateKey<GordianSM9SignType> {
+            implements GordianIdAwarePrivateKey {
         /**
          * The identity.
          */
@@ -413,6 +454,7 @@ public final class JcaSM9KeyPairGenerator {
          *
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
+         * @param pIdentity   the identity
          */
         JcaSM9SignUserPrivateKey(final GordianKeyPairSpec pKeySpec,
                                  final PrivateKey pPrivateKey,

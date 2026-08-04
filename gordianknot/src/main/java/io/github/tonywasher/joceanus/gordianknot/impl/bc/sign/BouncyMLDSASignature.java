@@ -78,6 +78,7 @@ public class BouncyMLDSASignature
     /**
      * Check for bouncyKeyPair.
      *
+     * @return the keyPair
      * @throws GordianException on error
      */
     BouncyKeyPair checkKeyPair() throws GordianException {

@@ -187,7 +187,7 @@ public abstract class JcaKeyPairGenerator
                                      final JcaPrivateKey pPrivateKey) {
         return switch (pPrivateKey) {
             case JcaStateAwarePrivateKey sa -> new JcaStateAwareKeyPair(pPublicKey, sa);
-            case GordianIdAwarePrivateKey<?> ia -> new JcaIdAwareKeyPair<>(pPublicKey, pPrivateKey);
+            case GordianIdAwarePrivateKey ia -> new JcaIdAwareKeyPair(pPublicKey, pPrivateKey);
             case null, default -> new JcaKeyPair(pPublicKey, pPrivateKey);
         };
     }

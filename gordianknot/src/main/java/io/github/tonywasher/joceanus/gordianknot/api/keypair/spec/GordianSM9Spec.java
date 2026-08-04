@@ -22,18 +22,18 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyTy
 /**
  * SM9 keySpec.
  */
-public class GordianSM9Spec {
+public interface GordianSM9Spec {
     /**
      * SM9 keyType.
      */
-    public interface GordianSM9KeyType
+    interface GordianSM9KeyType
             extends GordianIdAwareKeyType {
     }
 
     /**
      * SM9 Encrypt subtypes.
      */
-    public enum GordianSM9EncryptType
+    enum GordianSM9EncryptType
             implements GordianSM9KeyType {
         /**
          * Master.
@@ -59,7 +59,7 @@ public class GordianSM9Spec {
     /**
      * SM9 Sign subtypes.
      */
-    public enum GordianSM9SignType
+    enum GordianSM9SignType
             implements GordianSM9KeyType {
         /**
          * Master.

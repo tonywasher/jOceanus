@@ -23,9 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePrivateKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey.GordianStateAwarePrivateKey;
@@ -338,12 +336,10 @@ public class BouncyKeyPair
 
     /**
      * Bouncy IdAware KeyPair.
-     *
-     * @param <K> the keyType
      */
-    public static class BouncyIdAwareKeyPair<K extends GordianIdAwareKeyType>
+    public static class BouncyIdAwareKeyPair
             extends BouncyKeyPair
-            implements GordianIdAwareKeyPair<K> {
+            implements GordianCoreIdAwareKeyPair {
         /**
          * Constructor.
          *
@@ -355,84 +351,30 @@ public class BouncyKeyPair
             super(pPublic, pPrivate);
         }
 
-        /**
-         * Obtain idAware privateKey.
-         *
-         * @return the private key
-         */
-        @SuppressWarnings("unchecked")
-        public GordianIdAwarePublicKey<K> getIdAwarePublicKey() {
-            return (GordianIdAwarePublicKey<K>) getPublicKey();
-        }
-
-        /**
-         * Obtain idAware privateKey.
-         *
-         * @return the private key
-         */
-        @SuppressWarnings("unchecked")
-        public GordianIdAwarePrivateKey<K> getIdAwarePrivateKey() {
-            return (GordianIdAwarePrivateKey<K>) getPrivateKey();
+        @Override
+        public GordianIdAwarePublicKey getIdAwarePublicKey() {
+            return (GordianIdAwarePublicKey) getPublicKey();
         }
 
         @Override
-        public K getSubKeyType() {
+        public GordianIdAwarePrivateKey getIdAwarePrivateKey() {
+            return (GordianIdAwarePrivateKey) getPrivateKey();
+        }
+
+        @Override
+        public GordianIdAwareKeyPair newKeyPair(final GordianIdAwarePublicKey pPublic,
+                                                final GordianIdAwarePrivateKey pPrivate) {
+            return new BouncyIdAwareKeyPair((BouncyPublicKey<?>) pPublic, (BouncyPrivateKey<?>) pPrivate);
+        }
+
+        @Override
+        public GordianIdAwareKeyType getSubKeyType() {
             return getIdAwarePublicKey().getSubKeyType();
         }
 
         @Override
         public byte[] getIdentity() {
             return getIdAwarePublicKey().getIdentity();
-        }
-
-        @Override
-        public BouncyIdAwareKeyPair<K> newUserKeyPair(final K pKeyType,
-                                                      final byte[] pIdentity) throws GordianException {
-            /* Reject if we are not master key */
-            if (getSubKeyType().isUserKey()) {
-                throw new GordianLogicException("Can't create new userKeyPair from userKey");
-            }
-
-            /* Reject if we are public only */
-            if (isPublicOnly()) {
-                throw new GordianLogicException("Can't create new userKeyPair without privateKey");
-            }
-
-            /* Check for destroyed keyPair */
-            checkForDestroyed("keyPair");
-
-            /* Reject if requested keyType is not user */
-            if (pKeyType == null || !pKeyType.isUserKey()) {
-                throw new GordianLogicException("Invalid keyType: " + pKeyType);
-            }
-
-            /* Reject if identity is null */
-            if (pIdentity == null) {
-                throw new GordianLogicException("Null identity");
-            }
-
-            /* Create new userKey */
-            final GordianIdAwarePrivateKey<K> myPrivate = getIdAwarePrivateKey().newUserPrivateKey(pKeyType, pIdentity);
-            final GordianIdAwarePublicKey<K> myPublic = getIdAwarePublicKey().deriveUserPublicKey(pKeyType, pIdentity);
-            return new BouncyIdAwareKeyPair<K>((BouncyPublicKey<?>) myPublic, (BouncyPrivateKey<?>) myPrivate);
-        }
-
-        @Override
-        public GordianIdAwareKeyPair<K> derivePublicOnlyUserKeyPair(K pKeyType,
-                                                                    byte[] pIdentity) throws GordianException {
-            /* Reject if requested keyType is not user */
-            if (pKeyType == null || !pKeyType.isUserKey()) {
-                throw new GordianLogicException("Invalid keyType: " + pKeyType);
-            }
-
-            /* Reject if identity is null */
-            if (pIdentity == null) {
-                throw new GordianLogicException("Null identity");
-            }
-
-            /* derive new publicKey */
-            final GordianIdAwarePublicKey<K> myPublic = getIdAwarePublicKey().deriveUserPublicKey(pKeyType, pIdentity);
-            return new BouncyIdAwareKeyPair<K>((BouncyPublicKey<?>) myPublic, null);
         }
     }
 }

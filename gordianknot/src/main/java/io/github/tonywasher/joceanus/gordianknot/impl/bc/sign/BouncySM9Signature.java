@@ -19,7 +19,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9SignType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
@@ -86,26 +85,25 @@ public class BouncySM9Signature
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected BouncyIdAwareKeyPair<GordianSM9SignType> getKeyPair() {
-        return (BouncyIdAwareKeyPair<GordianSM9SignType>) super.getKeyPair();
+    protected BouncyIdAwareKeyPair getKeyPair() {
+        return (BouncyIdAwareKeyPair) super.getKeyPair();
     }
 
     /**
-     * Check for jcaKeyPair.
+     * Check for bouncyKeyPair.
      *
+     * @return the keyPair
      * @throws GordianException on error
      */
-    @SuppressWarnings("unchecked")
-    BouncyIdAwareKeyPair<GordianSM9SignType> checkKeyPair() throws GordianException {
-        return (BouncyIdAwareKeyPair<GordianSM9SignType>) BouncyKeyPair.checkKeyPair(super.getKeyPair());
+    BouncyIdAwareKeyPair checkKeyPair() throws GordianException {
+        return (BouncyIdAwareKeyPair) BouncyKeyPair.checkKeyPair(super.getKeyPair());
     }
 
     @Override
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        final BouncyIdAwareKeyPair<GordianSM9SignType> myPair = checkKeyPair();
+        final BouncyIdAwareKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
         final BouncySM9SignUserPrivateKey myPrivate = (BouncySM9SignUserPrivateKey) myPair.getPrivateKey();
@@ -117,7 +115,7 @@ public class BouncySM9Signature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        final BouncyIdAwareKeyPair<GordianSM9SignType> myPair = checkKeyPair();
+        final BouncyIdAwareKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
         final BouncySM9SignUserPublicKey myPublic = (BouncySM9SignUserPublicKey) myPair.getPublicKey();

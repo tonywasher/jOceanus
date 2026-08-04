@@ -17,7 +17,6 @@
 
 package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
@@ -42,38 +41,104 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactor
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianGenerator;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Stream;
 
-public class SM9Test {
-    @SuppressWarnings("unchecked")
-    public static void main(String[] args) {
-        try {
-            /* Create Factory */
-            final GordianFactory myFactory = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
-            final GordianFactory myJFactory = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
+/**
+ * SM9 Tests.
+ */
+class SM9Test {
+    /**
+     * The factories.
+     */
+    private static GordianFactory fcBCFACTORY;
+    private static GordianFactory fcJCAFACTORY;
 
-            /* Create Encrypt keyPair Generator */
-            final GordianAsyncFactory myAsyncFactory = myFactory.getAsyncFactory();
-            final GordianAsyncFactory myJAsyncFactory = myJFactory.getAsyncFactory();
-            final GordianKeyPairFactory myKeyPairs = myJAsyncFactory.getKeyPairFactory();
-            final GordianSignatureFactory mySigns = myAsyncFactory.getSignatureFactory();
-            final GordianEncryptorFactory myEncs = myJAsyncFactory.getEncryptorFactory();
-            final GordianAgreementFactory myAgrees = myAsyncFactory.getAgreementFactory();
+    /**
+     * Perform setup operations.
+     */
+    @BeforeAll
+    static void setUp() throws GordianException {
+        /* Create the factories */
+        fcBCFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
+        fcJCAFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
+    }
 
-            /* Create Encryption keyPairs */
-            final byte[] myTargetId = "TargetID".getBytes();
-            final byte[] myClientId = "ClientID".getBytes();
-            final byte[] mySignerId = "SignerID".getBytes();
-            final GordianKeyPairSpecBuilder myKPBuilder = myKeyPairs.newKeyPairSpecBuilder();
-            final GordianKeyPairSpec myEncMasterSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCMASTER);
-            final GordianKeyPairSpec myEncKEMSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCRYPT);
-            final GordianKeyPairGenerator myEncGenerator = myKeyPairs.getKeyPairGenerator(myEncMasterSpec);
-            final GordianIdAwareKeyPair<GordianSM9EncryptType> myEncMasterPair
-                    = (GordianIdAwareKeyPair<GordianSM9EncryptType>) myEncGenerator.generateKeyPair();
+    /**
+     * Create the bouncyCastle SM9 test suite.
+     *
+     * @return the test stream
+     */
+    @TestFactory
+    Stream<DynamicNode> bouncycastle() {
+        return asymmetricTests(fcBCFACTORY, fcJCAFACTORY);
+    }
+
+    /**
+     * Create the jca CM9 test suite.
+     *
+     * @return the test stream
+     */
+    @TestFactory
+    Stream<DynamicNode> jca() {
+        return asymmetricTests(fcJCAFACTORY, fcBCFACTORY);
+    }
+
+    /**
+     * Create the asymmetric test suite for a factory.
+     *
+     * @param pFactory the factory
+     * @param pPartner the partner factory
+     * @return the test stream
+     */
+    Stream<DynamicNode> asymmetricTests(final GordianFactory pFactory,
+                                        final GordianFactory pPartner) {
+        /* Create encryptor stream */
+        Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("encryptors", () -> testEncryptors(pFactory)));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("crossEncryptors", () -> testCrossEncryptors(pFactory, pPartner))));
+
+        /* Create signature stream */
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("signatures", () -> testSignatures(pFactory))));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("crossSignatures", () -> testCrossSignatures(pFactory, pPartner))));
+
+        /* Return the stream */
+        return myStream;
+    }
+
+//    @SuppressWarnings("unchecked")
+//    public static void main(String[] args) {
+//        try {
+//            /* Create Factory */
+//            final GordianFactory myFactory = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
+//            final GordianFactory myJFactory = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
+//
+//            /* Create Encrypt keyPair Generator */
+//            final GordianAsyncFactory myAsyncFactory = myFactory.getAsyncFactory();
+//            final GordianAsyncFactory myJAsyncFactory = myJFactory.getAsyncFactory();
+//            final GordianKeyPairFactory myKeyPairs = myJAsyncFactory.getKeyPairFactory();
+//            final GordianSignatureFactory mySigns = myAsyncFactory.getSignatureFactory();
+//            final GordianEncryptorFactory myEncs = myJAsyncFactory.getEncryptorFactory();
+//            final GordianAgreementFactory myAgrees = myAsyncFactory.getAgreementFactory();
+//
+//            /* Create Encryption keyPairs */
+//            final byte[] myTargetId = "TargetID".getBytes();
+//            final byte[] myClientId = "ClientID".getBytes();
+//            final byte[] mySignerId = "SignerID".getBytes();
+//            final GordianKeyPairSpecBuilder myKPBuilder = myKeyPairs.newKeyPairSpecBuilder();
+//            final GordianKeyPairSpec myEncMasterSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCMASTER);
+//            final GordianKeyPairSpec myEncKEMSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCRYPT);
+//            final GordianKeyPairGenerator myEncGenerator = myKeyPairs.getKeyPairGenerator(myEncMasterSpec);
+//            final GordianIdAwareKeyPair<GordianSM9EncryptType> myEncMasterPair
+//                    = (GordianIdAwareKeyPair<GordianSM9EncryptType>) myEncGenerator.generateKeyPair();
 
 //            /* Names */
 //            final X500Name myTargetName = KeyStoreUtils.buildX500Name(KeyStoreAlias.TARGET);
@@ -109,195 +174,260 @@ public class SM9Test {
 //            myAgrees.parseAgreementMessage(myXchgServerHello);
 //
 
-            /* Test encryptors */
-            testEncryptors(myAsyncFactory);
-            testEncryptors(myJAsyncFactory);
-            testCrossEncryptors(myAsyncFactory, myJAsyncFactory);
-            testCrossEncryptors(myJAsyncFactory, myAsyncFactory);
+//            /* Test encryptors */
+//            testEncryptors(myFactory);
+//            testEncryptors(myJFactory);
+//            testCrossEncryptors(myFactory, myJFactory);
+//            testCrossEncryptors(myJFactory, myFactory);
+//
+//            /* Test signatures */
+//            testSignatures(myFactory);
+//            testSignatures(myJFactory);
+//            testCrossSignatures(myFactory, myJFactory);
+//            testCrossSignatures(myJFactory, myFactory);
+//
+//        } catch (GordianException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-            /* Test signatures */
-            testSignatures(myAsyncFactory);
-            testSignatures(myJAsyncFactory);
-            testCrossSignatures(myAsyncFactory, myJAsyncFactory);
-            testCrossSignatures(myJAsyncFactory, myAsyncFactory);
+    private static void testEncryptors(final GordianFactory pFactory) throws GordianException {
+        /* Access factories */
+        final GordianAsyncFactory myAsync = pFactory.getAsyncFactory();
+        final GordianKeyPairFactory myKeyPairs = myAsync.getKeyPairFactory();
+        final GordianEncryptorFactory myEncs = myAsync.getEncryptorFactory();
+        final byte[] myTargetId = "TargetID".getBytes();
+        final byte[] myMessage = "ASimpleMessage".getBytes();
 
-        } catch (GordianException e) {
-            e.printStackTrace();
-        }
+        /* Create Encrypt keyPairs */
+        final GordianKeyPairSpecBuilder myKPBuilder = myKeyPairs.newKeyPairSpecBuilder();
+        final GordianKeyPairSpec myEncMasterSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCMASTER);
+        final GordianKeyPairGenerator myEncGenerator = myKeyPairs.getKeyPairGenerator(myEncMasterSpec);
+        final GordianIdAwareKeyPair myEncMasterPair = (GordianIdAwareKeyPair) myEncGenerator.generateKeyPair();
+        final GordianIdAwareKeyPair myEncPair = myEncMasterPair.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
+        final GordianKeyPair myXchgPair = myEncMasterPair.newUserKeyPair(GordianSM9EncryptType.EXCHANGE, myTargetId);
+        final GordianIdAwareKeyPair myPOEncPair = myEncMasterPair.derivePublicOnlyUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
+        final GordianIdAwareKeyPair myPOEncPair2 = myEncPair.derivePublicOnlyUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
+        Assertions.assertEquals(myPOEncPair, myPOEncPair2, "derived Public Only");
+
+        /* Can't access non-Master keyGenerators */
+        final GordianKeyPairSpec myEncEncSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCRYPT);
+        Assertions.assertThrows(GordianException.class, () -> myKeyPairs.getKeyPairGenerator(myEncEncSpec), "Encrypt keyPairGenerator");
+        final GordianKeyPairSpec myEncXchgSpec = myKPBuilder.sm9(GordianSM9EncryptType.EXCHANGE);
+        Assertions.assertThrows(GordianException.class, () -> myKeyPairs.getKeyPairGenerator(myEncXchgSpec), "Exchange keyPairGenerator");
+
+        /* Check for arguments on userKey calls */
+        Assertions.assertThrows(GordianException.class, () -> myEncMasterPair.newUserKeyPair(GordianSM9SignType.SIGN, myTargetId), "Wrong keyType");
+        Assertions.assertThrows(GordianException.class, () -> myEncMasterPair.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, null), "Null Id");
+        Assertions.assertThrows(GordianException.class, () -> myEncMasterPair.newUserKeyPair(null, myTargetId), "Null keyType");
+        Assertions.assertThrows(GordianException.class, () -> myEncMasterPair.derivePublicOnlyUserKeyPair(GordianSM9SignType.SIGN, myTargetId), "Wrong keyType");
+        Assertions.assertThrows(GordianException.class, () -> myEncMasterPair.derivePublicOnlyUserKeyPair(GordianSM9EncryptType.ENCRYPT, null), "Null Id");
+        Assertions.assertThrows(GordianException.class, () -> myEncMasterPair.derivePublicOnlyUserKeyPair(null, myTargetId), "Null keyType");
+        Assertions.assertThrows(GordianException.class, () -> myEncPair.derivePublicOnlyUserKeyPair(GordianSM9SignType.SIGN, myTargetId), "Wrong keyType");
+        Assertions.assertThrows(GordianException.class, () -> myEncPair.derivePublicOnlyUserKeyPair(GordianSM9EncryptType.ENCRYPT, null), "Null Id");
+        Assertions.assertThrows(GordianException.class, () -> myEncPair.derivePublicOnlyUserKeyPair(null, myTargetId), "Null keyType");
+
+        /* Can't create userKeys from userKeys */
+        Assertions.assertThrows(GordianException.class, () -> myEncPair.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId), "UserKey usage");
+
+        /* Obtain representations keyPair */
+        final X509EncodedKeySpec myX509 = myEncGenerator.getX509Encoding(myEncMasterPair);
+        final PKCS8EncodedKeySpec myPKCS8 = myEncGenerator.getPKCS8Encoding(myEncMasterPair);
+        final GordianKeyPair myDerived = myEncGenerator.deriveKeyPair(myX509, myPKCS8);
+        final boolean isIdentical = Objects.equals(myEncMasterPair, myDerived);
+        Assertions.assertTrue(isIdentical, "Derive Master keyPair");
+
+        /* Create an Encryptor */
+        final GordianEncryptorSpecBuilder myEncBuilder = myEncs.newEncryptorSpecBuilder();
+        final GordianEncryptorSpec myEncryptorSpec = myEncBuilder.sm9(GordianSM9EncryptionMode.STREAM);
+        final GordianEncryptor myEncSender = myEncs.createEncryptor(myEncryptorSpec);
+        myEncSender.initForEncrypt(myEncPair);
+        Assertions.assertThrows(GordianException.class, () -> myEncSender.encrypt(null), "Null encrypt");
+        final byte[] myEncrypted = myEncSender.encrypt(myMessage);
+        myEncSender.initForDecrypt(myEncPair);
+        Assertions.assertThrows(GordianException.class, () -> myEncSender.decrypt(null), "Null decrypt");
+        final byte[] myDecrypted = myEncSender.decrypt(myEncrypted);
+        final boolean matches = Arrays.equals(myMessage, myDecrypted);
+        Assertions.assertTrue(matches, "Decryption");
+
+        /* Can't initialise with master encryptor */
+        Assertions.assertThrows(GordianException.class, () -> myEncSender.initForEncrypt(myEncMasterPair), "Encrypt with master");
+        Assertions.assertThrows(GordianException.class, () -> myEncSender.initForDecrypt(myEncMasterPair), "Decrypt with master");
+
+        /* Can't initialise with exchange encryptor */
+        Assertions.assertThrows(GordianException.class, () -> myEncSender.initForEncrypt(myXchgPair), "Encrypt with exchange");
+        Assertions.assertThrows(GordianException.class, () -> myEncSender.initForDecrypt(myXchgPair), "Decrypt with exchange");
     }
 
-    @SuppressWarnings("unchecked")
-    private static void testEncryptors(final GordianAsyncFactory pFactory) {
-        try {
-            /* Access factories */
-            final GordianKeyPairFactory myKeyPairs = pFactory.getKeyPairFactory();
-            final GordianEncryptorFactory myEncs = pFactory.getEncryptorFactory();
-            final byte[] myTargetId = "TargetID".getBytes();
-            final byte[] myMessage = "ASimpleMessage".getBytes();
+    private static void testCrossEncryptors(final GordianFactory pSource,
+                                            final GordianFactory pTarget) throws GordianException {
+        /* Access factories */
+        final GordianAsyncFactory mySource = pSource.getAsyncFactory();
+        final GordianAsyncFactory myTarget = pTarget.getAsyncFactory();
+        final GordianKeyPairFactory mySourceKeyPairs = mySource.getKeyPairFactory();
+        final GordianEncryptorFactory mySourceEncs = mySource.getEncryptorFactory();
+        final byte[] myTargetId = "TargetID".getBytes();
+        final byte[] myMessage = "ASimpleMessage".getBytes();
 
-            /* Create Encrypt keyPairs */
-            final GordianKeyPairSpecBuilder myKPBuilder = myKeyPairs.newKeyPairSpecBuilder();
-            final GordianKeyPairSpec myEncMasterSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCMASTER);
-            final GordianKeyPairGenerator myEncGenerator = myKeyPairs.getKeyPairGenerator(myEncMasterSpec);
-            final GordianIdAwareKeyPair<GordianSM9EncryptType> myEncMasterPair = (GordianIdAwareKeyPair<GordianSM9EncryptType>) myEncGenerator.generateKeyPair();
-            final GordianKeyPair myEncPair = myEncMasterPair.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
+        /* Create Encrypt keyPairs */
+        final GordianKeyPairSpecBuilder myKPBuilder = mySourceKeyPairs.newKeyPairSpecBuilder();
+        final GordianKeyPairSpec myEncMasterSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCMASTER);
+        final GordianKeyPairGenerator myEncGenerator = mySourceKeyPairs.getKeyPairGenerator(myEncMasterSpec);
+        final GordianIdAwareKeyPair myEncMasterPair = (GordianIdAwareKeyPair) myEncGenerator.generateKeyPair();
+        final GordianKeyPair myEncPair = myEncMasterPair.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
 
-            /* Obtain representations keyPair */
-            final X509EncodedKeySpec myX509 = myEncGenerator.getX509Encoding(myEncMasterPair);
-            final PKCS8EncodedKeySpec myPKCS8 = myEncGenerator.getPKCS8Encoding(myEncMasterPair);
-            final GordianKeyPair myDerived = myEncGenerator.deriveKeyPair(myX509, myPKCS8);
-            final boolean isIdentical = Objects.equals(myEncMasterPair, myDerived);
-            assert isIdentical;
+        /* Obtain representations keyPair */
+        final X509EncodedKeySpec myX509 = myEncGenerator.getX509Encoding(myEncMasterPair);
+        final PKCS8EncodedKeySpec myPKCS8 = myEncGenerator.getPKCS8Encoding(myEncMasterPair);
+        final GordianKeyPairFactory myTargetKeyPairs = myTarget.getKeyPairFactory();
+        final GordianEncryptorFactory myTargetEncs = myTarget.getEncryptorFactory();
+        final GordianKeyPairGenerator myTargetGenerator = myTargetKeyPairs.getKeyPairGenerator(myEncMasterSpec);
+        final GordianIdAwareKeyPair myDerivedMaster = (GordianIdAwareKeyPair) myTargetGenerator.deriveKeyPair(myX509, myPKCS8);
+        final GordianKeyPair myTargetPair = myDerivedMaster.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
 
-            /* Create an Encryptor */
-            final GordianEncryptorSpecBuilder myEncBuilder = myEncs.newEncryptorSpecBuilder();
-            final GordianEncryptorSpec myEncryptorSpec = myEncBuilder.sm9(GordianSM9EncryptionMode.STREAM);
-            final GordianEncryptor myEncSender = myEncs.createEncryptor(myEncryptorSpec);
-            myEncSender.initForEncrypt(myEncPair);
-            final byte[] myEncrypted = myEncSender.encrypt(myMessage);
-            myEncSender.initForDecrypt(myEncPair);
-            final byte[] myDecrypted = myEncSender.decrypt(myEncrypted);
-            final boolean matches = Arrays.equals(myMessage, myDecrypted);
-            assert matches;
+        /* Create an Encryptor */
+        final GordianEncryptorSpecBuilder myEncBuilder = mySourceEncs.newEncryptorSpecBuilder();
+        final GordianEncryptorSpec myEncryptorSpec = myEncBuilder.sm9(GordianSM9EncryptionMode.STREAM);
+        final GordianEncryptor myEncSender = mySourceEncs.createEncryptor(myEncryptorSpec);
+        myEncSender.initForEncrypt(myEncPair);
+        final byte[] myEncrypted = myEncSender.encrypt(myMessage);
+        final GordianEncryptor myEncReceiver = myTargetEncs.createEncryptor(myEncryptorSpec);
+        myEncReceiver.initForDecrypt(myTargetPair);
+        final byte[] myDecrypted = myEncReceiver.decrypt(myEncrypted);
+        final boolean matches = Arrays.equals(myMessage, myDecrypted);
+        Assertions.assertTrue(matches, "Decryption");
 
-        } catch (GordianException e) {
-            e.printStackTrace();
-        }
+        /* Destroy the keyPairs */
+        myEncPair.destroy();
+        myTargetPair.destroy();
+
+        /* Can't encrypt using destroyed key */
+        Assertions.assertThrows(GordianException.class, () -> myEncSender.encrypt(myMessage), "Encrypt with destroyed keyPair");
+        Assertions.assertThrows(GordianException.class, () -> myEncReceiver.decrypt(myEncrypted), "Decrypt with destroyed keyPair");
+
+        /* Can't init using destroyed key */
+        Assertions.assertThrows(GordianException.class, () -> myEncSender.initForEncrypt(myEncPair), "initEncrypt with destroyed keyPair");
+        Assertions.assertThrows(GordianException.class, () -> myEncReceiver.initForDecrypt(myTargetPair), "initDecrypt with destroyed keyPair");
     }
 
-    @SuppressWarnings("unchecked")
-    private static void testCrossEncryptors(final GordianAsyncFactory pSource,
-                                            final GordianAsyncFactory pTarget) {
-        try {
-            /* Access factories */
-            final GordianKeyPairFactory mySourceKeyPairs = pSource.getKeyPairFactory();
-            final GordianEncryptorFactory mySourceEncs = pSource.getEncryptorFactory();
-            final byte[] myTargetId = "TargetID".getBytes();
-            final byte[] myMessage = "ASimpleMessage".getBytes();
+    private static void testSignatures(final GordianFactory pFactory) throws GordianException {
+        /* Access factories */
+        final GordianAsyncFactory myAsync = pFactory.getAsyncFactory();
+        final GordianKeyPairFactory myKeyPairs = myAsync.getKeyPairFactory();
+        final GordianSignatureFactory mySigns = myAsync.getSignatureFactory();
+        final byte[] mySignerId = "SignerID".getBytes();
+        final byte[] myMessage = "ASimpleMessage".getBytes();
 
-            /* Create Encrypt keyPairs */
-            final GordianKeyPairSpecBuilder myKPBuilder = mySourceKeyPairs.newKeyPairSpecBuilder();
-            final GordianKeyPairSpec myEncMasterSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCMASTER);
-            final GordianKeyPairGenerator myEncGenerator = mySourceKeyPairs.getKeyPairGenerator(myEncMasterSpec);
-            final GordianIdAwareKeyPair<GordianSM9EncryptType> myEncMasterPair = (GordianIdAwareKeyPair<GordianSM9EncryptType>) myEncGenerator.generateKeyPair();
-            final GordianKeyPair myEncPair = myEncMasterPair.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
+        /* Create Signature keyPairs */
+        final GordianKeyPairSpecBuilder myKPBuilder = myKeyPairs.newKeyPairSpecBuilder();
+        final GordianKeyPairSpec mySigMasterSpec = myKPBuilder.sm9(GordianSM9SignType.SIGNMASTER);
+        final GordianKeyPairGenerator mySigGenerator = myKeyPairs.getKeyPairGenerator(mySigMasterSpec);
+        final GordianIdAwareKeyPair mySigMasterPair = (GordianIdAwareKeyPair) mySigGenerator.generateKeyPair();
+        final GordianIdAwareKeyPair mySigPair = mySigMasterPair.newUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
+        final GordianIdAwareKeyPair myPOSigPair = mySigMasterPair.derivePublicOnlyUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
+        final GordianIdAwareKeyPair myPOSigPair2 = mySigPair.derivePublicOnlyUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
+        Assertions.assertEquals(myPOSigPair, myPOSigPair2, "derived Public Only");
 
-            /* Obtain representations keyPair */
-            final X509EncodedKeySpec myX509 = myEncGenerator.getX509Encoding(myEncMasterPair);
-            final PKCS8EncodedKeySpec myPKCS8 = myEncGenerator.getPKCS8Encoding(myEncMasterPair);
-            final GordianKeyPairFactory myTargetKeyPairs = pTarget.getKeyPairFactory();
-            final GordianEncryptorFactory myTargetEncs = pTarget.getEncryptorFactory();
-            final GordianKeyPairGenerator myTargetGenerator = myTargetKeyPairs.getKeyPairGenerator(myEncMasterSpec);
-            final GordianIdAwareKeyPair<GordianSM9EncryptType> myDerivedMaster =
-                    (GordianIdAwareKeyPair<GordianSM9EncryptType>) myTargetGenerator.deriveKeyPair(myX509, myPKCS8);
-            final GordianKeyPair myTargetPair = myDerivedMaster.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
+        /* Can't access non-Master keyGenerators */
+        final GordianKeyPairSpec mySignSignSpec = myKPBuilder.sm9(GordianSM9SignType.SIGN);
+        Assertions.assertThrows(GordianException.class, () -> myKeyPairs.getKeyPairGenerator(mySignSignSpec), "Sign keyPairGenerator");
 
-            /* Create an Encryptor */
-            final GordianEncryptorSpecBuilder myEncBuilder = mySourceEncs.newEncryptorSpecBuilder();
-            final GordianEncryptorSpec myEncryptorSpec = myEncBuilder.sm9(GordianSM9EncryptionMode.STREAM);
-            final GordianEncryptor myEncSender = mySourceEncs.createEncryptor(myEncryptorSpec);
-            myEncSender.initForEncrypt(myEncPair);
-            final byte[] myEncrypted = myEncSender.encrypt(myMessage);
-            final GordianEncryptor myEncReceiver = myTargetEncs.createEncryptor(myEncryptorSpec);
-            myEncReceiver.initForDecrypt(myTargetPair);
-            final byte[] myDecrypted = myEncReceiver.decrypt(myEncrypted);
-            final boolean matches = Arrays.equals(myMessage, myDecrypted);
-            assert matches;
+        /* Check for arguments on userKey calls */
+        Assertions.assertThrows(GordianException.class, () -> mySigMasterPair.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, mySignerId), "Wrong keyType");
+        Assertions.assertThrows(GordianException.class, () -> mySigMasterPair.newUserKeyPair(GordianSM9SignType.SIGN, null), "Null Id");
+        Assertions.assertThrows(GordianException.class, () -> mySigMasterPair.newUserKeyPair(null, mySignerId), "Null keyType");
+        Assertions.assertThrows(GordianException.class, () -> mySigMasterPair.derivePublicOnlyUserKeyPair(GordianSM9EncryptType.ENCRYPT, mySignerId), "Wrong keyType");
+        Assertions.assertThrows(GordianException.class, () -> mySigMasterPair.derivePublicOnlyUserKeyPair(GordianSM9SignType.SIGN, null), "Null Id");
+        Assertions.assertThrows(GordianException.class, () -> mySigMasterPair.derivePublicOnlyUserKeyPair(null, mySignerId), "Null keyType");
+        Assertions.assertThrows(GordianException.class, () -> mySigPair.derivePublicOnlyUserKeyPair(GordianSM9EncryptType.ENCRYPT, mySignerId), "Wrong keyType");
+        Assertions.assertThrows(GordianException.class, () -> mySigPair.derivePublicOnlyUserKeyPair(GordianSM9SignType.SIGN, null), "Null Id");
+        Assertions.assertThrows(GordianException.class, () -> mySigPair.derivePublicOnlyUserKeyPair(null, mySignerId), "Null keyType");
 
-        } catch (GordianException e) {
-            e.printStackTrace();
-        }
+        /* Can't create userKeys from userKeys */
+        Assertions.assertThrows(GordianException.class, () -> mySigPair.newUserKeyPair(GordianSM9SignType.SIGN, mySignerId), "UserKey usage");
 
+        /* Obtain representations keyPair */
+        final X509EncodedKeySpec myX509 = mySigGenerator.getX509Encoding(mySigMasterPair);
+        final PKCS8EncodedKeySpec myPKCS8 = mySigGenerator.getPKCS8Encoding(mySigMasterPair);
+        final GordianKeyPair myDerived = mySigGenerator.deriveKeyPair(myX509, myPKCS8);
+        final boolean isIdentical = Objects.equals(mySigMasterPair, myDerived);
+        Assertions.assertTrue(isIdentical, "derive MasterKeyPair");
+
+        /* Create a signature */
+        final GordianSignatureSpecBuilder mySigBuilder = mySigns.newSignatureSpecBuilder();
+        final GordianSignatureSpec mySigSpec = mySigBuilder.sm9();
+        final GordianSignature mySigner = mySigns.createSigner(mySigSpec);
+        final GordianSignParamsBuilder mySigParamsBuilder = mySigns.newSignParamsBuilder();
+        final GordianSignParams mySigParams = mySigParamsBuilder.keyPair(mySigPair);
+        mySigner.initForSigning(mySigParams);
+        mySigner.update(myMessage);
+        final byte[] mySignature = mySigner.sign();
+        mySigner.initForVerify(mySigParams);
+        mySigner.update(myMessage);
+        final boolean myResult = mySigner.verify(mySignature);
+        Assertions.assertTrue(myResult, "Verify");
+
+        /* Can't initialise with master encryptor */
+        final GordianSignParams myMasterParams = mySigParamsBuilder.keyPair(mySigMasterPair);
+        Assertions.assertThrows(GordianException.class, () -> mySigner.initForSigning(myMasterParams), "Sign with master");
+        Assertions.assertThrows(GordianException.class, () -> mySigner.initForVerify(myMasterParams), "Verify with master");
     }
 
-    @SuppressWarnings("unchecked")
-    private static void testSignatures(final GordianAsyncFactory pFactory) {
-        try {
-            /* Access factories */
-            final GordianKeyPairFactory myKeyPairs = pFactory.getKeyPairFactory();
-            final GordianSignatureFactory mySigns = pFactory.getSignatureFactory();
-            final byte[] mySignerId = "SignerID".getBytes();
-            final byte[] myMessage = "ASimpleMessage".getBytes();
+    private static void testCrossSignatures(final GordianFactory pSource,
+                                            final GordianFactory pTarget) throws GordianException {
+        /* Access factories */
+        final GordianAsyncFactory mySource = pSource.getAsyncFactory();
+        final GordianAsyncFactory myTarget = pTarget.getAsyncFactory();
+        final GordianKeyPairFactory mySourceKeyPairs = mySource.getKeyPairFactory();
+        final GordianSignatureFactory mySourceSigns = mySource.getSignatureFactory();
+        final byte[] mySignerId = "SignerID".getBytes();
+        final byte[] myMessage = "ASimpleMessage".getBytes();
 
-            /* Create Signature keyPairs */
-            final GordianKeyPairSpecBuilder myKPBuilder = myKeyPairs.newKeyPairSpecBuilder();
-            final GordianKeyPairSpec mySigMasterSpec = myKPBuilder.sm9(GordianSM9SignType.SIGNMASTER);
-            final GordianKeyPairGenerator mySigGenerator = myKeyPairs.getKeyPairGenerator(mySigMasterSpec);
-            final GordianIdAwareKeyPair<GordianSM9SignType> mySigMasterPair = (GordianIdAwareKeyPair<GordianSM9SignType>) mySigGenerator.generateKeyPair();
-            final GordianKeyPair mySigPair = mySigMasterPair.newUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
+        /* Create Signature keyPairs */
+        final GordianKeyPairSpecBuilder myKPBuilder = mySourceKeyPairs.newKeyPairSpecBuilder();
+        final GordianKeyPairSpec mySigMasterSpec = myKPBuilder.sm9(GordianSM9SignType.SIGNMASTER);
+        final GordianKeyPairGenerator mySigGenerator = mySourceKeyPairs.getKeyPairGenerator(mySigMasterSpec);
+        final GordianIdAwareKeyPair mySigMasterPair = (GordianIdAwareKeyPair) mySigGenerator.generateKeyPair();
+        final GordianKeyPair mySigPair = mySigMasterPair.newUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
 
-            /* Obtain representations keyPair */
-            final X509EncodedKeySpec myX509 = mySigGenerator.getX509Encoding(mySigMasterPair);
-            final PKCS8EncodedKeySpec myPKCS8 = mySigGenerator.getPKCS8Encoding(mySigMasterPair);
-            final GordianKeyPair myDerived = mySigGenerator.deriveKeyPair(myX509, myPKCS8);
-            final boolean isIdentical = Objects.equals(mySigMasterPair, myDerived);
-            assert isIdentical;
+        /* Obtain keyPair in target */
+        final X509EncodedKeySpec myX509 = mySigGenerator.getX509Encoding(mySigMasterPair);
+        final PKCS8EncodedKeySpec myPKCS8 = mySigGenerator.getPKCS8Encoding(mySigMasterPair);
+        final GordianKeyPairFactory myTargetKeyPairs = myTarget.getKeyPairFactory();
+        final GordianSignatureFactory myTargetSigns = myTarget.getSignatureFactory();
+        final GordianKeyPairGenerator myTargetGenerator = myTargetKeyPairs.getKeyPairGenerator(mySigMasterSpec);
+        final GordianIdAwareKeyPair myDerivedMaster = (GordianIdAwareKeyPair) myTargetGenerator.deriveKeyPair(myX509, myPKCS8);
+        final GordianKeyPair myTargetPair = myDerivedMaster.newUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
 
-            /* Create a signature */
-            final GordianSignatureSpecBuilder mySigBuilder = mySigns.newSignatureSpecBuilder();
-            final GordianSignatureSpec mySigSpec = mySigBuilder.sm9();
-            final GordianSignature mySigner = mySigns.createSigner(mySigSpec);
-            final GordianSignParamsBuilder mySigParamsBuilder = mySigns.newSignParamsBuilder();
-            final GordianSignParams mySigParams = mySigParamsBuilder.keyPair(mySigPair);
-            mySigner.initForSigning(mySigParams);
-            mySigner.update(myMessage);
-            final byte[] mySignature = mySigner.sign();
-            mySigner.initForVerify(mySigParams);
-            mySigner.update(myMessage);
-            final boolean myResult = mySigner.verify(mySignature);
-            assert myResult;
+        /* Create a signature */
+        final GordianSignatureSpecBuilder mySigBuilder = mySourceSigns.newSignatureSpecBuilder();
+        final GordianSignatureSpec mySigSpec = mySigBuilder.sm9();
+        final GordianSignature mySourceSigner = mySourceSigns.createSigner(mySigSpec);
+        final GordianSignature myTargetSigner = myTargetSigns.createSigner(mySigSpec);
+        final GordianSignParamsBuilder mySigParamsBuilder = mySourceSigns.newSignParamsBuilder();
+        final GordianSignParams mySourceParams = mySigParamsBuilder.keyPair(mySigPair);
+        mySourceSigner.initForSigning(mySourceParams);
+        mySourceSigner.update(myMessage);
+        final byte[] mySignature = mySourceSigner.sign();
+        final GordianSignParams myTargetParams = mySigParamsBuilder.keyPair(myTargetPair);
+        myTargetSigner.initForVerify(myTargetParams);
+        myTargetSigner.update(myMessage);
+        final boolean myResult = myTargetSigner.verify(mySignature);
+        Assertions.assertTrue(myResult, "Verify");
 
-        } catch (GordianException e) {
-            e.printStackTrace();
-        }
-    }
+        /* Destroy the keyPairs */
+        mySigPair.destroy();
+        myTargetPair.destroy();
 
-    @SuppressWarnings("unchecked")
-    private static void testCrossSignatures(final GordianAsyncFactory pSource,
-                                            final GordianAsyncFactory pTarget) {
-        try {
-            /* Access factories */
-            final GordianKeyPairFactory mySourceKeyPairs = pSource.getKeyPairFactory();
-            final GordianSignatureFactory mySourceSigns = pSource.getSignatureFactory();
-            final byte[] mySignerId = "SignerID".getBytes();
-            final byte[] myMessage = "ASimpleMessage".getBytes();
+        /* Can't sign using destroyed key */
+        Assertions.assertThrows(GordianException.class, mySourceSigner::sign, "Sign with destroyed keyPair");
+        Assertions.assertThrows(GordianException.class, () -> myTargetSigner.verify(mySignature), "Verify with destroyed keyPair");
 
-            /* Create Signature keyPairs */
-            final GordianKeyPairSpecBuilder myKPBuilder = mySourceKeyPairs.newKeyPairSpecBuilder();
-            final GordianKeyPairSpec mySigMasterSpec = myKPBuilder.sm9(GordianSM9SignType.SIGNMASTER);
-            final GordianKeyPairGenerator mySigGenerator = mySourceKeyPairs.getKeyPairGenerator(mySigMasterSpec);
-            final GordianIdAwareKeyPair<GordianSM9SignType> mySigMasterPair
-                    = (GordianIdAwareKeyPair<GordianSM9SignType>) mySigGenerator.generateKeyPair();
-            final GordianKeyPair mySigPair = mySigMasterPair.newUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
+        /* Can't update using destroyed key */
+        Assertions.assertThrows(GordianException.class, () -> mySourceSigner.update(myMessage), "Update with destroyed keyPair");
 
-            /* Obtain keyPair in target */
-            final X509EncodedKeySpec myX509 = mySigGenerator.getX509Encoding(mySigMasterPair);
-            final PKCS8EncodedKeySpec myPKCS8 = mySigGenerator.getPKCS8Encoding(mySigMasterPair);
-            final GordianKeyPairFactory myTargetKeyPairs = pTarget.getKeyPairFactory();
-            final GordianSignatureFactory myTargetSigns = pTarget.getSignatureFactory();
-            final GordianKeyPairGenerator myTargetGenerator = myTargetKeyPairs.getKeyPairGenerator(mySigMasterSpec);
-            final GordianIdAwareKeyPair<GordianSM9SignType> myDerivedMaster =
-                    (GordianIdAwareKeyPair<GordianSM9SignType>) myTargetGenerator.deriveKeyPair(myX509, myPKCS8);
-            final GordianKeyPair myTargetPair = myDerivedMaster.newUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
-
-            /* Create a signature */
-            final GordianSignatureSpecBuilder mySigBuilder = mySourceSigns.newSignatureSpecBuilder();
-            final GordianSignatureSpec mySigSpec = mySigBuilder.sm9();
-            final GordianSignature mySourceSigner = mySourceSigns.createSigner(mySigSpec);
-            final GordianSignature myTargetSigner = myTargetSigns.createSigner(mySigSpec);
-            final GordianSignParamsBuilder mySigParamsBuilder = mySourceSigns.newSignParamsBuilder();
-            final GordianSignParams mySourceParams = mySigParamsBuilder.keyPair(mySigPair);
-            mySourceSigner.initForSigning(mySourceParams);
-            mySourceSigner.update(myMessage);
-            final byte[] mySignature = mySourceSigner.sign();
-            final GordianSignParams myTargetParams = mySigParamsBuilder.keyPair(myTargetPair);
-            myTargetSigner.initForVerify(myTargetParams);
-            myTargetSigner.update(myMessage);
-            final boolean myResult = myTargetSigner.verify(mySignature);
-            assert myResult;
-
-        } catch (GordianException e) {
-            e.printStackTrace();
-        }
+        /* Can't init using destroyed key */
+        Assertions.assertThrows(GordianException.class, () -> mySourceSigner.initForSigning(mySourceParams), "initEncrypt with destroyed keyPair");
+        Assertions.assertThrows(GordianException.class, () -> myTargetSigner.initForVerify(myTargetParams), "initDecrypt with destroyed keyPair");
     }
 }

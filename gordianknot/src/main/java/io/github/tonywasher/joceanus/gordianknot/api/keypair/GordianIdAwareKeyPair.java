@@ -21,17 +21,15 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 
 /**
  * Asymmetric StateAware KeyPair.
- *
- * @param <K> the keyType
  */
-public interface GordianIdAwareKeyPair<K extends GordianIdAwareKeyType>
+public interface GordianIdAwareKeyPair
         extends GordianKeyPair {
     /**
      * get subKeyType.
      *
      * @return the keyType
      */
-    K getSubKeyType();
+    GordianIdAwareKeyType getSubKeyType();
 
     /**
      * Obtain identity.
@@ -48,8 +46,8 @@ public interface GordianIdAwareKeyPair<K extends GordianIdAwareKeyType>
      * @return the new keyPair
      * @throws GordianException on error
      */
-    GordianIdAwareKeyPair<K> newUserKeyPair(K pKeyType,
-                                            byte[] pIdentity) throws GordianException;
+    GordianIdAwareKeyPair newUserKeyPair(GordianIdAwareKeyType pKeyType,
+                                         byte[] pIdentity) throws GordianException;
 
     /**
      * Obtain a new publicOnly keyPair for identity.
@@ -59,6 +57,6 @@ public interface GordianIdAwareKeyPair<K extends GordianIdAwareKeyType>
      * @return the new keyPair
      * @throws GordianException on error
      */
-    GordianIdAwareKeyPair<K> derivePublicOnlyUserKeyPair(K pKeyType,
-                                                         byte[] pIdentity) throws GordianException;
+    GordianIdAwareKeyPair derivePublicOnlyUserKeyPair(GordianIdAwareKeyType pKeyType,
+                                                      byte[] pIdentity) throws GordianException;
 }

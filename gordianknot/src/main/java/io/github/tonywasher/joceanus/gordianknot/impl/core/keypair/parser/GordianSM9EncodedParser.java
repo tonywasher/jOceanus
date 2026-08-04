@@ -29,7 +29,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 /**
  * SM9 Encoded parser.
  */
-public class GordianSM9EncodedParser
+public final class GordianSM9EncodedParser
         implements GordianEncodedParser {
     /**
      * KeySpec.
