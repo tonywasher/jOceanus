@@ -57,7 +57,7 @@ public class BouncyNTRUPlusAgreementEngine
             final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myPublic.getPublicKey());
 
             /* Store the encapsulation */
-            setEncapsulated(myResult.getEncapsulation());
+            setClientEncapsulated(myResult.getEncapsulation());
 
             /* Store secret and create initVector */
             storeSecret(myResult.getSecret());
@@ -75,7 +75,7 @@ public class BouncyNTRUPlusAgreementEngine
         final NTRUPlusKEMExtractor myExtractor = new NTRUPlusKEMExtractor(myPrivate.getPrivateKey());
 
         /* Parse encapsulated message and store secret */
-        final byte[] myMessage = getEncapsulated();
+        final byte[] myMessage = getClientEncapsulated();
         storeSecret(myExtractor.extractSecret(myMessage));
     }
 }

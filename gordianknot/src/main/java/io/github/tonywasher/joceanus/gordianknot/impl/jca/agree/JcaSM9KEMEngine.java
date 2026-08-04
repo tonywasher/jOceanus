@@ -80,7 +80,7 @@ public class JcaSM9KEMEngine
             final SecretKeyWithEncapsulation mySecret = (SecretKeyWithEncapsulation) theGenerator.generateKey();
 
             /* Store the encapsulation */
-            setEncapsulated(mySecret.getEncapsulation());
+            setClientEncapsulated(mySecret.getEncapsulation());
 
             /* Store secret */
             storeSecret(mySecret.getEncoded());
@@ -97,7 +97,7 @@ public class JcaSM9KEMEngine
             /* Create extractor */
             final JcaSM9EncMasterPrivateKey myPrivate = (JcaSM9EncMasterPrivateKey) getPrivateKey(getServerKeyPair());
             final JcaSM9EncUserPrivateKey myUserPrivate = myPrivate.newUserPrivateKey(GordianSM9EncryptType.ENCRYPT, getServerName());
-            final KEMExtractSpec mySpec = new KEMExtractSpec.Builder(myUserPrivate.getPrivateKey(), getEncapsulated(),
+            final KEMExtractSpec mySpec = new KEMExtractSpec.Builder(myUserPrivate.getPrivateKey(), getClientEncapsulated(),
                     GordianSymKeyType.AES.toString(), KEYLEN).withKdfAlgorithm(derivationAlgorithmId()).build();
             theGenerator.init(mySpec);
 

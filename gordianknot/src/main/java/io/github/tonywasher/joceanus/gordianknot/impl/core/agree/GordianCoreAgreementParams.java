@@ -19,7 +19,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
@@ -421,10 +420,10 @@ public class GordianCoreAgreementParams
         }
 
         /* Only allowed if agreementType is SM2 */
-        if (pName != null
-                && !GordianAgreementType.SM2.equals(theSpec.getAgreementType())) {
-            throw new GordianDataException("Names only allowed for SM2 agreementTypes");
-        }
+        //if (pName != null
+        //        && !GordianAgreementType.SM2.equals(theSpec.getAgreementType())) {
+        //    throw new GordianDataException("Names only allowed for SM2 agreementTypes");
+        //}
 
         /* Create new updated parameters */
         final GordianCoreAgreementParams myParams = new GordianCoreAgreementParams(this);

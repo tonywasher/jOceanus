@@ -72,7 +72,7 @@ public class JcaPostQuantumEngine
             final SecretKeyWithEncapsulation mySecret = (SecretKeyWithEncapsulation) theGenerator.generateKey();
 
             /* Store the encapsulation */
-            setEncapsulated(mySecret.getEncapsulation());
+            setClientEncapsulated(mySecret.getEncapsulation());
 
             /* Store secret */
             storeSecret(mySecret.getEncoded());
@@ -88,7 +88,7 @@ public class JcaPostQuantumEngine
         try {
             /* Create extractor */
             final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getServerKeyPair());
-            final KEMExtractSpec mySpec = new KEMExtractSpec.Builder(myPrivate.getPrivateKey(), getEncapsulated(),
+            final KEMExtractSpec mySpec = new KEMExtractSpec.Builder(myPrivate.getPrivateKey(), getClientEncapsulated(),
                     GordianSymKeyType.AES.toString(), GordianLength.LEN_256.getLength()).withKdfAlgorithm(derivationAlgorithmId()).build();
             theGenerator.init(mySpec);
 

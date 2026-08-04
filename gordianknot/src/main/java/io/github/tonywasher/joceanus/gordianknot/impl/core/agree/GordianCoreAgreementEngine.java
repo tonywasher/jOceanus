@@ -185,21 +185,39 @@ public abstract class GordianCoreAgreementEngine {
     }
 
     /**
-     * Obtain encapsulation.
+     * Obtain client encapsulation.
      *
-     * @return the encapsulation
+     * @return the client encapsulation
      */
-    public byte[] getEncapsulated() {
-        return theState.getEncapsulated();
+    public byte[] getClientEncapsulated() {
+        return theState.getClientEncapsulated();
     }
 
     /**
-     * Set encapsulation.
+     * Set client encapsulation.
      *
      * @param pEncapsulated the encapsulated
      */
-    public void setEncapsulated(final byte[] pEncapsulated) {
-        theState.setEncapsulated(pEncapsulated);
+    public void setClientEncapsulated(final byte[] pEncapsulated) {
+        theState.setClientEncapsulated(pEncapsulated);
+    }
+
+    /**
+     * Obtain server encapsulation.
+     *
+     * @return the server encapsulation
+     */
+    public byte[] getServerEncapsulated() {
+        return theState.getServerEncapsulated();
+    }
+
+    /**
+     * Set server encapsulation.
+     *
+     * @param pEncapsulated the encapsulated
+     */
+    public void setServerEncapsulated(final byte[] pEncapsulated) {
+        theState.setServerEncapsulated(pEncapsulated);
     }
 
     /**

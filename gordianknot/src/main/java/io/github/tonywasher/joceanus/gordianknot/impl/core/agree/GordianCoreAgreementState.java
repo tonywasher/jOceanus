@@ -57,11 +57,6 @@ public class GordianCoreAgreementState {
     private final GordianCoreAgreementParticipant theServer;
 
     /**
-     * The encapsulated.
-     */
-    private byte[] theEncapsulated;
-
-    /**
      * Signer Certificate.
      */
     private GordianCertificate theSignerCertificate;
@@ -178,22 +173,42 @@ public class GordianCoreAgreementState {
     }
 
     /**
-     * Obtain the encapsulated.
+     * Obtain the client encapsulated.
      *
-     * @return the encapsulated
+     * @return the client encapsulated
      */
-    public byte[] getEncapsulated() {
-        return theEncapsulated;
+    public byte[] getClientEncapsulated() {
+        return getClient().getEncapsulated();
     }
 
     /**
-     * Set the encapsulated.
+     * Set the client encapsulated.
      *
      * @param pEncapsulated the encapsulated
      * @return the state
      */
-    public GordianCoreAgreementState setEncapsulated(final byte[] pEncapsulated) {
-        theEncapsulated = pEncapsulated;
+    public GordianCoreAgreementState setClientEncapsulated(final byte[] pEncapsulated) {
+        getClient().setEncapsulated(pEncapsulated);
+        return this;
+    }
+
+    /**
+     * Obtain the server encapsulated.
+     *
+     * @return the server encapsulated
+     */
+    public byte[] getServerEncapsulated() {
+        return getServer().getEncapsulated();
+    }
+
+    /**
+     * Set the server encapsulated.
+     *
+     * @param pEncapsulated the encapsulated
+     * @return the state
+     */
+    public GordianCoreAgreementState setServerEncapsulated(final byte[] pEncapsulated) {
+        getServer().setEncapsulated(pEncapsulated);
         return this;
     }
 

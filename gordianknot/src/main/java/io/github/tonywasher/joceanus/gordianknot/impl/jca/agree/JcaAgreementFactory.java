@@ -110,7 +110,8 @@ public class JcaAgreementFactory
      * @throws GordianException on error
      */
     private GordianCoreAgreementEngine getSM9Engine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
-        return new JcaSM9KEMEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyGenerator(pAgreementSpec.getKeyPairSpec()));
+        return new JcaSM9XchgEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyAgreement("SM9", false));
+        //return new JcaSM9KEMEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyGenerator(pAgreementSpec.getKeyPairSpec()));
     }
 
     /**

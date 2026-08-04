@@ -66,13 +66,13 @@ public class BouncySM9XchgAgreementEngine
 
         /* Generate the ephemeral key and stor as encapsulated */
         final ECPoint myEphemeral = theExchange.generateEphemeral(getRandom());
-        setEncapsulated(SM9Curve.g1ToBytes(myEphemeral));
+        setClientEncapsulated(SM9Curve.g1ToBytes(myEphemeral));
     }
 
     @Override
     public void processClientHello() throws GordianException {
         /* Access keys */
-        final byte[] myEncapsulated = getEncapsulated();
+        final byte[] myEncapsulated = getClientEncapsulated();
         final ECPoint myClientEphemeral = SM9Curve.g1FromBytes(myEncapsulated, 0).normalize();
         final BouncySM9EncMasterPrivateKey myPrivate = (BouncySM9EncMasterPrivateKey) getPrivateKey(getServerKeyPair());
         final BouncySM9EncUserPrivateKey myUserPrivate = myPrivate.newUserPrivateKey(GordianSM9EncryptType.EXCHANGE, getServerName());
@@ -83,7 +83,7 @@ public class BouncySM9XchgAgreementEngine
 
         /* Generate the ephemeral key */
         final ECPoint myEphemeral = myExchange.generateEphemeral(getRandom());
-        setEncapsulated(SM9Curve.g1ToBytes(myEphemeral));
+        setServerEncapsulated(SM9Curve.g1ToBytes(myEphemeral));
 
         /* Calculate and store the secret */
         storeSecret(myExchange.calculateKey(KEYLEN, myClientEphemeral));
@@ -99,7 +99,7 @@ public class BouncySM9XchgAgreementEngine
     @Override
     public void processServerHello() throws GordianException {
         /* Access keys */
-        final byte[] myEncapsulated = getEncapsulated();
+        final byte[] myEncapsulated = getServerEncapsulated();
         final ECPoint myServerEphemeral = SM9Curve.g1FromBytes(myEncapsulated, 0).normalize();
 
         /* Calculate and store the secret */

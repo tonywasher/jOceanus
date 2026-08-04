@@ -192,7 +192,7 @@ public final class GordianCoreAgreementType {
      */
     private static boolean isECorDH(final GordianKeyPairType pKeyPairType) {
         return switch (pKeyPairType) {
-            case SM2, EC, GOST, DSTU, DH, XDH -> true;
+            case SM2, EC, GOST, DSTU, DH, XDH, SM9 -> true;
             default -> false;
         };
     }

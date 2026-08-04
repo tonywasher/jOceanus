@@ -345,7 +345,7 @@ public class GordianCoreAgreementBuilder {
      */
     public void setClientEphemeralAsEncapsulated(final GordianKeyPair pEphemeral) throws GordianException {
         final X509EncodedKeySpec myKeySpec = theKeyPairGenerator.getX509Encoding(pEphemeral);
-        theState.setEncapsulated(myKeySpec.getEncoded());
+        theState.setClientEncapsulated(myKeySpec.getEncoded());
     }
 
     /**
@@ -434,7 +434,7 @@ public class GordianCoreAgreementBuilder {
                 .setServerName(myServer.getName())
                 .setInitVector(myClient.getInitVector())
                 .setEphemeral(myClient.getEphemeralKeySpec())
-                .setEncapsulated(theState.getEncapsulated());
+                .setEncapsulated(theState.getClientEncapsulated());
 
         /* Store certificates */
         myMsg.setClientCertificate(myClient.getCertificate())
@@ -471,6 +471,7 @@ public class GordianCoreAgreementBuilder {
                 .setServerName(myServer.getName())
                 .setInitVector(myServer.getInitVector())
                 .setEphemeral(myServer.getEphemeralKeySpec())
+                .setEncapsulated(myServer.getEncapsulated())
                 .setConfirmation(myServer.getConfirm());
 
         /* Store signing details */
@@ -583,6 +584,7 @@ public class GordianCoreAgreementBuilder {
         myServer.setId(pServerHello.getServerId())
                 .setName(pServerHello.getServerName())
                 .setInitVector(pServerHello.getInitVector())
+                .setEncapsulated(pServerHello.getEncapsulated())
                 .setConfirm(pServerHello.getConfirmation());
         final X509EncodedKeySpec myEphemeral = pServerHello.getEphemeral();
         if (myEphemeral != null) {
@@ -650,7 +652,7 @@ public class GordianCoreAgreementBuilder {
                     = theKeyPairGenerator.derivePublicOnlyKeyPair(new X509EncodedKeySpec(pEncapsulated));
             theState.getClient().setEphemeralKeyPair(myKeyPair);
         } else {
-            theState.setEncapsulated(pEncapsulated);
+            theState.setClientEncapsulated(pEncapsulated);
         }
     }
 

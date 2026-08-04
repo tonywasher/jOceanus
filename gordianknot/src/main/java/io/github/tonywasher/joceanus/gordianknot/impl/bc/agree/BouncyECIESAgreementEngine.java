@@ -71,7 +71,7 @@ public class BouncyECIESAgreementEngine
             final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myPublic.getPublicKey());
 
             /* Store the encapsulation */
-            setEncapsulated(myResult.getEncapsulation());
+            setClientEncapsulated(myResult.getEncapsulation());
 
             /* Store secret and create initVector */
             storeSecret(myResult.getSecret());
@@ -89,7 +89,7 @@ public class BouncyECIESAgreementEngine
         final ECIESKEMExtractor myExtractor = new ECIESKEMExtractor(myPrivate.getPrivateKey(), KEYLEN, theDerivation);
 
         /* Parse encapsulated message and store secret */
-        final byte[] myMessage = getEncapsulated();
+        final byte[] myMessage = getClientEncapsulated();
         storeSecret(myExtractor.extractSecret(myMessage));
     }
 }

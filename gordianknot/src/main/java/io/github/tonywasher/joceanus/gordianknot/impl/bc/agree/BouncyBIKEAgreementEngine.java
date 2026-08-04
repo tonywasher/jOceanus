@@ -57,7 +57,7 @@ public class BouncyBIKEAgreementEngine
             final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myPublic.getPublicKey());
 
             /* Store the encapsulation */
-            setEncapsulated(myResult.getEncapsulation());
+            setClientEncapsulated(myResult.getEncapsulation());
 
             /* Store secret */
             storeSecret(myResult.getSecret());
@@ -75,7 +75,7 @@ public class BouncyBIKEAgreementEngine
         final BIKEKEMExtractor myExtractor = new BIKEKEMExtractor(myPrivate.getPrivateKey());
 
         /* Parse encapsulated message and store secret */
-        final byte[] myMessage = getEncapsulated();
+        final byte[] myMessage = getClientEncapsulated();
         storeSecret(myExtractor.extractSecret(myMessage));
     }
 }

@@ -157,7 +157,7 @@ public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
                 myEngine.buildClientHello();
 
                 /* Add any encapsulated to sequence */
-                final byte[] myEngEncapsulated = myEngState.getEncapsulated();
+                final byte[] myEngEncapsulated = myEngState.getClientEncapsulated();
                 if (myEngEncapsulated != null) {
                     myEncapsulated.add(new DEROctetString(myEngEncapsulated));
                 }
@@ -165,7 +165,7 @@ public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
 
             /* Record combined ephemeral and encapsulated */
             if (myEncapsulated.size() > 0) {
-                theState.setEncapsulated(new DERSequence(myEncapsulated).getEncoded());
+                theState.setClientEncapsulated(new DERSequence(myEncapsulated).getEncoded());
             }
 
             /* catch exceptions */
@@ -198,7 +198,7 @@ public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
         final Iterator<GordianKeyPair> myServerEphemeralIterator = myServerEphemeralKeyPair == null ? null : myServerEphemeralKeyPair.iterator();
 
         /* Access encapsulated sequence */
-        final byte[] myEncapsulated = theState.getEncapsulated();
+        final byte[] myEncapsulated = theState.getClientEncapsulated();
         final Enumeration<?> enEnc = myEncapsulated == null ? null : ASN1Sequence.getInstance(myEncapsulated).getObjects();
 
         /* Loop through the engines */

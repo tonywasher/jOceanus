@@ -41,6 +41,11 @@ public class GordianCoreAgreementParticipant {
     private GordianKeyPair theEphemeral;
 
     /**
+     * The encapsulated.
+     */
+    private byte[] theEncapsulated;
+
+    /**
      * The Ephemeral keySpec.
      */
     private X509EncodedKeySpec theKeySpec;
@@ -100,6 +105,26 @@ public class GordianCoreAgreementParticipant {
      */
     public GordianKeyPair getKeyPair() {
         return theKeyPair;
+    }
+
+    /**
+     * Set the encapsulated.
+     *
+     * @param pEncapsulated the encapsulated
+     * @return the state
+     */
+    GordianCoreAgreementParticipant setEncapsulated(final byte[] pEncapsulated) {
+        theEncapsulated = pEncapsulated;
+        return this;
+    }
+
+    /**
+     * Obtain the encapsulated.
+     *
+     * @return the encapsulated
+     */
+    public byte[] getEncapsulated() {
+        return theEncapsulated;
     }
 
     /**

@@ -66,7 +66,7 @@ public class BouncySM9KEMAgreementEngine
             final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myUserPublic.getPublicKey());
 
             /* Store the encapsulation */
-            setEncapsulated(myResult.getEncapsulation());
+            setClientEncapsulated(myResult.getEncapsulation());
 
             /* Store secret and create initVector */
             storeSecret(myResult.getSecret());
@@ -85,7 +85,7 @@ public class BouncySM9KEMAgreementEngine
         final SM9KEMExtractor myExtractor = new SM9KEMExtractor(myUserPrivate.getPrivateKey(), KEYLEN);
 
         /* Parse encapsulated message and store secret */
-        final byte[] myMessage = getEncapsulated();
+        final byte[] myMessage = getClientEncapsulated();
         storeSecret(myExtractor.extractSecret(myMessage));
     }
 }
