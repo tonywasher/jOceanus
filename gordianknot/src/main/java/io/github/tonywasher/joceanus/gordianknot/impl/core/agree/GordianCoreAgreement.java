@@ -188,6 +188,26 @@ public class GordianCoreAgreement
     }
 
     /**
+     * Set the client name.
+     *
+     * @param pName the client name
+     * @throws GordianException on error
+     */
+    void setClientName(final byte[] pName) {
+        theBuilder.setClientName(pName);
+    }
+
+    /**
+     * Set the server name.
+     *
+     * @param pName the server name
+     * @throws GordianException on error
+     */
+    void setServerName(final byte[] pName) {
+        theBuilder.setServerName(pName);
+    }
+
+    /**
      * Set the client certificate.
      *
      * @param pClient the client certificate

@@ -40,7 +40,7 @@ public class BouncySM9KEMAgreementEngine
     /**
      * Key length.
      */
-    private static final int KEYLEN = 128;
+    private static final int KEYLEN = 256;
 
     /**
      * Constructor.
@@ -61,7 +61,7 @@ public class BouncySM9KEMAgreementEngine
         try {
             /* Create encapsulation */
             final BouncySM9EncMasterPublicKey myPublic = (BouncySM9EncMasterPublicKey) getPublicKey(getServerKeyPair());
-            final BouncySM9EncUserPublicKey myUserPublic = myPublic.deriveUserPublicKey(GordianSM9EncryptType.EXCHANGE, getServerName());
+            final BouncySM9EncUserPublicKey myUserPublic = myPublic.deriveUserPublicKey(GordianSM9EncryptType.ENCRYPT, getServerName());
             final SM9KEMGenerator myGenerator = new SM9KEMGenerator(KEYLEN, getRandom());
             final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myUserPublic.getPublicKey());
 
@@ -81,7 +81,7 @@ public class BouncySM9KEMAgreementEngine
     public void processClientHello() throws GordianException {
         /* Create encapsulation */
         final BouncySM9EncMasterPrivateKey myPrivate = (BouncySM9EncMasterPrivateKey) getPrivateKey(getServerKeyPair());
-        final BouncySM9EncUserPrivateKey myUserPrivate = myPrivate.newUserPrivateKey(GordianSM9EncryptType.EXCHANGE, getServerName());
+        final BouncySM9EncUserPrivateKey myUserPrivate = myPrivate.newUserPrivateKey(GordianSM9EncryptType.ENCRYPT, getServerName());
         final SM9KEMExtractor myExtractor = new SM9KEMExtractor(myUserPrivate.getPrivateKey(), KEYLEN);
 
         /* Parse encapsulated message and store secret */

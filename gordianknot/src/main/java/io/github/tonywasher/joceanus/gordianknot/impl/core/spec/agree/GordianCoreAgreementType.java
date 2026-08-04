@@ -122,8 +122,8 @@ public final class GordianCoreAgreementType {
      */
     public static boolean hasKEM(final GordianKeyPairType pKeyPairType) {
         return switch (pKeyPairType) {
-            case RSA, EC, GOST, DSTU, SM2, CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE,
-                 SMAUGT -> true;
+            case RSA, EC, GOST, DSTU, SM2, SM9, CMCE, FRODO, SABER, MLKEM, HQC,
+                 BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE, SMAUGT -> true;
             default -> false;
         };
     }

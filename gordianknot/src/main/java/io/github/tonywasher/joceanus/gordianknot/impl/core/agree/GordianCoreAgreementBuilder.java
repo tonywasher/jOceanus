@@ -245,6 +245,15 @@ public class GordianCoreAgreementBuilder {
     }
 
     /**
+     * Set the clientName.
+     *
+     * @param pName the Name
+     */
+    void setClientName(final byte[] pName) {
+        theState.getClient().setName(pName);
+    }
+
+    /**
      * Set the serverCertificate.
      *
      * @param pCert the Certificate
@@ -262,6 +271,15 @@ public class GordianCoreAgreementBuilder {
     GordianCoreAgreementBuilder setSignerCertificate(final GordianCertificate pCert) {
         theState.setSignerCertificate(pCert);
         return this;
+    }
+
+    /**
+     * Set the serverName.
+     *
+     * @param pName the Name
+     */
+    void setServerName(final byte[] pName) {
+        theState.getServer().setName(pName);
     }
 
     /**
@@ -413,6 +431,7 @@ public class GordianCoreAgreementBuilder {
                 .setResultId(theSupplier.getIdentifierForResultType(theState.getResultType()))
                 .setClientId(myClient.getId())
                 .setClientName(myClient.getName())
+                .setServerName(myServer.getName())
                 .setInitVector(myClient.getInitVector())
                 .setEphemeral(myClient.getEphemeralKeySpec())
                 .setEncapsulated(theState.getEncapsulated());
@@ -532,6 +551,9 @@ public class GordianCoreAgreementBuilder {
             myClient.setEphemeralKeySpec(myEphemeral)
                     .setEphemeralKeyPair(theKeyPairGenerator.derivePublicOnlyKeyPair(myEphemeral));
         }
+
+        /* Store server details */
+        myServer.setName(pClientHello.getServerName());
 
         /* Store certificates */
         myClient.setCertificate(pClientHello.getClientCertificate(theFactory));

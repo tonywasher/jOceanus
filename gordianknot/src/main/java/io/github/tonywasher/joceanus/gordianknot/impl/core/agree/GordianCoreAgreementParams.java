@@ -140,7 +140,9 @@ public class GordianCoreAgreementParams
         theSpec = myState.getSpec();
         theResultType = myState.getResultType();
         theClient = myState.getClient().getCertificate();
+        theClientName = myState.getClient().getName();
         theServer = myState.getServer().getCertificate();
+        theServerName = myState.getServer().getName();
         theSigner = myState.getSignerCertificate();
         theSignSpec = myState.getSignSpec();
     }
@@ -433,15 +435,15 @@ public class GordianCoreAgreementParams
     @Override
     public GordianAgreementParams setServerName(final byte[] pName) throws GordianException {
         /* Only allowed for server parameters */
-        if (isClient) {
-            throw new GordianDataException("Server Name cannot be changed for client");
-        }
+        //if (isClient) {
+        //    throw new GordianDataException("Server Name cannot be changed for client");
+        //}
 
         /* Only allowed if agreementType is SM2 */
-        if (pName != null
-                && !GordianAgreementType.SM2.equals(theSpec.getAgreementType())) {
-            throw new GordianDataException("Names only allowed for SM2 agreementTypes");
-        }
+        //if (pName != null
+        //        && !GordianAgreementType.SM2.equals(theSpec.getAgreementType())) {
+        //    throw new GordianDataException("Names only allowed for SM2 agreementTypes");
+        //}
 
         /* Create new updated parameters */
         final GordianCoreAgreementParams myParams = new GordianCoreAgreementParams(this);

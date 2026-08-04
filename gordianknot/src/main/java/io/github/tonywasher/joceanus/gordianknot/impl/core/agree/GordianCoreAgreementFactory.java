@@ -121,7 +121,9 @@ public abstract class GordianCoreAgreementFactory
 
         /* Set the details */
         myAgreement.setClientCertificate(pParams.getClientCertificate());
+        myAgreement.setClientName(pParams.getClientName());
         myAgreement.setServerCertificate(pParams.getServerCertificate());
+        myAgreement.setServerName(pParams.getServerName());
         myAgreement.setResultType(pParams.getResultType());
         myAgreement.setAdditionalData(pParams.getAdditionalData());
 

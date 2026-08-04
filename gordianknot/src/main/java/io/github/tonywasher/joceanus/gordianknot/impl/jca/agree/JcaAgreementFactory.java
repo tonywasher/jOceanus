@@ -59,6 +59,7 @@ public class JcaAgreementFactory
             case EC, GOST, DSTU -> getECEngine(mySpec);
             case SM2 -> mySpec.getAgreementType() == GordianAgreementType.SM2
                     ? getSM2Engine(mySpec) : getECEngine(mySpec);
+            case SM9 -> getSM9Engine(mySpec);
             case DH -> getDHEngine(mySpec);
             case NEWHOPE -> getNHEngine(mySpec);
             case CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, SMAUGT ->
@@ -99,6 +100,17 @@ public class JcaAgreementFactory
      */
     private GordianCoreAgreementEngine getSM2Engine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
         return new JcaSM2Engine(this, pAgreementSpec, JcaAgreement.getJavaKeyAgreement("SM2", false));
+    }
+
+    /**
+     * Create the SM9 Agreement.
+     *
+     * @param pAgreementSpec the agreementSpec
+     * @return the Agreement
+     * @throws GordianException on error
+     */
+    private GordianCoreAgreementEngine getSM9Engine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
+        return new JcaSM9KEMEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyGenerator(pAgreementSpec.getKeyPairSpec()));
     }
 
     /**
@@ -178,6 +190,7 @@ public class JcaAgreementFactory
         /* Switch on KeyType */
         return switch (pSpec.getKeyPairSpec().getKeyPairType()) {
             case NEWHOPE, CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, SMAUGT, COMPOSITE -> true;
+            case SM9 -> GordianAgreementKDF.NONE.equals(pSpec.getKDFType());
             case EC, GOST, DSTU, SM2, DH -> !GordianAgreementType.KEM.equals(myType);
             case XDH -> !GordianAgreementType.KEM.equals(myType)
                     && !GordianAgreementType.MQV.equals(myType);

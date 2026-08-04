@@ -29,6 +29,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
@@ -184,6 +185,7 @@ public class GordianCoreAgreementAlgId {
         }
         final GordianKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
         addKeyPair(myBuilder.composite());
+        addKeyPair(myBuilder.sm9(GordianSM9EncryptType.ENCMASTER));
     }
 
     /**

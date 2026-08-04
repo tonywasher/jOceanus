@@ -35,7 +35,7 @@ public class BouncySM9XchgAgreementEngine
     /**
      * Key length.
      */
-    private static final int KEYLEN = 128;
+    private static final int KEYLEN = 256;
 
     /**
      * The SM9KeyExchange.

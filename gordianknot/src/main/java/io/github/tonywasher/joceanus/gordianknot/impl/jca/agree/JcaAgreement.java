@@ -203,20 +203,16 @@ public final class JcaAgreement {
             /* Determine the algorithm name */
             String myName = pSpec.getKeyPairType().toString();
             final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pSpec;
-            switch (pSpec.getKeyPairType()) {
-                case NTRUPRIME:
+            myName = switch (pSpec.getKeyPairType()) {
+                case NTRUPRIME -> {
                     final GordianCoreNTRUPrimeSpec myNTRUSpec = mySpec.getNTRUPrimeSpec();
-                    myName = myNTRUSpec.getType() + "PRIME";
-                    break;
-                case MLKEM:
-                    myName = "ML-KEM";
-                    break;
-                case FRODO:
-                    myName = "FrodoKEM";
-                    break;
-                default:
-                    break;
-            }
+                    yield myNTRUSpec.getType() + "PRIME";
+                }
+                case MLKEM -> "ML-KEM";
+                case SM9 -> "SM9-KEM";
+                case FRODO -> "FrodoKEM";
+                default -> myName;
+            };
 
             /* Determine source of keyGenerator */
             final Provider myProvider = mySpec.getCoreKeyPairType().isStandardJca() ? JcaProvider.BCPROV : JcaProvider.BCPQPROV;
