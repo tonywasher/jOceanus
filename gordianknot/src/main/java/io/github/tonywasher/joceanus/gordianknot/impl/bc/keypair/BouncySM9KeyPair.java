@@ -23,6 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyTy
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9SignType;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPairGenerator.BouncyKeyFactorySet;
@@ -550,6 +551,12 @@ public final class BouncySM9KeyPair {
         BouncySM9EncMasterPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
             return new BouncySM9EncMasterPublicKey(getKeySpec(), (SM9EncMasterPublicKeyParameters) pThat);
         }
+
+        @Override
+        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+            final BouncyPublicKey<?> myPublic = derivePublicKey(pEncodedKey);
+            return new BouncyIdAwareKeyPair(myPublic, null);
+        }
     }
 
     /**
@@ -645,6 +652,12 @@ public final class BouncySM9KeyPair {
         @Override
         BouncySM9SignMasterPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
             return new BouncySM9SignMasterPublicKey(getKeySpec(), (SM9SigMasterPublicKeyParameters) pThat);
+        }
+
+        @Override
+        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+            final BouncyPublicKey<?> myPublic = derivePublicKey(pEncodedKey);
+            return new BouncyIdAwareKeyPair(myPublic, null);
         }
     }
 

@@ -188,7 +188,7 @@ public abstract class BouncyKeyPairGenerator<S extends AsymmetricKeyParameter, P
      * @return the public key
      * @throws GordianException on error
      */
-    private BouncyPublicKey<P> derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+    BouncyPublicKey<P> derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
         /* Check the keySpecs */
         checkKeySpec(pEncodedKey);
 

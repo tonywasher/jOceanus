@@ -27,6 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPublicKey;
 import org.bouncycastle.jcajce.interfaces.SM9EncMasterPrivateKey;
@@ -39,6 +40,7 @@ import org.bouncycastle.util.Arrays;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Objects;
 
 /**
@@ -541,8 +543,13 @@ public final class JcaSM9KeyPairGenerator {
         protected JcaSM9EncMasterPublicKey createPublic(final PublicKey pThat) {
             return new JcaSM9EncMasterPublicKey(getKeySpec(), pThat);
         }
-    }
 
+        @Override
+        public JcaKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+            final JcaPublicKey myPublic = derivePublicKey(pEncodedKey);
+            return new JcaIdAwareKeyPair(myPublic, null);
+        }
+    }
 
     /**
      * Jca SM9SignMaster KeyPair generator.
@@ -576,6 +583,12 @@ public final class JcaSM9KeyPairGenerator {
         @Override
         protected JcaSM9SignMasterPublicKey createPublic(final PublicKey pThat) {
             return new JcaSM9SignMasterPublicKey(getKeySpec(), pThat);
+        }
+
+        @Override
+        public JcaKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+            final JcaPublicKey myPublic = derivePublicKey(pEncodedKey);
+            return new JcaIdAwareKeyPair(myPublic, null);
         }
     }
 }

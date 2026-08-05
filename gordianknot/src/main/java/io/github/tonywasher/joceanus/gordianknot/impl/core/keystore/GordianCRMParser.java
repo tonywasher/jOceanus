@@ -29,6 +29,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
@@ -36,6 +37,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPair
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
@@ -45,6 +47,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCerti
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Object;
@@ -326,7 +329,10 @@ public class GordianCRMParser {
             /* Verify the signature */
             final byte[] mySignature = mySigning.getSignature().getBytes();
             final GordianSignParamsBuilder myBuilder = mySignFactory.newSignParamsBuilder();
-            myVerifier.initForVerify(myBuilder.keyPair(myKeyPair));
+            final GordianSignParams myParams = (myKeyPair instanceof GordianIdAwareKeyPair)
+                    ? myBuilder.keyPairAndIdentity(myKeyPair, GordianKeyPairValidity.SERVERID)
+                    : myBuilder.keyPair(myKeyPair);
+            myVerifier.initForVerify(myParams);
             myVerifier.update(pCertReq.getEncoded());
             if (!myVerifier.verify(mySignature)) {
                 throw new GordianDataException("Verification of keyPair failed");
@@ -465,6 +471,9 @@ public class GordianCRMParser {
                 new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
         GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(myAgreeSpec, GordianLength.LEN_256.getByteLength())
                 .setServerCertificate(myCert);
+        if (pKeyPair instanceof GordianIdAwareKeyPair) {
+            myParams = myParams.setServerName(GordianKeyPairValidity.SERVERID);
+        }
         final GordianAgreement mySender = myAgreeFactory.createAgreement(myParams);
         final byte[] myClientHello = mySender.nextMessage();
         final GordianAgreement myResponder = myAgreeFactory.parseAgreementMessage(myClientHello);

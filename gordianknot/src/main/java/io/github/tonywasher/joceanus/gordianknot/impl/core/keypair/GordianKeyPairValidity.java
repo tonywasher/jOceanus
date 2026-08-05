@@ -67,7 +67,7 @@ public final class GordianKeyPairValidity {
     /**
      * Test Server identity.
      */
-    private static final byte[] SERVERID = "TestServer".getBytes();
+    public static final byte[] SERVERID = "TestServer".getBytes();
 
     /**
      * Server X500Name.
