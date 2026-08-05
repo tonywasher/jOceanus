@@ -20,6 +20,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
+import org.bouncycastle.util.Arrays;
 
 /**
  * Core Signature parameters builder.
@@ -35,6 +36,11 @@ public final class GordianCoreSignParamsBuilder
      * The context.
      */
     private byte[] theContext;
+
+    /**
+     * The identity.
+     */
+    private byte[] theIdentity;
 
     /**
      * Constructor.
@@ -59,14 +65,20 @@ public final class GordianCoreSignParamsBuilder
 
     @Override
     public GordianSignParamsBuilder withContext(final byte[] pContext) {
-        theContext = pContext == null ? null : pContext.clone();
+        theContext = Arrays.clone(pContext);
+        return this;
+    }
+
+    @Override
+    public GordianSignParamsBuilder withIdentity(final byte[] pIdentity) {
+        theIdentity = Arrays.clone(pIdentity);
         return this;
     }
 
     @Override
     public GordianSignParams build() {
         /* Create params, reset and return */
-        final GordianCoreSignParams myParams = new GordianCoreSignParams(theKeyPair, theContext);
+        final GordianCoreSignParams myParams = new GordianCoreSignParams(theKeyPair, theContext, theIdentity);
         reset();
         return myParams;
     }
@@ -77,5 +89,6 @@ public final class GordianCoreSignParamsBuilder
     private void reset() {
         theKeyPair = null;
         theContext = null;
+        theIdentity = null;
     }
 }

@@ -498,11 +498,6 @@ class SM9Test {
         mySigner.update(myMessage);
         final boolean myResult = mySigner.verify(mySignature);
         Assertions.assertTrue(myResult, "Verify");
-
-        /* Can't initialise with master encryptor */
-        final GordianSignParams myMasterParams = mySigParamsBuilder.keyPair(mySigMasterPair);
-        Assertions.assertThrows(GordianException.class, () -> mySigner.initForSigning(myMasterParams), "Sign with master");
-        Assertions.assertThrows(GordianException.class, () -> mySigner.initForVerify(myMasterParams), "Verify with master");
     }
 
     private static void testCrossSignatures(final GordianFactory pSource,

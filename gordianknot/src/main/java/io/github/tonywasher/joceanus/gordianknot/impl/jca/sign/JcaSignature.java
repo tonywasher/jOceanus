@@ -29,6 +29,8 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianC
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.base.JcaProvider;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPublicKey;
 import org.bouncycastle.jcajce.spec.ContextParameterSpec;
 
 import java.security.InvalidAlgorithmParameterException;
@@ -157,15 +159,37 @@ public abstract class JcaSignature
      * @return the keyPair
      * @throws GordianException on error
      */
-    private JcaKeyPair checkKeyPair() throws GordianException {
+    protected JcaKeyPair checkKeyPair() throws GordianException {
         return JcaKeyPair.checkKeyPair(super.getKeyPair());
+    }
+
+    /**
+     * Obtain the publicKey.
+     *
+     * @param pParams the parameters
+     * @return the public key
+     * @throws GordianException on error
+     */
+    JcaPublicKey getPublicKey(final GordianSignParams pParams) throws GordianException {
+        return getKeyPair().getPublicKey();
+    }
+
+    /**
+     * Obtain the privateKey.
+     *
+     * @param pParams the parameters
+     * @return the private key
+     * @throws GordianException on error
+     */
+    JcaPrivateKey getPrivateKey(final GordianSignParams pParams) throws GordianException {
+        return getKeyPair().getPrivateKey();
     }
 
     @Override
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        final JcaKeyPair myPair = checkKeyPair();
+        checkKeyPair();
 
         /* Initialise for signing */
         try {
@@ -175,9 +199,9 @@ public abstract class JcaSignature
 
             /* Initialise the signing */
             if (useRandom) {
-                getSigner().initSign(myPair.getPrivateKey().getPrivateKey(), getRandom());
+                getSigner().initSign(getPrivateKey(pParams).getPrivateKey(), getRandom());
             } else {
-                getSigner().initSign(myPair.getPrivateKey().getPrivateKey());
+                getSigner().initSign(getPrivateKey(pParams).getPrivateKey());
             }
 
             /* If we should set context */
@@ -207,12 +231,12 @@ public abstract class JcaSignature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        final JcaKeyPair myPair = checkKeyPair();
+        checkKeyPair();
 
         /* Initialise for signing */
         try {
             /* Initialise for verification */
-            getSigner().initVerify(myPair.getPublicKey().getPublicKey());
+            getSigner().initVerify(getPublicKey(pParams).getPublicKey());
 
             /* If we should set context */
             if (setContextParameter()) {

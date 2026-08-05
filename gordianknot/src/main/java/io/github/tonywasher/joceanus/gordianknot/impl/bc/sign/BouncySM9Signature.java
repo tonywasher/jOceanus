@@ -19,14 +19,19 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9SignType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyIdAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySM9KeyPair.BouncySM9SignMasterPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySM9KeyPair.BouncySM9SignMasterPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySM9KeyPair.BouncySM9SignUserPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySM9KeyPair.BouncySM9SignUserPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.gm.SM9Signature;
@@ -99,14 +104,53 @@ public class BouncySM9Signature
         return (BouncyIdAwareKeyPair) BouncyKeyPair.checkKeyPair(super.getKeyPair());
     }
 
+    /**
+     * Obtain the User publicKey.
+     *
+     * @param pParams the parameters
+     * @return the publicKey
+     * @throws GordianException on error
+     */
+    private BouncySM9SignUserPublicKey getUserPublicKey(final GordianSignParams pParams) throws GordianException {
+        final BouncyIdAwareKeyPair myKeyPair = checkKeyPair();
+        final GordianSM9SignType myKeyType = (GordianSM9SignType) myKeyPair.getKeyPairSpec().getSubSpec();
+        return switch (myKeyType) {
+            case SIGNMASTER -> {
+                final BouncySM9SignMasterPublicKey myPublic = (BouncySM9SignMasterPublicKey) myKeyPair.getPublicKey();
+                yield myPublic.deriveUserPublicKey(GordianSM9SignType.SIGN, pParams.getIdentity());
+            }
+            case SIGN -> (BouncySM9SignUserPublicKey) myKeyPair.getPublicKey();
+            default -> throw new GordianDataException("Unsupported keyPairType: " + myKeyType);
+        };
+    }
+
+    /**
+     * Obtain the User privateKey.
+     *
+     * @param pParams the parameters
+     * @return the privateKey
+     * @throws GordianException on error
+     */
+    private BouncySM9SignUserPrivateKey getUserPrivateKey(final GordianSignParams pParams) throws GordianException {
+        final BouncyIdAwareKeyPair myKeyPair = checkKeyPair();
+        final GordianSM9SignType myKeyType = (GordianSM9SignType) myKeyPair.getKeyPairSpec().getSubSpec();
+        return switch (myKeyType) {
+            case SIGNMASTER -> {
+                final BouncySM9SignMasterPrivateKey myPrivate = (BouncySM9SignMasterPrivateKey) myKeyPair.getPrivateKey();
+                yield myPrivate.newUserPrivateKey(GordianSM9EncryptType.ENCRYPT, pParams.getIdentity());
+            }
+            case SIGN -> (BouncySM9SignUserPrivateKey) myKeyPair.getPrivateKey();
+            default -> throw new GordianDataException("Unsupported keyPairType: " + myKeyType);
+        };
+    }
+
     @Override
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        final BouncyIdAwareKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
-        final BouncySM9SignUserPrivateKey myPrivate = (BouncySM9SignUserPrivateKey) myPair.getPrivateKey();
+        final BouncySM9SignUserPrivateKey myPrivate = getUserPrivateKey(pParams);
         final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
         theSigner.init(true, myParms);
     }
@@ -115,10 +159,9 @@ public class BouncySM9Signature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        final BouncyIdAwareKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
-        final BouncySM9SignUserPublicKey myPublic = (BouncySM9SignUserPublicKey) myPair.getPublicKey();
+        final BouncySM9SignUserPublicKey myPublic = getUserPublicKey(pParams);
         final ParametersWithID myParms = new ParametersWithID(myPublic.getPublicKey(), myPublic.getIdentity());
         theSigner.init(false, myParms);
     }

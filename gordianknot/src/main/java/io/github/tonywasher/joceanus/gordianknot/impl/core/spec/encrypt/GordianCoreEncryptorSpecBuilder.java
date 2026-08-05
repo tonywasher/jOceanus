@@ -148,10 +148,13 @@ public final class GordianCoreEncryptorSpecBuilder
             case EC, SM2, GOST:
                 /* Add EC-ElGamal */
                 myEncryptors.add(myBuilder.ec());
-
-                /* Loop through the encryptionSpecs */
                 for (GordianSM2EncryptionSpec mySpec : listPossibleSM2Specs()) {
                     myEncryptors.add(new GordianCoreEncryptorSpec(pKeyPairType, mySpec));
+                }
+                break;
+            case SM9:
+                for (GordianSM9EncryptionMode myMode : GordianSM9EncryptionMode.values()) {
+                    myEncryptors.add(myBuilder.sm9(myMode));
                 }
                 break;
             default:

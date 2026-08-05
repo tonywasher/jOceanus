@@ -135,7 +135,7 @@ public abstract class GordianCoreSignatureFactory
                 yield myKeyPairSpec.getElliptic().getKeySize() == myDigestLen;
             }
             case RSA -> validSignatureSpecForRSAKeyPairSpec(myKeyPairSpec, mySpec);
-            case SM9 -> GordianSM9SignType.SIGN.equals(myKeyPairSpec.getSM9KeyType());
+            case SM9 -> myKeyPairSpec.getSM9KeyType() instanceof GordianSM9SignType;
             case COMPOSITE -> validSignatureSpecForCompositeKeyPairSpec(myKeyPairSpec, mySpec);
             default -> true;
         };
@@ -143,8 +143,9 @@ public abstract class GordianCoreSignatureFactory
 
     /**
      * Check composite signatureSpec against keySpec.
+     *
      * @param pKeyPairSpec the keyPairSpec
-     * @param pSignSpec the signatureSpec
+     * @param pSignSpec    the signatureSpec
      * @return true/false
      */
     private boolean validSignatureSpecForRSAKeyPairSpec(final GordianCoreKeyPairSpec pKeyPairSpec,
@@ -168,8 +169,9 @@ public abstract class GordianCoreSignatureFactory
 
     /**
      * Check composite signatureSpec against keySpec.
+     *
      * @param pKeyPairSpec the keyPairSpec
-     * @param pSignSpec the signatureSpec
+     * @param pSignSpec    the signatureSpec
      * @return true/false
      */
     private boolean validSignatureSpecForCompositeKeyPairSpec(final GordianCoreKeyPairSpec pKeyPairSpec,

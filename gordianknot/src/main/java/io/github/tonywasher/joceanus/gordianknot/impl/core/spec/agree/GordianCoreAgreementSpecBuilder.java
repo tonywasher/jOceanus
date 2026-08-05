@@ -157,6 +157,11 @@ public final class GordianCoreAgreementSpecBuilder
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.UNIFIED));
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.UNIFIED, true));
                 break;
+            case SM9:
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.SM9));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.SM9, true));
+                break;
             case COMPOSITE:
                 /* Loop through the possible keySpecs for the first key */
                 final Iterator<GordianKeyPairSpec> myIterator = ((GordianCoreKeyPairSpec) pKeyPairSpec).keySpecIterator();

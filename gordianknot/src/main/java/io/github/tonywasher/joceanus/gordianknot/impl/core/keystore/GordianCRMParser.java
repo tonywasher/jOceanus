@@ -442,7 +442,7 @@ public class GordianCRMParser {
         final byte[] myResult = myReceiver.decrypt(myEncrypted);
 
         /* Check the decryption */
-        if (!org.bouncycastle.util.Arrays.areEqual(mySrc, myResult)) {
+        if (!Arrays.equals(mySrc, myResult)) {
             throw new GordianDataException("Private key failed validation");
         }
     }
