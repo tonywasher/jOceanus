@@ -19,9 +19,11 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaAgreementBase;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaSM9KeyPairGenerator.JcaSM9EncMasterPrivateKey;
@@ -67,14 +69,51 @@ public class JcaSM9KEMEngine
         theGenerator = pGenerator;
     }
 
+    /**
+     * Obtain the User publicKey.
+     *
+     * @return the publicKey
+     * @throws GordianException on error
+     */
+    private JcaSM9EncUserPublicKey getUserPublicKey() throws GordianException {
+        final GordianKeyPair myKeyPair = getServerKeyPair();
+        final GordianSM9EncryptType myKeyType = (GordianSM9EncryptType) myKeyPair.getKeyPairSpec().getSubSpec();
+        return switch (myKeyType) {
+            case ENCMASTER -> {
+                final JcaSM9EncMasterPublicKey myPublic = (JcaSM9EncMasterPublicKey) getPublicKey(myKeyPair);
+                yield myPublic.deriveUserPublicKey(GordianSM9EncryptType.ENCRYPT, getServerName());
+            }
+            case ENCRYPT -> (JcaSM9EncUserPublicKey) getPublicKey(myKeyPair);
+            default -> throw new GordianDataException("Unsupported keyPairType: " + myKeyType);
+        };
+    }
+
+    /**
+     * Obtain the User privateKey.
+     *
+     * @return the privateKey
+     * @throws GordianException on error
+     */
+    private JcaSM9EncUserPrivateKey getUserPrivateKey() throws GordianException {
+        final GordianKeyPair myKeyPair = getServerKeyPair();
+        final GordianSM9EncryptType myKeyType = (GordianSM9EncryptType) myKeyPair.getKeyPairSpec().getSubSpec();
+        return switch (myKeyType) {
+            case ENCMASTER -> {
+                final JcaSM9EncMasterPrivateKey myPrivate = (JcaSM9EncMasterPrivateKey) getPrivateKey(myKeyPair);
+                yield myPrivate.newUserPrivateKey(GordianSM9EncryptType.ENCRYPT, getServerName());
+            }
+            case ENCRYPT -> (JcaSM9EncUserPrivateKey) getPrivateKey(myKeyPair);
+            default -> throw new GordianDataException("Unsupported keyPairType: " + myKeyType);
+        };
+    }
+
     @Override
     public void buildClientHello() throws GordianException {
         /* Protect against exceptions */
         try {
             /* Create encapsulation */
-            final JcaSM9EncMasterPublicKey myPublic = (JcaSM9EncMasterPublicKey) getPublicKey(getServerKeyPair());
-            final JcaSM9EncUserPublicKey myUserPublic = myPublic.deriveUserPublicKey(GordianSM9EncryptType.ENCRYPT, getServerName());
-            final KEMGenerateSpec mySpec = new KEMGenerateSpec.Builder(myUserPublic.getPublicKey(),
+            final JcaSM9EncUserPublicKey myPublic = getUserPublicKey();
+            final KEMGenerateSpec mySpec = new KEMGenerateSpec.Builder(myPublic.getPublicKey(),
                     GordianSymKeyType.AES.toString(), KEYLEN).withKdfAlgorithm(derivationAlgorithmId()).build();
             theGenerator.init(mySpec, getRandom());
             final SecretKeyWithEncapsulation mySecret = (SecretKeyWithEncapsulation) theGenerator.generateKey();
@@ -95,8 +134,7 @@ public class JcaSM9KEMEngine
         /* Protect against exceptions */
         try {
             /* Create extractor */
-            final JcaSM9EncMasterPrivateKey myPrivate = (JcaSM9EncMasterPrivateKey) getPrivateKey(getServerKeyPair());
-            final JcaSM9EncUserPrivateKey myUserPrivate = myPrivate.newUserPrivateKey(GordianSM9EncryptType.ENCRYPT, getServerName());
+            final JcaSM9EncUserPrivateKey myUserPrivate = getUserPrivateKey();
             final KEMExtractSpec mySpec = new KEMExtractSpec.Builder(myUserPrivate.getPrivateKey(), getClientEncapsulated(),
                     GordianSymKeyType.AES.toString(), KEYLEN).withKdfAlgorithm(derivationAlgorithmId()).build();
             theGenerator.init(mySpec);

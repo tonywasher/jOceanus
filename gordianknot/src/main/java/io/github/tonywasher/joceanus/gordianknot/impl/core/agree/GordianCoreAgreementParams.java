@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
@@ -26,6 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCi
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
@@ -419,11 +421,15 @@ public class GordianCoreAgreementParams
             throw new GordianDataException("Client Name cannot be changed for server");
         }
 
-        /* Only allowed if agreementType is SM2 */
-        //if (pName != null
-        //        && !GordianAgreementType.SM2.equals(theSpec.getAgreementType())) {
-        //    throw new GordianDataException("Names only allowed for SM2 agreementTypes");
-        //}
+        /* Only allowed if agreementType is SM2 or SM9 non-KEM */
+        final boolean isSupported = switch (theSpec.getAgreementType()) {
+            case SM2 -> true;
+            case SM9 -> theSpec.getAgreementType() == GordianAgreementType.SM9;
+            default -> false;
+        };
+        if (!isSupported) {
+            throw new GordianDataException("Client name not allowed for Spec: " + theSpec);
+        }
 
         /* Create new updated parameters */
         final GordianCoreAgreementParams myParams = new GordianCoreAgreementParams(this);
@@ -433,16 +439,17 @@ public class GordianCoreAgreementParams
 
     @Override
     public GordianAgreementParams setServerName(final byte[] pName) throws GordianException {
-        /* Only allowed for server parameters */
-        //if (isClient) {
-        //    throw new GordianDataException("Server Name cannot be changed for client");
-        //}
-
-        /* Only allowed if agreementType is SM2 */
-        //if (pName != null
-        //        && !GordianAgreementType.SM2.equals(theSpec.getAgreementType())) {
-        //    throw new GordianDataException("Names only allowed for SM2 agreementTypes");
-        //}
+        /* Only allowed if agreementType is SM2 server or SM9 client */
+        final boolean isSupported = switch (theSpec.getAgreementType()) {
+            case SM2 -> !isClient;
+            case SM9 -> isClient;
+            case KEM -> isClient
+                    && theSpec.getKeyPairSpec().getKeyPairType() == GordianKeyPairType.SM9;
+            default -> false;
+        };
+        if (!isSupported) {
+            throw new GordianDataException("Server name not allowed for Spec: " + theSpec);
+        }
 
         /* Create new updated parameters */
         final GordianCoreAgreementParams myParams = new GordianCoreAgreementParams(this);

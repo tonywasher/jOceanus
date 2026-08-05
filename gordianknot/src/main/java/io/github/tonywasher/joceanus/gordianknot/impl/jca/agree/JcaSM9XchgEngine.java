@@ -18,9 +18,11 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.jca.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreement.JcaAgreementBase;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaSM9KeyPairGenerator.JcaSM9EncMasterPrivateKey;
@@ -67,20 +69,61 @@ public class JcaSM9XchgEngine
         theAgreement = pAgreement;
     }
 
+    /**
+     * Obtain the User publicKey.
+     *
+     * @param pKeyPair  the keyPair
+     * @param pIdentity the identity
+     * @return the publicKey
+     * @throws GordianException on error
+     */
+    private JcaSM9EncUserPublicKey getUserPublicKey(final GordianKeyPair pKeyPair,
+                                                    final byte[] pIdentity) throws GordianException {
+        final GordianKeyPair myKeyPair = getServerKeyPair();
+        final GordianSM9EncryptType myKeyType = (GordianSM9EncryptType) myKeyPair.getKeyPairSpec().getSubSpec();
+        return switch (myKeyType) {
+            case ENCMASTER -> {
+                final JcaSM9EncMasterPublicKey myPublic = (JcaSM9EncMasterPublicKey) getPublicKey(pKeyPair);
+                yield myPublic.deriveUserPublicKey(GordianSM9EncryptType.EXCHANGE, pIdentity);
+            }
+            case EXCHANGE -> (JcaSM9EncUserPublicKey) getPublicKey(myKeyPair);
+            default -> throw new GordianDataException("Unsupported keyPairType: " + myKeyType);
+        };
+    }
+
+    /**
+     * Obtain the User privateKey.
+     *
+     * @param pKeyPair  the keyPair
+     * @param pIdentity the identity
+     * @return the privateKey
+     * @throws GordianException on error
+     */
+    private JcaSM9EncUserPrivateKey getUserPrivateKey(final GordianKeyPair pKeyPair,
+                                                      final byte[] pIdentity) throws GordianException {
+        final GordianSM9EncryptType myKeyType = (GordianSM9EncryptType) pKeyPair.getKeyPairSpec().getSubSpec();
+        return switch (myKeyType) {
+            case ENCMASTER -> {
+                final JcaSM9EncMasterPrivateKey myPrivate = (JcaSM9EncMasterPrivateKey) getPrivateKey(pKeyPair);
+                yield myPrivate.newUserPrivateKey(GordianSM9EncryptType.EXCHANGE, pIdentity);
+            }
+            case EXCHANGE -> (JcaSM9EncUserPrivateKey) getPrivateKey(pKeyPair);
+            default -> throw new GordianDataException("Unsupported keyPairType: " + myKeyType);
+        };
+    }
+
     @Override
     public void buildClientHello() throws GordianException {
         /* Protect against exceptions */
         try {
-            /* Access private key */
-            final JcaSM9EncMasterPrivateKey myMasterPrivate = (JcaSM9EncMasterPrivateKey) getPrivateKey(getClientKeyPair());
-            final JcaSM9EncUserPrivateKey myUserPrivate = myMasterPrivate.newUserPrivateKey(GordianSM9EncryptType.EXCHANGE, getClientName());
-            final JcaSM9EncMasterPublicKey myMasterPublic = (JcaSM9EncMasterPublicKey) getPublicKey(getServerKeyPair());
-            final JcaSM9EncUserPublicKey myUserPublic = myMasterPublic.deriveUserPublicKey(GordianSM9EncryptType.EXCHANGE, getServerName());
+            /* Access keys */
+            final JcaSM9EncUserPrivateKey myPrivate = getUserPrivateKey(getClientKeyPair(), getClientName());
+            final JcaSM9EncUserPublicKey myPublic = getUserPublicKey(getServerKeyPair(), getServerName());
 
             /* Initialise the agreement */
             final SM9KeyExchangeSpec mySpec = new SM9KeyExchangeSpec(true, KEYLEN);
-            theAgreement.init(myUserPrivate.getPrivateKey(), mySpec, getRandom());
-            final PublicKey myEphemeral = (PublicKey) theAgreement.doPhase(myUserPublic.getPublicKey(), false);
+            theAgreement.init(myPrivate.getPrivateKey(), mySpec, getRandom());
+            final PublicKey myEphemeral = (PublicKey) theAgreement.doPhase(myPublic.getPublicKey(), false);
             setClientEncapsulated(myEphemeral.getEncoded());
 
         } catch (InvalidKeyException
@@ -94,19 +137,17 @@ public class JcaSM9XchgEngine
         /* Protect against exceptions */
         try {
             /* Access keys */
-            final JcaSM9EncMasterPrivateKey myMasterPrivate = (JcaSM9EncMasterPrivateKey) getPrivateKey(getServerKeyPair());
-            final JcaSM9EncUserPrivateKey myUserPrivate = myMasterPrivate.newUserPrivateKey(GordianSM9EncryptType.EXCHANGE, getServerName());
-            final JcaSM9EncMasterPublicKey myMasterPublic = (JcaSM9EncMasterPublicKey) getPublicKey(getClientKeyPair());
-            final JcaSM9EncUserPublicKey myUserPublic = myMasterPublic.deriveUserPublicKey(GordianSM9EncryptType.EXCHANGE, getClientName());
+            final JcaSM9EncUserPrivateKey myPrivate = getUserPrivateKey(getServerKeyPair(), getServerName());
+            final JcaSM9EncUserPublicKey myUserPublic = getUserPublicKey(getClientKeyPair(), getClientName());
+            final SM9EncMasterPublicKey myMasterPublic = myUserPublic.getMasterPublicKey();
 
             /* Access client ephemeral */
             final byte[] myClientEncapsulated = getClientEncapsulated();
-            final SM9EncMasterPublicKey myPublic = (SM9EncMasterPublicKey) myMasterPublic.getPublicKey();
-            final PublicKey myClientEphemeral = myPublic.getExchangeEphemeral(myClientEncapsulated);
+            final PublicKey myClientEphemeral = myMasterPublic.getExchangeEphemeral(myClientEncapsulated);
 
             /* Process the agreement */
             final SM9KeyExchangeSpec mySpec = new SM9KeyExchangeSpec(false, KEYLEN);
-            theAgreement.init(myUserPrivate.getPrivateKey(), mySpec, getRandom());
+            theAgreement.init(myPrivate.getPrivateKey(), mySpec, getRandom());
             final PublicKey myEphemeral = (PublicKey) theAgreement.doPhase(myUserPublic.getPublicKey(), false);
             theAgreement.doPhase(myClientEphemeral, true);
             setServerEncapsulated(myEphemeral.getEncoded());
@@ -125,12 +166,12 @@ public class JcaSM9XchgEngine
         /* Protect against exceptions */
         try {
             /* Access keys */
-            final JcaSM9EncMasterPublicKey myMasterPublic = (JcaSM9EncMasterPublicKey) getPublicKey(getClientKeyPair());
+            final JcaSM9EncUserPublicKey myUserPublic = getUserPublicKey(getClientKeyPair(), getClientName());
+            final SM9EncMasterPublicKey myMasterPublic = myUserPublic.getMasterPublicKey();
 
             /* Access server ephemeral */
             final byte[] myServerEncapsulated = getServerEncapsulated();
-            final SM9EncMasterPublicKey myPublic = (SM9EncMasterPublicKey) myMasterPublic.getPublicKey();
-            final PublicKey myServerEphemeral = myPublic.getExchangeEphemeral(myServerEncapsulated);
+            final PublicKey myServerEphemeral = myMasterPublic.getExchangeEphemeral(myServerEncapsulated);
 
             /* Finalise the secret */
             theAgreement.doPhase(myServerEphemeral, true); /* Encapsulated */

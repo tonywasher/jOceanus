@@ -217,6 +217,15 @@ public final class JcaSM9KeyPairGenerator {
             return JcaSM9KeyPairGenerator.deriveUserPublicKey(theMasterPublic, pKeyType, pIdentity);
         }
 
+        /**
+         * Obtain the master publicKey
+         *
+         * @return the master public key
+         */
+        public SM9EncMasterPublicKey getMasterPublicKey() {
+            return theMasterPublic;
+        }
+
         @Override
         public boolean equals(final Object pThat) {
             /* Handle the trivial cases */

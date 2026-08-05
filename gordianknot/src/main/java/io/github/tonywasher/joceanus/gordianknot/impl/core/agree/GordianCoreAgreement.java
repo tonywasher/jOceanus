@@ -19,12 +19,14 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementStatus;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
@@ -193,7 +195,12 @@ public class GordianCoreAgreement
      * @param pName the client name
      * @throws GordianException on error
      */
-    void setClientName(final byte[] pName) {
+    void setClientName(final byte[] pName) throws GordianException {
+        /* Must supply clientName for SM9 agreements */
+        if (theSpec.getAgreementType() == GordianAgreementType.SM9
+                && pName == null) {
+            throw new GordianDataException("Server Name is missing");
+        }
         theBuilder.setClientName(pName);
     }
 
@@ -203,7 +210,12 @@ public class GordianCoreAgreement
      * @param pName the server name
      * @throws GordianException on error
      */
-    void setServerName(final byte[] pName) {
+    void setServerName(final byte[] pName) throws GordianException {
+        /* Must supply serverName for SM9 keyPairs */
+        if (theSpec.getKeyPairSpec().getKeyPairType() == GordianKeyPairType.SM9
+                && pName == null) {
+            throw new GordianDataException("Server Name is missing");
+        }
         theBuilder.setServerName(pName);
     }
 
@@ -296,6 +308,9 @@ public class GordianCoreAgreement
 
         /* Store additional data */
         theState.setAdditionalData(pParams.getAdditionalData());
+
+        /* Store serverName */
+        setServerName(pParams.getServerName());
 
         /* Update the parameters */
         theParams = new GordianCoreAgreementParams((GordianCoreAgreementParams) pParams);

@@ -110,8 +110,12 @@ public class JcaAgreementFactory
      * @throws GordianException on error
      */
     private GordianCoreAgreementEngine getSM9Engine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
-        return new JcaSM9XchgEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyAgreement("SM9", false));
-        //return new JcaSM9KEMEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyGenerator(pAgreementSpec.getKeyPairSpec()));
+        return switch (pAgreementSpec.getAgreementType()) {
+            case KEM ->
+                    new JcaSM9KEMEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyGenerator(pAgreementSpec.getKeyPairSpec()));
+            case SM9 -> new JcaSM9XchgEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyAgreement("SM9", false));
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
+        };
     }
 
     /**
@@ -191,7 +195,8 @@ public class JcaAgreementFactory
         /* Switch on KeyType */
         return switch (pSpec.getKeyPairSpec().getKeyPairType()) {
             case NEWHOPE, CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, SMAUGT, COMPOSITE -> true;
-            case SM9 -> GordianAgreementKDF.NONE.equals(pSpec.getKDFType());
+            case SM9 -> GordianAgreementKDF.NONE.equals(pSpec.getKDFType())
+                    && !pSpec.withConfirm();
             case EC, GOST, DSTU, SM2, DH -> !GordianAgreementType.KEM.equals(myType);
             case XDH -> !GordianAgreementType.KEM.equals(myType)
                     && !GordianAgreementType.MQV.equals(myType);

@@ -123,8 +123,8 @@ class SM9Test {
         myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("crossXchg", () -> testCrossExchanges(pFactory, pPartner))));
 
         /* Create kem stream */
-        //myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("KEMs", () -> testKEMs(pFactory))));
-        //myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("crossKEMs", () -> testCrossKEMs(pFactory, pPartner))));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("KEMs", () -> testKEMs(pFactory))));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("crossKEMs", () -> testCrossKEMs(pFactory, pPartner))));
 
         /* Create signature stream */
         myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("signatures", () -> testSignatures(pFactory))));
@@ -134,83 +134,6 @@ class SM9Test {
         return myStream;
     }
 
-//    @SuppressWarnings("unchecked")
-//    public static void main(String[] args) {
-//        try {
-//            /* Create Factory */
-//            final GordianFactory myFactory = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
-//            final GordianFactory myJFactory = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
-//
-//            /* Create Encrypt keyPair Generator */
-//            final GordianAsyncFactory myAsyncFactory = myFactory.getAsyncFactory();
-//            final GordianAsyncFactory myJAsyncFactory = myJFactory.getAsyncFactory();
-//            final GordianKeyPairFactory myKeyPairs = myJAsyncFactory.getKeyPairFactory();
-//            final GordianSignatureFactory mySigns = myAsyncFactory.getSignatureFactory();
-//            final GordianEncryptorFactory myEncs = myJAsyncFactory.getEncryptorFactory();
-//            final GordianAgreementFactory myAgrees = myAsyncFactory.getAgreementFactory();
-//
-//            /* Create Encryption keyPairs */
-//            final byte[] myTargetId = "TargetID".getBytes();
-//            final byte[] myClientId = "ClientID".getBytes();
-//            final byte[] mySignerId = "SignerID".getBytes();
-//            final GordianKeyPairSpecBuilder myKPBuilder = myKeyPairs.newKeyPairSpecBuilder();
-//            final GordianKeyPairSpec myEncMasterSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCMASTER);
-//            final GordianKeyPairSpec myEncKEMSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCRYPT);
-//            final GordianKeyPairGenerator myEncGenerator = myKeyPairs.getKeyPairGenerator(myEncMasterSpec);
-//            final GordianIdAwareKeyPair<GordianSM9EncryptType> myEncMasterPair
-//                    = (GordianIdAwareKeyPair<GordianSM9EncryptType>) myEncGenerator.generateKeyPair();
-
-//            /* Names */
-//            final X500Name myTargetName = KeyStoreUtils.buildX500Name(KeyStoreAlias.TARGET);
-//            final GordianCertificate myTargetCert = myAgrees.newMiniCertificate(myTargetName, (GordianKeyPair) myEncMasterPair,
-//                    new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
-//
-//            /* Create a KEM agreement */
-//            final GordianAgreementSpecBuilder myAgreeBuilder = myAgrees.newAgreementSpecBuilder();
-//            final GordianAgreementSpec myKEMAgreeSpec = myAgreeBuilder.kem(myEncMasterSpec, GordianAgreementKDF.NONE);
-//            final GordianAgreementParams myKEMClientParams = myAgrees.newAgreementParams(myKEMAgreeSpec, myEncMasterSpec)
-//                    .setServerCertificate(myTargetCert).setServerName(myTargetId);
-//            final GordianAgreement myKEMClient = myAgrees.createAgreement(myKEMClientParams);
-//            final byte[] myKEMClientHello = myKEMClient.nextMessage();
-//            final GordianAgreement myKEMServer = myAgrees.parseAgreementMessage(myKEMClientHello);
-//            final GordianAgreementParams myKEMServerParams = myKEMServer.getAgreementParams()
-//                    .setServerCertificate(myTargetCert);
-//            myKEMServer.updateParams(myKEMServerParams);
-//            final byte[] myServerHello = myKEMServer.nextMessage();
-//            myAgrees.parseAgreementMessage(myServerHello);
-//
-//            /* Create an Xchg agreement */
-//            final GordianAgreementSpec myXchgAgreeSpec = myAgreeBuilder.kem(myEncKEMSpec, GordianAgreementKDF.NONE);
-//            final GordianAgreementParams myXchgClientParams = myAgrees.newAgreementParams(myXchgAgreeSpec, myEncMasterSpec)
-//                    .setServerCertificate(myTargetCert).setServerName(myTargetId)
-//                    .setClientCertificate(myTargetCert).setClientName(myClientId);
-//            final GordianAgreement myXchgClient = myAgrees.createAgreement(myXchgClientParams);
-//            final byte[] myXchgClientHello = myXchgClient.nextMessage();
-//            final GordianAgreement myXchgServer = myAgrees.parseAgreementMessage(myXchgClientHello);
-//            final GordianAgreementParams myXchgServerParams = myXchgServer.getAgreementParams()
-//                    .setServerCertificate(myTargetCert);
-//            myXchgServer.updateParams(myXchgServerParams);
-//            final byte[] myXchgServerHello = myXchgServer.nextMessage();
-//            myAgrees.parseAgreementMessage(myXchgServerHello);
-//
-
-//            /* Test encryptors */
-//            testEncryptors(myFactory);
-//            testEncryptors(myJFactory);
-//            testCrossEncryptors(myFactory, myJFactory);
-//            testCrossEncryptors(myJFactory, myFactory);
-//
-//            /* Test signatures */
-//            testSignatures(myFactory);
-//            testSignatures(myJFactory);
-//            testCrossSignatures(myFactory, myJFactory);
-//            testCrossSignatures(myJFactory, myFactory);
-//
-//        } catch (GordianException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     private static void testExchanges(final GordianFactory pFactory) throws GordianException {
         /* Access factories */
         final GordianAsyncFactory myAsync = pFactory.getAsyncFactory();
@@ -218,6 +141,9 @@ class SM9Test {
         final GordianAgreementFactory myAgrees = myAsync.getAgreementFactory();
         final byte[] mySourceId = "SourceID".getBytes();
         final byte[] myTargetId = "TargetID".getBytes();
+
+        /* For BC Factory use withConfirm */
+        final boolean withConfirm = pFactory.getFactoryType() == GordianFactoryType.BC;
 
         /* Create Encrypt keyPairs */
         final GordianKeyPairSpecBuilder myKPBuilder = myKeyPairs.newKeyPairSpecBuilder();
@@ -235,7 +161,9 @@ class SM9Test {
 
         /* Create agreement */
         final GordianAgreementSpecBuilder myAgreeBuilder = myAgrees.newAgreementSpecBuilder();
-        final GordianAgreementSpec myAgreeSpec = myAgreeBuilder.basic(myEncMasterSpec, GordianAgreementKDF.NONE);
+        final GordianAgreementSpec myAgreeSpec = withConfirm
+                ? myAgreeBuilder.sm9Confirm(myEncMasterSpec, GordianAgreementKDF.NONE)
+                : myAgreeBuilder.sm9(myEncMasterSpec, GordianAgreementKDF.NONE);
         final GordianAgreementParams myClientParams = myAgrees.newAgreementParams(myAgreeSpec, GordianLength.LEN_200.getLength())
                 .setClientCertificate(myClientCert)
                 .setServerCertificate(myTargetCert)
@@ -248,9 +176,13 @@ class SM9Test {
                 .setServerCertificate(myTargetCert);
         myServer.updateParams(myServerParams);
         final byte[] myServerHello = myServer.nextMessage();
-        final byte[] myServerResult = myServer.getByteArrayResult();
         myAgrees.parseAgreementMessage(myServerHello);
         final byte[] myClientResult = myClient.getByteArrayResult();
+        if (withConfirm) {
+            final byte[] myClientConfirm = myClient.nextMessage();
+            myAgrees.parseAgreementMessage(myClientConfirm);
+        }
+        final byte[] myServerResult = myServer.getByteArrayResult();
         Assertions.assertArrayEquals(myClientResult, myServerResult, "Matching results");
     }
 
@@ -279,7 +211,7 @@ class SM9Test {
 
         /* Create agreement */
         final GordianAgreementSpecBuilder myAgreeBuilder = mySourceAgrees.newAgreementSpecBuilder();
-        final GordianAgreementSpec myAgreeSpec = myAgreeBuilder.basic(myEncMasterSpec, GordianAgreementKDF.NONE);
+        final GordianAgreementSpec myAgreeSpec = myAgreeBuilder.sm9(myEncMasterSpec, GordianAgreementKDF.NONE);
         final GordianAgreementParams myClientParams = mySourceAgrees.newAgreementParams(myAgreeSpec, GordianLength.LEN_200.getLength())
                 .setClientCertificate(myClientCert)
                 .setServerCertificate(myTargetCert)
@@ -300,7 +232,7 @@ class SM9Test {
                 new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
         final GordianAgreement myServer = myTargetAgrees.parseAgreementMessage(myClientHello);
         final GordianAgreementParams myServerParams = myServer.getAgreementParams()
-                .setServerCertificate(myNewTargetCert); //**
+                .setServerCertificate(myNewTargetCert);
         myServer.updateParams(myServerParams);
         final byte[] myServerHello = myServer.nextMessage();
         final byte[] myServerResult = myServer.getByteArrayResult();

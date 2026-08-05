@@ -47,6 +47,11 @@ public enum GordianAgreementType {
     SM2,
 
     /**
+     * SM9.
+     */
+    SM9,
+
+    /**
      * MQV.
      */
     MQV,

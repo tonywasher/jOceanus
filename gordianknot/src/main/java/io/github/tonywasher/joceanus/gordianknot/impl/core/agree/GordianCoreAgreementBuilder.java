@@ -17,7 +17,6 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementStatus;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
@@ -203,10 +202,11 @@ public class GordianCoreAgreementBuilder {
         /* If we are using confirmation */
         boolean bSuccess = true;
         final GordianCoreAgreementSpec mySpec = theState.getSpec();
-        if (mySpec.withConfirm()
-                && mySpec.getAgreementType() != GordianAgreementType.SM2) {
-            /* calculate the confirmation tags */
-            bSuccess = calculateConfirmationTags(pSecret);
+        if (mySpec.withConfirm()) {
+            bSuccess = switch (mySpec.getAgreementType()) {
+                case SM2, SM9 -> true;
+                default -> calculateConfirmationTags(pSecret);
+            };
         }
 
         /* Calculate result */

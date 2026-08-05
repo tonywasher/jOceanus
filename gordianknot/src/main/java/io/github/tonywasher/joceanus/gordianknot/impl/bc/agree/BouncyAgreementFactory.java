@@ -134,8 +134,8 @@ public class BouncyAgreementFactory
      */
     private GordianCoreAgreementEngine getBCSM9Engine(final GordianCoreAgreementSpec pSpec) throws GordianException {
         return switch (pSpec.getAgreementType()) {
-            case KEM -> new BouncySM9XchgAgreementEngine(this, pSpec);
-            case BASIC -> new BouncySM9XchgAgreementEngine(this, pSpec);
+            case KEM -> new BouncySM9KEMAgreementEngine(this, pSpec);
+            case SM9 -> new BouncySM9XchgAgreementEngine(this, pSpec);
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         };
     }

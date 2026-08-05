@@ -110,6 +110,7 @@ public final class GordianCoreAgreementType {
             case SM2 -> hasSM2(pKeyPairType);
             case MQV -> hasMQV(pKeyPairType);
             case UNIFIED -> hasUnified(pKeyPairType);
+            case SM9 -> hasSM9(pKeyPairType);
             default -> false;
         };
     }
@@ -185,6 +186,16 @@ public final class GordianCoreAgreementType {
     }
 
     /**
+     * Does the keyPairType have an SM9 agreement?
+     *
+     * @param pKeyPairType the keyPairType
+     * @return true/false
+     */
+    public static boolean hasSM9(final GordianKeyPairType pKeyPairType) {
+        return pKeyPairType == GordianKeyPairType.SM9;
+    }
+
+    /**
      * Is the keyPairType EC/DH?
      *
      * @param pKeyPairType the keyPairType
@@ -192,7 +203,7 @@ public final class GordianCoreAgreementType {
      */
     private static boolean isECorDH(final GordianKeyPairType pKeyPairType) {
         return switch (pKeyPairType) {
-            case SM2, EC, GOST, DSTU, DH, XDH, SM9 -> true;
+            case SM2, EC, GOST, DSTU, DH, XDH -> true;
             default -> false;
         };
     }

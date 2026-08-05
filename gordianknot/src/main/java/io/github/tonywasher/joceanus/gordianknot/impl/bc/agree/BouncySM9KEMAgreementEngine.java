@@ -18,12 +18,14 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySM9KeyPair.BouncySM9EncMasterPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySM9KeyPair.BouncySM9EncMasterPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySM9KeyPair.BouncySM9EncUserPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySM9KeyPair.BouncySM9EncUserPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import org.bouncycastle.crypto.SecretWithEncapsulation;
@@ -55,15 +57,52 @@ public class BouncySM9KEMAgreementEngine
         super(pFactory, pSpec);
     }
 
+    /**
+     * Obtain the User publicKey.
+     *
+     * @return the publicKey
+     * @throws GordianException on error
+     */
+    private BouncySM9EncUserPublicKey getUserPublicKey() throws GordianException {
+        final GordianKeyPair myKeyPair = getServerKeyPair();
+        final GordianSM9EncryptType myKeyType = (GordianSM9EncryptType) myKeyPair.getKeyPairSpec().getSubSpec();
+        return switch (myKeyType) {
+            case ENCMASTER -> {
+                final BouncySM9EncMasterPublicKey myPublic = (BouncySM9EncMasterPublicKey) getPublicKey(myKeyPair);
+                yield myPublic.deriveUserPublicKey(GordianSM9EncryptType.ENCRYPT, getServerName());
+            }
+            case ENCRYPT -> (BouncySM9EncUserPublicKey) getPublicKey(myKeyPair);
+            default -> throw new GordianDataException("Unsupported keyPairType: " + myKeyType);
+        };
+    }
+
+    /**
+     * Obtain the User privateKey.
+     *
+     * @return the privateKey
+     * @throws GordianException on error
+     */
+    private BouncySM9EncUserPrivateKey getUserPrivateKey() throws GordianException {
+        final GordianKeyPair myKeyPair = getServerKeyPair();
+        final GordianSM9EncryptType myKeyType = (GordianSM9EncryptType) myKeyPair.getKeyPairSpec().getSubSpec();
+        return switch (myKeyType) {
+            case ENCMASTER -> {
+                final BouncySM9EncMasterPrivateKey myPrivate = (BouncySM9EncMasterPrivateKey) getPrivateKey(myKeyPair);
+                yield myPrivate.newUserPrivateKey(GordianSM9EncryptType.ENCRYPT, getServerName());
+            }
+            case ENCRYPT -> (BouncySM9EncUserPrivateKey) getPrivateKey(myKeyPair);
+            default -> throw new GordianDataException("Unsupported keyPairType: " + myKeyType);
+        };
+    }
+
     @Override
     public void buildClientHello() throws GordianException {
         /* Protect against exceptions */
         try {
             /* Create encapsulation */
-            final BouncySM9EncMasterPublicKey myPublic = (BouncySM9EncMasterPublicKey) getPublicKey(getServerKeyPair());
-            final BouncySM9EncUserPublicKey myUserPublic = myPublic.deriveUserPublicKey(GordianSM9EncryptType.ENCRYPT, getServerName());
+            final BouncySM9EncUserPublicKey myPublic = getUserPublicKey();
             final SM9KEMGenerator myGenerator = new SM9KEMGenerator(KEYLEN, getRandom());
-            final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myUserPublic.getPublicKey());
+            final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myPublic.getPublicKey());
 
             /* Store the encapsulation */
             setClientEncapsulated(myResult.getEncapsulation());
@@ -80,9 +119,8 @@ public class BouncySM9KEMAgreementEngine
     @Override
     public void processClientHello() throws GordianException {
         /* Create encapsulation */
-        final BouncySM9EncMasterPrivateKey myPrivate = (BouncySM9EncMasterPrivateKey) getPrivateKey(getServerKeyPair());
-        final BouncySM9EncUserPrivateKey myUserPrivate = myPrivate.newUserPrivateKey(GordianSM9EncryptType.ENCRYPT, getServerName());
-        final SM9KEMExtractor myExtractor = new SM9KEMExtractor(myUserPrivate.getPrivateKey(), KEYLEN);
+        final BouncySM9EncUserPrivateKey myPrivate = getUserPrivateKey();
+        final SM9KEMExtractor myExtractor = new SM9KEMExtractor(myPrivate.getPrivateKey(), KEYLEN);
 
         /* Parse encapsulated message and store secret */
         final byte[] myMessage = getClientEncapsulated();
