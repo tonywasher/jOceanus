@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.B
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -175,10 +176,23 @@ public abstract class BouncyKeyPairGenerator<S extends AsymmetricKeyParameter, P
         return theFactorySet.createX509EncodedKeySpec(myParms);
     }
 
+    /**
+     * Create publicOnly keyPair.
+     *
+     * @param pPublicKey the public key
+     * @return the keyPair
+     */
+    private BouncyKeyPair createPublicOnlyKeyPair(final BouncyPublicKey<?> pPublicKey) {
+        return switch (pPublicKey) {
+            case GordianIdAwarePublicKey ia -> new BouncyIdAwareKeyPair(pPublicKey, null);
+            case null, default -> new BouncyKeyPair(pPublicKey, null);
+        };
+    }
+
     @Override
     public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
         final BouncyPublicKey<?> myPublic = derivePublicKey(pEncodedKey);
-        return new BouncyKeyPair(myPublic);
+        return createPublicOnlyKeyPair(myPublic);
     }
 
     /**

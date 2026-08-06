@@ -23,6 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.base.JcaProvider;
@@ -192,10 +193,23 @@ public abstract class JcaKeyPairGenerator
         };
     }
 
+    /**
+     * Create publicOnly keyPair.
+     *
+     * @param pPublicKey the public key
+     * @return the keyPair
+     */
+    private JcaKeyPair createPublicOnlyKeyPair(final JcaPublicKey pPublicKey) {
+        return switch (pPublicKey) {
+            case GordianIdAwarePublicKey ia -> new JcaIdAwareKeyPair(pPublicKey, null);
+            case null, default -> new JcaKeyPair(pPublicKey, null);
+        };
+    }
+
     @Override
     public JcaKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pPublicKey) throws GordianException {
         final JcaPublicKey myPublic = derivePublicKey(pPublicKey);
-        return createKeyPair(myPublic, null);
+        return createPublicOnlyKeyPair(myPublic);
     }
 
     /**
@@ -254,10 +268,9 @@ public abstract class JcaKeyPairGenerator
          *
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws GordianException on error
          */
         JcaStateAwareKeyPairGenerator(final GordianBaseFactory pFactory,
-                                      final GordianKeyPairSpec pKeySpec) throws GordianException {
+                                      final GordianKeyPairSpec pKeySpec) {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
         }

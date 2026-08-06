@@ -43,11 +43,6 @@ import java.security.InvalidAlgorithmParameterException;
 public class JcaSM9KEMEngine
         extends JcaAgreementBase {
     /**
-     * Key length.
-     */
-    private static final int KEYLEN = 256;
-
-    /**
      * Key Agreement.
      */
     private final KeyGenerator theGenerator;

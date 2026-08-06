@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.gordianknot.api.keypair;
+package io.github.tonywasher.joceanus.gordianknot.api.keypair.spec;
 
 /**
  * Id aware keyType.

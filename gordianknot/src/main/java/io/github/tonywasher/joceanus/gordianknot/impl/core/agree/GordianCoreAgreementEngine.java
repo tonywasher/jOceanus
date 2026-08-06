@@ -39,6 +39,11 @@ import java.security.SecureRandom;
  */
 public abstract class GordianCoreAgreementEngine {
     /**
+     * Standard Key length.
+     */
+    protected static final int KEYLEN = 256;
+
+    /**
      * The supplier.
      */
     private final GordianCoreAgreementSupplier theSupplier;

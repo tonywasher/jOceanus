@@ -35,11 +35,6 @@ import org.bouncycastle.math.ec.sm9.SM9Curve;
 public class BouncySM9XchgAgreementEngine
         extends BouncyAgreementBase {
     /**
-     * Key length.
-     */
-    private static final int KEYLEN = 256;
-
-    /**
      * The SM9KeyExchange.
      */
     private SM9KeyExchange theExchange;

@@ -17,8 +17,6 @@
 
 package io.github.tonywasher.joceanus.gordianknot.api.keypair.spec;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyType;
-
 /**
  * SM9 keySpec.
  */

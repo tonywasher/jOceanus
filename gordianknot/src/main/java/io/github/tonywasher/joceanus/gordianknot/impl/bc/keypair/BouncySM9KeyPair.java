@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianIdAwareKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9SignType;
@@ -68,6 +68,11 @@ public final class BouncySM9KeyPair {
     private static final GordianCoreKeyPairSpecBuilder BUILDER = GordianCoreKeyPairSpecBuilder.newInstance();
 
     /**
+     * The EncryptMaster keySpec.
+     */
+    private static final GordianKeyPairSpec ENCMASTER = BUILDER.sm9(GordianSM9EncryptType.ENCMASTER);
+
+    /**
      * The Encrypt keySpec.
      */
     private static final GordianKeyPairSpec ENCRYPT = BUILDER.sm9(GordianSM9EncryptType.ENCRYPT);
@@ -76,6 +81,11 @@ public final class BouncySM9KeyPair {
      * The Exchange keySpec.
      */
     private static final GordianKeyPairSpec EXCHANGE = BUILDER.sm9(GordianSM9EncryptType.EXCHANGE);
+
+    /**
+     * The SignMaster keySpec.
+     */
+    private static final GordianKeyPairSpec SIGNMASTER = BUILDER.sm9(GordianSM9SignType.SIGNMASTER);
 
     /**
      * The Sign keySpec.
@@ -150,6 +160,11 @@ public final class BouncySM9KeyPair {
         public BouncySM9EncUserPublicKey deriveUserPublicKey(final GordianIdAwareKeyType pKeyType,
                                                              final byte[] pIdentity) {
             return BouncySM9KeyPair.deriveUserPublicKey(getPublicKey(), pKeyType, pIdentity);
+        }
+
+        @Override
+        public BouncyIdAwareKeyPair deriveMasterPublicKey() {
+            return new BouncyIdAwareKeyPair(this, null);
         }
     }
 
@@ -246,6 +261,12 @@ public final class BouncySM9KeyPair {
                                                              final byte[] pIdentity) {
             return BouncySM9KeyPair.deriveUserPublicKey(getPublicKey().getMasterPublicKey(), pKeyType, pIdentity);
         }
+
+        @Override
+        public BouncyIdAwareKeyPair deriveMasterPublicKey() {
+            final BouncySM9EncMasterPublicKey myPublic = new BouncySM9EncMasterPublicKey(ENCMASTER, getPublicKey().getMasterPublicKey());
+            return new BouncyIdAwareKeyPair(myPublic, null);
+        }
     }
 
     /**
@@ -325,6 +346,11 @@ public final class BouncySM9KeyPair {
         public BouncySM9SignUserPublicKey deriveUserPublicKey(final GordianIdAwareKeyType pKeyType,
                                                               final byte[] pIdentity) {
             return new BouncySM9SignUserPublicKey(SIGN, getPublicKey(), pIdentity);
+        }
+
+        @Override
+        public BouncyIdAwareKeyPair deriveMasterPublicKey() {
+            return new BouncyIdAwareKeyPair(this, null);
         }
     }
 
@@ -418,6 +444,13 @@ public final class BouncySM9KeyPair {
         public BouncySM9SignUserPublicKey deriveUserPublicKey(final GordianIdAwareKeyType pKeyType,
                                                               final byte[] pIdentity) {
             return new BouncySM9SignUserPublicKey(SIGN, getPublicKey(), pIdentity);
+        }
+
+
+        @Override
+        public BouncyIdAwareKeyPair deriveMasterPublicKey() {
+            final BouncySM9SignMasterPublicKey myPublic = new BouncySM9SignMasterPublicKey(ENCMASTER, getPublicKey());
+            return new BouncyIdAwareKeyPair(myPublic, null);
         }
 
         @Override
@@ -551,12 +584,6 @@ public final class BouncySM9KeyPair {
         BouncySM9EncMasterPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
             return new BouncySM9EncMasterPublicKey(getKeySpec(), (SM9EncMasterPublicKeyParameters) pThat);
         }
-
-        @Override
-        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            final BouncyPublicKey<?> myPublic = derivePublicKey(pEncodedKey);
-            return new BouncyIdAwareKeyPair(myPublic, null);
-        }
     }
 
     /**
@@ -652,12 +679,6 @@ public final class BouncySM9KeyPair {
         @Override
         BouncySM9SignMasterPublicKey newPublicKey(final AsymmetricKeyParameter pThat) {
             return new BouncySM9SignMasterPublicKey(getKeySpec(), (SM9SigMasterPublicKeyParameters) pThat);
-        }
-
-        @Override
-        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            final BouncyPublicKey<?> myPublic = derivePublicKey(pEncodedKey);
-            return new BouncyIdAwareKeyPair(myPublic, null);
         }
     }
 

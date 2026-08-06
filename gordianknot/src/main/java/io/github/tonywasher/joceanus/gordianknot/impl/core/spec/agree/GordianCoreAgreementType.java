@@ -18,7 +18,9 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -94,37 +96,42 @@ public final class GordianCoreAgreementType {
     }
 
     /**
-     * Is this Agreement supported for this KeyPairType?
+     * Is this Agreement supported for this KeyPairSpec?
      *
-     * @param pKeyPairType the keyPair
+     * @param pKeyPairSpec the keyPairSpec
      * @return true/false
      */
-    public boolean isSupported(final GordianKeyPairType pKeyPairType) {
-        if (pKeyPairType == GordianKeyPairType.COMPOSITE) {
+    public boolean isSupported(final GordianKeyPairSpec pKeyPairSpec) {
+        final GordianKeyPairType myType = pKeyPairSpec.getKeyPairType();
+        if (myType == GordianKeyPairType.COMPOSITE) {
             return true;
         }
         return switch (theType) {
-            case KEM -> hasKEM(pKeyPairType);
-            case ANON -> hasAnon(pKeyPairType);
-            case BASIC, SIGNED -> hasBasic(pKeyPairType);
-            case SM2 -> hasSM2(pKeyPairType);
-            case MQV -> hasMQV(pKeyPairType);
-            case UNIFIED -> hasUnified(pKeyPairType);
-            case SM9 -> hasSM9(pKeyPairType);
+            case KEM -> hasKEM(pKeyPairSpec);
+            case ANON -> hasAnon(myType);
+            case BASIC, SIGNED -> hasBasic(myType);
+            case SM2 -> hasSM2(myType);
+            case MQV -> hasMQV(myType);
+            case UNIFIED -> hasUnified(myType);
+            case SM9 -> hasSM9(pKeyPairSpec);
             default -> false;
         };
     }
 
     /**
-     * Does the keyPairType have an KEM agreement?
+     * Does the keyPairSpec have an KEM agreement?
      *
-     * @param pKeyPairType the keyPairType
+     * @param pKeyPairSpec the keyPairSpec
      * @return true/false
      */
-    public static boolean hasKEM(final GordianKeyPairType pKeyPairType) {
-        return switch (pKeyPairType) {
-            case RSA, EC, GOST, DSTU, SM2, SM9, CMCE, FRODO, SABER, MLKEM, HQC,
+    public static boolean hasKEM(final GordianKeyPairSpec pKeyPairSpec) {
+        return switch (pKeyPairSpec.getKeyPairType()) {
+            case RSA, EC, GOST, DSTU, SM2, CMCE, FRODO, SABER, MLKEM, HQC,
                  BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE, SMAUGT -> true;
+            case SM9 -> switch (pKeyPairSpec.getSubSpec()) {
+                case GordianSM9EncryptType.ENCMASTER, GordianSM9EncryptType.ENCRYPT -> true;
+                default -> false;
+            };
             default -> false;
         };
     }
@@ -186,13 +193,17 @@ public final class GordianCoreAgreementType {
     }
 
     /**
-     * Does the keyPairType have an SM9 agreement?
+     * Does the keyPairSpec have an SM9 agreement?
      *
-     * @param pKeyPairType the keyPairType
+     * @param pKeyPairSpec the keyPairSpec
      * @return true/false
      */
-    public static boolean hasSM9(final GordianKeyPairType pKeyPairType) {
-        return pKeyPairType == GordianKeyPairType.SM9;
+    public static boolean hasSM9(final GordianKeyPairSpec pKeyPairSpec) {
+        return pKeyPairSpec.getKeyPairType() == GordianKeyPairType.SM9
+                && switch (pKeyPairSpec.getSubSpec()) {
+            case GordianSM9EncryptType.ENCMASTER, GordianSM9EncryptType.EXCHANGE -> true;
+            default -> false;
+        };
     }
 
     /**

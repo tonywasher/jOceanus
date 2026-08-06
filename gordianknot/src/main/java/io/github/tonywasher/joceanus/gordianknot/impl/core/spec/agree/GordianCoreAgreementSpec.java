@@ -152,7 +152,7 @@ public class GordianCoreAgreementSpec
      */
     public boolean isSupported() {
         final GordianKeyPairType myType = theKeyPairSpec.getKeyPairType();
-        return theAgreementType.isSupported(myType)
+        return theAgreementType.isSupported(theKeyPairSpec)
                 && theKDFType.isSupported(myType, theAgreementType.getType());
     }
 

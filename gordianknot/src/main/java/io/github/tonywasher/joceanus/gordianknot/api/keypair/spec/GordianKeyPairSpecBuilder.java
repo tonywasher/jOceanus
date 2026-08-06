@@ -18,7 +18,6 @@
 package io.github.tonywasher.joceanus.gordianknot.api.keypair.spec;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSHash;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSHeight;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSWidth;

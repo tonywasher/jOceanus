@@ -43,11 +43,6 @@ import java.security.PublicKey;
 public class JcaSM9XchgEngine
         extends JcaAgreementBase {
     /**
-     * Key length.
-     */
-    private static final int KEYLEN = 256;
-
-    /**
      * Key Agreement.
      */
     private final KeyAgreement theAgreement;

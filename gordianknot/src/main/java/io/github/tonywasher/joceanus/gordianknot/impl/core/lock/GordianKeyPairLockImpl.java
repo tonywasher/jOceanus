@@ -247,11 +247,11 @@ public class GordianKeyPairLockImpl
 
         /* Determine AgreementType - either ANON or KEM */
         GordianCoreAgreementType myType = GordianCoreAgreementType.mapCoreType(GordianAgreementType.ANON);
-        if (myType.isSupported(pKeySpec.getKeyPairType())) {
+        if (myType.isSupported(pKeySpec)) {
             return myBuilder.anon(pKeySpec, myKDFType);
         }
         myType = GordianCoreAgreementType.mapCoreType(GordianAgreementType.KEM);
-        if (myType.isSupported(pKeySpec.getKeyPairType())) {
+        if (myType.isSupported(pKeySpec)) {
             return myBuilder.kem(pKeySpec, GordianAgreementKDF.NONE);
         }
         throw new GordianLogicException("Invalid KeyPair type");

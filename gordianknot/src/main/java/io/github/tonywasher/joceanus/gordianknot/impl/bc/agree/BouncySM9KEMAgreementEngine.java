@@ -40,11 +40,6 @@ import javax.security.auth.DestroyFailedException;
 public class BouncySM9KEMAgreementEngine
         extends BouncyAgreementBase {
     /**
-     * Key length.
-     */
-    private static final int KEYLEN = 256;
-
-    /**
      * Constructor.
      *
      * @param pFactory the security factory

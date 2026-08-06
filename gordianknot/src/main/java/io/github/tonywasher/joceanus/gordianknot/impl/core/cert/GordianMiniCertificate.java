@@ -26,6 +26,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFacto
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair;
 import org.bouncycastle.asn1.x500.X500Name;
 
 import java.security.spec.X509EncodedKeySpec;
@@ -78,10 +79,16 @@ public class GordianMiniCertificate
         theKeyPair = pKeyPair;
         theUsage = pUsage;
 
+        /* Switch to masterPublic if the key is an IdAware userKey. */
+        GordianKeyPair myKeyPair = pKeyPair instanceof GordianCoreIdAwareKeyPair myIdAware
+                && myIdAware.getSubKeyType().isUserKey()
+                ? myIdAware.getIdAwarePublicKey().deriveMasterPublicKey()
+                : theKeyPair;
+
         /* Access the keyPairFactory */
         final GordianKeyPairFactory myFactory = pFactory.getAsyncFactory().getKeyPairFactory();
-        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeyPair.getKeyPairSpec());
-        final X509EncodedKeySpec myX509Spec = myGenerator.getX509Encoding(pKeyPair);
+        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeyPair.getKeyPairSpec());
+        final X509EncodedKeySpec myX509Spec = myGenerator.getX509Encoding(myKeyPair);
         theSubject = new GordianCoreCertificateId(pSubject, null);
 
         /* Create the encoded */

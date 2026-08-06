@@ -389,6 +389,13 @@ class SM9Test {
         /* Can't initialise with exchange encryptor */
         Assertions.assertThrows(GordianException.class, () -> myEncSender.initForEncrypt(myXchgPair), "Encrypt with exchange");
         Assertions.assertThrows(GordianException.class, () -> myEncSender.initForDecrypt(myXchgPair), "Decrypt with exchange");
+
+        /* Check for inits with Sign key */
+        final GordianKeyPairSpec mySigMasterSpec = myKPBuilder.sm9(GordianSM9SignType.SIGNMASTER);
+        final GordianKeyPairGenerator mySigGenerator = myKeyPairs.getKeyPairGenerator(mySigMasterSpec);
+        final GordianKeyPair mySigMasterPair = mySigGenerator.generateKeyPair();
+        Assertions.assertThrows(GordianException.class, () -> myEncSender.initForEncrypt(mySigMasterPair), "Encrypt with SigKey");
+        Assertions.assertThrows(GordianException.class, () -> myEncSender.initForDecrypt(mySigMasterPair), "Decrypt with SigKey");
     }
 
     private static void testCrossEncryptors(final GordianFactory pSource,
@@ -498,6 +505,14 @@ class SM9Test {
         mySigner.update(myMessage);
         final boolean myResult = mySigner.verify(mySignature);
         Assertions.assertTrue(myResult, "Verify");
+
+        /* Check for inits with Enc key */
+        final GordianKeyPairSpec myEncMasterSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCMASTER);
+        final GordianKeyPairGenerator myEncGenerator = myKeyPairs.getKeyPairGenerator(myEncMasterSpec);
+        final GordianKeyPair myEncMasterPair = myEncGenerator.generateKeyPair();
+        final GordianSignParams myBadParams = mySigParamsBuilder.keyPair(myEncMasterPair);
+        Assertions.assertThrows(GordianException.class, () -> mySigner.initForSigning(myBadParams), "init with EncKey");
+        Assertions.assertThrows(GordianException.class, () -> mySigner.initForVerify(myBadParams), "init with EncKey");
     }
 
     private static void testCrossSignatures(final GordianFactory pSource,

@@ -18,7 +18,6 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianAIMerSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianBIKESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianCMCESpec;
@@ -32,6 +31,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianFalconS
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianGOSTSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHAETAESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHQCSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianIdAwareKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
