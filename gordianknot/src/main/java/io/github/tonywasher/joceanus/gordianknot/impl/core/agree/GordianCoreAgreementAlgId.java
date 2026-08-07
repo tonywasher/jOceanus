@@ -186,6 +186,8 @@ public class GordianCoreAgreementAlgId {
         final GordianKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
         addKeyPair(myBuilder.composite());
         addKeyPair(myBuilder.sm9(GordianSM9EncryptType.ENCMASTER));
+        addKeyPair(myBuilder.sm9(GordianSM9EncryptType.ENCRYPT));
+        addKeyPair(myBuilder.sm9(GordianSM9EncryptType.EXCHANGE));
     }
 
     /**
@@ -253,6 +255,9 @@ public class GordianCoreAgreementAlgId {
                 break;
             case SMAUGT:
                 myId = myId.branch(Integer.toString(mySpec.getSmaugTSpec().getSpec().ordinal() + 1));
+                break;
+            case SM9:
+                myId = myId.branch(Integer.toString(((GordianSM9EncryptType) mySpec.getSM9KeyType()).ordinal() + 1));
                 break;
             default:
                 break;

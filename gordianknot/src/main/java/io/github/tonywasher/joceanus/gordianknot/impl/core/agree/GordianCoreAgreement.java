@@ -26,6 +26,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
@@ -33,6 +34,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureS
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseDestroyable;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementType;
 
@@ -199,7 +202,7 @@ public class GordianCoreAgreement
         /* Must supply clientName for SM9 agreements */
         if (theSpec.getAgreementType() == GordianAgreementType.SM9
                 && pName == null) {
-            throw new GordianDataException("Server Name is missing");
+            throw new GordianDataException("Client Name is missing");
         }
         theBuilder.setClientName(pName);
     }
@@ -378,6 +381,9 @@ public class GordianCoreAgreement
         if (!myType.isSigned() && !myType.isAnonymous()) {
             check4DestroyedKeyPair(theParams.getClientCertificate(), "Client");
         }
+
+        /* Check for matching idAware client/server */
+        check4MatchingIdAwareKeyPairs();
 
         /* Create ClientId and InitVector */
         if (!theSpec.getCoreAgreementType().isAnonymous()) {
@@ -572,6 +578,31 @@ public class GordianCoreAgreement
         if (pCertificate != null) {
             final GordianBaseDestroyable myDestroyable = (GordianBaseDestroyable) pCertificate.getKeyPair();
             myDestroyable.checkForDestroyed(pName);
+        }
+    }
+
+    /**
+     * Check for matching idAware keyPairs.
+     *
+     * @throws GordianException on error
+     */
+    private void check4MatchingIdAwareKeyPairs() throws GordianException {
+        /* If we have both client and server */
+        final GordianCertificate myClientCert = theState.getClient().getCertificate();
+        final GordianCertificate myServerCert = theState.getServer().getCertificate();
+        if (myClientCert != null && myServerCert != null) {
+            /* If they are both idAware */
+            final GordianKeyPair myClientPair = myClientCert.getKeyPair();
+            final GordianKeyPair myServerPair = myServerCert.getKeyPair();
+            if (myClientPair instanceof GordianCoreIdAwareKeyPair myClientId
+                    && myServerPair instanceof GordianCoreIdAwareKeyPair myServerId) {
+                /* Check that we have matching master public keys */
+                final GordianIdAwarePublicKey myClientPublic = myClientId.getIdAwarePublicKey();
+                final GordianIdAwarePublicKey myServerPublic = myServerId.getIdAwarePublicKey();
+                if (!Objects.equals(myClientPublic.deriveMasterPublicKey(), myServerPublic.deriveMasterPublicKey())) {
+                    throw new GordianDataException("IdAware client and server keyPairs must share the same master keyPair");
+                }
+            }
         }
     }
 }

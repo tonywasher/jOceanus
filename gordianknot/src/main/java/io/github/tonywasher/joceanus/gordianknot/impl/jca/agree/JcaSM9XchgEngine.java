@@ -74,14 +74,13 @@ public class JcaSM9XchgEngine
      */
     private JcaSM9EncUserPublicKey getUserPublicKey(final GordianKeyPair pKeyPair,
                                                     final byte[] pIdentity) throws GordianException {
-        final GordianKeyPair myKeyPair = getServerKeyPair();
-        final GordianSM9EncryptType myKeyType = (GordianSM9EncryptType) myKeyPair.getKeyPairSpec().getSubSpec();
+        final GordianSM9EncryptType myKeyType = (GordianSM9EncryptType) pKeyPair.getKeyPairSpec().getSubSpec();
         return switch (myKeyType) {
             case ENCMASTER -> {
                 final JcaSM9EncMasterPublicKey myPublic = (JcaSM9EncMasterPublicKey) getPublicKey(pKeyPair);
                 yield myPublic.deriveUserPublicKey(GordianSM9EncryptType.EXCHANGE, pIdentity);
             }
-            case EXCHANGE -> (JcaSM9EncUserPublicKey) getPublicKey(myKeyPair);
+            case EXCHANGE -> (JcaSM9EncUserPublicKey) getPublicKey(pKeyPair);
             default -> throw new GordianDataException("Unsupported keyPairType: " + myKeyType);
         };
     }

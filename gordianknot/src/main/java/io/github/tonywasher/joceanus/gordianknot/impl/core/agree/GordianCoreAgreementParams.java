@@ -26,6 +26,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
@@ -305,6 +306,12 @@ public class GordianCoreAgreementParams
             if (myKeyPair.isPublicOnly()) {
                 throw new GordianDataException("Client Certificate must supply privateKey");
             }
+
+            /* If this is an idAware userKey, set the clientName */
+            if (myKeyPair instanceof GordianIdAwareKeyPair myIdAware) {
+                theClientName = myIdAware.getIdentity();
+            }
+
         } else if (!myType.isSigned() && !myType.isAnonymous()) {
             throw new GordianDataException("Null Client Certificate not allowed");
         }
@@ -330,6 +337,12 @@ public class GordianCoreAgreementParams
             }
             if (!pServer.getUsage().hasUse(GordianKeyPairUse.AGREEMENT)) {
                 throw new GordianDataException("Server Certificate must be capable of keyAgreement");
+            }
+
+            /* If this is an idAware userKey, set the serverName */
+            if (myKeyPair instanceof GordianIdAwareKeyPair myIdAware
+                    && theServerName == null) {
+                theServerName = myIdAware.getIdentity();
             }
 
             /* If we are a server */

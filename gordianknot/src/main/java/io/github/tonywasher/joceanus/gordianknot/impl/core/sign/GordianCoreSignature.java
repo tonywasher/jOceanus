@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
@@ -153,6 +154,29 @@ public abstract class GordianCoreSignature
         }
     }
 
+    /**
+     * Check that the Identity is supported.
+     *
+     * @param pIdentity the context
+     * @throws GordianException on error
+     */
+    private void checkIdentity(final byte[] pIdentity) throws GordianException {
+        /* If we are an idAware keyPair */
+        if (theKeyPair instanceof GordianIdAwareKeyPair myIdAware) {
+            /* Check that identity is present for MasterKsey and absent for userKeys */
+            if (myIdAware.getSubKeyType().isUserKey() && pIdentity != null) {
+                throw new GordianDataException("Identity cannot override IdAware userKey");
+            }
+            if (!myIdAware.getSubKeyType().isUserKey() && pIdentity == null) {
+                throw new GordianDataException("Identity is required for IdAware masterKey");
+            }
+
+            /* Identity not allowed for non-IdAware */
+        } else if (pIdentity != null) {
+            throw new GordianDataException("Identity only allowed for IdAware masterKey");
+        }
+    }
+
     @Override
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Store details */
@@ -163,6 +187,7 @@ public abstract class GordianCoreSignature
         /* Check that the keyPair matches and that any context is supported */
         checkKeyPair(theKeyPair);
         checkContext(theContext);
+        checkIdentity(pParams.getIdentity());
         theKeyPair.checkForDestroyedKeyPair();
 
         /* Check that we have the private key */
@@ -181,6 +206,7 @@ public abstract class GordianCoreSignature
         /* Check that the keyPair matches and that any context is supported */
         checkKeyPair(theKeyPair);
         checkContext(theContext);
+        checkIdentity(pParams.getIdentity());
         theKeyPair.checkForDestroyedKeyPair();
     }
 
