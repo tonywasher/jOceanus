@@ -29,11 +29,6 @@ import org.bouncycastle.util.Pack;
 public abstract class GordianKangarooDigest
         implements Digest {
     /**
-     * Default digest length.
-     */
-    private static final int DIGESTLEN = 32;
-
-    /**
      * Private constructor.
      */
     private GordianKangarooDigest() {
@@ -53,16 +48,7 @@ public abstract class GordianKangarooDigest
          * Constructor.
          */
         public GordianKangarooTwelve() {
-            this(DIGESTLEN);
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param pLength the digest length
-         */
-        public GordianKangarooTwelve(final int pLength) {
-            super(GordianLength.LEN_128.getLength(), ROUNDS, pLength);
+            super(GordianLength.LEN_128.getLength(), ROUNDS);
         }
 
         @Override
@@ -85,16 +71,7 @@ public abstract class GordianKangarooDigest
          * Constructor.
          */
         public GordianMarsupilamiFourteen() {
-            this(DIGESTLEN);
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param pLength the digest length
-         */
-        public GordianMarsupilamiFourteen(final int pLength) {
-            super(GordianLength.LEN_256.getLength(), ROUNDS, pLength);
+            super(GordianLength.LEN_256.getLength(), ROUNDS);
         }
 
         @Override
@@ -178,11 +155,9 @@ public abstract class GordianKangarooDigest
          *
          * @param pStrength the strength
          * @param pRounds   the rounds.
-         * @param pLength   the digest length
          */
         GordianKangarooBase(final int pStrength,
-                            final int pRounds,
-                            final int pLength) {
+                            final int pRounds) {
             /* Create underlying digests */
             theTree = new GordianKangarooSponge(pStrength, pRounds);
             theLeaf = new GordianKangarooSponge(pStrength, pRounds);

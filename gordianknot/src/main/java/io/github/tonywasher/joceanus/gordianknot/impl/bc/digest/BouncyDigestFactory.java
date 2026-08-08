@@ -202,10 +202,9 @@ public class BouncyDigestFactory
      * @return the digest
      */
     private static GordianKangarooBase getKangarooDigest(final GordianCoreDigestSpec pSpec) {
-        final int myLength = pSpec.getDigestLength().getByteLength();
         return GordianDigestState.STATE128.equals(pSpec.getDigestState())
-                ? new GordianKangarooTwelve(myLength)
-                : new GordianMarsupilamiFourteen(myLength);
+                ? new GordianKangarooTwelve()
+                : new GordianMarsupilamiFourteen();
     }
 
     /**
