@@ -449,7 +449,7 @@ public final class BouncySM9KeyPair {
 
         @Override
         public BouncyIdAwareKeyPair deriveMasterPublicKey() {
-            final BouncySM9SignMasterPublicKey myPublic = new BouncySM9SignMasterPublicKey(ENCMASTER, getPublicKey());
+            final BouncySM9SignMasterPublicKey myPublic = new BouncySM9SignMasterPublicKey(SIGNMASTER, getPublicKey());
             return new BouncyIdAwareKeyPair(myPublic, null);
         }
 

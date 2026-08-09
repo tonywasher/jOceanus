@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.junit.regression;
+package io.github.tonywasher.joceanus.gordianknot.junit.regression.keystore;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
@@ -27,7 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreFac
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreManager;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStore;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.KeyStoreUtils.KeyStoreAlias;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.keystore.KeyStoreUtils.KeyStoreAlias;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.junit.jupiter.api.Assertions;

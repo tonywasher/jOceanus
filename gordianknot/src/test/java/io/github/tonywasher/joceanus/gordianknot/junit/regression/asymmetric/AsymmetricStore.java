@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.junit.regression;
+package io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
@@ -25,6 +25,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncrypt
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
@@ -63,6 +64,16 @@ import java.util.List;
  * Assymmetric Test Data Classes.
  */
 class AsymmetricStore {
+    /**
+     * Source identity.
+     */
+    static final byte[] SOURCEID = "SourceID".getBytes();
+
+    /**
+     * Target identity.
+     */
+    static final byte[] TARGETID = "TargetID".getBytes();
+
     /**
      * The single keyType to test.
      */
@@ -163,6 +174,16 @@ class AsymmetricStore {
         private final FactoryKeyPairs theKeyPairs;
 
         /**
+         * Is the keyPair idAware?
+         */
+        private final boolean isIdAware;
+
+        /**
+         * Is the keyPair and idAware userKey?
+         */
+        private final boolean isIdAwareUserKey;
+
+        /**
          * Constructor.
          *
          * @param pFactory the factory
@@ -187,6 +208,11 @@ class AsymmetricStore {
             thePartner = pPartner.getAsyncFactory().getKeyPairFactory().supportedKeyPairSpecs().test(pKeySpec)
                     ? pPartner.getAsyncFactory()
                     : null;
+
+            /* Determine idAwareness */
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) theKeySpec;
+            isIdAware = myKeySpec.isIdAware();
+            isIdAwareUserKey = isIdAware && myKeySpec.getIdAwareKeyType().isUserKey();
         }
 
         /**
@@ -261,6 +287,24 @@ class AsymmetricStore {
             return theEncryptors;
         }
 
+        /**
+         * Is the keySpec idAware?
+         *
+         * @return true/false
+         */
+        boolean isIdAware() {
+            return isIdAware;
+        }
+
+        /**
+         * Is the keySpec idAwareUserKey?
+         *
+         * @return true/false
+         */
+        boolean isIdAwareUserKey() {
+            return isIdAwareUserKey;
+        }
+
         @Override
         public boolean equals(final Object pThat) {
             if (this == pThat) {
@@ -269,10 +313,9 @@ class AsymmetricStore {
             if (pThat == null) {
                 return false;
             }
-            if (!(pThat instanceof FactoryKeySpec)) {
+            if (!(pThat instanceof FactoryKeySpec myThat)) {
                 return false;
             }
-            final FactoryKeySpec myThat = (FactoryKeySpec) pThat;
             return getFactoryType() == myThat.getFactoryType()
                     && theKeySpec.equals(myThat.theKeySpec);
         }
@@ -296,6 +339,11 @@ class AsymmetricStore {
          * The owner.
          */
         private final FactoryKeySpec theOwner;
+
+        /**
+         * The master keyPair.
+         */
+        private volatile GordianKeyPair theMasterKeyPair;
 
         /**
          * The keyPair.
@@ -352,10 +400,25 @@ class AsymmetricStore {
                     return myKeyPair;
                 }
 
+                /* Switch to master spec if the keyPair is an idAware userKey */
+                final GordianCoreKeyPairSpec myCoreSpec = (GordianCoreKeyPairSpec) theOwner.getKeySpec();
+                GordianCoreKeyPairSpec mySpec = myCoreSpec;
+                if (theOwner.isIdAwareUserKey()) {
+                    mySpec = mySpec.getMasterKeySpec();
+                }
+
                 /* Generate the keyPair */
                 final GordianAsyncFactory myFactory = theOwner.getFactory();
-                final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairFactory().getKeyPairGenerator(theOwner.getKeySpec());
+                final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairFactory().getKeyPairGenerator(mySpec);
                 myKeyPair = myGenerator.generateKeyPair();
+                theMasterKeyPair = myKeyPair;
+
+                /* Switch to user keyPair if required */
+                if (theOwner.isIdAwareUserKey()) {
+                    myKeyPair = ((GordianIdAwareKeyPair) theMasterKeyPair).newUserKeyPair(myCoreSpec.getIdAwareKeyType(), SOURCEID);
+                }
+
+                /* Store the keyPair */
                 theKeyPair = myKeyPair;
                 return myKeyPair;
             }
@@ -368,9 +431,20 @@ class AsymmetricStore {
          * @throws GordianException on error
          */
         X509EncodedKeySpec getX509Encoding() throws GordianException {
+            /* Access the keyPair factory */
             final GordianKeyPairFactory myFactory = theOwner.getFactory().getKeyPairFactory();
-            final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
-            return myGenerator.getX509Encoding(getKeyPair());
+
+            /* Handle idAware keyPairs */
+            GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) theOwner.getKeySpec();
+            GordianKeyPair myKeyPair = getKeyPair();
+            if (theOwner.isIdAwareUserKey()) {
+                mySpec = mySpec.getMasterKeySpec();
+                myKeyPair = theMasterKeyPair;
+            }
+
+            /* Return the encoding */
+            final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
+            return myGenerator.getX509Encoding(myKeyPair);
         }
 
         /**
@@ -380,9 +454,20 @@ class AsymmetricStore {
          * @throws GordianException on error
          */
         PKCS8EncodedKeySpec getPKCS8Encoding() throws GordianException {
+            /* Access the keyPair factory */
             final GordianKeyPairFactory myFactory = theOwner.getFactory().getKeyPairFactory();
-            final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
-            return myGenerator.getPKCS8Encoding(getKeyPair());
+
+            /* Handle idAware keyPairs */
+            GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) theOwner.getKeySpec();
+            GordianKeyPair myKeyPair = getKeyPair();
+            if (theOwner.isIdAwareUserKey()) {
+                mySpec = mySpec.getMasterKeySpec();
+                myKeyPair = theMasterKeyPair;
+            }
+
+            /* Return the encoding */
+            final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
+            return myGenerator.getPKCS8Encoding(myKeyPair);
         }
 
         /**
@@ -406,12 +491,20 @@ class AsymmetricStore {
                     return myTarget;
                 }
 
-                /* Generate the keyPair */
-                final GordianKeyPairFactory myFactory = theOwner.getFactory().getKeyPairFactory();
-                final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
-                myTarget = myGenerator.generateKeyPair();
-                theTarget = myTarget;
-                return myTarget;
+                /* Handle idAware keyPairs */
+                final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) theOwner.getKeySpec();
+                if (theOwner.isIdAwareUserKey()) {
+                    /* derive the keyPair */
+                    theTarget = ((GordianIdAwareKeyPair) theMasterKeyPair).newUserKeyPair(mySpec.getIdAwareKeyType(), TARGETID);
+                } else if (theOwner.isIdAware()) {
+                    theTarget = theMasterKeyPair;
+                } else {
+                    /* Generate the keyPair */
+                    final GordianKeyPairFactory myFactory = theOwner.getFactory().getKeyPairFactory();
+                    final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
+                    theTarget = myGenerator.generateKeyPair();
+                }
+                return theTarget;
             }
         }
 
@@ -439,12 +532,27 @@ class AsymmetricStore {
                 /* Access the keyPair */
                 GordianKeyPair myPair = getKeyPair();
 
-                /* Generate the keyPair */
+                /* Switch to master spec if the keyPair is an idAware userKey */
+                final GordianCoreKeyPairSpec myCoreSpec = (GordianCoreKeyPairSpec) theOwner.getKeySpec();
+                GordianCoreKeyPairSpec mySpec = myCoreSpec;
+                if (theOwner.isIdAwareUserKey()) {
+                    mySpec = mySpec.getMasterKeySpec();
+                    myPair = theMasterKeyPair;
+                }
+
+                /* Derive the mirror keyPair */
                 final GordianKeyPairFactory myFactory = theOwner.getFactory().getKeyPairFactory();
-                final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
+                final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
                 final X509EncodedKeySpec myPublic = myGenerator.getX509Encoding(myPair);
                 final PKCS8EncodedKeySpec myPrivate = myGenerator.getPKCS8Encoding(myPair);
                 myMirror = myGenerator.deriveKeyPair(myPublic, myPrivate);
+
+                /* Switch to user keyPair if required */
+                if (theOwner.isIdAwareUserKey()) {
+                    myMirror = ((GordianIdAwareKeyPair) myMirror).newUserKeyPair(myCoreSpec.getIdAwareKeyType(), SOURCEID);
+                }
+
+                /* Store and return */
                 theMirror = myMirror;
                 return myMirror;
             }
@@ -474,15 +582,32 @@ class AsymmetricStore {
 
                 /* Access the keyPair */
                 GordianKeyPair myPair = getKeyPair();
+
+                /* Switch to master spec if the keyPair is an idAware userKey */
+                final GordianCoreKeyPairSpec myCoreSpec = (GordianCoreKeyPairSpec) theOwner.getKeySpec();
+                GordianCoreKeyPairSpec mySpec = myCoreSpec;
+                if (theOwner.isIdAwareUserKey()) {
+                    mySpec = mySpec.getMasterKeySpec();
+                    myPair = theMasterKeyPair;
+                }
+
+                /* derive the encodings */
                 GordianKeyPairFactory myFactory = theOwner.getFactory().getKeyPairFactory();
-                GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
+                GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
                 final X509EncodedKeySpec myPublic = myGenerator.getX509Encoding(myPair);
                 final PKCS8EncodedKeySpec myPrivate = myGenerator.getPKCS8Encoding(myPair);
 
                 /* Derive the partner keyPair */
                 myFactory = theOwner.getPartner().getKeyPairFactory();
-                myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
+                myGenerator = myFactory.getKeyPairGenerator(mySpec);
                 myPartnerSelf = myGenerator.deriveKeyPair(myPublic, myPrivate);
+
+                /* Switch to user keyPair if required */
+                if (theOwner.isIdAwareUserKey()) {
+                    myPartnerSelf = ((GordianIdAwareKeyPair) myPartnerSelf).newUserKeyPair(myCoreSpec.getIdAwareKeyType(), SOURCEID);
+                }
+
+                /* Store and return */
                 thePartnerSelf = myPartnerSelf;
                 return myPartnerSelf;
             }
@@ -510,20 +635,71 @@ class AsymmetricStore {
                     return myPartnerTarget;
                 }
 
-                /* Access the target keyPair */
+                /* Access the keyPair */
                 GordianKeyPair myPair = getTargetKeyPair();
+
+                /* Switch to master spec if the keyPair is an idAware userKey */
+                final GordianCoreKeyPairSpec myCoreSpec = (GordianCoreKeyPairSpec) theOwner.getKeySpec();
+                GordianCoreKeyPairSpec mySpec = myCoreSpec;
+                if (theOwner.isIdAwareUserKey()) {
+                    mySpec = mySpec.getMasterKeySpec();
+                    myPair = theMasterKeyPair;
+                }
+
+                /* derive the encodings */
                 GordianKeyPairFactory myFactory = theOwner.getFactory().getKeyPairFactory();
-                GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
+                GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
                 final X509EncodedKeySpec myPublic = myGenerator.getX509Encoding(myPair);
                 final PKCS8EncodedKeySpec myPrivate = myGenerator.getPKCS8Encoding(myPair);
 
                 /* Derive the keyPair */
                 myFactory = theOwner.getPartner().getKeyPairFactory();
-                myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
+                myGenerator = myFactory.getKeyPairGenerator(mySpec);
                 myPartnerTarget = myGenerator.deriveKeyPair(myPublic, myPrivate);
+
+                /* Switch to user keyPair if required */
+                if (theOwner.isIdAwareUserKey()) {
+                    myPartnerTarget = ((GordianIdAwareKeyPair) myPartnerTarget).newUserKeyPair(myCoreSpec.getIdAwareKeyType(), TARGETID);
+                }
+
+                /* Store and return */
                 thePartnerTarget = myPartnerTarget;
                 return myPartnerTarget;
             }
+        }
+
+        /**
+         * Obtain a copy of the keyPair.
+         *
+         * @param pSource the source keyPair
+         * @return the keyPair
+         * @throws GordianException on error
+         */
+        GordianKeyPair copyKeyPair(GordianKeyPair pSource) throws GordianException {
+            /* Access the keyPair */
+            GordianKeyPair myPair = pSource;
+
+            /* Switch to master spec if the keyPair is an idAware userKey */
+            final GordianCoreKeyPairSpec myCoreSpec = (GordianCoreKeyPairSpec) theOwner.getKeySpec();
+            GordianCoreKeyPairSpec mySpec = myCoreSpec;
+            if (theOwner.isIdAwareUserKey()) {
+                mySpec = mySpec.getMasterKeySpec();
+                myPair = theMasterKeyPair;
+            }
+
+            /* derive the encodings */
+            GordianKeyPairFactory myFactory = theOwner.getFactory().getKeyPairFactory();
+            GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
+            final X509EncodedKeySpec myPublic = myGenerator.getX509Encoding(myPair);
+            final PKCS8EncodedKeySpec myPrivate = myGenerator.getPKCS8Encoding(myPair);
+            GordianKeyPair myCopy = myGenerator.deriveKeyPair(myPublic, myPrivate);
+
+            /* Switch to user keyPair if required */
+            if (theOwner.isIdAwareUserKey()) {
+                final GordianIdAwareKeyPair myIdAware = (GordianIdAwareKeyPair) pSource;
+                myCopy = ((GordianIdAwareKeyPair) myCopy).newUserKeyPair(myCoreSpec.getIdAwareKeyType(), myIdAware.getIdentity());
+            }
+            return myCopy;
         }
     }
 
@@ -744,11 +920,20 @@ class AsymmetricStore {
                 }
             }
 
+            /* Skip idAware userKeys if we are only testing one keySpec per type */
+            if (!allSpecs
+                    && mySpec.isIdAware()
+                    && mySpec.getIdAwareKeyType().isUserKey()) {
+                continue;
+            }
+
             /* Add the keySpec */
             myResult.add(new FactoryKeySpec(pFactory, pPartner, myKeySpec));
 
-            /* If we are only testing one keySpec per type, break the loop */
-            if (!allSpecs && pKeyType != GordianKeyPairType.COMPOSITE) {
+            /* Break loop if we are only testing one keySpec per type unless we have xtra requirements */
+            if (!allSpecs
+                    && pKeyType != GordianKeyPairType.COMPOSITE
+                    && !mySpec.isIdAware()) {
                 break;
             }
         }

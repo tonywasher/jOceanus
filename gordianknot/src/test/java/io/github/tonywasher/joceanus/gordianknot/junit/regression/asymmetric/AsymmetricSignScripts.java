@@ -14,13 +14,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.junit.regression;
+package io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
@@ -28,16 +27,14 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactor
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeyPairs;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactorySignature;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric.AsymmetricStore.FactoryKeyPairs;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric.AsymmetricStore.FactorySignature;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 
 import java.nio.charset.StandardCharsets;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.stream.Stream;
 
 /**
@@ -93,16 +90,24 @@ public final class AsymmetricSignScripts {
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myMirror = myPairs.getMirrorKeyPair();
         final byte[] myContext = getContextForSpec(mySpec);
+        final boolean isIdMaster = myPair instanceof GordianIdAwareKeyPair myIdAware
+                && !myIdAware.getSubKeyType().isUserKey();
 
         /* Check outgoing signature */
         final GordianSignatureFactory mySigns = pSignature.getOwner().getFactory().getSignatureFactory();
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
         GordianSignature mySigner = mySigns.createSigner(mySpec);
         final GordianSignParamsBuilder myBuilder = mySigns.newSignParamsBuilder();
-        mySigner.initForSigning(myBuilder.keyPairAndContext(myMirror, myContext));
+        final GordianSignParams mySignParams = isIdMaster
+                ? myBuilder.keyPairAndIdentity(myMirror, AsymmetricStore.SOURCEID)
+                : myBuilder.keyPairAndContext(myMirror, myContext);
+        mySigner.initForSigning(mySignParams);
         mySigner.update(myMessage);
         byte[] mySignature = mySigner.sign();
-        mySigner.initForVerify(myBuilder.keyPairAndContext(myPair, myContext));
+        final GordianSignParams myVerifyParams = isIdMaster
+                ? myBuilder.keyPairAndIdentity(myPair, AsymmetricStore.SOURCEID)
+                : myBuilder.keyPairAndContext(myPair, myContext);
+        mySigner.initForVerify(myVerifyParams);
         mySigner.update(myMessage);
         Assertions.assertTrue(mySigner.verify(mySignature), "Failed to verify own signature");
     }
@@ -118,16 +123,14 @@ public final class AsymmetricSignScripts {
         final GordianSignatureSpec mySpec = pSignature.getSpec();
         final FactoryKeyPairs myPairs = pSignature.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
+        final boolean isIdMaster = myPair instanceof GordianIdAwareKeyPair myIdAware
+                && !myIdAware.getSubKeyType().isUserKey();
 
         /* Create a second copy of the keyPair */
-        final GordianAsyncFactory myFactory = pSignature.getOwner().getFactory();
-        final GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
-        final GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(myPair.getKeyPairSpec());
-        final PKCS8EncodedKeySpec myPKCS8 = myPairs.getPKCS8Encoding();
-        final X509EncodedKeySpec myX509 = myPairs.getX509Encoding();
-        final GordianKeyPair mySecondCopy = myGenerator.deriveKeyPair(myX509, myPKCS8);
+        final GordianKeyPair mySecondCopy = pSignature.getOwner().getKeyPairs().copyKeyPair(myPair);
 
         /* Create signer and verifier */
+        final GordianAsyncFactory myFactory = pSignature.getOwner().getFactory();
         final GordianSignatureFactory mySigns = myFactory.getSignatureFactory();
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
         final GordianSignature mySigner = mySigns.createSigner(mySpec);
@@ -140,7 +143,9 @@ public final class AsymmetricSignScripts {
 
         /* Prime the signer and verifier */
         final GordianSignParamsBuilder myBuilder = mySigns.newSignParamsBuilder();
-        final GordianSignParams myParams = myBuilder.keyPair(mySecondCopy);
+        final GordianSignParams myParams = isIdMaster
+                ? myBuilder.keyPairAndIdentity(mySecondCopy, AsymmetricStore.SOURCEID)
+                : myBuilder.keyPair(mySecondCopy);
         mySigner.initForSigning(myParams);
         mySigner.update(myMessage);
         myVerifier.initForVerify(myParams);
@@ -174,6 +179,8 @@ public final class AsymmetricSignScripts {
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myPartnerSelf = myPairs.getPartnerSelfKeyPair();
         final byte[] myContext = getContextForSpec(mySpec);
+        final boolean isIdMaster = myPair instanceof GordianIdAwareKeyPair myIdAware
+                && !myIdAware.getSubKeyType().isUserKey();
 
         /* Check outgoing signature */
         final GordianSignatureFactory mySrcSigns = pSignature.getOwner().getFactory().getSignatureFactory();
@@ -181,21 +188,33 @@ public final class AsymmetricSignScripts {
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
         final GordianSignature mySigner = mySrcSigns.createSigner(mySpec);
         final GordianSignParamsBuilder myBuilder = mySrcSigns.newSignParamsBuilder();
-        mySigner.initForSigning(myBuilder.keyPairAndContext(myPair, myContext));
+        final GordianSignParams mySignParams = isIdMaster
+                ? myBuilder.keyPairAndIdentity(myPair, AsymmetricStore.SOURCEID)
+                : myBuilder.keyPairAndContext(myPair, myContext);
+        mySigner.initForSigning(mySignParams);
         mySigner.update(myMessage);
         byte[] mySignature = mySigner.sign();
 
         /* Check sent signature */
         final GordianSignature myPartnerSigner = myTgtSigns.createSigner(mySpec);
-        myPartnerSigner.initForVerify(myBuilder.keyPairAndContext(myPartnerSelf, myContext));
+        final GordianSignParams myVerifyParams = isIdMaster
+                ? myBuilder.keyPairAndIdentity(myPartnerSelf, AsymmetricStore.SOURCEID)
+                : myBuilder.keyPairAndContext(myPartnerSelf, myContext);
+        myPartnerSigner.initForVerify(myVerifyParams);
         myPartnerSigner.update(myMessage);
         Assertions.assertTrue(myPartnerSigner.verify(mySignature), "Failed to verify sent signature");
 
         /* Check incoming signature */
-        myPartnerSigner.initForSigning(myBuilder.keyPairAndContext(myPartnerSelf, myContext));
+        final GordianSignParams myPartnerSignParams = isIdMaster
+                ? myBuilder.keyPairAndIdentity(myPartnerSelf, AsymmetricStore.TARGETID)
+                : myBuilder.keyPairAndContext(myPartnerSelf, myContext);
+        myPartnerSigner.initForSigning(myPartnerSignParams);
         myPartnerSigner.update(myMessage);
         mySignature = myPartnerSigner.sign();
-        mySigner.initForVerify(myBuilder.keyPairAndContext(myPair, myContext));
+        final GordianSignParams myPartnerVerifyParams = isIdMaster
+                ? myBuilder.keyPairAndIdentity(myPair, AsymmetricStore.TARGETID)
+                : myBuilder.keyPairAndContext(myPair, myContext);
+        mySigner.initForVerify(myPartnerVerifyParams);
         mySigner.update(myMessage);
         Assertions.assertTrue(mySigner.verify(mySignature), "Failed to verify returned signature");
 

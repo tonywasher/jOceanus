@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.junit.regression;
+package io.github.tonywasher.joceanus.gordianknot.junit.regression.symmetric;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
@@ -37,9 +37,9 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryStreamPBECipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.symmetric.SymmetricStore.FactoryStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.symmetric.SymmetricStore.FactoryStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.symmetric.SymmetricStore.FactoryStreamPBECipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;

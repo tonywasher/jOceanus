@@ -52,6 +52,11 @@ public interface GordianSM9Spec {
         public boolean isUserKey() {
             return this != ENCMASTER;
         }
+
+        @Override
+        public GordianSM9EncryptType getMasterKeyType() {
+            return ENCMASTER;
+        }
     }
 
     /**
@@ -72,6 +77,11 @@ public interface GordianSM9Spec {
         @Override
         public boolean isUserKey() {
             return this != SIGNMASTER;
+        }
+
+        @Override
+        public GordianSM9SignType getMasterKeyType() {
+            return SIGNMASTER;
         }
     }
 }

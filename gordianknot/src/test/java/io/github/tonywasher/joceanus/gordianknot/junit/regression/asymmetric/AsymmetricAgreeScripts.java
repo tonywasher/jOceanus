@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.junit.regression;
+package io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
@@ -33,6 +33,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCiphe
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
@@ -43,9 +44,10 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgre
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementType;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryAgreement;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeyPairs;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.KeyStoreUtils.KeyStoreAlias;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric.AsymmetricStore.FactoryAgreement;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric.AsymmetricStore.FactoryKeyPairs;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.keystore.KeyStoreUtils;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.keystore.KeyStoreUtils.KeyStoreAlias;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -221,19 +223,13 @@ public final class AsymmetricAgreeScripts {
      */
     private static DynamicTest selfAgreementTest(final FactoryAgreement pAgreement) {
         /* Add self agreement test */
-        switch (RESULTTYPE.getAndIncrement() % 5) {
-            case 0:
-                return DynamicTest.dynamicTest("factory", () -> checkSelfAgreement(pAgreement, GordianFactoryType.BC));
-            case 1:
-                return DynamicTest.dynamicTest("keySet", () -> checkSelfAgreement(pAgreement, KEYSETSPEC));
-            case 2:
-                return DynamicTest.dynamicTest("symCipher", () -> checkSelfAgreement(pAgreement, SYMKEYSPEC));
-            case 3:
-                return DynamicTest.dynamicTest("streamCipher", () -> checkSelfAgreement(pAgreement, STREAMKEYSPEC));
-            case 4:
-            default:
-                return DynamicTest.dynamicTest("byteArray", () -> checkSelfAgreement(pAgreement, BYTEARRAY));
-        }
+        return switch (RESULTTYPE.getAndIncrement() % 5) {
+            case 0 -> DynamicTest.dynamicTest("factory", () -> checkSelfAgreement(pAgreement, GordianFactoryType.BC));
+            case 1 -> DynamicTest.dynamicTest("keySet", () -> checkSelfAgreement(pAgreement, KEYSETSPEC));
+            case 2 -> DynamicTest.dynamicTest("symCipher", () -> checkSelfAgreement(pAgreement, SYMKEYSPEC));
+            case 3 -> DynamicTest.dynamicTest("streamCipher", () -> checkSelfAgreement(pAgreement, STREAMKEYSPEC));
+            default -> DynamicTest.dynamicTest("byteArray", () -> checkSelfAgreement(pAgreement, BYTEARRAY));
+        };
     }
 
     /**
@@ -253,6 +249,8 @@ public final class AsymmetricAgreeScripts {
         final GordianKeyPair myTarget = myType.isAnonymous() ? myPair : myPairs.getTargetKeyPair();
         final byte[] myAdditional = GordianAgreementKDF.NONE.equals(mySpec.getKDFType()) ? null : "HelloThere".getBytes();
         final boolean isSM2 = GordianAgreementType.SM2.equals(mySpec.getAgreementType());
+        final boolean isIdMaster = myPair instanceof GordianIdAwareKeyPair myIdAware
+                && !myIdAware.getSubKeyType().isUserKey();
 
         /* Create mini-certificates */
         final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
@@ -270,6 +268,11 @@ public final class AsymmetricAgreeScripts {
                 .setAdditionalData(myAdditional);
         if (isSM2) {
             myParams = myParams.setClientName("Bill@yahoo".getBytes());
+        } else if (isIdMaster) {
+            myParams = myParams.setServerName(AsymmetricStore.TARGETID);
+            if (myClientCert != null) {
+                myParams = myParams.setClientName(AsymmetricStore.SOURCEID);
+            }
         }
         final GordianAgreement mySender = myAgrees.createAgreement(myParams);
         final byte[] myClientHello = mySender.nextMessage();
@@ -328,6 +331,8 @@ public final class AsymmetricAgreeScripts {
         final GordianKeyPair myTarget = myPairs.getTargetKeyPair();
         final GordianKeyPair myPartnerTarget = myPairs.getPartnerTargetKeyPair();
         final boolean isSM2 = GordianAgreementType.SM2.equals(mySpec.getAgreementType());
+        final boolean isIdMaster = myPair instanceof GordianIdAwareKeyPair myIdAware
+                && !myIdAware.getSubKeyType().isUserKey();
 
         /* Check the miniCertificates */
         final GordianAgreementFactory mySrcAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
@@ -347,6 +352,11 @@ public final class AsymmetricAgreeScripts {
                 .setServerCertificate(myTargetCert);
         if (isSM2) {
             myParams = myParams.setClientName("Bill@yahoo".getBytes());
+        } else if (isIdMaster) {
+            myParams = myParams.setServerName(AsymmetricStore.TARGETID);
+            if (myClientCert != null) {
+                myParams = myParams.setClientName(AsymmetricStore.SOURCEID);
+            }
         }
         final GordianAgreement mySender = mySrcAgrees.createAgreement(myParams);
         final byte[] myClientHello = mySender.nextMessage();
@@ -422,20 +432,21 @@ public final class AsymmetricAgreeScripts {
         final GordianAgreementSpec mySpec = pAgreement.getSpec();
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getTargetKeyPair();
+        final boolean isIdMaster = myPair instanceof GordianIdAwareKeyPair myIdAware
+                && !myIdAware.getSubKeyType().isUserKey();
 
         /* Create a second copy of the keyPair */
-        final GordianAsyncFactory myFactory = pAgreement.getOwner().getFactory();
-        final GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
-        final GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(myPair.getKeyPairSpec());
-        final PKCS8EncodedKeySpec myPKCS8 = myGenerator.getPKCS8Encoding(myPair);
-        final X509EncodedKeySpec myX509 = myGenerator.getX509Encoding(myPair);
-        final GordianKeyPair mySecondCopy = myGenerator.deriveKeyPair(myX509, myPKCS8);
+        final GordianKeyPair mySecondCopy = pAgreement.getOwner().getKeyPairs().copyKeyPair(myPair);
 
         /* Create agreement */
+        final GordianAsyncFactory myFactory = pAgreement.getOwner().getFactory();
         final GordianAgreementFactory myAgrees = myFactory.getAgreementFactory();
         final GordianCertificate myServerCert = myAgrees.newMiniCertificate(SERVERNAME, mySecondCopy,
                 new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
-        final GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, BYTEARRAY).setServerCertificate(myServerCert);
+        GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, BYTEARRAY).setServerCertificate(myServerCert);
+        if (isIdMaster) {
+            myParams = myParams.setServerName(AsymmetricStore.TARGETID);
+        }
         final GordianAgreement myAgreement = myAgrees.createAgreement(myParams);
         final byte[] myClientHello = myAgreement.nextMessage();
 
@@ -499,27 +510,29 @@ public final class AsymmetricAgreeScripts {
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myTarget = myPairs.getTargetKeyPair();
+        final boolean isIdMaster = myPair instanceof GordianIdAwareKeyPair myIdAware
+                && !myIdAware.getSubKeyType().isUserKey();
 
         /* Create a second copy of the keyPair */
-        final GordianAsyncFactory myFactory = pAgreement.getOwner().getFactory();
-        final GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
-        final GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(myPair.getKeyPairSpec());
-        final PKCS8EncodedKeySpec myPKCS8 = myPairs.getPKCS8Encoding();
-        final X509EncodedKeySpec myX509 = myPairs.getX509Encoding();
-        final GordianKeyPair mySecondCopy = myGenerator.deriveKeyPair(myX509, myPKCS8);
-        final PKCS8EncodedKeySpec myTargetPKCS8 = myGenerator.getPKCS8Encoding(myTarget);
-        final X509EncodedKeySpec myTargetX509 = myGenerator.getX509Encoding(myTarget);
-        final GordianKeyPair mySecondTarget = myGenerator.deriveKeyPair(myTargetX509, myTargetPKCS8);
+        final GordianKeyPair mySecondCopy = pAgreement.getOwner().getKeyPairs().copyKeyPair(myPair);
+        final GordianKeyPair mySecondTarget = pAgreement.getOwner().getKeyPairs().copyKeyPair(myTarget);
 
         /* Create agreement */
+        final GordianAsyncFactory myFactory = pAgreement.getOwner().getFactory();
         final GordianAgreementFactory myAgrees = myFactory.getAgreementFactory();
         final GordianCertificate myClientCert = myAgrees.newMiniCertificate(CLIENTNAME, mySecondCopy,
                 new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
         final GordianCertificate myServerCert = myAgrees.newMiniCertificate(SERVERNAME, mySecondTarget,
                 new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
-        final GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, BYTEARRAY)
+        GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, BYTEARRAY)
                 .setClientCertificate(myClientCert)
                 .setServerCertificate(myServerCert);
+        if (isIdMaster) {
+            myParams = myParams.setServerName(AsymmetricStore.TARGETID);
+            if (myClientCert != null) {
+                myParams = myParams.setClientName(AsymmetricStore.SOURCEID);
+            }
+        }
         final GordianAgreement myFirstAgreement = myAgrees.createAgreement(myParams);
         final byte[] myFirstClientHello = myFirstAgreement.nextMessage();
         final GordianAgreement mySecondAgreement = myAgrees.createAgreement(myParams);
@@ -548,7 +561,8 @@ public final class AsymmetricAgreeScripts {
         Assertions.assertThrows(GordianException.class, () -> myAgrees.parseAgreementMessage(myServerHello), "parse ServerHello");
 
         /* Can't Create new Agreement with destroyed Client keyPair */
-        Assertions.assertThrows(GordianException.class, () -> myAgrees.createAgreement(myParams), "Create new Agreement");
+        final GordianAgreementParams myTestParams = myParams;
+        Assertions.assertThrows(GordianException.class, () -> myAgrees.createAgreement(myTestParams), "Create new Agreement");
     }
 
     /**
@@ -591,6 +605,8 @@ public final class AsymmetricAgreeScripts {
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myTarget = myPairs.getTargetKeyPair();
+        final boolean isIdMaster = myPair instanceof GordianIdAwareKeyPair myIdAware
+                && !myIdAware.getSubKeyType().isUserKey();
 
         /* Create mini-certificates */
         final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
@@ -603,6 +619,12 @@ public final class AsymmetricAgreeScripts {
         GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, KEYSETSPEC)
                 .setClientCertificate(myClientCert)
                 .setServerCertificate(myTargetCert);
+        if (isIdMaster) {
+            myParams = myParams.setServerName(AsymmetricStore.TARGETID);
+            if (myClientCert != null) {
+                myParams = myParams.setClientName(AsymmetricStore.SOURCEID);
+            }
+        }
         final GordianAgreement mySender = myAgrees.createAgreement(myParams);
         final byte[] myClientHello = mySender.nextMessage();
 
@@ -683,6 +705,8 @@ public final class AsymmetricAgreeScripts {
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myTarget = myPairs.getTargetKeyPair();
+        final boolean isIdMaster = myPair instanceof GordianIdAwareKeyPair myIdAware
+                && !myIdAware.getSubKeyType().isUserKey();
 
         /* Create mini-certificates */
         final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
@@ -695,6 +719,12 @@ public final class AsymmetricAgreeScripts {
         GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, KEYSETSPEC)
                 .setClientCertificate(myClientCert)
                 .setServerCertificate(myTargetCert);
+        if (isIdMaster) {
+            myParams = myParams.setServerName(AsymmetricStore.TARGETID);
+            if (myClientCert != null) {
+                myParams = myParams.setClientName(AsymmetricStore.SOURCEID);
+            }
+        }
         final GordianCoreAgreement mySender = (GordianCoreAgreement) myAgrees.createAgreement(myParams);
         final byte[] myClientHello = mySender.nextMessage();
 
@@ -740,6 +770,8 @@ public final class AsymmetricAgreeScripts {
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myTarget = myPairs.getTargetKeyPair();
+        final boolean isIdMaster = myPair instanceof GordianIdAwareKeyPair myIdAware
+                && !myIdAware.getSubKeyType().isUserKey();
 
         /* Create mini-certificates */
         final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
@@ -752,6 +784,12 @@ public final class AsymmetricAgreeScripts {
         GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, KEYSETSPEC)
                 .setClientCertificate(myClientCert)
                 .setServerCertificate(myTargetCert);
+        if (isIdMaster) {
+            myParams = myParams.setServerName(AsymmetricStore.TARGETID);
+            if (myClientCert != null) {
+                myParams = myParams.setClientName(AsymmetricStore.SOURCEID);
+            }
+        }
         final GordianAgreement mySender = myAgrees.createAgreement(myParams);
         final byte[] myClientHello = mySender.nextMessage();
 

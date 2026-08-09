@@ -54,6 +54,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSABERSp
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSDitHSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSLHDSASpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM2Spec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9SignType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSQIsignSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSmaugTSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSnovaSpec;
@@ -275,6 +277,10 @@ public final class GordianCoreKeyPairSpecBuilder
 
         /* Add NTRUPrime */
         GordianCoreNTRUPrimeSpec.listAllPossibleSpecs().forEach(t -> mySpecs.add(myBuilder.ntruprime(t)));
+
+        /* Add SM9 */
+        EnumSet.allOf(GordianSM9EncryptType.class).forEach(t -> mySpecs.add(myBuilder.sm9(t)));
+        EnumSet.allOf(GordianSM9SignType.class).forEach(t -> mySpecs.add(myBuilder.sm9(t)));
 
         /* Return the list */
         return mySpecs;

@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.junit.regression;
+package io.github.tonywasher.joceanus.gordianknot.junit.regression.keystore;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
@@ -66,7 +66,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreMan
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStore;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreGateway;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreManager;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.KeyStoreUtils.KeyStoreAlias;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.keystore.KeyStoreUtils.KeyStoreAlias;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.junit.jupiter.api.Assertions;
@@ -78,7 +78,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.stream.Stream;
 
-import static io.github.tonywasher.joceanus.gordianknot.junit.regression.KeyStoreUtils.DEF_PASSWORD;
+import static io.github.tonywasher.joceanus.gordianknot.junit.regression.keystore.KeyStoreUtils.DEF_PASSWORD;
 
 /**
  * KeyStore Request Tests.

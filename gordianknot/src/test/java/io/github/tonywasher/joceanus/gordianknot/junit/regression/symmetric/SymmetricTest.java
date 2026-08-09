@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.junit.regression;
+package io.github.tonywasher.joceanus.gordianknot.junit.regression.symmetric;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianIdSpec;
@@ -27,9 +27,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomFactory
 import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianRandomSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianRandomType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryRandomSpec;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryRandomType;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactorySpec;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.symmetric.SymmetricStore.FactoryRandomSpec;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.symmetric.SymmetricStore.FactoryRandomType;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.symmetric.SymmetricStore.FactorySpec;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;

@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.junit.regression;
+package io.github.tonywasher.joceanus.gordianknot.junit.regression.keystore;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStore;
@@ -92,7 +92,7 @@ public final class KeyStoreUtils {
      *
      * @param pAlias the Alias
      */
-    static X500Name buildX500Name(final KeyStoreAlias pAlias) {
+    public static X500Name buildX500Name(final KeyStoreAlias pAlias) {
         /* Build the name */
         X500NameBuilder myBuilder = new X500NameBuilder(BCStyle.INSTANCE);
         myBuilder.addRDN(BCStyle.CN, pAlias.getName());
@@ -107,7 +107,7 @@ public final class KeyStoreUtils {
     /**
      * Aliases.
      */
-    enum KeyStoreAlias {
+    public enum KeyStoreAlias {
         /**
          * Root Certificate.
          */

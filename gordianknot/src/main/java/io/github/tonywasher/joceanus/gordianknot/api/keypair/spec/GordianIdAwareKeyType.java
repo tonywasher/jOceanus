@@ -27,4 +27,11 @@ public interface GordianIdAwareKeyType {
      * @return true/false
      */
     boolean isUserKey();
+
+    /**
+     * Obtain the masterKey type.
+     *
+     * @return the master keyType
+     */
+    GordianIdAwareKeyType getMasterKeyType();
 }

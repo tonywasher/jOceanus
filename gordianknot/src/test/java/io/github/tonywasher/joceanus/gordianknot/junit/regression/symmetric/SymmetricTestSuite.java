@@ -15,17 +15,22 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.gordianknot.junit.regression;
+package io.github.tonywasher.joceanus.gordianknot.junit.regression.symmetric;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
 
 /**
- * TestSuite for KeyStore Tests.
+ * TestSuite for Symmetric Tests.
  */
 @Suite
-@SuiteDisplayName("KeyStore Test Suite")
-@SelectClasses(KeyStoreTest.class)
-public class KeyStoreTestSuite {
+@SuiteDisplayName("Symmetric Test Suite")
+@SelectClasses({
+        KeySetTest.class,
+        RandomSpecTest.class,
+        SymmetricTest.class,
+        ZipFileTest.class
+})
+public class SymmetricTestSuite {
 }

@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianIdAwareKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9KeyType;
@@ -419,12 +420,32 @@ public class GordianCoreKeyPairSpec
     }
 
     /**
+     * Obtain the idAware keyType.
+     *
+     * @return the keyType.
+     */
+    public GordianIdAwareKeyType getIdAwareKeyType() {
+        return castValue(GordianIdAwareKeyType.class);
+    }
+
+    /**
      * Obtain the SM9 keyType.
      *
      * @return the keyType.
      */
     public GordianSM9KeyType getSM9KeyType() {
         return castValue(GordianSM9KeyType.class);
+    }
+
+    /**
+     * Obtain the master keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreKeyPairSpec getMasterKeySpec() {
+        return isIdAware() && getIdAwareKeyType().isUserKey()
+                ? new GordianCoreKeyPairSpec(theKeyPairType.getType(), getIdAwareKeyType().getMasterKeyType())
+                : this;
     }
 
     /**
@@ -571,6 +592,7 @@ public class GordianCoreKeyPairSpec
      */
     private boolean checkComposite() {
         Boolean stateAware = null;
+        Boolean idAware = null;
         final List<GordianKeyPairType> myExisting = new ArrayList<>();
         final Iterator<GordianKeyPairSpec> myIterator = keySpecIterator();
         while (myIterator.hasNext()) {
@@ -593,6 +615,13 @@ public class GordianCoreKeyPairSpec
                 return false;
             }
 
+            /* Check that idAwareness is identical */
+            if (idAware == null) {
+                idAware = mySpec.isIdAware();
+            } else if (mySpec.isIdAware() != idAware) {
+                return false;
+            }
+
             /* Add to list */
             myExisting.add(myType);
         }
@@ -602,7 +631,7 @@ public class GordianCoreKeyPairSpec
     }
 
     /**
-     * is the use subType for signatures?
+     * is the keySpec stateAware?
      *
      * @return true/false
      */
@@ -610,6 +639,19 @@ public class GordianCoreKeyPairSpec
         return switch (theKeyPairType.getType()) {
             case XMSS, LMS -> true;
             case COMPOSITE -> ((GordianCoreKeyPairSpec) keySpecIterator().next()).isStateAware();
+            default -> false;
+        };
+    }
+
+    /**
+     * is the keySpec idAware?
+     *
+     * @return true/false
+     */
+    public boolean isIdAware() {
+        return switch (theKeyPairType.getType()) {
+            case SM9 -> true;
+            case COMPOSITE -> ((GordianCoreKeyPairSpec) keySpecIterator().next()).isIdAware();
             default -> false;
         };
     }

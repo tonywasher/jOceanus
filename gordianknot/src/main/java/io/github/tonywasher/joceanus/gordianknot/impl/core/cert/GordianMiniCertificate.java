@@ -80,7 +80,7 @@ public class GordianMiniCertificate
         theUsage = pUsage;
 
         /* Switch to masterPublic if the key is an IdAware userKey. */
-        GordianKeyPair myKeyPair = pKeyPair instanceof GordianCoreIdAwareKeyPair myIdAware
+        final GordianKeyPair myKeyPair = pKeyPair instanceof GordianCoreIdAwareKeyPair myIdAware
                 && myIdAware.getSubKeyType().isUserKey()
                 ? myIdAware.getIdAwarePublicKey().deriveMasterPublicKey()
                 : theKeyPair;

@@ -308,7 +308,8 @@ public class GordianCoreAgreementParams
             }
 
             /* If this is an idAware userKey, set the clientName */
-            if (myKeyPair instanceof GordianIdAwareKeyPair myIdAware) {
+            if (myKeyPair instanceof GordianIdAwareKeyPair myIdAware
+                    && myIdAware.getSubKeyType().isUserKey()) {
                 theClientName = myIdAware.getIdentity();
             }
 
@@ -341,6 +342,7 @@ public class GordianCoreAgreementParams
 
             /* If this is an idAware userKey, set the serverName */
             if (myKeyPair instanceof GordianIdAwareKeyPair myIdAware
+                    && myIdAware.getSubKeyType().isUserKey()
                     && theServerName == null) {
                 theServerName = myIdAware.getIdentity();
             }

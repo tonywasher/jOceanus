@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.junit.regression;
+package io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
@@ -22,18 +22,14 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFac
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryEncryptor;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeyPairs;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric.AsymmetricStore.FactoryEncryptor;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric.AsymmetricStore.FactoryKeyPairs;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
@@ -192,14 +188,10 @@ public final class AsymmetricEncryptScripts {
         final GordianKeyPair myPair = myPairs.getKeyPair();
 
         /* Create a second copy of the keyPair */
-        final GordianAsyncFactory myFactory = pEncryptor.getOwner().getFactory();
-        final GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
-        final GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(myPair.getKeyPairSpec());
-        final PKCS8EncodedKeySpec myPKCS8 = myPairs.getPKCS8Encoding();
-        final X509EncodedKeySpec myX509 = myPairs.getX509Encoding();
-        final GordianKeyPair mySecondCopy = myGenerator.deriveKeyPair(myX509, myPKCS8);
+        final GordianKeyPair mySecondCopy = pEncryptor.getOwner().getKeyPairs().copyKeyPair(myPair);
 
         /* Create sender and receiver */
+        final GordianAsyncFactory myFactory = pEncryptor.getOwner().getFactory();
         final GordianEncryptorFactory myEncrypts = myFactory.getEncryptorFactory();
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
         final GordianEncryptor mySender = myEncrypts.createEncryptor(mySpec);

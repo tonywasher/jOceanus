@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.junit.regression;
+package io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
@@ -26,8 +26,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.factory.GordianCoreAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeyPairs;
-import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric.AsymmetricStore.FactoryKeyPairs;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric.AsymmetricStore.FactoryKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -118,8 +118,10 @@ class AsymmetricTest {
         for (final FactoryKeySpec myKeySpec : AsymmetricStore.keySpecProvider(pFactory, pPartner)) {
             /* Create a stream */
             Stream<DynamicNode> myKeyStream = Stream.of(DynamicTest.dynamicTest("generate", () -> generateKeyPairs(myKeySpec)));
-            myKeyStream = Stream.concat(myKeyStream, Stream.of(DynamicTest.dynamicTest("keySpec", () -> checkKeyPair(myKeySpec))));
-            myKeyStream = Stream.concat(myKeyStream, Stream.of(DynamicTest.dynamicTest("keyWrap", () -> checkKeyWrap(myKeySpec))));
+            if (!myKeySpec.isIdAwareUserKey()) {
+                myKeyStream = Stream.concat(myKeyStream, Stream.of(DynamicTest.dynamicTest("keySpec", () -> checkKeyPair(myKeySpec))));
+                myKeyStream = Stream.concat(myKeyStream, Stream.of(DynamicTest.dynamicTest("keyWrap", () -> checkKeyWrap(myKeySpec))));
+            }
 
             /* Add signature Tests */
             AsymmetricStore.signatureProvider(myKeySpec);
@@ -169,9 +171,9 @@ class AsymmetricTest {
         /* Force creation of the pairs */
         myPairs.getKeyPair();
         myPairs.getMirrorKeyPair();
+        myPairs.getTargetKeyPair();
         myPairs.getPartnerSelfKeyPair();
         myPairs.getPartnerTargetKeyPair();
-        myPairs.getTargetKeyPair();
     }
 
     /**
