@@ -138,13 +138,6 @@
             </dependency>
 
             <!-- External Modules -->
-            <!--<dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bc-jdk18on-bom</artifactId>
-                <version>${BouncyCastleVersion}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>-->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
