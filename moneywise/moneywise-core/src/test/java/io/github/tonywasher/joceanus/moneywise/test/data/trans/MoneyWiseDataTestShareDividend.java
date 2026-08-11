@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.test.data.trans;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.builder.MoneyWiseTransactionBuilder;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Test Dividend Share transactions.
@@ -83,13 +83,10 @@ public class MoneyWiseDataTestShareDividend
 
     @Override
     public boolean useInfoClass(final MoneyWiseTransInfoClass pInfoClass) {
-        switch (pInfoClass) {
-            case ACCOUNTDELTAUNITS:
-            case PARTNERAMOUNT:
-                return true;
-            default:
-                return false;
-        }
+        return switch (pInfoClass) {
+            case ACCOUNTDELTAUNITS, PARTNERAMOUNT, TAXCREDIT -> true;
+            default -> false;
+        };
     }
 
     @Override
@@ -122,16 +119,16 @@ public class MoneyWiseDataTestShareDividend
 
         /* A simple foreign dividend to deposit */
         //theTransBuilder.date("05-Jul-1990").category(MoneyWiseDataTestCategories.IDTC_DIVIDEND)
-        //        .account(MoneyWiseDataTestAccounts.IDSH_HALIFAX_SHARES_US).amount("200.00")
+        //        .account(MoneyWiseDataTestAccounts.IDSH_HALIFAX_SHARES_US).amount("200.00").xchgRate("0.8")
         //        .to().partner(MoneyWiseDataTestAccounts.IDDP_STARLING_DOLLAR).taxCredit("60.00")
         //        .build();
 
         /* A simple reinvested dividend */
-        theTransBuilder.date("06-Jul-1990").category(MoneyWiseDataTestCategories.IDTC_DIVIDEND)
-                .account(MoneyWiseDataTestAccounts.IDSH_BARCLAYS_SHARES).amount("150.00")
-                .to().partner(MoneyWiseDataTestAccounts.IDSH_BARCLAYS_SHARES)
-                .accountUnits("20").taxCredit("30.00")
-                .build();
+        //theTransBuilder.date("06-Jul-1990").category(MoneyWiseDataTestCategories.IDTC_DIVIDEND)
+        //        .account(MoneyWiseDataTestAccounts.IDSH_BARCLAYS_SHARES).amount("150.00").xchgRate("0.8")
+        //        .to().partner(MoneyWiseDataTestAccounts.IDSH_BARCLAYS_SHARES)
+        //        .accountUnits("20").taxCredit("30.00")
+        //        .build();
     }
 
     @Override
@@ -140,6 +137,7 @@ public class MoneyWiseDataTestShareDividend
 
     @Override
     public void checkAnalysis() {
+        int i = 0;
         //checkAccountValue(MoneyWiseDataTestAccounts.IDDP_BarclaysCurrent, "6950");
         //checkAccountValue(MoneyWiseDataTestAccounts.IDDP_NatWideFlexDirect, "12000");
         //checkAccountValue(MoneyWiseDataTestAccounts.IDDP_StarlingEuro, "5320");

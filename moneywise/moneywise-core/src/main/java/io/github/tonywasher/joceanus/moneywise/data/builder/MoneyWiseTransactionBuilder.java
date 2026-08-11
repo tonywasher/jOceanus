@@ -132,11 +132,6 @@ public class MoneyWiseTransactionBuilder {
     private OceanusRatio theDilution;
 
     /**
-     * The QualifyYears.
-     */
-    private Integer theQualifyYears;
-
-    /**
      * The ReturnedCash.
      */
     private OceanusMoney theReturnedCash;
@@ -150,6 +145,11 @@ public class MoneyWiseTransactionBuilder {
      * The PartnerAmount.
      */
     private OceanusMoney thePartnerAmount;
+
+    /**
+     * The ExchangeRate.
+     */
+    private OceanusRatio theXchgRate;
 
     /**
      * The Price.
@@ -495,17 +495,6 @@ public class MoneyWiseTransactionBuilder {
     }
 
     /**
-     * Set the qualifyYears.
-     *
-     * @param pYears the qualifyYears of the transaction.
-     * @return the builder
-     */
-    public MoneyWiseTransactionBuilder qualifyYears(final Integer pYears) {
-        theQualifyYears = pYears;
-        return this;
-    }
-
-    /**
      * Set the returnedCash.
      *
      * @param pCash    the returnedCash.
@@ -551,6 +540,27 @@ public class MoneyWiseTransactionBuilder {
      */
     public MoneyWiseTransactionBuilder price(final String pPrice) {
         return price(theParser.parsePriceValue(pPrice, theAccount.getCurrency()));
+    }
+
+    /**
+     * Set the xchgRate.
+     *
+     * @param pRate the xchgRate of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder xchgRate(final OceanusRatio pRate) {
+        theXchgRate = pRate;
+        return this;
+    }
+
+    /**
+     * Set the xchgRate.
+     *
+     * @param pRate the xchgRate of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder xchgRate(final String pRate) {
+        return xchgRate(theParser.parseRatioValue(pRate));
     }
 
     /**
@@ -637,10 +647,10 @@ public class MoneyWiseTransactionBuilder {
         myTrans.setAccountDeltaUnits(theAccountUnits);
         myTrans.setPartnerDeltaUnits(thePartnerUnits);
         myTrans.setDilution(theDilution);
-        myTrans.setYears(theQualifyYears);
         myTrans.setReturnedCash(theReturnedCash);
         myTrans.setReturnedCashAccount(theReturnedCashAccount);
         myTrans.setPrice(thePrice);
+        myTrans.setExchangeRate(theXchgRate);
         myTrans.setTransactionTags(theTags);
 
         /* Reset the values */
@@ -679,10 +689,10 @@ public class MoneyWiseTransactionBuilder {
         theAccountUnits = null;
         thePartnerUnits = null;
         theDilution = null;
-        theQualifyYears = null;
         theReturnedCash = null;
         theReturnedCashAccount = null;
         thePrice = null;
+        theXchgRate = null;
         theTags.clear();
         theReconciled = Boolean.FALSE;
     }

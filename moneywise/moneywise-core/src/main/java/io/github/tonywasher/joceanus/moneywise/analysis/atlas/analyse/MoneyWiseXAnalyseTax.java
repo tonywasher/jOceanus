@@ -21,7 +21,6 @@ import io.github.tonywasher.joceanus.moneywise.analysis.atlas.analyse.MoneyWiseX
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTaxCtl;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.analyse.MoneyWiseXAnalyse.MoneyWiseXAnalyseTransCtl;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysis;
-import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisCursor;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysisPayeeBucket;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysisTaxBasisBaseBucket;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets.MoneyWiseXAnalysisTaxBasisBucket;
@@ -625,8 +624,7 @@ public class MoneyWiseXAnalyseTax
         /* If the account is foreign */
         if (theAccount.isForeign()) {
             /* Convert the infoAmount to reporting currency */
-            final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();
-            final OceanusRatio myRate = myCursor.getCurrentXchgRate(theAccount.getAssetCurrency());
+            final OceanusRatio myRate = theTransaction.getTransaction().getExchangeRate();
             return pAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
         }
 

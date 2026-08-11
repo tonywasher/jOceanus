@@ -32,12 +32,20 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHoldi
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+
+import java.util.Objects;
 
 /**
  * Dividend Analysis.
  */
 public class MoneyWiseXAnalyseDividend {
+    /**
+     * The analysis.
+     */
+    private final MoneyWiseXAnalysis theAnalysis;
+
     /**
      * The portfolioBuckets.
      */
@@ -66,8 +74,8 @@ public class MoneyWiseXAnalyseDividend {
      */
     MoneyWiseXAnalyseDividend(final MoneyWiseXAnalyseEventAnalyserCtl pAnalyser,
                               final MoneyWiseXAnalyseSecurityCtl pSecurity) {
-        final MoneyWiseXAnalysis myAnalysis = pAnalyser.getAnalysis();
-        thePortfolios = myAnalysis.getPortfolios();
+        theAnalysis = pAnalyser.getAnalysis();
+        thePortfolios = theAnalysis.getPortfolios();
         theState = pAnalyser.getState();
         theSecurity = pSecurity;
         theTransAnalyser = theSecurity.getTransAnalyser();
@@ -87,7 +95,6 @@ public class MoneyWiseXAnalyseDividend {
         final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) myTransaction.getAccount();
         final MoneyWiseSecurity mySecurity = myHolding.getSecurity();
         final MoneyWiseTransAsset myCredit = pTrans.getCreditAccount();
-        final OceanusMoney myTaxCredit = myTransaction.getTaxCredit();
         final OceanusUnits myDeltaUnits = pTrans.getCreditUnitsDelta();
 
         /* True debit account is the parent */
@@ -98,11 +105,16 @@ public class MoneyWiseXAnalyseDividend {
         final MoneyWiseXAnalysisSecurityValues myValues = myAsset.getValues();
         final boolean isForeign = myAsset.isForeignCurrency();
         final boolean isReInvest = myCredit instanceof MoneyWiseSecurityHolding;
+        final OceanusMoney myBaseTaxCredit = Objects.requireNonNull(myTransaction.getTaxCredit());
+        final OceanusRatio myRate = myTransaction.getExchangeRate();
 
-        /* Determine the debit amount */
+        /* Determine the debit amount and taxCredit */
         final OceanusMoney myAmount = isForeign
                 ? theTransAnalyser.adjustForeignAssetDebit(myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE))
                 : pTrans.getDebitAmount();
+        final OceanusMoney myTaxCredit = isForeign
+                ? myBaseTaxCredit.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate)
+                : myBaseTaxCredit;
 
         /* Adjust the debit payee bucket */
         theTransAnalyser.processDebitPayee(myDebit);
@@ -133,9 +145,9 @@ public class MoneyWiseXAnalyseDividend {
             final OceanusMoney myAdjust = new OceanusMoney(myAmount);
 
             /* Any tax credit is viewed as a realised dividend from the account */
-            //if (myTaxCredit != null) {
-            //    myAdjust.addAmount(myTaxCredit);
-            //}
+            if (myTaxCredit != null) {
+                myAdjust.addAmount(myTaxCredit);
+            }
 
             /* The Dividend is viewed as a dividend from the account */
             myAsset.adjustDividend(myAdjust);
