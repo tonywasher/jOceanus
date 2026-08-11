@@ -12,6 +12,7 @@
                 <p>The <b>LMS</b> and <b>XMSS</b> signature schemes are stateful signature schemes and as such their keyPairs support the
                     <b>GordianStateAwareKeyPair</b> interface which allows sharding of the privateKey</p>
                 <p>The <b>MLDSA</b>, <b>SLHDSA</b> and <b>EDDSA</b> algorithms allow a context to be specified in the parameters</p>
+                <p>The <b>SM9</b> algorithm allow an identity to specified in the parameters for a master keyPair.</p>
             </subsection>
             <subsection name="Sample">
                 <source>
@@ -46,8 +47,13 @@ final GordianSignature mySigner = mySignatureFactory.createSigner(mySignSpec);
 
 /* Sign message */
 final byte[] message = ....;
+final boolean isIdAwareMaster = mySigningPair instanceof GordianIdAwareKeyPair idAware
+                                &amp;&amp; !idAware.isUserKey();
+final byte[] myIdentity = .. /* If IdMaster */
 final GordianSignParamsBuilder myBuilder = mySignatureFactory.newSignParamsBuilder();
-final GordianSignParams myParams = myBuilder.keyPair(mySigningPair);
+final GordianSignParams myParams = isIdAwareMaster
+                    ? myBuilder.keyPairAndIdentity(mySigningPair, myIdentity)
+                    : myBuilder.keyPair(mySigningPair);
 mySigner.initForSigning(myParams);
 mySigner.update(message);
 final byte[] mySignature = mySigner.sign();
@@ -127,6 +133,7 @@ final boolean verified = mySigner.verify(mySignature);
                     <tr><td>UOV</td><td>Native</td><td/></tr>
                     <tr><td>XMSS</td><td>Native, PreHash</td><td/></tr>
                     <tr><td>LMS</td><td>Native</td><td/></tr>
+                    <tr><td>SM9</td><td>Native</td><td/></tr>
                 </table>
             </subsection>
         </section>

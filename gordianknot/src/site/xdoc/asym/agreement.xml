@@ -91,12 +91,18 @@ final GordianKeyPair myTarget = myGenerator.generateKeyPair();
 final X500Name myServerName = ...
 final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget,
                                                    new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+final boolean isIdAwareMaster = myTarget instanceof GordianIdAwareKeyPair idAware
+                                &amp;&amp; !idAware.isUserKey();
+final byte[] myIdentity = .. /* If IdMaster */
 
 /* Create the client hello */
 final GordianAgreementSpec myAgreeSpec = myAgreementBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);
 final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
 GordianAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec)
                                                     .setServerCertificate(myTargetCert);
+if (isIdAwareMaster) {
+    myParams = myParams.setServerName(myIdentity);
+}
 final GordianAgreement mySender = myAgrees.createAgreement(myParams);
 final byte[] myClientHello = mySender.nextMessage();
 final GordianKeySet myClientKeySet = mySender.getKeySetResult();
@@ -155,6 +161,10 @@ final GordianCertificate mySourceCert = myAgreementFactory.newMiniCertificate(my
 final X500Name myServerName = ...
 final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget,
                                                    new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+final boolean isIdAwareMaster = myTarget instanceof GordianIdAwareKeyPair idAware
+                                &amp;&amp; !idAware.isUserKey();
+final byte[] mySourceIdentity = .. /* If IdMaster */
+final byte[] myTargetIdentity = .. /* If IdMaster */
 
 /* Create the client hello */
 final GordianAgreementSpec myAgreeSpec = myAgreementBuilder.unified(mySpec, GordianAgreementKDF.SHA256KDF);
@@ -162,6 +172,9 @@ final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_2
 GordianAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec)
                                                     .setClientCertificate(mySourceCert)
                                                     .setServerCertificate(myTargetCert);
+if (isIdAwareMaster) {
+    myParams = myParams.setClientName(mySourceIdentity).setServerName(myTargetIdentity);
+}
 final GordianAgreement mySender = myAgrees.createAgreement(myParams);
 final byte[] myClientHello = mySender.nextMessage();
 
@@ -225,6 +238,10 @@ final GordianCertificate mySourceCert = myAgreementFactory.newMiniCertificate(my
 final X500Name myServerName = ...
 final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget,
                                                    new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+final boolean isIdAwareMaster = myTarget instanceof GordianIdAwareKeyPair idAware
+                                &amp;&amp; !idAware.isUserKey();
+final byte[] mySourceIdentity = .. /* If IdMaster */
+final byte[] myTargetIdentity = .. /* If IdMaster */
 
 /* Create the client hello */
 final GordianAgreementSpec myAgreeSpec = myAgreementBuilder.unifiedConfirm(mySpec, GordianAgreementKDF.SHA256KDF);
@@ -232,6 +249,9 @@ final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_2
 GordianAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec)
                                                     .setClientCertificate(mySourceCert)
                                                     .setServerCertificate(myTargetCert);
+if (isIdAwareMaster) {
+    myParams = myParams.setClientName(mySourceIdentity).setServerName(myTargetIdentity);
+}
 final GordianAgreement mySender = myAgrees.createAgreement(myParams);
 final byte[] myClientHello = mySender.nextMessage();
 
@@ -359,6 +379,7 @@ final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(my
                     <tr><td>DH</td><td>ANON, BASIC, SIGNED, MQV, UNIFIED</td><td/></tr>
                     <tr><td>XDH</td><td>ANON, BASIC, SIGNED, UNIFIED</td><td/></tr>
                     <tr><td>BIKE, CMCE, Frodo, HQC, MLKEM, NEWHOPE, NTRU, NTRUPLUS, NTRUPRIME, SABER, SMAUGT</td><td>KEM</td><td/></tr>
+                    <tr><td>SM9</td><td>KEM, SM9</td><td>SM9-CONFIRM not available in JCA</td></tr>
                  </table>
             </subsection>
         </section>
