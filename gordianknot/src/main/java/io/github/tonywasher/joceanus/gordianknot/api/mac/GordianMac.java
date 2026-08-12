@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.mac;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianConsumer;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
@@ -24,8 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 /**
  * GordianKnot interface for Message Authentication Codes.
  */
-public interface GordianMac
-        extends GordianConsumer {
+public interface GordianMac {
     /**
      * Obtain MacSpec.
      *
@@ -69,6 +67,45 @@ public interface GordianMac
      * @throws GordianException on error
      */
     void initKeyBytes(byte[] pKeyBytes) throws GordianException;
+
+    /**
+     * Update the consumer with a portion of a byte array.
+     *
+     * @param pBytes  the bytes to update with.
+     * @param pOffset the offset of the data within the byte array
+     * @param pLength the length of the data to use
+     * @throws GordianException on error
+     */
+    void update(byte[] pBytes,
+                int pOffset,
+                int pLength) throws GordianException;
+
+    /**
+     * Update the consumer with a single byte.
+     *
+     * @param pByte the byte to update with.
+     * @throws GordianException on error
+     */
+    void update(byte pByte) throws GordianException;
+
+    /**
+     * Update the consumer with a byte array.
+     *
+     * @param pBytes the bytes to update with.
+     * @throws GordianException on error
+     */
+    default void update(final byte[] pBytes) throws GordianException {
+        if (pBytes != null) {
+            update(pBytes, 0, pBytes.length);
+        }
+    }
+
+    /**
+     * Reset the Consumer.
+     *
+     * @throws GordianException on error
+     */
+    void reset() throws GordianException;
 
     /**
      * Calculate the MAC.

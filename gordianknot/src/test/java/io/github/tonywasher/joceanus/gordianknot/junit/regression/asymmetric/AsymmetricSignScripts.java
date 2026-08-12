@@ -151,6 +151,12 @@ public final class AsymmetricSignScripts {
         myVerifier.initForVerify(myParams);
         mySigner.update(myMessage);
 
+        /* Can't update with null/short buffers */
+        Assertions.assertThrows(GordianException.class, () -> mySigner.update(null, 0, 1), "update null/length");
+        Assertions.assertThrows(GordianException.class, () -> mySigner.update(new byte[]{}, 0, 1), "update short");
+        Assertions.assertDoesNotThrow(() -> mySigner.update(null, 0, 0), "update null/zeroLength");
+        Assertions.assertDoesNotThrow(() -> mySigner.update(null), "update null");
+
         /* Destroy the second copy */
         mySecondCopy.destroy();
 

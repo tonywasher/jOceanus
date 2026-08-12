@@ -115,24 +115,29 @@ public final class JcaMac
     @Override
     public void doUpdate(final byte[] pBytes,
                          final int pOffset,
-                         final int pLength) {
-        theMac.update(pBytes, pOffset, pLength);
+                         final int pLength) throws GordianException {
+        checkInit();
+        if (checkInputBuffer(pBytes, pOffset, pLength)) {
+            theMac.update(pBytes, pOffset, pLength);
+        }
     }
 
     @Override
-    public void update(final byte pByte) {
+    public void update(final byte pByte) throws GordianException {
+        checkInit();
         theMac.update(pByte);
     }
 
     @Override
-    public void reset() {
+    public void reset() throws GordianException {
+        checkInit();
         theMac.reset();
     }
 
     @Override
     public byte[] finish() throws GordianException {
         /* Check for destroyed key */
-        getKey().checkForDestroyedKey();
+        checkInit();
 
         /* Finalise the mac */
         return theMac.doFinal();
@@ -143,7 +148,8 @@ public final class JcaMac
                         final int pOffset) throws GordianException {
         try {
             /* Check for destroyed key */
-            getKey().checkForDestroyedKey();
+            checkInit();
+            checkOutputBuffer(pBuffer, pOffset, getMacSize());
 
             /* Finalise the mac */
             theMac.doFinal(pBuffer, pOffset);

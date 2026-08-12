@@ -19,14 +19,16 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression.symmetric;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianXof;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParams;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacXof;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -117,6 +119,9 @@ public final class SymmetricMacScripts {
         /* Add Multi test */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("multi", () -> multiMac(pMacSpec))));
 
+        /* Add Destroyed test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("destroy", () -> checkDestroyMac(pMacSpec))));
+
         /* Add Xof test if this is a Xof */
         if (((GordianCoreMacSpec) pMacSpec.getSpec()).isXof()
                 && GordianFactoryType.BC.equals(pMacSpec.getFactory().getFactoryType())) {
@@ -198,6 +203,56 @@ public final class SymmetricMacScripts {
     }
 
     /**
+     * Check Destroy Mac.
+     *
+     * @param pMacSpec the macSpec
+     * @throws GordianException on error
+     */
+    private static void checkDestroyMac(final FactoryMacSpec pMacSpec) throws GordianException {
+        /* Access the KeySpec */
+        final GordianFactory myFactory = pMacSpec.getFactory();
+        final GordianCoreMacSpec mySpec = (GordianCoreMacSpec) pMacSpec.getSpec();
+        final GordianMacFactory myMacFactory = myFactory.getMacFactory();
+        final GordianMac myMac = myMacFactory.createMac(pMacSpec.getSpec());
+        final GordianKey<GordianMacSpec> myKey = pMacSpec.getKey();
+
+        /* Create a second key */
+        final GordianKeyGenerator<GordianMacSpec> myGenerator = myMacFactory.getKeyGenerator(mySpec);
+        final GordianKey<GordianMacSpec> mySecondKey = myGenerator.generateKey();
+        final GordianMacParamsBuilder myParamsBuilder = myMacFactory.newMacParamsBuilder();
+        final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
+
+        /* Can't update/finish/reset before init */
+        Assertions.assertThrows(GordianException.class, () -> myMac.update(myMessage), "update preInit");
+        Assertions.assertThrows(GordianException.class, myMac::finish, "finish preInit");
+        Assertions.assertThrows(GordianException.class, myMac::reset, "reset preInit");
+
+        /* Prime the mac */
+        myMac.init(myParamsBuilder.keyWithRandomNonce(myKey));
+
+        /* Can't update with null/short buffers */
+        Assertions.assertThrows(GordianException.class, () -> myMac.update(null, 0, 1), "update null/length");
+        Assertions.assertThrows(GordianException.class, () -> myMac.update(new byte[]{}, 0, 1), "update short");
+        Assertions.assertDoesNotThrow(() -> myMac.update(null, 0, 0), "update null/zeroLength");
+        Assertions.assertDoesNotThrow(() -> myMac.update(null), "update null");
+
+        /* Init with second key and then destroy it */
+        final GordianMacParams myParams = myParamsBuilder.keyWithRandomNonce(mySecondKey);
+        myMac.init(myParams);
+        mySecondKey.destroy();
+
+        /* Can't update with a destroyed key  */
+        Assertions.assertThrows(GordianException.class, () -> myMac.update(myMessage), "update destroyed");
+
+        /* Can't finish/reset with a destroyed key */
+        Assertions.assertThrows(GordianException.class, myMac::finish, "sign destroyed");
+        Assertions.assertThrows(GordianException.class, myMac::reset, "reset destroyed");
+
+        /* Can't init with a destroyed key */
+        Assertions.assertThrows(GordianException.class, () -> myMac.init(myParams), "init destroyed");
+    }
+
+    /**
      * Multi-call mac.
      *
      * @param pMacSpec the mac to profile
@@ -245,7 +300,7 @@ public final class SymmetricMacScripts {
         final GordianCoreMacSpec mySpec = (GordianCoreMacSpec) pMacSpec.getSpec();
         final GordianMacFactory myMacFactory = myFactory.getMacFactory();
         final GordianMac myMac = myMacFactory.createMac(mySpec);
-        final GordianXof myXof = (GordianXof) myMac;
+        final GordianMacXof myXof = (GordianMacXof) myMac;
         final GordianKey<GordianMacSpec> myKey = pMacSpec.getKey();
 
         /* Create the data */

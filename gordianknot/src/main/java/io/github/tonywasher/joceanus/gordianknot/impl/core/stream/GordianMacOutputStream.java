@@ -93,10 +93,15 @@ public class GordianMacOutputStream
     protected void processData(final byte[] pBytes,
                                final int pOffset,
                                final int pLength) throws IOException {
-        /* Update the MAC and write bytes to underlying stream */
-        theMac.update(pBytes, pOffset, pLength);
-        theDataLen += pLength;
-        writeToStream(pBytes, pOffset, pLength);
+        /* Protect against exceptions */
+        try {
+            /* Update the MAC and write bytes to underlying stream */
+            theMac.update(pBytes, pOffset, pLength);
+            theDataLen += pLength;
+            writeToStream(pBytes, pOffset, pLength);
+        } catch (GordianException e) {
+            throw new IOException("Failed to process data", e);
+        }
     }
 
     /**

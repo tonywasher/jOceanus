@@ -94,7 +94,9 @@ public abstract class BouncyDigestSignature
                        final int pOffset,
                        final int pLength) throws GordianException {
         checkInit();
-        theDigest.update(pBytes, pOffset, pLength);
+        if (checkBuffer(pBytes, pOffset, pLength)) {
+            theDigest.update(pBytes, pOffset, pLength);
+        }
     }
 
     @Override

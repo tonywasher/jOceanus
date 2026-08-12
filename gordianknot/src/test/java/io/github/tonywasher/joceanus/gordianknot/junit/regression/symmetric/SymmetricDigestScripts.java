@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression.symmetric;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianXof;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestXof;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
@@ -177,7 +177,7 @@ public class SymmetricDigestScripts {
         final GordianFactory myFactory = pDigestSpec.getFactory();
         final GordianDigestSpec mySpec = pDigestSpec.getSpec();
         final GordianDigestFactory myDigestFactory = myFactory.getDigestFactory();
-        final GordianXof myXof = (GordianXof) myDigestFactory.createDigest(mySpec);
+        final GordianDigestXof myXof = (GordianDigestXof) myDigestFactory.createDigest(mySpec);
 
         /* Create the data */
         final byte[] myData = SymmetricTest.getTestData();

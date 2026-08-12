@@ -258,7 +258,9 @@ public abstract class JcaSignature
                        final int pLength) throws GordianException {
         try {
             checkInit();
-            theSigner.update(pBytes, pOffset, pLength);
+            if (checkBuffer(pBytes, pOffset, pLength)) {
+                theSigner.update(pBytes, pOffset, pLength);
+            }
         } catch (SignatureException e) {
             throw new GordianIOException("Failed to update", e);
         }

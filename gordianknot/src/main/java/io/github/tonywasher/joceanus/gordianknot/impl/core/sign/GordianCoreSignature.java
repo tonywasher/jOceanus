@@ -24,6 +24,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseChecks;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -233,6 +234,35 @@ public abstract class GordianCoreSignature
             throw new GordianLogicException("Not initialised");
         }
         theKeyPair.checkForDestroyedKeyPair();
+    }
+
+    /**
+     * Check that the input buffer is valid.
+     *
+     * @param pBuffer the buffer
+     * @param pOffset the offset
+     * @param pLength the length
+     * @return non-Zero data true/false
+     * @throws GordianException on error
+     */
+    protected boolean checkBuffer(final byte[] pBuffer,
+                                  final int pOffset,
+                                  final int pLength) throws GordianException {
+        return GordianBaseChecks.checkInputBuffer(pBuffer, pOffset, pLength);
+    }
+
+    /**
+     * Check that the input buffer is valid.
+     *
+     * @param pBuffer the buffer
+     * @param pOffset the offset
+     * @param pLength the length
+     * @throws GordianException on error
+     */
+    protected void checkOutputBuffer(final byte[] pBuffer,
+                                     final int pOffset,
+                                     final int pLength) throws GordianException {
+        GordianBaseChecks.checkOutputBuffer(pBuffer, pOffset, pLength);
     }
 
     /**

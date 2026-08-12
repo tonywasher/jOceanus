@@ -410,8 +410,10 @@ public class GordianCoreKeySetAADCipher
 
     /**
      * Complete AEAD Mac input.
+     *
+     * @throws GordianException on error
      */
-    private void completeAEADMac() {
+    private void completeAEADMac() throws GordianException {
         /* Pad to boundary */
         padToBoundary(aeadLength);
 
@@ -421,8 +423,10 @@ public class GordianCoreKeySetAADCipher
 
     /**
      * Complete Mac data input.
+     *
+     * @throws GordianException on error
      */
-    private void completeDataMac() {
+    private void completeDataMac() throws GordianException {
         /* Pad to boundary */
         padToBoundary(encryptedLength);
 
@@ -441,8 +445,9 @@ public class GordianCoreKeySetAADCipher
      * Pad to boundary.
      *
      * @param pDataLen the length of the data to pad
+     * @throws GordianException on error
      */
-    private void padToBoundary(final long pDataLen) {
+    private void padToBoundary(final long pDataLen) throws GordianException {
         /* Pad to boundary */
         final int xtra = (int) pDataLen & (MACSIZE - 1);
         if (xtra != 0) {

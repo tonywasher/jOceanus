@@ -124,19 +124,15 @@ public class BouncyMLDSASignature
                        final int pOffset,
                        final int pLength) throws GordianException {
         checkInit();
-        theSigner.update(pBytes, pOffset, pLength);
+        if (checkBuffer(pBytes, pOffset, pLength)) {
+            theSigner.update(pBytes, pOffset, pLength);
+        }
     }
 
     @Override
     public void update(final byte pByte) throws GordianException {
         checkInit();
         theSigner.update(pByte);
-    }
-
-    @Override
-    public void update(final byte[] pBytes) throws GordianException {
-        checkInit();
-        theSigner.update(pBytes, 0, pBytes.length);
     }
 
     @Override

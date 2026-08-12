@@ -300,8 +300,9 @@ public class GordianPersonalisation {
      * Update a MAC with personalisation.
      *
      * @param pMac the MAC
+     * @throws GordianException on error
      */
-    public void updateMac(final GordianMac pMac) {
+    public void updateMac(final GordianMac pMac) throws GordianException {
         pMac.update(thePersonalisation);
         pMac.update(theInitVector);
     }
