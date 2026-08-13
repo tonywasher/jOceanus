@@ -94,8 +94,8 @@ public class BouncyStreamKeyAEADCipher
     public void updateAAD(final byte[] in,
                           final int inOff,
                           final int len) throws GordianException {
-        /* Check for destroyed key */
-        getKey().checkForDestroyedKey();
+        /* Check that we are initialised */
+        checkInit();
 
         /* Pass call on */
         theCipher.processAADBytes(in, inOff, len);
@@ -114,8 +114,8 @@ public class BouncyStreamKeyAEADCipher
                         final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
-            /* Check for destroyed key */
-            getKey().checkForDestroyedKey();
+            /* Check that we are initialised */
+            checkInit();
 
             /* Process the bytes */
             return theCipher.processBytes(pBytes, pOffset, pLength, pOutput, pOutOffset);
@@ -136,8 +136,8 @@ public class BouncyStreamKeyAEADCipher
                         final int outOff) throws GordianException {
         /* Protect against exceptions */
         try {
-            /* Check for destroyed key */
-            getKey().checkForDestroyedKey();
+            /* Check that we are initialised */
+            checkInit();
 
             /* Finish the cipher */
             return theCipher.doFinal(out, outOff);

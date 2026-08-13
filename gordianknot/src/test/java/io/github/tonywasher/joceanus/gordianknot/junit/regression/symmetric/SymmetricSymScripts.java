@@ -604,22 +604,39 @@ public class SymmetricSymScripts {
         final GordianSymCipher myCipher = pFactory.createSymKeyCipher(pCipherSpec);
         final GordianCipherParamsBuilder myParamsBuilder = pFactory.newCipherParamsBuilder();
         final GordianCipherParams myParms = myParamsBuilder.keyWithRandomNonce(mySecondKey);
+
+        /* Can't update/finish before init */
+        final boolean isAEAD = myCipher instanceof GordianSymAEADCipher;
+        final byte[] myMessage = "SomeBytes".getBytes(StandardCharsets.UTF_8);
+        final byte[] myAEAD = "AEADData".getBytes(StandardCharsets.UTF_8);
+        Assertions.assertThrows(GordianException.class, () -> myCipher.update(myMessage), "update preInit");
+        Assertions.assertThrows(GordianException.class, myCipher::finish, "finish preInit");
+        if (isAEAD) {
+            Assertions.assertThrows(GordianException.class, () -> ((GordianSymAEADCipher) myCipher).updateAAD(myAEAD));
+        }
+
+        /* Init the cipher */
         myCipher.initForEncrypt(myParms);
+
+        /* Can't update with null/short buffers */
+        Assertions.assertThrows(GordianException.class, () -> myCipher.update(null, 0, 1), "update null/length");
+        Assertions.assertThrows(GordianException.class, () -> myCipher.update(new byte[]{}, 0, 1), "update short");
+        Assertions.assertDoesNotThrow(() -> myCipher.update(null, 0, 0), "update null/zeroLength");
+        Assertions.assertDoesNotThrow(() -> myCipher.update(null), "update null");
 
         /* Destroy the second key */
         mySecondKey.destroy();
 
-        /* Can't supply AEAD Data to a cipher whose key has been destroyed */
-        if (myCipher instanceof GordianSymAEADCipher myAEAD) {
-            Assertions.assertThrows(GordianException.class, () -> myAEAD.updateAAD("AEADData".getBytes(StandardCharsets.UTF_8)));
-        }
-
         /* Can't update/finish a cipher whose key has now been destroyed */
-        Assertions.assertThrows(GordianException.class, () -> myCipher.update("SomeBytes".getBytes(StandardCharsets.UTF_8)));
+        Assertions.assertThrows(GordianException.class, () -> myCipher.update(myMessage));
         Assertions.assertThrows(GordianException.class, myCipher::finish);
+        if (isAEAD) {
+            Assertions.assertThrows(GordianException.class, () -> ((GordianSymAEADCipher) myCipher).updateAAD(myAEAD));
+        }
 
         /* Can't initialise a cipher with a destroyed key */
         Assertions.assertThrows(GordianException.class, () -> myCipher.initForEncrypt(myParms));
+        Assertions.assertThrows(GordianException.class, () -> myCipher.initForDecrypt(myParms));
     }
 
     /**
@@ -658,7 +675,7 @@ public class SymmetricSymScripts {
     }
 
     /**
-     * Check symKey Destroy.
+     * Check privateKey Destroy.
      *
      * @param pFactory        the cipherFactory
      * @param pKey            the key

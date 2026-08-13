@@ -29,9 +29,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKe
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianElephantKey;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSparkleKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseChecks;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
 
 import java.security.SecureRandom;
@@ -44,7 +46,7 @@ import java.util.Objects;
  * @param <T> the keyType
  */
 public abstract class GordianCoreCipher<T extends GordianKeySpec>
-        implements GordianKeyedCipher<T> {
+        implements GordianKeyedCipher<T>, GordianBaseCipher {
     /**
      * CipherSpec.
      */
@@ -232,6 +234,11 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
                       final int pLength,
                       final byte[] pOutput,
                       final int pOutOffset) throws GordianException {
+        /* Check the input buffer and handle null input */
+        if (!checkInputBuffer(pBytes, pOffset, pLength)) {
+            return 0;
+        }
+
         /* Make sure that there is no overlap between buffers */
         byte[] myInput = pBytes;
         int myOffset = pOffset;
@@ -332,6 +339,44 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
         if (!getKeyType().equals(pKey.getKeyType())) {
             throw new GordianLogicException("MisMatch on keyType");
         }
+    }
+
+    @Override
+    public void checkInit() throws GordianException {
+        final GordianCoreKey<T> myKey = (GordianCoreKey<T>) getKey();
+        if (myKey == null) {
+            throw new GordianLogicException("Not initialised");
+        }
+        myKey.checkForDestroyedKey();
+    }
+
+    /**
+     * Check that the input buffer is valid.
+     *
+     * @param pBuffer the buffer
+     * @param pOffset the offset
+     * @param pLength the length
+     * @return non-Zero data true/false
+     * @throws GordianException on error
+     */
+    protected boolean checkInputBuffer(final byte[] pBuffer,
+                                       final int pOffset,
+                                       final int pLength) throws GordianException {
+        return GordianBaseChecks.checkInputBuffer(pBuffer, pOffset, pLength);
+    }
+
+    /**
+     * Check that the output buffer is valid.
+     *
+     * @param pBuffer the buffer
+     * @param pOffset the offset
+     * @param pLength the length
+     * @throws GordianException on error
+     */
+    protected void checkOutputBuffer(final byte[] pBuffer,
+                                     final int pOffset,
+                                     final int pLength) throws GordianException {
+        GordianBaseChecks.checkOutputBuffer(pBuffer, pOffset, pLength);
     }
 
     @Override

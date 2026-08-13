@@ -196,9 +196,9 @@ public class GordianCoreKeySetAADCipher
     }
 
     @Override
-    protected void checkStatus() throws GordianException {
+    public void checkInit() throws GordianException {
         /* Check underlying status */
-        super.checkStatus();
+        super.checkInit();
 
         /* aead is now complete */
         aeadComplete = true;

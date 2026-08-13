@@ -245,7 +245,7 @@ public final class SymmetricMacScripts {
         Assertions.assertThrows(GordianException.class, () -> myMac.update(myMessage), "update destroyed");
 
         /* Can't finish/reset with a destroyed key */
-        Assertions.assertThrows(GordianException.class, myMac::finish, "sign destroyed");
+        Assertions.assertThrows(GordianException.class, myMac::finish, "finish destroyed");
         Assertions.assertThrows(GordianException.class, myMac::reset, "reset destroyed");
 
         /* Can't init with a destroyed key */

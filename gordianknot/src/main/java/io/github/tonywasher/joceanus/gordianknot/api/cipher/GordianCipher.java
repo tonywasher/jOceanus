@@ -18,8 +18,6 @@ package io.github.tonywasher.joceanus.gordianknot.api.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 
-import java.util.Arrays;
-
 /**
  * GordianKnot base for Cipher.
  */
@@ -53,26 +51,9 @@ public interface GordianCipher {
      * @return the intermediate processed data
      * @throws GordianException on error
      */
-    default byte[] update(final byte[] pBytes,
-                          final int pOffset,
-                          final int pLength) throws GordianException {
-        /* Create output buffer */
-        final int myLen = getOutputLength(pLength);
-        final byte[] myOutput = new byte[myLen];
-
-        /* Process the data */
-        final int myOut = update(pBytes, pOffset, pLength, myOutput, 0);
-
-        /* Return full buffer if possible */
-        if (myOut == myLen) {
-            return myOutput;
-        }
-
-        /* Cut down buffer */
-        final byte[] myReturn = Arrays.copyOf(myOutput, myOut);
-        Arrays.fill(myOutput, (byte) 0);
-        return myReturn;
-    }
+    byte[] update(byte[] pBytes,
+                  int pOffset,
+                  int pLength) throws GordianException;
 
     /**
      * Process the passed data and return intermediate results.
@@ -114,24 +95,7 @@ public interface GordianCipher {
      * @return the remaining processed data
      * @throws GordianException on error
      */
-    default byte[] finish() throws GordianException {
-        /* Create output buffer */
-        final int myLen = getOutputLength(0);
-        final byte[] myOutput = new byte[myLen];
-
-        /* Process the data */
-        final int myOut = finish(myOutput, 0);
-
-        /* Return full buffer if possible */
-        if (myOut == myLen) {
-            return myOutput;
-        }
-
-        /* Cut down buffer */
-        final byte[] myReturn = Arrays.copyOf(myOutput, myOut);
-        Arrays.fill(myOutput, (byte) 0);
-        return myReturn;
-    }
+    byte[] finish() throws GordianException;
 
     /**
      * Process the passed data and return final results.
@@ -153,26 +117,9 @@ public interface GordianCipher {
      * @return the remaining processed data
      * @throws GordianException on error
      */
-    default byte[] finish(final byte[] pBytes,
-                          final int pOffset,
-                          final int pLength) throws GordianException {
-        /* Create output buffer */
-        final int myLen = getOutputLength(pLength);
-        final byte[] myOutput = new byte[myLen];
-
-        /* Process the data */
-        final int myOut = finish(pBytes, pOffset, pLength, myOutput, 0);
-
-        /* Return full buffer if possible */
-        if (myOut == myLen) {
-            return myOutput;
-        }
-
-        /* Cut down buffer */
-        final byte[] myReturn = Arrays.copyOf(myOutput, myOut);
-        Arrays.fill(myOutput, (byte) 0);
-        return myReturn;
-    }
+    byte[] finish(byte[] pBytes,
+                  int pOffset,
+                  int pLength) throws GordianException;
 
     /**
      * Process the passed data and return final results.

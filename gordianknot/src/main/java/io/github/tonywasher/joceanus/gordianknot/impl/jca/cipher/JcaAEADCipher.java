@@ -127,7 +127,7 @@ public class JcaAEADCipher<T extends GordianKeySpec>
         /* Protect against exceptions */
         try {
             /* Check for destroyed key */
-            getKey().checkForDestroyedKey();
+            checkInit();
 
             /* Process the bytes */
             return theCipher.update(pBytes, pOffset, pLength, pOutput, pOutOffset);
@@ -145,7 +145,7 @@ public class JcaAEADCipher<T extends GordianKeySpec>
         /* Protect against exceptions */
         try {
             /* Check for destroyed key */
-            getKey().checkForDestroyedKey();
+            checkInit();
 
             /* Process the bytes */
             theCipher.updateAAD(pBytes, pOffset, pLength);
@@ -162,7 +162,7 @@ public class JcaAEADCipher<T extends GordianKeySpec>
         /* Protect against exceptions */
         try {
             /* Check for destroyed key */
-            getKey().checkForDestroyedKey();
+            checkInit();
 
             /* Finish the operation */
             return theCipher.doFinal(pOutput, pOutOffset);
