@@ -33,14 +33,17 @@ import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.Jca
 import org.bouncycastle.jcajce.interfaces.SM9EncMasterPrivateKey;
 import org.bouncycastle.jcajce.interfaces.SM9EncMasterPublicKey;
 import org.bouncycastle.jcajce.interfaces.SM9EncUserKeyGenerator;
+import org.bouncycastle.jcajce.interfaces.SM9EncUserPrivateKey;
+import org.bouncycastle.jcajce.interfaces.SM9EncUserPublicKey;
 import org.bouncycastle.jcajce.interfaces.SM9SigMasterPrivateKey;
 import org.bouncycastle.jcajce.interfaces.SM9SigMasterPublicKey;
+import org.bouncycastle.jcajce.interfaces.SM9SigUserPrivateKey;
+import org.bouncycastle.jcajce.interfaces.SM9SigUserPublicKey;
 import org.bouncycastle.util.Arrays;
 
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.Objects;
 
 /**
  * Jca SM9 KeyPair generator.
@@ -97,12 +100,12 @@ public final class JcaSM9KeyPairGenerator {
             case ENCRYPT -> {
                 final PublicKey myUserPublic = pPublicKey.getUserPublicKey(pIdentity,
                         SM9EncMasterPublicKey.HID);
-                yield new JcaSM9EncUserPublicKey(ENCRYPT, myUserPublic, pPublicKey, pIdentity);
+                yield new JcaSM9EncUserPublicKey(ENCRYPT, myUserPublic);
             }
             case EXCHANGE -> {
                 final PublicKey myUserPublic = pPublicKey.getUserPublicKey(pIdentity,
                         SM9EncMasterPublicKey.HID_EXCHANGE);
-                yield new JcaSM9EncUserPublicKey(EXCHANGE, myUserPublic, pPublicKey, pIdentity);
+                yield new JcaSM9EncUserPublicKey(EXCHANGE, myUserPublic);
             }
             default -> null;
         };
@@ -173,11 +176,11 @@ public final class JcaSM9KeyPairGenerator {
                 case ENCRYPT -> {
                     final PrivateKey myUserPrivate = myPrivate.generateUserKeyPair(pIdentity,
                             SM9EncUserKeyGenerator.HID).getPrivate();
-                    yield new JcaSM9EncUserPrivateKey(ENCRYPT, myUserPrivate, pIdentity);
+                    yield new JcaSM9EncUserPrivateKey(ENCRYPT, myUserPrivate);
                 }
                 case EXCHANGE -> {
                     final PrivateKey myUserPrivate = myPrivate.generateExchangeKeyPair(pIdentity).getPrivate();
-                    yield new JcaSM9EncUserPrivateKey(EXCHANGE, myUserPrivate, pIdentity);
+                    yield new JcaSM9EncUserPrivateKey(EXCHANGE, myUserPrivate);
                 }
                 default -> null;
             };
@@ -191,30 +194,14 @@ public final class JcaSM9KeyPairGenerator {
             extends JcaPublicKey
             implements GordianIdAwarePublicKey {
         /**
-         * The master publicKey.
-         */
-        private final SM9EncMasterPublicKey theMasterPublic;
-
-        /**
-         * The identity.
-         */
-        private final byte[] theIdentity;
-
-        /**
          * Constructor.
          *
-         * @param pKeySpec      the keySpec
-         * @param pPublicKey    the public key
-         * @param pMasterPublic the master publicKey
-         * @param pIdentity     the identity
+         * @param pKeySpec   the keySpec
+         * @param pPublicKey the public key
          */
         JcaSM9EncUserPublicKey(final GordianKeyPairSpec pKeySpec,
-                               final PublicKey pPublicKey,
-                               final SM9EncMasterPublicKey pMasterPublic,
-                               final byte[] pIdentity) {
+                               final PublicKey pPublicKey) {
             super(pKeySpec, pPublicKey);
-            theMasterPublic = pMasterPublic;
-            theIdentity = pIdentity.clone();
         }
 
         @Override
@@ -224,13 +211,14 @@ public final class JcaSM9KeyPairGenerator {
 
         @Override
         public byte[] getIdentity() {
-            return Arrays.clone(theIdentity);
+            final SM9EncUserPublicKey myPublic = (SM9EncUserPublicKey) getPublicKey();
+            return Arrays.clone(myPublic.getIdentity());
         }
 
         @Override
         public JcaSM9EncUserPublicKey deriveUserPublicKey(final GordianIdAwareKeyType pKeyType,
                                                           final byte[] pIdentity) {
-            return JcaSM9KeyPairGenerator.deriveUserPublicKey(theMasterPublic, pKeyType, pIdentity);
+            return JcaSM9KeyPairGenerator.deriveUserPublicKey(getMasterPublicKey(), pKeyType, pIdentity);
         }
 
         /**
@@ -239,38 +227,14 @@ public final class JcaSM9KeyPairGenerator {
          * @return the master public key
          */
         public SM9EncMasterPublicKey getMasterPublicKey() {
-            return theMasterPublic;
+            final SM9EncUserPublicKey myPublic = (SM9EncUserPublicKey) getPublicKey();
+            return myPublic.getMasterPublicKey();
         }
 
         @Override
         public JcaIdAwareKeyPair deriveMasterPublicKey() {
-            final JcaSM9EncMasterPublicKey myPublic = new JcaSM9EncMasterPublicKey(ENCMASTER, theMasterPublic);
+            final JcaSM9EncMasterPublicKey myPublic = new JcaSM9EncMasterPublicKey(ENCMASTER, getMasterPublicKey());
             return new JcaIdAwareKeyPair(myPublic, null);
-        }
-
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof JcaSM9EncUserPublicKey myThat)) {
-                return false;
-            }
-
-            /* Check differences */
-            return Arrays.areEqual(theIdentity, myThat.getIdentity())
-                    && super.equals(myThat);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(Arrays.hashCode(theIdentity), super.hashCode());
         }
     }
 
@@ -281,22 +245,14 @@ public final class JcaSM9KeyPairGenerator {
             extends JcaPrivateKey
             implements GordianIdAwarePrivateKey {
         /**
-         * The identity.
-         */
-        private final byte[] theIdentity;
-
-        /**
          * Constructor.
          *
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
-         * @param pIdentity   the identity
          */
         JcaSM9EncUserPrivateKey(final GordianKeyPairSpec pKeySpec,
-                                final PrivateKey pPrivateKey,
-                                final byte[] pIdentity) {
+                                final PrivateKey pPrivateKey) {
             super(pKeySpec, pPrivateKey);
-            theIdentity = pIdentity.clone();
         }
 
         @Override
@@ -306,32 +262,8 @@ public final class JcaSM9KeyPairGenerator {
 
         @Override
         public byte[] getIdentity() {
-            return Arrays.clone(theIdentity);
-        }
-
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof JcaSM9EncUserPrivateKey myThat)) {
-                return false;
-            }
-
-            /* Check differences */
-            return Arrays.areEqual(theIdentity, myThat.getIdentity())
-                    && super.equals(myThat);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(Arrays.hashCode(theIdentity), super.hashCode());
+            final SM9EncUserPrivateKey myPrivate = (SM9EncUserPrivateKey) getPrivateKey();
+            return Arrays.clone(myPrivate.getIdentity());
         }
     }
 
@@ -361,7 +293,8 @@ public final class JcaSM9KeyPairGenerator {
         public JcaSM9SignUserPublicKey deriveUserPublicKey(final GordianIdAwareKeyType pKeyType,
                                                            final byte[] pIdentity) {
             final SM9SigMasterPublicKey myPublic = (SM9SigMasterPublicKey) getPublicKey();
-            return new JcaSM9SignUserPublicKey(SIGN, myPublic, pIdentity);
+            final SM9SigUserPublicKey myUserPublic = (SM9SigUserPublicKey) myPublic.getUserPublicKey(pIdentity);
+            return new JcaSM9SignUserPublicKey(SIGN, myUserPublic);
         }
 
         @Override
@@ -397,7 +330,7 @@ public final class JcaSM9KeyPairGenerator {
                                                           final byte[] pIdentity) {
             final SM9SigMasterPrivateKey myPrivate = (SM9SigMasterPrivateKey) getPrivateKey();
             final PrivateKey myUserPrivate = myPrivate.generateUserKeyPair(pIdentity).getPrivate();
-            return new JcaSM9SignUserPrivateKey(SIGN, myUserPrivate, pIdentity);
+            return new JcaSM9SignUserPrivateKey(SIGN, myUserPrivate);
         }
     }
 
@@ -408,28 +341,14 @@ public final class JcaSM9KeyPairGenerator {
             extends JcaPublicKey
             implements GordianIdAwarePublicKey {
         /**
-         * The master publicKey.
-         */
-        private final SM9SigMasterPublicKey theMasterPublic;
-
-        /**
-         * The identity.
-         */
-        private final byte[] theIdentity;
-
-        /**
          * Constructor.
          *
          * @param pKeySpec   the keySpec
          * @param pPublicKey the master public key
-         * @param pIdentity  the identity
          */
         JcaSM9SignUserPublicKey(final GordianKeyPairSpec pKeySpec,
-                                final SM9SigMasterPublicKey pPublicKey,
-                                final byte[] pIdentity) {
-            super(pKeySpec, pPublicKey.getUserPublicKey(pIdentity));
-            theMasterPublic = pPublicKey;
-            theIdentity = pIdentity.clone();
+                                final SM9SigUserPublicKey pPublicKey) {
+            super(pKeySpec, pPublicKey);
         }
 
         @Override
@@ -439,44 +358,32 @@ public final class JcaSM9KeyPairGenerator {
 
         @Override
         public byte[] getIdentity() {
-            return Arrays.clone(theIdentity);
+            final SM9SigUserPublicKey myPublic = (SM9SigUserPublicKey) getPublicKey();
+            return Arrays.clone(myPublic.getIdentity());
         }
 
         @Override
         public JcaSM9SignUserPublicKey deriveUserPublicKey(final GordianIdAwareKeyType pKeyType,
                                                            final byte[] pIdentity) {
-            return new JcaSM9SignUserPublicKey(SIGN, theMasterPublic, pIdentity);
+            final SM9SigMasterPublicKey myPublic = getMasterPublicKey();
+            final SM9SigUserPublicKey myUserPublic = (SM9SigUserPublicKey) myPublic.getUserPublicKey(pIdentity);
+            return new JcaSM9SignUserPublicKey(SIGN, myUserPublic);
         }
 
         @Override
         public JcaIdAwareKeyPair deriveMasterPublicKey() {
-            final JcaSM9SignMasterPublicKey myPublic = new JcaSM9SignMasterPublicKey(SIGNMASTER, theMasterPublic);
+            final JcaSM9SignMasterPublicKey myPublic = new JcaSM9SignMasterPublicKey(SIGNMASTER, getMasterPublicKey());
             return new JcaIdAwareKeyPair(myPublic, null);
         }
 
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof JcaSM9SignUserPublicKey myThat)) {
-                return false;
-            }
-
-            /* Check differences */
-            return Arrays.areEqual(theIdentity, myThat.getIdentity())
-                    && super.equals(myThat);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(Arrays.hashCode(theIdentity), super.hashCode());
+        /**
+         * Obtain the master publicKey
+         *
+         * @return the master public key
+         */
+        public SM9SigMasterPublicKey getMasterPublicKey() {
+            final SM9SigUserPublicKey myPublic = (SM9SigUserPublicKey) getPublicKey();
+            return myPublic.getMasterPublicKey();
         }
     }
 
@@ -487,22 +394,14 @@ public final class JcaSM9KeyPairGenerator {
             extends JcaPrivateKey
             implements GordianIdAwarePrivateKey {
         /**
-         * The identity.
-         */
-        private final byte[] theIdentity;
-
-        /**
          * Constructor.
          *
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
-         * @param pIdentity   the identity
          */
         JcaSM9SignUserPrivateKey(final GordianKeyPairSpec pKeySpec,
-                                 final PrivateKey pPrivateKey,
-                                 final byte[] pIdentity) {
+                                 final PrivateKey pPrivateKey) {
             super(pKeySpec, pPrivateKey);
-            theIdentity = pIdentity.clone();
         }
 
         @Override
@@ -512,32 +411,8 @@ public final class JcaSM9KeyPairGenerator {
 
         @Override
         public byte[] getIdentity() {
-            return Arrays.clone(theIdentity);
-        }
-
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof JcaSM9SignUserPrivateKey myThat)) {
-                return false;
-            }
-
-            /* Check differences */
-            return Arrays.areEqual(theIdentity, myThat.getIdentity())
-                    && super.equals(myThat);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(Arrays.hashCode(theIdentity), super.hashCode());
+            final SM9SigUserPrivateKey myPrivate = (SM9SigUserPrivateKey) getPrivateKey();
+            return Arrays.clone(myPrivate.getIdentity());
         }
     }
 

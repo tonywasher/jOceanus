@@ -390,7 +390,7 @@ public final class BouncySM9KeyPair {
         public BouncySM9SignUserPrivateKey newUserPrivateKey(final GordianIdAwareKeyType pKeyType,
                                                              final byte[] pIdentity) {
             final SM9SigPrivateKeyParameters myParms = getPrivateKey().generateUserKey(pIdentity);
-            return new BouncySM9SignUserPrivateKey(SIGN, myParms, pIdentity);
+            return new BouncySM9SignUserPrivateKey(SIGN, myParms);
         }
     }
 
@@ -486,22 +486,14 @@ public final class BouncySM9KeyPair {
             extends BouncyPrivateKey<SM9SigPrivateKeyParameters>
             implements GordianIdAwarePrivateKey {
         /**
-         * The identity.
-         */
-        private final byte[] theIdentity;
-
-        /**
          * Constructor.
          *
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
-         * @param pIdentity   the identity
          */
         BouncySM9SignUserPrivateKey(final GordianKeyPairSpec pKeySpec,
-                                    final SM9SigPrivateKeyParameters pPrivateKey,
-                                    final byte[] pIdentity) {
+                                    final SM9SigPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
-            theIdentity = pIdentity.clone();
         }
 
         @Override
@@ -522,32 +514,7 @@ public final class BouncySM9KeyPair {
 
         @Override
         public byte[] getIdentity() {
-            return Arrays.clone(theIdentity);
-        }
-
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncySM9SignUserPrivateKey myThat)) {
-                return false;
-            }
-
-            /* Check differences */
-            return Arrays.areEqual(theIdentity, myThat.getIdentity())
-                    && super.equals(myThat);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(Arrays.hashCode(theIdentity), super.hashCode());
+            return Arrays.clone(getPrivateKey().getIdentity());
         }
     }
 
