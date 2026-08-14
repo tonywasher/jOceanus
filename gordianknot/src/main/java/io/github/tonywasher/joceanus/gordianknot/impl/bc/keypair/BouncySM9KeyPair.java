@@ -19,22 +19,27 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair.GordianIdAwareUserKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianIdAwareKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9SignType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyIdAwareMasterKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyIdAwareUserKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPairGenerator.BouncyKeyFactorySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareMasterPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareMasterPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareUserPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareUserPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
 import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
@@ -167,6 +172,37 @@ public final class BouncySM9KeyPair {
         @Override
         public BouncyIdAwareMasterKeyPair deriveMasterPublicKey() {
             return new BouncyIdAwareMasterKeyPair(this, null);
+        }
+
+        @Override
+        public GordianIdAwareUserKeyPair deriveUserKeyPairFromEncoding(final PKCS8EncodedKeySpec pEncoding,
+                                                                       final GordianIdAwareKeyType pKeyType,
+                                                                       final byte[] pIdentity) throws GordianException {
+            /* Can't derive EXCHANGE key from Encoding */
+            if (GordianSM9EncryptType.EXCHANGE.equals(pKeyType)) {
+                throw new GordianDataException("Can't derive EXCHANGE keyPairs from encoding");
+            }
+
+            /* protect against exceptions */
+            try {
+                /* Extract the encoded parameters */
+                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pEncoding.getEncoded());
+                final ASN1ObjectIdentifier myOid = myInfo.getPrivateKeyAlgorithm().getAlgorithm();
+                if (!GMObjectIdentifiers.sm9encrypt.equals(myOid)) {
+                    throw new GordianDataException("not an SM9 encrypt user private key: " + myOid);
+                }
+                final byte[] myEncoding = ASN1OctetString.getInstance(myInfo.parsePrivateKey()).getOctets();
+
+                /* Build the private key from encoded */
+                final SM9EncPrivateKeyParameters myParams = SM9EncPrivateKeyParameters.fromEncoded(myEncoding,
+                        getPublicKey(), pIdentity, SM9EncMasterPrivateKeyParameters.HID);
+                final BouncySM9EncUserPrivateKey myPrivate = new BouncySM9EncUserPrivateKey(ENCRYPT, myParams);
+                final BouncySM9EncUserPublicKey myPublic = deriveUserPublicKey(pKeyType, pIdentity);
+                return new BouncyIdAwareUserKeyPair(myPublic, myPrivate);
+            } catch (IOException
+                     | IllegalArgumentException e) {
+                throw new GordianIOException("Can't derive SM9 encrypt user private key", e);
+            }
         }
     }
 
@@ -310,6 +346,23 @@ public final class BouncySM9KeyPair {
         public byte[] getIdentity() {
             return Arrays.clone(getPrivateKey().getIdentity());
         }
+
+        @Override
+        public PKCS8EncodedKeySpec getPartialEncoding() throws GordianException {
+            /* Can't derive EXCHANGE key from Encoding */
+            if (GordianSM9EncryptType.EXCHANGE.equals(getSubKeyType())) {
+                throw new GordianDataException("Can't obtain EXCHANGE privateKey encoding");
+            }
+
+            /* Protect against exceptions */
+            try {
+                final PrivateKeyInfo myInfo = new PrivateKeyInfo(
+                        new AlgorithmIdentifier(GMObjectIdentifiers.sm9encrypt), new DEROctetString(getPrivateKey().getEncoded()));
+                return new PKCS8EncodedKeySpec(myInfo.getEncoded(ASN1Encoding.DER));
+            } catch (IOException e) {
+                throw new GordianIOException("Error deriving encoding", e);
+            }
+        }
     }
 
     /**
@@ -353,6 +406,32 @@ public final class BouncySM9KeyPair {
         @Override
         public BouncyIdAwareMasterKeyPair deriveMasterPublicKey() {
             return new BouncyIdAwareMasterKeyPair(this, null);
+        }
+
+        @Override
+        public GordianIdAwareUserKeyPair deriveUserKeyPairFromEncoding(final PKCS8EncodedKeySpec pEncoding,
+                                                                       final GordianIdAwareKeyType pKeyType,
+                                                                       final byte[] pIdentity) throws GordianException {
+            /* protect against exceptions */
+            try {
+                /* Extract the encoded parameters */
+                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pEncoding.getEncoded());
+                final ASN1ObjectIdentifier myOid = myInfo.getPrivateKeyAlgorithm().getAlgorithm();
+                if (!GMObjectIdentifiers.sm9sign.equals(myOid)) {
+                    throw new GordianDataException("not an SM9 sign user private key: " + myOid);
+                }
+                final byte[] myEncoding = ASN1OctetString.getInstance(myInfo.parsePrivateKey()).getOctets();
+
+                /* Build the private key from encoded */
+                final SM9SigPrivateKeyParameters myParams = SM9SigPrivateKeyParameters.fromEncoded(myEncoding,
+                        getPublicKey(), pIdentity);
+                final BouncySM9SignUserPrivateKey myPrivate = new BouncySM9SignUserPrivateKey(SIGN, myParams);
+                final BouncySM9SignUserPublicKey myPublic = deriveUserPublicKey(pKeyType, pIdentity);
+                return new BouncyIdAwareUserKeyPair(myPublic, myPrivate);
+            } catch (IOException
+                     | IllegalArgumentException e) {
+                throw new GordianIOException("Can't derive SM9 sign user private key", e);
+            }
         }
     }
 
@@ -518,6 +597,18 @@ public final class BouncySM9KeyPair {
         public byte[] getIdentity() {
             return Arrays.clone(getPrivateKey().getIdentity());
         }
+
+        @Override
+        public PKCS8EncodedKeySpec getPartialEncoding() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                final PrivateKeyInfo myInfo = new PrivateKeyInfo(
+                        new AlgorithmIdentifier(GMObjectIdentifiers.sm9sign), new DEROctetString(getPrivateKey().getEncoded()));
+                return new PKCS8EncodedKeySpec(myInfo.getEncoded(ASN1Encoding.DER));
+            } catch (IOException e) {
+                throw new GordianIOException("Error deriving encoding", e);
+            }
+        }
     }
 
     /**
@@ -574,7 +665,8 @@ public final class BouncySM9KeyPair {
                 final byte[] myData = ASN1OctetString.getInstance(myInfo.parsePrivateKey()).getOctets();
                 return SM9EncMasterPrivateKeyParameters.fromEncoded(myData);
 
-            } catch (IOException e) {
+            } catch (IOException
+                     | IllegalArgumentException e) {
                 throw new GordianCryptoException(BouncyKeyPairGenerator.ERROR_PARSE, e);
             }
         }
@@ -670,7 +762,8 @@ public final class BouncySM9KeyPair {
                 final byte[] myData = ASN1OctetString.getInstance(myInfo.parsePrivateKey()).getOctets();
                 return SM9SigMasterPrivateKeyParameters.fromEncoded(myData);
 
-            } catch (IOException e) {
+            } catch (IOException
+                     | IllegalArgumentException e) {
                 throw new GordianCryptoException(BouncyKeyPairGenerator.ERROR_PARSE, e);
             }
         }

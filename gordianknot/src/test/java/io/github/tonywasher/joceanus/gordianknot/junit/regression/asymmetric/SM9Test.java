@@ -274,6 +274,15 @@ class SM9Test {
                 = pMaster ? myEncMasterPair : myEncMasterPair.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
         final GordianKeyPairSpec myKeyPairSpec = pMaster ? myEncMasterSpec : myEncChildSpec;
 
+        /* If this is a child setUp */
+        if (!pMaster) {
+            final GordianIdAwareUserKeyPair myUserPair = (GordianIdAwareUserKeyPair) myTargetPair;
+            final PKCS8EncodedKeySpec myPartial = myUserPair.getPartialEncoding();
+            final GordianKeyPair myRestored
+                    = myEncMasterPair.deriveUserKeyPairFromEncoding(myPartial, GordianSM9EncryptType.ENCRYPT, myTargetId);
+            Assertions.assertEquals(myRestored, myUserPair, "Matching partial derived");
+        }
+
         /* Certificates */
         final X500Name myTargetName = KeyStoreUtils.buildX500Name(KeyStoreAlias.TARGET);
         final GordianCertificate myTargetCert = myAgrees.newMiniCertificate(myTargetName, myTargetPair,
@@ -432,7 +441,7 @@ class SM9Test {
         final GordianKeyPairSpec myEncMasterSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCMASTER);
         final GordianKeyPairGenerator myEncGenerator = mySourceKeyPairs.getKeyPairGenerator(myEncMasterSpec);
         final GordianIdAwareMasterKeyPair myEncMasterPair = (GordianIdAwareMasterKeyPair) myEncGenerator.generateKeyPair();
-        final GordianKeyPair myEncPair = myEncMasterPair.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
+        final GordianIdAwareUserKeyPair myEncPair = myEncMasterPair.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
 
         /* Obtain representations keyPair */
         final X509EncodedKeySpec myX509 = myEncGenerator.getX509Encoding(myEncMasterPair);
@@ -442,6 +451,16 @@ class SM9Test {
         final GordianKeyPairGenerator myTargetGenerator = myTargetKeyPairs.getKeyPairGenerator(myEncMasterSpec);
         final GordianIdAwareMasterKeyPair myDerivedMaster = (GordianIdAwareMasterKeyPair) myTargetGenerator.deriveKeyPair(myX509, myPKCS8);
         final GordianKeyPair myTargetPair = myDerivedMaster.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
+
+        /* Transmit and check the partial encoding */
+        final PKCS8EncodedKeySpec myPartial = myEncPair.getPartialEncoding();
+        final GordianKeyPair myRestored
+                = myDerivedMaster.deriveUserKeyPairFromEncoding(myPartial, GordianSM9EncryptType.ENCRYPT, myTargetId);
+        Assertions.assertEquals(myRestored, myTargetPair, "Matching partial derived");
+        Assertions.assertThrows(GordianException.class,
+                () -> myDerivedMaster.deriveUserKeyPairFromEncoding(myPKCS8, GordianSM9EncryptType.ENCRYPT, myTargetId), "derive master");
+        Assertions.assertThrows(GordianException.class,
+                () -> myEncGenerator.deriveKeyPair(myX509, myPartial), "derive partial");
 
         /* Create an Encryptor */
         final GordianEncryptorSpecBuilder myEncBuilder = mySourceEncs.newEncryptorSpecBuilder();
@@ -487,6 +506,14 @@ class SM9Test {
         final GordianIdAwareKeyPair myPOSigPair = mySigMasterPair.derivePublicOnlyUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
         final GordianIdAwareKeyPair myPOSigPair2 = mySigPair.derivePublicOnlyUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
         Assertions.assertEquals(myPOSigPair, myPOSigPair2, "derived Public Only");
+
+        /* If this is a child setUp */
+        if (!pMaster) {
+            final PKCS8EncodedKeySpec myPartial = mySigPair.getPartialEncoding();
+            final GordianKeyPair myRestored
+                    = mySigMasterPair.deriveUserKeyPairFromEncoding(myPartial, GordianSM9SignType.SIGN, mySignerId);
+            Assertions.assertEquals(myRestored, mySigPair, "Matching partial derived");
+        }
 
         /* Can't access non-Master keyGenerators */
         Assertions.assertThrows(GordianException.class, () -> myKeyPairs.getKeyPairGenerator(mySigChildSpec), "Sign keyPairGenerator");
@@ -549,7 +576,7 @@ class SM9Test {
         final GordianKeyPairSpec mySigMasterSpec = myKPBuilder.sm9(GordianSM9SignType.SIGNMASTER);
         final GordianKeyPairGenerator mySigGenerator = mySourceKeyPairs.getKeyPairGenerator(mySigMasterSpec);
         final GordianIdAwareMasterKeyPair mySigMasterPair = (GordianIdAwareMasterKeyPair) mySigGenerator.generateKeyPair();
-        final GordianKeyPair mySigPair = mySigMasterPair.newUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
+        final GordianIdAwareUserKeyPair mySigPair = mySigMasterPair.newUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
 
         /* Obtain keyPair in target */
         final X509EncodedKeySpec myX509 = mySigGenerator.getX509Encoding(mySigMasterPair);
@@ -559,6 +586,16 @@ class SM9Test {
         final GordianKeyPairGenerator myTargetGenerator = myTargetKeyPairs.getKeyPairGenerator(mySigMasterSpec);
         final GordianIdAwareMasterKeyPair myDerivedMaster = (GordianIdAwareMasterKeyPair) myTargetGenerator.deriveKeyPair(myX509, myPKCS8);
         final GordianKeyPair myTargetPair = myDerivedMaster.newUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
+
+        /* Transmit and check the partial encoding */
+        final PKCS8EncodedKeySpec myPartial = mySigPair.getPartialEncoding();
+        final GordianKeyPair myRestored
+                = myDerivedMaster.deriveUserKeyPairFromEncoding(myPartial, GordianSM9SignType.SIGN, mySignerId);
+        Assertions.assertEquals(myRestored, myTargetPair, "Matching partial derived");
+        Assertions.assertThrows(GordianException.class,
+                () -> myDerivedMaster.deriveUserKeyPairFromEncoding(myPKCS8, GordianSM9SignType.SIGN, mySignerId), "derive master");
+        Assertions.assertThrows(GordianException.class,
+                () -> mySigGenerator.deriveKeyPair(myX509, myPartial), "derive partial");
 
         /* Create a signature */
         final GordianSignatureSpecBuilder mySigBuilder = mySourceSigns.newSignatureSpecBuilder();

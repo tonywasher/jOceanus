@@ -23,6 +23,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianIdAware
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseDestroyable;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
+import java.security.spec.PKCS8EncodedKeySpec;
+
 /**
  * Core IdAware keyPair.
  */
@@ -84,13 +86,11 @@ public interface GordianCoreIdAwareKeyPair
         GordianIdAwareMasterPrivateKey getIdAwarePrivateKey();
 
         @Override
+        GordianIdAwareMasterPublicKey getIdAwarePublicKey();
+
+        @Override
         default GordianIdAwareUserKeyPair newUserKeyPair(final GordianIdAwareKeyType pKeyType,
                                                          final byte[] pIdentity) throws GordianException {
-            /* Reject if we are not master key */
-            if (getSubKeyType().isUserKey()) {
-                throw new GordianLogicException("Can't create new userKeyPair from userKey");
-            }
-
             /* Reject if we are public only */
             if (isPublicOnly()) {
                 throw new GordianLogicException("Can't create new userKeyPair without privateKey");
@@ -118,6 +118,47 @@ public interface GordianCoreIdAwareKeyPair
             final GordianIdAwarePrivateKey myPrivate = getIdAwarePrivateKey().newUserPrivateKey(pKeyType, pIdentity);
             final GordianIdAwarePublicKey myPublic = getIdAwarePublicKey().deriveUserPublicKey(pKeyType, pIdentity);
             return (GordianIdAwareUserKeyPair) newKeyPair(myPublic, myPrivate);
+        }
+
+        @Override
+        default GordianIdAwareUserKeyPair deriveUserKeyPairFromEncoding(final PKCS8EncodedKeySpec pEncoding,
+                                                                        final GordianIdAwareKeyType pKeyType,
+                                                                        final byte[] pIdentity) throws GordianException {
+            /* Check that KeyType is correct class */
+            if (!getSubKeyType().getClass().isInstance(pKeyType)) {
+                throw new GordianLogicException("Incorrect keyType: " + pKeyType);
+            }
+
+            /* Reject if identity is null */
+            if (pIdentity == null || pIdentity.length == 0) {
+                throw new GordianLogicException("Null identity");
+            }
+
+            /* Derive from encoding */
+            return getIdAwarePublicKey().deriveUserKeyPairFromEncoding(pEncoding, pKeyType, pIdentity);
+        }
+    }
+
+    /**
+     * IdAware PrivateKey.
+     */
+    interface GordianCoreIdAwareUserKeyPair
+            extends GordianCoreIdAwareKeyPair, GordianIdAwareUserKeyPair {
+        @Override
+        GordianIdAwareUserPrivateKey getIdAwarePrivateKey();
+
+        @Override
+        default PKCS8EncodedKeySpec getPartialEncoding() throws GordianException {
+            /* Reject if we are public only */
+            if (isPublicOnly()) {
+                throw new GordianLogicException("Cannot get partialEncoding without privateKey");
+            }
+
+            /* Check for destroyed keyPair */
+            checkForDestroyed("keyPair");
+
+            /* Obtain the partial encoding */
+            return getIdAwarePrivateKey().getPartialEncoding();
         }
     }
 
@@ -160,6 +201,14 @@ public interface GordianCoreIdAwareKeyPair
          * @return the identity
          */
         byte[] getIdentity();
+
+        /**
+         * Obtain the userKeyPair encoding.
+         *
+         * @return the encoding
+         * @throws GordianException on error
+         */
+        PKCS8EncodedKeySpec getPartialEncoding() throws GordianException;
     }
 
     /**
@@ -196,6 +245,18 @@ public interface GordianCoreIdAwareKeyPair
      */
     interface GordianIdAwareMasterPublicKey
             extends GordianIdAwarePublicKey {
+        /**
+         * Obtain a new user keyPair for identity and encoding.
+         *
+         * @param pEncoding the encoding
+         * @param pKeyType  the user keyType
+         * @param pIdentity the identity
+         * @return the new keyPair
+         * @throws GordianException on error
+         */
+        GordianIdAwareUserKeyPair deriveUserKeyPairFromEncoding(PKCS8EncodedKeySpec pEncoding,
+                                                                GordianIdAwareKeyType pKeyType,
+                                                                byte[] pIdentity) throws GordianException;
     }
 
     /**

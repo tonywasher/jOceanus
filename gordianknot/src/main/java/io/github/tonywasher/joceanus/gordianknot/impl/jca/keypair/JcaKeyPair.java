@@ -17,14 +17,13 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair.GordianIdAwareUserKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianIdAwareKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianCoreIdAwareMasterKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianCoreIdAwareUserKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey.GordianStateAwarePrivateKey;
@@ -368,7 +367,7 @@ public class JcaKeyPair
      */
     public static class JcaIdAwareMasterKeyPair
             extends JcaKeyPair
-            implements GordianCoreIdAwareKeyPair, GordianCoreIdAwareMasterKeyPair {
+            implements GordianCoreIdAwareMasterKeyPair {
         /**
          * Constructor.
          *
@@ -407,7 +406,7 @@ public class JcaKeyPair
      */
     public static class JcaIdAwareUserKeyPair
             extends JcaKeyPair
-            implements GordianCoreIdAwareKeyPair, GordianIdAwareUserKeyPair {
+            implements GordianCoreIdAwareUserKeyPair {
         /**
          * Constructor.
          *

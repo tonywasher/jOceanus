@@ -20,6 +20,8 @@ package io.github.tonywasher.joceanus.gordianknot.api.keypair;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianIdAwareKeyType;
 
+import java.security.spec.PKCS8EncodedKeySpec;
+
 /**
  * Asymmetric IdAware KeyPair.
  */
@@ -68,9 +70,9 @@ public interface GordianIdAwareKeyPair
          * @return the new keyPair
          * @throws GordianException on error
          */
-        //GordianIdAwareUserKeyPair deriveUserKeyPairFromEncoding(byte[] pEncoding,
-        //                                                        GordianIdAwareKeyType pKeyType,
-        //                                                        byte[] pIdentity) throws GordianException;
+        GordianIdAwareUserKeyPair deriveUserKeyPairFromEncoding(PKCS8EncodedKeySpec pEncoding,
+                                                                GordianIdAwareKeyType pKeyType,
+                                                                byte[] pIdentity) throws GordianException;
     }
 
     /**
@@ -86,11 +88,11 @@ public interface GordianIdAwareKeyPair
         byte[] getIdentity();
 
         /**
-         * Obtain the userKeyPair encoding. Available for UserKeys.
+         * Obtain the userKeyPair encoding.
          *
          * @return the encoding
          * @throws GordianException on error
          */
-        //byte[] getPartialEncoding() throws GordianException;
+        PKCS8EncodedKeySpec getPartialEncoding() throws GordianException;
     }
 }
