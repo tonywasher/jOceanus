@@ -23,14 +23,16 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianIdAware
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9SignType;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyIdAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyIdAwareMasterKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPairGenerator.BouncyKeyFactorySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePrivateKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareMasterPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareMasterPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareUserPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareUserPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -129,7 +131,7 @@ public final class BouncySM9KeyPair {
      */
     public static class BouncySM9EncMasterPublicKey
             extends BouncyPublicKey<SM9EncMasterPublicKeyParameters>
-            implements GordianIdAwarePublicKey {
+            implements GordianIdAwareMasterPublicKey {
         /**
          * Constructor.
          *
@@ -163,8 +165,8 @@ public final class BouncySM9KeyPair {
         }
 
         @Override
-        public BouncyIdAwareKeyPair deriveMasterPublicKey() {
-            return new BouncyIdAwareKeyPair(this, null);
+        public BouncyIdAwareMasterKeyPair deriveMasterPublicKey() {
+            return new BouncyIdAwareMasterKeyPair(this, null);
         }
     }
 
@@ -173,7 +175,7 @@ public final class BouncySM9KeyPair {
      */
     public static class BouncySM9EncMasterPrivateKey
             extends BouncyPrivateKey<SM9EncMasterPrivateKeyParameters>
-            implements GordianIdAwarePrivateKey {
+            implements GordianIdAwareMasterPrivateKey {
         /**
          * Constructor.
          *
@@ -223,7 +225,7 @@ public final class BouncySM9KeyPair {
      */
     public static class BouncySM9EncUserPublicKey
             extends BouncyPublicKey<SM9EncPublicKeyParameters>
-            implements GordianIdAwarePublicKey {
+            implements GordianIdAwareUserPublicKey {
         /**
          * Constructor.
          *
@@ -263,9 +265,9 @@ public final class BouncySM9KeyPair {
         }
 
         @Override
-        public BouncyIdAwareKeyPair deriveMasterPublicKey() {
+        public BouncyIdAwareMasterKeyPair deriveMasterPublicKey() {
             final BouncySM9EncMasterPublicKey myPublic = new BouncySM9EncMasterPublicKey(ENCMASTER, getPublicKey().getMasterPublicKey());
-            return new BouncyIdAwareKeyPair(myPublic, null);
+            return new BouncyIdAwareMasterKeyPair(myPublic, null);
         }
     }
 
@@ -274,7 +276,7 @@ public final class BouncySM9KeyPair {
      */
     public static class BouncySM9EncUserPrivateKey
             extends BouncyPrivateKey<SM9EncPrivateKeyParameters>
-            implements GordianIdAwarePrivateKey {
+            implements GordianIdAwareUserPrivateKey {
         /**
          * Constructor.
          *
@@ -315,7 +317,7 @@ public final class BouncySM9KeyPair {
      */
     public static class BouncySM9SignMasterPublicKey
             extends BouncyPublicKey<SM9SigMasterPublicKeyParameters>
-            implements GordianIdAwarePublicKey {
+            implements GordianIdAwareMasterPublicKey {
         /**
          * Constructor.
          *
@@ -349,8 +351,8 @@ public final class BouncySM9KeyPair {
         }
 
         @Override
-        public BouncyIdAwareKeyPair deriveMasterPublicKey() {
-            return new BouncyIdAwareKeyPair(this, null);
+        public BouncyIdAwareMasterKeyPair deriveMasterPublicKey() {
+            return new BouncyIdAwareMasterKeyPair(this, null);
         }
     }
 
@@ -359,7 +361,7 @@ public final class BouncySM9KeyPair {
      */
     public static class BouncySM9SignMasterPrivateKey
             extends BouncyPrivateKey<SM9SigMasterPrivateKeyParameters>
-            implements GordianIdAwarePrivateKey {
+            implements GordianIdAwareMasterPrivateKey {
         /**
          * Constructor.
          *
@@ -399,7 +401,7 @@ public final class BouncySM9KeyPair {
      */
     public static class BouncySM9SignUserPublicKey
             extends BouncyPublicKey<SM9SigMasterPublicKeyParameters>
-            implements GordianIdAwarePublicKey {
+            implements GordianIdAwareUserPublicKey {
         /**
          * The identity.
          */
@@ -448,9 +450,9 @@ public final class BouncySM9KeyPair {
 
 
         @Override
-        public BouncyIdAwareKeyPair deriveMasterPublicKey() {
+        public BouncyIdAwareMasterKeyPair deriveMasterPublicKey() {
             final BouncySM9SignMasterPublicKey myPublic = new BouncySM9SignMasterPublicKey(SIGNMASTER, getPublicKey());
-            return new BouncyIdAwareKeyPair(myPublic, null);
+            return new BouncyIdAwareMasterKeyPair(myPublic, null);
         }
 
         @Override
@@ -484,7 +486,7 @@ public final class BouncySM9KeyPair {
      */
     public static class BouncySM9SignUserPrivateKey
             extends BouncyPrivateKey<SM9SigPrivateKeyParameters>
-            implements GordianIdAwarePrivateKey {
+            implements GordianIdAwareUserPrivateKey {
         /**
          * Constructor.
          *

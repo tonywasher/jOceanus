@@ -24,10 +24,12 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPair
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9SignType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePrivateKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareMasterPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareMasterPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareUserPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareUserPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaIdAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaIdAwareMasterKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPublicKey;
 import org.bouncycastle.jcajce.interfaces.SM9EncMasterPrivateKey;
@@ -116,7 +118,7 @@ public final class JcaSM9KeyPairGenerator {
      */
     public static class JcaSM9EncMasterPublicKey
             extends JcaPublicKey
-            implements GordianIdAwarePublicKey {
+            implements GordianIdAwareMasterPublicKey {
         /**
          * Constructor.
          *
@@ -141,8 +143,8 @@ public final class JcaSM9KeyPairGenerator {
         }
 
         @Override
-        public JcaIdAwareKeyPair deriveMasterPublicKey() {
-            return new JcaIdAwareKeyPair(this, null);
+        public JcaIdAwareMasterKeyPair deriveMasterPublicKey() {
+            return new JcaIdAwareMasterKeyPair(this, null);
         }
     }
 
@@ -151,7 +153,7 @@ public final class JcaSM9KeyPairGenerator {
      */
     public static class JcaSM9EncMasterPrivateKey
             extends JcaPrivateKey
-            implements GordianIdAwarePrivateKey {
+            implements GordianIdAwareMasterPrivateKey {
         /**
          * Constructor.
          *
@@ -192,7 +194,7 @@ public final class JcaSM9KeyPairGenerator {
      */
     public static class JcaSM9EncUserPublicKey
             extends JcaPublicKey
-            implements GordianIdAwarePublicKey {
+            implements GordianIdAwareUserPublicKey {
         /**
          * Constructor.
          *
@@ -232,9 +234,9 @@ public final class JcaSM9KeyPairGenerator {
         }
 
         @Override
-        public JcaIdAwareKeyPair deriveMasterPublicKey() {
+        public JcaIdAwareMasterKeyPair deriveMasterPublicKey() {
             final JcaSM9EncMasterPublicKey myPublic = new JcaSM9EncMasterPublicKey(ENCMASTER, getMasterPublicKey());
-            return new JcaIdAwareKeyPair(myPublic, null);
+            return new JcaIdAwareMasterKeyPair(myPublic, null);
         }
     }
 
@@ -243,7 +245,7 @@ public final class JcaSM9KeyPairGenerator {
      */
     public static class JcaSM9EncUserPrivateKey
             extends JcaPrivateKey
-            implements GordianIdAwarePrivateKey {
+            implements GordianIdAwareUserPrivateKey {
         /**
          * Constructor.
          *
@@ -272,7 +274,7 @@ public final class JcaSM9KeyPairGenerator {
      */
     public static class JcaSM9SignMasterPublicKey
             extends JcaPublicKey
-            implements GordianIdAwarePublicKey {
+            implements GordianIdAwareMasterPublicKey {
         /**
          * Constructor.
          *
@@ -298,8 +300,8 @@ public final class JcaSM9KeyPairGenerator {
         }
 
         @Override
-        public JcaIdAwareKeyPair deriveMasterPublicKey() {
-            return new JcaIdAwareKeyPair(this, null);
+        public JcaIdAwareMasterKeyPair deriveMasterPublicKey() {
+            return new JcaIdAwareMasterKeyPair(this, null);
         }
     }
 
@@ -308,7 +310,7 @@ public final class JcaSM9KeyPairGenerator {
      */
     public static class JcaSM9SignMasterPrivateKey
             extends JcaPrivateKey
-            implements GordianIdAwarePrivateKey {
+            implements GordianIdAwareMasterPrivateKey {
         /**
          * Constructor.
          *
@@ -339,7 +341,7 @@ public final class JcaSM9KeyPairGenerator {
      */
     public static class JcaSM9SignUserPublicKey
             extends JcaPublicKey
-            implements GordianIdAwarePublicKey {
+            implements GordianIdAwareUserPublicKey {
         /**
          * Constructor.
          *
@@ -371,9 +373,9 @@ public final class JcaSM9KeyPairGenerator {
         }
 
         @Override
-        public JcaIdAwareKeyPair deriveMasterPublicKey() {
+        public JcaIdAwareMasterKeyPair deriveMasterPublicKey() {
             final JcaSM9SignMasterPublicKey myPublic = new JcaSM9SignMasterPublicKey(SIGNMASTER, getMasterPublicKey());
-            return new JcaIdAwareKeyPair(myPublic, null);
+            return new JcaIdAwareMasterKeyPair(myPublic, null);
         }
 
         /**
@@ -392,7 +394,7 @@ public final class JcaSM9KeyPairGenerator {
      */
     public static class JcaSM9SignUserPrivateKey
             extends JcaPrivateKey
-            implements GordianIdAwarePrivateKey {
+            implements GordianIdAwareUserPrivateKey {
         /**
          * Constructor.
          *

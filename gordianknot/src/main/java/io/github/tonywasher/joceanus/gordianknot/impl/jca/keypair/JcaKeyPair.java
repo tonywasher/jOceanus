@@ -17,13 +17,14 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair.GordianIdAwareUserKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianIdAwareKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianCoreIdAwareMasterKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey.GordianStateAwarePrivateKey;
@@ -365,34 +366,73 @@ public class JcaKeyPair
     /**
      * Jca IdAware KeyPair.
      */
-    public static class JcaIdAwareKeyPair
+    public static class JcaIdAwareMasterKeyPair
             extends JcaKeyPair
-            implements GordianCoreIdAwareKeyPair {
+            implements GordianCoreIdAwareKeyPair, GordianCoreIdAwareMasterKeyPair {
         /**
          * Constructor.
          *
          * @param pPublic  the public key
          * @param pPrivate the private key
          */
-        JcaIdAwareKeyPair(final JcaPublicKey pPublic,
-                          final JcaPrivateKey pPrivate) {
+        JcaIdAwareMasterKeyPair(final JcaPublicKey pPublic,
+                                final JcaPrivateKey pPrivate) {
             super(pPublic, pPrivate);
         }
 
         @Override
-        public GordianIdAwarePublicKey getIdAwarePublicKey() {
-            return (GordianIdAwarePublicKey) getPublicKey();
+        public GordianIdAwareMasterPublicKey getIdAwarePublicKey() {
+            return (GordianIdAwareMasterPublicKey) getPublicKey();
         }
 
         @Override
-        public GordianIdAwarePrivateKey getIdAwarePrivateKey() {
-            return (GordianIdAwarePrivateKey) getPrivateKey();
+        public GordianIdAwareMasterPrivateKey getIdAwarePrivateKey() {
+            return (GordianIdAwareMasterPrivateKey) getPrivateKey();
         }
 
         @Override
-        public GordianIdAwareKeyPair newKeyPair(final GordianIdAwarePublicKey pPublic,
-                                                final GordianIdAwarePrivateKey pPrivate) {
-            return new JcaIdAwareKeyPair((JcaPublicKey) pPublic, (JcaPrivateKey) pPrivate);
+        public GordianIdAwareUserKeyPair newKeyPair(final GordianIdAwarePublicKey pPublic,
+                                                    final GordianIdAwarePrivateKey pPrivate) {
+            return new JcaIdAwareUserKeyPair((JcaPublicKey) pPublic, (JcaPrivateKey) pPrivate);
+        }
+
+        @Override
+        public GordianIdAwareKeyType getSubKeyType() {
+            return getIdAwarePublicKey().getSubKeyType();
+        }
+    }
+
+    /**
+     * Jca IdAware User KeyPair.
+     */
+    public static class JcaIdAwareUserKeyPair
+            extends JcaKeyPair
+            implements GordianCoreIdAwareKeyPair, GordianIdAwareUserKeyPair {
+        /**
+         * Constructor.
+         *
+         * @param pPublic  the public key
+         * @param pPrivate the private key
+         */
+        JcaIdAwareUserKeyPair(final JcaPublicKey pPublic,
+                              final JcaPrivateKey pPrivate) {
+            super(pPublic, pPrivate);
+        }
+
+        @Override
+        public GordianIdAwareUserPublicKey getIdAwarePublicKey() {
+            return (GordianIdAwareUserPublicKey) getPublicKey();
+        }
+
+        @Override
+        public GordianIdAwareUserPrivateKey getIdAwarePrivateKey() {
+            return (GordianIdAwareUserPrivateKey) getPrivateKey();
+        }
+
+        @Override
+        public GordianIdAwareUserKeyPair newKeyPair(final GordianIdAwarePublicKey pPublic,
+                                                    final GordianIdAwarePrivateKey pPrivate) {
+            return new JcaIdAwareUserKeyPair((JcaPublicKey) pPublic, (JcaPrivateKey) pPrivate);
         }
 
         @Override

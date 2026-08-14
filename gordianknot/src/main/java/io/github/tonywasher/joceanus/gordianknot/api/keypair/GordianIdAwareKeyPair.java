@@ -21,7 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianIdAwareKeyType;
 
 /**
- * Asymmetric StateAware KeyPair.
+ * Asymmetric IdAware KeyPair.
  */
 public interface GordianIdAwareKeyPair
         extends GordianKeyPair {
@@ -33,24 +33,6 @@ public interface GordianIdAwareKeyPair
     GordianIdAwareKeyType getSubKeyType();
 
     /**
-     * Obtain identity.
-     *
-     * @return the identity
-     */
-    byte[] getIdentity();
-
-    /**
-     * Obtain a new user keyPair for identity.
-     *
-     * @param pKeyType  the user keyType
-     * @param pIdentity the identity
-     * @return the new keyPair
-     * @throws GordianException on error
-     */
-    GordianIdAwareKeyPair newUserKeyPair(GordianIdAwareKeyType pKeyType,
-                                         byte[] pIdentity) throws GordianException;
-
-    /**
      * Obtain a new publicOnly keyPair for identity.
      *
      * @param pKeyType  the user keyType
@@ -58,6 +40,57 @@ public interface GordianIdAwareKeyPair
      * @return the new keyPair
      * @throws GordianException on error
      */
-    GordianIdAwareKeyPair derivePublicOnlyUserKeyPair(GordianIdAwareKeyType pKeyType,
-                                                      byte[] pIdentity) throws GordianException;
+    GordianIdAwareUserKeyPair derivePublicOnlyUserKeyPair(GordianIdAwareKeyType pKeyType,
+                                                          byte[] pIdentity) throws GordianException;
+
+    /**
+     * Asymmetric IdAware Master KeyPair.
+     */
+    interface GordianIdAwareMasterKeyPair
+            extends GordianIdAwareKeyPair {
+        /**
+         * Obtain a new user keyPair for identity.
+         *
+         * @param pKeyType  the user keyType
+         * @param pIdentity the identity
+         * @return the new keyPair
+         * @throws GordianException on error
+         */
+        GordianIdAwareUserKeyPair newUserKeyPair(GordianIdAwareKeyType pKeyType,
+                                                 byte[] pIdentity) throws GordianException;
+
+        /**
+         * Obtain a new user keyPair for identity and encoding.
+         *
+         * @param pEncoding the encoding
+         * @param pKeyType  the user keyType
+         * @param pIdentity the identity
+         * @return the new keyPair
+         * @throws GordianException on error
+         */
+        //GordianIdAwareUserKeyPair deriveUserKeyPairFromEncoding(byte[] pEncoding,
+        //                                                        GordianIdAwareKeyType pKeyType,
+        //                                                        byte[] pIdentity) throws GordianException;
+    }
+
+    /**
+     * Asymmetric StateAware KeyPair.
+     */
+    public interface GordianIdAwareUserKeyPair
+            extends GordianIdAwareKeyPair {
+        /**
+         * Obtain identity.
+         *
+         * @return the identity
+         */
+        byte[] getIdentity();
+
+        /**
+         * Obtain the userKeyPair encoding. Available for UserKeys.
+         *
+         * @return the encoding
+         * @throws GordianException on error
+         */
+        //byte[] getPartialEncoding() throws GordianException;
+    }
 }

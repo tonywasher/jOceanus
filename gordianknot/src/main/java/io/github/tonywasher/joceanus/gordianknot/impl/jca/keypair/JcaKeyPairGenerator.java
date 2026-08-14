@@ -22,12 +22,15 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPair
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePrivateKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareMasterPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareMasterPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareUserPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareUserPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.base.JcaProvider;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaIdAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaIdAwareMasterKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaIdAwareUserKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaStateAwareKeyPair;
@@ -188,7 +191,8 @@ public abstract class JcaKeyPairGenerator
                                      final JcaPrivateKey pPrivateKey) {
         return switch (pPrivateKey) {
             case JcaStateAwarePrivateKey sa -> new JcaStateAwareKeyPair(pPublicKey, sa);
-            case GordianIdAwarePrivateKey ia -> new JcaIdAwareKeyPair(pPublicKey, pPrivateKey);
+            case GordianIdAwareMasterPrivateKey mia -> new JcaIdAwareMasterKeyPair(pPublicKey, pPrivateKey);
+            case GordianIdAwareUserPrivateKey uia -> new JcaIdAwareUserKeyPair(pPublicKey, pPrivateKey);
             case null, default -> new JcaKeyPair(pPublicKey, pPrivateKey);
         };
     }
@@ -201,7 +205,8 @@ public abstract class JcaKeyPairGenerator
      */
     private JcaKeyPair createPublicOnlyKeyPair(final JcaPublicKey pPublicKey) {
         return switch (pPublicKey) {
-            case GordianIdAwarePublicKey ia -> new JcaIdAwareKeyPair(pPublicKey, null);
+            case GordianIdAwareMasterPublicKey mia -> new JcaIdAwareMasterKeyPair(pPublicKey, null);
+            case GordianIdAwareUserPublicKey uia -> new JcaIdAwareUserKeyPair(pPublicKey, null);
             case null, default -> new JcaKeyPair(pPublicKey, null);
         };
     }

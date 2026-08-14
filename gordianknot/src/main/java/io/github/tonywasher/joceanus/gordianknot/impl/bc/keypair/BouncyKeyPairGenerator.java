@@ -20,15 +20,18 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyIdAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyIdAwareMasterKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyIdAwareUserKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyStateAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyStateAwarePrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePrivateKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwarePublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareMasterPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareMasterPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareUserPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianIdAwareUserPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -119,7 +122,8 @@ public abstract class BouncyKeyPairGenerator<S extends AsymmetricKeyParameter, P
                                         final BouncyPrivateKey<S> pPrivateKey) {
         return switch (pPrivateKey) {
             case BouncyStateAwarePrivateKey<?> sa -> new BouncyStateAwareKeyPair(pPublicKey, sa);
-            case GordianIdAwarePrivateKey ia -> new BouncyIdAwareKeyPair(pPublicKey, pPrivateKey);
+            case GordianIdAwareMasterPrivateKey mia -> new BouncyIdAwareMasterKeyPair(pPublicKey, pPrivateKey);
+            case GordianIdAwareUserPrivateKey uia -> new BouncyIdAwareUserKeyPair(pPublicKey, pPrivateKey);
             case null, default -> new BouncyKeyPair(pPublicKey, pPrivateKey);
         };
     }
@@ -184,7 +188,8 @@ public abstract class BouncyKeyPairGenerator<S extends AsymmetricKeyParameter, P
      */
     private BouncyKeyPair createPublicOnlyKeyPair(final BouncyPublicKey<?> pPublicKey) {
         return switch (pPublicKey) {
-            case GordianIdAwarePublicKey ia -> new BouncyIdAwareKeyPair(pPublicKey, null);
+            case GordianIdAwareMasterPublicKey mia -> new BouncyIdAwareMasterKeyPair(pPublicKey, null);
+            case GordianIdAwareUserPublicKey uia -> new BouncyIdAwareUserKeyPair(pPublicKey, null);
             case null, default -> new BouncyKeyPair(pPublicKey, null);
         };
     }

@@ -37,6 +37,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair.GordianIdAwareMasterKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair.GordianIdAwareUserKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
@@ -155,7 +157,7 @@ class SM9Test {
         final GordianKeyPairSpec myEncMasterSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCMASTER);
         final GordianKeyPairSpec myEncChildSpec = myKPBuilder.sm9(GordianSM9EncryptType.EXCHANGE);
         final GordianKeyPairGenerator myEncGenerator = myKeyPairs.getKeyPairGenerator(myEncMasterSpec);
-        final GordianIdAwareKeyPair myEncMasterPair = (GordianIdAwareKeyPair) myEncGenerator.generateKeyPair();
+        final GordianIdAwareMasterKeyPair myEncMasterPair = (GordianIdAwareMasterKeyPair) myEncGenerator.generateKeyPair();
         final GordianKeyPair mySourcePair
                 = pMaster ? myEncMasterPair : myEncMasterPair.newUserKeyPair(GordianSM9EncryptType.EXCHANGE, mySourceId);
         final GordianKeyPair myTargetPair
@@ -267,7 +269,7 @@ class SM9Test {
         final GordianKeyPairSpec myEncMasterSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCMASTER);
         final GordianKeyPairSpec myEncChildSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCRYPT);
         final GordianKeyPairGenerator myEncGenerator = myKeyPairs.getKeyPairGenerator(myEncMasterSpec);
-        final GordianIdAwareKeyPair myEncMasterPair = (GordianIdAwareKeyPair) myEncGenerator.generateKeyPair();
+        final GordianIdAwareMasterKeyPair myEncMasterPair = (GordianIdAwareMasterKeyPair) myEncGenerator.generateKeyPair();
         final GordianKeyPair myTargetPair
                 = pMaster ? myEncMasterPair : myEncMasterPair.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
         final GordianKeyPairSpec myKeyPairSpec = pMaster ? myEncMasterSpec : myEncChildSpec;
@@ -355,8 +357,8 @@ class SM9Test {
         final GordianKeyPairSpecBuilder myKPBuilder = myKeyPairs.newKeyPairSpecBuilder();
         final GordianKeyPairSpec myEncMasterSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCMASTER);
         final GordianKeyPairGenerator myEncGenerator = myKeyPairs.getKeyPairGenerator(myEncMasterSpec);
-        final GordianIdAwareKeyPair myEncMasterPair = (GordianIdAwareKeyPair) myEncGenerator.generateKeyPair();
-        final GordianIdAwareKeyPair myEncPair = myEncMasterPair.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
+        final GordianIdAwareMasterKeyPair myEncMasterPair = (GordianIdAwareMasterKeyPair) myEncGenerator.generateKeyPair();
+        final GordianIdAwareUserKeyPair myEncPair = myEncMasterPair.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
         final GordianKeyPair myXchgPair = myEncMasterPair.newUserKeyPair(GordianSM9EncryptType.EXCHANGE, myTargetId);
         final GordianIdAwareKeyPair myPOEncPair = myEncMasterPair.derivePublicOnlyUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
         final GordianIdAwareKeyPair myPOEncPair2 = myEncPair.derivePublicOnlyUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
@@ -378,9 +380,6 @@ class SM9Test {
         Assertions.assertThrows(GordianException.class, () -> myEncPair.derivePublicOnlyUserKeyPair(GordianSM9SignType.SIGN, myTargetId), "Wrong keyType");
         Assertions.assertThrows(GordianException.class, () -> myEncPair.derivePublicOnlyUserKeyPair(GordianSM9EncryptType.ENCRYPT, null), "Null Id");
         Assertions.assertThrows(GordianException.class, () -> myEncPair.derivePublicOnlyUserKeyPair(null, myTargetId), "Null keyType");
-
-        /* Can't create userKeys from userKeys */
-        Assertions.assertThrows(GordianException.class, () -> myEncPair.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId), "UserKey usage");
 
         /* Obtain representations keyPair */
         final X509EncodedKeySpec myX509 = myEncGenerator.getX509Encoding(myEncMasterPair);
@@ -432,7 +431,7 @@ class SM9Test {
         final GordianKeyPairSpecBuilder myKPBuilder = mySourceKeyPairs.newKeyPairSpecBuilder();
         final GordianKeyPairSpec myEncMasterSpec = myKPBuilder.sm9(GordianSM9EncryptType.ENCMASTER);
         final GordianKeyPairGenerator myEncGenerator = mySourceKeyPairs.getKeyPairGenerator(myEncMasterSpec);
-        final GordianIdAwareKeyPair myEncMasterPair = (GordianIdAwareKeyPair) myEncGenerator.generateKeyPair();
+        final GordianIdAwareMasterKeyPair myEncMasterPair = (GordianIdAwareMasterKeyPair) myEncGenerator.generateKeyPair();
         final GordianKeyPair myEncPair = myEncMasterPair.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
 
         /* Obtain representations keyPair */
@@ -441,7 +440,7 @@ class SM9Test {
         final GordianKeyPairFactory myTargetKeyPairs = myTarget.getKeyPairFactory();
         final GordianEncryptorFactory myTargetEncs = myTarget.getEncryptorFactory();
         final GordianKeyPairGenerator myTargetGenerator = myTargetKeyPairs.getKeyPairGenerator(myEncMasterSpec);
-        final GordianIdAwareKeyPair myDerivedMaster = (GordianIdAwareKeyPair) myTargetGenerator.deriveKeyPair(myX509, myPKCS8);
+        final GordianIdAwareMasterKeyPair myDerivedMaster = (GordianIdAwareMasterKeyPair) myTargetGenerator.deriveKeyPair(myX509, myPKCS8);
         final GordianKeyPair myTargetPair = myDerivedMaster.newUserKeyPair(GordianSM9EncryptType.ENCRYPT, myTargetId);
 
         /* Create an Encryptor */
@@ -483,8 +482,8 @@ class SM9Test {
         final GordianKeyPairSpec mySigMasterSpec = myKPBuilder.sm9(GordianSM9SignType.SIGNMASTER);
         final GordianKeyPairSpec mySigChildSpec = myKPBuilder.sm9(GordianSM9SignType.SIGN);
         final GordianKeyPairGenerator mySigGenerator = myKeyPairs.getKeyPairGenerator(mySigMasterSpec);
-        final GordianIdAwareKeyPair mySigMasterPair = (GordianIdAwareKeyPair) mySigGenerator.generateKeyPair();
-        final GordianIdAwareKeyPair mySigPair = mySigMasterPair.newUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
+        final GordianIdAwareMasterKeyPair mySigMasterPair = (GordianIdAwareMasterKeyPair) mySigGenerator.generateKeyPair();
+        final GordianIdAwareUserKeyPair mySigPair = mySigMasterPair.newUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
         final GordianIdAwareKeyPair myPOSigPair = mySigMasterPair.derivePublicOnlyUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
         final GordianIdAwareKeyPair myPOSigPair2 = mySigPair.derivePublicOnlyUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
         Assertions.assertEquals(myPOSigPair, myPOSigPair2, "derived Public Only");
@@ -502,9 +501,6 @@ class SM9Test {
         Assertions.assertThrows(GordianException.class, () -> mySigPair.derivePublicOnlyUserKeyPair(GordianSM9EncryptType.ENCRYPT, mySignerId), "Wrong keyType");
         Assertions.assertThrows(GordianException.class, () -> mySigPair.derivePublicOnlyUserKeyPair(GordianSM9SignType.SIGN, null), "Null Id");
         Assertions.assertThrows(GordianException.class, () -> mySigPair.derivePublicOnlyUserKeyPair(null, mySignerId), "Null keyType");
-
-        /* Can't create userKeys from userKeys */
-        Assertions.assertThrows(GordianException.class, () -> mySigPair.newUserKeyPair(GordianSM9SignType.SIGN, mySignerId), "UserKey usage");
 
         /* Obtain representations keyPair */
         final X509EncodedKeySpec myX509 = mySigGenerator.getX509Encoding(mySigMasterPair);
@@ -552,7 +548,7 @@ class SM9Test {
         final GordianKeyPairSpecBuilder myKPBuilder = mySourceKeyPairs.newKeyPairSpecBuilder();
         final GordianKeyPairSpec mySigMasterSpec = myKPBuilder.sm9(GordianSM9SignType.SIGNMASTER);
         final GordianKeyPairGenerator mySigGenerator = mySourceKeyPairs.getKeyPairGenerator(mySigMasterSpec);
-        final GordianIdAwareKeyPair mySigMasterPair = (GordianIdAwareKeyPair) mySigGenerator.generateKeyPair();
+        final GordianIdAwareMasterKeyPair mySigMasterPair = (GordianIdAwareMasterKeyPair) mySigGenerator.generateKeyPair();
         final GordianKeyPair mySigPair = mySigMasterPair.newUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
 
         /* Obtain keyPair in target */
@@ -561,7 +557,7 @@ class SM9Test {
         final GordianKeyPairFactory myTargetKeyPairs = myTarget.getKeyPairFactory();
         final GordianSignatureFactory myTargetSigns = myTarget.getSignatureFactory();
         final GordianKeyPairGenerator myTargetGenerator = myTargetKeyPairs.getKeyPairGenerator(mySigMasterSpec);
-        final GordianIdAwareKeyPair myDerivedMaster = (GordianIdAwareKeyPair) myTargetGenerator.deriveKeyPair(myX509, myPKCS8);
+        final GordianIdAwareMasterKeyPair myDerivedMaster = (GordianIdAwareMasterKeyPair) myTargetGenerator.deriveKeyPair(myX509, myPKCS8);
         final GordianKeyPair myTargetPair = myDerivedMaster.newUserKeyPair(GordianSM9SignType.SIGN, mySignerId);
 
         /* Create a signature */

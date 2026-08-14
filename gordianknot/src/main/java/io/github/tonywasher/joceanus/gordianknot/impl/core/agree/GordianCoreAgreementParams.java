@@ -26,7 +26,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair.GordianIdAwareUserKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
@@ -308,8 +308,7 @@ public class GordianCoreAgreementParams
             }
 
             /* If this is an idAware userKey, set the clientName */
-            if (myKeyPair instanceof GordianIdAwareKeyPair myIdAware
-                    && myIdAware.getSubKeyType().isUserKey()) {
+            if (myKeyPair instanceof GordianIdAwareUserKeyPair myIdAware) {
                 theClientName = myIdAware.getIdentity();
             }
 
@@ -341,8 +340,7 @@ public class GordianCoreAgreementParams
             }
 
             /* If this is an idAware userKey, set the serverName */
-            if (myKeyPair instanceof GordianIdAwareKeyPair myIdAware
-                    && myIdAware.getSubKeyType().isUserKey()
+            if (myKeyPair instanceof GordianIdAwareUserKeyPair myIdAware
                     && theServerName == null) {
                 theServerName = myIdAware.getIdentity();
             }

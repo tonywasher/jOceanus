@@ -25,7 +25,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncrypt
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair.GordianIdAwareMasterKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair.GordianIdAwareUserKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
@@ -415,7 +416,7 @@ class AsymmetricStore {
 
                 /* Switch to user keyPair if required */
                 if (theOwner.isIdAwareUserKey()) {
-                    myKeyPair = ((GordianIdAwareKeyPair) theMasterKeyPair).newUserKeyPair(myCoreSpec.getIdAwareKeyType(), SOURCEID);
+                    myKeyPair = ((GordianIdAwareMasterKeyPair) theMasterKeyPair).newUserKeyPair(myCoreSpec.getIdAwareKeyType(), SOURCEID);
                 }
 
                 /* Store the keyPair */
@@ -495,7 +496,7 @@ class AsymmetricStore {
                 final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) theOwner.getKeySpec();
                 if (theOwner.isIdAwareUserKey()) {
                     /* derive the keyPair */
-                    theTarget = ((GordianIdAwareKeyPair) theMasterKeyPair).newUserKeyPair(mySpec.getIdAwareKeyType(), TARGETID);
+                    theTarget = ((GordianIdAwareMasterKeyPair) theMasterKeyPair).newUserKeyPair(mySpec.getIdAwareKeyType(), TARGETID);
                 } else if (theOwner.isIdAware()) {
                     theTarget = theMasterKeyPair;
                 } else {
@@ -549,7 +550,7 @@ class AsymmetricStore {
 
                 /* Switch to user keyPair if required */
                 if (theOwner.isIdAwareUserKey()) {
-                    myMirror = ((GordianIdAwareKeyPair) myMirror).newUserKeyPair(myCoreSpec.getIdAwareKeyType(), SOURCEID);
+                    myMirror = ((GordianIdAwareMasterKeyPair) myMirror).newUserKeyPair(myCoreSpec.getIdAwareKeyType(), SOURCEID);
                 }
 
                 /* Store and return */
@@ -604,7 +605,7 @@ class AsymmetricStore {
 
                 /* Switch to user keyPair if required */
                 if (theOwner.isIdAwareUserKey()) {
-                    myPartnerSelf = ((GordianIdAwareKeyPair) myPartnerSelf).newUserKeyPair(myCoreSpec.getIdAwareKeyType(), SOURCEID);
+                    myPartnerSelf = ((GordianIdAwareMasterKeyPair) myPartnerSelf).newUserKeyPair(myCoreSpec.getIdAwareKeyType(), SOURCEID);
                 }
 
                 /* Store and return */
@@ -659,7 +660,7 @@ class AsymmetricStore {
 
                 /* Switch to user keyPair if required */
                 if (theOwner.isIdAwareUserKey()) {
-                    myPartnerTarget = ((GordianIdAwareKeyPair) myPartnerTarget).newUserKeyPair(myCoreSpec.getIdAwareKeyType(), TARGETID);
+                    myPartnerTarget = ((GordianIdAwareMasterKeyPair) myPartnerTarget).newUserKeyPair(myCoreSpec.getIdAwareKeyType(), TARGETID);
                 }
 
                 /* Store and return */
@@ -696,8 +697,8 @@ class AsymmetricStore {
 
             /* Switch to user keyPair if required */
             if (theOwner.isIdAwareUserKey()) {
-                final GordianIdAwareKeyPair myIdAware = (GordianIdAwareKeyPair) pSource;
-                myCopy = ((GordianIdAwareKeyPair) myCopy).newUserKeyPair(myCoreSpec.getIdAwareKeyType(), myIdAware.getIdentity());
+                final GordianIdAwareUserKeyPair myIdAware = (GordianIdAwareUserKeyPair) pSource;
+                myCopy = ((GordianIdAwareMasterKeyPair) myCopy).newUserKeyPair(myCoreSpec.getIdAwareKeyType(), myIdAware.getIdentity());
             }
             return myCopy;
         }
