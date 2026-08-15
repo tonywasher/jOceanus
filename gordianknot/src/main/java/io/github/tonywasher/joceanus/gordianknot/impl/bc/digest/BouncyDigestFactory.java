@@ -31,7 +31,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2B
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2Xof;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2bDigest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2sDigest;
-import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianCubeHashDigest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianGroestlDigest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianJHDigest;
@@ -44,6 +43,7 @@ import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Xof;
 import org.bouncycastle.crypto.digests.AsconHash256;
 import org.bouncycastle.crypto.digests.AsconXof128;
+import org.bouncycastle.crypto.digests.Blake3Digest;
 import org.bouncycastle.crypto.digests.DSTU7564Digest;
 import org.bouncycastle.crypto.digests.GOST3411Digest;
 import org.bouncycastle.crypto.digests.GOST3411_2012_256Digest;
@@ -129,7 +129,7 @@ public class BouncyDigestFactory
             case BLAKE2 -> pDigestSpec.isXofMode()
                     ? getBlake2Xof(pDigestSpec)
                     : getBlake2Digest(pDigestSpec);
-            case BLAKE3 -> new GordianBlake3Digest(myLen.getByteLength());
+            case BLAKE3 -> new Blake3Digest(myLen.getLength());
             case STREEBOG -> getStreebogDigest(myLen);
             case KUPYNA -> getKupynaDigest(myLen);
             case GROESTL -> new GordianGroestlDigest(myLen.getLength());

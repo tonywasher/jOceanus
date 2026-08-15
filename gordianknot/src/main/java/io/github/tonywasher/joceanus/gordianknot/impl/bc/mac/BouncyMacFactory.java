@@ -35,7 +35,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCo
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreSipHashType;
-import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianBlake2Mac;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianBlake2XMac;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianBlake3Mac;
@@ -45,6 +44,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianSkeinXMac;
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.Xof;
+import org.bouncycastle.crypto.digests.Blake3Digest;
 import org.bouncycastle.crypto.generators.Poly1305KeyGenerator;
 import org.bouncycastle.crypto.macs.CBCBlockCipherMac;
 import org.bouncycastle.crypto.macs.CFBBlockCipherMac;
@@ -266,7 +266,7 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCBlake3Mac(final GordianDigestSpec pSpec) {
-        final GordianBlake3Digest myDigest = new GordianBlake3Digest(pSpec.getDigestLength().getByteLength());
+        final Blake3Digest myDigest = new Blake3Digest(pSpec.getDigestLength().getLength());
         return new GordianBlake3Mac(myDigest);
     }
 

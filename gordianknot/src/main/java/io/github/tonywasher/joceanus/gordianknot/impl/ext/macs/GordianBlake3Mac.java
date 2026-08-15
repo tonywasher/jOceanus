@@ -16,11 +16,11 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.ext.macs;
 
-import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
-import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianBlake3Parameters;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.Xof;
+import org.bouncycastle.crypto.digests.Blake3Digest;
+import org.bouncycastle.crypto.params.Blake3Parameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 
 /**
@@ -31,14 +31,14 @@ public class GordianBlake3Mac
     /**
      * Digest.
      */
-    private final GordianBlake3Digest theDigest;
+    private final Blake3Digest theDigest;
 
     /**
      * Create a blake2Mac with the specified digest.
      *
      * @param pDigest the base digest.
      */
-    public GordianBlake3Mac(final GordianBlake3Digest pDigest) {
+    public GordianBlake3Mac(final Blake3Digest pDigest) {
         /* Store the digest */
         theDigest = pDigest;
     }
@@ -52,9 +52,9 @@ public class GordianBlake3Mac
     public void init(final CipherParameters pParams) {
         CipherParameters myParams = pParams;
         if (myParams instanceof KeyParameter keyParam) {
-            myParams = GordianBlake3Parameters.key(keyParam.getKey());
+            myParams = Blake3Parameters.key(keyParam.getKey());
         }
-        if (!(myParams instanceof GordianBlake3Parameters myBlakeParams)) {
+        if (!(myParams instanceof Blake3Parameters myBlakeParams)) {
             throw new IllegalArgumentException("Invalid parameter passed to Blake3Mac init - "
                     + pParams.getClass().getName());
         }

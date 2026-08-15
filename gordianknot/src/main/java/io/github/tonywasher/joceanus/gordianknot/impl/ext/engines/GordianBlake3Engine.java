@@ -16,12 +16,12 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.ext.engines;
 
-import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
-import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianBlake3Parameters;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.StreamCipher;
+import org.bouncycastle.crypto.digests.Blake3Digest;
+import org.bouncycastle.crypto.params.Blake3Parameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.util.Memoable;
@@ -44,18 +44,18 @@ public class GordianBlake3Engine
     /**
      * Underlying kMac.
      */
-    private final GordianBlake3Digest theDigest;
+    private final Blake3Digest theDigest;
 
     /**
      * Reset state.
      */
-    private GordianBlake3Digest theResetState;
+    private Blake3Digest theResetState;
 
     /**
      * Constructor.
      */
     public GordianBlake3Engine() {
-        theDigest = new GordianBlake3Digest();
+        theDigest = new Blake3Digest();
         theKeyStream = new byte[theDigest.getDigestSize() << 1];
     }
 
@@ -99,11 +99,11 @@ public class GordianBlake3Engine
         }
 
         /* Initialise engine and mark as initialised */
-        theDigest.init(GordianBlake3Parameters.key(newKey));
+        theDigest.init(Blake3Parameters.key(newKey));
         theDigest.update(newIV, 0, newIV.length);
 
         /* Save reset state */
-        theResetState = theDigest.copy();
+        theResetState = (Blake3Digest) theDigest.copy();
 
         /* Initialise the stream block */
         theIndex = 0;
