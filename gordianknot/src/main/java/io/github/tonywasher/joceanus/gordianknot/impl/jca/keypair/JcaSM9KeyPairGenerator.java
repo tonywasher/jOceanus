@@ -170,19 +170,17 @@ public final class JcaSM9KeyPairGenerator {
         public GordianIdAwareUserKeyPair deriveUserKeyPairFromEncoding(final PKCS8EncodedKeySpec pEncoding,
                                                                        final GordianIdAwareKeyType pKeyType,
                                                                        final byte[] pIdentity) throws GordianException {
-            /* Can't derive EXCHANGE key from Encoding */
-            if (GordianSM9EncryptType.EXCHANGE.equals(pKeyType)) {
-                throw new GordianDataException("Can't derive EXCHANGE keyPairs from encoding");
-            }
-
             /* Protect against exceptions */
             try {
                 /* Build the private key from encoded */
                 final SM9EncMasterPublicKey myMasterPublic = (SM9EncMasterPublicKey) getPublicKey();
+                final boolean isExchange = GordianSM9EncryptType.EXCHANGE.equals(pKeyType);
                 final SM9EncUserPrivateKeySpec mySpec =
-                        new SM9EncUserPrivateKeySpec(pEncoding.getEncoded(), myMasterPublic, pIdentity, SM9EncMasterPrivateKeyParameters.HID);
+                        new SM9EncUserPrivateKeySpec(pEncoding.getEncoded(), myMasterPublic,
+                                pIdentity, SM9EncMasterPrivateKeyParameters.HID, isExchange);
                 final PrivateKey myDerived = theKeyFactory.generatePrivate(mySpec);
-                final JcaSM9EncUserPrivateKey myPrivate = new JcaSM9EncUserPrivateKey(ENCRYPT, myDerived);
+                final GordianKeyPairSpec myKeyPairSpec = isExchange ? EXCHANGE : ENCRYPT;
+                final JcaSM9EncUserPrivateKey myPrivate = new JcaSM9EncUserPrivateKey(myKeyPairSpec, myDerived);
                 final JcaSM9EncUserPublicKey myPublic = deriveUserPublicKey(pKeyType, pIdentity);
                 return new JcaIdAwareUserKeyPair(myPublic, myPrivate);
             } catch (InvalidKeySpecException e) {
@@ -341,10 +339,6 @@ public final class JcaSM9KeyPairGenerator {
 
         @Override
         public PKCS8EncodedKeySpec getPartialEncoding() throws GordianException {
-            /* Can't derive EXCHANGE key from Encoding */
-            if (GordianSM9EncryptType.EXCHANGE.equals(getSubKeyType())) {
-                throw new GordianDataException("Can't obtain EXCHANGE privateKey encoding");
-            }
             return new PKCS8EncodedKeySpec(getPrivateKey().getEncoded());
         }
     }

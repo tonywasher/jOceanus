@@ -164,6 +164,15 @@ class SM9Test {
                 = pMaster ? myEncMasterPair : myEncMasterPair.newUserKeyPair(GordianSM9EncryptType.EXCHANGE, myTargetId);
         final GordianKeyPairSpec myKeyPairSpec = pMaster ? myEncMasterSpec : myEncChildSpec;
 
+        /* If this is a child setUp */
+        if (!pMaster) {
+            final GordianIdAwareUserKeyPair myUserPair = (GordianIdAwareUserKeyPair) myTargetPair;
+            final PKCS8EncodedKeySpec myPartial = myUserPair.getPartialEncoding();
+            final GordianKeyPair myRestored
+                    = myEncMasterPair.deriveUserKeyPairFromEncoding(myPartial, GordianSM9EncryptType.EXCHANGE, myTargetId);
+            Assertions.assertEquals(myRestored, myUserPair, "Matching partial derived");
+        }
+
         /* Certificates */
         final X500Name myClientName = KeyStoreUtils.buildX500Name(KeyStoreAlias.AGREE);
         final GordianCertificate myClientCert = myAgrees.newMiniCertificate(myClientName, mySourcePair,

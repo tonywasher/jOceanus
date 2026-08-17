@@ -178,11 +178,6 @@ public final class BouncySM9KeyPair {
         public GordianIdAwareUserKeyPair deriveUserKeyPairFromEncoding(final PKCS8EncodedKeySpec pEncoding,
                                                                        final GordianIdAwareKeyType pKeyType,
                                                                        final byte[] pIdentity) throws GordianException {
-            /* Can't derive EXCHANGE key from Encoding */
-            if (GordianSM9EncryptType.EXCHANGE.equals(pKeyType)) {
-                throw new GordianDataException("Can't derive EXCHANGE keyPairs from encoding");
-            }
-
             /* protect against exceptions */
             try {
                 /* Extract the encoded parameters */
@@ -194,9 +189,16 @@ public final class BouncySM9KeyPair {
                 final byte[] myEncoding = ASN1OctetString.getInstance(myInfo.parsePrivateKey()).getOctets();
 
                 /* Build the private key from encoded */
-                final SM9EncPrivateKeyParameters myParams = SM9EncPrivateKeyParameters.fromEncoded(myEncoding,
-                        getPublicKey(), pIdentity, SM9EncMasterPrivateKeyParameters.HID);
-                final BouncySM9EncUserPrivateKey myPrivate = new BouncySM9EncUserPrivateKey(ENCRYPT, myParams);
+                final SM9EncPrivateKeyParameters myParams = switch ((GordianSM9EncryptType) pKeyType) {
+                    case ENCRYPT -> SM9EncPrivateKeyParameters.fromEncoded(myEncoding,
+                            getPublicKey(), pIdentity, SM9EncMasterPrivateKeyParameters.HID);
+                    case EXCHANGE -> SM9EncPrivateKeyParameters.fromEncodedExchangeKey(myEncoding,
+                            getPublicKey(), pIdentity);
+                    default -> null;
+                };
+                final boolean isExchange = GordianSM9EncryptType.EXCHANGE.equals(pKeyType);
+                final GordianKeyPairSpec mySpec = isExchange ? EXCHANGE : ENCRYPT;
+                final BouncySM9EncUserPrivateKey myPrivate = new BouncySM9EncUserPrivateKey(mySpec, myParams);
                 final BouncySM9EncUserPublicKey myPublic = deriveUserPublicKey(pKeyType, pIdentity);
                 return new BouncyIdAwareUserKeyPair(myPublic, myPrivate);
             } catch (IOException
@@ -349,11 +351,6 @@ public final class BouncySM9KeyPair {
 
         @Override
         public PKCS8EncodedKeySpec getPartialEncoding() throws GordianException {
-            /* Can't derive EXCHANGE key from Encoding */
-            if (GordianSM9EncryptType.EXCHANGE.equals(getSubKeyType())) {
-                throw new GordianDataException("Can't obtain EXCHANGE privateKey encoding");
-            }
-
             /* Protect against exceptions */
             try {
                 final PrivateKeyInfo myInfo = new PrivateKeyInfo(
