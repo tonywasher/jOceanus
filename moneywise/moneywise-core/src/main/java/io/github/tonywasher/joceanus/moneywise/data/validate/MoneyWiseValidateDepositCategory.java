@@ -33,6 +33,12 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
  */
 public class MoneyWiseValidateDepositCategory
         extends MoneyWiseValidateCategory<MoneyWiseDepositCategory> {
+    /**
+     * Constructor.
+     */
+    public MoneyWiseValidateDepositCategory() {
+        /* NoOp */
+    }
 
     @Override
     public void validate(final PrometheusDataItemCtl pCategory) {

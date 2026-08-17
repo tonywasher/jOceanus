@@ -40,6 +40,13 @@ public class MoneyWiseValidateTransCategory
      */
     private static final String ERROR_DIFFPARENT = MoneyWiseBasicResource.TRANSCATEGORY_ERROR_DIFFPARENT.getValue();
 
+    /**
+     * Constructor.
+     */
+    public MoneyWiseValidateTransCategory() {
+        /* NoOp */
+    }
+
     @Override
     public void validate(final PrometheusDataItemCtl pCategory) {
         /* Validate the base */

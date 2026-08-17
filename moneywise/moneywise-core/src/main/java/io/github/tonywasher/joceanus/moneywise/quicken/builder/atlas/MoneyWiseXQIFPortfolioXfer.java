@@ -196,7 +196,6 @@ public class MoneyWiseXQIFPortfolioXfer {
 
     /**
      * Process transfer to a security.
-     * <p>
      *
      * @param pHolding the security holding
      * @param pDebit   the debit account

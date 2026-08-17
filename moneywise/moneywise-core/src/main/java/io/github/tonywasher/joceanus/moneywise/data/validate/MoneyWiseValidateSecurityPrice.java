@@ -35,6 +35,12 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
  */
 public class MoneyWiseValidateSecurityPrice
         implements PrometheusDataValidator {
+    /**
+     * Constructor.
+     */
+    public MoneyWiseValidateSecurityPrice() {
+        /* NoOp */
+    }
 
     @Override
     public void validate(final PrometheusDataItemCtl pPrice) {

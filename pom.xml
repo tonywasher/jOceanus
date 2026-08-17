@@ -78,13 +78,8 @@
         <ApacheMavenVersion>3.9.16</ApacheMavenVersion>
         <JavaVersion>21</JavaVersion>
         <JavaLanguageVersion>21</JavaLanguageVersion>
-<<<<<<< HEAD
         <CheckStyleVersion>14.1.0</CheckStyleVersion>
         <PMDVersion>7.27.0</PMDVersion>
-=======
-        <CheckStyleVersion>13.10.0</CheckStyleVersion>
-        <PMDVersion>7.26.0</PMDVersion>
->>>>>>> 4b0ec6e38 (Revamp saved reports)
         <CleanPluginVersion>3.5.0</CleanPluginVersion>
         <ResourcesPluginVersion>3.5.0</ResourcesPluginVersion>
         <InstallPluginVersion>3.1.4</InstallPluginVersion>

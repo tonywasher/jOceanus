@@ -981,6 +981,13 @@ public abstract class MoneyWiseAssetBase
      */
     protected static class MoneyWiseAssetDataMap
             extends PrometheusDataInstanceMap<MoneyWiseAssetBase, String> {
+        /**
+         * Constructor.
+         */
+        public MoneyWiseAssetDataMap() {
+            /* NoOp */
+        }
+
         @Override
         public void adjustForItem(final PrometheusDataItem pItem) {
             /* Access item */

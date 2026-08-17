@@ -30,6 +30,13 @@ import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateInfoS
  */
 public class MoneyWiseValidatePayeeInfoSet
         extends PrometheusValidateInfoSet<MoneyWisePayeeInfo> {
+    /**
+     * Constructor.
+     */
+    public MoneyWiseValidatePayeeInfoSet() {
+        /* NoOp */
+    }
+
     @Override
     public MoneyWisePayee getOwner() {
         return (MoneyWisePayee) super.getOwner();

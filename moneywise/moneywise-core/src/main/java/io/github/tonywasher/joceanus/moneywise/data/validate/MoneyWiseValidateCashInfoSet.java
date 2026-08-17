@@ -49,6 +49,13 @@ public class MoneyWiseValidateCashInfoSet
      */
     private static final String ERROR_PAYEECLOSED = "AutoPayee is closed for non-closed autoCash";
 
+    /**
+     * Constructor.
+     */
+    public MoneyWiseValidateCashInfoSet() {
+        /* NoOp */
+    }
+
     @Override
     public MoneyWiseCash getOwner() {
         return (MoneyWiseCash) super.getOwner();

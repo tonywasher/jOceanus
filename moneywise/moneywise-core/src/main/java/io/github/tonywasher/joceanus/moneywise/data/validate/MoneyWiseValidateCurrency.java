@@ -29,6 +29,12 @@ import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateStati
  */
 public class MoneyWiseValidateCurrency
         extends PrometheusValidateStatic {
+    /**
+     * Constructor.
+     */
+    public MoneyWiseValidateCurrency() {
+        /* NoOp */
+    }
 
     @Override
     public void validate(final PrometheusDataItemCtl pCurrency) {

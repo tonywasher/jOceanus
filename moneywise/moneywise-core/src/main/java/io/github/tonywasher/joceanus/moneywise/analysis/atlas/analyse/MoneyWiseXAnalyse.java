@@ -226,6 +226,7 @@ public interface MoneyWiseXAnalyse {
          * Adjust basis buckets.
          *
          * @param pTrans the transaction
+         * @throws OceanusException on error
          */
         void adjustTaxBasis(MoneyWiseXAnalyseTransCtl pTrans) throws OceanusException;
 

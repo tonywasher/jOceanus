@@ -26,6 +26,13 @@ import io.github.tonywasher.joceanus.themis.parser.base.ThemisInstance.ThemisMet
  */
 public class ThemisStatsParser {
     /**
+     * Constructor.
+     */
+    public ThemisStatsParser() {
+        /* NoOp */
+    }
+
+    /**
      * Parse the element.
      *
      * @param pElement  the owning element

@@ -20,6 +20,9 @@ package io.github.tonywasher.joceanus.moneywise.data.basic;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataIndexedItem;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 
+/**
+ * AssetTouch Interface.
+ */
 public interface MoneyWiseAssetTouch
         extends MetisDataIndexedItem {
     /**

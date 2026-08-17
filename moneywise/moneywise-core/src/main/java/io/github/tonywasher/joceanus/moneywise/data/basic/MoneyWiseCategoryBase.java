@@ -728,6 +728,13 @@ public abstract class MoneyWiseCategoryBase
      */
     public static class MoneyWiseCategoryDataMap<T extends MoneyWiseCategoryBase>
             extends PrometheusDataInstanceMap<T, String> {
+        /**
+         * Constructor.
+         */
+        public MoneyWiseCategoryDataMap() {
+            /* NoOp */
+        }
+
         @Override
         @SuppressWarnings("unchecked")
         public void adjustForItem(final PrometheusDataItem pItem) {

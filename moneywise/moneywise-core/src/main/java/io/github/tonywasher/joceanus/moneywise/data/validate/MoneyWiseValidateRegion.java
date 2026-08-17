@@ -38,6 +38,13 @@ public class MoneyWiseValidateRegion
      */
     private static final String NAME_NEWREGION = MoneyWiseBasicResource.REGION_NEWREGION.getValue();
 
+    /**
+     * Constructor.
+     */
+    public MoneyWiseValidateRegion() {
+        /* NoOp */
+    }
+
     @Override
     public void setEditSet(final PrometheusEditSet pEditSet) {
         /* NoOp */

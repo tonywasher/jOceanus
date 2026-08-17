@@ -30,6 +30,9 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 
+/**
+ * Portfolio Transfer Adjustment Utilities for QIF File.
+ */
 public class MoneyWiseXQIFPortfolioAdjust {
     /**
      * The Portfolio Helper.
