@@ -28,15 +28,46 @@ import org.w3c.dom.Document;
 public abstract class MetisReportBase<D, F>
         implements MetisReportControl<F> {
     /**
+     * HTML builder.
+     */
+    private final MetisReportHTMLBuilder theBuilder;
+
+    /**
      * Reference Manager.
      */
-    private final MetisReportReferenceManager<F> theReferenceMgr;
+    private final MetisReportReferenceManager<F> theRestrictedMgr;
+
+    /**
+     * The most recent data for the report.
+     */
+    private D theData;
+
+    /**
+     * Unrestricted Reference Manager.
+     */
+    private MetisReportReferenceManager<F> theUnrestrictedMgr;
 
     /**
      * Constructor.
+     *
+     * @param pBuilder the builder
      */
-    protected MetisReportBase() {
-        theReferenceMgr = new MetisReportReferenceManager<>(this);
+    protected MetisReportBase(final MetisReportHTMLBuilder pBuilder) {
+        theBuilder = pBuilder;
+        theRestrictedMgr = new MetisReportReferenceManager<>(this);
+    }
+
+    /**
+     * Set restricted/unrestricted mode.
+     *
+     * @param pRestricted is the document restricted?
+     */
+    public void setRestricted(final boolean pRestricted) {
+        if (pRestricted) {
+            theUnrestrictedMgr = null;
+        } else {
+            theUnrestrictedMgr = new MetisReportReferenceManager<>(this);
+        }
     }
 
     /**
@@ -45,7 +76,7 @@ public abstract class MetisReportBase<D, F>
      * @return the reference manager
      */
     protected MetisReportReferenceManager<F> getReferenceMgr() {
-        return theReferenceMgr;
+        return theUnrestrictedMgr != null ? theUnrestrictedMgr : theRestrictedMgr;
     }
 
     /**
@@ -56,7 +87,7 @@ public abstract class MetisReportBase<D, F>
      */
     public void setFilterForId(final String pId,
                                final Object pSelect) {
-        theReferenceMgr.setFilterForId(pId, pSelect);
+        getReferenceMgr().setFilterForId(pId, pSelect);
     }
 
     /**
@@ -69,7 +100,41 @@ public abstract class MetisReportBase<D, F>
     protected void setDelayedTable(final String pId,
                                    final MetisReportHTMLTable pParent,
                                    final Object pSource) {
-        theReferenceMgr.setDelayedTable(pId, pParent, pSource);
+        getReferenceMgr().setDelayedTable(pId, pParent, pSource);
+    }
+
+    /**
+     * Create the restricted document.
+     *
+     * @param pData the source data
+     * @return Web document
+     */
+    public Document createRestrictedReport(final D pData) {
+        /* Store the data */
+        theData = pData;
+
+        /* Create the report */
+        return createReport(pData);
+    }
+
+    /**
+     * Create the unrestricted document.
+     *
+     * @return Web document
+     */
+    public Document createUnrestrictedReport() {
+        /* Set unrestricted */
+        setRestricted(false);
+        theBuilder.setRestricted(false);
+
+        /* Create the report */
+        final Document myDoc = createReport(theData);
+        getReferenceMgr().addDelayedTablesAsHidden(theBuilder);
+
+        /* Reset restricted */
+        theBuilder.setRestricted(true);
+        setRestricted(true);
+        return myDoc;
     }
 
     /**

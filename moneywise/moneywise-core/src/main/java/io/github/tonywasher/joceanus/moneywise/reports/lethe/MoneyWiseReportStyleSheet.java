@@ -28,7 +28,12 @@ public enum MoneyWiseReportStyleSheet implements TethysUIStyleSheetId {
     /**
      * Report StyleSheet.
      */
-    CSS_REPORT("MoneyWiseReports.css");
+    CSS_REPORT("MoneyWiseReports.css"),
+
+    /**
+     * Report JavaScript.
+     */
+    JS_REPORT("MoneyWiseReports.js");
 
     /**
      * The Source.

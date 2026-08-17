@@ -80,6 +80,7 @@ public class MoneyWiseReportAssetGains
      */
     protected MoneyWiseReportAssetGains(final MetisReportManager<MoneyWiseAnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
+        super(pManager.getBuilder());
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
     }

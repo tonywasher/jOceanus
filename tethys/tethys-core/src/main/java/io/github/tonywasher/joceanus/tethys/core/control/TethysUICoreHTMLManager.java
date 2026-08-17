@@ -80,6 +80,16 @@ public abstract class TethysUICoreHTMLManager
     private String theCSSProcessed;
 
     /**
+     * JavaScript.
+     */
+    private String theJavaScript;
+
+    /**
+     * External String.
+     */
+    private String theExternalString;
+
+    /**
      * HTML String.
      */
     private String theHTMLString;
@@ -114,22 +124,24 @@ public abstract class TethysUICoreHTMLManager
         return theEventManager.getEventRegistrar();
     }
 
-    /**
-     * Obtain the HTML String.
-     *
-     * @return the string
-     */
+    @Override
     public String getHTMLString() {
         return theHTMLString;
     }
 
-    /**
-     * Obtain the processed CSS.
-     *
-     * @return the CSS
-     */
+    @Override
+    public String getExternalString() {
+        return theExternalString != null ? theExternalString : theHTMLString;
+    }
+
+    @Override
     public String getProcessedCSS() {
         return theCSSProcessed;
+    }
+
+    @Override
+    public String getJavaScript() {
+        return theJavaScript;
     }
 
     @Override
@@ -183,6 +195,12 @@ public abstract class TethysUICoreHTMLManager
         loadHTMLContent(theHTMLString);
     }
 
+    @Override
+    public void setExternalContent(final String pHTMLString) {
+        /* Store the string */
+        theExternalString = pHTMLString;
+    }
+
     /**
      * Load HTML Contents.
      *
@@ -203,6 +221,12 @@ public abstract class TethysUICoreHTMLManager
 
         /* Process the CSS */
         processCSS();
+    }
+
+    @Override
+    public void setJavaScript(final TethysUIStyleSheetId pJavaScript) throws OceanusException {
+        /* Store the JavaScript */
+        theJavaScript = OceanusResourceLoader.loadResourceToString(pJavaScript);
     }
 
     /**

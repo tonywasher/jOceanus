@@ -70,6 +70,7 @@ public class MoneyWiseReportIncomeExpense
      */
     protected MoneyWiseReportIncomeExpense(final MetisReportManager<MoneyWiseAnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
+        super(pManager.getBuilder());
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
     }

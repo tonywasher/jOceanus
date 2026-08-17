@@ -65,6 +65,11 @@ public class TethysUICoreHTMLToFile {
     private static final String ELEMENT_STYLE = "style";
 
     /**
+     * Script element name.
+     */
+    private static final String ELEMENT_SCRIPT = "script";
+
+    /**
      * The Gui Factory.
      */
     private final TethysUICoreFactory<?> theFactory;
@@ -132,7 +137,8 @@ public class TethysUICoreHTMLToFile {
      */
     private void writeToFile(final File pFile) throws OceanusException {
         /* Create the document */
-        final Document myDoc = createXMLDocument(theHTMLManager.getHTMLString(), theHTMLManager.getProcessedCSS());
+        final Document myDoc = createXMLDocument(theHTMLManager.getExternalString(),
+                theHTMLManager.getProcessedCSS(), theHTMLManager.getJavaScript());
 
         /* Write the document to the file */
         writeDocumentToFile(myDoc, pFile);
@@ -143,10 +149,12 @@ public class TethysUICoreHTMLToFile {
      *
      * @param pXML        the XML String
      * @param pStyleSheet the styleSheet
+     * @param pJavaScript the JavaScript
      * @return the document
      */
     private static Document createXMLDocument(final String pXML,
-                                              final String pStyleSheet) {
+                                              final String pStyleSheet,
+                                              final String pJavaScript) {
         /* Parse the document */
         final Document myDoc = Jsoup.parse(pXML);
 
@@ -163,6 +171,13 @@ public class TethysUICoreHTMLToFile {
         /* Obtain the head and add a style element */
         final Element myHead = myDoc.head();
         myHead.appendChild(myElement);
+
+        /* Create the JavaScript element */
+        if (pJavaScript != null) {
+            final Element myJSElement = myDoc.createElement(ELEMENT_SCRIPT);
+            myJSElement.text(pJavaScript);
+            myHead.appendChild(myJSElement);
+        }
 
         /* Obtain all link elements */
         final Elements myLinks = myDoc.getElementsByTag(ELEMENT_A);
