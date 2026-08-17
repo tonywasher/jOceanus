@@ -39,6 +39,13 @@ import java.util.Objects;
  */
 public class MoneyWiseValidateDepositInfoSet
         extends PrometheusValidateInfoSet<MoneyWiseDepositInfo> {
+    /**
+     * Constructor.
+     */
+    public MoneyWiseValidateDepositInfoSet() {
+        /* NoOp */
+    }
+
     @Override
     public MoneyWiseDeposit getOwner() {
         return (MoneyWiseDeposit) super.getOwner();

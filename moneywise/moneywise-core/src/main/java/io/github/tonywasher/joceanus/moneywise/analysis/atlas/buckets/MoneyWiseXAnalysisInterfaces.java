@@ -16,23 +16,23 @@
  */
 package io.github.tonywasher.joceanus.moneywise.analysis.atlas.buckets;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.moneywise.analysis.atlas.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 
 /**
  * Analysis Interfaces.
  */
-public abstract class MoneyWiseXAnalysisInterfaces {
+public interface MoneyWiseXAnalysisInterfaces {
     /**
      * Standard register-able bucket.
      */
-    public interface MoneyWiseXAnalysisBucketRegister {
+    interface MoneyWiseXAnalysisBucketRegister {
         /**
          * Obtain the bucket Id.
          *
@@ -51,7 +51,7 @@ public abstract class MoneyWiseXAnalysisInterfaces {
     /**
      * Standard foreign bucket.
      */
-    public interface MoneyWiseXAnalysisBucketForeign
+    interface MoneyWiseXAnalysisBucketForeign
             extends MoneyWiseXAnalysisBucketRegister {
         /**
          * Record exchangeRate.
@@ -81,7 +81,7 @@ public abstract class MoneyWiseXAnalysisInterfaces {
     /**
      * Standard security bucket.
      */
-    public interface MoneyWiseXAnalysisBucketPriced
+    interface MoneyWiseXAnalysisBucketPriced
             extends MoneyWiseXAnalysisBucketForeign {
         /**
          * Record securityPrice.
@@ -116,7 +116,7 @@ public abstract class MoneyWiseXAnalysisInterfaces {
     /**
      * Analysis Cursor.
      */
-    public interface MoneyWiseXAnalysisCursor {
+    interface MoneyWiseXAnalysisCursor {
         /**
          * Obtain the current price for a security.
          *

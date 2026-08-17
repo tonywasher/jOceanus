@@ -23,11 +23,11 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 /**
  * Tax related interfaces.
  */
-public class MoneyWiseTax {
+public interface MoneyWiseTax {
     /**
      * Tax Credit decisions.
      */
-    public interface MoneyWiseTaxCredit {
+    interface MoneyWiseTaxCredit {
         /**
          * Obtain the yearEnd.
          *
@@ -60,7 +60,7 @@ public class MoneyWiseTax {
     /**
      * Tax Year Factory.
      */
-    public interface MoneyWiseTaxFactory {
+    interface MoneyWiseTaxFactory {
         /**
          * Obtain the taxYear for the period.
          *

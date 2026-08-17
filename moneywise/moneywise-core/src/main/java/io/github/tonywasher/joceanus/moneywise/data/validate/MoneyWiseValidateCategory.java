@@ -58,6 +58,13 @@ public abstract class MoneyWiseValidateCategory<T extends MoneyWiseCategoryBase>
      */
     private PrometheusEditSet theEditSet;
 
+    /**
+     * Constructor.
+     */
+    public MoneyWiseValidateCategory() {
+        /* NoOp */
+    }
+
     @Override
     public void setEditSet(final PrometheusEditSet pEditSet) {
         theEditSet = pEditSet;

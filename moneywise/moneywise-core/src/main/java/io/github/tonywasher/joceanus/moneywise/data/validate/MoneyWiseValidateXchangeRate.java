@@ -34,6 +34,12 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
  */
 public class MoneyWiseValidateXchangeRate
         implements PrometheusDataValidator {
+    /**
+     * Constructor.
+     */
+    public MoneyWiseValidateXchangeRate() {
+        /* NoOp */
+    }
 
     @Override
     public void validate(final PrometheusDataItemCtl pRate) {
