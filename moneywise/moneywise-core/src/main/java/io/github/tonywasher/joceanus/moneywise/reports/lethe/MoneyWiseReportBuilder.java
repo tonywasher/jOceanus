@@ -104,6 +104,15 @@ public class MoneyWiseReportBuilder {
         theManager.setReport(myReport);
 
         /* Create the report */
-        return myReport.createReport(pAnalysis);
+        return myReport.createRestrictedReport(pAnalysis);
+    }
+
+    /**
+     * Build the unrestricted report.
+     *
+     * @return the Web document
+     */
+    public Document createUnrestrictedReport() {
+        return theManager.createUnrestrictedReport();
     }
 }

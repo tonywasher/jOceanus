@@ -114,6 +114,16 @@ public class MetisReportHTMLBuilder {
     private static final String CLASS_TITLEVALUE = "titleValue";
 
     /**
+     * Name of header class.
+     */
+    private static final String CLASS_HEADER = "tblHdr";
+
+    /**
+     * Name of hidden class.
+     */
+    private static final String CLASS_HIDDEN = "tblHidden";
+
+    /**
      * Name of accordianValue class.
      */
     private static final String CLASS_ACCORDIANVALUE = "accordianValue";
@@ -209,6 +219,11 @@ public class MetisReportHTMLBuilder {
     protected static final String REF_ID = ATTR_ID;
 
     /**
+     * The header reference header.
+     */
+    protected static final String REF_HDR = "hdr";
+
+    /**
      * The filter reference header.
      */
     protected static final String REF_FILTER = "filter";
@@ -221,12 +236,12 @@ public class MetisReportHTMLBuilder {
     /**
      * The open accordion prefix.
      */
-    protected static final String PFX_OPEN = "⯆ ";
+    protected static final String PFX_OPEN = "⯆";
 
     /**
      * The collapsed accordion prefix.
      */
-    private static final String PFX_COLLAPSED = "⯈ ";
+    private static final String PFX_COLLAPSED = "⯈";
 
     /**
      * The document builder.
@@ -234,14 +249,19 @@ public class MetisReportHTMLBuilder {
     private final DocumentBuilder theBuilder;
 
     /**
-     * The document.
-     */
-    private Document theDocument;
-
-    /**
      * The data formatter.
      */
     private final OceanusDataFormatter theFormatter;
+
+    /**
+     * Are we restricted?
+     */
+    private boolean restricted;
+
+    /**
+     * The document.
+     */
+    private Document theDocument;
 
     /**
      * Constructor.
@@ -254,6 +274,7 @@ public class MetisReportHTMLBuilder {
         try {
             /* Store the formatter */
             theFormatter = pFormatter;
+            restricted = true;
 
             /* Create the document builder */
             final DocumentBuilderFactory myDocFactory = DocumentBuilderFactory.newInstance();
@@ -274,6 +295,15 @@ public class MetisReportHTMLBuilder {
      */
     public OceanusDataFormatter getDataFormatter() {
         return theFormatter;
+    }
+
+    /**
+     * Set restricted/unrestricted mode.
+     *
+     * @param pRestricted is the document restricted?
+     */
+    public void setRestricted(final boolean pRestricted) {
+        restricted = pRestricted;
     }
 
     /**
@@ -412,8 +442,17 @@ public class MetisReportHTMLBuilder {
         final String myId = REF_ID
                 + pLink;
 
-        /* Create the header */
-        final Text myHeader = theDocument.createTextNode(PFX_OPEN);
+        /* If we are not restricted */
+        if (!restricted) {
+            /* Create the header */
+            final String myHdrId = REF_HDR
+                    + pLink;
+            final Element myHdr = pControl.createNewCell(false);
+            myHdr.setTextContent(PFX_OPEN);
+            myHdr.setAttribute(ATTR_CLASS, CLASS_HEADER);
+            myHdr.setAttribute(ATTR_ID, myHdrId);
+            myHdr.setIdAttribute(ATTR_ID, true);
+        }
 
         /* Create the cell */
         final Element myCell = pControl.createNewCell(false);
@@ -425,7 +464,12 @@ public class MetisReportHTMLBuilder {
         myLink.setAttribute(ATTR_HREF, REF_TAB
                 + pLink);
         myLink.setTextContent(pName);
-        myCell.appendChild(myHeader);
+
+        /* Add the cells */
+        if (restricted) {
+            final Text myHeader = theDocument.createTextNode(PFX_OPEN);
+            myCell.appendChild(myHeader);
+        }
         myCell.appendChild(myLink);
     }
 
@@ -454,8 +498,17 @@ public class MetisReportHTMLBuilder {
         final String myId = REF_ID
                 + pLink;
 
-        /* Create the header */
-        final Text myHeader = theDocument.createTextNode(PFX_COLLAPSED);
+        /* If we are not restricted */
+        if (!restricted) {
+            /* Create the header */
+            final String myHdrId = REF_HDR
+                    + pLink;
+            final Element myHdr = pControl.createNewCell(false);
+            myHdr.setTextContent(PFX_COLLAPSED);
+            myHdr.setAttribute(ATTR_CLASS, CLASS_HEADER);
+            myHdr.setAttribute(ATTR_ID, myHdrId);
+            myHdr.setIdAttribute(ATTR_ID, true);
+        }
 
         /* Create the cell */
         final Element myCell = pControl.createNewCell(false);
@@ -467,7 +520,12 @@ public class MetisReportHTMLBuilder {
         myLink.setAttribute(ATTR_HREF, REF_DELAY
                 + pLink);
         myLink.setTextContent(pName);
-        myCell.appendChild(myHeader);
+
+        /* Add the cells */
+        if (restricted) {
+            final Text myHeader = theDocument.createTextNode(PFX_COLLAPSED);
+            myCell.appendChild(myHeader);
+        }
         myCell.appendChild(myLink);
     }
 
@@ -593,6 +651,13 @@ public class MetisReportHTMLBuilder {
     public void startTotalRow(final MetisReportHTMLTable pControl) {
         /* Create the row */
         pControl.createTotalRow();
+
+        /* If we are not restricted */
+        if (!restricted) {
+            /* Create the dummy header cell */
+            final Element myHdr = pControl.createNewCell(false);
+            myHdr.setAttribute(ATTR_CLASS, CLASS_HEADER);
+        }
     }
 
     /**
@@ -698,9 +763,10 @@ public class MetisReportHTMLBuilder {
      *
      * @param pTable the table to embed
      * @param pTitle the title of the table
+     * @return the row element that was added
      */
-    public void embedTable(final MetisReportHTMLTable pTable,
-                           final String pTitle) {
+    public Element embedTable(final MetisReportHTMLTable pTable,
+                              final String pTitle) {
         /* Access body element */
         final MetisReportHTMLTable myParent = pTable.getParent();
         final Element myLink = getLinkRow(pTitle);
@@ -726,6 +792,7 @@ public class MetisReportHTMLBuilder {
 
         /* Adjust prefix of owning link */
         setPrefix(myLink, true);
+        return myRow;
     }
 
     /**
@@ -785,6 +852,17 @@ public class MetisReportHTMLBuilder {
                    final boolean pOpen) {
         /* Adjust prefix of owning link */
         pOwner.getFirstChild().getFirstChild().setTextContent(pOpen ? PFX_OPEN : PFX_COLLAPSED);
+    }
+
+    /**
+     * Set hidden row.
+     *
+     * @param pRow the row to hide
+     */
+    void setHidden(final Element pRow) {
+        pRow.setAttribute(ATTR_CLASS, CLASS_HIDDEN);
+        final Node myPrevious = pRow.getPreviousSibling();
+        setPrefix(myPrevious, false);
     }
 
     /**
@@ -1011,7 +1089,6 @@ public class MetisReportHTMLBuilder {
             theRow.appendChild(myCell);
             return myCell;
         }
-
     }
 
     /**

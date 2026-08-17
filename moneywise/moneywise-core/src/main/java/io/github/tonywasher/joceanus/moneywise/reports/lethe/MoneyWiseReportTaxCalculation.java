@@ -84,6 +84,7 @@ public class MoneyWiseReportTaxCalculation
      */
     protected MoneyWiseReportTaxCalculation(final MetisReportManager<MoneyWiseAnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
+        super(pManager.getBuilder());
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
     }

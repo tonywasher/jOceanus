@@ -36,6 +36,16 @@ td {
   border: 1px solid white;
 }
 
+/* Define Width of table header column */
+.tblHdr {
+  width: 15px;
+}
+
+/* Define hidden class */
+.tblHidden {
+  display: none;
+}
+
 /* Define background colour for title row */
 .totalRow {
   background-color: ${-jtethys-color-zebra};

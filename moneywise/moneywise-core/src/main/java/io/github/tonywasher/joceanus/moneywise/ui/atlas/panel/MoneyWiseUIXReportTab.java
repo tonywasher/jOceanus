@@ -42,6 +42,8 @@ import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.prometheus.ui.PrometheusGoToEvent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
@@ -61,6 +63,11 @@ import org.w3c.dom.Document;
  */
 public class MoneyWiseUIXReportTab
         implements OceanusEventProvider<PrometheusDataEvent>, TethysUIComponent {
+    /**
+     * Logger.
+     */
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseUIXReportTab.class);
+
     /**
      * Text for DataEntry Title.
      */
@@ -174,8 +181,9 @@ public class MoneyWiseUIXReportTab
         thePanel.setNorth(myHeader);
         thePanel.setCentre(myHTMLScroll);
 
-        /* Load the CSS */
+        /* Load the CSS and JavaScript */
         theHTMLPane.setCSSContent(MoneyWiseXReportStyleSheet.CSS_REPORT);
+        theHTMLPane.setJavaScript(MoneyWiseXReportStyleSheet.JS_REPORT);
 
         /* Create listeners */
         theView.getEventRegistrar().addEventListener(e -> refreshData());
@@ -184,7 +192,7 @@ public class MoneyWiseUIXReportTab
         final OceanusEventRegistrar<PrometheusDataEvent> myRegistrar = theSelect.getEventRegistrar();
         myRegistrar.addEventListener(PrometheusDataEvent.SELECTIONCHANGED, e -> handleReportRequest());
         myRegistrar.addEventListener(PrometheusDataEvent.PRINT, e -> theHTMLPane.printIt());
-        myRegistrar.addEventListener(PrometheusDataEvent.SAVETOFILE, e -> theHTMLPane.saveToFile());
+        myRegistrar.addEventListener(PrometheusDataEvent.SAVETOFILE, e -> saveToFile());
         theHTMLPane.getEventRegistrar().addEventListener(TethysUIEvent.BUILDPAGE, e -> {
             theManager.processReference(e.getDetails(String.class), theHTMLPane);
             e.consume();
@@ -212,6 +220,21 @@ public class MoneyWiseUIXReportTab
     @Override
     public void setVisible(final boolean pVisible) {
         thePanel.setVisible(pVisible);
+    }
+
+    /**
+     * Save to file.
+     */
+    private void saveToFile() {
+        try {
+            final Document myDoc = theBuilder.createUnrestrictedReport();
+            final String myText;
+            myText = theManager.formatXML(myDoc);
+            theHTMLPane.setExternalContent(myText);
+            theHTMLPane.saveToFile();
+        } catch (OceanusException e) {
+            LOGGER.error("Failed to save to file", e);
+        }
     }
 
     /**

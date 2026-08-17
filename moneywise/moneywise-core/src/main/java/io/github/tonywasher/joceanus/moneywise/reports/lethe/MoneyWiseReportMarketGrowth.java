@@ -118,6 +118,7 @@ public class MoneyWiseReportMarketGrowth
      */
     protected MoneyWiseReportMarketGrowth(final MetisReportManager<MoneyWiseAnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
+        super(pManager.getBuilder());
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
     }

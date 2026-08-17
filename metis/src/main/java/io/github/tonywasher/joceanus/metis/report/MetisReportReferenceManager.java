@@ -17,9 +17,11 @@
 package io.github.tonywasher.joceanus.metis.report;
 
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisReportHTMLTable;
+import org.w3c.dom.Element;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Reference Manager for report builders.
@@ -96,6 +98,31 @@ public class MetisReportReferenceManager<F> {
 
         /* Reformat text */
         return true;
+    }
+
+    /**
+     * Add delayed references as hidden elements.
+     *
+     * @param pBuilder the HTML builder
+     */
+    protected void addDelayedTablesAsHidden(final MetisReportHTMLBuilder pBuilder) {
+        /* Loop while we have delayed tables */
+        while (!theDelayedMap.isEmpty()) {
+            /* Access the first table */
+            final Entry<String, MetisReportDelayedTable> myEntry = theDelayedMap.entrySet().iterator().next();
+            final MetisReportDelayedTable myDelay = myEntry.getValue();
+            final String myReference = myEntry.getKey();
+
+            /* Remove the element from the map */
+            theDelayedMap.remove(myReference);
+
+            /* Create the delayed table */
+            final MetisReportHTMLTable myTable = theReport.createDelayedTable(myDelay);
+
+            /* Embed the table correctly and hide it */
+            final Element myRow = pBuilder.embedTable(myTable, myDelay.getId());
+            pBuilder.setHidden(myRow);
+        }
     }
 
     /**

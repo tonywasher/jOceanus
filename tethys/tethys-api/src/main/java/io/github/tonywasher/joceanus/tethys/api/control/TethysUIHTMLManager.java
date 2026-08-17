@@ -50,12 +50,27 @@ public interface TethysUIHTMLManager
                         String pReference);
 
     /**
+     * Set the external content.
+     *
+     * @param pHTMLString the external HTML content.
+     */
+    void setExternalContent(String pHTMLString);
+
+    /**
      * Set the CSS.
      *
      * @param pStyleSheet the CSS content.
      * @throws OceanusException on error
      */
     void setCSSContent(TethysUIStyleSheetId pStyleSheet) throws OceanusException;
+
+    /**
+     * Set the JavaScript.
+     *
+     * @param pJavaScript the JavaScript content.
+     * @throws OceanusException on error
+     */
+    void setJavaScript(TethysUIStyleSheetId pJavaScript) throws OceanusException;
 
     /**
      * Obtain the HTML String.
@@ -65,11 +80,25 @@ public interface TethysUIHTMLManager
     String getHTMLString();
 
     /**
+     * Obtain the External String.
+     *
+     * @return the string
+     */
+    String getExternalString();
+
+    /**
      * Obtain the processed CSS.
      *
      * @return the CSS
      */
     String getProcessedCSS();
+
+    /**
+     * Obtain the JavaScript.
+     *
+     * @return the JavaScript
+     */
+    String getJavaScript();
 
     /**
      * Scroll to reference.
