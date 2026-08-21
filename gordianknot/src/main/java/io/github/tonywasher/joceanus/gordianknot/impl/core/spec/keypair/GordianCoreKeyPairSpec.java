@@ -420,6 +420,24 @@ public class GordianCoreKeyPairSpec
     }
 
     /**
+     * Obtain the HybridKEM keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreHybridKEMSpec getHybridKEMSpec() {
+        return castValue(GordianCoreHybridKEMSpec.class);
+    }
+
+    /**
+     * Obtain the HybridSign keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreHybridSignSpec getHybridSignSpec() {
+        return castValue(GordianCoreHybridSignSpec.class);
+    }
+
+    /**
      * Obtain the idAware keyType.
      *
      * @return the keyType.
@@ -577,6 +595,8 @@ public class GordianCoreKeyPairSpec
             case SQISIGN -> theSubSpec instanceof GordianCoreSQIsignSpec;
             case UOV -> theSubSpec instanceof GordianCoreUOVSpec;
             case SM9 -> theSubSpec instanceof GordianSM9KeyType;
+            case HYBRIDKEM -> theSubSpec instanceof GordianCoreHybridKEMSpec;
+            case HYBRIDSIGN -> theSubSpec instanceof GordianCoreHybridSignSpec;
             case NEWHOPE -> theSubSpec == null;
             case LMS -> theSubSpec instanceof GordianCoreLMSSpec ls && ls.isValid();
             case EDDSA, XDH -> theSubSpec instanceof GordianCoreEdwardsSpec;
@@ -700,6 +720,8 @@ public class GordianCoreKeyPairSpec
             case SQISIGN -> GordianCoreSQIsignSpec.mapCoreSpec(pSubSpec);
             case UOV -> GordianCoreUOVSpec.mapCoreSpec(pSubSpec);
             case EDDSA, XDH -> GordianCoreEdwardsSpec.mapCoreSpec(pSubSpec);
+            case HYBRIDKEM -> GordianCoreHybridKEMSpec.mapCoreSpec(pSubSpec);
+            case HYBRIDSIGN -> GordianCoreHybridSignSpec.mapCoreSpec(pSubSpec);
             default -> pSubSpec;
         };
     }
@@ -742,6 +764,8 @@ public class GordianCoreKeyPairSpec
             case SQISIGN -> getSQIsignSpec().getSpec();
             case UOV -> getUOVSpec().getSpec();
             case EDDSA, XDH -> getEdwardsSpec().getSpec();
+            case HYBRIDKEM -> getHybridKEMSpec().getSpec();
+            case HYBRIDSIGN -> getHybridSignSpec().getSpec();
             default -> theSubSpec;
         };
     }

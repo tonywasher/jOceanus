@@ -550,6 +550,26 @@ public interface GordianKeyPairSpecBuilder {
     }
 
     /**
+     * Create HybridKEMKey.
+     *
+     * @param pSpec the HybridKEM Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec hybridKEM(final GordianHybridKEMSpec pSpec) {
+        return withKeyPairType(GordianKeyPairType.HYBRIDKEM).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
+     * Create HybridSignKey.
+     *
+     * @param pSpec the HybridSign Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec hybridSign(final GordianHybridSignSpec pSpec) {
+        return withKeyPairType(GordianKeyPairType.HYBRIDSIGN).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
      * Create CompositeKey.
      *
      * @param pSpecs the list of keySpecs

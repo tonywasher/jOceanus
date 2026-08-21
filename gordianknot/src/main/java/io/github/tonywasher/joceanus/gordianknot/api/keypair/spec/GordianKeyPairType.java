@@ -207,6 +207,16 @@ public enum GordianKeyPairType {
     SM9,
 
     /**
+     * HybridKEM.
+     */
+    HYBRIDKEM,
+
+    /**
+     * HybridSign.
+     */
+    HYBRIDSIGN,
+
+    /**
      * Composite.
      */
     COMPOSITE;

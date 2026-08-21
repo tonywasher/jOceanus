@@ -131,6 +131,7 @@ public class JcaKeyPairFactory
             case SM9 -> getSM9KeyGenerator(pKeySpec);
             case XMSS -> new JcaXMSSKeyPairGenerator(theFactory, pKeySpec);
             case LMS -> new JcaLMSKeyPairGenerator(theFactory, pKeySpec);
+            case HYBRIDKEM, HYBRIDSIGN -> new JcaHybridKeyPairGenerator(theFactory, pKeySpec);
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec.getKeyPairType()));
         };
     }

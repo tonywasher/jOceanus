@@ -78,7 +78,7 @@ public interface GordianIdAwareKeyPair
     /**
      * Asymmetric StateAware KeyPair.
      */
-    public interface GordianIdAwareUserKeyPair
+    interface GordianIdAwareUserKeyPair
             extends GordianIdAwareKeyPair {
         /**
          * Obtain identity.

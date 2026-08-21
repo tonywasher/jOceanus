@@ -179,6 +179,7 @@ public class BouncyKeyPairFactory
                     ? new BouncyXMSSMTKeyPairGenerator(theFactory, pKeySpec)
                     : new BouncyXMSSKeyPairGenerator(theFactory, pKeySpec);
             case LMS -> new BouncyHSSKeyPairGenerator(theFactory, pKeySpec);
+            case HYBRIDKEM, HYBRIDSIGN -> new BouncyHybridKeyPairGenerator(theFactory, pKeySpec);
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec.getKeyPairType()));
         };
     }
