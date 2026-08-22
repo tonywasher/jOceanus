@@ -21,37 +21,27 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreXMSSSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.jca.digest.JcaDigest;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianHybridSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair;
 
 /**
- * XMSS signature.
+ * Hybrid signature.
  */
-public class JcaXMSSSignature
+public class JcaHybridSignature
         extends JcaSignature {
-    /**
-     * Is this a preHash signature?
-     */
-    private final boolean preHash;
-
     /**
      * Constructor.
      *
      * @param pFactory       the factory
      * @param pSignatureSpec the signatureSpec
+     * @throws GordianException on error
      */
-    JcaXMSSSignature(final GordianBaseFactory pFactory,
-                     final GordianSignatureSpec pSignatureSpec) {
+    JcaHybridSignature(final GordianBaseFactory pFactory,
+                       final GordianSignatureSpec pSignatureSpec) throws GordianException {
         /* Initialise class */
         super(pFactory, pSignatureSpec);
-
-        /* Determine preHash */
-        preHash = GordianSignatureType.PREHASH.equals(pSignatureSpec.getSignatureType());
     }
 
     @Override
@@ -60,8 +50,9 @@ public class JcaXMSSSignature
         final GordianKeyPair myPair = pParams.getKeyPair();
         JcaKeyPair.checkKeyPair(myPair);
         checkKeyPairForSignature(myPair);
-        final String mySignName = getAlgorithmForKeyPair(myPair);
-        setSigner(getJavaSignature(mySignName, true));
+        final GordianHybridSpec myHybrid = ((GordianCoreKeyPairSpec) myPair.getKeyPairSpec()).getHybridSignSpec();
+        final String mySignName = myHybrid.getJCAName();
+        setSigner(getJavaSignature(mySignName, false));
 
         /* pass on call */
         super.initForSigning(pParams);
@@ -73,38 +64,11 @@ public class JcaXMSSSignature
         final GordianKeyPair myPair = pParams.getKeyPair();
         JcaKeyPair.checkKeyPair(myPair);
         checkKeyPairForSignature(myPair);
-        final String mySignName = getAlgorithmForKeyPair(myPair);
-        setSigner(getJavaSignature(mySignName, true));
+        final GordianHybridSpec myHybrid = ((GordianCoreKeyPairSpec) myPair.getKeyPairSpec()).getHybridSignSpec();
+        final String mySignName = myHybrid.getJCAName();
+        setSigner(getJavaSignature(mySignName, false));
 
         /* pass on call */
         super.initForVerify(pParams);
-    }
-
-    /**
-     * Obtain algorithmName for keyPair.
-     *
-     * @param pKeyPair the keyPair
-     * @return the name
-     * @throws GordianException on error
-     */
-    private String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
-        /* Determine the required signer */
-        final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
-        final GordianCoreXMSSSpec myXMSSKeySpec = mySpec.getXMSSSpec();
-        final GordianCoreDigestSpec myDigestSpec = (GordianCoreDigestSpec) myXMSSKeySpec.getDigestSpec();
-        final String myDigest = JcaDigest.getAlgorithm(myDigestSpec);
-
-        /* Create builder */
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(myXMSSKeySpec.getKeyType().name())
-                .append('-')
-                .append(myDigest);
-        if (preHash) {
-            myBuilder.insert(0, "with")
-                    .insert(0, myDigest);
-        }
-
-        /* Build the algorithm */
-        return myBuilder.toString();
     }
 }

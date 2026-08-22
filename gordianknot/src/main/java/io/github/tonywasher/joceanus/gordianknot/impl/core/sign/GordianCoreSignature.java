@@ -25,11 +25,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseChecks;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseDestroyable;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 
 import java.security.SecureRandom;
@@ -57,7 +57,7 @@ public abstract class GordianCoreSignature
     /**
      * The KeyPair.
      */
-    private GordianCoreKeyPair theKeyPair;
+    private GordianKeyPair theKeyPair;
 
     /**
      * The Context.
@@ -132,7 +132,7 @@ public abstract class GordianCoreSignature
      * @param pKeyPair the keyPair
      * @throws GordianException on error
      */
-    private void checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
+    protected void checkKeyPairForSignature(final GordianKeyPair pKeyPair) throws GordianException {
         if (pKeyPair == null) {
             throw new GordianLogicException("Null keyPair");
         }
@@ -182,14 +182,15 @@ public abstract class GordianCoreSignature
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Store details */
         theMode = GordianSignatureMode.SIGN;
-        theKeyPair = (GordianCoreKeyPair) pParams.getKeyPair();
+        theKeyPair = pParams.getKeyPair();
         theContext = pParams.getContext();
 
         /* Check that the keyPair matches and that any context is supported */
-        checkKeyPair(theKeyPair);
+        checkKeyPairForSignature(theKeyPair);
         checkContext(theContext);
         checkIdentity(pParams.getIdentity());
-        theKeyPair.checkForDestroyedKeyPair();
+        final GordianBaseDestroyable myDestroyable = (GordianBaseDestroyable) theKeyPair;
+        myDestroyable.checkForDestroyedKeyPair();
 
         /* Check that we have the private key */
         if (theKeyPair.isPublicOnly()) {
@@ -201,14 +202,15 @@ public abstract class GordianCoreSignature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Store details */
         theMode = GordianSignatureMode.VERIFY;
-        theKeyPair = (GordianCoreKeyPair) pParams.getKeyPair();
+        theKeyPair = pParams.getKeyPair();
         theContext = pParams.getContext();
 
         /* Check that the keyPair matches and that any context is supported */
-        checkKeyPair(theKeyPair);
+        checkKeyPairForSignature(theKeyPair);
         checkContext(theContext);
         checkIdentity(pParams.getIdentity());
-        theKeyPair.checkForDestroyedKeyPair();
+        final GordianBaseDestroyable myDestroyable = (GordianBaseDestroyable) theKeyPair;
+        myDestroyable.checkForDestroyedKeyPair();
     }
 
     /**
@@ -233,7 +235,8 @@ public abstract class GordianCoreSignature
         if (theKeyPair == null) {
             throw new GordianLogicException("Not initialised");
         }
-        theKeyPair.checkForDestroyedKeyPair();
+        final GordianBaseDestroyable myDestroyable = (GordianBaseDestroyable) theKeyPair;
+        myDestroyable.checkForDestroyedKeyPair();
     }
 
     /**

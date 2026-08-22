@@ -312,6 +312,15 @@ public interface GordianSignatureSpecBuilder {
     }
 
     /**
+     * Create hybridSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec hybrid() {
+        return withKeyPairType(GordianKeyPairType.HYBRIDSIGN).build();
+    }
+
+    /**
      * Create CompositeSpec.
      *
      * @param pSpecs the list of encryptorSpecs

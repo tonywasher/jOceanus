@@ -28,6 +28,12 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHybridK
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHybridSignSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -142,8 +148,36 @@ class HybridTest {
         final GordianKeyPair myDerived = mySourceGenerator.deriveKeyPair(myX509, myPKCS8);
         Assertions.assertEquals(myKeyPair, myDerived, "Matching results");
 
+        /* Create target KeyPair */
         final GordianKeyPairGenerator myTargetGenerator = myTarget.getKeyPairGenerator(myKeyPairSpec);
         final GordianKeyPair myTargetDerived = myTargetGenerator.deriveKeyPair(myX509, myPKCS8);
-        int i = 0;
+
+        if (pSpec instanceof GordianHybridSignSpec) {
+            /* Create Signer */
+            final GordianSignatureFactory mySourceSigns = pSource.getSignatureFactory();
+            final GordianSignatureSpecBuilder mySpecBuilder = mySourceSigns.newSignatureSpecBuilder();
+            final GordianSignatureSpec mySignSpec = mySpecBuilder.hybrid();
+            final GordianSignature mySourceSigner = mySourceSigns.createSigner(mySignSpec);
+            final GordianSignParamsBuilder myParmBuilder = mySourceSigns.newSignParamsBuilder();
+            final byte[] myContext = "SomeContext".getBytes();
+            final GordianSignParams mySourceParams = myParmBuilder.keyPairAndContext(myKeyPair, myContext);
+            final byte[] myMessage = "MyMessage".getBytes();
+            mySourceSigner.initForSigning(mySourceParams);
+            mySourceSigner.update(myMessage);
+            final byte[] mySignature = mySourceSigner.sign();
+            mySourceSigner.initForVerify(mySourceParams);
+            mySourceSigner.update(myMessage);
+            boolean bSuccess = mySourceSigner.verify(mySignature);
+            Assertions.assertTrue(bSuccess, "Verify");
+
+            /* Verify with Target */
+            final GordianSignatureFactory myTargetSigns = pTarget.getSignatureFactory();
+            final GordianSignature myTargetSigner = myTargetSigns.createSigner(mySignSpec);
+            final GordianSignParams myTargetParams = myParmBuilder.keyPairAndContext(myTargetDerived, myContext);
+            myTargetSigner.initForVerify(myTargetParams);
+            myTargetSigner.update(myMessage);
+            myTargetSigner.verify(mySignature);
+            Assertions.assertTrue(bSuccess, "Verify");
+        }
     }
 }

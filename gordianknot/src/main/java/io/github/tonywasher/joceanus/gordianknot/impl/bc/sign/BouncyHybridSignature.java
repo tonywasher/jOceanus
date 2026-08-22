@@ -100,7 +100,7 @@ public class BouncyHybridSignature
         /* Initialise detail */
         super.initForSigning(pParams);
         final BouncyHybridKeyPair myPair = checkKeyPair();
-        theHybrid = ((GordianCoreKeyPairSpec) getKeyPair().getKeyPairSpec()).getHybridSignSpec();
+        theHybrid = ((GordianCoreKeyPairSpec) myPair.getKeyPairSpec()).getHybridSignSpec();
 
         /* Access builders */
         final GordianSignParamsBuilder myParamsBuilder = theSignFactory.newSignParamsBuilder();
@@ -127,7 +127,7 @@ public class BouncyHybridSignature
         /* Initialise detail */
         super.initForVerify(pParams);
         final BouncyHybridKeyPair myPair = checkKeyPair();
-        theHybrid = ((GordianCoreKeyPairSpec) getKeyPair().getKeyPairSpec()).getHybridSignSpec();
+        theHybrid = ((GordianCoreKeyPairSpec) myPair.getKeyPairSpec()).getHybridSignSpec();
 
         /* Access builders */
         final GordianSignParamsBuilder myParamsBuilder = theSignFactory.newSignParamsBuilder();
@@ -135,7 +135,7 @@ public class BouncyHybridSignature
         /* Initialise the primary */
         thePrimary = (GordianCoreSignature) theSignFactory.createSigner(theHybrid.getPrimarySignatureSpec());
         final BouncyKeyPair myPrimary = myPair.getPrimary();
-        final GordianSignParams myPrimaryParams = myParamsBuilder.keyPair(myPrimary);
+        final GordianSignParams myPrimaryParams = myParamsBuilder.keyPairAndContext(myPrimary, theHybrid.getLabel());
         thePrimary.initForVerify(myPrimaryParams);
 
         /* Initialise the traditional */
@@ -143,6 +143,9 @@ public class BouncyHybridSignature
         final BouncyKeyPair myTraditional = myPair.getTraditional();
         final GordianSignParams myTradParams = myParamsBuilder.keyPair(myTraditional);
         theTraditional.initForVerify(myTradParams);
+
+        /* Initialise the digest */
+        theDigest = getDigestFactory().createDigest(theHybrid.getDigestSpec());
     }
 
     @Override

@@ -61,6 +61,7 @@ public class JcaEdDSASignature
         /* Determine the required signer */
         final GordianKeyPair myPair = pParams.getKeyPair();
         JcaKeyPair.checkKeyPair(myPair);
+        checkKeyPairForSignature(myPair);
         final String mySignName = getAlgorithmForKeyPair(myPair);
         setSigner(getJavaSignature(mySignName, false));
         setParameters(mySignName, pParams.getContext());
@@ -74,6 +75,7 @@ public class JcaEdDSASignature
         /* Determine the required signer */
         final GordianKeyPair myPair = pParams.getKeyPair();
         JcaKeyPair.checkKeyPair(myPair);
+        checkKeyPairForSignature(myPair);
         final String mySignName = getAlgorithmForKeyPair(myPair);
         setSigner(getJavaSignature(mySignName, false));
         setParameters(mySignName, pParams.getContext());
