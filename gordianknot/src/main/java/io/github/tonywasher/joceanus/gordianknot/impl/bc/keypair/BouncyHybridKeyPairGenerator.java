@@ -21,15 +21,22 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianEdwardsSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyEdDSAKeyPair.BouncyEd25519PrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyEdDSAKeyPair.BouncyEd448PrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianHybridSpec;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
+import org.bouncycastle.crypto.params.Ed448PrivateKeyParameters;
 import org.bouncycastle.util.Arrays;
 
 import java.io.IOException;
@@ -67,13 +74,12 @@ public class BouncyHybridKeyPairGenerator
                                  final GordianKeyPairSpec pSpec) throws GordianException {
         /* Store the spec. */
         super(pFactory, pSpec);
-        theHybridSpec = (GordianHybridSpec) pSpec.getSubSpec();
+        theHybridSpec = ((GordianCoreKeyPairSpec) pSpec).getHybridSpec();
 
         /* Access generators */
         final GordianKeyPairFactory myFactory = pFactory.getAsyncFactory().getKeyPairFactory();
-        final GordianKeyPairSpecBuilder myBuilder = myFactory.newKeyPairSpecBuilder();
-        thePrimaryGenerator = myFactory.getKeyPairGenerator(theHybridSpec.getPrimaryKeyPairSpec(myBuilder));
-        theTradGenerator = myFactory.getKeyPairGenerator(theHybridSpec.getTraditionalKeyPairSpec(myBuilder));
+        thePrimaryGenerator = myFactory.getKeyPairGenerator(theHybridSpec.getPrimaryKeyPairSpec());
+        theTradGenerator = myFactory.getKeyPairGenerator(theHybridSpec.getTraditionalKeyPairSpec());
     }
 
     @Override
@@ -131,16 +137,12 @@ public class BouncyHybridKeyPairGenerator
             /* Access the hybrid keyPair */
             final BouncyHybridKeyPair myPair = (BouncyHybridKeyPair) pKeyPair;
 
-            /* Access the keyPairs */
-            final GordianKeyPair myTraditional = myPair.getTraditional();
-
             /* Obtain the bytes of the Primary key */
             final byte[] myPrimeBytes = myPair.getPrimarySeed();
 
             /* Obtain the bytes of the traditional key */
-            final X509EncodedKeySpec myTradKeySpec = theTradGenerator.getX509Encoding(myTraditional);
-            final PrivateKeyInfo myTradInfo = PrivateKeyInfo.getInstance(myTradKeySpec.getEncoded());
-            final byte[] myTradBytes = myTradInfo.getPrivateKey().getOctets();
+            final BouncyKeyPair myTraditional = myPair.getTraditional();
+            final byte[] myTradBytes = getTraditionalPrivateKeyBytes(myTraditional);
 
             /* Build the x509 encoding */
             final byte[] myBytes = Arrays.concatenate(myPrimeBytes, myTradBytes);
@@ -151,6 +153,32 @@ public class BouncyHybridKeyPairGenerator
         } catch (IOException e) {
             throw new GordianIOException("Failed to derive keySpec", e);
         }
+    }
+
+    /**
+     * Obtain the traditional keyBytes.
+     *
+     * @param pTraditional the traditional keyPair
+     * @return the bytes
+     * @throws GordianException on error
+     */
+    private byte[] getTraditionalPrivateKeyBytes(final BouncyKeyPair pTraditional) throws GordianException {
+        /* Handle EdDSA specially */
+        if (pTraditional.getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.EDDSA)) {
+            final Object mySubSpec = pTraditional.getKeyPairSpec().getSubSpec();
+            if (GordianEdwardsSpec.CURVE25519.equals(mySubSpec)) {
+                final Ed25519PrivateKeyParameters myParams = (Ed25519PrivateKeyParameters) pTraditional.getPrivateKey().getPrivateKey();
+                return myParams.getEncoded();
+            } else {
+                final Ed448PrivateKeyParameters myParams = (Ed448PrivateKeyParameters) pTraditional.getPrivateKey().getPrivateKey();
+                return myParams.getEncoded();
+            }
+        }
+
+        /* Handle normally */
+        final PKCS8EncodedKeySpec myTradKeySpec = theTradGenerator.getPKCS8Encoding(pTraditional);
+        final PrivateKeyInfo myTradInfo = PrivateKeyInfo.getInstance(myTradKeySpec.getEncoded());
+        return myTradInfo.getPrivateKey().getOctets();
     }
 
     @Override
@@ -172,25 +200,79 @@ public class BouncyHybridKeyPairGenerator
             final byte[] myPrimePrivBytes = Arrays.copyOfRange(myPrivateBytes, 0, theHybridSpec.getPrivateSeedLength());
             final PrivateKeyInfo myPrimePrivInfo = new PrivateKeyInfo(theHybridSpec.getPrimaryIdentifier(), myPrimePrivBytes);
             final PKCS8EncodedKeySpec myPrimePrivSpec = new PKCS8EncodedKeySpec(myPrimePrivInfo.getEncoded());
-            final byte[] myPQPubBytes = Arrays.copyOfRange(myPublicBytes, 0, theHybridSpec.getPublicSeedLength());
-            final SubjectPublicKeyInfo myPQPubInfo = new SubjectPublicKeyInfo(theHybridSpec.getPrimaryIdentifier(), myPQPubBytes);
-            final X509EncodedKeySpec myPQPubSpec = new X509EncodedKeySpec(myPQPubInfo.getEncoded());
-            final BouncyKeyPair myPrimePair = (BouncyKeyPair) thePrimaryGenerator.deriveKeyPair(myPQPubSpec, myPrimePrivSpec);
+            final byte[] myPrimePubBytes = Arrays.copyOfRange(myPublicBytes, 0, theHybridSpec.getPublicSeedLength());
+            final SubjectPublicKeyInfo myPrimePubInfo = new SubjectPublicKeyInfo(theHybridSpec.getPrimaryIdentifier(), myPrimePubBytes);
+            final X509EncodedKeySpec myPrimePubSpec = new X509EncodedKeySpec(myPrimePubInfo.getEncoded());
+            final BouncyKeyPair myPrimePair = (BouncyKeyPair) thePrimaryGenerator.deriveKeyPair(myPrimePubSpec, myPrimePrivSpec);
 
             /* Derive the secondary keyPair */
-            final byte[] myTradPrivBytes = Arrays.copyOfRange(myPrivateBytes, 0, theHybridSpec.getPrivateSeedLength());
-            final PrivateKeyInfo myTradPrivInfo = new PrivateKeyInfo(theHybridSpec.getPrimaryIdentifier(), myTradPrivBytes);
-            final PKCS8EncodedKeySpec myTradPrivSpec = new PKCS8EncodedKeySpec(myTradPrivInfo.getEncoded());
+            final byte[] myTradPrivateBytes = Arrays.copyOfRange(myPrivateBytes, theHybridSpec.getPrivateSeedLength(), myPrivateBytes.length);
             final byte[] myTradPubBytes = Arrays.copyOfRange(myPublicBytes, theHybridSpec.getPublicSeedLength(), myPublicBytes.length);
-            final SubjectPublicKeyInfo myTradPubInfo = new SubjectPublicKeyInfo(theHybridSpec.getSecondaryIdentifier(), myTradPubBytes);
-            final X509EncodedKeySpec myTradPubSpec = new X509EncodedKeySpec(myTradPubInfo.getEncoded());
-            final BouncyKeyPair myTradPair = (BouncyKeyPair) theTradGenerator.deriveKeyPair(myTradPubSpec, myTradPrivSpec);
+            final BouncyKeyPair myTradPair = deriveTraditionalKeyPair(myTradPubBytes, myTradPrivateBytes);
 
             /* Return the hybrid pair */
             return new BouncyHybridKeyPair(getKeySpec(), myPrimePair, myTradPair);
 
         } catch (IOException e) {
             throw new GordianIOException("Failed to parse keySpec", e);
+        }
+    }
+
+    /**
+     * Obtain the traditional keyPair.
+     *
+     * @param pPublicBytes  the publicKeyBytes
+     * @param pPrivateBytes the privateKeyBytes
+     * @return the keyPair
+     * @throws GordianException on error
+     */
+    private BouncyKeyPair deriveTraditionalKeyPair(final byte[] pPublicBytes,
+                                                   final byte[] pPrivateBytes) throws GordianException {
+        /* Handle EdDSA specially */
+        final GordianKeyPairSpec mySpec = theHybridSpec.getTraditionalKeyPairSpec();
+        final Object mySubSpec = mySpec.getSubSpec();
+        if (mySpec.getKeyPairType().equals(GordianKeyPairType.EDDSA)) {
+            if (GordianEdwardsSpec.CURVE25519.equals(mySubSpec)) {
+                final Ed25519PrivateKeyParameters myParams = new Ed25519PrivateKeyParameters(pPrivateBytes);
+                final BouncyEd25519PrivateKey myPrivateKey = new BouncyEd25519PrivateKey(mySpec, myParams);
+                return new BouncyKeyPair(deriveTraditionalKey(pPublicBytes), myPrivateKey);
+            } else {
+                final Ed448PrivateKeyParameters myParams = new Ed448PrivateKeyParameters(pPrivateBytes);
+                final BouncyEd448PrivateKey myPrivateKey = new BouncyEd448PrivateKey(mySpec, myParams);
+                return new BouncyKeyPair(deriveTraditionalKey(pPublicBytes), myPrivateKey);
+            }
+        }
+
+        /* Protect against exceptions */
+        try {
+            /* Derive the secondary keyPair */
+            final PrivateKeyInfo myTradPrivInfo = new PrivateKeyInfo(theHybridSpec.getSecondaryIdentifier(), pPrivateBytes);
+            final PKCS8EncodedKeySpec myTradPrivSpec = new PKCS8EncodedKeySpec(myTradPrivInfo.getEncoded());
+            final SubjectPublicKeyInfo myTradPubInfo = new SubjectPublicKeyInfo(theHybridSpec.getSecondaryIdentifier(), pPublicBytes);
+            final X509EncodedKeySpec myTradPubSpec = new X509EncodedKeySpec(myTradPubInfo.getEncoded());
+            return (BouncyKeyPair) theTradGenerator.deriveKeyPair(myTradPubSpec, myTradPrivSpec);
+        } catch (IOException e) {
+            throw new GordianIOException("Failed to derive publicKeySpec", e);
+        }
+    }
+
+    /**
+     * Obtain the traditional publicOnly keyPair.
+     *
+     * @param pPublicBytes the publicKeyBytes
+     * @return the public key
+     * @throws GordianException on error
+     */
+    private BouncyPublicKey<?> deriveTraditionalKey(final byte[] pPublicBytes) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Derive the traditional publicKeyPair */
+            final SubjectPublicKeyInfo myTradInfo = new SubjectPublicKeyInfo(theHybridSpec.getSecondaryIdentifier(), pPublicBytes);
+            final X509EncodedKeySpec myTradSpec = new X509EncodedKeySpec(myTradInfo.getEncoded());
+            final BouncyKeyPair myTradPair = (BouncyKeyPair) theTradGenerator.derivePublicOnlyKeyPair(myTradSpec);
+            return myTradPair.getPublicKey();
+        } catch (IOException e) {
+            throw new GordianIOException("Failed to derive publicKeySpec", e);
         }
     }
 

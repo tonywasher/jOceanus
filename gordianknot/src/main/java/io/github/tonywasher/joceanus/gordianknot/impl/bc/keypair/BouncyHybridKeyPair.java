@@ -89,7 +89,7 @@ public class BouncyHybridKeyPair
      *
      * @return the primary keyPair
      */
-    public GordianKeyPair getPrimary() {
+    public BouncyKeyPair getPrimary() {
         return thePrimary;
     }
 
@@ -98,12 +98,13 @@ public class BouncyHybridKeyPair
      *
      * @return the traditional keyPair
      */
-    public GordianKeyPair getTraditional() {
+    public BouncyKeyPair getTraditional() {
         return theTraditional;
     }
 
     /**
      * Obtain the primary seed.
+     *
      * @return the seed
      * @throws GordianException on error
      */

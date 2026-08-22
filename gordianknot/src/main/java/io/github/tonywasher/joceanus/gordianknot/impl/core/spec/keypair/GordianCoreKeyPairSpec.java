@@ -424,6 +424,15 @@ public class GordianCoreKeyPairSpec
      *
      * @return the keySpec.
      */
+    public GordianHybridSpec getHybridSpec() {
+        return castValue(GordianHybridSpec.class);
+    }
+
+    /**
+     * Obtain the HybridKEM keySpec.
+     *
+     * @return the keySpec.
+     */
     public GordianCoreHybridKEMSpec getHybridKEMSpec() {
         return castValue(GordianCoreHybridKEMSpec.class);
     }

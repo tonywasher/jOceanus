@@ -26,14 +26,6 @@ import java.security.Security;
  * Provider constants.
  */
 public final class JcaProvider {
-    /*
-     * Static Constructor.
-     */
-    static {
-        /* Select unlimited security */
-        Security.setProperty("crypto.policy", "unlimited");
-    }
-
     /**
      * Note the standard provider.
      */
@@ -43,6 +35,19 @@ public final class JcaProvider {
      * Note the post quantum provider.
      */
     public static final Provider BCPQPROV = new BouncyCastlePQCProvider();
+
+    /*
+     * Static Constructor.
+     */
+    static {
+        /* Select unlimited security */
+        Security.setProperty("crypto.policy", "unlimited");
+
+        /* Add provider if not already installed */
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(BCPROV);
+        }
+    }
 
     /**
      * Private constructor.

@@ -17,6 +17,9 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianECSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHybridSignSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
@@ -24,6 +27,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPair
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMLDSASpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianRSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpecBuilder;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.iana.IANAObjectIdentifiers;
@@ -64,6 +72,21 @@ public final class GordianCoreHybridSignSpec
     private static final int MLDSA87_PUBLIC_SEED_LENGTH = 2592;
 
     /**
+     * The MLDSA44 Signature Length.
+     */
+    private static final int MLDSA44_SIGNATURE_LENGTH = 2420;
+
+    /**
+     * The MLDSA65 Signature Length.
+     */
+    private static final int MLDSA65_SIGNATURE_LENGTH = 3309;
+
+    /**
+     * The MLDSA87 Signature Length.
+     */
+    private static final int MLDSA87_SIGNATURE_LENGTH = 4627;
+
+    /**
      * The specMap.
      */
     private static final Map<GordianHybridSignSpec, GordianCoreHybridSignSpec> SPECMAP = newSpecMap();
@@ -77,6 +100,21 @@ public final class GordianCoreHybridSignSpec
      * The Spec.
      */
     private final GordianHybridSignSpec theSpec;
+
+    /**
+     * The KeyPair Builder.
+     */
+    private final GordianKeyPairSpecBuilder theKeyPair = GordianCoreKeyPairSpecBuilder.newInstance();
+
+    /**
+     * The Signature Builder.
+     */
+    private final GordianSignatureSpecBuilder theSignature = GordianCoreSignatureSpecBuilder.newInstance();
+
+    /**
+     * The Digest Builder.
+     */
+    private final GordianDigestSpecBuilder theDigest = GordianCoreDigestSpecBuilder.newInstance();
 
     /**
      * Constructor.
@@ -98,34 +136,86 @@ public final class GordianCoreHybridSignSpec
     }
 
     @Override
-    public GordianKeyPairSpec getPrimaryKeyPairSpec(final GordianKeyPairSpecBuilder pBuilder) {
+    public GordianKeyPairSpec getPrimaryKeyPairSpec() {
         return switch (theSpec) {
             case MLDSA44_RSA2048_PSS_SHA256, MLDSA44_RSA2048_PKCS15_SHA256, MLDSA44_ECDSA_P256_SHA256,
-                 MLDSA44_ED25519_SHA512 -> pBuilder.mldsa(GordianMLDSASpec.MLDSA44);
+                 MLDSA44_ED25519_SHA512 -> theKeyPair.mldsa(GordianMLDSASpec.MLDSA44);
             case MLDSA65_RSA3072_PSS_SHA512, MLDSA65_RSA3072_PKCS15_SHA512, MLDSA65_RSA4096_PSS_SHA512,
                  MLDSA65_RSA4096_PKCS15_SHA512, MLDSA65_ECDSA_P256_SHA512, MLDSA65_ECDSA_P384_SHA512,
-                 MLDSA65_ECDSA_BP256_SHA512, MLDSA65_ED25519_SHA512 -> pBuilder.mldsa(GordianMLDSASpec.MLDSA65);
+                 MLDSA65_ECDSA_BP256_SHA512, MLDSA65_ED25519_SHA512 -> theKeyPair.mldsa(GordianMLDSASpec.MLDSA65);
             case MLDSA87_RSA3072_PSS_SHA512, MLDSA87_RSA4096_PSS_SHA512, MLDSA87_ECDSA_P384_SHA512,
                  MLDSA87_ED448_SHAKE256, MLDSA87_ECDSA_BP384_SHA512, MLDSA87_ECDSA_P521_SHA512 ->
-                    pBuilder.mldsa(GordianMLDSASpec.MLDSA87);
+                    theKeyPair.mldsa(GordianMLDSASpec.MLDSA87);
         };
     }
 
     @Override
-    public GordianKeyPairSpec getTraditionalKeyPairSpec(final GordianKeyPairSpecBuilder pBuilder) {
+    public GordianKeyPairSpec getTraditionalKeyPairSpec() {
         return switch (theSpec) {
-            case MLDSA44_RSA2048_PSS_SHA256, MLDSA44_RSA2048_PKCS15_SHA256 -> pBuilder.rsa(GordianRSASpec.MOD2048);
-            case MLDSA44_ECDSA_P256_SHA256, MLDSA65_ECDSA_P256_SHA512 -> pBuilder.ec(GordianECSpec.SECP256R1);
-            case MLDSA44_ED25519_SHA512, MLDSA65_ED25519_SHA512 -> pBuilder.ed25519();
+            case MLDSA44_RSA2048_PSS_SHA256, MLDSA44_RSA2048_PKCS15_SHA256 -> theKeyPair.rsa(GordianRSASpec.MOD2048);
+            case MLDSA44_ECDSA_P256_SHA256, MLDSA65_ECDSA_P256_SHA512 -> theKeyPair.ec(GordianECSpec.SECP256R1);
+            case MLDSA44_ED25519_SHA512, MLDSA65_ED25519_SHA512 -> theKeyPair.ed25519();
             case MLDSA65_RSA3072_PSS_SHA512, MLDSA65_RSA3072_PKCS15_SHA512, MLDSA87_RSA3072_PSS_SHA512 ->
-                    pBuilder.rsa(GordianRSASpec.MOD3072);
+                    theKeyPair.rsa(GordianRSASpec.MOD3072);
             case MLDSA65_RSA4096_PSS_SHA512, MLDSA65_RSA4096_PKCS15_SHA512, MLDSA87_RSA4096_PSS_SHA512 ->
-                    pBuilder.rsa(GordianRSASpec.MOD4096);
-            case MLDSA65_ECDSA_P384_SHA512, MLDSA87_ECDSA_P384_SHA512 -> pBuilder.ec(GordianECSpec.SECP384R1);
-            case MLDSA65_ECDSA_BP256_SHA512 -> pBuilder.ec(GordianECSpec.BRAINPOOLP256R1);
-            case MLDSA87_ED448_SHAKE256 -> pBuilder.ed448();
-            case MLDSA87_ECDSA_BP384_SHA512 -> pBuilder.ec(GordianECSpec.BRAINPOOLP384R1);
-            case MLDSA87_ECDSA_P521_SHA512 -> pBuilder.ec(GordianECSpec.SECP521R1);
+                    theKeyPair.rsa(GordianRSASpec.MOD4096);
+            case MLDSA65_ECDSA_P384_SHA512, MLDSA87_ECDSA_P384_SHA512 -> theKeyPair.ec(GordianECSpec.SECP384R1);
+            case MLDSA65_ECDSA_BP256_SHA512 -> theKeyPair.ec(GordianECSpec.BRAINPOOLP256R1);
+            case MLDSA87_ED448_SHAKE256 -> theKeyPair.ed448();
+            case MLDSA87_ECDSA_BP384_SHA512 -> theKeyPair.ec(GordianECSpec.BRAINPOOLP384R1);
+            case MLDSA87_ECDSA_P521_SHA512 -> theKeyPair.ec(GordianECSpec.SECP521R1);
+        };
+    }
+
+    /**
+     * Obtain the Primary SignatureSpec.
+     *
+     * @return the Spec
+     */
+    public GordianSignatureSpec getPrimarySignatureSpec() {
+        return theSignature.mldsa();
+    }
+
+    /**
+     * Obtain the Traditional SignatureSpec.
+     *
+     * @return the Spec
+     */
+    public GordianSignatureSpec getTraditionalSignatureSpec() {
+        return switch (theSpec) {
+            case MLDSA44_RSA2048_PSS_SHA256, MLDSA65_RSA3072_PSS_SHA512, MLDSA87_RSA3072_PSS_SHA512 ->
+                    theSignature.rsa(GordianSignatureType.PSSMGF1, theDigest.sha2(GordianLength.LEN_256));
+            case MLDSA44_RSA2048_PKCS15_SHA256, MLDSA65_RSA3072_PKCS15_SHA512 ->
+                    theSignature.rsa(GordianSignatureType.PREHASH, theDigest.sha2(GordianLength.LEN_256));
+            case MLDSA65_RSA4096_PKCS15_SHA512 ->
+                    theSignature.rsa(GordianSignatureType.PREHASH, theDigest.sha2(GordianLength.LEN_384));
+            case MLDSA44_ECDSA_P256_SHA256, MLDSA65_ECDSA_P256_SHA512, MLDSA65_ECDSA_BP256_SHA512 ->
+                    theSignature.ec(GordianSignatureType.DSA, theDigest.sha2(GordianLength.LEN_256));
+            case MLDSA65_ECDSA_P384_SHA512, MLDSA87_ECDSA_P384_SHA512, MLDSA87_ECDSA_BP384_SHA512 ->
+                    theSignature.ec(GordianSignatureType.DSA, theDigest.sha2(GordianLength.LEN_384));
+            case MLDSA44_ED25519_SHA512, MLDSA65_ED25519_SHA512, MLDSA87_ED448_SHAKE256 -> theSignature.edDSA();
+            case MLDSA65_RSA4096_PSS_SHA512, MLDSA87_RSA4096_PSS_SHA512 ->
+                    theSignature.rsa(GordianSignatureType.PSSMGF1, theDigest.sha2(GordianLength.LEN_384));
+            case MLDSA87_ECDSA_P521_SHA512 ->
+                    theSignature.ec(GordianSignatureType.DSA, theDigest.sha2(GordianLength.LEN_512));
+        };
+    }
+
+    /**
+     * Obtain the DigestSpec.
+     *
+     * @return the Spec
+     */
+    public GordianDigestSpec getDigestSpec() {
+        return switch (theSpec) {
+            case MLDSA44_RSA2048_PSS_SHA256, MLDSA44_RSA2048_PKCS15_SHA256, MLDSA44_ECDSA_P256_SHA256 ->
+                    theDigest.sha2(GordianLength.LEN_256);
+            case MLDSA65_RSA3072_PSS_SHA512, MLDSA87_RSA3072_PSS_SHA512, MLDSA65_RSA3072_PKCS15_SHA512,
+                 MLDSA65_RSA4096_PKCS15_SHA512, MLDSA65_ECDSA_P256_SHA512, MLDSA65_ECDSA_BP256_SHA512,
+                 MLDSA65_ECDSA_P384_SHA512, MLDSA87_ECDSA_P384_SHA512, MLDSA87_ECDSA_BP384_SHA512,
+                 MLDSA44_ED25519_SHA512, MLDSA65_ED25519_SHA512, MLDSA65_RSA4096_PSS_SHA512,
+                 MLDSA87_RSA4096_PSS_SHA512, MLDSA87_ECDSA_P521_SHA512 -> theDigest.sha2(GordianLength.LEN_512);
+            case MLDSA87_ED448_SHAKE256 -> theDigest.shake256();
         };
     }
 
@@ -257,6 +347,24 @@ public final class GordianCoreHybridSignSpec
             case MLDSA87_ECDSA_P384_SHA512, MLDSA87_ECDSA_BP384_SHA512,
                  MLDSA87_ED448_SHAKE256, MLDSA87_RSA3072_PSS_SHA512,
                  MLDSA87_RSA4096_PSS_SHA512, MLDSA87_ECDSA_P521_SHA512 -> MLDSA87_PUBLIC_SEED_LENGTH;
+        };
+    }
+
+    /**
+     * Obtain the Primary Signature Length.
+     *
+     * @return th elength
+     */
+    public int getSignatureLength() {
+        return switch (theSpec) {
+            case MLDSA44_RSA2048_PSS_SHA256, MLDSA44_RSA2048_PKCS15_SHA256,
+                 MLDSA44_ECDSA_P256_SHA256, MLDSA44_ED25519_SHA512 -> MLDSA44_SIGNATURE_LENGTH;
+            case MLDSA65_RSA3072_PSS_SHA512, MLDSA65_RSA3072_PKCS15_SHA512, MLDSA65_RSA4096_PSS_SHA512,
+                 MLDSA65_RSA4096_PKCS15_SHA512, MLDSA65_ECDSA_P256_SHA512, MLDSA65_ECDSA_P384_SHA512,
+                 MLDSA65_ECDSA_BP256_SHA512, MLDSA65_ED25519_SHA512 -> MLDSA65_SIGNATURE_LENGTH;
+            case MLDSA87_ECDSA_P384_SHA512, MLDSA87_ECDSA_BP384_SHA512, MLDSA87_ED448_SHAKE256,
+                 MLDSA87_RSA3072_PSS_SHA512, MLDSA87_RSA4096_PSS_SHA512, MLDSA87_ECDSA_P521_SHA512 ->
+                    MLDSA87_SIGNATURE_LENGTH;
         };
     }
 

@@ -44,7 +44,6 @@ public final class GordianRSAEncodedParser
      */
     public static void register(final GordianKeyPairParserRegistrar pIdManager) {
         pIdManager.registerParser(PKCSObjectIdentifiers.rsaEncryption, new GordianRSAEncodedParser());
-        pIdManager.registerParser(PKCSObjectIdentifiers.id_RSAES_OAEP, new GordianRSAEncodedParser());
     }
 
     @Override

@@ -234,6 +234,7 @@ public final class GordianKeyPairValidity {
             case SM9 -> mySpec.getSM9KeyType() instanceof GordianSM9EncryptType
                     ? myAgreeBuilder.kem(mySpec, GordianAgreementKDF.NONE)
                     : mySignBuilder.sm9();
+            case HYBRIDKEM, HYBRIDSIGN -> null;
             default -> throw new GordianDataException("No validity check found for :" + mySpec.getKeyPairType());
         };
     }

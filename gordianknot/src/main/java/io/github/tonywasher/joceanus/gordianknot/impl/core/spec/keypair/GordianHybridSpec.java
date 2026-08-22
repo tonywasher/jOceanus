@@ -18,7 +18,6 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -29,18 +28,16 @@ public interface GordianHybridSpec {
     /**
      * Obtain the primary keyPairSpec.
      *
-     * @param pBuilder the builder
      * @return the composite keySpec.
      */
-    GordianKeyPairSpec getPrimaryKeyPairSpec(GordianKeyPairSpecBuilder pBuilder);
+    GordianKeyPairSpec getPrimaryKeyPairSpec();
 
     /**
      * Obtain the Traditional keyPairSpec.
      *
-     * @param pBuilder the builder
      * @return the composite keySpec.
      */
-    GordianKeyPairSpec getTraditionalKeyPairSpec(GordianKeyPairSpecBuilder pBuilder);
+    GordianKeyPairSpec getTraditionalKeyPairSpec();
 
     /**
      * Obtain the algorithm identifier.

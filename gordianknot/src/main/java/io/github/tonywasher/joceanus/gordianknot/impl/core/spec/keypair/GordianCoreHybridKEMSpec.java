@@ -24,14 +24,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPair
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMLKEMSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianRSASpec;
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.iana.IANAObjectIdentifiers;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.pkcs.RSAESOAEPparams;
 import org.bouncycastle.asn1.sec.SECObjectIdentifiers;
 import org.bouncycastle.asn1.teletrust.TeleTrusTObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -78,6 +75,11 @@ public final class GordianCoreHybridKEMSpec
     private final GordianHybridKEMSpec theSpec;
 
     /**
+     * The KeyPair Builder.
+     */
+    private final GordianKeyPairSpecBuilder theBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+
+    /**
      * Constructor.
      *
      * @param pSpec the spec
@@ -97,28 +99,29 @@ public final class GordianCoreHybridKEMSpec
     }
 
     @Override
-    public GordianKeyPairSpec getPrimaryKeyPairSpec(final GordianKeyPairSpecBuilder pBuilder) {
+    public GordianKeyPairSpec getPrimaryKeyPairSpec() {
         return switch (theSpec) {
             case MLKEM768_RSA2048, MLKEM768_RSA3072, MLKEM768_RSA4096, MLKEM768_ECDH_P256,
-                 MLKEM768_ECDH_P384, MLKEM768_ECDH_BP256, MLKEM768_X25519 -> pBuilder.mlkem(GordianMLKEMSpec.MLKEM768);
+                 MLKEM768_ECDH_P384, MLKEM768_ECDH_BP256, MLKEM768_X25519 ->
+                    theBuilder.mlkem(GordianMLKEMSpec.MLKEM768);
             case MLKEM1024_RSA3072, MLKEM1024_ECDH_P384, MLKEM1024_ECDH_BP384, MLKEM1024_ECDH_P521, MLKEM1024_X448 ->
-                    pBuilder.mlkem(GordianMLKEMSpec.MLKEM1024);
+                    theBuilder.mlkem(GordianMLKEMSpec.MLKEM1024);
         };
     }
 
     @Override
-    public GordianKeyPairSpec getTraditionalKeyPairSpec(final GordianKeyPairSpecBuilder pBuilder) {
+    public GordianKeyPairSpec getTraditionalKeyPairSpec() {
         return switch (theSpec) {
-            case MLKEM768_RSA2048 -> pBuilder.rsa(GordianRSASpec.MOD2048);
-            case MLKEM768_RSA3072, MLKEM1024_RSA3072 -> pBuilder.rsa(GordianRSASpec.MOD3072);
-            case MLKEM768_RSA4096 -> pBuilder.rsa(GordianRSASpec.MOD4096);
-            case MLKEM768_ECDH_P256 -> pBuilder.ec(GordianECSpec.SECP256R1);
-            case MLKEM768_ECDH_P384, MLKEM1024_ECDH_P384 -> pBuilder.ec(GordianECSpec.SECP384R1);
-            case MLKEM768_ECDH_BP256 -> pBuilder.ec(GordianECSpec.BRAINPOOLP256R1);
-            case MLKEM768_X25519 -> pBuilder.x25519();
-            case MLKEM1024_ECDH_BP384 -> pBuilder.ec(GordianECSpec.BRAINPOOLP384R1);
-            case MLKEM1024_ECDH_P521 -> pBuilder.ec(GordianECSpec.SECP521R1);
-            case MLKEM1024_X448 -> pBuilder.x448();
+            case MLKEM768_RSA2048 -> theBuilder.rsa(GordianRSASpec.MOD2048);
+            case MLKEM768_RSA3072, MLKEM1024_RSA3072 -> theBuilder.rsa(GordianRSASpec.MOD3072);
+            case MLKEM768_RSA4096 -> theBuilder.rsa(GordianRSASpec.MOD4096);
+            case MLKEM768_ECDH_P256 -> theBuilder.ec(GordianECSpec.SECP256R1);
+            case MLKEM768_ECDH_P384, MLKEM1024_ECDH_P384 -> theBuilder.ec(GordianECSpec.SECP384R1);
+            case MLKEM768_ECDH_BP256 -> theBuilder.ec(GordianECSpec.BRAINPOOLP256R1);
+            case MLKEM768_X25519 -> theBuilder.x25519();
+            case MLKEM1024_ECDH_BP384 -> theBuilder.ec(GordianECSpec.BRAINPOOLP384R1);
+            case MLKEM1024_ECDH_P521 -> theBuilder.ec(GordianECSpec.SECP521R1);
+            case MLKEM1024_X448 -> theBuilder.x448();
         };
     }
 
@@ -156,7 +159,7 @@ public final class GordianCoreHybridKEMSpec
     public AlgorithmIdentifier getSecondaryIdentifier() {
         return switch (theSpec) {
             case MLKEM768_RSA2048, MLKEM768_RSA3072, MLKEM768_RSA4096, MLKEM1024_RSA3072 ->
-                    new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSAES_OAEP, createRSAOAEPParams());
+                    new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption);
             case MLKEM768_ECDH_P256 ->
                     new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey, SECObjectIdentifiers.secp256r1);
             case MLKEM768_ECDH_P384, MLKEM1024_ECDH_P384 ->
@@ -222,17 +225,6 @@ public final class GordianCoreHybridKEMSpec
             case MLKEM1024_RSA3072, MLKEM1024_ECDH_P384, MLKEM1024_ECDH_BP384,
                  MLKEM1024_ECDH_P521, MLKEM1024_X448 -> MLKEM1024_PUBLIC_SEED_LENGTH;
         };
-    }
-
-    /**
-     * Create RSA OAEP parameters.
-     *
-     * @return the parameters
-     */
-    private static ASN1Encodable createRSAOAEPParams() {
-        final AlgorithmIdentifier hashAlg = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256);
-        return new RSAESOAEPparams(hashAlg, new AlgorithmIdentifier(PKCSObjectIdentifiers.id_mgf1, hashAlg),
-                new AlgorithmIdentifier(PKCSObjectIdentifiers.id_pSpecified, new DEROctetString(new byte[0])));
     }
 
     @Override

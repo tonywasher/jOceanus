@@ -45,6 +45,8 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianC
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreFalconSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreHAETAESpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreHQCSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreHybridKEMSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreHybridSignSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMLDSASpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMLKEMSpec;
@@ -130,6 +132,8 @@ public class GordianCoreKeyPairAlgId
         GordianKeyPairIdEncodedParser.register(this, GordianCoreSnovaSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreSQIsignSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreUOVSpec.values());
+        GordianKeyPairIdEncodedParser.register(this, GordianCoreHybridKEMSpec.values());
+        GordianKeyPairIdEncodedParser.register(this, GordianCoreHybridSignSpec.values());
         GordianCompositeEncodedParser.register(this);
     }
 

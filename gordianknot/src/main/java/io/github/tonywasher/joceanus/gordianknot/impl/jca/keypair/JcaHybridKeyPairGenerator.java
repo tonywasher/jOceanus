@@ -47,7 +47,7 @@ public class JcaHybridKeyPairGenerator
         try {
             /* Create and initialize the generator */
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
-            final GordianHybridSpec myHybridSpec = (GordianHybridSpec) myKeySpec.getSubSpec();
+            final GordianHybridSpec myHybridSpec = myKeySpec.getHybridSpec();
             createFactories(myHybridSpec.getJCAName(), false);
             getGenerator().initialize(null, getRandom());
 
