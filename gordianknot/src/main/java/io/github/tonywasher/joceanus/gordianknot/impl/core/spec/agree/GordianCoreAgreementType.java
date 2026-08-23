@@ -127,7 +127,7 @@ public final class GordianCoreAgreementType {
     public static boolean hasKEM(final GordianKeyPairSpec pKeyPairSpec) {
         return switch (pKeyPairSpec.getKeyPairType()) {
             case RSA, EC, GOST, DSTU, SM2, CMCE, FRODO, SABER, MLKEM, HQC,
-                 BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE, SMAUGT -> true;
+                 BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE, SMAUGT, HYBRIDKEM -> true;
             case SM9 -> switch (pKeyPairSpec.getSubSpec()) {
                 case GordianSM9EncryptType.ENCMASTER, GordianSM9EncryptType.ENCRYPT -> true;
                 default -> false;

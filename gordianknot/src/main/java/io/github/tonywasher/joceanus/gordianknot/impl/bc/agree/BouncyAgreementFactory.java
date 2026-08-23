@@ -68,6 +68,7 @@ public class BouncyAgreementFactory
             }
             case XDH -> getBCXDHEngine(mySpec);
             case SM9 -> getBCSM9Engine(mySpec);
+            case HYBRIDKEM -> new BouncyHybridAgreementEngine(this, mySpec);
             case COMPOSITE -> super.createEngine(pSpec);
             default -> super.createEngine(pSpec);
         };

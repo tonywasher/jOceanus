@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyEdDSAKeyP
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyEdDSAKeyPair.BouncyEd448PrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
@@ -196,18 +197,28 @@ public class BouncyHybridKeyPairGenerator
             final SubjectPublicKeyInfo myPubInfo = SubjectPublicKeyInfo.getInstance(pPublicKey.getEncoded());
             final byte[] myPublicBytes = myPubInfo.getPublicKeyData().getOctets();
 
+            /* Check minimum lengths */
+            final int myPrivSeedLength = theHybridSpec.getPrivateSeedLength();
+            final int myPubSeedLength = theHybridSpec.getPublicSeedLength();
+            if (myPrivateBytes.length < myPrivSeedLength) {
+                throw new GordianDataException("Private key length too short");
+            }
+            if (myPublicBytes.length < myPubSeedLength) {
+                throw new GordianDataException("Public key length too short");
+            }
+
             /* Derive the primary keyPair */
-            final byte[] myPrimePrivBytes = Arrays.copyOfRange(myPrivateBytes, 0, theHybridSpec.getPrivateSeedLength());
+            final byte[] myPrimePrivBytes = Arrays.copyOfRange(myPrivateBytes, 0, myPrivSeedLength);
             final PrivateKeyInfo myPrimePrivInfo = new PrivateKeyInfo(theHybridSpec.getPrimaryIdentifier(), myPrimePrivBytes);
             final PKCS8EncodedKeySpec myPrimePrivSpec = new PKCS8EncodedKeySpec(myPrimePrivInfo.getEncoded());
-            final byte[] myPrimePubBytes = Arrays.copyOfRange(myPublicBytes, 0, theHybridSpec.getPublicSeedLength());
+            final byte[] myPrimePubBytes = Arrays.copyOfRange(myPublicBytes, 0, myPubSeedLength);
             final SubjectPublicKeyInfo myPrimePubInfo = new SubjectPublicKeyInfo(theHybridSpec.getPrimaryIdentifier(), myPrimePubBytes);
             final X509EncodedKeySpec myPrimePubSpec = new X509EncodedKeySpec(myPrimePubInfo.getEncoded());
             final BouncyKeyPair myPrimePair = (BouncyKeyPair) thePrimaryGenerator.deriveKeyPair(myPrimePubSpec, myPrimePrivSpec);
 
             /* Derive the secondary keyPair */
-            final byte[] myTradPrivateBytes = Arrays.copyOfRange(myPrivateBytes, theHybridSpec.getPrivateSeedLength(), myPrivateBytes.length);
-            final byte[] myTradPubBytes = Arrays.copyOfRange(myPublicBytes, theHybridSpec.getPublicSeedLength(), myPublicBytes.length);
+            final byte[] myTradPrivateBytes = Arrays.copyOfRange(myPrivateBytes, myPrivSeedLength, myPrivateBytes.length);
+            final byte[] myTradPubBytes = Arrays.copyOfRange(myPublicBytes, myPubSeedLength, myPublicBytes.length);
             final BouncyKeyPair myTradPair = deriveTraditionalKeyPair(myTradPubBytes, myTradPrivateBytes);
 
             /* Return the hybrid pair */
@@ -287,14 +298,20 @@ public class BouncyHybridKeyPairGenerator
             final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pPublicKeySpec.getEncoded());
             final byte[] myBytes = myInfo.getPublicKeyData().getOctets();
 
+            /* Check minimum lengths */
+            final int myPubSeedLength = theHybridSpec.getPublicSeedLength();
+            if (myBytes.length < myPubSeedLength) {
+                throw new GordianDataException("Public key length too short");
+            }
+
             /* Derive the primary keyPair */
-            final byte[] myPrimeBytes = Arrays.copyOfRange(myBytes, 0, theHybridSpec.getPublicSeedLength());
+            final byte[] myPrimeBytes = Arrays.copyOfRange(myBytes, 0, myPubSeedLength);
             final SubjectPublicKeyInfo myPrimeInfo = new SubjectPublicKeyInfo(theHybridSpec.getPrimaryIdentifier(), myPrimeBytes);
             final X509EncodedKeySpec myPrimeSpec = new X509EncodedKeySpec(myPrimeInfo.getEncoded());
             final BouncyKeyPair myPrimePair = (BouncyKeyPair) thePrimaryGenerator.derivePublicOnlyKeyPair(myPrimeSpec);
 
             /* Derive the secondary keyPair */
-            final byte[] myTradBytes = Arrays.copyOfRange(myBytes, theHybridSpec.getPublicSeedLength(), myBytes.length);
+            final byte[] myTradBytes = Arrays.copyOfRange(myBytes, myPubSeedLength, myBytes.length);
             final SubjectPublicKeyInfo myTradInfo = new SubjectPublicKeyInfo(theHybridSpec.getSecondaryIdentifier(), myTradBytes);
             final X509EncodedKeySpec myTradSpec = new X509EncodedKeySpec(myTradInfo.getEncoded());
             final BouncyKeyPair myTradPair = (BouncyKeyPair) theTradGenerator.derivePublicOnlyKeyPair(myTradSpec);

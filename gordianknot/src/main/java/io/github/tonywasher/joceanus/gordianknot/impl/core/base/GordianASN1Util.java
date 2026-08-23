@@ -159,7 +159,7 @@ public final class GordianASN1Util {
         public byte[] getEncodedBytes() throws GordianException {
             try {
                 return toASN1Primitive().getEncoded();
-            } catch (IOException e) {
+            } catch (IOException | NullPointerException e) {
                 throw new GordianIOException("Failed to generate ASN1", e);
             }
         }

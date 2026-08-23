@@ -214,7 +214,7 @@ public abstract class GordianCoreAgreementFactory
      * @return the engine
      * @throws GordianException on error
      */
-    protected GordianCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
+    public GordianCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
         /* If this is a composite agreement */
         if (pSpec.getKeyPairSpec().getKeyPairType() == GordianKeyPairType.COMPOSITE) {
             /* Create an engine for each sub-agreement */

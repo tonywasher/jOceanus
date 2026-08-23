@@ -211,6 +211,7 @@ public final class JcaAgreement {
                 case MLKEM -> "ML-KEM";
                 case SM9 -> "SM9-KEM";
                 case FRODO -> "FrodoKEM";
+                case HYBRIDKEM -> mySpec.getHybridKEMSpec().getJCAName();
                 default -> myName;
             };
 

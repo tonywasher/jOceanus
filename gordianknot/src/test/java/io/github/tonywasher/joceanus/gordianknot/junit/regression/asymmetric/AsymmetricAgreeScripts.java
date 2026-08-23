@@ -94,12 +94,12 @@ public final class AsymmetricAgreeScripts {
     private static final X500Name CLIENTNAME = KeyStoreUtils.buildX500Name(KeyStoreAlias.AGREE);
 
     /**
-     * ClientName.
+     * ServerName.
      */
     private static final X500Name SERVERNAME = KeyStoreUtils.buildX500Name(KeyStoreAlias.TARGET);
 
     /**
-     * ClientName.
+     * SignerName.
      */
     private static final X500Name SIGNERNAME = KeyStoreUtils.buildX500Name(KeyStoreAlias.SIGNER);
 

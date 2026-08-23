@@ -17,7 +17,18 @@
 
 package io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric;
 
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementStatus;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
@@ -34,7 +45,10 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.keystore.KeyStoreUtils;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.keystore.KeyStoreUtils.KeyStoreAlias;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianGenerator;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicContainer;
@@ -44,12 +58,18 @@ import org.junit.jupiter.api.TestFactory;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
  * Hybrid Tests.
  */
 class HybridTest {
+    /**
+     * ServerName.
+     */
+    private static final X500Name SERVERNAME = KeyStoreUtils.buildX500Name(KeyStoreAlias.TARGET);
+
     /**
      * The factories.
      */
@@ -178,6 +198,44 @@ class HybridTest {
             myTargetSigner.update(myMessage);
             myTargetSigner.verify(mySignature);
             Assertions.assertTrue(bSuccess, "Verify");
+        }
+
+        if (pSpec instanceof GordianHybridKEMSpec) {
+            /* Create Agreement */
+            final GordianAgreementFactory mySourceAgrees = pSource.getAgreementFactory();
+            final GordianAgreementSpecBuilder mySpecBuilder = mySourceAgrees.newAgreementSpecBuilder();
+            final GordianAgreementSpec myAgreeSpec = mySpecBuilder.kem(myKeyPairSpec, GordianAgreementKDF.NONE);
+            final GordianCertificate myTargetCert = mySourceAgrees.newMiniCertificate(SERVERNAME, myKeyPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+            GordianAgreementParams myParams = mySourceAgrees.newAgreementParams(myAgreeSpec, GordianLength.LEN_128.getLength())
+                    .setServerCertificate(myTargetCert);
+            final GordianAgreement mySender = mySourceAgrees.createAgreement(myParams);
+
+            /* Accept agreement */
+            final byte[] myMessage = mySender.nextMessage();
+            final GordianAgreement myResponder = mySourceAgrees.parseAgreementMessage(myMessage);
+            myParams = myResponder.getAgreementParams().setServerCertificate(myTargetCert);
+            myResponder.updateParams(myParams);
+
+            /* Check that the values match */
+            Assertions.assertEquals(GordianAgreementStatus.RESULT_AVAILABLE, mySender.getStatus(), "Sender result not available");
+            final Object myFirst = mySender.getResult();
+            Assertions.assertEquals(GordianAgreementStatus.RESULT_AVAILABLE, myResponder.getStatus(), "Responder result not available");
+            final Object mySecond = myResponder.getResult();
+            boolean isEqual = Objects.deepEquals(myFirst, mySecond);
+            Assertions.assertTrue(isEqual, "Failed to agree result");
+
+            /* Accept agreement */
+            final GordianAgreementFactory myTargetAgrees = pTarget.getAgreementFactory();
+            final GordianAgreement myOtherResponder = myTargetAgrees.parseAgreementMessage(myMessage);
+            final GordianCertificate myOtherCert = myTargetAgrees.newMiniCertificate(SERVERNAME, myTargetDerived, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+            myParams = myOtherResponder.getAgreementParams().setServerCertificate(myOtherCert);
+            myOtherResponder.updateParams(myParams);
+
+            /* Check that the values match */
+            Assertions.assertEquals(GordianAgreementStatus.RESULT_AVAILABLE, myOtherResponder.getStatus(), "Responder result not available");
+            final Object myOther = myOtherResponder.getResult();
+            isEqual = Objects.deepEquals(myFirst, myOther);
+            Assertions.assertTrue(isEqual, "Failed to agree other result");
         }
     }
 }

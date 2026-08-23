@@ -139,7 +139,7 @@ public class GordianCoreAgreementState {
      *
      * @return the result
      */
-    Object getResult() {
+    public Object getResult() {
         return theResult;
     }
 

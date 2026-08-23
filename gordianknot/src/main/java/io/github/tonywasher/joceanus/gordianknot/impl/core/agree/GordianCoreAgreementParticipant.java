@@ -113,7 +113,7 @@ public class GordianCoreAgreementParticipant {
      * @param pEncapsulated the encapsulated
      * @return the state
      */
-    GordianCoreAgreementParticipant setEncapsulated(final byte[] pEncapsulated) {
+    public GordianCoreAgreementParticipant setEncapsulated(final byte[] pEncapsulated) {
         theEncapsulated = pEncapsulated;
         return this;
     }
@@ -133,7 +133,7 @@ public class GordianCoreAgreementParticipant {
      * @param pKeyPair the keyPair
      * @return the state
      */
-    GordianCoreAgreementParticipant setKeyPair(final GordianKeyPair pKeyPair) {
+    public GordianCoreAgreementParticipant setKeyPair(final GordianKeyPair pKeyPair) {
         theKeyPair = pKeyPair;
         return this;
     }
@@ -153,7 +153,7 @@ public class GordianCoreAgreementParticipant {
      * @param pKeyPair the keyPair
      * @return the state
      */
-    GordianCoreAgreementParticipant setEphemeralKeyPair(final GordianKeyPair pKeyPair) {
+    public GordianCoreAgreementParticipant setEphemeralKeyPair(final GordianKeyPair pKeyPair) {
         theEphemeral = pKeyPair;
         return this;
     }
@@ -190,7 +190,7 @@ public class GordianCoreAgreementParticipant {
      *
      * @return the certificate
      */
-    byte[] getInitVector() {
+    public byte[] getInitVector() {
         return theInitVector;
     }
 
@@ -200,7 +200,7 @@ public class GordianCoreAgreementParticipant {
      * @param pInitVector the initVector
      * @return the state
      */
-    GordianCoreAgreementParticipant setInitVector(final byte[] pInitVector) {
+    public GordianCoreAgreementParticipant setInitVector(final byte[] pInitVector) {
         theInitVector = pInitVector;
         return this;
     }

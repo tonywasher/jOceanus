@@ -26,6 +26,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCi
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHybridKEMSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
@@ -186,6 +187,9 @@ public class GordianCoreAgreementAlgId {
         }
         final GordianKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
         addKeyPair(myBuilder.composite());
+        for (GordianHybridKEMSpec mySpec : GordianHybridKEMSpec.values()) {
+            addKeyPair(myBuilder.hybridKEM(mySpec));
+        }
     }
 
     /**
@@ -253,6 +257,9 @@ public class GordianCoreAgreementAlgId {
                 break;
             case SMAUGT:
                 myId = myId.branch(Integer.toString(mySpec.getSmaugTSpec().getSpec().ordinal() + 1));
+                break;
+            case HYBRIDKEM:
+                myId = myId.branch(Integer.toString(mySpec.getHybridKEMSpec().getSpec().ordinal() + 1));
                 break;
             case SM9:
                 myId = switch (mySpec.getSM9KeyType()) {

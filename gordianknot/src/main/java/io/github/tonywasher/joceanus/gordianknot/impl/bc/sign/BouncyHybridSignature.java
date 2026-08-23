@@ -26,6 +26,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureS
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyHybridKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreHybridSignSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
@@ -188,9 +189,15 @@ public class BouncyHybridSignature
         /* Check that we are in verify mode */
         checkMode(GordianSignatureMode.VERIFY);
 
-        /* Split the message */
-        final byte[] myPrimeSignature = Arrays.copyOfRange(pSignature, 0, theHybrid.getSignatureLength());
-        final byte[] myTradSignature = Arrays.copyOfRange(pSignature, theHybrid.getSignatureLength(), pSignature.length);
+        /* Check minimum lengths */
+        final int mySigLength = theHybrid.getSignatureLength();
+        if (pSignature.length < mySigLength) {
+            throw new GordianDataException("Signature too short");
+        }
+
+        /* Split the signature */
+        final byte[] myPrimeSignature = Arrays.copyOfRange(pSignature, 0, mySigLength);
+        final byte[] myTradSignature = Arrays.copyOfRange(pSignature, mySigLength, pSignature.length);
 
         /* Prepare the signers */
         prepareSigners();

@@ -53,7 +53,8 @@ import java.util.Random;
 /**
  * Implementation engine for composite Agreements.
  */
-public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
+public class GordianCoreAgreementComposite
+        extends GordianCoreAgreementEngine {
     /**
      * The factory.
      */
