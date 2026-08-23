@@ -46,7 +46,7 @@ public class BouncyAgreementFactory
     public GordianCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
         final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pSpec;
         return switch (pSpec.getKeyPairSpec().getKeyPairType()) {
-            case RSA -> new BouncyRSAAgreementEngine(this, mySpec);
+            case RSA -> getBCRSAEngine(mySpec);
             case EC, GOST, DSTU, SM2 -> getBCECEngine(mySpec);
             case DH -> getBCDHEngine(mySpec);
             case NEWHOPE -> new BouncyNewHopeAgreementEngine(this, mySpec);
@@ -71,6 +71,21 @@ public class BouncyAgreementFactory
             case HYBRIDKEM -> new BouncyHybridAgreementEngine(this, mySpec);
             case COMPOSITE -> super.createEngine(pSpec);
             default -> super.createEngine(pSpec);
+        };
+    }
+
+    /**
+     * Create the BouncyCastle RSA Agreement.
+     *
+     * @param pSpec the agreementSpec
+     * @return the Agreement
+     * @throws GordianException on error
+     */
+    private GordianCoreAgreementEngine getBCRSAEngine(final GordianCoreAgreementSpec pSpec) throws GordianException {
+        return switch (pSpec.getAgreementType()) {
+            case KEM -> new BouncyRSAKEMAgreementEngine(this, pSpec);
+            case WRAP -> new BouncyRSAWrapAgreementEngine(this, pSpec);
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         };
     }
 

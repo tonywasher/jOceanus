@@ -65,6 +65,7 @@ public class JcaAgreementFactory
             case CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, SMAUGT, HYBRIDKEM ->
                     getPostQuantumEngine(mySpec);
             case XDH -> getXDHEngine(mySpec);
+            case RSA -> new JcaHybridEngine(this, mySpec);
             default -> super.createEngine(pSpec);
         };
     }
@@ -184,7 +185,7 @@ public class JcaAgreementFactory
             return false;
         }
 
-        /* Only allow SM2 for NoKDF */
+        /* Disallow various SM2 options */
         final GordianAgreementType myType = pSpec.getAgreementType();
         if (GordianAgreementType.SM2.equals(myType)) {
             return GordianAgreementKDF.NONE.equals(pSpec.getKDFType())
@@ -196,6 +197,7 @@ public class JcaAgreementFactory
         return switch (pSpec.getKeyPairSpec().getKeyPairType()) {
             case NEWHOPE, CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, SMAUGT, HYBRIDKEM,
                  COMPOSITE -> true;
+            case RSA -> GordianAgreementType.WRAP.equals(myType);
             case SM9 -> GordianAgreementKDF.NONE.equals(pSpec.getKDFType())
                     && !pSpec.withConfirm();
             case EC, GOST, DSTU, SM2, DH -> !GordianAgreementType.KEM.equals(myType);

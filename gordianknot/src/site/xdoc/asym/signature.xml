@@ -134,6 +134,7 @@ final boolean verified = mySigner.verify(mySignature);
                     <tr><td>XMSS</td><td>Native, PreHash</td><td/></tr>
                     <tr><td>LMS</td><td>Native</td><td/></tr>
                     <tr><td>SM9</td><td>Native</td><td/></tr>
+                    <tr><td>HYBRIDSIGN</td><td>Native</td><td/></tr>
                 </table>
             </subsection>
         </section>

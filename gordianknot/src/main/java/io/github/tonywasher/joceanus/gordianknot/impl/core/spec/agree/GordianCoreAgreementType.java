@@ -69,7 +69,7 @@ public final class GordianCoreAgreementType {
      */
     public boolean isAnonymous() {
         return switch (theType) {
-            case KEM, ANON -> true;
+            case KEM, WRAP, ANON -> true;
             default -> false;
         };
     }
@@ -108,6 +108,7 @@ public final class GordianCoreAgreementType {
         }
         return switch (theType) {
             case KEM -> hasKEM(pKeyPairSpec);
+            case WRAP -> hasWrap(myType);
             case ANON -> hasAnon(myType);
             case BASIC, SIGNED -> hasBasic(myType);
             case SM2 -> hasSM2(myType);
@@ -134,6 +135,16 @@ public final class GordianCoreAgreementType {
             };
             default -> false;
         };
+    }
+
+    /**
+     * Does the keyPairType have a WRAP agreement?
+     *
+     * @param pKeyPairType the keyPairType
+     * @return true/false
+     */
+    public static boolean hasWrap(final GordianKeyPairType pKeyPairType) {
+        return GordianKeyPairType.RSA.equals(pKeyPairType);
     }
 
     /**

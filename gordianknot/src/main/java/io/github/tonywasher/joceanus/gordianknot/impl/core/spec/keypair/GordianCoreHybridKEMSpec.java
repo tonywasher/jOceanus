@@ -220,7 +220,7 @@ public final class GordianCoreHybridKEMSpec
     public GordianAgreementSpec getTraditionalAgreementSpec() {
         return switch (theSpec) {
             case MLKEM768_RSA2048, MLKEM768_RSA3072, MLKEM768_RSA4096, MLKEM1024_RSA3072 ->
-                    theAgreement.kem(getTraditionalKeyPairSpec(), GordianAgreementKDF.NONE);
+                    theAgreement.wrap(getTraditionalKeyPairSpec());
             case MLKEM768_ECDH_P256, MLKEM768_ECDH_P384, MLKEM768_ECDH_BP256, MLKEM1024_ECDH_P384, MLKEM1024_ECDH_BP384,
                  MLKEM1024_ECDH_P521, MLKEM768_X25519, MLKEM1024_X448 ->
                     theAgreement.anon(getTraditionalKeyPairSpec(), GordianAgreementKDF.NONE);

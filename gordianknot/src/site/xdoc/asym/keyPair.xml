@@ -87,6 +87,8 @@ final GordianKeyPair myDerived = myGenerator.deriveKeyPair(myX509, myPKCS8);
                         <tr><td>UOV</td><td>(Is, Ip, III, V) * (Classic, PHC, PKC-SKC)</td></tr>
                         <tr><td>NEWHOPE</td><td/></tr>
                         <tr><td>SM9</td><td/></tr>
+                        <tr><td>HYBRIDKEM</td><td/></tr>
+                        <tr><td>HYBRIDSIGN</td><td/></tr>
                     </table>
                 </subsection>
             </subsection>

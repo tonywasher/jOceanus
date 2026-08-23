@@ -108,6 +108,16 @@ public interface GordianAgreementSpecBuilder {
     }
 
     /**
+     * Create the WRAP agreementSpec.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @return the Spec
+     */
+    default GordianAgreementSpec wrap(final GordianKeyPairSpec pKeyPairSpec) {
+        return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianAgreementType.WRAP).withKDF(GordianAgreementKDF.NONE).build();
+    }
+
+    /**
      * Create the ANON agreementSpec.
      *
      * @param pKeyPairSpec the keyPairSpec

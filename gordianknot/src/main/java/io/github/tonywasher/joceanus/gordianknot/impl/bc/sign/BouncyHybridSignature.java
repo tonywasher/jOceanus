@@ -132,6 +132,7 @@ public class BouncyHybridSignature
 
         /* Access builders */
         final GordianSignParamsBuilder myParamsBuilder = theSignFactory.newSignParamsBuilder();
+        theContext = pParams.getContext();
 
         /* Initialise the primary */
         thePrimary = (GordianCoreSignature) theSignFactory.createSigner(theHybrid.getPrimarySignatureSpec());

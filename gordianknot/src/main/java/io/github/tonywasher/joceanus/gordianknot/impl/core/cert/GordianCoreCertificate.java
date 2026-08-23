@@ -35,8 +35,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianBaseKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
@@ -151,7 +150,7 @@ public class GordianCoreCertificate
 
         /* Store the parameters */
         theFactory = pFactory;
-        theKeyPair = getPublicOnly(pKeyPair);
+        theKeyPair = ((GordianBaseKeyPair) pKeyPair).getPublicOnly();
 
         /* Determine the signatureSpec */
         theSigSpec = determineSignatureSpecForKeyPair(theKeyPair);
@@ -194,7 +193,7 @@ public class GordianCoreCertificate
                                   final GordianKeyPairUsage pUsage) throws GordianException {
         /* Store the parameters */
         theFactory = pFactory;
-        theKeyPair = getPublicOnly(pKeyPair);
+        theKeyPair = ((GordianBaseKeyPair) pKeyPair).getPublicOnly();
         theKeyUsage = pUsage;
 
         /* Check that the signer is allowed to sign certificates */
@@ -440,18 +439,6 @@ public class GordianCoreCertificate
     }
 
     /**
-     * get public only version of key.
-     *
-     * @param pKeyPair the key
-     * @return the publicOnly version
-     */
-    protected GordianKeyPair getPublicOnly(final GordianKeyPair pKeyPair) {
-        return pKeyPair instanceof GordianCompositeKeyPair myComposite
-                ? myComposite.getPublicOnly()
-                : ((GordianCoreKeyPair) pKeyPair).getPublicOnly();
-    }
-
-    /**
      * Determine the signatureSpec for the key.
      *
      * @param pKeyPair the keyPair
@@ -492,9 +479,7 @@ public class GordianCoreCertificate
      * @return matches true/false
      */
     public boolean checkMatchingPublicKey(final GordianKeyPair pKeyPair) {
-        return pKeyPair instanceof GordianCompositeKeyPair myComposite
-                ? myComposite.checkMatchingPublicKey(getKeyPair())
-                : ((GordianCoreKeyPair) pKeyPair).checkMatchingPublicKey(getKeyPair());
+        return ((GordianBaseKeyPair) pKeyPair).checkMatchingPublicKey(getKeyPair());
     }
 
     /**

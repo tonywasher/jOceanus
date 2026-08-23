@@ -33,6 +33,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianFalconS
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianGOSTSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHAETAESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHQCSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHybridKEMSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHybridSignSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSHash;
@@ -134,6 +136,7 @@ public final class KeyStoreRequest {
                 signedKeyPairRequestTest(myBuilder.sqisign(GordianSQIsignSpec.SQISIGN1)),
                 signedKeyPairRequestTest(myBuilder.uov(GordianUOVSpec.UOV_IP_CLASSIC)),
                 signedKeyPairRequestTest(myBuilder.sm9(GordianSM9SignType.SIGNMASTER)),
+                signedKeyPairRequestTest(myBuilder.hybridSign(GordianHybridSignSpec.MLDSA44_ED25519_SHA512)),
                 signedKeyPairRequestTest(myBuilder.xmss(GordianXMSSDigestType.SHA512, GordianXMSSHeight.H10)),
                 signedKeyPairRequestTest(myBuilder.lms(GordianLMSHash.SHA256, GordianLMSHeight.H5,
                         GordianLMSWidth.W1, GordianLength.LEN_256)),
@@ -159,6 +162,7 @@ public final class KeyStoreRequest {
                 agreedKeyPairRequestTest(myBuilder.saber(GordianSABERSpec.BASE128)),
                 agreedKeyPairRequestTest(myBuilder.smaugT(GordianSmaugTSpec.MODE1)),
                 agreedKeyPairRequestTest(myBuilder.sm9(GordianSM9EncryptType.ENCMASTER)),
+                agreedKeyPairRequestTest(myBuilder.hybridKEM(GordianHybridKEMSpec.MLKEM768_X25519)),
                 agreedKeyPairRequestTest(myBuilder.composite(myBuilder.cmce(GordianCMCESpec.CMCE4608),
                         myBuilder.frodo(GordianFRODOSpec.AES976),
                         myBuilder.mlkem(GordianMLKEMSpec.MLKEM512))),

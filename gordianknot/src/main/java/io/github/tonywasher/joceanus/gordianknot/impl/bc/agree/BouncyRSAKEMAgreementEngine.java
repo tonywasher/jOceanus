@@ -31,9 +31,9 @@ import org.bouncycastle.crypto.kems.RSAKEMGenerator;
 import javax.security.auth.DestroyFailedException;
 
 /**
- * RSA Agreement Engine.
+ * RSA KEM Agreement Engine.
  */
-public class BouncyRSAAgreementEngine
+public class BouncyRSAKEMAgreementEngine
         extends BouncyAgreementBase {
     /**
      * Key Length.
@@ -52,8 +52,8 @@ public class BouncyRSAAgreementEngine
      * @param pSpec    the agreementSpec
      * @throws GordianException on error
      */
-    BouncyRSAAgreementEngine(final GordianCoreAgreementFactory pFactory,
-                             final GordianCoreAgreementSpec pSpec) throws GordianException {
+    BouncyRSAKEMAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                final GordianCoreAgreementSpec pSpec) throws GordianException {
         /* Initialize underlying class */
         super(pFactory, pSpec);
 

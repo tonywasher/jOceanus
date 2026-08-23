@@ -197,7 +197,7 @@ class HybridTest {
             myTargetSigner.initForVerify(myTargetParams);
             myTargetSigner.update(myMessage);
             myTargetSigner.verify(mySignature);
-            Assertions.assertTrue(bSuccess, "Verify");
+            Assertions.assertTrue(bSuccess, "CrossVerify");
         }
 
         if (pSpec instanceof GordianHybridKEMSpec) {
@@ -235,7 +235,7 @@ class HybridTest {
             Assertions.assertEquals(GordianAgreementStatus.RESULT_AVAILABLE, myOtherResponder.getStatus(), "Responder result not available");
             final Object myOther = myOtherResponder.getResult();
             isEqual = Objects.deepEquals(myFirst, myOther);
-            Assertions.assertTrue(isEqual, "Failed to agree other result");
+            Assertions.assertTrue(isEqual, "Failed to agree cross result");
         }
     }
 }

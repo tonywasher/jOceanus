@@ -20,7 +20,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseDestroyable;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
@@ -33,7 +32,7 @@ import java.util.Objects;
  * CompositeKeyPair.
  */
 public class GordianCompositeKeyPair
-        implements GordianKeyPair, GordianBaseDestroyable {
+        implements GordianBaseKeyPair {
     /**
      * The KeySpec.
      */
@@ -122,25 +121,16 @@ public class GordianCompositeKeyPair
         }
     }
 
-    /**
-     * Obtain a publicOnly version of this keyPair.
-     *
-     * @return the publicOnly keyPair
-     */
+    @Override
     public GordianCompositeKeyPair getPublicOnly() {
         final GordianCompositeKeyPair myPublicOnly = new GordianCompositeKeyPair(theSpec);
         for (GordianKeyPair myPair : theKeyPairs.values()) {
-            myPublicOnly.theKeyPairs.put(myPair.getKeyPairSpec(), ((GordianCoreKeyPair) myPair).getPublicOnly());
+            myPublicOnly.theKeyPairs.put(myPair.getKeyPairSpec(), ((GordianBaseKeyPair) myPair).getPublicOnly());
         }
         return myPublicOnly;
     }
 
-    /**
-     * Validate that the keyPair public Key matches.
-     *
-     * @param pPair the key pair
-     * @return matches true/false
-     */
+    @Override
     public boolean checkMatchingPublicKey(final GordianKeyPair pPair) {
         /* Must be composite and matching spec */
         if (!(pPair instanceof GordianCompositeKeyPair)

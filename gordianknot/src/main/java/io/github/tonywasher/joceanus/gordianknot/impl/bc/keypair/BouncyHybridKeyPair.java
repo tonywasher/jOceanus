@@ -20,9 +20,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseDestroyable;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianBaseKeyPair;
 import org.bouncycastle.crypto.params.MLDSAPrivateKeyParameters;
 import org.bouncycastle.crypto.params.MLKEMPrivateKeyParameters;
 
@@ -32,7 +32,7 @@ import java.util.Objects;
  * BouncyCastle Hybrid keyPair.
  */
 public class BouncyHybridKeyPair
-        implements GordianKeyPair, GordianBaseDestroyable {
+        implements GordianBaseKeyPair {
     /**
      * The KeySpec.
      */
@@ -150,6 +150,26 @@ public class BouncyHybridKeyPair
             /* Reject keyPair */
             throw new GordianDataException("Invalid KeyPairType");
         }
+    }
+
+    @Override
+    public BouncyHybridKeyPair getPublicOnly() {
+        final BouncyKeyPair myPrimary = getPrimary().getPublicOnly();
+        final BouncyKeyPair myTraditional = getTraditional().getPublicOnly();
+        return new BouncyHybridKeyPair(getKeyPairSpec(), myPrimary, myTraditional);
+    }
+
+    @Override
+    public boolean checkMatchingPublicKey(final GordianKeyPair pPair) {
+        /* Must be composite and matching spec */
+        if (!(pPair instanceof BouncyHybridKeyPair myHybrid)
+                || !theSpec.equals(pPair.getKeyPairSpec())) {
+            return false;
+        }
+
+        /* Check primary and Traditional */
+        return thePrimary.checkMatchingPublicKey(myHybrid.getPrimary())
+                && theTraditional.checkMatchingPublicKey(myHybrid.getTraditional());
     }
 
     @Override

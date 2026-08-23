@@ -384,6 +384,7 @@ public abstract class GordianCoreSignatureFactory
             case XMSS -> myBuilder.xmss();
             case LMS -> myBuilder.lms();
             case SM9 -> pKeySpec.getSubSpec() instanceof GordianSM9SignType ? myBuilder.sm9() : null;
+            case HYBRIDSIGN -> myBuilder.hybrid();
             case COMPOSITE -> {
                 final List<GordianSignatureSpec> mySpecs = new ArrayList<>();
                 final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;

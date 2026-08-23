@@ -122,10 +122,14 @@ public final class GordianCoreAgreementSpecBuilder
 
         /* Switch on keyPairType */
         switch (pKeyPairSpec.getKeyPairType()) {
-            case RSA, MLKEM, CMCE, FRODO:
+            case RSA:
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
+                myAgreements.add(new GordianCoreAgreementSpec(pKeyPairSpec, GordianAgreementType.WRAP, GordianAgreementKDF.NONE));
+                break;
+            case MLKEM, CMCE, FRODO:
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
                 break;
-            case NEWHOPE, SABER, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, SMAUGT:
+            case NEWHOPE, SABER, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, SMAUGT, HYBRIDKEM:
                 myAgreements.add(new GordianCoreAgreementSpec(pKeyPairSpec, GordianAgreementType.KEM, GordianAgreementKDF.NONE));
                 break;
             case EC, SM2, GOST:

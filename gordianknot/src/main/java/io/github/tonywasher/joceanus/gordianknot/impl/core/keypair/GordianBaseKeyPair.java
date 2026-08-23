@@ -15,54 +15,28 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.gordianknot.api.agree.spec;
+package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseDestroyable;
 
 /**
- * Agreement Type.
+ * Base keyPair.
  */
-public enum GordianAgreementType {
+public interface GordianBaseKeyPair
+        extends GordianKeyPair, GordianBaseDestroyable {
     /**
-     * KEM.
+     * Obtain a publicOnly copy of this keyPair?
+     *
+     * @return the publicOnly copy
      */
-    KEM,
+    GordianKeyPair getPublicOnly();
 
     /**
-     * Anonymous.
+     * Validate that the keyPair public Key matches.
+     *
+     * @param pPair the key pair
+     * @return matches true/false
      */
-    ANON,
-
-    /**
-     * Wrap.
-     */
-    WRAP,
-
-    /**
-     * Basic.
-     */
-    BASIC,
-
-    /**
-     * Signed.
-     */
-    SIGNED,
-
-    /**
-     * SM2.
-     */
-    SM2,
-
-    /**
-     * SM9.
-     */
-    SM9,
-
-    /**
-     * MQV.
-     */
-    MQV,
-
-    /**
-     * Unified.
-     */
-    UNIFIED;
+    boolean checkMatchingPublicKey(GordianKeyPair pPair);
 }

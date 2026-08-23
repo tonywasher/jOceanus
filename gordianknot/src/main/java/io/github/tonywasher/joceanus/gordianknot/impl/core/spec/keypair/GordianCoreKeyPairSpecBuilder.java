@@ -31,6 +31,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianFalconS
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianGOSTSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHAETAESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHQCSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHybridKEMSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHybridSignSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianIdAwareKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
@@ -251,7 +253,7 @@ public final class GordianCoreKeyPairSpecBuilder
         /* Add LMS */
         GordianCoreLMSSpec.listAllPossibleSpecs().forEach(t -> mySpecs.add(myBuilder.lms(t)));
 
-        /* Add SPHINCSPlus/CMCE/Frodo/Saber */
+        /* Add PostQuantum */
         EnumSet.allOf(GordianSLHDSASpec.class).forEach(t -> mySpecs.add(myBuilder.slhdsa(t)));
         EnumSet.allOf(GordianCMCESpec.class).forEach(t -> mySpecs.add(myBuilder.cmce(t)));
         EnumSet.allOf(GordianFRODOSpec.class).forEach(t -> mySpecs.add(myBuilder.frodo(t)));
@@ -281,6 +283,10 @@ public final class GordianCoreKeyPairSpecBuilder
         /* Add SM9 */
         EnumSet.allOf(GordianSM9EncryptType.class).forEach(t -> mySpecs.add(myBuilder.sm9(t)));
         EnumSet.allOf(GordianSM9SignType.class).forEach(t -> mySpecs.add(myBuilder.sm9(t)));
+
+        /* Add Hybrid */
+        EnumSet.allOf(GordianHybridKEMSpec.class).forEach(t -> mySpecs.add(myBuilder.hybridKEM(t)));
+        EnumSet.allOf(GordianHybridSignSpec.class).forEach(t -> mySpecs.add(myBuilder.hybridSign(t)));
 
         /* Return the list */
         return mySpecs;
