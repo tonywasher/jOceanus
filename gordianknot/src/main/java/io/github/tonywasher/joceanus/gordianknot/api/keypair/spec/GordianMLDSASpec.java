@@ -34,20 +34,5 @@ public enum GordianMLDSASpec {
     /**
      * mldsa87.
      */
-    MLDSA87,
-
-    /**
-     * mldsa44sha2.
-     */
-    MLDSA44SHA,
-
-    /**
-     * mldsa65sha2.
-     */
-    MLDSA65SHA,
-
-    /**
-     * mldsa87sha2.
-     */
-    MLDSA87SHA;
+    MLDSA87;
 }

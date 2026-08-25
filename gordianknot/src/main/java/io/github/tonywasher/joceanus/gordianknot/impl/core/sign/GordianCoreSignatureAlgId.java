@@ -435,9 +435,11 @@ public class GordianCoreSignatureAlgId {
         /* Add XMSS signatures */
         addXMSSSignatures();
 
+        /* Add MLDSA/SLHDSA signatures */
+        addMLDSASignatures();
+        addSLHDSASignatures();
+
         /* Add signatures that use keyPair id */
-        addKeyPairIdSignatures(GordianCoreMLDSASpec.values());
-        addKeyPairIdSignatures(GordianCoreSLHDSASpec.values());
         addKeyPairIdSignatures(GordianCoreFalconSpec.values());
         addKeyPairIdSignatures(GordianCoreAIMerSpec.values());
         addKeyPairIdSignatures(GordianCoreFaestSpec.values());
@@ -462,6 +464,32 @@ public class GordianCoreSignatureAlgId {
             final GordianSignatureSpec mySigSpec = myBuilder.withKeyPairType(mySpec.getKeyPairType()).build();
             addToMaps(mySigSpec, mySpec.getSpec(),
                     new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
+        }
+    }
+
+    /**
+     * Add MLDSA signatures.
+     */
+    private void addMLDSASignatures() {
+        final GordianSignatureSpecBuilder myBuilder = GordianCoreSignatureSpecBuilder.newInstance();
+        for (GordianCoreMLDSASpec mySpec : GordianCoreMLDSASpec.values()) {
+            addToMaps(myBuilder.mlDSA(), mySpec.getSpec(),
+                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
+            addToMaps(myBuilder.mlDSAph(), mySpec.getSpec(),
+                    new AlgorithmIdentifier(mySpec.getPreHashIdentifier(), DERNull.INSTANCE));
+        }
+    }
+
+    /**
+     * Add SLHDSA signatures.
+     */
+    private void addSLHDSASignatures() {
+        final GordianSignatureSpecBuilder myBuilder = GordianCoreSignatureSpecBuilder.newInstance();
+        for (GordianCoreSLHDSASpec mySpec : GordianCoreSLHDSASpec.values()) {
+            addToMaps(myBuilder.slhDSA(), mySpec.getSpec(),
+                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
+            addToMaps(myBuilder.slhDSAph(), mySpec.getSpec(),
+                    new AlgorithmIdentifier(mySpec.getPreHashIdentifier(), DERNull.INSTANCE));
         }
     }
 

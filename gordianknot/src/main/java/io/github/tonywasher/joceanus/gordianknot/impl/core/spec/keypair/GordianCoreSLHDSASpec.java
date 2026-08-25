@@ -67,19 +67,6 @@ public final class GordianCoreSLHDSASpec
     }
 
     /**
-     * Is this a hash signer?
-     *
-     * @return true/false
-     */
-    public boolean isHash() {
-        return switch (theSpec) {
-            case SHA128F, SHA128S, SHA192F, SHA192S, SHA256F, SHA256S, SHAKE128F, SHAKE128S, SHAKE192F, SHAKE192S,
-                 SHAKE256F, SHAKE256S -> false;
-            default -> true;
-        };
-    }
-
-    /**
      * Obtain SLHDSA Parameters.
      *
      * @return the parameters.
@@ -98,19 +85,6 @@ public final class GordianCoreSLHDSASpec
             case SHAKE192S -> SLHDSAParameters.shake_192s;
             case SHAKE256F -> SLHDSAParameters.shake_256f;
             case SHAKE256S -> SLHDSAParameters.shake_256s;
-            case SHA128F_HASH -> SLHDSAParameters.sha2_128f_with_sha256;
-            case SHA128S_HASH -> SLHDSAParameters.sha2_128s_with_sha256;
-            case SHA192F_HASH -> SLHDSAParameters.sha2_192f_with_sha512;
-            case SHA192S_HASH -> SLHDSAParameters.sha2_192s_with_sha512;
-            case SHA256F_HASH -> SLHDSAParameters.sha2_256f_with_sha512;
-            case SHA256S_HASH -> SLHDSAParameters.sha2_256s_with_sha512;
-            case SHAKE128F_HASH -> SLHDSAParameters.shake_128f_with_shake128;
-            case SHAKE128S_HASH -> SLHDSAParameters.shake_128s_with_shake128;
-            case SHAKE192F_HASH -> SLHDSAParameters.shake_192f_with_shake256;
-            case SHAKE192S_HASH -> SLHDSAParameters.shake_192s_with_shake256;
-            case SHAKE256F_HASH -> SLHDSAParameters.shake_256f_with_shake256;
-            case SHAKE256S_HASH -> SLHDSAParameters.shake_256s_with_shake256;
-            default -> throw new IllegalArgumentException();
         };
     }
 
@@ -133,19 +107,6 @@ public final class GordianCoreSLHDSASpec
             case SHAKE192S -> SLHDSAParameterSpec.slh_dsa_shake_192s;
             case SHAKE256F -> SLHDSAParameterSpec.slh_dsa_shake_256f;
             case SHAKE256S -> SLHDSAParameterSpec.slh_dsa_shake_256s;
-            case SHA128F_HASH -> SLHDSAParameterSpec.slh_dsa_sha2_128f_with_sha256;
-            case SHA128S_HASH -> SLHDSAParameterSpec.slh_dsa_sha2_128s_with_sha256;
-            case SHA192F_HASH -> SLHDSAParameterSpec.slh_dsa_sha2_192f_with_sha512;
-            case SHA192S_HASH -> SLHDSAParameterSpec.slh_dsa_sha2_192s_with_sha512;
-            case SHA256F_HASH -> SLHDSAParameterSpec.slh_dsa_sha2_256f_with_sha512;
-            case SHA256S_HASH -> SLHDSAParameterSpec.slh_dsa_sha2_256s_with_sha512;
-            case SHAKE128F_HASH -> SLHDSAParameterSpec.slh_dsa_shake_128f_with_shake128;
-            case SHAKE128S_HASH -> SLHDSAParameterSpec.slh_dsa_shake_128s_with_shake128;
-            case SHAKE192F_HASH -> SLHDSAParameterSpec.slh_dsa_shake_192f_with_shake256;
-            case SHAKE192S_HASH -> SLHDSAParameterSpec.slh_dsa_shake_192s_with_shake256;
-            case SHAKE256F_HASH -> SLHDSAParameterSpec.slh_dsa_shake_256f_with_shake256;
-            case SHAKE256S_HASH -> SLHDSAParameterSpec.slh_dsa_shake_256s_with_shake256;
-            default -> throw new IllegalArgumentException();
         };
     }
 
@@ -164,19 +125,29 @@ public final class GordianCoreSLHDSASpec
             case SHAKE192S -> NISTObjectIdentifiers.id_slh_dsa_shake_192s;
             case SHAKE256F -> NISTObjectIdentifiers.id_slh_dsa_shake_256f;
             case SHAKE256S -> NISTObjectIdentifiers.id_slh_dsa_shake_256s;
-            case SHA128F_HASH -> NISTObjectIdentifiers.id_hash_slh_dsa_sha2_128f_with_sha256;
-            case SHA128S_HASH -> NISTObjectIdentifiers.id_hash_slh_dsa_sha2_128s_with_sha256;
-            case SHA192F_HASH -> NISTObjectIdentifiers.id_hash_slh_dsa_sha2_192f_with_sha512;
-            case SHA192S_HASH -> NISTObjectIdentifiers.id_hash_slh_dsa_sha2_192s_with_sha512;
-            case SHA256F_HASH -> NISTObjectIdentifiers.id_hash_slh_dsa_sha2_256f_with_sha512;
-            case SHA256S_HASH -> NISTObjectIdentifiers.id_hash_slh_dsa_sha2_256s_with_sha512;
-            case SHAKE128F_HASH -> NISTObjectIdentifiers.id_hash_slh_dsa_shake_128f_with_shake128;
-            case SHAKE128S_HASH -> NISTObjectIdentifiers.id_hash_slh_dsa_shake_128s_with_shake128;
-            case SHAKE192F_HASH -> NISTObjectIdentifiers.id_hash_slh_dsa_shake_192f_with_shake256;
-            case SHAKE192S_HASH -> NISTObjectIdentifiers.id_hash_slh_dsa_shake_192s_with_shake256;
-            case SHAKE256F_HASH -> NISTObjectIdentifiers.id_hash_slh_dsa_shake_256f_with_shake256;
-            case SHAKE256S_HASH -> NISTObjectIdentifiers.id_hash_slh_dsa_shake_256s_with_shake256;
-            default -> throw new IllegalArgumentException();
+        };
+    }
+
+
+    /**
+     * Obtain the preHash identifier.
+     *
+     * @return the identifier
+     */
+    public ASN1ObjectIdentifier getPreHashIdentifier() {
+        return switch (theSpec) {
+            case SHA128F -> NISTObjectIdentifiers.id_hash_slh_dsa_sha2_128f_with_sha256;
+            case SHA128S -> NISTObjectIdentifiers.id_hash_slh_dsa_sha2_128s_with_sha256;
+            case SHA192F -> NISTObjectIdentifiers.id_hash_slh_dsa_sha2_192f_with_sha512;
+            case SHA192S -> NISTObjectIdentifiers.id_hash_slh_dsa_sha2_192s_with_sha512;
+            case SHA256F -> NISTObjectIdentifiers.id_hash_slh_dsa_sha2_256f_with_sha512;
+            case SHA256S -> NISTObjectIdentifiers.id_hash_slh_dsa_sha2_256s_with_sha512;
+            case SHAKE128F -> NISTObjectIdentifiers.id_hash_slh_dsa_shake_128f_with_shake128;
+            case SHAKE128S -> NISTObjectIdentifiers.id_hash_slh_dsa_shake_128s_with_shake128;
+            case SHAKE192F -> NISTObjectIdentifiers.id_hash_slh_dsa_shake_192f_with_shake256;
+            case SHAKE192S -> NISTObjectIdentifiers.id_hash_slh_dsa_shake_192s_with_shake256;
+            case SHAKE256F -> NISTObjectIdentifiers.id_hash_slh_dsa_shake_256f_with_shake256;
+            case SHAKE256S -> NISTObjectIdentifiers.id_hash_slh_dsa_shake_256s_with_shake256;
         };
     }
 

@@ -37,11 +37,6 @@ public class JcaMLDSAKeyPairGenerator
     private static final String MLDSA_ALGO = "ML-DSA";
 
     /**
-     * HASH indication.
-     */
-    private static final String MLDSA_HASH = "HASH-" + MLDSA_ALGO;
-
-    /**
      * Constructor.
      *
      * @param pFactory the Security Factory
@@ -57,10 +52,9 @@ public class JcaMLDSAKeyPairGenerator
         try {
             /* Determine algorithm */
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
-            final String myAlgo = myKeySpec.getMLDSASpec().isHash() ? MLDSA_HASH : MLDSA_ALGO;
 
             /* Create and initialize the generator */
-            createFactories(myAlgo, false);
+            createFactories(MLDSA_ALGO, false);
             final MLDSAParameterSpec myParms = myKeySpec.getMLDSASpec().getParameterSpec();
             getGenerator().initialize(myParms, getRandom());
 

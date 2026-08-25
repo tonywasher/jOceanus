@@ -21,8 +21,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair;
 
 /**
@@ -40,11 +40,15 @@ public class JcaSLHDSASignature
      *
      * @param pFactory       the factory
      * @param pSignatureSpec the signatureSpec
+     * @throws GordianException on error
      */
     JcaSLHDSASignature(final GordianBaseFactory pFactory,
-                       final GordianSignatureSpec pSignatureSpec) {
+                       final GordianSignatureSpec pSignatureSpec) throws GordianException {
         /* Initialise class */
         super(pFactory, pSignatureSpec);
+        final boolean isHash = GordianSignatureType.PREHASH.equals(pSignatureSpec.getSignatureType());
+        final String myName = isHash ? PQC_HASH_PFX + BASE_NAME : BASE_NAME;
+        setSigner(getJavaSignature(myName, false));
     }
 
     @Override
@@ -53,8 +57,6 @@ public class JcaSLHDSASignature
         final GordianKeyPair myPair = pParams.getKeyPair();
         JcaKeyPair.checkKeyPair(myPair);
         checkKeyPairForSignature(myPair);
-        final String mySignName = getAlgorithmForKeyPair(myPair);
-        setSigner(getJavaSignature(mySignName, false));
 
         /* pass on call */
         super.initForSigning(pParams);
@@ -66,23 +68,8 @@ public class JcaSLHDSASignature
         final GordianKeyPair myPair = pParams.getKeyPair();
         JcaKeyPair.checkKeyPair(myPair);
         checkKeyPairForSignature(myPair);
-        final String mySignName = getAlgorithmForKeyPair(myPair);
-        setSigner(getJavaSignature(mySignName, false));
 
         /* pass on call */
         super.initForVerify(pParams);
-    }
-
-    /**
-     * Obtain algorithmName for keyPair.
-     *
-     * @param pKeyPair the keyPair
-     * @return the name
-     */
-    private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) {
-        /* Build the algorithm */
-        final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
-        final boolean isHash = mySpec.getSLHDSASpec().isHash();
-        return isHash ? PQC_HASH_PFX + BASE_NAME : BASE_NAME;
     }
 }

@@ -163,7 +163,7 @@ public interface GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    default GordianSignatureSpec eddsaph() {
+    default GordianSignatureSpec edDSAph() {
         return withKeyPairType(GordianKeyPairType.EDDSA).withSignatureType(GordianSignatureType.PREHASH).build();
     }
 
@@ -172,8 +172,17 @@ public interface GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    default GordianSignatureSpec slhdsa() {
+    default GordianSignatureSpec slhDSA() {
         return withKeyPairType(GordianKeyPairType.SLHDSA).build();
+    }
+
+    /**
+     * Create SLHDSA preHash Spec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec slhDSAph() {
+        return withKeyPairType(GordianKeyPairType.SLHDSA).withSignatureType(GordianSignatureType.PREHASH).build();
     }
 
     /**
@@ -181,8 +190,17 @@ public interface GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    default GordianSignatureSpec mldsa() {
+    default GordianSignatureSpec mlDSA() {
         return withKeyPairType(GordianKeyPairType.MLDSA).build();
+    }
+
+    /**
+     * Create MLDSA preHash Spec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec mlDSAph() {
+        return withKeyPairType(GordianKeyPairType.MLDSA).withSignatureType(GordianSignatureType.PREHASH).build();
     }
 
     /**

@@ -142,7 +142,7 @@ public abstract class GordianCoreSignatureFactory
     }
 
     /**
-     * Check composite signatureSpec against keySpec.
+     * Check RSA signatureSpec against keySpec.
      *
      * @param pKeyPairSpec the keyPairSpec
      * @param pSignSpec    the signatureSpec
@@ -368,8 +368,8 @@ public abstract class GordianCoreSignatureFactory
             case GOST -> myBuilder.gost2012(GordianGOSTSpec.GOST256A.equals(pKeySpec.getSubSpec())
                     ? GordianLength.LEN_256 : GordianLength.LEN_512);
             case EDDSA -> myBuilder.edDSA();
-            case SLHDSA -> myBuilder.slhdsa();
-            case MLDSA -> myBuilder.mldsa();
+            case SLHDSA -> myBuilder.slhDSAph();
+            case MLDSA -> myBuilder.mlDSAph();
             case FALCON -> myBuilder.falcon();
             case AIMER -> myBuilder.aimer();
             case FAEST -> myBuilder.faest();

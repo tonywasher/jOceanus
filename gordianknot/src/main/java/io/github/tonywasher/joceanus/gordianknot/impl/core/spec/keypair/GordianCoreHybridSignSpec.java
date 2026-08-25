@@ -173,7 +173,7 @@ public final class GordianCoreHybridSignSpec
      * @return the Spec
      */
     public GordianSignatureSpec getPrimarySignatureSpec() {
-        return theSignature.mldsa();
+        return theSignature.mlDSA();
     }
 
     /**

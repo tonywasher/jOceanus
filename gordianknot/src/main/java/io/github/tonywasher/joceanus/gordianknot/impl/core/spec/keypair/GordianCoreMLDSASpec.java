@@ -67,18 +67,6 @@ public final class GordianCoreMLDSASpec
     }
 
     /**
-     * Is this a hash signer?
-     *
-     * @return true/false
-     */
-    public boolean isHash() {
-        return switch (theSpec) {
-            case MLDSA44SHA, MLDSA65SHA, MLDSA87SHA -> true;
-            default -> false;
-        };
-    }
-
-    /**
      * Obtain MLDSA Parameters.
      *
      * @return the parameters.
@@ -88,10 +76,6 @@ public final class GordianCoreMLDSASpec
             case MLDSA44 -> MLDSAParameters.ml_dsa_44;
             case MLDSA65 -> MLDSAParameters.ml_dsa_65;
             case MLDSA87 -> MLDSAParameters.ml_dsa_87;
-            case MLDSA44SHA -> MLDSAParameters.ml_dsa_44_with_sha512;
-            case MLDSA65SHA -> MLDSAParameters.ml_dsa_65_with_sha512;
-            case MLDSA87SHA -> MLDSAParameters.ml_dsa_87_with_sha512;
-            default -> throw new IllegalArgumentException();
         };
     }
 
@@ -105,10 +89,6 @@ public final class GordianCoreMLDSASpec
             case MLDSA44 -> MLDSAParameterSpec.ml_dsa_44;
             case MLDSA65 -> MLDSAParameterSpec.ml_dsa_65;
             case MLDSA87 -> MLDSAParameterSpec.ml_dsa_87;
-            case MLDSA44SHA -> MLDSAParameterSpec.ml_dsa_44_with_sha512;
-            case MLDSA65SHA -> MLDSAParameterSpec.ml_dsa_65_with_sha512;
-            case MLDSA87SHA -> MLDSAParameterSpec.ml_dsa_87_with_sha512;
-            default -> throw new IllegalArgumentException();
         };
     }
 
@@ -118,10 +98,19 @@ public final class GordianCoreMLDSASpec
             case MLDSA44 -> NISTObjectIdentifiers.id_ml_dsa_44;
             case MLDSA65 -> NISTObjectIdentifiers.id_ml_dsa_65;
             case MLDSA87 -> NISTObjectIdentifiers.id_ml_dsa_87;
-            case MLDSA44SHA -> NISTObjectIdentifiers.id_hash_ml_dsa_44_with_sha512;
-            case MLDSA65SHA -> NISTObjectIdentifiers.id_hash_ml_dsa_65_with_sha512;
-            case MLDSA87SHA -> NISTObjectIdentifiers.id_hash_ml_dsa_87_with_sha512;
-            default -> throw new IllegalArgumentException();
+        };
+    }
+
+    /**
+     * Obtain the preHash identifier.
+     *
+     * @return the identifier
+     */
+    public ASN1ObjectIdentifier getPreHashIdentifier() {
+        return switch (theSpec) {
+            case MLDSA44 -> NISTObjectIdentifiers.id_hash_ml_dsa_44_with_sha512;
+            case MLDSA65 -> NISTObjectIdentifiers.id_hash_ml_dsa_65_with_sha512;
+            case MLDSA87 -> NISTObjectIdentifiers.id_hash_ml_dsa_87_with_sha512;
         };
     }
 

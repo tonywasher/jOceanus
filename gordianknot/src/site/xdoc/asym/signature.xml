@@ -118,8 +118,8 @@ final boolean verified = mySigner.verify(mySignature);
                     <tr><td>GOST2012</td><td>Native</td><td/></tr>
                     <tr><td>SM2</td><td>Native</td><td/></tr>
                     <tr><td>EdDSA</td><td>Native, PreHash</td><td>Y</td></tr>
-                    <tr><td>SLHDSA</td><td>Native</td><td>Y</td></tr>
-                    <tr><td>MLDSA</td><td>Native</td><td>Y</td></tr>
+                    <tr><td>SLHDSA</td><td>Native, PreHash</td><td>Y</td></tr>
+                    <tr><td>MLDSA</td><td>Native, PreHash</td><td>Y</td></tr>
                     <tr><td>FALCON</td><td>Native</td><td/></tr>
                     <tr><td>AIMER</td><td>Native</td><td/></tr>
                     <tr><td>FAEST</td><td>Native</td><td/></tr>

@@ -37,11 +37,6 @@ public class JcaSLHDSAKeyPairGenerator
     private static final String SLHDSA_ALGO = "SLH-DSA";
 
     /**
-     * HASH indication.
-     */
-    private static final String SLHDSA_HASH = "HASH-" + SLHDSA_ALGO;
-
-    /**
      * Constructor.
      *
      * @param pFactory the Security Factory
@@ -57,10 +52,9 @@ public class JcaSLHDSAKeyPairGenerator
         try {
             /* Determine algorithm */
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
-            final String myAlgo = myKeySpec.getSLHDSASpec().isHash() ? SLHDSA_HASH : SLHDSA_ALGO;
 
             /* Create and initialize the generator */
-            createFactories(myAlgo, false);
+            createFactories(SLHDSA_ALGO, false);
             final SLHDSAParameterSpec myParms = myKeySpec.getSLHDSASpec().getParameterSpec();
             getGenerator().initialize(myParms, getRandom());
 

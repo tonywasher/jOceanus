@@ -20,12 +20,12 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySLHDSAKeyPair.BouncySLHDSAPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncySLHDSAKeyPair.BouncySLHDSAPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.params.ParametersWithContext;
@@ -49,9 +49,9 @@ public class BouncySLHDSASignature
     private final HashSLHDSASigner theHashSigner;
 
     /**
-     * Is this a hash signer?
+     * Is this a preHash signature?
      */
-    private boolean isHash;
+    private final boolean preHash;
 
     /**
      * Constructor.
@@ -66,6 +66,7 @@ public class BouncySLHDSASignature
         super(pFactory, pSpec);
         theSigner = new SLHDSASigner();
         theHashSigner = new HashSLHDSASigner();
+        preHash = GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
     }
 
     @Override
@@ -75,17 +76,13 @@ public class BouncySLHDSASignature
         final BouncyKeyPair myPair = checkKeyPair();
         final byte[] myContext = getContext();
 
-        /* Determine whether this is a hashSigner */
-        final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) myPair.getKeyPairSpec();
-        isHash = myKeySpec.getSLHDSASpec().isHash();
-
         /* Initialise and set the signer */
         final BouncySLHDSAPrivateKey myPrivate = (BouncySLHDSAPrivateKey) myPair.getPrivateKey();
         CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
         if (myContext != null) {
             myParms = new ParametersWithContext(myParms, myContext);
         }
-        if (isHash) {
+        if (preHash) {
             theHashSigner.init(true, myParms);
         } else {
             theSigner.init(true, myParms);
@@ -99,17 +96,13 @@ public class BouncySLHDSASignature
         final BouncyKeyPair myPair = checkKeyPair();
         final byte[] myContext = getContext();
 
-        /* Determine whether this is a hashSigner */
-        final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) myPair.getKeyPairSpec();
-        isHash = myKeySpec.getSLHDSASpec().isHash();
-
         /* Initialise and set the signer */
         final BouncySLHDSAPublicKey myPublic = (BouncySLHDSAPublicKey) myPair.getPublicKey();
         CipherParameters myParms = myPublic.getPublicKey();
         if (myContext != null) {
             myParms = new ParametersWithContext(myParms, myContext);
         }
-        if (isHash) {
+        if (preHash) {
             theHashSigner.init(false, myParms);
         } else {
             theSigner.init(false, myParms);
@@ -120,9 +113,11 @@ public class BouncySLHDSASignature
     public void update(final byte[] pBytes,
                        final int pOffset,
                        final int pLength) throws GordianException {
-        if (isHash) {
+        if (preHash) {
             checkInit();
-            theHashSigner.update(pBytes, pOffset, pLength);
+            if (checkBuffer(pBytes, pOffset, pLength)) {
+                theHashSigner.update(pBytes, pOffset, pLength);
+            }
         } else {
             super.update(pBytes, pOffset, pLength);
         }
@@ -130,21 +125,11 @@ public class BouncySLHDSASignature
 
     @Override
     public void update(final byte pByte) throws GordianException {
-        if (isHash) {
+        if (preHash) {
             checkInit();
             theHashSigner.update(pByte);
         } else {
             super.update(pByte);
-        }
-    }
-
-    @Override
-    public void update(final byte[] pBytes) throws GordianException {
-        if (isHash) {
-            checkInit();
-            theHashSigner.update(pBytes, 0, pBytes.length);
-        } else {
-            super.update(pBytes);
         }
     }
 
@@ -155,7 +140,7 @@ public class BouncySLHDSASignature
 
         /* Sign the message */
         try {
-            return isHash
+            return preHash
                     ? theHashSigner.generateSignature()
                     : theSigner.generateSignature(getDigest());
         } catch (CryptoException e) {
@@ -169,7 +154,7 @@ public class BouncySLHDSASignature
         checkMode(GordianSignatureMode.VERIFY);
 
         /* Verify the message */
-        return isHash
+        return preHash
                 ? theHashSigner.verifySignature(pSignature)
                 : theSigner.verifySignature(getDigest(), pSignature);
     }
