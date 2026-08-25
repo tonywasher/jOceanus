@@ -23,12 +23,12 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreLMSSpec;
 import org.bouncycastle.crypto.KeyGenerationParameters;
+import org.bouncycastle.crypto.generators.HSSKeyPairGenerator;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.pqc.crypto.lms.HSSKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.lms.HSSKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.lms.HSSPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.lms.HSSPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.lms.LMSParameters;
+import org.bouncycastle.crypto.params.HSSKeyGenerationParameters;
+import org.bouncycastle.crypto.params.HSSPrivateKeyParameters;
+import org.bouncycastle.crypto.params.HSSPublicKeyParameters;
+import org.bouncycastle.crypto.params.LMSParameters;
 
 import java.util.Arrays;
 
@@ -129,7 +129,7 @@ public final class BouncyLMSKeyPair {
 
             /* Create and initialise the generator */
             setGenerator(new HSSKeyPairGenerator(), myParams);
-            setFactorySet(BouncyPqKeyFactorySet.INSTANCE);
+            setFactorySet(BouncyStdKeyFactorySet.INSTANCE);
         }
 
         /**

@@ -161,11 +161,11 @@ public final class GordianCoreHybridKEMSpec
             case MLKEM768_RSA4096 -> IANAObjectIdentifiers.id_MLKEM768_RSA4096_SHA3_256;
             case MLKEM768_ECDH_P256 -> IANAObjectIdentifiers.id_MLKEM768_ECDH_P256_SHA3_256;
             case MLKEM768_ECDH_P384 -> IANAObjectIdentifiers.id_MLKEM768_ECDH_P384_SHA3_256;
-            case MLKEM768_ECDH_BP256 -> IANAObjectIdentifiers.id_MLKEM768_ECDH_BP256_SHA3_256;
+            case MLKEM768_ECDH_BP256 -> IANAObjectIdentifiers.id_MLKEM768_ECDH_brainpoolP256r1_SHA3_256;
             case MLKEM768_X25519 -> IANAObjectIdentifiers.id_MLKEM768_X25519_SHA3_256;
             case MLKEM1024_RSA3072 -> IANAObjectIdentifiers.id_MLKEM1024_RSA3072_SHA3_256;
             case MLKEM1024_ECDH_P384 -> IANAObjectIdentifiers.id_MLKEM1024_ECDH_P384_SHA3_256;
-            case MLKEM1024_ECDH_BP384 -> IANAObjectIdentifiers.id_MLKEM1024_ECDH_BP384_SHA3_256;
+            case MLKEM1024_ECDH_BP384 -> IANAObjectIdentifiers.id_MLKEM1024_ECDH_brainpoolP384r1_SHA3_256;
             case MLKEM1024_ECDH_P521 -> IANAObjectIdentifiers.id_MLKEM1024_ECDH_P521_SHA3_256;
             case MLKEM1024_X448 -> IANAObjectIdentifiers.id_MLKEM1024_X448_SHA3_256;
         };

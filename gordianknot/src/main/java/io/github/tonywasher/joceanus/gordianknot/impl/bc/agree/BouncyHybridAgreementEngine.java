@@ -234,8 +234,12 @@ public class BouncyHybridAgreementEngine
     private void mergeResults(final byte[] pTradCipherText,
                               final GordianKeyPair pTradKeyPair) throws GordianException {
         /* Update with the results */
-        theDigest.update((byte[]) thePrimary.getBuilder().getState().getResult());
-        theDigest.update((byte[]) theTraditional.getBuilder().getState().getResult());
+        final byte[] myPrimaryResult = (byte[]) thePrimary.getBuilder().getState().getResult();
+        theDigest.update(myPrimaryResult);
+        Arrays.fill(myPrimaryResult, (byte) 0);
+        final byte[] myTraditionalResult = (byte[]) theTraditional.getBuilder().getState().getResult();
+        theDigest.update(myTraditionalResult);
+        Arrays.fill(myTraditionalResult, (byte) 0);
 
         /* Update with traditional cipherText */
         theDigest.update(pTradCipherText);

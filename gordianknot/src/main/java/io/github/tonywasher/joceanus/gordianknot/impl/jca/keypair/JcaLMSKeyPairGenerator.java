@@ -24,7 +24,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoExce
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreLMSSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaStateAwareKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.lms.LMSParameters;
+import org.bouncycastle.crypto.params.LMSParameters;
 import org.bouncycastle.pqc.jcajce.spec.LMSHSSKeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.LMSKeyGenParameterSpec;
 
