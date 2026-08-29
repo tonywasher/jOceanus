@@ -34,9 +34,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2s
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianCubeHashDigest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianGroestlDigest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianJHDigest;
-import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianKangarooBase;
-import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianKangarooTwelve;
-import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianMarsupilamiFourteen;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianSkeinDigest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianSkeinXof;
 import org.bouncycastle.crypto.Digest;
@@ -51,6 +48,8 @@ import org.bouncycastle.crypto.digests.GOST3411_2012_512Digest;
 import org.bouncycastle.crypto.digests.Haraka256Digest;
 import org.bouncycastle.crypto.digests.Haraka512Digest;
 import org.bouncycastle.crypto.digests.ISAPDigest;
+import org.bouncycastle.crypto.digests.Kangaroo.KangarooTwelve;
+import org.bouncycastle.crypto.digests.Kangaroo.MarsupilamiFourteen;
 import org.bouncycastle.crypto.digests.MD2Digest;
 import org.bouncycastle.crypto.digests.MD4Digest;
 import org.bouncycastle.crypto.digests.MD5Digest;
@@ -201,10 +200,10 @@ public class BouncyDigestFactory
      * @param pSpec the digest spec
      * @return the digest
      */
-    private static GordianKangarooBase getKangarooDigest(final GordianCoreDigestSpec pSpec) {
+    private static Digest getKangarooDigest(final GordianCoreDigestSpec pSpec) {
         return GordianDigestState.STATE128.equals(pSpec.getDigestState())
-                ? new GordianKangarooTwelve()
-                : new GordianMarsupilamiFourteen();
+                ? new KangarooTwelve()
+                : new MarsupilamiFourteen();
     }
 
     /**
