@@ -16,12 +16,12 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.jca.mac;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParams;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMac;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.base.JcaKey;
 import org.bouncycastle.jcajce.spec.SkeinParameterSpec.Builder;

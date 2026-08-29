@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.digest;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 
 /**
  * GordianKnot interface for Message Digests.

@@ -37,6 +37,7 @@ module io.github.tonywasher.joceanus.gordianknot {
     exports io.github.tonywasher.joceanus.gordianknot.api.digest.spec;
     exports io.github.tonywasher.joceanus.gordianknot.api.encrypt;
     exports io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec;
+    exports io.github.tonywasher.joceanus.gordianknot.api.exc;
     exports io.github.tonywasher.joceanus.gordianknot.api.factory;
     exports io.github.tonywasher.joceanus.gordianknot.api.key;
     exports io.github.tonywasher.joceanus.gordianknot.api.keypair;
@@ -61,7 +62,6 @@ module io.github.tonywasher.joceanus.gordianknot {
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.cipher to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.digest to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt to io.github.tonywasher.joceanus.gordianknot.test;
-    exports io.github.tonywasher.joceanus.gordianknot.impl.core.exc to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.factory to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.key to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.keypair to io.github.tonywasher.joceanus.gordianknot.test;
@@ -73,6 +73,7 @@ module io.github.tonywasher.joceanus.gordianknot {
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest to io.github.tonywasher.joceanus.gordianknot.test;
+    exports io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.ext.engines to io.github.tonywasher.joceanus.gordianknot.test;
@@ -80,5 +81,4 @@ module io.github.tonywasher.joceanus.gordianknot {
     exports io.github.tonywasher.joceanus.gordianknot.impl.ext.macs to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.ext.params to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair to io.github.tonywasher.joceanus.gordianknot.test;
-    exports io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 }

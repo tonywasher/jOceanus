@@ -14,31 +14,38 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.impl.core.exc;
+package io.github.tonywasher.joceanus.gordianknot.api.exc;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 
 import java.io.Serial;
 
 /**
- * Cryptography Exception.
+ * Data Exception.
  */
-public class GordianIOException
+public class GordianDataException
         extends GordianException {
     /**
      * SerialId.
      */
     @Serial
-    private static final long serialVersionUID = -3757499807817742930L;
+    private static final long serialVersionUID = 7691011512207759691L;
 
     /**
-     * Create a new GordianKnot Exception object based on a string and an underlying exception.
+     * Create a new GordianKnot Exception object based on a string.
      *
      * @param s the description of the exception
-     * @param e the underlying exception
      */
-    public GordianIOException(final String s,
-                              final Throwable e) {
+    public GordianDataException(final String s) {
+        super(s);
+    }
+
+    /**
+     * Create a new GordianKnot Exception object based on a string and exception.
+     *
+     * @param s the description of the exception
+     * @param e the causing exception
+     */
+    public GordianDataException(final String s, final Exception e) {
         super(s, e);
     }
 }

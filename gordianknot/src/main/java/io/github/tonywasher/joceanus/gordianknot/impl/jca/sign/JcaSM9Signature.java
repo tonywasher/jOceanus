@@ -17,13 +17,13 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.jca.sign;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9SignType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaSM9KeyPairGenerator.JcaSM9SignMasterPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaSM9KeyPairGenerator.JcaSM9SignMasterPublicKey;

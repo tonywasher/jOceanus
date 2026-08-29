@@ -14,27 +14,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.api.keyset;
+package io.github.tonywasher.joceanus.gordianknot.api.exc;
 
 import java.io.Serial;
 
 /**
- * Exception indicating that an incorrect password was given.
+ * Logic Exception.
  */
-public class GordianBadCredentialsException
-        extends RuntimeException {
+public class GordianLogicException
+        extends GordianException {
     /**
-     * Serial id.
+     * SerialId.
      */
     @Serial
-    private static final long serialVersionUID = 2737035909654646703L;
+    private static final long serialVersionUID = -1823057546452392611L;
 
     /**
-     * Constructor.
+     * Create a new GordianKnot Exception object based on a string.
      *
-     * @param s exception string
+     * @param s the description of the exception
      */
-    public GordianBadCredentialsException(final String s) {
+    public GordianLogicException(final String s) {
         super(s);
     }
 }

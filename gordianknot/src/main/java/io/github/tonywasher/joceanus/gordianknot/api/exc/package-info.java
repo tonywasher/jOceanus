@@ -18,4 +18,4 @@
 /**
  * Core Exceptions.
  */
-package io.github.tonywasher.joceanus.gordianknot.impl.core.exc;
+package io.github.tonywasher.joceanus.gordianknot.api.exc;

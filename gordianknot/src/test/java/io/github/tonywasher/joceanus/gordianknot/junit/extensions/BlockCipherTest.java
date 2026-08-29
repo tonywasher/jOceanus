@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.junit.extensions;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.engines.GordianAnubisEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.engines.GordianMARSEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.engines.GordianSimonEngine;

@@ -16,11 +16,11 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.key;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseDestroyable;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
 /**
  * GordianKnot Key abstraction.

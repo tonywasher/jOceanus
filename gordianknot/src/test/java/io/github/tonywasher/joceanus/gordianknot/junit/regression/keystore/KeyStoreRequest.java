@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.junit.regression.keystore;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianAIMerSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianBIKESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianCMCESpec;

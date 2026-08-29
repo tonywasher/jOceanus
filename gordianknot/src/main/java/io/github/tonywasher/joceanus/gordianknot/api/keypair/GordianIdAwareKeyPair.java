@@ -17,7 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.api.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianIdAwareKeyType;
 
 import java.security.spec.PKCS8EncodedKeySpec;

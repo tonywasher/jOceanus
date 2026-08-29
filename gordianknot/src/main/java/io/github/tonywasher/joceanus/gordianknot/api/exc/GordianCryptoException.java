@@ -14,10 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.impl.core.exc;
+package io.github.tonywasher.joceanus.gordianknot.api.exc;
 
-
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 
 import java.io.Serial;
 
