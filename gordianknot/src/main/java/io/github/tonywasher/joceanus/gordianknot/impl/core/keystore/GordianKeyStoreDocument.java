@@ -217,7 +217,7 @@ public final class GordianKeyStoreDocument {
         final GordianPasswordLockSpecASN1 mySpecASN1 = GordianPasswordLockSpecASN1.getInstance(myAttrArray);
 
         /* Create the empty keyStore */
-        theKeyStore = (GordianBaseKeyStore) pFactory.getAsyncFactory().getKeyStoreFactory().createKeyStore(mySpecASN1.getLockSpec());
+        theKeyStore = (GordianBaseKeyStore) pFactory.getAsymFactory().getKeyStoreFactory().createKeyStore(mySpecASN1.getLockSpec());
         theDocument = pDocument;
 
         /* Loop through the nodes */

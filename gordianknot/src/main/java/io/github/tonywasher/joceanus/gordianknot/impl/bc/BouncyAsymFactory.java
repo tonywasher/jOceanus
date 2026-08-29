@@ -25,19 +25,19 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.encrypt.BouncyEncryptor
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.sign.BouncySignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.factory.GordianCoreAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.factory.GordianCoreAsymFactory;
 
 /**
- * Bouncy Async Factory.
+ * Bouncy Asym Factory.
  */
-public class BouncyAsyncFactory
-        extends GordianCoreAsyncFactory {
+public class BouncyAsymFactory
+        extends GordianCoreAsymFactory {
     /**
      * Constructor.
      *
      * @param pFactory the factory
      */
-    BouncyAsyncFactory(final GordianBaseFactory pFactory) {
+    BouncyAsymFactory(final GordianBaseFactory pFactory) {
         /* Initialize underlying class */
         super(pFactory);
     }

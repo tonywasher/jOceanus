@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
@@ -136,7 +136,7 @@ public abstract class GordianCoreSignature
         if (pKeyPair == null) {
             throw new GordianLogicException("Null keyPair");
         }
-        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();
+        final GordianAsymFactory myFactory = theFactory.getAsymFactory();
         final GordianSignatureFactory mySigns = myFactory.getSignatureFactory();
         if (!mySigns.validSignatureSpecForKeyPair(pKeyPair, theSpec)) {
             throw new GordianDataException("Incorrect KeyPair type");

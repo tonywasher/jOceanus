@@ -28,7 +28,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianEdwardsSpec;
@@ -99,8 +99,8 @@ public class GordianKeyPairLockImpl
         byte[] myPassword = null;
         try {
             /* Create the agreement and derive the factory */
-            final GordianAsyncFactory myAsyncFactory = pLockingFactory.getAsyncFactory();
-            final GordianAgreementFactory myAgreeFactory = myAsyncFactory.getAgreementFactory();
+            final GordianAsymFactory myAsymFactory = pLockingFactory.getAsymFactory();
+            final GordianAgreementFactory myAgreeFactory = myAsymFactory.getAgreementFactory();
             final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair,
                     new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
             final GordianAgreementSpec mySpec = getAgreementSpec(pKeyPair.getKeyPairSpec());
@@ -186,8 +186,8 @@ public class GordianKeyPairLockImpl
             theKeyPair = pKeyPair;
 
             /* Resolve the agreement */
-            final GordianAsyncFactory myAsyncFactory = pLockingFactory.getAsyncFactory();
-            final GordianAgreementFactory myAgreeFactory = myAsyncFactory.getAgreementFactory();
+            final GordianAsymFactory myAsymFactory = pLockingFactory.getAsymFactory();
+            final GordianAgreementFactory myAgreeFactory = myAsymFactory.getAgreementFactory();
             final byte[] myClientHello = theLockASN1.getAgreement().getEncodedBytes();
             final GordianAgreement myAgreement = myAgreeFactory.parseAgreementMessage(myClientHello);
             final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair,

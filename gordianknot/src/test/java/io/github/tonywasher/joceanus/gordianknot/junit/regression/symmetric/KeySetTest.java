@@ -912,7 +912,7 @@ class KeySetTest {
         final GordianKey<GordianSymKeySpec> mySecondKey = myGenerator.generateKey();
 
         /* Create a keyPair and destroy it */
-        final GordianKeyPairFactory myKeyPairFactory = myFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myKeyPairFactory = myFactory.getAsymFactory().getKeyPairFactory();
         final GordianKeyPairSpecBuilder myKPBuilder = myKeyPairFactory.newKeyPairSpecBuilder();
         final GordianKeyPairSpec myKPSpec = myKPBuilder.newHope();
         final GordianKeyPairGenerator myKPGenerator = myKeyPairFactory.getKeyPairGenerator(myKPSpec);

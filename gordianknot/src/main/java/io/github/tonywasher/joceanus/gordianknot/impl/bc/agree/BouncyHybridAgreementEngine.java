@@ -87,7 +87,7 @@ public class BouncyHybridAgreementEngine
         final GordianBaseFactory myFactory = pFactory.getFactory();
 
         /* Create the generator */
-        final GordianKeyPairFactory myKPFactory = myFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myKPFactory = myFactory.getAsymFactory().getKeyPairFactory();
         final GordianKeyPairSpecBuilder myKeyPairBuilder = myKPFactory.newKeyPairSpecBuilder();
         theGenerator = myKPFactory.getKeyPairGenerator(theHybrid.getTraditionalKeyPairSpec(myKeyPairBuilder));
 

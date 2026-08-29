@@ -74,7 +74,7 @@ class KeyStoreTest {
         final GordianFactory myFactory = GordianGenerator.createRandomFactory(pFactoryType);
 
         /* Access keyStoreFactory and create a keyStore */
-        final GordianKeyStoreFactory myKSFactory = myFactory.getAsyncFactory().getKeyStoreFactory();
+        final GordianKeyStoreFactory myKSFactory = myFactory.getAsymFactory().getKeyStoreFactory();
         final GordianKeyStore myStore = myKSFactory.createKeyStore(KEYSETLOCKSPEC);
         final GordianKeyStoreManager myMgr = myKSFactory.createKeyStoreManager(myStore);
 

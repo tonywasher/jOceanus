@@ -84,7 +84,7 @@ public class BouncyHybridSignature
     BouncyHybridSignature(final GordianBaseFactory pFactory,
                           final GordianSignatureSpec pSpec) {
         super(pFactory, pSpec);
-        theSignFactory = pFactory.getAsyncFactory().getSignatureFactory();
+        theSignFactory = pFactory.getAsymFactory().getSignatureFactory();
     }
 
     /**
@@ -109,7 +109,7 @@ public class BouncyHybridSignature
         theContext = pParams.getContext();
 
         /* Initialise the primary */
-        final GordianSignatureSpecBuilder myBuilder = getFactory().getAsyncFactory().getSignatureFactory().newSignatureSpecBuilder();
+        final GordianSignatureSpecBuilder myBuilder = getFactory().getAsymFactory().getSignatureFactory().newSignatureSpecBuilder();
         thePrimary = (GordianCoreSignature) theSignFactory.createSigner(theHybrid.getPrimarySignatureSpec(myBuilder));
         final BouncyKeyPair myPrimary = myPair.getPrimary();
         final GordianSignParams myPrimaryParams = myParamsBuilder.keyPairAndContext(myPrimary, theHybrid.getLabel());
@@ -137,7 +137,7 @@ public class BouncyHybridSignature
         theContext = pParams.getContext();
 
         /* Initialise the primary */
-        final GordianSignatureSpecBuilder myBuilder = getFactory().getAsyncFactory().getSignatureFactory().newSignatureSpecBuilder();
+        final GordianSignatureSpecBuilder myBuilder = getFactory().getAsymFactory().getSignatureFactory().newSignatureSpecBuilder();
         thePrimary = (GordianCoreSignature) theSignFactory.createSigner(theHybrid.getPrimarySignatureSpec(myBuilder));
         final BouncyKeyPair myPrimary = myPair.getPrimary();
         final GordianSignParams myPrimaryParams = myParamsBuilder.keyPairAndContext(myPrimary, theHybrid.getLabel());

@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.factory;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
@@ -26,10 +26,10 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
 
 /**
- * GordianKnot Core AsyncFactory.
+ * GordianKnot Core AsymFactory.
  */
-public abstract class GordianCoreAsyncFactory
-        implements GordianAsyncFactory {
+public abstract class GordianCoreAsymFactory
+        implements GordianAsymFactory {
     /**
      * The factory.
      */
@@ -65,7 +65,7 @@ public abstract class GordianCoreAsyncFactory
      *
      * @param pFactory the factory
      */
-    protected GordianCoreAsyncFactory(final GordianBaseFactory pFactory) {
+    protected GordianCoreAsymFactory(final GordianBaseFactory pFactory) {
         theFactory = pFactory;
         theKeyPairFactory = newKeyPairFactory(theFactory);
         theSignatureFactory = newSignatureFactory(theFactory);

@@ -29,7 +29,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -125,15 +125,15 @@ class HybridTest {
     /**
      * Test keyPairs.
      *
-     * @param pFactory the source async factory
-     * @param pPartner the target async factory
+     * @param pFactory the source asym factory
+     * @param pPartner the target asym factory
      * @param pClazz   the keyPairSpec class
      */
     private static Stream<DynamicNode> testKeyPairs(final GordianFactory pFactory,
                                                     final GordianFactory pPartner,
                                                     final Class<? extends Enum<?>> pClazz) {
-        final GordianAsyncFactory mySource = pFactory.getAsyncFactory();
-        final GordianAsyncFactory myTarget = pPartner.getAsyncFactory();
+        final GordianAsymFactory mySource = pFactory.getAsymFactory();
+        final GordianAsymFactory myTarget = pPartner.getAsymFactory();
         Stream<DynamicNode> myStream = Stream.empty();
         for (Enum<?> mySpec : pClazz.getEnumConstants()) {
             myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest(mySpec.toString(),
@@ -145,13 +145,13 @@ class HybridTest {
     /**
      * Test keyPair.
      *
-     * @param pSource the source async factory
-     * @param pTarget the target async factory
+     * @param pSource the source asym factory
+     * @param pTarget the target asym factory
      * @param pSpec   the keyPairSpec
      * @throws GordianException on error
      */
-    private static void testKeyPair(final GordianAsyncFactory pSource,
-                                    final GordianAsyncFactory pTarget,
+    private static void testKeyPair(final GordianAsymFactory pSource,
+                                    final GordianAsymFactory pTarget,
                                     final Object pSpec) throws GordianException {
         /* Access factories */
         final GordianKeyPairFactory mySource = pSource.getKeyPairFactory();

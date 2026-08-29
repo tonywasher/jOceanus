@@ -92,7 +92,7 @@ class ZipFileTest {
 
         /* Create the keyPair */
         final GordianKeyPairSpecBuilder myBuilder = GordianUtilities.newKeyPairSpecBuilder();
-        final GordianKeyPairFactory myAsymFactory = myFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myAsymFactory = myFactory.getAsymFactory().getKeyPairFactory();
         GordianKeyPairGenerator myPairGenerator = myAsymFactory.getKeyPairGenerator(myBuilder.x448());
         final GordianKeyPair myKeyPair1 = myPairGenerator.generateKeyPair();
         myPairGenerator = myAsymFactory.getKeyPairGenerator(myBuilder.mlkem(GordianMLKEMSpec.MLKEM512));

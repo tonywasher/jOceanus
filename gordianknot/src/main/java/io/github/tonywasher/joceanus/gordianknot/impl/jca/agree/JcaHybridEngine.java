@@ -58,7 +58,7 @@ public class JcaHybridEngine
 
         /* Create the encryptor */
         final GordianDigestFactory myDigestFactory = pFactory.getFactory().getDigestFactory();
-        final GordianEncryptorFactory myEncryptorFactory = pFactory.getFactory().getAsyncFactory().getEncryptorFactory();
+        final GordianEncryptorFactory myEncryptorFactory = pFactory.getFactory().getAsymFactory().getEncryptorFactory();
         final GordianDigestSpecBuilder myDigestBuilder = myDigestFactory.newDigestSpecBuilder();
         final GordianEncryptorSpecBuilder myEncBuilder = myEncryptorFactory.newEncryptorSpecBuilder();
         final GordianEncryptorSpec myEncSpec = myEncBuilder.rsa(myDigestBuilder.sha2(GordianLength.LEN_256));

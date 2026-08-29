@@ -227,7 +227,7 @@ public final class GordianCoreKeySet
     @Override
     public int getPrivateKeyWrapLength(final GordianKeyPair pKeyPair) throws GordianException {
         /* Determine and check the keySpec */
-        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsymFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeyPair.getKeyPairSpec());
         final PKCS8EncodedKeySpec myPrivateKey = myGenerator.getPKCS8Encoding(pKeyPair);
         return getDataWrapLength(myPrivateKey.getEncoded().length);
@@ -403,7 +403,7 @@ public final class GordianCoreKeySet
         final PKCS8EncodedKeySpec myPrivate = derivePrivateKeySpec(pSecuredPrivateKey);
 
         /* Determine and check the keySpec */
-        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsymFactory().getKeyPairFactory();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pPublicKeySpec);
         if (!myKeySpec.equals(myFactory.determineKeyPairSpec(myPrivate))) {
             throw new GordianLogicException("Mismatch on keySpecs");

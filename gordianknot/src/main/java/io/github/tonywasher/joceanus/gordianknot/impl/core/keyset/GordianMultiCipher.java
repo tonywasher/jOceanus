@@ -467,7 +467,7 @@ public final class GordianMultiCipher
         checkParameters(pParams);
 
         /* Secure the key */
-        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsymFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeyPairToSecure.getKeyPairSpec());
         final PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyPairToSecure);
         return secureBytes(pParams, myPKCS8Key.getEncoded());

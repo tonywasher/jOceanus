@@ -445,7 +445,7 @@ public class GordianCoreCertificate
      * @return the signatureSpec
      */
     GordianCoreSignatureSpec determineSignatureSpecForKeyPair(final GordianKeyPair pKeyPair) {
-        return (GordianCoreSignatureSpec) theFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(pKeyPair.getKeyPairSpec());
+        return (GordianCoreSignatureSpec) theFactory.getAsymFactory().getSignatureFactory().defaultForKeyPair(pKeyPair.getKeyPairSpec());
     }
 
     /**
@@ -455,7 +455,7 @@ public class GordianCoreCertificate
      * @return the signatureSpec
      */
     GordianCoreSignatureSpec determineSignatureSpecForAlgId(final AlgorithmIdentifier pAlgId) {
-        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsyncFactory().getSignatureFactory();
+        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsymFactory().getSignatureFactory();
         return (GordianCoreSignatureSpec) mySigns.getSpecForIdentifier(pAlgId);
     }
 
@@ -468,7 +468,7 @@ public class GordianCoreCertificate
      */
     AlgorithmIdentifier determineAlgIdForSignatureSpec(final GordianSignatureSpec pSpec,
                                                        final GordianKeyPair pSigner) {
-        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsyncFactory().getSignatureFactory();
+        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsymFactory().getSignatureFactory();
         return mySigns.getIdentifierForSpecAndKeyPair(pSpec, pSigner);
     }
 
@@ -490,7 +490,7 @@ public class GordianCoreCertificate
      */
     protected GordianKeyPair parseEncodedKey() throws GordianException {
         /* Derive the keyPair */
-        final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = getFactory().getAsymFactory().getKeyPairFactory();
         final X509EncodedKeySpec myX509 = getX509KeySpec();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509);
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
@@ -508,7 +508,7 @@ public class GordianCoreCertificate
         final GordianKeyPair myPair = getKeyPair();
 
         /* Access the keyPair generator */
-        final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = getFactory().getAsymFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myPair.getKeyPairSpec());
 
         /* Obtain the publicKey Info */
@@ -532,7 +532,7 @@ public class GordianCoreCertificate
      */
     protected GordianSignature createSigner() throws GordianException {
         /* Create the signer */
-        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsyncFactory().getSignatureFactory();
+        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsymFactory().getSignatureFactory();
         return mySigns.createSigner(getSignatureSpec());
     }
 

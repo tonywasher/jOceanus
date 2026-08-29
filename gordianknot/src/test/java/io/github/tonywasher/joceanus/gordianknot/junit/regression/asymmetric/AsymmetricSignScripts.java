@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric;
 
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
@@ -64,7 +64,7 @@ public final class AsymmetricSignScripts {
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("destroy", () -> checkDestroySignature(pSignature))));
 
         /* Check that the partner supports this keySpec*/
-        final GordianAsyncFactory myTgtAsym = pSignature.getOwner().getPartner();
+        final GordianAsymFactory myTgtAsym = pSignature.getOwner().getPartner();
         if (myTgtAsym != null) {
             /* Add partner test if the partner supports this signature */
             final GordianSignatureFactory myTgtSigns = myTgtAsym.getSignatureFactory();
@@ -130,7 +130,7 @@ public final class AsymmetricSignScripts {
         final GordianKeyPair mySecondCopy = pSignature.getOwner().getKeyPairs().copyKeyPair(myPair);
 
         /* Create signer and verifier */
-        final GordianAsyncFactory myFactory = pSignature.getOwner().getFactory();
+        final GordianAsymFactory myFactory = pSignature.getOwner().getFactory();
         final GordianSignatureFactory mySigns = myFactory.getSignatureFactory();
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
         final GordianSignature mySigner = mySigns.createSigner(mySpec);

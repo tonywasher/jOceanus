@@ -18,10 +18,10 @@
                 <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
 final GordianDigestFactory myDigestFactory = myBase.getDigestFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianSignatureFactory mySignatureFactory = myAsyncFactory.getSignatureFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+final GordianSignatureFactory mySignatureFactory = myAsymFactory.getSignatureFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 final GordianSignatureSpecBuilder mySignatureBuilder = mySignatureFactory.newSignatureSpecBuilder()
 final GordianDigestSpecBuilder myDigestBuilder = myDigestFactory.newDigestSpecBuilder()
@@ -71,10 +71,10 @@ final boolean verified = mySigner.verify(mySignature);
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
 final GordianDigestFactory myDigestFactory = myBase.getDigestFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianSignatureFactory mySignatureFactory = myAsyncFactory.getSignatureFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+final GordianSignatureFactory mySignatureFactory = myAsymFactory.getSignatureFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 final GordianSignatureSpecBuilder mySignatureBuilder = mySignatureFactory.newSignatureSpecBuilder()
 final GordianDigestSpecBuilder myDigestBuilder = myDigestFactory.newDigestSpecBuilder()

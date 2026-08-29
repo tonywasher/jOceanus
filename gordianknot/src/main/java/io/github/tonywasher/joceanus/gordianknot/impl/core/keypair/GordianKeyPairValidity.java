@@ -116,7 +116,7 @@ public final class GordianKeyPairValidity {
         final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();
 
         /* Create signer */
-        final GordianSignatureFactory mySigns = pFactory.getAsyncFactory().getSignatureFactory();
+        final GordianSignatureFactory mySigns = pFactory.getAsymFactory().getSignatureFactory();
         final GordianSignature mySigner = mySigns.createSigner(pSignSpec);
 
         /* Create signature */
@@ -151,7 +151,7 @@ public final class GordianKeyPairValidity {
         final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();
 
         /* Create encryptor */
-        final GordianEncryptorFactory myEncrypts = pFactory.getAsyncFactory().getEncryptorFactory();
+        final GordianEncryptorFactory myEncrypts = pFactory.getAsymFactory().getEncryptorFactory();
         final GordianEncryptor myEncryptor = myEncrypts.createEncryptor(pEncryptSpec);
 
         /* Encrypt data */
@@ -180,7 +180,7 @@ public final class GordianKeyPairValidity {
                                       final GordianKeyPair pKeyPair,
                                       final GordianAgreementSpec pAgreeSpec) throws GordianException {
         /* Create agreement on client side */
-        final GordianAgreementFactory myAgrees = pFactory.getAsyncFactory().getAgreementFactory();
+        final GordianAgreementFactory myAgrees = pFactory.getAsymFactory().getAgreementFactory();
         final GordianCertificate myCert = myAgrees.newMiniCertificate(SERVER, pKeyPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
         GordianAgreementParams myParams = myAgrees.newAgreementParams(pAgreeSpec, GordianLength.LEN_256.getByteLength())
                 .setServerCertificate(myCert);
@@ -222,7 +222,7 @@ public final class GordianKeyPairValidity {
         return switch (mySpec.getKeyPairType()) {
             case RSA, DSA, EDDSA, EC, GOST, DSTU, SM2, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE,
                  MAYO, MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, XMSS, LMS ->
-                    pFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);
+                    pFactory.getAsymFactory().getSignatureFactory().defaultForKeyPair(mySpec);
             case ELGAMAL -> myEncBuilder.elGamal(myBuilder.sha2(GordianLength.LEN_256));
             case DH -> myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);
             case XDH -> mySpec.getEdwardsSpec().is25519()

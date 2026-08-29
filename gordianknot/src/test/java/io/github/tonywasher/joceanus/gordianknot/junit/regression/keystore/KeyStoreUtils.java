@@ -57,7 +57,7 @@ public final class KeyStoreUtils {
     static DynamicNode testKeyStoreSave(final GordianCoreKeyStore pStore) {
         return DynamicTest.dynamicTest("keyStoreSave", () -> {
             /* Create keyStore documents */
-            final GordianKeyStoreFactory myFactory = pStore.getFactory().getAsyncFactory().getKeyStoreFactory();
+            final GordianKeyStoreFactory myFactory = pStore.getFactory().getAsymFactory().getKeyStoreFactory();
             final ByteArrayOutputStream myZipStream = new ByteArrayOutputStream();
             pStore.storeToStream(myZipStream, KeyStoreUtils.DEF_PASSWORD);
             final ByteArrayInputStream myInputStream = new ByteArrayInputStream(myZipStream.toByteArray());

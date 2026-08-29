@@ -120,7 +120,7 @@ public class GordianCoreAgreementBuilder {
     private GordianKeyPairGenerator getKeyPairGenerator() throws GordianException {
         /* Create the generator if required */
         if (theKeyPairGenerator == null) {
-            final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
+            final GordianKeyPairFactory myFactory = theFactory.getAsymFactory().getKeyPairFactory();
             theKeyPairGenerator = myFactory.getKeyPairGenerator(theState.getSpec().getKeyPairSpec());
         }
 
@@ -495,7 +495,7 @@ public class GordianCoreAgreementBuilder {
         final GordianCertificate mySignerCert = theState.getSignerCertificate();
         if (mySignerCert != null) {
             /* Access details */
-            final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsyncFactory().getSignatureFactory();
+            final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsymFactory().getSignatureFactory();
             final GordianSignatureSpec mySignSpec = theState.getSignSpec();
             final GordianKeyPair mySignerPair = mySignerCert.getKeyPair();
             final AlgorithmIdentifier myAlgId = mySigns.getIdentifierForSpecAndKeyPair(mySignSpec, mySignerPair);
@@ -615,7 +615,7 @@ public class GordianCoreAgreementBuilder {
         final GordianCertificate mySignerCert = pServerHello.getSignerCertificate(theFactory);
         if (mySignerCert != null) {
             /* Access details */
-            final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsyncFactory().getSignatureFactory();
+            final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsymFactory().getSignatureFactory();
             final GordianSignatureSpec mySignSpec = mySigns.getSpecForIdentifier(pServerHello.getSignatureId());
             final GordianKeyPair mySignerPair = mySignerCert.getKeyPair();
             theState.setSignerCertificate(mySignerCert)

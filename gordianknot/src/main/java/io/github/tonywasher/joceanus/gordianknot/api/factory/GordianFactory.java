@@ -89,11 +89,11 @@ public interface GordianFactory {
     GordianZipFactory getZipFactory();
 
     /**
-     * Obtain the async Factory.
+     * Obtain the asym Factory.
      *
-     * @return the async factory
+     * @return the asym factory
      */
-    GordianAsyncFactory getAsyncFactory();
+    GordianAsymFactory getAsymFactory();
 
     /**
      * ReSeed the random number generator.

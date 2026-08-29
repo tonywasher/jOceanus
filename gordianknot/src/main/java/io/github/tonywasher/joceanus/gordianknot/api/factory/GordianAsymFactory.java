@@ -23,9 +23,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreFac
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 
 /**
- * Async Factory API.
+ * Asym Factory API.
  */
-public interface GordianAsyncFactory {
+public interface GordianAsymFactory {
     /**
      * Obtain the keyPairFactory.
      *

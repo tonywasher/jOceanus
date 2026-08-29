@@ -76,9 +76,9 @@
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myAsymFactory.getAgreementFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 final GordianAgreementSpecBuilder myAgreementBuilder = myAgreementFactory.newAgreementSpecBuilder()
 
@@ -142,9 +142,9 @@ final GordianKeySet myServerKeySet = myResponder.getKeySetResult();
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myAsymFactory.getAgreementFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 final GordianAgreementSpecBuilder myAgreementBuilder = myAgreementFactory.newAgreementSpecBuilder()
 
@@ -219,9 +219,9 @@ final GordianKeySet myClientKeySet = myClient.getKeySetResult();
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myAsymFactory.getAgreementFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 final GordianAgreementSpecBuilder myAgreementBuilder = myAgreementFactory.newAgreementSpecBuilder()
 
@@ -295,9 +295,9 @@ final GordianKeySet myServerKeySet = myServer.getKeySetResult();
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myAsymFactory.getAgreementFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 final GordianAgreementSpecBuilder myAgreementBuilder = myAgreementFactory.newAgreementSpecBuilder()
 
@@ -347,9 +347,9 @@ final GordianKeySet myClientKeySet = myClient.getKeySetResult();
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myAsymFactory.getAgreementFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 final GordianAgreementSpecBuilder myAgreementBuilder = myAgreementFactory.newAgreementSpecBuilder()
 

@@ -30,7 +30,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
@@ -135,7 +135,7 @@ public final class AsymmetricAgreeScripts {
                                       final GordianFactory pJCAFactory) throws GordianException {
         /* Create the BC Signer */
         final GordianKeyPairSpec mySpec = GordianUtilities.newKeyPairSpecBuilder().ed448();
-        GordianAsyncFactory myFactory = pBCFactory.getAsyncFactory();
+        GordianAsymFactory myFactory = pBCFactory.getAsymFactory();
         GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
         GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();
         GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(mySpec);
@@ -145,7 +145,7 @@ public final class AsymmetricAgreeScripts {
         /* Derive the JCASigner */
         final X509EncodedKeySpec myPublic = myGenerator.getX509Encoding(myKeyPair);
         final PKCS8EncodedKeySpec myPrivate = myGenerator.getPKCS8Encoding(myKeyPair);
-        myFactory = pJCAFactory.getAsyncFactory();
+        myFactory = pJCAFactory.getAsymFactory();
         myKPFactory = myFactory.getKeyPairFactory();
         myAgreeFactory = myFactory.getAgreementFactory();
         myGenerator = myKPFactory.getKeyPairGenerator(mySpec);
@@ -193,7 +193,7 @@ public final class AsymmetricAgreeScripts {
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkAgreementAlgId(pAgreement))));
 
         /* Check that the partner supports this keySpec */
-        final GordianAsyncFactory myTgtAsym = pAgreement.getOwner().getPartner();
+        final GordianAsymFactory myTgtAsym = pAgreement.getOwner().getPartner();
         if (myTgtAsym != null) {
             /* Add partner test if the partner supports this agreement */
             final GordianAgreementFactory myTgtAgrees = pAgreement.getOwner().getPartner().getAgreementFactory();
@@ -439,7 +439,7 @@ public final class AsymmetricAgreeScripts {
         final GordianKeyPair mySecondCopy = pAgreement.getOwner().getKeyPairs().copyKeyPair(myPair);
 
         /* Create agreement */
-        final GordianAsyncFactory myFactory = pAgreement.getOwner().getFactory();
+        final GordianAsymFactory myFactory = pAgreement.getOwner().getFactory();
         final GordianAgreementFactory myAgrees = myFactory.getAgreementFactory();
         final GordianCertificate myServerCert = myAgrees.newMiniCertificate(SERVERNAME, mySecondCopy,
                 new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
@@ -472,7 +472,7 @@ public final class AsymmetricAgreeScripts {
         final GordianKeyPair myPair = getFactorySigner(pAgreement).getKeyPair();
 
         /* Create a second copy of the keyPair */
-        final GordianAsyncFactory myFactory = pAgreement.getOwner().getFactory();
+        final GordianAsymFactory myFactory = pAgreement.getOwner().getFactory();
         final GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(myPair.getKeyPairSpec());
         final PKCS8EncodedKeySpec myPKCS8 = myGenerator.getPKCS8Encoding(myPair);
@@ -518,7 +518,7 @@ public final class AsymmetricAgreeScripts {
         final GordianKeyPair mySecondTarget = pAgreement.getOwner().getKeyPairs().copyKeyPair(myTarget);
 
         /* Create agreement */
-        final GordianAsyncFactory myFactory = pAgreement.getOwner().getFactory();
+        final GordianAsymFactory myFactory = pAgreement.getOwner().getFactory();
         final GordianAgreementFactory myAgrees = myFactory.getAgreementFactory();
         final GordianCertificate myClientCert = myAgrees.newMiniCertificate(CLIENTNAME, mySecondCopy,
                 new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));

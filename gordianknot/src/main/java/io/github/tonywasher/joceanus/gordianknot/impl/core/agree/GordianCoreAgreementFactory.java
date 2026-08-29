@@ -261,7 +261,7 @@ public abstract class GordianCoreAgreementFactory
 
     @Override
     public void setSigner(final GordianCertificate pSigner) throws GordianException {
-        final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
+        final GordianSignatureFactory mySignFactory = theFactory.getAsymFactory().getSignatureFactory();
         final GordianSignatureSpec mySignSpec = pSigner == null ? null : mySignFactory.defaultForKeyPair(pSigner.getKeyPair().getKeyPairSpec());
         setSigner(pSigner, mySignSpec);
     }
@@ -275,7 +275,7 @@ public abstract class GordianCoreAgreementFactory
         }
 
         /* Check that certificate can sign data */
-        final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
+        final GordianSignatureFactory mySignFactory = theFactory.getAsymFactory().getSignatureFactory();
         if (!mySignFactory.validSignatureSpecForKeyPair(pSigner.getKeyPair(), pSignSpec)) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pSignSpec));
         }

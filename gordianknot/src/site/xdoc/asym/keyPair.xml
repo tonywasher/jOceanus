@@ -21,8 +21,8 @@
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 
 /* Access keyPairGenerator */
@@ -102,8 +102,8 @@ final GordianKeyPair myDerived = myGenerator.deriveKeyPair(myX509, myPKCS8);
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 
 /* Access keyPairGenerator */
@@ -140,8 +140,8 @@ final GordianKeyPair myDerived = myGenerator.deriveKeyPair(myX509, myPKCS8);
                     <source>
                         /* Access factory */
                         final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-                        final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
-                        final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
+                        final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+                        final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
                         final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 
                         /* Access keyPairGenerator */
@@ -166,8 +166,8 @@ final GordianKeyPair myDerived = myGenerator.deriveKeyPair(myX509, myPKCS8);
                     <source>
                         /* Access factory */
                         final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-                        final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
-                        final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
+                        final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+                        final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
                         final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 
                         /* Access keyPairGenerator */

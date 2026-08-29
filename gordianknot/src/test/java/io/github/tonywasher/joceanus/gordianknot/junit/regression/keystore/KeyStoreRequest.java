@@ -218,12 +218,12 @@ public final class KeyStoreRequest {
         final GordianKeyStorePair myIntermediate = theState.getIntermediate();
 
         /* Handle a disabled keyPairSpec */
-        if (!myMgr.getKeyStore().getFactory().getAsyncFactory().getKeyPairFactory().supportedKeyPairSpecs().test(pKeyPairSpec)) {
+        if (!myMgr.getKeyStore().getFactory().getAsymFactory().getKeyPairFactory().supportedKeyPairSpecs().test(pKeyPairSpec)) {
             return;
         }
 
         /* Create and configure gateway */
-        final GordianKeyStoreGateway myGateway = myStore.getFactory().getAsyncFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
+        final GordianKeyStoreGateway myGateway = myStore.getFactory().getAsymFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
         myGateway.setPasswordResolver(theState::passwordResolver);
         myGateway.setCertifier(KeyStoreAlias.CERTIFIER.getName());
         myGateway.setMACSecretResolver(n -> DEF_MACSECRET);
@@ -274,7 +274,7 @@ public final class KeyStoreRequest {
         myMgr.createKeyPair(pKeyPairSpec, myCertName, pUsage, myIntermediate, myAlias.getName(), KeyStoreUtils.DEF_PASSWORD);
 
         /* Create and configure gateway */
-        final GordianKeyStoreGateway myGateway = myStore.getFactory().getAsyncFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
+        final GordianKeyStoreGateway myGateway = myStore.getFactory().getAsymFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
         myGateway.setPasswordResolver(theState::passwordResolver);
         myGateway.setCertifier(KeyStoreAlias.CERTIFIER.getName());
         myGateway.setMACSecretResolver(n -> DEF_MACSECRET);

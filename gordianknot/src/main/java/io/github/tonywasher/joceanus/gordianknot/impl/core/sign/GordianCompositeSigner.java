@@ -75,7 +75,7 @@ public class GordianCompositeSigner
     public GordianCompositeSigner(final GordianFactory pFactory,
                                   final GordianSignatureSpec pSignatureSpec) throws GordianException {
         /* Store parameters */
-        theFactory = pFactory.getAsyncFactory().getSignatureFactory();
+        theFactory = pFactory.getAsymFactory().getSignatureFactory();
         theSpec = (GordianCoreSignatureSpec) pSignatureSpec;
         theSigners = new ArrayList<>();
 

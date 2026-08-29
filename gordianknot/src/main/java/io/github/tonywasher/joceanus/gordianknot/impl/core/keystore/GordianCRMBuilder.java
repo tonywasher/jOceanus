@@ -24,7 +24,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSp
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
@@ -198,7 +198,7 @@ public class GordianCRMBuilder {
         /* Try to send a signed proof */
         final GordianKeyPair myKeyPair = pKeyPair.getKeyPair();
         final GordianKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
-        final GordianSignatureSpec mySignSpec = theGateway.getFactory().getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);
+        final GordianSignatureSpec mySignSpec = theGateway.getFactory().getAsymFactory().getSignatureFactory().defaultForKeyPair(mySpec);
         if (mySignSpec != null) {
             return createKeyPairSignedProof(myKeyPair, mySignSpec, pCertRequest);
         }
@@ -221,7 +221,7 @@ public class GordianCRMBuilder {
     private ProofOfPossession createTargetedProofOfPossession(final GordianKeyPair pKeyPair,
                                                               final GordianCoreCertificate pCertificate) throws GordianException {
         /* Obtain the PKCS8Encoding of the private key */
-        final GordianKeyPairFactory myFactory = theGateway.getFactory().getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theGateway.getFactory().getAsymFactory().getKeyPairFactory();
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
         final PKCS8EncodedKeySpec myPKCS8Encoding = myGenerator.getPKCS8Encoding(pKeyPair);
@@ -255,7 +255,7 @@ public class GordianCRMBuilder {
                                                final GordianSignatureSpec pSignSpec,
                                                final CertRequest pCertRequest) throws GordianException {
         /* Create the signer */
-        final GordianAsyncFactory myFactory = theGateway.getFactory().getAsyncFactory();
+        final GordianAsymFactory myFactory = theGateway.getFactory().getAsymFactory();
         final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
         final GordianSignature mySigner = mySignFactory.createSigner(pSignSpec);
         final AlgorithmIdentifier myAlgId = mySignFactory.getIdentifierForSpecAndKeyPair(pSignSpec, pKeyPair);

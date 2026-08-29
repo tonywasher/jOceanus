@@ -20,8 +20,10 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -37,8 +39,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEnt
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStorePair;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -111,12 +111,12 @@ public class GordianCoreKeyStoreManager
                                                      final String pAlias,
                                                      final char[] pPassword) throws GordianException {
         /* Check that the keySpec can provide a signature */
-        if (theFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(pKeySpec) == null) {
+        if (theFactory.getAsymFactory().getSignatureFactory().defaultForKeyPair(pKeySpec) == null) {
             throw new GordianDataException("Root keyPair must be capable of signing");
         }
 
         /* Create the new keyPair */
-        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsymFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeySpec);
         final GordianCoreKeyPair myKeyPair = (GordianCoreKeyPair) myGenerator.generateKeyPair();
 
@@ -138,7 +138,7 @@ public class GordianCoreKeyStoreManager
                                                  final char[] pPassword) throws GordianException {
         /* Create the new keyPair */
         checkKeyPairUsage(pKeySpec, pUsage);
-        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsymFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeySpec);
         final GordianKeyPair myKeyPair = myGenerator.generateKeyPair();
 
@@ -211,10 +211,10 @@ public class GordianCoreKeyStoreManager
         final boolean needsAgree = pUsage.hasUse(GordianKeyPairUse.AGREEMENT);
 
         /* Validate keyPairSpec against requirements */
-        final GordianAsyncFactory myAsyncFactory = theFactory.getAsyncFactory();
-        final boolean bFail = (needsSign && myAsyncFactory.getSignatureFactory().defaultForKeyPair(pKeyPairSpec) == null)
-                || (needsEnc && myAsyncFactory.getEncryptorFactory().defaultForKeyPair(pKeyPairSpec) == null)
-                || (needsAgree && myAsyncFactory.getAgreementFactory().defaultForKeyPair(pKeyPairSpec) == null);
+        final GordianAsymFactory myAsymFactory = theFactory.getAsymFactory();
+        final boolean bFail = (needsSign && myAsymFactory.getSignatureFactory().defaultForKeyPair(pKeyPairSpec) == null)
+                || (needsEnc && myAsymFactory.getEncryptorFactory().defaultForKeyPair(pKeyPairSpec) == null)
+                || (needsAgree && myAsymFactory.getAgreementFactory().defaultForKeyPair(pKeyPairSpec) == null);
 
         /* Handle failure */
         if (bFail) {

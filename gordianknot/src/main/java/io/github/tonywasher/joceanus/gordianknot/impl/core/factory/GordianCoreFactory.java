@@ -22,7 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
@@ -142,9 +142,9 @@ public abstract class GordianCoreFactory
     private GordianCoreKeyAlgId theKeyAlgIds;
 
     /**
-     * Async Factory.
+     * Asym Factory.
      */
-    private GordianAsyncFactory theAsyncFactory;
+    private GordianAsymFactory theAsymFactory;
 
     /**
      * Constructor.
@@ -409,20 +409,20 @@ public abstract class GordianCoreFactory
     }
 
     @Override
-    public GordianAsyncFactory getAsyncFactory() {
-        if (theAsyncFactory == null) {
-            theAsyncFactory = newAsyncFactory(this);
+    public GordianAsymFactory getAsymFactory() {
+        if (theAsymFactory == null) {
+            theAsymFactory = newAsymFactory(this);
         }
-        return theAsyncFactory;
+        return theAsymFactory;
     }
 
     /**
-     * Create a new Async factory.
+     * Create a new Asym factory.
      *
      * @param pFactory the factory
-     * @return the new Async factory
+     * @return the new Asym factory
      */
-    public abstract GordianAsyncFactory newAsyncFactory(GordianBaseFactory pFactory);
+    public abstract GordianAsymFactory newAsymFactory(GordianBaseFactory pFactory);
 
     /**
      * Obtain Identifier for keySpec.

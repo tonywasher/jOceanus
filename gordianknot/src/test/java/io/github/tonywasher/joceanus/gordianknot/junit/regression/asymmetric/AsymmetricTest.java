@@ -24,7 +24,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFacto
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.factory.GordianCoreAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.factory.GordianCoreAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric.AsymmetricStore.FactoryKeyPairs;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric.AsymmetricStore.FactoryKeySpec;
@@ -221,7 +221,7 @@ class AsymmetricTest {
     private void checkKeyWrap(final FactoryKeySpec pKeySpec) throws GordianException {
         /* Access the keyPairs */
         final FactoryKeyPairs myPairs = pKeySpec.getKeyPairs();
-        final GordianCoreAsyncFactory myFactory = (GordianCoreAsyncFactory) pKeySpec.getFactory();
+        final GordianCoreAsymFactory myFactory = (GordianCoreAsymFactory) pKeySpec.getFactory();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final X509EncodedKeySpec myPublic = myPairs.getX509Encoding();
 

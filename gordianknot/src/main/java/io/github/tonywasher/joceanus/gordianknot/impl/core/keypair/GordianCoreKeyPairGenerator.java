@@ -115,7 +115,7 @@ public abstract class GordianCoreKeyPairGenerator
      * @throws GordianException on error
      */
     protected void checkKeySpec(final PKCS8EncodedKeySpec pKeySpec) throws GordianException {
-        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsymFactory().getKeyPairFactory();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pKeySpec);
         if (!theKeySpec.equals(myKeySpec)) {
             throw new GordianDataException("KeySpec not supported by this KeyPairGenerator");
@@ -129,7 +129,7 @@ public abstract class GordianCoreKeyPairGenerator
      * @throws GordianException on error
      */
     protected void checkKeySpec(final X509EncodedKeySpec pKeySpec) throws GordianException {
-        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsymFactory().getKeyPairFactory();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pKeySpec);
         if (!theKeySpec.equals(myKeySpec)) {
             throw new GordianDataException("KeySpec not supported by this KeyPairGenerator");

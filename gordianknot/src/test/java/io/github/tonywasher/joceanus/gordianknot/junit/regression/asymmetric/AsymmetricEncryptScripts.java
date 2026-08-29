@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric.AsymmetricStore.FactoryEncryptor;
@@ -60,7 +60,7 @@ public final class AsymmetricEncryptScripts {
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("destroy", () -> checkDestroyEncryptor(pEncryptor))));
 
         /* Check that the partner supports this keySpec*/
-        final GordianAsyncFactory myTgtAsym = pEncryptor.getOwner().getPartner();
+        final GordianAsymFactory myTgtAsym = pEncryptor.getOwner().getPartner();
         if (myTgtAsym != null) {
             /* Add partner test if the partner supports this encryptore */
             final GordianEncryptorFactory myTgtEncrypts = pEncryptor.getOwner().getPartner().getEncryptorFactory();
@@ -191,7 +191,7 @@ public final class AsymmetricEncryptScripts {
         final GordianKeyPair mySecondCopy = pEncryptor.getOwner().getKeyPairs().copyKeyPair(myPair);
 
         /* Create sender and receiver */
-        final GordianAsyncFactory myFactory = pEncryptor.getOwner().getFactory();
+        final GordianAsymFactory myFactory = pEncryptor.getOwner().getFactory();
         final GordianEncryptorFactory myEncrypts = myFactory.getEncryptorFactory();
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
         final GordianEncryptor mySender = myEncrypts.createEncryptor(mySpec);

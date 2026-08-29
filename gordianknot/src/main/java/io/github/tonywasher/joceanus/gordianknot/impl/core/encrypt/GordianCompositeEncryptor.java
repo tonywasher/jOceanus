@@ -66,7 +66,7 @@ public class GordianCompositeEncryptor
     public GordianCompositeEncryptor(final GordianFactory pFactory,
                                      final GordianCoreEncryptorSpec pSpec) throws GordianException {
         /* Store parameters */
-        theFactory = pFactory.getAsyncFactory().getEncryptorFactory();
+        theFactory = pFactory.getAsymFactory().getEncryptorFactory();
         theSpec = pSpec;
         theEncryptors = new ArrayList<>();
 

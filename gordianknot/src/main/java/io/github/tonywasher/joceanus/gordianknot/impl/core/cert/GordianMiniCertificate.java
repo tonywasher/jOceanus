@@ -86,7 +86,7 @@ public class GordianMiniCertificate
                 : theKeyPair;
 
         /* Access the keyPairFactory */
-        final GordianKeyPairFactory myFactory = pFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = pFactory.getAsymFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeyPair.getKeyPairSpec());
         final X509EncodedKeySpec myX509Spec = myGenerator.getX509Encoding(myKeyPair);
         theSubject = new GordianCoreCertificateId(pSubject, null);
@@ -123,7 +123,7 @@ public class GordianMiniCertificate
         theEncoded = theASN1.getEncodedBytes();
 
         /* Derive the keyPair */
-        final GordianKeyPairFactory myFactory = pFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = pFactory.getAsymFactory().getKeyPairFactory();
         final X509EncodedKeySpec myX509Spec = theASN1.getPublicKey();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);

@@ -69,7 +69,7 @@ public final class KeyStorePairs {
     KeyStorePairs(final GordianKeyStoreManager pManager) {
         theManager = pManager;
         theStore = (GordianCoreKeyStore) theManager.getKeyStore();
-        final GordianKeyStoreFactory myFactory = theStore.getFactory().getAsyncFactory().getKeyStoreFactory();
+        final GordianKeyStoreFactory myFactory = theStore.getFactory().getAsymFactory().getKeyStoreFactory();
         theGateway = myFactory.createKeyStoreGateway(theManager);
     }
 

@@ -120,7 +120,7 @@ public class GordianCoreSignatureAlgId {
         theIdentifierMap = new HashMap<>();
 
         /* Access the asymFactory and digests */
-        theFactory = pFactory.getAsyncFactory().getSignatureFactory();
+        theFactory = pFactory.getAsymFactory().getSignatureFactory();
 
         /* Populate with the public standards */
         addRSASignatures();

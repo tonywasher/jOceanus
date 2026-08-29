@@ -21,23 +21,23 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFac
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.factory.GordianCoreAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.factory.GordianCoreAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.agree.JcaAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.encrypt.JcaEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.sign.JcaSignatureFactory;
 
 /**
- * Jca Async Factory.
+ * Jca Asym Factory.
  */
-public class JcaAsyncFactory
-        extends GordianCoreAsyncFactory {
+public class JcaAsymFactory
+        extends GordianCoreAsymFactory {
     /**
      * Constructor.
      *
      * @param pFactory the factory
      */
-    JcaAsyncFactory(final GordianBaseFactory pFactory) {
+    JcaAsymFactory(final GordianBaseFactory pFactory) {
         /* Initialize underlying class */
         super(pFactory);
     }

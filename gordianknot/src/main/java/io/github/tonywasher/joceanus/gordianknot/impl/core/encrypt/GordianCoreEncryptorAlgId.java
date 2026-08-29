@@ -83,7 +83,7 @@ public class GordianCoreEncryptorAlgId {
         theIdentifierMap = new HashMap<>();
 
         /* Access the encryptorFactory  */
-        theFactory = pFactory.getAsyncFactory().getEncryptorFactory();
+        theFactory = pFactory.getAsymFactory().getEncryptorFactory();
 
         /* Populate with the public standards */
         addWellKnownEncryptors();

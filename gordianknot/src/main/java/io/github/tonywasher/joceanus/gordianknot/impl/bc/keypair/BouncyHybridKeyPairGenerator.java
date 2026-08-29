@@ -84,7 +84,7 @@ public class BouncyHybridKeyPairGenerator
         theHybridSpec = ((GordianCoreKeyPairSpec) pSpec).getHybridSpec();
 
         /* Access generators */
-        final GordianKeyPairFactory myFactory = pFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = pFactory.getAsymFactory().getKeyPairFactory();
         theBuilder = myFactory.newKeyPairSpecBuilder();
         thePrimaryGenerator = myFactory.getKeyPairGenerator(theHybridSpec.getPrimaryKeyPairSpec(theBuilder));
         theTradGenerator = myFactory.getKeyPairGenerator(theHybridSpec.getTraditionalKeyPairSpec(theBuilder));

@@ -561,7 +561,7 @@ public class SymmetricSymScripts {
         final GordianKey<GordianSymKeySpec> myKey = pKeySpec.getKey();
         final GordianSymCipherSpecBuilder myBuilder = myCipherFactory.newSymCipherSpecBuilder();
         final GordianSymCipherSpec myCipherSpec = myBuilder.ecb(mySpec, GordianPadding.ISO7816D4);
-        final GordianKeyPairFactory myKeyPairFactory = myFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myKeyPairFactory = myFactory.getAsymFactory().getKeyPairFactory();
 
         /* Call test methods */
         checkDestroySymKey(myCipherFactory, mySpec, myCipherSpec);

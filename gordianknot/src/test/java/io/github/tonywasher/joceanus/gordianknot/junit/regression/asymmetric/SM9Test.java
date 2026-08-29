@@ -33,7 +33,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncrypt
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM9EncryptionMode;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
@@ -143,9 +143,9 @@ class SM9Test {
     private static void testExchanges(final GordianFactory pFactory,
                                       final boolean pMaster) throws GordianException {
         /* Access factories */
-        final GordianAsyncFactory myAsync = pFactory.getAsyncFactory();
-        final GordianKeyPairFactory myKeyPairs = myAsync.getKeyPairFactory();
-        final GordianAgreementFactory myAgrees = myAsync.getAgreementFactory();
+        final GordianAsymFactory myAsym = pFactory.getAsymFactory();
+        final GordianKeyPairFactory myKeyPairs = myAsym.getKeyPairFactory();
+        final GordianAgreementFactory myAgrees = myAsym.getAgreementFactory();
         final byte[] mySourceId = "SourceID".getBytes();
         final byte[] myTargetId = "TargetID".getBytes();
 
@@ -213,7 +213,7 @@ class SM9Test {
     private static void testCrossExchanges(final GordianFactory pSource,
                                            final GordianFactory pTarget) throws GordianException {
         /* Access factories */
-        final GordianAsyncFactory mySource = pSource.getAsyncFactory();
+        final GordianAsymFactory mySource = pSource.getAsymFactory();
         final GordianKeyPairFactory mySourceKeyPairs = mySource.getKeyPairFactory();
         final GordianAgreementFactory mySourceAgrees = mySource.getAgreementFactory();
         final byte[] mySourceId = "SourceID".getBytes();
@@ -245,7 +245,7 @@ class SM9Test {
         final byte[] myClientHello = myClient.nextMessage();
 
         /* Create server agreement */
-        final GordianAsyncFactory myTarget = pTarget.getAsyncFactory();
+        final GordianAsymFactory myTarget = pTarget.getAsymFactory();
         final GordianKeyPairFactory myTargetKeyPairs = myTarget.getKeyPairFactory();
         final GordianAgreementFactory myTargetAgrees = myTarget.getAgreementFactory();
         final GordianKeyPairGenerator myTargetGenerator = myTargetKeyPairs.getKeyPairGenerator(myEncMasterSpec);
@@ -268,9 +268,9 @@ class SM9Test {
     private static void testKEMs(final GordianFactory pFactory,
                                  final boolean pMaster) throws GordianException {
         /* Access factories */
-        final GordianAsyncFactory myAsync = pFactory.getAsyncFactory();
-        final GordianKeyPairFactory myKeyPairs = myAsync.getKeyPairFactory();
-        final GordianAgreementFactory myAgrees = myAsync.getAgreementFactory();
+        final GordianAsymFactory myAsym = pFactory.getAsymFactory();
+        final GordianKeyPairFactory myKeyPairs = myAsym.getKeyPairFactory();
+        final GordianAgreementFactory myAgrees = myAsym.getAgreementFactory();
         final byte[] myTargetId = "TargetID".getBytes();
 
         /* Create Encrypt keyPairs */
@@ -319,7 +319,7 @@ class SM9Test {
     private static void testCrossKEMs(final GordianFactory pSource,
                                       final GordianFactory pTarget) throws GordianException {
         /* Access factories */
-        final GordianAsyncFactory mySource = pSource.getAsyncFactory();
+        final GordianAsymFactory mySource = pSource.getAsymFactory();
         final GordianKeyPairFactory mySourceKeyPairs = mySource.getKeyPairFactory();
         final GordianAgreementFactory mySourceAgrees = mySource.getAgreementFactory();
         final byte[] myTargetId = "TargetID".getBytes();
@@ -346,7 +346,7 @@ class SM9Test {
         final byte[] myClientResult = myClient.getByteArrayResult();
 
         /* Create server agreement */
-        final GordianAsyncFactory myTarget = pTarget.getAsyncFactory();
+        final GordianAsymFactory myTarget = pTarget.getAsymFactory();
         final GordianKeyPairFactory myTargetKeyPairs = myTarget.getKeyPairFactory();
         final GordianAgreementFactory myTargetAgrees = myTarget.getAgreementFactory();
         final GordianKeyPairGenerator myTargetGenerator = myTargetKeyPairs.getKeyPairGenerator(myEncMasterSpec);
@@ -365,9 +365,9 @@ class SM9Test {
 
     private static void testEncryptors(final GordianFactory pFactory) throws GordianException {
         /* Access factories */
-        final GordianAsyncFactory myAsync = pFactory.getAsyncFactory();
-        final GordianKeyPairFactory myKeyPairs = myAsync.getKeyPairFactory();
-        final GordianEncryptorFactory myEncs = myAsync.getEncryptorFactory();
+        final GordianAsymFactory myAsym = pFactory.getAsymFactory();
+        final GordianKeyPairFactory myKeyPairs = myAsym.getKeyPairFactory();
+        final GordianEncryptorFactory myEncs = myAsym.getEncryptorFactory();
         final byte[] myTargetId = "TargetID".getBytes();
         final byte[] myMessage = "ASimpleMessage".getBytes();
 
@@ -438,8 +438,8 @@ class SM9Test {
     private static void testCrossEncryptors(final GordianFactory pSource,
                                             final GordianFactory pTarget) throws GordianException {
         /* Access factories */
-        final GordianAsyncFactory mySource = pSource.getAsyncFactory();
-        final GordianAsyncFactory myTarget = pTarget.getAsyncFactory();
+        final GordianAsymFactory mySource = pSource.getAsymFactory();
+        final GordianAsymFactory myTarget = pTarget.getAsymFactory();
         final GordianKeyPairFactory mySourceKeyPairs = mySource.getKeyPairFactory();
         final GordianEncryptorFactory mySourceEncs = mySource.getEncryptorFactory();
         final byte[] myTargetId = "TargetID".getBytes();
@@ -499,9 +499,9 @@ class SM9Test {
     private static void testSignatures(final GordianFactory pFactory,
                                        final boolean pMaster) throws GordianException {
         /* Access factories */
-        final GordianAsyncFactory myAsync = pFactory.getAsyncFactory();
-        final GordianKeyPairFactory myKeyPairs = myAsync.getKeyPairFactory();
-        final GordianSignatureFactory mySigns = myAsync.getSignatureFactory();
+        final GordianAsymFactory myAsym = pFactory.getAsymFactory();
+        final GordianKeyPairFactory myKeyPairs = myAsym.getKeyPairFactory();
+        final GordianSignatureFactory mySigns = myAsym.getSignatureFactory();
         final byte[] mySignerId = "SignerID".getBytes();
         final byte[] myMessage = "ASimpleMessage".getBytes();
 
@@ -573,8 +573,8 @@ class SM9Test {
     private static void testCrossSignatures(final GordianFactory pSource,
                                             final GordianFactory pTarget) throws GordianException {
         /* Access factories */
-        final GordianAsyncFactory mySource = pSource.getAsyncFactory();
-        final GordianAsyncFactory myTarget = pTarget.getAsyncFactory();
+        final GordianAsymFactory mySource = pSource.getAsymFactory();
+        final GordianAsymFactory myTarget = pTarget.getAsymFactory();
         final GordianKeyPairFactory mySourceKeyPairs = mySource.getKeyPairFactory();
         final GordianSignatureFactory mySourceSigns = mySource.getSignatureFactory();
         final byte[] mySignerId = "SignerID".getBytes();
