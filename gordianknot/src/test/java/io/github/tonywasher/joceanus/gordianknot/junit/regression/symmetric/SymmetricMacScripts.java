@@ -236,6 +236,11 @@ public final class SymmetricMacScripts {
         Assertions.assertDoesNotThrow(() -> myMac.update(null, 0, 0), "update null/zeroLength");
         Assertions.assertDoesNotThrow(() -> myMac.update(null), "update null");
 
+        /* Can't finish with null/short buffers */
+        Assertions.assertThrows(GordianException.class, () -> myMac.finish(null, 0), "finish null");
+        Assertions.assertThrows(GordianException.class, () -> myMac.finish(new byte[128], 132), "finish bad offset");
+        Assertions.assertThrows(GordianException.class, () -> myMac.finish(new byte[1], 0), "finish short buffer");
+
         /* Init with second key and then destroy it */
         final GordianMacParams myParams = myParamsBuilder.keyWithRandomNonce(mySecondKey);
         myMac.init(myParams);

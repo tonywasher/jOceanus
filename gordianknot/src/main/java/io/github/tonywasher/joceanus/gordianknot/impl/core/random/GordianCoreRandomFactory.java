@@ -390,9 +390,10 @@ public class GordianCoreRandomFactory
      * @param isPredictionResistant specify whether the underlying DRBG in the resulting
      *                              SecureRandom should re-seed on each request for bytes.
      * @return a SecureRandom supported by a Hash DRBG.
+     * @throws GordianException on error
      */
     private GordianSecureRandom buildHash(final GordianDigest pDigest,
-                                          final boolean isPredictionResistant) {
+                                          final boolean isPredictionResistant) throws GordianException {
         /* Create initVector */
         final byte[] myInit = theRandom.generateSeed(NUM_ENTROPY_BYTES_REQUIRED);
 

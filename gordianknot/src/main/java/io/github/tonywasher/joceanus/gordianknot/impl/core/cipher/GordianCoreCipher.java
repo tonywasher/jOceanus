@@ -238,6 +238,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
         if (!checkInputBuffer(pBytes, pOffset, pLength)) {
             return 0;
         }
+        checkOutputBuffer(pOutput, pOutOffset, getOutputLength(pLength));
 
         /* Make sure that there is no overlap between buffers */
         byte[] myInput = pBytes;
@@ -309,10 +310,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     public int finish(final byte[] pOutput,
                       final int pOutOffset) throws GordianException {
         /* Check that the buffers are sufficient */
-        final int myOutBufLen = pOutput == null ? 0 : pOutput.length;
-        if (myOutBufLen < (getOutputLength(0) + pOutOffset)) {
-            throw new GordianLogicException("Output buffer too short.");
-        }
+        checkOutputBuffer(pOutput, pOutOffset, getOutputLength(0));
 
         /* finish the cipher */
         return doFinish(pOutput, pOutOffset);

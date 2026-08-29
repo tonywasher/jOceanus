@@ -150,6 +150,17 @@ public class SymmetricDigestScripts {
         /* Check that the digestLength is correct */
         Assertions.assertEquals(mySpec.getDigestLength().getByteLength(), myDigest.getDigestSize(), "DigestLength incorrect");
 
+        /* Can't update with null/short buffers */
+        Assertions.assertThrows(GordianException.class, () -> myDigest.update(null, 0, 1), "update null/length");
+        Assertions.assertThrows(GordianException.class, () -> myDigest.update(new byte[]{}, 0, 1), "update short");
+        Assertions.assertDoesNotThrow(() -> myDigest.update(null, 0, 0), "update null/zeroLength");
+        Assertions.assertDoesNotThrow(() -> myDigest.update(null), "update null");
+
+        /* Can't finish with null/short buffers */
+        Assertions.assertThrows(GordianException.class, () -> myDigest.finish(null, 0), "finish null");
+        Assertions.assertThrows(GordianException.class, () -> myDigest.finish(new byte[128], 132), "finish bad offset");
+        Assertions.assertThrows(GordianException.class, () -> myDigest.finish(new byte[1], 0), "finish short buffer");
+
         /* Create the digest as a single block */
         final byte[] myBytes = SymmetricTest.getTestData();
         myDigest.update(myBytes);

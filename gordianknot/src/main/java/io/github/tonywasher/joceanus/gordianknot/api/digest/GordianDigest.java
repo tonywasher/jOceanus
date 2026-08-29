@@ -43,10 +43,11 @@ public interface GordianDigest {
      * @param pBytes  the bytes to update with.
      * @param pOffset the offset of the data within the byte array
      * @param pLength the length of the data to use
+     * @throws GordianException on error
      */
     void update(byte[] pBytes,
                 int pOffset,
-                int pLength);
+                int pLength) throws GordianException;
 
     /**
      * Update the consumer with a single byte.
@@ -59,8 +60,9 @@ public interface GordianDigest {
      * Update the consumer with a byte array.
      *
      * @param pBytes the bytes to update with.
+     * @throws GordianException on error
      */
-    default void update(final byte[] pBytes) {
+    default void update(final byte[] pBytes) throws GordianException {
         if (pBytes != null) {
             update(pBytes, 0, pBytes.length);
         }
@@ -95,7 +97,7 @@ public interface GordianDigest {
      * @param pBytes the bytes to update with.
      * @return the digest
      */
-    default byte[] finish(final byte[] pBytes) {
+    default byte[] finish(final byte[] pBytes) throws GordianException {
         update(pBytes);
         return finish();
     }

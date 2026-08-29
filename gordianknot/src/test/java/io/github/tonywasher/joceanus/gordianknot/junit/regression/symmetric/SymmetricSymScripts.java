@@ -623,6 +623,14 @@ public class SymmetricSymScripts {
         Assertions.assertThrows(GordianException.class, () -> myCipher.update(new byte[]{}, 0, 1), "update short");
         Assertions.assertDoesNotThrow(() -> myCipher.update(null, 0, 0), "update null/zeroLength");
         Assertions.assertDoesNotThrow(() -> myCipher.update(null), "update null");
+        Assertions.assertThrows(GordianException.class,
+                () -> myCipher.update(new byte[1], 0, 1, null, 0), "update null output");
+        Assertions.assertThrows(GordianException.class,
+                () -> myCipher.update(new byte[1], 0, 1, new byte[128], 132), "update bad output offset");
+
+        /* Can't finish with null/short buffers */
+        Assertions.assertThrows(GordianException.class, () -> myCipher.finish(null, 0), "finish null");
+        Assertions.assertThrows(GordianException.class, () -> myCipher.finish(new byte[128], 132), "finish bad offset");
 
         /* Destroy the second key */
         mySecondKey.destroy();

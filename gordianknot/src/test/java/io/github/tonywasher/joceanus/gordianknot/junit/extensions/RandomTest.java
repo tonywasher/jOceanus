@@ -20,11 +20,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
@@ -336,10 +336,11 @@ class RandomTest {
      * @param pDigest    the Digest
      * @param pInit      the initialisation
      * @param pTestCases the testCases
+     * @throws GordianException on error
      */
     private void testHashDRBG(final GordianDigest pDigest,
                               final GordianDRBGInit pInit,
-                              final GordianTestCase[] pTestCases) {
+                              final GordianTestCase[] pTestCases) throws GordianException {
         /* Access the nonce and personalisation */
         final byte[] myNonce = Hex.decode(pInit.theNonce);
         final String myPers = pInit.thePersonal;

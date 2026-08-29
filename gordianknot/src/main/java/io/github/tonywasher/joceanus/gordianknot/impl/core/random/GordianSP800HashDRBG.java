@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.random;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
@@ -97,11 +98,12 @@ public final class GordianSP800HashDRBG
      * @param pEntropy       source of entropy to use for seeding/reSeeding.
      * @param pSecurityBytes personalisation string to distinguish this DRBG (may be null).
      * @param pInitVector    nonce to further distinguish this DRBG (may be null).
+     * @throws GordianException on error
      */
     public GordianSP800HashDRBG(final GordianDigest pDigest,
                                 final EntropySource pEntropy,
                                 final byte[] pSecurityBytes,
-                                final byte[] pInitVector) {
+                                final byte[] pInitVector) throws GordianException {
         /* Store digest and entropy source */
         theDigest = pDigest;
         theEntropy = pEntropy;
@@ -127,69 +129,81 @@ public final class GordianSP800HashDRBG
 
     @Override
     public void reseed(final byte[] pXtraBytes) {
-        /* Create variable Hash */
-        final byte[] myEntropy = theEntropy.getEntropy();
-        final byte[] mySeed = Arrays.concatenate(RESEED_ID, theV.getBuffer(), myEntropy, pXtraBytes);
-        theV = hashDerive(mySeed, theSeedLength);
+        /* Protect against exceptions */
+        try {
+            /* Create variable Hash */
+            final byte[] myEntropy = theEntropy.getEntropy();
+            final byte[] mySeed = Arrays.concatenate(RESEED_ID, theV.getBuffer(), myEntropy, pXtraBytes);
+            theV = hashDerive(mySeed, theSeedLength);
 
-        /* Create constant hash */
-        final byte[] myTempH = Arrays.concatenate(INIT_ID, theV.getBuffer());
-        theC = hashDerive(myTempH, theSeedLength);
+            /* Create constant hash */
+            final byte[] myTempH = Arrays.concatenate(INIT_ID, theV.getBuffer());
+            theC = hashDerive(myTempH, theSeedLength);
 
-        /* re-initialise reSeed counter */
-        theReseedCounter.reset();
-        theReseedCounter.iterate();
+            /* re-initialise reSeed counter */
+            theReseedCounter.reset();
+            theReseedCounter.iterate();
+
+        } catch (final GordianException e) {
+            throw new IllegalStateException("Failed to reseed bytes", e);
+        }
     }
 
     @Override
     public int generate(final byte[] pOutput,
                         final byte[] pXtraBytes,
                         final boolean isPredictionResistant) {
-        /* Check valid # of bits */
-        final int myNumBits = pOutput.length << GordianRandomConstants.BIT_SHIFT;
-        if (myNumBits > GordianRandomConstants.MAX_BITS_REQUEST) {
-            throw new IllegalArgumentException("Number of bits per request limited to "
-                    + GordianRandomConstants.MAX_BITS_REQUEST);
+        /* Protect against exceptions */
+        try {
+            /* Check valid # of bits */
+            final int myNumBits = pOutput.length << GordianRandomConstants.BIT_SHIFT;
+            if (myNumBits > GordianRandomConstants.MAX_BITS_REQUEST) {
+                throw new IllegalArgumentException("Number of bits per request limited to "
+                        + GordianRandomConstants.MAX_BITS_REQUEST);
+            }
+
+            /* Check for reSeed required */
+            if (theReseedCounter.compareLimit(GordianRandomConstants.RESEED_MAX)) {
+                return -1;
+            }
+
+            /* If we are prediction resistant */
+            if (isPredictionResistant) {
+                /* ReSeed */
+                reseed(pXtraBytes);
+
+                /* else if we have extra bytes */
+            } else if (pXtraBytes != null) {
+                /* Hash the new input and add to variable hash */
+                final byte[] newInput = Arrays.concatenate(XTRA_ID, theV.getBuffer(), pXtraBytes);
+                theV.addTo(theDigest.finish(newInput));
+            }
+
+            /* Generate the requested bits */
+            final byte[] myResult = hashgen(theV.getBuffer(), myNumBits);
+
+            /* Adjust the variable hash */
+            final byte[] myTempH = Arrays.concatenate(REHASH_ID, theV.getBuffer());
+
+            /* Add the hash and constant */
+            theV.addTo(theDigest.finish(myTempH));
+            theV.addTo(theC.getBuffer());
+
+            /* Add the reSeed counter */
+            theV.addTo(theReseedCounter.getBuffer());
+
+            /* Iterate the reSeed counter */
+            theReseedCounter.iterate();
+
+            /* Return the bytes */
+            System.arraycopy(myResult, 0, pOutput, 0, pOutput.length);
+
+            /* Return the number of bits generated */
+            return myNumBits;
+
+        } catch (final GordianException e) {
+            throw new IllegalStateException("Failed to generate bytes", e);
         }
-
-        /* Check for reSeed required */
-        if (theReseedCounter.compareLimit(GordianRandomConstants.RESEED_MAX)) {
-            return -1;
-        }
-
-        /* If we are prediction resistant */
-        if (isPredictionResistant) {
-            /* ReSeed */
-            reseed(pXtraBytes);
-
-            /* else if we have extra bytes */
-        } else if (pXtraBytes != null) {
-            /* Hash the new input and add to variable hash */
-            final byte[] newInput = Arrays.concatenate(XTRA_ID, theV.getBuffer(), pXtraBytes);
-            theV.addTo(theDigest.finish(newInput));
-        }
-
-        /* Generate the requested bits */
-        final byte[] myResult = hashgen(theV.getBuffer(), myNumBits);
-
-        /* Adjust the variable hash */
-        final byte[] myTempH = Arrays.concatenate(REHASH_ID, theV.getBuffer());
-
-        /* Add the hash and constant */
-        theV.addTo(theDigest.finish(myTempH));
-        theV.addTo(theC.getBuffer());
-
-        /* Add the reSeed counter */
-        theV.addTo(theReseedCounter.getBuffer());
-
-        /* Iterate the reSeed counter */
-        theReseedCounter.iterate();
-
-        /* Return the bytes */
-        System.arraycopy(myResult, 0, pOutput, 0, pOutput.length);
-
-        /* Return the number of bits generated */
-        return myNumBits;
     }
 
     /**
@@ -198,9 +212,10 @@ public final class GordianSP800HashDRBG
      * @param pInputBytes the input bytes to hash
      * @param pNumBits    the number of output bits
      * @return the stretched hash
+     * @throws GordianException on error
      */
     private byte[] hashgen(final byte[] pInputBytes,
-                           final int pNumBits) {
+                           final int pNumBits) throws GordianException {
         /* Determine # of iterations */
         final int mySize = theDigest.getDigestSize();
         final int myLen = pNumBits >> GordianRandomConstants.BIT_SHIFT;
@@ -240,9 +255,10 @@ public final class GordianSP800HashDRBG
      * @param pSeedMaterial the seed material
      * @param pSeedLength   the length of seed required
      * @return the new hash as a counter
+     * @throws GordianException on error
      */
     private GordianByteArrayInteger hashDerive(final byte[] pSeedMaterial,
-                                               final int pSeedLength) {
+                                               final int pSeedLength) throws GordianException {
         /* Determine sizes */
         final int mySize = theDigest.getDigestSize();
         final int myLen = pSeedLength >> GordianRandomConstants.BIT_SHIFT;

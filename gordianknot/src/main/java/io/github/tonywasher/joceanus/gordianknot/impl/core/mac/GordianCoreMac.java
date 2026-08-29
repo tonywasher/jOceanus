@@ -168,9 +168,7 @@ public abstract class GordianCoreMac
     public int finish(final byte[] pBuffer,
                       final int pOffset) throws GordianException {
         /* Check that the buffers are sufficient */
-        if (pBuffer.length < (getMacSize() + pOffset)) {
-            throw new IllegalArgumentException("Output buffer too short.");
-        }
+        checkOutputBuffer(pBuffer, pOffset, getMacSize());
 
         /* Finish the digest */
         return doFinish(pBuffer, pOffset);
