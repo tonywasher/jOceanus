@@ -30,7 +30,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPair
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMLKEMSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianRSASpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
@@ -93,16 +92,6 @@ public final class GordianCoreHybridKEMSpec
     private final GordianHybridKEMSpec theSpec;
 
     /**
-     * The KeyPair Builder.
-     */
-    private final GordianKeyPairSpecBuilder theKeyPair = GordianCoreKeyPairSpecBuilder.newInstance();
-
-    /**
-     * The Agreement Builder.
-     */
-    private final GordianAgreementSpecBuilder theAgreement = GordianCoreAgreementSpecBuilder.newInstance();
-
-    /**
      * The Digest Builder.
      */
     private final GordianDigestSpecBuilder theDigest = GordianCoreDigestSpecBuilder.newInstance();
@@ -127,29 +116,28 @@ public final class GordianCoreHybridKEMSpec
     }
 
     @Override
-    public GordianKeyPairSpec getPrimaryKeyPairSpec() {
+    public GordianKeyPairSpec getPrimaryKeyPairSpec(final GordianKeyPairSpecBuilder pBuilder) {
         return switch (theSpec) {
             case MLKEM768_RSA2048, MLKEM768_RSA3072, MLKEM768_RSA4096, MLKEM768_ECDH_P256,
-                 MLKEM768_ECDH_P384, MLKEM768_ECDH_BP256, MLKEM768_X25519 ->
-                    theKeyPair.mlkem(GordianMLKEMSpec.MLKEM768);
+                 MLKEM768_ECDH_P384, MLKEM768_ECDH_BP256, MLKEM768_X25519 -> pBuilder.mlkem(GordianMLKEMSpec.MLKEM768);
             case MLKEM1024_RSA3072, MLKEM1024_ECDH_P384, MLKEM1024_ECDH_BP384, MLKEM1024_ECDH_P521, MLKEM1024_X448 ->
-                    theKeyPair.mlkem(GordianMLKEMSpec.MLKEM1024);
+                    pBuilder.mlkem(GordianMLKEMSpec.MLKEM1024);
         };
     }
 
     @Override
-    public GordianKeyPairSpec getTraditionalKeyPairSpec() {
+    public GordianKeyPairSpec getTraditionalKeyPairSpec(final GordianKeyPairSpecBuilder pBuilder) {
         return switch (theSpec) {
-            case MLKEM768_RSA2048 -> theKeyPair.rsa(GordianRSASpec.MOD2048);
-            case MLKEM768_RSA3072, MLKEM1024_RSA3072 -> theKeyPair.rsa(GordianRSASpec.MOD3072);
-            case MLKEM768_RSA4096 -> theKeyPair.rsa(GordianRSASpec.MOD4096);
-            case MLKEM768_ECDH_P256 -> theKeyPair.ec(GordianECSpec.SECP256R1);
-            case MLKEM768_ECDH_P384, MLKEM1024_ECDH_P384 -> theKeyPair.ec(GordianECSpec.SECP384R1);
-            case MLKEM768_ECDH_BP256 -> theKeyPair.ec(GordianECSpec.BRAINPOOLP256R1);
-            case MLKEM768_X25519 -> theKeyPair.x25519();
-            case MLKEM1024_ECDH_BP384 -> theKeyPair.ec(GordianECSpec.BRAINPOOLP384R1);
-            case MLKEM1024_ECDH_P521 -> theKeyPair.ec(GordianECSpec.SECP521R1);
-            case MLKEM1024_X448 -> theKeyPair.x448();
+            case MLKEM768_RSA2048 -> pBuilder.rsa(GordianRSASpec.MOD2048);
+            case MLKEM768_RSA3072, MLKEM1024_RSA3072 -> pBuilder.rsa(GordianRSASpec.MOD3072);
+            case MLKEM768_RSA4096 -> pBuilder.rsa(GordianRSASpec.MOD4096);
+            case MLKEM768_ECDH_P256 -> pBuilder.ec(GordianECSpec.SECP256R1);
+            case MLKEM768_ECDH_P384, MLKEM1024_ECDH_P384 -> pBuilder.ec(GordianECSpec.SECP384R1);
+            case MLKEM768_ECDH_BP256 -> pBuilder.ec(GordianECSpec.BRAINPOOLP256R1);
+            case MLKEM768_X25519 -> pBuilder.x25519();
+            case MLKEM1024_ECDH_BP384 -> pBuilder.ec(GordianECSpec.BRAINPOOLP384R1);
+            case MLKEM1024_ECDH_P521 -> pBuilder.ec(GordianECSpec.SECP521R1);
+            case MLKEM1024_X448 -> pBuilder.x448();
         };
     }
 
@@ -206,24 +194,30 @@ public final class GordianCoreHybridKEMSpec
     /**
      * Obtain the Primary AgreementSpec.
      *
+     * @param pKeyPair   the keyPairSpec builder
+     * @param pAgreement the agreementSpec builder
      * @return the Spec
      */
-    public GordianAgreementSpec getPrimaryAgreementSpec() {
-        return theAgreement.kem(getPrimaryKeyPairSpec(), GordianAgreementKDF.NONE);
+    public GordianAgreementSpec getPrimaryAgreementSpec(final GordianKeyPairSpecBuilder pKeyPair,
+                                                        final GordianAgreementSpecBuilder pAgreement) {
+        return pAgreement.kem(getPrimaryKeyPairSpec(pKeyPair), GordianAgreementKDF.NONE);
     }
 
     /**
      * Obtain the Traditional AgreementSpec.
      *
+     * @param pKeyPair   the keyPairSpec builder
+     * @param pAgreement the agreementSpec builder
      * @return the Spec
      */
-    public GordianAgreementSpec getTraditionalAgreementSpec() {
+    public GordianAgreementSpec getTraditionalAgreementSpec(final GordianKeyPairSpecBuilder pKeyPair,
+                                                            final GordianAgreementSpecBuilder pAgreement) {
         return switch (theSpec) {
             case MLKEM768_RSA2048, MLKEM768_RSA3072, MLKEM768_RSA4096, MLKEM1024_RSA3072 ->
-                    theAgreement.wrap(getTraditionalKeyPairSpec());
+                    pAgreement.wrap(getTraditionalKeyPairSpec(pKeyPair));
             case MLKEM768_ECDH_P256, MLKEM768_ECDH_P384, MLKEM768_ECDH_BP256, MLKEM1024_ECDH_P384, MLKEM1024_ECDH_BP384,
                  MLKEM1024_ECDH_P521, MLKEM768_X25519, MLKEM1024_X448 ->
-                    theAgreement.anon(getTraditionalKeyPairSpec(), GordianAgreementKDF.NONE);
+                    pAgreement.anon(getTraditionalKeyPairSpec(pKeyPair), GordianAgreementKDF.NONE);
         };
     }
 

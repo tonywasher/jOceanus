@@ -25,6 +25,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFacto
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianEdwardsSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyEdDSAKeyPair.BouncyEd25519PrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyEdDSAKeyPair.BouncyEd448PrivateKey;
@@ -65,6 +66,11 @@ public class BouncyHybridKeyPairGenerator
     private final GordianKeyPairGenerator theTradGenerator;
 
     /**
+     * The keyPairSpecBuilder.
+     */
+    private final GordianKeyPairSpecBuilder theBuilder;
+
+    /**
      * Constructor.
      *
      * @param pFactory the asymFactory.
@@ -79,8 +85,9 @@ public class BouncyHybridKeyPairGenerator
 
         /* Access generators */
         final GordianKeyPairFactory myFactory = pFactory.getAsyncFactory().getKeyPairFactory();
-        thePrimaryGenerator = myFactory.getKeyPairGenerator(theHybridSpec.getPrimaryKeyPairSpec());
-        theTradGenerator = myFactory.getKeyPairGenerator(theHybridSpec.getTraditionalKeyPairSpec());
+        theBuilder = myFactory.newKeyPairSpecBuilder();
+        thePrimaryGenerator = myFactory.getKeyPairGenerator(theHybridSpec.getPrimaryKeyPairSpec(theBuilder));
+        theTradGenerator = myFactory.getKeyPairGenerator(theHybridSpec.getTraditionalKeyPairSpec(theBuilder));
     }
 
     @Override
@@ -240,7 +247,7 @@ public class BouncyHybridKeyPairGenerator
     private BouncyKeyPair deriveTraditionalKeyPair(final byte[] pPublicBytes,
                                                    final byte[] pPrivateBytes) throws GordianException {
         /* Handle EdDSA specially */
-        final GordianKeyPairSpec mySpec = theHybridSpec.getTraditionalKeyPairSpec();
+        final GordianKeyPairSpec mySpec = theHybridSpec.getTraditionalKeyPairSpec(theBuilder);
         final Object mySubSpec = mySpec.getSubSpec();
         if (mySpec.getKeyPairType().equals(GordianKeyPairType.EDDSA)) {
             if (GordianEdwardsSpec.CURVE25519.equals(mySubSpec)) {

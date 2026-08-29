@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.agree;
 
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
@@ -24,6 +25,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyHybridKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
@@ -84,13 +86,15 @@ public class BouncyHybridAgreementEngine
         theHybrid = ((GordianCoreKeyPairSpec) pSpec.getKeyPairSpec()).getHybridKEMSpec();
         final GordianBaseFactory myFactory = pFactory.getFactory();
 
-        /* Create primary and traditional engines */
-        thePrimary = pFactory.createEngine(theHybrid.getPrimaryAgreementSpec());
-        theTraditional = pFactory.createEngine(theHybrid.getTraditionalAgreementSpec());
-
         /* Create the generator */
         final GordianKeyPairFactory myKPFactory = myFactory.getAsyncFactory().getKeyPairFactory();
-        theGenerator = myKPFactory.getKeyPairGenerator(theHybrid.getTraditionalKeyPairSpec());
+        final GordianKeyPairSpecBuilder myKeyPairBuilder = myKPFactory.newKeyPairSpecBuilder();
+        theGenerator = myKPFactory.getKeyPairGenerator(theHybrid.getTraditionalKeyPairSpec(myKeyPairBuilder));
+
+        /* Create primary and traditional engines */
+        final GordianAgreementSpecBuilder myAgreementBuilder = pFactory.newAgreementSpecBuilder();
+        thePrimary = pFactory.createEngine(theHybrid.getPrimaryAgreementSpec(myKeyPairBuilder, myAgreementBuilder));
+        theTraditional = pFactory.createEngine(theHybrid.getTraditionalAgreementSpec(myKeyPairBuilder, myAgreementBuilder));
 
         /* Create digest */
         theDigest = myFactory.getDigestFactory().createDigest(theHybrid.getDigestSpec());

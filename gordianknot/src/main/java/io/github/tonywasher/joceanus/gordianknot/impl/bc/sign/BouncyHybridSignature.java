@@ -24,6 +24,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyHybridKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -108,13 +109,14 @@ public class BouncyHybridSignature
         theContext = pParams.getContext();
 
         /* Initialise the primary */
-        thePrimary = (GordianCoreSignature) theSignFactory.createSigner(theHybrid.getPrimarySignatureSpec());
+        final GordianSignatureSpecBuilder myBuilder = getFactory().getAsyncFactory().getSignatureFactory().newSignatureSpecBuilder();
+        thePrimary = (GordianCoreSignature) theSignFactory.createSigner(theHybrid.getPrimarySignatureSpec(myBuilder));
         final BouncyKeyPair myPrimary = myPair.getPrimary();
         final GordianSignParams myPrimaryParams = myParamsBuilder.keyPairAndContext(myPrimary, theHybrid.getLabel());
         thePrimary.initForSigning(myPrimaryParams);
 
         /* Initialise the traditional */
-        theTraditional = (GordianCoreSignature) theSignFactory.createSigner(theHybrid.getTraditionalSignatureSpec());
+        theTraditional = (GordianCoreSignature) theSignFactory.createSigner(theHybrid.getTraditionalSignatureSpec(myBuilder));
         final BouncyKeyPair myTraditional = myPair.getTraditional();
         final GordianSignParams myTradParams = myParamsBuilder.keyPair(myTraditional);
         theTraditional.initForSigning(myTradParams);
@@ -135,13 +137,14 @@ public class BouncyHybridSignature
         theContext = pParams.getContext();
 
         /* Initialise the primary */
-        thePrimary = (GordianCoreSignature) theSignFactory.createSigner(theHybrid.getPrimarySignatureSpec());
+        final GordianSignatureSpecBuilder myBuilder = getFactory().getAsyncFactory().getSignatureFactory().newSignatureSpecBuilder();
+        thePrimary = (GordianCoreSignature) theSignFactory.createSigner(theHybrid.getPrimarySignatureSpec(myBuilder));
         final BouncyKeyPair myPrimary = myPair.getPrimary();
         final GordianSignParams myPrimaryParams = myParamsBuilder.keyPairAndContext(myPrimary, theHybrid.getLabel());
         thePrimary.initForVerify(myPrimaryParams);
 
         /* Initialise the traditional */
-        theTraditional = (GordianCoreSignature) theSignFactory.createSigner(theHybrid.getTraditionalSignatureSpec());
+        theTraditional = (GordianCoreSignature) theSignFactory.createSigner(theHybrid.getTraditionalSignatureSpec(myBuilder));
         final BouncyKeyPair myTraditional = myPair.getTraditional();
         final GordianSignParams myTradParams = myParamsBuilder.keyPair(myTraditional);
         theTraditional.initForVerify(myTradParams);
