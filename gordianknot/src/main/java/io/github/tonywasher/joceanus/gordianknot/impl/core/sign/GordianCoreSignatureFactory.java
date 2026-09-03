@@ -135,6 +135,7 @@ public abstract class GordianCoreSignatureFactory
                 yield myKeyPairSpec.getElliptic().getKeySize() == myDigestLen;
             }
             case RSA -> validSignatureSpecForRSAKeyPairSpec(myKeyPairSpec, mySpec);
+            case XMSS -> validSignatureSpecForXMSSKeyPairSpec(myKeyPairSpec, mySpec);
             case SM9 -> myKeyPairSpec.getSM9KeyType() instanceof GordianSM9SignType;
             case COMPOSITE -> validSignatureSpecForCompositeKeyPairSpec(myKeyPairSpec, mySpec);
             default -> true;
@@ -165,6 +166,26 @@ public abstract class GordianCoreSignatureFactory
         int myLen = pSignSpec.getDigestSpec().getDigestLength().getLength();
         myLen += Integer.SIZE;
         return pKeyPairSpec.getRSASpec().getLength() >= myLen;
+    }
+
+    /**
+     * Check XMSS signatureSpec against keySpec.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pSignSpec    the signatureSpec
+     * @return true/false
+     */
+    private boolean validSignatureSpecForXMSSKeyPairSpec(final GordianCoreKeyPairSpec pKeyPairSpec,
+                                                         final GordianCoreSignatureSpec pSignSpec) {
+        /* Restrict PREHASH Double Digest */
+        if (GordianSignatureType.PREHASH.equals(pSignSpec.getSignatureType())) {
+            /* Double digest only allowed for certain KeyPairs */
+            return switch (pKeyPairSpec.getXMSSSpec().getDigestType()) {
+                case SHAKE128, SHAKE256 -> true;
+                default -> !pSignSpec.isDoubleDigest();
+            };
+        }
+        return true;
     }
 
     /**
@@ -211,6 +232,9 @@ public abstract class GordianCoreSignatureFactory
 
         /* Don't worry about digestSpec if it is irrelevant */
         final GordianCoreKeyPairType myKeyType = GordianCoreKeyPairType.mapCoreType(myType);
+        if (mySignType.hasDoubleDigest(myKeyType.getType())) {
+            return true;
+        }
         if (myKeyType.useDigestForSignatures().mustNotExist()) {
             return pSignSpec.getSignatureSpec() == null;
         }

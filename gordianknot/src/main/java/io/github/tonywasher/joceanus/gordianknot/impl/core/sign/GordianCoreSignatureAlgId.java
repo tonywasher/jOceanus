@@ -517,6 +517,9 @@ public class GordianCoreSignatureAlgId {
                 BCObjectIdentifiers.xmss_SHAKE128ph,
                 BCObjectIdentifiers.xmss_mt_SHAKE128,
                 BCObjectIdentifiers.xmss_mt_SHAKE128ph);
+        addXMSSSignatures(GordianXMSSDigestType.SHAKE128,
+                BCObjectIdentifiers.xmss_SHAKE128_512ph,
+                BCObjectIdentifiers.xmss_mt_SHAKE128_512ph);
 
         /* Process XMSS Shake256 signatures */
         addXMSSSignatures(GordianXMSSDigestType.SHAKE256,
@@ -524,6 +527,9 @@ public class GordianCoreSignatureAlgId {
                 BCObjectIdentifiers.xmss_SHAKE256ph,
                 BCObjectIdentifiers.xmss_mt_SHAKE256,
                 BCObjectIdentifiers.xmss_mt_SHAKE256ph);
+        addXMSSSignatures(GordianXMSSDigestType.SHAKE256,
+                BCObjectIdentifiers.xmss_SHAKE256_1024ph,
+                BCObjectIdentifiers.xmss_mt_SHAKE256_1024ph);
 
         /* Process XMSS Sha256_192 signatures */
         addXMSSSignatures(GordianXMSSDigestType.SHA256_192,
@@ -564,7 +570,7 @@ public class GordianCoreSignatureAlgId {
         /* Create the main signature Specs */
         final GordianSignatureSpecBuilder mySigBuilder = GordianCoreSignatureSpecBuilder.newInstance();
         final GordianSignatureSpec myStd = mySigBuilder.xmss();
-        final GordianSignatureSpec myPreHash = mySigBuilder.xmssph();
+        final GordianSignatureSpec myPreHash = mySigBuilder.xmssPh();
 
         /* Process XMSS Sha256 signatures */
         for (GordianXMSSSpec mySpec : GordianCoreXMSSSpec.listPossibleSpecs(pDigestType)) {
@@ -572,6 +578,28 @@ public class GordianCoreSignatureAlgId {
             final ASN1ObjectIdentifier myStdId = isMT ? pStdMT : pStd;
             final ASN1ObjectIdentifier myPreHashId = isMT ? pPreHashMT : pPreHash;
             addToMaps(myStd, mySpec, new AlgorithmIdentifier(myStdId, DERNull.INSTANCE));
+            addToMaps(myPreHash, mySpec, new AlgorithmIdentifier(myPreHashId, DERNull.INSTANCE));
+        }
+    }
+
+    /**
+     * Add XMSS Double Signatures.
+     *
+     * @param pDigestType the digestType
+     * @param pPreHash    the XMSS preHashId
+     * @param pPreHashMT  the XMSSMT preHashId
+     */
+    private void addXMSSSignatures(final GordianXMSSDigestType pDigestType,
+                                   final ASN1ObjectIdentifier pPreHash,
+                                   final ASN1ObjectIdentifier pPreHashMT) {
+        /* Create the main signature Specs */
+        final GordianSignatureSpecBuilder mySigBuilder = GordianCoreSignatureSpecBuilder.newInstance();
+        final GordianSignatureSpec myPreHash = mySigBuilder.xmssDoublePh();
+
+        /* Process XMSS Sha256 signatures */
+        for (GordianXMSSSpec mySpec : GordianCoreXMSSSpec.listPossibleSpecs(pDigestType)) {
+            final boolean isMT = mySpec.isMT();
+            final ASN1ObjectIdentifier myPreHashId = isMT ? pPreHashMT : pPreHash;
             addToMaps(myPreHash, mySpec, new AlgorithmIdentifier(myPreHashId, DERNull.INSTANCE));
         }
     }

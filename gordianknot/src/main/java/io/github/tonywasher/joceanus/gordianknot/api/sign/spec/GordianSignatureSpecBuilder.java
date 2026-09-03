@@ -54,6 +54,14 @@ public interface GordianSignatureSpecBuilder {
     GordianSignatureSpecBuilder withDigestSpec(GordianDigestSpec pDigestSpec);
 
     /**
+     * Define Double digest.
+     *
+     * @param pDouble true/false
+     * @return the Builder
+     */
+    GordianSignatureSpecBuilder withDoubleDigest(Boolean pDouble);
+
+    /**
      * Define signatureSpec list.
      *
      * @param pSpecs the specs
@@ -312,12 +320,25 @@ public interface GordianSignatureSpecBuilder {
     }
 
     /**
-     * Create xmssPHSpec.
+     * Create xmssPhSpec.
      *
      * @return the SignatureSpec
      */
-    default GordianSignatureSpec xmssph() {
-        return withKeyPairType(GordianKeyPairType.XMSS).withSignatureType(GordianSignatureType.PREHASH).build();
+    default GordianSignatureSpec xmssPh() {
+        return withKeyPairType(GordianKeyPairType.XMSS)
+                .withSignatureType(GordianSignatureType.PREHASH)
+                .withDoubleDigest(Boolean.FALSE).build();
+    }
+
+    /**
+     * Create xmssPhSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec xmssDoublePh() {
+        return withKeyPairType(GordianKeyPairType.XMSS)
+                .withSignatureType(GordianSignatureType.PREHASH)
+                .withDoubleDigest(Boolean.TRUE).build();
     }
 
     /**

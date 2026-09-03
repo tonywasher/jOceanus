@@ -89,6 +89,12 @@ public final class GordianCoreSignatureSpecBuilder
     }
 
     @Override
+    public GordianSignatureSpecBuilder withDoubleDigest(final Boolean pDouble) {
+        theSubSpec = pDouble;
+        return this;
+    }
+
+    @Override
     public GordianSignatureSpecBuilder withSignatureSpecs(final List<GordianSignatureSpec> pSpecs) {
         theSubSpec = pSpecs;
         return this;
@@ -103,6 +109,10 @@ public final class GordianCoreSignatureSpecBuilder
     public GordianSignatureSpec build() {
         /* Handle defaults */
         theSignatureType = theSignatureType == null ? GordianSignatureType.NATIVE : theSignatureType;
+        if (GordianKeyPairType.XMSS.equals(theKeyPairType)
+                && GordianSignatureType.PREHASH.equals(theSignatureType)) {
+            theSubSpec = theSubSpec == null ? Boolean.FALSE : theSubSpec;
+        }
 
         /* Create spec, reset and return */
         final GordianCoreSignatureSpec mySpec = new GordianCoreSignatureSpec(theKeyPairType, theSignatureType, theSubSpec);
@@ -138,7 +148,12 @@ public final class GordianCoreSignatureSpecBuilder
                 /* If we need null-digestSpec */
                 if (myCoreType.useDigestForSignatures().canNotExist()) {
                     /* Add the signature */
-                    mySignatures.add(new GordianCoreSignatureSpec(pKeyPairType, mySignType.getType(), null));
+                    if (mySignType.hasDoubleDigest(myCoreType.getType())) {
+                        mySignatures.add(new GordianCoreSignatureSpec(pKeyPairType, mySignType.getType(), Boolean.FALSE));
+                        mySignatures.add(new GordianCoreSignatureSpec(pKeyPairType, mySignType.getType(), Boolean.TRUE));
+                    } else {
+                        mySignatures.add(new GordianCoreSignatureSpec(pKeyPairType, mySignType.getType(), null));
+                    }
                 }
 
                 /* If we need digestSpec */

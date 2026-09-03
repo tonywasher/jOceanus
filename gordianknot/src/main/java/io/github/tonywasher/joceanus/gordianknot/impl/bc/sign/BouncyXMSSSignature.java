@@ -22,6 +22,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.digest.BouncyDigest;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.digest.BouncyDigestXof;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.digest.BouncyDoubleDigest;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXMSSKeyPair.BouncyXMSSMTPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXMSSKeyPair.BouncyXMSSMTPublicKey;
@@ -59,6 +62,11 @@ public class BouncyXMSSSignature
     private boolean isMT;
 
     /**
+     * Is this a double digest?
+     */
+    private final boolean isDouble;
+
+    /**
      * Constructor.
      *
      * @param pFactory the factory
@@ -76,6 +84,7 @@ public class BouncyXMSSSignature
 
         /* Determine preHash */
         preHash = GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
+        isDouble = Boolean.TRUE.equals(pSpec.getSignatureSpec());
     }
 
     @Override
@@ -87,8 +96,15 @@ public class BouncyXMSSSignature
         /* Set the digest */
         final GordianCoreKeyPairSpec myKeyPairSpec = (GordianCoreKeyPairSpec) myPair.getKeyPairSpec();
         final GordianCoreXMSSSpec myKeySpec = myKeyPairSpec.getXMSSSpec();
-        final GordianDigestSpec myDigestSpec = myKeySpec.getDigestSpec();
-        setDigest(preHash ? myDigestSpec : null);
+        BouncyDigest myDigest = null;
+        if (preHash) {
+            final GordianDigestSpec myDigestSpec = myKeySpec.getDigestSpec();
+            myDigest = (BouncyDigest) getFactory().getDigestFactory().createDigest(myDigestSpec);
+            if (isDouble) {
+                myDigest = new BouncyDoubleDigest((BouncyDigestXof) myDigest);
+            }
+        }
+        setDigest(myDigest);
 
         /* Initialise and set the signer */
         isMT = myKeySpec.isMT();
@@ -110,8 +126,15 @@ public class BouncyXMSSSignature
         /* Set the digest */
         final GordianCoreKeyPairSpec myKeyPairSpec = (GordianCoreKeyPairSpec) myPair.getKeyPairSpec();
         final GordianCoreXMSSSpec myKeySpec = myKeyPairSpec.getXMSSSpec();
-        final GordianDigestSpec myDigestSpec = myKeySpec.getDigestSpec();
-        setDigest(preHash ? myDigestSpec : null);
+        BouncyDigest myDigest = null;
+        if (preHash) {
+            final GordianDigestSpec myDigestSpec = myKeySpec.getDigestSpec();
+            myDigest = (BouncyDigest) getFactory().getDigestFactory().createDigest(myDigestSpec);
+            if (isDouble) {
+                myDigest = new BouncyDoubleDigest((BouncyDigestXof) myDigest);
+            }
+        }
+        setDigest(myDigest);
 
         /* Initialise and set the signer */
         isMT = myKeySpec.isMT();

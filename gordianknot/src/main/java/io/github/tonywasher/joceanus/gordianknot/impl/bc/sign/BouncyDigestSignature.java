@@ -17,7 +17,6 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
 
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.digest.BouncyDigest;
@@ -48,9 +47,10 @@ public abstract class BouncyDigestSignature
     BouncyDigestSignature(final GordianBaseFactory pFactory,
                           final GordianSignatureSpec pSpec) throws GordianException {
         super(pFactory, pSpec);
-        theDigest = pSpec.getSignatureSpec() == null
+        final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSpec;
+        theDigest = mySpec.getDigestSpec() == null
                 ? new BouncyDigest(null, new NullDigest())
-                : (BouncyDigest) getDigestFactory().createDigest(((GordianCoreSignatureSpec) pSpec).getDigestSpec());
+                : (BouncyDigest) getDigestFactory().createDigest(mySpec.getDigestSpec());
     }
 
     /**
@@ -80,13 +80,12 @@ public abstract class BouncyDigestSignature
     /**
      * Set the digest.
      *
-     * @param pSpec the digestSpec.
-     * @throws GordianException on error
+     * @param pDigest the digest.
      */
-    protected void setDigest(final GordianDigestSpec pSpec) throws GordianException {
-        theDigest = pSpec == null
+    protected void setDigest(final BouncyDigest pDigest) {
+        theDigest = pDigest == null
                 ? new BouncyDigest(null, new NullDigest())
-                : (BouncyDigest) getDigestFactory().createDigest(pSpec);
+                : pDigest;
     }
 
     @Override

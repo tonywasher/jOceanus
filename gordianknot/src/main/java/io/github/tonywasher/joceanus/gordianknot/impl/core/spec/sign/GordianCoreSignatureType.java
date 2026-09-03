@@ -91,6 +91,16 @@ public final class GordianCoreSignatureType {
     }
 
     /**
+     * Does the AsymKeyType have a DoubleDigest signature?
+     *
+     * @param pKeyType the asymKeyType
+     * @return true/false
+     */
+    public boolean hasDoubleDigest(final GordianKeyPairType pKeyType) {
+        return GordianKeyPairType.XMSS.equals(pKeyType) && GordianSignatureType.PREHASH.equals(getType());
+    }
+
+    /**
      * Does the AsymKeyType have a DSA signature?
      *
      * @param pKeyType the asymKeyType

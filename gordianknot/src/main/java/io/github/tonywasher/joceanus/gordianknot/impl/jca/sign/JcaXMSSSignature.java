@@ -40,6 +40,11 @@ public class JcaXMSSSignature
     private final boolean preHash;
 
     /**
+     * Is this a double digest?
+     */
+    private final boolean isDouble;
+
+    /**
      * Constructor.
      *
      * @param pFactory       the factory
@@ -50,8 +55,9 @@ public class JcaXMSSSignature
         /* Initialise class */
         super(pFactory, pSignatureSpec);
 
-        /* Determine preHash */
+        /* Determine preHash and double digest */
         preHash = GordianSignatureType.PREHASH.equals(pSignatureSpec.getSignatureType());
+        isDouble = Boolean.TRUE.equals(pSignatureSpec.getSignatureSpec());
     }
 
     @Override
@@ -93,6 +99,9 @@ public class JcaXMSSSignature
         final GordianCoreXMSSSpec myXMSSKeySpec = mySpec.getXMSSSpec();
         final GordianCoreDigestSpec myDigestSpec = (GordianCoreDigestSpec) myXMSSKeySpec.getDigestSpec();
         final String myDigest = JcaDigest.getAlgorithm(myDigestSpec);
+        final String myXtra = isDouble
+                ? ("(" + (myDigestSpec.getDigestLength().getLength() << 1) + ")")
+                : "";
 
         /* Create builder */
         final StringBuilder myBuilder = new StringBuilder();
@@ -101,6 +110,7 @@ public class JcaXMSSSignature
                 .append(myDigest);
         if (preHash) {
             myBuilder.insert(0, "with")
+                    .insert(0, myXtra)
                     .insert(0, myDigest);
         }
 
