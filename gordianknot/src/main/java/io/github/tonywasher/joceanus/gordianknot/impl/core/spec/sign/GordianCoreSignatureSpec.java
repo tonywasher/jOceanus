@@ -76,6 +76,16 @@ public class GordianCoreSignatureSpec
         isValid = checkValidity();
     }
 
+    /**
+     * Utility function to change signatureType.
+     *
+     * @param pType the new type
+     * @return the updated spec.
+     */
+    public GordianCoreSignatureSpec asSignatureType(final GordianSignatureType pType) {
+        return new GordianCoreSignatureSpec(theKeyPairType.getType(), pType, theSignatureSpec);
+    }
+
     @Override
     public GordianKeyPairType getKeyPairType() {
         return theKeyPairType.getType();

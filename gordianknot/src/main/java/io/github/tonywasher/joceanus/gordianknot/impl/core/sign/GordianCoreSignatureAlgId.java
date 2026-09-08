@@ -44,7 +44,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianC
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMQOMSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMayoSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreQRUOVSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreRSASpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSDitHSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSLHDSASpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSQIsignSpec;
@@ -70,6 +69,7 @@ import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
 import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
 import org.bouncycastle.asn1.teletrust.TeleTrusTObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 
 import java.util.ArrayList;
@@ -175,8 +175,13 @@ public class GordianCoreSignatureAlgId {
                     : myMap.get(pKeyPair.getKeyPairSpec().getSubSpec());
         }
 
+        /* DDSA shares OID with DSA */
+        final GordianSignatureSpec mySpec = GordianSignatureType.DDSA.equals(pSpec.getSignatureType())
+                ? ((GordianCoreSignatureSpec) pSpec).asSignatureType(GordianSignatureType.DSA)
+                : pSpec;
+
         /* Look up in the standard map */
-        return theSpecMap.get(pSpec);
+        return theSpecMap.get(mySpec);
     }
 
     /**
@@ -278,8 +283,8 @@ public class GordianCoreSignatureAlgId {
                 NISTObjectIdentifiers.id_sha3_384, GordianLength.LEN_384);
         addPSS128Algorithms(myDigestBuilder.sha3(GordianLength.LEN_512),
                 NISTObjectIdentifiers.id_sha3_512, GordianLength.LEN_512);
-        addPSS128Algorithms(myDigestBuilder.shake128(),
-                NISTObjectIdentifiers.id_shake128_len, GordianLength.LEN_256);
+        addToMaps(mySigBuilder.rsa(GordianSignatureType.PSS128, myDigestBuilder.shake128()),
+                new AlgorithmIdentifier(X509ObjectIdentifiers.id_rsassa_pss_shake128, DERNull.INSTANCE));
 
         addPSS256Algorithms(myDigestBuilder.sha2(GordianLength.LEN_224),
                 NISTObjectIdentifiers.id_sha224, GordianLength.LEN_224);
@@ -297,8 +302,8 @@ public class GordianCoreSignatureAlgId {
                 NISTObjectIdentifiers.id_sha3_384, GordianLength.LEN_384);
         addPSS256Algorithms(myDigestBuilder.sha3(GordianLength.LEN_512),
                 NISTObjectIdentifiers.id_sha3_512, GordianLength.LEN_512);
-        addPSS256Algorithms(myDigestBuilder.shake256(),
-                NISTObjectIdentifiers.id_shake256_len, GordianLength.LEN_512);
+        addToMaps(mySigBuilder.rsa(GordianSignatureType.PSS256, myDigestBuilder.shake256()),
+                new AlgorithmIdentifier(X509ObjectIdentifiers.id_rsassa_pss_shake256, DERNull.INSTANCE));
 
         addToMaps(mySigBuilder.rsa(GordianSignatureType.PREHASH, myDigestBuilder.md2()),
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.md2WithRSAEncryption, DERNull.INSTANCE));
@@ -386,6 +391,12 @@ public class GordianCoreSignatureAlgId {
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_384, DERNull.INSTANCE));
         addToMaps(mySigBuilder.ec(GordianSignatureType.DSA, myDigestBuilder.sha3(GordianLength.LEN_512)),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_512, DERNull.INSTANCE));
+        addToMaps(mySigBuilder.ec(GordianSignatureType.DSA, myDigestBuilder.shake128()),
+                new AlgorithmIdentifier(X509ObjectIdentifiers.id_ecdsa_with_shake128, DERNull.INSTANCE));
+        addToMaps(mySigBuilder.ec(GordianSignatureType.DSA, myDigestBuilder.shake256()),
+                new AlgorithmIdentifier(X509ObjectIdentifiers.id_ecdsa_with_shake256, DERNull.INSTANCE));
+        addToMaps(mySigBuilder.ec(GordianSignatureType.DSA, myDigestBuilder.ripemd(GordianLength.LEN_160)),
+                new AlgorithmIdentifier(TeleTrusTObjectIdentifiers.ecSignWithRipemd160, DERNull.INSTANCE));
     }
 
     /**
@@ -630,33 +641,22 @@ public class GordianCoreSignatureAlgId {
     private void addPSS128Algorithms(final GordianDigestSpec pSpec,
                                      final ASN1ObjectIdentifier pHash,
                                      final GordianLength pSaltSize) {
-        /* Loop through the RSAModulii */
         final GordianSignatureSpecBuilder mySigBuilder = GordianCoreSignatureSpecBuilder.newInstance();
-        for (GordianCoreRSASpec myModulus : GordianCoreRSASpec.values()) {
-            addToMaps(mySigBuilder.rsa(GordianSignatureType.PSS128, pSpec),
-                    myModulus, new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS,
-                            createPSS128Params(pHash, myModulus, pSaltSize)));
-        }
+        addToMaps(mySigBuilder.rsa(GordianSignatureType.PSS128, pSpec),
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS, createPSS128Params(pHash, pSaltSize)));
     }
 
     /**
      * Create PSS SHAKE128 Parameters.
      *
      * @param pHash     the hash algorithmId
-     * @param pModulus  the RSA modulus
      * @param pSaltSize the saltSize
      * @return the params
      */
     private static RSASSAPSSparams createPSS128Params(final ASN1ObjectIdentifier pHash,
-                                                      final GordianCoreRSASpec pModulus,
                                                       final GordianLength pSaltSize) {
-        final AlgorithmIdentifier myId = NISTObjectIdentifiers.id_shake128_len.equals(pHash)
-                ? new AlgorithmIdentifier(pHash, new ASN1Integer(GordianLength.LEN_256.getByteLength()))
-                : new AlgorithmIdentifier(pHash, DERNull.INSTANCE);
-        final int myShakeLen = GordianLength.LEN_256.getLength();
-        final int myLen = (pModulus.getLength() - myShakeLen - Byte.SIZE) / Byte.SIZE;
-        return new RSASSAPSSparams(myId,
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake128, new ASN1Integer(myLen)),
+        return new RSASSAPSSparams(new AlgorithmIdentifier(pHash, DERNull.INSTANCE),
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake128, DERNull.INSTANCE),
                 new ASN1Integer(pSaltSize.getByteLength()),
                 new ASN1Integer(1));
     }
@@ -673,31 +673,21 @@ public class GordianCoreSignatureAlgId {
                                      final GordianLength pSaltSize) {
         /* Loop through the RSAModulii */
         final GordianSignatureSpecBuilder mySigBuilder = GordianCoreSignatureSpecBuilder.newInstance();
-        for (GordianCoreRSASpec myModulus : GordianCoreRSASpec.values()) {
-            addToMaps(mySigBuilder.rsa(GordianSignatureType.PSS256, pSpec),
-                    myModulus, new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS,
-                            createPSS256Params(pHash, myModulus, pSaltSize)));
-        }
+        addToMaps(mySigBuilder.rsa(GordianSignatureType.PSS256, pSpec),
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS, createPSS256Params(pHash, pSaltSize)));
     }
 
     /**
      * Create PSS SHAKE256 Parameters.
      *
      * @param pHash     the hash algorithmId
-     * @param pModulus  the RSA modulus
      * @param pSaltSize the saltSize
      * @return the params
      */
     private static RSASSAPSSparams createPSS256Params(final ASN1ObjectIdentifier pHash,
-                                                      final GordianCoreRSASpec pModulus,
                                                       final GordianLength pSaltSize) {
-        final AlgorithmIdentifier myId = NISTObjectIdentifiers.id_shake256_len.equals(pHash)
-                ? new AlgorithmIdentifier(pHash, new ASN1Integer(GordianLength.LEN_512.getByteLength()))
-                : new AlgorithmIdentifier(pHash, DERNull.INSTANCE);
-        final int myShakeLen = GordianLength.LEN_512.getLength();
-        final int myLen = (pModulus.getLength() - myShakeLen - Byte.SIZE) / Byte.SIZE;
-        return new RSASSAPSSparams(myId,
-                new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake256, new ASN1Integer(myLen)),
+        return new RSASSAPSSparams(new AlgorithmIdentifier(pHash, DERNull.INSTANCE),
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake256, DERNull.INSTANCE),
                 new ASN1Integer(pSaltSize.getByteLength()),
                 new ASN1Integer(1));
     }
@@ -709,7 +699,10 @@ public class GordianCoreSignatureAlgId {
      */
     private void addSignatures(final GordianKeyPairType pKeyType) {
         for (GordianSignatureSpec mySpec : theFactory.listAllSupportedSignatures(pKeyType)) {
-            ensureSignature(mySpec);
+            /* DDSA signatures share mappings with DSA */
+            if (!GordianSignatureType.DDSA.equals(mySpec.getSignatureType())) {
+                ensureSignature(mySpec);
+            }
         }
     }
 

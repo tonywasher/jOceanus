@@ -25,6 +25,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuild
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.asymmetric.AsymmetricStore.FactoryKeyPairs;
@@ -244,8 +245,12 @@ public final class AsymmetricSignScripts {
         Assertions.assertNotNull(myId, "Unknown AlgorithmId for " + pSignature.getSpec());
 
         /* Check unique mapping */
-        final GordianSignatureSpec mySpec = myFactory.getSpecForIdentifier(myId);
-        Assertions.assertEquals(pSignature.getSpec(), mySpec, "Invalid mapping for  " + pSignature.getSpec());
+        GordianCoreSignatureSpec myBaseSpec = (GordianCoreSignatureSpec) pSignature.getSpec();
+        final GordianSignatureSpec myDerivedSpec = myFactory.getSpecForIdentifier(myId);
+        if (GordianSignatureType.DDSA.equals(myBaseSpec.getSignatureType())) {
+            myBaseSpec = myBaseSpec.asSignatureType(GordianSignatureType.DSA);
+        }
+        Assertions.assertEquals(myBaseSpec, myDerivedSpec, "Invalid mapping for  " + pSignature.getSpec());
     }
 
     /**

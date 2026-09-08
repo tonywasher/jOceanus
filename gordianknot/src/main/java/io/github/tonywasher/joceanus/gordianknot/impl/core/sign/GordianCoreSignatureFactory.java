@@ -307,6 +307,14 @@ public abstract class GordianCoreSignatureFactory
             };
         }
 
+        /* Apply restrictions on PSSMGF1 */
+        if (GordianSignatureType.PSSMGF1.equals(pSpec.getSignatureType())) {
+            /* Disallow SHAKE as DigestType */
+            final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSpec;
+            final GordianDigestSpec myDigest = mySpec.getDigestSpec();
+            return !GordianDigestType.SHAKE.equals(myDigest.getDigestType());
+        }
+
         /* Otherwise OK */
         return true;
     }

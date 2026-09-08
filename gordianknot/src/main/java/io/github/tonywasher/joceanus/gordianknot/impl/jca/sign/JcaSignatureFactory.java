@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.jca.sign;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec.GordianDigestState;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
@@ -178,6 +179,8 @@ public class JcaSignatureFactory
         return switch (myDigest.getDigestType()) {
             case SHA2 -> !myDigest.isSha2Hybrid();
             case SHA1, SHA3 -> true;
+            case RIPEMD -> GordianLength.LEN_160.equals(myDigest.getDigestLength())
+                    && GordianSignatureType.DSA.equals(pSpec.getSignatureType());
             default -> false;
         };
     }
