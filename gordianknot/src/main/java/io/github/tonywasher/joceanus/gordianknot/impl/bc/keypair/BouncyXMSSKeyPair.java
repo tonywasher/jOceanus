@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyStateAwarePrivateKey;
@@ -138,6 +139,19 @@ public final class BouncyXMSSKeyPair {
                 return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
             } catch (IOException e) {
                 throw new IllegalArgumentException(e);
+            }
+        }
+
+        @Override
+        public boolean isClearable() {
+            return true;
+        }
+
+        @Override
+        public synchronized void destroy() throws GordianException {
+            if (!isDestroyed()) {
+                setDestroyed();
+                getPrivateKey().destroy();
             }
         }
     }
@@ -273,6 +287,19 @@ public final class BouncyXMSSKeyPair {
                 return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
             } catch (IOException e) {
                 throw new IllegalArgumentException(e);
+            }
+        }
+
+        @Override
+        public boolean isClearable() {
+            return true;
+        }
+
+        @Override
+        public synchronized void destroy() throws GordianException {
+            if (!isDestroyed()) {
+                setDestroyed();
+                getPrivateKey().destroy();
             }
         }
     }

@@ -204,7 +204,8 @@ public class JcaKeyPair
         @Override
         public boolean isClearable() {
             return switch (getKeySpec().getKeyPairType()) {
-                case EC, RSA, SM2, MLDSA, MLKEM, SLHDSA, CMCE, FRODO, SM9 -> true;
+                case EC, GOST, DSTU, RSA, DSA, DH, ELGAMAL, SM2, SM9, XMSS,
+                     LMS, MLDSA, MLKEM, SLHDSA, CMCE, FRODO -> true;
                 default -> false;
             };
         }

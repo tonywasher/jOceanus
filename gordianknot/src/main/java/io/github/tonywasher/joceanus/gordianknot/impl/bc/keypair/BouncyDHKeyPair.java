@@ -111,6 +111,19 @@ public final class BouncyDHKeyPair {
             /* Compare keys */
             return Objects.equals(myThis, myThat);
         }
+
+        @Override
+        public boolean isClearable() {
+            return true;
+        }
+
+        @Override
+        public synchronized void destroy() throws GordianException {
+            if (!isDestroyed()) {
+                setDestroyed();
+                getPrivateKey().destroy();
+            }
+        }
     }
 
     /**
