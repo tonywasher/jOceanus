@@ -467,8 +467,7 @@ public class GordianCRMParser {
         final GordianAgreementSpec myAgreeSpec = myAgreeFactory.defaultForKeyPair(mySpec);
 
         /* Create agreement */
-        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(GordianCRMEncryptor.SERVER, pKeyPair,
-                new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(GordianCRMEncryptor.SERVER, pKeyPair, GordianKeyPairUse.AGREEMENT);
         GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(myAgreeSpec, GordianLength.LEN_256.getByteLength())
                 .setServerCertificate(myCert);
         if (pKeyPair instanceof GordianIdAwareKeyPair) {

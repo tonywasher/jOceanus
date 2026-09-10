@@ -24,7 +24,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreement
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
@@ -181,7 +180,7 @@ public final class GordianKeyPairValidity {
                                       final GordianAgreementSpec pAgreeSpec) throws GordianException {
         /* Create agreement on client side */
         final GordianAgreementFactory myAgrees = pFactory.getAsymFactory().getAgreementFactory();
-        final GordianCertificate myCert = myAgrees.newMiniCertificate(SERVER, pKeyPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+        final GordianCertificate myCert = myAgrees.newMiniCertificate(SERVER, pKeyPair, GordianKeyPairUse.AGREEMENT);
         GordianAgreementParams myParams = myAgrees.newAgreementParams(pAgreeSpec, GordianLength.LEN_256.getByteLength())
                 .setServerCertificate(myCert);
         if (pKeyPair instanceof GordianIdAwareKeyPair) {

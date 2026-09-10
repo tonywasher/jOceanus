@@ -89,8 +89,7 @@ final GordianKeyPair myTarget = myGenerator.generateKeyPair();
 
 /* Create mini-certificates */
 final X500Name myServerName = ...
-final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget,
-                                                   new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget, GordianKeyPairUse.AGREEMENT);
 final boolean isIdAwareMaster = myTarget instanceof GordianIdAwareKeyPair idAware
                                 &amp;&amp; !idAware.isUserKey();
 final byte[] myIdentity = .. /* If IdMaster */
@@ -156,11 +155,9 @@ final GordianKeyPair myTarget = myGenerator.generateKeyPair();
 
 /* Create mini-certificates */
 final X500Name myClientName = ...
-final GordianCertificate mySourceCert = myAgreementFactory.newMiniCertificate(myClientName, mySource,
-                                                   new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+final GordianCertificate mySourceCert = myAgreementFactory.newMiniCertificate(myClientName, mySource, GordianKeyPairUse.AGREEMENT);
 final X500Name myServerName = ...
-final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget,
-                                                   new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget, GordianKeyPairUse.AGREEMENT);
 final boolean isIdAwareMaster = myTarget instanceof GordianIdAwareKeyPair idAware
                                 &amp;&amp; !idAware.isUserKey();
 final byte[] mySourceIdentity = .. /* If IdMaster */
@@ -233,11 +230,9 @@ final GordianKeyPair myTarget = myGenerator.generateKeyPair();
 
 /* Create mini-certificates */
 final X500Name myClientName = ...
-final GordianCertificate mySourceCert = myAgreementFactory.newMiniCertificate(myClientName, mySource,
-                                                   new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+final GordianCertificate mySourceCert = myAgreementFactory.newMiniCertificate(myClientName, mySource, GordianKeyPairUse.AGREEMENT);
 final X500Name myServerName = ...
-final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget,
-                                                   new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget, GordianKeyPairUse.AGREEMENT);
 final boolean isIdAwareMaster = myTarget instanceof GordianIdAwareKeyPair idAware
                                 &amp;&amp; !idAware.isUserKey();
 final byte[] mySourceIdentity = .. /* If IdMaster */
@@ -308,8 +303,7 @@ final GordianKeyPair mySigner = myGenerator.generateKeyPair();
 
 /* Create mini-certificates */
 final X500Name myClientName = ...
-final GordianCertificate mySignerCert = myAgreementFactory.newMiniCertificate(myClientName, mySigner,
-                                                   new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE));
+final GordianCertificate mySignerCert = myAgreementFactory.newMiniCertificate(myClientName, mySigner, GordianKeyPairUse.SIGNATURE);
 
 /* Create the client hello */
 final GordianAgreementSpec myAgreeSpec = myAgreementBuilder.unified(mySpec, GordianAgreementKDF.SHA256KDF);
@@ -361,8 +355,7 @@ final GordianKeyPair myTarget = myGenerator.generateKeyPair();
 
 /* Create mini-certificates */
 final X500Name myServerName = ...
-final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget,
-                                                   new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget, GordianKeyPairUse.AGREEMENT);
 
 /* Handle as standard */
 ....

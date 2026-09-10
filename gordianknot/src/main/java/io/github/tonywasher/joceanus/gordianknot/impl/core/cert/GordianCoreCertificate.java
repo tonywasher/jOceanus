@@ -159,7 +159,7 @@ public class GordianCoreCertificate
         theSigAlgId = determineAlgIdForSignatureSpec(theSigSpec, theKeyPair);
 
         /* Create the TBSCertificate */
-        theKeyUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE);
+        theKeyUsage = new GordianCoreKeyPairUsage().withUse(GordianKeyPairUse.CERTIFICATE);
         theCAStatus = new GordianCAStatus(true);
         theTbsCertificate = buildCertificate(null, pSubject);
         theSerialNo = theTbsCertificate.getSerialNumber().getValue();

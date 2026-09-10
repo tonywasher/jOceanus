@@ -26,7 +26,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreement
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
@@ -205,7 +204,7 @@ class HybridTest {
             final GordianAgreementFactory mySourceAgrees = pSource.getAgreementFactory();
             final GordianAgreementSpecBuilder mySpecBuilder = mySourceAgrees.newAgreementSpecBuilder();
             final GordianAgreementSpec myAgreeSpec = mySpecBuilder.kem(myKeyPairSpec, GordianAgreementKDF.NONE);
-            final GordianCertificate myTargetCert = mySourceAgrees.newMiniCertificate(SERVERNAME, myKeyPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+            final GordianCertificate myTargetCert = mySourceAgrees.newMiniCertificate(SERVERNAME, myKeyPair, GordianKeyPairUse.AGREEMENT);
             GordianAgreementParams myParams = mySourceAgrees.newAgreementParams(myAgreeSpec, GordianLength.LEN_128.getLength())
                     .setServerCertificate(myTargetCert);
             final GordianAgreement mySender = mySourceAgrees.createAgreement(myParams);
@@ -227,7 +226,7 @@ class HybridTest {
             /* Accept agreement */
             final GordianAgreementFactory myTargetAgrees = pTarget.getAgreementFactory();
             final GordianAgreement myOtherResponder = myTargetAgrees.parseAgreementMessage(myMessage);
-            final GordianCertificate myOtherCert = myTargetAgrees.newMiniCertificate(SERVERNAME, myTargetDerived, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+            final GordianCertificate myOtherCert = myTargetAgrees.newMiniCertificate(SERVERNAME, myTargetDerived, GordianKeyPairUse.AGREEMENT);
             myParams = myOtherResponder.getAgreementParams().setServerCertificate(myOtherCert);
             myOtherResponder.updateParams(myParams);
 

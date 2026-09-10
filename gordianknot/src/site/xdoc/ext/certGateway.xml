@@ -33,7 +33,7 @@ final GordianKeyPairSpec mySpec = myKeyPairBuilder.ed448();
 final X500Name myX500Name = ...;
 final String myName = ...;
 final byte[] myPassword = ...;
-final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE);
+final GordianKeyPairUsage myUsage = myKeyStoreFactory.newKeyPairUsage().withUse(GordianKeyPairUse.SIGNATURE);
 myMgr.createKeyPair(mySpec, myX500Name, myUsage, mySigner, myName, myPassword);
 
 /* Build the CertificateRequest */
@@ -84,7 +84,7 @@ final GordianKeyPairSpec mySpec = myKeyPairBuilder.x448();
 final X500Name myX500Name = ...;
 final String myName = ...;
 final byte[] myPassword = ...;
-final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT);
+final GordianKeyPairUsage myUsage = myKeyStoreFactory.newKeyPairUsage().withUse(GordianKeyPairUse.AGREEMENT);
 myMgr.createKeyPair(mySpec, myX500Name, myUsage, mySigner, myName, myPassword);
 
 /* Build the CertificateRequest */

@@ -16,39 +16,34 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.cert;
 
-import org.bouncycastle.asn1.x509.KeyUsage;
-
-import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 /**
  * KeyPair Usage.
  */
-public class GordianKeyPairUsage {
+public interface GordianKeyPairUsage {
     /**
-     * The Usage set.
-     */
-    private final EnumSet<GordianKeyPairUse> theUsageSet;
-
-    /**
-     * Constructor.
-     *
-     * @param pUse the usage.
-     */
-    public GordianKeyPairUsage(final GordianKeyPairUse... pUse) {
-        theUsageSet = EnumSet.noneOf(GordianKeyPairUse.class);
-        theUsageSet.addAll(List.of(pUse));
-    }
-
-    /**
-     * Add a usage.
+     * Add a use.
      *
      * @param pUse the use to add
+     * @return the usage
      */
-    public void addUse(final GordianKeyPairUse pUse) {
-        theUsageSet.add(pUse);
-    }
+    GordianKeyPairUsage withUse(GordianKeyPairUse pUse);
+
+    /**
+     * Add uses.
+     *
+     * @param pUse the uses to add
+     * @return the usage
+     */
+    GordianKeyPairUsage withUses(GordianKeyPairUse... pUse);
+
+    /**
+     * Remove a use.
+     *
+     * @param pUse the use to remove
+     */
+    void removeUse(GordianKeyPairUse pUse);
 
     /**
      * Does the keyPair have the specified use?
@@ -56,29 +51,50 @@ public class GordianKeyPairUsage {
      * @param pUse the use to test for
      * @return true/false
      */
-    public boolean hasUse(final GordianKeyPairUse pUse) {
-        return theUsageSet.contains(pUse);
-    }
+    boolean hasUse(GordianKeyPairUse pUse);
 
     /**
      * Obtain the usageSet.
      *
      * @return the UseSet
      */
-    public Set<GordianKeyPairUse> getUsageSet() {
-        return EnumSet.copyOf(theUsageSet);
-    }
+    Set<GordianKeyPairUse> getUsageSet();
 
     /**
-     * Obtain the keyUsage.
+     * Add a purpose.
      *
-     * @return the keyUsage
+     * @param pPurpose the purpose to add
+     * @return the usage
      */
-    public KeyUsage getKeyUsage() {
-        int myUsage = 0;
-        for (GordianKeyPairUse myUse : theUsageSet) {
-            myUsage |= myUse.getUsage();
-        }
-        return new KeyUsage(myUsage);
-    }
+    GordianKeyPairUsage withPurpose(GordianKeyPairPurpose pPurpose);
+
+    /**
+     * Add purposes.
+     *
+     * @param pPurposes the purposes to add
+     * @return the usage
+     */
+    GordianKeyPairUsage withPurposes(GordianKeyPairPurpose... pPurposes);
+
+    /**
+     * Remove a purpose.
+     *
+     * @param pPurpose the use to remove
+     */
+    void removePurpose(GordianKeyPairPurpose pPurpose);
+
+    /**
+     * Does the keyPair have the specified purpose?
+     *
+     * @param pPurpose the purpose to test for
+     * @return true/false
+     */
+    boolean hasPurpose(GordianKeyPairPurpose pPurpose);
+
+    /**
+     * Obtain the purposeSet.
+     *
+     * @return the purposeSet
+     */
+    Set<GordianKeyPairPurpose> getPurposeSet();
 }

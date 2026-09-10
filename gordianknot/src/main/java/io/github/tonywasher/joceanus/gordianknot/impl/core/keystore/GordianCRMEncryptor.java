@@ -137,8 +137,7 @@ public class GordianCRMEncryptor {
         /* Create the agreement */
         final GordianAsymFactory myFactory = theFactory.getAsymFactory();
         final GordianCoreAgreementFactory myAgreeFactory = (GordianCoreAgreementFactory) myFactory.getAgreementFactory();
-        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pCertificate.getKeyPair(),
-                new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+        final var myCert = myAgreeFactory.newMiniCertificate(SERVER, pCertificate.getKeyPair(), GordianKeyPairUse.AGREEMENT);
         final GordianKeySetSpecBuilder myBuilder = theFactory.getKeySetFactory().newKeySetSpecBuilder();
         GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(pAgreeSpec, myBuilder.keySet())
                 .setServerCertificate(myCert);
@@ -340,7 +339,7 @@ public class GordianCRMEncryptor {
         /* Handle agreement */
         final GordianAsymFactory myFactory = theFactory.getAsymFactory();
         final GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();
-        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair, GordianKeyPairUse.AGREEMENT);
         final GordianAgreement myAgree = myAgreeFactory.parseAgreementMessage(pHello);
         final GordianAgreementParams myParams = myAgree.getAgreementParams().setServerCertificate(myCert);
         myAgree.updateParams(myParams);

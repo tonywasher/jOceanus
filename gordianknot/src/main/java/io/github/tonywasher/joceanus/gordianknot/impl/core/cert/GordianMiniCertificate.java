@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.cert;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificateId;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -68,16 +69,16 @@ public class GordianMiniCertificate
      * @param pFactory the factory
      * @param pSubject the subject of the certificate
      * @param pKeyPair the keyPair.
-     * @param pUsage   the usage
+     * @param pUses    the uses
      * @throws GordianException on error
      */
     public GordianMiniCertificate(final GordianFactory pFactory,
                                   final X500Name pSubject,
                                   final GordianKeyPair pKeyPair,
-                                  final GordianKeyPairUsage pUsage) throws GordianException {
+                                  final GordianKeyPairUse... pUses) throws GordianException {
         /* Store parameters */
         theKeyPair = pKeyPair;
-        theUsage = pUsage;
+        theUsage = new GordianCoreKeyPairUsage().withUses(pUses);
 
         /* Switch to masterPublic if the key is an IdAware userKey. */
         final GordianKeyPair myKeyPair = pKeyPair instanceof GordianCoreIdAwareKeyPair myIdAware
@@ -92,7 +93,7 @@ public class GordianMiniCertificate
         theSubject = new GordianCoreCertificateId(pSubject, null);
 
         /* Create the encoded */
-        theASN1 = new GordianMiniCertificateASN1(pSubject, myX509Spec, pUsage);
+        theASN1 = new GordianMiniCertificateASN1(pSubject, myX509Spec, theUsage);
         theEncoded = theASN1.getEncodedBytes();
     }
 

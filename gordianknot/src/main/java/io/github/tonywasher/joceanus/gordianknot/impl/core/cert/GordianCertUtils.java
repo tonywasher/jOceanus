@@ -18,6 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.cert;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairPurpose;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
@@ -28,10 +29,10 @@ import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import org.bouncycastle.asn1.ASN1BitString;
-import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.ExtensionsGenerator;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.TBSCertificate;
 
@@ -65,54 +66,7 @@ public final class GordianCertUtils {
      * @return the usage
      */
     public static GordianKeyPairUsage determineUsage(final Extensions pExtensions) {
-        /* Access details */
-        final KeyUsage myUsage = KeyUsage.fromExtensions(pExtensions);
-        final BasicConstraints myConstraint = BasicConstraints.fromExtensions(pExtensions);
-        final GordianKeyPairUsage myResult = new GordianKeyPairUsage();
-
-        /* Check for CERTIFICATE */
-        final boolean isCA = myConstraint != null && myConstraint.isCA();
-        if (isCA && checkUsage(myUsage, KeyUsage.keyCertSign)) {
-            myResult.addUse(GordianKeyPairUse.CERTIFICATE);
-        }
-
-        /* Check for signer. */
-        if (checkUsage(myUsage, KeyUsage.digitalSignature)) {
-            myResult.addUse(GordianKeyPairUse.SIGNATURE);
-        }
-
-        /* Check for nonRepudiation. */
-        if (checkUsage(myUsage, KeyUsage.nonRepudiation)) {
-            myResult.addUse(GordianKeyPairUse.NONREPUDIATION);
-        }
-
-        /* Check for keyAgreement. */
-        if (checkUsage(myUsage, KeyUsage.keyAgreement)) {
-            myResult.addUse(GordianKeyPairUse.AGREEMENT);
-        }
-
-        /* Check for keyEncryption. */
-        if (checkUsage(myUsage, KeyUsage.keyEncipherment)) {
-            myResult.addUse(GordianKeyPairUse.KEYENCRYPT);
-        }
-
-        /* Check for dataEncryption. */
-        if (checkUsage(myUsage, KeyUsage.dataEncipherment)) {
-            myResult.addUse(GordianKeyPairUse.DATAENCRYPT);
-        }
-
-        /* Check for encipherOnly. */
-        if (checkUsage(myUsage, KeyUsage.encipherOnly)) {
-            myResult.addUse(GordianKeyPairUse.ENCRYPTONLY);
-        }
-
-        /* Check for decipherOnly. */
-        if (checkUsage(myUsage, KeyUsage.decipherOnly)) {
-            myResult.addUse(GordianKeyPairUse.DECRYPTONLY);
-        }
-
-        /* Return the result */
-        return myResult;
+        return GordianCoreKeyPairUsage.fromExtensions(pExtensions);
     }
 
     /**
@@ -179,10 +133,14 @@ public final class GordianCertUtils {
         try {
             /* Create extensions for the certificate */
             final ExtensionsGenerator myGenerator = new ExtensionsGenerator();
-            myGenerator.addExtension(Extension.keyUsage, true, pUsage.getKeyUsage());
+            final GordianCoreKeyPairUsage myUsage = (GordianCoreKeyPairUsage) pUsage;
+            myGenerator.addExtension(Extension.keyUsage, true, myUsage.getKeyPairUsage());
             myGenerator.addExtension(Extension.subjectKeyIdentifier, true, pSubjectId);
             if (pIssuerId != null) {
                 myGenerator.addExtension(Extension.authorityKeyIdentifier, true, pIssuerId);
+            }
+            if (myUsage.hasPurposes()) {
+                myGenerator.addExtension(Extension.extendedKeyUsage, false, myUsage.getKeyPairPurpose());
             }
             pCAStatus.createExtensions(myGenerator);
             return myGenerator.generate();
@@ -203,7 +161,8 @@ public final class GordianCertUtils {
         /* Protect against exceptions */
         try {
             final ExtensionsGenerator myGenerator = new ExtensionsGenerator();
-            myGenerator.addExtension(Extension.keyUsage, true, pUsage.getKeyUsage());
+            final GordianCoreKeyPairUsage myUsage = (GordianCoreKeyPairUsage) pUsage;
+            myGenerator.addExtension(Extension.keyUsage, true, myUsage.getKeyPairUsage());
             return myGenerator.generate();
         } catch (IOException e) {
             throw new GordianIOException("Failed to create extensions", e);
@@ -229,5 +188,83 @@ public final class GordianCertUtils {
 
         /* Create the keyId */
         return myDigest.finish();
+    }
+
+    /**
+     * Obtain the ID for the usage id.
+     *
+     * @param pUsage the purpose
+     * @return the id
+     */
+    private int getOIDforUsage(final GordianKeyPairUse pUsage) {
+        return switch (pUsage) {
+            case CERTIFICATE -> KeyUsage.keyCertSign;
+            case CRLSIGN -> KeyUsage.cRLSign;
+            case SIGNATURE -> KeyUsage.digitalSignature;
+            case NONREPUDIATION -> KeyUsage.nonRepudiation;
+            case AGREEMENT -> KeyUsage.keyAgreement;
+            case KEYENCRYPT -> KeyUsage.keyEncipherment;
+            case DATAENCRYPT -> KeyUsage.dataEncipherment;
+            case ENCRYPTONLY -> KeyUsage.encipherOnly;
+            case DECRYPTONLY -> KeyUsage.decipherOnly;
+        };
+    }
+
+    /**
+     * Obtain the OID for the purpose id.
+     *
+     * @param pPurpose the purpose
+     * @return the OID
+     */
+    private KeyPurposeId getOIDforPurpose(final GordianKeyPairPurpose pPurpose) {
+        return switch (pPurpose) {
+            case SERVERAUTH -> KeyPurposeId.id_kp_serverAuth;
+            case CLIENTAUTH -> KeyPurposeId.id_kp_clientAuth;
+            case CODESIGN -> KeyPurposeId.id_kp_codeSigning;
+            case EMAILPROTECT -> KeyPurposeId.id_kp_emailProtection;
+            case TIMESTAMP -> KeyPurposeId.id_kp_timeStamping;
+            case OCSPSIGN -> KeyPurposeId.id_kp_OCSPSigning;
+            case DVCS -> KeyPurposeId.id_kp_dvcs;
+            case SBGPCERT -> KeyPurposeId.id_kp_sbgpCertAAServerAuth;
+            case SCVPRESPONDER -> KeyPurposeId.id_kp_scvp_responder;
+            case EAPOVERPPP -> KeyPurposeId.id_kp_eapOverPPP;
+            case EAPOVERLAN -> KeyPurposeId.id_kp_eapOverLAN;
+            case SCVPSERVER -> KeyPurposeId.id_kp_scvpServer;
+            case SCVPCLIENT -> KeyPurposeId.id_kp_scvpClient;
+            case IPSECIKE -> KeyPurposeId.id_kp_ipsecIKE;
+            case SECURESHELLCLIENT -> KeyPurposeId.id_kp_secureShellClient;
+            case SECURESHELLSERVER -> KeyPurposeId.id_kp_secureShellServer;
+            case CAPWAPAC -> KeyPurposeId.id_kp_capwapAC;
+            case CAPWAPWTP -> KeyPurposeId.id_kp_capwapWTP;
+            case CMCRA -> KeyPurposeId.id_kp_cmcRA;
+            case CMCARCHIVE -> KeyPurposeId.id_kp_cmcArchive;
+            case CMCCA -> KeyPurposeId.id_kp_cmcCA;
+            case CMKGA -> KeyPurposeId.id_kp_cmKGA;
+            case BUNDLESECURITY -> KeyPurposeId.id_kp_bundleSecurity;
+            case DOCSIGN -> KeyPurposeId.id_kp_documentSigning;
+            case JWT -> KeyPurposeId.id_kp_jwt;
+            case HTTPCONTENT -> KeyPurposeId.id_kp_httpContentEncrypt;
+            case OAUTHACCESSTOKEN -> KeyPurposeId.id_kp_oauthAccessTokenSigning;
+            case IMURI -> KeyPurposeId.id_kp_imUri;
+            case CONFIGSIGN -> KeyPurposeId.id_kp_configSigning;
+            case TRUSTANCHORCONFIGSIGN -> KeyPurposeId.id_kp_trustAnchorConfigSigning;
+            case UPDATEPACKAGE -> KeyPurposeId.id_kp_updatePackageSigning;
+            case SAFETYCOMMS -> KeyPurposeId.id_kp_safetyCommunication;
+        };
+    }
+
+    /**
+     * Obtain the purpose for the OID.
+     *
+     * @param pOID the oid
+     * @return the purpose or null
+     */
+    private GordianKeyPairPurpose getOIDforPurpose(final KeyPurposeId pOID) {
+        for (GordianKeyPairPurpose myPurpose : GordianKeyPairPurpose.values()) {
+            if (getOIDforPurpose(myPurpose).equals(pOID)) {
+                return myPurpose;
+            }
+        }
+        return null;
     }
 }

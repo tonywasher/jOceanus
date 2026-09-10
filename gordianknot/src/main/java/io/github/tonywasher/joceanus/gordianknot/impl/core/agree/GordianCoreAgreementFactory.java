@@ -22,7 +22,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreement
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
@@ -105,8 +104,8 @@ public abstract class GordianCoreAgreementFactory
     @Override
     public GordianCertificate newMiniCertificate(final X500Name pSubject,
                                                  final GordianKeyPair pKeyPair,
-                                                 final GordianKeyPairUsage pUsage) throws GordianException {
-        return new GordianMiniCertificate(theFactory, pSubject, pKeyPair, pUsage);
+                                                 final GordianKeyPairUse... pUses) throws GordianException {
+        return new GordianMiniCertificate(theFactory, pSubject, pKeyPair, pUses);
     }
 
     @Override

@@ -43,6 +43,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCRMEncryptor.GordianCRMResult;
@@ -171,7 +172,8 @@ public class GordianCRMBuilder {
 
             /* record extensions */
             final ExtensionsGenerator myGenerator = new ExtensionsGenerator();
-            myGenerator.addExtension(Extension.keyUsage, true, pCertificate.getUsage().getKeyUsage());
+            final GordianCoreKeyPairUsage myUsage = (GordianCoreKeyPairUsage) pCertificate.getUsage();
+            myGenerator.addExtension(Extension.keyUsage, true, myUsage.getKeyPairUsage());
             myGenerator.addExtension(Extension.basicConstraints, false, new BasicConstraints(false));
             myBuilder.setExtensions(myGenerator.generate());
 

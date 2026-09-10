@@ -171,6 +171,15 @@ public final class KeyStoreRequest {
     }
 
     /**
+     * Create new keyPairUsage.
+     *
+     * @return the new keyPair usage
+     */
+    private GordianKeyPairUsage newKeyPairUsage() {
+        return theState.getStore().getFactory().getAsymFactory().getKeyStoreFactory().newKeyPairUsage();
+    }
+
+    /**
      * create signed keyPairRequest test for a keyPairSpec.
      *
      * @param pSpec the keyPairSpec
@@ -189,7 +198,7 @@ public final class KeyStoreRequest {
      */
     private DynamicNode encryptedKeyPairRequestTest(final GordianKeyPairSpec pSpec) {
         /* Create test */
-        final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.KEYENCRYPT, GordianKeyPairUse.DATAENCRYPT);
+        final GordianKeyPairUsage myUsage = newKeyPairUsage().withUses(GordianKeyPairUse.KEYENCRYPT, GordianKeyPairUse.DATAENCRYPT);
         return DynamicTest.dynamicTest(pSpec.toString(), () -> encryptedKeyPairRequest(pSpec, myUsage));
     }
 
@@ -201,7 +210,7 @@ public final class KeyStoreRequest {
      */
     private DynamicNode agreedKeyPairRequestTest(final GordianKeyPairSpec pSpec) {
         /* Create test */
-        final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT);
+        final GordianKeyPairUsage myUsage = newKeyPairUsage().withUse(GordianKeyPairUse.AGREEMENT);
         return DynamicTest.dynamicTest(pSpec.toString(), () -> encryptedKeyPairRequest(pSpec, myUsage));
     }
 
@@ -230,7 +239,7 @@ public final class KeyStoreRequest {
 
         /* Create a signature keyPair */
         final X500Name mySignName = KeyStoreUtils.buildX500Name(KeyStoreAlias.SIGNER);
-        final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE);
+        final GordianKeyPairUsage myUsage = newKeyPairUsage().withUse(GordianKeyPairUse.SIGNATURE);
         myMgr.createKeyPair(pKeyPairSpec, mySignName, myUsage, myIntermediate, KeyStoreAlias.SIGNER.getName(), KeyStoreUtils.DEF_PASSWORD);
 
         /* Build the CertificateRequest */
@@ -369,6 +378,15 @@ public final class KeyStoreRequest {
         }
 
         /**
+         * Create new keyPairUsage.
+         *
+         * @return the new keyPair usage
+         */
+        private GordianKeyPairUsage newKeyPairUsage() {
+            return getStore().getFactory().getAsymFactory().getKeyStoreFactory().newKeyPairUsage();
+        }
+
+        /**
          * Initialise.
          *
          * @throws GordianException on error
@@ -387,7 +405,7 @@ public final class KeyStoreRequest {
             final GordianKeyStorePair myRoot = theManager.createRootKeyPair(myRSASpec, myRootName, KeyStoreAlias.ROOT.getName(), DEF_PASSWORD);
 
             /* Create intermediate */
-            GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE);
+            GordianKeyPairUsage myUsage = newKeyPairUsage().withUse(GordianKeyPairUse.CERTIFICATE);
             final X500Name myInterName = KeyStoreUtils.buildX500Name(KeyStoreAlias.INTER);
             theIntermediate = theManager.createKeyPair(myECSpec, myInterName, myUsage, myRoot, KeyStoreAlias.INTER.getName(), DEF_PASSWORD);
 
