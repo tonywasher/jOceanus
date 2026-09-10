@@ -17,22 +17,21 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyStateAwarePrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreXMSSSpec;
 import org.bouncycastle.crypto.KeyGenerationParameters;
+import org.bouncycastle.crypto.generators.XMSSKeyPairGenerator;
+import org.bouncycastle.crypto.generators.XMSSMTKeyPairGenerator;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.pqc.crypto.xmss.XMSSKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.xmss.XMSSKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.xmss.XMSSMTKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.xmss.XMSSMTKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.xmss.XMSSMTPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.xmss.XMSSMTPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.xmss.XMSSPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.xmss.XMSSPublicKeyParameters;
+import org.bouncycastle.crypto.params.XMSSKeyGenerationParameters;
+import org.bouncycastle.crypto.params.XMSSMTKeyGenerationParameters;
+import org.bouncycastle.crypto.params.XMSSMTPrivateKeyParameters;
+import org.bouncycastle.crypto.params.XMSSMTPublicKeyParameters;
+import org.bouncycastle.crypto.params.XMSSPrivateKeyParameters;
+import org.bouncycastle.crypto.params.XMSSPublicKeyParameters;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -167,7 +166,7 @@ public final class BouncyXMSSKeyPair {
 
             /* Create and initialise the generator */
             setGenerator(new XMSSKeyPairGenerator(), myParams);
-            setFactorySet(BouncyPqKeyFactorySet.INSTANCE);
+            setFactorySet(BouncyStdKeyFactorySet.INSTANCE);
         }
 
         @Override
@@ -302,17 +301,7 @@ public final class BouncyXMSSKeyPair {
 
             /* Create and initialise the generator */
             setGenerator(new XMSSMTKeyPairGenerator(), myParams);
-            setFactorySet(BouncyPqKeyFactorySet.INSTANCE);
-        }
-
-        /**
-         * Obtain the digestType.
-         *
-         * @return the digestType
-         */
-        private GordianXMSSDigestType getKeyType() {
-            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) getKeySpec();
-            return myKeySpec.getXMSSSpec().getDigestType();
+            setFactorySet(BouncyStdKeyFactorySet.INSTANCE);
         }
 
         @Override
