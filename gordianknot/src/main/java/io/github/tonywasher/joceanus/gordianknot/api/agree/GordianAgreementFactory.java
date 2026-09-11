@@ -18,9 +18,9 @@ package io.github.tonywasher.joceanus.gordianknot.api.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
@@ -99,13 +99,13 @@ public interface GordianAgreementFactory {
      *
      * @param pSubject the subject of the certificate
      * @param pKeyPair the keyPair.
-     * @param pUsage   the usage
+     * @param pUses    the uses
      * @return the certificate
      * @throws GordianException on error
      */
     GordianCertificate newMiniCertificate(X500Name pSubject,
                                           GordianKeyPair pKeyPair,
-                                          GordianKeyPairUsage pUsage) throws GordianException;
+                                          GordianKeyPairUse... pUses) throws GordianException;
 
     /**
      * Obtain predicate for keyAgreement.

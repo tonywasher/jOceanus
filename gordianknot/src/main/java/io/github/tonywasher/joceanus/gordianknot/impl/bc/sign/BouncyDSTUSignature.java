@@ -17,7 +17,8 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyEllipticKeyPair.BouncyECPrivateKey;
@@ -26,7 +27,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.sign.BouncySignature.BouncyDSACoder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.DEROctetString;
@@ -78,8 +78,7 @@ public class BouncyDSTUSignature
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        final BouncyKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
         final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) myPair.getPrivateKey();
@@ -91,8 +90,7 @@ public class BouncyDSTUSignature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        final BouncyKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
         final BouncyECPublicKey myPublic = (BouncyECPublicKey) myPair.getPublicKey();

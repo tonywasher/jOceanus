@@ -17,7 +17,8 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
@@ -26,7 +27,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreEdwardsSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
@@ -106,12 +106,21 @@ public class BouncyEdDSASignature
                 : new Ed448Signer(myContext);
     }
 
+    /**
+     * Check for bouncyKeyPair.
+     *
+     * @return the keyPair
+     * @throws GordianException on error
+     */
+    BouncyKeyPair checkKeyPair() throws GordianException {
+        return BouncyKeyPair.checkKeyPair(super.getKeyPair());
+    }
+
     @Override
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        final GordianKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        final GordianKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
         theSigner = createSigner(myPair);
@@ -123,8 +132,7 @@ public class BouncyEdDSASignature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        final GordianKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        final GordianKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
         theSigner = createSigner(myPair);
@@ -137,19 +145,15 @@ public class BouncyEdDSASignature
                        final int pOffset,
                        final int pLength) throws GordianException {
         checkInit();
-        theSigner.update(pBytes, pOffset, pLength);
+        if (checkBuffer(pBytes, pOffset, pLength)) {
+            theSigner.update(pBytes, pOffset, pLength);
+        }
     }
 
     @Override
     public void update(final byte pByte) throws GordianException {
         checkInit();
         theSigner.update(pByte);
-    }
-
-    @Override
-    public void update(final byte[] pBytes) throws GordianException {
-        checkInit();
-        theSigner.update(pBytes, 0, pBytes.length);
     }
 
     @Override

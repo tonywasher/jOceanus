@@ -1,0 +1,791 @@
+/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.junit.regression.symmetric;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianKeyedCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymAEADCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreWrapper;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.symmetric.SymmetricStore.FactorySymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.symmetric.SymmetricStore.FactorySymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.junit.regression.symmetric.SymmetricStore.FactorySymPBECipherSpec;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.util.Arrays;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Stream;
+
+/**
+ * SymKey/Cipher scripts.
+ */
+public class SymmetricSymScripts {
+    /**
+     * Private constructor.
+     */
+    private SymmetricSymScripts() {
+    }
+
+    /**
+     * Create the symKey test suite for a factory.
+     *
+     * @param pFactory the factory
+     * @return the test stream or null
+     */
+    static Stream<DynamicNode> symKeyTests(final GordianFactory pFactory,
+                                           final GordianFactory pPartner) {
+        /* Create the default stream */
+        Stream<DynamicNode> myTests = Stream.empty();
+
+        /* Loop through the keyLengths */
+        Iterator<GordianLength> myIterator = GordianKeyLengths.iterator();
+        while (myIterator.hasNext()) {
+            final GordianLength myKeyLen = myIterator.next();
+
+            /* Build tests for this keyLength */
+            final Stream<DynamicNode> myTest = symKeyTests(pFactory, pPartner, myKeyLen);
+            if (myTest != null) {
+                myTests = Stream.concat(myTests, myTest);
+            }
+        }
+
+        /* Return the tests */
+        return Stream.of(DynamicContainer.dynamicContainer("symKeys", myTests));
+    }
+
+    /**
+     * Create the symKey test suite for a factory.
+     *
+     * @param pFactory the factory
+     * @param pPartner the partner
+     * @param pKeyLen  the keyLength
+     * @return the test stream or null
+     */
+    private static Stream<DynamicNode> symKeyTests(final GordianFactory pFactory,
+                                                   final GordianFactory pPartner,
+                                                   final GordianLength pKeyLen) {
+        /* Add symKey Test */
+        List<FactorySymKeySpec> myKeys = SymmetricStore.symKeyProvider(pFactory, pPartner, pKeyLen);
+        if (!myKeys.isEmpty()) {
+            Stream<DynamicNode> myTests = myKeys.stream().map(x -> DynamicContainer.dynamicContainer(x.toString(), symKeyTests(x)));
+            return Stream.of(DynamicContainer.dynamicContainer(pKeyLen.toString(), myTests));
+        }
+
+        /* No sym Tests */
+        return null;
+    }
+
+    /**
+     * Create the symKey test suite for a symKeySpec.
+     *
+     * @param pKeySpec the keySpec
+     * @return the test stream
+     */
+    private static Stream<DynamicNode> symKeyTests(final FactorySymKeySpec pKeySpec) {
+        /* Add profile test */
+        Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("profile", () -> profileSymKey(pKeySpec)));
+
+        /* Add modes test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicContainer.dynamicContainer("checkModes",
+                SymmetricStore.symCipherProvider(pKeySpec).stream().map(y -> DynamicContainer.dynamicContainer(y.toString(), symCipherTests(y)))
+        )));
+
+        /* Add externalId test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalId", () -> SymmetricTest.checkExternalId(pKeySpec))));
+
+        /* Add algorithmId test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmId", () -> checkSymKeyAlgId(pKeySpec))));
+
+        /* Add wrapCipher test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("wrapCipher", () -> checkWrapCipher(pKeySpec))));
+
+        /* Add destroy test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("destroy", () -> checkDestroySymKey(pKeySpec))));
+
+        /* Add partner test if  the partner supports this symKeySpec */
+        if (pKeySpec.getPartner() != null) {
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("PartnerWrap", () -> checkPartnerWrapCipher(pKeySpec))));
+        }
+
+        /* Return the tests */
+        return myTests;
+    }
+
+    /**
+     * Create the symKey test suite for a symCipherSpec.
+     *
+     * @param pCipherSpec the cipherSpec
+     * @return the test stream
+     */
+    private static Stream<DynamicNode> symCipherTests(final FactorySymCipherSpec pCipherSpec) {
+        /* Add profile test */
+        Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("cipher", () -> checkSymCipher(pCipherSpec)));
+
+        /* Add multi test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("multi", () -> multiSymCipher(pCipherSpec))));
+
+        /* Add externalId test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalId", () -> SymmetricTest.checkExternalId(pCipherSpec))));
+
+        /* Add algorithmId test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmId", () -> checkSymCipherAlgId(pCipherSpec))));
+
+        /* Add destroy test */
+        if (pCipherSpec.getSpec().isAAD()) {
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("destroy", () -> checkDestroySymKey(pCipherSpec))));
+        }
+
+        /* Add partner test if  the partner supports this symCipherSpec */
+        if (pCipherSpec.getPartner() != null) {
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("Partner", () -> checkPartnerSymCipher(pCipherSpec))));
+        }
+
+        /* Add PBE tests */
+        myTests = Stream.concat(myTests, Stream.of(DynamicContainer.dynamicContainer("PBE", symPBECipherTests(pCipherSpec))));
+
+        /* Return the tests */
+        return myTests;
+    }
+
+    /**
+     * Create the symPBECipher test suite for a symCipherSpec.
+     *
+     * @param pCipherSpec the cipherSpec
+     * @return the test stream
+     */
+    private static Stream<DynamicNode> symPBECipherTests(final FactorySymCipherSpec pCipherSpec) {
+        /* Add PBE  tests */
+        Stream<DynamicNode> myTests = Stream.empty();
+        for (FactorySymPBECipherSpec myPBESpec : SymmetricStore.symPBECipherProvider(pCipherSpec)) {
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest(myPBESpec.toString(), () -> checkSymPBECipher(myPBESpec))));
+        }
+
+        /* Return the tests */
+        return myTests;
+    }
+
+    /**
+     * Check symKey CipherMode.
+     *
+     * @param pCipherSpec the cipherSpec
+     * @throws GordianException on error
+     */
+    private static void checkSymCipher(final FactorySymCipherSpec pCipherSpec) throws GordianException {
+        /* Split out AAD cipher */
+        if (pCipherSpec.getSpec().isAAD()) {
+            checkSymAADCipher(pCipherSpec);
+            return;
+        }
+
+        /* Access details */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final GordianCoreSymCipherSpec mySpec = pCipherSpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianKey<GordianSymKeySpec> myKey = pCipherSpec.getKey();
+
+        /* Access Data */
+        final byte[] myTestData = getSymCipherTestData(mySpec);
+
+        /* Create the Spec */
+        final GordianSymCipher myCipher = myCipherFactory.createSymKeyCipher(mySpec);
+        final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+        GordianCipherParams myParms = myParamsBuilder.keyWithRandomNonce(myKey);
+        myCipher.initForEncrypt(myParms);
+
+        /* Check encryption */
+        final byte[] myIV = Arrays.clone(myCipher.getInitVector());
+        myParms = myParamsBuilder.keyAndNonce(myKey, myIV);
+        final byte[] myEncrypted = myCipher.finish(myTestData);
+        final byte[] myEncrypted2 = myCipher.finish(myTestData);
+        myCipher.initForDecrypt(myParms);
+        final byte[] myResult = myCipher.finish(myEncrypted);
+        myCipher.initForDecrypt(myParms);
+        final byte[] myResult2 = myCipher.finish(myEncrypted2);
+        Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
+        Assertions.assertArrayEquals(myResult, myResult2, "Failed to reset properly");
+    }
+
+    /**
+     * Obtain testData for CipherSpec.
+     *
+     * @param pSpec the cipherSpec
+     */
+    private static byte[] getSymCipherTestData(final GordianCoreSymCipherSpec pSpec) {
+        /* Access Data */
+        final byte[] myTestData = SymmetricTest.getTestData();
+
+        /* If we need to process in blocks but have no padding */
+        if (pSpec.getCoreCipherMode().hasPadding()
+                && GordianPadding.NONE.equals(pSpec.getPadding())) {
+            /* Limit test data to multiple of blocks */
+            final int myBlockLen = pSpec.getBlockLength().getByteLength();
+            final int myDataLen = myBlockLen * (myTestData.length / myBlockLen);
+            return Arrays.copyOf(myTestData, myDataLen);
+        }
+
+        /* Else return the standard data */
+        return myTestData;
+    }
+
+    /**
+     * Multi-call symCipher.
+     *
+     * @param pCipherSpec the cipher to profile
+     */
+    private static void multiSymCipher(final FactorySymCipherSpec pCipherSpec) throws GordianException {
+        /* Create the cipher */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final GordianCoreSymCipherSpec mySpec = pCipherSpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianSymCipher myCipher1 = myCipherFactory.createSymKeyCipher(mySpec);
+        final GordianSymCipher myCipher2 = myCipherFactory.createSymKeyCipher(mySpec);
+        final GordianKey<GordianSymKeySpec> myKey = pCipherSpec.getKey();
+
+        /* Access Data */
+        final byte[] myBytes = getSymCipherTestData(mySpec);
+
+        /* Encrypt the data as a single block */
+        final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+        myCipher1.initForEncrypt(myParamsBuilder.keyWithRandomNonce(myKey));
+        byte[] myEncrypt = new byte[myCipher1.getOutputLength(myBytes.length)];
+        int myOut = myCipher1.update(myBytes, 0, myBytes.length, myEncrypt, 0);
+        myOut += myCipher1.finish(myEncrypt, myOut);
+        myEncrypt = Arrays.copyOf(myEncrypt, myOut);
+
+        /* Decrypt the data as partial blocks */
+        myCipher2.initForDecrypt(myParamsBuilder.keyAndNonce(myKey, myCipher1.getInitVector()));
+        byte[] myMulti = new byte[myCipher2.getOutputLength(myEncrypt.length)];
+        myOut = 0;
+        for (int myPos = 0; myPos < myEncrypt.length; myPos += SymmetricTest.PARTIALLEN) {
+            final int myLen = Math.min(SymmetricTest.PARTIALLEN, myEncrypt.length - myPos);
+            myOut += myCipher2.update(myEncrypt, myPos, myLen, myMulti, myOut);
+        }
+        myOut += myCipher2.finish(myMulti, myOut);
+        myMulti = Arrays.copyOf(myMulti, myOut);
+
+        /* Check that the results are identical */
+        Assertions.assertEquals(myBytes.length, myOut, "Multi-Block decrypt length failed");
+        Assertions.assertArrayEquals(myBytes, myMulti, "Multi-Block decrypt failed");
+
+        /* Encrypt the data as partial blocks */
+        myCipher2.initForEncrypt(myParamsBuilder.keyWithRandomNonce(myKey));
+        myOut = 0;
+        for (int myPos = 0; myPos < myBytes.length; myPos += SymmetricTest.PARTIALLEN) {
+            final int myLen = Math.min(SymmetricTest.PARTIALLEN, myBytes.length - myPos);
+            myOut += myCipher2.update(myBytes, myPos, myLen, myEncrypt, myOut);
+        }
+        myOut += myCipher2.finish(myEncrypt, myOut);
+        myEncrypt = Arrays.copyOf(myEncrypt, myOut);
+
+        /* Decrypt the data as single block */
+        myCipher1.initForDecrypt(myParamsBuilder.keyAndNonce(myKey, myCipher2.getInitVector()));
+        byte[] mySingle = new byte[myCipher1.getOutputLength(myEncrypt.length)];
+        myOut = myCipher1.update(myEncrypt, 0, myEncrypt.length, mySingle, 0);
+        myOut += myCipher1.finish(mySingle, myOut);
+        mySingle = Arrays.copyOf(mySingle, myOut);
+
+        /* Check that the results are identical */
+        Assertions.assertEquals(myBytes.length, myOut, "Multi-Block encrypt length failed");
+        Assertions.assertArrayEquals(myBytes, mySingle, "Multi-Block encrypt failed");
+    }
+
+    /**
+     * Check symKey PBE CipherMode.
+     *
+     * @param pCipherSpec the cipherSpec
+     * @throws GordianException on error
+     */
+    private static void checkSymPBECipher(final FactorySymPBECipherSpec pCipherSpec) throws GordianException {
+        /* Access details */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final FactorySymCipherSpec myOwner = pCipherSpec.getOwner();
+        final GordianCoreSymCipherSpec myCipherSpec = myOwner.getSpec();
+        final GordianPBESpec myPBESpec = pCipherSpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+
+        /* Access Data */
+        final byte[] myTestData = getSymCipherTestData(myCipherSpec);
+        final char[] myPassword = "HelloThere".toCharArray();
+
+        /* Create the Spec */
+        final GordianSymCipher myCipher = myCipherFactory.createSymKeyCipher(myCipherSpec);
+        final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+        GordianCipherParams myParms = myParamsBuilder.pbe(myPBESpec, myPassword);
+        myCipher.initForEncrypt(myParms);
+
+        /* Check encryption */
+        final byte[] mySalt = myCipher.getPBESalt();
+        myParms = myParamsBuilder.pbeAndNonce(myPBESpec, myPassword, mySalt);
+        final byte[] myEncrypted = myCipher.finish(myTestData);
+        myCipher.initForDecrypt(myParms);
+        final byte[] myResult = myCipher.finish(myEncrypted);
+        Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
+    }
+
+    /**
+     * Check partner symKey CipherMode.
+     *
+     * @param pCipherSpec the cipherSpec
+     * @throws GordianException on error
+     */
+    private static void checkPartnerSymCipher(final FactorySymCipherSpec pCipherSpec) throws GordianException {
+        /* Split out AAD cipher */
+        if (pCipherSpec.getSpec().isAAD()) {
+            checkPartnerSymAADCipher(pCipherSpec);
+            return;
+        }
+
+        /* Access details */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final GordianFactory myPartner = pCipherSpec.getPartner();
+        final GordianCoreSymCipherSpec mySpec = pCipherSpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianCipherFactory myPartnerFactory = myPartner.getCipherFactory();
+        final GordianKey<GordianSymKeySpec> myKey = pCipherSpec.getKey();
+        final GordianKey<GordianSymKeySpec> myPartnerKey = pCipherSpec.getPartnerKey();
+
+        /* Access Data */
+        final byte[] myTestData = SymmetricTest.getTestData();
+
+        /* Create the Spec */
+        final GordianKeyedCipher<GordianSymKeySpec> myCipher = myCipherFactory.createSymKeyCipher(mySpec);
+        final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+        GordianCipherParams myParms = myParamsBuilder.keyWithRandomNonce(myKey);
+        myCipher.initForEncrypt(myParms);
+        if (!mySpec.getCoreCipherMode().hasPadding()
+                || !GordianPadding.NONE.equals(mySpec.getPadding())) {
+            /* Check encryption */
+            final byte[] myIV = myCipher.getInitVector();
+            myParms = myParamsBuilder.keyAndNonce(myPartnerKey, myIV);
+            final byte[] myEncrypted = myCipher.finish(myTestData);
+            final GordianKeyedCipher<GordianSymKeySpec> myPartnerCipher = myPartnerFactory.createSymKeyCipher(mySpec);
+            myPartnerCipher.initForDecrypt(myParms);
+            final byte[] myResult = myPartnerCipher.finish(myEncrypted);
+            Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
+        }
+    }
+
+    /**
+     * Check AAD cipher mode.
+     *
+     * @param pCipherSpec the cipherSpec
+     * @throws GordianException on error
+     */
+    private static void checkSymAADCipher(final FactorySymCipherSpec pCipherSpec) throws GordianException {
+        /* Access details */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final GordianCoreSymCipherSpec mySpec = pCipherSpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianKey<GordianSymKeySpec> myKey = pCipherSpec.getKey();
+
+        /* Access Data */
+        final byte[] myTestData = SymmetricTest.getTestData();
+        final byte[] myAADData = SymmetricTest.getAADData();
+        final GordianSymAEADCipher myCipher = (GordianSymAEADCipher) myCipherFactory.createSymKeyCipher(mySpec);
+        final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+        GordianCipherParams myParms = myParamsBuilder.keyWithRandomNonce(myKey);
+        myCipher.initForEncrypt(myParms);
+        final byte[] myIV = myCipher.getInitVector();
+        myCipher.updateAAD(myAADData);
+        final byte[] myEncrypted = myCipher.finish(myTestData);
+        byte[] myEncrypted2 = null;
+        if (!mySpec.getCoreCipherMode().needsReInitialisation()) {
+            myCipher.updateAAD(myAADData);
+            myEncrypted2 = myCipher.finish(myTestData);
+        }
+        myParms = myParamsBuilder.aeadAndNonce(myKey, myAADData, myIV);
+        myCipher.initForDecrypt(myParms);
+        final byte[] myResult = myCipher.finish(myEncrypted);
+        if (myEncrypted2 != null) {
+            myCipher.initForDecrypt(myParms);
+            final byte[] myResult2 = myCipher.finish(myEncrypted2);
+            Assertions.assertArrayEquals(myResult, myResult2, "Failed to reset properly");
+        }
+        Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
+    }
+
+    /**
+     * Check Partner AAD cipher mode.
+     *
+     * @param pCipherSpec the cipherSpec
+     * @throws GordianException on error
+     */
+    private static void checkPartnerSymAADCipher(final FactorySymCipherSpec pCipherSpec) throws GordianException {
+        /* Access details */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final GordianFactory myPartner = pCipherSpec.getPartner();
+        final GordianSymCipherSpec mySpec = pCipherSpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianCipherFactory myPartnerFactory = myPartner.getCipherFactory();
+        final GordianKey<GordianSymKeySpec> myKey = pCipherSpec.getKey();
+        final GordianKey<GordianSymKeySpec> myPartnerKey = pCipherSpec.getPartnerKey();
+
+        /* Encrypt Data */
+        final byte[] myTestData = SymmetricTest.getTestData();
+        final byte[] myAADData = SymmetricTest.getAADData();
+        final GordianSymAEADCipher myCipher = (GordianSymAEADCipher) myCipherFactory.createSymKeyCipher(mySpec);
+        final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+        GordianCipherParams myParms = myParamsBuilder.keyWithRandomNonce(myKey);
+        myCipher.initForEncrypt(myParms);
+        final byte[] myIV = myCipher.getInitVector();
+        myCipher.updateAAD(myAADData);
+        final byte[] myEncrypted = myCipher.finish(myTestData);
+
+        /* Decrypt data at partner */
+        final GordianSymAEADCipher myPartnerCipher = (GordianSymAEADCipher) myPartnerFactory.createSymKeyCipher(mySpec);
+        myParms = myParamsBuilder.keyAndNonce(myPartnerKey, myIV);
+        myPartnerCipher.initForDecrypt(myParms);
+        myPartnerCipher.updateAAD(myAADData);
+        final byte[] myResult = myPartnerCipher.finish(myEncrypted);
+        Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
+    }
+
+    /**
+     * Check wrap cipher.
+     *
+     * @param pKeySpec the keySpec
+     * @throws GordianException on error
+     */
+    private static void checkWrapCipher(final FactorySymKeySpec pKeySpec) throws GordianException {
+        /* Access details */
+        final GordianFactory myFactory = pKeySpec.getFactory();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianKey<GordianSymKeySpec> mySymKey = pKeySpec.getKey();
+
+        /* Access Data */
+        final byte[] myTestData = SymmetricTest.getTestData();
+
+        /* Check wrapping bytes */
+        final GordianCoreWrapper myWrapper = (GordianCoreWrapper) myCipherFactory.createKeyWrapper(mySymKey);
+        byte[] myWrapped = myWrapper.secureBytes(myTestData);
+        final byte[] myResult = myWrapper.deriveBytes(myWrapped);
+        Assertions.assertArrayEquals(myTestData, myResult, "Failed to wrap/unwrap bytes");
+        Assertions.assertEquals(myWrapper.getDataWrapLength(myTestData.length), myWrapped.length, "Incorrect wrapped length");
+
+        /* Check wrapping key */
+        myWrapped = myWrapper.secureKey(mySymKey);
+        final GordianKey<GordianSymKeySpec> myResultKey = myWrapper.deriveKey(myWrapped, mySymKey.getKeyType());
+        Assertions.assertEquals(mySymKey, myResultKey, "Failed to wrap/unwrap key");
+        Assertions.assertEquals(myWrapper.getKeyWrapLength(mySymKey), myWrapped.length, "Incorrect wrapped length");
+    }
+
+    /**
+     * Check partner wrap cipher.
+     *
+     * @param pKeySpec the keySpec
+     * @throws GordianException on error
+     */
+    private static void checkPartnerWrapCipher(final FactorySymKeySpec pKeySpec) throws GordianException {
+        /* Access details */
+        final GordianFactory myFactory = pKeySpec.getFactory();
+        final GordianFactory myPartner = pKeySpec.getPartner();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianCipherFactory myPartnerFactory = myPartner.getCipherFactory();
+        final GordianKey<GordianSymKeySpec> mySymKey = pKeySpec.getKey();
+        final GordianKey<GordianSymKeySpec> myPartnerKey = pKeySpec.getPartnerKey();
+
+        /* Access Data */
+        final byte[] myTestData = SymmetricTest.getTestData();
+
+        /* Check wrapping bytes */
+        final GordianCoreWrapper myWrapper = (GordianCoreWrapper) myCipherFactory.createKeyWrapper(mySymKey);
+        byte[] myWrapped = myWrapper.secureBytes(myTestData);
+        final GordianCoreWrapper myPartnerWrapper = (GordianCoreWrapper) myPartnerFactory.createKeyWrapper(myPartnerKey);
+        final byte[] myResult = myPartnerWrapper.deriveBytes(myWrapped);
+        Assertions.assertArrayEquals(myTestData, myResult, "Failed to wrap/unwrap bytes");
+        Assertions.assertEquals(myWrapper.getDataWrapLength(myTestData.length), myWrapped.length, "Incorrect wrapped length");
+
+        /* Check wrapping key */
+        myWrapped = myWrapper.secureKey(mySymKey);
+        final GordianKey<GordianSymKeySpec> myResultKey = myPartnerWrapper.deriveKey(myWrapped, mySymKey.getKeyType());
+        Assertions.assertEquals(myPartnerKey, myResultKey, "Failed to wrap/unwrap key");
+        Assertions.assertEquals(myWrapper.getKeyWrapLength(mySymKey), myWrapped.length, "Incorrect wrapped length");
+    }
+
+    /**
+     * Check symKey Destroy.
+     *
+     * @param pKeySpec the keySpec
+     * @throws GordianException on error
+     */
+    private static void checkDestroySymKey(final FactorySymKeySpec pKeySpec) throws GordianException {
+        /* Access details */
+        final GordianFactory myFactory = pKeySpec.getFactory();
+        final GordianCoreSymKeySpec mySpec = pKeySpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianKey<GordianSymKeySpec> myKey = pKeySpec.getKey();
+        final GordianSymCipherSpecBuilder myBuilder = myCipherFactory.newSymCipherSpecBuilder();
+        final GordianSymCipherSpec myCipherSpec = myBuilder.ecb(mySpec, GordianPadding.ISO7816D4);
+        final GordianKeyPairFactory myKeyPairFactory = myFactory.getAsymFactory().getKeyPairFactory();
+
+        /* Call test methods */
+        checkDestroySymKey(myCipherFactory, mySpec, myCipherSpec);
+        checkDestroySymKey(myCipherFactory, myKey);
+        checkDestroyPrivateKey(myCipherFactory, myKey, myKeyPairFactory);
+    }
+
+    /**
+     * Check symKey Destroy.
+     *
+     * @param pCipherSpec the cipherSpec
+     * @throws GordianException on error
+     */
+    private static void checkDestroySymKey(final FactorySymCipherSpec pCipherSpec) throws GordianException {
+        /* Access details */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final GordianSymKeySpec mySpec = pCipherSpec.getOwner().getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+
+        /* Call test method */
+        checkDestroySymKey(myCipherFactory, mySpec, pCipherSpec.getSpec());
+    }
+
+    /**
+     * Check symKey Destroy.
+     *
+     * @param pFactory    the cipherFactory
+     * @param pKeySpec    the keySpec
+     * @param pCipherSpec the cipherSpec
+     * @throws GordianException on error
+     */
+    private static void checkDestroySymKey(final GordianCipherFactory pFactory,
+                                           final GordianSymKeySpec pKeySpec,
+                                           final GordianSymCipherSpec pCipherSpec) throws GordianException {
+        /* Create a second key */
+        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = pFactory.getKeyGenerator(pKeySpec);
+        final GordianKey<GordianSymKeySpec> mySecondKey = myGenerator.generateKey();
+
+        /* Create the Cipher */
+        final GordianSymCipher myCipher = pFactory.createSymKeyCipher(pCipherSpec);
+        final GordianCipherParamsBuilder myParamsBuilder = pFactory.newCipherParamsBuilder();
+        final GordianCipherParams myParms = myParamsBuilder.keyWithRandomNonce(mySecondKey);
+
+        /* Can't update/finish before init */
+        final boolean isAEAD = myCipher instanceof GordianSymAEADCipher;
+        final byte[] myMessage = "SomeBytes".getBytes(StandardCharsets.UTF_8);
+        final byte[] myAEAD = "AEADData".getBytes(StandardCharsets.UTF_8);
+        Assertions.assertThrows(GordianException.class, () -> myCipher.update(myMessage), "update preInit");
+        Assertions.assertThrows(GordianException.class, myCipher::finish, "finish preInit");
+        if (isAEAD) {
+            Assertions.assertThrows(GordianException.class, () -> ((GordianSymAEADCipher) myCipher).updateAAD(myAEAD));
+        }
+
+        /* Init the cipher */
+        myCipher.initForEncrypt(myParms);
+
+        /* Can't update with null/short buffers */
+        Assertions.assertThrows(GordianException.class, () -> myCipher.update(null, 0, 1), "update null/length");
+        Assertions.assertThrows(GordianException.class, () -> myCipher.update(new byte[]{}, 0, 1), "update short");
+        Assertions.assertDoesNotThrow(() -> myCipher.update(null, 0, 0), "update null/zeroLength");
+        Assertions.assertDoesNotThrow(() -> myCipher.update(null), "update null");
+        Assertions.assertThrows(GordianException.class,
+                () -> myCipher.update(new byte[1], 0, 1, null, 0), "update null output");
+        Assertions.assertThrows(GordianException.class,
+                () -> myCipher.update(new byte[1], 0, 1, new byte[128], 132), "update bad output offset");
+
+        /* Can't finish with null/short buffers */
+        Assertions.assertThrows(GordianException.class, () -> myCipher.finish(null, 0), "finish null");
+        Assertions.assertThrows(GordianException.class, () -> myCipher.finish(new byte[128], 132), "finish bad offset");
+
+        /* Destroy the second key */
+        mySecondKey.destroy();
+
+        /* Can't update/finish a cipher whose key has now been destroyed */
+        Assertions.assertThrows(GordianException.class, () -> myCipher.update(myMessage));
+        Assertions.assertThrows(GordianException.class, myCipher::finish);
+        if (isAEAD) {
+            Assertions.assertThrows(GordianException.class, () -> ((GordianSymAEADCipher) myCipher).updateAAD(myAEAD));
+        }
+
+        /* Can't initialise a cipher with a destroyed key */
+        Assertions.assertThrows(GordianException.class, () -> myCipher.initForEncrypt(myParms));
+        Assertions.assertThrows(GordianException.class, () -> myCipher.initForDecrypt(myParms));
+    }
+
+    /**
+     * Check symKey Destroy.
+     *
+     * @param pFactory the cipherFactory
+     * @param pKey     the key
+     * @throws GordianException on error
+     */
+    private static void checkDestroySymKey(final GordianCipherFactory pFactory,
+                                           final GordianKey<GordianSymKeySpec> pKey) throws GordianException {
+        /* Access details */
+        final GordianSymKeySpec mySpec = pKey.getKeyType();
+
+        /* Create a second key */
+        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = pFactory.getKeyGenerator(mySpec);
+        final GordianKey<GordianSymKeySpec> mySecondKey = myGenerator.generateKey();
+
+        /* Create the wrappers */
+        final GordianCoreWrapper myWrapper = (GordianCoreWrapper) pFactory.createKeyWrapper(pKey);
+        final GordianCoreWrapper mySecondWrapper = (GordianCoreWrapper) pFactory.createKeyWrapper(mySecondKey);
+        final byte[] myWrapped = mySecondWrapper.secureKey(pKey);
+
+        /* Destroy the second key */
+        mySecondKey.destroy();
+
+        /* Can't initialise a wrapper with a destroyed key */
+        Assertions.assertThrows(GordianException.class, () -> pFactory.createKeyWrapper(mySecondKey));
+
+        /* Can't wrap a destroyed key */
+        Assertions.assertThrows(GordianException.class, () -> myWrapper.secureKey(mySecondKey));
+
+        /* Can't use a wrapper whose key has been destroyed */
+        Assertions.assertThrows(GordianException.class, () -> mySecondWrapper.secureKey(pKey));
+        Assertions.assertThrows(GordianException.class, () -> mySecondWrapper.deriveKey(myWrapped, mySpec));
+    }
+
+    /**
+     * Check privateKey Destroy.
+     *
+     * @param pFactory        the cipherFactory
+     * @param pKey            the key
+     * @param pKeyPairFactory the keyPairFactory
+     * @throws GordianException on error
+     */
+    private static void checkDestroyPrivateKey(final GordianCipherFactory pFactory,
+                                               final GordianKey<GordianSymKeySpec> pKey,
+                                               final GordianKeyPairFactory pKeyPairFactory) throws GordianException {
+        /* Create a second key */
+        final GordianSymKeySpec mySpec = pKey.getKeyType();
+        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = pFactory.getKeyGenerator(mySpec);
+        final GordianKey<GordianSymKeySpec> mySecondKey = myGenerator.generateKey();
+
+        /* Create a keyPair and destroy it */
+        final GordianKeyPairSpecBuilder myBuilder = pKeyPairFactory.newKeyPairSpecBuilder();
+        final GordianKeyPairSpec myKPSpec = myBuilder.newHope();
+        final GordianKeyPairGenerator myKPGenerator = pKeyPairFactory.getKeyPairGenerator(myKPSpec);
+        final GordianKeyPair myKeyPair = myKPGenerator.generateKeyPair();
+        final GordianKeyPair mySecondKeyPair = myKPGenerator.generateKeyPair();
+        mySecondKeyPair.destroy();
+
+        /* Create the wrappers */
+        final GordianCoreWrapper myWrapper = (GordianCoreWrapper) pFactory.createKeyWrapper(pKey);
+        final GordianCoreWrapper mySecondWrapper = (GordianCoreWrapper) pFactory.createKeyWrapper(mySecondKey);
+        mySecondKey.destroy();
+
+        /* Can't wrap a destroyed keyPair */
+        Assertions.assertThrows(GordianException.class, () -> myWrapper.securePrivateKey(mySecondKeyPair));
+
+        /* Can't use a wrapper whose key has been destroyed */
+        Assertions.assertThrows(GordianException.class, () -> mySecondWrapper.securePrivateKey(myKeyPair));
+    }
+
+    /**
+     * Profile symKey.
+     *
+     * @param pKeySpec the keySpec
+     * @throws GordianException on error
+     */
+    private static void profileSymKey(final FactorySymKeySpec pKeySpec) throws GordianException {
+        /* Access details */
+        final GordianFactory myFactory = pKeySpec.getFactory();
+        final GordianCoreSymKeySpec mySpec = pKeySpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianKey<GordianSymKeySpec> mySymKey = pKeySpec.getKey();
+        final int myLen = mySpec.getBlockLength().getByteLength();
+
+        /* Build the cipher */
+        byte[] myBytes = new byte[myLen];
+        final GordianSymCipherSpecBuilder myBuilder = myCipherFactory.newSymCipherSpecBuilder();
+        final GordianSymCipherSpec myCipherSpec = myBuilder.symCipher(mySpec, GordianCipherMode.ECB, GordianPadding.NONE);
+        final GordianSymCipher myCipher = myCipherFactory.createSymKeyCipher(myCipherSpec);
+
+        /* Start loop */
+        final long myStart = System.nanoTime();
+        final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+        GordianCipherParams myParms = myParamsBuilder.key(mySymKey);
+        for (int i = 0; i < SymmetricTest.profileRepeat; i++) {
+            myCipher.initForEncrypt(myParms);
+            myBytes = myCipher.finish(myBytes);
+        }
+        long myElapsed = System.nanoTime() - myStart;
+        myElapsed /= SymmetricTest.MILLINANOS * (long) SymmetricTest.profileRepeat;
+        if (SymmetricTest.fullProfiles) {
+            System.out.println(mySpec + ":" + myElapsed);
+        }
+    }
+
+    /**
+     * Check keyAlgId.
+     *
+     * @param pSpec the Spec to check
+     */
+    private static void checkSymKeyAlgId(final FactorySymKeySpec pSpec) {
+        /* Access the factory */
+        final GordianBaseFactory myFactory = (GordianBaseFactory) pSpec.getFactory();
+
+        /* Check that we have an id */
+        final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pSpec.getSpec());
+        Assertions.assertNotNull(myId, "Unknown AlgorithmId for " + pSpec.getSpec());
+
+        /* Check unique mapping */
+        final GordianKeySpec mySpec = myFactory.getKeySpecForIdentifier(myId);
+        Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
+    }
+
+    /**
+     * Check cipherAlgId.
+     *
+     * @param pSpec the Spec to check
+     */
+    private static void checkSymCipherAlgId(final FactorySymCipherSpec pSpec) {
+        /* Access the factory */
+        final GordianCoreCipherFactory myFactory = (GordianCoreCipherFactory) pSpec.getFactory().getCipherFactory();
+
+        /* Check that we have an id */
+        final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pSpec.getSpec());
+        Assertions.assertNotNull(myId, "Unknown AlgorithmId for " + pSpec.getSpec());
+
+        /* Check unique mapping */
+        final GordianCipherSpec<?> mySpec = myFactory.getCipherSpecForIdentifier(myId);
+        Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
+    }
+}

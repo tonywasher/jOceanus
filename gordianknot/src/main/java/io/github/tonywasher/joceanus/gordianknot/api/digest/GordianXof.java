@@ -16,13 +16,12 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.digest;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianConsumer;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 
 /**
  * GordianKnot interface for extendable Output Functions.
  */
-public interface GordianXof
-        extends GordianConsumer {
+public interface GordianXof {
     /**
      * Output the results of the final calculation for this digest to pOutLen number of bytes.
      *
@@ -30,10 +29,11 @@ public interface GordianXof
      * @param pOutOff offset to start writing the bytes at.
      * @param pOutLen the number of output bytes requested.
      * @return the number of bytes written
+     * @throws GordianException on error
      */
     int finish(byte[] pOutBuf,
                int pOutOff,
-               int pOutLen);
+               int pOutLen) throws GordianException;
 
     /**
      * Start outputting the results of the final calculation for this digest. Unlike finish, this method
@@ -43,8 +43,9 @@ public interface GordianXof
      * @param pOutOff offset to start writing the bytes at.
      * @param pOutLen the number of output bytes requested.
      * @return the number of bytes written
+     * @throws GordianException on error
      */
     int output(byte[] pOutBuf,
                int pOutOff,
-               int pOutLen);
+               int pOutLen) throws GordianException;
 }

@@ -16,7 +16,10 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keystore;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStore;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway;
@@ -27,8 +30,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFileEntry;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipLock;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipReadFile;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreKeyPairUsage;
 import org.w3c.dom.Document;
 
 import java.io.File;
@@ -53,6 +55,11 @@ public class GordianCoreKeyStoreFactory
      */
     public GordianCoreKeyStoreFactory(final GordianBaseFactory pFactory) {
         theFactory = pFactory;
+    }
+
+    @Override
+    public GordianKeyPairUsage newKeyPairUsage() {
+        return new GordianCoreKeyPairUsage();
     }
 
     @Override

@@ -72,13 +72,29 @@ public final class GordianCoreAgreementKDF {
                                final GordianAgreementType pAgreeType) {
         /* Switch on keyType */
         return switch (pKeyType) {
-            case RSA -> !isCKDF();
+            case RSA -> isSupported4RSA(pAgreeType);
             case EC, SM2, DSTU, GOST -> isSupported4EC(pAgreeType);
             case DH -> isSupported4DH(pAgreeType);
             case XDH -> isSupported4XDH(pAgreeType);
-            case SABER, NEWHOPE, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME -> theKDF == GordianAgreementKDF.NONE;
+            case SABER, NEWHOPE, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, SM9, HYBRIDKEM ->
+                    theKDF == GordianAgreementKDF.NONE;
             case FRODO -> theKDF != GordianAgreementKDF.NONE;
             default -> true;
+        };
+    }
+
+    /**
+     * Determine whether this is a supported kdfType for RSA.
+     *
+     * @param pAgreeType the agreement type
+     * @return true/false
+     */
+    private boolean isSupported4RSA(final GordianAgreementType pAgreeType) {
+        /* Switch on kdfType */
+        return switch (theKDF) {
+            case SHA256CKDF, SHA512CKDF -> false;
+            case NONE -> true;
+            default -> pAgreeType == GordianAgreementType.KEM;
         };
     }
 

@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.lock;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;

@@ -16,12 +16,12 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseDestroyable;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -32,7 +32,7 @@ import java.util.Objects;
  * CompositeKeyPair.
  */
 public class GordianCompositeKeyPair
-        implements GordianKeyPair, GordianBaseDestroyable {
+        implements GordianBaseKeyPair {
     /**
      * The KeySpec.
      */
@@ -58,7 +58,7 @@ public class GordianCompositeKeyPair
      *
      * @param pSpec the spec
      */
-    GordianCompositeKeyPair(final GordianKeyPairSpec pSpec) {
+    public GordianCompositeKeyPair(final GordianKeyPairSpec pSpec) {
         this(pSpec, false);
     }
 
@@ -68,8 +68,8 @@ public class GordianCompositeKeyPair
      * @param pSpec       the spec
      * @param pPublicOnly is the keyPair publicOnly?
      */
-    GordianCompositeKeyPair(final GordianKeyPairSpec pSpec,
-                            final boolean pPublicOnly) {
+    public GordianCompositeKeyPair(final GordianKeyPairSpec pSpec,
+                                   final boolean pPublicOnly) {
         theSpec = pSpec;
         isPublicOnly = pPublicOnly;
         theKeyPairs = new LinkedHashMap<>();
@@ -86,24 +86,51 @@ public class GordianCompositeKeyPair
     }
 
     /**
-     * Obtain a publicOnly version of this keyPair.
+     * Check for compositeKeyPair.
      *
-     * @return the publicOnly keyPair
+     * @param pKeyPair the keyPair to check
+     * @return the keyPair
+     * @throws GordianException on error
      */
+    public static GordianCompositeKeyPair checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
+        /* Check that it is a GordianCompositeKeyPair */
+        if (!(pKeyPair instanceof GordianCompositeKeyPair myPair)) {
+            /* Reject keyPair */
+            throw new GordianDataException("Invalid KeyPair");
+        }
+        myPair.checkForDestroyedKeyPair();
+        return myPair;
+    }
+
+    /**
+     * Check for compositeKeyPair.
+     *
+     * @param pKeyPair the keyPair to check
+     * @param pSpec    the required keySpec
+     * @throws GordianException on error
+     */
+    public static void checkKeyPair(final GordianKeyPair pKeyPair,
+                                    final GordianKeyPairSpec pSpec) throws GordianException {
+        /* Check the keyPair */
+        checkKeyPair(pKeyPair);
+
+        /* Check that it the correct key type */
+        if (!pSpec.equals(pKeyPair.getKeyPairSpec())) {
+            /* Reject keyPair */
+            throw new GordianDataException("Invalid KeyPairType");
+        }
+    }
+
+    @Override
     public GordianCompositeKeyPair getPublicOnly() {
         final GordianCompositeKeyPair myPublicOnly = new GordianCompositeKeyPair(theSpec);
         for (GordianKeyPair myPair : theKeyPairs.values()) {
-            myPublicOnly.theKeyPairs.put(myPair.getKeyPairSpec(), ((GordianCoreKeyPair) myPair).getPublicOnly());
+            myPublicOnly.theKeyPairs.put(myPair.getKeyPairSpec(), ((GordianBaseKeyPair) myPair).getPublicOnly());
         }
         return myPublicOnly;
     }
 
-    /**
-     * Validate that the keyPair public Key matches.
-     *
-     * @param pPair the key pair
-     * @return matches true/false
-     */
+    @Override
     public boolean checkMatchingPublicKey(final GordianKeyPair pPair) {
         /* Must be composite and matching spec */
         if (!(pPair instanceof GordianCompositeKeyPair)
@@ -141,7 +168,7 @@ public class GordianCompositeKeyPair
      *
      * @param pKeyPair the keyPair
      */
-    void addKeyPair(final GordianKeyPair pKeyPair) {
+    public void addKeyPair(final GordianKeyPair pKeyPair) {
         /* Check publicOnly */
         if (pKeyPair.isPublicOnly() != isPublicOnly) {
             throw new IllegalStateException("PublicOnly mismatch");

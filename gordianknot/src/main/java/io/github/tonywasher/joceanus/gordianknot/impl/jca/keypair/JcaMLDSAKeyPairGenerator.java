@@ -17,10 +17,10 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 
@@ -35,11 +35,6 @@ public class JcaMLDSAKeyPairGenerator
      * MLDSA algorithm.
      */
     private static final String MLDSA_ALGO = "ML-DSA";
-
-    /**
-     * HASH indication.
-     */
-    private static final String MLDSA_HASH = "HASH-" + MLDSA_ALGO;
 
     /**
      * Constructor.
@@ -57,10 +52,9 @@ public class JcaMLDSAKeyPairGenerator
         try {
             /* Determine algorithm */
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
-            final String myAlgo = myKeySpec.getMLDSASpec().isHash() ? MLDSA_HASH : MLDSA_ALGO;
 
             /* Create and initialize the generator */
-            createFactories(myAlgo, false);
+            createFactories(MLDSA_ALGO, false);
             final MLDSAParameterSpec myParms = myKeySpec.getMLDSASpec().getParameterSpec();
             getGenerator().initialize(myParms, getRandom());
 

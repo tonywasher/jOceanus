@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSp
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM9EncryptionMode;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
@@ -125,6 +126,15 @@ public class GordianCoreEncryptorSpec
     }
 
     /**
+     * Obtain the SM9 encryption Type.
+     *
+     * @return the encryptionType.
+     */
+    public GordianSM9EncryptionMode getSM9EncryptionMode() {
+        return castValue(GordianSM9EncryptionMode.class);
+    }
+
+    /**
      * Obtain the composite encryptorSpec iterator.
      *
      * @return the encryptorSpec iterator.
@@ -157,6 +167,7 @@ public class GordianCoreEncryptorSpec
             case SM2 -> theEncryptorType == null
                     || (theEncryptorType instanceof GordianSM2EncryptionSpec s
                     && s.isValid());
+            case SM9 -> theEncryptorType instanceof GordianSM9EncryptionMode;
             case EC, GOST -> theEncryptorType == null;
             case COMPOSITE -> theEncryptorType instanceof List && checkComposite();
             default -> false;
@@ -177,7 +188,7 @@ public class GordianCoreEncryptorSpec
                 final GordianCoreDigestSpec mySpec = getDigestSpec();
                 yield GordianDigestType.SHA2.equals(mySpec.getDigestType()) && !mySpec.isSha2Hybrid();
             }
-            case EC, GOST, SM2, COMPOSITE -> true;
+            case EC, GOST, SM2, SM9, COMPOSITE -> true;
             default -> false;
         };
     }
@@ -216,6 +227,9 @@ public class GordianCoreEncryptorSpec
                         break;
                     case SM2:
                         theName += GordianSpecConstants.SEP + (theEncryptorType == null ? ECELGAMAL : theEncryptorType);
+                        break;
+                    case SM9:
+                        theName += GordianSpecConstants.SEP + theEncryptorType;
                         break;
                     case COMPOSITE:
                         final Iterator<GordianEncryptorSpec> myIterator = encryptorSpecIterator();

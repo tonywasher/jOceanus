@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.cert;
 
-import org.bouncycastle.asn1.x509.KeyUsage;
-
 /**
  * KeyPair Usage.
  */
@@ -25,63 +23,45 @@ public enum GordianKeyPairUse {
     /**
      * Certificates.
      */
-    CERTIFICATE(KeyUsage.keyCertSign),
+    CERTIFICATE,
+
+    /**
+     * CRL Signing.
+     */
+    CRLSIGN,
 
     /**
      * Signatures.
      */
-    SIGNATURE(KeyUsage.digitalSignature),
+    SIGNATURE,
 
     /**
      * NonRepudiation.
      */
-    NONREPUDIATION(KeyUsage.nonRepudiation),
+    NONREPUDIATION,
 
     /**
      * KeyAgreement.
      */
-    AGREEMENT(KeyUsage.keyAgreement),
+    AGREEMENT,
 
     /**
      * keyEncryption.
      */
-    KEYENCRYPT(KeyUsage.keyEncipherment),
+    KEYENCRYPT,
 
     /**
      * dataEncryption.
      */
-    DATAENCRYPT(KeyUsage.dataEncipherment),
+    DATAENCRYPT,
 
     /**
      * EncryptOnly.
      */
-    ENCRYPTONLY(KeyUsage.encipherOnly),
+    ENCRYPTONLY,
 
     /**
      * DecryptOnly.
      */
-    DECRYPTONLY(KeyUsage.decipherOnly);
-
-    /**
-     * The KeyUsage.
-     */
-    private final int theUsage;
-
-    /**
-     * Constructor.
-     *
-     * @param pUsage the usage.
-     */
-    GordianKeyPairUse(final int pUsage) {
-        theUsage = pUsage;
-    }
-
-    /**
-     * Obtain the usage.
-     *
-     * @return the usage
-     */
-    public int getUsage() {
-        return theUsage;
-    }
+    DECRYPTONLY;
 }

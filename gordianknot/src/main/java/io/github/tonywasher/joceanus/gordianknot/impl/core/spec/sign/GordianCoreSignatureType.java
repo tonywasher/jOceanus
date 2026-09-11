@@ -85,9 +85,19 @@ public final class GordianCoreSignatureType {
      */
     public static boolean hasPreHash(final GordianKeyPairType pKeyType) {
         return switch (pKeyType) {
-            case XMSS, RSA, EDDSA -> true;
+            case XMSS, RSA, EDDSA, MLDSA, SLHDSA -> true;
             default -> false;
         };
+    }
+
+    /**
+     * Does the AsymKeyType have a DoubleDigest signature?
+     *
+     * @param pKeyType the asymKeyType
+     * @return true/false
+     */
+    public boolean hasDoubleDigest(final GordianKeyPairType pKeyType) {
+        return GordianKeyPairType.XMSS.equals(pKeyType) && GordianSignatureType.PREHASH.equals(getType());
     }
 
     /**
@@ -111,8 +121,8 @@ public final class GordianCoreSignatureType {
      */
     public static boolean hasNative(final GordianKeyPairType pKeyType) {
         return switch (pKeyType) {
-            case SM2, EDDSA, DSTU, GOST, SLHDSA, MLDSA, FALCON, PICNIC, AIMER, FAEST, HAETAE, HAWK,
-                 MAYO, MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, XMSS, LMS, COMPOSITE -> true;
+            case SM2, EDDSA, DSTU, GOST, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE,
+                 MAYO, MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, XMSS, LMS, SM9, HYBRIDSIGN, COMPOSITE -> true;
             default -> false;
         };
     }

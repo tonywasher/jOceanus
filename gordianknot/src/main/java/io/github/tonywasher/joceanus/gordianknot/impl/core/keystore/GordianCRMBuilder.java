@@ -16,13 +16,16 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keystore;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
@@ -32,6 +35,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEnt
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
@@ -39,9 +43,9 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCRMEncryptor.GordianCRMResult;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
@@ -168,7 +172,8 @@ public class GordianCRMBuilder {
 
             /* record extensions */
             final ExtensionsGenerator myGenerator = new ExtensionsGenerator();
-            myGenerator.addExtension(Extension.keyUsage, true, pCertificate.getUsage().getKeyUsage());
+            final GordianCoreKeyPairUsage myUsage = (GordianCoreKeyPairUsage) pCertificate.getUsage();
+            myGenerator.addExtension(Extension.keyUsage, true, myUsage.getKeyPairUsage());
             myGenerator.addExtension(Extension.basicConstraints, false, new BasicConstraints(false));
             myBuilder.setExtensions(myGenerator.generate());
 
@@ -195,7 +200,7 @@ public class GordianCRMBuilder {
         /* Try to send a signed proof */
         final GordianKeyPair myKeyPair = pKeyPair.getKeyPair();
         final GordianKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
-        final GordianSignatureSpec mySignSpec = theGateway.getFactory().getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);
+        final GordianSignatureSpec mySignSpec = theGateway.getFactory().getAsymFactory().getSignatureFactory().defaultForKeyPair(mySpec);
         if (mySignSpec != null) {
             return createKeyPairSignedProof(myKeyPair, mySignSpec, pCertRequest);
         }
@@ -218,7 +223,7 @@ public class GordianCRMBuilder {
     private ProofOfPossession createTargetedProofOfPossession(final GordianKeyPair pKeyPair,
                                                               final GordianCoreCertificate pCertificate) throws GordianException {
         /* Obtain the PKCS8Encoding of the private key */
-        final GordianKeyPairFactory myFactory = theGateway.getFactory().getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theGateway.getFactory().getAsymFactory().getKeyPairFactory();
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
         final PKCS8EncodedKeySpec myPKCS8Encoding = myGenerator.getPKCS8Encoding(pKeyPair);
@@ -252,7 +257,7 @@ public class GordianCRMBuilder {
                                                final GordianSignatureSpec pSignSpec,
                                                final CertRequest pCertRequest) throws GordianException {
         /* Create the signer */
-        final GordianAsyncFactory myFactory = theGateway.getFactory().getAsyncFactory();
+        final GordianAsymFactory myFactory = theGateway.getFactory().getAsymFactory();
         final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
         final GordianSignature mySigner = mySignFactory.createSigner(pSignSpec);
         final AlgorithmIdentifier myAlgId = mySignFactory.getIdentifierForSpecAndKeyPair(pSignSpec, pKeyPair);
@@ -279,7 +284,10 @@ public class GordianCRMBuilder {
         try {
             /* Create the signature */
             final GordianSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
-            pSigner.initForSigning(myBuilder.keyPair(pKeyPair));
+            final GordianSignParams myParams = (pKeyPair instanceof GordianIdAwareKeyPair)
+                    ? myBuilder.keyPairAndIdentity(pKeyPair, GordianKeyPairValidity.SERVERID)
+                    : myBuilder.keyPair(pKeyPair);
+            pSigner.initForSigning(myParams);
             pSigner.update(pCertRequest.getEncoded());
             final byte[] mySignature = pSigner.sign();
 

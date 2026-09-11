@@ -27,7 +27,6 @@ import org.junit.platform.suite.api.SuiteDisplayName;
 @Suite
 @SuiteDisplayName("BouncyCastle Extensions")
 @SelectClasses({
-        Blake3Test.class,
         BlockCipherTest.class,
         DigestTest.class,
         RandomTest.class,

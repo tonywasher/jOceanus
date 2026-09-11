@@ -16,9 +16,9 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreWrapper;

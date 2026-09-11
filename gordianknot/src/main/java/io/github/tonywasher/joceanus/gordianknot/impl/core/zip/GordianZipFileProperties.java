@@ -16,9 +16,9 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.zip;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 
 import java.util.ArrayList;
 import java.util.Arrays;

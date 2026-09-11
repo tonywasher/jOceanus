@@ -18,15 +18,15 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
@@ -203,20 +203,17 @@ public final class JcaAgreement {
             /* Determine the algorithm name */
             String myName = pSpec.getKeyPairType().toString();
             final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pSpec;
-            switch (pSpec.getKeyPairType()) {
-                case NTRUPRIME:
+            myName = switch (pSpec.getKeyPairType()) {
+                case NTRUPRIME -> {
                     final GordianCoreNTRUPrimeSpec myNTRUSpec = mySpec.getNTRUPrimeSpec();
-                    myName = myNTRUSpec.getType() + "PRIME";
-                    break;
-                case MLKEM:
-                    myName = "ML-KEM";
-                    break;
-                case FRODO:
-                    myName = "FrodoKEM";
-                    break;
-                default:
-                    break;
-            }
+                    yield myNTRUSpec.getType() + "PRIME";
+                }
+                case MLKEM -> "ML-KEM";
+                case SM9 -> "SM9-KEM";
+                case FRODO -> "FrodoKEM";
+                case HYBRIDKEM -> mySpec.getHybridKEMSpec().getJCAName();
+                default -> myName;
+            };
 
             /* Determine source of keyGenerator */
             final Provider myProvider = mySpec.getCoreKeyPairType().isStandardJca() ? JcaProvider.BCPROV : JcaProvider.BCPQPROV;

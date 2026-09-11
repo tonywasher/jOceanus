@@ -16,12 +16,15 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.cert;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificateId;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
@@ -32,11 +35,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianBaseKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
@@ -151,7 +150,7 @@ public class GordianCoreCertificate
 
         /* Store the parameters */
         theFactory = pFactory;
-        theKeyPair = getPublicOnly(pKeyPair);
+        theKeyPair = ((GordianBaseKeyPair) pKeyPair).getPublicOnly();
 
         /* Determine the signatureSpec */
         theSigSpec = determineSignatureSpecForKeyPair(theKeyPair);
@@ -160,7 +159,7 @@ public class GordianCoreCertificate
         theSigAlgId = determineAlgIdForSignatureSpec(theSigSpec, theKeyPair);
 
         /* Create the TBSCertificate */
-        theKeyUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE);
+        theKeyUsage = new GordianCoreKeyPairUsage().withUse(GordianKeyPairUse.CERTIFICATE);
         theCAStatus = new GordianCAStatus(true);
         theTbsCertificate = buildCertificate(null, pSubject);
         theSerialNo = theTbsCertificate.getSerialNumber().getValue();
@@ -194,7 +193,7 @@ public class GordianCoreCertificate
                                   final GordianKeyPairUsage pUsage) throws GordianException {
         /* Store the parameters */
         theFactory = pFactory;
-        theKeyPair = getPublicOnly(pKeyPair);
+        theKeyPair = ((GordianBaseKeyPair) pKeyPair).getPublicOnly();
         theKeyUsage = pUsage;
 
         /* Check that the signer is allowed to sign certificates */
@@ -440,25 +439,13 @@ public class GordianCoreCertificate
     }
 
     /**
-     * get public only version of key.
-     *
-     * @param pKeyPair the key
-     * @return the publicOnly version
-     */
-    protected GordianKeyPair getPublicOnly(final GordianKeyPair pKeyPair) {
-        return pKeyPair instanceof GordianCompositeKeyPair myComposite
-                ? myComposite.getPublicOnly()
-                : ((GordianCoreKeyPair) pKeyPair).getPublicOnly();
-    }
-
-    /**
      * Determine the signatureSpec for the key.
      *
      * @param pKeyPair the keyPair
      * @return the signatureSpec
      */
     GordianCoreSignatureSpec determineSignatureSpecForKeyPair(final GordianKeyPair pKeyPair) {
-        return (GordianCoreSignatureSpec) theFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(pKeyPair.getKeyPairSpec());
+        return (GordianCoreSignatureSpec) theFactory.getAsymFactory().getSignatureFactory().defaultForKeyPair(pKeyPair.getKeyPairSpec());
     }
 
     /**
@@ -468,7 +455,7 @@ public class GordianCoreCertificate
      * @return the signatureSpec
      */
     GordianCoreSignatureSpec determineSignatureSpecForAlgId(final AlgorithmIdentifier pAlgId) {
-        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsyncFactory().getSignatureFactory();
+        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsymFactory().getSignatureFactory();
         return (GordianCoreSignatureSpec) mySigns.getSpecForIdentifier(pAlgId);
     }
 
@@ -481,7 +468,7 @@ public class GordianCoreCertificate
      */
     AlgorithmIdentifier determineAlgIdForSignatureSpec(final GordianSignatureSpec pSpec,
                                                        final GordianKeyPair pSigner) {
-        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsyncFactory().getSignatureFactory();
+        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsymFactory().getSignatureFactory();
         return mySigns.getIdentifierForSpecAndKeyPair(pSpec, pSigner);
     }
 
@@ -492,9 +479,7 @@ public class GordianCoreCertificate
      * @return matches true/false
      */
     public boolean checkMatchingPublicKey(final GordianKeyPair pKeyPair) {
-        return pKeyPair instanceof GordianCompositeKeyPair myComposite
-                ? myComposite.checkMatchingPublicKey(getKeyPair())
-                : ((GordianCoreKeyPair) pKeyPair).checkMatchingPublicKey(getKeyPair());
+        return ((GordianBaseKeyPair) pKeyPair).checkMatchingPublicKey(getKeyPair());
     }
 
     /**
@@ -505,7 +490,7 @@ public class GordianCoreCertificate
      */
     protected GordianKeyPair parseEncodedKey() throws GordianException {
         /* Derive the keyPair */
-        final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = getFactory().getAsymFactory().getKeyPairFactory();
         final X509EncodedKeySpec myX509 = getX509KeySpec();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509);
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
@@ -523,7 +508,7 @@ public class GordianCoreCertificate
         final GordianKeyPair myPair = getKeyPair();
 
         /* Access the keyPair generator */
-        final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = getFactory().getAsymFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myPair.getKeyPairSpec());
 
         /* Obtain the publicKey Info */
@@ -547,7 +532,7 @@ public class GordianCoreCertificate
      */
     protected GordianSignature createSigner() throws GordianException {
         /* Create the signer */
-        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsyncFactory().getSignatureFactory();
+        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsymFactory().getSignatureFactory();
         return mySigns.createSigner(getSignatureSpec());
     }
 

@@ -67,7 +67,7 @@ public final class GordianCoreKeyPairType {
      */
     public boolean useRandomForSignatures() {
         return switch (theType) {
-            case PICNIC, LMS, XMSS, EDDSA -> false;
+            case LMS, XMSS, EDDSA -> false;
             default -> true;
         };
     }
@@ -79,9 +79,8 @@ public final class GordianCoreKeyPairType {
      */
     public GordianRequired useDigestForSignatures() {
         return switch (theType) {
-            case SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE, HAWK, MAYO, MQOM, QRUOV,
-                 SDITH, SNOVA, SQISIGN, UOV, XMSS, EDDSA, LMS -> GordianRequired.NEVER;
-            case PICNIC -> GordianRequired.POSSIBLE;
+            case SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE, MAYO, MQOM, QRUOV,
+                 SDITH, SNOVA, SQISIGN, UOV, XMSS, EDDSA, LMS, SM9, HYBRIDSIGN -> GordianRequired.NEVER;
             default -> GordianRequired.ALWAYS;
         };
     }
@@ -93,7 +92,7 @@ public final class GordianCoreKeyPairType {
      */
     public boolean subTypeForSignatures() {
         return switch (theType) {
-            case MLDSA, SLHDSA, FALCON, AIMER, FAEST, HAETAE, HAWK, MAYO, MQOM,
+            case MLDSA, SLHDSA, FALCON, AIMER, FAEST, HAETAE, MAYO, MQOM,
                  QRUOV, SDITH, SNOVA, SQISIGN, UOV, XMSS -> true;
             default -> false;
         };
@@ -106,7 +105,8 @@ public final class GordianCoreKeyPairType {
      */
     public boolean isStandardJca() {
         return switch (theType) {
-            case RSA, DSA, EC, ELGAMAL, DH, SM2, GOST, DSTU, XDH, EDDSA, MLKEM, MLDSA, SLHDSA, CMCE, FRODO -> true;
+            case RSA, DSA, EC, ELGAMAL, DH, SM2, SM9, GOST, DSTU, XDH, EDDSA, MLKEM, MLDSA, SLHDSA, CMCE, FRODO,
+                 HYBRIDKEM -> true;
             default -> false;
         };
     }

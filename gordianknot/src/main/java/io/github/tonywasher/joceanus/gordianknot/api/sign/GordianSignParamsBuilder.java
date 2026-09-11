@@ -40,6 +40,14 @@ public interface GordianSignParamsBuilder {
     GordianSignParamsBuilder withContext(byte[] pContext);
 
     /**
+     * use identity.
+     *
+     * @param pIdentity the identity
+     * @return the Builder
+     */
+    GordianSignParamsBuilder withIdentity(byte[] pIdentity);
+
+    /**
      * Build signatureParams.
      *
      * @return the signParams
@@ -66,5 +74,17 @@ public interface GordianSignParamsBuilder {
     default GordianSignParams keyPairAndContext(final GordianKeyPair pKeyPair,
                                                 final byte[] pContext) {
         return withKeyPair(pKeyPair).withContext(pContext).build();
+    }
+
+    /**
+     * Create keyPair and Identity parameters.
+     *
+     * @param pKeyPair  the keyPair
+     * @param pIdentity the identity
+     * @return the new params
+     */
+    default GordianSignParams keyPairAndIdentity(final GordianKeyPair pKeyPair,
+                                                 final byte[] pIdentity) {
+        return withKeyPair(pKeyPair).withIdentity(pIdentity).build();
     }
 }

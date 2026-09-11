@@ -16,12 +16,13 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.mac;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.cipher.BouncyCipherFactory;
@@ -29,24 +30,21 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.cipher.BouncyKeyGenerat
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.digest.BouncyDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreSipHashType;
-import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianBlake2Mac;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianBlake2XMac;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianBlake3Mac;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianKMACWrapper;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianSkeinMac;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianSkeinXMac;
-import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianZuc128Mac;
-import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianZuc256Mac;
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.Xof;
+import org.bouncycastle.crypto.digests.Blake3Digest;
 import org.bouncycastle.crypto.generators.Poly1305KeyGenerator;
 import org.bouncycastle.crypto.macs.CBCBlockCipherMac;
 import org.bouncycastle.crypto.macs.CFBBlockCipherMac;
@@ -59,6 +57,8 @@ import org.bouncycastle.crypto.macs.Poly1305;
 import org.bouncycastle.crypto.macs.SipHash;
 import org.bouncycastle.crypto.macs.SipHash128;
 import org.bouncycastle.crypto.macs.VMPCMac;
+import org.bouncycastle.crypto.macs.Zuc128Mac;
+import org.bouncycastle.crypto.macs.Zuc256Mac;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.modes.KGCMBlockCipher;
 import org.bouncycastle.crypto.patch.macs.GordianDSTU7624Mac;
@@ -266,7 +266,7 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCBlake3Mac(final GordianDigestSpec pSpec) {
-        final GordianBlake3Digest myDigest = new GordianBlake3Digest(pSpec.getDigestLength().getByteLength());
+        final Blake3Digest myDigest = new Blake3Digest(pSpec.getDigestLength().getLength());
         return new GordianBlake3Mac(myDigest);
     }
 
@@ -342,7 +342,7 @@ public class BouncyMacFactory
      */
     private static Mac getBCZucMac(final GordianCoreMacSpec pMacSpec) {
         return GordianLength.LEN_128 == pMacSpec.getKeyLength()
-                ? new GordianZuc128Mac()
-                : new GordianZuc256Mac(pMacSpec.getMacLength().getLength());
+                ? new Zuc128Mac()
+                : new Zuc256Mac(pMacSpec.getMacLength().getLength());
     }
 }

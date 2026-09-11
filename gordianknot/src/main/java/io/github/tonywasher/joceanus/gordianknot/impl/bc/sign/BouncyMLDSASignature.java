@@ -17,17 +17,16 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyMLDSAKeyPair.BouncyMLDSAPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyMLDSAKeyPair.BouncyMLDSAPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.Signer;
@@ -44,7 +43,7 @@ public class BouncyMLDSASignature
     /**
      * The MLDSA Signer.
      */
-    private Signer theSigner;
+    private final Signer theSigner;
 
     /**
      * Constructor.
@@ -56,35 +55,30 @@ public class BouncyMLDSASignature
                          final GordianSignatureSpec pSpec) {
         /* Initialise underlying class */
         super(pFactory, pSpec);
+
+        /* Determine preHash */
+        final boolean preHash = GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
+        theSigner = preHash ? new HashMLDSASigner() : new MLDSASigner();
     }
 
     /**
-     * Create the signer according to the keyPair.
+     * Check for bouncyKeyPair.
      *
-     * @param pKeyPair the keyPair
-     * @return the signer
+     * @return the keyPair
+     * @throws GordianException on error
      */
-    private static Signer createSigner(final GordianKeyPair pKeyPair) {
-        /* Determine whether this is a hashSigner */
-        final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
-        final boolean isHash = myKeySpec.getMLDSASpec().isHash();
-
-        /* Create the internal digests */
-        return isHash
-                ? new HashMLDSASigner()
-                : new MLDSASigner();
+    BouncyKeyPair checkKeyPair() throws GordianException {
+        return BouncyKeyPair.checkKeyPair(super.getKeyPair());
     }
 
     @Override
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
+        final BouncyKeyPair myPair = checkKeyPair();
         final byte[] myContext = getContext();
-        BouncyKeyPair.checkKeyPair(myPair);
 
         /* Initialise and set the signer */
-        theSigner = createSigner(myPair);
         final BouncyMLDSAPrivateKey myPrivate = (BouncyMLDSAPrivateKey) myPair.getPrivateKey();
         CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
         if (myContext != null) {
@@ -97,12 +91,10 @@ public class BouncyMLDSASignature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
+        final BouncyKeyPair myPair = checkKeyPair();
         final byte[] myContext = getContext();
-        BouncyKeyPair.checkKeyPair(myPair);
 
         /* Initialise and set the signer */
-        theSigner = createSigner(myPair);
         final BouncyMLDSAPublicKey myPublic = (BouncyMLDSAPublicKey) myPair.getPublicKey();
         CipherParameters myParms = myPublic.getPublicKey();
         if (myContext != null) {
@@ -116,19 +108,15 @@ public class BouncyMLDSASignature
                        final int pOffset,
                        final int pLength) throws GordianException {
         checkInit();
-        theSigner.update(pBytes, pOffset, pLength);
+        if (checkBuffer(pBytes, pOffset, pLength)) {
+            theSigner.update(pBytes, pOffset, pLength);
+        }
     }
 
     @Override
     public void update(final byte pByte) throws GordianException {
         checkInit();
         theSigner.update(pByte);
-    }
-
-    @Override
-    public void update(final byte[] pBytes) throws GordianException {
-        checkInit();
-        theSigner.update(pBytes, 0, pBytes.length);
     }
 
     @Override

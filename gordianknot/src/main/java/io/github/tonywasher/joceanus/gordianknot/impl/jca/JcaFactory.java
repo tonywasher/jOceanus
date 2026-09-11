@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianFactoryGenerator;
@@ -69,7 +69,7 @@ public class JcaFactory
     }
 
     @Override
-    public GordianAsyncFactory newAsyncFactory(final GordianBaseFactory pFactory) {
-        return new JcaAsyncFactory(this);
+    public GordianAsymFactory newAsymFactory(final GordianBaseFactory pFactory) {
+        return new JcaAsymFactory(this);
     }
 }

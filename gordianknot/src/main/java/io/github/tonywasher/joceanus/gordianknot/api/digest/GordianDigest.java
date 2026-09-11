@@ -16,15 +16,13 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.digest;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianConsumer;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 
 /**
  * GordianKnot interface for Message Digests.
  */
-public interface GordianDigest
-        extends GordianConsumer {
+public interface GordianDigest {
     /**
      * Obtain DigestSpec.
      *
@@ -38,6 +36,42 @@ public interface GordianDigest
      * @return the digest size
      */
     int getDigestSize();
+
+    /**
+     * Update the consumer with a portion of a byte array.
+     *
+     * @param pBytes  the bytes to update with.
+     * @param pOffset the offset of the data within the byte array
+     * @param pLength the length of the data to use
+     * @throws GordianException on error
+     */
+    void update(byte[] pBytes,
+                int pOffset,
+                int pLength) throws GordianException;
+
+    /**
+     * Update the consumer with a single byte.
+     *
+     * @param pByte the byte to update with.
+     */
+    void update(byte pByte);
+
+    /**
+     * Update the consumer with a byte array.
+     *
+     * @param pBytes the bytes to update with.
+     * @throws GordianException on error
+     */
+    default void update(final byte[] pBytes) throws GordianException {
+        if (pBytes != null) {
+            update(pBytes, 0, pBytes.length);
+        }
+    }
+
+    /**
+     * Reset the Consumer.
+     */
+    void reset();
 
     /**
      * Calculate the digest.
@@ -63,7 +97,7 @@ public interface GordianDigest
      * @param pBytes the bytes to update with.
      * @return the digest
      */
-    default byte[] finish(final byte[] pBytes) {
+    default byte[] finish(final byte[] pBytes) throws GordianException {
         update(pBytes);
         return finish();
     }

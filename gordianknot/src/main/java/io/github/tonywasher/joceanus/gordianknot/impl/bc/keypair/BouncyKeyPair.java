@@ -16,11 +16,14 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianIdAwareKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianCoreIdAwareMasterKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair.GordianCoreIdAwareUserKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey.GordianStateAwarePrivateKey;
@@ -73,15 +76,17 @@ public class BouncyKeyPair
      * Check for bouncyKeyPair.
      *
      * @param pKeyPair the keyPair to check
+     * @return the keyPair
      * @throws GordianException on error
      */
-    public static void checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
+    public static BouncyKeyPair checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check that it is a BouncyKeyPair */
         if (!(pKeyPair instanceof BouncyKeyPair myPair)) {
             /* Reject keyPair */
             throw new GordianDataException("Invalid KeyPair");
         }
         myPair.checkForDestroyedKeyPair();
+        return myPair;
     }
 
     /**
@@ -326,6 +331,89 @@ public class BouncyKeyPair
         @Override
         public BouncyStateAwareKeyPair getKeyPairShard(final int pNumUsages) {
             return new BouncyStateAwareKeyPair(getPublicKey(), getPrivateKey().getKeyShard(pNumUsages));
+        }
+    }
+
+    /**
+     * Bouncy IdAware Master KeyPair.
+     */
+    public static class BouncyIdAwareMasterKeyPair
+            extends BouncyKeyPair
+            implements GordianCoreIdAwareMasterKeyPair {
+        /**
+         * Constructor.
+         *
+         * @param pPublic  the public key
+         * @param pPrivate the private key
+         */
+        BouncyIdAwareMasterKeyPair(final BouncyPublicKey<?> pPublic,
+                                   final BouncyPrivateKey<?> pPrivate) {
+            super(pPublic, pPrivate);
+        }
+
+        @Override
+        public GordianIdAwareMasterPublicKey getIdAwarePublicKey() {
+            return (GordianIdAwareMasterPublicKey) getPublicKey();
+        }
+
+        @Override
+        public GordianIdAwareMasterPrivateKey getIdAwarePrivateKey() {
+            return (GordianIdAwareMasterPrivateKey) getPrivateKey();
+        }
+
+        @Override
+        public GordianIdAwareUserKeyPair newKeyPair(final GordianIdAwarePublicKey pPublic,
+                                                    final GordianIdAwarePrivateKey pPrivate) {
+            return new BouncyIdAwareUserKeyPair((BouncyPublicKey<?>) pPublic, (BouncyPrivateKey<?>) pPrivate);
+        }
+
+        @Override
+        public GordianIdAwareKeyType getSubKeyType() {
+            return getIdAwarePublicKey().getSubKeyType();
+        }
+    }
+
+    /**
+     * Bouncy IdAware KeyPair.
+     */
+    public static class BouncyIdAwareUserKeyPair
+            extends BouncyKeyPair
+            implements GordianCoreIdAwareUserKeyPair {
+        /**
+         * Constructor.
+         *
+         * @param pPublic  the public key
+         * @param pPrivate the private key
+         */
+        BouncyIdAwareUserKeyPair(final BouncyPublicKey<?> pPublic,
+                                 final BouncyPrivateKey<?> pPrivate) {
+            super(pPublic, pPrivate);
+        }
+
+        @Override
+        public GordianIdAwareUserPublicKey getIdAwarePublicKey() {
+            return (GordianIdAwareUserPublicKey) getPublicKey();
+        }
+
+        @Override
+        public GordianIdAwareUserPrivateKey getIdAwarePrivateKey() {
+            return (GordianIdAwareUserPrivateKey) getPrivateKey();
+        }
+
+        @Override
+        public GordianIdAwareUserKeyPair newKeyPair(final GordianIdAwarePublicKey pPublic,
+                                                    final GordianIdAwarePrivateKey pPrivate) {
+            return new BouncyIdAwareUserKeyPair((BouncyPublicKey<?>) pPublic, (BouncyPrivateKey<?>) pPrivate);
+        }
+
+        @Override
+        public GordianIdAwareKeyType getSubKeyType() {
+            return getIdAwarePublicKey().getSubKeyType();
+        }
+
+        @Override
+        public byte[] getIdentity() {
+            return getIdAwarePublicKey().getIdentity();
         }
     }
 }

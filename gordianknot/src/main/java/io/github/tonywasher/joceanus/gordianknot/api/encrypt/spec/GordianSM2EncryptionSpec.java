@@ -24,11 +24,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSp
  */
 public interface GordianSM2EncryptionSpec {
     /**
-     * Obtain the encryptionType.
+     * Obtain the encryptionMode.
      *
-     * @return the encryptionType
+     * @return the encryptionMode
      */
-    GordianSM2EncryptionType getEncryptionType();
+    GordianSM2EncryptionMode getEncryptionMode();
 
     /**
      * Obtain the digestSpec.

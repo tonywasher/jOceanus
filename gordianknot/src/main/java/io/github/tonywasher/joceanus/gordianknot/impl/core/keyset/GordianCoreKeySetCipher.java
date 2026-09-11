@@ -16,20 +16,21 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianBaseCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
 
 /**
  * Core keySetCipher.
  */
 public class GordianCoreKeySetCipher
-        implements GordianKeySetCipher {
+        implements GordianKeySetCipher, GordianBaseCipher {
     /**
      * The factory.
      */
@@ -175,12 +176,8 @@ public class GordianCoreKeySetCipher
         theCipher.initCiphers(pParams, encrypting);
     }
 
-    /**
-     * check status.
-     *
-     * @throws GordianException on error
-     */
-    protected void checkStatus() throws GordianException {
+    @Override
+    public void checkInit() throws GordianException {
         /* Check we are initialised */
         if (!initialised) {
             throw new GordianLogicException("Cipher is not initialised");
@@ -207,7 +204,7 @@ public class GordianCoreKeySetCipher
                       final byte[] pOutput,
                       final int pOutOffset) throws GordianException {
         /* Check status */
-        checkStatus();
+        checkInit();
 
         /* Make sure that there is no overlap between buffers */
         byte[] myInput = pBytes;
@@ -400,7 +397,7 @@ public class GordianCoreKeySetCipher
     protected int finishCipher(final byte[] pOutput,
                                final int pOutOffset) throws GordianException {
         /* Check status */
-        checkStatus();
+        checkInit();
 
         /* Reject if we have not fully processed the header on decrypt */
         if (!encrypting && !hdrProcessed) {

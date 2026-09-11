@@ -16,13 +16,13 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
 
@@ -66,7 +66,7 @@ public class GordianCompositeEncryptor
     public GordianCompositeEncryptor(final GordianFactory pFactory,
                                      final GordianCoreEncryptorSpec pSpec) throws GordianException {
         /* Store parameters */
-        theFactory = pFactory.getAsyncFactory().getEncryptorFactory();
+        theFactory = pFactory.getAsymFactory().getEncryptorFactory();
         theSpec = pSpec;
         theEncryptors = new ArrayList<>();
 

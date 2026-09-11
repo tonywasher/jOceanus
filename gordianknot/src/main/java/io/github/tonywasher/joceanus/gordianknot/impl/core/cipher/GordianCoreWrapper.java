@@ -16,12 +16,14 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
@@ -29,8 +31,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPair
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
@@ -182,7 +182,7 @@ public class GordianCoreWrapper
     @Override
     public byte[] securePrivateKey(final GordianKeyPair pKeyPairToSecure) throws GordianException {
         /* Access the KeyPair Generator */
-        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsymFactory().getKeyPairFactory();
         final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myFactory.getKeyPairGenerator(pKeyPairToSecure.getKeyPairSpec());
         final PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyPairToSecure);
         return secureBytes(myPKCS8Key.getEncoded());
@@ -195,7 +195,7 @@ public class GordianCoreWrapper
         final PKCS8EncodedKeySpec myPrivate = derivePrivateKeySpec(pSecuredPrivateKey);
 
         /* Determine and check the keyPairSpec */
-        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsymFactory().getKeyPairFactory();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pPublicKeySpec);
         if (!myKeySpec.equals(myFactory.determineKeyPairSpec(myPrivate))) {
             throw new GordianLogicException("Mismatch on keySpecs");
@@ -467,7 +467,7 @@ public class GordianCoreWrapper
     @Override
     public int getPrivateKeyWrapLength(final GordianKeyPair pKeyPair) throws GordianException {
         /* Determine and check the keySpec */
-        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsymFactory().getKeyPairFactory();
         final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myFactory.getKeyPairGenerator(pKeyPair.getKeyPairSpec());
         final PKCS8EncodedKeySpec myPrivateKey = myGenerator.getPKCS8Encoding(pKeyPair);
         return getDataWrapLength(myPrivateKey.getEncoded().length);

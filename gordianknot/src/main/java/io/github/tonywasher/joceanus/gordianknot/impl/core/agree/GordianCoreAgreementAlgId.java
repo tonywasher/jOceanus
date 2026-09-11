@@ -20,20 +20,22 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreement
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9SignType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetSpecASN1;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
@@ -178,7 +180,7 @@ public class GordianCoreAgreementAlgId {
      */
     private void addAllKeyPairs() {
         /* Loop through all the Agreement types */
-        for (GordianKeyPairSpec mySpec : theFactory.getAsyncFactory().getKeyPairFactory().listPossibleKeySpecs()) {
+        for (GordianKeyPairSpec mySpec : theFactory.getAsymFactory().getKeyPairFactory().listPossibleKeySpecs()) {
             /* Add agreements */
             addKeyPair(mySpec);
         }
@@ -248,6 +250,21 @@ public class GordianCoreAgreementAlgId {
                 final GordianCoreNTRUPrimeSpec myNTRUPrime = mySpec.getNTRUPrimeSpec();
                 myId = myId.branch(Integer.toString(myNTRUPrime.getType().ordinal() + 1));
                 myId = myId.branch(Integer.toString(myNTRUPrime.getParams().ordinal() + 1));
+                break;
+            case SMAUGT:
+                myId = myId.branch(Integer.toString(mySpec.getSmaugTSpec().getSpec().ordinal() + 1));
+                break;
+            case HYBRIDKEM:
+                myId = myId.branch(Integer.toString(mySpec.getHybridKEMSpec().getSpec().ordinal() + 1));
+                break;
+            case SM9:
+                myId = switch (mySpec.getSM9KeyType()) {
+                    case GordianSM9EncryptType myEncType ->
+                            myId.branch("1").branch(Integer.toString(myEncType.ordinal() + 1));
+                    case GordianSM9SignType mySignType ->
+                            myId.branch("2").branch(Integer.toString(mySignType.ordinal() + 1));
+                    default -> myId;
+                };
                 break;
             default:
                 break;

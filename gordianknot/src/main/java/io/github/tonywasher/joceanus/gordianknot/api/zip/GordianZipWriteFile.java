@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.zip;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import org.w3c.dom.Document;
 
 import java.io.File;

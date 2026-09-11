@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.cipher;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 
 /**
  * GordianKnot Keyed Cipher.

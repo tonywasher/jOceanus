@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.base;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

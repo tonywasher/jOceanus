@@ -17,8 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.digest.BouncyDigest;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
@@ -48,9 +47,10 @@ public abstract class BouncyDigestSignature
     BouncyDigestSignature(final GordianBaseFactory pFactory,
                           final GordianSignatureSpec pSpec) throws GordianException {
         super(pFactory, pSpec);
-        theDigest = pSpec.getSignatureSpec() == null
+        final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSpec;
+        theDigest = mySpec.getDigestSpec() == null
                 ? new BouncyDigest(null, new NullDigest())
-                : (BouncyDigest) getDigestFactory().createDigest(((GordianCoreSignatureSpec) pSpec).getDigestSpec());
+                : (BouncyDigest) getDigestFactory().createDigest(mySpec.getDigestSpec());
     }
 
     /**
@@ -68,15 +68,24 @@ public abstract class BouncyDigestSignature
     }
 
     /**
-     * Set the digest.
+     * Check for bouncyKeyPair.
      *
-     * @param pSpec the digestSpec.
+     * @return the keyPair
      * @throws GordianException on error
      */
-    protected void setDigest(final GordianDigestSpec pSpec) throws GordianException {
-        theDigest = pSpec == null
+    BouncyKeyPair checkKeyPair() throws GordianException {
+        return BouncyKeyPair.checkKeyPair(super.getKeyPair());
+    }
+
+    /**
+     * Set the digest.
+     *
+     * @param pDigest the digest.
+     */
+    protected void setDigest(final BouncyDigest pDigest) {
+        theDigest = pDigest == null
                 ? new BouncyDigest(null, new NullDigest())
-                : (BouncyDigest) getDigestFactory().createDigest(pSpec);
+                : pDigest;
     }
 
     @Override
@@ -84,7 +93,9 @@ public abstract class BouncyDigestSignature
                        final int pOffset,
                        final int pLength) throws GordianException {
         checkInit();
-        theDigest.update(pBytes, pOffset, pLength);
+        if (checkBuffer(pBytes, pOffset, pLength)) {
+            theDigest.update(pBytes, pOffset, pLength);
+        }
     }
 
     @Override

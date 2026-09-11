@@ -76,6 +76,16 @@ public class GordianCoreSignatureSpec
         isValid = checkValidity();
     }
 
+    /**
+     * Utility function to change signatureType.
+     *
+     * @param pType the new type
+     * @return the updated spec.
+     */
+    public GordianCoreSignatureSpec asSignatureType(final GordianSignatureType pType) {
+        return new GordianCoreSignatureSpec(theKeyPairType.getType(), pType, theSignatureSpec);
+    }
+
     @Override
     public GordianKeyPairType getKeyPairType() {
         return theKeyPairType.getType();
@@ -115,10 +125,7 @@ public class GordianCoreSignatureSpec
      * @return the digestSpec.
      */
     public GordianCoreDigestSpec getDigestSpec() {
-        if (theSignatureSpec instanceof GordianCoreDigestSpec mySpec) {
-            return mySpec;
-        }
-        throw new IllegalArgumentException();
+        return theSignatureSpec instanceof GordianCoreDigestSpec mySpec ? mySpec : null;
     }
 
     /**
@@ -134,6 +141,15 @@ public class GordianCoreSignatureSpec
         throw new IllegalArgumentException();
     }
 
+    /**
+     * Is this a DoubleDigest?
+     *
+     * @return true/false.
+     */
+    public boolean isDoubleDigest() {
+        return Boolean.TRUE.equals(theSignatureSpec);
+    }
+
     @Override
     public boolean isValid() {
         return isValid;
@@ -146,7 +162,7 @@ public class GordianCoreSignatureSpec
      */
     public boolean supportsContext() {
         return switch (theKeyPairType.getType()) {
-            case MLDSA, SLHDSA, EDDSA -> true;
+            case MLDSA, SLHDSA, EDDSA, HYBRIDSIGN -> true;
             default -> false;
         };
     }
@@ -164,10 +180,10 @@ public class GordianCoreSignatureSpec
             case RSA, DSA, EC, DSTU, GOST -> theSignatureSpec instanceof GordianCoreDigestSpec mySpec
                     && mySpec.isValid()
                     && mySpec.getCoreDigestType().supportsLargeData();
-            case EDDSA, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE, HAWK, MAYO,
-                 MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, XMSS, LMS -> theSignatureSpec == null;
-            case PICNIC -> theSignatureSpec == null || checkPICNICDigest();
+            case EDDSA, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE, MAYO,
+                 MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, LMS, SM9, HYBRIDSIGN -> theSignatureSpec == null;
             case SM2 -> checkSM2Digest();
+            case XMSS -> checkXMSSSubSpec();
             case COMPOSITE -> theSignatureSpec instanceof List && checkComposite();
             default -> false;
         };
@@ -191,25 +207,6 @@ public class GordianCoreSignatureSpec
     }
 
     /**
-     * Check picnic spec validity.
-     *
-     * @return valid true/false
-     */
-    private boolean checkPICNICDigest() {
-        /* Check that signature length is 512 */
-        if (!(theSignatureSpec instanceof GordianCoreDigestSpec mySpec)
-                || (!GordianLength.LEN_512.equals(mySpec.getDigestLength()))) {
-            return false;
-        }
-
-        /* Switch on DigestType */
-        return switch (mySpec.getDigestType()) {
-            case SHA2, SHA3, SHAKE -> true;
-            default -> false;
-        };
-    }
-
-    /**
      * Check sm2 spec validity.
      *
      * @return valid true/false
@@ -225,6 +222,17 @@ public class GordianCoreSignatureSpec
                     && !mySpec.isSha2Hybrid();
             default -> false;
         };
+    }
+
+    /**
+     * Check XMSS subSpec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkXMSSSubSpec() {
+        return GordianSignatureType.PREHASH.equals(theSignatureType.getType())
+                ? theSignatureSpec instanceof Boolean
+                : theSignatureSpec == null;
     }
 
     @Override
@@ -244,8 +252,10 @@ public class GordianCoreSignatureSpec
                         myBuilder.append(GordianSpecConstants.SEP).append(myIterator.next().toString());
                     }
                     theName = myBuilder.toString();
+                } else if (theSignatureType.hasDoubleDigest(theKeyPairType.getType())) {
+                    theName += Boolean.TRUE.equals(theSignatureSpec) ? "-DOUBLE" : "";
                 } else {
-                    theName += GordianSpecConstants.SEP + theSignatureSpec.toString();
+                    theName += GordianSpecConstants.SEP + theSignatureSpec;
                 }
             }
         }

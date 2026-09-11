@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.jca.encrypt;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.base.JcaProvider;
 
 import javax.crypto.Cipher;

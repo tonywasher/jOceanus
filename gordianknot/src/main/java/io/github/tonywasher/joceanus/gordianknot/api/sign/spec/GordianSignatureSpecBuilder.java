@@ -54,6 +54,14 @@ public interface GordianSignatureSpecBuilder {
     GordianSignatureSpecBuilder withDigestSpec(GordianDigestSpec pDigestSpec);
 
     /**
+     * Define Double digest.
+     *
+     * @param pDouble true/false
+     * @return the Builder
+     */
+    GordianSignatureSpecBuilder withDoubleDigest(Boolean pDouble);
+
+    /**
      * Define signatureSpec list.
      *
      * @param pSpecs the specs
@@ -122,6 +130,15 @@ public interface GordianSignatureSpecBuilder {
     }
 
     /**
+     * Create SM9Spec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec sm9() {
+        return withKeyPairType(GordianKeyPairType.SM9).build();
+    }
+
+    /**
      * Create DSTU4145Spec.
      *
      * @return the SignatureSpec
@@ -154,7 +171,7 @@ public interface GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    default GordianSignatureSpec eddsaph() {
+    default GordianSignatureSpec edDSAph() {
         return withKeyPairType(GordianKeyPairType.EDDSA).withSignatureType(GordianSignatureType.PREHASH).build();
     }
 
@@ -163,8 +180,17 @@ public interface GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    default GordianSignatureSpec slhdsa() {
+    default GordianSignatureSpec slhDSA() {
         return withKeyPairType(GordianKeyPairType.SLHDSA).build();
+    }
+
+    /**
+     * Create SLHDSA preHash Spec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec slhDSAph() {
+        return withKeyPairType(GordianKeyPairType.SLHDSA).withSignatureType(GordianSignatureType.PREHASH).build();
     }
 
     /**
@@ -172,8 +198,17 @@ public interface GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    default GordianSignatureSpec mldsa() {
+    default GordianSignatureSpec mlDSA() {
         return withKeyPairType(GordianKeyPairType.MLDSA).build();
+    }
+
+    /**
+     * Create MLDSA preHash Spec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec mlDSAph() {
+        return withKeyPairType(GordianKeyPairType.MLDSA).withSignatureType(GordianSignatureType.PREHASH).build();
     }
 
     /**
@@ -183,25 +218,6 @@ public interface GordianSignatureSpecBuilder {
      */
     default GordianSignatureSpec falcon() {
         return withKeyPairType(GordianKeyPairType.FALCON).build();
-    }
-
-    /**
-     * Create picnicSpec.
-     *
-     * @return the SignatureSpec
-     */
-    default GordianSignatureSpec picnic() {
-        return withKeyPairType(GordianKeyPairType.PICNIC).build();
-    }
-
-    /**
-     * Create picnicSpec.
-     *
-     * @param pDigest the digestSpec
-     * @return the SignatureSpec
-     */
-    default GordianSignatureSpec picnic(final GordianDigestSpec pDigest) {
-        return withKeyPairType(GordianKeyPairType.PICNIC).withDigestSpec(pDigest).build();
     }
 
     /**
@@ -229,15 +245,6 @@ public interface GordianSignatureSpecBuilder {
      */
     default GordianSignatureSpec haetae() {
         return withKeyPairType(GordianKeyPairType.HAETAE).build();
-    }
-
-    /**
-     * Create hawkSpec.
-     *
-     * @return the SignatureSpec
-     */
-    default GordianSignatureSpec hawk() {
-        return withKeyPairType(GordianKeyPairType.HAWK).build();
     }
 
     /**
@@ -313,12 +320,25 @@ public interface GordianSignatureSpecBuilder {
     }
 
     /**
-     * Create xmssPHSpec.
+     * Create xmssPhSpec.
      *
      * @return the SignatureSpec
      */
-    default GordianSignatureSpec xmssph() {
-        return withKeyPairType(GordianKeyPairType.XMSS).withSignatureType(GordianSignatureType.PREHASH).build();
+    default GordianSignatureSpec xmssPh() {
+        return withKeyPairType(GordianKeyPairType.XMSS)
+                .withSignatureType(GordianSignatureType.PREHASH)
+                .withDoubleDigest(Boolean.FALSE).build();
+    }
+
+    /**
+     * Create xmssPhSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec xmssDoublePh() {
+        return withKeyPairType(GordianKeyPairType.XMSS)
+                .withSignatureType(GordianSignatureType.PREHASH)
+                .withDoubleDigest(Boolean.TRUE).build();
     }
 
     /**
@@ -328,6 +348,15 @@ public interface GordianSignatureSpecBuilder {
      */
     default GordianSignatureSpec lms() {
         return withKeyPairType(GordianKeyPairType.LMS).build();
+    }
+
+    /**
+     * Create hybridSpec.
+     *
+     * @return the SignatureSpec
+     */
+    default GordianSignatureSpec hybrid() {
+        return withKeyPairType(GordianKeyPairType.HYBRIDSIGN).build();
     }
 
     /**

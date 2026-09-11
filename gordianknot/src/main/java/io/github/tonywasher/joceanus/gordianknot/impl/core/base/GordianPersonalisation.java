@@ -16,16 +16,16 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.base;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
@@ -300,8 +300,9 @@ public class GordianPersonalisation {
      * Update a MAC with personalisation.
      *
      * @param pMac the MAC
+     * @throws GordianException on error
      */
-    public void updateMac(final GordianMac pMac) {
+    public void updateMac(final GordianMac pMac) throws GordianException {
         pMac.update(thePersonalisation);
         pMac.update(theInitVector);
     }

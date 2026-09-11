@@ -142,11 +142,6 @@ public enum GordianKeyPairType {
     FALCON,
 
     /**
-     * Picnic.
-     */
-    PICNIC,
-
-    /**
      * NewHope.
      */
     NEWHOPE,
@@ -165,11 +160,6 @@ public enum GordianKeyPairType {
      * HAETAE.
      */
     HAETAE,
-
-    /**
-     * Hawk.
-     */
-    HAWK,
 
     /**
      * Mayo.
@@ -192,6 +182,11 @@ public enum GordianKeyPairType {
     SDITH,
 
     /**
+     * Smaug.
+     */
+    SMAUGT,
+
+    /**
      * Snova.
      */
     SNOVA,
@@ -205,6 +200,21 @@ public enum GordianKeyPairType {
      * UOV.
      */
     UOV,
+
+    /**
+     * SM9.
+     */
+    SM9,
+
+    /**
+     * HybridKEM.
+     */
+    HYBRIDKEM,
+
+    /**
+     * HybridSign.
+     */
+    HYBRIDSIGN,
 
     /**
      * Composite.

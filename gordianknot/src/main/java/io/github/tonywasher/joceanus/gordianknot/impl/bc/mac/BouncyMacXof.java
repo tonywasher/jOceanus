@@ -16,7 +16,8 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.mac;
 
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianXof;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacXof;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import org.bouncycastle.crypto.Mac;
@@ -26,7 +27,8 @@ import org.bouncycastle.crypto.Xof;
  * BouncyCastle Mac Xof.
  */
 public class BouncyMacXof
-        extends BouncyMac implements GordianXof {
+        extends BouncyMac
+        implements GordianMacXof {
     /**
      * The Xof.
      */
@@ -49,20 +51,26 @@ public class BouncyMacXof
     @Override
     public int finish(final byte[] pOutBuf,
                       final int pOutOff,
-                      final int pOutLen) {
+                      final int pOutLen) throws GordianException {
+        checkInit();
+        checkOutputBuffer(pOutBuf, pOutOff, pOutLen);
         return theXof.doFinal(pOutBuf, pOutOff, pOutLen);
     }
 
     @Override
     public int output(final byte[] pOutBuf,
                       final int pOutOff,
-                      final int pOutLen) {
+                      final int pOutLen) throws GordianException {
+        checkInit();
+        checkOutputBuffer(pOutBuf, pOutOff, pOutLen);
         return theXof.doOutput(pOutBuf, pOutOff, pOutLen);
     }
 
     @Override
     public int doFinish(final byte[] pBuffer,
-                        final int pOffset) {
+                        final int pOffset) throws GordianException {
+        checkInit();
+        checkOutputBuffer(pBuffer, pOffset, getMacSize());
         return theXof.doFinal(pBuffer, pOffset);
     }
 }

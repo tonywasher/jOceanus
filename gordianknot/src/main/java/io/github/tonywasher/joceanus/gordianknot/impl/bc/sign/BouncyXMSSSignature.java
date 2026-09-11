@@ -17,21 +17,23 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.digest.BouncyDigest;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.digest.BouncyDigestXof;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.digest.BouncyDoubleDigest;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXMSSKeyPair.BouncyXMSSMTPrivateKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXMSSKeyPair.BouncyXMSSMTPublicKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXMSSKeyPair.BouncyXMSSPrivateKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXMSSKeyPair.BouncyXMSSPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreXMSSSpec;
-import org.bouncycastle.pqc.crypto.xmss.XMSSMTSigner;
-import org.bouncycastle.pqc.crypto.xmss.XMSSSigner;
+import org.bouncycastle.crypto.CryptoException;
+import org.bouncycastle.crypto.Signer;
+import org.bouncycastle.crypto.signers.XMSSMTSigner;
+import org.bouncycastle.crypto.signers.XMSSSigner;
 
 /**
  * XMSS signature.
@@ -46,7 +48,7 @@ public class BouncyXMSSSignature
     /**
      * The XMSS Signer.
      */
-    private final XMSSSigner theSigner;
+    private final XMSSSigner theStdSigner;
 
     /**
      * The XMSSMT Signer.
@@ -54,9 +56,14 @@ public class BouncyXMSSSignature
     private final XMSSMTSigner theMTSigner;
 
     /**
-     * Are we using the MT signer?
+     * Is this a double digest?
      */
-    private boolean isMT;
+    private final boolean isDouble;
+
+    /**
+     * The active Signer.
+     */
+    private Signer theSigner;
 
     /**
      * Constructor.
@@ -71,59 +78,60 @@ public class BouncyXMSSSignature
         super(pFactory, pSpec);
 
         /* Create the signers */
-        theSigner = new XMSSSigner();
+        theStdSigner = new XMSSSigner();
         theMTSigner = new XMSSMTSigner();
 
         /* Determine preHash */
         preHash = GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
+        isDouble = Boolean.TRUE.equals(pSpec.getSignatureSpec());
     }
 
     @Override
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        final BouncyKeyPair myPair = checkKeyPair();
 
         /* Set the digest */
         final GordianCoreKeyPairSpec myKeyPairSpec = (GordianCoreKeyPairSpec) myPair.getKeyPairSpec();
         final GordianCoreXMSSSpec myKeySpec = myKeyPairSpec.getXMSSSpec();
-        final GordianDigestSpec myDigestSpec = myKeySpec.getDigestSpec();
-        setDigest(preHash ? myDigestSpec : null);
+        BouncyDigest myDigest = null;
+        if (preHash) {
+            final GordianDigestSpec myDigestSpec = myKeySpec.getDigestSpec();
+            myDigest = (BouncyDigest) getFactory().getDigestFactory().createDigest(myDigestSpec);
+            if (isDouble) {
+                myDigest = new BouncyDoubleDigest((BouncyDigestXof) myDigest);
+            }
+        }
+        setDigest(myDigest);
 
         /* Initialise and set the signer */
-        isMT = myKeySpec.isMT();
-        if (isMT) {
-            final BouncyXMSSMTPrivateKey myPrivate = (BouncyXMSSMTPrivateKey) myPair.getPrivateKey();
-            theMTSigner.init(true, myPrivate.getPrivateKey());
-        } else {
-            final BouncyXMSSPrivateKey myPrivate = (BouncyXMSSPrivateKey) myPair.getPrivateKey();
-            theSigner.init(true, myPrivate.getPrivateKey());
-        }
+        theSigner = myKeySpec.isMT() ? theMTSigner : theStdSigner;
+        theSigner.init(true, myPair.getPrivateKey().getPrivateKey());
     }
 
     @Override
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        final BouncyKeyPair myPair = getKeyPair();
-        BouncyKeyPair.checkKeyPair(myPair);
+        final BouncyKeyPair myPair = checkKeyPair();
 
         /* Set the digest */
         final GordianCoreKeyPairSpec myKeyPairSpec = (GordianCoreKeyPairSpec) myPair.getKeyPairSpec();
         final GordianCoreXMSSSpec myKeySpec = myKeyPairSpec.getXMSSSpec();
-        final GordianDigestSpec myDigestSpec = myKeySpec.getDigestSpec();
-        setDigest(preHash ? myDigestSpec : null);
+        BouncyDigest myDigest = null;
+        if (preHash) {
+            final GordianDigestSpec myDigestSpec = myKeySpec.getDigestSpec();
+            myDigest = (BouncyDigest) getFactory().getDigestFactory().createDigest(myDigestSpec);
+            if (isDouble) {
+                myDigest = new BouncyDoubleDigest((BouncyDigestXof) myDigest);
+            }
+        }
+        setDigest(myDigest);
 
         /* Initialise and set the signer */
-        isMT = myKeySpec.isMT();
-        if (isMT) {
-            final BouncyXMSSMTPublicKey myPublic = (BouncyXMSSMTPublicKey) myPair.getPublicKey();
-            theMTSigner.init(false, myPublic.getPublicKey());
-        } else {
-            final BouncyXMSSPublicKey myPublic = (BouncyXMSSPublicKey) myPair.getPublicKey();
-            theSigner.init(false, myPublic.getPublicKey());
-        }
+        theSigner = myKeySpec.isMT() ? theMTSigner : theStdSigner;
+        theSigner.init(false, myPair.getPublicKey().getPublicKey());
     }
 
     @Override
@@ -131,10 +139,14 @@ public class BouncyXMSSSignature
         /* Check that we are in signing mode */
         checkMode(GordianSignatureMode.SIGN);
 
-        /* Sign the message */
-        return isMT
-                ? theMTSigner.generateSignature(getDigest())
-                : theSigner.generateSignature(getDigest());
+        /* Update signer with digest and create signature */
+        try {
+            final byte[] myDigest = getDigest();
+            theSigner.update(myDigest, 0, myDigest.length);
+            return theSigner.generateSignature();
+        } catch (CryptoException e) {
+            throw new GordianCryptoException("Failed to sign message", e);
+        }
     }
 
     @Override
@@ -143,8 +155,9 @@ public class BouncyXMSSSignature
         checkMode(GordianSignatureMode.VERIFY);
 
         /* Verify the message */
-        return isMT
-                ? theMTSigner.verifySignature(getDigest(), pSignature)
-                : theSigner.verifySignature(getDigest(), pSignature);
+        /* Update signer with digest and verify signature */
+        final byte[] myDigest = getDigest();
+        theSigner.update(myDigest, 0, myDigest.length);
+        return theSigner.verifySignature(pSignature);
     }
 }

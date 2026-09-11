@@ -21,10 +21,10 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParam
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
@@ -33,7 +33,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureS
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianMiniCertificate;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreEdwardsSpec;
@@ -105,8 +104,8 @@ public abstract class GordianCoreAgreementFactory
     @Override
     public GordianCertificate newMiniCertificate(final X500Name pSubject,
                                                  final GordianKeyPair pKeyPair,
-                                                 final GordianKeyPairUsage pUsage) throws GordianException {
-        return new GordianMiniCertificate(theFactory, pSubject, pKeyPair, pUsage);
+                                                 final GordianKeyPairUse... pUses) throws GordianException {
+        return new GordianMiniCertificate(theFactory, pSubject, pKeyPair, pUses);
     }
 
     @Override
@@ -121,7 +120,9 @@ public abstract class GordianCoreAgreementFactory
 
         /* Set the details */
         myAgreement.setClientCertificate(pParams.getClientCertificate());
+        myAgreement.setClientName(pParams.getClientName());
         myAgreement.setServerCertificate(pParams.getServerCertificate());
+        myAgreement.setServerName(pParams.getServerName());
         myAgreement.setResultType(pParams.getResultType());
         myAgreement.setAdditionalData(pParams.getAdditionalData());
 
@@ -212,7 +213,7 @@ public abstract class GordianCoreAgreementFactory
      * @return the engine
      * @throws GordianException on error
      */
-    protected GordianCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
+    public GordianCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
         /* If this is a composite agreement */
         if (pSpec.getKeyPairSpec().getKeyPairType() == GordianKeyPairType.COMPOSITE) {
             /* Create an engine for each sub-agreement */
@@ -259,7 +260,7 @@ public abstract class GordianCoreAgreementFactory
 
     @Override
     public void setSigner(final GordianCertificate pSigner) throws GordianException {
-        final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
+        final GordianSignatureFactory mySignFactory = theFactory.getAsymFactory().getSignatureFactory();
         final GordianSignatureSpec mySignSpec = pSigner == null ? null : mySignFactory.defaultForKeyPair(pSigner.getKeyPair().getKeyPairSpec());
         setSigner(pSigner, mySignSpec);
     }
@@ -273,7 +274,7 @@ public abstract class GordianCoreAgreementFactory
         }
 
         /* Check that certificate can sign data */
-        final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
+        final GordianSignatureFactory mySignFactory = theFactory.getAsymFactory().getSignatureFactory();
         if (!mySignFactory.validSignatureSpecForKeyPair(pSigner.getKeyPair(), pSignSpec)) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pSignSpec));
         }

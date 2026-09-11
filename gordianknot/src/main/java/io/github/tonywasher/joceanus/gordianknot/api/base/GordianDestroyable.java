@@ -17,6 +17,8 @@
 
 package io.github.tonywasher.joceanus.gordianknot.api.base;
 
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+
 /**
  * GordianKnot interface for Destroyable keys.
  */

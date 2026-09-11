@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 

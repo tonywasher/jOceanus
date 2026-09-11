@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.stream;
 
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -95,10 +96,15 @@ public class GordianDigestOutputStream
     protected void processData(final byte[] pBytes,
                                final int pOffset,
                                final int pLength) throws IOException {
-        /* Update the digest and write bytes to underlying stream */
-        theDigest.update(pBytes, pOffset, pLength);
-        theDataLen += pLength;
-        writeToStream(pBytes, pOffset, pLength);
+        /* Protect against exceptions */
+        try {
+            /* Update the digest and write bytes to underlying stream */
+            theDigest.update(pBytes, pOffset, pLength);
+            theDataLen += pLength;
+            writeToStream(pBytes, pOffset, pLength);
+        } catch (GordianException e) {
+            throw new IOException("Failed to process data", e);
+        }
     }
 
     @Override

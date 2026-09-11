@@ -20,15 +20,15 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreement
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementCalculator.GordianDerivationId;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
@@ -53,7 +53,8 @@ import java.util.Random;
 /**
  * Implementation engine for composite Agreements.
  */
-public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
+public class GordianCoreAgreementComposite
+        extends GordianCoreAgreementEngine {
     /**
      * The factory.
      */
@@ -157,7 +158,7 @@ public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
                 myEngine.buildClientHello();
 
                 /* Add any encapsulated to sequence */
-                final byte[] myEngEncapsulated = myEngState.getEncapsulated();
+                final byte[] myEngEncapsulated = myEngState.getClientEncapsulated();
                 if (myEngEncapsulated != null) {
                     myEncapsulated.add(new DEROctetString(myEngEncapsulated));
                 }
@@ -165,7 +166,7 @@ public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
 
             /* Record combined ephemeral and encapsulated */
             if (myEncapsulated.size() > 0) {
-                theState.setEncapsulated(new DERSequence(myEncapsulated).getEncoded());
+                theState.setClientEncapsulated(new DERSequence(myEncapsulated).getEncoded());
             }
 
             /* catch exceptions */
@@ -198,7 +199,7 @@ public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
         final Iterator<GordianKeyPair> myServerEphemeralIterator = myServerEphemeralKeyPair == null ? null : myServerEphemeralKeyPair.iterator();
 
         /* Access encapsulated sequence */
-        final byte[] myEncapsulated = theState.getEncapsulated();
+        final byte[] myEncapsulated = theState.getClientEncapsulated();
         final Enumeration<?> enEnc = myEncapsulated == null ? null : ASN1Sequence.getInstance(myEncapsulated).getObjects();
 
         /* Loop through the engines */

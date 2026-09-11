@@ -23,6 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSWidth;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9KeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSHeight;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSMTLayers;
@@ -97,6 +98,14 @@ public interface GordianKeyPairSpecBuilder {
      */
     GordianKeyPairSpecBuilder withNTRUPrimeSubSpec(GordianNTRUPrimeType pType,
                                                    GordianNTRUPrimeParams pParams);
+
+    /**
+     * Define isAwareKeyType.
+     *
+     * @param pType the type
+     * @return the Builder
+     */
+    GordianKeyPairSpecBuilder withIdAwareKeyType(GordianIdAwareKeyType pType);
 
     /**
      * Define keyPairSpec list.
@@ -421,16 +430,6 @@ public interface GordianKeyPairSpecBuilder {
     }
 
     /**
-     * Create PicnicKey.
-     *
-     * @param pSpec the Picnic Spec
-     * @return the KeySpec
-     */
-    default GordianKeyPairSpec picnic(final GordianPicnicSpec pSpec) {
-        return withKeyPairType(GordianKeyPairType.PICNIC).withEnumSubSpec(pSpec).build();
-    }
-
-    /**
      * Create AIMerKey.
      *
      * @param pSpec the AIMer Spec
@@ -458,16 +457,6 @@ public interface GordianKeyPairSpecBuilder {
      */
     default GordianKeyPairSpec haetae(final GordianHAETAESpec pSpec) {
         return withKeyPairType(GordianKeyPairType.HAETAE).withEnumSubSpec(pSpec).build();
-    }
-
-    /**
-     * Create HawkKey.
-     *
-     * @param pSpec the Hawk Spec
-     * @return the KeySpec
-     */
-    default GordianKeyPairSpec hawk(final GordianHawkSpec pSpec) {
-        return withKeyPairType(GordianKeyPairType.HAWK).withEnumSubSpec(pSpec).build();
     }
 
     /**
@@ -511,6 +500,16 @@ public interface GordianKeyPairSpecBuilder {
     }
 
     /**
+     * Create SmaugKey.
+     *
+     * @param pSpec the Smaug Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec smaugT(final GordianSmaugTSpec pSpec) {
+        return withKeyPairType(GordianKeyPairType.SMAUGT).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
      * Create SnovaKey.
      *
      * @param pSpec the Snova Spec
@@ -538,6 +537,36 @@ public interface GordianKeyPairSpecBuilder {
      */
     default GordianKeyPairSpec uov(final GordianUOVSpec pSpec) {
         return withKeyPairType(GordianKeyPairType.UOV).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
+     * Create SM9Key.
+     *
+     * @param pSpec the SM9 Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec sm9(final GordianSM9KeyType pSpec) {
+        return withKeyPairType(GordianKeyPairType.SM9).withIdAwareKeyType(pSpec).build();
+    }
+
+    /**
+     * Create HybridKEMKey.
+     *
+     * @param pSpec the HybridKEM Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec hybridKEM(final GordianHybridKEMSpec pSpec) {
+        return withKeyPairType(GordianKeyPairType.HYBRIDKEM).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
+     * Create HybridSignKey.
+     *
+     * @param pSpec the HybridSign Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec hybridSign(final GordianHybridSignSpec pSpec) {
+        return withKeyPairType(GordianKeyPairType.HYBRIDSIGN).withEnumSubSpec(pSpec).build();
     }
 
     /**

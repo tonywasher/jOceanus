@@ -22,29 +22,32 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParam
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9EncryptType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpecBuilder;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -59,6 +62,11 @@ public final class GordianKeyPairValidity {
      * Error message.
      */
     private static final String ERRORMSG = "Mismatch on public/private key";
+
+    /**
+     * Test Server identity.
+     */
+    public static final byte[] SERVERID = "TestServer".getBytes();
 
     /**
      * Server X500Name.
@@ -86,6 +94,8 @@ public final class GordianKeyPairValidity {
             case GordianEncryptorSpec mySpec -> checkValidity(pFactory, pKeyPair, mySpec);
 
             case GordianAgreementSpec mySpec -> checkValidity(pFactory, pKeyPair, mySpec);
+            case null -> {
+            }
             default -> throw new GordianLogicException("Unexpected keyPairType");
         }
     }
@@ -105,12 +115,14 @@ public final class GordianKeyPairValidity {
         final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();
 
         /* Create signer */
-        final GordianSignatureFactory mySigns = pFactory.getAsyncFactory().getSignatureFactory();
+        final GordianSignatureFactory mySigns = pFactory.getAsymFactory().getSignatureFactory();
         final GordianSignature mySigner = mySigns.createSigner(pSignSpec);
 
         /* Create signature */
         final GordianSignParamsBuilder myBuilder = mySigns.newSignParamsBuilder();
-        final GordianSignParams myParams = myBuilder.keyPair(pKeyPair);
+        final GordianSignParams myParams = (pKeyPair instanceof GordianIdAwareKeyPair)
+                ? myBuilder.keyPairAndIdentity(pKeyPair, SERVERID)
+                : myBuilder.keyPair(pKeyPair);
         mySigner.initForSigning(myParams);
         mySigner.update(myData);
         final byte[] mySignature = mySigner.sign();
@@ -138,7 +150,7 @@ public final class GordianKeyPairValidity {
         final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();
 
         /* Create encryptor */
-        final GordianEncryptorFactory myEncrypts = pFactory.getAsyncFactory().getEncryptorFactory();
+        final GordianEncryptorFactory myEncrypts = pFactory.getAsymFactory().getEncryptorFactory();
         final GordianEncryptor myEncryptor = myEncrypts.createEncryptor(pEncryptSpec);
 
         /* Encrypt data */
@@ -167,10 +179,13 @@ public final class GordianKeyPairValidity {
                                       final GordianKeyPair pKeyPair,
                                       final GordianAgreementSpec pAgreeSpec) throws GordianException {
         /* Create agreement on client side */
-        final GordianAgreementFactory myAgrees = pFactory.getAsyncFactory().getAgreementFactory();
-        final GordianCertificate myCert = myAgrees.newMiniCertificate(SERVER, pKeyPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+        final GordianAgreementFactory myAgrees = pFactory.getAsymFactory().getAgreementFactory();
+        final GordianCertificate myCert = myAgrees.newMiniCertificate(SERVER, pKeyPair, GordianKeyPairUse.AGREEMENT);
         GordianAgreementParams myParams = myAgrees.newAgreementParams(pAgreeSpec, GordianLength.LEN_256.getByteLength())
                 .setServerCertificate(myCert);
+        if (pKeyPair instanceof GordianIdAwareKeyPair) {
+            myParams = myParams.setServerName(SERVERID);
+        }
         GordianAgreement myAgreement = myAgrees.createAgreement(myParams);
         final byte[] myHello = myAgreement.nextMessage();
         final byte[] myClient = (byte[]) myAgreement.getResult();
@@ -201,19 +216,24 @@ public final class GordianKeyPairValidity {
         final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
         final GordianEncryptorSpecBuilder myEncBuilder = GordianCoreEncryptorSpecBuilder.newInstance();
         final GordianAgreementSpecBuilder myAgreeBuilder = GordianCoreAgreementSpecBuilder.newInstance();
+        final GordianSignatureSpecBuilder mySignBuilder = GordianCoreSignatureSpecBuilder.newInstance();
         final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
         return switch (mySpec.getKeyPairType()) {
-            case RSA, DSA, EDDSA, EC, GOST, DSTU, SM2, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE, HAWK,
-                 MAYO, MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, PICNIC, XMSS, LMS ->
-                    pFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);
+            case RSA, DSA, EDDSA, EC, GOST, DSTU, SM2, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE,
+                 MAYO, MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, XMSS, LMS ->
+                    pFactory.getAsymFactory().getSignatureFactory().defaultForKeyPair(mySpec);
             case ELGAMAL -> myEncBuilder.elGamal(myBuilder.sha2(GordianLength.LEN_256));
             case DH -> myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);
             case XDH -> mySpec.getEdwardsSpec().is25519()
                     ? myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF)
                     : myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA512KDF);
-            case CMCE, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE ->
+            case CMCE, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE, SMAUGT ->
                     myAgreeBuilder.kem(mySpec, GordianAgreementKDF.NONE);
             case FRODO -> myAgreeBuilder.kem(mySpec, GordianAgreementKDF.KMAC128);
+            case SM9 -> mySpec.getSM9KeyType() instanceof GordianSM9EncryptType
+                    ? myAgreeBuilder.kem(mySpec, GordianAgreementKDF.NONE)
+                    : mySignBuilder.sm9();
+            case HYBRIDKEM, HYBRIDSIGN -> null;
             default -> throw new GordianDataException("No validity check found for :" + mySpec.getKeyPairType());
         };
     }

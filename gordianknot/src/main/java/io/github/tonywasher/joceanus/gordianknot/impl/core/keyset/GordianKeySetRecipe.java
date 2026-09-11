@@ -16,17 +16,17 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianIdManager;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianPersonalisation;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 
 import java.security.SecureRandom;
 import java.util.Arrays;

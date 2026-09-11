@@ -76,9 +76,9 @@
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myAsymFactory.getAgreementFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 final GordianAgreementSpecBuilder myAgreementBuilder = myAgreementFactory.newAgreementSpecBuilder()
 
@@ -89,14 +89,19 @@ final GordianKeyPair myTarget = myGenerator.generateKeyPair();
 
 /* Create mini-certificates */
 final X500Name myServerName = ...
-final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget,
-                                                   new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget, GordianKeyPairUse.AGREEMENT);
+final boolean isIdAwareMaster = myTarget instanceof GordianIdAwareKeyPair idAware
+                                &amp;&amp; !idAware.isUserKey();
+final byte[] myIdentity = .. /* If IdMaster */
 
 /* Create the client hello */
 final GordianAgreementSpec myAgreeSpec = myAgreementBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);
 final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
 GordianAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec)
                                                     .setServerCertificate(myTargetCert);
+if (isIdAwareMaster) {
+    myParams = myParams.setServerName(myIdentity);
+}
 final GordianAgreement mySender = myAgrees.createAgreement(myParams);
 final byte[] myClientHello = mySender.nextMessage();
 final GordianKeySet myClientKeySet = mySender.getKeySetResult();
@@ -136,9 +141,9 @@ final GordianKeySet myServerKeySet = myResponder.getKeySetResult();
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myAsymFactory.getAgreementFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 final GordianAgreementSpecBuilder myAgreementBuilder = myAgreementFactory.newAgreementSpecBuilder()
 
@@ -150,11 +155,13 @@ final GordianKeyPair myTarget = myGenerator.generateKeyPair();
 
 /* Create mini-certificates */
 final X500Name myClientName = ...
-final GordianCertificate mySourceCert = myAgreementFactory.newMiniCertificate(myClientName, mySource,
-                                                   new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+final GordianCertificate mySourceCert = myAgreementFactory.newMiniCertificate(myClientName, mySource, GordianKeyPairUse.AGREEMENT);
 final X500Name myServerName = ...
-final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget,
-                                                   new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget, GordianKeyPairUse.AGREEMENT);
+final boolean isIdAwareMaster = myTarget instanceof GordianIdAwareKeyPair idAware
+                                &amp;&amp; !idAware.isUserKey();
+final byte[] mySourceIdentity = .. /* If IdMaster */
+final byte[] myTargetIdentity = .. /* If IdMaster */
 
 /* Create the client hello */
 final GordianAgreementSpec myAgreeSpec = myAgreementBuilder.unified(mySpec, GordianAgreementKDF.SHA256KDF);
@@ -162,6 +169,9 @@ final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_2
 GordianAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec)
                                                     .setClientCertificate(mySourceCert)
                                                     .setServerCertificate(myTargetCert);
+if (isIdAwareMaster) {
+    myParams = myParams.setClientName(mySourceIdentity).setServerName(myTargetIdentity);
+}
 final GordianAgreement mySender = myAgrees.createAgreement(myParams);
 final byte[] myClientHello = mySender.nextMessage();
 
@@ -206,9 +216,9 @@ final GordianKeySet myClientKeySet = myClient.getKeySetResult();
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myAsymFactory.getAgreementFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 final GordianAgreementSpecBuilder myAgreementBuilder = myAgreementFactory.newAgreementSpecBuilder()
 
@@ -220,11 +230,13 @@ final GordianKeyPair myTarget = myGenerator.generateKeyPair();
 
 /* Create mini-certificates */
 final X500Name myClientName = ...
-final GordianCertificate mySourceCert = myAgreementFactory.newMiniCertificate(myClientName, mySource,
-                                                   new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+final GordianCertificate mySourceCert = myAgreementFactory.newMiniCertificate(myClientName, mySource, GordianKeyPairUse.AGREEMENT);
 final X500Name myServerName = ...
-final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget,
-                                                   new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget, GordianKeyPairUse.AGREEMENT);
+final boolean isIdAwareMaster = myTarget instanceof GordianIdAwareKeyPair idAware
+                                &amp;&amp; !idAware.isUserKey();
+final byte[] mySourceIdentity = .. /* If IdMaster */
+final byte[] myTargetIdentity = .. /* If IdMaster */
 
 /* Create the client hello */
 final GordianAgreementSpec myAgreeSpec = myAgreementBuilder.unifiedConfirm(mySpec, GordianAgreementKDF.SHA256KDF);
@@ -232,6 +244,9 @@ final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_2
 GordianAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec)
                                                     .setClientCertificate(mySourceCert)
                                                     .setServerCertificate(myTargetCert);
+if (isIdAwareMaster) {
+    myParams = myParams.setClientName(mySourceIdentity).setServerName(myTargetIdentity);
+}
 final GordianAgreement mySender = myAgrees.createAgreement(myParams);
 final byte[] myClientHello = mySender.nextMessage();
 
@@ -275,9 +290,9 @@ final GordianKeySet myServerKeySet = myServer.getKeySetResult();
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myAsymFactory.getAgreementFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 final GordianAgreementSpecBuilder myAgreementBuilder = myAgreementFactory.newAgreementSpecBuilder()
 
@@ -288,8 +303,7 @@ final GordianKeyPair mySigner = myGenerator.generateKeyPair();
 
 /* Create mini-certificates */
 final X500Name myClientName = ...
-final GordianCertificate mySignerCert = myAgreementFactory.newMiniCertificate(myClientName, mySigner,
-                                                   new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE));
+final GordianCertificate mySignerCert = myAgreementFactory.newMiniCertificate(myClientName, mySigner, GordianKeyPairUse.SIGNATURE);
 
 /* Create the client hello */
 final GordianAgreementSpec myAgreeSpec = myAgreementBuilder.unified(mySpec, GordianAgreementKDF.SHA256KDF);
@@ -327,9 +341,9 @@ final GordianKeySet myClientKeySet = myClient.getKeySetResult();
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myAsymFactory.getAgreementFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 final GordianAgreementSpecBuilder myAgreementBuilder = myAgreementFactory.newAgreementSpecBuilder()
 
@@ -341,8 +355,7 @@ final GordianKeyPair myTarget = myGenerator.generateKeyPair();
 
 /* Create mini-certificates */
 final X500Name myServerName = ...
-final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget,
-                                                   new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(myServerName, myTarget, GordianKeyPairUse.AGREEMENT);
 
 /* Handle as standard */
 ....
@@ -353,12 +366,13 @@ final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(my
                 <p>The following agreement algorithms are supported.</p>
                 <table class="defTable">
                     <tr><th class="defHdr">KeyPairType</th><th class="defHdr">AgreementType</th><th class="defHdr">Notes</th></tr>
-                    <tr><td>RSA</td><td>KEM</td><td>Not available in JCA</td></tr>
+                    <tr><td>RSA</td><td>KEM, WRAP</td><td>KEM not available in JCA</td></tr>
                     <tr><td>EC, GOST2012, SM2</td><td>KEM, ANON, BASIC, SIGNED, MQV, UNIFIED, SM2</td><td>KEM and SM2-CONFIRM not available in JCA</td></tr>
                     <tr><td>DSTU4145</td><td>KEM, ANON, BASIC, SIGNED, MQV, UNIFIED</td><td>KEM not available in JCA</td></tr>
                     <tr><td>DH</td><td>ANON, BASIC, SIGNED, MQV, UNIFIED</td><td/></tr>
                     <tr><td>XDH</td><td>ANON, BASIC, SIGNED, UNIFIED</td><td/></tr>
-                    <tr><td>BIKE, CMCE, Frodo, HQC, MLKEM, NEWHOPE, NTRU, NTRUPLUS, NTRUPRIME, SABER</td><td>KEM</td><td/></tr>
+                    <tr><td>BIKE, CMCE, Frodo, HQC, MLKEM, NEWHOPE, NTRU, NTRUPLUS, NTRUPRIME, SABER, SMAUGT, HYBRIDKEM</td><td>KEM</td><td/></tr>
+                    <tr><td>SM9</td><td>KEM, SM9</td><td>SM9-CONFIRM not available in JCA</td></tr>
                  </table>
             </subsection>
         </section>

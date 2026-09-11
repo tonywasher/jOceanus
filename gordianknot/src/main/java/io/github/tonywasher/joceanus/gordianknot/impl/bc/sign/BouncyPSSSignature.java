@@ -17,12 +17,13 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.digest.BouncyDigest;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
@@ -58,6 +59,16 @@ abstract class BouncyPSSSignature
     }
 
     /**
+     * Check for bouncyKeyPair.
+     *
+     * @return the keyPair
+     * @throws GordianException on error
+     */
+    BouncyKeyPair checkKeyPair() throws GordianException {
+        return BouncyKeyPair.checkKeyPair(super.getKeyPair());
+    }
+
+    /**
      * Obtain the signer.
      *
      * @return the signer.
@@ -71,19 +82,15 @@ abstract class BouncyPSSSignature
                        final int pOffset,
                        final int pLength) throws GordianException {
         checkInit();
-        theSigner.update(pBytes, pOffset, pLength);
+        if (checkBuffer(pBytes, pOffset, pLength)) {
+            theSigner.update(pBytes, pOffset, pLength);
+        }
     }
 
     @Override
     public void update(final byte pByte) throws GordianException {
         checkInit();
         theSigner.update(pByte);
-    }
-
-    @Override
-    public void update(final byte[] pBytes) throws GordianException {
-        checkInit();
-        theSigner.update(pBytes, 0, pBytes.length);
     }
 
     /**

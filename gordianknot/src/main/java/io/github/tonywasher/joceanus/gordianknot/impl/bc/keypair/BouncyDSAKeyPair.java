@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
@@ -118,6 +119,19 @@ public final class BouncyDSAKeyPair {
                                            final DSAPrivateKeyParameters pSecond) {
             return pFirst.getX().equals(pSecond.getX())
                     && pFirst.getParameters().equals(pSecond.getParameters());
+        }
+
+        @Override
+        public boolean isClearable() {
+            return true;
+        }
+
+        @Override
+        public synchronized void destroy() throws GordianException {
+            if (!isDestroyed()) {
+                setDestroyed();
+                getPrivateKey().destroy();
+            }
         }
     }
 

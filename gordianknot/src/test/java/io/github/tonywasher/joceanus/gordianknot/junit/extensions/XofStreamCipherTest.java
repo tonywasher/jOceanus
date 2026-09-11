@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.junit.extensions;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2Xof;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2bDigest;

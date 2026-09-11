@@ -16,12 +16,12 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCompositeSigner;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 
@@ -78,7 +78,6 @@ public class BouncySignatureFactory
             case AIMER -> new BouncyAIMerSignature(getFactory(), pSignatureSpec);
             case FAEST -> new BouncyFaestSignature(getFactory(), pSignatureSpec);
             case HAETAE -> new BouncyHAETAESignature(getFactory(), pSignatureSpec);
-            case HAWK -> new BouncyHawkSignature(getFactory(), pSignatureSpec);
             case MAYO -> new BouncyMayoSignature(getFactory(), pSignatureSpec);
             case MQOM -> new BouncyMQOMSignature(getFactory(), pSignatureSpec);
             case QRUOV -> new BouncyQRUOVSignature(getFactory(), pSignatureSpec);
@@ -86,9 +85,10 @@ public class BouncySignatureFactory
             case SNOVA -> new BouncySnovaSignature(getFactory(), pSignatureSpec);
             case SQISIGN -> new BouncySQIsignSignature(getFactory(), pSignatureSpec);
             case UOV -> new BouncyUOVSignature(getFactory(), pSignatureSpec);
-            case PICNIC -> new BouncyPicnicSignature(getFactory(), pSignatureSpec);
             case XMSS -> new BouncyXMSSSignature(getFactory(), pSignatureSpec);
             case LMS -> new BouncyLMSSignature(getFactory(), pSignatureSpec);
+            case SM9 -> new BouncySM9Signature(getFactory(), pSignatureSpec);
+            case HYBRIDSIGN -> new BouncyHybridSignature(getFactory(), pSignatureSpec);
             case COMPOSITE -> new GordianCompositeSigner(getFactory(), pSignatureSpec);
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pSignatureSpec.getKeyPairType()));
         };

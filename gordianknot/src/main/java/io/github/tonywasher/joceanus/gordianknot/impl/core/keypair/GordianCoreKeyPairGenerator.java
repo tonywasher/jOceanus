@@ -16,14 +16,14 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 
 import java.security.SecureRandom;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -115,7 +115,7 @@ public abstract class GordianCoreKeyPairGenerator
      * @throws GordianException on error
      */
     protected void checkKeySpec(final PKCS8EncodedKeySpec pKeySpec) throws GordianException {
-        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsymFactory().getKeyPairFactory();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pKeySpec);
         if (!theKeySpec.equals(myKeySpec)) {
             throw new GordianDataException("KeySpec not supported by this KeyPairGenerator");
@@ -129,7 +129,7 @@ public abstract class GordianCoreKeyPairGenerator
      * @throws GordianException on error
      */
     protected void checkKeySpec(final X509EncodedKeySpec pKeySpec) throws GordianException {
-        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsymFactory().getKeyPairFactory();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pKeySpec);
         if (!theKeySpec.equals(myKeySpec)) {
             throw new GordianDataException("KeySpec not supported by this KeyPairGenerator");

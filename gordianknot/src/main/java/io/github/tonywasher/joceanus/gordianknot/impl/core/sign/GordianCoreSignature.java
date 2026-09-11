@@ -16,18 +16,20 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseChecks;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseDestroyable;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 
 import java.security.SecureRandom;
@@ -55,7 +57,7 @@ public abstract class GordianCoreSignature
     /**
      * The KeyPair.
      */
-    private GordianCoreKeyPair theKeyPair;
+    private GordianKeyPair theKeyPair;
 
     /**
      * The Context.
@@ -130,11 +132,11 @@ public abstract class GordianCoreSignature
      * @param pKeyPair the keyPair
      * @throws GordianException on error
      */
-    private void checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
+    protected void checkKeyPairForSignature(final GordianKeyPair pKeyPair) throws GordianException {
         if (pKeyPair == null) {
             throw new GordianLogicException("Null keyPair");
         }
-        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();
+        final GordianAsymFactory myFactory = theFactory.getAsymFactory();
         final GordianSignatureFactory mySigns = myFactory.getSignatureFactory();
         if (!mySigns.validSignatureSpecForKeyPair(pKeyPair, theSpec)) {
             throw new GordianDataException("Incorrect KeyPair type");
@@ -153,17 +155,42 @@ public abstract class GordianCoreSignature
         }
     }
 
+    /**
+     * Check that the Identity is supported.
+     *
+     * @param pIdentity the context
+     * @throws GordianException on error
+     */
+    private void checkIdentity(final byte[] pIdentity) throws GordianException {
+        /* If we are an idAware keyPair */
+        if (theKeyPair instanceof GordianIdAwareKeyPair myIdAware) {
+            /* Check that identity is present for MasterKsey and absent for userKeys */
+            if (myIdAware.getSubKeyType().isUserKey() && pIdentity != null) {
+                throw new GordianDataException("Identity cannot override IdAware userKey");
+            }
+            if (!myIdAware.getSubKeyType().isUserKey() && pIdentity == null) {
+                throw new GordianDataException("Identity is required for IdAware masterKey");
+            }
+
+            /* Identity not allowed for non-IdAware */
+        } else if (pIdentity != null) {
+            throw new GordianDataException("Identity only allowed for IdAware masterKey");
+        }
+    }
+
     @Override
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Store details */
         theMode = GordianSignatureMode.SIGN;
-        theKeyPair = (GordianCoreKeyPair) pParams.getKeyPair();
+        theKeyPair = pParams.getKeyPair();
         theContext = pParams.getContext();
 
         /* Check that the keyPair matches and that any context is supported */
-        checkKeyPair(theKeyPair);
+        checkKeyPairForSignature(theKeyPair);
         checkContext(theContext);
-        theKeyPair.checkForDestroyedKeyPair();
+        checkIdentity(pParams.getIdentity());
+        final GordianBaseDestroyable myDestroyable = (GordianBaseDestroyable) theKeyPair;
+        myDestroyable.checkForDestroyedKeyPair();
 
         /* Check that we have the private key */
         if (theKeyPair.isPublicOnly()) {
@@ -175,13 +202,15 @@ public abstract class GordianCoreSignature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Store details */
         theMode = GordianSignatureMode.VERIFY;
-        theKeyPair = (GordianCoreKeyPair) pParams.getKeyPair();
+        theKeyPair = pParams.getKeyPair();
         theContext = pParams.getContext();
 
         /* Check that the keyPair matches and that any context is supported */
-        checkKeyPair(theKeyPair);
+        checkKeyPairForSignature(theKeyPair);
         checkContext(theContext);
-        theKeyPair.checkForDestroyedKeyPair();
+        checkIdentity(pParams.getIdentity());
+        final GordianBaseDestroyable myDestroyable = (GordianBaseDestroyable) theKeyPair;
+        myDestroyable.checkForDestroyedKeyPair();
     }
 
     /**
@@ -206,7 +235,37 @@ public abstract class GordianCoreSignature
         if (theKeyPair == null) {
             throw new GordianLogicException("Not initialised");
         }
-        theKeyPair.checkForDestroyedKeyPair();
+        final GordianBaseDestroyable myDestroyable = (GordianBaseDestroyable) theKeyPair;
+        myDestroyable.checkForDestroyedKeyPair();
+    }
+
+    /**
+     * Check that the input buffer is valid.
+     *
+     * @param pBuffer the buffer
+     * @param pOffset the offset
+     * @param pLength the length
+     * @return non-Zero data true/false
+     * @throws GordianException on error
+     */
+    protected boolean checkBuffer(final byte[] pBuffer,
+                                  final int pOffset,
+                                  final int pLength) throws GordianException {
+        return GordianBaseChecks.checkInputBuffer(pBuffer, pOffset, pLength);
+    }
+
+    /**
+     * Check that the input buffer is valid.
+     *
+     * @param pBuffer the buffer
+     * @param pOffset the offset
+     * @param pLength the length
+     * @throws GordianException on error
+     */
+    protected void checkOutputBuffer(final byte[] pBuffer,
+                                     final int pOffset,
+                                     final int pLength) throws GordianException {
+        GordianBaseChecks.checkOutputBuffer(pBuffer, pOffset, pLength);
     }
 
     /**

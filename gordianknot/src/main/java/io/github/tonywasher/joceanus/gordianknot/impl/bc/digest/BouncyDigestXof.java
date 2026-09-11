@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.digest;
 
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianXof;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestXof;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import org.bouncycastle.crypto.Xof;
 
@@ -24,7 +24,8 @@ import org.bouncycastle.crypto.Xof;
  * BouncyCastle Digest Xof.
  */
 public class BouncyDigestXof
-        extends BouncyDigest implements GordianXof {
+        extends BouncyDigest
+        implements GordianDigestXof {
     /**
      * The Xof.
      */

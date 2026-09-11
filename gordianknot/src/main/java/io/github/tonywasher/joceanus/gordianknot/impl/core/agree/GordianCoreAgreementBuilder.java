@@ -17,10 +17,10 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementStatus;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
@@ -34,7 +34,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementCalculator.GordianDerivationId;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -68,11 +67,6 @@ public class GordianCoreAgreementBuilder {
     private final SecureRandom theRandom;
 
     /**
-     * The KeyPair factory.
-     */
-    private final GordianKeyPairGenerator theKeyPairGenerator;
-
-    /**
      * The state.
      */
     private final GordianCoreAgreementState theState;
@@ -81,6 +75,11 @@ public class GordianCoreAgreementBuilder {
      * The result calculator.
      */
     private final GordianCoreAgreementCalculator theResultCalc;
+
+    /**
+     * The KeyPair generator.
+     */
+    private GordianKeyPairGenerator theKeyPairGenerator;
 
     /**
      * Should we fail signature during testing?
@@ -108,11 +107,25 @@ public class GordianCoreAgreementBuilder {
 
         /* Create the state */
         theState = new GordianCoreAgreementState(pSpec);
-        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
-        theKeyPairGenerator = myFactory.getKeyPairGenerator(pSpec.getKeyPairSpec());
 
         /* Create the result calculator */
         theResultCalc = new GordianCoreAgreementCalculator(theFactory, theState);
+    }
+
+    /**
+     * Obtain/Create the keyPair Generator.
+     *
+     * @return the generator.
+     */
+    private GordianKeyPairGenerator getKeyPairGenerator() throws GordianException {
+        /* Create the generator if required */
+        if (theKeyPairGenerator == null) {
+            final GordianKeyPairFactory myFactory = theFactory.getAsymFactory().getKeyPairFactory();
+            theKeyPairGenerator = myFactory.getKeyPairGenerator(theState.getSpec().getKeyPairSpec());
+        }
+
+        /* Return the generator */
+        return theKeyPairGenerator;
     }
 
     /**
@@ -203,10 +216,11 @@ public class GordianCoreAgreementBuilder {
         /* If we are using confirmation */
         boolean bSuccess = true;
         final GordianCoreAgreementSpec mySpec = theState.getSpec();
-        if (mySpec.withConfirm()
-                && mySpec.getAgreementType() != GordianAgreementType.SM2) {
-            /* calculate the confirmation tags */
-            bSuccess = calculateConfirmationTags(pSecret);
+        if (mySpec.withConfirm()) {
+            bSuccess = switch (mySpec.getAgreementType()) {
+                case SM2, SM9 -> true;
+                default -> calculateConfirmationTags(pSecret);
+            };
         }
 
         /* Calculate result */
@@ -245,6 +259,15 @@ public class GordianCoreAgreementBuilder {
     }
 
     /**
+     * Set the clientName.
+     *
+     * @param pName the Name
+     */
+    void setClientName(final byte[] pName) {
+        theState.getClient().setName(pName);
+    }
+
+    /**
      * Set the serverCertificate.
      *
      * @param pCert the Certificate
@@ -262,6 +285,15 @@ public class GordianCoreAgreementBuilder {
     GordianCoreAgreementBuilder setSignerCertificate(final GordianCertificate pCert) {
         theState.setSignerCertificate(pCert);
         return this;
+    }
+
+    /**
+     * Set the serverName.
+     *
+     * @param pName the Name
+     */
+    void setServerName(final byte[] pName) {
+        theState.getServer().setName(pName);
     }
 
     /**
@@ -313,10 +345,11 @@ public class GordianCoreAgreementBuilder {
      * @throws GordianException on error
      */
     public void newClientEphemeral() throws GordianException {
-        final GordianKeyPair myPair = theKeyPairGenerator.generateKeyPair();
+        final GordianKeyPairGenerator myGenerator = getKeyPairGenerator();
+        final GordianKeyPair myPair = myGenerator.generateKeyPair();
         theState.getClient()
                 .setEphemeralKeyPair(myPair)
-                .setEphemeralKeySpec(theKeyPairGenerator.getX509Encoding(myPair));
+                .setEphemeralKeySpec(myGenerator.getX509Encoding(myPair));
     }
 
     /**
@@ -326,8 +359,9 @@ public class GordianCoreAgreementBuilder {
      * @throws GordianException on error
      */
     public void setClientEphemeralAsEncapsulated(final GordianKeyPair pEphemeral) throws GordianException {
-        final X509EncodedKeySpec myKeySpec = theKeyPairGenerator.getX509Encoding(pEphemeral);
-        theState.setEncapsulated(myKeySpec.getEncoded());
+        final GordianKeyPairGenerator myGenerator = getKeyPairGenerator();
+        final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(pEphemeral);
+        theState.setClientEncapsulated(myKeySpec.getEncoded());
     }
 
     /**
@@ -336,10 +370,11 @@ public class GordianCoreAgreementBuilder {
      * @throws GordianException on error
      */
     public void newServerEphemeral() throws GordianException {
-        final GordianKeyPair myPair = theKeyPairGenerator.generateKeyPair();
+        final GordianKeyPairGenerator myGenerator = getKeyPairGenerator();
+        final GordianKeyPair myPair = myGenerator.generateKeyPair();
         theState.getServer()
                 .setEphemeralKeyPair(myPair)
-                .setEphemeralKeySpec(theKeyPairGenerator.getX509Encoding(myPair));
+                .setEphemeralKeySpec(myGenerator.getX509Encoding(myPair));
     }
 
     /**
@@ -413,9 +448,10 @@ public class GordianCoreAgreementBuilder {
                 .setResultId(theSupplier.getIdentifierForResultType(theState.getResultType()))
                 .setClientId(myClient.getId())
                 .setClientName(myClient.getName())
+                .setServerName(myServer.getName())
                 .setInitVector(myClient.getInitVector())
                 .setEphemeral(myClient.getEphemeralKeySpec())
-                .setEncapsulated(theState.getEncapsulated());
+                .setEncapsulated(theState.getClientEncapsulated());
 
         /* Store certificates */
         myMsg.setClientCertificate(myClient.getCertificate())
@@ -452,13 +488,14 @@ public class GordianCoreAgreementBuilder {
                 .setServerName(myServer.getName())
                 .setInitVector(myServer.getInitVector())
                 .setEphemeral(myServer.getEphemeralKeySpec())
+                .setEncapsulated(myServer.getEncapsulated())
                 .setConfirmation(myServer.getConfirm());
 
         /* Store signing details */
         final GordianCertificate mySignerCert = theState.getSignerCertificate();
         if (mySignerCert != null) {
             /* Access details */
-            final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsyncFactory().getSignatureFactory();
+            final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsymFactory().getSignatureFactory();
             final GordianSignatureSpec mySignSpec = theState.getSignSpec();
             final GordianKeyPair mySignerPair = mySignerCert.getKeyPair();
             final AlgorithmIdentifier myAlgId = mySigns.getIdentifierForSpecAndKeyPair(mySignSpec, mySignerPair);
@@ -529,9 +566,13 @@ public class GordianCoreAgreementBuilder {
                 .setInitVector(pClientHello.getInitVector());
         final X509EncodedKeySpec myEphemeral = pClientHello.getEphemeral();
         if (myEphemeral != null) {
+            final GordianKeyPairGenerator myGenerator = getKeyPairGenerator();
             myClient.setEphemeralKeySpec(myEphemeral)
-                    .setEphemeralKeyPair(theKeyPairGenerator.derivePublicOnlyKeyPair(myEphemeral));
+                    .setEphemeralKeyPair(myGenerator.derivePublicOnlyKeyPair(myEphemeral));
         }
+
+        /* Store server details */
+        myServer.setName(pClientHello.getServerName());
 
         /* Store certificates */
         myClient.setCertificate(pClientHello.getClientCertificate(theFactory));
@@ -561,18 +602,20 @@ public class GordianCoreAgreementBuilder {
         myServer.setId(pServerHello.getServerId())
                 .setName(pServerHello.getServerName())
                 .setInitVector(pServerHello.getInitVector())
+                .setEncapsulated(pServerHello.getEncapsulated())
                 .setConfirm(pServerHello.getConfirmation());
         final X509EncodedKeySpec myEphemeral = pServerHello.getEphemeral();
         if (myEphemeral != null) {
+            final GordianKeyPairGenerator myGenerator = getKeyPairGenerator();
             myServer.setEphemeralKeySpec(myEphemeral)
-                    .setEphemeralKeyPair(theKeyPairGenerator.derivePublicOnlyKeyPair(myEphemeral));
+                    .setEphemeralKeyPair(myGenerator.derivePublicOnlyKeyPair(myEphemeral));
         }
 
         /* Store signing details */
         final GordianCertificate mySignerCert = pServerHello.getSignerCertificate(theFactory);
         if (mySignerCert != null) {
             /* Access details */
-            final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsyncFactory().getSignatureFactory();
+            final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsymFactory().getSignatureFactory();
             final GordianSignatureSpec mySignSpec = mySigns.getSpecForIdentifier(pServerHello.getSignatureId());
             final GordianKeyPair mySignerPair = mySignerCert.getKeyPair();
             theState.setSignerCertificate(mySignerCert)
@@ -624,11 +667,12 @@ public class GordianCoreAgreementBuilder {
     void parseEncapsulated(final byte[] pEncapsulated) throws GordianException {
         if (pEncapsulated != null
                 && GordianKeyPairType.NEWHOPE.equals(theState.getSpec().getKeyPairSpec().getKeyPairType())) {
+            final GordianKeyPairGenerator myGenerator = getKeyPairGenerator();
             final GordianKeyPair myKeyPair
-                    = theKeyPairGenerator.derivePublicOnlyKeyPair(new X509EncodedKeySpec(pEncapsulated));
+                    = myGenerator.derivePublicOnlyKeyPair(new X509EncodedKeySpec(pEncapsulated));
             theState.getClient().setEphemeralKeyPair(myKeyPair);
         } else {
-            theState.setEncapsulated(pEncapsulated);
+            theState.setClientEncapsulated(pEncapsulated);
         }
     }
 
@@ -643,6 +687,7 @@ public class GordianCoreAgreementBuilder {
         /* Access details */
         final GordianCoreAgreementParticipant myClient = theState.getClient();
         final GordianCoreAgreementParticipant myServer = theState.getServer();
+        final GordianKeyPairGenerator myGenerator = getKeyPairGenerator();
 
         /* Derive the key */
         final byte[] myKey = theResultCalc.calculateDerivedSecret(pSecret, GordianDerivationId.TAGS, GordianLength.LEN_512.getByteLength());
@@ -655,9 +700,9 @@ public class GordianCoreAgreementBuilder {
         myMac.initKeyBytes(myKey);
 
         /* Access the public encodings */
-        final byte[] myClientSpec = theKeyPairGenerator.getX509Encoding(myClient.getKeyPair()).getEncoded();
+        final byte[] myClientSpec = myGenerator.getX509Encoding(myClient.getKeyPair()).getEncoded();
         final byte[] myClientEphemeral = myClient.getEphemeralKeySpec().getEncoded();
-        final byte[] myServerSpec = theKeyPairGenerator.getX509Encoding(myServer.getKeyPair()).getEncoded();
+        final byte[] myServerSpec = myGenerator.getX509Encoding(myServer.getKeyPair()).getEncoded();
         final byte[] myServerEphemeral = myServer.getEphemeralKeySpec().getEncoded();
 
         /* Build Server Confirmation tag */

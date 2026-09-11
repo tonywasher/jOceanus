@@ -17,8 +17,9 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.digest;
 
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseChecks;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 
 /**
@@ -50,18 +51,41 @@ public abstract class GordianCoreDigest
         return theDigestSpec.getDigestLength().getByteLength();
     }
 
+    /**
+     * Check that the input buffer is valid.
+     *
+     * @param pBuffer the buffer
+     * @param pOffset the offset
+     * @param pLength the length
+     * @return non-Zero data true/false
+     * @throws GordianException on error
+     */
+    protected boolean checkInputBuffer(final byte[] pBuffer,
+                                       final int pOffset,
+                                       final int pLength) throws GordianException {
+        return GordianBaseChecks.checkInputBuffer(pBuffer, pOffset, pLength);
+    }
+
+    /**
+     * Check that the output buffer is valid.
+     *
+     * @param pBuffer the buffer
+     * @param pOffset the offset
+     * @param pLength the length
+     * @throws GordianException on error
+     */
+    protected void checkOutputBuffer(final byte[] pBuffer,
+                                     final int pOffset,
+                                     final int pLength) throws GordianException {
+        GordianBaseChecks.checkOutputBuffer(pBuffer, pOffset, pLength);
+    }
+
     @Override
     public void update(final byte[] pBytes,
                        final int pOffset,
-                       final int pLength) {
-        /* Check that the buffers are sufficient */
-        final int myInBufLen = pBytes == null ? 0 : pBytes.length;
-        if (myInBufLen < (pLength + pOffset)) {
-            throw new IllegalArgumentException("Input buffer too short.");
-        }
-
+                       final int pLength) throws GordianException {
         /* Process the bytes */
-        if (pLength != 0) {
+        if (checkInputBuffer(pBytes, pOffset, pLength)) {
             doUpdate(pBytes, pOffset, pLength);
         }
     }
@@ -81,9 +105,7 @@ public abstract class GordianCoreDigest
     public int finish(final byte[] pBuffer,
                       final int pOffset) throws GordianException {
         /* Check that the buffers are sufficient */
-        if (pBuffer.length < (getDigestSize() + pOffset)) {
-            throw new IllegalArgumentException("Output buffer too short.");
-        }
+        checkOutputBuffer(pBuffer, pOffset, getDigestSize());
 
         /* Finish the digest */
         return doFinish(pBuffer, pOffset);

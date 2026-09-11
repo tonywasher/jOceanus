@@ -19,13 +19,13 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca.agree;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 
 /**
@@ -59,10 +59,13 @@ public class JcaAgreementFactory
             case EC, GOST, DSTU -> getECEngine(mySpec);
             case SM2 -> mySpec.getAgreementType() == GordianAgreementType.SM2
                     ? getSM2Engine(mySpec) : getECEngine(mySpec);
+            case SM9 -> getSM9Engine(mySpec);
             case DH -> getDHEngine(mySpec);
             case NEWHOPE -> getNHEngine(mySpec);
-            case CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME -> getPostQuantumEngine(mySpec);
+            case CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, SMAUGT, HYBRIDKEM ->
+                    getPostQuantumEngine(mySpec);
             case XDH -> getXDHEngine(mySpec);
+            case RSA -> new JcaHybridEngine(this, mySpec);
             default -> super.createEngine(pSpec);
         };
     }
@@ -98,6 +101,22 @@ public class JcaAgreementFactory
      */
     private GordianCoreAgreementEngine getSM2Engine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
         return new JcaSM2Engine(this, pAgreementSpec, JcaAgreement.getJavaKeyAgreement("SM2", false));
+    }
+
+    /**
+     * Create the SM9 Agreement.
+     *
+     * @param pAgreementSpec the agreementSpec
+     * @return the Agreement
+     * @throws GordianException on error
+     */
+    private GordianCoreAgreementEngine getSM9Engine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
+        return switch (pAgreementSpec.getAgreementType()) {
+            case KEM ->
+                    new JcaSM9KEMEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyGenerator(pAgreementSpec.getKeyPairSpec()));
+            case SM9 -> new JcaSM9XchgEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyAgreement("SM9", false));
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
+        };
     }
 
     /**
@@ -166,7 +185,7 @@ public class JcaAgreementFactory
             return false;
         }
 
-        /* Only allow SM2 for NoKDF */
+        /* Disallow various SM2 options */
         final GordianAgreementType myType = pSpec.getAgreementType();
         if (GordianAgreementType.SM2.equals(myType)) {
             return GordianAgreementKDF.NONE.equals(pSpec.getKDFType())
@@ -176,7 +195,11 @@ public class JcaAgreementFactory
 
         /* Switch on KeyType */
         return switch (pSpec.getKeyPairSpec().getKeyPairType()) {
-            case NEWHOPE, CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, COMPOSITE -> true;
+            case NEWHOPE, CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, SMAUGT, HYBRIDKEM,
+                 COMPOSITE -> true;
+            case RSA -> GordianAgreementType.WRAP.equals(myType);
+            case SM9 -> GordianAgreementKDF.NONE.equals(pSpec.getKDFType())
+                    && !pSpec.withConfirm();
             case EC, GOST, DSTU, SM2, DH -> !GordianAgreementType.KEM.equals(myType);
             case XDH -> !GordianAgreementType.KEM.equals(myType)
                     && !GordianAgreementType.MQV.equals(myType);

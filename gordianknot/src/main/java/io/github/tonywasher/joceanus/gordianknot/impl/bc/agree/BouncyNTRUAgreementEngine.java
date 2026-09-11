@@ -17,11 +17,11 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyNTRUKeyPair.BouncyNTRUPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyNTRUKeyPair.BouncyNTRUPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import org.bouncycastle.crypto.SecretWithEncapsulation;
 import org.bouncycastle.pqc.crypto.ntru.NTRUKEMExtractor;
@@ -57,7 +57,7 @@ public class BouncyNTRUAgreementEngine
             final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myPublic.getPublicKey());
 
             /* Store the encapsulation */
-            setEncapsulated(myResult.getEncapsulation());
+            setClientEncapsulated(myResult.getEncapsulation());
 
             /* Store secret and create initVector */
             storeSecret(myResult.getSecret());
@@ -75,7 +75,7 @@ public class BouncyNTRUAgreementEngine
         final NTRUKEMExtractor myExtractor = new NTRUKEMExtractor(myPrivate.getPrivateKey());
 
         /* Parse encapsulated message and store secret */
-        final byte[] myMessage = getEncapsulated();
+        final byte[] myMessage = getClientEncapsulated();
         storeSecret(myExtractor.extractSecret(myMessage));
     }
 }

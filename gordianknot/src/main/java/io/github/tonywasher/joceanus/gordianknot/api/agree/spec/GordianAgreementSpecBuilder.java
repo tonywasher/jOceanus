@@ -108,6 +108,16 @@ public interface GordianAgreementSpecBuilder {
     }
 
     /**
+     * Create the WRAP agreementSpec.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @return the Spec
+     */
+    default GordianAgreementSpec wrap(final GordianKeyPairSpec pKeyPairSpec) {
+        return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianAgreementType.WRAP).withKDF(GordianAgreementKDF.NONE).build();
+    }
+
+    /**
      * Create the ANON agreementSpec.
      *
      * @param pKeyPairSpec the keyPairSpec
@@ -213,5 +223,29 @@ public interface GordianAgreementSpecBuilder {
     default GordianAgreementSpec sm2Confirm(final GordianKeyPairSpec pKeyPairSpec,
                                             final GordianAgreementKDF pKDFType) {
         return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianAgreementType.SM2).withKDF(pKDFType).withConfirm().build();
+    }
+
+    /**
+     * Create the sm9 agreementSpec.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pKDFType     the KDF type
+     * @return the Spec
+     */
+    default GordianAgreementSpec sm9(final GordianKeyPairSpec pKeyPairSpec,
+                                     final GordianAgreementKDF pKDFType) {
+        return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianAgreementType.SM9).withKDF(pKDFType).build();
+    }
+
+    /**
+     * Create the sm9Confirm agreementSpec.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pKDFType     the KDF type
+     * @return the Spec
+     */
+    default GordianAgreementSpec sm9Confirm(final GordianKeyPairSpec pKeyPairSpec,
+                                            final GordianAgreementKDF pKDFType) {
+        return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianAgreementType.SM9).withKDF(pKDFType).withConfirm().build();
     }
 }

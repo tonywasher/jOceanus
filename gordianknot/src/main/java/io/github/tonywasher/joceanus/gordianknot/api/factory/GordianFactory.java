@@ -16,9 +16,9 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.factory;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLock;
@@ -89,11 +89,11 @@ public interface GordianFactory {
     GordianZipFactory getZipFactory();
 
     /**
-     * Obtain the async Factory.
+     * Obtain the asym Factory.
      *
-     * @return the async factory
+     * @return the asym factory
      */
-    GordianAsyncFactory getAsyncFactory();
+    GordianAsymFactory getAsymFactory();
 
     /**
      * ReSeed the random number generator.

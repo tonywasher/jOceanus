@@ -16,7 +16,9 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.zip;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -26,8 +28,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLock;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipLock;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipLockType;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactory;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;

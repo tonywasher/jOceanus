@@ -16,11 +16,10 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseDestroyable;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
 import java.util.Objects;
 
@@ -28,7 +27,7 @@ import java.util.Objects;
  * KeyPair implementation.
  */
 public abstract class GordianCoreKeyPair
-        implements GordianKeyPair, GordianBaseDestroyable {
+        implements GordianBaseKeyPair {
     /**
      * The KeySpec.
      */
@@ -79,19 +78,7 @@ public abstract class GordianCoreKeyPair
         return thePrivateKey == null;
     }
 
-    /**
-     * Obtain a publicOnly version of this key.
-     *
-     * @return the public key
-     */
-    public abstract GordianCoreKeyPair getPublicOnly();
-
-    /**
-     * Validate that the keyPair public Key matches.
-     *
-     * @param pPair the key pair
-     * @return matches true/false
-     */
+    @Override
     public boolean checkMatchingPublicKey(final GordianKeyPair pPair) {
         /* Must be core and matching spec */
         if (!(pPair instanceof GordianCoreKeyPair)
@@ -135,12 +122,17 @@ public abstract class GordianCoreKeyPair
 
     @Override
     public boolean isClearable() {
-        return false;
+        return !isPublicOnly() && getPrivateKey().isClearable();
     }
 
     @Override
-    public void destroy() throws GordianException {
-        setDestroyed();
+    public synchronized void destroy() throws GordianException {
+        if (!isDestroyed) {
+            setDestroyed();
+            if (isClearable()) {
+                getPrivateKey().destroy();
+            }
+        }
     }
 
     @Override

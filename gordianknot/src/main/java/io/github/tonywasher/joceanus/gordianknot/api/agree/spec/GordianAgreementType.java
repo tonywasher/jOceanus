@@ -32,6 +32,11 @@ public enum GordianAgreementType {
     ANON,
 
     /**
+     * Wrap.
+     */
+    WRAP,
+
+    /**
      * Basic.
      */
     BASIC,
@@ -45,6 +50,11 @@ public enum GordianAgreementType {
      * SM2.
      */
     SM2,
+
+    /**
+     * SM9.
+     */
+    SM9,
 
     /**
      * MQV.

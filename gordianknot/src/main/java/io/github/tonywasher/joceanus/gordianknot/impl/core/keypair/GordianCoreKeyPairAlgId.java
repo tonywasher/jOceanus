@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser.GordianCompositeEncodedParser;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser.GordianDHEncodedParser;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser.GordianDSAEncodedParser;
@@ -34,6 +34,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser.Gordia
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser.GordianLMSEncodedParser;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser.GordianNewHopeEncodedParser;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser.GordianRSAEncodedParser;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser.GordianSM9EncodedParser;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser.GordianXMSSEncodedParser;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser.GordianXMSSMTEncodedParser;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreAIMerSpec;
@@ -44,7 +45,8 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianC
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreFalconSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreHAETAESpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreHQCSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreHawkSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreHybridKEMSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreHybridSignSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMLDSASpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMLKEMSpec;
@@ -53,12 +55,12 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianC
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreNTRUPlusSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreNTRUPrimeSpec.GordianCoreNTRUPrimeParams;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreNTRUSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCorePicnicSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreQRUOVSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSABERSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSDitHSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSLHDSASpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSQIsignSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSmaugTSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSnovaSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreUOVSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -106,6 +108,7 @@ public class GordianCoreKeyPairAlgId
         GordianXMSSEncodedParser.register(this);
         GordianXMSSMTEncodedParser.register(this);
         GordianLMSEncodedParser.register(this);
+        GordianSM9EncodedParser.register(this);
         GordianNewHopeEncodedParser.register(this);
         GordianKeyPairIdEncodedParser.register(this, GordianCoreCMCESpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreFRODOSpec.values());
@@ -121,15 +124,16 @@ public class GordianCoreKeyPairAlgId
         GordianKeyPairIdEncodedParser.register(this, GordianCoreAIMerSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreFaestSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreHAETAESpec.values());
-        GordianKeyPairIdEncodedParser.register(this, GordianCoreHawkSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreMayoSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreMQOMSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreQRUOVSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreSDitHSpec.values());
+        GordianKeyPairIdEncodedParser.register(this, GordianCoreSmaugTSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreSnovaSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreSQIsignSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreUOVSpec.values());
-        GordianPicnicEncodedParser.register(this);
+        GordianKeyPairIdEncodedParser.register(this, GordianCoreHybridKEMSpec.values());
+        GordianKeyPairIdEncodedParser.register(this, GordianCoreHybridSignSpec.values());
         GordianCompositeEncodedParser.register(this);
     }
 
@@ -199,47 +203,6 @@ public class GordianCoreKeyPairAlgId
                         new GordianNTRUPrimeEncodedParser(myBuilder.ntruprime(GordianNTRUPrimeType.NTRUL, myParams.getParams())));
                 pIdManager.registerParser(myParams.getSNTRUIdentifier(),
                         new GordianNTRUPrimeEncodedParser(myBuilder.ntruprime(GordianNTRUPrimeType.SNTRU, myParams.getParams())));
-            }
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
-            return theKeySpec;
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
-            return theKeySpec;
-        }
-    }
-
-    /**
-     * Picnic Encoded parser.
-     */
-    private static class GordianPicnicEncodedParser implements GordianEncodedParser {
-        /**
-         * AsymKeySpec.
-         */
-        private final GordianKeyPairSpec theKeySpec;
-
-        /**
-         * Constructor.
-         *
-         * @param pKeySpec the keySpec
-         */
-        GordianPicnicEncodedParser(final GordianKeyPairSpec pKeySpec) {
-            theKeySpec = pKeySpec;
-        }
-
-        /**
-         * Registrar.
-         *
-         * @param pIdManager the idManager
-         */
-        static void register(final GordianCoreKeyPairAlgId pIdManager) {
-            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
-            for (GordianCorePicnicSpec mySpec : GordianCorePicnicSpec.values()) {
-                pIdManager.registerParser(mySpec.getIdentifier(), new GordianPicnicEncodedParser(myBuilder.picnic(mySpec.getSpec())));
             }
         }
 

@@ -17,10 +17,10 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementDerivation.GordianCoreNullKeyDerivation;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
@@ -38,6 +38,11 @@ import java.security.SecureRandom;
  * Implementation engine for Agreements.
  */
 public abstract class GordianCoreAgreementEngine {
+    /**
+     * Standard Key length.
+     */
+    protected static final int KEYLEN = 256;
+
     /**
      * The supplier.
      */
@@ -185,21 +190,39 @@ public abstract class GordianCoreAgreementEngine {
     }
 
     /**
-     * Obtain encapsulation.
+     * Obtain client encapsulation.
      *
-     * @return the encapsulation
+     * @return the client encapsulation
      */
-    public byte[] getEncapsulated() {
-        return theState.getEncapsulated();
+    public byte[] getClientEncapsulated() {
+        return theState.getClientEncapsulated();
     }
 
     /**
-     * Set encapsulation.
+     * Set client encapsulation.
      *
      * @param pEncapsulated the encapsulated
      */
-    public void setEncapsulated(final byte[] pEncapsulated) {
-        theState.setEncapsulated(pEncapsulated);
+    public void setClientEncapsulated(final byte[] pEncapsulated) {
+        theState.setClientEncapsulated(pEncapsulated);
+    }
+
+    /**
+     * Obtain server encapsulation.
+     *
+     * @return the server encapsulation
+     */
+    public byte[] getServerEncapsulated() {
+        return theState.getServerEncapsulated();
+    }
+
+    /**
+     * Set server encapsulation.
+     *
+     * @param pEncapsulated the encapsulated
+     */
+    public void setServerEncapsulated(final byte[] pEncapsulated) {
+        theState.setServerEncapsulated(pEncapsulated);
     }
 
     /**

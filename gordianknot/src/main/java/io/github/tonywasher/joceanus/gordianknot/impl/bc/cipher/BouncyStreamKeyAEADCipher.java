@@ -16,14 +16,14 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.cipher;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamAEADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -94,8 +94,8 @@ public class BouncyStreamKeyAEADCipher
     public void updateAAD(final byte[] in,
                           final int inOff,
                           final int len) throws GordianException {
-        /* Check for destroyed key */
-        getKey().checkForDestroyedKey();
+        /* Check that we are initialised */
+        checkInit();
 
         /* Pass call on */
         theCipher.processAADBytes(in, inOff, len);
@@ -114,8 +114,8 @@ public class BouncyStreamKeyAEADCipher
                         final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
-            /* Check for destroyed key */
-            getKey().checkForDestroyedKey();
+            /* Check that we are initialised */
+            checkInit();
 
             /* Process the bytes */
             return theCipher.processBytes(pBytes, pOffset, pLength, pOutput, pOutOffset);
@@ -136,8 +136,8 @@ public class BouncyStreamKeyAEADCipher
                         final int outOff) throws GordianException {
         /* Protect against exceptions */
         try {
-            /* Check for destroyed key */
-            getKey().checkForDestroyedKey();
+            /* Check that we are initialised */
+            checkInit();
 
             /* Finish the cipher */
             return theCipher.doFinal(out, outOff);

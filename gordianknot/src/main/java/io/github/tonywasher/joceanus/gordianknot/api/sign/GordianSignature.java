@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.sign;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 
 /**
@@ -73,7 +73,9 @@ public interface GordianSignature {
      * @throws GordianException on error
      */
     default void update(final byte[] pBytes) throws GordianException {
-        update(pBytes, 0, pBytes == null ? 0 : pBytes.length);
+        if (pBytes != null) {
+            update(pBytes, 0, pBytes.length);
+        }
     }
 
     /**

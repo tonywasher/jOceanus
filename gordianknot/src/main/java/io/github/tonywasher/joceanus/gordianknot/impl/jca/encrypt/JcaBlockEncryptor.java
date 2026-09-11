@@ -17,11 +17,12 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.jca.encrypt;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPair.JcaPrivateKey;
@@ -105,6 +106,11 @@ public class JcaBlockEncryptor
         /* Check that we are in encryption mode */
         checkMode(GordianEncryptMode.ENCRYPT);
 
+        /* Reject null data */
+        if (pBytes == null) {
+            throw new GordianDataException("Null Message");
+        }
+
         /* Encrypt the message */
         return processData(pBytes);
     }
@@ -113,6 +119,11 @@ public class JcaBlockEncryptor
     public byte[] decrypt(final byte[] pBytes) throws GordianException {
         /* Check that we are in decryption mode */
         checkMode(GordianEncryptMode.DECRYPT);
+
+        /* Reject null data */
+        if (pBytes == null) {
+            throw new GordianDataException("Null Message");
+        }
 
         /* Decrypt the message */
         return processData(pBytes);

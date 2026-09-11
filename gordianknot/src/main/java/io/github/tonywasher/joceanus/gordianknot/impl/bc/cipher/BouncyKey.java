@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.cipher;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import org.bouncycastle.util.Arrays;
 
@@ -90,11 +90,11 @@ public final class BouncyKey<T extends GordianKeySpec>
     }
 
     @Override
-    public void destroy() throws GordianException {
+    public synchronized void destroy() throws GordianException {
         if (!isDestroyed()) {
+            setDestroyed();
             Arrays.fill(theKey, (byte) 0);
         }
-        setDestroyed();
     }
 
     @Override

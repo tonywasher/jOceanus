@@ -36,4 +36,11 @@ public interface GordianSignParams {
      * @return the context
      */
     byte[] getContext();
+
+    /**
+     * Obtain the identity.
+     *
+     * @return the identity
+     */
+    byte[] getIdentity();
 }

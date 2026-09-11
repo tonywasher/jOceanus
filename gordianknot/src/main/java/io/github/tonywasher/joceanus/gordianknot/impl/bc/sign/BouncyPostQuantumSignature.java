@@ -17,7 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.sign;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
@@ -65,14 +65,14 @@ public abstract class BouncyPostQuantumSignature
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForSigning(pParams);
-        BouncyKeyPair.checkKeyPair(getKeyPair());
+        final BouncyKeyPair myPair = checkKeyPair();
 
         /* Determine whether we should use random for signatures */
         final GordianCoreKeyPairType myType = GordianCoreKeyPairType.mapCoreType(getSignatureSpec().getKeyPairType());
         final boolean useRandom = myType.useRandomForSignatures();
 
         /* Initialise and set the signer */
-        final BouncyPrivateKey<?> myPrivate = getKeyPair().getPrivateKey();
+        final BouncyPrivateKey<?> myPrivate = myPair.getPrivateKey();
         final CipherParameters myParms = useRandom
                 ? new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom())
                 : myPrivate.getPrivateKey();
@@ -83,10 +83,10 @@ public abstract class BouncyPostQuantumSignature
     public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
         super.initForVerify(pParams);
-        BouncyKeyPair.checkKeyPair(getKeyPair());
+        final BouncyKeyPair myPair = checkKeyPair();
 
         /* Initialise and set the signer */
-        final BouncyPublicKey<?> myPublic = getKeyPair().getPublicKey();
+        final BouncyPublicKey<?> myPublic = myPair.getPublicKey();
         theSigner.init(false, myPublic.getPublicKey());
     }
 

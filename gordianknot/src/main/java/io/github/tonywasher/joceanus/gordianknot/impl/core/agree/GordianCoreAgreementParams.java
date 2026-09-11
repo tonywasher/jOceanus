@@ -20,21 +20,23 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParam
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair.GordianIdAwareUserKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementType;
@@ -140,7 +142,9 @@ public class GordianCoreAgreementParams
         theSpec = myState.getSpec();
         theResultType = myState.getResultType();
         theClient = myState.getClient().getCertificate();
+        theClientName = myState.getClient().getName();
         theServer = myState.getServer().getCertificate();
+        theServerName = myState.getServer().getName();
         theSigner = myState.getSignerCertificate();
         theSignSpec = myState.getSignSpec();
     }
@@ -302,6 +306,12 @@ public class GordianCoreAgreementParams
             if (myKeyPair.isPublicOnly()) {
                 throw new GordianDataException("Client Certificate must supply privateKey");
             }
+
+            /* If this is an idAware userKey, set the clientName */
+            if (myKeyPair instanceof GordianIdAwareUserKeyPair myIdAware) {
+                theClientName = myIdAware.getIdentity();
+            }
+
         } else if (!myType.isSigned() && !myType.isAnonymous()) {
             throw new GordianDataException("Null Client Certificate not allowed");
         }
@@ -329,6 +339,12 @@ public class GordianCoreAgreementParams
                 throw new GordianDataException("Server Certificate must be capable of keyAgreement");
             }
 
+            /* If this is an idAware userKey, set the serverName */
+            if (myKeyPair instanceof GordianIdAwareUserKeyPair myIdAware
+                    && theServerName == null) {
+                theServerName = myIdAware.getIdentity();
+            }
+
             /* If we are a server */
             if (!isClient) {
                 /* Perform additional checks */
@@ -354,7 +370,7 @@ public class GordianCoreAgreementParams
 
     @Override
     public GordianAgreementParams setSigner(final GordianCertificate pSigner) throws GordianException {
-        final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
+        final GordianSignatureFactory mySignFactory = theFactory.getAsymFactory().getSignatureFactory();
         final GordianSignatureSpec mySignSpec = pSigner == null ? null : mySignFactory.defaultForKeyPair(pSigner.getKeyPair().getKeyPairSpec());
         return setSigner(pSigner, mySignSpec);
     }
@@ -381,7 +397,7 @@ public class GordianCoreAgreementParams
             }
 
             /* Check that signSpec is valid for keyPair */
-            final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
+            final GordianSignatureFactory mySignFactory = theFactory.getAsymFactory().getSignatureFactory();
             if (!mySignFactory.validSignatureSpecForKeyPair(pSigner.getKeyPair(), pSignSpec)) {
                 throw new GordianDataException(GordianBaseData.getInvalidText(pSignSpec));
             }
@@ -418,10 +434,14 @@ public class GordianCoreAgreementParams
             throw new GordianDataException("Client Name cannot be changed for server");
         }
 
-        /* Only allowed if agreementType is SM2 */
-        if (pName != null
-                && !GordianAgreementType.SM2.equals(theSpec.getAgreementType())) {
-            throw new GordianDataException("Names only allowed for SM2 agreementTypes");
+        /* Only allowed if agreementType is SM2 or SM9 non-KEM */
+        final boolean isSupported = switch (theSpec.getAgreementType()) {
+            case SM2 -> true;
+            case SM9 -> theSpec.getAgreementType() == GordianAgreementType.SM9;
+            default -> false;
+        };
+        if (!isSupported) {
+            throw new GordianDataException("Client name not allowed for Spec: " + theSpec);
         }
 
         /* Create new updated parameters */
@@ -432,15 +452,16 @@ public class GordianCoreAgreementParams
 
     @Override
     public GordianAgreementParams setServerName(final byte[] pName) throws GordianException {
-        /* Only allowed for server parameters */
-        if (isClient) {
-            throw new GordianDataException("Server Name cannot be changed for client");
-        }
-
-        /* Only allowed if agreementType is SM2 */
-        if (pName != null
-                && !GordianAgreementType.SM2.equals(theSpec.getAgreementType())) {
-            throw new GordianDataException("Names only allowed for SM2 agreementTypes");
+        /* Only allowed if agreementType is SM2 server or SM9 client */
+        final boolean isSupported = switch (theSpec.getAgreementType()) {
+            case SM2 -> !isClient;
+            case SM9 -> isClient;
+            case KEM -> isClient
+                    && theSpec.getKeyPairSpec().getKeyPairType() == GordianKeyPairType.SM9;
+            default -> false;
+        };
+        if (!isSupported) {
+            throw new GordianDataException("Server name not allowed for Spec: " + theSpec);
         }
 
         /* Create new updated parameters */

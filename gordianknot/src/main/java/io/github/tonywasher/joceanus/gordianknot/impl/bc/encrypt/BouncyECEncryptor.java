@@ -17,14 +17,15 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.encrypt;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.engines.GordianEllipticEncryptor;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -92,6 +93,11 @@ public class BouncyECEncryptor
             /* Check that we are in encryption mode */
             checkMode(GordianEncryptMode.ENCRYPT);
 
+            /* Reject null data */
+            if (pBytes == null) {
+                throw new GordianDataException("Null Message");
+            }
+
             /* Encrypt the message */
             return theEncryptor.encrypt(pBytes);
         } catch (InvalidCipherTextException e) {
@@ -104,6 +110,11 @@ public class BouncyECEncryptor
         try {
             /* Check that we are in decryption mode */
             checkMode(GordianEncryptMode.DECRYPT);
+
+            /* Reject null data */
+            if (pBytes == null) {
+                throw new GordianDataException("Null Message");
+            }
 
             /* Decrypt the message */
             return theEncryptor.decrypt(pBytes);

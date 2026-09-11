@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.factory;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianIdSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 
 /**
  * GordianKnot Knuth Obfuscator API.

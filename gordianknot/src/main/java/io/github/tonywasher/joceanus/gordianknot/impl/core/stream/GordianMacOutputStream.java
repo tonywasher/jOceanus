@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.stream;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 
 import java.io.IOException;
@@ -93,10 +93,15 @@ public class GordianMacOutputStream
     protected void processData(final byte[] pBytes,
                                final int pOffset,
                                final int pLength) throws IOException {
-        /* Update the MAC and write bytes to underlying stream */
-        theMac.update(pBytes, pOffset, pLength);
-        theDataLen += pLength;
-        writeToStream(pBytes, pOffset, pLength);
+        /* Protect against exceptions */
+        try {
+            /* Update the MAC and write bytes to underlying stream */
+            theMac.update(pBytes, pOffset, pLength);
+            theDataLen += pLength;
+            writeToStream(pBytes, pOffset, pLength);
+        } catch (GordianException e) {
+            throw new IOException("Failed to process data", e);
+        }
     }
 
     /**

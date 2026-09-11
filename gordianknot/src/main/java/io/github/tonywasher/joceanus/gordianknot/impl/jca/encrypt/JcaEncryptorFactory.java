@@ -16,14 +16,14 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.jca.encrypt;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCompositeEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
 
 /**
@@ -60,7 +60,7 @@ public class JcaEncryptorFactory
     private GordianEncryptor getJcaEncryptor(final GordianCoreEncryptorSpec pEncryptorSpec) throws GordianException {
         return switch (pEncryptorSpec.getKeyPairType()) {
             case RSA, ELGAMAL -> new JcaBlockEncryptor(getFactory(), pEncryptorSpec);
-            case SM2 -> new JcaHybridEncryptor(getFactory(), pEncryptorSpec);
+            case SM2, SM9 -> new JcaHybridEncryptor(getFactory(), pEncryptorSpec);
             case COMPOSITE -> new GordianCompositeEncryptor(getFactory(), pEncryptorSpec);
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pEncryptorSpec.getKeyPairType()));
         };
@@ -75,7 +75,7 @@ public class JcaEncryptorFactory
 
         /* Switch on KeyType */
         return switch (pSpec.getKeyPairType()) {
-            case RSA, ELGAMAL, SM2, COMPOSITE -> true;
+            case RSA, ELGAMAL, SM2, SM9, COMPOSITE -> true;
             default -> false;
         };
     }

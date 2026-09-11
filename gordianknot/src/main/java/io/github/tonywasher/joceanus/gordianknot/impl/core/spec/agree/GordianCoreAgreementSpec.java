@@ -152,7 +152,7 @@ public class GordianCoreAgreementSpec
      */
     public boolean isSupported() {
         final GordianKeyPairType myType = theKeyPairSpec.getKeyPairType();
-        return theAgreementType.isSupported(myType)
+        return theAgreementType.isSupported(theKeyPairSpec)
                 && theKDFType.isSupported(myType, theAgreementType.getType());
     }
 
@@ -181,7 +181,7 @@ public class GordianCoreAgreementSpec
         /* Confirmation is restricted to certain agreement types */
         if (withConfirm) {
             return switch (theAgreementType.getType()) {
-                case UNIFIED, MQV, SM2 -> true;
+                case UNIFIED, MQV, SM2, SM9 -> true;
                 default -> false;
             };
         }

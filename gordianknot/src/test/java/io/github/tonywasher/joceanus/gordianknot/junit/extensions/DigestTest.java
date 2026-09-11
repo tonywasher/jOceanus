@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.junit.extensions;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2Tree;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2Xof;
@@ -25,7 +25,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2s
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianCubeHashDigest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianGroestlDigest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianJHDigest;
-import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianKangarooTwelve;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianSkeinBase;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianSkeinDigest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianSkeinTree;
@@ -33,8 +32,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianSkeinXo
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianBlake2Mac;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters.GordianBlake2ParametersBuilder;
-import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianKeccakParameters;
-import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianKeccakParameters.GordianKeccakParametersBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters.GordianSkeinParametersBuilder;
 import org.bouncycastle.crypto.Digest;
@@ -125,8 +122,7 @@ class DigestTest {
                         DynamicTest.dynamicTest("Xof", () -> new SkeinXofTest().checkXofs()),
                         DynamicTest.dynamicTest("Tree", () -> new SkeinTreeTest().runTest())
                 )),
-                DynamicTest.dynamicTest("BlakeTree", () -> new Blake2TreeTest().runTest()),
-                DynamicTest.dynamicTest("Kangaroo", () -> new KangarooTest().checkDigests())
+                DynamicTest.dynamicTest("BlakeTree", () -> new Blake2TreeTest().runTest())
         )));
     }
 
@@ -159,27 +155,6 @@ class DigestTest {
 
             /* Check the hash */
             Assertions.assertArrayEquals(myExpected, myOutput, "Result mismatch");
-        }
-    }
-
-    /**
-     * Print the Digests.
-     *
-     * @param pDigest the digest to test.
-     */
-    static void printDigestStrings(final Digest pDigest) {
-        /* Create the output buffer */
-        final byte[] myOutput = new byte[pDigest.getDigestSize()];
-
-        /* Loop through the input strings */
-        for (String myInput : INPUTS) {
-            /* Create the hash */
-            pDigest.update(myInput.getBytes(), 0, myInput.length());
-            pDigest.doFinal(myOutput, 0);
-
-            /* Check the hash */
-            final String myHash = Hex.toHexString(myOutput);
-            System.out.println(myHash);
         }
     }
 
@@ -340,86 +315,6 @@ class DigestTest {
 
         /* Check the result */
         Assertions.assertArrayEquals(myXofResult, myDigestResult, "Result mismatch");
-    }
-
-    /**
-     * Run the kangaroo tests.
-     *
-     * @param pMsgLen  the messageLength
-     * @param pStdMsg  is this a  standard message
-     * @param pPersLen the personalLength
-     * @param pResult  the expected result
-     */
-    static void testKangaroo(final int pMsgLen,
-                             final boolean pStdMsg,
-                             final int pPersLen,
-                             final String pResult) {
-        testKangaroo(pMsgLen, pStdMsg, pPersLen, 0, pResult);
-    }
-
-    /**
-     * Run the kangaroo tests.
-     *
-     * @param pMsgLen  the messageLength
-     * @param pStdMsg  is this a  standard message
-     * @param pPersLen the personalLength
-     * @param pOutLen  the outputLength
-     * @param pResult  the expected result
-     */
-    static void testKangaroo(final int pMsgLen,
-                             final boolean pStdMsg,
-                             final int pPersLen,
-                             final int pOutLen,
-                             final String pResult) {
-        /* Access the expected result */
-        final byte[] myExpected = Hex.decode(pResult);
-        final int myXofLen = pOutLen == 0 ? myExpected.length : pOutLen;
-
-        /* Create the message */
-        final byte[] myMsg = new byte[pMsgLen];
-        if (pStdMsg) {
-            buildStdBuffer(myMsg);
-        } else {
-            Arrays.fill(myMsg, (byte) 0xFF);
-        }
-
-        /* Create the personalisation */
-        final byte[] myPers = pPersLen > 0 ? new byte[pPersLen] : null;
-        if (pPersLen > 0) {
-            buildStdBuffer(myPers);
-        }
-
-        /* Create the output buffer */
-        byte[] myOutput = new byte[myXofLen];
-
-        /* Initialise the mac */
-        final GordianKangarooTwelve myDigest = new GordianKangarooTwelve();
-        final GordianKeccakParameters myParams = new GordianKeccakParametersBuilder()
-                .setPersonalisation(myPers)
-                .build();
-        myDigest.init(myParams);
-        myDigest.update(myMsg, 0, pMsgLen);
-        myDigest.doFinal(myOutput, 0, myXofLen);
-
-        /* If we are only looking at the last bit of the output */
-        if (pOutLen != 0) {
-            myOutput = Arrays.copyOfRange(myOutput, pOutLen - myExpected.length, pOutLen);
-        }
-
-        /* Check the result */
-        Assertions.assertArrayEquals(myExpected, myOutput, "Result mismatch");
-    }
-
-    /**
-     * Build a standard buffer.
-     *
-     * @param pBuffer the buffer to build
-     */
-    private static void buildStdBuffer(final byte[] pBuffer) {
-        for (int i = 0; i < pBuffer.length; i += 251) {
-            final int myLen = Math.min(251, pBuffer.length - i);
-            System.arraycopy(BLAKE2DATA, 0, pBuffer, i, myLen);
-        }
     }
 
     /**
@@ -1144,63 +1039,6 @@ class DigestTest {
             testBlakeNullXof(new GordianBlake2bDigest(256));
             testBlakeNullXof(new GordianBlake2bDigest(384));
             testBlakeNullXof(new GordianBlake2bDigest(512));
-        }
-    }
-
-    /**
-     * KangarooTest.
-     */
-    static class KangarooTest {
-        /**
-         * Expected results.
-         */
-        private static final String[] EXPECTED = {
-                "1AC2D450FC3B4205D19DA7BFCA1B37513C0803577AC7167F06FE2CE1F0EF39E5",
-                "1AC2D450FC3B4205D19DA7BFCA1B37513C0803577AC7167F06FE2CE1F0EF39E54269C056B8C82E48276038B6D292966CC07A3D4645272E31FF38508139EB0A71",
-                "E8DC563642F7228C84684C898405D3A834799158C079B12880277A1D28E2FF6D",
-                "2BDA92450E8B147F8A7CB629E784A058EFCA7CF7D8218E02D345DFAA65244A1F",
-                "6BF75FA2239198DB4772E36478F8E19B0F371205F6A9A93A273F51DF37122888",
-                "0C315EBCDEDBF61426DE7DCF8FB725D1E74675D7F5327A5067F367B108ECB67C",
-                "CB552E2EC77D9910701D578B457DDF772C12E322E4EE7FE417F92C758F0D59D0",
-                "8701045E22205345FF4DDA05555CBB5C3AF1A771C2B89BAEF37DB43D9998B9FE",
-                "844D610933B1B9963CBDEB5AE3B6B05CC7CBD67CEEDF883EB678A0A8E0371682",
-                "3C390782A8A4E89FA6367F72FEAAF13255C8D95878481D3CD8CE85F58E880AF8",
-                "FAB658DB63E94A246188BF7AF69A133045F46EE984C56E3C3328CAAF1AA1A583",
-                "D848C5068CED736F4462159B9867FD4C20B808ACC3D5BC48E0B06BA0A3762EC4",
-                "C389E5009AE57120854C2E8C64670AC01358CF4C1BAF89447A724234DC7CED74",
-                "75D2F86A2E644566726B4FBCFC5657B9DBCF070C7B0DCA06450AB291D7443BCF",
-                "61F2AD5657F4F2632A0822138EFE20C6A68A1885E1C0643EBF5587103219301D",
-                "CBBE9DD1E423F20003FBA7BB219491C8D1F445FA5C4199D6C6C70C9FDC101964",
-                "77DF46FD2D22BCE26E636E02CE10F9A42AE925E071F9056A9236328DB01BA411",
-                "711835517A182DD4BC0E816BF5C72A278B227AE0B3D68F82577F97AD3CBFCA6A",
-                "640728E5B4BE29F04A4FFFA645CB308102170F4D2B69D61F030CDC569BC74BAC",
-                "5D7D68B49A5D999B8699FC4EDBEF0F0B4E4E7E904FE4B2B6B10C7C922407CF66"
-        };
-
-        /**
-         * Test digests.
-         */
-        void checkDigests() {
-            testKangaroo(0, true, 0, EXPECTED[0]);
-            testKangaroo(0, true, 0, EXPECTED[1]);
-            testKangaroo(0, true, 0, 10032, EXPECTED[2]);
-            testKangaroo(1, true, 0, EXPECTED[3]);
-            testKangaroo(17, true, 0, EXPECTED[4]);
-            testKangaroo(17 * 17, true, 0, EXPECTED[5]);
-            testKangaroo(17 * 17 * 17, true, 0, EXPECTED[6]);
-            testKangaroo(17 * 17 * 17 * 17, true, 0, EXPECTED[7]);
-            testKangaroo(17 * 17 * 17 * 17 * 17, true, 0, EXPECTED[8]);
-            testKangaroo(17 * 17 * 17 * 17 * 17 * 17, true, 0, EXPECTED[9]);
-            testKangaroo(0, true, 1, EXPECTED[10]);
-            testKangaroo(1, false, 41, EXPECTED[11]);
-            testKangaroo(3, false, 41 * 41, EXPECTED[12]);
-            testKangaroo(7, false, 41 * 41 * 41, EXPECTED[13]);
-            testKangaroo(165, true, 0, EXPECTED[14]);
-            testKangaroo(166, true, 0, EXPECTED[15]);
-            testKangaroo(167, true, 0, EXPECTED[16]);
-            testKangaroo(8192 + 165, false, 0, EXPECTED[17]);
-            testKangaroo(8192 + 166, false, 0, EXPECTED[18]);
-            testKangaroo(8192 + 167, false, 0, EXPECTED[19]);
         }
     }
 

@@ -16,15 +16,16 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.jca.sign;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCompositeSigner;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
@@ -74,7 +75,6 @@ public class JcaSignatureFactory
             case AIMER -> new JcaAIMerSignature(getFactory(), pSignatureSpec);
             case FAEST -> new JcaFaestSignature(getFactory(), pSignatureSpec);
             case HAETAE -> new JcaHAETAESignature(getFactory(), pSignatureSpec);
-            case HAWK -> new JcaHawkSignature(getFactory(), pSignatureSpec);
             case MAYO -> new JcaMayoSignature(getFactory(), pSignatureSpec);
             case MQOM -> new JcaMQOMSignature(getFactory(), pSignatureSpec);
             case QRUOV -> new JcaQRUOVSignature(getFactory(), pSignatureSpec);
@@ -82,8 +82,9 @@ public class JcaSignatureFactory
             case SNOVA -> new JcaSnovaSignature(getFactory(), pSignatureSpec);
             case SQISIGN -> new JcaSQIsignSignature(getFactory(), pSignatureSpec);
             case UOV -> new JcaUOVSignature(getFactory(), pSignatureSpec);
-            case PICNIC -> new JcaPicnicSignature(getFactory(), pSignatureSpec);
             case LMS -> new JcaLMSSignature(getFactory(), pSignatureSpec);
+            case SM9 -> new JcaSM9Signature(getFactory(), pSignatureSpec);
+            case HYBRIDSIGN -> new JcaHybridSignature(getFactory(), pSignatureSpec);
             case COMPOSITE -> new GordianCompositeSigner(getFactory(), pSignatureSpec);
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pSignatureSpec.getKeyPairType()));
         };
@@ -102,8 +103,8 @@ public class JcaSignatureFactory
             case RSA -> validRSASignature(mySpec);
             case EC -> validECSignature(mySpec);
             case DSA -> validDSASignature(mySpec);
-            case DSTU, GOST, SM2, XMSS, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE, HAWK, MAYO,
-                 MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, PICNIC, EDDSA, LMS, COMPOSITE -> true;
+            case DSTU, GOST, SM2, XMSS, SLHDSA, MLDSA, FALCON, AIMER, FAEST, HAETAE, MAYO,
+                 MQOM, QRUOV, SDITH, SNOVA, SQISIGN, UOV, EDDSA, LMS, SM9, HYBRIDSIGN, COMPOSITE -> true;
             default -> false;
         };
     }
@@ -178,6 +179,8 @@ public class JcaSignatureFactory
         return switch (myDigest.getDigestType()) {
             case SHA2 -> !myDigest.isSha2Hybrid();
             case SHA1, SHA3 -> true;
+            case RIPEMD -> GordianLength.LEN_160.equals(myDigest.getDigestLength())
+                    && GordianSignatureType.DSA.equals(pSpec.getSignatureType());
             default -> false;
         };
     }

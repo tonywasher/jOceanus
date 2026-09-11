@@ -37,15 +37,23 @@ public class GordianCoreSignParams
     private final byte[] theContext;
 
     /**
+     * Identity.
+     */
+    private final byte[] theIdentity;
+
+    /**
      * Constructor.
      *
-     * @param pKeyPair the keyPair
-     * @param pContext the Context
+     * @param pKeyPair  the keyPair
+     * @param pContext  the Context
+     * @param pIdentity the Identity
      */
     GordianCoreSignParams(final GordianKeyPair pKeyPair,
-                          final byte[] pContext) {
+                          final byte[] pContext,
+                          final byte[] pIdentity) {
         theKeyPair = pKeyPair;
-        theContext = pContext != null ? Arrays.clone(pContext) : null;
+        theContext = Arrays.clone(pContext);
+        theIdentity = Arrays.clone(pIdentity);
     }
 
     @Override
@@ -55,6 +63,11 @@ public class GordianCoreSignParams
 
     @Override
     public byte[] getContext() {
-        return theContext == null ? null : Arrays.clone(theContext);
+        return Arrays.clone(theContext);
+    }
+
+    @Override
+    public byte[] getIdentity() {
+        return Arrays.clone(theIdentity);
     }
 }

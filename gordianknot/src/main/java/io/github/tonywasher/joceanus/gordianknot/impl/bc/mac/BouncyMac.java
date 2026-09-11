@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.mac;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParams;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
@@ -124,17 +124,22 @@ public class BouncyMac
     @Override
     public void doUpdate(final byte[] pBytes,
                          final int pOffset,
-                         final int pLength) {
-        theMac.update(pBytes, pOffset, pLength);
+                         final int pLength) throws GordianException {
+        checkInit();
+        if (checkInputBuffer(pBytes, pOffset, pLength)) {
+            theMac.update(pBytes, pOffset, pLength);
+        }
     }
 
     @Override
-    public void update(final byte pByte) {
+    public void update(final byte pByte) throws GordianException {
+        checkInit();
         theMac.update(pByte);
     }
 
     @Override
-    public void reset() {
+    public void reset() throws GordianException {
+        checkInit();
         theMac.reset();
     }
 
@@ -149,7 +154,8 @@ public class BouncyMac
     public int doFinish(final byte[] pBuffer,
                         final int pOffset) throws GordianException {
         /* Check for destroyed key */
-        getKey().checkForDestroyedKey();
+        checkInit();
+        checkOutputBuffer(pBuffer, pOffset, getMacSize());
 
         /* Finalize the mac */
         return theMac.doFinal(pBuffer, pOffset);

@@ -18,7 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.base;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianDestroyable;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 
 /**
  * Base destroyable interface.

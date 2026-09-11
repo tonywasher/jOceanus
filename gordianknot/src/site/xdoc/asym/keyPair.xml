@@ -21,8 +21,8 @@
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 
 /* Access keyPairGenerator */
@@ -58,7 +58,7 @@ final GordianKeyPair myDerived = myGenerator.deriveKeyPair(myX509, myPKCS8);
                         <tr><td>SM2</td><td>sm2p256v1, wapip192v1</td></tr>
                         <tr><td>EdDSA</td><td rowspan="2">Curve25519, Curve448</td></tr>
                         <tr><td>XDH</td></tr>
-                        <tr><td>SLHDSA</td><td>(SHA2, SHAKE) * (128, 192, 256) * (F, S) * (pure, hash)</td></tr>
+                        <tr><td>SLHDSA</td><td>(SHA2, SHAKE) * (128, 192, 256) * (F, S)</td></tr>
                         <tr><td rowspan="2">XMSS</td><td>XMSS((SHA256, SHA512, SHAKE128, SHAKE256) * HEIGHT(H12, H16, H20))</td></tr>
                         <tr><td>XMSS^MT((SHA256, SHA512, SHAKE128, SHAKE256) * HEIGHT(H20, H40, H60) * LAYERS(2, 3, 4, 6, 8, 12))</td></tr>
                         <tr><td rowspan="2">LMS</td><td>(SHA256, SHAKE256) * SIG(H5,H10,H25,H20,H25) * OTS(W1,W2,W4,W8)</td></tr>
@@ -67,26 +67,28 @@ final GordianKeyPair myDerived = myGenerator.deriveKeyPair(myX509, myPKCS8);
                         <tr><td>FRODO</td><td>(AES, SHAKE) * (976, 1344) * (BASE, E)</td></tr>
                         <tr><td>SABER</td><td>(LIGHT, BASE, FIRE) * (128, 192, 256)</td></tr>
                         <tr><td>MLKEM</td><td>512, 768, 1024</td></tr>
-                        <tr><td>MLDSA</td><td>(44, 65, 87) * (pure, hash)</td></tr>
+                        <tr><td>MLDSA</td><td>(44, 65, 87)</td></tr>
                         <tr><td>NTRU</td><td>HPS509, HPS677, HPS821, HPS1229, HRSS701, HRSS1373</td></tr>
                         <tr><td>NTRUPLUS</td><td>(768, 864, 1152)</td></tr>
                         <tr><td>NTRUPRIME</td><td>(NTRUL, SNTRU) * (653, 761, 857, 953, 1013, 1277)</td></tr>
                         <tr><td>BIKE</td><td>128, 192, 256</td></tr>
                         <tr><td>FALCON</td><td>512, 1024</td></tr>
                         <tr><td>HQC</td><td>128, 192, 256</td></tr>
-                        <tr><td>PICNIC</td><td>(L1, L3, L5) * (FS, UR, FULL, 3)</td></tr>
                         <tr><td>AIMER</td><td>(128, 192, 256) * (s, f)</td></tr>
                         <tr><td>FAEST</td><td>(128, 192, 256) * (std, em) * (s, f)</td></tr>
                         <tr><td>HAETAE</td><td>(2, 3, 5)</td></tr>
-                        <tr><td>HAWK</td><td>(256, 512, 1024)</td></tr>
                         <tr><td>MAYO</td><td>(1, 2, 3, 5)</td></tr>
                         <tr><td>MQOM</td><td>Cat(1, 3, 5) * GF(2, 16, 256) * (fast, short) * r(3, 5)</td></tr>
-                        <tr><td>QRUOV</td><td>Cat(1, 3, 5) * (4 variants) * (SHAKE, AES)</td></tr>
+                        <tr><td>QRUOV</td><td>Cat(1, 3, 5) * (4 variants)</td></tr>
                         <tr><td>SDITH</td><td>(HyperCube, Threshold) * Cat(1, 3, 5) * (GF256, P251)</td></tr>
+                        <tr><td>SMAUGT</td><td>(1, 3, 5, T)</td></tr>
                         <tr><td>SNOVA</td><td>(24A, 24B, 25, 29, 37A, 37B, 49, 56, 60, 66, 75) * (SSK, ESK) * (SHAKE, BASE)</td></tr>
                         <tr><td>SQISIGN</td><td>(1, 3, 5)</td></tr>
                         <tr><td>UOV</td><td>(Is, Ip, III, V) * (Classic, PHC, PKC-SKC)</td></tr>
                         <tr><td>NEWHOPE</td><td/></tr>
+                        <tr><td>SM9</td><td/></tr>
+                        <tr><td>HYBRIDKEM</td><td/></tr>
+                        <tr><td>HYBRIDSIGN</td><td/></tr>
                     </table>
                 </subsection>
             </subsection>
@@ -94,12 +96,14 @@ final GordianKeyPair myDerived = myGenerator.deriveKeyPair(myX509, myPKCS8);
                 <p>Composite keyPairs can be created as a list of <strong>different</strong> keyPairs. These composite keyPairs can be used
                 for signatures/agreements/encryption as long as each individual component keyPair can be used for the operation. The only restrictions
                 are that there must be at least two keyPairs and that all keyPairs must be of a different type</p>
+                <p>In addition, if keyPair have special characteristics such as <strong>stateAware</strong> or <strong>idAware</strong>, then
+                    all keyPairs in the composite set must share the same characteristic.</p>
                 <subsection name="Sample">
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 
 /* Access keyPairGenerator */
@@ -119,6 +123,89 @@ final GordianKeyPair myPublicOnly = myGenerator.derivePublicOnlyKeyPair(myX509);
 final GordianKeyPair myDerived = myGenerator.deriveKeyPair(myX509, myPKCS8);
                     </source>
                 </subsection>
+            </subsection>
+            <subsection  name="StateAware KeyPairs">
+                <p>Some Signature keyPairs are <strong>StateAware</strong>, in that they maintain state. Currently two signature algorithms
+                (<strong>XMSS</strong> and <strong>LMS</strong>) are stateAware. These stateAware keyPairs maintain a count of how many signatures
+                have been produced, and how many available signatures remain. The keyPairs should only be used once for each state to maintain
+                security. The keyPair is automatically updated after each signature, but this update is only in memory, so it is important to
+                harden the state to disk prior to publicising the signature.</p>
+                <p>A <strong>stateAware</strong> keyPair allows sharding, whereby if a keyPair has a maximum of 100 signatures and has
+                produced 20 signatures, a shard can be created with the capacity for say 5 further signatures. This will leave the original
+                keyPair in the state of having produced 25 out of 100 signatures and the shard having produced 20 out of 25 signatures.
+                The shard and original keyPair can then be used independently without conflicting.</p>
+                <p>The generally recommended way of hardening the stateAware state is to store the updated PKCS8Encoding of the keyPair to a database
+                after signing but prior to distributing the signature.</p>
+                <subsection name="Sample">
+                    <source>
+                        /* Access factory */
+                        final GordianFactory myBaseFactory = GordianGenerator.createFactory();
+                        final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+                        final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+                        final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
+
+                        /* Access keyPairGenerator */
+                        final GordianKeyPairSpec mySpec = myKeyPairBuilder.xmss(GordianXMSSDigestType.SHA256, GordianXMSSHeight.H10));
+                        final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
+                        final PKCS8EncodedKeySpec myPKCS8 = .. from database;
+                        final X509EncodedKeySpec myX509 = .. from database;
+                        final GordianKeyPair myPair = myGenerator.deriveKeyPair(myX509, myPKCS8);
+
+                        /* Perform signature */
+
+                        /* Save new PKCS8Encoding to database */
+                        final PKCS8EncodedKeySpec myPKCS8 = myGenerator.getPKCS8Encoding(myPair);
+                        .. to database
+                    </source>
+                </subsection>
+                <p>An alternate method to storing the updated keyPair is to maintain just the count of signatures that are produced,
+                and to save that prior to distributing the signature. On startup, the application can load the original keyPair and  the signature
+                count <strong>x</strong>, and extract a shard of count <strong>x</strong>. This shard can then be discarded leaving the original
+                keyPair in the correct state.</p>
+                <subsection name="Sample">
+                    <source>
+                        /* Access factory */
+                        final GordianFactory myBaseFactory = GordianGenerator.createFactory();
+                        final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
+                        final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+                        final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
+
+                        /* Access keyPairGenerator */
+                        final GordianKeyPairSpec mySpec = myKeyPairBuilder.xmss(GordianXMSSDigestType.SHA256, GordianXMSSHeight.H10));
+                        final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
+                        final PKCS8EncodedKeySpec myPKCS8 = .. from database;
+                        final X509EncodedKeySpec myX509 = .. from database;
+                        final GordianStateAwareKeyPair myPair = (GordianStateAwareKeyPair) myGenerator.deriveKeyPair(myX509, myPKCS8);
+
+                        /* Extract and discard the shard */
+                        int mySignatureCount = .. from database;
+                        myPair.getKeyPairShard(mySignatureCount);
+
+                        /* Perform signature */
+
+                        /* Save new signatureCount to database */
+                        mySignatureCount++;
+                        .. to database;
+                    </source>
+                </subsection>
+                <p>For the performance sensitive among you, the update after evey signature can be avoided by aggressive sharding, whereby a shard
+                of say 32 signatures is extracted, and the external count is upped by 32. The shard is then used for all signatures until it is
+                exhausted, whereupon a new shard is created and the external count is again. On controlled application termination the external
+                count should be updated to the correct figure. This reduces the number of times that the external count has to be updated at the
+                potential loss of a number of signature slots on uncontrolled termination.</p>
+            </subsection>
+            <subsection  name="IdAware KeyPairs">
+                <p>Some keyPairs are <strong>IdAware</strong>, in that they utilise a master keyPair and multiple linked user keyPairs
+                each with a unique Identity. Currently only <strong>SM9</strong> is idAware. The user KeyPairs are deterministically derived
+                from the master KeyPair via their identity and idKeyType. This means that keyPairGenerators only exist for master KeyPairs,
+                and that user keyPairs cannot be stored externally, they can only be re-derived from the master keyPair.</p>
+                <p>Where two idAware keyPairs are used in tandem, such as in SM9-SM9 style agreements, they must share the same master keyPair.</p>
+                <p>User keyPairs can be used as per normal in agreements, encryptors and signatures. Master keyPairs can be used in agreements
+                and signatures by additionally specifying the identity of the keyPairs that will be derived from the master keyPairs. This is
+                required to test the validity of master keyPairs and to enable proof of possession during certificate generation.</p>
+                <p>It is not possible to create standard certificates for userKey pairs, since there is no X509 format for the public keys.
+                For agreements, miniCertificates must be created using the user keyPair. This will hold the userKey pair and the X509 encoding
+                of the master keyPair. The identity of the user keyPair will be embedded in the agreement message.</p>
             </subsection>
         </section>
     </body>

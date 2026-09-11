@@ -16,13 +16,15 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
@@ -30,8 +32,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
@@ -196,9 +196,9 @@ public class GordianCoreKeySetAADCipher
     }
 
     @Override
-    protected void checkStatus() throws GordianException {
+    public void checkInit() throws GordianException {
         /* Check underlying status */
-        super.checkStatus();
+        super.checkInit();
 
         /* aead is now complete */
         aeadComplete = true;
@@ -410,8 +410,10 @@ public class GordianCoreKeySetAADCipher
 
     /**
      * Complete AEAD Mac input.
+     *
+     * @throws GordianException on error
      */
-    private void completeAEADMac() {
+    private void completeAEADMac() throws GordianException {
         /* Pad to boundary */
         padToBoundary(aeadLength);
 
@@ -421,8 +423,10 @@ public class GordianCoreKeySetAADCipher
 
     /**
      * Complete Mac data input.
+     *
+     * @throws GordianException on error
      */
-    private void completeDataMac() {
+    private void completeDataMac() throws GordianException {
         /* Pad to boundary */
         padToBoundary(encryptedLength);
 
@@ -441,8 +445,9 @@ public class GordianCoreKeySetAADCipher
      * Pad to boundary.
      *
      * @param pDataLen the length of the data to pad
+     * @throws GordianException on error
      */
-    private void padToBoundary(final long pDataLen) {
+    private void padToBoundary(final long pDataLen) throws GordianException {
         /* Pad to boundary */
         final int xtra = (int) pDataLen & (MACSIZE - 1);
         if (xtra != 0) {

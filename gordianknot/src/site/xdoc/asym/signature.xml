@@ -12,15 +12,16 @@
                 <p>The <b>LMS</b> and <b>XMSS</b> signature schemes are stateful signature schemes and as such their keyPairs support the
                     <b>GordianStateAwareKeyPair</b> interface which allows sharding of the privateKey</p>
                 <p>The <b>MLDSA</b>, <b>SLHDSA</b> and <b>EDDSA</b> algorithms allow a context to be specified in the parameters</p>
+                <p>The <b>SM9</b> algorithm allow an identity to specified in the parameters for a master keyPair.</p>
             </subsection>
             <subsection name="Sample">
                 <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
 final GordianDigestFactory myDigestFactory = myBase.getDigestFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianSignatureFactory mySignatureFactory = myAsyncFactory.getSignatureFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+final GordianSignatureFactory mySignatureFactory = myAsymFactory.getSignatureFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 final GordianSignatureSpecBuilder mySignatureBuilder = mySignatureFactory.newSignatureSpecBuilder()
 final GordianDigestSpecBuilder myDigestBuilder = myDigestFactory.newDigestSpecBuilder()
@@ -46,8 +47,13 @@ final GordianSignature mySigner = mySignatureFactory.createSigner(mySignSpec);
 
 /* Sign message */
 final byte[] message = ....;
+final boolean isIdAwareMaster = mySigningPair instanceof GordianIdAwareKeyPair idAware
+                                &amp;&amp; !idAware.isUserKey();
+final byte[] myIdentity = .. /* If IdMaster */
 final GordianSignParamsBuilder myBuilder = mySignatureFactory.newSignParamsBuilder();
-final GordianSignParams myParams = myBuilder.keyPair(mySigningPair);
+final GordianSignParams myParams = isIdAwareMaster
+                    ? myBuilder.keyPairAndIdentity(mySigningPair, myIdentity)
+                    : myBuilder.keyPair(mySigningPair);
 mySigner.initForSigning(myParams);
 mySigner.update(message);
 final byte[] mySignature = mySigner.sign();
@@ -65,10 +71,10 @@ final boolean verified = mySigner.verify(mySignature);
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
+final GordianAsymFactory myAsymFactory = myBase.getAsymFactory();
 final GordianDigestFactory myDigestFactory = myBase.getDigestFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianSignatureFactory mySignatureFactory = myAsyncFactory.getSignatureFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+final GordianSignatureFactory mySignatureFactory = myAsymFactory.getSignatureFactory();
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 final GordianSignatureSpecBuilder mySignatureBuilder = mySignatureFactory.newSignatureSpecBuilder()
 final GordianDigestSpecBuilder myDigestBuilder = myDigestFactory.newDigestSpecBuilder()
@@ -112,14 +118,12 @@ final boolean verified = mySigner.verify(mySignature);
                     <tr><td>GOST2012</td><td>Native</td><td/></tr>
                     <tr><td>SM2</td><td>Native</td><td/></tr>
                     <tr><td>EdDSA</td><td>Native, PreHash</td><td>Y</td></tr>
-                    <tr><td>SLHDSA</td><td>Native</td><td>Y</td></tr>
-                    <tr><td>MLDSA</td><td>Native</td><td>Y</td></tr>
+                    <tr><td>SLHDSA</td><td>Native, PreHash</td><td>Y</td></tr>
+                    <tr><td>MLDSA</td><td>Native, PreHash</td><td>Y</td></tr>
                     <tr><td>FALCON</td><td>Native</td><td/></tr>
-                    <tr><td>PICNIC</td><td>Native</td><td/></tr>
                     <tr><td>AIMER</td><td>Native</td><td/></tr>
                     <tr><td>FAEST</td><td>Native</td><td/></tr>
                     <tr><td>HAETAE</td><td>Native</td><td/></tr>
-                    <tr><td>HAWK</td><td>Native</td><td/></tr>
                     <tr><td>MAYO</td><td>Native</td><td/></tr>
                     <tr><td>MQOM</td><td>Native</td><td/></tr>
                     <tr><td>QRUOV</td><td>Native</td><td/></tr>
@@ -129,6 +133,8 @@ final boolean verified = mySigner.verify(mySignature);
                     <tr><td>UOV</td><td>Native</td><td/></tr>
                     <tr><td>XMSS</td><td>Native, PreHash</td><td/></tr>
                     <tr><td>LMS</td><td>Native</td><td/></tr>
+                    <tr><td>SM9</td><td>Native</td><td/></tr>
+                    <tr><td>HYBRIDSIGN</td><td>Native</td><td/></tr>
                 </table>
             </subsection>
         </section>

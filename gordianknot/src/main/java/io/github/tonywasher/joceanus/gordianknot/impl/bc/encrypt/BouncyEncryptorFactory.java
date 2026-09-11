@@ -16,14 +16,14 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc.encrypt;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCompositeEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
 
 /**
@@ -63,6 +63,7 @@ public class BouncyEncryptorFactory
             case ELGAMAL -> new BouncyElGamalEncryptor(getFactory(), pSpec);
             case EC -> new BouncyECEncryptor(getFactory(), pSpec);
             case SM2 -> new BouncySM2Encryptor(getFactory(), pSpec);
+            case SM9 -> new BouncySM9Encryptor(getFactory(), pSpec);
             case COMPOSITE -> new GordianCompositeEncryptor(getFactory(), pSpec);
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         };

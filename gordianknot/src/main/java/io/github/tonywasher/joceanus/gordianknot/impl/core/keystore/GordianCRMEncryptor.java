@@ -20,15 +20,18 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
@@ -38,8 +41,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameters;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetSpecASN1;
 import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
@@ -107,13 +109,13 @@ public class GordianCRMEncryptor {
         /* Try to send an encrypted proof */
         final GordianKeyPair myKeyPair = pCertificate.getKeyPair();
         final GordianKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
-        final GordianEncryptorSpec myEncSpec = theFactory.getAsyncFactory().getEncryptorFactory().defaultForKeyPair(mySpec);
+        final GordianEncryptorSpec myEncSpec = theFactory.getAsymFactory().getEncryptorFactory().defaultForKeyPair(mySpec);
         if (myEncSpec != null) {
             return prepareForEncryption(myEncSpec, pCertificate);
         }
 
         /* Try to send an agreed proof */
-        final GordianAgreementSpec myAgreeSpec = theFactory.getAsyncFactory().getAgreementFactory().defaultForKeyPair(mySpec);
+        final GordianAgreementSpec myAgreeSpec = theFactory.getAsymFactory().getAgreementFactory().defaultForKeyPair(mySpec);
         if (myAgreeSpec != null) {
             return prepareAgreedEncryption(myAgreeSpec, pCertificate);
         }
@@ -133,13 +135,15 @@ public class GordianCRMEncryptor {
     private GordianCRMResult prepareAgreedEncryption(final GordianAgreementSpec pAgreeSpec,
                                                      final GordianCoreCertificate pCertificate) throws GordianException {
         /* Create the agreement */
-        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();
+        final GordianAsymFactory myFactory = theFactory.getAsymFactory();
         final GordianCoreAgreementFactory myAgreeFactory = (GordianCoreAgreementFactory) myFactory.getAgreementFactory();
-        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pCertificate.getKeyPair(),
-                new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+        final var myCert = myAgreeFactory.newMiniCertificate(SERVER, pCertificate.getKeyPair(), GordianKeyPairUse.AGREEMENT);
         final GordianKeySetSpecBuilder myBuilder = theFactory.getKeySetFactory().newKeySetSpecBuilder();
-        final GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(pAgreeSpec, myBuilder.keySet())
+        GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(pAgreeSpec, myBuilder.keySet())
                 .setServerCertificate(myCert);
+        if (pCertificate.getKeyPair() instanceof GordianIdAwareKeyPair) {
+            myParams = myParams.setServerName(GordianKeyPairValidity.SERVERID);
+        }
         final GordianAgreement myAgree = myAgreeFactory.createAgreement(myParams);
         final byte[] myHello = myAgree.nextMessage();
         final GordianKeySet myKeySet = myAgree.getKeySetResult();
@@ -215,7 +219,7 @@ public class GordianCRMEncryptor {
                                               final GordianCoreCertificate pCertificate,
                                               final GordianEncryptorSpec pSpec) throws GordianException {
         /* Create the encrypted key */
-        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();
+        final GordianAsymFactory myFactory = theFactory.getAsymFactory();
         final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myFactory.getEncryptorFactory();
         final GordianEncryptor myEncryptor = myEncFactory.createEncryptor(pSpec);
 
@@ -311,7 +315,7 @@ public class GordianCRMEncryptor {
                                                 final AlgorithmIdentifier pAlgId,
                                                 final byte[] pEncryptedKey) throws GordianException {
         /* Handle decryption */
-        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();
+        final GordianAsymFactory myFactory = theFactory.getAsymFactory();
         final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myFactory.getEncryptorFactory();
         final GordianEncryptorSpec myEncSpec = myEncFactory.getSpecForIdentifier(pAlgId);
         final GordianEncryptor myEncryptor = myEncFactory.createEncryptor(myEncSpec);
@@ -333,9 +337,9 @@ public class GordianCRMEncryptor {
     private GordianKeySet deriveAgreedKeySet(final GordianKeyPair pKeyPair,
                                              final byte[] pHello) throws GordianException {
         /* Handle agreement */
-        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();
+        final GordianAsymFactory myFactory = theFactory.getAsymFactory();
         final GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();
-        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair, GordianKeyPairUse.AGREEMENT);
         final GordianAgreement myAgree = myAgreeFactory.parseAgreementMessage(pHello);
         final GordianAgreementParams myParams = myAgree.getAgreementParams().setServerCertificate(myCert);
         myAgree.updateParams(myParams);

@@ -17,8 +17,10 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianIdAwareKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9KeyType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 
 import java.util.ArrayList;
@@ -346,15 +348,6 @@ public class GordianCoreKeyPairSpec
     }
 
     /**
-     * Obtain the Hawk keySpec.
-     *
-     * @return the keySpec.
-     */
-    public GordianCoreHawkSpec getHawkSpec() {
-        return castValue(GordianCoreHawkSpec.class);
-    }
-
-    /**
      * Obtain the Mayo keySpec.
      *
      * @return the keySpec.
@@ -391,6 +384,15 @@ public class GordianCoreKeyPairSpec
     }
 
     /**
+     * Obtain the SmaugT keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreSmaugTSpec getSmaugTSpec() {
+        return castValue(GordianCoreSmaugTSpec.class);
+    }
+
+    /**
      * Obtain the Snova keySpec.
      *
      * @return the keySpec.
@@ -418,12 +420,59 @@ public class GordianCoreKeyPairSpec
     }
 
     /**
-     * Obtain the Picnic keySpec.
+     * Obtain the HybridKEM keySpec.
      *
      * @return the keySpec.
      */
-    public GordianCorePicnicSpec getPicnicSpec() {
-        return castValue(GordianCorePicnicSpec.class);
+    public GordianHybridSpec getHybridSpec() {
+        return castValue(GordianHybridSpec.class);
+    }
+
+    /**
+     * Obtain the HybridKEM keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreHybridKEMSpec getHybridKEMSpec() {
+        return castValue(GordianCoreHybridKEMSpec.class);
+    }
+
+    /**
+     * Obtain the HybridSign keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreHybridSignSpec getHybridSignSpec() {
+        return castValue(GordianCoreHybridSignSpec.class);
+    }
+
+    /**
+     * Obtain the idAware keyType.
+     *
+     * @return the keyType.
+     */
+    public GordianIdAwareKeyType getIdAwareKeyType() {
+        return castValue(GordianIdAwareKeyType.class);
+    }
+
+    /**
+     * Obtain the SM9 keyType.
+     *
+     * @return the keyType.
+     */
+    public GordianSM9KeyType getSM9KeyType() {
+        return castValue(GordianSM9KeyType.class);
+    }
+
+    /**
+     * Obtain the master keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreKeyPairSpec getMasterKeySpec() {
+        return isIdAware() && getIdAwareKeyType().isUserKey()
+                ? new GordianCoreKeyPairSpec(theKeyPairType.getType(), getIdAwareKeyType().getMasterKeyType())
+                : this;
     }
 
     /**
@@ -546,15 +595,17 @@ public class GordianCoreKeyPairSpec
             case AIMER -> theSubSpec instanceof GordianCoreAIMerSpec;
             case FAEST -> theSubSpec instanceof GordianCoreFaestSpec;
             case HAETAE -> theSubSpec instanceof GordianCoreHAETAESpec;
-            case HAWK -> theSubSpec instanceof GordianCoreHawkSpec;
             case MAYO -> theSubSpec instanceof GordianCoreMayoSpec;
             case MQOM -> theSubSpec instanceof GordianCoreMQOMSpec;
             case SDITH -> theSubSpec instanceof GordianCoreSDitHSpec;
             case QRUOV -> theSubSpec instanceof GordianCoreQRUOVSpec;
+            case SMAUGT -> theSubSpec instanceof GordianCoreSmaugTSpec;
             case SNOVA -> theSubSpec instanceof GordianCoreSnovaSpec;
             case SQISIGN -> theSubSpec instanceof GordianCoreSQIsignSpec;
             case UOV -> theSubSpec instanceof GordianCoreUOVSpec;
-            case PICNIC -> theSubSpec instanceof GordianCorePicnicSpec;
+            case SM9 -> theSubSpec instanceof GordianSM9KeyType;
+            case HYBRIDKEM -> theSubSpec instanceof GordianCoreHybridKEMSpec;
+            case HYBRIDSIGN -> theSubSpec instanceof GordianCoreHybridSignSpec;
             case NEWHOPE -> theSubSpec == null;
             case LMS -> theSubSpec instanceof GordianCoreLMSSpec ls && ls.isValid();
             case EDDSA, XDH -> theSubSpec instanceof GordianCoreEdwardsSpec;
@@ -570,6 +621,7 @@ public class GordianCoreKeyPairSpec
      */
     private boolean checkComposite() {
         Boolean stateAware = null;
+        Boolean idAware = null;
         final List<GordianKeyPairType> myExisting = new ArrayList<>();
         final Iterator<GordianKeyPairSpec> myIterator = keySpecIterator();
         while (myIterator.hasNext()) {
@@ -592,6 +644,13 @@ public class GordianCoreKeyPairSpec
                 return false;
             }
 
+            /* Check that idAwareness is identical */
+            if (idAware == null) {
+                idAware = mySpec.isIdAware();
+            } else if (mySpec.isIdAware() != idAware) {
+                return false;
+            }
+
             /* Add to list */
             myExisting.add(myType);
         }
@@ -601,7 +660,7 @@ public class GordianCoreKeyPairSpec
     }
 
     /**
-     * is the use subType for signatures?
+     * is the keySpec stateAware?
      *
      * @return true/false
      */
@@ -609,6 +668,19 @@ public class GordianCoreKeyPairSpec
         return switch (theKeyPairType.getType()) {
             case XMSS, LMS -> true;
             case COMPOSITE -> ((GordianCoreKeyPairSpec) keySpecIterator().next()).isStateAware();
+            default -> false;
+        };
+    }
+
+    /**
+     * is the keySpec idAware?
+     *
+     * @return true/false
+     */
+    public boolean isIdAware() {
+        return switch (theKeyPairType.getType()) {
+            case SM9 -> true;
+            case COMPOSITE -> ((GordianCoreKeyPairSpec) keySpecIterator().next()).isIdAware();
             default -> false;
         };
     }
@@ -648,16 +720,17 @@ public class GordianCoreKeyPairSpec
             case AIMER -> GordianCoreAIMerSpec.mapCoreSpec(pSubSpec);
             case FAEST -> GordianCoreFaestSpec.mapCoreSpec(pSubSpec);
             case HAETAE -> GordianCoreHAETAESpec.mapCoreSpec(pSubSpec);
-            case HAWK -> GordianCoreHawkSpec.mapCoreSpec(pSubSpec);
             case MAYO -> GordianCoreMayoSpec.mapCoreSpec(pSubSpec);
             case MQOM -> GordianCoreMQOMSpec.mapCoreSpec(pSubSpec);
             case SDITH -> GordianCoreSDitHSpec.mapCoreSpec(pSubSpec);
             case QRUOV -> GordianCoreQRUOVSpec.mapCoreSpec(pSubSpec);
+            case SMAUGT -> GordianCoreSmaugTSpec.mapCoreSpec(pSubSpec);
             case SNOVA -> GordianCoreSnovaSpec.mapCoreSpec(pSubSpec);
             case SQISIGN -> GordianCoreSQIsignSpec.mapCoreSpec(pSubSpec);
             case UOV -> GordianCoreUOVSpec.mapCoreSpec(pSubSpec);
-            case PICNIC -> GordianCorePicnicSpec.mapCoreSpec(pSubSpec);
             case EDDSA, XDH -> GordianCoreEdwardsSpec.mapCoreSpec(pSubSpec);
+            case HYBRIDKEM -> GordianCoreHybridKEMSpec.mapCoreSpec(pSubSpec);
+            case HYBRIDSIGN -> GordianCoreHybridSignSpec.mapCoreSpec(pSubSpec);
             default -> pSubSpec;
         };
     }
@@ -691,16 +764,17 @@ public class GordianCoreKeyPairSpec
             case AIMER -> getAIMerSpec().getSpec();
             case FAEST -> getFaestSpec().getSpec();
             case HAETAE -> getHAETAESpec().getSpec();
-            case HAWK -> getHawkSpec().getSpec();
             case MAYO -> getMayoSpec().getSpec();
             case MQOM -> getMQOMSpec().getSpec();
             case QRUOV -> getQRUOVSpec().getSpec();
             case SDITH -> getSDitHSpec().getSpec();
+            case SMAUGT -> getSmaugTSpec().getSpec();
             case SNOVA -> getSnovaSpec().getSpec();
             case SQISIGN -> getSQIsignSpec().getSpec();
             case UOV -> getUOVSpec().getSpec();
-            case PICNIC -> getPicnicSpec().getSpec();
             case EDDSA, XDH -> getEdwardsSpec().getSpec();
+            case HYBRIDKEM -> getHybridKEMSpec().getSpec();
+            case HYBRIDSIGN -> getHybridSignSpec().getSpec();
             default -> theSubSpec;
         };
     }

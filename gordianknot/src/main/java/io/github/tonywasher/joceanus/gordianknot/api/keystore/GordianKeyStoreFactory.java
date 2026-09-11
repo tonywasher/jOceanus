@@ -16,7 +16,8 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.keystore;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 
 import java.io.File;
@@ -26,6 +27,13 @@ import java.io.InputStream;
  * KeyStore Factory.
  */
 public interface GordianKeyStoreFactory {
+    /**
+     * Create a new KeyPair Usage.
+     *
+     * @return the keyPairUsage
+     */
+    GordianKeyPairUsage newKeyPairUsage();
+
     /**
      * Create a new empty KeyStore.
      *

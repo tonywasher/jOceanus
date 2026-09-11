@@ -213,7 +213,7 @@ public interface GordianCoreDigestSubSpec {
         }
 
         /**
-         * Is this state valid for the skeinLength?
+         * Is this state valid for the shakeLength?
          *
          * @param pLength the length
          * @return true/false

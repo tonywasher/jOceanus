@@ -21,18 +21,18 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.KeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.xmss.XMSSKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.xmss.XMSSKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.xmss.XMSSMTKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.xmss.XMSSMTKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.xmss.XMSSMTParameters;
-import org.bouncycastle.pqc.crypto.xmss.XMSSMTPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.xmss.XMSSMTPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.xmss.XMSSMTSigner;
-import org.bouncycastle.pqc.crypto.xmss.XMSSParameters;
-import org.bouncycastle.pqc.crypto.xmss.XMSSPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.xmss.XMSSPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.xmss.XMSSSigner;
+import org.bouncycastle.crypto.generators.XMSSKeyPairGenerator;
+import org.bouncycastle.crypto.generators.XMSSMTKeyPairGenerator;
+import org.bouncycastle.crypto.params.XMSSKeyGenerationParameters;
+import org.bouncycastle.crypto.params.XMSSMTKeyGenerationParameters;
+import org.bouncycastle.crypto.params.XMSSMTParameters;
+import org.bouncycastle.crypto.params.XMSSMTPrivateKeyParameters;
+import org.bouncycastle.crypto.params.XMSSMTPublicKeyParameters;
+import org.bouncycastle.crypto.params.XMSSParameters;
+import org.bouncycastle.crypto.params.XMSSPrivateKeyParameters;
+import org.bouncycastle.crypto.params.XMSSPublicKeyParameters;
+import org.bouncycastle.crypto.signers.XMSSMTSigner;
+import org.bouncycastle.crypto.signers.XMSSSigner;
 
 import java.security.SecureRandom;
 
@@ -422,7 +422,8 @@ public class XMSSPerformance {
             /* Loop through the signatures */
             for (int i = 0; i < theSignatures.length; i++) {
                 /* Sign the message */
-                theSignatures[i] = theSigner.generateSignature(MESSAGE);
+                theSigner.update(MESSAGE, 0, MESSAGE.length);
+                theSignatures[i] = theSigner.generateSignature();
             }
 
             /* Complete the timeStamp */
@@ -479,7 +480,8 @@ public class XMSSPerformance {
             final byte[][] mySignatures = pSignature.theSignatures;
             for (byte[] mySignature : mySignatures) {
                 /* Sign the message */
-                if (!theSigner.verifySignature(MESSAGE, mySignature)) {
+                theSigner.update(MESSAGE, 0, MESSAGE.length);
+                if (!theSigner.verifySignature(mySignature)) {
                     throw new IllegalStateException();
                 }
             }
@@ -628,7 +630,8 @@ public class XMSSPerformance {
             /* Loop through the signatures */
             for (int i = 0; i < theSignatures.length; i++) {
                 /* Sign the message */
-                theSignatures[i] = theSigner.generateSignature(MESSAGE);
+                theSigner.update(MESSAGE, 0, MESSAGE.length);
+                theSignatures[i] = theSigner.generateSignature();
             }
 
             /* Complete the timeStamp */
@@ -685,7 +688,8 @@ public class XMSSPerformance {
             final byte[][] mySignatures = pSignature.theSignatures;
             for (byte[] mySignature : mySignatures) {
                 /* Sign the message */
-                if (!theSigner.verifySignature(MESSAGE, mySignature)) {
+                theSigner.update(MESSAGE, 0, MESSAGE.length);
+                if (!theSigner.verifySignature(mySignature)) {
                     throw new IllegalStateException();
                 }
             }

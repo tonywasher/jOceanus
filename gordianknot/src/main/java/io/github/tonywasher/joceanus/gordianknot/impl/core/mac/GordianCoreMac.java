@@ -16,14 +16,16 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.mac;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParams;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseChecks;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 
 /**
  * GordianKnot interface for Message Authentication Codes.
@@ -68,6 +70,19 @@ public abstract class GordianCoreMac
     }
 
     /**
+     * Check that we are initialised.
+     *
+     * @throws GordianException on error
+     */
+    protected void checkInit() throws GordianException {
+        final GordianCoreKey<GordianMacSpec> myKey = (GordianCoreKey<GordianMacSpec>) getKey();
+        if (myKey == null) {
+            throw new GordianLogicException("Not initialised");
+        }
+        myKey.checkForDestroyedKey();
+    }
+
+    /**
      * Check that the key matches the keyType.
      *
      * @param pKey the passed key.
@@ -77,6 +92,35 @@ public abstract class GordianCoreMac
         if (!theMacSpec.equals(pKey.getKeyType())) {
             throw new GordianLogicException("MisMatch on macSpec");
         }
+    }
+
+    /**
+     * Check that the input buffer is valid.
+     *
+     * @param pBuffer the buffer
+     * @param pOffset the offset
+     * @param pLength the length
+     * @return non-Zero data true/false
+     * @throws GordianException on error
+     */
+    protected boolean checkInputBuffer(final byte[] pBuffer,
+                                       final int pOffset,
+                                       final int pLength) throws GordianException {
+        return GordianBaseChecks.checkInputBuffer(pBuffer, pOffset, pLength);
+    }
+
+    /**
+     * Check that the output buffer is valid.
+     *
+     * @param pBuffer the buffer
+     * @param pOffset the offset
+     * @param pLength the length
+     * @throws GordianException on error
+     */
+    protected void checkOutputBuffer(final byte[] pBuffer,
+                                     final int pOffset,
+                                     final int pLength) throws GordianException {
+        GordianBaseChecks.checkOutputBuffer(pBuffer, pOffset, pLength);
     }
 
     @Override
@@ -102,15 +146,9 @@ public abstract class GordianCoreMac
     @Override
     public void update(final byte[] pBytes,
                        final int pOffset,
-                       final int pLength) {
-        /* Check that the buffers are sufficient */
-        final int myInBufLen = pBytes == null ? 0 : pBytes.length;
-        if (myInBufLen < (pLength + pOffset)) {
-            throw new IllegalArgumentException("Input buffer too short.");
-        }
-
+                       final int pLength) throws GordianException {
         /* Process the bytes */
-        if (pLength != 0) {
+        if (checkInputBuffer(pBytes, pOffset, pLength)) {
             doUpdate(pBytes, pOffset, pLength);
         }
     }
@@ -124,15 +162,13 @@ public abstract class GordianCoreMac
      */
     public abstract void doUpdate(byte[] pBytes,
                                   int pOffset,
-                                  int pLength);
+                                  int pLength) throws GordianException;
 
     @Override
     public int finish(final byte[] pBuffer,
                       final int pOffset) throws GordianException {
         /* Check that the buffers are sufficient */
-        if (pBuffer.length < (getMacSize() + pOffset)) {
-            throw new IllegalArgumentException("Output buffer too short.");
-        }
+        checkOutputBuffer(pBuffer, pOffset, getMacSize());
 
         /* Finish the digest */
         return doFinish(pBuffer, pOffset);
