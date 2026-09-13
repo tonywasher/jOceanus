@@ -90,8 +90,8 @@
         <ShadePluginVersion>3.6.2</ShadePluginVersion>
         <DependencyPluginVersion>3.11.0</DependencyPluginVersion>
         <SurefirePluginVersion>3.6.0</SurefirePluginVersion>
-        <BuildNumberPluginVersion>3.3.0</BuildNumberPluginVersion>
-        <BuildHelperPluginVersion>3.6.1</BuildHelperPluginVersion>
+        <BuildNumberPluginVersion>3.3.1</BuildNumberPluginVersion>
+        <BuildHelperPluginVersion>3.6.2</BuildHelperPluginVersion>
         <JarPluginVersion>3.5.1</JarPluginVersion>
         <ProjectInfoPluginVersion>3.9.0</ProjectInfoPluginVersion>
         <JxrPluginVersion>3.6.0</JxrPluginVersion>
@@ -102,8 +102,8 @@
         <PMDPluginVersion>3.28.0</PMDPluginVersion>
         <JacocoPluginVersion>0.8.15</JacocoPluginVersion>
         <JetBrainsAnnotationsVersion>26.1.0</JetBrainsAnnotationsVersion>
-        <VersionsPluginVersion>2.21.0</VersionsPluginVersion>
-        <ExecPluginVersion>3.6.3</ExecPluginVersion>
+        <VersionsPluginVersion>2.22.0</VersionsPluginVersion>
+        <ExecPluginVersion>3.6.4</ExecPluginVersion>
         <sonar.organization>tonywasher</sonar.organization>
         <sonar.projectKey>jOceanus</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>

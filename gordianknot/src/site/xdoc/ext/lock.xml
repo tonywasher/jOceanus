@@ -108,9 +108,9 @@ final GordianFactoryLock myResolved = myBaseFactory.resolveFactoryLock(myLockByt
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianLockFactory myLockFactory = myBaseFactory.getLockFactory();
 final GordianKeySetFactory myKeySetFactory = myBaseFactory.getKeySetFactory();
-final GordianAsyncFactory myAsyncFactory = myBaseFactory.getAsyncFactory();
-final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
+final GordianAsyncFactory myAsymFactory = myBaseFactory.getAsymFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsymFactory.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myAsymFactory.getAgreementFactory();
 
 /* Access keyPairGenerator and create sending/receiving pairs */
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairkSpecBuilder()

@@ -26,6 +26,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipLock;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCertStatusASN1.GordianCertStatus;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.zip.GordianCoreZipLock;
 import org.bouncycastle.asn1.ASN1Object;
@@ -92,11 +93,6 @@ public class GordianCoreKeyStoreGateway
      * The responseMap.
      */
     private final Map<Integer, GordianCoreCertificate> theResponseMap;
-
-    /**
-     * The encryption target certificate.
-     */
-    private GordianCoreCertificate theTarget;
 
     /**
      * The secret MAC key resolver.
@@ -172,11 +168,6 @@ public class GordianCoreKeyStoreGateway
     }
 
     @Override
-    public GordianCoreCertificate getTarget() {
-        return theTarget;
-    }
-
-    @Override
     public Function<String, char[]> getPasswordResolver() {
         return thePasswordResolver;
     }
@@ -189,16 +180,6 @@ public class GordianCoreKeyStoreGateway
         final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, myPassword);
         final GordianPEMCoder myCoder = new GordianPEMCoder(theKeyStore);
         myCoder.exportKeyStoreEntry(myEntry, pStream, (GordianCoreZipLock) pLock);
-    }
-
-    @Override
-    public void setEncryptionTarget(final String pAlias) throws GordianException {
-        final List<GordianCertificate> myKeyPairChain = theKeyStore.getCertificateChain(pAlias);
-        if (myKeyPairChain != null) {
-            theTarget = (GordianCoreCertificate) myKeyPairChain.get(0);
-            return;
-        }
-        throw new GordianDataException("Encryption target not found");
     }
 
     @Override
@@ -271,7 +252,8 @@ public class GordianCoreKeyStoreGateway
 
         /* Create the certificate response */
         final int myReqId = myCertReq.getCertReq().getCertReqId().intValueExact();
-        final GordianCertResponseASN1 myResponse = GordianCertResponseASN1.createCertResponse(myReqId, myRespId, myChain);
+        final GordianCertStatusASN1 myStatus = GordianCertStatusASN1.createCertStatus(GordianCertStatus.ACCEPTED);
+        final GordianCertResponseASN1 myResponse = GordianCertResponseASN1.createCertResponse(myReqId, myRespId, myStatus, myChain);
 
         /* Create PKMACValue if required */
         final X500Name mySubject = myCertReq.getCertReq().getCertTemplate().getSubject();
@@ -283,7 +265,7 @@ public class GordianCoreKeyStoreGateway
         }
 
         /* Access the new certificate */
-        final GordianCoreCertificate myCert = (GordianCoreCertificate) myChain.get(0);
+        final GordianCoreCertificate myCert = (GordianCoreCertificate) myChain.getFirst();
 
         /* If the certificate requires encryption */
         if (GordianCRMParser.requiresEncryption(myCertReq)) {
@@ -328,7 +310,8 @@ public class GordianCoreKeyStoreGateway
 
         /* calculate the Digest value */
         final byte[] myDigest = theBuilder.calculateAckValue((GordianCoreCertificate) myChain[0]);
-        final GordianCertAckASN1 myAck = new GordianCertAckASN1(myResponse.getRespId(), myDigest);
+        final GordianCertStatusASN1 myStatus = GordianCertStatusASN1.createCertStatus(GordianCertStatus.ACCEPTED);
+        final GordianCertAckASN1 myAck = new GordianCertAckASN1(myResponse.getRespId(), myStatus, myDigest);
 
         /* Write out the response */
         final GordianPEMObject myPEMObject = GordianPEMCoder.createPEMObject(GordianPEMObjectType.CERTACK, myAck);

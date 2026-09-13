@@ -19,7 +19,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keystore;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import org.bouncycastle.asn1.x500.X500Name;
 
 import java.util.function.Function;
@@ -57,13 +56,6 @@ public interface GordianBaseKeyStoreGateway
      * @return the signer
      */
     GordianKeyStorePair getSigner();
-
-    /**
-     * Obtain the EncryptionTarget.
-     *
-     * @return the target
-     */
-    GordianCoreCertificate getTarget();
 
     /**
      * Obtain the PasswordResolver.

@@ -122,7 +122,7 @@ public class GordianCoreKeyPairUsage
      *
      * @return true/false
      */
-    boolean hasPurposes() {
+    public boolean hasPurposes() {
         return !thePurposeSet.isEmpty();
     }
 

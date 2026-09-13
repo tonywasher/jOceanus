@@ -28,7 +28,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
@@ -49,19 +48,13 @@ import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
 import org.bouncycastle.asn1.cms.RecipientIdentifier;
 import org.bouncycastle.asn1.cms.RecipientInfo;
-import org.bouncycastle.asn1.crmf.CRMFObjectIdentifiers;
-import org.bouncycastle.asn1.crmf.EncKeyWithID;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.Certificate;
-import org.bouncycastle.asn1.x509.GeneralName;
 
-import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Arrays;
 
 /**
@@ -233,33 +226,6 @@ public class GordianCRMEncryptor {
         final IssuerAndSerialNumber myId = new IssuerAndSerialNumber(pCertificate.getIssuer().getName(), pCertificate.getSerialNo());
         final KeyTransRecipientInfo myKTInfo = new KeyTransRecipientInfo(new RecipientIdentifier(myId), myAlgId, new BEROctetString(myEncryptedKey));
         return new RecipientInfo(myKTInfo);
-    }
-
-    /**
-     * Build the encryptedContentInfo for a PrivateKey.
-     *
-     * @param pKeySet        the keySet to encrypt with
-     * @param pPKCS8Encoding the PKCS8Encoded privateKey
-     * @param pCertificate   the local certificate
-     * @return the encryptedContentInfo
-     * @throws GordianException on error
-     */
-    public static EncryptedContentInfo buildEncryptedContentInfo(final GordianKeySet pKeySet,
-                                                                 final PKCS8EncodedKeySpec pPKCS8Encoding,
-                                                                 final GordianCertificate pCertificate) throws GordianException {
-        /* Protect against exceptions */
-        try {
-            /* Obtain the PrivateKeyInfo */
-            final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPKCS8Encoding.getEncoded());
-            final EncKeyWithID myKeyWithId = new EncKeyWithID(myInfo, new GeneralName(pCertificate.getSubject().getName()));
-            final byte[] myData = pKeySet.encryptBytes(myKeyWithId.getEncoded());
-            final GordianKeySetSpecASN1 myASN1 = new GordianKeySetSpecASN1(pKeySet.getKeySetSpec());
-            final AlgorithmIdentifier myAlgId = myASN1.getAlgorithmId();
-            return new EncryptedContentInfo(CRMFObjectIdentifiers.id_ct_encKeyWithID, myAlgId, new BEROctetString(myData));
-
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to create EncryptedContentInfo", e);
-        }
     }
 
     /**
