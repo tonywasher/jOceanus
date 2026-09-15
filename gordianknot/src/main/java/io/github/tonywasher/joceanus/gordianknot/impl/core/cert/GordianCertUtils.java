@@ -18,9 +18,9 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.cert;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairPurpose;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertPurpose;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
@@ -65,8 +65,8 @@ public final class GordianCertUtils {
      * @param pExtensions the extensions.
      * @return the usage
      */
-    public static GordianKeyPairUsage determineUsage(final Extensions pExtensions) {
-        return GordianCoreKeyPairUsage.fromExtensions(pExtensions);
+    public static GordianCertUsage determineUsage(final Extensions pExtensions) {
+        return GordianCoreCertUsage.fromExtensions(pExtensions);
     }
 
     /**
@@ -126,14 +126,14 @@ public final class GordianCertUtils {
      * @throws GordianException on error
      */
     static Extensions createExtensions(final GordianCAStatus pCAStatus,
-                                       final GordianKeyPairUsage pUsage,
+                                       final GordianCertUsage pUsage,
                                        final byte[] pSubjectId,
                                        final byte[] pIssuerId) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Create extensions for the certificate */
             final ExtensionsGenerator myGenerator = new ExtensionsGenerator();
-            final GordianCoreKeyPairUsage myUsage = (GordianCoreKeyPairUsage) pUsage;
+            final GordianCoreCertUsage myUsage = (GordianCoreCertUsage) pUsage;
             myGenerator.addExtension(Extension.keyUsage, true, myUsage.getKeyPairUsage());
             myGenerator.addExtension(Extension.subjectKeyIdentifier, true, pSubjectId);
             if (pIssuerId != null) {
@@ -157,11 +157,11 @@ public final class GordianCertUtils {
      * @return the extensions
      * @throws GordianException on error
      */
-    static Extensions createExtensions(final GordianKeyPairUsage pUsage) throws GordianException {
+    static Extensions createExtensions(final GordianCertUsage pUsage) throws GordianException {
         /* Protect against exceptions */
         try {
             final ExtensionsGenerator myGenerator = new ExtensionsGenerator();
-            final GordianCoreKeyPairUsage myUsage = (GordianCoreKeyPairUsage) pUsage;
+            final GordianCoreCertUsage myUsage = (GordianCoreCertUsage) pUsage;
             myGenerator.addExtension(Extension.keyUsage, true, myUsage.getKeyPairUsage());
             return myGenerator.generate();
         } catch (IOException e) {
@@ -196,7 +196,7 @@ public final class GordianCertUtils {
      * @param pUsage the purpose
      * @return the id
      */
-    private int getOIDforUsage(final GordianKeyPairUse pUsage) {
+    private int getOIDforUsage(final GordianCertUse pUsage) {
         return switch (pUsage) {
             case CERTIFICATE -> KeyUsage.keyCertSign;
             case CRLSIGN -> KeyUsage.cRLSign;
@@ -216,7 +216,7 @@ public final class GordianCertUtils {
      * @param pPurpose the purpose
      * @return the OID
      */
-    private KeyPurposeId getOIDforPurpose(final GordianKeyPairPurpose pPurpose) {
+    private KeyPurposeId getOIDforPurpose(final GordianCertPurpose pPurpose) {
         return switch (pPurpose) {
             case SERVERAUTH -> KeyPurposeId.id_kp_serverAuth;
             case CLIENTAUTH -> KeyPurposeId.id_kp_clientAuth;
@@ -259,8 +259,8 @@ public final class GordianCertUtils {
      * @param pOID the oid
      * @return the purpose or null
      */
-    private GordianKeyPairPurpose getOIDforPurpose(final KeyPurposeId pOID) {
-        for (GordianKeyPairPurpose myPurpose : GordianKeyPairPurpose.values()) {
+    private GordianCertPurpose getOIDforPurpose(final KeyPurposeId pOID) {
+        for (GordianCertPurpose myPurpose : GordianCertPurpose.values()) {
             if (getOIDforPurpose(myPurpose).equals(pOID)) {
                 return myPurpose;
             }

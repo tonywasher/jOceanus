@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keystore;
 
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
@@ -220,7 +220,7 @@ public class GordianCoreKeyStoreGateway
         final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, myPassword);
         if (myEntry instanceof GordianKeyStorePair myPair) {
             final GordianCertificate myCert = myPair.getCertificateChain().get(0);
-            if (myCert.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)) {
+            if (myCert.getUsage().hasUse(GordianCertUse.CERTIFICATE)) {
                 theKeyPairCertifier = myPair;
                 return;
             }

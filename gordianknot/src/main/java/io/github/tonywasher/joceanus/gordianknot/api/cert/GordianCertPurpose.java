@@ -18,9 +18,9 @@
 package io.github.tonywasher.joceanus.gordianknot.api.cert;
 
 /**
- * KeyPair Purpose.
+ * Certificate Purpose.
  */
-public enum GordianKeyPairPurpose {
+public enum GordianCertPurpose {
     /**
      * Server Authorization.
      */

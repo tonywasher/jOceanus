@@ -19,8 +19,6 @@ package io.github.tonywasher.joceanus.gordianknot.api.cert;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 
-import java.time.LocalDate;
-
 /**
  * Certificate API.
  */
@@ -54,21 +52,6 @@ public interface GordianCertificate {
     byte[] getEncoded();
 
     /**
-     * Is the certificate valid at this moment?
-     *
-     * @return true/false
-     */
-    boolean isValidNow();
-
-    /**
-     * Is the certificate valid on the specified date?
-     *
-     * @param pDate the date to test
-     * @return true/false
-     */
-    boolean isValidOnDate(LocalDate pDate);
-
-    /**
      * Is this certificate self-signed?
      *
      * @return true/false
@@ -80,7 +63,14 @@ public interface GordianCertificate {
      *
      * @return the usage
      */
-    GordianKeyPairUsage getUsage();
+    GordianCertUsage getUsage();
+
+    /**
+     * Obtain the keyPair validity?
+     *
+     * @return the validity
+     */
+    GordianCertValidity getValidity();
 
     /**
      * Validate the certificate.

@@ -39,8 +39,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureS
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertUsage;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignParamsBuilder;
@@ -162,7 +162,7 @@ public class GordianCRMBuilder {
 
             /* record extensions */
             final ExtensionsGenerator myGenerator = new ExtensionsGenerator();
-            final GordianCoreKeyPairUsage myUsage = (GordianCoreKeyPairUsage) pCertificate.getUsage();
+            final GordianCoreCertUsage myUsage = (GordianCoreCertUsage) pCertificate.getUsage();
             myGenerator.addExtension(Extension.keyUsage, true, myUsage.getKeyPairUsage());
             myGenerator.addExtension(Extension.basicConstraints, false, new BasicConstraints(false));
             if (myUsage.hasPurposes()) {

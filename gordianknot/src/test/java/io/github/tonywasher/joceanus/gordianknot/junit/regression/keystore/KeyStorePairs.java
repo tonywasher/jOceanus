@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.junit.regression.keystore;
 
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianECSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
@@ -78,7 +78,7 @@ public final class KeyStorePairs {
      *
      * @return the new keyPair usage
      */
-    private GordianKeyPairUsage newKeyPairUsage() {
+    private GordianCertUsage newKeyPairUsage() {
         return theStore.getFactory().getAsymFactory().getKeyStoreFactory().newKeyPairUsage();
     }
 
@@ -94,13 +94,13 @@ public final class KeyStorePairs {
                 testKeyPairRoot(KeyStoreAlias.ROOT2),
                 testKeyPairAlternate(KeyStoreAlias.ROOT, KeyStoreAlias.ROOT2, KeyStoreAlias.ROOTALT),
                 testKeyPairAlternate(KeyStoreAlias.ROOT2, KeyStoreAlias.ROOT, KeyStoreAlias.ROOTALT2),
-                testKeyPairCreate(KeyStoreAlias.ROOT, KeyStoreAlias.INTER, GordianKeyPairUse.CERTIFICATE),
-                testKeyPairCreate(KeyStoreAlias.ROOT2, KeyStoreAlias.INTER2, GordianKeyPairUse.CERTIFICATE),
+                testKeyPairCreate(KeyStoreAlias.ROOT, KeyStoreAlias.INTER, GordianCertUse.CERTIFICATE),
+                testKeyPairCreate(KeyStoreAlias.ROOT2, KeyStoreAlias.INTER2, GordianCertUse.CERTIFICATE),
                 testKeyPairAlternate(KeyStoreAlias.INTER, KeyStoreAlias.ROOT2, KeyStoreAlias.INTERALT),
                 testKeyPairAlternate(KeyStoreAlias.INTER2, KeyStoreAlias.ROOT, KeyStoreAlias.INTERALT2),
-                testKeyPairCreate(KeyStoreAlias.INTER, KeyStoreAlias.SIGNER, GordianKeyPairUse.SIGNATURE),
-                testKeyPairCreate(KeyStoreAlias.INTER, KeyStoreAlias.AGREE, GordianKeyPairUse.AGREEMENT),
-                testKeyPairCreate(KeyStoreAlias.INTER, KeyStoreAlias.ENCRYPT, GordianKeyPairUse.DATAENCRYPT),
+                testKeyPairCreate(KeyStoreAlias.INTER, KeyStoreAlias.SIGNER, GordianCertUse.SIGNATURE),
+                testKeyPairCreate(KeyStoreAlias.INTER, KeyStoreAlias.AGREE, GordianCertUse.AGREEMENT),
+                testKeyPairCreate(KeyStoreAlias.INTER, KeyStoreAlias.ENCRYPT, GordianCertUse.DATAENCRYPT),
                 KeyStoreUtils.testKeyStoreSave(theStore),
                 testKeyPairCleanup()
         ));
@@ -131,12 +131,12 @@ public final class KeyStorePairs {
      */
     private DynamicNode testKeyPairCreate(final KeyStoreAlias pSigner,
                                           final KeyStoreAlias pAlias,
-                                          final GordianKeyPairUse pUse) {
+                                          final GordianCertUse pUse) {
         return DynamicTest.dynamicTest(pAlias.getName(), () -> {
             /* Create a keyPair */
             final GordianKeyStorePair mySigner = (GordianKeyStorePair) theStore.getEntry(pSigner.getName(), KeyStoreUtils.DEF_PASSWORD);
             final X500Name myName = KeyStoreUtils.buildX500Name(pAlias);
-            final GordianKeyPairUsage myUsage = newKeyPairUsage().withUse(pUse);
+            final GordianCertUsage myUsage = newKeyPairUsage().withUse(pUse);
             final GordianKeyStorePair myKeyPair = theManager.createKeyPair(KEYPAIRSPEC, myName, myUsage, mySigner, pAlias.getName(), KeyStoreUtils.DEF_PASSWORD);
             checkKeyPair(theGateway, pAlias, myKeyPair);
         });

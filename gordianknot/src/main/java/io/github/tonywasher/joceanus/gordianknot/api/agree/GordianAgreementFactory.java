@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.api.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
@@ -105,7 +105,7 @@ public interface GordianAgreementFactory {
      */
     GordianCertificate newMiniCertificate(X500Name pSubject,
                                           GordianKeyPair pKeyPair,
-                                          GordianKeyPairUse... pUses) throws GordianException;
+                                          GordianCertUse... pUses) throws GordianException;
 
     /**
      * Obtain predicate for keyAgreement.

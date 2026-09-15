@@ -21,9 +21,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFacto
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
@@ -130,7 +130,7 @@ public class GordianCRMEncryptor {
         /* Create the agreement */
         final GordianAsymFactory myFactory = theFactory.getAsymFactory();
         final GordianCoreAgreementFactory myAgreeFactory = (GordianCoreAgreementFactory) myFactory.getAgreementFactory();
-        final var myCert = myAgreeFactory.newMiniCertificate(SERVER, pCertificate.getKeyPair(), GordianKeyPairUse.AGREEMENT);
+        final var myCert = myAgreeFactory.newMiniCertificate(SERVER, pCertificate.getKeyPair(), GordianCertUse.AGREEMENT);
         final GordianKeySetSpecBuilder myBuilder = theFactory.getKeySetFactory().newKeySetSpecBuilder();
         GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(pAgreeSpec, myBuilder.keySet())
                 .setServerCertificate(myCert);
@@ -262,8 +262,8 @@ public class GordianCRMEncryptor {
         final byte[] myEncryptedKey = pRecInfo.getEncryptedKey().getOctets();
 
         /* Derive the keySet appropriately */
-        final GordianKeyPairUsage myUsage = pCertificate.getUsage();
-        return myUsage.hasUse(GordianKeyPairUse.KEYENCRYPT)
+        final GordianCertUsage myUsage = pCertificate.getUsage();
+        return myUsage.hasUse(GordianCertUse.KEYENCRYPT)
                 ? deriveEncryptedKeySet(pKeyPair, myAlgId, myEncryptedKey)
                 : deriveAgreedKeySet(pKeyPair, myEncryptedKey);
     }
@@ -305,7 +305,7 @@ public class GordianCRMEncryptor {
         /* Handle agreement */
         final GordianAsymFactory myFactory = theFactory.getAsymFactory();
         final GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();
-        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair, GordianKeyPairUse.AGREEMENT);
+        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair, GordianCertUse.AGREEMENT);
         final GordianAgreement myAgree = myAgreeFactory.parseAgreementMessage(pHello);
         final GordianAgreementParams myParams = myAgree.getAgreementParams().setServerCertificate(myCert);
         myAgree.updateParams(myParams);

@@ -19,16 +19,16 @@ package io.github.tonywasher.joceanus.gordianknot.api.cert;
 import java.util.Set;
 
 /**
- * KeyPair Usage.
+ * Certificate Usage.
  */
-public interface GordianKeyPairUsage {
+public interface GordianCertUsage {
     /**
      * Add a use.
      *
      * @param pUse the use to add
      * @return the usage
      */
-    GordianKeyPairUsage withUse(GordianKeyPairUse pUse);
+    GordianCertUsage withUse(GordianCertUse pUse);
 
     /**
      * Add uses.
@@ -36,14 +36,14 @@ public interface GordianKeyPairUsage {
      * @param pUse the uses to add
      * @return the usage
      */
-    GordianKeyPairUsage withUses(GordianKeyPairUse... pUse);
+    GordianCertUsage withUses(GordianCertUse... pUse);
 
     /**
      * Remove a use.
      *
      * @param pUse the use to remove
      */
-    void removeUse(GordianKeyPairUse pUse);
+    void removeUse(GordianCertUse pUse);
 
     /**
      * Does the keyPair have the specified use?
@@ -51,14 +51,14 @@ public interface GordianKeyPairUsage {
      * @param pUse the use to test for
      * @return true/false
      */
-    boolean hasUse(GordianKeyPairUse pUse);
+    boolean hasUse(GordianCertUse pUse);
 
     /**
      * Obtain the usageSet.
      *
      * @return the UseSet
      */
-    Set<GordianKeyPairUse> getUsageSet();
+    Set<GordianCertUse> getUsageSet();
 
     /**
      * Add a purpose.
@@ -66,7 +66,7 @@ public interface GordianKeyPairUsage {
      * @param pPurpose the purpose to add
      * @return the usage
      */
-    GordianKeyPairUsage withPurpose(GordianKeyPairPurpose pPurpose);
+    GordianCertUsage withPurpose(GordianCertPurpose pPurpose);
 
     /**
      * Add purposes.
@@ -74,14 +74,14 @@ public interface GordianKeyPairUsage {
      * @param pPurposes the purposes to add
      * @return the usage
      */
-    GordianKeyPairUsage withPurposes(GordianKeyPairPurpose... pPurposes);
+    GordianCertUsage withPurposes(GordianCertPurpose... pPurposes);
 
     /**
      * Remove a purpose.
      *
      * @param pPurpose the use to remove
      */
-    void removePurpose(GordianKeyPairPurpose pPurpose);
+    void removePurpose(GordianCertPurpose pPurpose);
 
     /**
      * Does the keyPair have the specified purpose?
@@ -89,12 +89,12 @@ public interface GordianKeyPairUsage {
      * @param pPurpose the purpose to test for
      * @return true/false
      */
-    boolean hasPurpose(GordianKeyPairPurpose pPurpose);
+    boolean hasPurpose(GordianCertPurpose pPurpose);
 
     /**
      * Obtain the purposeSet.
      *
      * @return the purposeSet
      */
-    Set<GordianKeyPairPurpose> getPurposeSet();
+    Set<GordianCertPurpose> getPurposeSet();
 }

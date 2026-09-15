@@ -40,7 +40,7 @@ import java.util.Map;
  * }
  * </pre>
  */
-public class GordianCertStatusASN1
+public final class GordianCertStatusASN1
         extends GordianASN1Object {
     /**
      * The status.

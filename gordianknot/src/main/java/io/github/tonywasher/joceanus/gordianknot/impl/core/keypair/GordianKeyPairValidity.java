@@ -23,8 +23,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreement
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
@@ -180,7 +180,7 @@ public final class GordianKeyPairValidity {
                                       final GordianAgreementSpec pAgreeSpec) throws GordianException {
         /* Create agreement on client side */
         final GordianAgreementFactory myAgrees = pFactory.getAsymFactory().getAgreementFactory();
-        final GordianCertificate myCert = myAgrees.newMiniCertificate(SERVER, pKeyPair, GordianKeyPairUse.AGREEMENT);
+        final GordianCertificate myCert = myAgrees.newMiniCertificate(SERVER, pKeyPair, GordianCertUse.AGREEMENT);
         GordianAgreementParams myParams = myAgrees.newAgreementParams(pAgreeSpec, GordianLength.LEN_256.getByteLength())
                 .setServerCertificate(myCert);
         if (pKeyPair instanceof GordianIdAwareKeyPair) {
@@ -224,9 +224,9 @@ public final class GordianKeyPairValidity {
                     pFactory.getAsymFactory().getSignatureFactory().defaultForKeyPair(mySpec);
             case ELGAMAL -> myEncBuilder.elGamal(myBuilder.sha2(GordianLength.LEN_256));
             case DH -> myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);
-            case XDH -> mySpec.getEdwardsSpec().is25519()
-                    ? myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF)
-                    : myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA512KDF);
+            case XDH -> myAgreeBuilder.anon(mySpec, mySpec.getEdwardsSpec().is25519()
+                    ? GordianAgreementKDF.SHA256KDF
+                    : GordianAgreementKDF.SHA512KDF);
             case CMCE, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE, SMAUGT ->
                     myAgreeBuilder.kem(mySpec, GordianAgreementKDF.NONE);
             case FRODO -> myAgreeBuilder.kem(mySpec, GordianAgreementKDF.KMAC128);

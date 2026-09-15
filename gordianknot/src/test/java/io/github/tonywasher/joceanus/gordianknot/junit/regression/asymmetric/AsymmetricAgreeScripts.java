@@ -24,8 +24,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreement
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
@@ -139,7 +139,7 @@ public final class AsymmetricAgreeScripts {
         GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();
         GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(mySpec);
         GordianKeyPair myKeyPair = myGenerator.generateKeyPair();
-        sgBCSIGNER = myAgreeFactory.newMiniCertificate(SIGNERNAME, myKeyPair, GordianKeyPairUse.SIGNATURE);
+        sgBCSIGNER = myAgreeFactory.newMiniCertificate(SIGNERNAME, myKeyPair, GordianCertUse.SIGNATURE);
 
         /* Derive the JCASigner */
         final X509EncodedKeySpec myPublic = myGenerator.getX509Encoding(myKeyPair);
@@ -149,7 +149,7 @@ public final class AsymmetricAgreeScripts {
         myAgreeFactory = myFactory.getAgreementFactory();
         myGenerator = myKPFactory.getKeyPairGenerator(mySpec);
         myKeyPair = myGenerator.deriveKeyPair(myPublic, myPrivate);
-        sgJCASIGNER = myAgreeFactory.newMiniCertificate(SIGNERNAME, myKeyPair, GordianKeyPairUse.SIGNATURE);
+        sgJCASIGNER = myAgreeFactory.newMiniCertificate(SIGNERNAME, myKeyPair, GordianCertUse.SIGNATURE);
     }
 
     /**
@@ -254,9 +254,9 @@ public final class AsymmetricAgreeScripts {
         /* Create mini-certificates */
         final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianCertificate myClientCert = (myType.isSigned() || myType.isAnonymous())
-                ? null : myAgrees.newMiniCertificate(CLIENTNAME, myPair, GordianKeyPairUse.AGREEMENT);
+                ? null : myAgrees.newMiniCertificate(CLIENTNAME, myPair, GordianCertUse.AGREEMENT);
         final GordianCertificate myTargetCert = myType.isSigned()
-                ? null : myAgrees.newMiniCertificate(SERVERNAME, myTarget, GordianKeyPairUse.AGREEMENT);
+                ? null : myAgrees.newMiniCertificate(SERVERNAME, myTarget, GordianCertUse.AGREEMENT);
         final GordianCertificate mySignerCert = myType.isSigned()
                 ? getFactorySigner(pAgreement) : null;
 
@@ -337,11 +337,11 @@ public final class AsymmetricAgreeScripts {
         final GordianAgreementFactory mySrcAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianAgreementFactory myPartnerAgrees = pAgreement.getOwner().getPartner().getAgreementFactory();
         final GordianCertificate myClientCert = (myType.isSigned() || myType.isAnonymous())
-                ? null : mySrcAgrees.newMiniCertificate(CLIENTNAME, myPair, GordianKeyPairUse.AGREEMENT);
+                ? null : mySrcAgrees.newMiniCertificate(CLIENTNAME, myPair, GordianCertUse.AGREEMENT);
         final GordianCertificate myTargetCert = myType.isSigned()
-                ? null : mySrcAgrees.newMiniCertificate(SERVERNAME, myTarget, GordianKeyPairUse.AGREEMENT);
+                ? null : mySrcAgrees.newMiniCertificate(SERVERNAME, myTarget, GordianCertUse.AGREEMENT);
         final GordianCertificate myServerCert = myType.isSigned()
-                ? null : myPartnerAgrees.newMiniCertificate(SERVERNAME, myPartnerTarget, GordianKeyPairUse.AGREEMENT);
+                ? null : myPartnerAgrees.newMiniCertificate(SERVERNAME, myPartnerTarget, GordianCertUse.AGREEMENT);
         final GordianCertificate mySignerCert = myType.isSigned()
                 ? getPartnerSigner(pAgreement) : null;
 
@@ -440,7 +440,7 @@ public final class AsymmetricAgreeScripts {
         /* Create agreement */
         final GordianAsymFactory myFactory = pAgreement.getOwner().getFactory();
         final GordianAgreementFactory myAgrees = myFactory.getAgreementFactory();
-        final GordianCertificate myServerCert = myAgrees.newMiniCertificate(SERVERNAME, mySecondCopy, GordianKeyPairUse.AGREEMENT);
+        final GordianCertificate myServerCert = myAgrees.newMiniCertificate(SERVERNAME, mySecondCopy, GordianCertUse.AGREEMENT);
         GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, BYTEARRAY).setServerCertificate(myServerCert);
         if (isIdMaster) {
             myParams = myParams.setServerName(AsymmetricStore.TARGETID);
@@ -479,7 +479,7 @@ public final class AsymmetricAgreeScripts {
 
         /* Create agreement */
         final GordianAgreementFactory myAgrees = myFactory.getAgreementFactory();
-        final GordianCertificate mySignerCert = myAgrees.newMiniCertificate(SIGNERNAME, mySecondCopy, GordianKeyPairUse.SIGNATURE);
+        final GordianCertificate mySignerCert = myAgrees.newMiniCertificate(SIGNERNAME, mySecondCopy, GordianCertUse.SIGNATURE);
         final GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, BYTEARRAY);
         final GordianAgreement myAgreement = myAgrees.createAgreement(myParams);
         final byte[] myClientHello = myAgreement.nextMessage();
@@ -517,8 +517,8 @@ public final class AsymmetricAgreeScripts {
         /* Create agreement */
         final GordianAsymFactory myFactory = pAgreement.getOwner().getFactory();
         final GordianAgreementFactory myAgrees = myFactory.getAgreementFactory();
-        final GordianCertificate myClientCert = myAgrees.newMiniCertificate(CLIENTNAME, mySecondCopy, GordianKeyPairUse.AGREEMENT);
-        final GordianCertificate myServerCert = myAgrees.newMiniCertificate(SERVERNAME, mySecondTarget, GordianKeyPairUse.AGREEMENT);
+        final GordianCertificate myClientCert = myAgrees.newMiniCertificate(CLIENTNAME, mySecondCopy, GordianCertUse.AGREEMENT);
+        final GordianCertificate myServerCert = myAgrees.newMiniCertificate(SERVERNAME, mySecondTarget, GordianCertUse.AGREEMENT);
         GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, BYTEARRAY)
                 .setClientCertificate(myClientCert)
                 .setServerCertificate(myServerCert);
@@ -606,9 +606,9 @@ public final class AsymmetricAgreeScripts {
         /* Create mini-certificates */
         final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianCertificate myClientCert = myType.isSigned()
-                ? null : myAgrees.newMiniCertificate(CLIENTNAME, myPair, GordianKeyPairUse.AGREEMENT);
+                ? null : myAgrees.newMiniCertificate(CLIENTNAME, myPair, GordianCertUse.AGREEMENT);
         final GordianCertificate myTargetCert = myType.isSigned()
-                ? null : myAgrees.newMiniCertificate(SERVERNAME, myTarget, GordianKeyPairUse.AGREEMENT);
+                ? null : myAgrees.newMiniCertificate(SERVERNAME, myTarget, GordianCertUse.AGREEMENT);
 
         /* Create the client hello */
         GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, KEYSETSPEC)
@@ -706,9 +706,9 @@ public final class AsymmetricAgreeScripts {
         /* Create mini-certificates */
         final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianCertificate myClientCert = myType.isSigned()
-                ? null : myAgrees.newMiniCertificate(CLIENTNAME, myPair, GordianKeyPairUse.AGREEMENT);
+                ? null : myAgrees.newMiniCertificate(CLIENTNAME, myPair, GordianCertUse.AGREEMENT);
         final GordianCertificate myTargetCert = myType.isSigned()
-                ? null : myAgrees.newMiniCertificate(SERVERNAME, myTarget, GordianKeyPairUse.AGREEMENT);
+                ? null : myAgrees.newMiniCertificate(SERVERNAME, myTarget, GordianCertUse.AGREEMENT);
 
         /* Create the client hello */
         GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, KEYSETSPEC)
@@ -771,9 +771,9 @@ public final class AsymmetricAgreeScripts {
         /* Create mini-certificates */
         final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianCertificate myClientCert = myType.isSigned()
-                ? null : myAgrees.newMiniCertificate(CLIENTNAME, myPair, GordianKeyPairUse.AGREEMENT);
+                ? null : myAgrees.newMiniCertificate(CLIENTNAME, myPair, GordianCertUse.AGREEMENT);
         final GordianCertificate myTargetCert = myType.isSigned()
-                ? null : myAgrees.newMiniCertificate(SERVERNAME, myTarget, GordianKeyPairUse.AGREEMENT);
+                ? null : myAgrees.newMiniCertificate(SERVERNAME, myTarget, GordianCertUse.AGREEMENT);
 
         /* Create the client hello */
         GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, KEYSETSPEC)

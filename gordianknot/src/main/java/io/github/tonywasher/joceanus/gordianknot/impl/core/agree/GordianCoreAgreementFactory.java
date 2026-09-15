@@ -21,8 +21,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParam
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -104,7 +104,7 @@ public abstract class GordianCoreAgreementFactory
     @Override
     public GordianCertificate newMiniCertificate(final X500Name pSubject,
                                                  final GordianKeyPair pKeyPair,
-                                                 final GordianKeyPairUse... pUses) throws GordianException {
+                                                 final GordianCertUse... pUses) throws GordianException {
         return new GordianMiniCertificate(theFactory, pSubject, pKeyPair, pUses);
     }
 
@@ -269,7 +269,7 @@ public abstract class GordianCoreAgreementFactory
     public void setSigner(final GordianCertificate pSigner,
                           final GordianSignatureSpec pSignSpec) throws GordianException {
         /* Check that certificate can sign data */
-        if (pSigner == null || !pSigner.getUsage().hasUse(GordianKeyPairUse.SIGNATURE)) {
+        if (pSigner == null || !pSigner.getUsage().hasUse(GordianCertUse.SIGNATURE)) {
             throw new GordianDataException("Certificate must be capable of signing data");
         }
 

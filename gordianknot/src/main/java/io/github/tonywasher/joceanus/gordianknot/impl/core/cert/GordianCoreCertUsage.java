@@ -17,9 +17,9 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.cert;
 
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairPurpose;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertPurpose;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
@@ -36,84 +36,84 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * KeyPair Usage implementation.
+ * Certificate Usage implementation.
  */
-public class GordianCoreKeyPairUsage
-        implements GordianKeyPairUsage {
+public class GordianCoreCertUsage
+        implements GordianCertUsage {
     /**
      * The Purpose Map.
      */
-    private static final Map<KeyPurposeId, GordianKeyPairPurpose> PURPOSE_MAP = buildPurposeMap();
+    private static final Map<KeyPurposeId, GordianCertPurpose> PURPOSE_MAP = buildPurposeMap();
 
     /**
      * The Usage set.
      */
-    private final EnumSet<GordianKeyPairUse> theUsageSet;
+    private final EnumSet<GordianCertUse> theUsageSet;
 
     /**
      * The Usage set.
      */
-    private final EnumSet<GordianKeyPairPurpose> thePurposeSet;
+    private final EnumSet<GordianCertPurpose> thePurposeSet;
 
     /**
      * Constructor.
      */
-    public GordianCoreKeyPairUsage() {
-        theUsageSet = EnumSet.noneOf(GordianKeyPairUse.class);
-        thePurposeSet = EnumSet.noneOf(GordianKeyPairPurpose.class);
+    public GordianCoreCertUsage() {
+        theUsageSet = EnumSet.noneOf(GordianCertUse.class);
+        thePurposeSet = EnumSet.noneOf(GordianCertPurpose.class);
     }
 
     @Override
-    public boolean hasUse(final GordianKeyPairUse pUse) {
+    public boolean hasUse(final GordianCertUse pUse) {
         return theUsageSet.contains(pUse);
     }
 
     @Override
-    public Set<GordianKeyPairUse> getUsageSet() {
+    public Set<GordianCertUse> getUsageSet() {
         return EnumSet.copyOf(theUsageSet);
     }
 
     @Override
-    public boolean hasPurpose(final GordianKeyPairPurpose pPurpose) {
+    public boolean hasPurpose(final GordianCertPurpose pPurpose) {
         return thePurposeSet.contains(pPurpose);
     }
 
     @Override
-    public Set<GordianKeyPairPurpose> getPurposeSet() {
+    public Set<GordianCertPurpose> getPurposeSet() {
         return EnumSet.copyOf(thePurposeSet);
     }
 
     @Override
-    public GordianCoreKeyPairUsage withUse(final GordianKeyPairUse pUse) {
+    public GordianCoreCertUsage withUse(final GordianCertUse pUse) {
         theUsageSet.add(pUse);
         return this;
     }
 
     @Override
-    public GordianCoreKeyPairUsage withUses(final GordianKeyPairUse... pUses) {
+    public GordianCoreCertUsage withUses(final GordianCertUse... pUses) {
         theUsageSet.addAll(Set.of(pUses));
         return this;
     }
 
     @Override
-    public void removeUse(final GordianKeyPairUse pUse) {
+    public void removeUse(final GordianCertUse pUse) {
         theUsageSet.remove(pUse);
     }
 
     @Override
-    public GordianCoreKeyPairUsage withPurpose(final GordianKeyPairPurpose pPurpose) {
+    public GordianCoreCertUsage withPurpose(final GordianCertPurpose pPurpose) {
         thePurposeSet.add(pPurpose);
         return this;
     }
 
     @Override
-    public GordianCoreKeyPairUsage withPurposes(final GordianKeyPairPurpose... pPurposes) {
+    public GordianCoreCertUsage withPurposes(final GordianCertPurpose... pPurposes) {
         thePurposeSet.addAll(Set.of(pPurposes));
         return this;
     }
 
     @Override
-    public void removePurpose(final GordianKeyPairPurpose pPurpose) {
+    public void removePurpose(final GordianCertPurpose pPurpose) {
         thePurposeSet.remove(pPurpose);
     }
 
@@ -132,13 +132,13 @@ public class GordianCoreKeyPairUsage
      * @param pExtensions the extensions.
      * @return the usage
      */
-    public static GordianCoreKeyPairUsage fromExtensions(final Extensions pExtensions) {
+    public static GordianCoreCertUsage fromExtensions(final Extensions pExtensions) {
         /* Create a new usage */
-        final GordianCoreKeyPairUsage myUsage = new GordianCoreKeyPairUsage();
+        final GordianCoreCertUsage myUsage = new GordianCoreCertUsage();
 
         /* Determine the keyPair Usage */
         final KeyUsage myKeyUsage = KeyUsage.fromExtensions(pExtensions);
-        for (GordianKeyPairUse myUse : GordianKeyPairUse.values()) {
+        for (GordianCertUse myUse : GordianCertUse.values()) {
             if (myKeyUsage.hasUsages(determineUsage(myUse))) {
                 myUsage.withUse(myUse);
             }
@@ -147,8 +147,8 @@ public class GordianCoreKeyPairUsage
         /* Restrict Certificate signing to CA */
         final BasicConstraints myConstraint = BasicConstraints.fromExtensions(pExtensions);
         final boolean isCA = myConstraint != null && myConstraint.isCA();
-        if (!isCA && myUsage.hasUse(GordianKeyPairUse.CERTIFICATE)) {
-            myUsage.removeUse(GordianKeyPairUse.CERTIFICATE);
+        if (!isCA && myUsage.hasUse(GordianCertUse.CERTIFICATE)) {
+            myUsage.removeUse(GordianCertUse.CERTIFICATE);
         }
 
         /* Determine the keyPair Purpose */
@@ -157,7 +157,7 @@ public class GordianCoreKeyPairUsage
             final Enumeration<?> enPurp = myPurposes.getObjects();
             while (enPurp.hasMoreElements()) {
                 final KeyPurposeId myId = KeyPurposeId.getInstance(enPurp.nextElement());
-                final GordianKeyPairPurpose myPurpose = getPurposeforOID(myId);
+                final GordianCertPurpose myPurpose = getPurposeforOID(myId);
                 myUsage.withPurpose(myPurpose);
             }
         }
@@ -173,7 +173,7 @@ public class GordianCoreKeyPairUsage
      */
     public KeyUsage getKeyPairUsage() {
         int myUsage = 0;
-        for (GordianKeyPairUse myUse : theUsageSet) {
+        for (GordianCertUse myUse : theUsageSet) {
             myUsage |= determineUsage(myUse);
         }
         return new KeyUsage(myUsage);
@@ -187,7 +187,7 @@ public class GordianCoreKeyPairUsage
     public ASN1Sequence getKeyPairPurpose() {
         /* Create the vector */
         final ASN1EncodableVector v = new ASN1EncodableVector();
-        for (GordianKeyPairPurpose myPurpose : thePurposeSet) {
+        for (GordianCertPurpose myPurpose : thePurposeSet) {
             v.add(determinePurposeId(myPurpose));
         }
         return new DERSequence(v);
@@ -198,9 +198,9 @@ public class GordianCoreKeyPairUsage
      *
      * @return the Map
      */
-    private static Map<KeyPurposeId, GordianKeyPairPurpose> buildPurposeMap() {
-        final Map<KeyPurposeId, GordianKeyPairPurpose> myMap = new HashMap<>();
-        for (GordianKeyPairPurpose myPurpose : GordianKeyPairPurpose.values()) {
+    private static Map<KeyPurposeId, GordianCertPurpose> buildPurposeMap() {
+        final Map<KeyPurposeId, GordianCertPurpose> myMap = new HashMap<>();
+        for (GordianCertPurpose myPurpose : GordianCertPurpose.values()) {
             final KeyPurposeId myId = determinePurposeId(myPurpose);
             myMap.put(myId, myPurpose);
         }
@@ -213,7 +213,7 @@ public class GordianCoreKeyPairUsage
      * @param pOID the oid
      * @return the purpose or null
      */
-    private static GordianKeyPairPurpose getPurposeforOID(final KeyPurposeId pOID) {
+    private static GordianCertPurpose getPurposeforOID(final KeyPurposeId pOID) {
         return PURPOSE_MAP.get(pOID);
     }
 
@@ -223,7 +223,7 @@ public class GordianCoreKeyPairUsage
      * @param pUse the use
      * @return the Usage
      */
-    private static int determineUsage(final GordianKeyPairUse pUse) {
+    private static int determineUsage(final GordianCertUse pUse) {
         return switch (pUse) {
             case CERTIFICATE -> KeyUsage.keyCertSign;
             case SIGNATURE -> KeyUsage.digitalSignature;
@@ -243,7 +243,7 @@ public class GordianCoreKeyPairUsage
      * @param pPurpose the purpose
      * @return the OID
      */
-    private static KeyPurposeId determinePurposeId(final GordianKeyPairPurpose pPurpose) {
+    private static KeyPurposeId determinePurposeId(final GordianCertPurpose pPurpose) {
         return switch (pPurpose) {
             case SERVERAUTH -> KeyPurposeId.id_kp_serverAuth;
             case CLIENTAUTH -> KeyPurposeId.id_kp_clientAuth;
