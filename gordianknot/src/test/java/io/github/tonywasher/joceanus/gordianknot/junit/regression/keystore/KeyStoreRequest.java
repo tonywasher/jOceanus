@@ -19,6 +19,10 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression.keystore;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
+import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGateway;
+import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGatewayConfirm;
+import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGatewayRequest;
+import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGatewayResponse;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianAIMerSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianBIKESpec;
@@ -63,10 +67,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianUOVSpec
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSHeight;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreManager;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.certgateway.GordianCoreCertGateway;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStore;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreGateway;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreManager;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.keystore.KeyStoreUtils.KeyStoreAlias;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
@@ -76,8 +79,6 @@ import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.stream.Stream;
 
 import static io.github.tonywasher.joceanus.gordianknot.junit.regression.keystore.KeyStoreUtils.DEF_PASSWORD;
@@ -232,7 +233,7 @@ public final class KeyStoreRequest {
         }
 
         /* Create and configure gateway */
-        final GordianKeyStoreGateway myGateway = myStore.getFactory().getAsymFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
+        final GordianCertGateway myGateway = myStore.getFactory().getAsymFactory().getCertGatewayFactory().createKeyStoreGateway(myMgr);
         myGateway.setPasswordResolver(theState::passwordResolver);
         myGateway.setCertifier(KeyStoreAlias.CERTIFIER.getName());
         myGateway.setMACSecretResolver(n -> DEF_MACSECRET);
@@ -243,22 +244,17 @@ public final class KeyStoreRequest {
         myMgr.createKeyPair(pKeyPairSpec, mySignName, myUsage, myIntermediate, KeyStoreAlias.SIGNER.getName(), KeyStoreUtils.DEF_PASSWORD);
 
         /* Build the CertificateRequest */
-        final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
-        myGateway.createCertificateRequest(KeyStoreAlias.SIGNER.getName(), myOutStream);
+        final GordianCertGatewayRequest myRequest = myGateway.createCertificateRequest(KeyStoreAlias.SIGNER.getName());
 
         /* Process the certificateRequest */
-        ByteArrayInputStream myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
-        myOutStream.reset();
-        myGateway.processCertificateRequest(myInputStream, myOutStream);
+        final GordianCertGatewayResponse myResponse = myGateway.processCertificateRequest(myRequest);
 
         /* Process the certificateResponse */
-        myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
-        myOutStream.reset();
-        final Integer myRespId = myGateway.processCertificateResponse(myInputStream, myOutStream);
+        myGateway.processCertificateResponse(myResponse);
 
         /* Cleanup */
         myStore.deleteEntry(KeyStoreAlias.SIGNER.getName());
-        myStore.deleteEntry(((GordianCoreKeyStoreGateway) myGateway).getCertificateAlias(myRespId));
+        myStore.deleteEntry(((GordianCoreCertGateway) myGateway).getCertificateAlias(myResponse.getResponseId()));
     }
 
     /**
@@ -283,33 +279,26 @@ public final class KeyStoreRequest {
         myMgr.createKeyPair(pKeyPairSpec, myCertName, pUsage, myIntermediate, myAlias.getName(), KeyStoreUtils.DEF_PASSWORD);
 
         /* Create and configure gateway */
-        final GordianKeyStoreGateway myGateway = myStore.getFactory().getAsymFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
+        final GordianCertGateway myGateway = myStore.getFactory().getAsymFactory().getCertGatewayFactory().createKeyStoreGateway(myMgr);
         myGateway.setPasswordResolver(theState::passwordResolver);
         myGateway.setCertifier(KeyStoreAlias.CERTIFIER.getName());
         myGateway.setMACSecretResolver(n -> DEF_MACSECRET);
 
         /* Build the CertificateRequest */
-        final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
-        myGateway.createCertificateRequest(myAlias.getName(), myOutStream);
+        final GordianCertGatewayRequest myRequest = myGateway.createCertificateRequest(myAlias.getName());
 
         /* Process the certificateRequest */
-        ByteArrayInputStream myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
-        myOutStream.reset();
-        myGateway.processCertificateRequest(myInputStream, myOutStream);
+        final GordianCertGatewayResponse myResponse = myGateway.processCertificateRequest(myRequest);
 
         /* Process the certificateResponse */
-        myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
-        myOutStream.reset();
-        final Integer myRespId = myGateway.processCertificateResponse(myInputStream, myOutStream);
+        final GordianCertGatewayConfirm myConfirm = myGateway.processCertificateResponse(myResponse);
 
         /* Process the certificateAck */
-        myInputStream = new ByteArrayInputStream(myOutStream.toByteArray());
-        myOutStream.reset();
-        myGateway.processCertificateAck(myInputStream);
+        myGateway.processCertificateConfirm(myConfirm);
 
         /* Cleanup */
         myStore.deleteEntry(myAlias.getName());
-        myStore.deleteEntry(((GordianCoreKeyStoreGateway) myGateway).getCertificateAlias(myRespId));
+        myStore.deleteEntry(((GordianCoreCertGateway) myGateway).getCertificateAlias(myResponse.getResponseId()));
     }
 
     /**

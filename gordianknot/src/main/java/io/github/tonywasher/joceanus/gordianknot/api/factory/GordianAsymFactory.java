@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.api.factory;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGatewayFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
@@ -60,4 +61,11 @@ public interface GordianAsymFactory {
      * @return the keyStore factory
      */
     GordianKeyStoreFactory getKeyStoreFactory();
+
+    /**
+     * Obtain the certGateway Factory.
+     *
+     * @return the certGateway factory
+     */
+    GordianCertGatewayFactory getCertGatewayFactory();
 }

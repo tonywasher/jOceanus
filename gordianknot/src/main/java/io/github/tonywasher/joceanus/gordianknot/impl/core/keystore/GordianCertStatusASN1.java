@@ -203,7 +203,7 @@ public final class GordianCertStatusASN1
         /**
          * Lookup the Enum from the value
          *
-         * @param pValue the vaue
+         * @param pValue the value
          * @return the enum (or null)
          */
         public static GordianCertStatus fromValue(final int pValue) {
