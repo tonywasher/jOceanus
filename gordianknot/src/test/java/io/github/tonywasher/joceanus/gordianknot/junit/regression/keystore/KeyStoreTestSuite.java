@@ -26,6 +26,9 @@ import org.junit.platform.suite.api.SuiteDisplayName;
  */
 @Suite
 @SuiteDisplayName("KeyStore Test Suite")
-@SelectClasses(KeyStoreTest.class)
+@SelectClasses({
+        KeyStoreTest.class,
+        CertGatewayTest.class
+})
 public class KeyStoreTestSuite {
 }

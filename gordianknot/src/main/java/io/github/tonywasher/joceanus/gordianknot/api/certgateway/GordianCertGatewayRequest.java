@@ -22,7 +22,8 @@ import org.bouncycastle.asn1.crmf.CertReqMsg;
 /**
  * Certificate Gateway Request.
  */
-public interface GordianCertGatewayRequest {
+public interface GordianCertGatewayRequest
+        extends GordianCertGatewayMsg {
     /**
      * Obtain the certificate request.
      *

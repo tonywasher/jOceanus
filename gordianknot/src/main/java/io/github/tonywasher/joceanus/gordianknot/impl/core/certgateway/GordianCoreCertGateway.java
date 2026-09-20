@@ -27,7 +27,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway.GordianLockResolver;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
@@ -109,11 +108,6 @@ public class GordianCoreCertGateway
      * The password callback.
      */
     private Function<String, char[]> thePasswordResolver;
-
-    /**
-     * The lock callback.
-     */
-    private GordianLockResolver theLockResolver;
 
     /**
      * Constructor.
@@ -223,11 +217,6 @@ public class GordianCoreCertGateway
     }
 
     @Override
-    public void setLockResolver(final GordianLockResolver pResolver) {
-        theLockResolver = pResolver;
-    }
-
-    @Override
     public GordianCertGatewayResponse processCertificateRequest(final GordianCertGatewayRequest pRequest) throws GordianException {
         /* Extract the certificate request */
         final CertReqMsg myCertReq = pRequest.getCertificateRequest();
@@ -238,9 +227,8 @@ public class GordianCoreCertGateway
 
         /* Create the certificate response */
         final int myReqId = myCertReq.getCertReq().getCertReqId().intValueExact();
-        final GordianCertGatewayStatusASN1 myStatus = GordianCertGatewayStatusASN1.createCertStatus(GordianCertStatus.ACCEPTED);
         final GordianCertGatewayResponseASN1 myResponse
-                = GordianCertGatewayResponseASN1.createCertResponse(myReqId, myRespId, myStatus, myChain);
+                = GordianCertGatewayResponseASN1.createCertResponse(myReqId, myRespId, GordianCertStatus.ACCEPTED, myChain);
 
         /* Create PKMACValue if required */
         final X500Name mySubject = myCertReq.getCertReq().getCertTemplate().getSubject();
@@ -293,8 +281,7 @@ public class GordianCoreCertGateway
 
         /* calculate the Digest value */
         final byte[] myDigest = theBuilder.calculateAckValue((GordianCoreCertificate) myChain[0]);
-        final GordianCertGatewayStatusASN1 myStatus = GordianCertGatewayStatusASN1.createCertStatus(GordianCertStatus.ACCEPTED);
-        final GordianCertGatewayConfirmASN1 myConfirm = new GordianCertGatewayConfirmASN1(myResponse.getResponseId(), myStatus, myDigest);
+        final GordianCertGatewayConfirmASN1 myConfirm = GordianCertGatewayConfirmASN1.createCertConfirm(myResponse.getResponseId(), myDigest);
 
         /* Return the response id */
         return myConfirm;

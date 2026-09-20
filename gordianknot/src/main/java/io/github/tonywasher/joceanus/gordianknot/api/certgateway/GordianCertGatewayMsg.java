@@ -18,21 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.api.certgateway;
 
 /**
- * Certificate Gateway Confirm.
+ * Certificate Gateway Message Indicator.
  */
-public interface GordianCertGatewayConfirm
-        extends GordianCertGatewayMsg {
-    /**
-     * Obtain the responseId.
-     *
-     * @return the id
-     */
-    int getResponseId();
-
-    /**
-     * Obtain the status.
-     *
-     * @return the status
-     */
-    GordianCertGatewayStatus getStatus();
+public interface GordianCertGatewayMsg {
 }

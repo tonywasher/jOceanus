@@ -19,7 +19,6 @@ package io.github.tonywasher.joceanus.gordianknot.api.certgateway;
 
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStore;
-import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway.GordianLockResolver;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreManager;
 import org.bouncycastle.asn1.x500.X500Name;
 
@@ -92,13 +91,6 @@ public interface GordianCertGateway {
      * @param pResolver the resolver
      */
     void setPasswordResolver(Function<String, char[]> pResolver);
-
-    /**
-     * set the lockResolver.
-     *
-     * @param pResolver the resolver
-     */
-    void setLockResolver(GordianLockResolver pResolver);
 
     /**
      * Set the MAC secret resolver.

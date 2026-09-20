@@ -61,6 +61,7 @@ module io.github.tonywasher.joceanus.gordianknot {
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.agree to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.base to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.cipher to io.github.tonywasher.joceanus.gordianknot.test;
+    exports io.github.tonywasher.joceanus.gordianknot.impl.core.cert to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.certgateway to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.digest to io.github.tonywasher.joceanus.gordianknot.test;
     exports io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt to io.github.tonywasher.joceanus.gordianknot.test;

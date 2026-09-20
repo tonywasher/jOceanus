@@ -137,11 +137,30 @@ public final class GordianCertGatewayStatusASN1
     /**
      * Create the certificate status.
      *
+     * @return the status
+     */
+    public static GordianCertGatewayStatusASN1 createCertStatus() {
+        return createCertStatus(GordianCertStatus.ACCEPTED, null);
+    }
+
+    /**
+     * Create the certificate status.
+     *
      * @param pStatus the status
      * @return the status
      */
     public static GordianCertGatewayStatusASN1 createCertStatus(final GordianCertStatus pStatus) {
-        return new GordianCertGatewayStatusASN1(pStatus, null);
+        return createCertStatus(pStatus, null);
+    }
+
+    /**
+     * Create the certificate status.
+     *
+     * @param pFailure the failure
+     * @return the failure
+     */
+    public static GordianCertGatewayStatusASN1 createCertStatus(final GordianCertFailure pFailure) {
+        return createCertStatus(GordianCertStatus.REJECTION, pFailure);
     }
 
     /**
@@ -151,8 +170,8 @@ public final class GordianCertGatewayStatusASN1
      * @param pFailure the failure
      * @return the status
      */
-    public static GordianCertGatewayStatusASN1 createCertStatus(final GordianCertStatus pStatus,
-                                                                final GordianCertFailure pFailure) {
+    private static GordianCertGatewayStatusASN1 createCertStatus(final GordianCertStatus pStatus,
+                                                                 final GordianCertFailure pFailure) {
         return new GordianCertGatewayStatusASN1(pStatus, pFailure);
     }
 
@@ -215,7 +234,7 @@ public final class GordianCertGatewayStatusASN1
     private static int getValueForFailure(final GordianCertFailure pFailure) {
         return switch (pFailure) {
             case BADMESSAGE -> FAILURE_BADMESSAGE;
-            case BADPOP -> FAILURE_BADMESSAGE;
+            case BADPOP -> FAILURE_BADPOP;
             case BADUSAGE -> FAILURE_BADUSAGE;
             case DUPLICATE -> FAILURE_DUPLICATE;
             case SYSTEMFAIL -> FAILURE_SYSTEMFAIL;

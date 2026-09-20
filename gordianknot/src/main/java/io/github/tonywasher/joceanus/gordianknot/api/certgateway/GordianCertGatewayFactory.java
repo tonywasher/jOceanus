@@ -17,13 +17,13 @@
 
 package io.github.tonywasher.joceanus.gordianknot.api.certgateway;
 
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreManager;
 
 /**
  * Certificate Gateway Factory.
  */
 public interface GordianCertGatewayFactory {
-
     /**
      * Create a certificate Gateway for the Manager.
      *
@@ -31,4 +31,22 @@ public interface GordianCertGatewayFactory {
      * @return the certificate Gateway
      */
     GordianCertGateway createKeyStoreGateway(GordianKeyStoreManager pKeyStoreMgr);
+
+    /**
+     * Wrap message.
+     *
+     * @param pMessage the message to wrap
+     * @return the wrapped message
+     * @throws GordianException on error
+     */
+    GordianCertGatewayWrappedMsg wrapMessage(GordianCertGatewayMsg pMessage) throws GordianException;
+
+    /**
+     * Derive message from bytes.
+     *
+     * @param pMessageBytes the message bytes
+     * @return the wrapped message
+     * @throws GordianException on error
+     */
+    GordianCertGatewayWrappedMsg deriveMessage(byte[] pMessageBytes) throws GordianException;
 }

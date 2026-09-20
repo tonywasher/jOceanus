@@ -1,6 +1,6 @@
 /*
  * GordianKnot: Security Suite
- * Copyright 2012-2026. Tony Washer
+ * Copyright 2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -14,6 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package io.github.tonywasher.joceanus.gordianknot.junit.regression.keystore;
 
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
@@ -31,9 +32,9 @@ import org.junit.jupiter.api.TestFactory;
 import java.util.stream.Stream;
 
 /**
- * KeyStore Tests.
+ * CertGateway Tests.
  */
-class KeyStoreTest {
+class CertGatewayTest {
     /**
      * The KeySetHashSpec.
      */
@@ -48,7 +49,7 @@ class KeyStoreTest {
      */
     @TestFactory
     Stream<DynamicNode> bouncyCastle() throws GordianException {
-        return keyStoreTests(GordianFactoryType.BC);
+        return certGatewayTests(GordianFactoryType.BC);
     }
 
     /**
@@ -59,7 +60,7 @@ class KeyStoreTest {
      */
     @TestFactory
     Stream<DynamicNode> jca() throws GordianException {
-        return keyStoreTests(GordianFactoryType.JCA);
+        return certGatewayTests(GordianFactoryType.JCA);
     }
 
     /**
@@ -69,7 +70,7 @@ class KeyStoreTest {
      * @return the test stream
      * @throws GordianException on error
      */
-    private Stream<DynamicNode> keyStoreTests(final GordianFactoryType pFactoryType) throws GordianException {
+    private Stream<DynamicNode> certGatewayTests(final GordianFactoryType pFactoryType) throws GordianException {
         /* Create the factory */
         final GordianFactory myFactory = GordianGenerator.createRandomFactory(pFactoryType);
 
@@ -80,8 +81,7 @@ class KeyStoreTest {
 
         /* Return the stream */
         return Stream.of(
-                new KeyStoreSymmetric(myMgr).symmetricTest(),
-                new KeyStorePairs(myMgr).keyPairsTest()
+                new KeyStoreRequest(myMgr).keyPairRequestTest()
         );
     }
 }

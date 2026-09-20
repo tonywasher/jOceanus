@@ -19,6 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.certgateway;
 
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGatewayResponse;
+import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGatewayStatus.GordianCertFailure;
+import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGatewayStatus.GordianCertStatus;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
@@ -50,6 +52,19 @@ import java.util.List;
 
 /**
  * Certificate Gateway Response ASN1.
+ * <pre>
+ * GordianCertResponseASN1 ::= SEQUENCE {
+ *      certReqId    INTEGER
+ *      certRespId   INTEGER
+ *      status       GordianCertStatusASN1
+ *      CHOICE {
+ *          certificate     [1] Certificate,
+ *          encrypted       [2] EnvelopedData
+ *      } OPTIONAL
+ *      signerCerts  SEQUENCE SIZE (1..MAX) OF Certificate OPTIONAL
+ *      macValue  PKMACValue OPTIONAL
+ * }
+ * </pre>
  */
 public final class GordianCertGatewayResponseASN1
         extends GordianASN1Object
@@ -82,7 +97,7 @@ public final class GordianCertGatewayResponseASN1
     /**
      * The signer certificates.
      */
-    private final Certificate[] theSignerCerts;
+    private Certificate[] theSignerCerts;
 
     /**
      * The certificate.
@@ -118,7 +133,7 @@ public final class GordianCertGatewayResponseASN1
         theRespId = pRespId;
         theStatus = pStatus;
         theCertificate = pCertificate;
-        theSignerCerts = pSignerCerts.clone();
+        theSignerCerts = pSignerCerts == null ? null : pSignerCerts.clone();
     }
 
     /**
@@ -137,25 +152,29 @@ public final class GordianCertGatewayResponseASN1
             theStatus = GordianCertGatewayStatusASN1.getInstance(en.nextElement());
 
             /* Extract the certificate from the sequence */
-            final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());
-            switch (myTagged.getTagNo()) {
-                case TAG_STANDARD:
-                    theCertificate = Certificate.getInstance(myTagged, false);
-                    break;
-                case TAG_ENCRYPTED:
-                    theEncrypted = EnvelopedData.getInstance(myTagged, false);
-                    break;
-                default:
-                    throw new GordianDataException("Unexpected tag");
+            if (en.hasMoreElements()) {
+                final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());
+                switch (myTagged.getTagNo()) {
+                    case TAG_STANDARD:
+                        theCertificate = Certificate.getInstance(myTagged, false);
+                        break;
+                    case TAG_ENCRYPTED:
+                        theEncrypted = EnvelopedData.getInstance(myTagged, false);
+                        break;
+                    default:
+                        throw new GordianDataException("Unexpected tag");
+                }
             }
 
             /* Extract the signer Certificates from the sequence */
-            final ASN1Sequence mySignerCerts = ASN1Sequence.getInstance(en.nextElement());
-            final Enumeration<?> enCert = mySignerCerts.getObjects();
-            final int myNumCerts = mySignerCerts.size();
-            theSignerCerts = new Certificate[mySignerCerts.size()];
-            for (int i = 0; i < myNumCerts; i++) {
-                theSignerCerts[i] = Certificate.getInstance(enCert.nextElement());
+            if (en.hasMoreElements()) {
+                final ASN1Sequence mySignerCerts = ASN1Sequence.getInstance(en.nextElement());
+                final Enumeration<?> enCert = mySignerCerts.getObjects();
+                final int myNumCerts = mySignerCerts.size();
+                theSignerCerts = new Certificate[mySignerCerts.size()];
+                for (int i = 0; i < myNumCerts; i++) {
+                    theSignerCerts[i] = Certificate.getInstance(enCert.nextElement());
+                }
             }
 
             /* Extract the Optional MACValue from the sequence */
@@ -186,6 +205,37 @@ public final class GordianCertGatewayResponseASN1
     }
 
     /**
+     * Parse the ASN1 Tagged object.
+     *
+     * @param pObject   the object to parse
+     * @param pExplicit is the tag explicit?
+     * @return the parsed object
+     * @throws GordianException on error
+     */
+    public static GordianCertGatewayResponseASN1 getInstance(final ASN1TaggedObject pObject,
+                                                             final boolean pExplicit) throws GordianException {
+        return getInstance(ASN1Sequence.getInstance(pObject, pExplicit));
+    }
+
+    /**
+     * Create the certificate response.
+     *
+     * @param pReqId   the request id
+     * @param pRespId  the responseId
+     * @param pFailure the failure code
+     * @return the response
+     */
+    public static GordianCertGatewayResponseASN1 createCertResponse(final int pReqId,
+                                                                    final int pRespId,
+                                                                    final GordianCertFailure pFailure) {
+        /* Create the status */
+        final GordianCertGatewayStatusASN1 myStatus = GordianCertGatewayStatusASN1.createCertStatus(pFailure);
+
+        /* Return the ASN1 */
+        return new GordianCertGatewayResponseASN1(pReqId, pRespId, myStatus, null, null);
+    }
+
+    /**
      * Create the certificate response.
      *
      * @param pReqId  the request id
@@ -196,8 +246,11 @@ public final class GordianCertGatewayResponseASN1
      */
     public static GordianCertGatewayResponseASN1 createCertResponse(final int pReqId,
                                                                     final int pRespId,
-                                                                    final GordianCertGatewayStatusASN1 pStatus,
+                                                                    final GordianCertStatus pStatus,
                                                                     final List<GordianCertificate> pChain) {
+        /* Create the status */
+        final GordianCertGatewayStatusASN1 myStatus = GordianCertGatewayStatusASN1.createCertStatus(pStatus);
+
         /* Create the chain */
         final Certificate[] myChain = new Certificate[pChain.size() - 1];
 
@@ -211,7 +264,7 @@ public final class GordianCertGatewayResponseASN1
         }
 
         /* Return the ASN1 */
-        return new GordianCertGatewayResponseASN1(pReqId, pRespId, pStatus, myCert, myChain);
+        return new GordianCertGatewayResponseASN1(pReqId, pRespId, myStatus, myCert, myChain);
     }
 
     @Override
@@ -291,6 +344,11 @@ public final class GordianCertGatewayResponseASN1
      */
     public GordianCoreCertificate[] getCertificateChain(final GordianCertGatewayEncryptor pEncryptor) throws GordianException {
         /* If the certificate is still encrypted */
+        if (theSignerCerts == null) {
+            throw new GordianLogicException("Certificate chain not available");
+        }
+
+        /* If the certificate is still encrypted */
         if (isEncrypted()) {
             throw new GordianLogicException("Certificate still encrypted");
         }
@@ -321,7 +379,9 @@ public final class GordianCertGatewayResponseASN1
         } else if (theEncrypted != null) {
             v.add(new DERTaggedObject(false, TAG_ENCRYPTED, theEncrypted));
         }
-        v.add(new DERSequence(theSignerCerts));
+        if (theSignerCerts != null) {
+            v.add(new DERSequence(theSignerCerts));
+        }
         if (theMACValue != null) {
             v.add(theMACValue);
         }
@@ -360,6 +420,11 @@ public final class GordianCertGatewayResponseASN1
                                    final GordianKeyStorePair pKeyPair) throws GordianException {
         /* Only decrypt if currently encrypted */
         if (theCertificate == null) {
+            /* If the certificate is still encrypted */
+            if (theEncrypted == null) {
+                throw new GordianLogicException("No Certificate available");
+            }
+
             /* Derive the KeySet */
             final RecipientInfo myRecipient = RecipientInfo.getInstance(theEncrypted.getRecipientInfos().getObjectAt(0));
             final KeyTransRecipientInfo myRecInfo = (KeyTransRecipientInfo) myRecipient.getInfo();

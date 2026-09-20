@@ -19,10 +19,16 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.certgateway;
 
 import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGateway;
 import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGatewayFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGatewayMsg;
+import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGatewayWrappedMsg;
+import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreManager;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreManager;
 
+/**
+ * Certificate Gateway Factory Implementation.
+ */
 public class GordianCoreCertGatewayFactory
         implements GordianCertGatewayFactory {
     /**
@@ -43,5 +49,15 @@ public class GordianCoreCertGatewayFactory
     @Override
     public GordianCertGateway createKeyStoreGateway(final GordianKeyStoreManager pKeyStoreMgr) {
         return new GordianCoreCertGateway(theFactory, (GordianCoreKeyStoreManager) pKeyStoreMgr);
+    }
+
+    @Override
+    public GordianCertGatewayWrappedMsg wrapMessage(final GordianCertGatewayMsg pMessage) throws GordianException {
+        return GordianCertGatewayWrappedMsgASN1.createWrappedMessage(pMessage);
+    }
+
+    @Override
+    public GordianCertGatewayWrappedMsg deriveMessage(final byte[] pMessageBytes) throws GordianException {
+        return GordianCertGatewayWrappedMsgASN1.getInstance(pMessageBytes);
     }
 }

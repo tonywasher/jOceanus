@@ -24,8 +24,17 @@ import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.crmf.CertReqMsg;
 
+/**
+ * Certificate Gateway Request ASN1.
+ * <pre>
+ * GordianCertResponseASN1 ::= SEQUENCE {
+ *      certReq     CertReqMsg
+ * }
+ * </pre>
+ */
 public class GordianCertGatewayRequestASN1
         extends GordianASN1Object
         implements GordianCertGatewayRequest {
@@ -76,6 +85,19 @@ public class GordianCertGatewayRequestASN1
             return new GordianCertGatewayRequestASN1(ASN1Sequence.getInstance(pObject));
         }
         throw new GordianDataException("Null sequence");
+    }
+
+    /**
+     * Parse the ASN1 Tagged object.
+     *
+     * @param pObject   the object to parse
+     * @param pExplicit is the tag explicit?
+     * @return the parsed object
+     * @throws GordianException on error
+     */
+    public static GordianCertGatewayRequestASN1 getInstance(final ASN1TaggedObject pObject,
+                                                            final boolean pExplicit) throws GordianException {
+        return getInstance(ASN1Sequence.getInstance(pObject, pExplicit));
     }
 
     @Override

@@ -20,7 +20,8 @@ package io.github.tonywasher.joceanus.gordianknot.api.certgateway;
 /**
  * Certificate Gateway Response.
  */
-public interface GordianCertGatewayResponse {
+public interface GordianCertGatewayResponse
+        extends GordianCertGatewayMsg {
     /**
      * Obtain the requestId.
      *
