@@ -32,12 +32,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <BouncyCastleVersion>1.86.1</BouncyCastleVersion>
         <JSONVersion>20260814</JSONVersion>
-        <ApacheMavenVersion>3.9.16</ApacheMavenVersion>
+        <ApacheMavenVersion>3.10.0</ApacheMavenVersion>
         <MySQLVersion>26.7.0</MySQLVersion>
         <MariaDBVersion>3.5.10</MariaDBVersion>
         <PostGreSQLVersion>42.7.13</PostGreSQLVersion>
         <MSSQLVersion>13.6.0.jre11</MSSQLVersion>
-        <H2Version>2.5.250</H2Version>
+        <H2Version>2.5.252</H2Version>
         <ApachePOIVersion>5.5.1</ApachePOIVersion>
         <JSoupVersion>1.23.2</JSoupVersion>
         <JFreeChartVersion>1.5.6</JFreeChartVersion>

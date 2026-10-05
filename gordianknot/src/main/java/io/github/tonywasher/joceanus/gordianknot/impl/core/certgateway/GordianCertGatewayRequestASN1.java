@@ -100,6 +100,15 @@ public class GordianCertGatewayRequestASN1
         return getInstance(ASN1Sequence.getInstance(pObject, pExplicit));
     }
 
+    /**
+     * Obtain the certificate requestId.
+     *
+     * @return the requestId
+     */
+    public int getRequestId() {
+        return theRequest.getCertReq().getCertReqId().intValueExact();
+    }
+
     @Override
     public CertReqMsg getCertificateRequest() {
         return theRequest;

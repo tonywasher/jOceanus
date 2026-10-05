@@ -53,7 +53,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianBaseK
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianBaseKeyStoreManager;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.bouncycastle.asn1.cms.EnvelopedData;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
@@ -179,22 +178,22 @@ public class GordianCertGatewayParser {
         }
 
         /* Check the MACValue */
-        final GordianCoreCertificate myCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().getFirst();
-        final X500Name myName = myCert.getSubjectName();
-        final byte[] myMACSecret = theGateway.getMACSecret(myName);
-        final ASN1Object myMACData = pResponse.getMACData();
-        final PKMACValue mySent = pResponse.getMACValue();
+        //final GordianCoreCertificate myCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().getFirst();
+        //final X500Name myName = myCert.getSubjectName();
+        //final byte[] myMACSecret = theGateway.getMACSecret(myName);
+        //final ASN1Object myMACData = pResponse.getMACData();
+        //final PKMACValue mySent = pResponse.getMACValue();
 
         /* If we have a mismatch on security */
-        if ((myMACSecret == null) != (mySent == null)) {
-            throw new GordianDataException("Mismatch on PKMAC Security");
-        }
+        //if ((myMACSecret == null) != (mySent == null)) {
+        //    throw new GordianDataException("Mismatch on PKMAC Security");
+        //}
 
         /* If we have a MACValue */
-        if (mySent != null) {
-            /* Calculate the PKMACValue and compare with the value that was sent */
-            theBuilder.checkPKMACValue(myMACSecret, myMACData, mySent);
-        }
+        //if (mySent != null) {
+        /* Calculate the PKMACValue and compare with the value that was sent */
+        //    theBuilder.checkPKMACValue(myMACSecret, myMACData, mySent);
+        //}
 
         /* Check that the publicKey matches */
         final GordianCoreCertificate myNewCert = pResponse.getCertificate(theGateway.getEncryptor());

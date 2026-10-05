@@ -74,7 +74,11 @@ public class JcaKeyPair
 
     @Override
     public JcaKeyPair getPublicOnly() {
-        return new JcaKeyPair(getPublicKey());
+        return switch (this) {
+            case JcaIdAwareMasterKeyPair iam -> new JcaIdAwareMasterKeyPair(getPublicKey(), null);
+            case JcaIdAwareUserKeyPair iau -> new JcaIdAwareUserKeyPair(getPublicKey(), null);
+            default -> new JcaKeyPair(getPublicKey());
+        };
     }
 
     /**

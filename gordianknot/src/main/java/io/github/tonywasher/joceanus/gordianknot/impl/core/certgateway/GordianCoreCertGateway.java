@@ -22,7 +22,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGatewayConfirm;
 import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGatewayRequest;
 import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGatewayResponse;
-import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGatewayStatus.GordianCertStatus;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
@@ -32,9 +31,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConve
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStore;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreManager;
-import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.crmf.CertReqMsg;
-import org.bouncycastle.asn1.crmf.PKMACValue;
 import org.bouncycastle.asn1.x500.X500Name;
 
 import java.util.Arrays;
@@ -219,34 +216,23 @@ public class GordianCoreCertGateway
     @Override
     public GordianCertGatewayResponse processCertificateRequest(final GordianCertGatewayRequest pRequest) throws GordianException {
         /* Extract the certificate request */
-        final CertReqMsg myCertReq = pRequest.getCertificateRequest();
+        final GordianCertGatewayRequestASN1 myRequest = (GordianCertGatewayRequestASN1) pRequest;
+        final CertReqMsg myCertReq = myRequest.getCertificateRequest();
 
         /* Determine responseId and sign certificate */
         final int myRespId = theNextId.getAndIncrement();
+        final GordianCertGatewayResponseState myControl = new GordianCertGatewayResponseState(myRequest, theEncryptor, myRespId);
         final List<GordianCertificate> myChain = theParser.processCertificateRequest(myCertReq);
+        myControl.setCertificates(myChain);
 
         /* Create the certificate response */
-        final int myReqId = myCertReq.getCertReq().getCertReqId().intValueExact();
-        final GordianCertGatewayResponseASN1 myResponse
-                = GordianCertGatewayResponseASN1.createCertResponse(myReqId, myRespId, GordianCertStatus.ACCEPTED, myChain);
-
-        /* Create PKMACValue if required */
-        final X500Name mySubject = myCertReq.getCertReq().getCertTemplate().getSubject();
-        final byte[] myMACSecret = getMACSecret(mySubject);
-        if (myMACSecret != null) {
-            final ASN1Object myMACData = myResponse.getMACData();
-            final PKMACValue myMACValue = theBuilder.createPKMACValue(myMACSecret, myMACData);
-            myResponse.setMACValue(myMACValue);
-        }
+        final GordianCertGatewayResponseASN1 myResponse = myControl.buildResponse();
 
         /* Access the new certificate */
         final GordianCoreCertificate myCert = (GordianCoreCertificate) myChain.getFirst();
 
         /* If the certificate requires encryption */
         if (GordianCertGatewayParser.requiresEncryption(myCertReq)) {
-            /* Encrypt the certificate */
-            myResponse.encryptCertificate(theEncryptor);
-
             /* Store in the response cache */
             theResponseMap.put(myRespId, myCert);
 
@@ -272,19 +258,23 @@ public class GordianCoreCertGateway
         theRequestMap.remove(myResponse.getRequestId());
 
         /* Process the certificate response */
+        final GordianCertGatewayConfirmState myControl = new GordianCertGatewayConfirmState(myResponse, theEncryptor);
         theParser.processCertificateResponse(myResponse, myCache.keyPair());
-        final GordianCertificate[] myChain = myResponse.getCertificateChain(theEncryptor);
+        final List<GordianCertificate> myChain = myControl.getChain(myCache.keyPair());
 
         /* Update the keyStore with the new certificate chain */
-        final List<GordianCertificate> myList = List.of(myChain);
-        theKeyStore.updateCertificateChain(myCache.alias(), myList);
+        theKeyStore.updateCertificateChain(myCache.alias(), myChain);
 
-        /* calculate the Digest value */
-        final byte[] myDigest = theBuilder.calculateAckValue((GordianCoreCertificate) myChain[0]);
-        final GordianCertGatewayConfirmASN1 myConfirm = GordianCertGatewayConfirmASN1.createCertConfirm(myResponse.getResponseId(), myDigest);
+        /* If we need to calculate the digest */
+        if (myControl.needsDigest()) {
+            /* calculate the Digest and record the digest */
+            final byte[] myDigest = theBuilder.calculateAckValue((GordianCoreCertificate) myChain.getFirst());
+            myControl.setDigest(myDigest);
+            return myControl.buildConfirm();
+        }
 
-        /* Return the response id */
-        return myConfirm;
+        /* No confirm */
+        return null;
     }
 
     @Override
