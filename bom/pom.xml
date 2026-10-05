@@ -32,7 +32,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <BouncyCastleVersion>1.86.1</BouncyCastleVersion>
         <JSONVersion>20260814</JSONVersion>
-        <ApacheMavenVersion>3.10.0</ApacheMavenVersion>
+        <ApacheMavenVersion>3.9.16</ApacheMavenVersion>
         <MySQLVersion>26.7.0</MySQLVersion>
         <MariaDBVersion>3.5.10</MariaDBVersion>
         <PostGreSQLVersion>42.7.13</PostGreSQLVersion>
